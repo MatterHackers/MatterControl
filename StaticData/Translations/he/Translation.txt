@@ -172,6 +172,15 @@ Translated:כל חימום
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:אפשר MatterControl לפצל שורות ארוכות כדי לשפר את פילוס וביטול הדפסה. קריטי עבור מדפסות כי הם באופן משמעותי מחוץ לרמה.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:מאפשר לך להפעיל ולכבות את החלת הציר x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:מאפשר לך להפעיל ולכבות את החלת הציר y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:מאפשר לך להפעיל ולכבות את החלת הציר z.
+
 English:Alpha
 Translated:אלפא
 
@@ -418,6 +427,12 @@ Translated:שינוי
 English:Change Password
 Translated:שנה סיסמא
 
+English:Change the scale of the image within the coin.
+Translated:לשנות את קנה המידה של התמונה בתוך המטבע.
+
+English:Change the width of the image lines.
+Translated:שנה את רוחב שורות התמונה.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:שינוי ערוץ העדכון שלך ישנה את גרסת MatterControl שתקבל בעת העדכון
 
@@ -441,6 +456,9 @@ Translated:בדיקות לפני כל הדפס כי גובה השכבה הוא �
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:בחר בפקודה להצגת התקדמות ההדפסה על מסך ה- LCD של המדפסת, אם יש בה.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:בחר להציג כברייל או טקסט רגיל. זה יכול לעזור להראות איך עובד כיתה 2.
 
 English:Clean Filament Page
 Translated:דף נימה נקי
@@ -606,6 +624,12 @@ Translated:לספור או מ"מ
 
 English:Create
 Translated:צור
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:יצירת וו, כך מטבע ניתן לתלות בשרשרת.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:צור וו כך ברייל ניתן לתלות מ שרשרת או מחזיק מפתחות.
 
 English:Create a printer to export G-Code
 Translated:צור מדפסת לייצוא קוד G
@@ -879,6 +903,12 @@ Translated:סוף
 
 English:End G-Code
 Translated:סוף G-Code
+
+English:Ensure that the part maintains its proportions.
+Translated:ודא שהחלק שומר על הפרופורציות שלו.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:מבטיח את החלק המסובב יש מספר מינימלי של הצדדים לכל סיבוב מלא
 
 English:Enter a Design Name Here
 Translated:הזן שם עיצוב כאן
@@ -1543,6 +1573,9 @@ Translated:הגיע הזמן להעתיק את הגדרות המדפסת הקי�
 English:Jerk Velocity
 Translated:מהירות ג 'ייק
 
+English:Keep the entire extents of the part within the angle described.
+Translated:שמור את כל החלקים של החלק בתוך הזווית המתוארת.
+
 English:Keep Within Angle
 Translated:שמור בתוך זווית
 
@@ -1977,6 +2010,9 @@ Translated:לא נבחרה מדפסת
 
 English:None
 Translated:אף אחד
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:בדרך כלל התמונה מורחבת לקצה. זה ינסה למרכז את המשקל של התמונה חזותית.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:בדרך כלל אתה רוצה להשתמש מרחקים e מוחלטת. רק לבדוק את זה אם אתה יודע את המדפסת צריך יחסית מרחקים e.
@@ -2662,6 +2698,18 @@ Translated:סובב (Alt + עכבר שמאלי)
 English:Rotate About
 Translated:סובב על
 
+English:Rotate about the X axis
+Translated:סובב את ציר ה- X
+
+English:Rotate about the Y axis
+Translated:סובב את ציר Y
+
+English:Rotate about the Z axis
+Translated:סובב את ציר Z
+
+English:Rotate the part to the same angle as the array.
+Translated:סובב את החלק באותה זווית כמו המערך.
+
 English:Rotate View
 Translated:סובב את התצוגה
 
@@ -2821,11 +2869,20 @@ Translated:פג תוקף הפעילות באתר
 English:Set as Default
 Translated:נקבע כברירת מחדל
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:הגדר את הכללים כיצד לשמור על החלק בזמן קנה המידה.
+
+English:Set the shape the part will be fit into.
+Translated:הגדר את הצורה של החלק יהיה מתאים.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:מגדיר MatterControl לנסות להתחבר למדפסת דרך הרשת. (עליך להתנתק ולחבר מחדש כדי שזה ייכנס לתוקף)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:מגדיר MatterControl להשתמש בשיטת תקשורת s3g. (עליך להתנתק ולחבר מחדש כדי שזה ייכנס לתוקף)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:מגדיר את עומק האריח שהברייל מודפס עליו
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:קובע את המודלים שיתווספו לתור בעת יצירת מדפסת חדשה.
@@ -3153,6 +3210,9 @@ Translated:סחיטה
 
 English:Subtract & Replace
 Translated:הפחת והחלפה
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:הפחת את התמונה מדיסק, כך שהמרחב השלילי יודפס.
 
 English:Success
 Translated:הצלחה
@@ -3661,6 +3721,9 @@ Translated:זהו המודל של המדפסת פרופיל זה הוא המיק
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:זהו שם המדפסת שלך שיוצג בתפריט 'בחירת מדפסת'.
 
+English:This is the position to perform the scale about.
+Translated:זה המיקום לבצע את הסולם על.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:זה כדי לעזור להפחית את הרטט במהלך ההדפסה. אם המדפסת שלך נמצאת בתדר תהודה שגורם לבעיות, באפשרותך להגדיר זאת כדי לנסות ולהקטין את ההדפסה בתדר זה.
 
@@ -3711,6 +3774,9 @@ Translated:כדי להשלים את הצעדים הבאים תצטרך
 
 English:To Folder
 Translated:לתיקייה
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:החלף בין מציין את הגודל או את האחוז לגודל.
 
 English:Toggle Selection
 Translated:החלף בחירה
@@ -3877,6 +3943,9 @@ Translated:מעלה ...
 English:Use Automatic Z Probe
 Translated:השתמש בדיקה אוטומטית Z
 
+English:Use Braille grade 2 (contractions)
+Translated:השתמש ברייל כיתה 2 (התכווצויות)
+
 English:Use cursor keys for axis movements
 Translated:השתמש במקשי הסמן לתנועות ציר
 
@@ -4041,6 +4110,9 @@ Translated:בעת שדרוג לקושחה חדשה, תחילה שמור גיבו
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:בעת שימוש extruders מרובים, את נימה המרחק יהיה הפוך לפני שינוי כדי extruder שונים.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:איפה להתחיל את העיקול כאחוז רוחב של החלק
 
 English:Width
 Translated:רוחב

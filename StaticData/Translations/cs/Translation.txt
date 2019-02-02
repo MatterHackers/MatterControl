@@ -172,6 +172,15 @@ Translated:Všechny ohřívače
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Umožněte společnosti MatterControl rozdělit dlouhé čáry, aby se zlepšilo vyrovnání a zrušení tisku. Kritická pro tiskárny, které jsou výrazně mimo úroveň.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Umožňuje zapnutí a vypnutí použití osy x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Umožňuje zapnutí a vypnutí použití osy y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Umožňuje zapnutí a vypnutí použití osy z.
+
 English:Alpha
 Translated:Alpha
 
@@ -418,6 +427,12 @@ Translated:Změna
 English:Change Password
 Translated:Změnit heslo
 
+English:Change the scale of the image within the coin.
+Translated:Změňte měřítko obrazu v minci.
+
+English:Change the width of the image lines.
+Translated:Změňte šířku čáry obrazu.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Změnou kanálu aktualizace se změní verze aplikace MatterControl, kterou obdržíte při aktualizaci
 
@@ -441,6 +456,9 @@ Translated:Před každým tiskem zkontrolujte, zda je výška vrstvy menší ne�
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Zvolte příkaz pro zobrazování postupu tisku na obrazovce LCD tiskárny, pokud ji máte.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Vyberte, zda chcete vykreslit jako Braillovo písmo nebo standardní text. To může pomoci ukázat, jak funguje stupeň 2.
 
 English:Clean Filament Page
 Translated:Čisté vlákno
@@ -606,6 +624,12 @@ Translated:počet nebo mm
 
 English:Create
 Translated:Vytvořit
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Vytvořte hák tak, aby mohla být mince zavěšena z řetězce.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Vytvořte hák tak, aby Braillovo písmo mohlo být zavěšeno na náhrdelník nebo na klíčenku.
 
 English:Create a printer to export G-Code
 Translated:Vytvořte tiskárnu pro export G-kódu
@@ -879,6 +903,12 @@ Translated:Konec
 
 English:End G-Code
 Translated:Konec G-kódu
+
+English:Ensure that the part maintains its proportions.
+Translated:Ujistěte se, že část udržuje své proporce.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Zajišťuje, aby otočná část měla minimální počet stran při úplném otočení
 
 English:Enter a Design Name Here
 Translated:Zadejte název návrhu zde
@@ -1543,6 +1573,9 @@ Translated:Je čas zkopírovat stávající nastavení tiskárny na váš účet
 English:Jerk Velocity
 Translated:Rychlost Jerk
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Uchovávejte celý rozsah dílu v popsaném úhlu.
+
 English:Keep Within Angle
 Translated:Udržujte v úhlu
 
@@ -1977,6 +2010,9 @@ Translated:Není vybrána žádná tiskárna
 
 English:None
 Translated:Žádný
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Obvykle se obraz rozšiřuje na okraj. Tímto se pokusíte vizuálně vycentrovat váhu obrazu.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normálně budete chtít používat absolutní vzdálenosti. Zkontrolujte to pouze, pokud víte, že tiskárna potřebuje relativní vzdálenosti.
@@ -2662,6 +2698,18 @@ Translated:Otočit (Alt + Levá myš)
 English:Rotate About
 Translated:Otočit O
 
+English:Rotate about the X axis
+Translated:Otočte kolem osy X
+
+English:Rotate about the Y axis
+Translated:Otočte kolem osy Y
+
+English:Rotate about the Z axis
+Translated:Otočte kolem osy Z
+
+English:Rotate the part to the same angle as the array.
+Translated:Otočte část do stejného úhlu jako pole.
+
 English:Rotate View
 Translated:Otočit pohled
 
@@ -2821,11 +2869,20 @@ Translated:Relace vypršela
 English:Set as Default
 Translated:Nastavit jako výchozí
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Nastavte pravidla pro udržování části při škálování.
+
+English:Set the shape the part will be fit into.
+Translated:Nastavte tvar, do kterého bude vložena součást.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Nastaví MatterControl a pokusí se připojit k tiskárně v síti. (Musíte se odpojit a znovu připojit k tomu, aby se projevily)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Nastaví MatterControl tak, aby používal komunikační metodu s3g. (Musíte se odpojit a znovu připojit k tomu, aby se projevily)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Nastavuje hloubku dlaždice, na které je tisknut Braillovo písmo
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Nastaví modely, které budou přidány do fronty po vytvoření nové tiskárny.
@@ -3153,6 +3210,9 @@ Translated:Odčítat
 
 English:Subtract & Replace
 Translated:Odečtěte a nahraďte
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Odečtěte snímek z disku tak, aby byl vytištěn negativní prostor.
 
 English:Success
 Translated:Úspěch
@@ -3661,6 +3721,9 @@ Translated:Jedná se o model tiskárny, na který je tento profil zaměřen.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Toto je název vaší tiskárny, která se zobrazí v nabídce zvolte tiskárnu.
 
+English:This is the position to perform the scale about.
+Translated:Toto je pozice pro provedení stupnice kolem.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:To pomáhá snižovat vibrace během tisku. Pokud má tiskárna rezonanční frekvenci, která způsobuje potíže, můžete ji nastavit tak, aby zkusila snížit tisk na této frekvenci.
 
@@ -3711,6 +3774,9 @@ Translated:Chcete-li dokončit další kroky, které budete potřebovat
 
 English:To Folder
 Translated:Do složky
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Přepíná mezi určením velikosti nebo procentuální stupnice.
 
 English:Toggle Selection
 Translated:Přepnout výběr
@@ -3877,6 +3943,9 @@ Translated:Nahrávám ...
 English:Use Automatic Z Probe
 Translated:Použijte automatickou sondu Z
 
+English:Use Braille grade 2 (contractions)
+Translated:Použijte braillský řádek stupeň 2 (kontrakce)
+
 English:Use cursor keys for axis movements
 Translated:Použijte kurzorová tlačítka pro pohyby os
 
@@ -4041,6 +4110,9 @@ Translated:Při upgradu na nový firmware nejprve uložte zálohu aktuálního f
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Při použití více extruderů se vzdálenost vlákna vrátí před změnou na jiný extrudér.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Kde začít ohýbat jako procento šířky části
 
 English:Width
 Translated:Šířka

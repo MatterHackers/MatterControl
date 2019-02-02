@@ -172,6 +172,15 @@ Translated:Toate încălzitoarele
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Permiteți MatterControl să împartă linii lungi pentru a îmbunătăți nivelarea și anularea tipăririi. Critic pentru imprimantele care sunt în mod semnificativ în afara nivelului.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Permite pornirea și oprirea aplicării potrivirii pe axa x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Permite activarea și dezactivarea aplicării potrivirii pe axa y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Permite pornirea și oprirea aplicării potrivirii la axa z.
+
 English:Alpha
 Translated:Alfa
 
@@ -418,6 +427,12 @@ Translated:Schimbare
 English:Change Password
 Translated:Schimbați parola
 
+English:Change the scale of the image within the coin.
+Translated:Modificați scala imaginii în cadrul monedei.
+
+English:Change the width of the image lines.
+Translated:Modificați lățimea liniilor de imagine.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Schimbarea canalului de actualizare va modifica versiunea de MatterControl pe care o primiți la actualizare
 
@@ -441,6 +456,9 @@ Translated:Verifică înainte de fiecare imprimare că înălțimea stratului es
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Alegeți comanda pentru afișarea progresului de imprimare pe ecranul LCD al imprimantei, dacă are unul.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Alegeți să faceți ca Braille sau text standard. Acest lucru vă poate arăta cum funcționează gradul 2.
 
 English:Clean Filament Page
 Translated:Curățați pagina cu fila
@@ -606,6 +624,12 @@ Translated:număr sau mm
 
 English:Create
 Translated:Crea
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Creați un cârlig astfel încât moneda să poată fi atinsă de un lanț.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Creați un cârlig, astfel încât Brailleul să poată fi atârnat de un colier sau breloc.
 
 English:Create a printer to export G-Code
 Translated:Creați o imprimantă pentru a exporta codul G
@@ -879,6 +903,12 @@ Translated:Sfârșit
 
 English:End G-Code
 Translated:Sfârșitul codului G
+
+English:Ensure that the part maintains its proportions.
+Translated:Asigurați-vă că partea își menține proporțiile.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Asigură faptul că piesa rotită are un număr minim de laturi pe rotație completă
 
 English:Enter a Design Name Here
 Translated:Introduceți un nume de design aici
@@ -1543,6 +1573,9 @@ Translated:Este timpul să copiați setările de imprimantă existente în contu
 English:Jerk Velocity
 Translated:Nimic
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Păstrați întreaga întindere a părții în unghiul descris.
+
 English:Keep Within Angle
 Translated:Păstrați în unghi
 
@@ -1977,6 +2010,9 @@ Translated:Nici o imprimantă selectată
 
 English:None
 Translated:Nici unul
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:În mod normal, imaginea este extinsă la margine. Aceasta va încerca să centreze greutatea imaginii vizual.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:În mod normal, veți dori să utilizați distanțe absolute e. Verificați numai dacă știți că imprimanta are nevoie de distanțe relative.
@@ -2662,6 +2698,18 @@ Translated:Rotire (Alt + Stânga)
 English:Rotate About
 Translated:Rotire Despre
 
+English:Rotate about the X axis
+Translated:Rotiți în jurul axei X
+
+English:Rotate about the Y axis
+Translated:Rotiți în jurul axei Y
+
+English:Rotate about the Z axis
+Translated:Rotiți în jurul axei Z
+
+English:Rotate the part to the same angle as the array.
+Translated:Rotiți piesa în același unghi cu matricea.
+
 English:Rotate View
 Translated:Rotire Vizualizare
 
@@ -2821,11 +2869,20 @@ Translated:Sesiunea a expirat
 English:Set as Default
 Translated:Setați ca implicit
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Stabiliți regulile pentru modul în care să mențineți partea în timp ce scalați.
+
+English:Set the shape the part will be fit into.
+Translated:Setați forma în care se va potrivi piesa.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Setează MatterControl pentru a încerca să se conecteze la o imprimantă prin rețea. (Trebuie să deconectați și să vă reconectați pentru ca aceasta să se aplice)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Setează MatterControl să folosească metoda de comunicare s3g. (Trebuie să deconectați și să vă reconectați pentru ca aceasta să se aplice)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Setează adâncimea plăcii pe care este imprimată Braille-ul
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Setează modelele care vor fi adăugate la coadă atunci când se creează o nouă imprimantă.
@@ -3153,6 +3210,9 @@ Translated:Scădea
 
 English:Subtract & Replace
 Translated:Scădere și înlocuire
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Reduceți imaginea de pe un disc, astfel încât spațiul negativ să fie imprimat.
 
 English:Success
 Translated:Succes
@@ -3661,6 +3721,9 @@ Translated:Acesta este modelul imprimantei pe care acest profil îl direcționea
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Acesta este numele imprimantei dvs. care va fi afișată în meniul de selectare a imprimantei.
 
+English:This is the position to perform the scale about.
+Translated:Aceasta este poziția de a efectua scara aproximativ.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Acest lucru contribuie la reducerea vibrațiilor în timpul tipăririi. Dacă imprimanta dvs. are o frecvență de rezonanță care cauzează probleme, puteți seta aceasta pentru a încerca să reducă imprimarea la frecvența respectivă.
 
@@ -3711,6 +3774,9 @@ Translated:Pentru a finaliza următorii pași, veți avea nevoie
 
 English:To Folder
 Translated:La dosar
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Comutați între specificarea mărimii sau procentului la scară.
 
 English:Toggle Selection
 Translated:Comutați selecția
@@ -3877,6 +3943,9 @@ Translated:Se încarcă ...
 English:Use Automatic Z Probe
 Translated:Utilizați sonda Z automată
 
+English:Use Braille grade 2 (contractions)
+Translated:Utilizați gradul 2 Braille (contracții)
+
 English:Use cursor keys for axis movements
 Translated:Utilizați tastele cursor pentru deplasarea axelor
 
@@ -4041,6 +4110,9 @@ Translated:Când faceți upgrade la un nou firmware, salvați mai întâi o copi
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Când se utilizează extrudere multiple, filamentul de distanță se va inversa înainte de a trece la un alt extruder.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Unde să începeți curba ca procent din lățimea părții
 
 English:Width
 Translated:Lăţime

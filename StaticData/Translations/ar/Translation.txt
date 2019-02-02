@@ -172,6 +172,15 @@ Translated:جميع السخانات
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:اسمح لـ MatterControl بتقسيم الأسطر الطويلة لتحسين التسوية وإلغاء الطباعة. الحرجة للطابعات التي هي خارج المستوى بشكل ملحوظ.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:يسمح لك بتشغيل وإيقاف تطبيق الاحتواء على محور س.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:يتيح لك تشغيل وإيقاف تطبيق الاحتواء على محور y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:يتيح لك تشغيل وإيقاف تطبيق الاحتواء على المحور z.
+
 English:Alpha
 Translated:ألفا
 
@@ -418,6 +427,12 @@ Translated:يتغيرون
 English:Change Password
 Translated:غير كلمة السر
 
+English:Change the scale of the image within the coin.
+Translated:تغيير حجم الصورة داخل العملة.
+
+English:Change the width of the image lines.
+Translated:تغيير عرض خطوط الصور.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:سيؤدي تغيير قناة التحديث إلى تغيير إصدار MatterControl الذي تتلقاه عند التحديث
 
@@ -441,6 +456,9 @@ Translated:التحقق قبل كل طباعة أن ارتفاع الطبقة أ
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:اختر الأمر لإظهار تقدم الطباعة على شاشة LCD الخاصة بالطابعة ، إذا كان يحتوي على واحدة.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:اختر العرض بطريقة برايل أو نص عادي. هذا يمكن أن يساعد في إظهار كيفية عمل الصف الثاني.
 
 English:Clean Filament Page
 Translated:صفحة الشعيرات النظيفة
@@ -606,6 +624,12 @@ Translated:العد أو مم
 
 English:Create
 Translated:خلق
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:أنشئ خطافًا بحيث يمكن تعليق العملة من سلسلة.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:أنشئ خطافًا بحيث يمكن تعليق Braille من عقد أو سلسلة المفاتيح.
 
 English:Create a printer to export G-Code
 Translated:قم بإنشاء طابعة لتصدير G-Code
@@ -879,6 +903,12 @@ Translated:النهاية
 
 English:End G-Code
 Translated:نهاية G-Code
+
+English:Ensure that the part maintains its proportions.
+Translated:تأكد من أن الجزء يحافظ على نسبه.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:يضمن الجزء المدور لديه الحد الأدنى لعدد الجوانب في كل دوران كامل
 
 English:Enter a Design Name Here
 Translated:أدخل اسم التصميم هنا
@@ -1543,6 +1573,9 @@ Translated:لقد حان الوقت لنسخ إعدادات الطابعة ال�
 English:Jerk Velocity
 Translated:رعشة السرعة
 
+English:Keep the entire extents of the part within the angle described.
+Translated:احتفظ بالنطاقات الكاملة للجزء الموجود بزاوية الموصوفة.
+
 English:Keep Within Angle
 Translated:تبقي داخل الزاوية
 
@@ -1977,6 +2010,9 @@ Translated:لم يتم تحديد طابعة
 
 English:None
 Translated:لا شيء
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:عادة يتم توسيع الصورة إلى الحافة. سيؤدي ذلك إلى تركيز وزن الصورة بشكل مرئي.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:عادةً ما ستحتاج إلى استخدام المسافات الإلكترونية المطلقة. تحقق من ذلك فقط إذا كنت تعرف أن الطابعة تحتاج إلى مسافات e نسبية.
@@ -2662,6 +2698,18 @@ Translated:تدوير (Alt + Left Mouse)
 English:Rotate About
 Translated:تدوير حول
 
+English:Rotate about the X axis
+Translated:تدوير حول المحور X
+
+English:Rotate about the Y axis
+Translated:تدوير حول محور Y.
+
+English:Rotate about the Z axis
+Translated:تدوير حول المحور Z
+
+English:Rotate the part to the same angle as the array.
+Translated:قم بتدوير الجزء بنفس زاوية المصفوفة.
+
 English:Rotate View
 Translated:تدوير عرض
 
@@ -2821,11 +2869,20 @@ Translated:انتهت الجلسة
 English:Set as Default
 Translated:تعيين كافتراضي
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:اضبط القواعد الخاصة بكيفية الحفاظ على الجزء أثناء القياس.
+
+English:Set the shape the part will be fit into.
+Translated:اضبط الشكل الذي سيكون الجزء فيه مناسبًا.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:لتعيين MatterControl لمحاولة الاتصال بطابعة عبر الشبكة. (يجب عليك قطع الاتصال وإعادة الاتصال بهذا ليكون ساري المفعول)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:يضبط MatterControl لاستخدام طريقة الاتصال s3g. (يجب عليك قطع الاتصال وإعادة الاتصال بهذا ليكون ساري المفعول)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:لتعيين عمق التجانب الذي تتم طباعته بطريقة برايل
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:يعيّن النماذج التي ستتم إضافتها إلى قائمة الانتظار عند إنشاء طابعة جديدة.
@@ -3153,6 +3210,9 @@ Translated:طرح
 
 English:Subtract & Replace
 Translated:طرح واستبدال
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:اطرح الصورة من قرص بحيث تتم طباعة المساحة السلبية.
 
 English:Success
 Translated:نجاح
@@ -3661,6 +3721,9 @@ Translated:هذا هو طراز الطابعة الذي يستهدفه هذا ا
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:هذا هو اسم طابعتك التي سيتم عرضها في قائمة اختيار الطابعة.
 
+English:This is the position to perform the scale about.
+Translated:هذا هو الموقف لأداء المقياس عنه.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:هذا للمساعدة في تقليل الاهتزازات أثناء الطباعة. إذا كان للطابعة تردد رنين يسبب لك مشكلة ، فيمكنك تعيينه لمحاولة تقليل الطباعة على هذا التردد.
 
@@ -3711,6 +3774,9 @@ Translated:لإكمال الخطوات القليلة التالية ستحتا�
 
 English:To Folder
 Translated:إلى مجلد
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:التبديل بين تحديد الحجم أو النسبة المئوية للقياس.
 
 English:Toggle Selection
 Translated:تبديل التحديد
@@ -3877,6 +3943,9 @@ Translated:تحميل ...
 English:Use Automatic Z Probe
 Translated:استخدم Automatic Z Probe
 
+English:Use Braille grade 2 (contractions)
+Translated:استخدم برايل الصف الثاني (تقلصات)
+
 English:Use cursor keys for axis movements
 Translated:استخدم مفاتيح المؤشر لحركات المحور
 
@@ -4041,6 +4110,9 @@ Translated:عند الترقية إلى برامج ثابتة جديدة ، قم
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:عند استخدام بثق متعدد ، سوف تنعكس خيوط المسافة قبل أن تتحول إلى آلة بثق مختلفة.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:من أين تبدأ الانحناء كنسبة مئوية من عرض الجزء
 
 English:Width
 Translated:عرض

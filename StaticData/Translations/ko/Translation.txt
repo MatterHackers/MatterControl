@@ -172,6 +172,15 @@ Translated:모든 히터
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:MatterControl이 긴 라인을 분리하여 레벨링 및 인쇄 취소를 개선 할 수 있습니다. 상당히 수준이 낮은 프린터에 대해서는 중요합니다.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:x 축에 맞추기를 켜고 끌 수 있습니다.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:y 축에 맞추기를 켜고 끌 수 있습니다.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:z 축에 맞추기를 켜고 끌 수 있습니다.
+
 English:Alpha
 Translated:알파
 
@@ -418,6 +427,12 @@ Translated:변화
 English:Change Password
 Translated:비밀번호 변경
 
+English:Change the scale of the image within the coin.
+Translated:동전 내부의 이미지 크기를 변경하십시오.
+
+English:Change the width of the image lines.
+Translated:이미지 선의 너비를 변경하십시오.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:업데이트 채널을 변경하면 업데이트시 수신되는 MatterControl의 버전이 변경됩니다
 
@@ -441,6 +456,9 @@ Translated:각 인쇄 전에 레이어 높이가 노즐 직경보다 작은 지 
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:프린터의 LCD 화면 (있는 경우)에 인쇄 진행 상황을 보여주는 명령을 선택하십시오.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:점자 또는 표준 텍스트로 렌더링하도록 선택하십시오. 이는 2 학년 학년이 어떻게 작동하는지 보여줍니다.
 
 English:Clean Filament Page
 Translated:클린 필라멘트 페이지
@@ -606,6 +624,12 @@ Translated:카운트 또는 mm
 
 English:Create
 Translated:몹시 떠들어 대다
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:동전이 체인에서 매달 수 있도록 후크를 만듭니다.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:점자가 목걸이 나 열쇠 고리에 매달려 있도록 고리를 만듭니다.
 
 English:Create a printer to export G-Code
 Translated:G 코드를 내보내는 프린터 만들기
@@ -879,6 +903,12 @@ Translated:종료
 
 English:End G-Code
 Translated:엔드 G 코드
+
+English:Ensure that the part maintains its proportions.
+Translated:파트가 비율을 유지하는지 확인하십시오.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:회전 된 파트의 전체 회전 당 최소면 수를 보장합니다.
 
 English:Enter a Design Name Here
 Translated:여기에 디자인 이름 입력
@@ -1543,6 +1573,9 @@ Translated:기존 프린터 설정을 MatterHackers 계정으로 복사하십시
 English:Jerk Velocity
 Translated:저크 속도
 
+English:Keep the entire extents of the part within the angle described.
+Translated:설명 된 각도 내에서 부품의 전체 범위를 유지하십시오.
+
 English:Keep Within Angle
 Translated:각도 내에서 유지
 
@@ -1977,6 +2010,9 @@ Translated:선택된 프린터 없음
 
 English:None
 Translated:없음
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:일반적으로 이미지는 가장자리로 확장됩니다. 이렇게하면 이미지의 무게를 시각적으로 중심에 맞 춥니 다.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:일반적으로 절대 거리를 사용하려고합니다. 프린터가 상대적 거리를 필요로하는 경우에만 확인하십시오.
@@ -2662,6 +2698,18 @@ Translated:회전 (Alt + 왼쪽 마우스)
 English:Rotate About
 Translated:회전 정보
 
+English:Rotate about the X axis
+Translated:X 축을 중심으로 회전
+
+English:Rotate about the Y axis
+Translated:Y 축을 중심으로 회전
+
+English:Rotate about the Z axis
+Translated:Z 축 중심 회전
+
+English:Rotate the part to the same angle as the array.
+Translated:파트를 배열과 동일한 각도로 회전하십시오.
+
 English:Rotate View
 Translated:보기 회전
 
@@ -2821,11 +2869,20 @@ Translated:세션 만료 됨
 English:Set as Default
 Translated:기본값으로 설정
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:치수를 조정하는 동안 파트를 유지 관리하는 방법에 대한 규칙을 설정합니다.
+
+English:Set the shape the part will be fit into.
+Translated:부품이 들어갈 모양을 설정하십시오.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:네트워크를 통해 프린터에 연결을 시도하도록 MatterControl을 설정합니다. (이 작업을 수행하려면 연결을 끊었다가 다시 연결해야합니다.)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:s3g 통신 방식을 사용하도록 MatterControl을 설정합니다. (이 작업을 수행하려면 연결을 끊었다가 다시 연결해야합니다.)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:점자가 인쇄되는 타일의 깊이를 설정합니다.
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:새 프린터를 만들 때 대기열에 추가 할 모델을 설정합니다.
@@ -3153,6 +3210,9 @@ Translated:덜다
 
 English:Subtract & Replace
 Translated:빼기 및 바꾸기
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:음수 공간이 인쇄되도록 디스크에서 이미지를 빼십시오.
 
 English:Success
 Translated:성공
@@ -3661,6 +3721,9 @@ Translated:이것은이 프로파일이 목표로하는 프린터의 모델입�
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:이것은 프린터 메뉴 선택에 표시 될 프린터의 이름입니다.
 
+English:This is the position to perform the scale about.
+Translated:이것은 규모를 수행 할 위치입니다.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:이는 인쇄 중 진동을 줄이는 데 도움이됩니다. 프린터에 문제를 일으키는 공진 주파수가있는 경우이를 설정하여 해당 빈도로 인쇄를 줄이십시오.
 
@@ -3711,6 +3774,9 @@ Translated:다음 몇 단계를 완료하려면 필요합니다.
 
 English:To Folder
 Translated:폴더로
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:크기를 지정하거나 백분율을 지정하는 것을 토글합니다.
 
 English:Toggle Selection
 Translated:선택 토글
@@ -3877,6 +3943,9 @@ Translated:업로드 중 ...
 English:Use Automatic Z Probe
 Translated:자동 Z 프로브 사용
 
+English:Use Braille grade 2 (contractions)
+Translated:점자 학년 2 학년 (수축) 사용
+
 English:Use cursor keys for axis movements
 Translated:축 이동에 커서 키 사용
 
@@ -4041,6 +4110,9 @@ Translated:새 펌웨어로 업그레이드 할 때는 먼저 현재 펌웨어�
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:여러 개의 압출기를 사용하면 다른 압출기로 변경하기 전에 거리 필라멘트가 뒤집어집니다.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:파트의 너비의 백분율로 벤드를 시작하는 위치
 
 English:Width
 Translated:폭

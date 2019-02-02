@@ -172,6 +172,15 @@ Translated:Todos los calentadores
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Permita que MatterControl divida las líneas largas para mejorar la nivelación y la cancelación de impresión. Crítico para impresoras que están significativamente fuera de nivel.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Le permite encender y apagar aplicando el ajuste al eje x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Le permite encender y apagar aplicando el ajuste al eje y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Le permite encender y apagar aplicando el ajuste al eje z.
+
 English:Alpha
 Translated:Alfa
 
@@ -418,6 +427,12 @@ Translated:Cambio
 English:Change Password
 Translated:Cambia la contraseña
 
+English:Change the scale of the image within the coin.
+Translated:Cambia la escala de la imagen dentro de la moneda.
+
+English:Change the width of the image lines.
+Translated:Cambia el ancho de las líneas de imagen.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Cambiar su canal de actualización cambiará la versión de MatterControl que recibirá al actualizar
 
@@ -441,6 +456,9 @@ Translated:Comprueba antes de cada impresión que la altura de la capa es menor 
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Elija el comando para mostrar el progreso de la impresión en la pantalla LCD de la impresora, si tiene una.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Elija renderizar como Braille o texto estándar. Esto puede ayudar a mostrar cómo funciona el grado 2.
 
 English:Clean Filament Page
 Translated:Página de filamento limpio
@@ -606,6 +624,12 @@ Translated:contar o mm
 
 English:Create
 Translated:Crear
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Crea un gancho para que la moneda se pueda colgar de una cadena.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Crea un gancho para que el Braille se pueda colgar de un collar o llavero.
 
 English:Create a printer to export G-Code
 Translated:Crear una impresora para exportar G-Code
@@ -879,6 +903,12 @@ Translated:Fin
 
 English:End G-Code
 Translated:Código G final
+
+English:Ensure that the part maintains its proportions.
+Translated:Asegúrese de que la parte mantiene sus proporciones.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Asegura que la parte girada tenga un número mínimo de lados por rotación completa
 
 English:Enter a Design Name Here
 Translated:Ingrese un nombre de diseño aquí
@@ -1543,6 +1573,9 @@ Translated:Es hora de copiar la configuración de su impresora existente a su cu
 English:Jerk Velocity
 Translated:Velocidad de sacudida
 
+English:Keep the entire extents of the part within the angle described.
+Translated:Mantenga todas las extensiones de la pieza dentro del ángulo descrito.
+
 English:Keep Within Angle
 Translated:Mantener dentro de ángulo
 
@@ -1977,6 +2010,9 @@ Translated:Ninguna impresora seleccionada
 
 English:None
 Translated:Ninguna
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normalmente la imagen se expande hasta el borde. Esto intentará centrar visualmente el peso de la imagen.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normalmente querrá usar distancias absolutas. Solo marque esto si sabe que su impresora necesita distancias y relativamente.
@@ -2662,6 +2698,18 @@ Translated:Girar (Alt + ratón izquierdo)
 English:Rotate About
 Translated:Girar sobre
 
+English:Rotate about the X axis
+Translated:Girar sobre el eje X
+
+English:Rotate about the Y axis
+Translated:Girar sobre el eje Y
+
+English:Rotate about the Z axis
+Translated:Girar sobre el eje Z
+
+English:Rotate the part to the same angle as the array.
+Translated:Gire la pieza al mismo ángulo que la matriz.
+
 English:Rotate View
 Translated:Rotar vista
 
@@ -2821,11 +2869,20 @@ Translated:Sesión expirada
 English:Set as Default
 Translated:Establecer por defecto
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Establezca las reglas sobre cómo mantener la pieza mientras se escala.
+
+English:Set the shape the part will be fit into.
+Translated:Establezca la forma en la que se ajustará la pieza.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:Establece MatterControl para intentar conectarse a una impresora a través de la red. (Debe desconectarse y volver a conectarse para que esto tenga efecto)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:Establece MatterControl para utilizar el método de comunicación s3g. (Debe desconectarse y volver a conectarse para que esto tenga efecto)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Establece la profundidad de la baldosa en la que se imprime el Braille.
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Establece los modelos que se agregarán a la cola cuando se cree una nueva impresora.
@@ -3153,6 +3210,9 @@ Translated:Sustraer
 
 English:Subtract & Replace
 Translated:Restar y reemplazar
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Reste la imagen de un disco para que se imprima el espacio negativo.
 
 English:Success
 Translated:Éxito
@@ -3661,6 +3721,9 @@ Translated:Este es el modelo de impresora al que se dirige este perfil.
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Este es el nombre de su impresora que se mostrará en el menú de elegir impresora.
 
+English:This is the position to perform the scale about.
+Translated:Esta es la posición para realizar la escala alrededor.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Esto es para ayudar a reducir las vibraciones durante la impresión. Si su impresora tiene una frecuencia de resonancia que está causando problemas, puede configurarla para intentar reducir la impresión a esa frecuencia.
 
@@ -3711,6 +3774,9 @@ Translated:Para completar los siguientes pasos necesitará
 
 English:To Folder
 Translated:A la carpeta
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Alternar entre especificar el tamaño o el porcentaje a escalar.
 
 English:Toggle Selection
 Translated:Selección de palanca
@@ -3877,6 +3943,9 @@ Translated:Cargando ...
 English:Use Automatic Z Probe
 Translated:Usar sonda Z automática
 
+English:Use Braille grade 2 (contractions)
+Translated:Use Braille grado 2 (contracciones)
+
 English:Use cursor keys for axis movements
 Translated:Usa las teclas del cursor para los movimientos del eje.
 
@@ -4041,6 +4110,9 @@ Translated:Al actualizar a un nuevo firmware, primero guarde una copia de seguri
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Cuando se utilizan múltiples extrusoras, el filamento de la distancia se invertirá antes de cambiar a una extrusora diferente.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Dónde comenzar la curva como porcentaje del ancho de la pieza.
 
 English:Width
 Translated:Anchura

@@ -172,6 +172,15 @@ Translated:همه بخاری ها
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:به MatterControl اجازه دهید تا خطوط طولانی را برای تقسیم کردن سطوح و چاپ لغو کند. انتقادی برای پرینترها که به طور قابل توجهی خارج از سطح هستند.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:به شما اجازه می دهد تا روی محور x استفاده کنید.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:به شما امکان می دهد که متناسب با محور y را روشن یا خاموش کنید.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:به شما امکان می دهد تا متناسب با محور z را روشن یا خاموش کنید.
+
 English:Alpha
 Translated:آلفا
 
@@ -418,6 +427,12 @@ Translated:تغییر دادن
 English:Change Password
 Translated:تغییر رمز عبور
 
+English:Change the scale of the image within the coin.
+Translated:تغییر مقیاس تصویر در سکه.
+
+English:Change the width of the image lines.
+Translated:عرض خطوط تصویر را تغییر دهید.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:تغییر دادن کانال به روزرسانی شما، نسخه ای از MatterControl را که در هنگام به روز رسانی دریافت می کنید تغییر می دهد
 
@@ -441,6 +456,9 @@ Translated:چک کردن قبل از هر چاپ که ارتفاع لایه کم
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:فرمان برای نشان دادن پیشرفت چاپ روی صفحه LCD چاپگر، اگر آن را داشته باشد، را انتخاب کنید.
+
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:را انتخاب کنید که به عنوان بریل یا متن استاندارد رندر کنید. این می تواند نشان دهد که درجه 2 کار می کند.
 
 English:Clean Filament Page
 Translated:صفحه تمیز تمیز
@@ -606,6 +624,12 @@ Translated:شمارش یا میلی متر
 
 English:Create
 Translated:ايجاد كردن
+
+English:Create a hook so that the coin can be hung from a chain.
+Translated:یک قلاب را ایجاد کنید تا سکه بتواند از یک زنجیر آویزان شود.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:قلاب را ایجاد کنید تا بریل را از یک گردنبند یا keychain آویزان کنید.
 
 English:Create a printer to export G-Code
 Translated:یک چاپگر برای صادرات G-Code ایجاد کنید
@@ -879,6 +903,12 @@ Translated:پایان
 
 English:End G-Code
 Translated:پایان G-Code
+
+English:Ensure that the part maintains its proportions.
+Translated:اطمینان حاصل کنید که بخشی نسبت آن را حفظ می کند.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:اطمینان حاصل می کند که قسمت چرخشی دارای حداقل تعداد طرف در هر چرخش کامل است
 
 English:Enter a Design Name Here
 Translated:نام طراحی را در اینجا وارد کنید
@@ -1543,6 +1573,9 @@ Translated:وقت آن است که تنظیمات چاپگر موجود خود �
 English:Jerk Velocity
 Translated:سرعت حرکت تند و سریع
 
+English:Keep the entire extents of the part within the angle described.
+Translated:کل قسمت های آن را در زاویه توصیف کنید.
+
 English:Keep Within Angle
 Translated:نگه داشتن در زاویه
 
@@ -1977,6 +2010,9 @@ Translated:هیچ پرینتر انتخاب نشده است
 
 English:None
 Translated:هیچ یک
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:به طور معمول تصویر به لبه گسترش می یابد. این سعی خواهد کرد تا تصویر بصری را به صورت مرکزی قرار دهد.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:به طور معمول شما می خواهید از فاصله های مطلق استفاده کنید. فقط اگر می دانید که چاپگر شما نیاز به فاصله های نسبی دارد، فقط این را بررسی کنید.
@@ -2662,6 +2698,18 @@ Translated:چرخش (Alt + چپ موس)
 English:Rotate About
 Translated:چرخاندن درباره
 
+English:Rotate about the X axis
+Translated:چرخش در مورد محور X
+
+English:Rotate about the Y axis
+Translated:چرخش در محور Y
+
+English:Rotate about the Z axis
+Translated:چرخش در مورد محور Z
+
+English:Rotate the part to the same angle as the array.
+Translated:قسمت را به زاویه ای مشابه آرایه چرخانید.
+
 English:Rotate View
 Translated:چرخاندن نمای
 
@@ -2821,11 +2869,20 @@ Translated:جلسه تمام شده
 English:Set as Default
 Translated:تنظیم به عنوان پیشفرض
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:قوانین را برای چگونگی حفظ بخش در هنگام مقیاس بندی تنظیم کنید.
+
+English:Set the shape the part will be fit into.
+Translated:شکل را تنظیم کنید که بخشی در آن قرار دارد.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControl را برای اتصال به یک چاپگر بر روی شبکه تنظیم می کند. (برای جدا کردن و اتصال مجدد باید آن را فعال کنید)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
 Translated:MatterControl را برای استفاده از روش ارتباط s3g تنظیم می کند. (برای جدا کردن و اتصال مجدد باید آن را فعال کنید)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:عمق کاشی را تنظیم می کند که بریل چاپ شده است
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:مدل هایی را که در هنگام چاپ یک چاپگر جدید ایجاد می شوند، تعیین می کند.
@@ -3153,6 +3210,9 @@ Translated:تفریق کردن
 
 English:Subtract & Replace
 Translated:تفریق و جایگزین کردن
+
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:تصویر را از یک دیسک جدا کنید تا فضای منفی چاپ شود.
 
 English:Success
 Translated:موفقیت
@@ -3661,6 +3721,9 @@ Translated:این مدل چاپگر است که این مشخصات هدف قر�
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:این نام چاپگر شما است که در منوی چاپگر انتخاب شده نمایش داده می شود.
 
+English:This is the position to perform the scale about.
+Translated:این موقعیت برای انجام مقیاس در مورد است.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:این برای کمک به کاهش ارتعاشات در هنگام چاپ است. اگر پرینتر شما یک فرکانس رزونانس داشته باشد که موجب مشکل می شود، می توانید این را تنظیم کنید تا سعی کنید چاپ را در آن فرکانس کاهش دهید.
 
@@ -3711,6 +3774,9 @@ Translated:برای تکمیل چند مرحله بعدی که نیاز داری
 
 English:To Folder
 Translated:برای پوشه
+
+English:Toggle between specifying the size or the percentage to scale.
+Translated:تعویض بین تعیین اندازه و یا درصد به مقیاس.
 
 English:Toggle Selection
 Translated:انتخاب را تغییر دهید
@@ -3877,6 +3943,9 @@ Translated:بارگیری ...
 English:Use Automatic Z Probe
 Translated:استفاده از Automatic Z Probe
 
+English:Use Braille grade 2 (contractions)
+Translated:استفاده از کلاس درجه 2 (انقباضات)
+
 English:Use cursor keys for axis movements
 Translated:از کلید های مکان نما برای حرکات محور استفاده کنید
 
@@ -4041,6 +4110,9 @@ Translated:هنگام ارتقاء به سیستم عامل جدید، ابتد�
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:هنگام استفاده از اکسترودر های متعدد، راندگی فاصله قبل از تغییر به اکسترودر متفاوت تغییر خواهد کرد.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:خم شدن به عنوان یک درصد عرض این قسمت کجاست
 
 English:Width
 Translated:عرض
