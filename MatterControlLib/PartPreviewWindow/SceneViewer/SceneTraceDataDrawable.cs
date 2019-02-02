@@ -34,12 +34,12 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class TraceDataDrawable : IDrawable
+	public class SceneTraceDataDrawable : IDrawable
 	{
 		private ISceneContext sceneContext;
 		private InteractiveScene scene;
 
-		public TraceDataDrawable(ISceneContext sceneContext)
+		public SceneTraceDataDrawable(ISceneContext sceneContext)
 		{
 			this.sceneContext = sceneContext;
 			this.scene = sceneContext.Scene;
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool Enabled { get; set; }
 
-		public string Title { get; } = "TraceData Render";
+		public string Title { get; } = "Scene TraceData Render";
 
 		public string Description { get; } = "Render TraceData for the scene";
 
