@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public partial class InteractionLayer : GuiWidget, IInteractionVolumeContext
 	{
-		private int volumeIndexWithMouseDown = -1;
+		private InteractionVolume mouseDownIAVolume = null;
 
 		public WorldView World => sceneContext.World;
 
@@ -112,7 +112,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (DoOpenGlDrawing)
 			{
-				// Draw Gl Content
 				this.DrawGlContent(e);
 			}
 		}
@@ -175,16 +174,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseDown(mouseEvent);
 
-			int volumeHitIndex;
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info;
 			if (this.Scene.SelectedItem != null
 				&& !SuppressUiVolumes
-				&& FindInteractionVolumeHit(ray, out volumeHitIndex, out info))
+				&& FindInteractionVolumeHit(ray, out mouseDownIAVolume, out info))
 			{
-				volumeIndexWithMouseDown = volumeHitIndex;
-				interactionVolumes[volumeHitIndex].OnMouseDown(new MouseEvent3DArgs(mouseEvent, ray, info));
-				SelectedInteractionVolume = interactionVolumes[volumeHitIndex];
+				mouseDownIAVolume.OnMouseDown(new MouseEvent3DArgs(mouseEvent, ray, info));
+				SelectedInteractionVolume = mouseDownIAVolume;
 			}
 			else
 			{
@@ -206,31 +203,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IntersectInfo info = null;
 			var mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
 
-			if (MouseDownOnInteractionVolume && volumeIndexWithMouseDown != -1)
+			if (MouseDownOnInteractionVolume && mouseDownIAVolume != null)
 			{
-				interactionVolumes[volumeIndexWithMouseDown].OnMouseMove(mouseEvent3D);
+				mouseDownIAVolume.OnMouseMove(mouseEvent3D);
 			}
 			else
 			{
-				int volumeHitIndex;
-				FindInteractionVolumeHit(ray, out volumeHitIndex, out info);
+				this.FindInteractionVolumeHit(ray, out InteractionVolume hitIAVolume, out info);
 
-				for (int i = 0; i < interactionVolumes.Count; i++)
+				var iaVolumes = this.InteractionVolumes;
+
+				foreach (var iaVolume in iaVolumes)
 				{
-					if (i == volumeHitIndex)
+					if (hitIAVolume == iaVolume)
 					{
-						interactionVolumes[i].MouseOver = true;
-						interactionVolumes[i].MouseMoveInfo = info;
-
-						HoveredInteractionVolume = interactionVolumes[i];
+						iaVolume.MouseOver = true;
+						iaVolume.MouseMoveInfo = info;
+						HoveredInteractionVolume = iaVolume;
 					}
 					else
 					{
-						interactionVolumes[i].MouseOver = false;
-						interactionVolumes[i].MouseMoveInfo = null;
+						iaVolume.MouseOver = false;
+						iaVolume.MouseMoveInfo = null;
 					}
 
-					interactionVolumes[i].OnMouseMove(mouseEvent3D);
+					// TODO: Why do non-hit volumes get mouse move?
+					iaVolume.OnMouseMove(mouseEvent3D);
 				}
 			}
 		}
@@ -244,26 +242,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			int volumeHitIndex;
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info;
-			bool anyInteractionVolumeHit = FindInteractionVolumeHit(ray, out volumeHitIndex, out info);
+			bool anyInteractionVolumeHit = FindInteractionVolumeHit(ray, out InteractionVolume iaVolume, out info);
 			MouseEvent3DArgs mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
 
-			if (MouseDownOnInteractionVolume && volumeIndexWithMouseDown != -1)
+			if (MouseDownOnInteractionVolume && mouseDownIAVolume != null)
 			{
-				interactionVolumes[volumeIndexWithMouseDown].OnMouseUp(mouseEvent3D);
+				mouseDownIAVolume.OnMouseUp(mouseEvent3D);
 				SelectedInteractionVolume = null;
 
-				volumeIndexWithMouseDown = -1;
+				mouseDownIAVolume = null;
 			}
 			else
 			{
-				volumeIndexWithMouseDown = -1;
-
+				mouseDownIAVolume = null;
+				
 				if (anyInteractionVolumeHit)
 				{
-					interactionVolumes[volumeHitIndex].OnMouseUp(mouseEvent3D);
+					iaVolume.OnMouseUp(mouseEvent3D);
 				}
 				SelectedInteractionVolume = null;
 			}
@@ -293,18 +290,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		private bool FindInteractionVolumeHit(Ray ray, out int interactionVolumeHitIndex, out IntersectInfo info)
+		private bool FindInteractionVolumeHit(Ray ray, out InteractionVolume hitIAVolume, out IntersectInfo info)
 		{
-			interactionVolumeHitIndex = -1;
-			if (interactionVolumes.Count == 0 || interactionVolumes[0].CollisionVolume == null)
+			var iaVolumes = this.InteractionVolumes;
+
+			hitIAVolume = null;
+
+			if (!iaVolumes.Any())
 			{
 				info = null;
 				return false;
 			}
 
 			// TODO: Rewrite as projection without extra list
-			List<IPrimitive> uiTraceables = new List<IPrimitive>();
-			foreach (InteractionVolume interactionVolume in interactionVolumes)
+			// - Looks like the extra list is always required as CreateNewHierachy requires a List and we can only produce an IEnumerable without the list overhead
+			// - var uiTraceables = iaVolumes.Where(ia => ia.CollisionVolume != null).Select(ia => new Transform(ia.CollisionVolume, ia.TotalTransform)).ToList<IPrimitive>();
+			var uiTraceables = new List<IPrimitive>();
+			foreach (InteractionVolume interactionVolume in iaVolumes)
 			{
 				if (interactionVolume.CollisionVolume != null)
 				{
@@ -318,15 +320,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			info = allUiObjects.GetClosestIntersection(ray);
 			if (info != null)
 			{
-				for (int i = 0; i < interactionVolumes.Count; i++)
+				foreach (var iaVolume in iaVolumes)
 				{
-					List<IBvhItem> insideBounds = new List<IBvhItem>();
-					if (interactionVolumes[i].CollisionVolume != null)
+					var insideBounds = new List<IBvhItem>();
+					if (iaVolume.CollisionVolume != null)
 					{
-						interactionVolumes[i].CollisionVolume.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
+						iaVolume.CollisionVolume.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
 						if (insideBounds.Contains(info.closestHitObject))
 						{
-							interactionVolumeHitIndex = i;
+							hitIAVolume = iaVolume;
 							return true;
 						}
 					}
