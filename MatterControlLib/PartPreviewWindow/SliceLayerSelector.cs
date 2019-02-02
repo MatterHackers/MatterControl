@@ -43,16 +43,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InlineEditControl currentLayerInfo;
 
 		private LayerScrollbar layerScrollbar;
-		private ISceneContext sceneContext;
 
 		private SolidSlider layerSlider;
 		private double layerInfoHalfHeight;
+		private PrinterConfig printer;
 
-		public SliceLayerSelector(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
+		public SliceLayerSelector(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.sceneContext = sceneContext;
-
-			this.AddChild(layerScrollbar = new LayerScrollbar(printer, sceneContext, theme)
+			this.printer = printer;
+			this.AddChild(layerScrollbar = new LayerScrollbar(printer, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right
@@ -99,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set initial position
 			currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
 
-			sceneContext.ActiveLayerChanged += SetPositionAndValue;
+			printer.Bed.ActiveLayerChanged += SetPositionAndValue;
 			layerScrollbar.MouseEnter += SetPositionAndValue;
 		}
 
@@ -119,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
-			sceneContext.ActiveLayerChanged -= SetPositionAndValue;
+			printer.Bed.ActiveLayerChanged -= SetPositionAndValue;
 			layerSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
@@ -129,7 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				currentLayerInfo.Value = sceneContext.ActiveLayerIndex + 1;
+				currentLayerInfo.Value = printer.Bed.ActiveLayerIndex + 1;
 				currentLayerInfo.Visible = true;
 			});
 		}
@@ -137,16 +136,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private class LayerScrollbar : FlowLayoutWidget
 		{
 			internal SolidSlider layerSlider;
-
+			private PrinterConfig printer;
 			private TextWidget layerCountText;
 			private TextWidget layerStartText;
-			private ISceneContext sceneContext;
 
-			public LayerScrollbar(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
+			public LayerScrollbar(PrinterConfig printer, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
 			{
-				this.sceneContext = sceneContext;
-
+				this.printer = printer;
 				layerCountText = new TextWidget("", pointSize: 9, textColor: theme.TextColor)
 				{
 					MinimumSize = new Vector2(20, 20),
@@ -161,14 +158,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Stretch,
 					Margin = new BorderDouble(0, 5),
 					Minimum = 0,
-					Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1,
-					Value = sceneContext.ActiveLayerIndex
+					Maximum = printer.Bed.LoadedGCode?.LayerCount ?? 1,
+					Value = printer.Bed.ActiveLayerIndex
 				};
 				layerSlider.ValueChanged += (s, e) =>
 				{
 					if (printer?.Bed?.RenderInfo != null)
 					{
-						sceneContext.ActiveLayerIndex = (int)(layerSlider.Value + .5);
+						printer.Bed.ActiveLayerIndex = (int)(layerSlider.Value + .5);
 					}
 
 					// show the layer info next to the slider
@@ -183,7 +180,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(layerStartText);
 
-				sceneContext.ActiveLayerChanged += ActiveLayer_Changed;
+				printer.Bed.ActiveLayerChanged += ActiveLayer_Changed;
 			}
 
 			public double Maximum
@@ -217,15 +214,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				base.OnClosed(e);
 
-				sceneContext.ActiveLayerChanged -= ActiveLayer_Changed;
+				printer.Bed.ActiveLayerChanged -= ActiveLayer_Changed;
 			}
 
 			private void ActiveLayer_Changed(object sender, EventArgs e)
 			{
 				if (layerSlider != null
-					&& sceneContext.ActiveLayerIndex != (int)(layerSlider.Value + .5))
+					&& printer.Bed.ActiveLayerIndex != (int)(layerSlider.Value + .5))
 				{
-					layerSlider.Value = sceneContext.ActiveLayerIndex;
+					layerSlider.Value = printer.Bed.ActiveLayerIndex;
 				}
 			}
 		}

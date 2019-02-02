@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
 
-			LayerScrollbar = new SliceLayerSelector(printer, sceneContext, theme)
+			LayerScrollbar = new SliceLayerSelector(printer, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Fit,
