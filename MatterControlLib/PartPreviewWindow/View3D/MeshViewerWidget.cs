@@ -71,22 +71,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
-			drawables.Add(new AxisIndicatorDrawable());
-			drawables.Add(new TraceDataDrawable(sceneContext)
+			drawables.AddRange(new IDrawable[]
 			{
-				Enabled = false
-			});
-			drawables.Add(new AABBDrawable(sceneContext)
-			{
-				Enabled = false
+				new AxisIndicatorDrawable(),
+				new SceneTraceDataDrawable(sceneContext),
+				new AABBDrawable(sceneContext)
 			});
 
-			itemDrawables.Add(new SelectedItemDrawable(sceneContext, this));
+			itemDrawables.AddRange(new IDrawableItem[]
+			{
+				new SelectedItemDrawable(sceneContext, this),
+			});
 
 #if DEBUG
 			itemDrawables.Add(new InspectedItemDrawable(sceneContext));
 #endif
-
 
 			base.OnLoad(args);
 		}
