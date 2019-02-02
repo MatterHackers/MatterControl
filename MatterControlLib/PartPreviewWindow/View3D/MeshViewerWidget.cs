@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			itemDrawables.AddRange(new IDrawableItem[]
 			{
 				new SelectedItemDrawable(sceneContext, this),
+				new ItemTraceDataDrawable(sceneContext)
 			});
 
 #if DEBUG
