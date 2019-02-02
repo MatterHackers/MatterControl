@@ -271,6 +271,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			// If implemented, invoke Dispose on Drawables
+			foreach(var item in drawables)
+			{
+				if (item is IDisposable disposable)
+				{
+					disposable.Dispose();
+				}
+			}
+
+			foreach (var item in itemDrawables)
+			{
+				if (item is IDisposable disposable)
+				{
+					disposable.Dispose();
+				}
+			}
+
+			base.OnClosed(e);
+		}
+
 		private bool FindInteractionVolumeHit(Ray ray, out int interactionVolumeHitIndex, out IntersectInfo info)
 		{
 			interactionVolumeHitIndex = -1;
