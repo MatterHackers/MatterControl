@@ -28,16 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IDrawable
+	public interface IDrawableItem
 	{
-		string Title { get; }
-		string Description { get; }
-		bool Enabled { get; set; }
-		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
-		DrawStage DrawStage { get; }
+		void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
 	}
 }

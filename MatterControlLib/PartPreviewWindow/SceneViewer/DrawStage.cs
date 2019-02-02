@@ -27,17 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
-
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public interface IDrawable
+	public enum DrawStage
 	{
-		string Title { get; }
-		string Description { get; }
-		bool Enabled { get; set; }
-		void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
-		DrawStage DrawStage { get; }
-	}
+		First = 0,
+		OpaqueContent = 1,
+		TransparentContent = 2,
+		Last = 3
+	};
 }
