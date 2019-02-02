@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
-		internal BedConfig sceneContext;
+		internal ISceneContext sceneContext;
 		internal PrinterConfig printer;
 		protected PartWorkspace workspace;
 		protected ViewControls3D viewControls3D;

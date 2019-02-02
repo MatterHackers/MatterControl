@@ -46,9 +46,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private int volumeIndexWithMouseDown = -1;
 
-		public WorldView World { get; }
+		public WorldView World => sceneContext.World;
 
-		public InteractiveScene Scene { get; }
+		public InteractiveScene Scene => sceneContext.Scene;
 
 		public bool DoOpenGlDrawing { get; set; } = true;
 
@@ -59,13 +59,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
 
-		public InteractionLayer(BedConfig sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
+		public InteractionLayer(ISceneContext sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
-			this.Scene = scene = sceneContext.Scene;
 			this.InteractionVolumes = interactionVolumes;
 			this.EditorMode = editorType;
 			this.theme = theme;
+
+			scene = sceneContext.Scene;
 
 			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
 

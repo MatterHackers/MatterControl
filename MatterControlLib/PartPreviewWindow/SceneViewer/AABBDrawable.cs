@@ -35,9 +35,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class AABBDrawable : IDrawable
 	{
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 
-		public AABBDrawable(BedConfig sceneContext)
+		public AABBDrawable(ISceneContext sceneContext)
 		{
 			this.sceneContext = sceneContext;
 		}

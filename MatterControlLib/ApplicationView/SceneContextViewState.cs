@@ -36,10 +36,10 @@ namespace MatterHackers.MatterControl
 
 	public class SceneContextViewState
 	{
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private RenderTypes renderType = RenderTypes.Outlines;
 
-		public SceneContextViewState(BedConfig sceneContext)
+		public SceneContextViewState(ISceneContext sceneContext)
 		{
 			this.sceneContext = sceneContext;
 

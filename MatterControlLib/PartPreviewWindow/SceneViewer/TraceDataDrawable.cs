@@ -36,10 +36,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class TraceDataDrawable : IDrawable
 	{
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private InteractiveScene scene;
 
-		public TraceDataDrawable(BedConfig sceneContext)
+		public TraceDataDrawable(ISceneContext sceneContext)
 		{
 			this.sceneContext = sceneContext;
 			this.scene = sceneContext.Scene;

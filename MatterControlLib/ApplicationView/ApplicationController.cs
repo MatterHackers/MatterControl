@@ -2787,7 +2787,7 @@ If you experience adhesion problems, please re-run leveling."
 			return (slicingSucceeded, gcodeFilePath);
 		}
 
-		internal void GetViewOptionButtons(GuiWidget parent, BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
+		internal void GetViewOptionButtons(GuiWidget parent, ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
 			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons), theme)
 			{
@@ -2910,7 +2910,7 @@ If you experience adhesion problems, please re-run leveling."
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
-		public BedConfig SceneContext { get; set; }
+		public ISceneContext SceneContext { get; set; }
 	}
 
 	public class RunningTaskDetails : IProgress<ProgressStatus>

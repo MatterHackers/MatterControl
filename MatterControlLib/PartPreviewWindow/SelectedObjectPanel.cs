@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private IObject3D item = new Object3D();
 
 		private ThemeConfig theme;
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private View3DWidget view3DWidget;
 		private SectionWidget editorSectionWidget;
 
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private string editorTitle = "Properties".Localize();
 
-		public SelectedObjectPanel(View3DWidget view3DWidget, BedConfig sceneContext, ThemeConfig theme)
+		public SelectedObjectPanel(View3DWidget view3DWidget, ISceneContext sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Stretch;

@@ -43,12 +43,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InlineEditControl currentLayerInfo;
 
 		private LayerScrollbar layerScrollbar;
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 
 		private SolidSlider layerSlider;
 		private double layerInfoHalfHeight;
 
-		public SliceLayerSelector(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+		public SliceLayerSelector(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
 		{
 			this.sceneContext = sceneContext;
 
@@ -140,9 +140,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			private TextWidget layerCountText;
 			private TextWidget layerStartText;
-			private BedConfig sceneContext;
+			private ISceneContext sceneContext;
 
-			public LayerScrollbar(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+			public LayerScrollbar(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
 			{
 				this.sceneContext = sceneContext;

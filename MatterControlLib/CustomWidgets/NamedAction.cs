@@ -38,7 +38,7 @@ namespace MatterHackers.Agg.UI
 {
 	public class SceneSelectionOperation : LocalizedAction
 	{
-		public Action<BedConfig> Action { get; set; }
+		public Action<ISceneContext> Action { get; set; }
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 		public Type OperationType { get; set; }
 	}

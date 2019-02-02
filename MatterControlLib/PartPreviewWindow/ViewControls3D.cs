@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton partSelectButton;
 
 		private View3DWidget view3DWidget;
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
 		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private GuiWidget CreateAddButton(BedConfig sceneContext, ThemeConfig theme)
+		private GuiWidget CreateAddButton(ISceneContext sceneContext, ThemeConfig theme)
 		{
 			var buttonView = new TextIconButton(
 				"",

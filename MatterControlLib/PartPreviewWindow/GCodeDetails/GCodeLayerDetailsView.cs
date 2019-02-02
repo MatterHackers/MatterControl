@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ThemeConfig theme;
 
-		public GCodeLayerDetailsView(GCodeFile gCodeMemoryFile, BedConfig sceneContext, ThemeConfig theme)
+		public GCodeLayerDetailsView(GCodeFile gCodeMemoryFile, ISceneContext sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;

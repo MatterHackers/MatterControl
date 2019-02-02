@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private InteractiveScene scene;
 
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 
 		private ThemeConfig theme;
 		private FloorDrawable floorDrawable;

@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private InteractiveScene scene;
 		private Color debugBorderColor = Color.Green;
 
-		public InspectedItemDrawable(BedConfig sceneContext)
+		public InspectedItemDrawable(ISceneContext sceneContext)
 		{
 			this.scene = sceneContext.Scene;
 		}

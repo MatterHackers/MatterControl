@@ -89,13 +89,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public BedConfig sceneContext;
+		public ISceneContext sceneContext;
 
 		public PrinterConfig Printer { get; private set; }
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, InteractionLayer.EditorType editorType = InteractionLayer.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, InteractionLayer.EditorType editorType = InteractionLayer.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
@@ -675,7 +675,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
+		private static void CopyPlateToPrinter(ISceneContext sceneContext, PrinterConfig printer)
 		{
 			Task.Run(async () =>
 			{
@@ -1931,7 +1931,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& sceneContext.GCodeRenderer != null
 				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
 			{
-				sceneContext.RenderGCode3D(e);
+				printerTabPage.printer.Bed.RenderGCode3D(e);
 			}
 		}
 

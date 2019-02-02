@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void Paste(this BedConfig sceneContext)
+		public static void Paste(this ISceneContext sceneContext)
 		{
 			var scene = sceneContext.Scene;
 
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static async void DuplicateItem(this BedConfig sceneContext, double xOffset, IObject3D sourceItem = null)
+		public static async void DuplicateItem(this ISceneContext sceneContext, double xOffset, IObject3D sourceItem = null)
 		{
 			var scene = sceneContext.Scene;
 			if (sourceItem == null)
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void InsertNewItem(this BedConfig sceneContext, IObject3D newItem)
+		public static void InsertNewItem(this ISceneContext sceneContext, IObject3D newItem)
 		{
 			var scene = sceneContext.Scene;
 

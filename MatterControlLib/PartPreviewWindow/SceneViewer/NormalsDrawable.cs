@@ -38,10 +38,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class NormalsDrawable : IDrawableItem
 	{
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private InteractiveScene scene;
 
-		public NormalsDrawable(BedConfig sceneContext)
+		public NormalsDrawable(ISceneContext sceneContext)
 		{
 			this.sceneContext = sceneContext;
 			this.scene = sceneContext.Scene;

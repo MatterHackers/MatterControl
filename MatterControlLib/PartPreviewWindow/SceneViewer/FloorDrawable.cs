@@ -39,14 +39,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class FloorDrawable : IDrawable
 	{
 		private GridColors gridColors;
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private InteractionLayer.EditorType editorType;
 		private ThemeConfig theme;
 		private Color buildVolumeColor;
 		private Color bedColor;
 		private Color underBedColor;
 
-		public FloorDrawable(InteractionLayer.EditorType editorType, BedConfig sceneContext, Color buildVolumeColor, ThemeConfig theme)
+		public FloorDrawable(InteractionLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
 			this.buildVolumeColor = buildVolumeColor;
 			this.sceneContext = sceneContext;
