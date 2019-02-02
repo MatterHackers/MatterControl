@@ -46,6 +46,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = sceneContext.Scene;
 		}
 
+		public bool Enabled { get; set; } = true;
+
+		public string Title { get; } = "Inspected Item Debugger";
+
+		public string Description { get; } = "Render inspector selection";
+
+		public DrawStage DrawStage { get; } = DrawStage.TransparentContent;
+
 		public void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			if (item == scene.DebugItem)

@@ -57,6 +57,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			scene.SelectionChanged += Selection_Changed;
 		}
 
+		public bool Enabled { get; set; } = true;
+
+		public string Title { get; } = "Selection Renderer";
+
+		public string Description { get; } = "Render selected item with expanded mesh";
+
+		public DrawStage DrawStage { get; } = DrawStage.TransparentContent;
+
 		public void Dispose()
 		{
 			// Unregister listeners

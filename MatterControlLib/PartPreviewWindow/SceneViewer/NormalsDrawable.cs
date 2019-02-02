@@ -47,6 +47,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.scene = sceneContext.Scene;
 		}
 
+		public bool Enabled { get; set; }
+
+		public string Title { get; } = "Normals Renderer";
+
+		public string Description { get; } = "Render selected item normals";
+
+		public DrawStage DrawStage { get; } = DrawStage.TransparentContent;
+
 		public void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			throw new NotImplementedException();
