@@ -262,9 +262,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
-
 				// Invoke all item Drawables
-				foreach(var drawable in itemDrawables)
+				foreach(var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))
 				{
 					drawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
 				}
@@ -463,6 +462,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			GLHelper.UnsetGlContext();
 
+			var selectedItem = scene.SelectedItem;
+
+			// Invoke DrawStage.Last item drawables
+			foreach (var item in scene.Children)
+			{
+				// HACK: Consider how shared code in DrawObject can be reused to prevent duplicate execution
+				bool isSelected = selectedItem != null
+					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
+						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
+
+				foreach (var itemDrawable in itemDrawables.Where(d => d.DrawStage == DrawStage.Last && d.Enabled))
+				{
+					itemDrawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
+				}
+			}
+
+			// Invoke DrawStage.Last scene drawables
 			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.Last))
 			{
 				if (drawable.Enabled)
