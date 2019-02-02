@@ -160,6 +160,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					row.AddChild(toggleSwitch);
 				}
 
+				foreach (var drawable in ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.ItemDrawables)
+				{
+					var row = new SettingsRow(drawable.Title, drawable.Description, theme);
+					subPanel.AddChild(row);
+
+					var toggleSwitch = new RoundedToggleSwitch(theme)
+					{
+						Checked = drawable.Enabled
+					};
+					toggleSwitch.CheckedStateChanged += (s, e) =>
+					{
+						drawable.Enabled = toggleSwitch.Checked;
+					};
+					row.AddChild(toggleSwitch);
+				}
+
 				menuTheme.ApplyBoxStyle(sectionWidget);
 
 				sectionWidget.Margin = new BorderDouble(0, 10);
