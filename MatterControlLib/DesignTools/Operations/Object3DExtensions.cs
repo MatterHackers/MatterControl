@@ -231,19 +231,37 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return output;
 		}
 
-		public static IObject3D Plus(this IObject3D a, IObject3D b)
+		/// <summary>
+		/// Union a and b together. This can either return a single item with a mesh on it
+		/// or a group item that has the a and be itmes as children
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="doMeshCombine"></param>
+		/// <returns></returns>
+		public static IObject3D Plus(this IObject3D a, IObject3D b, bool doMeshCombine = false)
 		{
-			var combine = new CombineObject3D_2();
-			combine.Children.Add(a.Clone());
-			combine.Children.Add(b.Clone());
-
-			combine.Combine();
-
-			var finalMesh = combine.VisibleMeshes().First().Mesh;
-			return new Object3D()
+			if (doMeshCombine)
 			{
-				Mesh = finalMesh
-			};
+				var combine = new CombineObject3D_2();
+				combine.Children.Add(a.Clone());
+				combine.Children.Add(b.Clone());
+
+				combine.Combine();
+
+				var finalMesh = combine.VisibleMeshes().First().Mesh;
+				return new Object3D()
+				{
+					Mesh = finalMesh
+				};
+			}
+			else
+			{
+				var group = new GroupObject3D();
+				group.Children.Add(a);
+				group.Children.Add(b);
+				return group;
+			}
 		}
 
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
