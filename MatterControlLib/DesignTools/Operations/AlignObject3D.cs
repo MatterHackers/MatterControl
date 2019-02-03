@@ -311,9 +311,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				await Rebuild();
 			}
-
-			// and also always pass back the actual type
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				// and also always pass back the actual type
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override Task Rebuild()
