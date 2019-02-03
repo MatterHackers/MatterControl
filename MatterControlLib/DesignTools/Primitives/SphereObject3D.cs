@@ -140,12 +140,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			var editRow = change.Context.GetEditRow(nameof(StartingAngle));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(EndingAngle));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(LatitudeSides));
-			if (editRow != null) editRow.Visible = Advanced;
+			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
+			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
+			change.SetRowVisible(nameof(LatitudeSides), () => Advanced);
 		}
 	}
 }

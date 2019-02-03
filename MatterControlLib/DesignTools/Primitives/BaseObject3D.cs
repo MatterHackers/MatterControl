@@ -324,8 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			//var editRow = context.GetEditRow((this.ID, nameof(InfillAmount)));
-			//if (editRow != null) editRow.Visible = CurrentBaseType == BaseTypes.Outline;
+			//change.SetRowVisible(nameof(InfillAmount), () => CurrentBaseType == BaseTypes.Outline);
 		}
 	}
 }

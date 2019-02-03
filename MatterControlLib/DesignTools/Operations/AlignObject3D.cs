@@ -443,18 +443,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			var editRow = change.Context.GetEditRow(nameof(XAlignTo));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(XOffset));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(YAlignTo));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(YOffset));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(ZAlignTo));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(ZOffset));
-			if (editRow != null) editRow.Visible = Advanced;
+			change.SetRowVisible(nameof(XAlignTo), () => Advanced);
+			change.SetRowVisible(nameof(XOffset), () => Advanced);
+			change.SetRowVisible(nameof(YAlignTo), () => Advanced);
+			change.SetRowVisible(nameof(YOffset), () => Advanced);
+			change.SetRowVisible(nameof(ZAlignTo), () => Advanced);
+			change.SetRowVisible(nameof(ZOffset), () => Advanced);
 		}
 
 		private static bool IsSet(FaceAlign variableToCheck, FaceAlign faceToCheckFor, FaceAlign faceToAssertNot)
