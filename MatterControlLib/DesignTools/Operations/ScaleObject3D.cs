@@ -208,6 +208,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override Task Rebuild()
 		{
+			this.DebugDepth("Rebuild");
+
 			using (RebuildLock())
 			{
 				// set the matrix for the transform object
@@ -276,6 +278,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[1] = ScaleRatio[0];
 					ScaleRatio[2] = ScaleRatio[0];
+					Rebuild();
 					// and invalidate the other properties
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
@@ -287,6 +290,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[1];
 					ScaleRatio[2] = ScaleRatio[1];
+					Rebuild();
 					// and invalidate the other properties
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
@@ -298,6 +302,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[2];
 					ScaleRatio[1] = ScaleRatio[2];
+					Rebuild();
 					// and invalidate the other properties
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
