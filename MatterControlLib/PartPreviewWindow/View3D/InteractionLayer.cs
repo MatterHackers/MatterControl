@@ -34,6 +34,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
@@ -46,15 +47,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private InteractionVolume mouseDownIAVolume = null;
 
+		/// <summary>
+		/// Contains type to IAVolume mappings
+		/// </summary>
+		private Dictionary<Type, List<InteractionVolume>> iavMappings = new Dictionary<Type, List<InteractionVolume>>();
+
 		public WorldView World => sceneContext.World;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
 		public bool DoOpenGlDrawing { get; set; } = true;
 
-		// TODO: Collapse into auto-property
-		private List<InteractionVolume> interactionVolumes = new List<InteractionVolume>();
-		public List<InteractionVolume> InteractionVolumes { get; }
+		private List<InteractionVolume> registeredIAVolumes = new List<InteractionVolume>();
+
+		public IEnumerable<InteractionVolume> InteractionVolumes
+		{
+			get
+			{
+				if (selectedItemType == null)
+				{
+					return Enumerable.Empty<InteractionVolume>();
+				}
+				else if (iavMappings.TryGetValue(selectedItemType, out List<InteractionVolume> mappedIAVolumes))
+				{
+					return mappedIAVolumes;
+				}
+				else
+				{
+					return registeredIAVolumes;
+				}
+			}
+		}
 
 		private LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
@@ -62,7 +85,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public InteractionLayer(ISceneContext sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
-			this.InteractionVolumes = interactionVolumes;
 			this.EditorMode = editorType;
 			this.theme = theme;
 
@@ -87,11 +109,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
 				});
 			}
+
+			iavMappings.Add(typeof(ImageObject3D), new List<InteractionVolume> { new MoveInZControlTest(this) });
 		}
 
 		public void RegisterDrawable(IDrawable drawable)
 		{
-			this.drawables.Add(drawable);
+			drawables.Add(drawable);
+		}
+
+		public void RegisterIAVolume(InteractionVolume interactionVolume)
+		{
+			registeredIAVolumes.Add(interactionVolume);
 		}
 
 		public IEnumerable<IDrawable> Drawables => drawables;

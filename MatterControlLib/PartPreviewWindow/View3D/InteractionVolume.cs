@@ -185,7 +185,6 @@ namespace MatterHackers.MeshVisualizer
 
 		GuiWidget GuiSurface { get; }
 
-		List<InteractionVolume> InteractionVolumes { get; }
 		double SnapGridDistance { get; }
 	}
 

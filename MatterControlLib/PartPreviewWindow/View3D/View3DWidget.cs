@@ -346,15 +346,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewOptionsBar.AddChild(gridSnapButton);
 
-			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
-			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
-			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
-			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
+			this.InteractionLayer.RegisterIAVolume(new MoveInZControl(this.InteractionLayer));
+			this.InteractionLayer.RegisterIAVolume(new SelectionShadow(this.InteractionLayer));
+			this.InteractionLayer.RegisterIAVolume(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
 			// Add IAVolumeProviderPlugins
 			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
 			{
 				interactionVolumes.AddRange(ivProvider.Create(this.InteractionLayer));
+				this.InteractionLayer.RegisterIAVolume(plugin.CreateInteractionVolume(this.InteractionLayer));
 			}
 
 			this.InteractionLayer.AfterDraw += AfterDraw3DContent;
