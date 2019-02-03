@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
-					if (e.InvalidateType.HasFlag(InvalidateType.Properties))
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						double newValue = (double)property.Value;
 						if (newValue != field.DoubleValue)
@@ -534,7 +534,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				void RefreshField(object s, InvalidateArgs e)
 				{
-					if (e.InvalidateType.HasFlag(InvalidateType.Properties))
+					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 					{
 						int newValue = (int)property.Value;
 						if (newValue != field.IntValue)

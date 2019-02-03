@@ -82,11 +82,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool changed = false;
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref changed);
-				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref changed);
+				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref valuesChanged);
+				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref valuesChanged);
 
 				using (new CenterAndHeightMantainer(this))
 				{
@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Mesh);
-			if (changed)
+			if (valuesChanged)
 			{
-				Invalidate(InvalidateType.Properties);
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			return Task.CompletedTask;

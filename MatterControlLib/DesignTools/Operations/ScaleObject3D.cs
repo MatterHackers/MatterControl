@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			else if(change.Changed == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
-				Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
+				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 			}
 			else if (change.Changed == nameof(MaitainProportions))
 			{
@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio = new Vector3(maxScale, maxScale, maxScale);
 					Rebuild();
 					// make sure we update the controls on screen to reflect the different data type
-					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
 			else if (change.Changed == nameof(SizeX))
@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[2] = ScaleRatio[0];
 					Rebuild();
 					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
 			else if (change.Changed == nameof(SizeY))
@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[2] = ScaleRatio[1];
 					Rebuild();
 					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
 			else if (change.Changed == nameof(SizeZ))
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[1] = ScaleRatio[2];
 					Rebuild();
 					// and invalidate the other properties
-					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
+					Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));
 				}
 			}
 		}

@@ -173,12 +173,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool propertyUpdated = Diameter == double.MinValue;
+			bool valuesChanged = Diameter == double.MinValue;
 			if (StartPercent < 0
 				|| StartPercent > 100)
 			{
 				StartPercent = Math.Min(100, Math.Max(0, StartPercent));
-				propertyUpdated = true;
+				valuesChanged = true;
 			}
 
 			using (RebuildLock())
@@ -276,9 +276,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Mesh);
-			if (propertyUpdated)
+			if (valuesChanged)
 			{
-				Invalidate(InvalidateType.Properties);
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			return Task.CompletedTask;

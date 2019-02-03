@@ -94,11 +94,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool changed = false;
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref changed);
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 
 				using (new CenterAndHeightMantainer(this))
 				{
@@ -126,9 +126,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Invalidate(InvalidateType.Mesh);
-			if (changed)
+			if (valuesChanged)
 			{
-				Invalidate(InvalidateType.Properties);
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			return Task.CompletedTask;
