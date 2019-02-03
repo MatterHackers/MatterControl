@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (doSlicing)
 				{
 					var errors = printer.ValidateSettings();
-					if (errors.Count > 0)
+					if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 					{
 						doSlicing = false;
 						ApplicationController.Instance.ShowValidationErrors("Slicing Error".Localize(), errors);

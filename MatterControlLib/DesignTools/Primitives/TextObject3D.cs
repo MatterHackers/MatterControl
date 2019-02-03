@@ -43,6 +43,8 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
+using System;
+using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -54,11 +56,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
 
-		public static TextObject3D Create()
+		public static async Task<TextObject3D> Create()
 		{
 			var item = new TextObject3D();
 
-			item.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
+			await item.Rebuild();
+
 			return item;
 		}
 
@@ -80,74 +83,93 @@ namespace MatterHackers.MatterControl.DesignTools
 			// change this from a text object to a group
 			var newContainer = new GroupObject3D();
 			newContainer.CopyProperties(this, Object3DPropertyFlags.All);
+			int index = 0;
 			foreach (var child in this.Children)
 			{
-				newContainer.Children.Add(child.Clone());
+				var clone = child.Clone();
+				var newName = index < NameToWrite.Length ? NameToWrite[index++].ToString() : "Letter".Localize();
+				clone.Name = MapIfSymbol(newName);
+				newContainer.Children.Add(clone);
 			}
-			undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { newContainer }));
+			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
+			newContainer.Name = this.Name + " - " + "Flattened".Localize();
+		}
+
+		private string MapIfSymbol(string newName)
+		{
+			switch(newName)
+			{
+				case " ":
+					return "space";
+			}
+
+			return newName;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override Task Rebuild()
 		{
-			return Task.Run((System.Action)(() =>
-			{
-				using (RebuildLock())
+			this.DebugDepth("Rebuild");
+
+			var rebuildLock = RebuildLock();
+
+			return ApplicationController.Instance.Tasks.Execute(
+				"Mirror".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					var aabb = (this).GetAxisAlignedBoundingBox();
-
-					this.Children.Modify((List<IObject3D> list) =>
+					using (new CenterAndHeightMantainer(this))
 					{
-						list.Clear();
-
-						var offest = 0.0;
-						double pointsToMm = 0.352778;
-						foreach (var letter in NameToWrite.ToCharArray())
+						this.Children.Modify((List<IObject3D> list) =>
 						{
-							var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+							list.Clear();
+
+							var offest = 0.0;
+							double pointsToMm = 0.352778;
+							foreach (var letter in NameToWrite.ToCharArray())
 							{
-								ResolutionScale = 10
-							};
-							var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-							IObject3D letterObject = new Object3D()
-							{
-								Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
-							};
+								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+								{
+									ResolutionScale = 10
+								};
+								var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+								IObject3D letterObject = new Object3D()
+								{
+									Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
+								};
 
-							letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-							list.Add(letterObject);
+								letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
+								list.Add(letterObject);
 
-							offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
-						}
-					});
-
-					if (aabb.ZSize > 0)
-					{
-						// If the part was already created and at a height, maintain the height.
-						PlatingHelper.PlaceMeshAtHeight(this, (double)aabb.MinXYZ.Z);
+								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+							}
+						});
 					}
-				}
-			}));
+
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
+				});
 		}
 	}
 }

@@ -27,11 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
@@ -77,44 +80,38 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
-
-				// remove whatever rotation has been applied (they go in reverse order)
-				Matrix = Matrix4X4.Identity;
-
-				// add the current rotation
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
-				Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
-
-				if (startingAabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
+					var startingAabb = this.GetAxisAlignedBoundingBox();
+					// remove whatever rotation has been applied (they go in reverse order)
+					Matrix = Matrix4X4.Identity;
+
+					// add the current rotation
+					Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(RotationXDegrees)));
+					Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(RotationYDegrees)));
+					Matrix = this.ApplyAtPosition(startingAabb.Center, Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(RotationZDegrees)));
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			Invalidate(InvalidateType.Matrix);
 
 			return Task.CompletedTask;
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Matrix, invalidateType.UndoBuffer);
+				await Rebuild();
 			}
 
 			base.OnInvalidate(invalidateType);

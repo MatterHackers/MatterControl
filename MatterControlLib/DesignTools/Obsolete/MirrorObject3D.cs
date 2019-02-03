@@ -27,18 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.Linq;
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using System.Threading;
-using MatterHackers.Agg.UI;
+using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Mirror".Localize();
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -88,30 +88,30 @@ namespace MatterHackers.MatterControl.DesignTools
 					item.meshCopy.Mesh.Transform(meshCopyToThis * mirrorMatrix * meshCopyToThis.Inverted);
 
 					item.meshCopy.Mesh.ReverseFaces();
-					item.meshCopy.Mesh.CalculateNormals();
-					item.meshCopy.Mesh.MarkAsChanged();
 				}
 
 				this.Matrix = oldMatrix;
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
+
+			return Task.CompletedTask;
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{

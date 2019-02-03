@@ -71,6 +71,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+	using MatterHackers.MatterControl.Plugins;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.Tour;
 	using MatterHackers.PolygonMesh;
@@ -596,7 +597,7 @@ namespace MatterHackers.MatterControl
 							});
 						});
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new List<IObject3D> { newGroup }));
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(selectedItem.Children.ToList(), new[] { newGroup }));
 
 						newGroup.MakeNameNonColliding();
 
@@ -651,7 +652,6 @@ namespace MatterHackers.MatterControl
 						var selectedItem = scene.SelectedItem;
 						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
-						align.Invalidate(new InvalidateArgs(align, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
@@ -674,9 +674,9 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(CombineObject3D),
+					OperationType = typeof(CombineObject3D_2),
 					TitleResolver = () => "Combine".Localize(),
-					Action = (sceneContext) => new CombineObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 					IsEnabled = (scene) =>
 					{
@@ -694,11 +694,15 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(IntersectionObject3D),
+					OperationType = typeof(IntersectionObject3D_2),
 					TitleResolver = () => "Intersect".Localize(),
-					Action = (sceneContext) => new IntersectionObject3D().WrapSelectedItemAndSelect(sceneContext.Scene),
+					Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+					},
 				},
 				new SceneSelectionOperation()
 				{
@@ -717,7 +721,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayLinearObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -730,7 +733,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayRadialObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -743,7 +745,6 @@ namespace MatterHackers.MatterControl
 					{
 						var array = new ArrayAdvancedObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-						array.Invalidate(new InvalidateArgs(array, InvalidateType.Properties, null));
 					},
 					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -751,11 +752,11 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(PinchObject3D),
+					OperationType = typeof(PinchObject3D_2),
 					TitleResolver = () => "Pinch".Localize(),
 					Action = (sceneContext) =>
 					{
-						var pinch = new PinchObject3D();
+						var pinch = new PinchObject3D_2();
 						pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
@@ -763,11 +764,11 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
-					OperationType = typeof(CurveObject3D),
+					OperationType = typeof(CurveObject3D_2),
 					TitleResolver = () => "Curve".Localize(),
 					Action = (sceneContext) =>
 					{
-						var curve = new CurveObject3D();
+						var curve = new CurveObject3D_2();
 						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
 					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
@@ -781,12 +782,13 @@ namespace MatterHackers.MatterControl
 					{
 						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone());
-						fit.MakeNameNonColliding();
+						using (new SelectionMaintainer(scene))
+						{
+							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone()).Result;
+							fit.MakeNameNonColliding();
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { selectedItem }, new List<IObject3D> { fit }));
-						scene.SelectedItem = fit;
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
+						}
 					},
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
@@ -1101,6 +1103,7 @@ namespace MatterHackers.MatterControl
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
+			this.Library.ContentProviders.Add(new[] { "scad" }, new OpenScadContentProvider());
 
 			this.Graph.RegisterOperation(
 				new NodeOperation()
@@ -1113,9 +1116,20 @@ namespace MatterHackers.MatterControl
 					{
 						if (sceneItem is IObject3D imageObject)
 						{
+							// TODO: make it look like this (and get rid of all the other stuff)
+							//scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
+
 							var path = new ImageToPathObject3D();
-							sceneItem.WrapWith(path, scene);
-							path.Invalidate(new InvalidateArgs(path, InvalidateType.Properties, null));
+
+							var itemClone = sceneItem.Clone();
+							path.Children.Add(itemClone);
+							path.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { path }));
+							scene.SelectedItem = null;
+							scene.SelectedItem = path;
+							path.Invalidate(InvalidateType.Properties);
 						}
 
 						return Task.CompletedTask;
@@ -1132,11 +1146,12 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(TranslateObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var scale = new TranslateObject3D();
-						scale.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = scale;
+						var items = scene.GetSelectedItems();
+						using (new SelectionMaintainer(scene))
+						{
+							var translate = new TranslateObject3D();
+							translate.WrapItems(items, scene.UndoBuffer);
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1152,11 +1167,12 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(RotateObject3D_2),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var rotate = new RotateObject3D_2();
-						rotate.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = rotate;
+						var items = scene.GetSelectedItems();
+						using (new SelectionMaintainer(scene))
+						{
+							var rotate = new RotateObject3D_2();
+							rotate.WrapItems(items, scene.UndoBuffer);
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1172,12 +1188,12 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ScaleObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var selectedItem = scene.SelectedItem;
-						scene.SelectedItem = null;
-						var scale = new ScaleObject3D();
-						scale.WrapItem(selectedItem, scene.UndoBuffer);
-						scene.SelectedItem = scale;
-
+						var items = scene.GetSelectedItems();
+						using (new SelectionMaintainer(scene))
+						{
+							var scale = new ScaleObject3D();
+							scale.WrapItems(items, scene.UndoBuffer);
+						}
 						return Task.CompletedTask;
 					},
 					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
@@ -1192,8 +1208,7 @@ namespace MatterHackers.MatterControl
 					ResultType = typeof(ComponentObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var imageObject = scene.SelectedItem;
-						scene.SelectedItem = null;
+						var imageObject = sceneItem.Clone() as ImageObject3D;
 
 						var path = new ImageToPathObject3D();
 						path.Children.Add(imageObject);
@@ -1224,24 +1239,19 @@ namespace MatterHackers.MatterControl
 							}
 						};
 
-						// Invalidate image to kick off rebuild of ImageConverter stack 
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image, null));
+						component.Matrix = imageObject.Matrix;
+						imageObject.Matrix = Matrix4X4.Identity;
 
-						// Swap original item with new wrapping component
-						scene.Children.Modify(children =>
+						using (new SelectionMaintainer(scene))
 						{
-							children.Remove(imageObject);
-							children.Add(component);
-						});
-
-						scene.SelectedItem = component;
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
+						}						// Invalidate image to kick off rebuild of ImageConverter stack 
+						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
 					},
 					IconCollector = (theme) => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons)
 				});
-
-			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"] });
 
 			this.Graph.RegisterOperation(
 				new NodeOperation()
@@ -1249,10 +1259,10 @@ namespace MatterHackers.MatterControl
 					OperationID = "Mirror",
 					Title = "Mirror".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(MirrorObject3D),
+					ResultType = typeof(MirrorObject3D_2),
 					Operation = (sceneItem, scene) =>
 					{
-						var mirror = new MirrorObject3D();
+						var mirror = new MirrorObject3D_2();
 						mirror.WrapSelectedItemAndSelect(scene);
 
 						return Task.CompletedTask;
@@ -1278,24 +1288,24 @@ namespace MatterHackers.MatterControl
 						}
 
 						// Dump selection forcing collapse of selection group
-						scene.SelectedItem = null;
-
-						var component = new ComponentObject3D
+						using (new SelectionMaintainer(scene))
 						{
-							Name = "New Component",
-							Finalized = false
-						};
+							var component = new ComponentObject3D
+							{
+								Name = "New Component",
+								Finalized = false
+							};
 
-						// Copy an selected item into the component as a clone
-						component.Children.Modify(children =>
-											{
-												children.AddRange(items.Select(o => o.Clone()));
-											});
+							// Copy an selected item into the component as a clone
+							component.Children.Modify(children =>
+							{
+								children.AddRange(items.Select(o => o.Clone()));
+							});
 
-						component.MakeNameNonColliding();
+							component.MakeNameNonColliding();
 
-						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
-						scene.SelectedItem = component;
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
+						}
 
 						return Task.CompletedTask;
 					},
@@ -1351,8 +1361,17 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var extrude = new LinearExtrudeObject3D();
-							sceneItem.WrapWith(extrude, scene);
-							extrude.Invalidate(new InvalidateArgs(extrude, InvalidateType.Properties, null));
+
+							var itemClone = sceneItem.Clone();
+							extrude.Children.Add(itemClone);
+							extrude.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
+							}
+							extrude.Invalidate(InvalidateType.Properties);
 						}
 
 						return Task.CompletedTask;
@@ -1372,8 +1391,16 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var smoothPath = new SmoothPathObject3D();
-							sceneItem.WrapWith(smoothPath, scene);
-							smoothPath.Invalidate(new InvalidateArgs(smoothPath, InvalidateType.Properties, null));
+							var itemClone = sceneItem.Clone();
+							smoothPath.Children.Add(itemClone);
+							smoothPath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
+							}
+							smoothPath.Invalidate(InvalidateType.Properties);
 						}
 
 						return Task.CompletedTask;
@@ -1393,8 +1420,16 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IPathObject imageObject)
 						{
 							var inflatePath = new InflatePathObject3D();
-							sceneItem.WrapWith(inflatePath, scene);
-							inflatePath.Invalidate(new InvalidateArgs(inflatePath, InvalidateType.Properties, null));
+							var itemClone = sceneItem.Clone();
+							inflatePath.Children.Add(itemClone);
+							inflatePath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
+							}
+							inflatePath.Invalidate(InvalidateType.Properties);
 						}
 
 						return Task.CompletedTask;
@@ -1420,7 +1455,7 @@ namespace MatterHackers.MatterControl
 						};
 						newChild.Matrix = Matrix4X4.Identity;
 						baseMesh.Children.Add(newChild);
-						baseMesh.Invalidate(new InvalidateArgs(baseMesh, InvalidateType.Properties, null));
+						baseMesh.Invalidate(InvalidateType.Properties);
 
 						scene.UndoBuffer.AddAndDo(
 							new ReplaceCommand(
@@ -1459,6 +1494,12 @@ namespace MatterHackers.MatterControl
 					mappedEditors.Add(editor);
 				}
 			}
+
+			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
+			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 
 		public void Connection_ErrorReported(object sender, string line)
@@ -2339,7 +2380,7 @@ namespace MatterHackers.MatterControl
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
 		}
 
-		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool overrideAllowGCode = false)
+		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var partFilePath = editContext.SourceFilePath;
 			var gcodeFilePath = editContext.GCodeFilePath(printer);
@@ -2364,19 +2405,12 @@ namespace MatterHackers.MatterControl
 				printer.Connection.PrintingItemName = printItemName;
 
 				var errors = printer.ValidateSettings();
-				if(errors.Count > 0)
+				if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
 					this.ShowValidationErrors("Export Error".Localize(), errors);
 				}
 				else // there are no errors continue printing
 				{
-					// last let's check if there is any support in the scene and if it looks like it is needed
-					if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
-					{
-						var warning = "Some of the parts appear to require support. Consider canceling this print then adding support to get the best results possible.".Localize();
-						StyledMessageBox.ShowMessageBox(warning, "Warning: Support Required".Localize());
-					}
-
 					// check that current bed temp is within 10 degrees of leveling temp
 					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 					var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
@@ -2411,47 +2445,53 @@ If you experience adhesion problems, please re-run leveling."
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
-					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE"
-						&& hideGCodeWarning == null
-						&& !overrideAllowGCode)
+					if (Path.GetExtension(partFilePath).ToUpper() == ".GCODE")
 					{
-						var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
+						if (hideGCodeWarning != "true")
 						{
-							TextColor = this.Theme.TextColor,
-							Margin = new BorderDouble(top: 6, left: 6),
-							HAnchor = Agg.UI.HAnchor.Left
-						};
-						hideGCodeWarningCheckBox.Click += (sender, e) =>
-						{
-							if (hideGCodeWarningCheckBox.Checked)
+							var hideGCodeWarningCheckBox = new CheckBox("Don't remind me again".Localize())
 							{
-								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
-							}
-							else
+								TextColor = this.Theme.TextColor,
+								Margin = new BorderDouble(top: 6, left: 6),
+								HAnchor = Agg.UI.HAnchor.Left
+							};
+							hideGCodeWarningCheckBox.Click += (sender, e) =>
 							{
-								ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
-							}
-						};
+								if (hideGCodeWarningCheckBox.Checked)
+								{
+									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, "true");
+								}
+								else
+								{
+									ApplicationSettings.Instance.set(ApplicationSettingsKey.HideGCodeWarning, null);
+								}
+							};
 
-						UiThread.RunOnIdle(() =>
-						{
-							StyledMessageBox.ShowMessageBox(
-								(messageBoxResponse) =>
-								{
-									if (messageBoxResponse)
+							UiThread.RunOnIdle(() =>
+							{
+								StyledMessageBox.ShowMessageBox(
+									(messageBoxResponse) =>
 									{
-										printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-										this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
-									}
-								},
-								"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
-								"Warning - GCode file".Localize(),
-								new GuiWidget[]
-								{
+										if (messageBoxResponse)
+										{
+											printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+										}
+									},
+									"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
+									"Warning - GCode file".Localize(),
+									new GuiWidget[]
+									{
 									hideGCodeWarningCheckBox
-								},
-								StyledMessageBox.MessageType.YES_NO);
-						});
+									},
+									StyledMessageBox.MessageType.YES_NO);
+							});
+						}
+						else
+						{
+							printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+						}
 					}
 					else
 					{
@@ -2484,28 +2524,19 @@ If you experience adhesion problems, please re-run leveling."
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				// Project to newline separated Error/Details/Location string
-				var formattedErrors = errors.Select(err =>
+				var dialogPage = new DialogPage("Close".Localize())
 				{
-					string location = null;
-					string valueDetails = null;
+					HAnchor = HAnchor.Stretch,
+					WindowTitle = windowTitle,
+					HeaderText = "Action Required".Localize()
+				};
 
-					if (err is SettingsValidationError settingsError)
-					{
-						location = settingsError.Location;
-						valueDetails = settingsError.ValueDetails;
-					}
+				dialogPage.ContentRow.AddChild(new ValidationErrorsPanel(errors, AppContext.Theme)
+				{
+					HAnchor = HAnchor.Stretch
+				});
 
-					// Conditionally combine Error/Details/Location when not empty
-					return err.Error +
-						((string.IsNullOrWhiteSpace(err.Details)) ? "" : $"\n\n{err.Details}") +
-						((string.IsNullOrWhiteSpace(valueDetails)) ? "" : $"\n\n{valueDetails}") +
-						((string.IsNullOrWhiteSpace(location)) ? "" : $"\n\n{location}");
-				}).ToArray();
-
-				StyledMessageBox.ShowMessageBox(
-						string.Join("\n__________________\n\n", formattedErrors),
-						windowTitle);
+				DialogWindow.Show(dialogPage);
 			});
 		}
 
@@ -2644,20 +2675,31 @@ If you experience adhesion problems, please re-run leveling."
 					{
 						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
 						int bufferSize = 32000;
+
+						int padding = 100;
+
 						using (Stream fileStream = new FileStream(gcodeFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
 						{
-							byte[] buffer = new byte[bufferSize];
-							fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
-							int numBytesRead = fileStream.Read(buffer, 0, bufferSize);
-							fileStream.Close();
-
-							string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-							if (fileEnd.Contains("filament used"))
+							int i = 1;
+							bool readToStart = false;
+							do
 							{
-								await printer.Connection.StartPrint(gcodeFilePath);
-								MonitorPrintTask(printer);
-								return;
-							}
+								var buffer = new byte[bufferSize + 100];
+
+								// fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+								fileStream.Position = Math.Max(0, fileStream.Length - (bufferSize * i++) - padding);
+								readToStart = fileStream.Position == 0;
+
+								int numBytesRead = fileStream.Read(buffer, 0, bufferSize + padding);
+
+								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+								if (fileEnd.Contains("filament used"))
+								{
+									await printer.Connection.StartPrint(gcodeFilePath);
+									MonitorPrintTask(printer);
+									return;
+								}
+							} while (!readToStart);
 						}
 					}
 				}
@@ -3046,6 +3088,7 @@ If you experience adhesion problems, please re-run leveling."
 		private static Stopwatch timer;
 
 		public static bool EnableF5Collect { get; set; }
+		public static bool EnableNetworkTraffic { get; set; } = true;
 
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{

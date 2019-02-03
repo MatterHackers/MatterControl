@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using System;
 	using System.ComponentModel;
 	using System.Linq;
+	using System.Threading.Tasks;
 	using Polygons = List<List<IntPoint>>;
 
 	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw
@@ -58,18 +59,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Path)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
@@ -85,7 +86,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				InsetPath();
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+			Invalidate(InvalidateType.Path);
+			return Task.CompletedTask;
 		}
 
 		private void InsetPath()

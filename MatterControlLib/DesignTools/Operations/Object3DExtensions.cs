@@ -41,6 +41,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 
@@ -230,19 +231,37 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return output;
 		}
 
-		public static IObject3D Plus(this IObject3D a, IObject3D b)
+		/// <summary>
+		/// Union a and b together. This can either return a single item with a mesh on it
+		/// or a group item that has the a and be itmes as children
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <param name="doMeshCombine"></param>
+		/// <returns></returns>
+		public static IObject3D Plus(this IObject3D a, IObject3D b, bool doMeshCombine = false)
 		{
-			var combine = new CombineObject3D();
-			combine.Children.Add(a.Clone());
-			combine.Children.Add(b.Clone());
-
-			combine.Combine();
-
-			var finalMesh = combine.VisibleMeshes().First().Mesh;
-			return new Object3D()
+			if (doMeshCombine)
 			{
-				Mesh = finalMesh
-			};
+				var combine = new CombineObject3D_2();
+				combine.Children.Add(a.Clone());
+				combine.Children.Add(b.Clone());
+
+				combine.Combine();
+
+				var finalMesh = combine.VisibleMeshes().First().Mesh;
+				return new Object3D()
+				{
+					Mesh = finalMesh
+				};
+			}
+			else
+			{
+				var group = new GroupObject3D();
+				group.Children.Add(a);
+				group.Children.Add(b);
+				return group;
+			}
 		}
 
 		public static IObject3D Minus(this IObject3D a, IObject3D b)
@@ -287,81 +306,31 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return item.GetAxisAlignedBoundingBox().ZSize;
 		}
 
-		public static void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
+		public static async void AddSelectionAsChildren(this IObject3D newParent, InteractiveScene scene, IObject3D selectedItem)
 		{
 			if (selectedItem != null)
 			{
-				List<IObject3D> itemsToReplace;
+				var selectedItems = scene.GetSelectedItems();
 
-				if (selectedItem is SelectionGroupObject3D)
+				using (new SelectionMaintainer(scene))
 				{
-					itemsToReplace = selectedItem.Children.ToList();
-					foreach (var child in itemsToReplace)
+					using (selectedItem.Parent.RebuildLock())
 					{
-						newParent.Children.Add(child.Clone());
+						foreach (var item in selectedItems)
+						{
+							newParent.Children.Add(item.Clone());
+						}
+
+						newParent.MakeNameNonColliding();
+
+						scene.UndoBuffer.AddAndDo(
+							new ReplaceCommand(
+								selectedItems,
+								new[] { newParent }));
 					}
+
+					await newParent.Rebuild();
 				}
-				else
-				{
-					itemsToReplace = new List<IObject3D> { selectedItem };
-					newParent.Children.Add(selectedItem.Clone());
-				}
-
-				scene.SelectedItem = null;
-
-				newParent.MakeNameNonColliding();
-
-				scene.UndoBuffer.AddAndDo(
-					new ReplaceCommand(
-						itemsToReplace,
-						new List<IObject3D> { newParent }));
-
-				SelectModifiedItem(selectedItem, newParent, scene);
-			}
-		}
-
-		public static void WrapWith(this IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
-		{
-			// make sure we walk to the top of a mesh wrapper stack before we wrap the item (all mesh wrappers should be under the add)
-			while(originalItem.Parent is ModifiedMeshObject3D modifiedMesh)
-			{
-				originalItem = modifiedMesh;
-			}
-
-			using (originalItem.RebuildLock())
-			{
-				originalItem.Parent.Children.Modify(list =>
-				{
-					list.Remove(originalItem);
-
-					wrapper.Matrix = originalItem.Matrix;
-
-					originalItem.Matrix = Matrix4X4.Identity;
-					wrapper.Children.Add(originalItem);
-
-					list.Add(wrapper);
-				});
-
-				SelectModifiedItem(originalItem, wrapper, scene);
-			}
-		}
-
-		private static void SelectModifiedItem(IObject3D originalItem, IObject3D wrapper, InteractiveScene scene)
-		{
-			if (scene != null)
-			{
-				var topParent = wrapper.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
-				UiThread.RunOnIdle(() =>
-				{
-					var sceneSelection = topParent != null ? topParent : wrapper;
-					scene.SelectedItem = sceneSelection;
-
-					if (sceneSelection != originalItem)
-					{
-						// select the sub item in the tree view
-						//scene.SelectedItem =  originalItem;
-					}
-				});
 			}
 		}
 

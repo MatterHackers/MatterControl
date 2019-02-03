@@ -27,9 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -96,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(ScaleItem.Children);
 				});
 			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -117,23 +123,23 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -159,23 +165,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				AdjustChildSize(null, null);
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					AdjustChildSize(null, null);
 				}
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
+			return Task.CompletedTask;
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

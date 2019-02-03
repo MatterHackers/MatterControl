@@ -4,6 +4,9 @@ Translated:
 English:    • Remove the paper
 Translated:    • Rimuovere la carta
 
+English:    1. Select the 'Controls' tab on the right
+Translated:    1. Seleziona la scheda "Controlli" sulla destra
+
 English:    2. Look for the calibration section (pictured below)
 Translated:    2. Cerca la sezione di calibrazione (nella foto sotto)
 
@@ -30,9 +33,6 @@ Translated:{0} deve essere minore o uguale a {1} * 4.
 
 English:{0} must be less than or equal to the {1}.
 Translated:{0} deve essere minore o uguale a {1}.
-
-English:{0} works best when set to LINES.
-Translated:{0} funziona meglio se impostato su LINEE.
 
 English:<< Back
 Translated:<< Indietro
@@ -64,11 +64,8 @@ Translated:Un modificatore della larghezza dell'estrusione quando si stampa peri
 English:A password reset code will be sent to your email.
 Translated:Un codice di reimpostazione della password verrà inviato alla tua email.
 
-English:A Quick Tour of MatterControl
-Translated:Un giro rapido di MatterControl
-
 English:A six-digit code - sent to your email account
-Translated:Un codice a sei cifre - inviato al tuo account di posta elettronica
+Translated:Un codice di sei cifre - inviato al tuo account di posta elettronica
 
 English:A standard sheet of paper
 Translated:Un foglio di carta standard
@@ -99,6 +96,12 @@ Translated:Account creato
 
 English:Action
 Translated:Azione
+
+English:Action Recommended
+Translated:Azione raccomandata
+
+English:Action Required
+Translated:Azione richiesta
 
 English:Add
 Translated:Inserisci
@@ -146,7 +149,7 @@ English:After Tool Change G-Code
 Translated:Dopo aver cambiato utensile G-Code
 
 English:After Tool Change G-Code 2
-Translated:Dopo lo strumento cambiare il codice G 2
+Translated:Dopo cambio utensile G-Code 2
 
 English:Air Gap
 Translated:Vuoto d'aria
@@ -169,17 +172,35 @@ Translated:Tutti i riscaldatori
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Consenti a MatterControl di dividere le linee lunghe per migliorare il livellamento e l'annullamento della stampa. Critico per le stampanti che sono significativamente fuori dal livello.
 
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Ti permette di accendere e spegnere applicando la vestibilità all'asse x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Ti permette di accendere e spegnere applicando la vestibilità all'asse y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Ti permette di accendere e spegnere applicando la vestibilità all'asse z.
+
 English:Alpha
 Translated:Alfa
 
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: la versione in sviluppo di MatterControl
 
+English:Already Loaded
+Translated:Già caricato
+
+English:Anchor
+Translated:Ancora
+
 English:and ensure that no filament is stuck to your nozzle.
 Translated:e assicurarsi che nessun filo sia attaccato al tuo ugello.
 
 English:and the hotend to heat to 
-Translated:e l'hotend per riscaldare
+Translated:e l'hotend da riscaldare
+
+English:Angle
+Translated:Angolo
 
 English:Anyone with this code will have access
 Translated:Chiunque abbia questo codice avrà accesso
@@ -202,8 +223,8 @@ Translated:Sei sicuro di voler interrompere la stampa corrente e chiudere Matter
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
 Translated:Sei sicuro di voler aggiungere questa parte ({0}) alla coda?\nLa parte 3D che stai tentando di caricare potrebbe essere troppo complicata e causare problemi di prestazioni o stabilità.\n\nRiduci la geometria prima di procedere.
 
-English:Are you sure you want to delete your currently selected printer?
-Translated:Sei sicuro di voler eliminare la tua stampante attualmente selezionata?
+English:Are you sure you want to delete printer '{0}'?
+Translated:Sei sicuro di voler eliminare la stampante '{0}'?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Sei sicuro di voler uscire mentre una stampa è in esecuzione dalla scheda SD?\n\nNota: se si esce, si consiglia di attendere fino al completamento della stampa prima di eseguire nuovamente MatterControl.
@@ -215,7 +236,7 @@ English:Are you sure you want to sign out? You will not have access to your prin
 Translated:Sei sicuro di voler uscire? Non avrai accesso ai profili della stampante o alla libreria cloud.
 
 English:Arrange All Parts
-Translated:Disporre tutte le parti
+Translated:Disponi tutte le parti
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:Man mano che il tempo di stampare uno strato diminuisce, la velocità della ventola verrà aumentata fino alla sua velocità massima.
@@ -227,7 +248,7 @@ English:Attempting to connect
 Translated:Tentativo di connessione
 
 English:ATX Power Control
-Translated:ATX Power Control
+Translated:Controllo di potenza ATX
 
 English:Auto Calibrate
 Translated:Calibrazione automatica
@@ -248,7 +269,7 @@ English:Avoid contact with your skin.
 Translated:Evitare il contatto con la pelle.
 
 English:Avoid Crossing Perimeters
-Translated:Evitare i perimetri di attraversamento
+Translated:Evitare i perimetri trasversali
 
 English:Axis
 Translated:Asse
@@ -262,11 +283,14 @@ Translated:Baby Step Offset
 English:Back
 Translated:Indietro
 
+English:Back Ratio
+Translated:Rapporto posteriore
+
+English:Backing Depth
+Translated:Profondità di appoggio
+
 English:Backup Firmware Before Update
 Translated:Firmware di backup prima dell'aggiornamento
-
-English:BadSubtract
-Translated:BadSubtract
 
 English:Base
 Translated:Base
@@ -302,13 +326,16 @@ English:Before Tool Change
 Translated:Prima del cambio utensile
 
 English:Before Tool Change G-Code
-Translated:Codice G prima di cambio utensile
+Translated:Codice G prima di cambiare utensile
 
 English:Before Tool Change G-Code 2
 Translated:Codice G prima di cambiare utensile 2
 
 English:Behavior
 Translated:Comportamento
+
+English:Bend Up
+Translated:Curvarsi
 
 English:Beta
 Translated:Beta
@@ -358,9 +385,6 @@ Translated:Calibrare l'offset della sonda
 English:Calibration
 Translated:Calibrazione
 
-English:Calibration Error
-Translated:Errore di calibrazione
-
 English:Calibration Files
 Translated:File di calibrazione
 
@@ -403,6 +427,12 @@ Translated:Modificare
 English:Change Password
 Translated:Cambia la password
 
+English:Change the scale of the image within the coin.
+Translated:Cambia la scala dell'immagine all'interno della moneta.
+
+English:Change the width of the image lines.
+Translated:Cambia la larghezza delle linee dell'immagine.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:La modifica del canale di aggiornamento cambierà la versione di MatterControl che ricevi durante l'aggiornamento
 
@@ -425,10 +455,10 @@ English:Checks before each print that the layer height is less than the nozzle d
 Translated:Controlla prima di ogni stampa che l'altezza dello strato è inferiore al diametro dell'ugello (importante per l'adesione del filamento)
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
-Translated:Scegli il comando per mostrare i progressi di stampa sullo schermo LCD della stampante, se ne ha uno.
+Translated:Scegliere il comando per mostrare lo stato di avanzamento sullo schermo LCD della stampante, se disponibile.
 
-English:Clean
-Translated:Pulito
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Scegli il rendering come Braille o testo standard. Questo può aiutare a mostrare come funziona il grado 2.
 
 English:Clean Filament Page
 Translated:Pulire la pagina del filamento
@@ -485,7 +515,7 @@ English:Compile model
 Translated:Modello di compilazione
 
 English:Complete Individual Objects
-Translated:Completa i singoli oggetti
+Translated:Completa singoli oggetti
 
 English:Cone
 Translated:Cono
@@ -518,13 +548,16 @@ English:Connect
 Translated:Collegare
 
 English:Connect Bad Edges
-Translated:Connetti cattivi bordi
+Translated:Collega i bordi difettosi
 
 English:Connect printer (make sure it is on)
 Translated:Collega la stampante (assicurati che sia accesa)
 
 English:Connect to the currently selected printer
 Translated:Connetti alla stampante attualmente selezionata
+
+English:Connect to your printer to continue
+Translated:Connettiti alla tua stampante per continuare
 
 English:Connect your printer to check for firmware updates.
 Translated:Collegare la stampante per verificare gli aggiornamenti del firmware.
@@ -568,23 +601,11 @@ Translated:Soglie di raffreddamento
 English:Copy
 Translated:copia
 
-English:Copy Edges
-Translated:Copia bordi
-
-English:Copy Faces
-Translated:Copia volti
-
 English:Copy Printers
 Translated:Copia stampanti
 
 English:Copy Printers to Account
 Translated:Copia stampanti in account
-
-English:Copy State
-Translated:Copia stato
-
-English:Copy Vertices
-Translated:Copia vertici
 
 English:Cost
 Translated:Costo
@@ -604,6 +625,12 @@ Translated:conteggio o mm
 English:Create
 Translated:Creare
 
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Crea un gancio in modo che la moneta possa essere appesa a una catena.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Crea un gancio in modo che il braille possa essere appeso a una collana oa un portachiavi.
+
 English:Create a printer to export G-Code
 Translated:Crea una stampante per esportare il codice G
 
@@ -615,9 +642,6 @@ Translated:Crea un account
 
 English:Create Brim
 Translated:Crea Brim
-
-English:Create Dictionaries
-Translated:Crea dizionari
 
 English:Create Folder
 Translated:Creare una cartella
@@ -637,11 +661,14 @@ Translated:Crea una zattera
 English:Create Skirt
 Translated:Crea Gonna
 
+English:Create Support
+Translated:Crea supporto
+
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Crea una tesa attaccata alla base della stampa. Utile per evitare deformazioni durante la stampa di ABS (e di altri materiali plastici soggetti a distorsione d'aria) in quanto aiuta le parti ad aderire al letto.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Crea un perimetro attorno alla parte su cui pulire l'altro ugello quando si stampa usando la doppia estrusione. Impostare su 0 per disabilitare.
+Translated:Crea un perimetro attorno alla parte su cui pulire l'altro ugello quando si stampa utilizzando la doppia estrusione. Impostare su 0 per disabilitare.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Crea una zattera sotto la parte stampata. Utile per evitare deformazioni durante la stampa di ABS (e di altri materiali plastici soggetti a distorsione d'aria) in quanto aiuta le parti ad aderire al letto.
@@ -702,6 +729,9 @@ Translated:Modalità demo
 
 English:Density
 Translated:Densità
+
+English:Depth
+Translated:Profondità
 
 English:Descending
 Translated:Discendente
@@ -773,7 +803,7 @@ English:Distance From Object
 Translated:Distanza dall'oggetto
 
 English:Distance or Loops
-Translated:Distanza o loop
+Translated:Distanza o cicli
 
 English:Done
 Translated:Fatto
@@ -806,7 +836,7 @@ English:Duplicate
 Translated:Duplicare
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:Ogni singola parte viene stampata per il completamento, quindi l'ugello viene abbassato sul letto e la parte successiva viene stampata.
+Translated:Ogni singola parte viene stampata fino al completamento, quindi l'ugello viene abbassato sul letto e la parte successiva viene stampata.
 
 English:edit
 Translated:modificare
@@ -833,7 +863,7 @@ English:Edit Selected Setting
 Translated:Modifica impostazioni selezionate
 
 English:Editor Selector
-Translated:Editor Selector
+Translated:Editor Selettore
 
 English:EEProm Settings
 Translated:Impostazioni EEProm
@@ -848,7 +878,7 @@ English:Email Address
 Translated:Indirizzo email
 
 English:Enable Auto Cooling
-Translated:Abilita raffreddamento automatico
+Translated:Abilita il raffreddamento automatico
 
 English:Enable Extruder Lift
 Translated:Abilita sollevamento dell'estrusore
@@ -872,7 +902,13 @@ English:End
 Translated:Fine
 
 English:End G-Code
-Translated:Fine G-Code
+Translated:Fine codice G
+
+English:Ensure that the part maintains its proportions.
+Translated:Assicurarsi che la parte mantenga le sue proporzioni.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Assicura che la parte ruotata abbia un numero minimo di lati per rotazione completa
 
 English:Enter a Design Name Here
 Translated:Inserisci qui un nome per il design
@@ -900,6 +936,9 @@ Translated:Inserisci la tua password
 
 English:Enter your username or email address
 Translated:Inserisci il tuo nome utente o indirizzo email
+
+English:Error
+Translated:Errore
 
 English:Error compiling OpenSCAD script
 Translated:Errore durante la compilazione dello script OpenSCAD
@@ -952,8 +991,8 @@ Translated:Esporta EEPROM
 English:Export EEPROM Settings
 Translated:Esportare le impostazioni EEPROM
 
-English:Export failed
-Translated:Esportazione fallita
+English:Export Error
+Translated:Errore di esportazione
 
 English:Export File
 Translated:Esporta file
@@ -1069,6 +1108,9 @@ Translated:filtri
 English:Finally click 'Next' to continue.
 Translated:Infine fai clic su "Avanti" per continuare.
 
+English:Find and create supports where needed
+Translated:Trova e crea supporti dove necessario
+
 English:Finish
 Translated:finire
 
@@ -1123,6 +1165,9 @@ Translated:Piatto
 English:Flatten
 Translated:Appiattire
 
+English:Flattened
+Translated:appiattito
+
 English:Folder Name
 Translated:Nome della cartella
 
@@ -1136,7 +1181,7 @@ English:Forces external perimeters to be printed first. By default, they will pr
 Translated:Forza prima i perimetri esterni da stampare. Per impostazione predefinita, stamperanno per ultimi.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:Forza la stampa per avere una sola estrusione e aumentare gradualmente l'altezza Z durante la stampa. Solo una parte verrà stampata alla volta con questa funzione.
+Translated:Forza la stampa di avere una sola estrusione e aumentare gradualmente l'altezza Z durante la stampa. Solo una parte verrà stampata alla volta con questa funzione.
 
 English:Forces the printer to heat the nozzle before homing.
 Translated:Forza la stampante a riscaldare l'ugello prima della corsa di riferimento.
@@ -1169,10 +1214,16 @@ English:G-Code Output
 Translated:G-Code Output
 
 English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:Codice G da eseguire dopo ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione di offset.
+Translated:Codice G da eseguire dopo ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione offset.
+
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:Codice G da eseguire dopo ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la compensazione della posizione.
 
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:Codice G da eseguire dopo il passaggio all'estrusore 2. Utilizzerà lo standard dopo il codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione di offset.
+Translated:Codice G da eseguire dopo il passaggio all'estrusore 2. Utilizzerà lo standard dopo il codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione offset.
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:Codice G da eseguire dopo il passaggio all'estrusore 2. Utilizzerà lo standard dopo il codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la compensazione della posizione.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:Codice G da eseguire dopo la modifica dell'altezza Z per il livello successivo.
@@ -1181,10 +1232,16 @@ English:G-Code to be run at the end of all automatic output (the very end of the
 Translated:G-Code da eseguire alla fine di tutti gli output automatici (la fine dei comandi G-Code).
 
 English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:Codice G da eseguire prima di ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione di offset.
+Translated:Codice G da eseguire prima di ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione offset.
+
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:Codice G da eseguire prima di ogni cambio utensile. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la compensazione della posizione.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:Codice G da eseguire prima di passare all'estrusore 2. Utilizzerà lo standard prima del codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione di offset.
+Translated:Codice G da eseguire prima di passare all'estrusore 2. Utilizzerà lo standard prima del codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la posizione offset.
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:Codice G da eseguire prima di passare all'estrusore 2. Utilizzerà lo standard prima del codice G se non impostato. Puoi utilizzare [wipe_tower_x] [wipe_tower_y] e [wipe_tower_z] per impostare la posizione dell'estrusore se necessario. Puoi anche usare '; WRITE_RAW 'per saltare i checksum o'; NO_PROCESSING 'per saltare la compensazione della posizione.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
 Translated:Il codice G deve essere eseguito immediatamente dopo i comandi di impostazione della temperatura. Includendo i comandi per impostare la temperatura in questa sezione, non verranno generati al di fuori di questa sezione. Accetterà le variabili G-Code personalizzate.
@@ -1204,17 +1261,17 @@ Translated:Codice G da eseguire quando la stampante è in pausa.
 English:General
 Translated:Generale
 
-English:Generate Support Material
-Translated:Genera materiale di supporto
+English:Generate
+Translated:creare
+
+English:Generate Support
+Translated:Genera supporto
+
+English:Generate Supports
+Translated:Genera supporti
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Genera un contorno attorno al materiale di supporto per migliorare la forza e mantenere i livelli dell'interfaccia.
-
-English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:Genera materiale di supporto che inizia sopra le superfici interne. Se il supporto deselezionato verrà generato solo a partire dal letto.
-
-English:Generates support material under areas of the part which may be too steep to support themselves.
-Translated:Genera materiale di supporto sotto le aree della parte che possono essere troppo ripide per sostenersi.
 
 English:Generating Lithophane
 Translated:Generazione di litofano
@@ -1364,10 +1421,10 @@ English:If set, the printer will automatically attempt to connect when selected.
 Translated:Se impostato, la stampante tenterà automaticamente di connettersi quando selezionato.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:Se l'estrusore è in funzione da molto tempo, potrebbe riportare valori troppo grandi, ciò verrà periodicamente ripristinato.
+Translated:Se l'estrusore è in funzione da molto tempo, potrebbe riportare valori troppo grandi, questo lo ripristinerà periodicamente.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:Se il tempo per stampare un livello è inferiore a questo, la ventola si accenderà alla sua velocità minima. Riattiverà quindi la sua velocità massima al diminuire del tempo del livello.
+Translated:Se il tempo per stampare un livello è inferiore a questo, la ventola si accenderà alla sua velocità minima. Quindi salirà alla massima velocità man mano che il tempo del livello diminuirà.
 
 English:If you wish to re-calibrate leveling in the future:
 Translated:Se desideri ricalibrare il livellamento in futuro:
@@ -1394,22 +1451,22 @@ English:Import EEPROM
 Translated:Importa EEPROM
 
 English:Import EEPROM Settings
-Translated:Importa le impostazioni EEPROM
+Translated:Importa impostazioni EEPROM
 
 English:Import Presets
-Translated:Importa preset
+Translated:Importa preimpostazioni
 
 English:Import Printer
 Translated:Importa stampante
 
 English:Import Successful
-Translated:Importato con successo
+Translated:Importa con successo
 
 English:Import Wizard
 Translated:Importazione guidata
 
 English:Include a picture of my print
-Translated:Includi un'immagine della mia stampa
+Translated:Includi una foto della mia stampa
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
 Translated:Indica che l'asse Z ospita l'estremità calda lontano dal letto (z-max homing)
@@ -1444,8 +1501,11 @@ Translated:Inizializzazione dell'hardware ...
 English:Initializing Library
 Translated:Inizializzazione della libreria
 
-English:Insert
-Translated:Inserire
+English:Inner Radius
+Translated:Raggio interno
+
+English:Inner Size
+Translated:Dimensione interna
 
 English:Insert Filament
 Translated:Inserisci filamento
@@ -1466,7 +1526,7 @@ English:Interface Layers
 Translated:Livelli di interfaccia
 
 English:Interface Tour
-Translated:Tour dell'interfaccia
+Translated:Tour di interfaccia
 
 English:Intersect
 Translated:intersecare
@@ -1498,6 +1558,12 @@ Translated:Sembra che l'ultima stampa non sia stata completata.\n\nVorresti tent
 English:It is currently set to {0}.
 Translated:Attualmente è impostato su {0}.
 
+English:Item cannot be exported
+Translated:L'articolo non può essere esportato
+
+English:Item cannot be exported as STL
+Translated:L'articolo non può essere esportato come STL
+
 English:Item not Found
 Translated:Articolo non trovato
 
@@ -1506,6 +1572,12 @@ Translated:È ora di copiare le impostazioni della stampante esistenti sul tuo a
 
 English:Jerk Velocity
 Translated:Jerk Velocity
+
+English:Keep the entire extents of the part within the angle described.
+Translated:Mantenere l'intera estensione della parte entro l'angolo descritto.
+
+English:Keep Within Angle
+Translated:Tieni dentro l'angolo
 
 English:Keys
 Translated:chiavi
@@ -1550,13 +1622,19 @@ English:left drag
 Translated:resistenza a sinistra
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:Lunghezza del filamento extra da estrudere dopo un cambio utensile completo (oltre alla ri-estrusione della distanza di retrazione cambio utensile).
+Translated:Lunghezza del filamento extra da estrudere dopo un cambio utensile completo (oltre alla riestrusione della distanza di retrazione cambio utensile).
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
 Translated:Lunghezza del filamento da estrudere dopo una retrazione completa (oltre alla ri-estrusione della lunghezza sulla distanza di spostamento).
 
 English:Length on Tool Change
 Translated:Lunghezza sul cambio utensile
+
+English:Let's show you around before you get started.
+Translated:Ti mostriamo in giro prima di iniziare.
+
+English:Letter
+Translated:Lettera
 
 English:Leveling
 Translated:Livellamento
@@ -1574,7 +1652,7 @@ English:Library
 Translated:Biblioteca
 
 English:Library - Enter Share Code
-Translated:Libreria - Inserisci il codice di condivisione
+Translated:Libreria: inserire il codice di condivisione
 
 English:Limited Connectivity
 Translated:Connettività limitata
@@ -1601,7 +1679,7 @@ English:Load Filament
 Translated:Carica filamento
 
 English:Load Filament Length
-Translated:Caricare la lunghezza del filamento
+Translated:Carica la lunghezza del filamento
 
 English:Load Filament Wizard
 Translated:Carica guidata filamento
@@ -1616,7 +1694,7 @@ English:Loading Bed
 Translated:Caricamento del letto
 
 English:Loading Filament
-Translated:Caricamento del filamento
+Translated:Caricamento Filamento
 
 English:Loading GCode
 Translated:Caricamento GCode
@@ -1655,10 +1733,13 @@ English:Macro Name
 Translated:Nome macro
 
 English:Macro Presets
-Translated:Preset macro
+Translated:Preimpostazioni macro
 
 English:Macros
 Translated:Macro
+
+English:Maintain Proportions
+Translated:Mantenere le proporzioni
 
 English:make
 Translated:rendere
@@ -1671,9 +1752,6 @@ Translated:Crea componente
 
 English:Make Selection
 Translated:Fare selezione
-
-English:Make Support
-Translated:Fai supporto
 
 English:Make sure the first point on a perimeter is a concave point.
 Translated:Assicurati che il primo punto su un perimetro sia un punto concavo.
@@ -1704,9 +1782,6 @@ Translated:Materiale
 
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:Densità del materiale Utilizzato solo per stimare la massa nella vista livello.
-
-English:Material Loading
-Translated:Caricamento del materiale
 
 English:Materials
 Translated:materiale
@@ -1862,7 +1937,7 @@ English:Move Y positive
 Translated:Muovi Y positivo
 
 English:Move Z negative
-Translated:Sposta Z negativo
+Translated:Muovi Z negativo
 
 English:Move Z positive
 Translated:Muovi Z positivo
@@ -1890,9 +1965,6 @@ Translated:Le mie impostazioni modificate (stampante)
 
 English:Name
 Translated:Nome
-
-English:Need to connect before printing
-Translated:È necessario connettersi prima di stampare
 
 English:Networked Printing
 Translated:Stampa in rete
@@ -1924,6 +1996,12 @@ Translated:Nessun colore
 English:No COM ports available
 Translated:Nessuna porta COM disponibile
 
+English:No items to Export
+Translated:Nessun articolo da esportare
+
+English:No Items to Export
+Translated:Nessun oggetto da esportare
+
 English:No macros are currently set up for this printer.
 Translated:Nessuna macro è attualmente impostata per questa stampante.
 
@@ -1933,8 +2011,11 @@ Translated:Nessuna stampante selezionata
 English:None
 Translated:Nessuna
 
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Normalmente l'immagine viene espansa fino al bordo. Questo cercherà di centrare il peso dell'immagine visivamente.
+
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:Normalmente vorrai usare le distanze assolute. Controllalo solo se sai che la tua stampante ha bisogno di distanze relative.
+Translated:Normalmente vorrai usare le distanze e assolute. Controllalo solo se sai che la tua stampante ha bisogno di distanze relative.
 
 English:Not Connected
 Translated:Non collegato
@@ -1947,6 +2028,9 @@ Translated:NOTA: potrebbero essere applicate tariffe di messaggistica standard.
 
 English:Notifications
 Translated:notifiche
+
+English:Nozzle
+Translated:Ugello
 
 English:Nozzle Diameter
 Translated:Diametro dell'ugello
@@ -1971,6 +2055,9 @@ Translated:di
 
 English:Off
 Translated:via
+
+English:Offset
+Translated:Compensare
 
 English:Ok
 Translated:Ok
@@ -2048,7 +2135,7 @@ English:Oops! You cannot share this item.
 Translated:Oops! Non puoi condividere questo oggetto.
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:Oops! La tua sessione è scaduta. Accedi di nuovo per continuare.
+Translated:Oops! La tua sessione è scaduta. Effettua nuovamente l'accesso per continuare.
 
 English:Open
 Translated:Aperto
@@ -2068,9 +2155,6 @@ Translated:Aperto di recente
 English:OpenSCAD not installed
 Translated:OpenSCAD non installato
 
-English:Optionally, click below to get help loading this material
-Translated:Facoltativamente, fai clic di seguito per ricevere assistenza per il caricamento di questo materiale
-
 English:Options
 Translated:Opzioni
 
@@ -2079,6 +2163,12 @@ Translated:o
 
 English:Other
 Translated:Altro
+
+English:Outer Radius
+Translated:Raggio esterno
+
+English:Outer Size
+Translated:Dimensione esterna
 
 English:Outer Surface - Perimeters
 Translated:Superficie esterna - Perimetri
@@ -2098,14 +2188,14 @@ Translated:Perimetri esterni
 English:Overhang
 Translated:Sporgenza
 
+English:Overhang Angle
+Translated:Angolo di sbalzo
+
 English:Pan
 Translated:Pan
 
 English:Pan View
 Translated:Pan View
-
-English:Parse Error while slicing
-Translated:Errore durante l'analisi
 
 English:Part Cooling Fan
 Translated:Ventola di raffreddamento parziale
@@ -2143,6 +2233,9 @@ Translated:Pausa stampa
 English:Paused
 Translated:In pausa
 
+English:Percentage of
+Translated:Percentuale di
+
 English:perimeters
 Translated:perimetri
 
@@ -2155,11 +2248,17 @@ Translated:Permesso negato
 English:PID Settings
 Translated:Impostazioni PID
 
+English:Pillar Size
+Translated:Dimensione del pilastro
+
 English:Pinch
 Translated:Pizzico
 
 English:Pipe Works
 Translated:Pipe funziona
+
+English:Pixels Per mm
+Translated:Pixel per mm
 
 English:Place the paper under the extruder
 Translated:Posizionare la carta sotto l'estrusore
@@ -2248,8 +2347,14 @@ Translated:Premere [Z-] fino a quando non vi è resistenza allo spostamento dell
 English:Press [Z+] once to release the paper
 Translated:Premere [Z +] una volta per rilasciare la carta
 
+English:Prev
+Translated:prev
+
 English:Preview
 Translated:Anteprima
+
+English:Primary
+Translated:Primario
 
 English:Primitive Shapes
 Translated:Forme primitive
@@ -2267,7 +2372,7 @@ English:Print History
 Translated:Storia di stampa
 
 English:Print Leveling
-Translated:Livellamento di stampa
+Translated:Livellamento della stampa
 
 English:Print Leveling Overview
 Translated:Panoramica sul livellamento di stampa
@@ -2282,13 +2387,16 @@ English:Print Queue
 Translated:Coda di stampa
 
 English:Print Recovery
-Translated:Ripristino stampa
+Translated:Stampa recupero
 
 English:Print Time
 Translated:Tempo di stampa
 
 English:Printer
 Translated:Stampante
+
+English:Printer Disconnected
+Translated:Stampante disconnessa
 
 English:Printer Hardware Error
 Translated:Errore hardware della stampante
@@ -2307,6 +2415,12 @@ Translated:Stampante in pausa
 
 English:Printer Setup
 Translated:Impostazioni della stampante
+
+English:Printer Setup must be run before printing
+Translated:La configurazione della stampante deve essere eseguita prima della stampa
+
+English:Printer Setup Required
+Translated:Impostazione della stampante richiesta
 
 English:Printers
 Translated:stampanti
@@ -2330,7 +2444,7 @@ English:Probe Calibration Overview
 Translated:Panoramica sulla calibrazione della sonda
 
 English:Probe Calibration Wizard
-Translated:Procedura guidata per la calibrazione della sonda
+Translated:Procedura guidata di calibrazione della sonda
 
 English:Probe Has Been Calibrated
 Translated:La sonda è stata calibrata
@@ -2381,7 +2495,10 @@ English:Raise / Stow
 Translated:Alza / Stow
 
 English:Randomize Starting Points
-Translated:Randomizza punti di partenza
+Translated:Randomizza i punti di partenza
+
+English:Reach
+Translated:Raggiungere
 
 English:Read Filter
 Translated:Leggi Filtro
@@ -2393,7 +2510,7 @@ English:Rebuild
 Translated:Ricostruire
 
 English:Rebuild Thumbnails Now
-Translated:Ricostruisci le miniature adesso
+Translated:Ricreare miniature ora
 
 English:Recommended Update Available
 Translated:Aggiornamento consigliato disponibile
@@ -2405,7 +2522,7 @@ English:Recover Layer Speed
 Translated:Recupera velocità layer
 
 English:Recover Print
-Translated:Recupera stampa
+Translated:Ripristina stampa
 
 English:recovered once
 Translated:recuperato una volta
@@ -2428,9 +2545,6 @@ Translated:Reinserire la password
 English:Refresh
 Translated:ricaricare
 
-English:Registered
-Translated:Registrato
-
 English:Release
 Translated:pubblicazione
 
@@ -2449,8 +2563,11 @@ Translated:rimuovere
 English:Remove
 Translated:Rimuovere
 
+English:Remove all auto generated supports
+Translated:Rimuovi tutti i supporti generati automaticamente
+
 English:Remove Items?
-Translated:Rimuovere gli articoli?
+Translated:Rimuovere gli oggetti?
 
 English:Remove the paper
 Translated:Rimuovere la carta
@@ -2468,7 +2585,7 @@ English:Report a Bug
 Translated:Segnalare un bug
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Richiedere al firmware di effettuare le retrazioni piuttosto che specificare direttamente i movimenti dell'estrusore.
+Translated:Richiedere al firmware di eseguire le ritrattazioni anziché specificare direttamente i movimenti dell'estrusore.
 
 English:Require Leveling To Print
 Translated:Richiedi il livellamento per stampare
@@ -2518,6 +2635,9 @@ Translated:Riprendi G-Code
 English:Resume Print
 Translated:Riprendi stampa
 
+English:Resume Printing
+Translated:Riprendi stampa
+
 English:Retract
 Translated:Ritrattare
 
@@ -2540,13 +2660,13 @@ English:Retractions
 Translated:ritrattazioni
 
 English:Retrieving download info...
-Translated:Recupero informazioni di download ...
+Translated:Recupero delle informazioni di download ...
 
 English:Retrieving sync information...
 Translated:Recupero delle informazioni di sincronizzazione ...
 
 English:Retry Login
-Translated:Riprova Login
+Translated:Riprova login
 
 English:Revert
 Translated:ritornare
@@ -2575,6 +2695,21 @@ Translated:Ruotare
 English:Rotate (Alt + Left Mouse)
 Translated:Ruota (Alt + Sinistra)
 
+English:Rotate About
+Translated:Ruota Informazioni
+
+English:Rotate about the X axis
+Translated:Ruota attorno all'asse X.
+
+English:Rotate about the Y axis
+Translated:Ruota attorno all'asse Y.
+
+English:Rotate about the Z axis
+Translated:Ruota attorno all'asse Z.
+
+English:Rotate the part to the same angle as the array.
+Translated:Ruota la parte allo stesso angolo dell'array.
+
 English:Rotate View
 Translated:Ruota vista
 
@@ -2586,9 +2721,6 @@ Translated:Esegui calibrazione
 
 English:Run Max if Below
 Translated:Esegui max se sotto
-
-English:Run setup configuration for printer.
-Translated:Esegui la configurazione di configurazione per la stampante.
 
 English:s
 Translated:S
@@ -2630,7 +2762,7 @@ English:Saving
 Translated:Salvataggio
 
 English:Saving Asset
-Translated:Salvataggio di risorse
+Translated:Risparmio di risorse
 
 English:Saving changes
 Translated:Salvataggio delle modifiche
@@ -2711,13 +2843,13 @@ English:Send
 Translated:Inviare
 
 English:Send email notifications
-Translated:Invia notifiche via email
+Translated:Invia notifiche email
 
 English:Send SMS notifications
 Translated:Invia notifiche SMS
 
 English:Send With Checksum
-Translated:Invia con il checksum
+Translated:Invia con checksum
 
 English:Serial Port
 Translated:Porta seriale
@@ -2737,11 +2869,20 @@ Translated:Sessione scaduta
 English:Set as Default
 Translated:Imposta come predefinito
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Impostare le regole su come mantenere la parte durante il ridimensionamento.
+
+English:Set the shape the part will be fit into.
+Translated:Imposta la forma in cui la parte sarà adattata.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Imposta MatterControl per tentare di connettersi a una stampante attraverso la rete. (È necessario disconnettere e riconnettersi affinché ciò abbia effetto)
+Translated:Imposta MatterControl per tentare di connettersi a una stampante attraverso la rete. (È necessario disconnettersi e riconnettersi affinché ciò abbia effetto)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
-Translated:Imposta MatterControl per utilizzare il metodo di comunicazione s3g. (È necessario disconnettere e riconnettersi affinché ciò abbia effetto)
+Translated:Imposta MatterControl per utilizzare il metodo di comunicazione s3g. (È necessario disconnettersi e riconnettersi affinché ciò abbia effetto)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Imposta la profondità della tessera su cui è stampato il Braille
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Imposta i modelli che verranno aggiunti alla coda quando viene creata una nuova stampante.
@@ -2752,17 +2893,14 @@ Translated:Imposta la dimensione della superficie solida esterna (perimetro) per
 English:Settings
 Translated:impostazioni
 
+English:Setup
+Translated:Impostare
+
 English:Setup Needs to be Run
 Translated:L'installazione deve essere eseguita
 
-English:Setup needs to be run before printing
-Translated:L'installazione deve essere eseguita prima della stampa
-
 English:Setup Wizard
 Translated:Installazione guidata
-
-English:Setup...
-Translated:Impostare...
 
 English:Shaded
 Translated:ombroso
@@ -2858,7 +2996,7 @@ English:Skip
 Translated:Salta
 
 English:Skip Connection Setup
-Translated:Ignora configurazione connessione
+Translated:Ignora installazione connessione
 
 English:Skirt
 Translated:Gonna
@@ -2872,9 +3010,6 @@ Translated:gonne
 English:Slice
 Translated:Fetta
 
-English:Slice Error
-Translated:Errore di sezione
-
 English:Slice Presets Editor
 Translated:Slice Presets Editor
 
@@ -2883,6 +3018,9 @@ Translated:Impostazioni delle sezioni
 
 English:Slicing
 Translated:Affettare
+
+English:Slicing Error
+Translated:Errore di taglio
 
 English:Slicing Item
 Translated:Affettare l'elemento
@@ -2910,6 +3048,12 @@ Translated:Riempimento solido
 
 English:Some features may require an internet connection.
 Translated:Alcune funzionalità potrebbero richiedere una connessione Internet.
+
+English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
+Translated:Alcune parti sembrano richiedere supporto. Valuta di aggiungere supporto e riesportare per ottenere i migliori risultati possibili.
+
+English:Some parts are unsupported and require support structures to print correctly
+Translated:Alcune parti non sono supportate e richiedono strutture di supporto per stampare correttamente
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 Translated:A volte una maglia non ha chiuso un perimetro. Quando questo è controllato questi perimetri non chiusi mentre sono chiusi.
@@ -2963,7 +3107,7 @@ English:Speed for Infill
 Translated:Velocità per riempimento
 
 English:Speed for Perimeters
-Translated:Velocità per perimetri
+Translated:Velocità per i perimetri
 
 English:Speed Multiplier
 Translated:Moltiplicatore di velocità
@@ -2996,7 +3140,7 @@ English:Start At Non Overhang
 Translated:Inizia a non sporgere
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:Iniziare ogni nuovo livello da un vertice diverso per ridurre le cuciture.
+Translated:Inizia ogni nuovo livello da un vertice diverso per ridurre le cuciture.
 
 English:Start End Overlap
 Translated:Inizia fine sovrapposizione
@@ -3067,6 +3211,9 @@ Translated:Sottrarre
 English:Subtract & Replace
 Translated:Sottrai e sostituisci
 
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Sottrarre l'immagine da un disco in modo da stampare lo spazio negativo.
+
 English:Success
 Translated:Successo
 
@@ -3088,9 +3235,6 @@ Translated:Successo!\n\nIl tuo filamento dovrebbe ora essere scaricato
 English:Support
 Translated:Supporto
 
-English:Support Everywhere
-Translated:Supporto ovunque
-
 English:Support Interface Extruder
 Translated:Support Interface Extruder
 
@@ -3098,7 +3242,7 @@ English:Support Material
 Translated:Materiale di supporto
 
 English:Support Material Extruder
-Translated:Supporto estrusore materiale
+Translated:Materiale di supporto estrusore
 
 English:Support Options
 Translated:Opzioni di supporto
@@ -3116,7 +3260,7 @@ English:Switch
 Translated:Interruttore
 
 English:Switch the settings interface to one intended for SLA printers.
-Translated:Passa l'interfaccia delle impostazioni a quella destinata alle stampanti SLA.
+Translated:Cambia l'interfaccia delle impostazioni in una delle stampanti SLA.
 
 English:Switch to new G-Code?
 Translated:Passa al nuovo codice G?
@@ -3153,12 +3297,6 @@ Translated:temperature
 
 English:Terminal
 Translated:terminale
-
-English:Test Parts
-Translated:Parti di prova
-
-English:TestPart
-Translated:TestPart
 
 English:Text
 Translated:Testo
@@ -3202,6 +3340,9 @@ Translated:L'angolo con cui verranno disegnate le linee del materiale di support
 English:The angle of the infill, measured from the X axis. Not used when bridging.
 Translated:L'angolo del riempimento, misurato dall'asse X. Non utilizzato durante il collegamento.
 
+English:The angle to generate support for
+Translated:L'angolo per generare supporto per
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:Il letto è attualmente riscaldato e la sua temperatura target non può essere modificata fino a raggiungere {0} ° C.\n\nÈ possibile impostare la temperatura del letto di partenza in IMPOSTAZIONI -> Filamento -> Temperature.\n\n{1}
 
@@ -3239,7 +3380,7 @@ English:The distance the z probe is from the extruder in x and y.
 Translated:La distanza dalla sonda z proviene dall'estrusore in xey.
 
 English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-Translated:La distanza dalla sonda z dall'estrusore in z. Per il sondaggio manuale, questo è lo spessore della carta (o altro dispositivo di calibrazione).
+Translated:La distanza dalla sonda z dall'estrusore in z. Per la tastatura manuale, questo è lo spessore della carta (o altro dispositivo di calibrazione).
 
 English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
 Translated:La distanza per spostare l'ugello lungo l'asse Z per garantire che sia la distanza corretta dal piano di stampa. Un numero positivo solleverà l'ugello e un numero negativo lo abbasserà.
@@ -3266,7 +3407,7 @@ English:The index of the extruder to use for printing support material. Applicab
 Translated:L'indice dell'estrusore da utilizzare per la stampa del materiale di supporto. Applicabile solo quando Count contatore è impostato su un valore superiore a 1.
 
 English:The index of the extruder to use for support material interface layer(s).
-Translated:L'indice dell'estrusore da utilizzare per i layer dell'interfaccia materiale di supporto.
+Translated:L'indice dell'estrusore da utilizzare per i layer dell'interfaccia del materiale di supporto.
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:L'indice dell'estrusore da utilizzare per stampare la zattera. Impostare su 0 per utilizzare l'indice dell'estrusore di supporto.
@@ -3290,7 +3431,7 @@ English:The maximum amount the printer can accelerate on a G-Code move.
 Translated:La quantità massima che la stampante può accelerare con una mossa G-Code.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:La velocità massima a cui verrà eseguita la ventola di raffreddamento del layer, espressa come percentuale della piena potenza.
+Translated:La velocità massima a cui verrà eseguita la ventola di raffreddamento del layer, espressa in percentuale della piena potenza.
 
 English:The maximum speed that the printer treats as 0 and changes direction instantly.
 Translated:La velocità massima che la stampante tratta come 0 e cambia direzione all'istante.
@@ -3299,7 +3440,7 @@ English:The maximum speed the printer can move.
 Translated:La velocità massima che la stampante può spostare.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:La quantità minima di tempo che un livello deve impiegare per stampare. Se uno strato impiega meno di questo tempo, la velocità di movimento viene ridotta in modo che il tempo di stampa dello strato corrisponda a questo valore, fino alla velocità minima di stampa più lenta.
+Translated:La quantità minima di tempo che un livello deve impiegare per stampare. Se uno strato impiega meno di questo tempo, la velocità di movimento viene ridotta in modo che il tempo di stampa del livello corrisponda a questo valore, fino alla velocità minima di stampa più lenta.
 
 English:The minimum distance of a non-print move which will trigger a retraction.
 Translated:La distanza minima di una mossa non stampabile che attiverà una ritrazione.
@@ -3308,25 +3449,25 @@ English:The minimum feature size to consider from the model. Leave at 0 to use a
 Translated:La dimensione minima della feature da considerare dal modello. Lasciare 0 per utilizzare tutti i dettagli del modello.
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
-Translated:La lunghezza minima del filamento che deve essere estruso prima che si verifichi una ritrazione.
+Translated:La lunghezza minima del filamento che deve essere estrusa prima che si verifichi una ritrazione.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:La lunghezza minima del filamento per utilizzare la stampa dei passanti. Sarà sufficiente utilizzare i loop della gonna per utilizzare questa quantità di filamento, ignorando il valore impostato in Loops se il valore in Loops produrrà una gonna più corta rispetto a questo valore.
+Translated:La lunghezza minima del filamento per utilizzare la stampa dei passanti. Sarà necessario disegnare abbastanza loop per utilizzare questa quantità di filamento, ignorando il valore impostato in Loop se il valore in Loops produrrà una gonna più corta di questo valore.
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:La velocità minima a cui verrà eseguita la ventola di raffreddamento del layer, espressa come percentuale della piena potenza.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:La velocità minima a cui la stampante si ridurrà per tentare di rendere il tempo di stampa del livello sufficientemente lungo da soddisfare il tempo minimo del layer.
+Translated:La velocità minima a cui la stampante si ridurrà per tentare di rendere il tempo di stampa del livello abbastanza lungo da soddisfare il tempo minimo del layer.
 
 English:The next few screens will walk your through calibrating your printer.
-Translated:Le prossime schermate illustreranno la tua stampante.
+Translated:Le prossime schermate spiegheranno come calibrare la tua stampante.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:Il numero di core della CPU da utilizzare durante l'esecuzione dell'affettatura. Aumentando questo si può rallentare la macchina.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
-Translated:Il numero di gradi centigradi per abbassare la temperatura di un ugello mentre non è attivo.
+Translated:Il numero di gradi Centigradi per abbassare la temperatura di un ugello mentre non è attivo.
 
 English:The number of extruders the printer has.
 Translated:Il numero di estrusori della stampante.
@@ -3359,7 +3500,7 @@ English:The number of times to sample each probe position (results will be avera
 Translated:Il numero di volte per campionare ciascuna posizione della sonda (i risultati verranno calcolati in media).
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:Il numero, o larghezza totale, di shell esterne da creare. Aggiungi mm alla fine del numero per specificare la larghezza in millimetri.
+Translated:Il numero o la larghezza totale delle shell esterne da creare. Aggiungi mm alla fine del numero per specificare la larghezza in millimetri.
 
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 Translated:L'offset di ciascun ugello rispetto al primo ugello. Utile solo per più macchine per estrusori.
@@ -3431,7 +3572,7 @@ English:The shape of the physical print bed.
 Translated:La forma del letto di stampa fisica.
 
 English:The speed at which bridging between walls will print.
-Translated:La velocità con cui verrà eseguito il collegamento tra le pareti.
+Translated:La velocità con cui verrà eseguito il collegamento tra i muri verrà stampata.
 
 English:The speed at which filament will retract and re-extrude.
 Translated:La velocità con cui il filamento si ritira e ri-estrude.
@@ -3452,7 +3593,7 @@ English:The speed at which the air gap layer will print.
 Translated:La velocità con cui verrà stampato lo strato di traferro.
 
 English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
-Translated:La velocità con cui verranno stampati i livelli solidi inferiori. Può essere impostato in modo esplicito o come percentuale della velocità di riempimento. Usa 0 per abbinare la velocità di riempimento.
+Translated:La velocità con cui verranno stampati gli strati solidi inferiori. Può essere impostato in modo esplicito o come percentuale della velocità di riempimento. Utilizzare 0 per abbinare la velocità di riempimento.
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
 Translated:La velocità con cui verrà eseguita la ventola di raffreddamento del layer durante il bridging, espressa come percentuale della piena potenza.
@@ -3473,13 +3614,13 @@ English:The speed at which the top solid layers will print. Can be set explicitl
 Translated:La velocità con cui verranno stampati i primi strati solidi. Può essere impostato in modo esplicito o come percentuale della velocità di riempimento.
 
 English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:La velocità per spostare il laser quando l'altezza dello strato è 0.025mm. La velocità verrà regolata linearmente ad altre altezze.
+Translated:La velocità per spostare il laser quando l'altezza dello strato è 0,025 mm. La velocità verrà regolata linearmente ad altre altezze.
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
 Translated:La velocità per spostare il laser quando l'altezza dello strato è 0.1mm. La velocità verrà regolata linearmente ad altre altezze.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:La velocità di stampa del riempimento quando è completamente solida. Questo può essere impostato in modo esplicito o come percentuale della velocità di riempimento.
+Translated:La velocità per stampare il riempimento quando completamente solido. Questo può essere impostato in modo esplicito o come percentuale della velocità di riempimento.
 
 English:The speed to run filament into and out of the printer.
 Translated:La velocità per far funzionare il filamento dentro e fuori la stampante.
@@ -3500,7 +3641,7 @@ English:The temperature to which the bed will heat (or cool) in order to remove 
 Translated:La temperatura alla quale il letto si riscalda (o si raffredda) per rimuovere la parte, come specificato nel codice G personalizzato.
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:La temperatura a cui verrà riscaldato l'ugello prima di stampare il primo strato di una parte. La stampante attenderà fino al raggiungimento di questa temperatura prima della stampa.
+Translated:La temperatura a cui verrà riscaldato l'ugello prima di stampare il primo strato di un pezzo. La stampante attenderà fino a quando questa temperatura non sarà stata raggiunta prima di stampare.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
 Translated:Il termine "Baud Rate" indica approssimativamente la velocità alla quale vengono trasmessi i dati. Le velocità di trasmissione possono variare da stampante a stampante \ n. Fare riferimento al manuale della stampante per maggiori informazioni.\n\nSuggerimento: se non sei sicuro, prova 250000.
@@ -3509,7 +3650,7 @@ English:The thickness of each layer of the print, except the first layer. A smal
 Translated:Lo spessore di ogni strato della stampa, ad eccezione del primo strato. Un numero inferiore creerà più livelli e più precisione verticale, ma anche una stampa più lenta.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:Lo spessore del primo strato. Un primo strato più alto dello spessore predefinito dello strato può assicurare una buona adesione alla piastra di costruzione.
+Translated:Lo spessore del primo strato. Un primo strato più alto dello spessore predefinito dello strato può garantire una buona adesione alla piastra di costruzione.
 
 English:The time it will take to unload the filament
 Translated:Il tempo necessario per scaricare il filamento
@@ -3521,13 +3662,16 @@ English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease 
 Translated:Il tempo per stampare questo codice G è stimato in {0} secondi.\n\nSi prega di controllare la parte per errori se questo è inaspettato.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:La versione di G-Code con cui comunica il firmware della stampante. Alcuni firmware utilizzano diversi codici G e M. Impostando questo si assicura che l'output G-Code userà i comandi corretti.
+Translated:La versione di G-Code con cui il firmware della stampante comunica. Alcuni firmware utilizzano diversi codici G e M. Impostando questo si assicura che l'output G-Code userà i comandi corretti.
+
+English:The width and depth of the support pillars
+Translated:La larghezza e la profondità dei pilastri di supporto
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
 Translated:La posizione X e Y del lato caldo che riduce al minimo la possibilità di collisione con le parti sul letto.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
-Translated:I valori X e Y della dimensione del piano di stampa, in millimetri. Per stampanti con letto circolare, questi valori sono i diametri sugli assi X e Y.
+Translated:I valori X e Y della dimensione del piano di stampa, in millimetri. Per le stampanti con un letto circolare, questi valori sono i diametri sugli assi X e Y.
 
 English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
 Translated:L'offset Z per la stampante, a volte chiamato Baby Stepping, è maggiore di 2 mm e non è valido. Cancellare il valore e riallineare il letto.
@@ -3554,7 +3698,7 @@ English:Thin Walls
 Translated:Pareti sottili
 
 English:This code to will provide read-only access.
-Translated:Questo codice fornirà l'accesso in sola lettura.
+Translated:Questo codice fornirà l'accesso di sola lettura.
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:Questo è un insieme di espressioni regolari da applicare alle linee dopo che sono state ricevute dalla stampante. Saranno applicati per ogni linea ricevuta.
@@ -3576,6 +3720,9 @@ Translated:Questo è il modello di stampante che questo profilo ha come target.
 
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Questo è il nome della stampante che verrà visualizzata nel menu Seleziona stampante.
+
+English:This is the position to perform the scale about.
+Translated:Questa è la posizione su cui eseguire la scala.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
 Translated:Questo per aiutare a ridurre le vibrazioni durante la stampa. Se la tua stampante ha una frequenza di risonanza che causa problemi, puoi impostarla per provare a ridurre la stampa a quella frequenza.
@@ -3628,8 +3775,14 @@ Translated:Per completare i prossimi passaggi necessari
 English:To Folder
 Translated:Alla cartella
 
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Passa dalla specifica alla dimensione o alla percentuale da ridimensionare.
+
 English:Toggle Selection
 Translated:Attiva / disattiva selezione
+
+English:Toggle Support
+Translated:Attiva / disattiva supporto
 
 English:Top Solid Infill
 Translated:Top riempimento solido
@@ -3706,6 +3859,9 @@ Translated:Impossibile importare
 English:Undo
 Translated:Disfare
 
+English:Unexpected error validating settings
+Translated:Errore inaspettato durante la convalida delle impostazioni
+
 English:Unexpected response
 Translated:Risposta inaspettata
 
@@ -3723,6 +3879,9 @@ Translated:Scaricare
 
 English:Unload filament
 Translated:Scarica il filamento
+
+English:Unload Filament
+Translated:Scarica Filament
 
 English:Unload Filament Length
 Translated:Scarica lunghezza del filamento
@@ -3744,6 +3903,9 @@ Translated:Sbloccare
 
 English:Unsupported Baud Rate
 Translated:Baud Rate non supportato
+
+English:Unsupported Parts Detected
+Translated:Parti non supportate rilevate
 
 English:Up
 Translated:Su
@@ -3780,6 +3942,9 @@ Translated:Caricamento ...
 
 English:Use Automatic Z Probe
 Translated:Usa la sonda Z automatica
+
+English:Use Braille grade 2 (contractions)
+Translated:Usa Braille grado 2 (contrazioni)
 
 English:Use cursor keys for axis movements
 Translated:Usa i tasti cursore per i movimenti degli assi
@@ -3851,7 +4016,7 @@ English:Wait For Running Clean
 Translated:Aspetta di correre pulito
 
 English:Waiting For Bed To Heat
-Translated:Aspettando il letto da riscaldare
+Translated:Aspettando il letto per scaldarsi
 
 English:Waiting for Bed to Heat to
 Translated:Aspettando che il letto si riscaldi
@@ -3871,6 +4036,9 @@ Translated:Aspettando che il letto si scaldi
 English:Waiting for the hotend to heat to 
 Translated:Aspettando che l'hotend si scaldi
 
+English:Warning
+Translated:avvertimento
+
 English:Warning - GCode file
 Translated:Avviso: file GCode
 
@@ -3887,7 +4055,10 @@ English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you 
 Translated:AVVERTENZA: la disconnessione interromperà la stampa corrente.\n\nSei sicuro di voler disconnettere?
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:AVVERTENZA: per eseguire il ripristino della stampa, la stampante deve essere abbassata per raggiungere la posizione iniziale.\nSe la stampa è troppo grande, parte della stampante potrebbe collidere con essa quando si sposta verso il basso.\nAssicurarsi che sia sicuro eseguire questa operazione prima di procedere.
+Translated:AVVERTENZA: per eseguire il ripristino della stampa, la stampante deve essere abbassata per raggiungere la posizione iniziale.\nSe la stampa è troppo grande, parte della stampante potrebbe scontrarsi con essa quando si sposta verso il basso.\nAssicurarsi che sia sicuro eseguire questa operazione prima di procedere.
+
+English:Warning: Support Required
+Translated:Avviso: supporto richiesto
 
 English:WARNING: Write Failed!
 Translated:ATTENZIONE: scrittura fallita!
@@ -3902,7 +4073,7 @@ English:We will now finalize our measurement of the extruder height at this posi
 Translated:Ora definiremo la nostra misurazione dell'altezza dell'estrusore in questa posizione.
 
 English:We will now refine our measurement of the extruder height at this position.
-Translated:Ora raffineremo la nostra misurazione dell'altezza dell'estrusore in questa posizione.
+Translated:Ora affineremo la nostra misurazione dell'altezza dell'estrusore in questa posizione.
 
 English:We will use this paper to measure the distance between the nozzle and the bed.
 Translated:Useremo questa carta per misurare la distanza tra l'ugello e il letto.
@@ -3913,8 +4084,11 @@ Translated:Sito web
 English:Wedge
 Translated:Cuneo
 
+English:Welcome to MatterControl
+Translated:Benvenuto in MatterControl
+
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Benvenuto nella procedura guidata di livellamento della stampa. Ecco una rapida panoramica su ciò che faremo.
+Translated:Benvenuto nella procedura guidata per il livellamento della stampa. Ecco una rapida panoramica su ciò che faremo.
 
 English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
 Translated:Benvenuti nella procedura guidata di calibrazione della sonda. Ecco una rapida panoramica su ciò che faremo.
@@ -3929,13 +4103,16 @@ English:wheel
 Translated:ruota
 
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
-Translated:Quando viene controllato, MatterControl tenterà di ripristinare una stampa in caso di guasto, come la perdita della connessione o la perdita di alimentazione.
+Translated:Quando viene controllato, MatterControl tenterà di ripristinare una stampa in caso di guasto, come perdita di connessione o perdita di alimentazione.
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
 Translated:Quando si esegue l'aggiornamento a un nuovo firmware, salvare prima un backup del firmware corrente.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
 Translated:Quando si utilizzano più estrusori, il filamento della distanza si inverte prima di passare a un estrusore diverso.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Dove iniziare la piega come percentuale della larghezza della parte
 
 English:Width
 Translated:Larghezza
@@ -3961,11 +4138,17 @@ Translated:Volete passare al nuovo G-Code? Prima di cambiare, controlla che tu s
 English:Write Filter
 Translated:Scrivi filtro
 
+English:X
+Translated:X
+
 English:X and Y Distance
 Translated:Distanza X e Y.
 
 English:XY Homing Position
 Translated:Posizione di riferimento XY
+
+English:Y
+Translated:Y
 
 English:Yes
 Translated:sì
@@ -3980,7 +4163,7 @@ English:You can only connect when not currently connected.
 Translated:Puoi connetterti solo quando non sei connesso.
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
-Translated:Hai importato con successo una nuova impostazione {0}. Puoi trovare '{1}' nel tuo elenco di {0} impostazioni.
+Translated:Hai importato con successo una nuova impostazione {0}. Puoi trovare "{1}" nel tuo elenco di {0} impostazioni.
 
 English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
 Translated:Hai importato con successo un nuovo profilo di stampante. Puoi trovare "{0}" nell'elenco delle stampanti disponibili.
@@ -3991,8 +4174,8 @@ Translated:Potrebbe essere necessario attendere un minuto affinché la stampante
 English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
 Translated:La tua stampa 3D è stata messa in pausa automatica.\n\nLayer {0} raggiunto.
 
-English:Your 3D print has been paused.\n\nOut of filament detected.
-Translated:La tua stampa 3D è stata messa in pausa.\n\nOut del filamento rilevato.
+English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
+Translated:La tua stampa 3D è stata messa in pausa.\n\nFuori filamento o inceppamento rilevato. Si prega di caricare più filamento o eliminare l'inceppamento.
 
 English:Your application is up-to-date
 Translated:La tua applicazione è aggiornata
@@ -4029,6 +4212,9 @@ Translated:Il codice G di avvio non deve contenere un G30 se si prevede di utili
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 Translated:Il codice G di avvio non deve contenere un G30 se si prevede di utilizzare Ripristino stampa. Cambia il tuo codice G di partenza o disattiva Ripristino stampa.
+
+English:Z
+Translated:Z
 
 English:Z Lift
 Translated:Sollevamento Z

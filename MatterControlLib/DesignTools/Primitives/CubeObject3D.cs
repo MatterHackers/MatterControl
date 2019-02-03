@@ -27,10 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -43,15 +45,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
 		}
 
-		public CubeObject3D(double width, double depth, double height)
-			: this()
-		{
-			Width = width;
-			Depth = depth;
-			Height = height;
-			Rebuild(null);
-		}
-
 		public double Width { get; set; } = 20;
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
@@ -59,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static CubeObject3D Create()
 		{
 			var item = new CubeObject3D();
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -72,40 +65,33 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = z,
 			};
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			return Task.CompletedTask;
 		}
 	}
 }

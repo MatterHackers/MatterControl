@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			this.CustomSearch = this;
 
+			this.ID = "SqliteContainer" + collectionID;
 			this.IsProtected = false;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl.Library
 
 			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
 			{
-				ContainerID = c.Id,
+				CollectionID = c.Id,
 				Name = c.Name
 			});
 
@@ -200,7 +201,7 @@ namespace MatterHackers.MatterControl.Library
 			}
 			else if (selectedItem is SqliteLibraryContainerLink containerLink)
 			{
-				string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {containerLink.ContainerID}";
+				string sql = $"SELECT * FROM PrintItemCollection WHERE ID = {containerLink.CollectionID}";
 
 				var container = Datastore.Instance.dbSQLite.Query<PrintItemCollection>(sql).FirstOrDefault();
 				if (container != null)
@@ -261,9 +262,9 @@ namespace MatterHackers.MatterControl.Library
 
 		public class SqliteLibraryContainerLink : ILibraryContainerLink
 		{
-			public string ID { get; } = Guid.NewGuid().ToString();
+			public string ID => "SqliteContainer" + this.CollectionID;
 
-			public int ContainerID { get; set; }
+			public int CollectionID { get; set; }
 
 			public string Name { get; set; }
 
@@ -280,7 +281,7 @@ namespace MatterHackers.MatterControl.Library
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
 				return Task.FromResult<ILibraryContainer>(
-					new SqliteLibraryContainer(this.ContainerID)
+					new SqliteLibraryContainer(this.CollectionID)
 					{
 						Name = this.Name,
 					});

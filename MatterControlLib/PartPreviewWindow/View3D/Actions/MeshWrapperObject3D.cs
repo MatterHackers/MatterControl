@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content, undoBuffer));
+			Invalidate(InvalidateType.Children);
 		}
 
 		/// <summary>
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					// collapse our children into our parent
 					// and replace us with the children
-					var replaceCommand = new ReplaceCommand(new List<IObject3D> { this }, thisClone.Children.ToList());
+					var replaceCommand = new ReplaceCommand(new[] { this }, thisClone.Children.ToList());
 					if (undoBuffer != null)
 					{
 						undoBuffer.AddAndDo(replaceCommand);
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public void ResetMeshWrapperMeshes(Object3DPropertyFlags flags, CancellationToken cancellationToken)
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+			Invalidate(InvalidateType.Properties);
 		}
 
 		public void WrapItems(List<IObject3D> items)
@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				this.MakeNameNonColliding();
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
+			Invalidate(InvalidateType.Properties);
 		}
 
 		private void AddMeshWrapperToAllChildren()

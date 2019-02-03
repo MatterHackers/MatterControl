@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
@@ -101,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					// send the invalidate on image change
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Content));
+					Invalidate(InvalidateType.Image);
 				}
 
 				return _image;
@@ -118,7 +119,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					_invert = value;
 					_image = null;
 
-					this.OnInvalidate(new InvalidateArgs(this, InvalidateType.Image));
+					Invalidate(InvalidateType.Image);
 				}
 			}
 		}
@@ -171,6 +172,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double ScaleMmPerPixels { get; private set; }
+
+		public override Task Rebuild()
+		{
+			InitMesh();
+
+			return base.Rebuild();
+		}
 
 		private Mesh InitMesh()
 		{

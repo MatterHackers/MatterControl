@@ -29,21 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 #define DEBUG_INTO_TGAS
 
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Tests.Automation;
-using MatterHackers.PolygonMesh.Csg;
-using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.VectorMath;
-using Net3dBool;
 using NUnit.Framework;
 
 namespace MatterHackers.PolygonMesh.UnitTests
@@ -57,16 +50,25 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			MatterControl.AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			MatterControl.AppContext.Platform.InitPluginFinder();
+			MatterControl.AppContext.Platform.ProcessCommandline();
+			RunTest();
+		}
+
+		private async void RunTest()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
 			var root = new Object3D();
-			var cube = new CubeObject3D();
-			root.Children.Add(cube);
-			cube.Invalidate(new InvalidateArgs(cube, InvalidateType.Properties));
-			Assert.AreEqual(1, root.Descendants().Count());
 
 			// now add a pinch
-			var pinch1 = new PinchObject3D();
-			pinch1.WrapItems(new List<IObject3D>() { cube });
-			root.Children.Remove(cube);
+			var pinch1 = new PinchObject3D_2();
+			pinch1.Children.Add(new CubeObject3D());
+			await pinch1.Rebuild();
 			root.Children.Add(pinch1);
 			Assert.AreEqual(3, root.Descendants().Count());
 		}

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				+ "    • " + "Remove the paper".Localize() + "\n"
 				+ "\n"
 				+ "If you wish to re-calibrate your probe in the future:".Localize() + "\n"
-				+ "    1. Select the 'Controls' tab on the right" + "\n"
+				+ "    1. Select the 'Controls' tab on the right".Localize() + "\n"
 				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
 			contentRow.AddChild(this.CreateTextField(calibrated));
 

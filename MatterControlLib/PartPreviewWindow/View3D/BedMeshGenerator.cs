@@ -136,7 +136,6 @@ namespace MatterHackers.MatterControl
 		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)
 		{
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
-
 			double sizeForMarking = Math.Max(displayVolumeToBuild.X, displayVolumeToBuild.Y);
 			double cmPerLine = 10;
 			int skip = 1;
@@ -153,6 +152,7 @@ namespace MatterHackers.MatterControl
 
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
+			graphics2D.Clear(bedBaseColor);
 
 			var originPixels = new Vector2();
 			{

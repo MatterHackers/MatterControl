@@ -36,66 +36,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DeleteCommand : IUndoRedoCommand
 	{
-		private List<IObject3D> items = new List<IObject3D>();
+		private List<(IObject3D parent, IObject3D item)> items = new List<(IObject3D parent, IObject3D item)>();
 
 		private InteractiveScene scene;
 
 		public DeleteCommand(InteractiveScene scene, IObject3D deletingItem)
 		{
-			this.scene = scene;
-
 			if (deletingItem is SelectionGroupObject3D)
 			{
-				var childrenToAdd = deletingItem.Children;
-				// push whatever happened to the selection into the objects before saving them
-				scene.ClearSelection();
-				// save them in our list
-				foreach (var item in childrenToAdd)
-				{
-					items.Add(item);
-				}
+				SetDeletionObjects(scene, deletingItem.Children);
 			}
 			else
 			{
-				this.items.Add(deletingItem);
+				SetDeletionObjects(scene, new IObject3D[] { deletingItem });
+			}
+		}
+
+		public DeleteCommand(InteractiveScene scene, IEnumerable<IObject3D> deletingItems)
+		{
+			SetDeletionObjects(scene, deletingItems);
+		}
+
+		private void SetDeletionObjects(InteractiveScene scene, IEnumerable<IObject3D> deletingItems)
+		{ 
+			this.scene = scene;
+			scene.ClearSelection();
+			// save them in our list
+			foreach (var item in deletingItems)
+			{
+				items.Add((item.Parent, item));
 			}
 		}
 
 		public void Do()
 		{
-			scene.ClearSelection();
-
-			scene.Children.Modify(list =>
+			using (new SelectionMaintainer(scene))
 			{
-				foreach (var item in items)
+				foreach(var item in items)
 				{
-					list.Remove(item);
+					item.parent.Children.Remove(item.item);
 				}
-			});
-
-			scene.SelectLastChild();
-
-			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
+			}
 		}
 
 		public void Undo()
 		{
-			scene.Children.Modify(list =>
+			using (new SelectionMaintainer(scene))
 			{
 				foreach (var item in items)
 				{
-					list.Add(item);
+					item.parent.Children.Add(item.item);
 				}
-			});
-
-			scene.ClearSelection();
-
-			foreach (var item in items)
-			{
-				scene.AddToSelection(item);
 			}
-
-			scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content));
 		}
 	}
 }

@@ -27,17 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[Obsolete("Use PinchObject3D_2 instead", false)]
 	public class PinchObject3D : MeshWrapperObject3D
 	{
 		public PinchObject3D()
@@ -50,18 +58,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -69,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -117,7 +125,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
+			return Task.CompletedTask;
 		}
 	}
 }

@@ -49,12 +49,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var firstChild = this.Children.FirstOrDefault();
 			if (firstChild != null)
 			{
-				if (invalidateType.InvalidateType == InvalidateType.Color)
+				if (invalidateType.InvalidateType.HasFlag(InvalidateType.Color))
 				{
 					this.Color = firstChild.Color;
 				}
 
-				if (invalidateType.InvalidateType == InvalidateType.Material)
+				if (invalidateType.InvalidateType.HasFlag(InvalidateType.Material))
 				{
 					this.MaterialIndex = firstChild.MaterialIndex;
 				}

@@ -29,19 +29,58 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public static class SettingsValidation
 	{
-		public static List<ValidationError> ValidateSettings(this PrinterConfig printer)
+		/// <summary>
+		/// Validates the printer settings satisfy all requirements
+		/// </summary>
+		/// <param name="printer">The printer to validate</param>
+		/// <returns>A list of all warnings and errors</returns>
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null)
 		{
-			var settings = printer.Settings;
+			if (settings == null)
+			{
+				settings = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			}
 
 			var errors = new List<ValidationError>();
+
+			// last let's check if there is any support in the scene and if it looks like it is needed
+			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+			if (supportGenerator.RequiresSupport())
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Unsupported Parts Detected".Localize(),
+					Details = "Some parts are unsupported and require support structures to print correctly".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning,
+					FixAction = new NamedAction()
+					{
+						 Title = "Generate Supports".Localize(),
+						 Action = () =>
+						 {
+							 // Find and InvokeClick on the Generate Supports toolbar button
+							 var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+							 if (sharedParent != null)
+							 {
+								 var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+								 supportsPopup.InvokeClick();
+							 }
+						 }
+					}
+				});
+			}
 
 			try
 			{
@@ -302,6 +341,57 @@ namespace MatterHackers.MatterControl
 						Details = e.Message
 					});
 			}
+
+			return errors;
+		}
+
+		/// <summary>
+		/// Validates printer satisfies all requirements
+		/// </summary>
+		/// <param name="printer">The printer to validate</param>
+		/// <returns>A list of all warnings and errors</returns>
+		public static List<ValidationError> Validate(this PrinterConfig printer)
+		{
+			var errors = new List<ValidationError>();
+
+			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
+			if (!printerIsConnected)
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Disconnected".Localize(),
+					Details = "Connect to your printer to continue".Localize()
+				});
+			}
+
+			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
+			if (ApplicationController.PrinterNeedsToRunSetup(printer))
+			{
+				errors.Add(new ValidationError()
+				{
+					Error = "Printer Setup Required".Localize(),
+					Details = "Printer Setup must be run before printing".Localize(),
+					FixAction = new NamedAction()
+					{
+						ID = "SetupPrinter",
+						Title = "Setup".Localize() + "...",
+						Action = () =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.PrintPart(
+									printer.Bed.EditContext,
+									printer,
+									null,
+									CancellationToken.None);
+							});
+						}
+					}
+				});
+			}
+
+			// Concat printer and settings errors
+			errors.AddRange(printer.ValidateSettings());
 
 			return errors;
 		}

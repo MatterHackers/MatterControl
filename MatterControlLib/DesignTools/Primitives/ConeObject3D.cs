@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -48,10 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cone"];
 		}
 
-		public static ConeObject3D Create()
+		public static async Task<ConeObject3D> Create()
 		{
 			var item = new ConeObject3D();
-			item.Rebuild(null);
+			await item.Rebuild();
+
 			return item;
 		}
 
@@ -61,46 +64,45 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Height { get; set; } = 20;
 		public int Sides { get; set; } = 40;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		private Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			bool changed = false;
-			using (RebuildLock())
-			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
-				var aabb = this.GetAxisAlignedBoundingBox();
+			this.DebugDepth("Rebuild");
 
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(Diameter / 2, 0);
-				path.LineTo(0, Height);
+			var rebuildLock = this.RebuildLock();
 
-				Mesh = VertexSourceToMesh.Revolve(path, Sides);
-				if (aabb.ZSize > 0)
+			return ApplicationController.Instance.Tasks.Execute(
+				"Cone".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
-				}
-			}
+					Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+					using (new CenterAndHeightMantainer(this))
+					{
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if (changed)
-			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
-			}
+						var path = new VertexStorage();
+						path.MoveTo(0, 0);
+						path.LineTo(Diameter / 2, 0);
+						path.LineTo(0, Height);
+
+						Mesh = VertexSourceToMesh.Revolve(path, Sides);
+					}
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
+				});
 		}
 	}
 }

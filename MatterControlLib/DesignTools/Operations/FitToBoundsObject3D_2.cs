@@ -38,6 +38,7 @@ using MatterHackers.VectorMath;
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -57,33 +58,34 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Fit to Bounds".Localize();
 		}
 
-		public override bool CanFlatten => true;
 		private IObject3D FitBounds => Children.Last();
 
-		public static FitToBoundsObject3D_2 Create(IObject3D itemToFit)
+		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
 		{
 			var fitToBounds = new FitToBoundsObject3D_2();
 			using (fitToBounds.RebuildLock())
 			{
-				var aabb = itemToFit.GetAxisAlignedBoundingBox();
-
-				var bounds = new Object3D()
+				using (new CenterAndHeightMantainer(itemToFit))
 				{
-					Visible = false,
-					Color = new Color(Color.Red, 100),
-					Mesh = PlatonicSolids.CreateCube()
-				};
+					var aabb = itemToFit.GetAxisAlignedBoundingBox();
+					var bounds = new Object3D()
+					{
+						Visible = false,
+						Color = new Color(Color.Red, 100),
+						Mesh = PlatonicSolids.CreateCube()
+					};
 
-				// add all the children
-				var scaleItem = new Object3D();
-				fitToBounds.Children.Add(scaleItem);
-				scaleItem.Children.Add(itemToFit);
-				fitToBounds.Children.Add(bounds);
+					// add all the children
+					var scaleItem = new Object3D();
+					fitToBounds.Children.Add(scaleItem);
+					scaleItem.Children.Add(itemToFit);
+					fitToBounds.Children.Add(bounds);
 
-				fitToBounds.boundsSize.X = aabb.XSize;
-				fitToBounds.boundsSize.Y = aabb.YSize;
-				fitToBounds.boundsSize.Z = aabb.ZSize;
-				fitToBounds.Rebuild(null);
+					fitToBounds.boundsSize.X = aabb.XSize;
+					fitToBounds.boundsSize.Y = aabb.YSize;
+					fitToBounds.boundsSize.Z = aabb.ZSize;
+					await fitToBounds.Rebuild();
+				}
 			}
 
 			return fitToBounds;
@@ -95,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+				var aabb = SourceItems.GetAxisAlignedBoundingBox();
 
 				var center = aabb.Center;
 				var worldMatrix = this.WorldMatrix();
@@ -135,64 +137,58 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return base.GetAxisAlignedBoundingBox(matrix);
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if ((invalidateType.InvalidateType == InvalidateType.Properties
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh
-				|| invalidateType.InvalidateType == InvalidateType.Content))
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
 				cacheThisMatrix = Matrix4X4.Identity;
 				base.OnInvalidate(invalidateType);
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		public void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				AdjustChildSize(null, null);
-
-				UpdateBoundsItem();
-
-				cacheRequestedMatrix = new Matrix4X4();
-				var after = this.GetAxisAlignedBoundingBox();
-
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					AdjustChildSize(null, null);
+
+					UpdateBoundsItem();
+
+					cacheRequestedMatrix = new Matrix4X4();
+					var after = this.GetAxisAlignedBoundingBox();
 				}
 			}
 
-			base.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
+			Invalidate(InvalidateType.Matrix);
+			return Task.CompletedTask;
 		}
 
 		private void AdjustChildSize(object sender, EventArgs e)
 		{
 			if (Children.Count > 0)
 			{
-				var aabb = SourceItem.GetAxisAlignedBoundingBox();
+				var aabb = SourceItems.GetAxisAlignedBoundingBox();
 				TransformItem.Matrix = Matrix4X4.Identity;
 				var scale = Vector3.One;
 				if (StretchX)
@@ -265,7 +261,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.X = value;
-				Rebuild(null);
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 
@@ -276,7 +275,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Y = value;
-				Rebuild(null);
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 
@@ -287,7 +289,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			set
 			{
 				boundsSize.Z = value;
-				Rebuild(null);
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
 			}
 		}
 

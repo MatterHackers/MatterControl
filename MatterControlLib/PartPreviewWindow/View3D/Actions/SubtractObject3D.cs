@@ -27,22 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
+using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.PolygonMesh.Processors;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	[Obsolete("Use SubtractObject3D_2 instead", false)]
 	[ShowUpdateButton]
 	public class SubtractObject3D : MeshWrapperObject3D, ISelectableChildContainer
 	{
@@ -55,6 +57,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public SelectedChildren SelectedChildren => ItemsToSubtract;
 
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				await Rebuild();
+			}
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateType.Source == this)
+			{
+				await Rebuild();
+			}
+
+			base.OnInvalidate(invalidateType);
+		}
+
+		public override Task Rebuild()
+		{
+			this.DebugDepth("Rebuild");
+			var rebuildLocks = this.RebuilLockAll();
+
+			// spin up a task to remove holes from the objects in the group
+			return ApplicationController.Instance.Tasks.Execute(
+				"Subtract".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+					reporter.Report(progressStatus);
+
+					try
+					{
+						Subtract(cancellationToken, reporter);
+					}
+					catch
+					{
+					}
+
+					rebuildLocks.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
+				});
+		}
+
 		public void Subtract()
 		{
 			Subtract(CancellationToken.None, null);
@@ -66,13 +115,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			bool ItemInSubtractList(IObject3D item)
 			{
-				if(ItemsToSubtract.Contains(item.ID))
+				if (ItemsToSubtract.Contains(item.ID))
 				{
 					return true;
 				}
 
 				// check if the wrapped item is in the subtract list
-				if(item.Children.Count > 0 && ItemsToSubtract.Contains(item.Children.First().ID))
+				if (item.Children.Count > 0 && ItemsToSubtract.Contains(item.Children.First().ID))
 				{
 					return true;
 				}
@@ -127,59 +176,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					remove.obj3D.Visible = false;
 				}
 			}
-		}
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-				invalidateType = new InvalidateArgs(this, InvalidateType.Content, invalidateType.UndoBuffer);
-			}
-
-			base.OnInvalidate(invalidateType);
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-			var rebuildLocks = this.RebuilLockAll();
-
-			// spin up a task to remove holes from the objects in the group
-			return ApplicationController.Instance.Tasks.Execute(
-				"Subtract".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
-
-					try
-					{
-						Subtract(cancellationToken, reporter);
-					}
-					catch
-					{
-					}
-
-					UiThread.RunOnIdle(() =>
-					{
-						rebuildLocks.Dispose();
-						base.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-					});
-
-					return Task.CompletedTask;
-				});
 		}
 	}
 }

@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						thumbnailWidget.Image = SetImage(theme, imageObject);
 
 						column.Invalidate();
-						imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image));
+						imageObject.Invalidate(InvalidateType.Image);
 					};
 
 					pasteMenu.Enabled = Clipboard.Instance.ContainsImage;
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								thumbnailWidget.Image = SetImage(theme, imageObject);
 
 								column.Invalidate();
-								imageObject.Invalidate(new InvalidateArgs(imageObject, InvalidateType.Image));
+								imageObject.Invalidate(InvalidateType.Image);
 							});
 				});
 			};
@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			imageObject.Invalidated += (s, e) =>
 			{
-				if (e.InvalidateType == InvalidateType.Image
+				if (e.InvalidateType.HasFlag(InvalidateType.Image)
 					&& activeImage != imageObject.Image)
 				{
 					thumbnailImage = SetImage(theme, imageObject);

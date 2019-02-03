@@ -137,6 +137,9 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		// Add public accessor for content panel
+		public FlowLayoutWidget ContentRow => contentRow;
+
 		public DialogWindow DialogWindow { get; set; }
 
 		public string WindowTitle { get; set; }

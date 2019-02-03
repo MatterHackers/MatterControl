@@ -27,17 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.VectorMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinearObject3D : Object3D
+	public class ArrayLinearObject3D : OperationSourceContainerObject3D
 	{
 		public ArrayLinearObject3D()
 		{
@@ -48,68 +49,46 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public int Count { get; set; } = 3;
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
 		public double Distance { get; set; } = 30;
-
-		public override void Flatten(UndoBuffer undoBuffer)
+		
+		public override async Task Rebuild()
 		{
-			OperationSourceObject3D.Flatten(this);
+			var rebuildLock = this.RebuildLock();
+			SourceContainer.Visible = true;
 
-			base.Flatten(undoBuffer);
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				Rebuild(null);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		private void Rebuild(UndoBuffer undoBuffer)
-		{
-			using (this.RebuildLock())
-			{
-				this.DebugDepth("Rebuild");
-
-				var sourceContainer = OperationSourceObject3D.GetOrCreateSourceContainer(this);
-
-				this.Children.Modify(list =>
+			await ApplicationController.Instance.Tasks.Execute(
+				"Linear Array".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					list.Clear();
-					// add back in the sourceContainer
-					list.Add(sourceContainer);
-					// get the source item
-					var sourceItem = sourceContainer.Children.First();
+					this.DebugDepth("Rebuild");
 
-					for (int i = 0; i < Math.Max(Count, 1); i++)
+					using (new CenterAndHeightMantainer(this))
 					{
-						var next = sourceItem.Clone();
-						next.Matrix = sourceItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-						list.Add(next);
+						var newChildren = new List<IObject3D>();
+
+						newChildren.Add(SourceContainer);
+
+						var arrayItem = SourceContainer.Children.First();
+
+						// add in all the array items
+						for (int i = 0; i < Math.Max(Count, 1); i++)
+						{
+							var next = arrayItem.Clone();
+							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+							newChildren.Add(next);
+						}
+
+						Children.Modify(list =>
+						{
+							list.Clear();
+							list.AddRange(newChildren);
+						});
 					}
+					SourceContainer.Visible = false;
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
 				});
-			}
-
-			this.Invalidate(new InvalidateArgs(this, InvalidateType.Content));
-		}
-
-		public override void Remove(UndoBuffer undoBuffer)
-		{
-			OperationSourceObject3D.Remove(this);
-
-			base.Remove(undoBuffer);
 		}
 	}
 }

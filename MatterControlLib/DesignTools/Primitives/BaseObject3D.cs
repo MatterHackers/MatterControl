@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -37,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -66,22 +68,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
-
-				var firstChild = this.Children.FirstOrDefault();
-
-				// only keep the first object
-				this.Children.Modify(list =>
+				using (new CenterAndHeightMantainer(this))
 				{
-					list.Clear();
-				// add back in the sourceContainer
-				list.Add(firstChild);
-				});
+					var firstChild = this.Children.FirstOrDefault();
 
-				if (startingAabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
+					// only keep the first object
+					this.Children.Modify(list =>
+					{
+						list.Clear();
+						// add back in the sourceContainer
+						list.Add(firstChild);
+					});
 				}
 			}
 
@@ -106,68 +103,67 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static BaseObject3D Create()
+		public static async Task<BaseObject3D> Create()
 		{
 			var item = new BaseObject3D();
-			item.Rebuild(null);
+			await item.Rebuild();
 			return item;
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Path
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
-			using (RebuildLock())
-			{
-				var startingAabb = this.GetAxisAlignedBoundingBox();
+			var rebuildLock = this.RebuildLock();
 
-				var firstChild = this.Children.FirstOrDefault();
-
-				// remove the base mesh we added
-				this.Children.Modify(list =>
+			return ApplicationController.Instance.Tasks.Execute(
+				"Base".Localize(),
+				null,
+				(reporter, cancellationToken) =>
 				{
-					list.Clear();
-				// add back in the sourceContainer
-				list.Add(firstChild);
+					using (new CenterAndHeightMantainer(this))
+					{
+						var firstChild = this.Children.FirstOrDefault();
+
+						// remove the base mesh we added
+						this.Children.Modify(list =>
+						{
+							list.Clear();
+						// add back in the sourceContainer
+						list.Add(firstChild);
+						});
+
+						// and create the base
+						var vertexSource = this.VertexSource;
+
+						// Convert VertexSource into expected Polygons
+						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
+						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
+					}
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Children);
+					return Task.CompletedTask;
 				});
-
-				// and create the base
-				var vertexSource = this.VertexSource;
-
-				// Convert VertexSource into expected Polygons
-				Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
-				GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
-
-				if (startingAabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, startingAabb.MinXYZ.Z);
-				}
-			}
-
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 		}
 
 		private static Polygon GetBoundingPolygon(Polygons basePolygons)

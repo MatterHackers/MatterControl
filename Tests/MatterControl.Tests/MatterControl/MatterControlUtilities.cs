@@ -236,7 +236,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model);
 
-
 			// edit the com port
 			testRunner.SwitchToPrinterSettings();
 
@@ -562,7 +561,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			// Complete new material selection requirement
 			testRunner.ClickByName("PrintPopupMenu");
-			testRunner.ClickByName("Finish Setup Button");
+			testRunner.ClickByName("SetupPrinter");
 
 			// Configure ABS as selected material
 			//testRunner.ClickByName("Material DropDown List");
@@ -892,9 +891,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// make sure we are in a state that can print
 			if (doFinishSetup
-				&& testRunner.NameExists("Finish Setup Button"))
+				&& testRunner.NameExists("SetupPrinter"))
 			{
-				testRunner.ClickByName("Finish Setup Button");
+				testRunner.ClickByName("SetupPrinter");
 				testRunner.ClickByName("Already Loaded Button");
 				// open it again
 				testRunner.ClickByName("PrintPopupMenu");

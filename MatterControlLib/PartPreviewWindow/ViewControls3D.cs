@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
-				ToolTipText = "Undo",
+				ToolTipText = "Undo".Localize(),
 				Enabled = false,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center
@@ -341,7 +341,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Redo",
+				ToolTipText = "Redo".Localize(),
 				Enabled = false,
 				VAnchor = VAnchor.Center
 			};
@@ -527,7 +527,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new OpenFileDialogParams(filter, multiSelect: true),
 						(openParams) =>
 						{
-							ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, ApplicationController.Instance.DragDropData.SceneContext);
+							sceneContext.AddToPlate(openParams.FileNames);
 						});
 				}, .1);
 			};
@@ -789,117 +789,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			iconButton.Selectable = true;
 
 			return saveButton;
-		}
-
-		public static async void LoadAndAddPartsToPlate(GuiWidget originatingWidget, string[] filesToLoad, BedConfig sceneContext)
-		{
-			if (filesToLoad != null && filesToLoad.Length > 0)
-			{
-				await Task.Run(() => loadAndAddPartsToPlate(filesToLoad, sceneContext));
-
-				if (originatingWidget.HasBeenClosed)
-				{
-					return;
-				}
-
-				var scene = sceneContext.Scene;
-
-				bool addingOnlyOneItem = scene.Children.Count == scene.Children.Count + 1;
-
-				if (scene.HasChildren())
-				{
-					if (addingOnlyOneItem)
-					{
-						// if we are only adding one part to the plate set the selection to it
-						scene.SelectLastChild();
-					}
-				}
-
-				scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
-			}
-		}
-
-		private static async Task loadAndAddPartsToPlate(string[] filesToLoadIncludingZips, BedConfig sceneContext)
-		{
-			if (filesToLoadIncludingZips?.Any() == true)
-			{
-				var scene = sceneContext.Scene;
-
-				// When a single GCode file is selected, swap the plate to the new GCode content
-				if (filesToLoadIncludingZips.Count() == 1
-					&& filesToLoadIncludingZips.FirstOrDefault() is string firstFilePath
-					&& Path.GetExtension(firstFilePath).ToUpper() == ".GCODE")
-				{
-					// Special case for GCode which changes loaded scene to special mode for GCode
-					await sceneContext.LoadContent(
-						new EditContext()
-						{
-							SourceItem = new FileSystemFileItem(firstFilePath),
-							ContentStore = null // No content store for GCode, otherwise PlatingHistory
-						});
-
-					return;
-				}
-
-				var filesToLoad = new List<string>();
-				foreach (string loadedFileName in filesToLoadIncludingZips)
-				{
-					string extension = Path.GetExtension(loadedFileName).ToUpper();
-					if ((extension != ""
-						&& extension != ".ZIP"
-						&& extension != ".GCODE"
-						&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName))
-						)
-					{
-						filesToLoad.Add(loadedFileName);
-					}
-					else if (extension == ".ZIP")
-					{
-						List<PrintItem> partFiles = ProjectFileHandler.ImportFromProjectArchive(loadedFileName);
-						if (partFiles != null)
-						{
-							foreach (PrintItem part in partFiles)
-							{
-								string itemExtension = Path.GetExtension(part.FileLocation).ToUpper();
-								if (itemExtension != ".GCODE")
-								{
-									filesToLoad.Add(part.FileLocation);
-								}
-							}
-						}
-					}
-				}
-
-				var itemCache = new Dictionary<string, IObject3D>();
-
-				foreach (string filePath in filesToLoad)
-				{
-					var libraryItem = new FileSystemFileItem(filePath);
-
-					IObject3D object3D = null;
-
-					await ApplicationController.Instance.Tasks.Execute("Loading".Localize() + " " + Path.GetFileName(filePath), sceneContext.Printer, async (progressReporter, cancellationToken) =>
-					{
-						var progressStatus = new ProgressStatus();
-
-						progressReporter.Report(progressStatus);
-
-						object3D = await libraryItem.CreateContent((double progress0To1, string processingState) =>
-						{
-							progressStatus.Progress0To1 = progress0To1;
-							progressStatus.Status = processingState;
-							progressReporter.Report(progressStatus);
-						});
-					});
-
-					if (object3D != null)
-					{
-						scene.Children.Modify(list => list.Add(object3D));
-
-						PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
-					}
-				}
-			}
 		}
 
 		public override void OnClosed(EventArgs e)

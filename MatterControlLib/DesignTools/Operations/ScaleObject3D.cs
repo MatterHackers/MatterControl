@@ -36,6 +36,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -58,21 +59,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public ScaleObject3D(IObject3D itemToScale, Vector3 scale)
 			: this()
 		{
-			WrapItem(itemToScale);
+			WrapItems(new IObject3D[] { itemToScale });
+
+			ScaleRatio = scale;
+			Rebuild();
 		}
 
-		public override void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
+		public override void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
 		{
-			base.WrapItem(item, undoBuffer);
+			base.WrapItems(items, undoBuffer);
 
 			// use source item as it may be a copy of item by the time we have wrapped it
-			var aabb = SourceItem.GetAxisAlignedBoundingBox();
+			var aabb = SourceItems.GetAxisAlignedBoundingBox();
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
-			SourceItem.Translate(-newCenter);
+			SourceItems.Translate(-newCenter);
 			this.Translate(newCenter);
 		}
-
-		public override bool CanFlatten => true;
 
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
@@ -91,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.X * 100;
 				}
 
-				return ScaleRatio.X * SourceItem.XSize();
+				return ScaleRatio.X * SourceItems.GetAxisAlignedBoundingBox().XSize;
 			}
 
 			set
@@ -102,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.X = value / SourceItem.XSize();
+					ScaleRatio.X = value / SourceItems.GetAxisAlignedBoundingBox().XSize;
 				}
 			}
 		}
@@ -118,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Y * 100;
 				}
 
-				return ScaleRatio.Y * SourceItem.YSize();
+				return ScaleRatio.Y * SourceItems.GetAxisAlignedBoundingBox().YSize;
 			}
 
 			set
@@ -129,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Y = value / SourceItem.YSize();
+					ScaleRatio.Y = value / SourceItems.GetAxisAlignedBoundingBox().YSize;
 				}
 			}
 		}
@@ -145,7 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Z * 100;
 				}
 
-				return ScaleRatio.Z * SourceItem.ZSize();
+				return ScaleRatio.Z * SourceItems.GetAxisAlignedBoundingBox().ZSize;
 			}
 
 			set
@@ -156,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Z = value / SourceItem.ZSize();
+					ScaleRatio.Z = value / SourceItems.GetAxisAlignedBoundingBox().ZSize;
 				}
 			}
 		}
@@ -183,23 +185,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateArgs)
+		public async override void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateArgs.InvalidateType == InvalidateType.Content
-				|| invalidateArgs.InvalidateType == InvalidateType.Matrix
-				|| invalidateArgs.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
-			else if (invalidateArgs.InvalidateType == InvalidateType.Properties
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateArgs.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
-
-			base.OnInvalidate(invalidateArgs);
+			else
+			{
+				base.OnInvalidate(invalidateArgs);
+			}
 		}
 
 		public override Task Rebuild()
@@ -213,7 +217,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				TransformItem.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			Invalidate(InvalidateType.Matrix);
 
 			return Task.CompletedTask;
 		}
@@ -259,7 +263,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			else if(change.Changed == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.Properties);
 			}
 			else if (change.Changed == nameof(MaitainProportions))
 			{
