@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+
 			using (RebuildLock())
 			{
 				using (new CenterAndHeightMantainer(this))
