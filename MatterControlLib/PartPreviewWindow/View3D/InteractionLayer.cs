@@ -52,6 +52,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// </summary>
 		private Dictionary<Type, List<InteractionVolume>> iavMappings = new Dictionary<Type, List<InteractionVolume>>();
 
+		/// <summary>
+		/// Interaction Volume Overrides for the selected scene item
+		/// </summary>
+		private List<InteractionVolume> iavOverrides = null;
+
+		private Type selectedItemType;
+
 		public WorldView World => sceneContext.World;
 
 		public InteractiveScene Scene => sceneContext.Scene;
@@ -68,13 +75,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					return Enumerable.Empty<InteractionVolume>();
 				}
-				else if (iavMappings.TryGetValue(selectedItemType, out List<InteractionVolume> mappedIAVolumes))
-				{
-					return mappedIAVolumes;
-				}
 				else
 				{
-					return registeredIAVolumes;
+					return iavOverrides ?? registeredIAVolumes;
 				}
 			}
 		}
@@ -111,6 +114,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iavMappings.Add(typeof(ImageObject3D), new List<InteractionVolume> { new MoveInZControlTest(this) });
+
+			// Register listeners
+			sceneContext.Scene.SelectionChanged += this.Scene_SelectionChanged;
 		}
 
 		public void RegisterDrawable(IDrawable drawable)
@@ -129,21 +135,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal void SetRenderTarget(GuiWidget renderSource)
 		{
+			// Unregister listener
+			if (renderSource != null)
+			{
+				renderSource.BeforeDraw -= RenderSource_BeforeDraw;
+			}
+
 			this.renderSource = renderSource;
 
 			// Hook our drawing operation to the renderSource so we can draw unclipped in the source objects bounds. At the time of writing,
 			// this mechanism is needed to draw bed items under the semi-transparent right treeview/editor panel
-			renderSource.BeforeDraw += renderSource_BeforeDraw;
+			renderSource.BeforeDraw += RenderSource_BeforeDraw;
 		}
 
 		// The primary draw hook. Kick off our draw operation when the renderSource fires AfterDraw
-		private void renderSource_BeforeDraw(object sender, DrawEventArgs e)
+		private void RenderSource_BeforeDraw(object sender, DrawEventArgs e)
 		{
 			if (DoOpenGlDrawing)
 			{
 				this.DrawGlContent(e);
 			}
 		}
+
+		private void Scene_SelectionChanged(object sender, EventArgs e)
+		{
+			// On selection change, update state for mappings
+			selectedItemType = scene.SelectedItem?.GetType();
+			iavOverrides = null;
+
+			if (selectedItemType != null)
+			{
+				iavMappings.TryGetValue(selectedItemType, out iavOverrides);
+			}
+		}
+
 
 		public static void RenderBounds(DrawEventArgs e, WorldView world, IEnumerable<BvhIterator> allResults)
 		{
@@ -299,8 +324,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnClosed(EventArgs e)
 		{
+			// Unregister listeners
+			sceneContext.Scene.SelectionChanged -= this.Scene_SelectionChanged;
+			if (renderSource != null)
+			{
+				renderSource.BeforeDraw -= RenderSource_BeforeDraw;
+			}
+
 			// If implemented, invoke Dispose on Drawables
-			foreach(var item in drawables)
+			foreach (var item in drawables)
 			{
 				if (item is IDisposable disposable)
 				{
