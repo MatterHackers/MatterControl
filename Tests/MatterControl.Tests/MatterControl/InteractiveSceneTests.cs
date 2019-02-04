@@ -221,7 +221,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeB = CubeObject3D.Create(20, 20, 20);
 				var offsetCubeB = new TranslateObject3D(cubeB, 10);
 
-				var plus = cubeA.Plus(offsetCubeB);
+				var plus = cubeA.Plus(offsetCubeB, true);
 
 				Assert.AreEqual(0, plus.Children.Count());
 				Assert.IsTrue(plus.Mesh != null);

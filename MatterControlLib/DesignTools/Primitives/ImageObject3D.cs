@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.ImageProcessing;
@@ -171,6 +172,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double ScaleMmPerPixels { get; private set; }
+
+		public override Task Rebuild()
+		{
+			InitMesh();
+
+			return base.Rebuild();
+		}
 
 		private Mesh InitMesh()
 		{

@@ -224,19 +224,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			var editRow = change.Context.GetEditRow(nameof(SizeX));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
-			editRow = change.Context.GetEditRow(nameof(SizeY));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
-			editRow = change.Context.GetEditRow(nameof(SizeZ));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
-
-			editRow = change.Context.GetEditRow(nameof(MaitainProportions));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
-			editRow = change.Context.GetEditRow(nameof(UsePercentage));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
-			editRow = change.Context.GetEditRow(nameof(ScaleAbout));
-			if (editRow != null) editRow.Visible = Operation == ScaleType.Specify;
+			change.SetRowVisible(nameof(SizeX), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(SizeY), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(SizeZ), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(MaitainProportions), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Specify);
+			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Specify);
 
 			if(change.Changed == nameof(Operation))
 			{
@@ -263,7 +256,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			else if(change.Changed == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
-				Invalidate(InvalidateType.Properties);
+				Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 			}
 			else if (change.Changed == nameof(MaitainProportions))
 			{
@@ -272,6 +265,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var maxScale = Math.Max(ScaleRatio.X, Math.Max(ScaleRatio.Y, ScaleRatio.Z));
 					ScaleRatio = new Vector3(maxScale, maxScale, maxScale);
 					Rebuild();
+					// make sure we update the controls on screen to reflect the different data type
+					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
 			else if (change.Changed == nameof(SizeX))
@@ -281,7 +276,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[1] = ScaleRatio[0];
 					ScaleRatio[2] = ScaleRatio[0];
-					Rebuild();
+					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
 			else if (change.Changed == nameof(SizeY))
@@ -291,7 +287,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[1];
 					ScaleRatio[2] = ScaleRatio[1];
-					Rebuild();
+					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
 			else if (change.Changed == nameof(SizeZ))
@@ -301,7 +298,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// scale y and z to match
 					ScaleRatio[0] = ScaleRatio[2];
 					ScaleRatio[1] = ScaleRatio[2];
-					Rebuild();
+					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
 		}
