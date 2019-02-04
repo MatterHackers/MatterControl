@@ -353,8 +353,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add IAVolumeProviderPlugins
 			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
 			{
-				interactionVolumes.AddRange(ivProvider.Create(this.InteractionLayer));
-				this.InteractionLayer.RegisterIAVolume(plugin.CreateInteractionVolume(this.InteractionLayer));
+				this.InteractionLayer.RegisterIAVolumes(ivProvider.Create(this.InteractionLayer));
 			}
 
 			this.InteractionLayer.AfterDraw += AfterDraw3DContent;

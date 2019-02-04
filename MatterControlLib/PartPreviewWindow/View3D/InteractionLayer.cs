@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			iavMappings.Add(typeof(ImageObject3D), new List<InteractionVolume> { new MoveInZControlTest(this) });
+			iavMappings.Add(typeof(ImageObject3D), new List<InteractionVolume> { new MoveInZControl(this) });
 
 			// Register listeners
 			sceneContext.Scene.SelectionChanged += this.Scene_SelectionChanged;
@@ -127,6 +127,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void RegisterIAVolume(InteractionVolume interactionVolume)
 		{
 			registeredIAVolumes.Add(interactionVolume);
+		}
+
+		public void RegisterIAVolumes(IEnumerable<InteractionVolume> interactionVolumes)
+		{
+			registeredIAVolumes.AddRange(interactionVolumes);
 		}
 
 		public IEnumerable<IDrawable> Drawables => drawables;
