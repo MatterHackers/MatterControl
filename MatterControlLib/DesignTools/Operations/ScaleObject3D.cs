@@ -277,6 +277,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[1] = ScaleRatio[0];
 					ScaleRatio[2] = ScaleRatio[0];
 					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
@@ -288,6 +289,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[0] = ScaleRatio[1];
 					ScaleRatio[2] = ScaleRatio[1];
 					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
@@ -299,6 +301,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					ScaleRatio[0] = ScaleRatio[2];
 					ScaleRatio[1] = ScaleRatio[2];
 					// and invalidate the other properties
+					Invalidate(new InvalidateArgs(this, InvalidateType.Properties));
 					Invalidate(new InvalidateArgs(null, InvalidateType.Properties));
 				}
 			}
