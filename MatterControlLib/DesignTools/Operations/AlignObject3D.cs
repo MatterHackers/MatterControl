@@ -90,7 +90,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Top = 0x20,
 	};
 
-	public class AlignObject3D : Object3D, IPropertyGridModifier
+	public abstract class SelectedChildContainer : Object3D
+	{
+		public abstract SelectedChildren SelectedChild { get; set; }
+	}
+
+	public class AlignObject3D : SelectedChildContainer, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
@@ -155,7 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[ShowAsList]
 		[DisplayName("Primary")]
-		public SelectedChildren AnchorObjectSelector
+		public override SelectedChildren SelectedChild
 		{
 			get
 			{
@@ -243,7 +248,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				return this.Children.Where(c => c.ID == AnchorObjectSelector[0]).FirstOrDefault();
+				return this.Children.Where(c => c.ID == SelectedChild[0]).FirstOrDefault();
 			}
 		}
 

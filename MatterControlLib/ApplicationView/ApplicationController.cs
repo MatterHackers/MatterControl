@@ -1182,13 +1182,13 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Visibility",
-					Title = "Visiability".Localize(),
+					OperationID = "Visibility Control",
+					Title = "Visiability Control".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(SetChildVisabilityObject3D),
+					ResultType = typeof(ChildVisabilityObject3D),
 					Operation = (sceneItem, scene) =>
 					{
-						var visibility = new SetChildVisabilityObject3D();
+						var visibility = new ChildVisabilityObject3D();
 						visibility.AddSelectionAsChildren(scene, sceneItem);
 
 						return Task.CompletedTask;

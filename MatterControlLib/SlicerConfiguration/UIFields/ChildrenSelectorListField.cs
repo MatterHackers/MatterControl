@@ -55,12 +55,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Enum keyed on name to friendly name
 			List<(string key, string value)> names = null;
 			var selectedName = "";
-			if (property.source is AlignObject3D item)
+			if (property.source is SelectedChildContainer item)
 			{
 				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
-				if (item.AnchorObjectSelector.Count == 1)
+				if (item.SelectedChild.Count == 1)
 				{
-					var selectedKey = item.AnchorObjectSelector[0];
+					var selectedKey = item.SelectedChild[0];
 					foreach(var name in names)
 					{
 						if(name.key == selectedKey)

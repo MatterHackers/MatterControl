@@ -34,18 +34,18 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SetChildVisabilityObject3D : Object3D
+	public class ChildVisabilityObject3D : SelectedChildContainer
 	{
 		private SelectedChildren _childToSetVisabilityOn = new SelectedChildren();
 
-		public SetChildVisabilityObject3D()
+		public ChildVisabilityObject3D()
 		{
 			Name = "Set Visability";
 		}
 
 		[ShowAsList]
 		[DisplayName("Child")]
-		public SelectedChildren ChildToSetVisabilityOn
+		public override SelectedChildren SelectedChild
 		{
 			get
 			{
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (this.RebuildLock())
 			{
-				var childToSetVisabilityOn = this.Children.Where(c => c.ID == ChildToSetVisabilityOn[0]).FirstOrDefault();
+				var childToSetVisabilityOn = this.Children.Where(c => c.ID == SelectedChild[0]).FirstOrDefault();
 				childToSetVisabilityOn.Visible = ChildVisibility;
 			}
 
