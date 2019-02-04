@@ -35,6 +35,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
@@ -195,11 +196,8 @@ namespace MatterHackers.MeshVisualizer
 		double SnapGridDistance { get; }
 	}
 
-	public class InteractionVolumePlugin
+	public interface IInteractionVolumeProvider
 	{
-		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
-		{
-			return null;
-		}
+		IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context);
 	}
 }

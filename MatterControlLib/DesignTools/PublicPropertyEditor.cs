@@ -631,7 +631,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			// Use known IObject3D editors
 			else if (propertyValue is IObject3D item
-				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
+				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
 				rowContainer = iObject3DEditor.Create(item, theme);
 			}

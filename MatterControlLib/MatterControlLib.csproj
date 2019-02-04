@@ -62,6 +62,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj" />
     <ProjectReference Include="..\MatterControl.OpenGL\MatterControl.OpenGL.csproj" />
     <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
@@ -77,7 +78,6 @@
     <ProjectReference Include="..\Submodules\agg-sharp\Tesselate\Tesselate.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\RenderOpenGl\RenderOpenGl.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\PolygonMesh\PolygonMesh.csproj" />
-    <ProjectReference Include="..\PluginSystem\MatterControlPluginSystem.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
     <ProjectReference Include="..\Submodules\MatterSlice\MatterSliceLib\MatterSliceLib.csproj" />

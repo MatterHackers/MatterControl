@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Extensibility;
 using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial

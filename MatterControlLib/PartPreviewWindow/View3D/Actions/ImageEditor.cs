@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	using DataConverters3D;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.MatterControl.DataStorage;
-	using MatterHackers.MatterControl.Library;
 
 	public class ImageEditor : IObject3DEditor
 	{

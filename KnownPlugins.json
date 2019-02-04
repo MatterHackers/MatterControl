@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "MatterControl Cloud Services",
+    "TypeName": "MatterHackers.MatterControl.Plugins.CloudServices.CloudServicesPlugin"
+  },
+  {
+    "Name": "MatterControl Authentication",
+    "TypeName": "MatterHackers.MatterControl.Plugins.AuthenticationPlugin.AuthenticationPlugin"
+  },
+  {
+    "Name": "Editor Tools",
+    "TypeName": "MatterHackers.Plugins.EditorTools.EditorToolsPlugin"
+  },
+  {
+    "Name": "Firmware Updater",
+    "TypeName": "MatterHackers.MatterControl.Plugins.MarlinFirmwareUpdatePlugin.MarlinFirmwareUpdatePlugin"
+  },
+  {
+    "Name": "Print Notifications",
+    "TypeName": "MatterHackers.MatterControl.Plugins.PrintNotifications.PrintNotificationPlugin"
+  },
+]

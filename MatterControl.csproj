@@ -65,6 +65,9 @@
     <None Include="StaticData\OEMSettings\OEMUrls.json" />
     <None Include="StaticData\OEMSettings\Printers.json" />
     <None Include="StaticData\OEMSettings\Settings.json" />
+    <None Include="KnownPlugins.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Community.CsharpSqlite\Community.CsharpSqlite.csproj">
@@ -102,6 +105,8 @@
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
       <Name>MatterSlice</Name>
+    </ProjectReference>
+    <ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj">
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

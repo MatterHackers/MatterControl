@@ -45,6 +45,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -353,10 +354,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
 			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
-			var interactionVolumePlugins = PluginFinder.CreateInstancesOf<InteractionVolumePlugin>();
-			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins)
+			// Add IAVolumeProviderPlugins
+			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
 			{
-				interactionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
+				interactionVolumes.AddRange(ivProvider.Create(this.InteractionLayer));
 			}
 
 			meshViewerWidget.AfterDraw += AfterDraw3DContent;

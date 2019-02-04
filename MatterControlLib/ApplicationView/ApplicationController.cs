@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.DesignTools.Operations;
+	using MatterHackers.MatterControl.Extensibility;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -267,7 +268,7 @@ namespace MatterHackers.MatterControl
 
 		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
 
-		private Dictionary<Type, HashSet<IObject3DEditor>> objectEditorsByType;
+		public ExtensionsConfig Extensions { get; }
 
 		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, IEnumerable<NodeOperation> nodeOperations = null)
 		{
@@ -1069,6 +1070,10 @@ namespace MatterHackers.MatterControl
 
 			this.RebuildSceneOperations(this.Theme);
 
+			this.Extensions = new ExtensionsConfig(this.Library);
+			this.Extensions.Register(new ImageEditor());
+			this.Extensions.Register(new PublicPropertyEditor());
+
 			HelpArticle helpArticle = null;
 
 			string helpPath = Path.Combine("OEMSettings", "toc.json");
@@ -1475,26 +1480,6 @@ namespace MatterHackers.MatterControl
 
 			this.InitializeLibrary();
 
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType = new Dictionary<Type, HashSet<IObject3DEditor>>();
-
-			// Initialize plugins, passing the MatterControl assembly as the only non-dll instance
-			//PluginFinder.Initialize(Assembly.GetExecutingAssembly());
-
-			foreach (IObject3DEditor editor in PluginFinder.CreateInstancesOf<IObject3DEditor>())
-			{
-				foreach (Type type in editor.SupportedTypes())
-				{
-					if (!objectEditorsByType.TryGetValue(type, out mappedEditors))
-					{
-						mappedEditors = new HashSet<IObject3DEditor>();
-						objectEditorsByType.Add(type, mappedEditors);
-					}
-
-					mappedEditors.Add(editor);
-				}
-			}
-
 			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
 			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
@@ -1643,29 +1628,6 @@ namespace MatterHackers.MatterControl
 			return false;
 		}
 
-		public HashSet<IObject3DEditor> GetEditorsForType(Type selectedItemType)
-		{
-			HashSet<IObject3DEditor> mappedEditors;
-			objectEditorsByType.TryGetValue(selectedItemType, out mappedEditors);
-
-			if (mappedEditors == null)
-			{
-				foreach (var kvp in objectEditorsByType)
-				{
-					var editorType = kvp.Key;
-
-					if (editorType.IsAssignableFrom(selectedItemType)
-						&& selectedItemType != typeof(Object3D))
-					{
-						mappedEditors = kvp.Value;
-						break;
-					}
-				}
-			}
-
-			return mappedEditors;
-		}
-
 		public void Shutdown()
 		{
 			// Ensure all threads shutdown gracefully on close
@@ -1721,7 +1683,6 @@ namespace MatterHackers.MatterControl
 			return TypeFaceCache[Name];
 		}
 
-
 		private static TypeFace titilliumTypeFace = null;
 		public static TypeFace TitilliumTypeFace
 		{
@@ -1735,7 +1696,6 @@ namespace MatterHackers.MatterControl
 				return titilliumTypeFace;
 			}
 		}
-
 
 		public static string LoadCachedFile(string cacheKey, string cacheScope)
 		{
@@ -2627,6 +2587,23 @@ If you experience adhesion problems, please re-run leveling."
 					}),
 					StopToolTip = "Cancel Print".Localize(),
 				});
+		}
+
+		private static PluginManager pluginManager = null;
+
+		public static PluginManager Plugins
+		{
+			get
+			{
+				// PluginManager initialization must occur late, after the config is loaded and after localization libraries
+				// have occurred, which currently is driven by MatterControlApplication init
+				if (pluginManager == null)
+				{
+					pluginManager = new PluginManager();
+				}
+
+				return pluginManager;
+			}
 		}
 
 		/// <summary>
@@ -3544,7 +3521,7 @@ If you experience adhesion problems, please re-run leveling."
 			}
 
 			reporter?.Invoke(0.3, (loading != null) ? loading : "Plugins");
-			AppContext.Platform.FindAndInstantiatePlugins(systemWindow);
+			ApplicationController.Plugins.InitializePlugins(systemWindow);
 
 			reporter?.Invoke(0.4, (loading != null) ? loading : "MainView");
 			applicationController.MainView = new MainViewWidget(applicationController.Theme);

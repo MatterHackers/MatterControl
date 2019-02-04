@@ -27,14 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PluginSystem;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 // finish a, b, t
-
 namespace MatterHackers.MatterControl.Plugins.BrailleBuilder
 {
 	public static class BrailleGrade2Mapping

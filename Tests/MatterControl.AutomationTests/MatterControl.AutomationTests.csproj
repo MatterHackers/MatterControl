@@ -75,6 +75,10 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj">
+      <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
+      <Name>MatterControl.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>
@@ -86,10 +90,6 @@
     <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj">
       <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
       <Name>MatterControlLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\PluginSystem\MatterControlPluginSystem.csproj">
-      <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>
-      <Name>MatterControlPluginSystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
       <Project>{657dbc6d-c3ea-4398-a3fa-ddb73c14f71b}</Project>
