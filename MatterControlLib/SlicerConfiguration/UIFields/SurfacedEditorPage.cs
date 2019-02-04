@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -109,7 +110,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			treeView.ScrollArea.CloseAllChildren();
 
-			var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, null, theme);
+			var keyValues = new Dictionary<IObject3D, TreeNode>();
+	
+			var rootNode = Object3DTreeBuilder.BuildTree(selectedItem, keyValues, theme);
 			treeView.AddChild(rootNode);
 			rootNode.TreeView = treeView;
 

@@ -1182,23 +1182,6 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "Visibility Control",
-					Title = "Visiability Control".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(ChildVisabilityObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						var visibility = new ChildVisabilityObject3D();
-						visibility.AddSelectionAsChildren(scene, sceneItem);
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
 					OperationID = "Scale",
 					Title = "Scale".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
