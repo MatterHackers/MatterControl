@@ -27,18 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MeshVisualizer;
@@ -103,38 +108,77 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 	}
 
+	[Obsolete("Use CurveObject3D_2 instead", false)]
 	public class CurveObject3D : MeshWrapperObject3D, IEditorDraw
 	{
-		public double Diameter { get; set; } = double.MinValue;
-
-		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Where to start the bend as a percent of the width of the part")]
-		public double StartPercent { get; set; } = 50;
-
-		[DisplayName("Bend Up")]
-		public bool BendCcw { get; set; } = true;
-
-		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinSidesPerRotation { get; set; } = 3;
-
 		// holds where we rotate the object
-		Vector2 rotationCenter;
+		private Vector2 rotationCenter;
 
 		public CurveObject3D()
 		{
 			Name = "Curve".Localize();
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		[DisplayName("Bend Up")]
+		public bool BendCcw { get; set; } = true;
+
+		public double Diameter { get; set; } = double.MinValue;
+
+		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
+		public double MinSidesPerRotation { get; set; } = 3;
+
+		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Description("Where to start the bend as a percent of the width of the part")]
+		public double StartPercent { get; set; } = 50;
+
+		public void DrawEditor(object sender, DrawEventArgs e)
+		{
+			if (sender is InteractionLayer layer
+				&& layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			{
+				// we want to measure the
+				var currentMatrixInv = Matrix.Inverted;
+				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
+
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), new Vector3(rotationCenter, aabb.Center.Z), Diameter, aabb.ZSize, 30, Color.Red);
+			}
+
+			// turn the lighting back on
+			GL.Enable(EnableCap.Lighting);
+		}
+
+		public override void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateType.Source != this
+				&& !RebuildLocked)
+			{
+				Rebuild();
+			}
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateType.Source == this)
+			{
+				Rebuild();
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
+
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool propertyUpdated = Diameter == double.MinValue;
+			bool valuesChanged = Diameter == double.MinValue;
 			if (StartPercent < 0
 				|| StartPercent > 100)
 			{
 				StartPercent = Math.Min(100, Math.Max(0, StartPercent));
-				propertyUpdated = true;
+				valuesChanged = true;
 			}
 
 			using (RebuildLock())
@@ -231,49 +275,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if(propertyUpdated)
+			Invalidate(InvalidateType.Mesh);
+			if (valuesChanged)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
-			}
-		}
-
-		public override void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
-				&& invalidateType.Source != this
-				&& !RebuildLocked)
-			{
-				Rebuild(null);
-			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
-			{
-				Rebuild(null);
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public void DrawEditor(object sender, DrawEventArgs e)
-		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				// we want to measure the
-				var currentMatrixInv = Matrix.Inverted;
-				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
-
-				layer.World.RenderCylinderOutline(this.WorldMatrix(), new Vector3(rotationCenter, aabb.Center.Z), Diameter, aabb.ZSize, 30, Color.Red);
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
-			// turn the lighting back on
-			GL.Enable(EnableCap.Lighting);
+			return Task.CompletedTask;
 		}
 	}
 }

@@ -27,9 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -44,30 +43,17 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	[HideFromTreeViewAttribute, Immutable]
-	public class GeneratedSupportObject3D : Object3D
-	{
-		public GeneratedSupportObject3D()
-		{
-			OutputType = PrintOutputTypes.Support;
-		}
-	}
-
 	public class GenerateSupportPanel : FlowLayoutWidget
 	{
-		/// <summary>
-		/// The amount to reduce the pillars so they are separated in the 3D view
-		/// </summary>
-		private double reduceAmount => PillarSize / 8;
-
-		private InteractiveScene scene;
+		private SupportGenerator supportGenerator;
 		private ThemeConfig theme;
 
 		public GenerateSupportPanel(ThemeConfig theme, InteractiveScene scene)
 			: base(FlowDirection.TopToBottom)
 		{
+			supportGenerator = new SupportGenerator(scene);
+
 			this.theme = theme;
-			this.scene = scene;
 
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Absolute;
@@ -75,34 +61,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = theme.DefaultContainerPadding;
 
-			// put in support pillar size
+			// Add an editor field for the SupportGenerator.SupportType
+			PropertyInfo propertyInfo = typeof(SupportGenerator).GetProperty(nameof(SupportGenerator.SupportType));
 
-			// support pillar resolution
+			var editor = PublicPropertyEditor.CreatePropertyEditor(
+				new EditableProperty(propertyInfo, supportGenerator),
+				null,
+				new PPEContext(),
+				theme);
+
+			if (editor != null)
+			{
+				this.AddChild(editor);
+			}
+
+			// put in support pillar size
 			var pillarSizeField = new DoubleField(theme);
 			pillarSizeField.Initialize(0);
-			pillarSizeField.DoubleValue = PillarSize;
+			pillarSizeField.DoubleValue = supportGenerator.PillarSize;
 			pillarSizeField.ValueChanged += (s, e) =>
 			{
-				PillarSize = pillarSizeField.DoubleValue;
+				supportGenerator.PillarSize = pillarSizeField.DoubleValue;
+				// in case it was corrected set it back again
+				if (pillarSizeField.DoubleValue != supportGenerator.PillarSize)
+				{
+					pillarSizeField.DoubleValue = supportGenerator.PillarSize;
+				}
 			};
 
-			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize());
+			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize(), theme);
 			pillarRow.AddChild(pillarSizeField.Content);
 			this.AddChild(pillarRow);
 
 			// put in the angle setting
 			var overHangField = new DoubleField(theme);
 			overHangField.Initialize(0);
-			overHangField.DoubleValue = MaxOverHangAngle;
+			overHangField.DoubleValue = supportGenerator.MaxOverHangAngle;
 			overHangField.ValueChanged += (s, e) =>
 			{
-				MaxOverHangAngle = overHangField.DoubleValue;
+				supportGenerator.MaxOverHangAngle = overHangField.DoubleValue;
+				// in case it was corrected set it back again
+				if (overHangField.DoubleValue != supportGenerator.MaxOverHangAngle)
+				{
+					overHangField.DoubleValue = supportGenerator.MaxOverHangAngle;
+				}
 			};
 
-			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize());
+			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize(), theme);
 			overHangRow.AddChild(overHangField.Content);
 			this.AddChild(overHangRow);
 
+			// Button Row
 			var buttonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -116,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// add 'Remove Auto Supports' button
 			var removeButton = theme.CreateDialogButton("Remove".Localize());
 			removeButton.ToolTipText = "Remove all auto generated supports".Localize();
-			removeButton.Click += (s, e) => RemoveExisting();
+			removeButton.Click += (s, e) => supportGenerator.RemoveExisting();
 			buttonRow.AddChild(removeButton);
 
 			// add 'Generate Supports' button
@@ -127,239 +136,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			theme.ApplyPrimaryActionStyle(generateButton);
 		}
 
-		public static double MaxOverHangAngle { get; private set; } = 45;
-
-		public double PillarSize { get; private set; } = 4;
-
-		private void AddSupportColumn(IObject3D holder, double gridX, double gridY, double bottomZ, double topZ)
-		{
-			if(topZ - bottomZ < .01)
-			{
-				// less than 10 micros high, don't ad it
-				return;
-			}
-			holder.Children.Add(new GeneratedSupportObject3D()
-			{
-				Mesh = PlatonicSolids.CreateCube(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ),
-				Matrix = Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2)
-			});
-		}
-
 		private Task Rebuild()
 		{
 			return ApplicationController.Instance.Tasks.Execute(
 				"Create Support".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					// Get visible meshes for each of them
-					var visibleMeshes = scene.Children.SelectMany(i => i.VisibleMeshes());
-
-					var selectedItem = scene.SelectedItem;
-					if (selectedItem != null)
-					{
-						visibleMeshes = selectedItem.VisibleMeshes();
-					}
-
-					var supportCandidates = visibleMeshes.Where(i => i.OutputType != PrintOutputTypes.Support);
-
-					// find all the faces that are candidates for support
-					var upVerts = new List<Vector3Float>();
-					var upFaces = new FaceList();
-					var downVerts = new List<Vector3Float>();
-					var downFaces = new FaceList();
-					foreach (var item in supportCandidates)
-					{
-						var matrix = item.WorldMatrix(scene);
-						for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
-						{
-							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
-							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
-
-							if (angle < MaxOverHangAngle)
-							{
-								var face = item.Mesh.Faces[faceIndex];
-								var verts = new int[] { face.v0, face.v1, face.v2 };
-								var fc = downVerts.Count;
-								downVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
-								downVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
-								downVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
-
-								downFaces.Add(fc, fc + 1, fc + 2, downVerts);
-							}
-
-							if (angle > 0)
-							{
-								var face = item.Mesh.Faces[faceIndex];
-								var verts = new int[] { face.v0, face.v1, face.v2 };
-								var fc = upFaces.Count;
-								upVerts.Add(item.Mesh.Vertices[face.v0].Transform(matrix));
-								upVerts.Add(item.Mesh.Vertices[face.v1].Transform(matrix));
-								upVerts.Add(item.Mesh.Vertices[face.v2].Transform(matrix));
-
-								upFaces.Add(fc, fc + 1, fc + 2, upVerts);
-							}
-						}
-					}
-
-					if (downFaces.Count > 0)
-					{
-						var downTraceData = downFaces.CreateTraceData(downVerts, 0);
-						var upTraceData = upFaces.CreateTraceData(upVerts, 0);
-
-						// get the bounds of all verts
-						var bounds = downVerts.Bounds();
-
-						// create the gird of possible support
-						var gridBounds = new RectangleDouble(Math.Floor((double)(bounds.MinXYZ.X / PillarSize)),
-							Math.Floor((double)(bounds.MinXYZ.Y / PillarSize)),
-							Math.Ceiling(bounds.MaxXYZ.X / PillarSize),
-							Math.Ceiling(bounds.MaxXYZ.Y / PillarSize));
-
-						var supportGrid = new List<List<double>>((int)(gridBounds.Width * gridBounds.Height));
-
-						IObject3D holder = new Object3D();
-
-						// at the center of every grid item add in a list of all the top faces to look down from
-						for (int y = 0; y < gridBounds.Height; y++)
-						{
-							var yPos = (gridBounds.Bottom + y) * PillarSize;
-							for (int x = 0; x < gridBounds.Width; x++)
-							{
-								var xPos = (gridBounds.Left + x) * PillarSize;
-								IntersectInfo upHit = null;
-								var upRay = new Ray(new Vector3(xPos, yPos, 0), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-								do
-								{
-									upHit = downTraceData.GetClosestIntersection(upRay);
-									if (upHit != null)
-									{
-										// we found a ceiling above this spot, look down from that to find the first floor
-										var downRay = new Ray(new Vector3(upHit.HitPosition.X, upHit.HitPosition.Y, upHit.HitPosition.Z - .001), -Vector3.UnitZ, intersectionType: IntersectionType.Both);
-										var downHit = upTraceData.GetClosestIntersection(downRay);
-										if (downHit != null)
-										{
-											AddSupportColumn(holder, downHit.HitPosition.X, downHit.HitPosition.Y, downHit.HitPosition.Z, upHit.HitPosition.Z);
-										}
-										else
-										{
-											// did not find a hit, go to the bed
-											AddSupportColumn(holder, upHit.HitPosition.X, upHit.HitPosition.Y, upRay.origin.Z, upHit.HitPosition.Z);
-										}
-
-										// make a new ray just past the last hit to keep looking for up hits
-										upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.Both);
-									}
-								} while (upHit != null);
-							}
-						}
-
-						// foreach face set the support heights in the overlapped support grid
-						// foreach grid column that has data
-						// trace down from the top to the first bottom hit (or bed)
-						// add a support column
-						var first = downFaces.First();
-						var position = downVerts[first.v0];
-						//AddSupportColumn(position.X, position.Y, position.Z, 0);
-
-						scene.Children.Modify(list =>
-						{
-							list.AddRange(holder.Children);
-						});
-					}
-
-					// this is the theory for regions rather than pillars
-					// separate the faces into face patch groups (these are the new support tops)
-					// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
-					// make a new patch group at the z of the hit (these will be the bottoms)
-					// find the outline of the patch groups (these will be the walls of the top and bottom patches
-					// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
-
-					return Task.CompletedTask;
-				});
-		}
-
-		private void RemoveExisting()
-		{
-			var existingSupports = scene.Children.Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
-
-			scene.Children.Modify((list) =>
-			{
-				foreach (var item in existingSupports)
-				{
-					list.Remove(item);
-				}
-			});
-		}
-
-		public static bool RequiresSupport(InteractiveScene scene)
-		{
-			bool supportInScene = scene.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support);
-			if (!supportInScene)
-			{
-				// there is no support in the scene check if there are faces that require support
-				var supportCandidates = scene.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
-
-				// find all the faces that are candidates for support
-				foreach (var item in supportCandidates)
-				{
-					var matrix = item.WorldMatrix(scene);
-					for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
-					{
-						bool aboveBed = false;
-						var face = item.Mesh.Faces[faceIndex];
-						var verts = new int[] { face.v0, face.v1, face.v2 };
-						foreach(var vertex in verts)
-						{
-							if(item.Mesh.Vertices[vertex].Transform(matrix).Z > .01)
-							{
-								aboveBed = true;
-								break;
-							}
-						}
-						if (aboveBed)
-						{
-							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
-							var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
-
-							if (angle < MaxOverHangAngle)
-							{
-								// TODO: consider how much area all supported polygons represent
-								return true;
-							}
-						}
-					}
-				}
-			}
-
-			return false;
-		}
-	}
-
-	public static class FaceListExtensions
-	{
-		public static IPrimitive CreateTraceData(this FaceList faceList, List<Vector3> vertexList, int maxRecursion = int.MaxValue)
-		{
-			var allPolys = new List<IPrimitive>();
-
-			foreach (var face in faceList)
-			{
-				allPolys.Add(new TriangleShape(vertexList[face.v0], vertexList[face.v1], vertexList[face.v2], null));
-			}
-
-			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
-		}
-
-		public static IPrimitive CreateTraceData(this FaceList faceList, List<Vector3Float> vertexList, int maxRecursion = int.MaxValue)
-		{
-			var allPolys = new List<IPrimitive>();
-
-			foreach (var face in faceList)
-			{
-				allPolys.Add(new TriangleShape(vertexList[face.v0], vertexList[face.v1], vertexList[face.v2], null));
-			}
-
-			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
+				null, supportGenerator.Create
+				);
 		}
 	}
 }

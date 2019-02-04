@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.ComponentModel;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
@@ -56,14 +58,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.Height = height;
 			this.Sides = sides;
 
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public static RingObject3D Create()
 		{
 			var item = new RingObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -78,10 +80,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -89,58 +91,53 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool changed = false;
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref changed);
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var startingAngle = StartingAngle;
-				var endingAngle = EndingAngle;
-				if (!Advanced)
+				using (new CenterAndHeightMantainer(this))
 				{
-					startingAngle = 0;
-					endingAngle = 360;
-				}
+					var startingAngle = StartingAngle;
+					var endingAngle = EndingAngle;
+					if (!Advanced)
+					{
+						startingAngle = 0;
+						endingAngle = 360;
+					}
 
-				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
+					var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 
-				var path = new VertexStorage();
-				path.MoveTo(OuterDiameter / 2, -Height / 2);
-				path.LineTo(OuterDiameter / 2, Height / 2);
-				path.LineTo(innerDiameter / 2, Height / 2);
-				path.LineTo(innerDiameter / 2, -Height / 2);
-				path.LineTo(OuterDiameter / 2, -Height / 2);
+					var path = new VertexStorage();
+					path.MoveTo(OuterDiameter / 2, -Height / 2);
+					path.LineTo(OuterDiameter / 2, Height / 2);
+					path.LineTo(innerDiameter / 2, Height / 2);
+					path.LineTo(innerDiameter / 2, -Height / 2);
+					path.LineTo(OuterDiameter / 2, -Height / 2);
 
-				var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-				var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-				Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
-
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+					Mesh = VertexSourceToMesh.Revolve(path, Sides, startAngle, endAngle);
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if (changed)
+			Invalidate(InvalidateType.Mesh);
+			if (valuesChanged)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.DisplayValues);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			var editRow = change.Context.GetEditRow(nameof(StartingAngle));
-			if (editRow != null) editRow.Visible = Advanced;
-			editRow = change.Context.GetEditRow(nameof(EndingAngle));
-			if (editRow != null) editRow.Visible = Advanced;
+			change.SetRowVisible(nameof(StartingAngle), () => Advanced);
+			change.SetRowVisible(nameof(EndingAngle), () => Advanced);
 		}
 	}
 }

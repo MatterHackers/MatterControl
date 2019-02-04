@@ -238,8 +238,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SplitterSize = theme.SplitterWidth,
 				SplitterBackground = theme.SplitterBackground
 			};
-			historyAndProperties.Panel1.MinimumSize = new Vector2(0, 120);
-			historyAndProperties.Panel2.MinimumSize = new Vector2(0, 120);
+			historyAndProperties.Panel1.MinimumSize = new Vector2(0, 60);
+			historyAndProperties.Panel2.MinimumSize = new Vector2(0, 60);
 
 			modelViewSidePanel.AddChild(historyAndProperties);
 
@@ -382,6 +382,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RebuildTree()
 		{
+			rebuildTreePending = false;
 			workspaceName.Text = sceneContext.Scene.Name ?? "";
 
 			// Top level selection only - rebuild tree
@@ -391,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var child in sceneContext.Scene.Children)
 			{
-				if (child.GetType().IsDefined(typeof(HideFromTreeViewAttribute), false))
+				if (child is GeneratedSupportObject3D)
 				{
 					continue;
 				}
@@ -416,202 +417,141 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
 
-			return new Dictionary<string, NamedAction>()
+			// Build workspace actions, each having a unique ID
+			var actions = new [] 
 			{
+				new NamedAction()
 				{
-					"Insert",
-					new NamedAction()
+					ID = "Print",
+					Title = "Print".Localize(),
+					Shortcut = "Ctrl+P",
+					Action = this.PushToPrinterAndPrint,
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Cut",
+					Title = "Cut".Localize(),
+					Shortcut = "Ctrl+X",
+					Action = () =>
 					{
-						ID = "Insert",
-						Title = "Insert".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, invertIcons),
-						Action = () =>
-						{
-							var extensionsWithoutPeriod = new HashSet<string>(ApplicationSettings.OpenDesignFileParams.Split('|').First().Split(',').Select(s => s.Trim().Trim('.')));
-
-							foreach(var extension in ApplicationController.Instance.Library.ContentProviders.Keys)
-							{
-								extensionsWithoutPeriod.Add(extension.ToUpper());
-							}
-
-							var extensionsArray = extensionsWithoutPeriod.OrderBy(t => t).ToArray();
-
-							string filter = string.Format(
-								"{0}|{1}",
-								string.Join(",", extensionsArray),
-								string.Join("", extensionsArray.Select(e => $"*.{e.ToLower()};").ToArray()));
-
-							UiThread.RunOnIdle(() =>
-							{
-								AggContext.FileDialogs.OpenFileDialog(
-									new OpenFileDialogParams(filter, multiSelect: true),
-									(openParams) =>
+						sceneContext.Scene.Cut();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Copy",
+					Title = "Copy".Localize(),
+					Shortcut = "Ctrl+C",
+					Action = () =>
+					{
+						sceneContext.Scene.Copy();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Paste",
+					Title = "Paste".Localize(),
+					Shortcut = "Ctrl+V",
+					Action = () =>
+					{
+						sceneContext.Paste();
+					},
+					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+				},
+				new NamedAction()
+				{
+					ID = "Delete",
+					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+					Title = "Remove".Localize(),
+					Action = sceneContext.Scene.DeleteSelection,
+					IsEnabled = () =>  sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Export",
+					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
+					Action = () =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+							centerOnBed: false,
+							printer: printer);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Save",
+					Title = "Save".Localize(),
+					Shortcut = "Ctrl+S",
+					Action = () =>
+					{
+						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "SaveAs",
+					Title = "Save As".Localize(),
+					Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
 									{
-										ViewControls3D.LoadAndAddPartsToPlate(this, openParams.FileNames, sceneContext);
-									});
-							});
-						}
-					}
-				},
-				{
-					"Print",
-					new NamedAction()
-					{
-						ID = "Print",
-						Title = "Print".Localize(),
-						Shortcut = "Ctrl+P",
-						Action = this.PushToPrinterAndPrint,
-						IsEnabled = () => sceneContext.EditableScene
-							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
-					}
-				},
-				{
-					"Cut",
-					new NamedAction()
-					{
-						ID = "Cut",
-						Title = "Cut".Localize(),
-						Shortcut = "Ctrl+X",
-						Action = () =>
-						{
-							sceneContext.Scene.Cut();
-						},
-						IsEnabled = () => sceneContext.Scene.SelectedItem != null
-					}
-				},
-				{
-					"Copy",
-					new NamedAction()
-					{
-						ID = "Copy",
-						Title = "Copy".Localize(),
-						Shortcut = "Ctrl+C",
-						Action = () =>
-						{
-							sceneContext.Scene.Copy();
-						},
-						IsEnabled = () => sceneContext.Scene.SelectedItem != null
-					}
-				},
-				{
-					"Paste",
-					new NamedAction()
-					{
-						ID = "Paste",
-						Title = "Paste".Localize(),
-						Shortcut = "Ctrl+V",
-						Action = () =>
-						{
-							sceneContext.Paste();
-						},
-						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-					}
-				},
-				{
-					"Delete",
-					new NamedAction()
-					{
-						ID = "Delete",
-						Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
-						Title = "Remove".Localize(),
-						Action = sceneContext.Scene.DeleteSelection,
-						IsEnabled = () =>  sceneContext.Scene.SelectedItem != null
-					}
-				},
-				{
-					"Export",
-					new NamedAction()
-					{
-						ID = "Export",
-						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
-						Action = () =>
-						{
-							ApplicationController.Instance.ExportLibraryItems(
-								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
-								centerOnBed: false,
-								printer: printer);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
-					}
-				},
-				{
-					"Save",
-					new NamedAction()
-					{
-						ID = "Save",
-						Title = "Save".Localize(),
-						Shortcut = "Ctrl+S",
-						Action = () =>
-						{
-							ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					}
-				},
-				{
-					"SaveAs",
-					new NamedAction()
-					{
-						ID = "SaveAs",
-						Title = "Save As".Localize(),
-						Action = () => UiThread.RunOnIdle(() =>
-						{
-							DialogWindow.Show(
-								new SaveAsPage(
-									async (newName, destinationContainer) =>
-									{
-										// Save to the destination provider
-										if (destinationContainer is ILibraryWritableContainer writableContainer)
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
 										{
-											// Wrap stream with ReadOnlyStream library item and add to container
-											writableContainer.Add(new[]
+											new InMemoryLibraryItem(sceneContext.Scene)
 											{
-												new InMemoryLibraryItem(sceneContext.Scene)
-												{
-													Name = newName
-												}
-											});
+												Name = newName
+											}
+										});
 
-											destinationContainer.Dispose();
-										}
-									}));
-						}),
-						IsEnabled = () => sceneContext.EditableScene
-					}
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
+					IsEnabled = () => sceneContext.EditableScene
 				},
+				new NamedAction()
 				{
-					"ArrangeAll",
-					new NamedAction()
+					ID = "ArrangeAll",
+					Title = "Arrange All Parts".Localize(),
+					Action = () =>
 					{
-						ID = "ArrangeAll",
-						Title = "Arrange All Parts".Localize(),
-						Action = () =>
-						{
-							sceneContext.Scene.AutoArrangeChildren(this.BedCenter);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					}
+						sceneContext.Scene.AutoArrangeChildren(this.BedCenter);
+					},
+					IsEnabled = () => sceneContext.EditableScene
 				},
+				new NamedAction()
 				{
-					"ClearBed",
-					new NamedAction()
+					ID = "ClearBed",
+					Title = "Clear Bed".Localize(),
+					Action = () =>
 					{
-						ID = "ClearBed",
-						Title = "Clear Bed".Localize(),
-						Action = () =>
+						UiThread.RunOnIdle(() =>
 						{
-							UiThread.RunOnIdle(() =>
-							{
-								this.ClearPlate();
-							});
-						}
+							this.ClearPlate();
+						});
 					}
 				}
 			};
+
+			// Construct dictionary from workspace actions by ID
+			return actions.ToDictionary(a => a.ID);
 		}
 
 		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
@@ -1068,7 +1008,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.deferEditorTillMouseUp = false;
 				Scene_SelectionChanged(null, null);
 
-				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Content, null));
+				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 
 				// Set focus to View3DWidget after drag-drop
 				UiThread.RunOnIdle(this.Focus);
@@ -1881,18 +1821,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
 		private bool AllowDragDrop() => true;
 
+		private bool rebuildTreePending = false;
+
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
-			if (e.InvalidateType == InvalidateType.Content)
+			if (e.InvalidateType.HasFlag(InvalidateType.Children)
+				&& !rebuildTreePending)
 			{
+				rebuildTreePending = true;
 				UiThread.RunOnIdle(this.RebuildTree);
 			}
 
-			if (e.InvalidateType == InvalidateType.Name)
+			if (e.InvalidateType.HasFlag(InvalidateType.Name))
 			{
 				// clear and restore the selection so we have the name change
 				var lastSelectedItem = Scene.SelectedItem;
-				UiThread.RunOnIdle(this.RebuildTree);
+				if (!rebuildTreePending)
+				{
+					rebuildTreePending = true;
+					UiThread.RunOnIdle(this.RebuildTree);
+				}
 				Scene.SelectedItem = null;
 				Scene.SelectedItem = lastSelectedItem;
 			}

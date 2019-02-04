@@ -29,25 +29,40 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
-using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using static MatterHackers.DataConverters3D.Object3DExtensions;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public abstract class TransformWrapperObject3D : Object3D
 	{
+		public TransformWrapperObject3D()
+		{
+			Name = "Transform Wrapper".Localize();
+		}
+
+		public override bool CanFlatten => true;
+
+		[JsonIgnore]
+		public SafeList<IObject3D> SourceItems
+		{
+			get
+			{
+				if (TransformItem?.Children.Count > 0)
+				{
+					return TransformItem.Children;
+				}
+
+				return null;
+			}
+		}
+
 		protected IObject3D TransformItem
 		{
 			get
@@ -58,78 +73,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				return null;
-			}
-		}
-
-		[JsonIgnore]
-		public IObject3D SourceItem
-		{
-			get
-			{
-				if (TransformItem?.Children.Count > 0)
-				{
-					return TransformItem.Children.First();
-				}
-
-				return null;
-			}
-		}
-
-		public TransformWrapperObject3D()
-		{
-			Name = "Transform Wrapper".Localize();
-		}
-
-		public virtual void WrapItem(IObject3D item, UndoBuffer undoBuffer = null)
-		{
-			using (item.RebuilLockAll())
-			{
-				RebuildLock parentLock = null;
-				if (item.Parent != null)
-				{
-					parentLock = item.Parent.RebuildLock();
-				}
-
-				if (item is SelectionGroupObject3D)
-				{
-					throw new Exception("The selection should have been cleared before you wrap this item");
-				}
-
-				while (item.Parent is ModifiedMeshObject3D)
-				{
-					item = item.Parent;
-				}
-
-				// if the items we are replacing ar already in a list
-				if (item.Parent != null)
-				{
-					var firstChild = new Object3D();
-					this.Children.Add(firstChild);
-					if (undoBuffer != null)
-					{
-						IObject3D replaceItem = item.Clone();
-						firstChild.Children.Add(replaceItem);
-						var replace = new ReplaceCommand(new List<IObject3D> { item }, new List<IObject3D> { this });
-						undoBuffer.AddAndDo(replace);
-					}
-					else
-					{
-						item.Parent.Children.Modify(list =>
-						{
-							list.Remove(item);
-							list.Add(this);
-						});
-						firstChild.Children.Add(item);
-					}
-				}
-				else // just add them
-				{
-					var firstChild = new Object3D();
-					firstChild.Children.Add(item);
-					this.Children.Add(firstChild);
-				}
-
-				parentLock?.Dispose();
 			}
 		}
 
@@ -144,7 +87,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				// push child into children
-				SourceItem.Matrix *= TransformItem.Matrix;
+				foreach (var item in SourceItems)
+				{
+					item.Matrix *= TransformItem.Matrix;
+				}
 
 				// add our children to our parent and remove from parent
 				this.Parent.Children.Modify(list =>
@@ -153,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(TransformItem.Children);
 				});
 			}
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -174,7 +120,53 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
+		}
+
+		public virtual void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
+		{
+			var parent = items.First().Parent;
+			RebuildLocks parentLock = (parent == null) ? null : parent.RebuilLockAll();
+
+			var firstChild = new Object3D();
+			this.Children.Add(firstChild);
+
+			// if the items we are replacing are already in a list
+			if (parent != null)
+			{
+				if (undoBuffer != null)
+				{
+					foreach (var item in items)
+					{
+						firstChild.Children.Add(item.Clone());
+					}
+					var replace = new ReplaceCommand(items, new[] { this });
+					undoBuffer.AddAndDo(replace);
+				}
+				else
+				{
+					parent.Children.Modify(list =>
+					{
+						foreach (var item in items)
+						{
+							list.Remove(item);
+							firstChild.Children.Add(item);
+						}
+						list.Add(this);
+					});
+				}
+			}
+			else // just add them
+			{
+				firstChild.Children.Modify(list =>
+				{
+					list.AddRange(items);
+				});
+			}
+
+			parentLock?.Dispose();
+
+			parent?.Invalidate(new InvalidateArgs(parent, InvalidateType.Children));
 		}
 	}
 }

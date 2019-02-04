@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -60,6 +61,22 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.Context = pPEContext;
 			this.Changed = propertyChanged;
+		}
+
+
+		/// <summary>
+		/// Set the visability of a property line item in the property editor
+		/// </summary>
+		/// <param name="editRowName"></param>
+		/// <param name="change"></param>
+		/// <param name="visible"></param>
+		public void SetRowVisible(string editRowName, Func<bool> visible)
+		{
+			var editRow = this.Context.GetEditRow(editRowName);
+			if (editRow != null)
+			{
+				editRow.Visible = visible.Invoke();
+			}
 		}
 	}
 

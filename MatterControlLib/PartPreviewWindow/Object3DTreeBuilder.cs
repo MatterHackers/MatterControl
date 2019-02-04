@@ -139,10 +139,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			switch (item)
 			{
-				case TransformWrapperObject3D fitToBounds3D:
+				case TransformWrapperObject3D transformWrapperObject3D:
 					return new ObjectView()
 					{
-						Children = new IObject3D[] { fitToBounds3D.SourceItem },
+						Children = transformWrapperObject3D.SourceItems,
 						Name = item.Name,
 						Source = item
 					};
@@ -171,6 +171,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = $"{arrayRadial3D.Name} ({arrayRadial3D.Count})",
 						Source = item
 					};
+
+				case OperationSourceContainerObject3D operationSourceContainerObject3D:
+					return new ObjectView()
+					{
+						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
+						Name = operationSourceContainerObject3D.Name,
+						Source = item
+					};
+
 
 				default:
 					return new ObjectView(item);

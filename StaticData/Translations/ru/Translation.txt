@@ -4,6 +4,9 @@ Translated:
 English:    • Remove the paper
 Translated:    • Удалить бумагу
 
+English:    1. Select the 'Controls' tab on the right
+Translated:    1. Выберите вкладку «Элементы управления» справа
+
 English:    2. Look for the calibration section (pictured below)
 Translated:    2. Ищите раздел калибровки (изображенный ниже)
 
@@ -30,9 +33,6 @@ Translated:{0} должно быть меньше или равно {1} * 4.
 
 English:{0} must be less than or equal to the {1}.
 Translated:{0} должно быть меньше или равно {1}.
-
-English:{0} works best when set to LINES.
-Translated:{0} лучше всего работает при установке на LINES.
 
 English:<< Back
 Translated:<< Назад
@@ -63,9 +63,6 @@ Translated:Модификатор ширины экструзии при печ�
 
 English:A password reset code will be sent to your email.
 Translated:Код сброса пароля будет отправлен на вашу электронную почту.
-
-English:A Quick Tour of MatterControl
-Translated:Быстрый тур по MatterControl
 
 English:A six-digit code - sent to your email account
 Translated:Шестизначный код - отправляется на ваш электронный адрес
@@ -99,6 +96,12 @@ Translated:Аккаунт создан
 
 English:Action
 Translated:действие
+
+English:Action Recommended
+Translated:Действие Рекомендуется
+
+English:Action Required
+Translated:Необходимое действие
 
 English:Add
 Translated:добавлять
@@ -158,7 +161,7 @@ English:Align
 Translated:выравнивать
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Все выдавливания умножаются на это значение. Увеличение его выше 1 увеличит количество экструдируемой нити (1.1 - это максимальное максимальное значение); уменьшение его уменьшит количество выдавливаемого материала (0,9 - это хорошее минимальное значение).
+Translated:Все выдавливания умножаются на это значение. Увеличение его выше 1 увеличит количество экструдируемой нити (1.1 - это максимальное максимальное значение); уменьшение его приведет к уменьшению количества выдавливаемого материала (0,9 - это хорошее минимальное значение).
 
 English:All G-Code lines mush be shorter than 100 characters (excluding comments).
 Translated:Все строки G-кода должны быть короче 100 символов (исключая комментарии).
@@ -167,7 +170,16 @@ English:All Heaters
 Translated:Все обогреватели
 
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
-Translated:Разрешить MatterControl разбивать длинные строки для улучшения выравнивания и отмены печати. Критично для принтеров, которые значительно вышли из уровня.
+Translated:Разрешить MatterControl разбивать длинные строки, чтобы улучшить выравнивание и отмену печати. Критично для принтеров, которые значительно вышли из уровня.
+
+English:Allows you turn on and off applying the fit to the x axis.
+Translated:Позволяет включать и выключать применение подгонки к оси x.
+
+English:Allows you turn on and off applying the fit to the y axis.
+Translated:Позволяет включать и выключать применение подгонки к оси y.
+
+English:Allows you turn on and off applying the fit to the z axis.
+Translated:Позволяет включать и выключать применение подгонки к оси z.
 
 English:Alpha
 Translated:Альфа
@@ -175,11 +187,20 @@ Translated:Альфа
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: версия MatterControl в разработке
 
+English:Already Loaded
+Translated:Уже загружен
+
+English:Anchor
+Translated:анкер
+
 English:and ensure that no filament is stuck to your nozzle.
 Translated:и убедитесь, что нить не прилипла к соплу.
 
 English:and the hotend to heat to 
 Translated:и хотэнд, чтобы нагреть
+
+English:Angle
+Translated:Угол
 
 English:Anyone with this code will have access
 Translated:Любой с этим кодом будет иметь доступ
@@ -202,8 +223,8 @@ Translated:Вы уверены, что хотите прервать текущ�
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
 Translated:Вы уверены, что хотите добавить эту часть ({0}) в очередь?\n3D-деталь, которую вы пытаетесь загрузить, может быть слишком сложной и вызывать проблемы с производительностью или стабильностью.\n\nПодумайте об уменьшении геометрии, прежде чем продолжить.
 
-English:Are you sure you want to delete your currently selected printer?
-Translated:Вы уверены, что хотите удалить выбранный принтер?
+English:Are you sure you want to delete printer '{0}'?
+Translated:Вы уверены, что хотите удалить принтер '{0}'?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
 Translated:Вы уверены, что хотите выйти во время печати с SD-карты?\n\nПримечание. При выходе рекомендуется дождаться завершения печати, прежде чем снова запустить MatterControl.
@@ -262,11 +283,14 @@ Translated:Baby Step Offset
 English:Back
 Translated:назад
 
+English:Back Ratio
+Translated:Обратно соотношение
+
+English:Backing Depth
+Translated:Глубина подложки
+
 English:Backup Firmware Before Update
 Translated:Резервное копирование прошивки перед обновлением
-
-English:BadSubtract
-Translated:BadSubtract
 
 English:Base
 Translated:База
@@ -310,6 +334,9 @@ Translated:Перед сменой инструмента G-Code 2
 English:Behavior
 Translated:Поведение
 
+English:Bend Up
+Translated:Согнуть
+
 English:Beta
 Translated:Бета
 
@@ -347,7 +374,7 @@ English:Build Height
 Translated:Высота сборки
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
-Translated:Рассчитайте и передайте стандартную контрольную сумму повторного рэпа для всех команд.
+Translated:Рассчитайте и передайте стандартную контрольную сумму rep-rap для всех команд.
 
 English:Calculate Path
 Translated:Рассчитать путь
@@ -357,9 +384,6 @@ Translated:Калибровать смещение зонда
 
 English:Calibration
 Translated:калибровка
-
-English:Calibration Error
-Translated:Ошибка калибровки
 
 English:Calibration Files
 Translated:Калибровочные файлы
@@ -403,6 +427,12 @@ Translated:+ Изменить
 English:Change Password
 Translated:Изменить пароль
 
+English:Change the scale of the image within the coin.
+Translated:Измените масштаб изображения внутри монеты.
+
+English:Change the width of the image lines.
+Translated:Изменить ширину линий изображения.
+
 English:Changing your update channel will change the version of MatterControl that you receive when updating
 Translated:Изменение канала обновления изменит версию MatterControl, которую вы получите при обновлении
 
@@ -427,8 +457,8 @@ Translated:Перед каждым отпечатком проверяет, чт
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Выберите команду для отображения хода печати на ЖК-экране принтера, если он есть.
 
-English:Clean
-Translated:чистый
+English:Choose to render as Braille or standard text. This can help show how grade 2 works.
+Translated:Выберите, чтобы сделать как Брайля или стандартный текст. Это может помочь показать, как работает 2 класс.
 
 English:Clean Filament Page
 Translated:Чистая нить
@@ -526,6 +556,9 @@ Translated:Подключите принтер (убедитесь, что он 
 English:Connect to the currently selected printer
 Translated:Подключиться к выбранному в данный момент принтеру
 
+English:Connect to your printer to continue
+Translated:Подключитесь к принтеру, чтобы продолжить
+
 English:Connect your printer to check for firmware updates.
 Translated:Подключите принтер, чтобы проверить наличие обновлений прошивки.
 
@@ -568,23 +601,11 @@ Translated:Порог охлаждения
 English:Copy
 Translated:копия
 
-English:Copy Edges
-Translated:Копировать края
-
-English:Copy Faces
-Translated:Копировать лица
-
 English:Copy Printers
 Translated:Копировальные принтеры
 
 English:Copy Printers to Account
 Translated:Копировать принтеры в аккаунт
-
-English:Copy State
-Translated:Скопировать состояние
-
-English:Copy Vertices
-Translated:Копировать вершины
 
 English:Cost
 Translated:Стоимость
@@ -604,6 +625,12 @@ Translated:количество или мм
 English:Create
 Translated:Создайте
 
+English:Create a hook so that the coin can be hung from a chain.
+Translated:Создайте крючок, чтобы монету можно было повесить на цепочку.
+
+English:Create a hook so the Braille can be hung from a necklace or keychain.
+Translated:Создайте крючок, чтобы шрифт Брайля можно было повесить на ожерелье или брелок.
+
 English:Create a printer to export G-Code
 Translated:Создать принтер для экспорта G-кода
 
@@ -615,9 +642,6 @@ Translated:Завести аккаунт
 
 English:Create Brim
 Translated:Создать Брим
-
-English:Create Dictionaries
-Translated:Создать словари
 
 English:Create Folder
 Translated:Создать папку
@@ -636,6 +660,9 @@ Translated:Создать плот
 
 English:Create Skirt
 Translated:Создать юбку
+
+English:Create Support
+Translated:Создать поддержку
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Создает поле, прикрепленное к основанию печати. Полезно для предотвращения деформации при печати АБС (и других склонных к деформации пластиков), поскольку она помогает деталям прилипать к кровати.
@@ -703,6 +730,9 @@ Translated:Демонстрационный режим
 English:Density
 Translated:плотность
 
+English:Depth
+Translated:глубина
+
 English:Descending
 Translated:нисходящий
 
@@ -719,13 +749,13 @@ English:Details
 Translated:подробности
 
 English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
-Translated:Определите промежутки между периметрами, которые слишком тонкие, чтобы заполнить их нормальным заполнением, и попытайтесь их заполнить.
+Translated:Определите промежутки между периметрами, которые слишком тонки, чтобы заполнить их нормальным заполнением, и попытайтесь их заполнить.
 
 English:Detect perimeters that cross over themselves and combine them.
 Translated:Обнаружьте периметры, которые пересекают себя и объедините их.
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:Определите, когда стены расположены слишком близко друг к другу, и их необходимо выдавливать как одну стену.
+Translated:Определите, когда стены расположены слишком близко друг к другу и их необходимо выдавливать как одну стену.
 
 English:Detecting device firmware...
 Translated:Обнаружение прошивки устройства ...
@@ -874,6 +904,12 @@ Translated:Конец
 English:End G-Code
 Translated:Конечный G-код
 
+English:Ensure that the part maintains its proportions.
+Translated:Убедитесь, что деталь сохраняет свои пропорции.
+
+English:Ensures the rotated part has a minimum number of sides per complete rotation
+Translated:Гарантирует, что вращаемая часть имеет минимальное количество сторон за полный оборот
+
 English:Enter a Design Name Here
 Translated:Введите имя дизайна здесь
 
@@ -900,6 +936,9 @@ Translated:Введите ваш пароль
 
 English:Enter your username or email address
 Translated:Введите ваше имя пользователя или адрес электронной почты
+
+English:Error
+Translated:ошибка
 
 English:Error compiling OpenSCAD script
 Translated:Ошибка компиляции скрипта OpenSCAD
@@ -952,8 +991,8 @@ Translated:Экспорт EEPROM
 English:Export EEPROM Settings
 Translated:Экспорт настроек EEPROM
 
-English:Export failed
-Translated:Экспорт не удался
+English:Export Error
+Translated:Ошибка экспорта
 
 English:Export File
 Translated:Экспорт файла
@@ -1069,6 +1108,9 @@ Translated:фильтры
 English:Finally click 'Next' to continue.
 Translated:Наконец, нажмите «Далее», чтобы продолжить.
 
+English:Find and create supports where needed
+Translated:Найти и создать поддержку, где это необходимо
+
 English:Finish
 Translated:Конец
 
@@ -1115,13 +1157,16 @@ English:Flag for the state of our filament loaded.
 Translated:Флаг для состояния нашей нити загружен.
 
 English:Flag keeping track if probe calibration wizard has been run.
-Translated:Флаг отслеживания, если мастер калибровки зонда был запущен.
+Translated:Флаг отслеживания, если мастер калибровки датчика был запущен.
 
 English:Flat
 Translated:Плоский
 
 English:Flatten
 Translated:расплющить
+
+English:Flattened
+Translated:сплюснутый
 
 English:Folder Name
 Translated:Имя папки
@@ -1133,13 +1178,13 @@ English:Force a retraction when moving between islands (distinct parts on the la
 Translated:Принудительное сокращение при перемещении между островами (отдельные части на слое).
 
 English:Forces external perimeters to be printed first. By default, they will print last.
-Translated:Принудительно печатает внешний периметр первым. По умолчанию они будут печататься последними.
+Translated:Принудительно печатает внешние периметры. По умолчанию они будут печататься последними.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
 Translated:Принудительно печатает только одно выдавливание и постепенно увеличивает высоту Z во время печати. Только одна часть будет печататься одновременно с этой функцией.
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:Принудительно принуждает принтер нагревать сопло перед нахождением.
+Translated:Принудительно принуждает принтер нагревать сопло перед тем, как вернуться
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
 Translated:Заставляет слайсер пытаться избежать пересечения линии периметра с существующими линиями периметра. Это может помочь с слизью или струнами.
@@ -1169,10 +1214,16 @@ English:G-Code Output
 Translated:Вывод G-кода
 
 English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-код запускается после каждой смены инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z], чтобы при необходимости установить положение экструдера. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+Translated:G-код запускается после каждой смены инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+
+English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-код запускается после каждой смены инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
 
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-код будет запущен после переключения на экструдер 2. Будет использоваться стандарт после G-кода, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z], чтобы при необходимости установить положение экструдера. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+Translated:G-код будет запущен после переключения на экструдер 2. Будет использоваться стандарт после G-кода, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-код будет запущен после переключения на экструдер 2. Будет использоваться стандарт после G-кода, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-код для запуска после изменения высоты Z для следующего слоя.
@@ -1181,13 +1232,19 @@ English:G-Code to be run at the end of all automatic output (the very end of the
 Translated:G-код запускается в конце всех автоматических выходов (самый конец команд G-кода).
 
 English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-код запускается перед каждой сменой инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z], чтобы при необходимости установить положение экструдера. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+Translated:G-код запускается перед каждой сменой инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+
+English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-код запускается перед каждой сменой инструмента. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-код должен быть запущен перед переключением в экструдер 2. Будет использоваться стандарт перед G-кодом, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z], чтобы при необходимости установить положение экструдера. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+Translated:G-код должен быть запущен перед переключением в экструдер 2. Будет использоваться стандарт перед G-кодом, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
+
+English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-код должен быть запущен перед переключением в экструдер 2. Будет использоваться стандарт перед G-кодом, если он не установлен. Вы можете использовать [wipe_tower_x] [wipe_tower_y] и [wipe_tower_z] для установки позиции экструдера при необходимости. Вы также можете использовать '; WRITE_RAW «чтобы пропустить контрольные суммы или»; NO_PROCESSING ', чтобы пропустить смещение позиции.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G-код запускается сразу после команд установки температуры. Включение команд для установки температуры в этом разделе приведет к тому, что они не будут генерироваться вне этого раздела. Примет пользовательские переменные G-кода.
+Translated:G-код запускается сразу после команд установки температуры. Включение команд для установки температуры в этом разделе приведет к тому, что они не будут генерироваться за пределами этого раздела. Примет пользовательские переменные G-кода.
 
 English:G-Code to be run when the print resumes after a pause.
 Translated:G-код запускается, когда печать возобновляется после паузы.
@@ -1199,22 +1256,22 @@ English:G-Code to run when a print is canceled.
 Translated:G-код запускается при отмене печати.
 
 English:G-Code to run when the printer is paused.
-Translated:G-код для запуска, когда принтер приостановлен.
+Translated:G-код для запуска, когда принтер находится в режиме паузы.
 
 English:General
 Translated:генеральный
 
-English:Generate Support Material
-Translated:Создать вспомогательный материал
+English:Generate
+Translated:генерировать
+
+English:Generate Support
+Translated:Создать поддержку
+
+English:Generate Supports
+Translated:Создать Поддержки
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
 Translated:Создает контур вокруг материала поддержки для повышения прочности и удержания слоев интерфейса.
-
-English:Generates support material starting on top of internal surfaces. If unchecked support will only generate starting on the bed.
-Translated:Создает материал поддержки, начиная сверху внутренних поверхностей. Если не проверено, поддержка будет генерировать только запуск на кровати.
-
-English:Generates support material under areas of the part which may be too steep to support themselves.
-Translated:Создает материал поддержки под областями детали, которые могут быть слишком крутыми, чтобы поддерживать себя.
 
 English:Generating Lithophane
 Translated:Генерация литофана
@@ -1247,7 +1304,7 @@ English:Has Fan
 Translated:Имеет вентилятор
 
 English:Has Filament Runout Sensor
-Translated:Имеет датчик биения нити накала
+Translated:Имеет датчик биения нити
 
 English:Has Hardware Leveling
 Translated:Имеет аппаратное выравнивание
@@ -1364,16 +1421,16 @@ English:If set, the printer will automatically attempt to connect when selected.
 Translated:Если установлено, принтер автоматически попытается подключиться при выборе.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:Если экструдер работал в течение длительного времени, он может сообщать о слишком больших значениях, это будет периодически сбрасывать его.
+Translated:Если экструдер работал в течение длительного времени, он может сообщать о слишком больших значениях, это периодически сбрасывает его.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:Если время для печати слоя меньше, чем это, вентилятор включится с минимальной скоростью. Затем он будет наращивать максимальную скорость по мере уменьшения времени слоя.
+Translated:Если время для печати слоя меньше этого, вентилятор включится с минимальной скоростью. Затем он будет наращивать максимальную скорость по мере уменьшения времени слоя.
 
 English:If you wish to re-calibrate leveling in the future:
 Translated:Если вы хотите повторно откалибровать выравнивание в будущем:
 
 English:If you wish to re-calibrate your probe in the future:
-Translated:Если вы хотите откалибровать ваш датчик в будущем:
+Translated:Если вы хотите повторно откалибровать ваш зонд в будущем:
 
 English:Image
 Translated:Образ
@@ -1444,8 +1501,11 @@ Translated:Инициализация оборудования ...
 English:Initializing Library
 Translated:Инициализация библиотеки
 
-English:Insert
-Translated:Вставить
+English:Inner Radius
+Translated:Внутренний радиус
+
+English:Inner Size
+Translated:Внутренний размер
 
 English:Insert Filament
 Translated:Вставить нить
@@ -1498,6 +1558,12 @@ Translated:Похоже, ваш последний отпечаток не бы�
 English:It is currently set to {0}.
 Translated:В настоящее время установлено значение {0}.
 
+English:Item cannot be exported
+Translated:Предмет не может быть экспортирован
+
+English:Item cannot be exported as STL
+Translated:Предмет не может быть экспортирован как STL
+
 English:Item not Found
 Translated:Предмет не найден
 
@@ -1506,6 +1572,12 @@ Translated:Пришло время скопировать существующи
 
 English:Jerk Velocity
 Translated:Скорость рывка
+
+English:Keep the entire extents of the part within the angle described.
+Translated:Держите все части детали в пределах угла, описанного.
+
+English:Keep Within Angle
+Translated:Держать в пределах угла
 
 English:Keys
 Translated:Ключи
@@ -1550,13 +1622,19 @@ English:left drag
 Translated:перетащить влево
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:Длина дополнительной нити накала, подлежащей выдавливанию после полной смены инструмента (в дополнение к повторной экструзии расстояния втягивания смены инструмента).
+Translated:Длина дополнительной нити накала, подлежащей выдавливанию после полной смены инструмента (в дополнение к повторной экструзии расстояния втягивания смены инструмента)
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
 Translated:Длина нити, которая должна выдавливаться после полного отвода (в дополнение к повторному выдавливанию длины на расстоянии перемещения).
 
 English:Length on Tool Change
 Translated:Длина при смене инструмента
+
+English:Let's show you around before you get started.
+Translated:Давайте покажем вам, прежде чем начать.
+
+English:Letter
+Translated:Письмо
 
 English:Leveling
 Translated:нивелирование
@@ -1660,6 +1738,9 @@ Translated:Макро пресеты
 English:Macros
 Translated:макрос
 
+English:Maintain Proportions
+Translated:Поддерживать пропорции
+
 English:make
 Translated:делать
 
@@ -1671,9 +1752,6 @@ Translated:Сделать компонент
 
 English:Make Selection
 Translated:Сделать выбор
-
-English:Make Support
-Translated:Сделать поддержку
 
 English:Make sure the first point on a perimeter is a concave point.
 Translated:Убедитесь, что первая точка периметра является вогнутой точкой.
@@ -1705,9 +1783,6 @@ Translated:материал
 English:Material density. Only used for estimating mass in the Layer View.
 Translated:Плотность материала Используется только для оценки массы в режиме просмотра слоев.
 
-English:Material Loading
-Translated:Загрузка материала
-
 English:Materials
 Translated:материалы
 
@@ -1715,7 +1790,7 @@ English:MatterControl
 Translated:MatterControl
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
-Translated:Команда MatterHackers и другое программное обеспечение с открытым исходным кодом стало возможным благодаря MatterControl.
+Translated:MatterControl стал возможен благодаря команде MatterHackers и другим программам с открытым исходным кодом.
 
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl теперь попытается автоматически определить принтер.
@@ -1891,9 +1966,6 @@ Translated:Мои измененные настройки (принтер)
 English:Name
 Translated:название
 
-English:Need to connect before printing
-Translated:Необходимо подключиться перед печатью
-
 English:Networked Printing
 Translated:Сетевая печать
 
@@ -1924,6 +1996,12 @@ Translated:Нет цвета
 English:No COM ports available
 Translated:COM-порты недоступны
 
+English:No items to Export
+Translated:Нет товаров для экспорта
+
+English:No Items to Export
+Translated:Нет предметов для экспорта
+
 English:No macros are currently set up for this printer.
 Translated:В данный момент макросы для этого принтера не настроены.
 
@@ -1932,6 +2010,9 @@ Translated:Принтер не выбран
 
 English:None
 Translated:Никто
+
+English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+Translated:Обычно изображение расширяется до края. Это попытается отцентрировать вес изображения визуально.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Обычно вы хотите использовать абсолютные расстояния e. Проверяйте это, только если вы знаете, что вашему принтеру нужны относительные расстояния.
@@ -1947,6 +2028,9 @@ Translated:ПРИМЕЧАНИЕ. Могут применяться станда�
 
 English:Notifications
 Translated:Уведомления
+
+English:Nozzle
+Translated:форсунка
 
 English:Nozzle Diameter
 Translated:Диаметр сопла
@@ -1971,6 +2055,9 @@ Translated:из
 
 English:Off
 Translated:от
+
+English:Offset
+Translated:офсет
 
 English:Ok
 Translated:Хорошо
@@ -2018,7 +2105,7 @@ English:Oops! Printer could not be detected
 Translated:К сожалению! Принтер не может быть обнаружен
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:К сожалению! Файл настроек '{0}' не содержал настроек, которые мы могли бы импортировать.
+Translated:К сожалению! Файл настроек {0} не содержит настроек, которые мы могли бы импортировать.
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:К сожалению! Для прошивки вашего принтера отсутствует отображение eeprom.
@@ -2068,9 +2155,6 @@ Translated:Открыть недавние
 English:OpenSCAD not installed
 Translated:OpenSCAD не установлен
 
-English:Optionally, click below to get help loading this material
-Translated:При желании нажмите ниже, чтобы получить помощь при загрузке этого материала.
-
 English:Options
 Translated:Опции
 
@@ -2080,6 +2164,12 @@ Translated:или же
 English:Other
 Translated:Другой
 
+English:Outer Radius
+Translated:Внешний радиус
+
+English:Outer Size
+Translated:Наружный размер
+
 English:Outer Surface - Perimeters
 Translated:Внешняя поверхность - Периметры
 
@@ -2087,7 +2177,7 @@ English:Outlines
 Translated:контуры
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Выведите только первый слой отпечатка. Особенно полезно для вывода данных gcode для таких приложений, как гравировка или резка
+Translated:Выведите только первый слой отпечатка. Особенно полезно для вывода данных gcode для таких приложений, как гравировка или резка.
 
 English:Outside Perimeter
 Translated:Внешний периметр
@@ -2098,14 +2188,14 @@ Translated:Внешний периметр
 English:Overhang
 Translated:свес
 
+English:Overhang Angle
+Translated:Угол свеса
+
 English:Pan
 Translated:Кастрюля
 
 English:Pan View
 Translated:Панорамирование
-
-English:Parse Error while slicing
-Translated:Ошибка разбора при нарезке
 
 English:Part Cooling Fan
 Translated:Частичный охлаждающий вентилятор
@@ -2143,6 +2233,9 @@ Translated:Пауза Печать
 English:Paused
 Translated:Приостановлена
 
+English:Percentage of
+Translated:Процент
+
 English:perimeters
 Translated:периметры
 
@@ -2155,11 +2248,17 @@ Translated:Доступ запрещен
 English:PID Settings
 Translated:Настройки PID
 
+English:Pillar Size
+Translated:Размер столба
+
 English:Pinch
 Translated:зажимать
 
 English:Pipe Works
 Translated:Трубный завод
+
+English:Pixels Per mm
+Translated:Пикселей на мм
 
 English:Place the paper under the extruder
 Translated:Поместите бумагу под экструдер
@@ -2189,7 +2288,7 @@ English:Please sign in to continue.
 Translated:Пожалуйста, войдите, чтобы продолжить.
 
 English:Please wait until the print has finished and try again.
-Translated:Пожалуйста, дождитесь окончания печати и попробуйте снова.
+Translated:Пожалуйста, дождитесь окончания печати и повторите попытку.
 
 English:Please wait while we create your account...
 Translated:Пожалуйста, подождите, пока мы создадим ваш аккаунт ...
@@ -2248,8 +2347,14 @@ Translated:Нажимайте [Z-], пока не появится сопрот�
 English:Press [Z+] once to release the paper
 Translated:Нажмите [Z +] один раз, чтобы освободить бумагу
 
+English:Prev
+Translated:Предыдущая
+
 English:Preview
 Translated:предварительный просмотр
+
+English:Primary
+Translated:первичный
 
 English:Primitive Shapes
 Translated:Примитивные Формы
@@ -2290,6 +2395,9 @@ Translated:Время печати
 English:Printer
 Translated:принтер
 
+English:Printer Disconnected
+Translated:Принтер отключен
+
 English:Printer Hardware Error
 Translated:Аппаратная ошибка принтера
 
@@ -2307,6 +2415,12 @@ Translated:Принтер приостановлен
 
 English:Printer Setup
 Translated:Настройка принтера
+
+English:Printer Setup must be run before printing
+Translated:Настройка принтера должна быть запущена перед печатью
+
+English:Printer Setup Required
+Translated:Требуется настройка принтера
 
 English:Printers
 Translated:Принтеры
@@ -2383,6 +2497,9 @@ Translated:Поднять / Стоу
 English:Randomize Starting Points
 Translated:Рандомизировать начальные точки
 
+English:Reach
+Translated:достичь
+
 English:Read Filter
 Translated:Прочитать фильтр
 
@@ -2428,9 +2545,6 @@ Translated:Повторно введите пароль
 English:Refresh
 Translated:обновление
 
-English:Registered
-Translated:зарегистрированный
-
 English:Release
 Translated:Релиз
 
@@ -2448,6 +2562,9 @@ Translated:Удалить
 
 English:Remove
 Translated:Удалить
+
+English:Remove all auto generated supports
+Translated:Удалить все автоматически созданные поддержки
 
 English:Remove Items?
 Translated:Удалить элементы?
@@ -2468,7 +2585,7 @@ English:Report a Bug
 Translated:Сообщить об ошибке
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Попросите прошивку выполнить отвод, а не указывать движения экструдера напрямую.
+Translated:Попросите прошивку сделать отвод, а не указывать движения экструдера напрямую.
 
 English:Require Leveling To Print
 Translated:Требовать выравнивание для печати
@@ -2492,7 +2609,7 @@ English:Reset View
 Translated:Сбросить вид
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Сброс к значениям по умолчанию удалит ваши текущие изменения и восстановит ваши исходные настройки принтера.\nВы уверены, что хотите продолжить?
+Translated:Сброс к значениям по умолчанию удалит ваши текущие переопределения и восстановит ваши исходные настройки принтера.\nВы уверены, что хотите продолжить?
 
 English:Resolution
 Translated:разрешение
@@ -2517,6 +2634,9 @@ Translated:Возобновить G-код
 
 English:Resume Print
 Translated:Резюме Печать
+
+English:Resume Printing
+Translated:Возобновить печать
 
 English:Retract
 Translated:втягиваться
@@ -2575,6 +2695,21 @@ Translated:Поворот
 English:Rotate (Alt + Left Mouse)
 Translated:Повернуть (Alt + Левая мышь)
 
+English:Rotate About
+Translated:Повернуть О
+
+English:Rotate about the X axis
+Translated:Поворот вокруг оси X
+
+English:Rotate about the Y axis
+Translated:Поворот вокруг оси Y
+
+English:Rotate about the Z axis
+Translated:Поворот вокруг оси Z
+
+English:Rotate the part to the same angle as the array.
+Translated:Поверните деталь на тот же угол, что и массив.
+
 English:Rotate View
 Translated:Повернуть вид
 
@@ -2586,9 +2721,6 @@ Translated:Выполнить калибровку
 
 English:Run Max if Below
 Translated:Запустите Макс, если ниже
-
-English:Run setup configuration for printer.
-Translated:Запустите настройку конфигурации для принтера.
 
 English:s
 Translated:s
@@ -2737,11 +2869,20 @@ Translated:Сессия истекла
 English:Set as Default
 Translated:Установить по умолчанию
 
+English:Set the rules for how to maintain the part while scaling.
+Translated:Установите правила для поддержания детали при масштабировании.
+
+English:Set the shape the part will be fit into.
+Translated:Установите форму, в которую будет вписываться деталь.
+
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Устанавливает MatterControl для попытки подключения к принтеру по сети. (Вы должны отключиться и снова подключиться, чтобы это вступило в силу)
+Translated:Устанавливает MatterControl для попытки подключения к принтеру по сети. (Вы должны отключить и повторно подключиться, чтобы это вступило в силу)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
-Translated:Устанавливает MatterControl для использования метода связи s3g. (Вы должны отключиться и снова подключиться, чтобы это вступило в силу)
+Translated:Устанавливает MatterControl для использования метода связи s3g. (Вы должны отключить и повторно подключиться, чтобы это вступило в силу)
+
+English:Sets the depth of the tile the Braille is printed on
+Translated:Устанавливает глубину плитки, на которой напечатан шрифт Брайля
 
 English:Sets the models that will be added to the queue when a new printer is created.
 Translated:Устанавливает модели, которые будут добавлены в очередь при создании нового принтера.
@@ -2752,17 +2893,14 @@ Translated:Устанавливает размер внешней твердой
 English:Settings
 Translated:настройки
 
+English:Setup
+Translated:Настроить
+
 English:Setup Needs to be Run
 Translated:Настройка должна быть запущена
 
-English:Setup needs to be run before printing
-Translated:Установка должна быть запущена перед печатью
-
 English:Setup Wizard
 Translated:Мастер установки
-
-English:Setup...
-Translated:Настроить...
 
 English:Shaded
 Translated:Затенение
@@ -2822,7 +2960,7 @@ English:Show Terminal
 Translated:Показать терминал
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:Показывает кнопку в правой части панели подключения принтера, которая используется для сброса USB-подключения к принтеру. Это можно использовать на принтерах, которые поддерживают его в качестве аварийного останова.
+Translated:Показывает кнопку в правой части панели подключения принтера, которая используется для сброса USB-подключения к принтеру. Это можно использовать на принтерах, которые поддерживают его в качестве аварийной остановки.
 
 English:sign in
 Translated:войти в систему
@@ -2872,9 +3010,6 @@ Translated:юбки
 English:Slice
 Translated:Ломтик
 
-English:Slice Error
-Translated:Ошибка среза
-
 English:Slice Presets Editor
 Translated:Редактор пресетов слайсов
 
@@ -2883,6 +3018,9 @@ Translated:Настройки среза
 
 English:Slicing
 Translated:нарезка
+
+English:Slicing Error
+Translated:Ошибка нарезки
 
 English:Slicing Item
 Translated:Нарезка предмета
@@ -2910,6 +3048,12 @@ Translated:Твердое заполнение
 
 English:Some features may require an internet connection.
 Translated:Некоторые функции могут потребовать подключения к интернету.
+
+English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
+Translated:Некоторые части требуют поддержки. Рассмотрите возможность добавления поддержки и реэкспорта, чтобы получить наилучшие возможные результаты.
+
+English:Some parts are unsupported and require support structures to print correctly
+Translated:Некоторые детали не поддерживаются и требуют правильной структуры поддержки
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 Translated:Иногда сетка не будет закрывать периметр. Когда это проверено, эти незамкнутые периметры пока будут закрыты.
@@ -2948,7 +3092,7 @@ English:Source
 Translated:Источник
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:Указывает, что микропрограмма имеет поддержку для завершения отчета ros_0 на M119. Состояние TRIGGERED определяет истечение нити накала. При обнаружении выхода из строя принтеры приостанавливают G-код.
+Translated:Указывает, что микропрограмма имеет поддержку для завершения отчета ros_0 на M119. Состояние TRIGGERED определяет истечение нити накала. Если обнаруживается биение, принтер останавливается, запускается G-код.
 
 English:Speed
 Translated:скорость
@@ -3067,6 +3211,9 @@ Translated:вычитать
 English:Subtract & Replace
 Translated:Вычесть и заменить
 
+English:Subtract the image from a disk so that the negative space will be printed.
+Translated:Вычтите изображение с диска, чтобы было напечатано негативное пространство.
+
 English:Success
 Translated:успех
 
@@ -3087,9 +3234,6 @@ Translated:Успех!\n\nВаша нить должна быть выгруже
 
 English:Support
 Translated:Служба поддержки
-
-English:Support Everywhere
-Translated:Поддержка везде
 
 English:Support Interface Extruder
 Translated:Поддержка интерфейса экструдера
@@ -3154,12 +3298,6 @@ Translated:Температуры
 English:Terminal
 Translated:Терминал
 
-English:Test Parts
-Translated:Испытательные части
-
-English:TestPart
-Translated:TestPart
-
 English:Text
 Translated:Текст
 
@@ -3202,8 +3340,11 @@ Translated:Угол, под которым будут нарисованы ли�
 English:The angle of the infill, measured from the X axis. Not used when bridging.
 Translated:Угол заполнения, измеренный от оси X. Не используется при соединении.
 
+English:The angle to generate support for
+Translated:Угол для создания поддержки
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:В данный момент кровать нагревается, и ее заданная температура не может быть изменена, пока она не достигнет {0} ° C.\n\nВы можете установить начальную температуру слоя в меню НАСТРОЙКИ -> Нить -> Температуры.\n\n{1}
+Translated:В данный момент кровать нагревается, и ее заданная температура не может быть изменена, пока не достигнет {0} ° C.\n\nВы можете установить начальную температуру слоя в меню НАСТРОЙКИ -> Нить -> Температура.\n\n{1}
 
 English:The date this file was originally created.
 Translated:Дата, когда этот файл был изначально создан.
@@ -3221,7 +3362,7 @@ English:The distance between the top of the support and the bottom of the model.
 Translated:Расстояние между верхом опоры и низом модели. Хорошая стоимость зависит от типа материала. Для ABS и PLA значение от 0,4 до 0,6 работает хорошо, соответственно.
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:Расстояние нити накала будет меняться перед каждым квалификационным ходом
+Translated:Расстояние нити накала будет меняться перед каждым квалификационным перемещением без печати
 
 English:The distance from the model at which the first skirt loop is drawn.
 Translated:Расстояние от модели, на которой нарисована первая петля юбки.
@@ -3251,7 +3392,7 @@ English:The extra distance the raft will extend around the edge of the part.
 Translated:На дополнительное расстояние плот будет простираться вокруг края детали.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:Экструдер в настоящее время нагревается, и его заданная температура не может быть изменена, пока он не достигнет {0} ° C.\n\nВы можете установить начальную температуру экструдера в «Настройки среза» -> «Нить».\n\n{1}
+Translated:Экструдер в настоящее время нагревается, и его заданная температура не может быть изменена, пока не достигнет {0} ° C.\n\nВы можете установить начальную температуру экструдера в «Настройки среза» -> «Нить».\n\n{1}
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
 Translated:Файл, который вы пытаетесь распечатать, является файлом GCode.\n\nРекомендуется печатать только те файлы Gcode, которые соответствуют конфигурации вашего принтера.\n\nВы уверены, что хотите напечатать этот файл GCode?
@@ -3272,7 +3413,7 @@ English:The index of the extruder to use to print the raft. Set to 0 to use the 
 Translated:Индекс экструдера, чтобы использовать, чтобы напечатать плот. Установите 0, чтобы использовать индекс поддержки экструдера.
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:Слой (-ы), на котором печать будет приостановлена, что позволит изменить нить накала. Принтер приостановлен перед запуском данного слоя. Оставьте пустым, чтобы отключить. Чтобы сделать паузу на нескольких слоях, разделите номера слоев точками с запятой. Например: «16; 37».
+Translated:Слой (-ы), на котором будет приостановлена печать, что позволит изменить нить накала. Принтер приостановлен перед запуском данного слоя. Оставьте пустым, чтобы отключить. Чтобы сделать паузу на нескольких слоях, разделите номера слоев точками с запятой. Например: «16; 37».
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Длина и ширина башни, созданной в левой задней части оттиска, используется для вытирания следующего сопла при переключении между несколькими экструдерами. Установите 0, чтобы отключить.
@@ -3287,7 +3428,7 @@ English:The Markdown that will be shown on the Trim Filament page.
 Translated:Уценка, которая будет показана на странице Trim Filament.
 
 English:The maximum amount the printer can accelerate on a G-Code move.
-Translated:Максимальное количество, которое принтер может ускорить при перемещении G-кода.
+Translated:Максимальная величина, которую принтер может ускорить при перемещении G-кода.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:Максимальная скорость, с которой вентилятор многослойного охлаждения будет работать, выражается в процентах от полной мощности.
@@ -3299,7 +3440,7 @@ English:The maximum speed the printer can move.
 Translated:Максимальная скорость, с которой принтер может двигаться.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:Минимальное количество времени, которое слой должен занять для печати. Если слой занимает меньше этого времени, скорость движения уменьшается, поэтому время печати слоя будет соответствовать этому значению, вплоть до минимальной скорости печати при самой низкой скорости.
+Translated:Минимальное количество времени, которое слой должен занять для печати. Если слой займет меньше этого времени, скорость перемещения будет уменьшена, поэтому время печати слоя будет соответствовать этому значению, вплоть до минимальной скорости печати при самой низкой скорости.
 
 English:The minimum distance of a non-print move which will trigger a retraction.
 Translated:Минимальное расстояние перемещения без печати, которое вызовет отвод.
@@ -3311,7 +3452,7 @@ English:The minimum length of filament that must be extruded before a retraction
 Translated:Минимальная длина нити, которая должна быть вытянута до того, как может произойти втягивание.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:Минимальная длина нити накала для печати юбки. Будет нарисовано достаточное количество петель юбки, чтобы использовать это количество нити накала, переопределяя значение, установленное в Петлях, если значение в Петлях создаст юбку короче этого значения.
+Translated:Минимальная длина нити накала для печати юбки. Будет нарисовано достаточно петель юбки, чтобы использовать это количество нити накала, переопределяя значение, установленное в Петлях, если значение в Петлях создаст юбку короче этого значения.
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
 Translated:Минимальная скорость, на которой будет работать вентилятор охлаждения, выраженная в процентах от полной мощности.
@@ -3374,7 +3515,7 @@ English:The percent of the extrusion width that can be overlapped and still gene
 Translated:Процент ширины экструзии, который может перекрываться и при этом генерироваться.
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-Translated:Положение (координаты X и Y) центра печатной площадки в миллиметрах. Обычно это 1/2 размера кровати для декартовых принтеров и 0, 0 для дельта-принтеров.
+Translated:Положение (координаты X и Y) центра печатного слоя в миллиметрах. Обычно это 1/2 размера кровати для декартовых принтеров и 0, 0 для дельта-принтеров.
 
 English:The position to measure the probe offset.
 Translated:Положение для измерения смещения зонда.
@@ -3401,7 +3542,7 @@ English:The printer has a z probe for measuring bed level.
 Translated:У принтера есть зонд для измерения уровня кровати.
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
-Translated:Принтер имеет собственный датчик и процедуру автоматического выравнивания слоя, который можно вызвать с помощью команды G29 во время запуска G-кода.
+Translated:Принтер имеет собственный датчик и процедуру автоматического выравнивания слоя, которая может быть вызвана командой G29 во время запуска G-кода.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
 Translated:Принтер имеет возможность управления источником питания. Включите эту функцию, чтобы отобразить раздел управления питанием ATX на панели управления.
@@ -3410,7 +3551,7 @@ English:The printer requires print leveling to run correctly.
 Translated:Принтер требует правильного выравнивания печати.
 
 English:The printer should now be 'homing'.
-Translated:Принтер теперь должен быть «самонаводящимся».
+Translated:Теперь принтер должен быть «самонаводящимся».
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
 Translated:Профиль, который вы пытаетесь загрузить, был поврежден. Вместо этого мы загрузили ваш последний используемый профиль {0} {1} из вашей недавней истории профиля.
@@ -3422,7 +3563,7 @@ English:The serial port communication speed of the printers firmware.
 Translated:Скорость обмена данными через последовательный порт прошивки принтера.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:В разделе «Последовательный порт» перечислены все доступные последовательные порты на вашем устройстве. Изменение порта USB, к которому подключен принтер \ n, может изменить связанный последовательный порт.\n\nСовет. Если вы не уверены, отключите / подключите принтер\nи нажмите обновить. Появится новый порт\nвашего принтера.
+Translated:В разделе «Последовательный порт» перечислены все доступные последовательные порты на вашем устройстве. Изменение порта USB, к которому подключен принтер \ n, может изменить соответствующий последовательный порт.\n\nСовет. Если вы не уверены, отключите / подключите принтер\nи нажмите обновить. Появится новый порт\nвашего принтера.
 
 English:The serial port to use while connecting to this printer.
 Translated:Последовательный порт для использования при подключении к этому принтеру.
@@ -3473,7 +3614,7 @@ English:The speed at which the top solid layers will print. Can be set explicitl
 Translated:Скорость, с которой будут печататься верхние сплошные слои. Может быть установлен явно или в процентах от скорости заполнения.
 
 English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:Скорость перемещения лазера при высоте слоя 0,025 мм. Скорость будет регулироваться линейно на других высотах.
+Translated:Скорость перемещения лазера при высоте слоя составляет 0,025 мм. Скорость будет регулироваться линейно на других высотах.
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
 Translated:Скорость перемещения лазера при высоте слоя составляет 0,1 мм. Скорость будет регулироваться линейно на других высотах.
@@ -3497,16 +3638,16 @@ English:The temperature to which the bed will be set for the duration of the pri
 Translated:Температура, до которой будет установлена кровать, на время печати. Установите 0, чтобы отключить.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:Температура, до которой кровать будет нагреваться (или охлаждаться), чтобы удалить деталь, как указано в пользовательском G-коде.
+Translated:Температура, до которой кровать будет нагреваться (или охлаждаться) для удаления детали, как указано в пользовательском G-коде.
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
 Translated:Температура, до которой сопло будет нагреваться перед печатью первого слоя детали. Принтер будет ждать, пока эта температура не будет достигнута, прежде чем печатать.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:Термин «скорость передачи» примерно означает скорость, с которой\nданные передаются. Скорость передачи может отличаться от принтера к\nпринтеру. Обратитесь к руководству по эксплуатации вашего принтера для получения дополнительной информации.\n\nСовет. Если вы не уверены, попробуйте 250000.
+Translated:Термин «Скорость передачи» примерно означает скорость, с которой\nданные передаются. Скорость передачи может отличаться от принтера к\nпринтеру. Обратитесь к руководству по эксплуатации вашего принтера для получения дополнительной информации.\n\nСовет. Если вы не уверены, попробуйте 250000.
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:Толщина каждого слоя печати, кроме первого слоя. Меньшее число создаст больше слоев и увеличит точность по вертикали, а также замедлит печать.
+Translated:Толщина каждого слоя печати, кроме первого слоя. Меньшее число создаст больше слоев и больше вертикальной точности, но также и медленный отпечаток.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 Translated:Толщина первого слоя. Первый слой выше толщины слоя по умолчанию может обеспечить хорошую адгезию к рабочей пластине.
@@ -3515,13 +3656,16 @@ English:The time it will take to unload the filament
 Translated:Время, необходимое для выгрузки нити
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
-Translated:Время, за которое можно увеличить максимальную длину дополнительной длины при перезапуске. Ниже этого времени будет применена только часть дополнительной длины. Оставьте 0, чтобы применить всю сумму все время.
+Translated:Время, за которое можно увеличить максимальную длину дополнительной длины при перезапуске. Ниже этого времени будет применяться только часть дополнительной длины. Оставьте 0, чтобы применить всю сумму все время.
 
 English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
 Translated:Время для печати этого G-кода оценивается в {0} секунд.\n\nПожалуйста, проверьте свою часть на наличие ошибок, если это неожиданно.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:Версия G-кода, с которой связана прошивка принтера. Некоторые прошивки используют разные G и M коды. Установка этого гарантирует, что выходной G-код будет использовать правильные команды.
+Translated:Версия G-кода, с которой связана прошивка принтера. Некоторые прошивки используют разные G и M коды. Установка этого параметра гарантирует, что выходной G-код будет использовать правильные команды.
+
+English:The width and depth of the support pillars
+Translated:Ширина и глубина опорных столбов
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
 Translated:Положение X и Y горячего конца, которое сводит к минимуму вероятность столкновения с деталями на кровати.
@@ -3577,14 +3721,17 @@ Translated:Это модель принтера, на которую ориен�
 English:This is the name of your printer that will be displayed in the choose printer menu.
 Translated:Это имя вашего принтера, которое будет отображаться в меню выбора принтера.
 
+English:This is the position to perform the scale about.
+Translated:Это позиция для выполнения шкалы около.
+
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Это должно помочь уменьшить вибрации во время печати. Если ваш принтер имеет резонансную частоту, которая вызывает проблемы, вы можете установить это, чтобы попытаться уменьшить печать на этой частоте.
+Translated:Это должно помочь уменьшить вибрации во время печати. Если ваш принтер имеет резонансную частоту, которая вызывает проблемы, вы можете настроить его, чтобы попытаться уменьшить печать на этой частоте.
 
 English:This should be in 'G-Code'
 Translated:Это должно быть в «G-Code»
 
 English:This will ensure that filament is able to flow through the nozzle.
-Translated:Это обеспечит прохождение нити накала через сопло.
+Translated:Это гарантирует, что нить сможет течь через сопло.
 
 English:This will ensure that no filament is stuck to your nozzle.
 Translated:Это гарантирует, что нить не прилипнет к вашей форсунке.
@@ -3593,7 +3740,7 @@ English:This will improve the accuracy of print leveling
 Translated:Это улучшит точность выравнивания печати
 
 English:This will improve the accuracy of print leveling.
-Translated:Это повысит точность выравнивания печати.
+Translated:Это улучшит точность выравнивания печати.
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:Это будет работать только на конкретном оборудовании. Не используйте, если вы не уверены, что ваш контроллер принтера поддерживает эту функцию
@@ -3628,8 +3775,14 @@ Translated:Для завершения следующих нескольких �
 English:To Folder
 Translated:В папку
 
+English:Toggle between specifying the size or the percentage to scale.
+Translated:Переключайтесь между указанием размера или процента для масштабирования.
+
 English:Toggle Selection
 Translated:Переключить выбор
+
+English:Toggle Support
+Translated:Поддержка Toggle
 
 English:Top Solid Infill
 Translated:Верхняя сплошная заливка
@@ -3665,7 +3818,7 @@ English:Trim Filament Page
 Translated:Trim Filament Page
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:Попробуйте соединить края сетки, когда фактические данные сетки не полностью связаны между собой.
+Translated:Попробуйте соединить ребра сетки, если фактические данные сетки не полностью связаны между собой.
 
 English:Tuning Adjustment
 Translated:Регулировка настройки
@@ -3706,6 +3859,9 @@ Translated:Невозможно импортировать
 English:Undo
 Translated:расстегивать
 
+English:Unexpected error validating settings
+Translated:Неожиданная ошибка проверки настроек
+
 English:Unexpected response
 Translated:Неожиданный ответ
 
@@ -3722,6 +3878,9 @@ English:Unload
 Translated:разгружать
 
 English:Unload filament
+Translated:Выгрузить нить
+
+English:Unload Filament
 Translated:Выгрузить нить
 
 English:Unload Filament Length
@@ -3744,6 +3903,9 @@ Translated:отпереть
 
 English:Unsupported Baud Rate
 Translated:Неподдерживаемая скорость передачи
+
+English:Unsupported Parts Detected
+Translated:Обнаружены неподдерживаемые детали
 
 English:Up
 Translated:вверх
@@ -3781,11 +3943,14 @@ Translated:Загрузка ...
 English:Use Automatic Z Probe
 Translated:Используйте автоматический зонд Z
 
+English:Use Braille grade 2 (contractions)
+Translated:Используйте брайлевскую оценку 2 (сокращения)
+
 English:Use cursor keys for axis movements
 Translated:Используйте клавиши курсора для перемещения оси
 
 English:Use Firmware Retraction
-Translated:Использовать прошивку Retraction
+Translated:Используйте прошивку Retraction
 
 English:Use G0
 Translated:Используйте G0
@@ -3871,6 +4036,9 @@ Translated:В ожидании кровати, чтобы нагреться д�
 English:Waiting for the hotend to heat to 
 Translated:В ожидании горячего
 
+English:Warning
+Translated:Предупреждение
+
 English:Warning - GCode file
 Translated:Предупреждение - файл GCode
 
@@ -3887,7 +4055,10 @@ English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you 
 Translated:ПРЕДУПРЕЖДЕНИЕ. Отключение остановит текущую печать.\n\nВы уверены, что хотите отключиться?
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:ПРЕДУПРЕЖДЕНИЕ. Чтобы выполнить восстановление печати, ваш принтер должен опуститься вниз, чтобы достичь своего исходного положения.\nЕсли ваш отпечаток слишком большой, часть вашего принтера может столкнуться с ним при движении вниз.\nУбедитесь, что выполнить эту операцию безопасно, прежде чем продолжить.
+Translated:ПРЕДУПРЕЖДЕНИЕ. Чтобы выполнить восстановление печати, принтер должен опуститься вниз, чтобы достичь своего исходного положения.\nЕсли ваш отпечаток слишком большой, часть вашего принтера может столкнуться с ним при движении вниз.\nУбедитесь, что выполнить эту операцию безопасно, прежде чем продолжить.
+
+English:Warning: Support Required
+Translated:Предупреждение: требуется поддержка
 
 English:WARNING: Write Failed!
 Translated:ВНИМАНИЕ: Запись не удалась!
@@ -3913,6 +4084,9 @@ Translated:Веб-сайт
 English:Wedge
 Translated:Клин
 
+English:Welcome to MatterControl
+Translated:Добро пожаловать в MatterControl
+
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
 Translated:Добро пожаловать в мастер выравнивания печати. Вот краткий обзор того, что мы собираемся сделать.
 
@@ -3929,13 +4103,16 @@ English:wheel
 Translated:рулевое колесо
 
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
-Translated:Когда это проверено, MatterControl будет пытаться восстановить печать в случае сбоя, такого как потеря соединения или потеря питания.
+Translated:Когда это проверено, MatterControl будет пытаться восстановить печать в случае сбоя, такого как потерянное соединение или потеря питания.
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
 Translated:При обновлении до новой прошивки сначала сохраните резервную копию текущей прошивки.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:При использовании нескольких экструдеров расстояние нити накала будет меняться, прежде чем перейти на другой экструдер.
+Translated:При использовании нескольких экструдеров расстояние нити накала будет изменяться, прежде чем переходить на другой экструдер.
+
+English:Where to start the bend as a percent of the width of the part
+Translated:Где начать изгиб в процентах от ширины детали
 
 English:Width
 Translated:ширина
@@ -3961,11 +4138,17 @@ Translated:Вы хотите перейти на новый G-код? Прежд
 English:Write Filter
 Translated:Фильтр записи
 
+English:X
+Translated:Икс
+
 English:X and Y Distance
 Translated:X и Y Расстояние
 
 English:XY Homing Position
 Translated:XY Homing Положение
+
+English:Y
+Translated:Y
 
 English:Yes
 Translated:да
@@ -3977,7 +4160,7 @@ English:You can also
 Translated:Вы также можете
 
 English:You can only connect when not currently connected.
-Translated:Вы можете подключиться только тогда, когда не подключены.
+Translated:Вы можете подключиться, только если в данный момент не подключены.
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
 Translated:Вы успешно импортировали новый параметр {0}. Вы можете найти «{1}» в списке настроек {0}.
@@ -3991,8 +4174,8 @@ Translated:Возможно, вам придется подождать мину
 English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
 Translated:Ваша 3D-печать была автоматически приостановлена.\n\nLayer {0} достигнут.
 
-English:Your 3D print has been paused.\n\nOut of filament detected.
-Translated:Ваша 3D-печать была приостановлена.\n\nОбнаружена нить накала.
+English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
+Translated:Ваша 3D-печать была приостановлена.\n\nОбнаружена нить накала или застревание. Пожалуйста, загрузите больше нити или очистите варенье.
 
 English:Your application is up-to-date
 Translated:Ваша заявка актуальна
@@ -4010,7 +4193,7 @@ English:Your Phone Number
 Translated:Ваш номер телефона
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
-Translated:Ваш принтер сообщает об ОШИБКЕ ОБОРУДОВАНИЯ и был приостановлен. Проверьте ошибку и отмените печать при необходимости.
+Translated:Ваш принтер сообщает об ОШИБКЕ ОБОРУДОВАНИЯ и был приостановлен. Проверьте ошибку и отмените печать, если требуется.
 
 English:Your Probe is now calibrated.
 Translated:Ваш зонд теперь откалиброван.
@@ -4029,6 +4212,9 @@ Translated:Ваш стартовый G-код не должен содержат
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
 Translated:Ваш стартовый G-код не должен содержать G30, если вы планируете использовать Print Recovery. Измените свой стартовый G-код или выключите Print Recovery.
+
+English:Z
+Translated:Z
 
 English:Z Lift
 Translated:Z Lift

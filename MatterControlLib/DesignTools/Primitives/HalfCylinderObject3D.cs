@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new HalfCylinderObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -60,51 +62,46 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool changed = false;
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 180, ref changed);
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var path = new VertexStorage();
-				path.MoveTo(Width / 2, 0);
-
-				for (int i = 1; i < Sides; i++)
+				Sides = agg_basics.Clamp(Sides, 3, 180, ref valuesChanged);
+				using (new CenterAndHeightMantainer(this))
 				{
-					var angle = MathHelper.Tau * i / 2 / (Sides - 1);
-					path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
-				}
+					var path = new VertexStorage();
+					path.MoveTo(Width / 2, 0);
 
-				var mesh = VertexSourceToMesh.Extrude(path, Depth);
-				mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-				Mesh = mesh;
+					for (int i = 1; i < Sides; i++)
+					{
+						var angle = MathHelper.Tau * i / 2 / (Sides - 1);
+						path.LineTo(Math.Cos(angle) * Width / 2, Math.Sin(angle) * Width / 2);
+					}
 
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var mesh = VertexSourceToMesh.Extrude(path, Depth);
+					mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
+					Mesh = mesh;
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if (changed)
+			Invalidate(InvalidateType.Mesh);
+			if (valuesChanged)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.DisplayValues);
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

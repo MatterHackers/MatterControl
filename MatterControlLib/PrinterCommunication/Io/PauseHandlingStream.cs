@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		internal class PositionSensorData
 		{
-			public bool RecievingData { get; internal set; }
-
 			public double LastSensorDistance { get; internal set; }
 			public double LastStepperDistance { get; internal set; }
 			public int ExtrusionDiscrepency { get; internal set; }
@@ -86,23 +84,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							{
 								if (sensorDistance < -1 || sensorDistance > 1)
 								{
-									positionSensorData.RecievingData = true;
+									printer.Connection.FilamentPositionSensorDetected = true;
 								}
 
-								if (positionSensorData.RecievingData)
+								if (printer.Connection.FilamentPositionSensorDetected)
 								{
 									GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
 
 									var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
 
 									// if we think we should have move the filament by more than 1mm
-									if (stepperDelta > .2)
+									if (stepperDelta > 1)
 									{
 										var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
 										// check if the sensor data is within a tolerance of the stepper data
 
 										var deltaRatio = sensorDelta / stepperDelta;
-										if (deltaRatio < .9 || deltaRatio > 1.1)
+										if (deltaRatio < .5 || deltaRatio > 2)
 										{
 											// we have a repartable discrepency set a runout state
 											positionSensorData.ExtrusionDiscrepency++;

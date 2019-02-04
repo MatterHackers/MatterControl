@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	using MatterHackers.PolygonMesh;
 	using System.Collections.Generic;
 	using System.Threading;
+	using System.Threading.Tasks;
 
 	public class LinearExtrudeObject3D : Object3D
 	{
@@ -76,10 +77,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
 
 				// and replace us with the children 
-				undoBuffer.AddAndDo(new ReplaceCommand(new List<IObject3D> { this }, new List<IObject3D> { meshOnlyItem }));
+				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Content));
+			Invalidate(InvalidateType.Children);
 		}
 
 		public LinearExtrudeObject3D()
@@ -87,41 +88,48 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Linear Extrude".Localize();
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs eventArgs)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh
-				|| invalidateType.InvalidateType == InvalidateType.Path)
-				&& invalidateType.Source != this
+			if ((eventArgs.InvalidateType.HasFlag(InvalidateType.Path)
+					||  eventArgs.InvalidateType.HasFlag(InvalidateType.Children))
+				&& eventArgs.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
-				&& invalidateType.Source == this)
+			else if (eventArgs.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& eventArgs.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(eventArgs);
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
-			using (RebuildLock())
-			{
-				var vertexSource = this.VertexSource;
-				Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
-				if (Mesh.Vertices.Count == 0)
-				{
-					Mesh = null;
-				}
-			}
+			this.DebugDepth("Rebuild");
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			var rebuildLock = RebuildLock();
+			// now create a long running task to process the image
+			return ApplicationController.Instance.Tasks.Execute(
+				"Linear Extrude".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					var vertexSource = this.VertexSource;
+					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
+					if (Mesh.Vertices.Count == 0)
+					{
+						Mesh = null;
+					}
+
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Mesh);
+					return Task.CompletedTask;
+				});
 		}
 	}
 }

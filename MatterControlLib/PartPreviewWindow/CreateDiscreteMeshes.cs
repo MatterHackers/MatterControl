@@ -50,27 +50,6 @@ namespace MatterHackers.MatterControl
 
 	public static class CreateDiscreteMeshes
 	{
-		public static List<List<int>> GetFacesSharingVertex(List<Vector3Float> vertexList, FaceList faces)
-		{
-			var sharingList = new List<List<int>>(vertexList.Count);
-			for(int i=0; i<vertexList.Count; i++)
-			{
-				sharingList.Add(new List<int>());
-			}
-
-			for (int faceIndex = 0; faceIndex < faces.Count; faceIndex++)
-			{
-				var face = faces[faceIndex];
-				var vertices = new int[] { face.v0, face.v1, face.v2 };
-				for (int vertexIndex = 0; vertexIndex < 3; vertexIndex++)
-				{
-					sharingList[vertexIndex].Add(faceIndex);
-				}
-			}
-
-			return sharingList;
-		}
-
 		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
 			Stopwatch maxProgressReport = Stopwatch.StartNew();
@@ -80,8 +59,8 @@ namespace MatterHackers.MatterControl
 			var attachedFaces = new Stack<int>();
 			int faceCount = meshToSplit.Faces.Count;
 
-			var facesSharingVertex = GetFacesSharingVertex(meshToSplit.Vertices, meshToSplit.Faces);
-
+			var facesSharingVertex = meshToSplit.NewVertexFaceLists();
+			 
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
 			{
 				if (reportProgress != null)
@@ -110,7 +89,7 @@ namespace MatterHackers.MatterControl
 
 						foreach (var attachedVertex in vertices)
 						{
-							foreach (var sharedFaceIndex in facesSharingVertex[attachedVertex])
+							foreach (var sharedFaceIndex in facesSharingVertex[attachedVertex].Faces)
 							{
 								if (!facesThatHaveBeenAdded.Contains(sharedFaceIndex))
 								{

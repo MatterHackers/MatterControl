@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	using Newtonsoft.Json;
 	using System;
 	using System.Linq;
+	using System.Threading.Tasks;
 	using Polygon = List<IntPoint>;
 	using Polygons = List<List<IntPoint>>;
 
@@ -56,20 +57,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double SmoothDistance { get; set; } = .3;
 		public int Iterations { get; set; } = 3;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Path)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
 			else
 			{
@@ -77,15 +78,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			using (RebuildLock())
-			{
-				DoSmoothing((long)(SmoothDistance * 1000), Iterations);
-			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Path));
+			var rebuildLock = RebuildLock();
+			return ApplicationController.Instance.Tasks.Execute(
+				"Smooth Path".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
+
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Path);
+					return Task.CompletedTask;
+				});
 		}
 
 		private void DoSmoothing(long maxDist, int interations)

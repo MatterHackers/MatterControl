@@ -40,6 +40,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
@@ -194,6 +195,8 @@ namespace MatterHackers.MatterControl.Library.Export
 						// TODO: Prior code bypassed GCodeOverridePath mechanisms in EditContext. Consolidating into a single pathway
 						string gcodePath = printer.Bed.EditContext.GCodeFilePath(printer);
 
+						var errors = new List<ValidationError>();
+
 						if (ApplicationSettings.ValidFileExtensions.IndexOf(sourceExtension, StringComparison.OrdinalIgnoreCase) >= 0
 							|| string.Equals(sourceExtension, ".mcx", StringComparison.OrdinalIgnoreCase))
 						{
@@ -217,9 +220,9 @@ namespace MatterHackers.MatterControl.Library.Export
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
-								var errors = printer.ValidateSettings();
+								errors = printer.ValidateSettings();
 
-								if(errors.Count > 0)
+								if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 								{
 									return errors;
 								}
@@ -246,7 +249,8 @@ namespace MatterHackers.MatterControl.Library.Export
 							ApplyStreamPipelineAndExport(gcodePath, outputPath);
 
 							// last let's check if there is any support in the scene and if it looks like it is needed
-							if (GenerateSupportPanel.RequiresSupport(printer.Bed.Scene))
+							var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+							if (supportGenerator.RequiresSupport())
 							{
 								UiThread.RunOnIdle(() =>
 								{
@@ -255,7 +259,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								});
 							}
 
-							return null;
+							return errors;
 						}
 					}
 					catch

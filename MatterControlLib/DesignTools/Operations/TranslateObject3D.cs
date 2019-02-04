@@ -32,6 +32,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.VectorMath;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -52,12 +53,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			using (this.RebuildLock())
 			{
-				WrapItem(itemToTranslate);
+				WrapItems(new IObject3D[] { itemToTranslate });
 				Matrix = Matrix4X4.CreateTranslation(translation);
 			}
 		}
-
-		public override bool CanFlatten => true;
 
 		public static TranslateObject3D Create(IObject3D itemToTranslate)
 		{
@@ -79,18 +78,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if ((invalidateType.InvalidateType == InvalidateType.Content
-				|| invalidateType.InvalidateType == InvalidateType.Matrix
-				|| invalidateType.InvalidateType == InvalidateType.Mesh)
+			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -98,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 
@@ -108,7 +107,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				TransformItem.Matrix = Matrix4X4.CreateTranslation(Translation);
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Matrix, null));
+			Invalidate(InvalidateType.Matrix);
+			return Task.CompletedTask;
 		}
 	}
 }

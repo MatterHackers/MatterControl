@@ -29,11 +29,13 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -51,14 +53,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.Diameter = diametar;
 			this.LatitudeSides = sides;
 			this.LongitudeSides = sides;
-			Rebuild(null);
+			Rebuild();
 		}
 
 		public static HalfSphereObject3D Create()
 		{
 			var item = new HalfSphereObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -68,53 +70,49 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool changed = false;
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref changed);
-				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref changed);
+				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref valuesChanged);
+				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref valuesChanged);
 
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var radius = Diameter / 2;
-				var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
-				var angle = 0.0;
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				for (int i = 0; i < LatitudeSides; i++)
+				using (new CenterAndHeightMantainer(this))
 				{
-					angle += angleDelta;
+					var radius = Diameter / 2;
+					var angleDelta = MathHelper.Tau / 4 / LatitudeSides;
+					var angle = 0.0;
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
 					path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-				}
+					for (int i = 0; i < LatitudeSides; i++)
+					{
+						angle += angleDelta;
+						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+					}
 
-				Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
-				if (aabb.ZSize > 0)
-				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					Mesh = VertexSourceToMesh.Revolve(path, LongitudeSides);
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			if (changed)
+			Invalidate(InvalidateType.Mesh);
+			if (valuesChanged)
 			{
-				base.OnInvalidate(new InvalidateArgs(this, InvalidateType.Properties));
+				Invalidate(InvalidateType.DisplayValues);
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

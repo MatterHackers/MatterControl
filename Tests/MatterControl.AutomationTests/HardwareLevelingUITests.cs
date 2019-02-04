@@ -48,13 +48,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.OpenPrintPopupMenu(false, false);
 
 					// HACK: automatically resuming setup wizard. Long term we want a better plan
-					testRunner.ClickByName("Finish Setup Button");
+					testRunner.ClickByName("SetupPrinter");
 
 					testRunner.Complete9StepLeveling();
 
 					// make sure the button has changed to start print
 					Assert.IsTrue(testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after leveling the printer");
-					Assert.IsFalse(testRunner.WaitForName("Finish Setup Button", .5), "Finish Setup should not be visible after leveling the printer");
+					Assert.IsFalse(testRunner.WaitForName("SetupPrinter", .5), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
 					testRunner.SwitchToSliceSettings();
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.OpenPrintPopupMenu(false, false);
 
 					// make sure it is showing the correct button
-					Assert.IsTrue(testRunner.WaitForName("Finish Setup Button"), "Finish Setup should be visible after reset to Defaults");
+					Assert.IsTrue(testRunner.WaitForName("SetupPrinter"), "Finish Setup should be visible after reset to Defaults");
 				}
 
 				return Task.CompletedTask;

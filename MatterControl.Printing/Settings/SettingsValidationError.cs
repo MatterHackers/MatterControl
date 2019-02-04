@@ -37,9 +37,12 @@ namespace MatterHackers.MatterControl
 		public SettingsValidationError(string settingsName)
 		{
 			this.CanonicalSettingsName = settingsName;
+			this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;
 		}
 
 		public string CanonicalSettingsName { get; }
+
+		public string PresentationName { get; }
 
 		public string Location => SettingsLocation(this.CanonicalSettingsName);
 

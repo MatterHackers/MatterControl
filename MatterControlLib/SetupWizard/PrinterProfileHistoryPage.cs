@@ -48,7 +48,11 @@ namespace MatterHackers.MatterControl.SetupWizard
 					var profile = ProfileManager.Instance[printer.Settings.ID];
 
 					// Download the specified json profile
-					var printerSettings = await ApplicationController.GetPrinterProfileAsync(profile, profileToken);
+					PrinterSettings printerSettings = null;
+					if (Application.EnableNetworkTraffic)
+					{
+						await ApplicationController.GetPrinterProfileAsync(profile, profileToken);
+					}
 					if (printerSettings != null)
 					{
 						// Persist downloaded profile

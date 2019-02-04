@@ -306,25 +306,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Image
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Image)
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild(null);
+				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType == InvalidateType.Properties
+			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
 				UpdateHistogramDisplay();
-				Rebuild(null);
-				base.OnInvalidate(invalidateType);
+				await Rebuild();
 			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+
+			base.OnInvalidate(invalidateType);
 		}
 
 		private Color GetRGBA(byte[] buffer, int offset)
@@ -332,8 +329,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new Color(buffer[offset + 2], buffer[offset + 1], buffer[offset + 0], buffer[offset + 3]);
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		public override Task Rebuild()
 		{
+			this.DebugDepth("Rebuild");
+
 			bool propertyUpdated = false;
 			var minSeparation = .01;
 			if (RangeStart < 0
@@ -361,35 +360,35 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				propertyUpdated = true;
 			}
+
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
-			ApplicationController.Instance.Tasks.Execute(
-			"Calculate Path".Localize(),
-			null,
-			(reporter, cancellationToken) =>
-			{
-				var progressStatus = new ProgressStatus();
-				this.GenerateMarchingSquaresAndLines(
-					(progress0to1, status) =>
+			return ApplicationController.Instance.Tasks.Execute(
+				"Calculate Path".Localize(),
+				null,
+				(reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+					this.GenerateMarchingSquaresAndLines(
+						(progress0to1, status) =>
+						{
+							progressStatus.Progress0To1 = progress0to1;
+							progressStatus.Status = status;
+							reporter.Report(progressStatus);
+						},
+						Image,
+						ThresholdFunction);
+
+					if (propertyUpdated)
 					{
-						progressStatus.Progress0To1 = progress0to1;
-						progressStatus.Status = status;
-						reporter.Report(progressStatus);
-					},
-					Image,
-					ThresholdFunction);
+						UpdateHistogramDisplay();
+						Invalidate(InvalidateType.Properties);
+					}
 
-				rebuildLock.Dispose();
-				Invalidate(new InvalidateArgs(this, InvalidateType.Path, null));
-
-				return Task.CompletedTask;
-			});
-
-			if (propertyUpdated)
-			{
-				UpdateHistogramDisplay();
-				Invalidate(new InvalidateArgs(this, InvalidateType.Properties, null));
-			}
+					rebuildLock.Dispose();
+					Invalidate(InvalidateType.Path);
+					return Task.CompletedTask;
+				});
 		}
 	}
 }

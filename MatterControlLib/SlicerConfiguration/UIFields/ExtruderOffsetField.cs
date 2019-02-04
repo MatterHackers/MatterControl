@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				column.AddChild(row);
 
-				var labelWidget = SettingsRow.CreateSettingsLabel($"Nozzle {i + 1}", "", textColor);
+				var labelWidget = SettingsRow.CreateSettingsLabel(string.Format("{0} {1}", "Nozzle".Localize(), i + 1), "", textColor);
 				labelWidget.Name = $"Nozzle {i}";
 				labelWidget.Margin = new BorderDouble(right: 60);
 				row.AddChild(labelWidget);

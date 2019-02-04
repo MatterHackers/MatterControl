@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -51,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var item = new WedgeObject3D();
 
-			item.Rebuild(null);
+			item.Rebuild();
 			return item;
 		}
 
@@ -61,10 +62,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			if (invalidateType.InvalidateType == InvalidateType.Properties
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild(null);
+				Rebuild();
 			}
 			else
 			{
@@ -72,28 +73,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private void Rebuild(UndoBuffer undoBuffer)
+		override public Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				var aabb = this.GetAxisAlignedBoundingBox();
-
-				var path = new VertexStorage();
-				path.MoveTo(0, 0);
-				path.LineTo(Width, 0);
-				path.LineTo(0, Height);
-
-				Mesh = VertexSourceToMesh.Extrude(path, Depth);
-				Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-				if (aabb.ZSize > 0)
+				using (new CenterAndHeightMantainer(this))
 				{
-					// If the part was already created and at a height, maintain the height.
-					PlatingHelper.PlaceMeshAtHeight(this, aabb.MinXYZ.Z);
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
+					path.LineTo(Width, 0);
+					path.LineTo(0, Height);
+
+					Mesh = VertexSourceToMesh.Extrude(path, Depth);
+					Mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
 				}
 			}
 
-			Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			Invalidate(InvalidateType.Mesh);
+
+			return Task.CompletedTask;
 		}
 	}
 }

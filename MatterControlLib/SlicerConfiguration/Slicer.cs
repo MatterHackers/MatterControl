@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (supportObjects.Any())
 					{
 						// add a flag to the merge rules to let us know there was support
-						mergeRules += "," + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount) + "S";
+						mergeRules += ",S" + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount);
 					}
 
 					mergeRules += " ";
