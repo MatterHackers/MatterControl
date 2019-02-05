@@ -77,8 +77,6 @@ namespace MatterHackers.MatterControl
 			// Camera Monitoring
 			bool hasCamera = true || ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true";
 
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", IconColor.Raw);
-
 			var previewButton = new IconButton(configureIcon, theme)
 			{
 				ToolTipText = "Preview".Localize()
