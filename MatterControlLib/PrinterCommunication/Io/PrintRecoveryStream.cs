@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					// heat up the extruder
-					queuedCommands.Add("M109 S{0}".FormatWith(printer.Settings.Helpers.ExtruderTemperature(0)));
+					queuedCommands.Add("M109 S{0}".FormatWith(printer.Settings.Helpers.ExtruderTargetTemperature(0)));
 
 					if (hasHeatedBed && bedTemp > 0)
 					{

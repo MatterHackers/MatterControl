@@ -36,11 +36,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class SelectMaterialPage : PrinterSetupWizardPage
 	{
-		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, bool onlyLoad)
+		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton)
 			: base(context, headerText, instructionsText)
 		{
 			contentRow.AddChild(
-				new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, theme)
+				new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, extruderIndex, theme)
 				{
 					BackgroundColor = Color.Transparent,
 					Margin = new BorderDouble(0, 0, 0, 15)
@@ -48,39 +48,46 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			NextButton.Text = nextButtonText;
 
-			if (onlyLoad)
+			if (showLoadFilamentButton)
 			{
+				AddLoadFilamentButton();
 			}
-			else
+		}
+
+		private void AddLoadFilamentButton()
+		{
+			NextButton.Visible = false;
+
+			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
 			{
-				NextButton.Visible = false;
+				Name = "Load Filament",
+				BackgroundColor = theme.MinimalShade,
+			};
+			loadFilamentButton.Click += (s, e) =>
+			{
+				wizardContext.ShowNextPage(this.DialogWindow);
+			};
 
-				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
-				{
-					Name = "Load Filament",
-					BackgroundColor = theme.MinimalShade,
-				};
-				loadFilamentButton.Click += (s, e) =>
-				{
-					wizardContext.ShowNextPage(this.DialogWindow);
-				};
+			this.AddPageAction(loadFilamentButton);
 
-				this.AddPageAction(loadFilamentButton);
+			var selectButton = new TextButton("Already Loaded".Localize(), theme)
+			{
+				Name = "Already Loaded Button",
+				BackgroundColor = theme.MinimalShade
+			};
 
-				var selectButton = new TextButton("Already Loaded".Localize(), theme)
-				{
-					Name = "Already Loaded Button",
-					BackgroundColor = theme.MinimalShade
-				};
+			selectButton.Click += (s, e) =>
+			{
+				this.DialogWindow.CloseOnIdle();
+				printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
+			};
 
-				selectButton.Click += (s, e) =>
-				{
-					this.DialogWindow.CloseOnIdle();
-					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-				};
+			this.AddPageAction(selectButton);
+		}
 
-				this.AddPageAction(selectButton);
-			}
+		public override void PageIsBecomingInactive()
+		{
+			base.PageIsBecomingInactive();
 		}
 	}
 }

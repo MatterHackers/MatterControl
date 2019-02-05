@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -47,60 +48,64 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ProgressBar hotEndProgressBar;
 		private TextWidget hotEndProgressBarText;
 		private TextWidget hotEndDoneText;
-		private double hotEndTargetTemp;
+		private double[] targetHotendTemps;
 
 		public WaitForTempPage(PrinterSetupWizard context,
 			string step, string instructions,
-			double targetBedTemp, double targetHotendTemp)
+			double targetBedTemp, double[] targetHotendTemps)
 			: base(context, step, instructions)
 		{
 			this.bedTargetTemp = targetBedTemp;
-			this.hotEndTargetTemp = targetHotendTemp;
+			this.targetHotendTemps = targetHotendTemps;
 
-			if (hotEndTargetTemp > 0)
+			for (int i = 0; i < targetHotendTemps.Length; i++)
 			{
-				var hotEndProgressHolder = new FlowLayoutWidget()
+				var hotEndTargetTemp = targetHotendTemps[i];
+				if (hotEndTargetTemp > 0)
 				{
-					Margin = new BorderDouble(0, 5)
-				};
+					var hotEndProgressHolder = new FlowLayoutWidget()
+					{
+						Margin = new BorderDouble(0, 5)
+					};
 
-				// put in bar name
-				contentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
-				{
-					AutoExpandBoundsToText = true,
-					Margin = new BorderDouble(5, 0, 5, 5),
-				});
+					// put in bar name
+					contentRow.AddChild(new TextWidget("Hotend Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
+					{
+						AutoExpandBoundsToText = true,
+						Margin = new BorderDouble(5, 0, 5, 5),
+					});
 
-				// put in the progress bar
-				hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
-				{
-					FillColor = theme.PrimaryAccentColor,
-					BorderColor = theme.TextColor,
-					BackgroundColor = Color.White,
-					Margin = new BorderDouble(3, 0, 0, 0),
-					VAnchor = VAnchor.Center
-				};
-				hotEndProgressHolder.AddChild(hotEndProgressBar);
+					// put in the progress bar
+					hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+					{
+						FillColor = theme.PrimaryAccentColor,
+						BorderColor = theme.TextColor,
+						BackgroundColor = Color.White,
+						Margin = new BorderDouble(3, 0, 0, 0),
+						VAnchor = VAnchor.Center
+					};
+					hotEndProgressHolder.AddChild(hotEndProgressBar);
 
-				// put in the status
-				hotEndProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
-				{
-					AutoExpandBoundsToText = true,
-					Margin = new BorderDouble(5, 0, 5, 5),
-					VAnchor = VAnchor.Center
-				};
-				hotEndProgressHolder.AddChild(hotEndProgressBarText);
+					// put in the status
+					hotEndProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
+					{
+						AutoExpandBoundsToText = true,
+						Margin = new BorderDouble(5, 0, 5, 5),
+						VAnchor = VAnchor.Center
+					};
+					hotEndProgressHolder.AddChild(hotEndProgressBarText);
 
-				// message to show when done
-				hotEndDoneText = new TextWidget("Done!", textColor: theme.TextColor)
-				{
-					AutoExpandBoundsToText = true,
-					Visible = false,
-				};
+					// message to show when done
+					hotEndDoneText = new TextWidget("Done!", textColor: theme.TextColor)
+					{
+						AutoExpandBoundsToText = true,
+						Visible = false,
+					};
 
-				hotEndProgressHolder.AddChild(hotEndDoneText);
+					hotEndProgressHolder.AddChild(hotEndDoneText);
 
-				contentRow.AddChild(hotEndProgressHolder);
+					contentRow.AddChild(hotEndProgressHolder);
+				}
 			}
 
 			if (bedTargetTemp > 0)
@@ -176,16 +181,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.TargetBedTemperature = bedTargetTemp;
 			}
 
-			if (hotEndTargetTemp > 0)
+			for (int i = 0; i < targetHotendTemps.Length; i++)
 			{
-				// start heating the hot end and show our progress
-				printer.Connection.SetTargetHotendTemperature(0, hotEndTargetTemp);
+				if (targetHotendTemps[i] > 0)
+				{
+					// start heating the hot end and show our progress
+					printer.Connection.SetTargetHotendTemperature(i, targetHotendTemps[i]);
+				}
 			}
 
 			NextButton.Enabled = false;
 
 			// if we are trying to go to a temp of 0 than just move on to next window
-			if(bedTargetTemp == 0 && hotEndTargetTemp == 0)
+			if(bedTargetTemp == 0 
+				&& targetHotendTemps.All(i => i == 0))
 			{
 				// advance to the next page
 				UiThread.RunOnIdle(() => NextButton.InvokeClick());
@@ -211,23 +220,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void ShowTempChangeProgress()
 		{
-			if (hotEndTargetTemp > 0)
+			for (int i = 0; i < targetHotendTemps.Length; i++)
 			{
-				hotEndProgressBar.Visible = true;
-				double targetTemp = printer.Connection.GetTargetHotendTemperature(0);
-				double actualTemp = printer.Connection.GetActualHotendTemperature(0);
-				double totalDelta = targetTemp;
-				double currentDelta = actualTemp;
-				double ratioDone = hotEndDoneText.Visible ? 1 : totalDelta != 0 ? (currentDelta / totalDelta) : 1;
-				hotEndProgressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-				hotEndProgressBarText.Text = $"{actualTemp:0} / {targetTemp:0}";
-
-				// if we are within 1 degree of our target
-				if (Math.Abs(targetTemp - actualTemp) < 2
-					&& hotEndDoneText.Visible == false)
+				if (targetHotendTemps[i] > 0)
 				{
-					hotEndDoneText.Visible = true;
-					NextButton.Enabled = true;
+					hotEndProgressBar.Visible = true;
+					double targetTemp = printer.Connection.GetTargetHotendTemperature(i);
+					double actualTemp = printer.Connection.GetActualHotendTemperature(i);
+					double totalDelta = targetTemp;
+					double currentDelta = actualTemp;
+					double ratioDone = hotEndDoneText.Visible ? 1 : totalDelta != 0 ? (currentDelta / totalDelta) : 1;
+					hotEndProgressBar.RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
+					hotEndProgressBarText.Text = $"{actualTemp:0} / {targetTemp:0}";
+
+					// if we are within 1 degree of our target
+					if (Math.Abs(targetTemp - actualTemp) < 2
+						&& hotEndDoneText.Visible == false)
+					{
+						hotEndDoneText.Visible = true;
+						NextButton.Enabled = true;
+					}
 				}
 			}
 
@@ -252,7 +264,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			if ((bedTargetTemp == 0 || bedDoneText.Visible)
-				&& (hotEndTargetTemp == 0 || hotEndDoneText.Visible)
+				&& (targetHotendTemps.All(i => i== 0) || hotEndDoneText.Visible)
 				&& !HasBeenClosed)
 			{
 				// advance to the next page

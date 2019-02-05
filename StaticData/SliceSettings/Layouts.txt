@@ -208,6 +208,8 @@ Printer
         trim_filament_markdown
         insert_filament_markdown2
         running_clean_markdown2
+        insert_filament_1_markdown
+        running_clean_1_markdown
         created_date
   G-Code
     G-Code

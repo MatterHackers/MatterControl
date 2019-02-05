@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize()
 			};
 
-			var probeCalibrationWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			var probeCalibrationWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
 			{
 				WindowTitle = levelingContext.WindowTitle
 			});
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			double targetHotendTemp = 0;
 
-			targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+			targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(0);
 
 			if (LevelingValidation.NeedsToBeRun(printer))
 			{
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize(),
 				0,
-				targetHotendTemp);
+				new double[] { targetHotendTemp });
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer);

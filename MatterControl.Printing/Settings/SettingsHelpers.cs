@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.printerSettings = printerSettings;
 		}
 
-		public double ExtruderTemperature(int extruderIndex)
+		public double ExtruderTargetTemperature(int extruderIndex)
 		{
 			if (extruderIndex == 0)
 			{

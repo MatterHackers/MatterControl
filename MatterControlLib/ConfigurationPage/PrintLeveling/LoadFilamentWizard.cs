@@ -43,38 +43,31 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LoadFilamentWizard : PrinterSetupWizard
 	{
-		private bool onlyLoad;
 		private static double temperatureAtStart;
+		private int extruderIndex;
 
-		public static void Start(PrinterConfig printer, ThemeConfig theme, bool onlyLoad)
+		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
 		{
-			temperatureAtStart = printer.Connection.GetTargetHotendTemperature(0);
+			temperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 
-			var levelingContext = new LoadFilamentWizard(printer, onlyLoad);
+			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex);
 
-			if (onlyLoad)
-			{
-				levelingContext.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
-			}
-			else
-			{
-				levelingContext.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Select Filament Wizard".Localize();
-			}
+			loadFilamentWizard.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
 
-			var loadFilamentWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(loadFilamentWizard)
 			{
-				WindowTitle = levelingContext.WindowTitle
+				WindowTitle = loadFilamentWizard.WindowTitle
 			});
 			loadFilamentWizardWindow.Closed += (s, e) =>
 			{
-				printer.Connection.SetTargetHotendTemperature(0, temperatureAtStart);
+				printer.Connection.SetTargetHotendTemperature(extruderIndex, temperatureAtStart);
 			};
 		}
 
-		public LoadFilamentWizard(PrinterConfig printer, bool onlyLoad)
+		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
-			this.onlyLoad = onlyLoad;
+			this.extruderIndex = extruderIndex;
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
@@ -87,17 +80,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var levelingStrings = new LevelingStrings(printer.Settings);
 
-			var title = "Select Material".Localize();
-			var instructions = "Please select the material you will be printing with.".Localize();
-
-			if (onlyLoad)
-			{
-				title = "Load Material".Localize();
-				instructions = "Please select the material you want to load.".Localize();
-			}
+			var title = "Load Material".Localize();
+			var instructions = "Please select the material you want to load.".Localize();
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, onlyLoad ? "Load".Localize() : "Select".Localize(), onlyLoad);
+			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, false);
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -112,7 +99,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BecomingActive = () =>
 					{
 						// start heating up the extruder
-						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
+						printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
 						var markdownText = printer.Settings.GetValue(SettingsKey.trim_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
@@ -135,6 +122,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BecomingActive = () =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
+						if(extruderIndex == 1)
+						{
+							markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_1_markdown);
+						}
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						insertFilamentPage.ContentRow.AddChild(markdownWidget);
@@ -220,7 +211,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// put in a second one to use as a signal for the first being processed
 						printer.Connection.QueueLine("G4 P1");
 						// start heating up the extruder
-						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
+						printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
 						var loadingSpeedMmPerS = printer.Settings.GetValue<double>(SettingsKey.load_filament_speed);
 						var loadLengthMm = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.load_filament_length));
@@ -275,7 +266,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// wait for extruder to heat
 			{
-				double targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+				var targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex);
+				var temps = new double[4];
+				temps[extruderIndex] = targetHotendTemp;
 				yield return new WaitForTempPage(
 					this,
 					"Waiting For Printer To Heat".Localize(),
@@ -285,7 +278,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 						+ "Avoid contact with your skin.".Localize(),
 					0,
-					targetHotendTemp);
+					temps);
 			}
 
 			// extrude slowly so that we can prime the extruder
@@ -300,6 +293,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					BecomingActive = () =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
+						if(extruderIndex == 1)
+						{
+							markdownText = printer.Settings.GetValue(SettingsKey.running_clean_1_markdown);
+						}
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						runningCleanPage.ContentRow.AddChild(markdownWidget);
@@ -334,13 +331,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// put up a success message
-			yield return new DoneLoadingPage(this);
+			yield return new DoneLoadingPage(this, extruderIndex);
 		}
 	}
 
 	public class DoneLoadingPage : PrinterSetupWizardPage
 	{
-		public DoneLoadingPage(PrinterSetupWizard setupWizard)
+		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
 		{
 			if (printer.Connection.PrinterIsPaused)
@@ -358,6 +355,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				theme.ApplyPrimaryActionStyle(resumePrintingButton);
 				this.AddPageAction(resumePrintingButton);
+			}
+			else if(extruderIndex == 0 && printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			{
+				var loadFilament2Button = new TextButton("Load Filament 2".Localize(), theme)
+				{
+					Name = "Load Filament 2",
+					BackgroundColor = theme.MinimalShade,
+				};
+				loadFilament2Button.Click += (s, e) =>
+				{
+					loadFilament2Button.Parents<SystemWindow>().First().Close();
+					LoadFilamentWizard.Start(printer, theme, 1);
+				};
+				theme.ApplyPrimaryActionStyle(loadFilament2Button);
+
+				this.AddPageAction(loadFilament2Button);
 			}
 		}
 

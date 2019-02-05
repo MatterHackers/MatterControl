@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);
 		public const string infill_type = nameof(infill_type);
 		public const string insert_filament_markdown2 = nameof(insert_filament_markdown2);
+		public const string insert_filament_1_markdown = nameof(insert_filament_1_markdown);
 		public const string ip_address = nameof(ip_address);
 		public const string ip_port = nameof(ip_port);
 		public const string jerk_velocity = nameof(jerk_velocity);
@@ -128,6 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string running_clean_markdown2 = nameof(running_clean_markdown2);
+		public const string running_clean_1_markdown = nameof(running_clean_1_markdown);
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);

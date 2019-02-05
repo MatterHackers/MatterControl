@@ -31,18 +31,18 @@ using System;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LevelingWizardRootPage : DialogPage
+	public class PrinterSetupWizardRootPage : DialogPage
 	{
-		private PrinterSetupWizard levelingContext;
+		private PrinterSetupWizard printerSetupWizard;
 
-		public LevelingWizardRootPage(PrinterSetupWizard levelingContext)
+		public PrinterSetupWizardRootPage(PrinterSetupWizard printerSetupWizard)
 		{
-			this.levelingContext = levelingContext;
+			this.printerSetupWizard = printerSetupWizard;
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			levelingContext.ShowNextPage(this.DialogWindow);
+			printerSetupWizard.ShowNextPage(this.DialogWindow);
 			base.OnLoad(args);
 		}
 	}

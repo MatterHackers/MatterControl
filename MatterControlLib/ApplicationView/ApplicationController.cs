@@ -1620,7 +1620,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LoadFilamentWizard.Start(printer, theme, false);
+					LoadFilamentWizard.Start(printer, theme, 0);
 				});
 				return true;
 			}

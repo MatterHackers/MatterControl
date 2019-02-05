@@ -97,7 +97,9 @@ namespace MatterHackers.MatterControl
 				new ScaledSingleNumber(this, SettingsKey.load_filament_speed, SettingsKey.load_filament_speed, 60),
 				new MappedSetting(this, SettingsKey.trim_filament_markdown, SettingsKey.trim_filament_markdown),
 				new MappedSetting(this, SettingsKey.insert_filament_markdown2, SettingsKey.insert_filament_markdown2),
+				new MappedSetting(this, SettingsKey.insert_filament_1_markdown, SettingsKey.insert_filament_1_markdown),
 				new MappedSetting(this, SettingsKey.running_clean_markdown2, SettingsKey.running_clean_markdown2),
+				new MappedSetting(this, SettingsKey.running_clean_1_markdown, SettingsKey.running_clean_1_markdown),
 			};
 
 			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
