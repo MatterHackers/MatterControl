@@ -312,7 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
 			viewOptionsBar.AddChild(homeButton);
 
-			var xxx = new RenderOptionsButton(theme, this.InteractionLayer)
+			var renderOptionsButton = new RenderOptionsButton(theme, this.InteractionLayer)
 			{
 				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				}
 			};
-			viewOptionsBar.AddChild(xxx);
+			viewOptionsBar.AddChild(renderOptionsButton);
 
 			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{
