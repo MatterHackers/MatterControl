@@ -51,7 +51,6 @@ namespace MatterControl.Tests
 						DataConverters3D.dll
 						Localizations.dll
 						Community.CsharpSqlite.dll
-						MatterControlPluginSystem.dll
 						MatterHackers.Agg.ImageProcessing.dll
 						MatterHackers.MarchingSquares.dll
 						GuiAutomation.dll";
