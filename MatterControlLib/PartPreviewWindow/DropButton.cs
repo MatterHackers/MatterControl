@@ -85,6 +85,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!MenuVisible
 				&& !downWhileOpen)
 			{
+				if (this.AnchorMate.Widget == null)
+				{
+					this.AnchorMate.Widget = this;
+				};
+
 				var popupContent = this.PopupContent();
 				if (popupContent == null
 					|| popupContent.Children.Count <= 0)
