@@ -366,10 +366,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
-			view3DWidget.InteractionLayer.Visible = !gcode2DWidget.Visible;
 
-			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
-
+			view3DWidget.InteractionLayer.DrawOpenGLContent = printer?.ViewState.ViewMode != PartViewMode.Layers2D;
+			
 			gcodeContainer.Visible = viewMode != PartViewMode.Model;
 
 			tumbleCubeControl.Visible = !gcode2DWidget.Visible;

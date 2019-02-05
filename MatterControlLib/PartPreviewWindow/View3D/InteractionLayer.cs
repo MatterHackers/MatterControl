@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
-		public bool DoOpenGlDrawing { get; set; } = true;
+		public bool DrawOpenGLContent { get; set; } = true;
 
 		private List<InteractionVolume> registeredIAVolumes = new List<InteractionVolume>();
 
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// The primary draw hook. Kick off our draw operation when the renderSource fires AfterDraw
 		private void RenderSource_BeforeDraw(object sender, DrawEventArgs e)
 		{
-			if (DoOpenGlDrawing)
+			if (this.DrawOpenGLContent)
 			{
 				this.DrawGlContent(e);
 			}
