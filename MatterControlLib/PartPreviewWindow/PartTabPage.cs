@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
-		internal BedConfig sceneContext;
+		internal ISceneContext sceneContext;
 		internal PrinterConfig printer;
 		protected PartWorkspace workspace;
 		protected ViewControls3D viewControls3D;
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D,
 				theme,
 				this,
-				editorType: (isPrinterType) ? MeshViewerWidget.EditorType.Printer : MeshViewerWidget.EditorType.Part);
+				editorType: (isPrinterType) ? InteractionLayer.EditorType.Printer : InteractionLayer.EditorType.Part);
 
 			viewControls3D.SetView3DWidget(view3DWidget);
 

@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
 
-	public class BedConfig
+	public class BedConfig : ISceneContext
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		internal void ClearPlate()
+		public void ClearPlate()
 		{
 			// Clear existing
 			this.LoadedGCode = null;
@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl
 
 		public WorldView World { get; } = new WorldView(0, 0);
 
-		public double BuildHeight  { get; internal set; }
+		public double BuildHeight { get; internal set; }
 		public Vector3 ViewerVolume { get; internal set; }
 		public Vector2 BedCenter { get; internal set; } = Vector2.Zero;
 		public BedShape BedShape { get; internal set; }

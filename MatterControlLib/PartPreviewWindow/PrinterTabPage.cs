@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			gcodeOptions = sceneContext.RendererOptions;
 
-			view3DWidget.meshViewerWidget.EditorMode = MeshViewerWidget.EditorType.Printer;
+			view3DWidget.InteractionLayer.EditorMode = InteractionLayer.EditorType.Printer;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
 
-			LayerScrollbar = new SliceLayerSelector(printer, sceneContext, theme)
+			LayerScrollbar = new SliceLayerSelector(printer, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Fit,
@@ -366,10 +366,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
-			view3DWidget.meshViewerWidget.Visible = !gcode2DWidget.Visible;
 
-			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
-
+			view3DWidget.InteractionLayer.DrawOpenGLContent = printer?.ViewState.ViewMode != PartViewMode.Layers2D;
+			
 			gcodeContainer.Visible = viewMode != PartViewMode.Model;
 
 			tumbleCubeControl.Visible = !gcode2DWidget.Visible;

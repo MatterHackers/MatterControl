@@ -35,6 +35,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
@@ -42,11 +43,6 @@ namespace MatterHackers.MeshVisualizer
 {
 	[Flags]
 	public enum LineArrows { None = 0, Start = 1, End = 2, Both = 3 };
-
-	public interface IInteractionVolume
-	{
-
-	}
 
 	public class InteractionVolume
 	{
@@ -189,17 +185,11 @@ namespace MatterHackers.MeshVisualizer
 
 		GuiWidget GuiSurface { get; }
 
-		void AddTransformSnapshot(Matrix4X4 originalTransform);
-
-		List<InteractionVolume> InteractionVolumes { get; }
 		double SnapGridDistance { get; }
 	}
 
-	public class InteractionVolumePlugin
+	public interface IInteractionVolumeProvider
 	{
-		public virtual InteractionVolume CreateInteractionVolume(IInteractionVolumeContext context)
-		{
-			return null;
-		}
+		IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context);
 	}
 }

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,70 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 
 namespace MatterHackers.MatterControl
 {
-	public interface INativePlatformFeatures
+	public class PluginsPage : DialogPage
 	{
-		event EventHandler PictureTaken;
-		void TakePhoto(string imageFileName);
-		void OpenCameraPreview();
-		void PlaySound(string fileName);
-		void ConfigureWifi();
-		bool CameraInUseByExternalProcess { get; set; }
-		bool IsNetworkConnected();
-		void InitPluginFinder();
-		GuiWidget GetConnectDevicePage(object printer);
-		void FindAndInstantiatePlugins(SystemWindow systemWindow);
-		void ProcessCommandline();
-		void PlatformInit(Action<string> reporter);
-		void GenerateLocalizationValidationFile();
-		bool HasPermissionToDevice(object printer);
+		public PluginsPage()
+		{
+			this.AnchorAll();
+
+			this.HeaderText = this.WindowTitle = "MatterControl Plugins".Localize();
+
+			var contentScroll = new ScrollableWidget(true);
+			contentScroll.ScrollArea.HAnchor |= HAnchor.Stretch;
+			contentScroll.ScrollArea.VAnchor = VAnchor.Fit;
+			contentScroll.AnchorAll();
+
+			var formContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			// TODO: Move to instance
+			var plugins = ApplicationController.Plugins;
+
+			foreach (var plugin in plugins.KnownPlugins)
+			{
+				// Touch Screen Mode
+				formContainer.AddChild(
+					new SettingsItem(
+						plugin.Name,
+						theme,
+						new SettingsItem.ToggleSwitchConfig()
+						{
+							Checked = !plugins.Disabled.Contains(plugin.TypeName),
+							ToggleAction = (itemChecked) =>
+							{
+								if (itemChecked)
+								{
+									plugins.Enable(plugin.TypeName);
+								}
+								else
+								{
+									plugins.Disable(plugin.TypeName);
+								}
+							}
+						},
+						enforceGutter: false));
+			}
+
+			contentScroll.AddChild(formContainer);
+
+			contentRow.AddChild(contentScroll);
+
+			var saveButton = theme.CreateDialogButton("Save".Localize());
+			saveButton.Click += (s,e) =>
+			{
+				ApplicationController.Plugins.Save();
+				this.DialogWindow.CloseOnIdle();
+			};
+
+			this.AddPageAction(saveButton);
+		}
 	}
 }

@@ -45,6 +45,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -57,7 +58,7 @@ using MatterHackers.VectorMath.TrackBall;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class View3DWidget : GuiWidget
+	public class View3DWidget : GuiWidget, IDrawable
 	{
 		private bool deferEditorTillMouseUp = false;
 
@@ -84,29 +85,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private WorldView World => sceneContext.World;
-
 		public TrackballTumbleWidget TrackballTumbleWidget { get; private set;}
 
 		public InteractionLayer InteractionLayer { get; }
 
-		public BedConfig sceneContext;
+		public ISceneContext sceneContext;
 
 		public PrinterConfig Printer { get; private set; }
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, BedConfig sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, MeshViewerWidget.EditorType editorType = MeshViewerWidget.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, InteractionLayer.EditorType editorType = InteractionLayer.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Printer = printer;
 
-			this.InteractionLayer = new InteractionLayer(this.World, Scene.UndoBuffer, Scene)
+			this.InteractionLayer = new InteractionLayer(sceneContext, theme, editorType)
 			{
 				Name = "InteractionLayer",
 			};
 			this.InteractionLayer.AnchorAll();
+
+			// Register ourself as an IDrawable
+			this.InteractionLayer.RegisterDrawable(this);
 
 			this.viewControls3D = viewControls3D;
 			this.printer = printer;
@@ -119,11 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			// MeshViewer
-			meshViewerWidget = new MeshViewerWidget(sceneContext, this.InteractionLayer, theme, editorType: editorType);
-			meshViewerWidget.AnchorAll();
-			this.AddChild(meshViewerWidget);
-
-			TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, meshViewerWidget)
+			TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, this)
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};
@@ -134,7 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// TumbleWidget
 			this.InteractionLayer.AddChild(TrackballTumbleWidget);
 
-			this.InteractionLayer.SetRenderTarget(this.meshViewerWidget);
+			this.InteractionLayer.SetRenderTarget(this);
 
 			// Add splitter support with the InteractionLayer on the left and resize containers on the right
 			var splitContainer = new FlowLayoutWidget()
@@ -348,24 +346,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewOptionsBar.AddChild(gridSnapButton);
 
-			var interactionVolumes = this.InteractionLayer.InteractionVolumes;
-			interactionVolumes.Add(new MoveInZControl(this.InteractionLayer));
-			interactionVolumes.Add(new SelectionShadow(this.InteractionLayer));
-			interactionVolumes.Add(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
+			this.InteractionLayer.RegisterIAVolume(new MoveInZControl(this.InteractionLayer));
+			this.InteractionLayer.RegisterIAVolume(new SelectionShadow(this.InteractionLayer));
+			this.InteractionLayer.RegisterIAVolume(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
 
-			var interactionVolumePlugins = PluginFinder.CreateInstancesOf<InteractionVolumePlugin>();
-			foreach (InteractionVolumePlugin plugin in interactionVolumePlugins)
+			// Add IAVolumeProviderPlugins
+			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
 			{
-				interactionVolumes.Add(plugin.CreateInteractionVolume(this.InteractionLayer));
+				this.InteractionLayer.RegisterIAVolumes(ivProvider.Create(this.InteractionLayer));
 			}
 
-			meshViewerWidget.AfterDraw += AfterDraw3DContent;
+			this.InteractionLayer.AfterDraw += AfterDraw3DContent;
 
 			Scene.SelectFirstChild();
 
 			viewControls3D.ActiveButton = ViewControls3DButtons.PartSelect;
-
-			this.InteractionLayer.DrawGlOpaqueContent += Draw_GlOpaqueContent;
 
 			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
@@ -679,7 +674,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private static void CopyPlateToPrinter(BedConfig sceneContext, PrinterConfig printer)
+		private static void CopyPlateToPrinter(ISceneContext sceneContext, PrinterConfig printer)
 		{
 			Task.Run(async () =>
 			{
@@ -767,49 +762,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Scene.SetSelection(Scene.Children.ToList());
 		}
 
-		private void Draw_GlOpaqueContent(object sender, DrawEventArgs e)
-		{
-			if (CurrentSelectInfo.DownOnPart
-				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
-				&& Keyboard.IsKeyDown(Keys.ShiftKey))
-			{
-				// draw marks on the bed to show that the part is constrained to x and y
-				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
-				var drawColor = new Color(Color.Red, 20);
-				bool zBuffer = false;
-
-				for (int i = 0; i < 2; i++)
-				{
-					World.Render3DLine(
-						drawCenter - new Vector3(-50, 0, 0),
-						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
-
-					World.Render3DLine(
-						drawCenter - new Vector3(0, -50, 0),
-						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
-
-					drawColor = Color.Black;
-					drawCenter.Z = 0;
-					zBuffer = true;
-				}
-
-				GL.Enable(EnableCap.Lighting);
-			}
-
-			// Render 3D GCode if applicable
-			if (sceneContext.LoadedGCode != null
-				&& sceneContext.GCodeRenderer != null
-				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
-			{
-				sceneContext.RenderGCode3D(e);
-			}
-
-			// This shows the BVH as rects around the scene items
-			//Scene?.TraceData().RenderBvhRecursive(0, 3);
-		}
-
 		public void AddUndoOperation(IUndoRedoCommand operation)
 		{
 			Scene.UndoBuffer.Add(operation);
@@ -824,7 +776,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Release events
 			this.Scene.SelectionChanged -= Scene_SelectionChanged;
 			this.Scene.Invalidated -= Scene_Invalidated;
-			this.InteractionLayer.DrawGlOpaqueContent -= Draw_GlOpaqueContent;
 
 			sceneContext.SceneLoaded -= SceneContext_SceneLoaded;
 			modelViewSidePanel.Resized -= ModelViewSidePanel_Resized;
@@ -834,9 +785,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
 			}
 
-			if (meshViewerWidget != null)
+			if (this.InteractionLayer != null)
 			{
-				meshViewerWidget.AfterDraw -= AfterDraw3DContent;
+				this.InteractionLayer.AfterDraw -= AfterDraw3DContent;
 			}
 
 			base.OnClosed(e);
@@ -864,7 +815,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// If the mouse is within the MeshViewer process the Drag move
-			var meshViewerScreenBounds = this.meshViewerWidget.TransformToScreenSpace(meshViewerWidget.LocalBounds);
+			var meshViewerScreenBounds = this.InteractionLayer.TransformToScreenSpace(this.InteractionLayer.LocalBounds);
 			if (meshViewerScreenBounds.Contains(screenSpaceMousePosition))
 			{
 				// If already started, process drag move
@@ -907,7 +858,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& selectedItem != null)
 			{
 				// Move the DropDropObject the target item
-				DragSelectedObject(selectedItem, localMousePosition: meshViewerWidget.TransformFromScreenSpace(screenSpaceMousePosition));
+				DragSelectedObject(selectedItem, localMousePosition: this.InteractionLayer.TransformFromScreenSpace(screenSpaceMousePosition));
 			}
 		}
 
@@ -1087,7 +1038,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					InteractionLayer.RenderBounds(e, World, allResults);
+					InteractionLayer.RenderBounds(e, sceneContext.World, allResults);
 				}
 			}
 		}
@@ -1110,7 +1061,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 3; i++)
 				{
 					Vector3 bottomStartPosition = Vector3Ex.Transform(tri.GetVertex(i), x.TransformToWorld);
-					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
 				}
 
 				for (int i = 0; i < 3; i++)
@@ -1128,10 +1079,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				for (int i = 0; i < 4; i++)
 				{
 					Vector3 bottomStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetBottomCorner(i), x.TransformToWorld);
-					traceBottoms[i] = this.World.GetScreenPosition(bottomStartPosition);
+					traceBottoms[i] = sceneContext.World.GetScreenPosition(bottomStartPosition);
 
 					Vector3 topStartPosition = Vector3Ex.Transform(x.Bvh.GetAxisAlignedBoundingBox().GetTopCorner(i), x.TransformToWorld);
-					traceTops[i] = this.World.GetScreenPosition(topStartPosition);
+					traceTops[i] = sceneContext.World.GetScreenPosition(topStartPosition);
 				}
 
 				RectangleDouble.OutCode allPoints = RectangleDouble.OutCode.Inside;
@@ -1170,7 +1121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = Scene.SelectedItem;
 			mouseDownPositon = mouseEvent.Position;
-			worldMatrixOnMouseDown = World.GetTransform4X4();
+			worldMatrixOnMouseDown = sceneContext.World.GetTransform4X4();
 			// Show transform override
 			if (activeButtonBeforeMouseOverride == null
 				&& (mouseEvent.Button == MouseButtons.Right || Keyboard.IsKeyDown(Keys.Control)))
@@ -1200,7 +1151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mouseEvent.Button == MouseButtons.Right ||
 				mouseEvent.Button == MouseButtons.Middle)
 			{
-				meshViewerWidget.SuppressUiVolumes = true;
+				this.InteractionLayer.SuppressUiVolumes = true;
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -1218,7 +1169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (!this.InteractionLayer.MouseDownOnInteractionVolume)
 					{
-						meshViewerWidget.SuppressUiVolumes = true;
+						this.InteractionLayer.SuppressUiVolumes = true;
 
 						IntersectInfo info = new IntersectInfo();
 
@@ -1418,8 +1369,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
 				DragSelectionEndPosition = new Vector2(
-					Math.Max(Math.Min((double)DragSelectionEndPosition.X, meshViewerWidget.LocalBounds.Right), meshViewerWidget.LocalBounds.Left),
-					Math.Max(Math.Min((double)DragSelectionEndPosition.Y, meshViewerWidget.LocalBounds.Top), meshViewerWidget.LocalBounds.Bottom));
+					Math.Max(Math.Min((double)DragSelectionEndPosition.X, this.InteractionLayer.LocalBounds.Right), this.InteractionLayer.LocalBounds.Left),
+					Math.Max(Math.Min((double)DragSelectionEndPosition.Y, this.InteractionLayer.LocalBounds.Top), this.InteractionLayer.LocalBounds.Bottom));
 				Invalidate();
 			}
 
@@ -1428,20 +1379,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
 		{
-			//Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, new Vector2(mouseEvent.X, mouseEvent.Y));
-
 			// Translate to local
-			Vector2 localPosition = meshViewerWidget.TransformFromScreenSpace(screenSpacePosition);
+			Vector2 localPosition = this.InteractionLayer.TransformFromScreenSpace(screenSpacePosition);
 
-			Ray ray = this.World.GetRayForLocalBounds(localPosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(localPosition);
 
 			return CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 		}
 
 		public void DragSelectedObject(IObject3D selectedItem, Vector2 localMousePosition)
 		{
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, localMousePosition);
-			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, localMousePosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			if (!PositionWithinLocalBounds(localMousePosition.X, localMousePosition.Y))
 			{
@@ -1530,7 +1479,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Vector2 OffsetToMeshViewerWidget()
 		{
 			List<GuiWidget> parents = new List<GuiWidget>();
-			GuiWidget parent = meshViewerWidget.Parent;
+			GuiWidget parent = this.InteractionLayer.Parent;
 			while (parent != this)
 			{
 				parents.Add(parent);
@@ -1548,7 +1497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			TrackballTumbleWidget.ZeroVelocity();
 
-			var world = this.World;
+			var world = sceneContext.World;
 
 			world.Reset();
 			world.Scale = .03;
@@ -1573,7 +1522,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& CurrentSelectInfo.DownOnPart
 					&& CurrentSelectInfo.LastMoveDelta != Vector3.Zero)
 				{
-					InteractionLayer.AddTransformSnapshot(TransformOnMouseDown);
+					this.Scene.AddTransformSnapshot(TransformOnMouseDown);
 				}
 				else if (DragSelectionInProgress)
 				{
@@ -1582,7 +1531,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			meshViewerWidget.SuppressUiVolumes = false;
+			this.InteractionLayer.SuppressUiVolumes = false;
 
 			CurrentSelectInfo.DownOnPart = false;
 
@@ -1593,7 +1542,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// if we had a down and an up that did not move the view
-			if (worldMatrixOnMouseDown == World.GetTransform4X4())
+			if (worldMatrixOnMouseDown == sceneContext.World.GetTransform4X4())
 			{
 				// and we are the first under mouse
 				if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse)
@@ -1907,7 +1856,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// popupMenu.CreateHorizontalLine();
 		}
 
-		public MeshViewerWidget meshViewerWidget;
 		private bool assigningTreeNode;
 		private FlowLayoutWidget treeNodeContainer;
 		private InlineStringEdit workspaceName;
@@ -1918,10 +1866,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
+
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
-			Vector2 meshViewerWidgetScreenPosition = meshViewerWidget.TransformFromParentSpace(this, screenPosition);
-			Ray ray = this.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
+			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, screenPosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)
@@ -1944,6 +1893,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges);
 		}
+
+		void IDrawable.Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		{
+			if (CurrentSelectInfo.DownOnPart
+				&& TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+				&& Keyboard.IsKeyDown(Keys.ShiftKey))
+			{
+				// draw marks on the bed to show that the part is constrained to x and y
+				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+
+				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
+				var drawColor = new Color(Color.Red, 20);
+				bool zBuffer = false;
+
+				for (int i = 0; i < 2; i++)
+				{
+					sceneContext.World.Render3DLine(
+						drawCenter - new Vector3(-50, 0, 0),
+						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
+
+					sceneContext.World.Render3DLine(
+						drawCenter - new Vector3(0, -50, 0),
+						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
+
+					drawColor = Color.Black;
+					drawCenter.Z = 0;
+					zBuffer = true;
+				}
+
+				GL.Enable(EnableCap.Lighting);
+			}
+
+			// Render 3D GCode if applicable
+			if (sceneContext.LoadedGCode != null
+				&& sceneContext.GCodeRenderer != null
+				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
+			{
+				printerTabPage.printer.Bed.RenderGCode3D(e);
+			}
+		}
+
+		string IDrawable.Title { get; } = "View3DWidget Extensions";
+
+		string IDrawable.Description { get; } = "Render axis indicators for shift drag and 3D GCode view";
+
+		DrawStage IDrawable.DrawStage { get; } = DrawStage.OpaqueContent;
 	}
 
 	public enum HitQuadrant { LB, LT, RB, RT }

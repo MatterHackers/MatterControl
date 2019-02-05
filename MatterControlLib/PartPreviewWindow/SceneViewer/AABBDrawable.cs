@@ -1,5 +1,5 @@
-/*
-Copyright (c) 2016, Lars Brubaker, Kevin Pope
+﻿/*
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,48 +27,36 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterControl.Printing;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public static class MatterControlApplication
+	public class AABBDrawable : IDrawable
 	{
-		public static string MCWSBaseUri { get; }
+		private ISceneContext sceneContext;
 
-		static MatterControlApplication()
+		public AABBDrawable(ISceneContext sceneContext)
 		{
-			if (MatterHackers.MatterControl.AppContext.Options.McwsTestEnvironment)
-			{
-				MCWSBaseUri = "https://mattercontrol-test.appspot.com"; // http://192.168.2.129:9206
-			}
-			else
-			{
-				MCWSBaseUri = "https://mattercontrol.appspot.com";
-			}
-		}
-	}
-
-	public static class BuildValidationTests
-	{
-		private static void AssertDebugNotDefined()
-		{
-#if DEBUG
-			throw new Exception("DEBUG is defined and should not be!");
-#endif
+			this.sceneContext = sceneContext;
 		}
 
-		public static void CheckKnownAssemblyConditionalCompSymbols()
+		public string Title { get; } = "AABB Render";
+
+		public string Description { get; } = "Render AABB for each scene child";
+
+		public DrawStage DrawStage { get; } = DrawStage.Last;
+
+		public bool Enabled { get; set; }
+
+		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			BuildValidationTests.AssertDebugNotDefined();
-			GCodeFile.AssertDebugNotDefined();
-			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
-			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
-			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
-			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
-			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
-			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
-			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
+			foreach (var child in sceneContext.Scene.Children)
+			{
+				world.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
+				world.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
+			}
 		}
 	}
 }

@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewStyleButton : DropButton
 	{
 		private IconButton iconButton;
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 
 		private Dictionary<RenderTypes, ImageBuffer> viewIcons;
 
-		public ViewStyleButton(BedConfig sceneContext, ThemeConfig theme)
+		public ViewStyleButton(ISceneContext sceneContext, ThemeConfig theme)
 			: base(theme)
 		{
 			this.sceneContext = sceneContext;

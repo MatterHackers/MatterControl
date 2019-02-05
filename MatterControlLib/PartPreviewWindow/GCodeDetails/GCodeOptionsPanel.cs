@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private RadioIconButton noColorButton;
 		private View3DConfig gcodeOptions;
 
-		public GCodeOptionsPanel(BedConfig sceneContext, PrinterConfig printer, ThemeConfig theme)
+		public GCodeOptionsPanel(ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
 			gcodeOptions = sceneContext.RendererOptions;

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 {
 	public class PartWorkspace
 	{
-		private BedConfig _sceneContext { get; }
+		private ISceneContext _sceneContext { get; }
 
 		public PartWorkspace()
 		{
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public PartWorkspace(BedConfig bedConfig)
+		public PartWorkspace(ISceneContext bedConfig)
 		{
 			var extraContainers = new List<ILibraryContainerLink>();
 
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 		public string Name { get; set; }
 
 		[JsonIgnore]
-		public BedConfig SceneContext => _sceneContext;
+		public ISceneContext SceneContext => _sceneContext;
 
 		public EditContext EditContext { get; set; }
 

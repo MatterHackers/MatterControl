@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
 
 			var previewButton = new IconButton(configureIcon, theme)
 			{
-				ToolTipText = "Configure Camera View".Localize()
+				ToolTipText = "Preview".Localize()
 			};
 			previewButton.Click += (s, e) =>
 			{
@@ -361,6 +361,28 @@ namespace MatterHackers.MatterControl
 					clearCacheButton,
 					theme),
 				advancedPanel);
+
+#if DEBUG
+			var configurePluginsButton = new IconButton(configureIcon, theme)
+			{
+				ToolTipText = "Configure Plugins".Localize(),
+				Margin = 0
+			};
+			configurePluginsButton.Click += (s, e) =>
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.Show<PluginsPage>();
+				});
+			};
+
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Plugins".Localize(),
+					configurePluginsButton,
+					theme),
+				advancedPanel);
+#endif
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 

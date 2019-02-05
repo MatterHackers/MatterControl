@@ -1,5 +1,5 @@
-/*
-Copyright (c) 2016, Lars Brubaker, Kevin Pope
+﻿/*
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,47 +28,24 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterControl.Printing;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public static class MatterControlApplication
+	public interface INativePlatformFeatures
 	{
-		public static string MCWSBaseUri { get; }
-
-		static MatterControlApplication()
-		{
-			if (MatterHackers.MatterControl.AppContext.Options.McwsTestEnvironment)
-			{
-				MCWSBaseUri = "https://mattercontrol-test.appspot.com"; // http://192.168.2.129:9206
-			}
-			else
-			{
-				MCWSBaseUri = "https://mattercontrol.appspot.com";
-			}
-		}
-	}
-
-	public static class BuildValidationTests
-	{
-		private static void AssertDebugNotDefined()
-		{
-#if DEBUG
-			throw new Exception("DEBUG is defined and should not be!");
-#endif
-		}
-
-		public static void CheckKnownAssemblyConditionalCompSymbols()
-		{
-			BuildValidationTests.AssertDebugNotDefined();
-			GCodeFile.AssertDebugNotDefined();
-			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
-			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
-			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
-			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
-			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
-			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
-			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
-		}
+		event EventHandler PictureTaken;
+		void TakePhoto(string imageFileName);
+		void OpenCameraPreview();
+		void PlaySound(string fileName);
+		void ConfigureWifi();
+		bool CameraInUseByExternalProcess { get; set; }
+		bool IsNetworkConnected();
+		void InitPluginFinder();
+		GuiWidget GetConnectDevicePage(object printer);
+		void ProcessCommandline();
+		void PlatformInit(Action<string> reporter);
+		void GenerateLocalizationValidationFile();
+		bool HasPermissionToDevice(object printer);
 	}
 }

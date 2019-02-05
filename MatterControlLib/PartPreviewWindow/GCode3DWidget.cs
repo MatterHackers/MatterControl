@@ -42,13 +42,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodePanel : FlowLayoutWidget
 	{
-		private BedConfig sceneContext;
+		private ISceneContext sceneContext;
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private SectionWidget speedsWidget;
 		private GuiWidget loadedGCodeSection;
 
-		public GCodePanel(PrinterConfig printer, BedConfig sceneContext, ThemeConfig theme)
+		public GCodePanel(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;

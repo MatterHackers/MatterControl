@@ -1,5 +1,5 @@
-/*
-Copyright (c) 2016, Lars Brubaker, Kevin Pope
+﻿/*
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,48 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterControl.Printing;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public static class MatterControlApplication
+	public interface IDrawableItem
 	{
-		public static string MCWSBaseUri { get; }
+		string Title { get; }
 
-		static MatterControlApplication()
-		{
-			if (MatterHackers.MatterControl.AppContext.Options.McwsTestEnvironment)
-			{
-				MCWSBaseUri = "https://mattercontrol-test.appspot.com"; // http://192.168.2.129:9206
-			}
-			else
-			{
-				MCWSBaseUri = "https://mattercontrol.appspot.com";
-			}
-		}
-	}
+		string Description { get; }
 
-	public static class BuildValidationTests
-	{
-		private static void AssertDebugNotDefined()
-		{
-#if DEBUG
-			throw new Exception("DEBUG is defined and should not be!");
-#endif
-		}
+		bool Enabled { get; set; }
 
-		public static void CheckKnownAssemblyConditionalCompSymbols()
-		{
-			BuildValidationTests.AssertDebugNotDefined();
-			GCodeFile.AssertDebugNotDefined();
-			MatterHackers.Agg.Graphics2D.AssertDebugNotDefined();
-			MatterHackers.Agg.UI.SystemWindow.AssertDebugNotDefined();
-			MatterHackers.Agg.ImageProcessing.InvertLightness.AssertDebugNotDefined();
-			MatterHackers.Localizations.TranslationMap.AssertDebugNotDefined();
-			MatterHackers.MarchingSquares.MarchingSquaresByte.AssertDebugNotDefined();
-			MatterHackers.MatterSlice.MatterSlice.AssertDebugNotDefined();
-			MatterHackers.RenderOpenGl.GLMeshTrianglePlugin.AssertDebugNotDefined();
-		}
+		DrawStage DrawStage { get; }
+
+		void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world);
 	}
 }

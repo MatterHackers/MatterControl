@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PluginSystem;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 
 namespace MatterHackers.MatterControl
@@ -89,14 +88,6 @@ namespace MatterHackers.MatterControl
 
 		public void ConfigureWifi()
 		{
-		}
-
-		public void FindAndInstantiatePlugins(SystemWindow systemWindow)
-		{
-			foreach (MatterControlPlugin plugin in PluginFinder.CreateInstancesOf<MatterControlPlugin>())
-			{
-				plugin.Initialize(systemWindow);
-			}
 		}
 
 		public void ProcessCommandline()

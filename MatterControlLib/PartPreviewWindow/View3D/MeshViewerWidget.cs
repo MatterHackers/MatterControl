@@ -31,95 +31,39 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using static MatterHackers.Agg.Easing;
 
-namespace MatterHackers.MeshVisualizer
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MeshViewerWidget : GuiWidget
+	public partial class InteractionLayer : GuiWidget
 	{
 		private static ImageBuffer ViewOnlyTexture;
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
-		private GridColors gridColors;
 		private Color gCodeMeshColor;
 
 		private InteractiveScene scene;
 
-		private InteractionLayer interactionLayer;
-
-		private BedConfig sceneContext;
-
-		private Color debugBorderColor = Color.Green;
-
-		public MeshViewerWidget(BedConfig sceneContext, InteractionLayer interactionLayer, ThemeConfig theme, EditorType editorType = EditorType.Part)
-		{
-			this.EditorMode = editorType;
-			this.scene = sceneContext.Scene;
-			this.sceneContext = sceneContext;
-			this.interactionLayer = interactionLayer;
-			this.World = interactionLayer.World;
-			this.theme = theme;
-
-			gridColors = new GridColors()
-			{
-				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
-				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
-			};
-
-			gCodeMeshColor = new Color(theme.PrimaryAccentColor, 35);
-
-			// Register listeners
-			scene.SelectionChanged += selection_Changed;
-
-			BuildVolumeColor = new ColorF(.2, .8, .3, .2).ToColor();
-
-			this.interactionLayer.DrawGlTransparentContent += Draw_GlTransparentContent;
-
-			if (ViewOnlyTexture == null)
-			{
-				// TODO: What is the ViewOnlyTexture???
-				UiThread.RunOnIdle(() =>
-				{
-					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
-					var graphics2D = ViewOnlyTexture.NewGraphics2D();
-					graphics2D.Clear(Color.White);
-					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
-					// request the texture so we can set it to repeat
-					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
-				});
-			}
-		}
-
-		public WorldView World { get; }
+		private ISceneContext sceneContext;
 
 		private ThemeConfig theme;
+		private FloorDrawable floorDrawable;
 
-		private class GridColors
-		{
-			public Color Red { get; set; }
-			public Color Green { get; set; }
-			public Color Blue { get; set; }
-			public Color Gray { get; set; }
-		}
+		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
+
+		private List<IDrawable> drawables = new List<IDrawable>();
+		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -127,33 +71,29 @@ namespace MatterHackers.MeshVisualizer
 
 		public override void OnLoad(EventArgs args)
 		{
-			// some debug code to be able to click on parts
-			if (false)
+			drawables.AddRange(new IDrawable[]
 			{
-				AfterDraw += (sender, e) =>
-				{
-					foreach (var child in scene.Children)
-					{
-						this.World.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
-						this.World.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
-					}
-				};
-			}
+				new AxisIndicatorDrawable(),
+				new SceneTraceDataDrawable(sceneContext),
+				new AABBDrawable(sceneContext)
+			});
+
+			itemDrawables.AddRange(new IDrawableItem[]
+			{
+				new SelectedItemDrawable(sceneContext, this),
+				new ItemTraceDataDrawable(sceneContext)
+			});
+
+#if DEBUG
+			itemDrawables.Add(new InspectedItemDrawable(sceneContext));
+#endif
 
 			base.OnLoad(args);
 		}
 
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			scene.SelectionChanged -= selection_Changed;
-
-			base.OnClosed(e);
-		}
-
 		public override List<WidgetAndPosition> FindDescendants(IEnumerable<string> namesToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
-			foreach (InteractionVolume child in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume child in this.InteractionVolumes)
 			{
 				string object3DName = child.Name;
 
@@ -260,21 +200,6 @@ namespace MatterHackers.MeshVisualizer
 			return base.FindDescendants(namesToSearchFor, foundChildren, touchingBounds, seachType, allowInvalidItems);
 		}
 
-		public void CreateGlDataObject(IObject3D item)
-		{
-			if(item.Mesh != null)
-			{
-				GLMeshTrianglePlugin.Get(item.Mesh);
-			}
-
-			foreach (IObject3D child in item.Children.Where(o => o.Mesh != null))
-			{
-				GLMeshTrianglePlugin.Get(child.Mesh);
-			}
-		}
-
-		public bool SuppressUiVolumes { get; set; } = false;
-
 		private void DrawObject(IObject3D object3D, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			var selectedItem = scene.SelectedItem;
@@ -282,13 +207,13 @@ namespace MatterHackers.MeshVisualizer
 			foreach (var item in object3D.VisibleMeshes())
 			{
 				// check for correct persistable rendering
-				if(MeshViewerWidget.ViewOnlyTexture != null
+				if(InteractionLayer.ViewOnlyTexture != null
 					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
 
 					//item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
-					bool hasPersistableTexture = faceTexture == MeshViewerWidget.ViewOnlyTexture;
+					bool hasPersistableTexture = faceTexture == InteractionLayer.ViewOnlyTexture;
 
 					if (item.WorldPersistable())
 					{
@@ -311,39 +236,13 @@ namespace MatterHackers.MeshVisualizer
 					}
 				}
 
-				Color drawColor = GetItemColor(item);
+				Color drawColor = this.GetItemColor(item, selectedItem);
 
-				if(selectedItem is ISelectableChildContainer selectableChildContainer)
-				{
-					if(item.AncestorsAndSelf().Any(i => selectableChildContainer.SelectedChildren.Contains(i.ID)))
-					{
-						drawColor = new Color(drawColor, 200);
-					}
-				}
-
-				bool isDebugItem = (item == scene.DebugItem);
-
-				if (!sceneContext.ViewState.ModelView)
-				{
-					if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
-					{
-						drawColor = gCodeMeshColor;
-					}
-					else if(modelRenderStyle == ModelRenderStyle.Wireframe)
-					{
-						drawColor = new Color(gCodeMeshColor, 1);
-					}
-					else if (modelRenderStyle == ModelRenderStyle.None)
-					{
-						drawColor = Color.Transparent;
-					}
-				}
-
-				bool hasTransparentTextures = item.Mesh.FaceTextures.Any((ft) => ft.Value.image.HasTransparency);
+				bool hasTransparentTextures = item.Mesh.FaceTextures.Any(ft => ft.Value.image.HasTransparency);
 
 				if ((drawColor.alpha == 255
 					&& !hasTransparentTextures)
-					|| isDebugItem)
+					|| (item == scene.DebugItem))
 				{
 					// Render as solid
 					GLHelper.Render(item.Mesh,
@@ -363,54 +262,18 @@ namespace MatterHackers.MeshVisualizer
 					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
-				if (isSelected && scene.DrawSelection)
+				// Invoke all item Drawables
+				foreach(var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))
 				{
-					var frustum = World.GetClippingFrustum();
-
-					var selectionColor = Color.White;
-					double secondsSinceSelectionChanged = (UiThread.CurrentTimerMs - lastSelectionChangedMs) / 1000.0;
-					if (secondsSinceSelectionChanged < .5)
-					{
-						var accentColor = Color.LightGray;
-						if (secondsSinceSelectionChanged < .25)
-						{
-							selectionColor = Color.White.Blend(accentColor, Quadratic.InOut(secondsSinceSelectionChanged * 4));
-						}
-						else
-						{
-							selectionColor = accentColor.Blend(Color.White, Quadratic.InOut((secondsSinceSelectionChanged - .25) * 4));
-						}
-						Invalidate();
-					}
-
-					RenderSelection(item, frustum, selectionColor);
+					drawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
 				}
-
-#if DEBUG
-				if (isDebugItem)
-				{
-					var frustum = World.GetClippingFrustum();
-
-					var aabb = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-
-					World.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
-
-					if (item.Mesh != null)
-					{
-						GLHelper.Render(item.Mesh, debugBorderColor, item.WorldMatrix(),
-							RenderTypes.Wireframe, item.WorldMatrix() * World.ModelviewMatrix);
-					}
-				}
-#endif
-
-				// RenderNormals(renderData);
 
 				// turn lighting back on after rendering selection outlines
 				GL.Enable(EnableCap.Lighting);
 			}
 		}
 
-		private Color GetItemColor(IObject3D item)
+		private Color GetItemColor(IObject3D item, IObject3D selectedItem)
 		{
 			Color drawColor = item.WorldColor();
 			if (item.WorldOutputType() == PrintOutputTypes.Support)
@@ -439,67 +302,31 @@ namespace MatterHackers.MeshVisualizer
 				item3D.EnsureTransparentSorting();
 			}
 
-			return drawColor;
-		}
-
-		private void RenderNormals(IObject3D renderData)
-		{
-			throw new NotImplementedException();
-			//var frustum = World.GetClippingFrustum();
-
-			//foreach (var face in renderData.Mesh.Faces)
-			//{
-			//	int vertexCount = 0;
-			//	Vector3 faceCenter = Vector3.Zero;
-			//	foreach (var vertex in face.Vertices())
-			//	{
-			//		faceCenter += vertex.Position;
-			//		vertexCount++;
-			//	}
-			//	faceCenter /= vertexCount;
-
-			//	var transformed1 = Vector3Ex.Transform(faceCenter, renderData.Matrix);
-			//	var normal = Vector3Ex.TransformNormal(face.Normal, renderData.Matrix).GetNormal();
-
-			//	World.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
-			//}
-		}
-
-		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor)
-		{
-			if (item.Mesh == null)
+			if (selectedItem is ISelectableChildContainer selectableChildContainer)
 			{
-				return;
+				if (item.AncestorsAndSelf().Any(i => selectableChildContainer.SelectedChildren.Contains(i.ID)))
+				{
+					drawColor = new Color(drawColor, 200);
+				}
 			}
 
-			// Turn off lighting
-			GL.Disable(EnableCap.Lighting);
-			// Only render back faces
-			GL.CullFace(CullFaceMode.Front);
-			// Expand the object
-			var worldMatrix = item.WorldMatrix();
-			var worldBounds = item.Mesh.GetAxisAlignedBoundingBox(worldMatrix);
-			var worldCenter = worldBounds.Center;
-			double distBetweenPixelsWorldSpace = World.GetWorldUnitsPerScreenPixelAtPosition(worldCenter);
-			var pixelsAccross = worldBounds.Size / distBetweenPixelsWorldSpace;
-			var pixelsWant = pixelsAccross + Vector3.One * 4 * Math.Sqrt(2);
+			if (!sceneContext.ViewState.ModelView)
+			{
+				if (modelRenderStyle == ModelRenderStyle.WireframeAndSolid)
+				{
+					drawColor = gCodeMeshColor;
+				}
+				else if (modelRenderStyle == ModelRenderStyle.Wireframe)
+				{
+					drawColor = new Color(gCodeMeshColor, 1);
+				}
+				else if (modelRenderStyle == ModelRenderStyle.None)
+				{
+					drawColor = Color.Transparent;
+				}
+			}
 
-			var wantMm = pixelsWant * distBetweenPixelsWorldSpace;
-
-			var scaleMatrix = worldMatrix.ApplyAtPosition(worldCenter, Matrix4X4.CreateScale(
-				wantMm.X / worldBounds.XSize,
-				wantMm.Y / worldBounds.YSize,
-				wantMm.Z / worldBounds.ZSize));
-
-			GLHelper.Render(item.Mesh,
-				selectionColor,
-				scaleMatrix, RenderTypes.Shaded,
-				null,
-				darkWireframe);
-
-			// restore settings
-			GL.CullFace(CullFaceMode.Back);
-			GL.Enable(EnableCap.Lighting);
+			return drawColor;
 		}
 
 		public enum EditorType { Printer, Part }
@@ -531,7 +358,7 @@ namespace MatterHackers.MeshVisualizer
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
-		private void Draw_GlTransparentContent(object sender, DrawEventArgs e)
+		private void DrawGlContent(DrawEventArgs e)
 		{
 			var gcodeOptions = sceneContext.RendererOptions;
 
@@ -544,6 +371,24 @@ namespace MatterHackers.MeshVisualizer
 				modelRenderStyle = ModelRenderStyle.None;
 			}
 
+			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.First))
+			{
+				if (drawable.Enabled)
+				{
+					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
+				}
+			}
+
+			GLHelper.SetGlContext(this.World, renderSource.TransformToScreenSpace(renderSource.LocalBounds), lighting);
+
+			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.OpaqueContent))
+			{
+				if (drawable.Enabled)
+				{
+					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
+				}
+			}
+
 			// Draw solid objects, extract transparent
 			var transparentMeshes = new List<Object3DView>();
 			foreach (var object3D in scene.Children)
@@ -551,6 +396,14 @@ namespace MatterHackers.MeshVisualizer
 				if (object3D.Visible)
 				{
 					DrawObject(object3D, transparentMeshes, e);
+				}
+
+				// Invoke existing IEditorDraw when iterating items
+				if (object3D is IEditorDraw editorDraw)
+				{
+					// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
+					// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
+					editorDraw.DrawEditor(this, e);
 				}
 			}
 
@@ -560,9 +413,11 @@ namespace MatterHackers.MeshVisualizer
 			var pointOnBedInViewSpace = Vector3Ex.Transform(new Vector3(10, 10, 0), World.ModelviewMatrix);
 			var lookingDownOnBed = Vector3Ex.Dot(bedNormalInViewSpace, pointOnBedInViewSpace) < 0;
 
+			floorDrawable.LookingDownOnBed = lookingDownOnBed;
+
 			if (lookingDownOnBed)
 			{
-				RenderBedMesh(lookingDownOnBed);
+				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
 			var wireColor = Color.Transparent;
@@ -592,98 +447,44 @@ namespace MatterHackers.MeshVisualizer
 
 			if (!lookingDownOnBed)
 			{
-				RenderBedMesh(lookingDownOnBed);
-			}
-
-			// we don't want to render the bed or build volume before we load a model.
-			if (scene.HasChildren() || AllowBedRenderingWhenEmpty)
-			{
-				if (false) // this is code to draw a small axis indicator
-				{
-					double big = 10;
-					double small = 1;
-					Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
-					GLHelper.Render(xAxis, Color.Red);
-					Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
-					GLHelper.Render(yAxis, Color.Green);
-					Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
-					GLHelper.Render(zAxis, Color.Blue);
-				}
+				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
 			DrawInteractionVolumes(e);
 
-			if (scene.DebugItem?.Mesh != null)
+			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent))
 			{
-				var debugItem = scene.DebugItem;
-				GLHelper.Render(debugItem.Mesh, debugBorderColor, debugItem.WorldMatrix(),
-					RenderTypes.Wireframe, debugItem.WorldMatrix() * World.ModelviewMatrix);
-			}
-		}
-
-		private void RenderBedMesh(bool lookingDownOnBed)
-		{
-			if (this.EditorMode == EditorType.Printer)
-			{
-				// only render if we are above the bed
-				if (sceneContext.RendererOptions.RenderBed)
+				if (drawable.Enabled)
 				{
-					var bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
-
-					if (!lookingDownOnBed)
-					{
-						bedColor = new Color(bedColor, bedColor.alpha / 4);
-					}
-
-					GLHelper.Render(sceneContext.Mesh, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
-
-					if (sceneContext.PrinterShape != null)
-					{
-						GLHelper.Render(sceneContext.PrinterShape, bedColor, RenderTypes.Shaded, World.ModelviewMatrix);
-					}
-				}
-
-				if (sceneContext.BuildVolumeMesh != null && sceneContext.RendererOptions.RenderBuildVolume)
-				{
-					GLHelper.Render(sceneContext.BuildVolumeMesh, this.BuildVolumeColor, RenderTypes.Shaded, World.ModelviewMatrix);
+					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
 				}
 			}
-			else
+
+			GLHelper.UnsetGlContext();
+
+			var selectedItem = scene.SelectedItem;
+
+			// Invoke DrawStage.Last item drawables
+			foreach (var item in scene.Children)
 			{
-				GL.Disable(EnableCap.Texture2D);
-				GL.Disable(EnableCap.Blend);
-				GL.Disable(EnableCap.Lighting);
+				// HACK: Consider how shared code in DrawObject can be reused to prevent duplicate execution
+				bool isSelected = selectedItem != null
+					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
+						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
-				int width = 600;
-
-				GL.Begin(BeginMode.Lines);
+				foreach (var itemDrawable in itemDrawables.Where(d => d.DrawStage == DrawStage.Last && d.Enabled))
 				{
-					for (int i = -width; i <= width; i += 50)
-					{
-						GL.Color4(gridColors.Gray);
-						GL.Vertex3(i, width, 0);
-						GL.Vertex3(i, -width, 0);
-
-						GL.Vertex3(width, i, 0);
-						GL.Vertex3(-width, i, 0);
-					}
-
-					// X axis
-					GL.Color4(gridColors.Red);
-					GL.Vertex3(width, 0, 0);
-					GL.Vertex3(-width, 0, 0);
-
-					// Y axis
-					GL.Color4(gridColors.Green);
-					GL.Vertex3(0, width, 0);
-					GL.Vertex3(0, -width, 0);
-
-					// Z axis
-					GL.Color4(gridColors.Blue);
-					GL.Vertex3(0, 0, 10);
-					GL.Vertex3(0, 0, -10);
+					itemDrawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
 				}
-				GL.End();
+			}
+
+			// Invoke DrawStage.Last scene drawables
+			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.Last))
+			{
+				if (drawable.Enabled)
+				{
+					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
+				}
 			}
 		}
 
@@ -695,7 +496,7 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// draw on top of anything that is already drawn
-			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
 			{
 				if (interactionVolume.DrawOnTop)
 				{
@@ -706,16 +507,10 @@ namespace MatterHackers.MeshVisualizer
 			}
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (InteractionVolume interactionVolume in interactionLayer.InteractionVolumes)
+			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
-		}
-
-		void selection_Changed(object sender, EventArgs e)
-		{
-			Invalidate();
-			lastSelectionChangedMs = UiThread.CurrentTimerMs;
 		}
 
 		public enum ModelRenderStyle
@@ -725,9 +520,6 @@ namespace MatterHackers.MeshVisualizer
 			WireframeAndSolid,
 			None
 		}
-
-		private ModelRenderStyle modelRenderStyle = MeshViewerWidget.ModelRenderStyle.Wireframe;
-		private long lastSelectionChangedMs;
 
 		private class Object3DView
 		{

@@ -122,17 +122,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
 			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 
-			if (item is IEditorDraw editorDraw)
-			{
-				// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
-				// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
-				view3DWidget.InteractionLayer.DrawGlOpaqueContent += editorDraw.DrawEditor;
-				mainContainer.Closed += (s, e) =>
-				{
-					view3DWidget.InteractionLayer.DrawGlOpaqueContent -= editorDraw.DrawEditor;
-				};
-			}
-
 			if (item != null)
 			{
 				var context = new PPEContext()
@@ -631,7 +620,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			// Use known IObject3D editors
 			else if (propertyValue is IObject3D item
-				&& ApplicationController.Instance.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
+				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
 				rowContainer = iObject3DEditor.Create(item, theme);
 			}
