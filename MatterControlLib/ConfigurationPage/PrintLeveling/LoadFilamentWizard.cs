@@ -43,13 +43,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LoadFilamentWizard : PrinterSetupWizard
 	{
-		private static double temperatureAtStart;
+		public double TemperatureAtStart { get; private set; }
 		private int extruderIndex;
 
 		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
 		{
-			temperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
-
 			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex);
 
 			loadFilamentWizard.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
@@ -60,13 +58,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			});
 			loadFilamentWizardWindow.Closed += (s, e) =>
 			{
-				printer.Connection.SetTargetHotendTemperature(extruderIndex, temperatureAtStart);
+				printer.Connection.SetTargetHotendTemperature(extruderIndex, loadFilamentWizard.TemperatureAtStart);
 			};
 		}
 
 		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
+			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
 		}
 
@@ -78,6 +77,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
 		{
+			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
 			var levelingStrings = new LevelingStrings(printer.Settings);
 
 			var title = "Load Material".Localize();
@@ -110,6 +111,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				yield return trimFilamentPage;
 			}
 
+			if (extruderCount > 1)
+			{
+				// reset the extruder that was active
+				printer.Connection.QueueLine($"T{extruderIndex}");
+			}
+
+			// reset the extrusion amount so this is easier to debug
+			printer.Connection.QueueLine("G92 E0");
+
 			// show the insert filament page
 			{
 				RunningInterval runningGCodeCommands = null;
@@ -135,14 +145,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
 
+						int maxSecondsToStartLoading = 300;
 						var runningTime = Stopwatch.StartNew();
 						runningGCodeCommands = UiThread.SetInterval(() =>
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, .2, 80);
-								int secondsToRun = 300;
-								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
+								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 80);
+								// send a dwell to empty out the current move commands
+								printer.Connection.QueueLine("G4 P1");
+
+								if (runningTime.ElapsedMilliseconds > maxSecondsToStartLoading * 1000)
 								{
 									UiThread.ClearInterval(runningGCodeCommands);
 								}
@@ -230,11 +243,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 									runningTime = Stopwatch.StartNew();
 								}
 
-								if (progressBar.RatioComplete < 1)
+								if (progressBar.RatioComplete < 1
+									|| remainingLengthMm >= .001)
 								{
 									var thisExtrude = Math.Min(remainingLengthMm, maxSingleExtrudeLength);
 									var currentE = printer.Connection.CurrentExtruderDestination;
 									printer.Connection.QueueLine("G1 E{0:0.###} F{1}".FormatWith(currentE + thisExtrude, loadingSpeedMmPerS * 60));
+									// make sure we wait for this command to finish so we can cancel the unload at any time without delay
+									printer.Connection.QueueLine("G4 P1");
 									remainingLengthMm -= thisExtrude;
 									var elapsedSeconds = runningTime.Elapsed.TotalSeconds;
 									progressBar.RatioComplete = Math.Min(1, elapsedSeconds / expectedTimeS);
@@ -306,7 +322,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, .35, 140);
+								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 140);
+								// make sure we wait for this command to finish so we can cancel the unload at any time without delay
+								printer.Connection.QueueLine("G4 P1");
 								int secondsToRun = 90;
 								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
 								{

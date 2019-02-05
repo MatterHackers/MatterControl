@@ -96,6 +96,9 @@ Advanced
         filament_density
         filament_cost
         temperature
+        temperature1
+        temperature2
+        temperature3
         bed_temperature
     Advanced
       Material

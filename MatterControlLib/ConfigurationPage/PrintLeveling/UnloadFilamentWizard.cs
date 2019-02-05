@@ -176,7 +176,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 									runningTime = Stopwatch.StartNew();
 								}
 
-								if (progressBar.RatioComplete < 1)
+								if (progressBar.RatioComplete < 1
+									|| remainingLengthMm >= .001)
 								{
 									var thisExtrude = Math.Min(remainingLengthMm, maxSingleExtrudeLength);
 									currentE = printer.Connection.CurrentExtruderDestination;

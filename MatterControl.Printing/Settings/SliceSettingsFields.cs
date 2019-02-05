@@ -1729,7 +1729,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -1739,7 +1739,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>2",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -1749,7 +1749,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>3",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
