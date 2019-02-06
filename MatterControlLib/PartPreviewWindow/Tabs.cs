@@ -421,7 +421,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			UiThread.RunOnIdle(() =>
 			{
 				if (this.TabContent is PrinterTabPage printerTab
-					&& printerTab.printer.Connection.PrinterIsPrinting)
+					&& printerTab.printer.Connection.Printing)
 				{
 					StyledMessageBox.ShowMessageBox(
 						(bool response) =>

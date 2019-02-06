@@ -1503,7 +1503,7 @@ namespace MatterHackers.MatterControl
 						StyledMessageBox.ShowMessageBox(
 							(clickedOk) =>
 							{
-								if (clickedOk && printerConnection.PrinterIsPaused)
+								if (clickedOk && printerConnection.Paused)
 								{
 									printerConnection.Resume();
 								}
@@ -2308,7 +2308,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Indicates if any ActivePrinter is running a print task, either in paused or printing states
 		/// </summary>
-		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.PrinterIsPrinting || p.Connection.PrinterIsPaused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
+		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.Printing || p.Connection.Paused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
 
 		private List<TourLocation> _productTour;
 
@@ -2545,14 +2545,14 @@ If you experience adhesion problems, please re-run leveling."
 						string printing = "Printing".Localize();
 						int totalLayers = printer.Connection.TotalLayersInPrint;
 
-						while (!printer.Connection.PrinterIsPrinting
+						while (!printer.Connection.Printing
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
 							// Wait for printing
 							Thread.Sleep(200);
 						}
 
-						while ((printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused)
+						while ((printer.Connection.Printing || printer.Connection.Paused)
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
 							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1}{layerDetails}) - {printer.Connection.PercentComplete:0}%";
@@ -2573,7 +2573,7 @@ If you experience adhesion problems, please re-run leveling."
 					}),
 					IsPaused = () =>
 					{
-						return printer.Connection.PrinterIsPaused;
+						return printer.Connection.Paused;
 					},
 					PauseToolTip = "Pause Print".Localize(),
 					ResumeAction = () => UiThread.RunOnIdle(() =>

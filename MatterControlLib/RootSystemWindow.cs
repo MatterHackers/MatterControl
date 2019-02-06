@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 				int sdPrinting = 0;
 				foreach (var printer in ApplicationController.Instance.ActivePrinters)
 				{
-					if (printer.Connection.PrinterIsPrinting)
+					if (printer.Connection.Printing)
 					{
 						if (printer.Connection.CommunicationState == CommunicationStates.PrintingFromSd)
 						{

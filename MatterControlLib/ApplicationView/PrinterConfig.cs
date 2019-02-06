@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl
 		{
 			var printerConnection = this.Connection;
 
-			if (printerConnection.PrinterIsPrinting || printerConnection.PrinterIsPaused)
+			if (printerConnection.Printing || printerConnection.Paused)
 			{
 				switch (printerConnection.DetailedPrintingState)
 				{

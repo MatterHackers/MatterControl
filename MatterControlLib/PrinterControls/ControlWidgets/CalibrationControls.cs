@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			if (!printer.Settings.PrinterSelected
 				|| printer.Connection.CommunicationState == CommunicationStates.Printing
-				|| printer.Connection.PrinterIsPaused)
+				|| printer.Connection.Paused)
 			{
 				this.Enabled = false;
 			}

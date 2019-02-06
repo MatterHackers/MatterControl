@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 			this.Items.Clear();
 
 			if (printer.Connection.IsConnected
-				&& !(printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
+				&& !(printer.Connection.Printing || printer.Connection.Paused))
 			{
 				autoResetEvent = new AutoResetEvent(false);
 

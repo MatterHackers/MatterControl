@@ -606,7 +606,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 0;
 				}
 
-				if (PrintIsFinished && !PrinterIsPaused)
+				if (PrintIsFinished && !Paused)
 				{
 					return 100.0;
 				}
@@ -649,9 +649,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool PrinterIsPaused => CommunicationState == CommunicationStates.Paused;
+		public bool Paused => CommunicationState == CommunicationStates.Paused;
 
-		public bool PrinterIsPrinting
+		public bool Printing
 		{
 			get
 			{
@@ -741,7 +741,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (PrinterIsPrinting || PrinterIsPaused || PrintIsFinished)
+				if (Printing || Paused || PrintIsFinished)
 				{
 					return (int)(timeSinceStartedPrint.ElapsedMilliseconds / 1000);
 				}
@@ -1059,7 +1059,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		public void Disable()
 		{
 			if(this.CommunicationState == CommunicationStates.PrintingFromSd
-				|| (this.PrinterIsPaused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
+				|| (this.Paused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 			{
 				// don't turn off anything if we are printing from sd
 				return;
@@ -1475,7 +1475,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						timeSinceLastReadAnything.Restart();
 					}
 
-					if (PrinterIsPrinting)
+					if (Printing)
 					{
 						Thread.Sleep(0);
 					}
@@ -1679,7 +1679,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void RequestPause()
 		{
-			if (PrinterIsPrinting)
+			if (Printing)
 			{
 				if (CommunicationState == CommunicationStates.PrintingFromSd)
 				{
@@ -1706,7 +1706,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void Resume()
 		{
-			if (PrinterIsPaused)
+			if (Paused)
 			{
 				if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
 				{
@@ -1758,6 +1758,31 @@ You will then need to logout and log back in to the computer for the changes to 
 				}
 				else
 				{
+					// If we are not prnting and we switch extruders, make sure we send any gcode required to switch them
+					if(!this.Printing
+						&& lineToWrite.StartsWith("T"))
+					{
+						double extruderIndex = 0;
+						if (GCodeFile.GetFirstNumberAfter("T", lineToWrite, ref extruderIndex))
+						{
+							if(extruderIndex != ActiveExtruderIndex)
+							{
+								string gcodeToSend = "";
+								switch(extruderIndex)
+								{
+									case 0:
+										gcodeToSend = Printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+										break;
+									case 1:
+										gcodeToSend = Printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+										break;
+								}
+
+								// send the pre-switch gcode
+								QueueLine(gcodeToSend);
+							}
+						}
+					}
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// insert the command into the printing queue at the head
@@ -1857,7 +1882,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
 		{
-			if (!this.IsConnected || PrinterIsPrinting)
+			if (!this.IsConnected || Printing)
 			{
 				return;
 			}
@@ -1931,7 +1956,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		public bool StartSdCardPrint(string m23FileName)
 		{
 			if (!this.IsConnected
-				|| PrinterIsPrinting
+				|| Printing
 				|| string.IsNullOrEmpty(m23FileName))
 			{
 				return false;
@@ -2282,7 +2307,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			else
 			{
 				// make sure we time all of the printing that we are doing
-				if (this.PrinterIsPrinting && !this.PrinterIsPaused)
+				if (this.Printing && !this.Paused)
 				{
 					timeSinceStartedPrint.Start();
 				}
@@ -2484,7 +2509,7 @@ You will then need to logout and log back in to the computer for the changes to 
 							&& ContinuHoldingTemperature)
 						{
 							if (CommunicationState == CommunicationStates.PreparingToPrint
-								|| PrinterIsPrinting)
+								|| Printing)
 							{
 								ContinuHoldingTemperature = false;
 							}
@@ -2500,8 +2525,8 @@ You will then need to logout and log back in to the computer for the changes to 
 
 						// times up turn off heaters
 						if (ContinuHoldingTemperature
-							&& !PrinterIsPrinting
-							&& !PrinterIsPaused)
+							&& !Printing
+							&& !Paused)
 						{
 							UiThread.RunOnIdle(() =>
 							{

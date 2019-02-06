@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				// if the offsets change update them (unless we are actively printing)
 				if (stringEvent.Data == SettingsKey.extruder_offset
-					&& !printer.Connection.PrinterIsPrinting
-					&& !printer.Connection.PrinterIsPaused)
+					&& !printer.Connection.Printing
+					&& !printer.Connection.Paused)
 				{
 					ReadExtruderOffsets();
 				}
