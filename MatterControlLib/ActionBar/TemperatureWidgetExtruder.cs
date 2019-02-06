@@ -373,20 +373,16 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
-				var materialRowContainer = new FlowLayoutWidget()
-				{
-					HAnchor = HAnchor.Stretch
-				};
-				container.AddChild(materialRowContainer);
-				// material can be changed even when the printer is not connected
-				alwaysEnabled.Add(materialRowContainer);
-
 				// add in the material selector
 				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
 				{
-					Border = new BorderDouble(0, 1)
+					Border = new BorderDouble(0, 1),
+					BorderColor = AppContext.MenuTheme.RowBorder
 				};
-				materialRowContainer.AddChild(materialSettingsRow);
+
+				container.AddChild(materialSettingsRow);
+				// material can be changed even when the printer is not connected
+				alwaysEnabled.Add(materialSettingsRow);
 
 				// add in a shop button
 				var shopButton = theme.CreateDialogButton("Shop".Localize());
@@ -399,7 +395,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
 					});
 				};
-				materialRowContainer.AddChild(shopButton);
+				materialSettingsRow.AddChild(shopButton);
 				
 				presetsSelector.PerformLayout();
 			}
