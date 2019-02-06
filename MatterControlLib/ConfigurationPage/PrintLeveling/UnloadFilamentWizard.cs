@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// show the unloading filament progress bar
 			{
-				int extruderPirorToUnload = printer.Connection.ActiveExtruderIndex;
+				int extruderPriorToUnload = printer.Connection.ActiveExtruderIndex;
 
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage unloadingFilamentPage = null;
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					if (extruderCount > 1)
 					{
 						// reset the extruder that was active
-						printer.Connection.QueueLine($"T{extruderPirorToUnload}");
+						printer.Connection.QueueLine($"T{extruderPriorToUnload}");
 					}
 					printer.Connection.QueueLine("G92 E0");
 				};
