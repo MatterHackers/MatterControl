@@ -168,6 +168,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.OnPrintLevelingEnabledChanged(this, null);
 		}
 
+		public void SetExtruderZOffset(int extruderIndex, double newZOffset)
+		{
+			var offsetsVector3 = new List<Vector3>();
+			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
+			string[] offsets = currentOffsets.Split(',');
+			var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
+			foreach (string offset in offsets)
+			{
+				string[] xyz = offset.Split('x');
+				if (xyz.Length == 2)
+				{
+					offsetsVector3.Add(new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), -zOffset));
+				}
+				else
+				{
+					offsetsVector3.Add(new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), double.Parse(xyz[2])));
+				}
+			}
+
+			if (offsetsVector3.Count < extruderIndex)
+			{
+				offsetsVector3.Add(new Vector3(0, 0, -zOffset));
+			}
+
+			offsetsVector3[extruderIndex] = new Vector3(offsetsVector3[extruderIndex].X, offsetsVector3[extruderIndex].Y, newZOffset);
+
+			// now save it
+			var first = true;
+			var newValue = "";
+			foreach (var offset in offsetsVector3)
+			{
+				if (!first)
+				{
+					newValue += ",";
+				}
+				newValue += $"{offset.X}x{offset.Y}x{offset.Z}";
+				first = false;
+			}
+
+			printerSettings.SetValue(SettingsKey.extruder_offset, newValue);
+		}
+
 		public Vector3 ExtruderOffset(int extruderIndex)
 		{
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);

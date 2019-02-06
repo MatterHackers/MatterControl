@@ -253,9 +253,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				else if (i == 1)
 				{
 					// store the offset into the extruder offset z position
-					var extruder1Offset = printer.Settings.Helpers.ExtruderOffset(1);
-					//var newZOffset = extruder1Offset.Z
 					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+					var hotend0Offset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					var newZOffset = newProbeOffset - hotend0Offset;
+					printer.Settings.Helpers.SetExtruderZOffset(1, newZOffset);
 				}
 			}
 
