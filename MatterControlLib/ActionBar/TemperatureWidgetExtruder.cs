@@ -385,7 +385,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				alwaysEnabled.Add(materialSettingsRow);
 
 				// add in a shop button
-				var shopButton = theme.CreateDialogButton("Shop".Localize());
+				var shopButton = menuTheme.CreateDialogButton("Shop".Localize());
 				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
 				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
 				shopButton.Click += (s, e) =>
