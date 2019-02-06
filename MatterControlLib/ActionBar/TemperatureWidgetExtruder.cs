@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, menuTheme)
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, menuTheme, true)
 				{
 					Margin = new BorderDouble(right: menuTheme.ToolbarPadding.Right),
 					Padding = 0,
@@ -373,15 +373,30 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
-				GuiWidget rowItem = null;
-				container.AddChild(
-					rowItem = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
-					{
-						Border = new BorderDouble(0, 1)
-					});
-				// material can be changed even when the printer is not connected
-				alwaysEnabled.Add(rowItem);
+				// add in the material selector
+				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
+				{
+					Border = new BorderDouble(0, 1),
+					BorderColor = AppContext.MenuTheme.RowBorder
+				};
 
+				container.AddChild(materialSettingsRow);
+				// material can be changed even when the printer is not connected
+				alwaysEnabled.Add(materialSettingsRow);
+
+				// add in a shop button
+				var shopButton = theme.CreateDialogButton("Shop".Localize());
+				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
+				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
+				shopButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
+					});
+				};
+				materialSettingsRow.AddChild(shopButton);
+				
 				presetsSelector.PerformLayout();
 			}
 			else // put in a temperature selector for the correct material
