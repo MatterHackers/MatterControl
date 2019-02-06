@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.printer = printer;
 
 			GuiWidget loadUnloadButtons = null;
-			// We do not yet support loading filament into extruders other than 0, fix it when time.
+			// We do not yet support loading filament into extruders other than 0 & 1, fix it when needed.
 			if (extruderIndex < 2)
 			{
 				// add in load and unload buttons
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, menuTheme)
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, menuTheme, true)
 				{
 					Margin = new BorderDouble(right: menuTheme.ToolbarPadding.Right),
 					Padding = 0,
@@ -373,15 +373,34 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
-				GuiWidget rowItem = null;
-				container.AddChild(
-					rowItem = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
-					{
-						Border = new BorderDouble(0, 1)
-					});
+				var materialRowContainer = new FlowLayoutWidget()
+				{
+					HAnchor = HAnchor.Stretch
+				};
+				container.AddChild(materialRowContainer);
 				// material can be changed even when the printer is not connected
-				alwaysEnabled.Add(rowItem);
+				alwaysEnabled.Add(materialRowContainer);
 
+				// add in the material selector
+				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
+				{
+					Border = new BorderDouble(0, 1)
+				};
+				materialRowContainer.AddChild(materialSettingsRow);
+
+				// add in a shop button
+				var shopButton = theme.CreateDialogButton("Shop".Localize());
+				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
+				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
+				shopButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
+					});
+				};
+				materialRowContainer.AddChild(shopButton);
+				
 				presetsSelector.PerformLayout();
 			}
 			else // put in a temperature selector for the correct material
