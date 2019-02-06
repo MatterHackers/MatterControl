@@ -43,17 +43,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class UnloadFilamentWizard : PrinterSetupWizard
 	{
-		private bool onlyLoad;
+		private int extruderIndex;
 
-		public static void Start(PrinterConfig printer, ThemeConfig theme, bool onlyLoad)
+		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
 		{
 			// turn off print leveling
-			var levelingContext = new UnloadFilamentWizard(printer, onlyLoad)
+			var levelingContext = new UnloadFilamentWizard(printer, extruderIndex)
 			{
 				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize()
 			};
 
-			var loadFilamentWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
 			{
 				WindowTitle = levelingContext.WindowTitle
 			});
@@ -63,10 +63,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			};
 		}
 
-		public UnloadFilamentWizard(PrinterConfig printer, bool onlyLoad)
+		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
-			this.onlyLoad = onlyLoad;
+			this.extruderIndex = extruderIndex;
 		}
 
 		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
@@ -77,27 +77,33 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var instructions = "Please select the material you want to unload.".Localize();
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), onlyLoad);
+			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false);
 
 			var theme = ApplicationController.Instance.Theme;
 
+			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
 			// wait for extruder to heat
 			{
-				double targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+				var targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex);
+				var temps = new double[4];
+				temps[extruderIndex] = targetHotendTemp;
 				yield return new WaitForTempPage(
 					this,
 					"Waiting For Printer To Heat".Localize(),
-					"Waiting for the hotend to heat to ".Localize() + targetHotendTemp + "°C.\n"
+					(extruderCount > 1 ? "Waiting for hotend {0} to heat to ".Localize().FormatWith(extruderIndex + 1) : "Waiting for the hotend to heat to ".Localize()) + targetHotendTemp + "°C.\n"
 						+ "This will ensure that filament is able to flow through the nozzle.".Localize() + "\n"
 						+ "\n"
 						+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 						+ "Avoid contact with your skin.".Localize(),
 					0,
-					targetHotendTemp);
+					temps);
 			}
 
 			// show the unloading filament progress bar
 			{
+				int extruderPirorToUnload = printer.Connection.ActiveExtruderIndex;
+
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage unloadingFilamentPage = null;
 				unloadingFilamentPage = new PrinterSetupWizardPage(
@@ -131,6 +137,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						holder.AddChild(progressBarText);
 						unloadingFilamentPage.ContentRow.AddChild(holder);
 
+						if (extruderCount > 1)
+						{
+							// reset the extruder that was active
+							printer.Connection.QueueLine($"T{extruderIndex}");
+						}
+
+						// reset the extrusion amount so this is easier to debug
+						printer.Connection.QueueLine("G92 E0");
+
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
 						// send a dwell to empty out the current move commands
@@ -161,11 +176,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 									runningTime = Stopwatch.StartNew();
 								}
 
-								if (progressBar.RatioComplete < 1)
+								if (progressBar.RatioComplete < 1
+									|| remainingLengthMm >= .001)
 								{
 									var thisExtrude = Math.Min(remainingLengthMm, maxSingleExtrudeLength);
 									currentE = printer.Connection.CurrentExtruderDestination;
 									printer.Connection.QueueLine("G1 E{0:0.###} F{1}".FormatWith(currentE - thisExtrude, loadingSpeedMmPerS * 60));
+									// make sure we wait for this command to finish so we can cancel the unload at any time without delay
+									printer.Connection.QueueLine("G4 P1");
 									remainingLengthMm -= thisExtrude;
 									var elapsedSeconds = runningTime.Elapsed.TotalSeconds;
 									progressBar.RatioComplete = Math.Min(1, elapsedSeconds / expectedTimeS);
@@ -190,19 +208,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				unloadingFilamentPage.Closed += (s, e) =>
 				{
 					UiThread.ClearInterval(runningGCodeCommands);
+					if (extruderCount > 1)
+					{
+						// reset the extruder that was active
+						printer.Connection.QueueLine($"T{extruderPirorToUnload}");
+					}
+					printer.Connection.QueueLine("G92 E0");
 				};
 
 				yield return unloadingFilamentPage;
 			}
 
 			// put up a success message
-			yield return new DoneUnloadingPage(this);
+			yield return new DoneUnloadingPage(this, extruderIndex);
 		}
 	}
 
 	public class DoneUnloadingPage : PrinterSetupWizardPage
 	{
-		public DoneUnloadingPage(PrinterSetupWizard setupWizard)
+		public DoneUnloadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
 		{
 			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
@@ -213,7 +237,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			loadFilamentButton.Click += (s, e) =>
 			{
 				loadFilamentButton.Parents<SystemWindow>().First().Close();
-				LoadFilamentWizard.Start(printer, theme, true);
+				LoadFilamentWizard.Start(printer, theme, extruderIndex);
 			};
 			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 

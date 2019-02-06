@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Print Leveling Wizard".Localize()
 			};
 
-			var printLevelWizardWindow = DialogWindow.Show(new LevelingWizardRootPage(levelingContext)
+			var printLevelWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
 			{
 				WindowTitle = levelingContext.WindowTitle
 			});
@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (!useZProbe)
 			{
-				targetHotendTemp = printer.Settings.Helpers.ExtruderTemperature(0);
+				targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(0);
 			}
 
 			if (targetBedTemp > 0 || targetHotendTemp > 0)
@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this,
 					"Waiting For Printer To Heat".Localize(),
 					heatingInstructions,
-					targetBedTemp, targetHotendTemp);
+					targetBedTemp, new double[] { targetHotendTemp });
 			}
 
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;

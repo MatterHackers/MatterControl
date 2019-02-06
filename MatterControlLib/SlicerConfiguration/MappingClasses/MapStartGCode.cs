@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			{
 				if (extrudersUsed[0])
 				{
-					double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(0);
+					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(0);
 					if (materialTemperature != 0)
 					{
 						string setTempString = $"M109 T0 S{materialTemperature}";
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 					if (extruderIndex0Based < extrudersUsed.Count
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							// always heat the extruders that are used beyond extruder 0
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 					if (extruderIndex0Based < extrudersUsed.Count
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							// always heat the extruders that are used beyond extruder 0
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				if (extrudersUsed.Count > extruderIndex0Based
 					&& extrudersUsed[extruderIndex0Based])
 				{
-					double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
+					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
 					if (materialTemperature != 0)
 					{
 						string setTempString = "M104 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 					if (extrudersUsed.Count > extruderIndex0Based
 						&& extrudersUsed[extruderIndex0Based])
 					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTemperature(extruderIndex0Based);
+						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
 						if (materialTemperature != 0)
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(extruderIndex0Based, materialTemperature);

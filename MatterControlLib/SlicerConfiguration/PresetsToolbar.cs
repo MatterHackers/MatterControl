@@ -40,12 +40,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
 
-			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), theme.PresetColors.QualityPreset, NamedSettingsLayers.Quality, theme)
+			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), theme.PresetColors.QualityPreset, NamedSettingsLayers.Quality, 0, theme)
 			{
 				BackgroundColor = theme.MinimalShade
 			});
 			this.AddChild(new GuiWidget(8, 0));
-			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), theme.PresetColors.MaterialPreset, NamedSettingsLayers.Material, theme)
+			this.AddChild(new PresetSelectorWidget(printer, "Material".Localize(), theme.PresetColors.MaterialPreset, NamedSettingsLayers.Material, 0, theme)
 			{
 				BackgroundColor = theme.MinimalShade
 			});

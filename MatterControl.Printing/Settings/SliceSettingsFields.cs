@@ -162,12 +162,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.insert_filament_1_markdown,
+					PresentationName = "Insert Filament 2 Page".Localize(),
+					HelpText = "The Markdown that will be shown on the second extruders Insert Filament page.".Localize(),
+					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "* Insert filament into extruder 2 until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.running_clean_markdown2,
 					PresentationName = "Clean Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "In a few seconds filament should be coming out of the extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.running_clean_1_markdown,
+					PresentationName = "Extruder 2 Clean Page".Localize(),
+					HelpText = "The Markdown that will be shown on the second extruders Clean Filament page.".Localize(),
+					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "In a few seconds filament should be coming out of the second extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
 				new SliceSettingData()
 				{
@@ -1711,7 +1729,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -1721,7 +1739,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>2",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()
@@ -1731,7 +1749,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>3",
 					DefaultValue = "200"
 				},
 				new SliceSettingData()

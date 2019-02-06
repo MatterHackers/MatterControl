@@ -46,14 +46,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public DropDownList DropDownList;
 		private string defaultMenuItemText = "- none -".Localize();
 		private GuiWidget editButton;
+		private int extruderIndex;
 		private NamedSettingsLayers layerType;
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
 
-		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, ThemeConfig theme)
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, int extruderIndex, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 			this.printer = printer;
 			this.Name = label;
@@ -104,6 +106,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 6)
 			};
+
 			editButton.Click += (sender, e) =>
 			{
 				if (layerType == NamedSettingsLayers.Material)
@@ -288,13 +291,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (layerType == NamedSettingsLayers.Material)
 				{
-					settingsKey = printer.Settings.ActiveMaterialKey;
-
-					printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
-					dropDownList.Closed += (s1, e1) =>
+					if (extruderIndex == 0)
 					{
-						printer.Settings.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
-					};
+						settingsKey = printer.Settings.ActiveMaterialKey;
+
+						printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
+						dropDownList.Closed += (s1, e1) =>
+						{
+							printer.Settings.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
+						};
+					}
+					else // try to find the right material based on the extruders temperature
+					{
+						settingsKey = null;
+						var extuderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature1).ToString();
+						foreach(var materialLayer in printer.Settings.MaterialLayers)
+						{
+							if(materialLayer.TryGetValue(SettingsKey.temperature, out string _temp))
+							{
+								if(_temp == extuderTemp)
+								{
+									settingsKey = materialLayer.LayerID;
+								}
+							}
+						}
+					}
 				}
 				else
 				{
@@ -334,15 +355,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerType == NamedSettingsLayers.Material)
 			{
-				if (activeSettings.ActiveMaterialKey != item.Value)
+				if (extruderIndex == 0)
 				{
-					// Restore deactivated user overrides by iterating the Material preset we're coming off of
-					activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
+					if (activeSettings.ActiveMaterialKey != item.Value)
+					{
+						// Restore deactivated user overrides by iterating the Material preset we're coming off of
+						activeSettings.RestoreConflictingUserOverrides(activeSettings.MaterialLayer);
 
-					activeSettings.ActiveMaterialKey = item.Value;
+						activeSettings.ActiveMaterialKey = item.Value;
 
-					// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
-					activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
+						// Deactivate conflicting user overrides by iterating the Material preset we've just switched to
+						activeSettings.DeactivateConflictingUserOverrides(activeSettings.MaterialLayer);
+					}
+				}
+				else // set the temperature for the given extruder
+				{
+					var selectedMaterial = activeSettings.MaterialLayers.Where(l => l.LayerID == item.Value).FirstOrDefault();
+					if (selectedMaterial != null)
+					{
+						selectedMaterial.TryGetValue(SettingsKey.temperature, out string _temperature);
+						activeSettings.SetValue(SettingsKey.temperature1, _temperature);
+					}
+					else
+					{
+						activeSettings.SetValue(SettingsKey.temperature1, printer.Settings.GetValue(SettingsKey.temperature));
+					}
 				}
 			}
 			else if (layerType == NamedSettingsLayers.Quality)

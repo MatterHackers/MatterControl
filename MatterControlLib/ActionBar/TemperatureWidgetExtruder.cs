@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			GuiWidget loadUnloadButtons = null;
 			// We do not yet support loading filament into extruders other than 0, fix it when time.
-			if (extruderIndex == 0)
+			if (extruderIndex < 2)
 			{
 				// add in load and unload buttons
 				loadUnloadButtons = new FlowLayoutWidget()
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LoadFilamentWizard.Start(printer, theme, true);
+						LoadFilamentWizard.Start(printer, theme, extruderIndex);
 					});
 				};
 				loadUnloadButtons.AddChild(loadButton);
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						UnloadFilamentWizard.Start(printer, theme, true);
+						UnloadFilamentWizard.Start(printer, theme, extruderIndex);
 					});
 				};
 				loadUnloadButtons.AddChild(unloadButton);
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						if (itemChecked)
 						{
 							// Set to goal temp
-							SetTargetTemperature(printer.Settings.Helpers.ExtruderTemperature(hotendIndex));
+							SetTargetTemperature(printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex));
 						}
 						else
 						{
@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				MinValue = 0,
 				ShowGoal = true,
 				GoalColor = menuTheme.PrimaryAccentColor,
-				GoalValue = printer.Settings.Helpers.ExtruderTemperature(hotendIndex),
+				GoalValue = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex),
 				MaxValue = 280, // could come from some profile value in the future
 				Width = widget.Width - 20,
 				Height = 35, // this works better if it is a common multiple of the Width
@@ -319,7 +319,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					if (stringEvent.Data == this.TemperatureKey)
 					{
-						var temp = printer.Settings.Helpers.ExtruderTemperature(hotendIndex);
+						var temp = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
 
 						graph.GoalValue = temp;
 
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, menuTheme)
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, menuTheme)
 				{
 					Margin = new BorderDouble(right: menuTheme.ToolbarPadding.Right),
 					Padding = 0,

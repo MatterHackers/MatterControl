@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				printer.Connection.TargetBedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 				{
-					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTemperature(extruderIndex));
+					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex));
 				}
 				printer.Connection.TurnOffBedAndExtruders(PrinterCommunication.TurnOff.AfterDelay);
 			};

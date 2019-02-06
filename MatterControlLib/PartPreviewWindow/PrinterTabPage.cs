@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							UiThread.RunOnIdle(() =>
 							{
 								unloadFilamentButton.Parents<SystemWindow>().First().Close();
-								UnloadFilamentWizard.Start(printer, theme, true);
+								UnloadFilamentWizard.Start(printer, theme, 0);
 							});
 						};
 
