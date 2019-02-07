@@ -41,17 +41,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class CalibrateProbeLastPagelInstructions : PrinterSetupWizardPage
 	{
 		private bool pageWasActive = false;
-		private List<ProbePosition> autoProbePositions;
-		private List<ProbePosition> manualProbePositions;
 
-		public CalibrateProbeLastPagelInstructions(PrinterSetupWizard context, string headerText,
-			List<ProbePosition> autoProbePositions,
-			List<ProbePosition> manualProbePositions)
+		public CalibrateProbeLastPagelInstructions(PrinterSetupWizard context, string headerText)
 			: base(context, headerText, "")
 		{
-			this.autoProbePositions = autoProbePositions;
-			this.manualProbePositions = manualProbePositions;
-
 			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
 				+ "    • " + "Remove the paper".Localize() + "\n"
 				+ "\n"
@@ -72,11 +65,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void PageIsBecomingActive()
 		{
-			// make sure we don't have leveling data
-			double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
-			printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
-			printer.Settings.SetValue(SettingsKey.probe_has_been_calibrated, "1");
-
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);

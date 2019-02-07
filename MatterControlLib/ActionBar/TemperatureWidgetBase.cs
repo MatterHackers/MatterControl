@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private void EnableControls()
 		{
-			bool status =  printer.Connection.IsConnected && !printer.Connection.PrinterIsPrinting;
+			bool status =  printer.Connection.IsConnected && !printer.Connection.Printing;
 			if (isEnabled != status
 				&& this.PopupContent is GuiWidget popupContent)
 			{

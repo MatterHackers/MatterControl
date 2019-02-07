@@ -208,7 +208,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override void SetTargetTemperature(double targetTemp)
 		{
 			double goalTemp = (int)(targetTemp + .5);
-			if (printer.Connection.PrinterIsPrinting
+			if (printer.Connection.Printing
 				&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingBed
 				&& goalTemp != printer.Connection.TargetBedTemperature)
 			{

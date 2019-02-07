@@ -51,16 +51,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 		private GuiWidget pullDownContainer;
+		private bool createAsFit;
 
-		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, int extruderIndex, ThemeConfig theme)
+		public PresetSelectorWidget(PrinterConfig printer, string label, Color accentColor, NamedSettingsLayers layerType, int extruderIndex, ThemeConfig theme, bool createAsFit = false)
 			: base(FlowDirection.TopToBottom)
 		{
+			this.createAsFit = createAsFit;
 			this.extruderIndex = extruderIndex;
 			this.layerType = layerType;
 			this.printer = printer;
 			this.Name = label;
 			this.theme = theme;
-			this.HAnchor = HAnchor.Stretch;
+			this.HAnchor = createAsFit ? HAnchor.Fit : HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.BackgroundColor = theme.MinimalShade;
 			this.Padding = theme.DefaultContainerPadding;
@@ -74,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			pullDownContainer = new GuiWidget()
 			{
-				HAnchor = HAnchor.Stretch,
+				HAnchor = createAsFit ? HAnchor.Fit : HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Border = new BorderDouble(left: 3),
 				BorderColor = accentColor,
@@ -95,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var container = new FlowLayoutWidget()
 			{
-				HAnchor = HAnchor.MaxFitOrStretch,
+				HAnchor = createAsFit ? HAnchor.Fit : HAnchor.MaxFitOrStretch,
 				Name = "Preset Pulldown Container"
 			};
 

@@ -358,7 +358,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
 		{
-			if (printer.Connection.PrinterIsPaused)
+			if (printer.Connection.Paused)
 			{
 				var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
 				{

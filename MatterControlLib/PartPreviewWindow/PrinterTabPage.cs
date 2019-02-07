@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ResumePrint(bool clickedOk)
 		{
 			// They clicked either Resume or Ok
-			if (clickedOk && printer.Connection.PrinterIsPaused)
+			if (clickedOk && printer.Connection.Paused)
 			{
 				printer.Connection.Resume();
 			}
@@ -399,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderVisibility()
 		{
-			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
+			bool printerIsRunningPrint = printer.Connection.Paused || printer.Connection.Printing;
 
 			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
@@ -459,7 +459,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool printerIsRunningPrint = printer.Connection.PrinterIsPaused || printer.Connection.PrinterIsPrinting;
+			bool printerIsRunningPrint = printer.Connection.Paused || printer.Connection.Printing;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
 				&& printer.ViewState.ViewMode != PartViewMode.Model)
@@ -679,7 +679,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (clickedOk2)
 								{
 									if (printer.Connection != null
-										&& (printer.Connection.PrinterIsPrinting || printer.Connection.PrinterIsPaused))
+										&& (printer.Connection.Printing || printer.Connection.Paused))
 									{
 										printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath(printer));
 										bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);

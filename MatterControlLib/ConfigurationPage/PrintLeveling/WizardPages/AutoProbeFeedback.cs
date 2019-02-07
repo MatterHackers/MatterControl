@@ -155,8 +155,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			NextButton.Enabled = false;
 
 			if (printer.Connection.IsConnected
-				&& !(printer.Connection.PrinterIsPrinting
-				|| printer.Connection.PrinterIsPaused))
+				&& !(printer.Connection.Printing
+				|| printer.Connection.Paused))
 			{
 				printer.Connection.LineReceived += GetZProbeHeight;
 			}

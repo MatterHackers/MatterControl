@@ -32,6 +32,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -135,10 +136,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings.HomingPageInstructions(true, false),
 				false);
 
-			double targetHotendTemp = 0;
-
-			targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(0);
-
 			if (LevelingValidation.NeedsToBeRun(printer))
 			{
 				// start heating up the bed as that will be needed next
@@ -151,29 +148,44 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			}
 
+			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
+			var temps = new double[4];
+			for(int i=0; i< extruderCount; i++)
+			{
+				temps[i] = printer.Settings.Helpers.ExtruderTargetTemperature(i);
+			}
+
 			yield return new WaitForTempPage(
 				this,
 				"Waiting For Printer To Heat".Localize(),
-				"Waiting for the hotend to heat to ".Localize() + targetHotendTemp + "°C.\n"
+				((extruderCount == 1) ? "Waiting for the hotend to heat to ".Localize() + temps[0] + "°C.\n" : "Waiting for the hotends to heat up.".Localize())
 					+ "This will ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 					+ "\n"
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize(),
 				0,
-				new double[] { targetHotendTemp });
+				temps);
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer);
 
-			int i = 0;
+			int extruderPriorToMeasure = printer.Connection.ActiveExtruderIndex;
 
+			if (extruderCount > 1)
+			{
+				// reset the extruder that was active
+				printer.Connection.QueueLine($"T0");
+			}
+
+			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
 				this,
 				new Vector3(probePosition, startProbeHeight),
-				$"{"Step".Localize()} {i + 1} {"of".Localize()} 3: {"Position".Localize()} {i + 1} - {"Auto Calibrate".Localize()}",
+				$"{"Step".Localize()} 1 {"of".Localize()} {numberOfSamples}: {"Position".Localize()} 1 - {"Auto Calibrate".Localize()}",
 				autoProbePositions,
-				i);
+				0);
 
 			// show what steps will be taken
 			yield return new PrinterSetupWizardPage(
@@ -185,49 +197,80 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
 					"Click 'Next' to continue.".Localize()));
 
-			// do the manual prob of the same position
-			yield return new GetCoarseBedHeight(
-				this,
-				new Vector3(probePosition, startProbeHeight),
-				string.Format(
-					"{0} {1} {2} - {3}",
-					levelingStrings.GetStepString(totalSteps),
-					"Position".Localize(),
-					i + 1,
-					"Low Precision".Localize()),
-				manualProbePositions,
-				i,
-				levelingStrings);
+			// we currently only support calibrating 2 extruders
+			for (int i = 0; i < Math.Min(extruderCount, 2); i++)
+			{
+				if (extruderCount > 1)
+				{
+					// reset the extruder that was active
+					printer.Connection.QueueLine($"T{i}");
+				}
 
-			yield return new GetFineBedHeight(
-				this,
-				string.Format(
-					"{0} {1} {2} - {3}",
-					levelingStrings.GetStepString(totalSteps),
-					"Position".Localize(),
-					i + 1,
-					"Medium Precision".Localize()),
-				manualProbePositions,
-				i,
-				levelingStrings);
+				// do the manual prob of the same position
+				yield return new GetCoarseBedHeight(
+					this,
+					new Vector3(probePosition, startProbeHeight),
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						1,
+						"Low Precision".Localize()),
+					manualProbePositions,
+					0,
+					levelingStrings);
 
-			yield return new GetUltraFineBedHeight(
-				this,
-				string.Format(
-					"{0} {1} {2} - {3}",
-					levelingStrings.GetStepString(totalSteps),
-					"Position".Localize(),
-					i + 1,
-					"High Precision".Localize()),
-				manualProbePositions,
-				i,
-				levelingStrings);
+				yield return new GetFineBedHeight(
+					this,
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						1,
+						"Medium Precision".Localize()),
+					manualProbePositions,
+					0,
+					levelingStrings);
+
+				yield return new GetUltraFineBedHeight(
+					this,
+					string.Format(
+						"{0} {1} {2} - {3}",
+						levelingStrings.GetStepString(totalSteps),
+						"Position".Localize(),
+						1,
+						"High Precision".Localize()),
+					manualProbePositions,
+					0,
+					levelingStrings);
+
+				if (i == 0)
+				{
+					// make sure we don't have leveling data
+					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+					printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
+				}
+				else if (i == 1)
+				{
+					// store the offset into the extruder offset z position
+					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+					var hotend0Offset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					var newZOffset = newProbeOffset - hotend0Offset;
+					printer.Settings.Helpers.SetExtruderZOffset(1, newZOffset);
+				}
+			}
+
+			printer.Settings.SetValue(SettingsKey.probe_has_been_calibrated, "1");
+
+			if (extruderCount > 1)
+			{
+				// reset the extruder that was active
+				printer.Connection.QueueLine($"T{extruderPriorToMeasure}");
+			}
 
 			yield return new CalibrateProbeLastPagelInstructions(
 				this,
-				"Done".Localize(),
-				autoProbePositions,
-				manualProbePositions);
+				"Done".Localize());
 		}
 	}
 }

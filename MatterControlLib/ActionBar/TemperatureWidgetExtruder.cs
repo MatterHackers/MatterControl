@@ -52,12 +52,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.HAnchor = HAnchor.Stretch;
 			this.printer = printer;
 
-			GuiWidget loadUnloadButtons = null;
-			// We do not yet support loading filament into extruders other than 0, fix it when time.
+			GuiWidget loadUnloadButtonRow = null;
+			// We do not yet support loading filament into extruders other than 0 & 1, fix it when needed.
 			if (extruderIndex < 2)
 			{
 				// add in load and unload buttons
-				loadUnloadButtons = new FlowLayoutWidget()
+				loadUnloadButtonRow = new FlowLayoutWidget()
 				{
 					Padding = theme.ToolbarPadding,
 				};
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ActionBar
 						LoadFilamentWizard.Start(printer, theme, extruderIndex);
 					});
 				};
-				loadUnloadButtons.AddChild(loadButton);
+				loadUnloadButtonRow.AddChild(loadButton);
 
 				var unloadButton = theme.CreateDialogButton("Unload".Localize());
 				unloadButton.ToolTipText = "Unload filament".Localize();
@@ -83,20 +83,20 @@ namespace MatterHackers.MatterControl.ActionBar
 						UnloadFilamentWizard.Start(printer, theme, extruderIndex);
 					});
 				};
-				loadUnloadButtons.AddChild(unloadButton);
+				loadUnloadButtonRow.AddChild(unloadButton);
 
-				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtons, theme, enforceGutter: false));
+				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtonRow, theme, enforceGutter: false));
 			}
 
 			// Add the Extrude buttons
-			var buttonContainer = new FlowLayoutWidget()
+			var extrudeRetractButtonRow = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				Padding = theme.ToolbarPadding,
 			};
 
-			int extruderButtonTopMargin = loadUnloadButtons == null ? 8 : 0;
+			int extruderButtonTopMargin = loadUnloadButtonRow == null ? 8 : 0;
 
 			var extrudeButton = theme.CreateDialogButton("Extrude".Localize());
 			extrudeButton.Name = "Extrude Button";
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
 			};
-			buttonContainer.AddChild(extrudeButton);
+			extrudeRetractButtonRow.AddChild(extrudeButton);
 
 			var retractButton = theme.CreateDialogButton("Retract".Localize());
 			retractButton.ToolTipText = "Retract filament".Localize();
@@ -113,11 +113,11 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				printer.Connection.MoveExtruderRelative(moveAmount * -1, printer.Settings.EFeedRate(extruderIndex), extruderIndex);
 			};
-			buttonContainer.AddChild(retractButton);
+			extrudeRetractButtonRow.AddChild(retractButton);
 
 			this.AddChild(new SettingsItem(
-				loadUnloadButtons == null ? "Filament".Localize() : "", // Don't put the name if we put in a load and unload button (it has the name)
-				buttonContainer,
+				loadUnloadButtonRow == null ? "Filament".Localize() : "", // Don't put the name if we put in a load and unload button (it has the name)
+				extrudeRetractButtonRow,
 				theme,
 				enforceGutter: false));
 
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			if (hotendIndex == 0)
 			{
 				// put in the material selector
-				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, menuTheme)
+				var presetsSelector = new PresetSelectorWidget(printer, "Material".Localize(), Color.Transparent, NamedSettingsLayers.Material, hotendIndex, menuTheme, true)
 				{
 					Margin = new BorderDouble(right: menuTheme.ToolbarPadding.Right),
 					Padding = 0,
@@ -373,14 +373,28 @@ namespace MatterHackers.MatterControl.ActionBar
 					dropList.Margin = 0;
 				}
 
-				GuiWidget rowItem = null;
-				container.AddChild(
-					rowItem = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
-					{
-						Border = new BorderDouble(0, 1)
-					});
+				// add in the material selector
+				GuiWidget materialSettingsRow = new SettingsItem("Material".Localize(), presetsSelector, menuTheme, enforceGutter: false)
+				{
+					Border = new BorderDouble(0, 1),
+					BorderColor = AppContext.MenuTheme.RowBorder
+				};
+
+				container.AddChild(materialSettingsRow);
 				// material can be changed even when the printer is not connected
-				alwaysEnabled.Add(rowItem);
+				alwaysEnabled.Add(materialSettingsRow);
+				// add in a shop button
+				var shopButton = theme.CreateDialogButton("Shop".Localize());
+				shopButton.Margin = new BorderDouble(3, 3, 6, 3);
+				shopButton.ToolTipText = "Shop Filament at MatterHackers".Localize();
+				shopButton.Click += (s, e) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
+					});
+				};
+				materialSettingsRow.AddChild(shopButton);
 
 				presetsSelector.PerformLayout();
 			}
@@ -444,7 +458,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		protected override void SetTargetTemperature(double targetTemp)
 		{
 			double goalTemp = (int)(targetTemp + .5);
-			if (printer.Connection.PrinterIsPrinting
+			if (printer.Connection.Printing
 				&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingExtruder
 				&& goalTemp != printer.Connection.GetTargetHotendTemperature(hotendIndex))
 			{

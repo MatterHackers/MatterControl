@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (lineToSend == null)
 			{
-				if (!printer.Connection.PrinterIsPaused)
+				if (!printer.Connection.Paused)
 				{
 					lineToSend = base.ReadLine();
 					if (lineToSend == null)
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				moveLocationAtEndOfPauseCode = LastDestination;
 
-				if (printer.Connection.PrinterIsPrinting)
+				if (printer.Connection.Printing)
 				{
 					// remember where we were after we ran the pause gcode
 					printer.Connection.CommunicationState = CommunicationStates.Paused;

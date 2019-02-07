@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			disconnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				if (printer.Connection.PrinterIsPrinting)
+				if (printer.Connection.Printing)
 				{
 					StyledMessageBox.ShowMessageBox(
 						(bool disconnectCancel) =>
