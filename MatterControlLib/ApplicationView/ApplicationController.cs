@@ -1590,7 +1590,8 @@ namespace MatterHackers.MatterControl
 		{
 			return LevelingValidation.NeedsToBeRun(printer)
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
-				|| (printer.Connection.IsConnected && LoadFilamentWizard.NeedsToBeRun(printer));
+				|| LoadFilamentWizard.NeedsToBeRun0(printer)
+				|| LoadFilamentWizard.NeedsToBeRun1(printer);
 		}
 
 		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
@@ -1616,11 +1617,21 @@ namespace MatterHackers.MatterControl
 			}
 
 			// run load filament if we need to
-			if (LoadFilamentWizard.NeedsToBeRun(printer))
+			if (LoadFilamentWizard.NeedsToBeRun0(printer))
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LoadFilamentWizard.Start(printer, theme, 0);
+					LoadFilamentWizard.Start(printer, theme, 0, true);
+				});
+				return true;
+			}
+
+			// run load filament for extruder 1 if we need to
+			if (LoadFilamentWizard.NeedsToBeRun1(printer))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					LoadFilamentWizard.Start(printer, theme, 1, true);
 				});
 				return true;
 			}

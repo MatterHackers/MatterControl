@@ -1758,31 +1758,6 @@ You will then need to logout and log back in to the computer for the changes to 
 				}
 				else
 				{
-					// If we are not prnting and we switch extruders, make sure we send any gcode required to switch them
-					if(!this.Printing
-						&& lineToWrite.StartsWith("T"))
-					{
-						double extruderIndex = 0;
-						if (GCodeFile.GetFirstNumberAfter("T", lineToWrite, ref extruderIndex))
-						{
-							if(extruderIndex != ActiveExtruderIndex)
-							{
-								string gcodeToSend = "";
-								switch(extruderIndex)
-								{
-									case 0:
-										gcodeToSend = Printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
-										break;
-									case 1:
-										gcodeToSend = Printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
-										break;
-								}
-
-								// send the pre-switch gcode
-								QueueLine(gcodeToSend);
-							}
-						}
-					}
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// insert the command into the printing queue at the head

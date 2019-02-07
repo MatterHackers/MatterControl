@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class SelectMaterialPage : PrinterSetupWizardPage
 	{
-		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton)
+		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton, bool showAlreadyLoadedButton)
 			: base(context, headerText, instructionsText)
 		{
 			contentRow.AddChild(
@@ -50,39 +50,48 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (showLoadFilamentButton)
 			{
-				AddLoadFilamentButton();
+				NextButton.Visible = false;
+
+				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+				{
+					Name = "Load Filament",
+					BackgroundColor = theme.MinimalShade,
+				};
+				loadFilamentButton.Click += (s, e) =>
+				{
+					wizardContext.ShowNextPage(this.DialogWindow);
+				};
+
+				this.AddPageAction(loadFilamentButton);
 			}
-		}
 
-		private void AddLoadFilamentButton()
-		{
-			NextButton.Visible = false;
-
-			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+			if (showAlreadyLoadedButton)
 			{
-				Name = "Load Filament",
-				BackgroundColor = theme.MinimalShade,
-			};
-			loadFilamentButton.Click += (s, e) =>
-			{
-				wizardContext.ShowNextPage(this.DialogWindow);
-			};
+				NextButton.Visible = false;
 
-			this.AddPageAction(loadFilamentButton);
+				var alreadyLoadedButton = new TextButton("Already Loaded".Localize(), theme)
+				{
+					Name = "Already Loaded Button",
+					BackgroundColor = theme.MinimalShade
+				};
 
-			var selectButton = new TextButton("Already Loaded".Localize(), theme)
-			{
-				Name = "Already Loaded Button",
-				BackgroundColor = theme.MinimalShade
-			};
+				alreadyLoadedButton.Click += (s, e) =>
+				{
+					this.DialogWindow.CloseOnIdle();
+					switch (extruderIndex)
+					{
+						case 0:
+							printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
+							break;
 
-			selectButton.Click += (s, e) =>
-			{
-				this.DialogWindow.CloseOnIdle();
-				printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-			};
+						case 1:
+							printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
+							break;
+					}
+				};
 
-			this.AddPageAction(selectButton);
+				this.AddPageAction(alreadyLoadedButton);
+			}
 		}
 
 		public override void PageIsBecomingInactive()

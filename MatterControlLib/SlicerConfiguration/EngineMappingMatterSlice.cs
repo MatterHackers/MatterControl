@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.filament_cost,
 			SettingsKey.filament_density,
 			SettingsKey.filament_has_been_loaded,
+			SettingsKey.filament_1_has_been_loaded,
 			SettingsKey.filament_runout_sensor,
 			SettingsKey.has_fan,
 			SettingsKey.has_hardware_leveling,

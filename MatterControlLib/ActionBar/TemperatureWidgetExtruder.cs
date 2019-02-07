@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						LoadFilamentWizard.Start(printer, theme, extruderIndex);
+						LoadFilamentWizard.Start(printer, theme, extruderIndex, false);
 					});
 				};
 				loadUnloadButtonRow.AddChild(loadButton);
