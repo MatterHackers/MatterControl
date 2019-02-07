@@ -76,9 +76,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			var lines = ProcessWriteRegEx(baseLine);
-			for (int i = 1; i < lines.Count; i++)
+			for (int i = lines.Count - 1; i >= 1; i--)
 			{
-				queueStream.Add(lines[i]);
+				queueStream.Add(lines[i], true);
 			}
 
 			var lineToSend = lines[0];

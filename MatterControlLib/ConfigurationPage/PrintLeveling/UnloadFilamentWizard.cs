@@ -71,17 +71,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
 		{
+			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
 			var levelingStrings = new LevelingStrings(printer.Settings);
 
 			var title = "Unload Material".Localize();
 			var instructions = "Please select the material you want to unload.".Localize();
+			if (extruderCount > 1)
+			{
+				instructions = "Please select the material you want to unload from extruder {0}.".Localize().FormatWith(extruderIndex + 1);
+			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false);
+			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false);
 
 			var theme = ApplicationController.Instance.Theme;
-
-			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// wait for extruder to heat
 			{
@@ -237,7 +241,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			loadFilamentButton.Click += (s, e) =>
 			{
 				loadFilamentButton.Parents<SystemWindow>().First().Close();
-				LoadFilamentWizard.Start(printer, theme, extruderIndex);
+				LoadFilamentWizard.Start(printer, theme, extruderIndex, false);
 			};
 			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 

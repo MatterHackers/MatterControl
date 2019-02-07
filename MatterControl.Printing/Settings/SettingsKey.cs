@@ -133,6 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
+		public const string filament_1_has_been_loaded = nameof(filament_1_has_been_loaded);
 		public const string show_reset_connection = nameof(show_reset_connection);
 		public const string sla_printer = nameof(sla_printer);
 		public const string spiral_vase = nameof(spiral_vase);

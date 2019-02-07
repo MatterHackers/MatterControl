@@ -125,6 +125,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};
+
+			TrackballTumbleWidget.GetNearFar = GetNearFar;
+
 			TrackballTumbleWidget.AnchorAll();
 
 			this.BoundsChanged += UpdateRenderView;
@@ -384,6 +387,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!AppContext.IsLoading)
 			{
 				this.RebuildTree();
+			}
+		}
+
+		private void GetNearFar(out double zNear, out double zFar)
+		{
+			zNear = .1;
+			zFar = 100;
+
+			// this function did not fix the image z fighting, so for now I'm just going to return rather than have it run.
+			return;
+
+			var bounds = Scene.GetAxisAlignedBoundingBox();
+
+			if(bounds.XSize > 0)
+			{
+				zNear = double.PositiveInfinity;
+				zFar = double.NegativeInfinity;
+				ExpandNearAndFarToBounds(ref zNear, ref zFar, bounds);
+
+				// TODO: add in the bed bounds
+
+				// TODO: add in the print volume bounds
+			}
+		}
+
+		private void ExpandNearAndFarToBounds(ref double zNear, ref double zFar, AxisAlignedBoundingBox bounds)
+		{
+			for (int x = 0; x < 2; x++)
+			{
+				for (int y = 0; y < 2; y++)
+				{
+					for (int z = 0; z < 2; z++)
+					{
+						var cornerPoint = new Vector3((x == 0) ? bounds.MinXYZ.X : bounds.MaxXYZ.X,
+							(y == 0) ? bounds.MinXYZ.Y : bounds.MaxXYZ.Y,
+							(z == 0) ? bounds.MinXYZ.Z : bounds.MaxXYZ.Z);
+
+						Vector3 viewPosition = cornerPoint.Transform(sceneContext.World.ModelviewMatrix);
+
+						zNear = Math.Max(.1, Math.Min(zNear, -viewPosition.Z));
+						zFar = Math.Max(Math.Max(zFar, -viewPosition.Z), zNear + .1);
+					}
+				}
 			}
 		}
 

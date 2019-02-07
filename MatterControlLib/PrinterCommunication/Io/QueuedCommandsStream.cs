@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using MatterControl.Printing;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -44,6 +46,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
+		private int requestedExtruder;
+		private int extruderLastSwitchTo;
 
 		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -63,6 +67,54 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
+					if (!printer.Connection.Printing)
+					{
+						if(line.StartsWith("G28)"))
+						{
+							extruderLastSwitchTo = requestedExtruder = 0;
+						}
+						if (line.StartsWith("T"))
+						{
+							GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
+						}
+						else if (LineIsMovement(line)
+							&& extruderLastSwitchTo != requestedExtruder)
+						{
+							string gcodeToQueue = "";
+							switch (requestedExtruder)
+							{
+								case 0:
+									gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+									break;
+								case 1:
+									gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+									break;
+							}
+
+							if (gcodeToQueue.Trim().Length > 0)
+							{
+								if (gcodeToQueue.Contains("\n"))
+								{
+									string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
+									for (int i = 0; i < linesToWrite.Length; i++)
+									{
+										string gcodeLine = linesToWrite[i].Trim();
+										if (gcodeLine.Length > 0)
+										{
+											commandQueue.Add(gcodeLine);
+										}
+									}
+								}
+								else
+								{
+									commandQueue.Add(gcodeToQueue);
+								}
+							}
+
+							extruderLastSwitchTo = requestedExtruder;
+						}
+					}
+
 					commandQueue.Add(line);
 				}
 			}

@@ -885,6 +885,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.filament_1_has_been_loaded,
+					PresentationName = "Filament 2 Has Been Loaded".Localize(),
+					HelpText = "Flag for the state of our filament loaded on extruder 2.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowIfSet = "!sla_printer",
+					DefaultValue = "0",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.print_leveling_probe_start,
 					PresentationName = "Start Height".Localize(),
 					HelpText = "The starting height (z) of the print head before probing each print level position.".Localize(),
