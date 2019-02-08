@@ -431,7 +431,7 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreNotEqual(cube, scaleObject.SourceItems.First(), "There is an undo buffer, there should have been a clone");
+				Assert.AreNotEqual(cube, scaleObject.UntransformedChildren.First(), "There is an undo buffer, there should have been a clone");
 			}
 			
 			// build cube with scale
@@ -454,7 +454,7 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreEqual(cube, scaleObject.SourceItems.First(), "There is no undo buffer, there should not have been a clone");
+				Assert.AreEqual(cube, scaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
 			}
 		}
 
@@ -480,7 +480,7 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.IsTrue(preScaleAabb.Equals(postScaleAabb, .001));
 
-				Assert.AreEqual(cube, scaleObject.SourceItems.First(), "There is no undo buffer, there should not have been a clone");
+				Assert.AreEqual(cube, scaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
 
 				var rotateScaleObject = new RotateObject3D_2(cube);
 				// ensure that the object did not move
@@ -489,7 +489,7 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.IsTrue(preScaleAabb.Equals(postRotateScaleAabb, .001));
 
-				Assert.AreEqual(cube, rotateScaleObject.SourceItems.First(), "There is no undo buffer, there should not have been a clone");
+				Assert.AreEqual(cube, rotateScaleObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
 			}
 		}
 
@@ -515,7 +515,7 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.IsTrue(preRotateAabb.Equals(postRotateAabb, .001));
 
-				Assert.AreEqual(cube, rotateObject.SourceItems.First(), "There is no undo buffer, there should not have been a clone");
+				Assert.AreEqual(cube, rotateObject.UntransformedChildren.First(), "There is no undo buffer, there should not have been a clone");
 			}
 		}
 

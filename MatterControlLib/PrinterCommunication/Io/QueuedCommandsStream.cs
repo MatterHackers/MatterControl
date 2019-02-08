@@ -47,11 +47,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
 		private int requestedExtruder;
-		private int extruderLastSwitchTo;
+		private int extruderLastSwitchedTo;
+		PrinterMove lastDestination = PrinterMove.Unknown;
+		int extruderCount = 0;
 
 		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 		}
 
 		public int Count => commandQueue.Count;
@@ -67,56 +70,74 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
-					if (!printer.Connection.Printing)
+					// If we are not printing, check if we need to switch extruders
+					if (extruderCount > 1
+						&& !printer.Connection.Printing)
 					{
-						if(line.StartsWith("G28)"))
-						{
-							extruderLastSwitchTo = requestedExtruder = 0;
-						}
-						if (line.StartsWith("T"))
-						{
-							GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
-						}
-						else if (LineIsMovement(line)
-							&& extruderLastSwitchTo != requestedExtruder)
-						{
-							string gcodeToQueue = "";
-							switch (requestedExtruder)
-							{
-								case 0:
-									gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
-									break;
-								case 1:
-									gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
-									break;
-							}
-
-							if (gcodeToQueue.Trim().Length > 0)
-							{
-								if (gcodeToQueue.Contains("\n"))
-								{
-									string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
-									for (int i = 0; i < linesToWrite.Length; i++)
-									{
-										string gcodeLine = linesToWrite[i].Trim();
-										if (gcodeLine.Length > 0)
-										{
-											commandQueue.Add(gcodeLine);
-										}
-									}
-								}
-								else
-								{
-									commandQueue.Add(gcodeToQueue);
-								}
-							}
-
-							extruderLastSwitchTo = requestedExtruder;
-						}
+						CheckIfNeedToSwitchExtruders(line);
 					}
 
 					commandQueue.Add(line);
 				}
+			}
+		}
+
+		private void CheckIfNeedToSwitchExtruders(string line)
+		{
+			if(line == null)
+			{
+				return;
+			}
+
+			var lineNoComment = line.Split(';')[0];
+
+			if (line.StartsWith("G28)"))
+			{
+				extruderLastSwitchedTo = 0;
+				requestedExtruder = 0;
+			}
+
+			if (line.StartsWith("T"))
+			{
+				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
+			}
+
+			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
+				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
+				&& extruderLastSwitchedTo != requestedExtruder) // is different than the last extruder set
+			{
+				string gcodeToQueue = "";
+				switch (requestedExtruder)
+				{
+					case 0:
+						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						break;
+					case 1:
+						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						break;
+				}
+
+				if (gcodeToQueue.Trim().Length > 0)
+				{
+					if (gcodeToQueue.Contains("\n"))
+					{
+						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
+						for (int i = 0; i < linesToWrite.Length; i++)
+						{
+							string gcodeLine = linesToWrite[i].Trim();
+							if (gcodeLine.Length > 0)
+							{
+								commandQueue.Add(gcodeLine);
+							}
+						}
+					}
+					else
+					{
+						commandQueue.Add(gcodeToQueue);
+					}
+				}
+
+				extruderLastSwitchedTo = requestedExtruder;
 			}
 		}
 
@@ -159,21 +180,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			string lineToSend = null;
 
+			// lock queue
+			lock (locker)
 			{
-				// lock queue
-				lock (locker)
+				if (commandQueue.Count > 0)
 				{
-					if (commandQueue.Count > 0)
-					{
-						lineToSend = commandQueue[0];
-						lineToSend = printer.ReplaceMacroValues(lineToSend);
-						commandQueue.RemoveAt(0);
-					}
+					lineToSend = commandQueue[0];
+					lineToSend = printer.ReplaceMacroValues(lineToSend);
+					commandQueue.RemoveAt(0);
+				}
+			}
+
+			if (lineToSend == null)
+			{
+				lineToSend = base.ReadLine();
+			}
+
+			if (lineToSend != null)
+			{
+				if (lineToSend.StartsWith("G28)"))
+				{
+					extruderLastSwitchedTo = 0;
+					requestedExtruder = 0;
 				}
 
-				if (lineToSend == null)
+				if (lineToSend.StartsWith("T"))
 				{
-					lineToSend = base.ReadLine();
+					GCodeFile.GetFirstNumberAfter("T", lineToSend, ref requestedExtruder);
 				}
 			}
 

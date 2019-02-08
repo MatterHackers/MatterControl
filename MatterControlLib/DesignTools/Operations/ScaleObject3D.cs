@@ -70,9 +70,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			base.WrapItems(items, undoBuffer);
 
 			// use source item as it may be a copy of item by the time we have wrapped it
-			var aabb = SourceItems.GetAxisAlignedBoundingBox();
+			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 			var newCenter = new Vector3(aabb.Center.X, aabb.Center.Y, aabb.MinXYZ.Z);
-			SourceItems.Translate(-newCenter);
+			UntransformedChildren.Translate(-newCenter);
 			this.Translate(newCenter);
 		}
 
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.X * 100;
 				}
 
-				return ScaleRatio.X * SourceItems.GetAxisAlignedBoundingBox().XSize;
+				return ScaleRatio.X * UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
 			}
 
 			set
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.X = value / SourceItems.GetAxisAlignedBoundingBox().XSize;
+					ScaleRatio.X = value / UntransformedChildren.GetAxisAlignedBoundingBox().XSize;
 				}
 			}
 		}
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Y * 100;
 				}
 
-				return ScaleRatio.Y * SourceItems.GetAxisAlignedBoundingBox().YSize;
+				return ScaleRatio.Y * UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
 			}
 
 			set
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Y = value / SourceItems.GetAxisAlignedBoundingBox().YSize;
+					ScaleRatio.Y = value / UntransformedChildren.GetAxisAlignedBoundingBox().YSize;
 				}
 			}
 		}
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return ScaleRatio.Z * 100;
 				}
 
-				return ScaleRatio.Z * SourceItems.GetAxisAlignedBoundingBox().ZSize;
+				return ScaleRatio.Z * UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
 			}
 
 			set
@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 				else
 				{
-					ScaleRatio.Z = value / SourceItems.GetAxisAlignedBoundingBox().ZSize;
+					ScaleRatio.Z = value / UntransformedChildren.GetAxisAlignedBoundingBox().ZSize;
 				}
 			}
 		}
@@ -213,10 +213,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				// set the matrix for the transform object
-				TransformItem.Matrix = Matrix4X4.Identity;
-				TransformItem.Matrix *= Matrix4X4.CreateTranslation(-ScaleAbout);
-				TransformItem.Matrix *= Matrix4X4.CreateScale(ScaleRatio);
-				TransformItem.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
+				ItemWithTransform.Matrix = Matrix4X4.Identity;
+				ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(-ScaleAbout);
+				ItemWithTransform.Matrix *= Matrix4X4.CreateScale(ScaleRatio);
+				ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 			}
 
 			Invalidate(InvalidateType.Matrix);
