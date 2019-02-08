@@ -76,8 +76,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			base.WrapItems(items, undoBuffer);
 
-			// use source item as the wrape may have cloned it
-			var aabb = SourceItems.GetAxisAlignedBoundingBox();
+			// use source item as the wraper may have cloned it
+			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 			this.RotateAbout.Origin = aabb.Center;
 		}
 
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				// set the matrix for the inner object
-				TransformItem.Matrix = RotationMatrix;
+				ItemWithTransform.Matrix = RotationMatrix;
 			}
 
 			Invalidate(InvalidateType.Matrix);

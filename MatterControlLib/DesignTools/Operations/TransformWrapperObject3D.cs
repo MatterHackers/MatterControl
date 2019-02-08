@@ -50,20 +50,20 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override bool CanFlatten => true;
 
 		[JsonIgnore]
-		public SafeList<IObject3D> SourceItems
+		public SafeList<IObject3D> UntransformedChildren
 		{
 			get
 			{
-				if (TransformItem?.Children.Count > 0)
+				if (ItemWithTransform?.Children.Count > 0)
 				{
-					return TransformItem.Children;
+					return ItemWithTransform.Children;
 				}
 
 				return null;
 			}
 		}
 
-		protected IObject3D TransformItem
+		protected IObject3D ItemWithTransform
 		{
 			get
 			{
@@ -87,16 +87,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				// push child into children
-				foreach (var item in SourceItems)
+				foreach (var item in UntransformedChildren)
 				{
-					item.Matrix *= TransformItem.Matrix;
+					item.Matrix *= ItemWithTransform.Matrix;
 				}
 
 				// add our children to our parent and remove from parent
 				this.Parent.Children.Modify(list =>
 				{
 					list.Remove(this);
-					list.AddRange(TransformItem.Children);
+					list.AddRange(ItemWithTransform.Children);
 				});
 			}
 			Invalidate(InvalidateType.Children);
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				// push our matrix into inner children
-				foreach (var child in TransformItem.Children)
+				foreach (var child in ItemWithTransform.Children)
 				{
 					child.Matrix *= this.Matrix;
 				}
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				this.Parent.Children.Modify(list =>
 				{
 					list.Remove(this);
-					list.AddRange(TransformItem.Children);
+					list.AddRange(ItemWithTransform.Children);
 				});
 			}
 

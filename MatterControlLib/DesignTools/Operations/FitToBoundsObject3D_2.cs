@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
+	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
 	{
 		private Vector3 boundsSize;
 
@@ -59,6 +59,72 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		private IObject3D FitBounds => Children.Last();
+
+		#region // editable properties
+
+		[Description("Set the shape the part will be fit into.")]
+		public FitType FitType { get; set; } = FitType.Box;
+
+		[Description("Set the rules for how to maintain the part while scaling.")]
+		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
+
+		[Description("Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.")]
+		public bool AlternateCentering { get; set; } = false;
+
+		[DisplayName("Width")]
+		public double SizeX
+		{
+			get => boundsSize.X;
+			set
+			{
+				boundsSize.X = value;
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
+			}
+		}
+
+		[DisplayName("Depth")]
+		public double SizeY
+		{
+			get => boundsSize.Y;
+			set
+			{
+				boundsSize.Y = value;
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
+			}
+		}
+
+		public double Diameter { get; set; }
+
+		[DisplayName("Height")]
+		public double SizeZ
+		{
+			get => boundsSize.Z;
+			set
+			{
+				boundsSize.Z = value;
+				if (this.Children.Count() > 0)
+				{
+					Rebuild();
+				}
+			}
+		}
+
+		[Description("Allows you turn on and off applying the fit to the x axis.")]
+		public bool StretchX { get; set; } = true;
+
+		[Description("Allows you turn on and off applying the fit to the y axis.")]
+		public bool StretchY { get; set; } = true;
+
+		[Description("Allows you turn on and off applying the fit to the z axis.")]
+		public bool StretchZ { get; set; } = true;
+
+		#endregion // editable properties
 
 		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
 		{
@@ -97,19 +163,39 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				var aabb = SourceItems.GetAxisAlignedBoundingBox();
+				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+				if (FitType == FitType.Box)
+				{
+					var center = aabb.Center;
+					var worldMatrix = this.WorldMatrix();
 
-				var center = aabb.Center;
-				var worldMatrix = this.WorldMatrix();
-
-				var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-				//var leftW = Vector3Ex.Transform(, worldMatrix);
-				var right = Vector3Ex.Transform(center + new Vector3(SizeX / 2, 0, 0), worldMatrix);
-				// layer.World.Render3DLine(left, right, Agg.Color.Red);
-				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
+					var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+					var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
+					//var leftW = Vector3Ex.Transform(, worldMatrix);
+					var right = Vector3Ex.Transform(center + new Vector3(SizeX / 2, 0, 0), worldMatrix);
+					// layer.World.Render3DLine(left, right, Agg.Color.Red);
+					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
+				}
+				else
+				{
+					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, aabb.ZSize, 30, Color.Red, 1, 1);
+				}
 			}
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			// turn on/off the stuff for cylinder
+			change.SetRowVisible(nameof(Diameter), () => FitType == FitType.Cylinder);
+			change.SetRowVisible(nameof(AlternateCentering), () => FitType == FitType.Cylinder);
+		
+			// turn on/off the stuff for box
+			change.SetRowVisible(nameof(SizeX), () => FitType == FitType.Box);
+			change.SetRowVisible(nameof(SizeY), () => FitType == FitType.Box);
+			change.SetRowVisible(nameof(MaintainRatio), () => FitType == FitType.Box);
+			change.SetRowVisible(nameof(StretchX), () => FitType == FitType.Box);
+			change.SetRowVisible(nameof(StretchY), () => FitType == FitType.Box);
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
@@ -188,8 +274,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count > 0)
 			{
-				var aabb = SourceItems.GetAxisAlignedBoundingBox();
-				TransformItem.Matrix = Matrix4X4.Identity;
+				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+				ItemWithTransform.Matrix = Matrix4X4.Identity;
 				var scale = Vector3.One;
 				if (StretchX)
 				{
@@ -223,7 +309,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						break;
 				}
 
-				TransformItem.Matrix = Object3DExtensions.ApplyAtPosition(TransformItem.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+				ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 			}
 		}
 
@@ -231,7 +317,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				var transformAabb = TransformItem.GetAxisAlignedBoundingBox();
+				var transformAabb = ItemWithTransform.GetAxisAlignedBoundingBox();
 				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
 				var fitSize = fitAabb.Size;
 				if (boundsSize.X != 0 && boundsSize.Y != 0 && boundsSize.Z != 0
@@ -243,68 +329,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						boundsSize.Y / fitSize.Y,
 						boundsSize.Z / fitSize.Z);
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
-						transformAabb.Center
-						- FitBounds.GetAxisAlignedBoundingBox().Center);
+						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
 				}
 			}
 		}
-
-		#region // editable properties
-
-		[Description("Set the rules for how to maintain the part while scaling.")]
-		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
-
-		[DisplayName("Width")]
-		public double SizeX
-		{
-			get => boundsSize.X;
-			set
-			{
-				boundsSize.X = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
-
-		[DisplayName("Depth")]
-		public double SizeY
-		{
-			get => boundsSize.Y;
-			set
-			{
-				boundsSize.Y = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
-
-		[DisplayName("Height")]
-		public double SizeZ
-		{
-			get => boundsSize.Z;
-			set
-			{
-				boundsSize.Z = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
-
-		[Description("Allows you turn on and off applying the fit to the x axis.")]
-		public bool StretchX { get; set; } = true;
-
-		[Description("Allows you turn on and off applying the fit to the y axis.")]
-		public bool StretchY { get; set; } = true;
-
-		[Description("Allows you turn on and off applying the fit to the z axis.")]
-		public bool StretchZ { get; set; } = true;
-
-		#endregion // editable properties
 	}
 }

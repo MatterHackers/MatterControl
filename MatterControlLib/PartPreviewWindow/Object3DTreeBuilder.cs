@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				case TransformWrapperObject3D transformWrapperObject3D:
 					return new ObjectView()
 					{
-						Children = transformWrapperObject3D.SourceItems,
+						Children = transformWrapperObject3D.UntransformedChildren,
 						Name = item.Name,
 						Source = item
 					};
