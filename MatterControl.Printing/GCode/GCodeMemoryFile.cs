@@ -46,7 +46,6 @@ namespace MatterControl.Printing
 		private double filamentUsedMmCache = 0;
 		private double diameterOfFilamentUsedMmCache = 0;
 
-		private List<double> layerZOffset = new List<double>();
 		private List<double> layerHeights = new List<double>();
 		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
 

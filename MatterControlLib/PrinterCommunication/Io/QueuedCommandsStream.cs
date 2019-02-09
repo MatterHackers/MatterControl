@@ -82,25 +82,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		private void CheckIfNeedToSwitchExtruders(string line)
+		private void CheckIfNeedToSwitchExtruders(string lineIn)
 		{
-			if(line == null)
+			if(lineIn == null)
 			{
 				return;
 			}
 
-			var lineNoComment = line.Split(';')[0];
+			var lineNoComment = lineIn.Split(';')[0];
 
-			if (line.StartsWith("G28)"))
-			{
-				extruderLastSwitchedTo = 0;
-				requestedExtruder = 0;
-			}
-
-			if (line.StartsWith("T"))
-			{
-				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
-			}
+			TrackExtruderState(lineNoComment);
 
 			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
@@ -196,21 +187,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				lineToSend = base.ReadLine();
 			}
 
-			if (lineToSend != null)
-			{
-				if (lineToSend.StartsWith("G28)"))
-				{
-					extruderLastSwitchedTo = 0;
-					requestedExtruder = 0;
-				}
-
-				if (lineToSend.StartsWith("T"))
-				{
-					GCodeFile.GetFirstNumberAfter("T", lineToSend, ref requestedExtruder);
-				}
-			}
+			TrackExtruderState(lineToSend);
 
 			return lineToSend;
+		}
+
+		private void TrackExtruderState(string line)
+		{
+			if (line == null)
+			{
+				return;
+			}
+
+			if (line.StartsWith("G28)"))
+			{
+				extruderLastSwitchedTo = 0;
+				requestedExtruder = 0;
+			}
+
+			if (line.StartsWith("T"))
+			{
+				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
+			}
 		}
 
 		public void Reset()
