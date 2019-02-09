@@ -232,26 +232,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void ShowTempChangeProgress()
 		{
+			int progressBarIndex = 0;
 			for (int i = 0; i < targetHotendTemps.Length; i++)
 			{
 				if (targetHotendTemps[i] > 0)
 				{
-					hotEndProgressBars[i].Visible = true;
+					hotEndProgressBars[progressBarIndex].Visible = true;
 					double targetTemp = printer.Connection.GetTargetHotendTemperature(i);
 					double actualTemp = printer.Connection.GetActualHotendTemperature(i);
 					double totalDelta = targetTemp;
 					double currentDelta = actualTemp;
-					double ratioDone = hotEndDoneTexts[i].Visible ? 1 : totalDelta != 0 ? (currentDelta / totalDelta) : 1;
-					hotEndProgressBars[i].RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
-					hotEndProgressBarTexts[i].Text = $"{actualTemp:0} / {targetTemp:0}";
+					double ratioDone = hotEndDoneTexts[progressBarIndex].Visible ? 1 : totalDelta != 0 ? (currentDelta / totalDelta) : 1;
+					hotEndProgressBars[progressBarIndex].RatioComplete = Math.Min(Math.Max(0, ratioDone), 1);
+					hotEndProgressBarTexts[progressBarIndex].Text = $"{actualTemp:0} / {targetTemp:0}";
 
 					// if we are within 1 degree of our target
 					if (Math.Abs(targetTemp - actualTemp) < 2
-						&& hotEndDoneTexts[i].Visible == false)
+						&& hotEndDoneTexts[progressBarIndex].Visible == false)
 					{
-						hotEndDoneTexts[i].Visible = true;
+						hotEndDoneTexts[progressBarIndex].Visible = true;
 						NextButton.Enabled = true;
 					}
+					progressBarIndex++;
 				}
 			}
 

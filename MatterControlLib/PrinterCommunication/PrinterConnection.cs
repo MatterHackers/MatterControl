@@ -198,8 +198,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private GCodeStream totalGCodeStream = null;
 
-		private PrinterMachineInstruction.MovementTypes movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
-
 		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
 		private DetailedPrintingState _printingStatePrivate;
@@ -302,7 +300,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			#endregion hardware failure callbacks
 
-			WriteLineStartCallBacks.Register("G90", MovementWasSetToAbsoluteMode);
 			WriteLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
 			WriteLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
@@ -2206,11 +2203,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			// Console.WriteLine("Syncing print to db stopped");
-		}
-
-		private void MovementWasSetToAbsoluteMode(string line)
-		{
-			movementMode = PrinterMachineInstruction.MovementTypes.Absolute;
 		}
 
 		private void AtxPowerUpWasWritenToPrinter(string line)
