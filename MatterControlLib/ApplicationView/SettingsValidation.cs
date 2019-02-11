@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl
 
 			var errors = new List<ValidationError>();
 
+			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+
 			// last let's check if there is any support in the scene and if it looks like it is needed
 			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
 			if (supportGenerator.RequiresSupport())
@@ -183,7 +185,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
+				// Make sure the z offsets are not too big
 				if (Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
 				{
 					// Static path generation for non-SliceSettings value
@@ -199,6 +201,26 @@ namespace MatterHackers.MatterControl
 							Details = string.Format(
 								"{0}\n\n{1}",
 								"The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
+								location)
+						});
+				}
+
+				if (extruderCount > 1
+					&& Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset_1)) > 2)
+				{
+					// Static path generation for non-SliceSettings value
+					var location = "Location".Localize() + ":"
+						+ "\n" + "Controls".Localize()
+						+ "\n  • " + "Movement".Localize()
+						+ "\n    • " + "Z Offset 2".Localize();
+
+					errors.Add(
+						new ValidationError()
+						{
+							Error = "Z Offset 2 is too large.".Localize(),
+							Details = string.Format(
+								"{0}\n\n{1}",
+								"The Z Offset for your second extruder, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
 								location)
 						});
 				}
@@ -285,15 +307,14 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (settings.GetValue<int>(SettingsKey.extruder_count) < 1)
+				if (extruderCount < 1)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.extruder_count)
 						{
 							Error = "The {0} must be at least 1.".Localize().FormatWith(
 								GetSettingsName(SettingsKey.extruder_count)),
-							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(
-								settings.GetValue<int>(SettingsKey.extruder_count)),
+							ValueDetails = "It is currently set to {0}.".Localize().FormatWith(extruderCount),
 						});
 				}
 

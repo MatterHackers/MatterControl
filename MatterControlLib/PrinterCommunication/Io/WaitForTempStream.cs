@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								waitWhenCooling = false;
 								lineToSend = "M104" + lineToSend.Substring(4);
 								GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
-								extruderIndex = 0;
+								extruderIndex = printer.Connection.ActiveExtruderIndex;
 								GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
 								if (targetTemp > ignoreRequestIfBelowTemp)
 								{

@@ -347,9 +347,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		}
 
 		public int PrintTimeSeconds { get; set; }
-		public float PrintingOffsetX { get; set; }
-		public float PrintingOffsetY { get; set; }
-		public float PrintingOffsetZ { get; set; }
 
 		public override void Commit()
 		{

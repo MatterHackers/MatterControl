@@ -35,7 +35,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string active_material_key = nameof(active_material_key);
 		public const string auto_connect = nameof(auto_connect);
 		public const string auto_release_motors = nameof(auto_release_motors);
+		/// <summary>
+		/// The baby step offset for extruder index 0
+		/// </summary>
 		public const string baby_step_z_offset = nameof(baby_step_z_offset);
+		/// <summary>
+		/// The baby step offset for extruder index 1
+		/// </summary>
+		public const string baby_step_z_offset_1 = nameof(baby_step_z_offset_1);
 		public const string backup_firmware_before_update = nameof(backup_firmware_before_update);
 		public const string baud_rate = nameof(baud_rate);
 		public const string bed_remove_part_temperature = nameof(bed_remove_part_temperature);

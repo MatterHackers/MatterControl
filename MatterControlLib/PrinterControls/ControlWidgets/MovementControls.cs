@@ -156,8 +156,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
 			toolbar.AddChild(homeZButton);
 
+			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
 			// Display the current baby step offset stream values
-			var offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
+			var offsetStreamLabel = new TextWidget(((extruderCount == 1) ? "Z Offset".Localize() : "Z Offset 1".Localize()) + ":", pointSize: 8)
 			{
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(left: 10),
@@ -166,8 +168,24 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			toolbar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
+			var ztuningWidget = new ZTuningWidget(printer.Settings, theme, 0);
 			toolbar.AddChild(ztuningWidget);
+
+			if(extruderCount > 1)
+			{
+				// Display the current baby step offset stream values
+				var offsetStreamLabel2 = new TextWidget("Z Offset 2".Localize() + ":", pointSize: 8)
+				{
+					TextColor = theme.TextColor,
+					Margin = new BorderDouble(left: 10),
+					AutoExpandBoundsToText = true,
+					VAnchor = VAnchor.Center
+				};
+				toolbar.AddChild(offsetStreamLabel2);
+
+				var ztuningWidget2 = new ZTuningWidget(printer.Settings, theme, 1);
+				toolbar.AddChild(ztuningWidget2);
+			}
 
 			toolbar.AddChild(new HorizontalSpacer());
 
@@ -251,15 +269,15 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private GuiWidget clearZOffsetButton;
 		private FlowLayoutWidget zOffsetStreamContainer;
 
-		private bool allowRemoveButton;
 		private ThemeConfig theme;
 		private PrinterSettings printerSettings;
+		private int extruderIndex;
 
-		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool allowRemoveButton = true)
+		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, int extruderIndex)
 		{
+			this.extruderIndex = extruderIndex;
 			this.theme = theme;
 			this.printerSettings = printerSettings;
-			this.allowRemoveButton = allowRemoveButton;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
@@ -275,6 +293,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(zOffsetStreamContainer);
 
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			if (extruderIndex == 1)
+			{
+				zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
+			}
 			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
@@ -286,27 +308,23 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			clearZOffsetButton = theme.CreateSmallResetButton();
 			clearZOffsetButton.Name = "Clear ZOffset button";
-			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
-			clearZOffsetButton.Visible = allowRemoveButton && zoffset != 0;
+			clearZOffsetButton.ToolTipText = extruderIndex == 0 ? "Clear ZOffset".Localize() : "Clear ZOffset 2".Localize();
+			clearZOffsetButton.Visible = zoffset != 0;
 			clearZOffsetButton.Click += (sender, e) =>
 			{
-				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
+				if (extruderIndex == 0)
+				{
+					printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
+				}
+				else
+				{
+					printerSettings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
+				}
 			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 
 			// Register listeners
 			printerSettings.SettingChanged += Printer_SettingChanged;
-		}
-
-		internal void OffsetStreamChanged(object sender, EventArgs e)
-		{
-			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			bool hasOverriddenZOffset = (zoffset != 0);
-
-			zOffsetStreamContainer.BackgroundColor = (allowRemoveButton && hasOverriddenZOffset) ? theme.PresetColors.UserOverride : theme.MinimalShade;
-			clearZOffsetButton.Visible = allowRemoveButton && hasOverriddenZOffset;
-
-			zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -319,9 +337,20 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
-			if (e?.Data == SettingsKey.baby_step_z_offset)
+			if ((e?.Data == SettingsKey.baby_step_z_offset && extruderIndex == 0)
+				|| (e?.Data == SettingsKey.baby_step_z_offset_1 && extruderIndex == 1))
 			{
-				OffsetStreamChanged(null, null);
+				double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
+				if(extruderIndex == 1)
+				{
+					zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
+				}
+				bool hasOverriddenZOffset = (zoffset != 0);
+
+				zOffsetStreamContainer.BackgroundColor = hasOverriddenZOffset ? theme.PresetColors.UserOverride : theme.MinimalShade;
+				clearZOffsetButton.Visible = hasOverriddenZOffset;
+
+				zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 			}
 		}
 	}

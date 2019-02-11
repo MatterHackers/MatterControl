@@ -2427,7 +2427,9 @@ If you experience adhesion problems, please re-run leveling."
 									"Leveling data warning");
 
 								levelingData.IssuedLevelingTempWarning = true;
-								printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
+								printer.Settings.Helpers.SetPrintLevelingData(levelingData);
+								printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+								printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 							});
 						}
 					}

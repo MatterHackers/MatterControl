@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl
 					newLevelingData.SampledPositions[i] = positions[i];
 				}
 
-				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData, false);
+				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData);
 				this.DialogWindow.Close();
 			});
 			this.AddPageAction(savePresetsButton);

@@ -48,7 +48,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (e?.Data == SettingsKey.baby_step_z_offset)
 				{
-					OffsetChanged();
+					offsetStream.RuntimeOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+				}
+				else if(e?.Data == SettingsKey.baby_step_z_offset_1)
+				{
+					offsetStream.RuntimeOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
 				}
 			}
 
@@ -56,15 +60,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			maxLengthStream = new MaxLengthStream(printer, internalStream, startingMaxLength);
-			offsetStream = new OffsetStream(maxLengthStream, printer, new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset)));
+			offsetStream = new OffsetStream(maxLengthStream, printer);
+			offsetStream.RuntimeOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			offsetStream.RuntimeOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
 			base.internalStream = offsetStream;
 		}
 
-		public Vector3 Offset
-		{
-			get => offsetStream.Offset;
-			set => offsetStream.Offset = value;
-		}
+		public Vector3[] RuntimeOffsets { get => offsetStream.RuntimeOffsets; }
 
 		public override void Dispose()
 		{
@@ -93,11 +95,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 			}
 			return lineToSend;
-		}
-
-		private void OffsetChanged()
-		{
-			offsetStream.Offset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
 		}
 
 		public void CancelMoves()
