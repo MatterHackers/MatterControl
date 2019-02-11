@@ -166,7 +166,10 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 
 								imageObject.AssetPath = openParams.FileName;
-								imageObject.Mesh = null;
+								using (imageObject.RebuildLock())
+								{
+									imageObject.Mesh = null;
+								}
 
 								thumbnailWidget.Image = SetImage(theme, imageObject);
 
