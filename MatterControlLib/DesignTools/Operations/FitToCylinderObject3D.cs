@@ -27,6 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
+using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -35,14 +41,17 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
+using MatterHackers.DataConverters2D;
+using MatterHackers.PolygonMesh.Rendering;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.Agg.Transform;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
+	using Polygon = List<IntPoint>;
+	using Polygons = List<List<IntPoint>>;
+
+	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
 		private Vector3 boundsSize;
 
@@ -53,70 +62,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		private Matrix4X4 cacheRequestedMatrix = new Matrix4X4();
 		private Matrix4X4 cacheThisMatrix;
 
-		public FitToBoundsObject3D_2()
+		public FitToCylinderObject3D()
 		{
-			Name = "Fit to Bounds".Localize();
+			Name = "Fit to Cylinder".Localize();
 		}
 
-		private IObject3D FitBounds => Children.Last();
+		[Description("Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.")]
+		public bool AlternateCentering { get; set; } = false;
 
-		[DisplayName("Width")]
-		public double SizeX
-		{
-			get => boundsSize.X;
-			set
-			{
-				boundsSize.X = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
-
-		[DisplayName("Depth")]
-		public double SizeY
-		{
-			get => boundsSize.Y;
-			set
-			{
-				boundsSize.Y = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
+		public double Diameter { get; set; }
 
 		[DisplayName("Height")]
-		public double SizeZ
-		{
-			get => boundsSize.Z;
-			set
-			{
-				boundsSize.Z = value;
-				if (this.Children.Count() > 0)
-				{
-					Rebuild();
-				}
-			}
-		}
-
-		[Description("Set the rules for how to maintain the part while scaling.")]
-		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
-
-		[Description("Allows you turn on and off applying the fit to the x axis.")]
-		public bool StretchX { get; set; } = true;
-
-		[Description("Allows you turn on and off applying the fit to the y axis.")]
-		public bool StretchY { get; set; } = true;
+		public double SizeZ { get; set; }
 
 		[Description("Allows you turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
-		public static async Task<FitToBoundsObject3D_2> Create(IObject3D itemToFit)
+		private IObject3D FitBounds => Children.Last();
+
+		public static async Task<FitToCylinderObject3D> Create(IObject3D itemToFit)
 		{
-			var fitToBounds = new FitToBoundsObject3D_2();
+			var fitToBounds = new FitToCylinderObject3D();
 			using (fitToBounds.RebuildLock())
 			{
 				using (new CenterAndHeightMantainer(itemToFit))
@@ -135,9 +101,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					scaleItem.Children.Add(itemToFit);
 					fitToBounds.Children.Add(bounds);
 
-					fitToBounds.boundsSize.X = aabb.XSize;
-					fitToBounds.boundsSize.Y = aabb.YSize;
+					fitToBounds.Diameter = Math.Sqrt(aabb.XSize * aabb.XSize + aabb.YSize * aabb.YSize);
 					fitToBounds.boundsSize.Z = aabb.ZSize;
+
+					fitToBounds.SizeZ = aabb.ZSize;
+
 					await fitToBounds.Rebuild();
 				}
 			}
@@ -152,16 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
 				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
-				var center = aabb.Center;
-				var worldMatrix = this.WorldMatrix();
-
-				var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-				//var leftW = Vector3Ex.Transform(, worldMatrix);
-				var right = Vector3Ex.Transform(center + new Vector3(SizeX / 2, 0, 0), worldMatrix);
-				// layer.World.Render3DLine(left, right, Agg.Color.Red);
-				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, aabb.ZSize, 30, Color.Red, 1, 1);
 			}
 		}
 
@@ -237,6 +196,124 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Task.CompletedTask;
 		}
 
+		private Matrix4X4 GetCenteringTransformExpandedToRadius(IEnumerable<IObject3D> items, double radius)
+		{
+			IEnumerable<Vector2> GetTranslatedXY()
+			{
+				foreach (var item in items)
+				{
+					foreach (var mesh in item.VisibleMeshes())
+					{
+						var worldMatrix = mesh.WorldMatrix(this);
+						foreach (var vertex in mesh.Mesh.Vertices)
+						{
+							yield return new Vector2(vertex.Transform(worldMatrix));
+						}
+					}
+				}
+			}
+
+			var circle = SmallestEnclosingCircle.MakeCircle(GetTranslatedXY());
+
+			// move the circle center to the origin
+			var centering = Matrix4X4.CreateTranslation(-circle.Center.X, -circle.Center.Y, 0);
+			// scale to the fit size in x y
+			double scale = radius / circle.Radius;
+			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
+
+			return centering * scalling;
+		}
+
+		private Matrix4X4 GetCenteringTransformVisualCenter(IEnumerable<IObject3D> items, double goalRadius)
+		{
+			IEnumerable<(Vector2, Vector2 , Vector2)> GetPolygons()
+			{
+				foreach (var item in items)
+				{
+					foreach (var meshItem in item.VisibleMeshes())
+					{
+						var worldMatrix = meshItem.WorldMatrix(this);
+						var faces = meshItem.Mesh.Faces;
+						var vertices = meshItem.Mesh.Vertices;
+						foreach (var face in faces)
+						{
+							if (face.normal.TransformNormal(worldMatrix).Z > 0)
+							{
+								yield return (
+									new Vector2(vertices[face.v0].Transform(worldMatrix)),
+									new Vector2(vertices[face.v1].Transform(worldMatrix)),
+									new Vector2(vertices[face.v2].Transform(worldMatrix))
+									);
+							}
+						}
+					}
+				}
+			}
+
+			var outsidePolygons = new List<List<IntPoint>>();
+
+			var projection = new Polygons();
+
+			// remove all holes from the polygons so we only center the major outlines
+			var polygons = OrthographicZProjection.GetClipperPolygons(GetPolygons());
+			foreach (var polygon in polygons)
+			{
+				if (polygon.GetWindingDirection() == 1)
+				{
+					outsidePolygons.Add(polygon);
+				}
+			}
+
+			IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
+
+			Vector2 center = outsideSource.GetWeightedCenter();
+
+			outsideSource = new VertexSourceApplyTransform(outsideSource, Affine.NewTranslation(-center));
+
+			double radius = MaxXyDistFromCenter(outsideSource);
+
+			double scale = goalRadius / radius;
+			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
+
+			var centering = Matrix4X4.CreateTranslation(-center.X, -center.Y, 0);
+
+			return centering * scalling;
+		}
+
+		private static double MaxXyDistFromCenter(IVertexSource vertexSource)
+		{
+			double maxDistSqrd = 0.000001;
+			var center = vertexSource.GetBounds().Center;
+			foreach (var vertex in vertexSource.Vertices())
+			{
+				var position = vertex.position;
+				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
+				if (distSqrd > maxDistSqrd)
+				{
+					maxDistSqrd = distSqrd;
+				}
+			}
+
+			return Math.Sqrt(maxDistSqrd);
+		}
+
+		private static double MaxXyDistFromCenter(Mesh mesh)
+		{
+			double maxDistSqrd = 0.000001;
+			var center = mesh.GetAxisAlignedBoundingBox().Center;
+			foreach (var vertex in mesh.Vertices)
+			{
+				var position = vertex;
+				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
+				if (distSqrd > maxDistSqrd)
+				{
+					maxDistSqrd = distSqrd;
+				}
+			}
+
+			return Math.Sqrt(maxDistSqrd);
+		}
+
 		private void AdjustChildSize(object sender, EventArgs e)
 		{
 			if (Children.Count > 0)
@@ -244,37 +321,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
 				ItemWithTransform.Matrix = Matrix4X4.Identity;
 				var scale = Vector3.One;
-				if (StretchX)
-				{
-					scale.X = SizeX / aabb.XSize;
-				}
-				if (StretchY)
-				{
-					scale.Y = SizeY / aabb.YSize;
-				}
 				if (StretchZ)
 				{
 					scale.Z = SizeZ / aabb.ZSize;
 				}
 
-				switch (MaintainRatio)
-				{
-					case MaintainRatio.None:
-						break;
-
-					case MaintainRatio.X_Y:
-						var minXy = Math.Min(scale.X, scale.Y);
-						scale.X = minXy;
-						scale.Y = minXy;
-						break;
-
-					case MaintainRatio.X_Y_Z:
-						var minXyz = Math.Min(Math.Min(scale.X, scale.Y), scale.Z);
-						scale.X = minXyz;
-						scale.Y = minXyz;
-						scale.Z = minXyz;
-						break;
-				}
+				var minXy = Math.Min(scale.X, scale.Y);
+				scale.X = minXy;
+				scale.Y = minXy;
 
 				ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
 			}
@@ -297,6 +351,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						boundsSize.Z / fitSize.Z);
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
 						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
+				}
+
+				if (AlternateCentering)
+				{
+					var test = GetCenteringTransformVisualCenter(UntransformedChildren, Diameter/2);
+				}
+				else
+				{
+					var test = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
 				}
 			}
 		}

@@ -283,12 +283,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (BaseType == BaseTypes.Outline
 						&& InfillAmount > 0)
 					{
-						basePolygons = Offset(polysToOffset, (BaseSize + InfillAmount) * scalingForClipper);
-						basePolygons = Offset(basePolygons, -InfillAmount * scalingForClipper);
+						basePolygons = polysToOffset.Offset((BaseSize + InfillAmount) * scalingForClipper);
+						basePolygons = basePolygons.Offset(-InfillAmount * scalingForClipper);
 					}
 					else
 					{
-						basePolygons = Offset(polysToOffset, BaseSize * scalingForClipper);
+						basePolygons = polysToOffset.Offset(BaseSize * scalingForClipper);
 					}
 
 					basePolygons = ClipperLib.Clipper.CleanPolygons(basePolygons, 10);
@@ -309,17 +309,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					Mesh = null;
 				}
 			}
-		}
-
-		public Polygons Offset(Polygons polygons, double distance)
-		{
-			var offseter = new ClipperOffset();
-			offseter.AddPaths(polygons, JoinType.jtRound, EndType.etClosedPolygon);
-
-			var solution = new Polygons();
-			offseter.Execute(ref solution, distance);
-
-			return solution;
 		}
 
 		public void UpdateControls(PublicPropertyChange change)
