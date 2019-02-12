@@ -120,15 +120,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double EndingAngle { get; set; } = 360;
 		public double DiameterTop { get; set; } = 20;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		override public Task Rebuild()
@@ -167,12 +169,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(InvalidateType.Mesh);
 			if (valuesChanged)
 			{
 				Invalidate(InvalidateType.DisplayValues);
 			}
 
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
 

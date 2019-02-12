@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Combine(CancellationToken.None, null);
 		}
 
-		public void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		private void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var participants = SourceContainer.VisibleMeshes();
 			if (participants.Count() < 2)
 			{
-				if(participants.Count() == 1)
+				if (participants.Count() == 1)
 				{
 					var newMesh = new Object3D();
 					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);

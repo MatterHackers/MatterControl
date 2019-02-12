@@ -37,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -134,36 +135,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				double percentCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
-				foreach (var remove in removeObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+				progressStatus.Status = "Do CSG";
+				foreach (var keep in keepObjects)
 				{
-					foreach (var keep in keepObjects.Select((r) => (obj3D: r, matrix: r.WorldMatrix())).ToList())
+					var resultsMesh = keep.Mesh;
+					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
+
+					foreach (var remove in removeObjects)
 					{
-						progressStatus.Status = "Copy Remove";
-						reporter?.Report(progressStatus);
+						resultsMesh = BooleanProcessing.Do(resultsMesh, keepWorldMatrix,
+							remove.Mesh, remove.WorldMatrix(SourceContainer), 
+							1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						
+						// after the first time we get a result the results mesh is in the right coordinate space
+						keepWorldMatrix = Matrix4X4.Identity;
 
-						progressStatus.Status = "Copy Keep";
-						reporter?.Report(progressStatus);
-
-						progressStatus.Status = "Do CSG";
-						reporter?.Report(progressStatus);
-						var resultsMesh = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
-							remove.obj3D.Mesh, remove.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-						//var inverse = keep.matrix.Inverted;
-						//resultsMesh.Transform(inverse);
-
-						var resultsItem = new Object3D()
-						{
-							Mesh = resultsMesh
-						};
-						resultsItem.CopyProperties(keep.obj3D, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
-						this.Children.Add(resultsItem);
-
+						// report our progress
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;
 						reporter?.Report(progressStatus);
 					}
+
+					// store our results mesh
+					var resultsItem = new Object3D()
+					{
+						Mesh = resultsMesh,
+						Visible = false
+					};
+					// copy all the properties but the matrix
+					resultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+					// and add it to this
+					this.Children.Add(resultsItem);
 				}
 
+				foreach (var child in Children)
+				{
+					child.Visible = true;
+				}
 				SourceContainer.Visible = false;
 			}
 		}
