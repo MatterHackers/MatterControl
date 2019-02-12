@@ -42,11 +42,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		Vector3[] extruderOffsets = new Vector3[4];
 
-		public OffsetStream(GCodeStream internalStream, PrinterConfig printer, Vector3 offset)
+		public OffsetStream(GCodeStream internalStream, PrinterConfig printer)
 			: base(printer, internalStream)
 		{
-			this.Offset = offset;
-
 			printer.Settings.SettingChanged += Settings_SettingChanged;
 
 			extruderIndex = printer.Connection.ActiveExtruderIndex;
@@ -86,15 +84,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			this.lastDestination.CopyKnowSettings(position);
-			lastDestination.position -= Offset;
 			if (extruderIndex < 4)
 			{
+				lastDestination.position -= RuntimeOffsets[extruderIndex];
 				lastDestination.position += extruderOffsets[extruderIndex];
 			}
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
-		public Vector3 Offset { get; set; }
+		public Vector3[] RuntimeOffsets { get; private set; } = new Vector3[4];
 
 		public override string ReadLine()
 		{
@@ -122,9 +120,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 
 				PrinterMove moveToSend = currentMove;
-				moveToSend.position += Offset;
 				if (extruderIndex < 4)
 				{
+					moveToSend.position += RuntimeOffsets[extruderIndex];
 					moveToSend.position -= extruderOffsets[extruderIndex];
 				}
 

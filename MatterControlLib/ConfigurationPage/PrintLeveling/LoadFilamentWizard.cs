@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, false, showAlreadyLoadedButton);
+			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton);
 
 			var theme = ApplicationController.Instance.Theme;
 

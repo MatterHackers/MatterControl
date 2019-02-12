@@ -794,6 +794,27 @@ namespace MatterHackers.MatterControl
 					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
+#if DEBUG
+				new SceneSelectionOperation()
+				{
+					OperationType = typeof(FitToCylinderObject3D),
+					TitleResolver = () => "Fit to Cylinder".Localize(),
+					Action = (sceneContext) =>
+					{
+						var scene = sceneContext.Scene;
+						var selectedItem = scene.SelectedItem;
+						using (new SelectionMaintainer(scene))
+						{
+							var fit = FitToCylinderObject3D.Create(selectedItem.Clone()).Result;
+							fit.MakeNameNonColliding();
+
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
+						}
+					},
+					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
+					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
+				},
+#endif
 			};
 
 			var operationIconsByType = new Dictionary<Type, Func<ImageBuffer>>();
@@ -2406,7 +2427,9 @@ If you experience adhesion problems, please re-run leveling."
 									"Leveling data warning");
 
 								levelingData.IssuedLevelingTempWarning = true;
-								printer.Settings.Helpers.SetPrintLevelingData(levelingData, true);
+								printer.Settings.Helpers.SetPrintLevelingData(levelingData);
+								printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+								printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 							});
 						}
 					}

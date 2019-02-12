@@ -2135,11 +2135,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
 			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			babyStepsStream5 = new BabyStepsStream(Printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
-			if (activePrintTask != null)
-			{
-				// make sure we are in the position we were when we stopped printing
-				babyStepsStream5.Offset = new Vector3(activePrintTask.PrintingOffsetX, activePrintTask.PrintingOffsetY, activePrintTask.PrintingOffsetZ);
-			}
 			printLevelingStream6 = new PrintLevelingStream(Printer, babyStepsStream5, true);
 			waitForTempStream7 = new WaitForTempStream(Printer, printLevelingStream6);
 			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(Printer, waitForTempStream7);
@@ -2186,9 +2181,6 @@ You will then need to logout and log back in to the computer for the changes to 
 						&& activePrintTask.PercentDone < currentDone)
 					{
 						activePrintTask.PercentDone = currentDone;
-						activePrintTask.PrintingOffsetX = (float)babyStepsStream5.Offset.X;
-						activePrintTask.PrintingOffsetY = (float)babyStepsStream5.Offset.Y;
-						activePrintTask.PrintingOffsetZ = (float)babyStepsStream5.Offset.Z;
 						activePrintTask?.Commit();
 
 						// Interval looks to be ~10ms

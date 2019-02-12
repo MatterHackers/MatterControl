@@ -62,6 +62,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			};
 
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
+
+			printer.Connection.QueueLine("T0");
 
 			LevelingPlan levelingPlan;
 
@@ -263,6 +266,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							"Auto Calibrate".Localize()),
 						probePositions,
 						i);
+
+					if (this.WindowHasBeenClosed)
+					{
+						yield break;
+					}
 				}
 				else
 				{

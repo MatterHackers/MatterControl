@@ -382,11 +382,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (propertyUpdated)
 					{
 						UpdateHistogramDisplay();
-						Invalidate(InvalidateType.Properties);
+						this.Invalidate(InvalidateType.Properties);
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Path);
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					return Task.CompletedTask;
 				});
 		}

@@ -145,13 +145,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return printLevelingData;
 		}
 
-		public void SetPrintLevelingData(PrintLevelingData data, bool clearUserZOffset)
+		public void SetPrintLevelingData(PrintLevelingData data)
 		{
-			if (clearUserZOffset)
-			{
-				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
-			}
-
 			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
 		}
 
