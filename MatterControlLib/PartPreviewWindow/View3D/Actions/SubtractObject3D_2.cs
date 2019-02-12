@@ -122,9 +122,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var removeObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => SelectedChildren.Contains(i.ID)).ToList();
+				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
 			var keepObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => !SelectedChildren.Contains(i.ID)).ToList();
+				.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
 
 			if (removeObjects.Any()
 				&& keepObjects.Any())
@@ -148,8 +148,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						reporter?.Report(progressStatus);
 						var resultsMesh = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
 							remove.obj3D.Mesh, remove.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-						var inverse = keep.matrix.Inverted;
-						resultsMesh.Transform(inverse);
+						//var inverse = keep.matrix.Inverted;
+						//resultsMesh.Transform(inverse);
 
 						var resultsItem = new Object3D()
 						{
