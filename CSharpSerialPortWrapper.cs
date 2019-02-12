@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2019, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,14 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
-using System.Text;
+using System.IO.Ports;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial
 {
 	public class CSharpSerialPortWrapper : IFrostedSerialPort
 	{
-		private System.IO.Ports.SerialPort port;
+		private SerialPort port;
 
 		internal CSharpSerialPortWrapper(string serialPortName)
 		{
@@ -49,42 +48,49 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				{
 				}
 			}
-			port = new System.IO.Ports.SerialPort(serialPortName);
+
+			port = new SerialPort(serialPortName);
 		}
 
 		public int ReadTimeout
 		{
-			get { return port.ReadTimeout; }
-			set { port.ReadTimeout = value; }
+			get => port.ReadTimeout;
+			set => port.ReadTimeout = value;
 		}
 
-		public string ReadExisting()
+		public int WriteTimeout
 		{
-			return port.ReadExisting();
+			get => port.WriteTimeout;
+			set => port.WriteTimeout = value;
 		}
 
-		public int BytesToRead
+		public int BaudRate
 		{
-			get
-			{
-				return port.BytesToRead;
-			}
+			get => port.BaudRate;
+			set => port.BaudRate = value;
 		}
 
-		public void Dispose()
+		public bool RtsEnable
 		{
-			port.Dispose();
+			get => port.RtsEnable;
+			set => port.RtsEnable = value;
 		}
 
-		public bool IsOpen
+		public bool DtrEnable
 		{
-			get { return port.IsOpen; }
+			get => port.DtrEnable;
+			set => port.DtrEnable = value;
 		}
 
-		public void Open()
-		{
-			port.Open();
-		}
+		public string ReadExisting() => port.ReadExisting();
+
+		public int BytesToRead => port.BytesToRead;
+
+		public void Dispose() => port.Dispose();
+
+		public bool IsOpen => port.IsOpen;
+
+		public void Open() => port.Open();
 
 		public void Close()
 		{
@@ -94,54 +100,6 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			}
 			catch (Exception)
 			{
-			}
-		}
-
-		public int WriteTimeout
-		{
-			get
-			{
-				return port.WriteTimeout;
-			}
-			set
-			{
-				port.WriteTimeout = value;
-			}
-		}
-
-		public int BaudRate
-		{
-			get
-			{
-				return port.BaudRate;
-			}
-			set
-			{
-				port.BaudRate = value;
-			}
-		}
-
-		public bool RtsEnable
-		{
-			get
-			{
-				return port.RtsEnable;
-			}
-			set
-			{
-				port.RtsEnable = value;
-			}
-		}
-
-		public bool DtrEnable
-		{
-			get
-			{
-				return port.DtrEnable;
-			}
-			set
-			{
-				port.DtrEnable = value;
 			}
 		}
 
