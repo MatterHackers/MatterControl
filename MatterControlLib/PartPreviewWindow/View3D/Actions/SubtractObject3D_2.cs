@@ -40,6 +40,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
+	[ShowUpdateButton]
 	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer
 	{
 		public SubtractObject3D_2()
@@ -47,9 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract";
 		}
 
-		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
-
-		public SelectedChildren SelectedChildren => ItemsToSubtract;
+		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -73,9 +72,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+
 			var rebuildLocks = this.RebuilLockAll();
 
-			// spin up a task to remove holes from the objects in the group
 			return ApplicationController.Instance.Tasks.Execute(
 				"Subtract".Localize(),
 				null,
@@ -122,30 +121,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
-			bool ItemInSubtractList(IObject3D item)
-			{
-				if (ItemsToSubtract.Contains(item.ID))
-				{
-					return true;
-				}
-
-				// check if the wrapped item is in the subtract list
-				if (item.Children.Count > 0 && ItemsToSubtract.Contains(item.Children.First().ID))
-				{
-					return true;
-				}
-
-				return false;
-			}
-
-			var removeObjects = this.Children
-				.Where((i) => ItemInSubtractList(i))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
-			var keepObjects = this.Children
-				.Where((i) => !ItemInSubtractList(i))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
+			var removeObjects = this.SourceContainer.VisibleMeshes()
+				.Where((i) => SelectedChildren.Contains(i.ID)).ToList();
+			var keepObjects = this.SourceContainer.VisibleMeshes()
+				.Where((i) => !SelectedChildren.Contains(i.ID)).ToList();
 
 			if (removeObjects.Any()
 				&& keepObjects.Any())
@@ -167,24 +146,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 						progressStatus.Status = "Do CSG";
 						reporter?.Report(progressStatus);
-						var result = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
+						var resultsMesh = BooleanProcessing.Do(keep.obj3D.Mesh, keep.matrix,
 							remove.obj3D.Mesh, remove.matrix, 1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 						var inverse = keep.matrix.Inverted;
-						result.Transform(inverse);
+						resultsMesh.Transform(inverse);
 
-						using (keep.obj3D.RebuildLock())
+						var resultsItem = new Object3D()
 						{
-							keep.obj3D.Mesh = result;
-						}
+							Mesh = resultsMesh
+						};
+						resultsItem.CopyProperties(keep.obj3D, Object3DPropertyFlags.All & (~Object3DPropertyFlags.Matrix));
+						this.Children.Add(resultsItem);
 
 						percentCompleted += amountPerOperation;
 						progressStatus.Progress0To1 = percentCompleted;
 						reporter?.Report(progressStatus);
 					}
-
-					remove.obj3D.Visible = false;
-					SourceContainer.Visible = false;
 				}
+
+				SourceContainer.Visible = false;
 			}
 		}
 	}

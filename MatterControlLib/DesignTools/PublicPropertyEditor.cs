@@ -41,6 +41,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -487,7 +488,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				else // show the subtract editor for boolean subtract and subtract and replace
 				{
 					rowContainer = CreateSettingsColumn(property);
-					rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
+					if (property.Item is OperationSourceContainerObject3D sourceContainer)
+					{
+						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme));
+					}
+					else
+					{
+						rowContainer.AddChild(CreateSelector(childSelector, property.Item, theme));
+					}
 				}
 			}
 			else if (propertyValue is ImageBuffer imageBuffer)
@@ -636,6 +644,76 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new ImageWidget(imageBuffer);
 		}
 
+		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceCantainer, ThemeConfig theme)
+		{
+			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var sourceChildren = sourceCantainer.SourceContainer.VisibleMeshes().ToList();
+
+			var objectChecks = new Dictionary<ICheckbox, IObject3D>();
+
+			var radioSiblings = new List<GuiWidget>();
+			for (int i = 0; i < sourceChildren.Count; i++)
+			{
+				var itemIndex = i;
+				var child = sourceChildren[itemIndex];
+				var rowContainer = new FlowLayoutWidget();
+
+				GuiWidget selectWidget;
+				if (sourceChildren.Count == 2)
+				{
+					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
+					{
+						Checked = childSelector.Contains(child.ID),
+						TextColor = theme.TextColor
+					};
+					radioSiblings.Add(radioButton);
+					radioButton.SiblingRadioButtonList = radioSiblings;
+					selectWidget = radioButton;
+				}
+				else
+				{
+					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
+					{
+						Checked = childSelector.Contains(child.ID),
+						TextColor = theme.TextColor
+					};
+				}
+
+				objectChecks.Add((ICheckbox)selectWidget, child);
+
+				rowContainer.AddChild(selectWidget);
+				var checkBox = selectWidget as ICheckbox;
+
+				checkBox.CheckedStateChanged += (s, e) =>
+				{
+					if (s is ICheckbox checkbox)
+					{
+						if (checkBox.Checked)
+						{
+							if (!childSelector.Contains(objectChecks[checkbox].ID))
+							{
+								childSelector.Add(objectChecks[checkbox].ID);
+							}
+						}
+						else
+						{
+							if (childSelector.Contains(objectChecks[checkbox].ID))
+							{
+								childSelector.Remove(objectChecks[checkbox].ID);
+							}
+						}
+
+						sourceCantainer.RemoveAllButSource();
+					}
+				};
+
+				tabContainer.AddChild(rowContainer);
+			}
+
+			return tabContainer;
+		}
+
 		private static GuiWidget CreateSelector(SelectedChildren childSelector, IObject3D parent, ThemeConfig theme)
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -727,29 +805,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				tabContainer.AddChild(rowContainer);
 				UpdateSelectColors();
 			}
-
-			/*
-			bool operationApplied = parent.Descendants()
-				.Where((obj) => obj.OwnerID == parent.ID)
-				.Where((objId) => objId.Mesh != objId.Children.First().Mesh).Any();
-
-			bool selectionHasBeenMade = parent.Descendants()
-				.Where((obj) => obj.OwnerID == parent.ID && obj.OutputType == PrintOutputTypes.Hole)
-				.Any();
-
-			if (!operationApplied && !selectionHasBeenMade)
-			{
-				// select the last item
-				if (tabContainer.Descendants().Where((d) => d is ICheckbox).Last() is ICheckbox lastCheckBox)
-				{
-					lastCheckBox.Checked = true;
-				}
-			}
-			else
-			{
-				updateButton.Enabled = !operationApplied;
-			}
-			*/
 
 			return tabContainer;
 		}
