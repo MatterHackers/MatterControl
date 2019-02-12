@@ -20,6 +20,10 @@ using System.Text;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial
 {
+
+	/// <summary>
+	/// SerialPort helper intended to fix IOExceptions in stock Windows implementation, as described in http://zachsaw.blogspot.com/2010/07/net-serialport-woes.html
+	/// </summary>
 	public class SerialPortFixer : IDisposable
 	{
 		public static void Execute(string portName)
