@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		#endregion // editable properties
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -84,12 +84,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else
 			{
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				ItemWithTransform.Matrix = Matrix4X4.CreateTranslation(Translation);
 			}
 
-			Invalidate(InvalidateType.Matrix);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
 	}

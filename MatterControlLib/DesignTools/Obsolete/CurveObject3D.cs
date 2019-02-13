@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Matrix = currentMatrix;
 			}
 
-			Invalidate(InvalidateType.Mesh);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			if (valuesChanged)
 			{
 				Invalidate(InvalidateType.DisplayValues);

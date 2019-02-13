@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(InvalidateType.Matrix);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
 

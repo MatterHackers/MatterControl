@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
 
 					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Path);
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					return Task.CompletedTask;
 				});
 		}

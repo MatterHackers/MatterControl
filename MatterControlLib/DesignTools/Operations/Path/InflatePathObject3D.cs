@@ -32,7 +32,6 @@ using ClipperLib;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -58,7 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("Change the width of the image lines.")]
 		public double Inflate { get; set; }
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -66,12 +65,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else
 			{
@@ -87,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				InsetPath();
 			}
 
-			Invalidate(InvalidateType.Path);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;
 		}
 

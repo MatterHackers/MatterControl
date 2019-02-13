@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(InvalidateType.Children);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 	}
 }

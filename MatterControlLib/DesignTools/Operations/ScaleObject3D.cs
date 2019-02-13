@@ -218,7 +218,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
 			}
 
-			Invalidate(InvalidateType.Matrix);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 
 			return Task.CompletedTask;
 		}
