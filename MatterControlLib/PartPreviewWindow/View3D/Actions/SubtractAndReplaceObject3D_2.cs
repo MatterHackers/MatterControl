@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -56,10 +57,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+				&& layer.Scene.SelectedItem == this)
 			{
-				// draw the component objects
-				//layer.World.RenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
+				suppressNormalDraw = true;
+
+				var removeObjects = this.SourceContainer.VisibleMeshes()
+					.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
+				var keepObjects = this.SourceContainer.VisibleMeshes()
+					.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+
+				foreach (var item in removeObjects)
+				{
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(SourceContainer), 128)));
+				}
+
+				foreach (var item in keepObjects)
+				{
+					var subtractChild = this.Children.Where(i => i.Name == item.Name).FirstOrDefault();
+					if (subtractChild != null)
+					{
+						GLHelper.Render(subtractChild.Mesh,
+							subtractChild.Color,
+							subtractChild.WorldMatrix(),
+							RenderTypes.Outlines,
+							subtractChild.WorldMatrix() * layer.World.ModelviewMatrix);
+					}
+					else
+					{
+						GLHelper.Render(item.Mesh,
+							item.WorldColor(SourceContainer),
+							item.WorldMatrix(),
+							RenderTypes.Outlines,
+							item.WorldMatrix() * layer.World.ModelviewMatrix);
+					}
+				}
 			}
 		}
 
@@ -128,6 +159,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 				return;
 			}
+
+			SubtractObject3D_2.CleanUpSelectedChildrenNames(this);
 
 			var paintObjects = this.SourceContainer.VisibleMeshes()
 				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();

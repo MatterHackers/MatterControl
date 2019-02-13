@@ -166,6 +166,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
+			CleanUpSelectedChildrenNames(this);
+
 			var removeObjects = this.SourceContainer.VisibleMeshes()
 				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
 			var keepObjects = this.SourceContainer.VisibleMeshes()
@@ -224,6 +226,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					else
 					{
 						child.Visible = true;
+					}
+				}
+			}
+		}
+
+		public static void CleanUpSelectedChildrenNames(OperationSourceContainerObject3D item)
+		{
+			if (item is ISelectableChildContainer selectableChildContainer)
+			{
+				var allVisibleNames = item.SourceContainer.VisibleMeshes().Select(i => i.Name);
+				// remove any names from SelectedChildren that are not in visible meshes
+				foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
+				{
+					if (!allVisibleNames.Contains(name))
+					{
+						selectableChildContainer.SelectedChildren.Remove(name);
 					}
 				}
 			}

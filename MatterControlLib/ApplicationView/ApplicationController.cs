@@ -715,7 +715,11 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Subtract & Replace".Localize(),
 					Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					IsEnabled = (scene) =>
+					{
+						var selectedItem = scene.SelectedItem;
+						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+					},
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
