@@ -28,10 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -39,7 +37,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -89,7 +86,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
 		}
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
@@ -97,12 +94,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else
 			{
@@ -145,8 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				base.Mesh = null;
 			}
 
-			Invalidate(InvalidateType.Path);
-
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 			return Task.CompletedTask;
 		}
 

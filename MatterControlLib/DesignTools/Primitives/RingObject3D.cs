@@ -28,16 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -78,12 +73,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double StartingAngle { get; set; } = 0;
 		public double EndingAngle { get; set; } = 360;
 
-		public override void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
 			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
 				&& invalidateType.Source == this)
 			{
-				Rebuild();
+				await Rebuild();
 			}
 			else
 			{
@@ -125,12 +120,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			Invalidate(InvalidateType.Mesh);
 			if (valuesChanged)
 			{
 				Invalidate(InvalidateType.DisplayValues);
 			}
 
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
 

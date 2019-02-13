@@ -126,8 +126,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
 		public override Task Rebuild()
@@ -161,7 +163,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 					}
 					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Children);
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
 				});
 		}

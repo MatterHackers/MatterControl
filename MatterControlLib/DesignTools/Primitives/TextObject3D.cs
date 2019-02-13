@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.ComponentModel;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -43,8 +42,6 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
-using System;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -167,7 +164,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Children);
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
 				});
 		}

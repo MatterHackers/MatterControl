@@ -27,18 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
-using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -71,38 +64,34 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				await Rebuild();
 			}
-
-			base.OnInvalidate(invalidateType);
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
 		}
 
-		private Task Rebuild()
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			bool changed = false;
-			this.DebugDepth("Rebuild");
 
-			var rebuildLock = this.RebuildLock();
-
-			return ApplicationController.Instance.Tasks.Execute(
-				"Cone".Localize(),
-				null,
-				(reporter, cancellationToken) =>
+			using (RebuildLock())
+			{
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
+				using (new CenterAndHeightMantainer(this))
 				{
-					Sides = agg_basics.Clamp(Sides, 3, 360, ref changed);
-					using (new CenterAndHeightMantainer(this))
-					{
 
-						var path = new VertexStorage();
-						path.MoveTo(0, 0);
-						path.LineTo(Diameter / 2, 0);
-						path.LineTo(0, Height);
+					var path = new VertexStorage();
+					path.MoveTo(0, 0);
+					path.LineTo(Diameter / 2, 0);
+					path.LineTo(0, Height);
 
-						Mesh = VertexSourceToMesh.Revolve(path, Sides);
-					}
-					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Children);
-					return Task.CompletedTask;
-				});
+					Mesh = VertexSourceToMesh.Revolve(path, Sides);
+				}
+			}
+
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+			return Task.CompletedTask;
 		}
 	}
 }
