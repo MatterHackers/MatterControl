@@ -37,16 +37,17 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, IEditorDraw
+	public class SubtractAndReplaceObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, IEditorDraw
 	{
-		public SubtractObject3D_2()
+		public SubtractAndReplaceObject3D_2()
 		{
-			Name = "Subtract";
+			Name = "Subtract and Replace";
 		}
 
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
@@ -85,38 +86,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public override Task Rebuild()
 		{
-			this.DebugDepth("Rebuild");
-
 			var rebuildLocks = this.RebuilLockAll();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Subtract".Localize(),
-				null,
-				(reporter, cancellationToken) =>
+			// spin up a task to calculate the paint
+			return ApplicationController.Instance.Tasks.Execute("Replacing".Localize(), null, (reporter, cancellationToken) =>
+			{
+				try
 				{
-					var progressStatus = new ProgressStatus();
-					reporter.Report(progressStatus);
+					SubtractAndReplace(cancellationToken, reporter);
+				}
+				catch
+				{
+				}
 
-					try
-					{
-						Subtract(cancellationToken, reporter);
-					}
-					catch
-					{
-					}
-
-					rebuildLocks.Dispose();
-					Invalidate(InvalidateType.Children);
-					return Task.CompletedTask;
-				});
+				rebuildLocks.Dispose();
+				Invalidate(InvalidateType.Children);
+				return Task.CompletedTask;
+			});
 		}
 
-		public void Subtract()
+		public void SubtractAndReplace()
 		{
-			Subtract(CancellationToken.None, null);
+			SubtractAndReplace(CancellationToken.None, null);
 		}
 
-		private void Subtract(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		private void SubtractAndReplace(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
 		{
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
@@ -135,33 +129,61 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
-			var removeObjects = this.SourceContainer.VisibleMeshes()
+			var paintObjects = this.SourceContainer.VisibleMeshes()
 				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
 			var keepObjects = this.SourceContainer.VisibleMeshes()
 				.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
 
-			if (removeObjects.Any()
+			if (paintObjects.Any()
 				&& keepObjects.Any())
 			{
-				var totalOperations = removeObjects.Count * keepObjects.Count;
+				var totalOperations = paintObjects.Count * keepObjects.Count;
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
 				progressStatus.Status = "Do CSG";
-				foreach (var keep in keepObjects)
+				foreach (var paint in paintObjects)
 				{
-					var resultsMesh = keep.Mesh;
-					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
+					Mesh paintMesh = null;
+					var paintWorldMatrix = paint.WorldMatrix(SourceContainer);
 
-					foreach (var remove in removeObjects)
+					foreach (var keep in keepObjects)
 					{
-						resultsMesh = BooleanProcessing.Do(resultsMesh, keepWorldMatrix,
-							remove.Mesh, remove.WorldMatrix(SourceContainer),
+						var keepResultsMesh = keep.Mesh;
+
+						var intersect = BooleanProcessing.Do(keepResultsMesh, keep.WorldMatrix(SourceContainer),
+							paint.Mesh, paintWorldMatrix,
+							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+
+						keepResultsMesh = BooleanProcessing.Do(keepResultsMesh, keep.WorldMatrix(SourceContainer),
+							paint.Mesh, paintWorldMatrix,
 							1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 						// after the first time we get a result the results mesh is in the right coordinate space
-						keepWorldMatrix = Matrix4X4.Identity;
+						paintWorldMatrix = Matrix4X4.Identity;
+
+						// keep all the intersections together
+						if (paintMesh == null)
+						{
+							paintMesh = intersect;
+						}
+						else // union into the current paint
+						{
+							paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
+								intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						}
+
+						// store our results mesh
+						var keepResultsItem = new Object3D()
+						{
+							Mesh = keepResultsMesh,
+							Visible = false
+						};
+						// copy all the properties but the matrix
+						keepResultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						// and add it to this
+						this.Children.Add(keepResultsItem);
 
 						// report our progress
 						percentCompleted += amountPerOperation;
@@ -170,15 +192,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					// store our results mesh
-					var resultsItem = new Object3D()
+					var paintResultsItem = new Object3D()
 					{
-						Mesh = resultsMesh,
+						Mesh = paintMesh,
 						Visible = false
 					};
 					// copy all the properties but the matrix
-					resultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+					paintResultsItem.CopyProperties(paint, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
-					this.Children.Add(resultsItem);
+					this.Children.Add(paintResultsItem);
 				}
 
 				foreach (var child in Children)
