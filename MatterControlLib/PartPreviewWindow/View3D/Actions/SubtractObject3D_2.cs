@@ -37,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -57,8 +58,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				&& layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
-				// draw the component objects
-				//layer.World.RenderDirectionAxis(RotateAbout, this.WorldMatrix(), 30);
+				var removeObjects = this.SourceContainer.VisibleMeshes()
+					.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
+				var keepObjects = this.SourceContainer.VisibleMeshes()
+					.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+
+				foreach (var item in removeObjects)
+				{
+					GLHelper.Render(item.Mesh,
+						Color.Transparent,
+						item.WorldMatrix(),
+						RenderTypes.Outlines,
+						item.WorldMatrix() * layer.World.ModelviewMatrix,
+						Color.Red);
+				}
+
+				foreach (var item in keepObjects)
+				{
+					GLHelper.Render(item.Mesh,
+						Color.Transparent,
+						item.WorldMatrix(),
+						RenderTypes.Outlines,
+						item.WorldMatrix() * layer.World.ModelviewMatrix,
+						Color.Green);
+				}
 			}
 		}
 
@@ -121,14 +144,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
 
-			var participants = SourceContainer.VisibleMeshes();
-			if (participants.Count() < 2)
+			var visibleMeshes = SourceContainer.VisibleMeshes();
+			if (visibleMeshes.Count() < 2)
 			{
-				if (participants.Count() == 1)
+				if (visibleMeshes.Count() == 1)
 				{
 					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
+					newMesh.CopyProperties(visibleMeshes.First(), Object3DPropertyFlags.All);
+					newMesh.Mesh = visibleMeshes.First().Mesh;
 					this.Children.Add(newMesh);
 					SourceContainer.Visible = false;
 				}

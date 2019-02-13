@@ -703,8 +703,6 @@ namespace MatterHackers.MatterControl.DesignTools
 								childSelector.Remove(objectChecks[checkbox].Name);
 							}
 						}
-
-						sourceCantainer.RemoveAllButSource();
 					}
 				};
 
