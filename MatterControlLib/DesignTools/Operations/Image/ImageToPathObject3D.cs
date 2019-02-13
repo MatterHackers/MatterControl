@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	using MatterHackers.Agg.Image.ThresholdFunctions;
 	using MatterHackers.Agg.UI;
+	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.RenderOpenGl.OpenGl;
 	using MatterHackers.VectorMath;
 	using System.ComponentModel.DataAnnotations;
@@ -240,7 +241,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

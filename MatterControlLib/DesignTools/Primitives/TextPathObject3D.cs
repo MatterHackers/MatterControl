@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Font;
@@ -38,6 +39,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -177,7 +179,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return null;
 		}
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

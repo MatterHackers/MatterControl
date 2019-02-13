@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,10 +53,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
+			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
 			{
 				// draw the component objects
@@ -143,47 +143,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				ProgressStatus progressStatus = new ProgressStatus();
 				progressStatus.Status = "Do CSG";
-				foreach (var paint in paintObjects)
+				foreach (var keep in keepObjects)
 				{
-					Mesh paintMesh = null;
-					var paintWorldMatrix = paint.WorldMatrix(SourceContainer);
+					var keepResultsMesh = keep.Mesh;
+					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
 
-					foreach (var keep in keepObjects)
+					foreach (var paint in paintObjects)
 					{
-						var keepResultsMesh = keep.Mesh;
-
-						var intersect = BooleanProcessing.Do(keepResultsMesh, keep.WorldMatrix(SourceContainer),
-							paint.Mesh, paintWorldMatrix,
+						Mesh paintMesh = BooleanProcessing.Do(keepResultsMesh, keepWorldMatrix,
+							paint.Mesh, paint.WorldMatrix(SourceContainer),
 							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
-						keepResultsMesh = BooleanProcessing.Do(keepResultsMesh, keep.WorldMatrix(SourceContainer),
-							paint.Mesh, paintWorldMatrix,
+						keepResultsMesh = BooleanProcessing.Do(keepResultsMesh, keepWorldMatrix,
+							paint.Mesh, paint.WorldMatrix(SourceContainer),
 							1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
 
 						// after the first time we get a result the results mesh is in the right coordinate space
-						paintWorldMatrix = Matrix4X4.Identity;
+						keepWorldMatrix = Matrix4X4.Identity;
 
-						// keep all the intersections together
-						if (paintMesh == null)
+						// store our intersection (paint) results mesh
+						var paintResultsItem = new Object3D()
 						{
-							paintMesh = intersect;
-						}
-						else // union into the current paint
-						{
-							paintMesh = BooleanProcessing.Do(paintMesh, Matrix4X4.Identity,
-								intersect, Matrix4X4.Identity, 0, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
-						}
-
-						// store our results mesh
-						var keepResultsItem = new Object3D()
-						{
-							Mesh = keepResultsMesh,
+							Mesh = paintMesh,
 							Visible = false
 						};
 						// copy all the properties but the matrix
-						keepResultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						paintResultsItem.CopyProperties(paint, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 						// and add it to this
-						this.Children.Add(keepResultsItem);
+						this.Children.Add(paintResultsItem);
 
 						// report our progress
 						percentCompleted += amountPerOperation;
@@ -192,15 +179,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					}
 
 					// store our results mesh
-					var paintResultsItem = new Object3D()
+					var keepResultsItem = new Object3D()
 					{
-						Mesh = paintMesh,
+						Mesh = keepResultsMesh,
 						Visible = false
 					};
 					// copy all the properties but the matrix
-					paintResultsItem.CopyProperties(paint, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+					keepResultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
-					this.Children.Add(paintResultsItem);
+					this.Children.Add(keepResultsItem);
 				}
 
 				foreach (var child in Children)

@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,12 +53,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (sender is InteractionLayer layer
-				&& layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
+			if (layer.Scene.SelectedItem != null
+				&& layer.Scene.SelectedItem == this)
 			{
+				suppressNormalDraw = true;
+
 				var removeObjects = this.SourceContainer.VisibleMeshes()
 					.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
 				var keepObjects = this.SourceContainer.VisibleMeshes()
@@ -65,22 +67,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				foreach (var item in removeObjects)
 				{
-					GLHelper.Render(item.Mesh,
-						Color.Transparent,
-						item.WorldMatrix(),
-						RenderTypes.Outlines,
-						item.WorldMatrix() * layer.World.ModelviewMatrix,
-						Color.Red);
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(SourceContainer), 128)));
 				}
 
 				foreach (var item in keepObjects)
 				{
-					GLHelper.Render(item.Mesh,
-						Color.Transparent,
-						item.WorldMatrix(),
-						RenderTypes.Outlines,
-						item.WorldMatrix() * layer.World.ModelviewMatrix,
-						Color.Green);
+					var subtractChild = this.Children.Where(i => i.Name == item.Name).FirstOrDefault();
+					if (subtractChild != null)
+					{
+						GLHelper.Render(subtractChild.Mesh,
+							subtractChild.Color,
+							subtractChild.WorldMatrix(),
+							RenderTypes.Outlines,
+							subtractChild.WorldMatrix() * layer.World.ModelviewMatrix);
+					}
+					else
+					{
+						GLHelper.Render(item.Mesh,
+							item.WorldColor(SourceContainer),
+							item.WorldMatrix(),
+							RenderTypes.Outlines,
+							item.WorldMatrix() * layer.World.ModelviewMatrix);
+					}
 				}
 			}
 		}
@@ -204,11 +212,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					this.Children.Add(resultsItem);
 				}
 
+				bool first = true;
 				foreach (var child in Children)
 				{
-					child.Visible = true;
+					if (first)
+					{
+						// hid the source item
+						child.Visible = false;
+						first = false;
+					}
+					else
+					{
+						child.Visible = true;
+					}
 				}
-				SourceContainer.Visible = false;
 			}
 		}
 	}

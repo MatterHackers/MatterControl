@@ -391,19 +391,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Draw solid objects, extract transparent
 			var transparentMeshes = new List<Object3DView>();
-			foreach (var object3D in scene.Children)
-			{
-				if (object3D.Visible)
-				{
-					DrawObject(object3D, transparentMeshes, e);
-				}
 
+			var selectedItem = scene.SelectedItem;
+			bool suppressNormalDraw = false;
+			if (selectedItem != null)
+			{
 				// Invoke existing IEditorDraw when iterating items
-				if (object3D is IEditorDraw editorDraw)
+				if (selectedItem is IEditorDraw editorDraw)
 				{
 					// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
 					// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
-					editorDraw.DrawEditor(this, e);
+					editorDraw.DrawEditor(this, transparentMeshes, e, ref suppressNormalDraw);
+				}
+			}
+
+			foreach (var item in scene.Children)
+			{
+				if (item.Visible
+					&& (item != selectedItem || suppressNormalDraw == false))
+				{
+					DrawObject(item, transparentMeshes, e);
 				}
 			}
 
@@ -462,8 +469,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			GLHelper.UnsetGlContext();
 
-			var selectedItem = scene.SelectedItem;
-
 			// Invoke DrawStage.Last item drawables
 			foreach (var item in scene.Children)
 			{
@@ -520,24 +525,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			WireframeAndSolid,
 			None
 		}
+	}
 
-		private class Object3DView
+	public class Object3DView
+	{
+		public Color Color { get; set; }
+
+		public IObject3D Object3D { get; }
+
+		public Object3DView(IObject3D source, Color color)
 		{
-			public Color Color { get; set; }
+			this.Object3D = source;
+			this.Color = color;
 
-			public IObject3D Object3D { get; }
-
-			public Object3DView(IObject3D source, Color color)
+			if (source is Object3D object3D
+				&& color != source.Color
+					&& color.alpha != 255)
 			{
-				this.Object3D = source;
-				this.Color = color;
-
-				if (source is Object3D object3D
-					&& color != source.Color
-						&& color.alpha != 255)
-				{
-					object3D.EnsureTransparentSorting();
-				}
+				object3D.EnsureTransparentSorting();
 			}
 		}
 	}
