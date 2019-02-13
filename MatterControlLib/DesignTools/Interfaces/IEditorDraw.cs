@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PartPreviewWindow;
 
@@ -35,6 +36,6 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IEditorDraw
 	{
-		void DrawEditor(object sender, DrawEventArgs e);
+		void DrawEditor(InteractionLayer interactionLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw);
 	}
 }

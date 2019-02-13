@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters2D;
+	using MatterHackers.MatterControl.PartPreviewWindow;
 	using Newtonsoft.Json;
 	using System;
 	using System.ComponentModel;
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			VertexSource = path.VertexSource.Offset(Inflate);
 		}
 
-		public void DrawEditor(object sender, DrawEventArgs e)
+		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}
