@@ -160,6 +160,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				return;
 			}
 
+			SubtractObject3D_2.CleanUpSelectedChildrenNames(this);
+
 			var paintObjects = this.SourceContainer.VisibleMeshes()
 				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
 			var keepObjects = this.SourceContainer.VisibleMeshes()
