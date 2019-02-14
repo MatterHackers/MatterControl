@@ -296,12 +296,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (extruderIndex == 0)
 					{
 						settingsKey = printer.Settings.ActiveMaterialKey;
-
-						printer.Settings.MaterialLayers.CollectionChanged += SettingsLayers_CollectionChanged;
-						dropDownList.Closed += (s1, e1) =>
-						{
-							printer.Settings.MaterialLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
-						};
 					}
 					else // try to find the right material based on the extruders temperature
 					{
@@ -322,12 +316,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				else
 				{
 					settingsKey = printer.Settings.ActiveQualityKey;
-
-					printer.Settings.QualityLayers.CollectionChanged += SettingsLayers_CollectionChanged;
-					dropDownList.Closed += (s1, e1) =>
-					{
-						printer.Settings.QualityLayers.CollectionChanged -= SettingsLayers_CollectionChanged;
-					};
 				}
 
 				if (!string.IsNullOrEmpty(settingsKey))
