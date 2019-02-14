@@ -28,12 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -56,7 +61,133 @@ namespace MatterHackers.MatterControl
 			startCalibrationButton.Click += (s, e) =>
 			{
 				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationPrintPage(printer));
+
+				var turtle = new GCodeTurtle();
+
+				var rect = new RectangleDouble(0, 0, 123, 30);
+				rect.Offset(50, 100);
+
+				double nozzleWidth = 0.4;
+
+				double y1 = rect.Bottom;
+				turtle.MoveTo(rect.Left, y1);
+
+				// Purge line
+				for (var i = 0; i < 2; i++)
+				{
+					turtle.LineTo(rect.Left - 30, y1);
+					y1 += nozzleWidth;
+					turtle.LineTo(rect.Left - 30, y1);
+
+					turtle.LineTo(rect.Left, y1);
+					y1 += nozzleWidth;
+					turtle.LineTo(rect.Left, y1);
+				}
+
+				// Draw box
+				for (var i = 0; i < 2; i++)
+				{
+					rect.Inflate(-nozzleWidth * 2);
+					turtle.Draw(rect);
+				}
+
+				y1 = rect.YCenter + nozzleWidth / 2;
+
+				// Draw centerline
+				turtle.MoveTo(rect.Left, y1);
+				turtle.LineTo(rect.Right, y1);
+				y1 += nozzleWidth;
+				turtle.MoveTo(rect.Right, y1);
+				turtle.LineTo(rect.Left, y1);
+
+				var x = rect.Left + 1.5;
+
+				double sectionHeight = rect.Height / 2;
+
+				var step = (rect.Width - 3) / 40;
+				double y2 = y1 - sectionHeight - nozzleWidth * 3;
+
+				var up = true;
+
+				// Draw calibration lines
+				for(var i = 0; i <= 40; i++)
+				{
+					turtle.MoveTo(x, up ? y1 : y2);
+
+					if ((i % 5 == 0))
+					{
+						turtle.LineTo(x, y2 - 5);
+
+						var currentPos = turtle.CurrentPosition;
+
+						turtle.Speed = 500;
+
+						if (CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
+						{
+							var flattened = new FlattenCurves(vertexSource);
+
+							var verticies = flattened.Vertices();
+							var firstItem = verticies.First();
+							var position = turtle.CurrentPosition;
+
+							var scale = 0.32;
+
+							if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
+							{
+								turtle.MoveTo((firstItem.position * scale) + currentPos);
+							}
+
+							bool closed = false;
+
+							foreach (var item in verticies)
+							{
+								switch(item.command)
+								{
+									case ShapePath.FlagsAndCommand.MoveTo:
+										turtle.MoveTo((item.position * scale) + currentPos);
+										break;
+
+									case ShapePath.FlagsAndCommand.LineTo:
+										turtle.LineTo((item.position * scale) + currentPos);
+										break;
+
+									case ShapePath.FlagsAndCommand.FlagClose:
+										turtle.LineTo((firstItem.position * scale) + currentPos);
+										closed = true;
+										break;
+								}
+							}
+
+							if (!closed)
+							{
+								turtle.LineTo((firstItem.position * scale) + currentPos);
+							}
+						}
+
+						turtle.PenUp();
+						turtle.MoveTo(x, y2);
+						turtle.PenDown();
+						turtle.Speed = 1800;
+					}
+
+					turtle.LineTo(x, up ? y2 : y1);
+
+					x = x + step;
+
+					up = !up;
+				}
+
+				string gcode = turtle.ToGCode();
+
+				Console.WriteLine("--------------------------------------------------");
+				Console.WriteLine(gcode);
+
+				File.WriteAllText(@"c:\temp\calibration.gcode", gcode);
+
+				printer.Connection.QueueLine(gcode);
+				printer.Connection.QueueLine("G1 Z20");
 			};
+
 			theme.ApplyPrimaryActionStyle(startCalibrationButton);
 
 			this.AddPageAction(startCalibrationButton);
@@ -111,6 +242,94 @@ namespace MatterHackers.MatterControl
 			});
 
 			base.OnLoad(args);
+		}
+	}
+
+	public class GCodeTurtle : IDisposable
+	{
+		private StringBuilder sb;
+		private StringWriter writer;
+		private double currentE = 0;
+
+		public GCodeTurtle()
+		{
+			sb = new StringBuilder();
+			writer = new StringWriter(sb);
+			writer.WriteLine("G92 E0");
+			writer.WriteLine("G1 X50 Y50 Z0.2 F{0}", this.Speed);
+		}
+
+		public Vector2 CurrentPosition { get; private set; }
+
+		private int _speed = 1800;
+
+		public int Speed
+		{
+			get => _speed;
+			set
+			{
+				if (value != _speed)
+				{
+					_speed = value;
+					writer.WriteLine("G1 F{0}", _speed);
+				}
+			}
+		}
+
+		public void MoveTo(double x, double y)
+		{
+			this.MoveTo(new Vector2(x, y));
+		}
+
+		public void MoveTo(Vector2 position)
+		{
+			writer.WriteLine("G1 X{0} Y{1}", position.X, position.Y);
+			this.CurrentPosition = position;
+		}
+
+		public void PenUp()
+		{
+			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - .8);
+		}
+
+		public void PenDown()
+		{
+			writer.WriteLine("G1 Z0.2 E{0:0.###}", currentE);
+		}
+
+		public void LineTo(double x, double y)
+		{
+			this.LineTo(new Vector2(x, y));
+		}
+
+		public void LineTo(Vector2 position)
+		{
+			var delta = this.CurrentPosition - position;
+			currentE += delta.Length * 0.06;
+
+			writer.WriteLine("G1 X{0} Y{1} E{2:0.###}", position.X, position.Y, currentE);
+
+			this.CurrentPosition = position;
+		}
+
+		public string ToGCode()
+		{
+			return sb.ToString();
+		}
+
+		public void Dispose()
+		{
+			writer.Dispose();
+		}
+
+		internal void Draw(RectangleDouble rect)
+		{
+			this.MoveTo(rect.Left, rect.Bottom);
+
+			this.LineTo(rect.Left, rect.Top);
+			this.LineTo(rect.Right, rect.Top);
+			this.LineTo(rect.Right, rect.Bottom);
+			this.LineTo(rect.Left, rect.Bottom);
 		}
 	}
 
