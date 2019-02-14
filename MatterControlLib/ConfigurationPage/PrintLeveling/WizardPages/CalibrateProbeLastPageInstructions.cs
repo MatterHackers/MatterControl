@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
+			printer.Connection.QueueLine("T0");
+			printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Connection.CurrentFeedRate);
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
