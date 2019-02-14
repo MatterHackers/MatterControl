@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
@@ -37,18 +38,21 @@ namespace MatterHackers.MatterControl
 {
 	public class CalibrationLine : GuiWidget
 	{
+		public static Dictionary<int, IVertexSource> Glyphs { get; private set; }
+		private static int glyphSize = 8;
+
 		private bool mouseInBounds;
 		private ThemeConfig theme;
-		private Dictionary<int, IVertexSource> glyphs;
-		private int glyphSize = 8;
+
+		static CalibrationLine()
+		{
+			int glyphCenter = glyphSize / 2;
+			CalibrationLine.CreateGlyphs(glyphCenter);
+		}
 
 		public CalibrationLine(ThemeConfig theme)
 		{
 			this.theme = theme;
-
-			int glyphCenter = glyphSize / 2;
-
-			this.CreateGlyphs(glyphCenter);
 		}
 
 		public int GlyphIndex { get; set; } = -1;
@@ -106,11 +110,11 @@ namespace MatterHackers.MatterControl
 
 				// Draw line end
 				if (this.GlyphIndex != -1
-					&& glyphs.TryGetValue(this.GlyphIndex, out IVertexSource vertexSource))
+					&& Glyphs.TryGetValue(this.GlyphIndex, out IVertexSource vertexSource))
 				{
 					graphics2D.Render(
 						vertexSource,
-						new Vector2((int)(this.LocalBounds.XCenter - (glyphSize / 2)), 5),
+						new Vector2((int)(this.LocalBounds.XCenter), 11),
 						theme.TextColor);
 				}
 
@@ -129,28 +133,33 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
-		private void CreateGlyphs(int glyphCenter)
+		private static void CreateGlyphs(int glyphCenter)
 		{
-			glyphs = new Dictionary<int, IVertexSource>();
+			Glyphs = new Dictionary<int, IVertexSource>();
+
+			var half = -(glyphSize / 2);
 
 			var triangle = new VertexStorage();
+			triangle.MoveTo(0, 0);
 			triangle.LineTo(glyphSize, 0);
 			triangle.LineTo(glyphSize / 2, glyphSize);
-			triangle.LineTo(0, 0);
+			triangle.ClosePolygon();
+			
 			//triangle.ClosePolygon();
 
 			var square = new VertexStorage();
+			square.MoveTo(0, 0);
 			square.LineTo(glyphSize, 0);
 			square.LineTo(glyphSize, glyphSize);
 			square.LineTo(0, glyphSize);
-			square.LineTo(0, 0);
+			square.ClosePolygon();
 
 			var diamond = new VertexStorage();
 			diamond.MoveTo(glyphCenter, 0);
 			diamond.LineTo(glyphSize, glyphCenter);
 			diamond.LineTo(glyphCenter, glyphSize);
 			diamond.LineTo(0, glyphCenter);
-			diamond.MoveTo(glyphCenter, 0);
+			diamond.ClosePolygon();
 
 			var circle = new Ellipse(new Vector2(glyphCenter, glyphCenter), glyphCenter);
 
@@ -162,17 +171,18 @@ namespace MatterHackers.MatterControl
 			center.LineTo(0, 0);
 			center.ClosePolygon();
 
-			glyphs.Add(0, triangle);
-			glyphs.Add(5, diamond);
-			glyphs.Add(10, square);
-			glyphs.Add(15, circle);
+			var transform = Affine.NewTranslation(-glyphSize / 2, -glyphSize);
+			Glyphs.Add(0, new VertexSourceApplyTransform(triangle, transform));
+			Glyphs.Add(5, new VertexSourceApplyTransform(diamond, transform));
+			Glyphs.Add(10, new VertexSourceApplyTransform(square, transform));
+			Glyphs.Add(15, new VertexSourceApplyTransform(circle, transform));
 
-			glyphs.Add(20, center);
+			Glyphs.Add(20, new VertexSourceApplyTransform(center, transform));
 
-			glyphs.Add(25, circle);
-			glyphs.Add(30, square);
-			glyphs.Add(35, diamond);
-			glyphs.Add(40, triangle);
+			Glyphs.Add(25, new VertexSourceApplyTransform(circle, transform));
+			Glyphs.Add(30, new VertexSourceApplyTransform(square, transform));
+			Glyphs.Add(35, new VertexSourceApplyTransform(diamond, transform));
+			Glyphs.Add(40, new VertexSourceApplyTransform(triangle, transform));
 		}
 	}
 }
