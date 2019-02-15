@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.FineInstruction2);
 
 		public string FineInstruction2 => string.Format(
-			"\t• {0}\n\t• {0}\n\n{0}",
+			"\t• {0}\n\t• {1}\n\n{2}",
 			"Press [Z-] until there is resistance to moving the paper".Localize(),
 			"Press [Z+] once to release the paper".Localize(),
 			"Finally click 'Next' to continue.".Localize());
