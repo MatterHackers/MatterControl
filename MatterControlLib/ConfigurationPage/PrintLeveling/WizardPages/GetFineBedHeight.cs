@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -35,7 +36,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		public GetFineBedHeight(PrinterSetupWizard context, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(context, pageDescription, levelingStrings.FineInstruction1, levelingStrings.FineInstruction2, .1, probePositions, probePositionsBeingEditedIndex)
+			: base(
+				  context, 
+				  pageDescription, 
+				  "We will now refine our measurement of the extruder height at this position.".Localize(), 
+				  levelingStrings.FineInstruction2, 
+				  .1, 
+				  probePositions, 
+				  probePositionsBeingEditedIndex)
 		{
 		}
 	}
