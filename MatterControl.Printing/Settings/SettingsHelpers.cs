@@ -165,9 +165,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetExtruderZOffset(int extruderIndex, double newZOffset)
 		{
+			// Get the existing offset, update Z, persist
 			var offset = this.ExtruderOffset(extruderIndex);
 			offset.Z = newZOffset;
-
 			this.SetExtruderOffset(extruderIndex, offset);
 		}
 

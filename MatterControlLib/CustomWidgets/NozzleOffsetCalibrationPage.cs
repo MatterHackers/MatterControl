@@ -56,42 +56,87 @@ namespace MatterHackers.MatterControl
 					textColor: theme.TextColor, 
 					pointSize: theme.DefaultFontSize));
 
-			var startCalibrationButton = theme.CreateDialogButton("Next".Localize());
-			startCalibrationButton.Name = "Begin calibration print";
-			startCalibrationButton.Click += (s, e) =>
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Begin calibration print";
+			nextButton.Click += (s, e) =>
 			{
 				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationPrintPage(printer));
+			};
 
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
+		}
+	}
+
+	public class NozzleOffsetCalibrationPrintPage: DialogPage
+	{
+		private PrinterConfig printer;
+		private TextButton nextButton;
+		private double[] activeOffsets;
+
+		public NozzleOffsetCalibrationPrintPage(PrinterConfig printer)
+		{
+			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
+			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
+			this.Name = "Nozzle Offset Calibration Wizard";
+			this.printer = printer;
+
+			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize()));
+
+			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize()));
+
+			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize()));
+
+			nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Configure Calibration";
+			nextButton.Enabled = false;
+			nextButton.Click += (s, e) =>
+			{
+				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationResultsPage(printer, activeOffsets));
+			};
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			// Replace with calibration template code
+			Task.Run(() =>
+			{
 				var turtle = new GCodeTurtle();
 
 				var rect = new RectangleDouble(0, 0, 123, 30);
-				rect.Offset(50, 100);
+				rect.Offset(70, 100);
+
+				var originalRect = rect;
 
 				double nozzleWidth = 0.4;
+
+				int towerSize = 10;
 
 				double y1 = rect.Bottom;
 				turtle.MoveTo(rect.Left, y1);
 
-				// Purge line
-				for (var i = 0; i < 2; i++)
-				{
-					turtle.LineTo(rect.Left - 30, y1);
-					y1 += nozzleWidth;
-					turtle.LineTo(rect.Left - 30, y1);
+				var towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
+				towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
 
-					turtle.LineTo(rect.Left, y1);
-					y1 += nozzleWidth;
-					turtle.LineTo(rect.Left, y1);
+				// Draw purge box
+				while (towerRect.Width > 4)
+				{
+					towerRect.Inflate(-nozzleWidth);
+					turtle.Draw(towerRect);
 				}
 
 				// Draw box
-				for (var i = 0; i < 2; i++)
+				for (var i = 0; i < 3; i++)
 				{
-					rect.Inflate(-nozzleWidth * 2);
+					rect.Inflate(-nozzleWidth);
 					turtle.Draw(rect);
 				}
 
-				y1 = rect.YCenter + nozzleWidth / 2;
+				y1 = rect.YCenter + (nozzleWidth / 2);
 
 				// Draw centerline
 				turtle.MoveTo(rect.Left, y1);
@@ -100,23 +145,26 @@ namespace MatterHackers.MatterControl
 				turtle.MoveTo(rect.Right, y1);
 				turtle.LineTo(rect.Left, y1);
 
+				y1 -= nozzleWidth / 2;
+
 				var x = rect.Left + 1.5;
 
 				double sectionHeight = rect.Height / 2;
 
 				var step = (rect.Width - 3) / 40;
-				double y2 = y1 - sectionHeight - nozzleWidth * 3;
+				double y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
+				double y3 = y2 - 5;
 
 				var up = true;
 
 				// Draw calibration lines
-				for(var i = 0; i <= 40; i++)
+				for (var i = 0; i <= 40; i++)
 				{
 					turtle.MoveTo(x, up ? y1 : y2);
 
 					if ((i % 5 == 0))
 					{
-						turtle.LineTo(x, y2 - 5);
+						turtle.LineTo(x, y3);
 
 						var currentPos = turtle.CurrentPosition;
 
@@ -141,7 +189,7 @@ namespace MatterHackers.MatterControl
 
 							foreach (var item in verticies)
 							{
-								switch(item.command)
+								switch (item.command)
 								{
 									case ShapePath.FlagsAndCommand.MoveTo:
 										turtle.MoveTo((item.position * scale) + currentPos);
@@ -163,11 +211,10 @@ namespace MatterHackers.MatterControl
 								turtle.LineTo((firstItem.position * scale) + currentPos);
 							}
 						}
-
-						turtle.PenUp();
-						turtle.MoveTo(x, y2);
-						turtle.PenDown();
 						turtle.Speed = 1800;
+
+						turtle.MoveTo(x, y3);
+						turtle.MoveTo(x, y2);
 					}
 
 					turtle.LineTo(x, up ? y2 : y1);
@@ -176,6 +223,58 @@ namespace MatterHackers.MatterControl
 
 					up = !up;
 				}
+
+				x = rect.Left + 1.5;
+				y1 = rect.Top + (nozzleWidth * .5);
+				y2 = y1 - sectionHeight + (nozzleWidth * .5);
+
+				turtle.WriteRaw("T1");
+				turtle.ResetE();
+
+				turtle.MoveTo(rect.Left, rect.Top);
+				towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
+				towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
+
+				turtle.PenDown();
+
+				turtle.Speed = 800;
+
+				// Draw purge box
+				while (towerRect.Width > 4)
+				{
+					towerRect.Inflate(-nozzleWidth);
+					turtle.Draw(towerRect);
+				}
+
+				turtle.Speed = 1000;
+
+				up = true;
+
+				// Build offsets
+				activeOffsets = new double[41];
+				activeOffsets[20] = 0;
+
+				var leftStep = 1.5d / 20;
+				var rightStep = 1.5d / 20;
+
+				for (var i = 1; i <= 20; i++)
+				{
+					activeOffsets[20 - i] = i * leftStep * -1;
+					activeOffsets[20 + i] = i * rightStep;
+				}
+
+				// Draw calibration lines
+				for (var i = 0; i <= 40; i++)
+				{
+					turtle.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					turtle.LineTo(x + activeOffsets[i], up ? y2 : y1);
+
+					x = x + step;
+
+					up = !up;
+				}
+
+				turtle.PenUp();
 
 				string gcode = turtle.ToGCode();
 
@@ -186,51 +285,6 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.QueueLine(gcode);
 				printer.Connection.QueueLine("G1 Z20");
-			};
-
-			theme.ApplyPrimaryActionStyle(startCalibrationButton);
-
-			this.AddPageAction(startCalibrationButton);
-		}
-	}
-
-	public class NozzleOffsetCalibrationPrintPage: DialogPage
-	{
-		private PrinterConfig printer;
-		private TextButton nextButton;
-
-		public NozzleOffsetCalibrationPrintPage(PrinterConfig printer)
-		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
-			this.printer = printer;
-
-			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize()));
-
-			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize()));
-
-			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize()));
-
-			nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Configure Calibration";
-			nextButton.Enabled = false;
-			nextButton.Click += (s, e) =>
-			{
-				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationResultsPage(printer));
-			};
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
-
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// Replace with calibration template code
-			Task.Run(() =>
-			{
-				//printer.Connection.QueueLine("T0\nG1 Y180 X150 Z0.8 F1800\nG92 E0\nG1 X100 Z0.3 E25 F900");
 			});
 
 			// TODO: At conclusion of calibration template print, enable next button
@@ -256,6 +310,7 @@ namespace MatterHackers.MatterControl
 			sb = new StringBuilder();
 			writer = new StringWriter(sb);
 			writer.WriteLine("G92 E0");
+			writer.WriteLine("T0");
 			writer.WriteLine("G1 X50 Y50 Z0.2 F{0}", this.Speed);
 		}
 
@@ -276,20 +331,31 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void MoveTo(double x, double y)
+		public void MoveTo(double x, double y, bool retract = false)
 		{
-			this.MoveTo(new Vector2(x, y));
+			this.MoveTo(new Vector2(x, y), retract);
 		}
 
-		public void MoveTo(Vector2 position)
+		private double retractAmount = 1.2;
+		private bool retracted = false;
+
+		public void MoveTo(Vector2 position, bool retract = false)
 		{
-			writer.WriteLine("G1 X{0} Y{1}", position.X, position.Y);
+			if (retract)
+			{
+				currentE -= retractAmount;
+				retracted = true;
+				writer.WriteLine("G1 E{0:0.###}", currentE);
+
+			}
+
+			writer.WriteLine("G1 X{0:0.###} Y{1:0.###}", position.X, position.Y);
 			this.CurrentPosition = position;
 		}
 
 		public void PenUp()
 		{
-			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - .8);
+			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - 1.2);
 		}
 
 		public void PenDown()
@@ -304,6 +370,13 @@ namespace MatterHackers.MatterControl
 
 		public void LineTo(Vector2 position)
 		{
+			if (retracted)
+			{
+				// Unretract
+				currentE += retractAmount;
+				writer.WriteLine("G1 E{0:0.###}", currentE);
+			}
+
 			var delta = this.CurrentPosition - position;
 			currentE += delta.Length * 0.06;
 
@@ -331,11 +404,22 @@ namespace MatterHackers.MatterControl
 			this.LineTo(rect.Right, rect.Bottom);
 			this.LineTo(rect.Left, rect.Bottom);
 		}
+
+		public void WriteRaw(string gcode)
+		{
+			writer.WriteLine(gcode);
+		}
+
+		internal void ResetE()
+		{
+			currentE = 0;
+			writer.WriteLine("G92 E0");
+		}
 	}
 
 	public class NozzleOffsetCalibrationResultsPage : DialogPage
 	{
-		public NozzleOffsetCalibrationResultsPage(PrinterConfig printer)
+		public NozzleOffsetCalibrationResultsPage(PrinterConfig printer, double[] activeOffsets)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
