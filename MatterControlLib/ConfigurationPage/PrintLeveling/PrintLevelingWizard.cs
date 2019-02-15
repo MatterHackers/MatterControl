@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions.Add(new ProbePosition());
 			}
 
-			var levelingStrings = new LevelingStrings(printer.Settings);
+			var levelingStrings = new LevelingStrings();
 
 			// If no leveling data has been calculated
 			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				yield return new PrinterSetupWizardPage(
 					this,
-					levelingStrings.InitialPrinterSetupStepText,
+					"Initial Printer Setup".Localize(),
 					string.Format(
 						"{0}\n\n{1}",
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
@@ -165,15 +165,45 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool useZProbe = printer.Settings.Helpers.UseZProbe();
 			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 
-			var secondsPerManualSpot = 10 * 3;
-			var secondsPerAutomaticSpot = 3 * zProbeSamples;
-			var secondsToCompleteWizard = levelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
-			secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
+			// Build welcome text for Print Leveling Overview page
+			string buildWelcomeText()
+			{
+				var secondsPerManualSpot = 10 * 3;
+				var secondsPerAutomaticSpot = 3 * zProbeSamples;
+				var secondsToCompleteWizard = levelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
+				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
+
+				int numberOfSteps = levelingPlan.ProbeCount;
+				int numberOfMinutes = (int)Math.Round(secondsToCompleteWizard / 60.0);
+
+				if (hasHeatedBed)
+				{
+					return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(
+						"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
+						"Select the material you are printing".Localize(),
+						"Home the printer".Localize(),
+						"Heat the bed".Localize(),
+						"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
+						"Turn auto leveling on".Localize(),
+						"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
+						"Click 'Next' to continue.".Localize());
+				}
+				else
+				{
+					return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
+						"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
+						"Home the printer".Localize(),
+						"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
+						"Turn auto leveling on".Localize(),
+						"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
+						"Click 'Next' to continue.".Localize());
+				}
+			}
 
 			yield return new PrinterSetupWizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
-				levelingStrings.WelcomeText(levelingPlan.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)));
+				buildWelcomeText());
 
 			yield return new HomePrinterPage(
 				this,
