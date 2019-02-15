@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
 		{
-			var levelingStrings = new LevelingStrings(printer.Settings);
+			var levelingStrings = new LevelingStrings();
 			var autoProbePositions = new List<ProbePosition>(3);
 			var manualProbePositions = new List<ProbePosition>(3);
 

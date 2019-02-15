@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -37,11 +36,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private int stepNumber = 1;
 
-		private PrinterSettings printerSettings;
-
-		public LevelingStrings(PrinterSettings printerSettings)
+		public LevelingStrings()
 		{
-			this.printerSettings = printerSettings;
 		}
 
 		public string HomingPageInstructions(bool useZProbe, bool heatBed)
@@ -85,9 +81,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return $"{"Step".Localize()} {stepNumber++} {"of".Localize()} {totalSteps}:";
 		}
 
-		public string WelcomeText(int numberOfSteps, int numberOfMinutes)
+		public string WelcomeText(int numberOfSteps, bool hasHeatedBed, int numberOfMinutes)
 		{
-			if (printerSettings.GetValue<bool>(SettingsKey.has_heated_bed))
+			if (hasHeatedBed)
 			{
 				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(
 					"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),

@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
-			var levelingStrings = new LevelingStrings(printer.Settings);
+			var levelingStrings = new LevelingStrings();
 
 			var title = "Unload Material".Localize();
 			var instructions = "Please select the material you want to unload.".Localize();

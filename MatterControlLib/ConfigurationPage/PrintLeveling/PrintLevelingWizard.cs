@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions.Add(new ProbePosition());
 			}
 
-			var levelingStrings = new LevelingStrings(printer.Settings);
+			var levelingStrings = new LevelingStrings();
 
 			// If no leveling data has been calculated
 			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new PrinterSetupWizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
-				levelingStrings.WelcomeText(levelingPlan.ProbeCount, (int)Math.Round(secondsToCompleteWizard / 60.0)));
+				levelingStrings.WelcomeText(levelingPlan.ProbeCount, printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed), (int)Math.Round(secondsToCompleteWizard / 60.0)));
 
 			yield return new HomePrinterPage(
 				this,
