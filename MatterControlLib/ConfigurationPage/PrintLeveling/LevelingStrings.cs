@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 
 		public string CoarseInstruction2 => string.Format(
-			"\t• {0}\n\t• {1}\n\t• {2}",
+			"\t• {0}\n\t• {1}\n{2}",
 			"Place the paper under the extruder".Localize(),
 			"Using the above controls".Localize(),
 			this.FineInstruction2);
