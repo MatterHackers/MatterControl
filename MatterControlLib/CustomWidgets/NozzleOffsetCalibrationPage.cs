@@ -488,7 +488,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Click += (s, e) =>
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
-				hotendOffset.X = double.Parse(activeOffset.Text);
+				hotendOffset.X += double.Parse(activeOffset.Text);
 				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
 			};
 
