@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -82,11 +83,11 @@ namespace MatterHackers.MatterControl
 			this.Name = "Nozzle Offset Calibration Wizard";
 			this.printer = printer;
 
-			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize()));
+			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize()));
+			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize()));
+			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
 			nextButton = theme.CreateDialogButton("Next".Localize());
 			nextButton.Name = "Configure Calibration";
@@ -157,6 +158,8 @@ namespace MatterHackers.MatterControl
 
 				var up = true;
 
+				bool drawGlpyphs = false;
+
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
@@ -170,7 +173,7 @@ namespace MatterHackers.MatterControl
 
 						turtle.Speed = 500;
 
-						if (CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
+						if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 						{
 							var flattened = new FlattenCurves(vertexSource);
 
@@ -419,6 +422,9 @@ namespace MatterHackers.MatterControl
 
 	public class NozzleOffsetCalibrationResultsPage : DialogPage
 	{
+		private TextWidget activeOffset;
+		private CalibrationLine calibrationLine;
+
 		public NozzleOffsetCalibrationResultsPage(PrinterConfig printer, double[] activeOffsets)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
@@ -438,15 +444,22 @@ namespace MatterHackers.MatterControl
 
 			for(var i = 0; i <= 40; i++)
 			{
-				row.AddChild(new CalibrationLine(theme)
+				var calibrationLine = new CalibrationLine(theme)
 				{
-					Width =  8,
+					Width = 8,
 					Margin = 1,
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Stretch,
 					GlyphIndex = (i % 5 == 0) ? i : -1,
-					IsNegative = i < 20
-				});
+					IsNegative = i < 20,
+					OffsetIndex = i
+				};
+				calibrationLine.Click += (s, e) =>
+				{
+					activeOffset.Text = activeOffsets[calibrationLine.OffsetIndex].ToString("0.####");
+
+				};
+				row.AddChild(calibrationLine);
 
 				// Add spacers to stretch to size
 				if (i < 40)
@@ -454,6 +467,8 @@ namespace MatterHackers.MatterControl
 					row.AddChild(new HorizontalSpacer());
 				}
 			}
+
+			contentRow.AddChild(activeOffset = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
 			row.AfterDraw += (s, e) =>
 			{
@@ -467,6 +482,19 @@ namespace MatterHackers.MatterControl
 				e.Graphics2D.Rectangle(rect, theme.TextColor, strokeWidth);
 				e.Graphics2D.Line(rect.Left, center.Y, rect.Right, center.Y, theme.TextColor, strokeWidth);
 			};
+
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Begin calibration print";
+			nextButton.Click += (s, e) =>
+			{
+				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
+				hotendOffset.X = double.Parse(activeOffset.Text);
+				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
+			};
+
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
 		}
 	}
 }

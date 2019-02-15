@@ -83,6 +83,8 @@ namespace MatterHackers.MatterControl
 			set => base.BackgroundColor = value;
 		}
 
+		public int OffsetIndex { get; set; }
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			if (this.Vertical)
