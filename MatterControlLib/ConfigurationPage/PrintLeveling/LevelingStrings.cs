@@ -90,9 +90,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Select the material you are printing".Localize(),
 					"Home the printer".Localize(),
 					"Heat the bed".Localize(),
-					this.WelcomeLine5(numberOfSteps),
+					"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
 					"Turn auto leveling on".Localize(),
-					this.WelcomeLine7(numberOfMinutes),
+					"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
 					"Click 'Next' to continue.".Localize());
 			}
 			else
@@ -100,21 +100,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
 					"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
 					"Home the printer".Localize(),
-					this.WelcomeLine5(numberOfSteps),
+					"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
 					"Turn auto leveling on".Localize(),
-					this.WelcomeLine7(numberOfMinutes),
+					"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
 					"Click 'Next' to continue.".Localize());
 			}
-		}
-
-		private string WelcomeLine5(int numberOfPoints)
-		{
-			return "Sample the bed at {0} points".Localize().FormatWith(numberOfPoints);
-		}
-
-		private string WelcomeLine7(int numberOfMinutes)
-		{
-			return "We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes);
 		}
 	}
 }
