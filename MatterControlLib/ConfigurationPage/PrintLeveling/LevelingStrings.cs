@@ -80,31 +80,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			return $"{"Step".Localize()} {stepNumber++} {"of".Localize()} {totalSteps}:";
 		}
-
-		public string WelcomeText(int numberOfSteps, bool hasHeatedBed, int numberOfMinutes)
-		{
-			if (hasHeatedBed)
-			{
-				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(
-					"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
-					"Select the material you are printing".Localize(),
-					"Home the printer".Localize(),
-					"Heat the bed".Localize(),
-					"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
-					"Turn auto leveling on".Localize(),
-					"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
-					"Click 'Next' to continue.".Localize());
-			}
-			else
-			{
-				return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
-					"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
-					"Home the printer".Localize(),
-					"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
-					"Turn auto leveling on".Localize(),
-					"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
-					"Click 'Next' to continue.".Localize());
-			}
-		}
 	}
 }
