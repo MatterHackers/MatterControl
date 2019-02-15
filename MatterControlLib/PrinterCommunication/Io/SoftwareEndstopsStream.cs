@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -36,40 +35,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class SoftwareEndstopsStream : GCodeStreamProxy
 	{
-		private int extruderIndex = 0;
-		PrinterMove lastDestination = PrinterMove.Unknown;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 
-		Vector3[] extruderOffsets = new Vector3[4];
+		AxisAlignedBoundingBox[] extruderBounds = new AxisAlignedBoundingBox[4];
 
-		public SoftwareEndstopsStream(GCodeStream internalStream, PrinterConfig printer)
+		public SoftwareEndstopsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			CalculateBounds();
+
 			printer.Settings.SettingChanged += Settings_SettingChanged;
 
-			extruderIndex = printer.Connection.ActiveExtruderIndex;
-
-			ReadExtruderOffsets();
+			// Register to listen for position after home and update Bounds based on the axis homed and position info.
 		}
 
 		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
-			if (stringEvent != null)
+			if (stringEvent.Data == SettingsKey.bed_size
+				|| stringEvent.Data == SettingsKey.print_center
+				|| stringEvent.Data == SettingsKey.build_height
+				|| stringEvent.Data == SettingsKey.bed_shape)
 			{
-				// if the offsets change update them (unless we are actively printing)
-				if (stringEvent.Data == SettingsKey.extruder_offset
-					&& !printer.Connection.Printing
-					&& !printer.Connection.Paused)
-				{
-					ReadExtruderOffsets();
-				}
-			}
-		}
-
-		private void ReadExtruderOffsets()
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
+				this.CalculateBounds();
 			}
 		}
 
@@ -80,18 +67,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			base.Dispose();
 		}
 
-		public override void SetPrinterPosition(PrinterMove position)
+		private void CalculateBounds()
 		{
-			this.lastDestination.CopyKnowSettings(position);
-			if (extruderIndex < 4)
+			var bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+			var printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			var buildHeight = printer.Settings.GetValue<double>(SettingsKey.build_height);
+			if (buildHeight == 0)
 			{
-				lastDestination.position -= RuntimeOffsets[extruderIndex];
-				lastDestination.position += extruderOffsets[extruderIndex];
+				buildHeight = double.PositiveInfinity;
 			}
-			internalStream.SetPrinterPosition(lastDestination);
-		}
 
-		public Vector3[] RuntimeOffsets { get; private set; } = new Vector3[4];
+			// first set all the extruders to the bounds defined by the settings file
+			for (int i = 0; i < extruderBounds.Length; i++)
+			{
+				extruderBounds[i] = new AxisAlignedBoundingBox(
+					printCenter.X - bedSize.X / 2, // min x
+					printCenter.Y - bedSize.Y / 2, // min y
+					0, // min z
+					printCenter.X + bedSize.X / 2, // max x
+					printCenter.Y + bedSize.Y / 2, // max y
+					buildHeight); // max z
+
+			}
+
+			// if we have more constrained info for extruders, add that it
+
+			// If we know something about the homing positions, add them in.
+			// Specifically never go above a z homes max endstop.
+			// We may also want to add in all other know (measured) endstop postions.
+
+		}
 
 		public override string ReadLine()
 		{
@@ -104,29 +109,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			if (lineToSend != null
-				&& lineToSend.StartsWith("T"))
-			{
-				int extruder = 0;
-				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruder))
-				{
-					extruderIndex = extruder;
-				}
-			}
-
-			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
 				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 
 				PrinterMove moveToSend = currentMove;
-				if (extruderIndex < 4)
-				{
-					moveToSend.position += RuntimeOffsets[extruderIndex];
-					moveToSend.position -= extruderOffsets[extruderIndex];
-				}
 
 				if (moveToSend.HaveAnyPosition)
 				{
+					ClampToPrinter(ref moveToSend);
 					lineToSend = CreateMovementLine(moveToSend, lastDestination);
 				}
 				lastDestination = currentMove;
@@ -135,6 +126,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return lineToSend;
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			this.lastDestination.CopyKnowSettings(position);
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+
+		private void ClampToPrinter(ref PrinterMove moveToSend)
+		{
+			var bounds = extruderBounds[printer.Connection.ActiveExtruderIndex];
+			if (moveToSend.position.X < bounds.MinXYZ.X)
+			{
+				moveToSend.position.X = bounds.MinXYZ.X;
+				// If we clamp, than do not do any extrusion at all
+				moveToSend.extrusion = 0;
+			}
 		}
 	}
 }

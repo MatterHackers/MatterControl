@@ -2142,7 +2142,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(Printer, extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
-			softwareEndstopsExStream12 = new SoftwareEndstopsStream(processWriteRegExStream11, Printer);
+			softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, processWriteRegExStream11);
 			totalGCodeStream = softwareEndstopsExStream12;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
