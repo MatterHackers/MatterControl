@@ -30,10 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
@@ -101,6 +101,8 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(nextButton);
 		}
 
+		bool vertical = false;
+
 		public override void OnLoad(EventArgs args)
 		{
 			// Replace with calibration template code
@@ -108,14 +110,22 @@ namespace MatterHackers.MatterControl
 			{
 				var turtle = new GCodeTurtle();
 
+				var vertical = true;
+				if (vertical)
+				{
+					//turtle.Transform = Affine.NewTranslation(90, 160);
+					turtle.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(110, 45);
+				}
+
 				var rect = new RectangleDouble(0, 0, 123, 30);
-				rect.Offset(70, 100);
 
 				var originalRect = rect;
 
 				double nozzleWidth = 0.4;
 
 				int towerSize = 10;
+
+				turtle.Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
 
 				double y1 = rect.Bottom;
 				turtle.MoveTo(rect.Left, y1);
@@ -344,7 +354,7 @@ namespace MatterHackers.MatterControl
 				};
 				calibrationLine.Click += (s, e) =>
 				{
-					activeOffset.Text = activeOffsets[calibrationLine.OffsetIndex].ToString("0.####");
+					activeOffset.Text = (activeOffsets[calibrationLine.OffsetIndex] * -1).ToString("0.####");
 
 				};
 				row.AddChild(calibrationLine);
@@ -376,7 +386,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Click += (s, e) =>
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
-				hotendOffset.X += double.Parse(activeOffset.Text);
+				hotendOffset.Y += double.Parse(activeOffset.Text);
 				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
 			};
 
