@@ -34,7 +34,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class SelectMaterialPage : PrinterSetupWizardPage
+	public class SelectMaterialPage : WizardPage
 	{
 		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton, bool showAlreadyLoadedButton)
 			: base(context, headerText, instructionsText)
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{
-					wizardContext.ShowNextPage(this.DialogWindow);
+					wizardPage.ShowNextPage(this.DialogWindow);
 				};
 
 				this.AddPageAction(loadFilamentButton);

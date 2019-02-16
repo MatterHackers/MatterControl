@@ -34,9 +34,9 @@ namespace MatterHackers.MatterControl
 {
 	public abstract class PrinterSetupWizard
 	{
-		private IEnumerator<PrinterSetupWizardPage> pages;
+		private IEnumerator<WizardPage> pages;
 
-		protected abstract IEnumerator<PrinterSetupWizardPage> GetWizardSteps();
+		protected abstract IEnumerator<WizardPage> GetWizardSteps();
 
 		public string WindowTitle { get; internal set; }
 

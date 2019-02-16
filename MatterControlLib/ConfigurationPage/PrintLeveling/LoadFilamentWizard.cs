@@ -36,7 +36,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -83,7 +82,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
+		protected override IEnumerator<WizardPage> GetWizardSteps()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// show the trim filament message
 			{
-				var trimFilamentPage = new PrinterSetupWizardPage(this, "Trim Filament".Localize(), "")
+				var trimFilamentPage = new WizardPage(this, "Trim Filament".Localize(), "")
 				{
 					PageLoad = (page) =>
 					{
@@ -131,7 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show the insert filament page
 			{
 				RunningInterval runningGCodeCommands = null;
-				var insertFilamentPage = new PrinterSetupWizardPage(this, "Insert Filament".Localize(), "")
+				var insertFilamentPage = new WizardPage(this, "Insert Filament".Localize(), "")
 				{
 					PageLoad = (page) =>
 					{
@@ -189,7 +188,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show the loading filament progress bar
 			{
 				RunningInterval runningGCodeCommands = null;
-				var loadingFilamentPage = new PrinterSetupWizardPage(this, "Loading Filament".Localize(), "")
+				var loadingFilamentPage = new WizardPage(this, "Loading Filament".Localize(), "")
 				{
 					PageLoad = (page) =>
 					{
@@ -300,7 +299,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// extrude slowly so that we can prime the extruder
 			{
 				RunningInterval runningGCodeCommands = null;
-				var runningCleanPage = new PrinterSetupWizardPage(this, "Wait For Running Clean".Localize(), "")
+				var runningCleanPage = new WizardPage(this, "Wait For Running Clean".Localize(), "")
 				{
 					PageLoad = (page) =>
 					{
@@ -358,7 +357,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class DoneLoadingPage : PrinterSetupWizardPage
+	public class DoneLoadingPage : WizardPage
 	{
 		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())

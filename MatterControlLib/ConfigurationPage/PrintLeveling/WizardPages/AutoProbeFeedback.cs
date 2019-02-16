@@ -31,16 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class AutoProbeFeedback : PrinterSetupWizardPage
+	public class AutoProbeFeedback : WizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;

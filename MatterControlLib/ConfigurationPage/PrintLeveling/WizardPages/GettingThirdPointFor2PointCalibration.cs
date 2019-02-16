@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class GettingThirdPointFor2PointCalibration : PrinterSetupWizardPage
+	public class GettingThirdPointFor2PointCalibration : WizardPage
 	{
 		protected Vector3 probeStartPosition;
 		private ProbePosition probePosition;

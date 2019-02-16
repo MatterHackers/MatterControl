@@ -38,7 +38,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class WaitForTempPage : PrinterSetupWizardPage
+	public class WaitForTempPage : WizardPage
 	{
 		private ProgressBar bedProgressBar;
 		private TextWidget bedProgressBarText;

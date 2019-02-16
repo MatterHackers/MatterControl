@@ -38,7 +38,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPagelInstructions : PrinterSetupWizardPage
+	public class CalibrateProbeLastPagelInstructions : WizardPage
 	{
 		private bool pageWasActive = false;
 

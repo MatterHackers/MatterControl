@@ -34,7 +34,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class HomePrinterPage : PrinterSetupWizardPage
+	public class HomePrinterPage : WizardPage
 	{
 		private bool autoAdvance;
 

@@ -34,12 +34,11 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LastPageInstructions : PrinterSetupWizardPage
+	public class LastPageInstructions : WizardPage
 	{
 		private List<ProbePosition> probePositions;
 

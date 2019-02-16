@@ -35,22 +35,22 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSetupWizardPage : DialogPage
+	public class WizardPage : DialogPage
 	{
 		public TextButton NextButton { get; }
 		protected PrinterConfig printer;
 
-		public Action<PrinterSetupWizardPage> PageLoad { get; set; }
+		public Action<WizardPage> PageLoad { get; set; }
 
 		public Action PageClose { get; set; }
 
-		protected PrinterSetupWizard wizardContext;
+		protected PrinterSetupWizard wizardPage;
 
-		public PrinterSetupWizardPage(PrinterSetupWizard wizardContext, string headerText, string instructionsText)
+		public WizardPage(PrinterSetupWizard wizardPage, string headerText, string instructionsText)
 		{
-			this.wizardContext = wizardContext;
-			this.printer = wizardContext.Printer;
-			this.WindowTitle = wizardContext.WindowTitle;
+			this.wizardPage = wizardPage;
+			this.printer = wizardPage.Printer;
+			this.WindowTitle = wizardPage.WindowTitle;
 			this.HeaderText = headerText;
 
 			if (!string.IsNullOrEmpty(instructionsText))
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			};
 			NextButton.Click += (s, e) =>
 			{
-				wizardContext.ShowNextPage(this.DialogWindow);
+				wizardPage.ShowNextPage(this.DialogWindow);
 			};
 
 			this.AddPageAction(NextButton);

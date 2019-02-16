@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.extruderIndex = extruderIndex;
 		}
 
-		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
+		protected override IEnumerator<WizardPage> GetWizardSteps()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				int extruderPriorToUnload = printer.Connection.ActiveExtruderIndex;
 
 				RunningInterval runningGCodeCommands = null;
-				var unloadingFilamentPage = new PrinterSetupWizardPage(this, "Unloading Filament".Localize(), "")
+				var unloadingFilamentPage = new WizardPage(this, "Unloading Filament".Localize(), "")
 				{
 					PageLoad = (page) =>
 					{
@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 	}
 
-	public class DoneUnloadingPage : PrinterSetupWizardPage
+	public class DoneUnloadingPage : WizardPage
 	{
 		public DoneUnloadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
