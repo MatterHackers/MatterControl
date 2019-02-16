@@ -43,40 +43,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class NozzleOffsetCalibrationIntroPage : DialogPage
-	{
-		public NozzleOffsetCalibrationIntroPage(PrinterConfig printer)
-		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
-
-			this.ContentRow.AddChild(
-				new WrappedTextWidget(
-					"Offset Calibration required. We'll now print a calibration guide on the printer to tune your nozzel offsets".Localize(), 
-					textColor: theme.TextColor, 
-					pointSize: theme.DefaultFontSize));
-
-			var nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Begin calibration print";
-			nextButton.Click += (s, e) =>
-			{
-				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationPrintPage(printer));
-			};
-
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
-		}
-	}
-
-	public class NozzleOffsetCalibrationPrintPage: DialogPage
+	public class NozzleOffsetCalibrationPrintPage: WizardPage
 	{
 		private PrinterConfig printer;
-		private TextButton nextButton;
 		private double[] activeOffsets;
 
-		public NozzleOffsetCalibrationPrintPage(PrinterConfig printer)
+		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
+			: base(setupWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
@@ -85,26 +58,17 @@ namespace MatterHackers.MatterControl
 
 			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-			nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Configure Calibration";
-			nextButton.Enabled = false;
-			nextButton.Click += (s, e) =>
-			{
-				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationResultsPage(printer, activeOffsets));
-			};
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
 		}
+
+		public double[] ActiveOffsets => activeOffsets;
 
 		bool vertical = false;
 
 		public override void OnLoad(EventArgs args)
 		{
+			this.NextButton.Enabled = false;
+
 			// Replace with calibration template code
 			Task.Run(() =>
 			{
@@ -266,7 +230,11 @@ namespace MatterHackers.MatterControl
 			{
 				// TODO: Silly hack to replicate expected behavior
 				Thread.Sleep(10 * 1000);
-				nextButton.Enabled = true;
+
+				if (!this.HasBeenClosed)
+				{
+					this.NextButton.Enabled = true;
+				}
 			});
 
 			base.OnLoad(args);
@@ -318,12 +286,13 @@ namespace MatterHackers.MatterControl
 		}
 	}
 
-	public class NozzleOffsetCalibrationResultsPage : DialogPage
+	public class NozzleOffsetCalibrationResultsPage : WizardPage
 	{
 		private TextWidget activeOffset;
 		private CalibrationLine calibrationLine;
 
-		public NozzleOffsetCalibrationResultsPage(PrinterConfig printer, double[] activeOffsets)
+		public NozzleOffsetCalibrationResultsPage(ISetupWizard setupWizard, PrinterConfig printer, double[] activeOffsets)
+			: base(setupWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";

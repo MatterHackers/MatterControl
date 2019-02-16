@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					calibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new NozzleOffsetCalibrationIntroPage(printer));
+						NozzleCalibrationWizard.Start(printer, theme);
 					});
 
 					settingsRow.BorderColor = Color.Transparent;
