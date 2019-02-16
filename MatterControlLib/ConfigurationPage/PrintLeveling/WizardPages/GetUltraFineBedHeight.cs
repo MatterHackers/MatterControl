@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,18 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using MatterHackers.Agg;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetUltraFineBedHeight : FindBedHeight
 	{
-		private bool haveDrawn = false;
-
 		public GetUltraFineBedHeight(PrinterSetupWizard context, string pageDescription, List<ProbePosition> probePositions,
 			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
 			: base(
@@ -50,23 +45,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions, 
 				probePositionsBeingEditedIndex)
 		{
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			haveDrawn = true;
-			base.OnDraw(graphics2D);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// TODO: Why conditional on haveDrawn?
-			if (haveDrawn)
-			{
-				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
-			}
-
-			base.OnLoad(args);
 		}
 	}
 }
