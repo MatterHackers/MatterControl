@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			// first make sure there is no leftover FinishedProbe event
 			printer.Connection.LineReceived += FinishedProbe;
@@ -67,9 +67,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.QueueLine("G30");
 			printer.Connection.LineReceived += FinishedProbe;
 
-			base.PageIsBecomingActive();
-
 			NextButton.Enabled = false;
+
+			base.OnLoad(args);
 		}
 
 		private void FinishedProbe(object sender, string line)

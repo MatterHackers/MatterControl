@@ -110,12 +110,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage unloadingFilamentPage = null;
-				unloadingFilamentPage = new PrinterSetupWizardPage(
-					this,
-					"Unloading Filament".Localize(),
-					"")
+				unloadingFilamentPage = new PrinterSetupWizardPage(this, "Unloading Filament".Localize(), "")
 				{
-					BecomingActive = () =>
+					PageLoad = () =>
 					{
 						unloadingFilamentPage.NextButton.Enabled = false;
 
@@ -204,7 +201,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						},
 						.1);
 					},
-					BecomingInactive = () =>
+					PageClose = () =>
 					{
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
@@ -248,11 +245,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.AddPageAction(loadFilamentButton);
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
-			ShowWizardFinished();
-
-			base.PageIsBecomingActive();
+			this.ShowWizardFinished();
+			base.OnLoad(args);
 		}
 	}
 }

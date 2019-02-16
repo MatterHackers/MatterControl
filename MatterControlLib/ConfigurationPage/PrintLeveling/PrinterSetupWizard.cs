@@ -27,13 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -60,14 +55,11 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				// Shutdown active page
-				pages.Current?.PageIsBecomingInactive();
 				pages.Current?.Close();
 
 				// Advance
 				if (pages.MoveNext())
 				{
-					pages.Current?.PageIsBecomingActive();
-
 					dialogWindow.ChangeToPage(pages.Current);
 				}
 			});

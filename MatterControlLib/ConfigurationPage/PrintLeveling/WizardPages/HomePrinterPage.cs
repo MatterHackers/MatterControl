@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			printer.Connection.CommunicationStateChanged += CheckHomeFinished;
 
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				NextButton.Enabled = false;
 			}
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 
 		private void CheckHomeFinished(object sender, EventArgs e)
@@ -83,13 +83,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					UiThread.RunOnIdle(() => NextButton.InvokeClick());
 				}
 			}
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			NextButton.Enabled = true;
-
-			base.PageIsBecomingInactive();
 		}
 	}
 }

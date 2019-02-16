@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
@@ -57,14 +58,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnDraw(graphics2D);
 		}
 
-		public override void PageIsBecomingInactive()
+		public override void OnLoad(EventArgs args)
 		{
 			// TODO: Why conditional on haveDrawn?
 			if (haveDrawn)
 			{
 				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
-			base.PageIsBecomingInactive();
+
+			base.OnLoad(args);
 		}
 	}
 }

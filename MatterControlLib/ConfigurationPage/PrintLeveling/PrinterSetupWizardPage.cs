@@ -40,8 +40,8 @@ namespace MatterHackers.MatterControl
 		public TextButton NextButton { get; }
 		protected PrinterConfig printer;
 
-		public Action BecomingActive;
-		public Action BecomingInactive;
+		public Action PageLoad;
+		public Action PageClose;
 		protected PrinterSetupWizard wizardContext;
 
 		public PrinterSetupWizardPage(PrinterSetupWizard wizardContext, string headerText, string instructionsText)
@@ -72,18 +72,6 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget ContentRow => contentRow;
 
-		public override void PageIsBecomingActive()
-		{
-			BecomingActive?.Invoke();
-			base.PageIsBecomingActive();
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			BecomingInactive?.Invoke();
-			base.PageIsBecomingInactive();
-		}
-
 		protected GuiWidget CreateTextField(string text)
 		{
 			return new WrappedTextWidget(text)
@@ -92,6 +80,18 @@ namespace MatterHackers.MatterControl
 				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch
 			};
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			this.PageLoad?.Invoke();
+			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			this.PageClose?.Invoke();
+			base.OnClosed(e);
 		}
 
 		public void ShowWizardFinished()

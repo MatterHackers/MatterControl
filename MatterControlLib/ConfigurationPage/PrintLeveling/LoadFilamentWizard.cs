@@ -104,12 +104,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show the trim filament message
 			{
 				PrinterSetupWizardPage trimFilamentPage = null;
-				trimFilamentPage = new PrinterSetupWizardPage(
-					this,
-					"Trim Filament".Localize(),
-					"")
+				trimFilamentPage = new PrinterSetupWizardPage(this, "Trim Filament".Localize(), "")
 				{
-					BecomingActive = () =>
+					PageLoad = () =>
 					{
 						// start heating up the extruder
 						printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature));
@@ -136,12 +133,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage insertFilamentPage = null;
-				insertFilamentPage = new PrinterSetupWizardPage(
-					this,
-					"Insert Filament".Localize(),
-					"")
+				insertFilamentPage = new PrinterSetupWizardPage(this, "Insert Filament".Localize(), "")
 				{
-					BecomingActive = () =>
+					PageLoad = () =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
 						if(extruderIndex == 1)
@@ -175,7 +169,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						},
 						.1);
 					},
-					BecomingInactive = () =>
+					PageClose = () =>
 					{
 						if (runningGCodeCommands != null)
 						{
@@ -198,12 +192,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage loadingFilamentPage = null;
-				loadingFilamentPage = new PrinterSetupWizardPage(
-					this,
-					"Loading Filament".Localize(),
-					"")
+				loadingFilamentPage = new PrinterSetupWizardPage(this, "Loading Filament".Localize(), "")
 				{
-					BecomingActive = () =>
+					PageLoad = () =>
 					{
 						loadingFilamentPage.NextButton.Enabled = false;
 
@@ -279,7 +270,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						},
 						.1);
 					},
-					BecomingInactive = () =>
+					PageClose = () =>
 					{
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
@@ -313,12 +304,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				RunningInterval runningGCodeCommands = null;
 				PrinterSetupWizardPage runningCleanPage = null;
-				runningCleanPage = new PrinterSetupWizardPage(
-					this,
-					"Wait For Running Clean".Localize(),
-					"")
+				runningCleanPage = new PrinterSetupWizardPage(this, "Wait For Running Clean".Localize(), "")
 				{
-					BecomingActive = () =>
+					PageLoad = () =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
 						if(extruderIndex == 1)
@@ -346,7 +334,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						},
 						.1);
 					},
-					BecomingInactive = () =>
+					PageClose = () =>
 					{
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
@@ -413,11 +401,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
-			ShowWizardFinished();
+			this.ShowWizardFinished();
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 	}
 }

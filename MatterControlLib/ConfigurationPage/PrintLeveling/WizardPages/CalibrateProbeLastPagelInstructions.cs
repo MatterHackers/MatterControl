@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.ShowWizardFinished();
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			pageWasActive = true;
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)

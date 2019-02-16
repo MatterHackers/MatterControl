@@ -90,17 +90,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this.CreateTextField(setZHeightCoarseInstruction2));
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
+			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
+			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
+
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
 			NextButton.ToolTipText = string.Format("[{0}]", "Right Arrow".Localize());
 
-			base.PageIsBecomingActive();
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
 			this.DialogWindow.KeyDown += TopWindowKeyDown;
 			base.OnLoad(args);
 		}
@@ -112,15 +110,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.DialogWindow.KeyDown -= TopWindowKeyDown;
 
 			base.OnClosed(e);
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
-			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
-			base.PageIsBecomingInactive();
-
-			NextButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()

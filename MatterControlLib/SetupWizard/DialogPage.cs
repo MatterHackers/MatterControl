@@ -223,13 +223,5 @@ namespace MatterHackers.MatterControl
 		{
 			abortCancel = false;
 		}
-
-		public virtual void PageIsBecomingActive()
-		{
-		}
-
-		public virtual void PageIsBecomingInactive()
-		{
-		}
 	}
 }

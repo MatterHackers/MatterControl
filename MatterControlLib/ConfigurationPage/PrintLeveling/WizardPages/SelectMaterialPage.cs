@@ -93,10 +93,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this.AddPageAction(alreadyLoadedButton);
 			}
 		}
-
-		public override void PageIsBecomingInactive()
-		{
-			base.PageIsBecomingInactive();
-		}
 	}
 }

@@ -119,12 +119,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private Vector3 feedRates;
 		private Vector3 adjustedProbePosition;
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
-
-			base.PageIsBecomingActive();
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
@@ -160,12 +158,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				printer.Connection.LineReceived += GetZProbeHeight;
 			}
+
+			base.OnLoad(args);
 		}
 
-		public override void PageIsBecomingInactive()
+		public override void OnClosed(EventArgs e)
 		{
 			printer.Connection.LineReceived -= GetZProbeHeight;
-			base.PageIsBecomingInactive();
+			base.OnClosed(e);
 		}
 	}
 }

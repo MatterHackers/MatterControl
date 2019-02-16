@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.ShowWizardFinished();
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 			};
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 	}
 }

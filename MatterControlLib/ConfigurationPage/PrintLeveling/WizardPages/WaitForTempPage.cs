@@ -167,13 +167,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			// hook our parent so we can turn off the bed when we are done with leveling
-			this.DialogWindow.Closed += WizardWindow_Closed;
-			base.OnLoad(args);
-		}
-
 		private void WizardWindow_Closed(object sender, EventArgs e)
 		{
 			// Make sure when the wizard closes we turn off the bed heating
@@ -181,8 +174,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.DialogWindow.Closed -= WizardWindow_Closed;
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
+			// hook our parent so we can turn off the bed when we are done with leveling
+			this.DialogWindow.Closed += WizardWindow_Closed;
+
 			bedStartingTemp = printer.Connection.ActualBedTemperature;
 
 			runningInterval = UiThread.SetInterval(ShowTempChangeProgress, 1);
@@ -205,21 +201,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			NextButton.Enabled = false;
 
 			// if we are trying to go to a temp of 0 than just move on to next window
-			if(bedTargetTemp == 0 
+			if (bedTargetTemp == 0
 				&& targetHotendTemps.All(i => i == 0))
 			{
 				// advance to the next page
 				UiThread.RunOnIdle(() => NextButton.InvokeClick());
 			}
 
-			base.PageIsBecomingActive();
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			NextButton.Enabled = true;
-
-			base.PageIsBecomingInactive();
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)
