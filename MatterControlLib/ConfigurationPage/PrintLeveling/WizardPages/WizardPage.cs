@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl
 		protected ISetupWizard setupWizard;
 
 		public WizardPage(ISetupWizard setupWizard, string headerText, string instructionsText)
+			: this(setupWizard)
 		{
-			this.setupWizard = setupWizard;
 			this.printer = setupWizard.Printer;
 			this.HeaderText = headerText;
 
@@ -57,6 +57,11 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(
 					this.CreateTextField(instructionsText.Replace("\t", "    ")));
 			}
+		}
+
+		public WizardPage(ISetupWizard setupWizard)
+		{
+			this.setupWizard = setupWizard;
 
 			this.NextButton = new TextButton("Next".Localize(), theme)
 			{
