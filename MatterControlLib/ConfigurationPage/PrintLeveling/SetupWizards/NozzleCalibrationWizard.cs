@@ -57,7 +57,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var nozzleWizard = new NozzleCalibrationWizard(printer);
 
-			var dialogWindow = DialogWindow.Show(nozzleWizard.CurrentPage);
+			DialogWindow.Show(nozzleWizard.CurrentPage);
+		}
+
+		public override void Dispose()
+		{
 		}
 
 		public static bool UsingZProbe(PrinterConfig printer)

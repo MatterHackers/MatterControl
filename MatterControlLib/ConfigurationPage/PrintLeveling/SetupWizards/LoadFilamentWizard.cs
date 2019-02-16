@@ -64,11 +64,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton);
 
-			var dialogWindow = DialogWindow.Show(loadFilamentWizard.CurrentPage);
-			dialogWindow.Closed += (s, e) =>
-			{
-				printer.Connection.SetTargetHotendTemperature(extruderIndex, loadFilamentWizard.TemperatureAtStart);
-			};
+			DialogWindow.Show(loadFilamentWizard.CurrentPage);
+		}
+
+		public override void Dispose()
+		{
+			printer.Connection.SetTargetHotendTemperature(extruderIndex, this.TemperatureAtStart);
 		}
 
 		public static bool NeedsToBeRun0(PrinterConfig printer)

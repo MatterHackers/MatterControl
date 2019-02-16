@@ -60,24 +60,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var probeWizard = new ProbeCalibrationWizard(printer);
 
-			var dialogWindow = DialogWindow.Show(probeWizard.CurrentPage);
-			dialogWindow.Closed += (s, e) =>
+			DialogWindow.Show(probeWizard.CurrentPage);
+		}
+
+		public override void Dispose()
+		{
+			// If leveling was on when we started, make sure it is on when we are done.
+			printer.Connection.AllowLeveling = true;
+
+			// make sure we raise the probe on close
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
 			{
-				// If leveling was on when we started, make sure it is on when we are done.
-				printer.Connection.AllowLeveling = true;
-
-				dialogWindow = null;
-
-				// make sure we raise the probe on close
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-				{
-					// make sure the servo is retracted
-					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
-				}
-			};
+				// make sure the servo is retracted
+				var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+				printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
+			}
 		}
 
 		public static bool UsingZProbe(PrinterConfig printer)

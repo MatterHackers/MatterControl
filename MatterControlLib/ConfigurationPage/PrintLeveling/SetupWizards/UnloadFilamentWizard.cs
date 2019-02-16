@@ -60,11 +60,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// turn off print leveling
 			var unloadWizard = new UnloadFilamentWizard(printer, extruderIndex);
 
-			var dialogWindow = DialogWindow.Show(unloadWizard.CurrentPage);
-			dialogWindow.Closed += (s, e) =>
-			{
-				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
-			};
+			DialogWindow.Show(unloadWizard.CurrentPage);
+		}
+
+		public override void Dispose()
+		{
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 		}
 
 		private IEnumerator<WizardPage> GetPages()
