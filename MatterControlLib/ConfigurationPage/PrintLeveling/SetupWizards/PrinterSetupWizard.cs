@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl
 
 		protected PrinterConfig printer;
 
+		protected string windowTitle;
+
 		public PrinterConfig Printer => printer;
 
 		public PrinterSetupWizard(PrinterConfig printer)

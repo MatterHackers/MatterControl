@@ -47,6 +47,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public double TemperatureAtStart { get; private set; }
 		private int extruderIndex;
 
+		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
+			: base(printer)
+		{
+			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
+
+			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
+			pages = this.GetPages();
+			pages.MoveNext();
+
+			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
+			this.extruderIndex = extruderIndex;
+		}
+
 		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex, bool showAlreadyLoadedButton)
 		{
 			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton);
@@ -56,18 +69,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				printer.Connection.SetTargetHotendTemperature(extruderIndex, loadFilamentWizard.TemperatureAtStart);
 			};
-		}
-
-		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
-			: base(printer)
-		{
-			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
-
-			pages = this.GetPages();
-			pages.MoveNext();
-
-			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
-			this.extruderIndex = extruderIndex;
 		}
 
 		public static bool NeedsToBeRun0(PrinterConfig printer)
@@ -97,7 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize()
+				WindowTitle = windowTitle
 			};
 
 			var theme = ApplicationController.Instance.Theme;

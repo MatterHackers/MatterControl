@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.levelingPlan = levelingPlan;
 
+			windowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 			pages = this.GetPages();
 			pages.MoveNext();
 		}
@@ -144,8 +145,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// If no leveling data has been calculated
 			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
 				&& !ProbeCalibrationWizard.UsingZProbe(printer);
-
-			string windowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 
 			if (showWelcomeScreen)
 			{

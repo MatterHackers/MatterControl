@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
+			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
 			pages = this.GetPages();
 			pages.MoveNext();
 		}
@@ -98,8 +99,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			manualProbePositions.Add(new ProbePosition());
 
 			int totalSteps = 3;
-
-			string windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
 
 			// make a welcome page if this is the first time calibrating the probe
 			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))

@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -45,6 +44,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private int extruderIndex;
 
+		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
+			: base(printer)
+		{
+			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize();
+			pages = this.GetPages();
+			pages.MoveNext();
+
+			this.extruderIndex = extruderIndex;
+		}
+
 		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
 		{
 			// turn off print leveling
@@ -55,15 +64,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
-		}
-
-		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
-			: base(printer)
-		{
-			pages = this.GetPages();
-			pages.MoveNext();
-
-			this.extruderIndex = extruderIndex;
 		}
 
 		private IEnumerator<WizardPage> GetPages()
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false)
 			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize()
+				WindowTitle = windowTitle
 			};
 
 			var theme = ApplicationController.Instance.Theme;
