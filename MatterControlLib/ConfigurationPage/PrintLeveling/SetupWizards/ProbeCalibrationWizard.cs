@@ -43,6 +43,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
 
+			// Initialize - turn off print leveling
+			printer.Connection.AllowLeveling = false;
+
 			pages = this.GetPages();
 			pages.MoveNext();
 		}
@@ -51,16 +54,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// we have a probe that we are using and we have not done leveling yet
 			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
-		}
-
-		public static void Start(PrinterConfig printer, ThemeConfig theme)
-		{
-			// turn off print leveling
-			printer.Connection.AllowLeveling = false;
-
-			var probeWizard = new ProbeCalibrationWizard(printer);
-
-			DialogWindow.Show(probeWizard.CurrentPage);
 		}
 
 		public override void Dispose()

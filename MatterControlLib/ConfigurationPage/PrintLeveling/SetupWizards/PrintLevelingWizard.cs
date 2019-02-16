@@ -41,19 +41,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private LevelingPlan levelingPlan;
 
-		public PrintLevelingWizard(LevelingPlan levelingPlan, PrinterConfig printer)
+		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.levelingPlan = levelingPlan;
 			this.WindowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
+
+			this.Initialize();
 
 			pages = this.GetPages();
 			pages.MoveNext();
 		}
 
-		public bool WindowHasBeenClosed { get; private set; }
-
-		public static void Start(PrinterConfig printer, ThemeConfig theme)
+		private void Initialize()
 		{
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -68,8 +67,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 
 			printer.Connection.QueueLine("T0");
-
-			LevelingPlan levelingPlan;
 
 			switch (levelingData.LevelingSystem)
 			{
@@ -108,11 +105,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				default:
 					throw new NotImplementedException();
 			}
-
-			var levelingWizard = new PrintLevelingWizard(levelingPlan, printer);
-			
-			DialogWindow.Show(levelingWizard.CurrentPage);
 		}
+
+		public bool WindowHasBeenClosed { get; private set; }
 
 		public override void Dispose()
 		{

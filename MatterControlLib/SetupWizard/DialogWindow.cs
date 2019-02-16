@@ -84,6 +84,28 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
+		public static DialogWindow Show(ISetupWizard setupWizard)
+		{
+			DialogWindow wizardWindow = GetWindow(setupWizard.GetType());
+			wizardWindow.Title = setupWizard.WindowTitle;
+
+			SetSizeAndShow(wizardWindow, setupWizard.CurrentPage);
+
+			wizardWindow.ChangeToPage(setupWizard.CurrentPage);
+
+			EventHandler windowClosed = null;
+
+			windowClosed = (s, e) =>
+			{
+				setupWizard.Dispose();
+				wizardWindow.Closed -= windowClosed;
+			};
+
+			wizardWindow.Closed += windowClosed;
+
+			return wizardWindow;
+		}
+
 		// Allow the WizardPage MinimumSize to override our MinimumSize
 		public override Vector2 MinimumSize
 		{

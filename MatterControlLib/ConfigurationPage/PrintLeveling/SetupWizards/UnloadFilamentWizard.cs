@@ -48,19 +48,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize();
+			this.extruderIndex = extruderIndex;
 
 			pages = this.GetPages();
 			pages.MoveNext();
-
-			this.extruderIndex = extruderIndex;
-		}
-
-		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
-		{
-			// turn off print leveling
-			var unloadWizard = new UnloadFilamentWizard(printer, extruderIndex);
-
-			DialogWindow.Show(unloadWizard.CurrentPage);
 		}
 
 		public override void Dispose()
@@ -239,7 +230,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			loadFilamentButton.Click += (s, e) =>
 			{
 				loadFilamentButton.Parents<SystemWindow>().First().Close();
-				LoadFilamentWizard.Start(printer, theme, extruderIndex, false);
+
+				DialogWindow.Show(
+					new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
 			};
 			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 

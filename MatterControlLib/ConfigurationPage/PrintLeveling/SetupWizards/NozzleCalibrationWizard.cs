@@ -53,13 +53,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated);
 		}
 
-		public static void Start(PrinterConfig printer, ThemeConfig theme)
-		{
-			var nozzleWizard = new NozzleCalibrationWizard(printer);
-
-			DialogWindow.Show(nozzleWizard.CurrentPage);
-		}
-
 		public override void Dispose()
 		{
 		}

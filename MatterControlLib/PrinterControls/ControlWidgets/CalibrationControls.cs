@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						PrintLevelingWizard.Start(printer, theme);
+						DialogWindow.Show(new PrintLevelingWizard(printer));
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					};
 					runCalibrateProbeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						ProbeCalibrationWizard.Start(printer, theme);
+						DialogWindow.Show(new ProbeCalibrationWizard(printer));
 					});
 
 					settingsRow.BorderColor = Color.Transparent;
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					calibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						NozzleCalibrationWizard.Start(printer, theme);
+						DialogWindow.Show(new NozzleCalibrationWizard(printer));
 					});
 
 					settingsRow.BorderColor = Color.Transparent;

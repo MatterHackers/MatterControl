@@ -53,18 +53,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
 
+			// Initialize - store startup temp and extruder index
+			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
+			this.extruderIndex = extruderIndex;
+
 			pages = this.GetPages();
 			pages.MoveNext();
-
-			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
-			this.extruderIndex = extruderIndex;
-		}
-
-		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex, bool showAlreadyLoadedButton)
-		{
-			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton);
-
-			DialogWindow.Show(loadFilamentWizard.CurrentPage);
 		}
 
 		public override void Dispose()
@@ -392,7 +386,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				loadFilament2Button.Click += (s, e) =>
 				{
 					loadFilament2Button.Parents<SystemWindow>().First().Close();
-					LoadFilamentWizard.Start(printer, theme, 1, true);
+
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
 				};
 				theme.ApplyPrimaryActionStyle(loadFilament2Button);
 

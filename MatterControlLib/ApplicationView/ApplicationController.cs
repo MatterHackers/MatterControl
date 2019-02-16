@@ -1630,7 +1630,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					ProbeCalibrationWizard.Start(printer, theme);
+					DialogWindow.Show(new ProbeCalibrationWizard(printer));
 				});
 				return true;
 			}
@@ -1640,7 +1640,7 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					PrintLevelingWizard.Start(printer, theme);
+					DialogWindow.Show(new PrintLevelingWizard(printer));
 				});
 				return true;
 			}
@@ -1650,7 +1650,8 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LoadFilamentWizard.Start(printer, theme, 0, true);
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
 				});
 				return true;
 			}
@@ -1660,7 +1661,8 @@ namespace MatterHackers.MatterControl
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					LoadFilamentWizard.Start(printer, theme, 1, true);
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
 				});
 				return true;
 			}
