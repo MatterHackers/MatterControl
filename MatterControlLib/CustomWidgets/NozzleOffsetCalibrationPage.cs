@@ -108,13 +108,13 @@ namespace MatterHackers.MatterControl
 			// Replace with calibration template code
 			Task.Run(() =>
 			{
-				var turtle = new GCodeTurtle();
+				var gcodeSketch = new GCodeSketch();
 
 				var vertical = true;
 				if (vertical)
 				{
 					//turtle.Transform = Affine.NewTranslation(90, 160);
-					turtle.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(110, 45);
+					gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(110, 45);
 				}
 
 				var rect = new RectangleDouble(0, 0, 123, 30);
@@ -125,10 +125,10 @@ namespace MatterHackers.MatterControl
 
 				int towerSize = 10;
 
-				turtle.Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
+				gcodeSketch.Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
 
 				double y1 = rect.Bottom;
-				turtle.MoveTo(rect.Left, y1);
+				gcodeSketch.MoveTo(rect.Left, y1);
 
 				var towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 				towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
@@ -137,24 +137,24 @@ namespace MatterHackers.MatterControl
 				while (towerRect.Width > 4)
 				{
 					towerRect.Inflate(-nozzleWidth);
-					turtle.Draw(towerRect);
+					gcodeSketch.DrawRectangle(towerRect);
 				}
 
 				// Draw box
 				for (var i = 0; i < 3; i++)
 				{
 					rect.Inflate(-nozzleWidth);
-					turtle.Draw(rect);
+					gcodeSketch.DrawRectangle(rect);
 				}
 
 				y1 = rect.YCenter + (nozzleWidth / 2);
 
 				// Draw centerline
-				turtle.MoveTo(rect.Left, y1);
-				turtle.LineTo(rect.Right, y1);
+				gcodeSketch.MoveTo(rect.Left, y1);
+				gcodeSketch.LineTo(rect.Right, y1);
 				y1 += nozzleWidth;
-				turtle.MoveTo(rect.Right, y1);
-				turtle.LineTo(rect.Left, y1);
+				gcodeSketch.MoveTo(rect.Right, y1);
+				gcodeSketch.LineTo(rect.Left, y1);
 
 				y1 -= nozzleWidth / 2;
 
@@ -173,25 +173,25 @@ namespace MatterHackers.MatterControl
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
-					turtle.MoveTo(x, up ? y1 : y2);
+					gcodeSketch.MoveTo(x, up ? y1 : y2);
 
 					if ((i % 5 == 0))
 					{
-						turtle.LineTo(x, y3);
+						gcodeSketch.LineTo(x, y3);
 
-						var currentPos = turtle.CurrentPosition;
+						var currentPos = gcodeSketch.CurrentPosition;
 
-						turtle.Speed = 500;
+						gcodeSketch.Speed = 500;
 
-						PrintLineEnd(turtle, drawGlpyphs, i, currentPos);
+						PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
 
-						turtle.Speed = 1800;
+						gcodeSketch.Speed = 1800;
 
-						turtle.MoveTo(x, y3);
-						turtle.MoveTo(x, y2);
+						gcodeSketch.MoveTo(x, y3);
+						gcodeSketch.MoveTo(x, y2);
 					}
 
-					turtle.LineTo(x, up ? y2 : y1);
+					gcodeSketch.LineTo(x, up ? y2 : y1);
 
 					x = x + step;
 
@@ -202,25 +202,25 @@ namespace MatterHackers.MatterControl
 				y1 = rect.Top + (nozzleWidth * .5);
 				y2 = y1 - sectionHeight + (nozzleWidth * .5);
 
-				turtle.WriteRaw("T1");
-				turtle.ResetE();
+				gcodeSketch.WriteRaw("T1");
+				gcodeSketch.ResetE();
 
-				turtle.MoveTo(rect.Left, rect.Top);
+				gcodeSketch.MoveTo(rect.Left, rect.Top);
 				towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 				towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
-				turtle.PenDown();
+				gcodeSketch.PenDown();
 
-				turtle.Speed = 800;
+				gcodeSketch.Speed = 800;
 
 				// Draw purge box
 				while (towerRect.Width > 4)
 				{
 					towerRect.Inflate(-nozzleWidth);
-					turtle.Draw(towerRect);
+					gcodeSketch.DrawRectangle(towerRect);
 				}
 
-				turtle.Speed = 1000;
+				gcodeSketch.Speed = 1000;
 
 				up = true;
 
@@ -240,17 +240,17 @@ namespace MatterHackers.MatterControl
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
-					turtle.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
-					turtle.LineTo(x + activeOffsets[i], up ? y2 : y1);
+					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
 					x = x + step;
 
 					up = !up;
 				}
 
-				turtle.PenUp();
+				gcodeSketch.PenUp();
 
-				string gcode = turtle.ToGCode();
+				string gcode = gcodeSketch.ToGCode();
 
 				Console.WriteLine("--------------------------------------------------");
 				Console.WriteLine(gcode);
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl
 			base.OnLoad(args);
 		}
 
-		private static void PrintLineEnd(GCodeTurtle turtle, bool drawGlpyphs, int i, Vector2 currentPos)
+		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)
 		{
 			if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{

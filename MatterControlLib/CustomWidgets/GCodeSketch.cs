@@ -36,7 +36,10 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class GCodeTurtle : IDisposable
+	/// <summary>
+	/// Build GCode instructions from simple commands like MoveTo/LineTo/DrawRectangle
+	/// </summary>
+	public class GCodeSketch : IDisposable
 	{
 		private StringBuilder sb;
 		private StringWriter writer;
@@ -44,7 +47,7 @@ namespace MatterHackers.MatterControl
 
 		public Affine Transform { get; set; } = Affine.NewIdentity();
 
-		public GCodeTurtle()
+		public GCodeSketch()
 		{
 			sb = new StringBuilder();
 			writer = new StringWriter(sb);
@@ -137,7 +140,7 @@ namespace MatterHackers.MatterControl
 			writer.Dispose();
 		}
 
-		internal void Draw(RectangleDouble rect)
+		internal void DrawRectangle(RectangleDouble rect)
 		{
 			this.MoveTo(rect.Left, rect.Bottom);
 
