@@ -45,8 +45,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.levelingPlan = levelingPlan;
+			this.WindowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 
-			windowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 			pages = this.GetPages();
 			pages.MoveNext();
 		}
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
 						"The next few screens will walk your through calibrating your printer.".Localize()))
 				{
-					WindowTitle = windowTitle
+					WindowTitle = WindowTitle
 				};
 			}
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Print Leveling Overview".Localize(),
 				buildWelcomeText())
 			{
-				WindowTitle = windowTitle
+				WindowTitle = WindowTitle
 			};
 
 			yield return new HomePrinterPage(

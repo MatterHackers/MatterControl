@@ -47,7 +47,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
-			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize();
+			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize();
+
 			pages = this.GetPages();
 			pages.MoveNext();
 
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false)
 			{
-				WindowTitle = windowTitle
+				WindowTitle = WindowTitle
 			};
 
 			var theme = ApplicationController.Instance.Theme;

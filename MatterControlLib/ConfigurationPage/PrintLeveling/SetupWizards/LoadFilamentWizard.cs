@@ -51,8 +51,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
+			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
 
-			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
 			pages = this.GetPages();
 			pages.MoveNext();
 
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
-				WindowTitle = windowTitle
+				WindowTitle = WindowTitle
 			};
 
 			var theme = ApplicationController.Instance.Theme;

@@ -41,10 +41,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public NozzleCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
+			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
+
 			pages = this.GetPages();
 			pages.MoveNext();
-
-			windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Nozzle Offset Calibration".Localize(),
 				"Offset Calibration required. We'll now print a calibration guide on the printer to tune your nozzle offsets".Localize())
 			{
-				WindowTitle = windowTitle
+				WindowTitle = WindowTitle
 			};
 
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);

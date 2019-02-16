@@ -36,8 +36,7 @@ namespace MatterHackers.MatterControl
 		protected IEnumerator<WizardPage> pages;
 
 		protected PrinterConfig printer;
-
-		protected string windowTitle;
+		public string WindowTitle { get; protected set; }
 
 		public PrinterConfig Printer => printer;
 
@@ -47,7 +46,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		public WizardPage CurrentPage => pages.Current;
-
 
 		public WizardPage GetNextPage()
 		{
@@ -59,5 +57,7 @@ namespace MatterHackers.MatterControl
 
 			return pages.Current;
 		}
+
+		public abstract void Dispose();
 	}
 }
