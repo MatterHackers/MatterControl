@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{
-					wizardPage.ShowNextPage(this.DialogWindow);
+					setupWizard.ShowNextPage(this.DialogWindow);
 				};
 
 				this.AddPageAction(loadFilamentButton);

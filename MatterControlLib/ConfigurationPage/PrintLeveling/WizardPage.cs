@@ -44,13 +44,13 @@ namespace MatterHackers.MatterControl
 
 		public Action PageClose { get; set; }
 
-		protected PrinterSetupWizard wizardPage;
+		protected PrinterSetupWizard setupWizard;
 
-		public WizardPage(PrinterSetupWizard wizardPage, string headerText, string instructionsText)
+		public WizardPage(PrinterSetupWizard setupWizard, string headerText, string instructionsText)
 		{
-			this.wizardPage = wizardPage;
-			this.printer = wizardPage.Printer;
-			this.WindowTitle = wizardPage.WindowTitle;
+			this.setupWizard = setupWizard;
+			this.printer = setupWizard.Printer;
+			this.WindowTitle = setupWizard.WindowTitle;
 			this.HeaderText = headerText;
 
 			if (!string.IsNullOrEmpty(instructionsText))
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			};
 			NextButton.Click += (s, e) =>
 			{
-				wizardPage.ShowNextPage(this.DialogWindow);
+				setupWizard.ShowNextPage(this.DialogWindow);
 			};
 
 			this.AddPageAction(NextButton);
