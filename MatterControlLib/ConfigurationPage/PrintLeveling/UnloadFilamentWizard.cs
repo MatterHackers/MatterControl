@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -109,12 +109,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				int extruderPriorToUnload = printer.Connection.ActiveExtruderIndex;
 
 				RunningInterval runningGCodeCommands = null;
-				PrinterSetupWizardPage unloadingFilamentPage = null;
-				unloadingFilamentPage = new PrinterSetupWizardPage(this, "Unloading Filament".Localize(), "")
+				var unloadingFilamentPage = new PrinterSetupWizardPage(this, "Unloading Filament".Localize(), "")
 				{
-					PageLoad = () =>
+					PageLoad = (page) =>
 					{
-						unloadingFilamentPage.NextButton.Enabled = false;
+						page.NextButton.Enabled = false;
 
 						// add the progress bar
 						var holder = new FlowLayoutWidget()
@@ -136,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						};
 						holder.AddChild(progressBar);
 						holder.AddChild(progressBarText);
-						unloadingFilamentPage.ContentRow.AddChild(holder);
+						page.ContentRow.AddChild(holder);
 
 						if (extruderCount > 1)
 						{
@@ -196,7 +195,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								&& remainingLengthMm <= .001)
 							{
 								UiThread.ClearInterval(runningGCodeCommands);
-								unloadingFilamentPage.NextButton.InvokeClick();
+								page.NextButton.InvokeClick();
 							}
 						},
 						.1);

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -103,10 +103,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// show the trim filament message
 			{
-				PrinterSetupWizardPage trimFilamentPage = null;
-				trimFilamentPage = new PrinterSetupWizardPage(this, "Trim Filament".Localize(), "")
+				var trimFilamentPage = new PrinterSetupWizardPage(this, "Trim Filament".Localize(), "")
 				{
-					PageLoad = () =>
+					PageLoad = (page) =>
 					{
 						// start heating up the extruder
 						printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature));
@@ -114,7 +113,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						var markdownText = printer.Settings.GetValue(SettingsKey.trim_filament_markdown);
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
-						trimFilamentPage.ContentRow.AddChild(markdownWidget);
+						page.ContentRow.AddChild(markdownWidget);
 					}
 				};
 				yield return trimFilamentPage;
@@ -132,10 +131,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show the insert filament page
 			{
 				RunningInterval runningGCodeCommands = null;
-				PrinterSetupWizardPage insertFilamentPage = null;
-				insertFilamentPage = new PrinterSetupWizardPage(this, "Insert Filament".Localize(), "")
+				var insertFilamentPage = new PrinterSetupWizardPage(this, "Insert Filament".Localize(), "")
 				{
-					PageLoad = () =>
+					PageLoad = (page) =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
 						if(extruderIndex == 1)
@@ -144,7 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
-						insertFilamentPage.ContentRow.AddChild(markdownWidget);
+						page.ContentRow.AddChild(markdownWidget);
 
 						// turn off the fan
 						printer.Connection.FanSpeed0To255 = 0;
@@ -191,12 +189,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show the loading filament progress bar
 			{
 				RunningInterval runningGCodeCommands = null;
-				PrinterSetupWizardPage loadingFilamentPage = null;
-				loadingFilamentPage = new PrinterSetupWizardPage(this, "Loading Filament".Localize(), "")
+				var loadingFilamentPage = new PrinterSetupWizardPage(this, "Loading Filament".Localize(), "")
 				{
-					PageLoad = () =>
+					PageLoad = (page) =>
 					{
-						loadingFilamentPage.NextButton.Enabled = false;
+						page.NextButton.Enabled = false;
 
 						// add the progress bar
 						var holder = new FlowLayoutWidget()
@@ -218,7 +215,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						};
 						holder.AddChild(progressBar);
 						holder.AddChild(progressBarText);
-						loadingFilamentPage.ContentRow.AddChild(holder);
+						page.ContentRow.AddChild(holder);
 
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
@@ -265,7 +262,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								&& remainingLengthMm <= .001)
 							{
 								UiThread.ClearInterval(runningGCodeCommands);
-								loadingFilamentPage.NextButton.InvokeClick();
+								page.NextButton.InvokeClick();
 							}
 						},
 						.1);
@@ -303,10 +300,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// extrude slowly so that we can prime the extruder
 			{
 				RunningInterval runningGCodeCommands = null;
-				PrinterSetupWizardPage runningCleanPage = null;
-				runningCleanPage = new PrinterSetupWizardPage(this, "Wait For Running Clean".Localize(), "")
+				var runningCleanPage = new PrinterSetupWizardPage(this, "Wait For Running Clean".Localize(), "")
 				{
-					PageLoad = () =>
+					PageLoad = (page) =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
 						if(extruderIndex == 1)
@@ -315,7 +311,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
-						runningCleanPage.ContentRow.AddChild(markdownWidget);
+						page.ContentRow.AddChild(markdownWidget);
 
 						var runningTime = Stopwatch.StartNew();
 						runningGCodeCommands = UiThread.SetInterval(() =>

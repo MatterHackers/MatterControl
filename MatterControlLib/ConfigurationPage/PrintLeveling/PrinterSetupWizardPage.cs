@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,8 +40,10 @@ namespace MatterHackers.MatterControl
 		public TextButton NextButton { get; }
 		protected PrinterConfig printer;
 
-		public Action PageLoad;
-		public Action PageClose;
+		public Action<PrinterSetupWizardPage> PageLoad { get; set; }
+
+		public Action PageClose { get; set; }
+
 		protected PrinterSetupWizard wizardContext;
 
 		public PrinterSetupWizardPage(PrinterSetupWizard wizardContext, string headerText, string instructionsText)
@@ -70,8 +72,6 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(NextButton);
 		}
 
-		public GuiWidget ContentRow => contentRow;
-
 		protected GuiWidget CreateTextField(string text)
 		{
 			return new WrappedTextWidget(text)
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnLoad(EventArgs args)
 		{
-			this.PageLoad?.Invoke();
+			this.PageLoad?.Invoke(this);
 			base.OnLoad(args);
 		}
 
