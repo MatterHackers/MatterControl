@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"T{extruderPriorToMeasure}");
 			}
 
-			yield return new CalibrateProbeLastPagelInstructions(
+			yield return new CalibrateProbeLastPageInstructions(
 				this,
 				"Done".Localize());
 		}

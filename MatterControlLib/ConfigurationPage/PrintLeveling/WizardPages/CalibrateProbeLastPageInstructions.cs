@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -38,11 +37,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPagelInstructions : WizardPage
+	public class CalibrateProbeLastPageInstructions : WizardPage
 	{
 		private bool pageWasActive = false;
 
-		public CalibrateProbeLastPagelInstructions(PrinterSetupWizard context, string headerText)
+		public CalibrateProbeLastPageInstructions(PrinterSetupWizard context, string headerText)
 			: base(context, headerText, "")
 		{
 			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
