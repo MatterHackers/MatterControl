@@ -173,47 +173,8 @@ namespace MatterHackers.MatterControl
 
 						turtle.Speed = 500;
 
-						if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
-						{
-							var flattened = new FlattenCurves(vertexSource);
+						PrintLineEnd(turtle, drawGlpyphs, i, currentPos);
 
-							var verticies = flattened.Vertices();
-							var firstItem = verticies.First();
-							var position = turtle.CurrentPosition;
-
-							var scale = 0.32;
-
-							if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
-							{
-								turtle.MoveTo((firstItem.position * scale) + currentPos);
-							}
-
-							bool closed = false;
-
-							foreach (var item in verticies)
-							{
-								switch (item.command)
-								{
-									case ShapePath.FlagsAndCommand.MoveTo:
-										turtle.MoveTo((item.position * scale) + currentPos);
-										break;
-
-									case ShapePath.FlagsAndCommand.LineTo:
-										turtle.LineTo((item.position * scale) + currentPos);
-										break;
-
-									case ShapePath.FlagsAndCommand.FlagClose:
-										turtle.LineTo((firstItem.position * scale) + currentPos);
-										closed = true;
-										break;
-								}
-							}
-
-							if (!closed)
-							{
-								turtle.LineTo((firstItem.position * scale) + currentPos);
-							}
-						}
 						turtle.Speed = 1800;
 
 						turtle.MoveTo(x, y3);
@@ -299,6 +260,51 @@ namespace MatterHackers.MatterControl
 			});
 
 			base.OnLoad(args);
+		}
+
+		private static void PrintLineEnd(GCodeTurtle turtle, bool drawGlpyphs, int i, Vector2 currentPos)
+		{
+			if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
+			{
+				var flattened = new FlattenCurves(vertexSource);
+
+				var verticies = flattened.Vertices();
+				var firstItem = verticies.First();
+				var position = turtle.CurrentPosition;
+
+				var scale = 0.32;
+
+				if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
+				{
+					turtle.MoveTo((firstItem.position * scale) + currentPos);
+				}
+
+				bool closed = false;
+
+				foreach (var item in verticies)
+				{
+					switch (item.command)
+					{
+						case ShapePath.FlagsAndCommand.MoveTo:
+							turtle.MoveTo((item.position * scale) + currentPos);
+							break;
+
+						case ShapePath.FlagsAndCommand.LineTo:
+							turtle.LineTo((item.position * scale) + currentPos);
+							break;
+
+						case ShapePath.FlagsAndCommand.FlagClose:
+							turtle.LineTo((firstItem.position * scale) + currentPos);
+							closed = true;
+							break;
+					}
+				}
+
+				if (!closed)
+				{
+					turtle.LineTo((firstItem.position * scale) + currentPos);
+				}
+			}
 		}
 	}
 
