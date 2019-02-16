@@ -45,6 +45,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.levelingPlan = levelingPlan;
+
+			pages = this.GetPages();
+			pages.MoveNext();
 		}
 
 		public bool WindowHasBeenClosed { get; private set; }
@@ -105,23 +108,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					throw new NotImplementedException();
 			}
 
-			var levelingContext = new PrintLevelingWizard(levelingPlan, printer)
-			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Print Leveling Wizard".Localize()
-			};
-
-			var printLevelWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
-			{
-				WindowTitle = levelingContext.WindowTitle
-			});
-
-			printLevelWizardWindow.Closed += (s, e) =>
+			var levelingWizard = new PrintLevelingWizard(levelingPlan, printer);
+			
+			var dialogWindow = DialogWindow.Show(levelingWizard.CurrentPage);
+			dialogWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.
 				printer.Connection.AllowLeveling = true;
 
-				printLevelWizardWindow = null;
-				levelingContext.WindowHasBeenClosed = true;
+				dialogWindow = null;
+				levelingWizard.WindowHasBeenClosed = true;
 
 				// make sure we raise the probe on close
 				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
@@ -135,7 +131,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			};
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
 			for (int j = 0; j < levelingPlan.ProbeCount; j++)
@@ -149,6 +145,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
 				&& !ProbeCalibrationWizard.UsingZProbe(printer);
 
+			string windowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
+
 			if (showWelcomeScreen)
 			{
 				yield return new WizardPage(
@@ -157,7 +155,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					string.Format(
 						"{0}\n\n{1}",
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()));
+						"The next few screens will walk your through calibrating your printer.".Localize()))
+				{
+					WindowTitle = windowTitle
+				};
 			}
 
 			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
@@ -202,7 +203,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new WizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
-				buildWelcomeText());
+				buildWelcomeText())
+			{
+				WindowTitle = windowTitle
+			};
 
 			yield return new HomePrinterPage(
 				this,

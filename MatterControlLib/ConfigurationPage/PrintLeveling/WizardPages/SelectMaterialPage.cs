@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class SelectMaterialPage : WizardPage
 	{
-		public SelectMaterialPage(PrinterSetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton, bool showAlreadyLoadedButton)
+		public SelectMaterialPage(ISetupWizard context, string headerText, string instructionsText, string nextButtonText, int extruderIndex, bool showLoadFilamentButton, bool showAlreadyLoadedButton)
 			: base(context, headerText, instructionsText)
 		{
 			contentRow.AddChild(
@@ -59,7 +59,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{
-					setupWizard.ShowNextPage(this.DialogWindow);
+					if(setupWizard.GetNextPage() is WizardPage wizardPage)
+					{
+						this.DialogWindow.ChangeToPage(wizardPage);
+					}
 				};
 
 				this.AddPageAction(loadFilamentButton);

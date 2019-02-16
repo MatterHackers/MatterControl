@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected Vector3 probeStartPosition;
 
-		public AutoProbeFeedback(PrinterSetupWizard context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+		public AutoProbeFeedback(ISetupWizard context, Vector3 probeStartPosition, string headerText, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(context, headerText, headerText)
 		{
 			this.probeStartPosition = probeStartPosition;

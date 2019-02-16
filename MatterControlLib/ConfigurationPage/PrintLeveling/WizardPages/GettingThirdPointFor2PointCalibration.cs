@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ProbePosition probePosition;
 		private EventHandler unregisterEvents;
 
-		public GettingThirdPointFor2PointCalibration(PrinterSetupWizard context, string pageDescription, Vector3 probeStartPosition, string instructionsText,
+		public GettingThirdPointFor2PointCalibration(ISetupWizard context, string pageDescription, Vector3 probeStartPosition, string instructionsText,
 			ProbePosition probePosition)
 			: base(context, pageDescription, instructionsText)
 		{

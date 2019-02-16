@@ -51,13 +51,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton);
 
-			loadFilamentWizard.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
-
-			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(loadFilamentWizard)
-			{
-				WindowTitle = loadFilamentWizard.WindowTitle
-			});
-			loadFilamentWizardWindow.Closed += (s, e) =>
+			var dialogWindow = DialogWindow.Show(loadFilamentWizard.CurrentPage);
+			dialogWindow.Closed += (s, e) =>
 			{
 				printer.Connection.SetTargetHotendTemperature(extruderIndex, loadFilamentWizard.TemperatureAtStart);
 			};
@@ -67,6 +62,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
+
+			pages = this.GetPages();
+			pages.MoveNext();
+
 			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
 		}
@@ -82,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -96,7 +95,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton);
+			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize()
+			};
 
 			var theme = ApplicationController.Instance.Theme;
 

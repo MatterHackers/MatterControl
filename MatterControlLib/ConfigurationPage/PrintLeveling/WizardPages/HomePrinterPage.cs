@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private bool autoAdvance;
 
-		public HomePrinterPage(PrinterSetupWizard context, string headerText, string instructionsText, bool autoAdvance)
+		public HomePrinterPage(ISetupWizard context, string headerText, string instructionsText, bool autoAdvance)
 			: base(context, headerText, instructionsText)
 		{
 			this.autoAdvance = autoAdvance;

@@ -48,16 +48,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
 		{
 			// turn off print leveling
-			var levelingContext = new UnloadFilamentWizard(printer, extruderIndex)
-			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize()
-			};
+			var unloadWizard = new UnloadFilamentWizard(printer, extruderIndex);
 
-			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
-			{
-				WindowTitle = levelingContext.WindowTitle
-			});
-			loadFilamentWizardWindow.Closed += (s, e) =>
+			var dialogWindow = DialogWindow.Show(unloadWizard.CurrentPage);
+			dialogWindow.Closed += (s, e) =>
 			{
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
@@ -66,10 +60,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
+			pages = this.GetPages();
+			pages.MoveNext();
+
 			this.extruderIndex = extruderIndex;
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -83,7 +80,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false);
+			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false)
+			{
+				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize()
+			};
 
 			var theme = ApplicationController.Instance.Theme;
 

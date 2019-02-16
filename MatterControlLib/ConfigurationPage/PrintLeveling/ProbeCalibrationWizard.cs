@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
+			pages = this.GetPages();
+			pages.MoveNext();
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
@@ -54,21 +56,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
 
-			var levelingContext = new ProbeCalibrationWizard(printer)
-			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize()
-			};
+			var probeWizard = new ProbeCalibrationWizard(printer);
 
-			var probeCalibrationWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
-			{
-				WindowTitle = levelingContext.WindowTitle
-			});
-			probeCalibrationWizardWindow.Closed += (s, e) =>
+			var dialogWindow = DialogWindow.Show(probeWizard.CurrentPage);
+			dialogWindow.Closed += (s, e) =>
 			{
 				// If leveling was on when we started, make sure it is on when we are done.
 				printer.Connection.AllowLeveling = true;
 
-				probeCalibrationWizardWindow = null;
+				dialogWindow = null;
 
 				// make sure we raise the probe on close
 				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
@@ -92,7 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var levelingStrings = new LevelingStrings();
 			var autoProbePositions = new List<ProbePosition>(3);
@@ -103,6 +99,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int totalSteps = 3;
 
+			string windowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
+
 			// make a welcome page if this is the first time calibrating the probe
 			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 			{
@@ -112,7 +110,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					string.Format(
 						"{0}\n\n{1}",
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()));
+						"The next few screens will walk your through calibrating your printer.".Localize()))
+				{
+					WindowTitle = windowTitle
+				};
 			}
 
 			// show what steps will be taken
@@ -126,7 +127,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Probe the bed at the center".Localize(),
 					"Manually measure the extruder at the center".Localize(),
 					"We should be done in less than five minutes.".Localize(),
-					"Click 'Next' to continue.".Localize()));
+					"Click 'Next' to continue.".Localize()))
+			{
+				WindowTitle = windowTitle
+			};
 
 			// add in the homing printer page
 			yield return new HomePrinterPage(

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl
 {
-	public class PrinterSetupWizardRootPage : DialogPage
+	public interface ISetupWizard
 	{
-		private PrinterSetupWizard printerSetupWizard;
+		PrinterConfig Printer { get; }
 
-		public PrinterSetupWizardRootPage(PrinterSetupWizard printerSetupWizard)
-		{
-			this.printerSetupWizard = printerSetupWizard;
-		}
+		WizardPage GetNextPage();
 
-		public override void OnLoad(EventArgs args)
-		{
-			printerSetupWizard.ShowNextPage(this.DialogWindow);
-			base.OnLoad(args);
-		}
+		WizardPage CurrentPage { get; }
 	}
 }
