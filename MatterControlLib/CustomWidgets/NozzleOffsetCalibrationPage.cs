@@ -70,5 +70,16 @@ namespace MatterHackers.MatterControl
 
 			base.OnLoad(args);
 		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Printing ||
+				printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Paused)
+			{
+				printer.CancelPrint();
+			}
+
+			base.OnClosed(e);
+		}
 	}
 }
