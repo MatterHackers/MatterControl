@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -58,6 +60,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			contentRow.AddChild(new ImageWidget(AggContext.StaticData.LoadImage(Path.Combine("Images", "leveling.png")))
 			{
 				HAnchor = HAnchor.Center
+			});
+
+			contentRow.AddChild(new ProbePositionsWidget(printer, probePositions.Select(p => new Vector2(p.position.X, p.position.Y)).ToList(), probePositions, theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				RenderLevelingData = true,
+				RenderProbePath = false,
+				SimplePoints = true,
 			});
 
 			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
