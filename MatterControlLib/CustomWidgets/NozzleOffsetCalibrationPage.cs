@@ -37,7 +37,6 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -283,85 +282,6 @@ namespace MatterHackers.MatterControl
 					turtle.LineTo((firstItem.position * scale) + currentPos);
 				}
 			}
-		}
-	}
-
-	public class NozzleOffsetCalibrationResultsPage : WizardPage
-	{
-		private TextWidget activeOffset;
-		private CalibrationLine calibrationLine;
-
-		public NozzleOffsetCalibrationResultsPage(ISetupWizard setupWizard, PrinterConfig printer, double[] activeOffsets)
-			: base(setupWizard)
-		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
-
-			var commonMargin = new BorderDouble(4, 2);
-
-			var row = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Padding = new BorderDouble(6, 0),
-				Height = 125
-			};
-			contentRow.AddChild(row);
-
-			for(var i = 0; i <= 40; i++)
-			{
-				var calibrationLine = new CalibrationLine(theme)
-				{
-					Width = 8,
-					Margin = 1,
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Stretch,
-					GlyphIndex = (i % 5 == 0) ? i : -1,
-					IsNegative = i < 20,
-					OffsetIndex = i
-				};
-				calibrationLine.Click += (s, e) =>
-				{
-					activeOffset.Text = (activeOffsets[calibrationLine.OffsetIndex] * -1).ToString("0.####");
-
-				};
-				row.AddChild(calibrationLine);
-
-				// Add spacers to stretch to size
-				if (i < 40)
-				{
-					row.AddChild(new HorizontalSpacer());
-				}
-			}
-
-			contentRow.AddChild(activeOffset = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-			row.AfterDraw += (s, e) =>
-			{
-				int strokeWidth = 3;
-
-				var rect = new RectangleDouble(0, 20, row.LocalBounds.Width, row.LocalBounds.Height);
-				rect.Inflate(-2);
-
-				var center = rect.Center;
-
-				e.Graphics2D.Rectangle(rect, theme.TextColor, strokeWidth);
-				e.Graphics2D.Line(rect.Left, center.Y, rect.Right, center.Y, theme.TextColor, strokeWidth);
-			};
-
-			var nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Begin calibration print";
-			nextButton.Click += (s, e) =>
-			{
-				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
-				hotendOffset.Y += double.Parse(activeOffset.Text);
-				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
-			};
-
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
 		}
 	}
 }
