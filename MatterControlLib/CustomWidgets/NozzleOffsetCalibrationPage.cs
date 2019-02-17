@@ -50,32 +50,26 @@ namespace MatterHackers.MatterControl
 			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
 			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
+
+			this.NextButton.Enabled = false;
 		}
 
 
 		bool vertical = false;
+		private NozzleOffsetTemplatePrinter templatePrinter;
 
-		public override void OnLoad(EventArgs args)
+		public async override void OnLoad(EventArgs args)
 		{
-			this.NextButton.Enabled = false;
-
 			// Replace with calibration template code
-			Task.Run(() =>
+			await templatePrinter.PrintTemplate(verticalLayout: true);
+			await templatePrinter.PrintTemplate(verticalLayout: false);
+
+			if (!this.HasBeenClosed)
 			{
-
-			});
-
-			// TODO: At conclusion of calibration template print, enable next button
-			Task.Run(() =>
-			{
-				// TODO: Silly hack to replicate expected behavior
-				Thread.Sleep(10 * 1000);
-
-				if (!this.HasBeenClosed)
-				{
-					this.NextButton.Enabled = true;
-				}
-			});
+				this.NextButton.Enabled = true;
+			}
 
 			base.OnLoad(args);
 		}

@@ -30,27 +30,50 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class NozzleGCodePrinter
+	public class NozzleOffsetTemplatePrinter
 	{
 		private PrinterConfig printer;
 		private double[] activeOffsets;
 
-		public NozzleGCodePrinter(PrinterConfig printer)
+		public NozzleOffsetTemplatePrinter(PrinterConfig printer)
 		{
 			this.printer = printer;
 		}
 
 		public double[] ActiveOffsets => activeOffsets;
 
-		public void PrintTemplate(bool verticalLayout)
+
+		public Task PrintTemplate(bool verticalLayout)
+		{
+			return Task.Run(()=>
+			{
+				string gcode = this.BuildTemplate(true);
+
+				string outputPath = Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"nozzle-offset-template{ (verticalLayout ? 1 : 2) }.gcode");
+
+				File.WriteAllText(outputPath, gcode);
+
+				while(printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.FinishedPrint)
+				{
+					Thread.Sleep(500);
+				}
+			});
+		}
+
+		private string BuildTemplate(bool verticalLayout)
 		{
 			var gcodeSketch = new GCodeSketch();
 
@@ -193,17 +216,8 @@ namespace MatterHackers.MatterControl
 
 			gcodeSketch.PenUp();
 
-			string gcode = gcodeSketch.ToGCode();
-
-			Console.WriteLine("--------------------------------------------------");
-			Console.WriteLine(gcode);
-
-			File.WriteAllText(@"c:\temp\calibration.gcode", gcode);
-
-			printer.Connection.QueueLine(gcode);
-			printer.Connection.QueueLine("G1 Z20");
+			return gcodeSketch.ToGCode();
 		}
-
 
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)
 		{
