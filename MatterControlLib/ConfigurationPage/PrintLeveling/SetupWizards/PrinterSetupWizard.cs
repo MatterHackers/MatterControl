@@ -34,16 +34,16 @@ namespace MatterHackers.MatterControl
 	public abstract class PrinterSetupWizard : ISetupWizard
 	{
 		protected IEnumerator<WizardPage> pages;
-
 		protected PrinterConfig printer;
-		public string WindowTitle { get; protected set; }
-
-		public PrinterConfig Printer => printer;
 
 		public PrinterSetupWizard(PrinterConfig printer)
 		{
 			this.printer = printer;
 		}
+
+		public string WindowTitle { get; protected set; }
+
+		public PrinterConfig Printer => printer;
 
 		public WizardPage CurrentPage => pages.Current;
 

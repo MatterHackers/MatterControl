@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl
 {
 	public class NozzleOffsetCalibrationPrintPage : WizardPage
 	{
-		private PrinterConfig printer;
+		private NozzleOffsetTemplatePrinter templatePrinter;
 
 		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
 			: base(setupWizard)
@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
 			this.Name = "Nozzle Offset Calibration Wizard";
-			this.printer = printer;
 
 			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
@@ -56,9 +55,7 @@ namespace MatterHackers.MatterControl
 			this.NextButton.Enabled = false;
 		}
 
-
-		bool vertical = false;
-		private NozzleOffsetTemplatePrinter templatePrinter;
+		public double[] ActiveOffsets => templatePrinter.ActiveOffsets;
 
 		public async override void OnLoad(EventArgs args)
 		{

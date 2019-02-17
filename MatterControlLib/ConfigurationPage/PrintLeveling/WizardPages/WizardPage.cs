@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 		public WizardPage(ISetupWizard setupWizard, string headerText, string instructionsText)
 			: this(setupWizard)
 		{
-			this.printer = setupWizard.Printer;
 			this.HeaderText = headerText;
 
 			if (!string.IsNullOrEmpty(instructionsText))
@@ -62,6 +61,7 @@ namespace MatterHackers.MatterControl
 		public WizardPage(ISetupWizard setupWizard)
 		{
 			this.setupWizard = setupWizard;
+			this.printer = setupWizard.Printer;
 
 			this.NextButton = new TextButton("Next".Localize(), theme)
 			{

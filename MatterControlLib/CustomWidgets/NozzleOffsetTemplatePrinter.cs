@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 		public Task PrintTemplate(bool verticalLayout)
 		{
-			return Task.Run(()=>
+			return Task.Run(async ()=>
 			{
 				string gcode = this.BuildTemplate(true);
 
@@ -66,7 +66,9 @@ namespace MatterHackers.MatterControl
 
 				File.WriteAllText(outputPath, gcode);
 
-				while(printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.FinishedPrint)
+				await printer.Connection.StartPrint(outputPath);
+
+				while (printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.FinishedPrint)
 				{
 					Thread.Sleep(500);
 				}
