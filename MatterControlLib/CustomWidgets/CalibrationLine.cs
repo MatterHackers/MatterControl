@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl
 			{
 				graphics2D.Render(
 					glyph,
-					verticalLine ? new Vector2(this.LocalBounds.XCenter, 11) : new Vector2(this.Width - 11, this.LocalBounds.YCenter),
+					verticalLine ? new Vector2(centerX, 11) : new Vector2(this.Width - 11, centerY),
 					theme.TextColor);
 			}
 

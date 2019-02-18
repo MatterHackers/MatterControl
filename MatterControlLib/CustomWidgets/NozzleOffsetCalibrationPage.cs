@@ -55,11 +55,15 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme));
+			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
+			{
+				Padding = new BorderDouble(left: 4)
+			});
 
 			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
 			{
-				Margin = new BorderDouble(top: 15)
+				Margin = new BorderDouble(top: 15),
+				Padding = new BorderDouble(top: 4)
 			});
 
 			this.NextButton.Enabled = false;

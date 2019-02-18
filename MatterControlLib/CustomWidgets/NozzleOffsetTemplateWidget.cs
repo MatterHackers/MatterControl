@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			{
 				var calibrationLine = new CalibrationLine(direction, (i % 5 == 0) ? i : -1, theme)
 				{
-					Margin = 1,
+					// Margin = 1,
 					IsNegative = i < 20,
 					OffsetIndex = i,
 				};
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 				rect = new RectangleDouble(0, 0, this.LocalBounds.Width - 20, this.LocalBounds.Height);
 			}
 
-			rect.Inflate(-2);
+			rect.Inflate(-1);
 
 			var center = rect.Center;
 
