@@ -42,7 +42,10 @@ namespace MatterHackers.MatterControl
 		private static int glyphSize = 8;
 
 		private bool mouseInBounds;
+		private bool vertical;
+
 		private ThemeConfig theme;
+		private IVertexSource glyph = null;
 
 		static CalibrationLine()
 		{
@@ -50,16 +53,37 @@ namespace MatterHackers.MatterControl
 			CalibrationLine.CreateGlyphs(glyphCenter);
 		}
 
-		public CalibrationLine(ThemeConfig theme)
+		public CalibrationLine(FlowDirection direction, int glyphIndex, ThemeConfig theme)
 		{
+			if (direction == FlowDirection.LeftToRight)
+			{
+				this.Width = 8;
+				this.HAnchor = HAnchor.Absolute;
+				this.VAnchor = VAnchor.Stretch;
+			}
+			else
+			{
+				this.Height = 8;
+				this.HAnchor = HAnchor.Stretch;
+				this.VAnchor = VAnchor.Absolute;
+			}
+
+			vertical = direction == FlowDirection.LeftToRight;
+
+			if (Glyphs.TryGetValue(glyphIndex, out IVertexSource glyph))
+			{
+				if (!vertical)
+				{
+					glyph = new VertexSourceApplyTransform(glyph, Affine.NewRotation(MathHelper.DegreesToRadians(90)));
+				}
+
+				this.glyph = glyph;
+			}
+
 			this.theme = theme;
 		}
 
-		public int GlyphIndex { get; set; } = -1;
-
 		public bool IsNegative { get; internal set; }
-
-		public bool Vertical { get; set; } = true;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
@@ -87,49 +111,38 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (this.Vertical)
+			var centerX = this.LocalBounds.XCenter + .5;
+			var centerY = this.LocalBounds.YCenter - .5;
+
+			var start = new Vector2(centerX, (glyph == null) ? 20 : 9);
+			var end = new Vector2(centerX, this.LocalBounds.Height);
+
+			if (!vertical)
 			{
-				int centerX = (int)this.LocalBounds.XCenter;
+				start = new Vector2(0, centerY);
+				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : 9), centerY);
+			}
 
-				if (this.GlyphIndex == -1)
-				{
-					// Draw primary line
-					graphics2D.Line(
-						new Vector2(centerX + .5, (this.GlyphIndex == -1) ? 20 : 9 /*+ .5*/),
-						new Vector2(centerX + .5, this.LocalBounds.Height /*+ .5*/),
-						theme.TextColor,
-						1);
-				}
-				else
-				{
-					// Draw primary line
-					graphics2D.Line(
-						new Vector2(centerX, (this.GlyphIndex == -1) ? 20 : 9 /*+ .5*/),
-						new Vector2(centerX, this.LocalBounds.Height /*+ .5*/),
-						theme.TextColor,
-						2);
-				}
+			graphics2D.Line(start, end, theme.TextColor, 1);
 
-				// Draw line end
-				if (this.GlyphIndex != -1
-					&& Glyphs.TryGetValue(this.GlyphIndex, out IVertexSource vertexSource))
-				{
-					graphics2D.Render(
-						vertexSource,
-						new Vector2((int)(this.LocalBounds.XCenter), 11),
-						theme.TextColor);
-				}
+			// Draw line end
+			if (glyph != null)
+			{
+				graphics2D.Render(
+					glyph,
+					vertical ? new Vector2(this.LocalBounds.XCenter, 11) : new Vector2(this.Width - 11, this.LocalBounds.YCenter),
+					theme.TextColor);
+			}
 
-				// Draw negative adornment below glyphs 
-				if (this.GlyphIndex != -1
-					&& this.IsNegative)
-				{
-					graphics2D.Line(
-						new Vector2(this.LocalBounds.XCenter, 5),
-						new Vector2(this.LocalBounds.XCenter, 0),
-						theme.TextColor,
-						1);
-				}
+			// Draw negative adornment below glyphs 
+			if (glyph != null
+				&& this.IsNegative)
+			{
+				graphics2D.Line(
+					vertical ? new Vector2(centerX, 0) : new Vector2(0, centerY),
+					vertical ? new Vector2(centerX, 5) : new Vector2(this.Width - 5, centerY),
+					theme.TextColor,
+					1);
 			}
 
 			base.OnDraw(graphics2D);

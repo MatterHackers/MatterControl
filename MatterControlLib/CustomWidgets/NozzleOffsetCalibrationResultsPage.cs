@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
@@ -57,46 +56,7 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(row);
 
-			for(var i = 0; i <= 40; i++)
-			{
-				var calibrationLine = new CalibrationLine(theme)
-				{
-					Width = 8,
-					Margin = 1,
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Stretch,
-					GlyphIndex = (i % 5 == 0) ? i : -1,
-					IsNegative = i < 20,
-					OffsetIndex = i
-				};
-				calibrationLine.Click += (s, e) =>
-				{
-					activeOffset.Text = (activeOffsets[calibrationLine.OffsetIndex] * -1).ToString("0.####");
-
-				};
-				row.AddChild(calibrationLine);
-
-				// Add spacers to stretch to size
-				if (i < 40)
-				{
-					row.AddChild(new HorizontalSpacer());
-				}
-			}
-
 			contentRow.AddChild(activeOffset = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-			row.AfterDraw += (s, e) =>
-			{
-				int strokeWidth = 3;
-
-				var rect = new RectangleDouble(0, 20, row.LocalBounds.Width, row.LocalBounds.Height);
-				rect.Inflate(-2);
-
-				var center = rect.Center;
-
-				e.Graphics2D.Rectangle(rect, theme.TextColor, strokeWidth);
-				e.Graphics2D.Line(rect.Left, center.Y, rect.Right, center.Y, theme.TextColor, strokeWidth);
-			};
 
 			var nextButton = theme.CreateDialogButton("Next".Localize());
 			nextButton.Name = "Begin calibration print";

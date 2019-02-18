@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
@@ -38,6 +39,8 @@ namespace MatterHackers.MatterControl
 	public class NozzleOffsetCalibrationPrintPage : WizardPage
 	{
 		private NozzleOffsetTemplatePrinter templatePrinter;
+		private NozzleOffsetTemplateWidget xOffsetWidget;
+		private NozzleOffsetTemplateWidget yOffsetWidget;
 
 		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
 			: base(setupWizard)
@@ -46,11 +49,18 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
 			this.Name = "Nozzle Offset Calibration Wizard";
 
-			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
+
+			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			contentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme));
+
+			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
+			{
+				Margin = new BorderDouble(top: 15)
+			});
 
 			this.NextButton.Enabled = false;
 		}
