@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static List<Vector3Float> GetOuterPoints(List<Vector3Float> vertices, Dictionary<Vector3Float, int> pointCounts, Vector2 bedCenter)
 		{
-			var outerPointsOnly = pointCounts.Where(kvp => kvp.Value == 2).Select(kvp => kvp.Key).ToList();
+			var outerPointsOnly = pointCounts.Where(kvp => kvp.Value <= 3).Select(kvp => kvp.Key).ToList();
 
 			var outerPoints = vertices.Where(p => outerPointsOnly.Contains(p)).ToList();
 			var p2 = (new[] { new Vector2(2, 2), new Vector2(2, -2), new Vector2(-2, 2), new Vector2(-2, -2) }).Select(v => new { V = v, M = v.GetAngle(), L = v.Length, D = MathHelper.RadiansToDegrees(v.GetAngle()) });
