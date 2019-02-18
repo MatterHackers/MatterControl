@@ -135,13 +135,13 @@ namespace MatterHackers.MatterControl
 					theme.TextColor);
 			}
 
-			// Draw negative adornment below glyphs 
+			// Draw negative adornment after glyphs 
 			if (glyph != null
 				&& this.IsNegative)
 			{
 				graphics2D.Line(
-					verticalLine ? new Vector2(centerX, 0) : new Vector2(0, centerY),
-					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width - 5, centerY),
+					verticalLine ? new Vector2(centerX, 0) : new Vector2(this.Width - 5, centerY),
+					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width, centerY),
 					theme.TextColor,
 					1);
 			}
