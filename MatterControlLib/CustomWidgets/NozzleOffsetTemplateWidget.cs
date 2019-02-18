@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl
 			{
 				var calibrationLine = new CalibrationLine(direction, (i % 5 == 0) ? i : -1, theme)
 				{
-					//Margin = 1,
+					Margin = 1,
 					IsNegative = i < 20,
 					OffsetIndex = i,
 				};

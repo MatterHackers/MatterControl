@@ -49,6 +49,19 @@ namespace MatterHackers.MatterControl
 		public NozzleOffsetTemplatePrinter(PrinterConfig printer)
 		{
 			this.printer = printer;
+
+			// Build offsets
+			activeOffsets = new double[41];
+			activeOffsets[20] = 0;
+
+			var leftStep = 1.5d / 20;
+			var rightStep = 1.5d / 20;
+
+			for (var i = 1; i <= 20; i++)
+			{
+				activeOffsets[20 - i] = i * leftStep * -1;
+				activeOffsets[20 + i] = i * rightStep;
+			}
 		}
 
 		public double[] ActiveOffsets => activeOffsets;
@@ -191,19 +204,6 @@ namespace MatterHackers.MatterControl
 			gcodeSketch.Speed = 1000;
 
 			up = true;
-
-			// Build offsets
-			activeOffsets = new double[41];
-			activeOffsets[20] = 0;
-
-			var leftStep = 1.5d / 20;
-			var rightStep = 1.5d / 20;
-
-			for (var i = 1; i <= 20; i++)
-			{
-				activeOffsets[20 - i] = i * leftStep * -1;
-				activeOffsets[20 + i] = i * rightStep;
-			}
 
 			// Draw calibration lines
 			for (var i = 0; i <= 40; i++)
