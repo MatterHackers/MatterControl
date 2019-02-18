@@ -73,16 +73,16 @@ namespace MatterHackers.MatterControl
 
 		public async override void OnLoad(EventArgs args)
 		{
-			// Replace with calibration template code
-			await templatePrinter.PrintTemplate(verticalLayout: true);
-			await templatePrinter.PrintTemplate(verticalLayout: false);
-
 			if (!this.HasBeenClosed)
 			{
 				this.NextButton.Enabled = true;
 			}
 
 			base.OnLoad(args);
+
+			// Replace with calibration template code
+			await templatePrinter.PrintTemplate(verticalLayout: true);
+			await templatePrinter.PrintTemplate(verticalLayout: false);
 		}
 
 		public override void OnClosed(EventArgs e)
