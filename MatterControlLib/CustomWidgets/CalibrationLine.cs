@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 		private static int glyphSize = 8;
 
 		private bool mouseInBounds;
-		private bool vertical;
+		private bool verticalLine;
 
 		private ThemeConfig theme;
 		private IVertexSource glyph = null;
@@ -53,9 +53,9 @@ namespace MatterHackers.MatterControl
 			CalibrationLine.CreateGlyphs(glyphCenter);
 		}
 
-		public CalibrationLine(FlowDirection direction, int glyphIndex, ThemeConfig theme)
+		public CalibrationLine(FlowDirection parentDirection, int glyphIndex, ThemeConfig theme)
 		{
-			if (direction == FlowDirection.LeftToRight)
+			if (parentDirection == FlowDirection.LeftToRight)
 			{
 				this.Width = 8;
 				this.HAnchor = HAnchor.Absolute;
@@ -68,12 +68,13 @@ namespace MatterHackers.MatterControl
 				this.VAnchor = VAnchor.Absolute;
 			}
 
-			vertical = direction == FlowDirection.LeftToRight;
+			verticalLine = parentDirection == FlowDirection.LeftToRight;
 
 			if (Glyphs.TryGetValue(glyphIndex, out IVertexSource glyph))
 			{
-				if (!vertical)
+				if (!verticalLine)
 				{
+					// Rotate glyph to match horizontal line
 					glyph = new VertexSourceApplyTransform(glyph, Affine.NewRotation(MathHelper.DegreesToRadians(90)));
 				}
 
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl
 			var start = new Vector2(centerX, (glyph == null) ? 20 : 9);
 			var end = new Vector2(centerX, this.LocalBounds.Height);
 
-			if (!vertical)
+			if (!verticalLine)
 			{
 				start = new Vector2(0, centerY);
 				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : 9), centerY);
@@ -130,7 +131,7 @@ namespace MatterHackers.MatterControl
 			{
 				graphics2D.Render(
 					glyph,
-					vertical ? new Vector2(this.LocalBounds.XCenter, 11) : new Vector2(this.Width - 11, this.LocalBounds.YCenter),
+					verticalLine ? new Vector2(this.LocalBounds.XCenter, 11) : new Vector2(this.Width - 11, this.LocalBounds.YCenter),
 					theme.TextColor);
 			}
 
@@ -139,8 +140,8 @@ namespace MatterHackers.MatterControl
 				&& this.IsNegative)
 			{
 				graphics2D.Line(
-					vertical ? new Vector2(centerX, 0) : new Vector2(0, centerY),
-					vertical ? new Vector2(centerX, 5) : new Vector2(this.Width - 5, centerY),
+					verticalLine ? new Vector2(centerX, 0) : new Vector2(0, centerY),
+					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width - 5, centerY),
 					theme.TextColor,
 					1);
 			}
