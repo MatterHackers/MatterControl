@@ -70,9 +70,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
-					// If we are not printing, check if we need to switch extruders
-					if (extruderCount > 1
-						&& !printer.Connection.Printing)
+					if (extruderCount > 1)
 					{
 						CheckIfNeedToSwitchExtruders(line);
 					}
