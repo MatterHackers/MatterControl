@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,21 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
 	public abstract class PrinterSetupWizard
 	{
-		private IEnumerator<PrinterSetupWizardPage> pages;
+		private IEnumerator<WizardPage> pages;
 
-		protected abstract IEnumerator<PrinterSetupWizardPage> GetWizardSteps();
+		protected abstract IEnumerator<WizardPage> GetWizardSteps();
 
 		public string WindowTitle { get; internal set; }
 
@@ -60,14 +55,11 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() =>
 			{
 				// Shutdown active page
-				pages.Current?.PageIsBecomingInactive();
 				pages.Current?.Close();
 
 				// Advance
 				if (pages.MoveNext())
 				{
-					pages.Current?.PageIsBecomingActive();
-
 					dialogWindow.ChangeToPage(pages.Current);
 				}
 			});

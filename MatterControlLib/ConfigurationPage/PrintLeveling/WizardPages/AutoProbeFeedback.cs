@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,16 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class AutoProbeFeedback : PrinterSetupWizardPage
+	public class AutoProbeFeedback : WizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
@@ -119,12 +117,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private Vector3 feedRates;
 		private Vector3 adjustedProbePosition;
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
-
-			base.PageIsBecomingActive();
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
@@ -160,12 +156,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				printer.Connection.LineReceived += GetZProbeHeight;
 			}
+
+			base.OnLoad(args);
 		}
 
-		public override void PageIsBecomingInactive()
+		public override void OnClosed(EventArgs e)
 		{
 			printer.Connection.LineReceived -= GetZProbeHeight;
-			base.PageIsBecomingInactive();
+			base.OnClosed(e);
 		}
 	}
 }

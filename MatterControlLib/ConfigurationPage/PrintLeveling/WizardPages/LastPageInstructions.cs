@@ -34,12 +34,11 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class LastPageInstructions : PrinterSetupWizardPage
+	public class LastPageInstructions : WizardPage
 	{
 		private List<ProbePosition> probePositions;
 
@@ -66,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.ShowWizardFinished();
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
 			levelingData.SampledPositions.Clear();
@@ -105,7 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 			};
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 	}
 }

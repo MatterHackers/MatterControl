@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -38,11 +37,11 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class CalibrateProbeLastPagelInstructions : PrinterSetupWizardPage
+	public class CalibrateProbeLastPageInstructions : WizardPage
 	{
 		private bool pageWasActive = false;
 
-		public CalibrateProbeLastPagelInstructions(PrinterSetupWizard context, string headerText)
+		public CalibrateProbeLastPageInstructions(PrinterSetupWizard context, string headerText)
 			: base(context, headerText, "")
 		{
 			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
@@ -63,7 +62,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.ShowWizardFinished();
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
@@ -72,7 +71,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			pageWasActive = true;
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)

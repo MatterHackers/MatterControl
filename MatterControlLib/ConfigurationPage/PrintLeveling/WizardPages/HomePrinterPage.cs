@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class HomePrinterPage : PrinterSetupWizardPage
+	public class HomePrinterPage : WizardPage
 	{
 		private bool autoAdvance;
 
@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			printer.Connection.CommunicationStateChanged += CheckHomeFinished;
 
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				NextButton.Enabled = false;
 			}
 
-			base.PageIsBecomingActive();
+			base.OnLoad(args);
 		}
 
 		private void CheckHomeFinished(object sender, EventArgs e)
@@ -83,13 +83,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					UiThread.RunOnIdle(() => NextButton.InvokeClick());
 				}
 			}
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			NextButton.Enabled = true;
-
-			base.PageIsBecomingInactive();
 		}
 	}
 }

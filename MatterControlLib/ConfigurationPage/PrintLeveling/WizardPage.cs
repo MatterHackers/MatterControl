@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,20 +35,22 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterSetupWizardPage : DialogPage
+	public class WizardPage : DialogPage
 	{
 		public TextButton NextButton { get; }
 		protected PrinterConfig printer;
 
-		public Action BecomingActive;
-		public Action BecomingInactive;
-		protected PrinterSetupWizard wizardContext;
+		public Action<WizardPage> PageLoad { get; set; }
 
-		public PrinterSetupWizardPage(PrinterSetupWizard wizardContext, string headerText, string instructionsText)
+		public Action PageClose { get; set; }
+
+		protected PrinterSetupWizard setupWizard;
+
+		public WizardPage(PrinterSetupWizard setupWizard, string headerText, string instructionsText)
 		{
-			this.wizardContext = wizardContext;
-			this.printer = wizardContext.Printer;
-			this.WindowTitle = wizardContext.WindowTitle;
+			this.setupWizard = setupWizard;
+			this.printer = setupWizard.Printer;
+			this.WindowTitle = setupWizard.WindowTitle;
 			this.HeaderText = headerText;
 
 			if (!string.IsNullOrEmpty(instructionsText))
@@ -64,24 +66,10 @@ namespace MatterHackers.MatterControl
 			};
 			NextButton.Click += (s, e) =>
 			{
-				wizardContext.ShowNextPage(this.DialogWindow);
+				setupWizard.ShowNextPage(this.DialogWindow);
 			};
 
 			this.AddPageAction(NextButton);
-		}
-
-		public GuiWidget ContentRow => contentRow;
-
-		public override void PageIsBecomingActive()
-		{
-			BecomingActive?.Invoke();
-			base.PageIsBecomingActive();
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			BecomingInactive?.Invoke();
-			base.PageIsBecomingInactive();
 		}
 
 		protected GuiWidget CreateTextField(string text)
@@ -92,6 +80,18 @@ namespace MatterHackers.MatterControl
 				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch
 			};
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			this.PageLoad?.Invoke(this);
+			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			this.PageClose?.Invoke();
+			base.OnClosed(e);
 		}
 
 		public void ShowWizardFinished()

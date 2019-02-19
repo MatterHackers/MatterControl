@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class GettingThirdPointFor2PointCalibration : PrinterSetupWizardPage
+	public class GettingThirdPointFor2PointCalibration : WizardPage
 	{
 		protected Vector3 probeStartPosition;
 		private ProbePosition probePosition;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnClosed(e);
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
 			// first make sure there is no leftover FinishedProbe event
 			printer.Connection.LineReceived += FinishedProbe;
@@ -67,9 +67,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.QueueLine("G30");
 			printer.Connection.LineReceived += FinishedProbe;
 
-			base.PageIsBecomingActive();
-
 			NextButton.Enabled = false;
+
+			base.OnLoad(args);
 		}
 
 		private void FinishedProbe(object sender, string line)

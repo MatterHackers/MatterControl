@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -93,7 +92,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
+		protected override IEnumerator<WizardPage> GetWizardSteps()
 		{
 			var levelingStrings = new LevelingStrings();
 			var autoProbePositions = new List<ProbePosition>(3);
@@ -107,7 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// make a welcome page if this is the first time calibrating the probe
 			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
 			{
-				yield return new PrinterSetupWizardPage(
+				yield return new WizardPage(
 					this,
 					"Initial Printer Setup".Localize(),
 					string.Format(
@@ -117,7 +116,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// show what steps will be taken
-			yield return new PrinterSetupWizardPage(
+			yield return new WizardPage(
 				this,
 				"Probe Calibration Overview".Localize(),
 				string.Format(
@@ -188,7 +187,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				0);
 
 			// show what steps will be taken
-			yield return new PrinterSetupWizardPage(
+			yield return new WizardPage(
 				this,
 				"Measure the nozzle offset".Localize(),
 				"{0}:\n\n\t• {1}\n\n{2}\n\n{3}".FormatWith(
@@ -268,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"T{extruderPriorToMeasure}");
 			}
 
-			yield return new CalibrateProbeLastPagelInstructions(
+			yield return new CalibrateProbeLastPageInstructions(
 				this,
 				"Done".Localize());
 		}

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -136,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			};
 		}
 
-		protected override IEnumerator<PrinterSetupWizardPage> GetWizardSteps()
+		protected override IEnumerator<WizardPage> GetWizardSteps()
 		{
 			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
 			for (int j = 0; j < levelingPlan.ProbeCount; j++)
@@ -152,7 +151,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			if (showWelcomeScreen)
 			{
-				yield return new PrinterSetupWizardPage(
+				yield return new WizardPage(
 					this,
 					"Initial Printer Setup".Localize(),
 					string.Format(
@@ -200,7 +199,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				}
 			}
 
-			yield return new PrinterSetupWizardPage(
+			yield return new WizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
 				buildWelcomeText());
@@ -259,7 +258,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this,
 					"Waiting For Printer To Heat".Localize(),
 					heatingInstructions,
-					targetBedTemp, new double[] { targetHotendTemp });
+					targetBedTemp, 
+					new double[] { targetHotendTemp });
 			}
 
 			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;

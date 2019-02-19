@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -48,10 +48,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.probeStartPosition = probeStartPosition;
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
-			base.PageIsBecomingActive();
-
 			// make sure the probe is not deployed
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
@@ -72,18 +70,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			zPlusControl.Click += zControl_Click;
 			zMinusControl.Click += zControl_Click;
+
+			base.OnLoad(args);
 		}
 
 		protected void zControl_Click(object sender, EventArgs mouseEvent)
 		{
 			NextButton.Enabled = true;
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			NextButton.Enabled = true;
-
-			base.PageIsBecomingInactive();
 		}
 	}
 }

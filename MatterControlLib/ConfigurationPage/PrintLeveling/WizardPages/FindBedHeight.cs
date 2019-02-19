@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,12 +34,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class FindBedHeight : PrinterSetupWizardPage
+	public class FindBedHeight : WizardPage
 	{
 		private Vector3 lastReportedPosition;
 		private List<ProbePosition> probePositions;
@@ -90,17 +89,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this.CreateTextField(setZHeightCoarseInstruction2));
 		}
 
-		public override void PageIsBecomingActive()
+		public override void OnLoad(EventArgs args)
 		{
+			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
+			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
+
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
 			NextButton.ToolTipText = string.Format("[{0}]", "Right Arrow".Localize());
 
-			base.PageIsBecomingActive();
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
 			this.DialogWindow.KeyDown += TopWindowKeyDown;
 			base.OnLoad(args);
 		}
@@ -112,15 +109,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.DialogWindow.KeyDown -= TopWindowKeyDown;
 
 			base.OnClosed(e);
-		}
-
-		public override void PageIsBecomingInactive()
-		{
-			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
-			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
-			base.PageIsBecomingInactive();
-
-			NextButton.ToolTipText = "";
 		}
 
 		private FlowLayoutWidget CreateZButtons()
