@@ -287,6 +287,11 @@ namespace MatterHackers.MatterControl.Library.Export
 			var queueStream = new QueuedCommandsStream(printer, gCodeBaseStream);
 			GCodeStream accumulatedStream = queueStream;
 
+			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			{
+				accumulatedStream = new SwitchExtruderStream(printer, accumulatedStream);
+			}
+
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
 
 			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
