@@ -103,13 +103,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
-			Closed += (s, e) =>
-			{
-				// give instruction about how to load filament if the user has not gotten them
-				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-			};
-
 			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// give instruction about how to load filament if the user has not gotten them
+			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
+
+			base.OnClosed(e);
 		}
 	}
 }

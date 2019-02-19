@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class CalibrateProbeLastPageInstructions : WizardPage
 	{
-		private bool pageWasActive = false;
-
 		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
 			: base(setupWizard, headerText, "")
 		{
@@ -77,18 +75,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
-			pageWasActive = true;
-
 			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (pageWasActive)
-			{
-				// move from this wizard to the print leveling wizard if needed
-				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-			}
+			// move from this wizard to the print leveling wizard if needed
+			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 		}
 	}
 }
