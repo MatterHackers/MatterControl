@@ -27,75 +27,82 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
-using System.IO;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
+using MatterControl.Printing;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class QueuedCommandsStream : GCodeStreamProxy
+	public class SwitchExtruderStream : GCodeStreamProxy
 	{
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
+		private int requestedExtruder;
+		private int extruderLastSwitchedTo;
 		PrinterMove lastDestination = PrinterMove.Unknown;
+		int extruderCount = 0;
 
-		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
+		public SwitchExtruderStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 		}
 
-		public int Count => commandQueue.Count;
-
-		public void Add(string line, bool forceTopOfQueue = false)
+		private bool CheckIfNeedToSwitchExtruders(string lineIn)
 		{
-			// lock queue
-			lock (locker)
+			bool queuedSwitch = false;
+			if (lineIn == null)
 			{
-				if (forceTopOfQueue)
-				{
-					commandQueue.Insert(0, line);
-				}
-				else
-				{
-					commandQueue.Add(line);
-				}
-			}
-		}
-
-		public void Cancel()
-		{
-			Reset();
-		}
-
-		public ImageBuffer LoadImageAsset(string uri)
-		{
-			string filePath = Path.Combine("Images", "Macros", uri);
-			bool imageOnDisk = false;
-			if (uri.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-			{
-				try
-				{
-					imageOnDisk = AggContext.StaticData.FileExists(filePath);
-				}
-				catch
-				{
-					imageOnDisk = false;
-				}
+				return queuedSwitch;
 			}
 
-			if (imageOnDisk)
-			{
-				return AggContext.StaticData.LoadImage(filePath);
-			}
-			else
-			{
-				var imageBuffer = new ImageBuffer(320, 10);
+			var lineNoComment = lineIn.Split(';')[0];
 
-				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, uri, true);
+			TrackExtruderState(lineNoComment);
 
-				return imageBuffer;
+			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
+				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
+				&& extruderLastSwitchedTo != requestedExtruder) // is different than the last extruder set
+			{
+				string gcodeToQueue = "";
+				switch (requestedExtruder)
+				{
+					case 0:
+						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						break;
+					case 1:
+						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						break;
+				}
+
+				if (gcodeToQueue.Trim().Length > 0)
+				{
+					if (gcodeToQueue.Contains("\n"))
+					{
+						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
+						for (int i = 0; i < linesToWrite.Length; i++)
+						{
+							string gcodeLine = linesToWrite[i].Trim();
+							if (gcodeLine.Length > 0)
+							{
+								commandQueue.Add(gcodeLine);
+							}
+						}
+					}
+					else
+					{
+						commandQueue.Add(gcodeToQueue);
+					}
+
+					commandQueue.Add(lineIn);
+					queuedSwitch = true;
+				}
+
+				extruderLastSwitchedTo = requestedExtruder;
 			}
+
+			return queuedSwitch;
 		}
 
 		public override string ReadLine()
@@ -118,14 +125,32 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				lineToSend = base.ReadLine();
 			}
 
+			if(CheckIfNeedToSwitchExtruders(lineToSend))
+			{
+				return "";
+			}
+
+			TrackExtruderState(lineToSend);
+
 			return lineToSend;
 		}
 
-		public void Reset()
+		private void TrackExtruderState(string line)
 		{
-			lock (locker)
+			if (line == null)
 			{
-				commandQueue.Clear();
+				return;
+			}
+
+			if (line.StartsWith("G28)"))
+			{
+				extruderLastSwitchedTo = 0;
+				requestedExtruder = 0;
+			}
+
+			if (line.StartsWith("T"))
+			{
+				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
 			}
 		}
 	}

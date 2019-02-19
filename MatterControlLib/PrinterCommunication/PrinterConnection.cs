@@ -2133,7 +2133,15 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			queuedCommandStream3 = new QueuedCommandsStream(Printer, firstStreamToRead);
-			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
+			if (ExtruderCount > 1)
+			{
+				var switchExtruderStream = new SwitchExtruderStream(Printer, queuedCommandStream3);
+				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, switchExtruderStream);
+			}
+			else
+			{
+				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
+			}
 			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			babyStepsStream5 = new BabyStepsStream(Printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
 			printLevelingStream6 = new PrintLevelingStream(Printer, babyStepsStream5, true);
