@@ -47,28 +47,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public double TemperatureAtStart { get; private set; }
 		private int extruderIndex;
 
-		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex, bool showAlreadyLoadedButton)
-		{
-			var loadFilamentWizard = new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton);
-
-			loadFilamentWizard.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
-
-			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(loadFilamentWizard)
-			{
-				WindowTitle = loadFilamentWizard.WindowTitle
-			});
-			loadFilamentWizardWindow.Closed += (s, e) =>
-			{
-				printer.Connection.SetTargetHotendTemperature(extruderIndex, loadFilamentWizard.TemperatureAtStart);
-			};
-		}
-
 		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
-			TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
+			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
+
+			// Initialize - store startup temp and extruder index
+			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
+
+			pages = this.GetPages();
+			pages.MoveNext();
+		}
+
+		public override void Dispose()
+		{
+			printer.Connection.SetTargetHotendTemperature(extruderIndex, this.TemperatureAtStart);
 		}
 
 		public static bool NeedsToBeRun0(PrinterConfig printer)
@@ -82,7 +77,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -96,7 +91,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton);
+			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
+			{
+				WindowTitle = WindowTitle
+			};
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -388,7 +386,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				loadFilament2Button.Click += (s, e) =>
 				{
 					loadFilament2Button.Parents<SystemWindow>().First().Close();
-					LoadFilamentWizard.Start(printer, theme, 1, true);
+
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
 				};
 				theme.ApplyPrimaryActionStyle(loadFilament2Button);
 

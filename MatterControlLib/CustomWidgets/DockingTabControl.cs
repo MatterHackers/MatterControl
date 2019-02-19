@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			allTabs.Add((key, name, widget));
 
-			if (formHasLoaded && allowRebuild)
+			if (onloadInvoked && allowRebuild)
 			{
 				Rebuild();
 			}

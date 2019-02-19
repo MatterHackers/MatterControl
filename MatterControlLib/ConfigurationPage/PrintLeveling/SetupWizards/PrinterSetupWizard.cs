@@ -28,41 +28,36 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
-	public abstract class PrinterSetupWizard
+	public abstract class PrinterSetupWizard : ISetupWizard
 	{
-		private IEnumerator<WizardPage> pages;
-
-		protected abstract IEnumerator<WizardPage> GetWizardSteps();
-
-		public string WindowTitle { get; internal set; }
-
+		protected IEnumerator<WizardPage> pages;
 		protected PrinterConfig printer;
-
-		public PrinterConfig Printer => printer;
 
 		public PrinterSetupWizard(PrinterConfig printer)
 		{
 			this.printer = printer;
-			this.pages = this.GetWizardSteps();
 		}
 
-		public void ShowNextPage(DialogWindow dialogWindow)
+		public string WindowTitle { get; protected set; }
+
+		public PrinterConfig Printer => printer;
+
+		public WizardPage CurrentPage => pages.Current;
+
+		public WizardPage GetNextPage()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				// Shutdown active page
-				pages.Current?.Close();
+			// Shutdown active page
+			pages.Current?.Close();
 
-				// Advance
-				if (pages.MoveNext())
-				{
-					dialogWindow.ChangeToPage(pages.Current);
-				}
-			});
+			// Advance
+			pages.MoveNext();
+
+			return pages.Current;
 		}
+
+		public abstract void Dispose();
 	}
 }

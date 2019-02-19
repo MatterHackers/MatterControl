@@ -41,15 +41,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private LevelingPlan levelingPlan;
 
-		public PrintLevelingWizard(LevelingPlan levelingPlan, PrinterConfig printer)
+		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.levelingPlan = levelingPlan;
+			this.WindowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
+
+			this.Initialize();
+
+			pages = this.GetPages();
+			pages.MoveNext();
 		}
 
-		public bool WindowHasBeenClosed { get; private set; }
-
-		public static void Start(PrinterConfig printer, ThemeConfig theme)
+		private void Initialize()
 		{
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -64,8 +67,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 
 			printer.Connection.QueueLine("T0");
-
-			LevelingPlan levelingPlan;
 
 			switch (levelingData.LevelingSystem)
 			{
@@ -104,38 +105,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				default:
 					throw new NotImplementedException();
 			}
-
-			var levelingContext = new PrintLevelingWizard(levelingPlan, printer)
-			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Print Leveling Wizard".Localize()
-			};
-
-			var printLevelWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
-			{
-				WindowTitle = levelingContext.WindowTitle
-			});
-
-			printLevelWizardWindow.Closed += (s, e) =>
-			{
-				// If leveling was on when we started, make sure it is on when we are done.
-				printer.Connection.AllowLeveling = true;
-
-				printLevelWizardWindow = null;
-				levelingContext.WindowHasBeenClosed = true;
-
-				// make sure we raise the probe on close
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-				{
-					// make sure the servo is retracted
-					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-					printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
-				}
-			};
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		public bool WindowHasBeenClosed { get; private set; }
+
+		public override void Dispose()
+		{
+			// If leveling was on when we started, make sure it is on when we are done.
+			printer.Connection.AllowLeveling = true;
+
+			this.WindowHasBeenClosed = true;
+
+			// make sure we raise the probe on close
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				// make sure the servo is retracted
+				var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+				printer.Connection.QueueLine($"M280 P0 S{servoRetract}");
+			}
+		}
+
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
 			for (int j = 0; j < levelingPlan.ProbeCount; j++)
@@ -157,7 +149,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					string.Format(
 						"{0}\n\n{1}",
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()));
+						"The next few screens will walk your through calibrating your printer.".Localize()))
+				{
+					WindowTitle = WindowTitle
+				};
 			}
 
 			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
@@ -202,7 +197,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new WizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
-				buildWelcomeText());
+				buildWelcomeText())
+			{
+				WindowTitle = WindowTitle
+			};
 
 			yield return new HomePrinterPage(
 				this,

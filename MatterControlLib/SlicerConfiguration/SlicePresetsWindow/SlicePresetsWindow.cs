@@ -27,32 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.DataStorage.ClassicDB;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text.RegularExpressions;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetsContext
 	{
-		public ObservableCollection<PrinterSettingsLayer> PresetLayers { get; }
+		public List<PrinterSettingsLayer> PresetLayers { get; }
 		public PrinterSettingsLayer PersistenceLayer { get; set; }
 		public Action<string> SetAsActive { get; set; }
 		public Action DeleteLayer { get; set; }
 
 		public NamedSettingsLayers LayerType { get; set; }
 
-		public PresetsContext(ObservableCollection<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
+		public PresetsContext(List<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
 		{
 			this.PersistenceLayer = activeLayer;
 			this.PresetLayers = settingsLayers;

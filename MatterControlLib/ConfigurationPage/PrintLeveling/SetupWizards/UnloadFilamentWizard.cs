@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -45,31 +44,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private int extruderIndex;
 
-		public static void Start(PrinterConfig printer, ThemeConfig theme, int extruderIndex)
-		{
-			// turn off print leveling
-			var levelingContext = new UnloadFilamentWizard(printer, extruderIndex)
-			{
-				WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize()
-			};
-
-			var loadFilamentWizardWindow = DialogWindow.Show(new PrinterSetupWizardRootPage(levelingContext)
-			{
-				WindowTitle = levelingContext.WindowTitle
-			});
-			loadFilamentWizardWindow.Closed += (s, e) =>
-			{
-				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
-			};
-		}
-
 		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
 		{
+			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Unload Filament Wizard".Localize();
 			this.extruderIndex = extruderIndex;
+
+			pages = this.GetPages();
+			pages.MoveNext();
 		}
 
-		protected override IEnumerator<WizardPage> GetWizardSteps()
+		public override void Dispose()
+		{
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+		}
+
+		private IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
@@ -83,7 +73,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false);
+			yield return new SelectMaterialPage(this, title, instructions, "Unload".Localize(), extruderIndex, false, false)
+			{
+				WindowTitle = WindowTitle
+			};
 
 			var theme = ApplicationController.Instance.Theme;
 
@@ -237,7 +230,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			loadFilamentButton.Click += (s, e) =>
 			{
 				loadFilamentButton.Parents<SystemWindow>().First().Close();
-				LoadFilamentWizard.Start(printer, theme, extruderIndex, false);
+
+				DialogWindow.Show(
+					new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
 			};
 			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 

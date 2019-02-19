@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						PrintLevelingWizard.Start(printer, theme);
+						DialogWindow.Show(new PrintLevelingWizard(printer));
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
@@ -113,18 +113,39 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						VAnchor = VAnchor.Center,
 						Margin = theme.ButtonSpacing,
-						ToolTipText = "Run Calibration".Localize()
+						ToolTipText = "Calibrate Probe Offset".Localize()
 					};
-					runCalibrateProbeButton.Click += (s, e) =>
+					runCalibrateProbeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							ProbeCalibrationWizard.Start(printer, theme);
-						});
-					};
+						DialogWindow.Show(new ProbeCalibrationWizard(printer));
+					});
 
 					settingsRow.BorderColor = Color.Transparent;
 					settingsRow.AddChild(runCalibrateProbeButton);
+				}
+
+				if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+				{
+					this.AddChild(settingsRow = new SettingsRow(
+						"Calibrate Nozzle Offsets".Localize(),
+						null,
+						theme,
+						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
+
+					var calibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = theme.ButtonSpacing,
+						ToolTipText = "Calibrate Nozzle Offsets".Localize()
+					};
+
+					calibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(new NozzleCalibrationWizard(printer));
+					});
+
+					settingsRow.BorderColor = Color.Transparent;
+					settingsRow.AddChild(calibrateButton);
 				}
 			}
 

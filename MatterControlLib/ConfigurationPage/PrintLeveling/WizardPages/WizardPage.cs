@@ -44,13 +44,11 @@ namespace MatterHackers.MatterControl
 
 		public Action PageClose { get; set; }
 
-		protected PrinterSetupWizard setupWizard;
+		protected ISetupWizard setupWizard;
 
-		public WizardPage(PrinterSetupWizard setupWizard, string headerText, string instructionsText)
+		public WizardPage(ISetupWizard setupWizard, string headerText, string instructionsText)
+			: this(setupWizard)
 		{
-			this.setupWizard = setupWizard;
-			this.printer = setupWizard.Printer;
-			this.WindowTitle = setupWizard.WindowTitle;
 			this.HeaderText = headerText;
 
 			if (!string.IsNullOrEmpty(instructionsText))
@@ -58,18 +56,27 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(
 					this.CreateTextField(instructionsText.Replace("\t", "    ")));
 			}
+		}
 
-			NextButton = new TextButton("Next".Localize(), theme)
+		public WizardPage(ISetupWizard setupWizard)
+		{
+			this.setupWizard = setupWizard;
+			this.printer = setupWizard.Printer;
+
+			this.NextButton = new TextButton("Next".Localize(), theme)
 			{
 				Name = "Next Button",
 				BackgroundColor = theme.MinimalShade
 			};
-			NextButton.Click += (s, e) =>
+			this.NextButton.Click += (s, e) =>
 			{
-				setupWizard.ShowNextPage(this.DialogWindow);
+				if (setupWizard.GetNextPage() is WizardPage wizardPage)
+				{
+					this.DialogWindow.ChangeToPage(wizardPage);
+				}
 			};
 
-			this.AddPageAction(NextButton);
+			this.AddPageAction(this.NextButton);
 		}
 
 		protected GuiWidget CreateTextField(string text)

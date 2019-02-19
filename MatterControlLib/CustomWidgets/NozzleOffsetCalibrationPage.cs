@@ -28,142 +28,70 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
-	public class NozzleOffsetCalibrationIntroPage : DialogPage
+	public class NozzleOffsetCalibrationPrintPage : WizardPage
 	{
-		public NozzleOffsetCalibrationIntroPage(PrinterConfig printer)
+		private NozzleOffsetTemplatePrinter templatePrinter;
+		private NozzleOffsetTemplateWidget xOffsetWidget;
+		private NozzleOffsetTemplateWidget yOffsetWidget;
+
+		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
+			: base(setupWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
 			this.Name = "Nozzle Offset Calibration Wizard";
 
-			this.ContentRow.AddChild(
-				new WrappedTextWidget(
-					"Offset Calibration required. We'll now print a calibration guide on the printer to tune your nozzel offsets".Localize(), 
-					textColor: theme.TextColor, 
-					pointSize: theme.DefaultFontSize));
+			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
 
-			var startCalibrationButton = theme.CreateDialogButton("Next".Localize());
-			startCalibrationButton.Name = "Begin calibration print";
-			startCalibrationButton.Click += (s, e) =>
+			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			contentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
-				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationPrintPage(printer));
-			};
-			theme.ApplyPrimaryActionStyle(startCalibrationButton);
-
-			this.AddPageAction(startCalibrationButton);
-		}
-	}
-
-	public class NozzleOffsetCalibrationPrintPage: DialogPage
-	{
-		private PrinterConfig printer;
-		private TextButton nextButton;
-
-		public NozzleOffsetCalibrationPrintPage(PrinterConfig printer)
-		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
-			this.printer = printer;
-
-			this.ContentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize()));
-
-			this.ContentRow.AddChild(new TextWidget("Heating printer...".Localize()));
-
-			this.ContentRow.AddChild(new TextWidget("Printing Guide...".Localize()));
-
-			nextButton = theme.CreateDialogButton("Next".Localize());
-			nextButton.Name = "Configure Calibration";
-			nextButton.Enabled = false;
-			nextButton.Click += (s, e) =>
-			{
-				this.DialogWindow.ChangeToPage(new NozzleOffsetCalibrationResultsPage(printer));
-			};
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
-
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			// Replace with calibration template code
-			Task.Run(() =>
-			{
-				//printer.Connection.QueueLine("T0\nG1 Y180 X150 Z0.8 F1800\nG92 E0\nG1 X100 Z0.3 E25 F900");
+				Padding = new BorderDouble(left: 4)
 			});
 
-			// TODO: At conclusion of calibration template print, enable next button
-			Task.Run(() =>
+			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
 			{
-				// TODO: Silly hack to replicate expected behavior
-				Thread.Sleep(10 * 1000);
-				nextButton.Enabled = true;
+				Margin = new BorderDouble(top: 15),
+				Padding = new BorderDouble(top: 4)
 			});
 
-			base.OnLoad(args);
+			this.NextButton.Enabled = false;
 		}
-	}
 
-	public class NozzleOffsetCalibrationResultsPage : DialogPage
-	{
-		public NozzleOffsetCalibrationResultsPage(PrinterConfig printer)
+		public double[] ActiveOffsets => templatePrinter.ActiveOffsets;
+
+		public async override void OnLoad(EventArgs args)
 		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
-
-			var commonMargin = new BorderDouble(4, 2);
-
-			var row = new FlowLayoutWidget()
+			if (!this.HasBeenClosed)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Padding = new BorderDouble(6, 0),
-				Height = 125
-			};
-			contentRow.AddChild(row);
-
-			for(var i = 0; i <= 40; i++)
-			{
-				row.AddChild(new CalibrationLine(theme)
-				{
-					Width =  8,
-					Margin = 1,
-					HAnchor = HAnchor.Absolute,
-					VAnchor = VAnchor.Stretch,
-					GlyphIndex = (i % 5 == 0) ? i : -1,
-					IsNegative = i < 20
-				});
-
-				// Add spacers to stretch to size
-				if (i < 40)
-				{
-					row.AddChild(new HorizontalSpacer());
-				}
+				this.NextButton.Enabled = true;
 			}
 
-			row.AfterDraw += (s, e) =>
+			base.OnLoad(args);
+
+			// Replace with calibration template code
+			await templatePrinter.PrintTemplate(verticalLayout: true);
+			await templatePrinter.PrintTemplate(verticalLayout: false);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Printing ||
+				printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Paused)
 			{
-				int strokeWidth = 3;
+				printer.CancelPrint();
+			}
 
-				var rect = new RectangleDouble(0, 20, row.LocalBounds.Width, row.LocalBounds.Height);
-				rect.Inflate(-2);
-
-				var center = rect.Center;
-
-				e.Graphics2D.Rectangle(rect, theme.TextColor, strokeWidth);
-				e.Graphics2D.Line(rect.Left, center.Y, rect.Right, center.Y, theme.TextColor, strokeWidth);
-			};
+			base.OnClosed(e);
 		}
 	}
 }

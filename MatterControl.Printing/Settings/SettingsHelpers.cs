@@ -165,10 +165,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void SetExtruderZOffset(int extruderIndex, double newZOffset)
 		{
+			// Get the existing offset, update Z, persist
+			var offset = this.ExtruderOffset(extruderIndex);
+			offset.Z = newZOffset;
+			this.SetExtruderOffset(extruderIndex, offset);
+		}
+
+		public void SetExtruderOffset(int extruderIndex, Vector3 newOffset)
+		{
 			var offsetsVector3 = new List<Vector3>();
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
 			var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
+
 			foreach (string offset in offsets)
 			{
 				string[] xyz = offset.Split('x');
@@ -187,7 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				offsetsVector3.Add(new Vector3(0, 0, -zOffset));
 			}
 
-			offsetsVector3[extruderIndex] = new Vector3(offsetsVector3[extruderIndex].X, offsetsVector3[extruderIndex].Y, newZOffset);
+			offsetsVector3[extruderIndex] = newOffset;
 
 			// now save it
 			var first = true;

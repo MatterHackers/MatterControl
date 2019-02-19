@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,23 +27,49 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl
 {
-	public class PrinterSetupWizardRootPage : DialogPage
+	public class NozzleOffsetCalibrationResultsPage : WizardPage
 	{
-		private PrinterSetupWizard printerSetupWizard;
+		private TextWidget activeOffset;
+		private CalibrationLine calibrationLine;
 
-		public PrinterSetupWizardRootPage(PrinterSetupWizard printerSetupWizard)
+		public NozzleOffsetCalibrationResultsPage(ISetupWizard setupWizard, PrinterConfig printer, double[] activeOffsets)
+			: base(setupWizard)
 		{
-			this.printerSetupWizard = printerSetupWizard;
-		}
+			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
+			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
+			this.Name = "Nozzle Offset Calibration Wizard";
 
-		public override void OnLoad(EventArgs args)
-		{
-			printerSetupWizard.ShowNextPage(this.DialogWindow);
-			base.OnLoad(args);
+			var commonMargin = new BorderDouble(4, 2);
+
+			var row = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Absolute,
+				Padding = new BorderDouble(6, 0),
+				Height = 125
+			};
+			contentRow.AddChild(row);
+
+			contentRow.AddChild(activeOffset = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Begin calibration print";
+			nextButton.Click += (s, e) =>
+			{
+				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
+				hotendOffset.Y += double.Parse(activeOffset.Text);
+				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
+			};
+
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
 		}
 	}
 }

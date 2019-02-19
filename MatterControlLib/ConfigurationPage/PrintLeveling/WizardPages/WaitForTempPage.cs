@@ -52,10 +52,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private List<TextWidget> hotEndDoneTexts = new List<TextWidget>();
 		private double[] targetHotendTemps;
 
-		public WaitForTempPage(PrinterSetupWizard context,
-			string step, string instructions,
-			double targetBedTemp, double[] targetHotendTemps)
-			: base(context, step, instructions)
+		public WaitForTempPage(ISetupWizard setupWizard, string step, string instructions, double targetBedTemp, double[] targetHotendTemps)
+			: base(setupWizard, step, instructions)
 		{
 			this.bedTargetTemp = targetBedTemp;
 			this.targetHotendTemps = targetHotendTemps;

@@ -27,24 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Localizations;
+using System;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl
 {
-	public class GetUltraFineBedHeight : FindBedHeight
+	public interface ISetupWizard : IDisposable
 	{
-		public GetUltraFineBedHeight(ISetupWizard setupWizard, string pageDescription, List<ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(
-				setupWizard, 
-				pageDescription, 
-				"We will now finalize our measurement of the extruder height at this position.".Localize(), 
-				levelingStrings.FineInstruction2, 
-				.02, 
-				probePositions, 
-				probePositionsBeingEditedIndex)
-		{
-		}
+		PrinterConfig Printer { get; }
+
+		string WindowTitle { get; }
+
+		WizardPage GetNextPage();
+
+		WizardPage CurrentPage { get; }
 	}
 }

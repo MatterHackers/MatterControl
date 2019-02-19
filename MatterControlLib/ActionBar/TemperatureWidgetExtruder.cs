@@ -65,24 +65,20 @@ namespace MatterHackers.MatterControl.ActionBar
 				var loadButton = theme.CreateDialogButton("Load".Localize());
 				loadButton.ToolTipText = "Load filament".Localize();
 				loadButton.Name = "Load Filament Button";
-				loadButton.Click += (s, e) =>
+				loadButton.Click += (s, e) =>UiThread.RunOnIdle(() =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						LoadFilamentWizard.Start(printer, theme, extruderIndex, false);
-					});
-				};
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
+				});
+				
 				loadUnloadButtonRow.AddChild(loadButton);
 
 				var unloadButton = theme.CreateDialogButton("Unload".Localize());
 				unloadButton.ToolTipText = "Unload filament".Localize();
-				unloadButton.Click += (s, e) =>
+				unloadButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						UnloadFilamentWizard.Start(printer, theme, extruderIndex);
-					});
-				};
+					DialogWindow.Show(new UnloadFilamentWizard(printer, extruderIndex));
+				});
 				loadUnloadButtonRow.AddChild(unloadButton);
 
 				this.AddChild(new SettingsItem("Filament".Localize(), loadUnloadButtonRow, theme, enforceGutter: false));

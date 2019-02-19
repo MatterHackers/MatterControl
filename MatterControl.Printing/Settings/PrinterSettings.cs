@@ -355,6 +355,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.OnSettingChanged("na");
 		}
 
+		public void CopyFrom(PrinterSettings printerSettings)
+		{
+			//this.OemLayer.Clear();
+			//foreach(var kvp in printerSettings.OemLayer)
+			//{
+			//	this.OemLayer.Add(kvp.Key, kvp.Value);
+			//}
+
+			this.OemLayer = printerSettings.OemLayer;
+			this.MaterialLayers = printerSettings.MaterialLayers;
+			this.QualityLayers = printerSettings.QualityLayers;
+			this.UserLayer = printerSettings.UserLayer;
+
+			this.ActiveMaterialKey = printerSettings.ActiveMaterialKey;
+			this.ActiveQualityKey = printerSettings.ActiveQualityKey;
+
+			this.QualityLayer = GetQualityLayer(ActiveQualityKey);
+			this.MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
+		}
+
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
 		{
 			if (string.IsNullOrEmpty(layerID))
@@ -433,7 +453,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// User settings overrides
 		/// </summary>
-		public PrinterSettingsLayer UserLayer { get; } = new PrinterSettingsLayer();
+		public PrinterSettingsLayer UserLayer { get; private set; } = new PrinterSettingsLayer();
 
 		public static PrinterSettings LoadFile(string printerProfilePath, bool performMigrations = false)
 		{
@@ -475,12 +495,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Should contain both user created and oem specified material layers
 		/// </summary>
-		public ObservableCollection<PrinterSettingsLayer> MaterialLayers { get; } = new ObservableCollection<PrinterSettingsLayer>();
+		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
 
 		/// <summary>
 		/// Should contain both user created and oem specified quality layers
 		/// </summary>
-		public ObservableCollection<PrinterSettingsLayer> QualityLayers { get; } = new ObservableCollection<PrinterSettingsLayer>();
+		public List<PrinterSettingsLayer> QualityLayers { get; private set; } = new List<PrinterSettingsLayer>();
 
 		///<summary>
 		///Returns the settings value at the 'top' of the stack

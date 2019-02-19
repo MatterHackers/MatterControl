@@ -41,8 +41,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private bool pageWasActive = false;
 
-		public CalibrateProbeLastPageInstructions(PrinterSetupWizard context, string headerText)
-			: base(context, headerText, "")
+		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
+			: base(setupWizard, headerText, "")
 		{
 			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
 				+ "    • " + "Remove the paper".Localize() + "\n"
@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
+			printer.Connection.QueueLine("T0");
+			printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Connection.CurrentFeedRate);
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
