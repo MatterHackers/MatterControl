@@ -41,8 +41,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private bool pageWasActive = false;
 
-		public CalibrateProbeLastPageInstructions(ISetupWizard context, string headerText)
-			: base(context, headerText, "")
+		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
+			: base(setupWizard, headerText, "")
 		{
 			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
 				+ "    • " + "Remove the paper".Localize() + "\n"

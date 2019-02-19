@@ -49,9 +49,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected JogControls.MoveButton zMinusControl;
 		private RunningInterval runningInterval;
 
-		public FindBedHeight(ISetupWizard context, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
+		public FindBedHeight(ISetupWizard setupWizard, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
 			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
-			: base(context, pageDescription, setZHeightCoarseInstruction1)
+			: base(setupWizard, pageDescription, setZHeightCoarseInstruction1)
 		{
 			this.probePositions = probePositions;
 			this.moveAmount = moveDistance;

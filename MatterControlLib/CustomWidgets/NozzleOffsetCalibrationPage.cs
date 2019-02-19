@@ -28,8 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
