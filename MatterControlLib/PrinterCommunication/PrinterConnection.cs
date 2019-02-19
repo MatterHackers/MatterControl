@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
 		private RequestTemperaturesStream requestTemperaturesStream10 = null;
 		private ProcessWriteRegexStream processWriteRegExStream11 = null;
-		private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
+		//private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -2142,8 +2142,13 @@ You will then need to logout and log back in to the computer for the changes to 
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(Printer, extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
+
+#if true
+			totalGCodeStream = processWriteRegExStream11;
+#else
 			softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, processWriteRegExStream11);
 			totalGCodeStream = softwareEndstopsExStream12;
+#endif
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
 			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
