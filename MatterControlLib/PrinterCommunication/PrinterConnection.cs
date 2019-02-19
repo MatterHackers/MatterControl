@@ -2135,7 +2135,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			queuedCommandStream3 = new QueuedCommandsStream(Printer, firstStreamToRead);
 			if (ExtruderCount > 1)
 			{
-				var switchExtruderStream = new SwitchExtruderStream(Printer, queuedCommandStream3);
+				var switchExtruderStream = new ToolChangeStream(Printer, queuedCommandStream3);
 				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, switchExtruderStream);
 			}
 			else

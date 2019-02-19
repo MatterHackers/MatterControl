@@ -289,7 +289,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
-				accumulatedStream = new SwitchExtruderStream(printer, accumulatedStream);
+				accumulatedStream = new ToolChangeStream(printer, accumulatedStream);
 			}
 
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);

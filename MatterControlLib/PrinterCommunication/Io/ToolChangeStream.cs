@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class SwitchExtruderStream : GCodeStreamProxy
+	public class ToolChangeStream : GCodeStreamProxy
 	{
 		private Queue<string> commandQueue = new Queue<string>();
 		private object locker = new object();
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		PrinterMove lastDestination = PrinterMove.Unknown;
 		int extruderCount = 0;
 
-		public SwitchExtruderStream(PrinterConfig printer, GCodeStream internalStream)
+		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
