@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class SwitchExtruderStream : GCodeStreamProxy
 	{
-		private List<string> commandQueue = new List<string>();
+		private Queue<string> commandQueue = new Queue<string>();
 		private object locker = new object();
 		private int requestedExtruder;
 		private int extruderLastSwitchedTo;
@@ -86,16 +86,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							string gcodeLine = linesToWrite[i].Trim();
 							if (gcodeLine.Length > 0)
 							{
-								commandQueue.Add(gcodeLine);
+								commandQueue.Enqueue(gcodeLine);
 							}
 						}
 					}
 					else
 					{
-						commandQueue.Add(gcodeToQueue);
+						commandQueue.Enqueue(gcodeToQueue);
 					}
 
-					commandQueue.Add(lineIn);
+					commandQueue.Enqueue(lineIn);
 					queuedSwitch = true;
 				}
 
@@ -114,9 +114,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (commandQueue.Count > 0)
 				{
-					lineToSend = commandQueue[0];
+					lineToSend = commandQueue.Dequeue();
 					lineToSend = printer.ReplaceMacroValues(lineToSend);
-					commandQueue.RemoveAt(0);
 				}
 			}
 
