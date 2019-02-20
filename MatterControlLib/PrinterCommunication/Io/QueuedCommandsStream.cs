@@ -27,18 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using MatterControl.Printing;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterControls;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -46,15 +38,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
-		private int requestedExtruder;
-		private int extruderLastSwitchedTo;
 		PrinterMove lastDestination = PrinterMove.Unknown;
-		int extruderCount = 0;
 
 		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 		}
 
 		public int Count => commandQueue.Count;
@@ -70,65 +58,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 				else
 				{
-					// If we are not printing, check if we need to switch extruders
-					if (extruderCount > 1
-						&& !printer.Connection.Printing)
-					{
-						CheckIfNeedToSwitchExtruders(line);
-					}
-
 					commandQueue.Add(line);
 				}
-			}
-		}
-
-		private void CheckIfNeedToSwitchExtruders(string lineIn)
-		{
-			if(lineIn == null)
-			{
-				return;
-			}
-
-			var lineNoComment = lineIn.Split(';')[0];
-
-			TrackExtruderState(lineNoComment);
-
-			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
-				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
-				&& extruderLastSwitchedTo != requestedExtruder) // is different than the last extruder set
-			{
-				string gcodeToQueue = "";
-				switch (requestedExtruder)
-				{
-					case 0:
-						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
-						break;
-					case 1:
-						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
-						break;
-				}
-
-				if (gcodeToQueue.Trim().Length > 0)
-				{
-					if (gcodeToQueue.Contains("\n"))
-					{
-						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
-						for (int i = 0; i < linesToWrite.Length; i++)
-						{
-							string gcodeLine = linesToWrite[i].Trim();
-							if (gcodeLine.Length > 0)
-							{
-								commandQueue.Add(gcodeLine);
-							}
-						}
-					}
-					else
-					{
-						commandQueue.Add(gcodeToQueue);
-					}
-				}
-
-				extruderLastSwitchedTo = requestedExtruder;
 			}
 		}
 
@@ -187,28 +118,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				lineToSend = base.ReadLine();
 			}
 
-			TrackExtruderState(lineToSend);
-
 			return lineToSend;
-		}
-
-		private void TrackExtruderState(string line)
-		{
-			if (line == null)
-			{
-				return;
-			}
-
-			if (line.StartsWith("G28)"))
-			{
-				extruderLastSwitchedTo = 0;
-				requestedExtruder = 0;
-			}
-
-			if (line.StartsWith("T"))
-			{
-				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
-			}
 		}
 
 		public void Reset()

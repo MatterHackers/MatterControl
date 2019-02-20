@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(ScaleItem.Children);
 				});
 			}
-			Invalidate(InvalidateType.Children);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 			}
 
-			Invalidate(InvalidateType.Children);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 			}
 
-			Invalidate(InvalidateType.Matrix);
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
 		}
 

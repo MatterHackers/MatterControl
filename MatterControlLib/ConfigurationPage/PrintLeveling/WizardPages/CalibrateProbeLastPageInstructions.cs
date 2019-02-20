@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class CalibrateProbeLastPageInstructions : WizardPage
 	{
-		private bool pageWasActive = false;
-
 		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
 			: base(setupWizard, headerText, "")
 		{
@@ -66,23 +64,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			printer.Connection.QueueLine("T0");
 			printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Connection.CurrentFeedRate);
+
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
-
-			pageWasActive = true;
+			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
+			{
+				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			}
 
 			base.OnLoad(args);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (pageWasActive)
-			{
-				// move from this wizard to the print leveling wizard if needed
-				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-			}
+			// move from this wizard to the print leveling wizard if needed
+			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
 		}
 	}
 }

@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					rebuildLock.Dispose();
-					Invalidate(InvalidateType.Mesh);
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					return Task.CompletedTask;
 				});
 		}

@@ -195,6 +195,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
 		private RequestTemperaturesStream requestTemperaturesStream10 = null;
 		private ProcessWriteRegexStream processWriteRegExStream11 = null;
+		//private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -2132,7 +2133,15 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			queuedCommandStream3 = new QueuedCommandsStream(Printer, firstStreamToRead);
-			relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
+			if (ExtruderCount > 1)
+			{
+				var switchExtruderStream = new ToolChangeStream(Printer, queuedCommandStream3);
+				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, switchExtruderStream);
+			}
+			else
+			{
+				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
+			}
 			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			babyStepsStream5 = new BabyStepsStream(Printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
 			printLevelingStream6 = new PrintLevelingStream(Printer, babyStepsStream5, true);
@@ -2141,7 +2150,13 @@ You will then need to logout and log back in to the computer for the changes to 
 			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(Printer, extrusionMultiplyerStream8);
 			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
+
+#if true
 			totalGCodeStream = processWriteRegExStream11;
+#else
+			softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, processWriteRegExStream11);
+			totalGCodeStream = softwareEndstopsExStream12;
+#endif
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
 			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");

@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double feedRate = 0;
 			GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref feedRate);
 
-			StringBuilder newLine = new StringBuilder("G1 ");
+			var newLine = new StringBuilder("G1");
 
 			if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
 			{
@@ -136,20 +136,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				lastDestinationWithLevelingApplied = outPosition;
 
-				newLine = newLine.Append($"X{outPosition.X:0.##} Y{outPosition.Y:0.##} Z{outPosition.Z:0.##} ");
+				newLine.Append($" X{outPosition.X:0.##} Y{outPosition.Y:0.##} Z{outPosition.Z:0.##}");
 			}
 
 			if (lineBeingSent.Contains("E"))
 			{
-				newLine = newLine.Append($"E{extruderDelta:0.###} ");
+				newLine.Append($" E{extruderDelta:0.###}");
 			}
 
 			if (lineBeingSent.Contains("F"))
 			{
-				newLine = newLine.Append($"F{feedRate:0.##}");
+				newLine.Append($" F{feedRate:0.##}");
 			}
 
-			return newLine.ToString().Trim();
+			return newLine.ToString();
 		}
 
 		public Vector3 GetPositionWithZOffset(Vector3 currentDestination)

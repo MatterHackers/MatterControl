@@ -97,14 +97,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 			}
-
-			Closed += (s, e) =>
+			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
 			{
-				// give instruction about how to load filament if the user has not gotten them
-				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-			};
+				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
+				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			}
 
 			base.OnLoad(args);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// give instruction about how to load filament if the user has not gotten them
+			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
+
+			base.OnClosed(e);
 		}
 	}
 }

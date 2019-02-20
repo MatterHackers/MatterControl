@@ -559,6 +559,74 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
+		[Test, Category("GCodeStream"), Ignore("WIP")]
+		public void SoftwareEndstopstreamTests()
+		{
+			string[] inputLines = new string[]
+			{
+				// test x min
+				// move without extrusion
+				"G1 X100Y100Z0E0", // start at the bed center
+				"G1 X-100", // move left off the bed
+				"G1 Y110", // move while outside bounds
+				"G1 X100", // move back on
+
+				// move with extrusion
+				"G1 X100Y100Z0E0", // start at the bed center
+				"G1 X-100E10", // move left off the bed
+				"G1 Y110E20", // move while outside bounds
+				"G1 X100E30", // move back on
+
+				// test x max
+				// test y min
+				// test y max
+				// test z min
+				// test z max
+
+				null,
+			};
+
+			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
+			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
+			string[] expected = new string[]
+			{
+				// move without extrusion
+				"G1 X100 Y100 Z0 E0", // strat position
+				"G1 X0", // clamped x
+				"", // move while outside
+				"G1 Y110", // first position back in bounds
+				"G1 X100", // move to requested x
+
+				// move with extrusion
+				"G1 X100Y100Z0E0", // start at the bed center
+				"G1 X-100E10", // move left off the bed
+				"G1 Y110E20", // move while outside bounds
+				"G1 X100E30", // move back on
+
+				null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var printer = new PrinterConfig(new PrinterSettings());
+			var pauseHandlingStream = new SoftwareEndstopsStream(printer, new TestGCodeStream(printer, inputLines));
+
+			int expectedIndex = 0;
+			string actualLine = pauseHandlingStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+
+			while (actualLine != null)
+			{
+				expectedLine = expected[expectedIndex++];
+				actualLine = pauseHandlingStream.ReadLine();
+
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+			}
+		}
+
 		[Test, Category("GCodeStream")]
 		public void MorePauseHandlingStreamTests()
 		{
