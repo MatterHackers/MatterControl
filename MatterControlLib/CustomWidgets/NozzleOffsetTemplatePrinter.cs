@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl
 
 		public double[] ActiveOffsets => activeOffsets;
 
+		public bool DebugMode { get; private set; } = true;
 
 		public Task PrintTemplate(bool verticalLayout)
 		{
@@ -137,55 +138,58 @@ namespace MatterHackers.MatterControl
 			// Perimeters
 			rect = this.CreatePerimeters(gcodeSketch, rect);
 
-			y1 = rect.YCenter + (nozzleWidth / 2);
-
-			// Draw centerline
-			gcodeSketch.MoveTo(rect.Left, y1);
-			gcodeSketch.LineTo(rect.Right, y1);
-			y1 += nozzleWidth;
-			gcodeSketch.MoveTo(rect.Right, y1);
-			gcodeSketch.LineTo(rect.Left, y1);
-
-			y1 -= nozzleWidth / 2;
-
-			var x = rect.Left + 1.5;
-
+			double x, y2, y3;
 			double sectionHeight = rect.Height / 2;
-
+			bool up = true;
 			var step = (rect.Width - 3) / 40;
-			double y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
-			double y3 = y2 - 5;
 
-			var up = true;
-
-			bool drawGlpyphs = false;
-
-			// Draw calibration lines
-			for (var i = 0; i <= 40; i++)
+			if (!this.DebugMode)
 			{
-				gcodeSketch.MoveTo(x, up ? y1 : y2);
+				y1 = rect.YCenter + (nozzleWidth / 2);
 
-				if ((i % 5 == 0))
+				// Draw centerline
+				gcodeSketch.MoveTo(rect.Left, y1);
+				gcodeSketch.LineTo(rect.Right, y1);
+				y1 += nozzleWidth;
+				gcodeSketch.MoveTo(rect.Right, y1);
+				gcodeSketch.LineTo(rect.Left, y1);
+
+				y1 -= nozzleWidth / 2;
+
+				x = rect.Left + 1.5;
+
+				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
+				y3 = y2 - 5;
+
+				bool drawGlpyphs = false;
+
+				// Draw calibration lines
+				for (var i = 0; i <= 40; i++)
 				{
-					gcodeSketch.LineTo(x, y3);
+					gcodeSketch.MoveTo(x, up ? y1 : y2);
 
-					var currentPos = gcodeSketch.CurrentPosition;
+					if ((i % 5 == 0))
+					{
+						gcodeSketch.LineTo(x, y3);
 
-					gcodeSketch.Speed = 500;
+						var currentPos = gcodeSketch.CurrentPosition;
 
-					PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
+						gcodeSketch.Speed = 500;
 
-					gcodeSketch.Speed = 1800;
+						PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
 
-					gcodeSketch.MoveTo(x, y3);
-					gcodeSketch.MoveTo(x, y2);
+						gcodeSketch.Speed = 1800;
+
+						gcodeSketch.MoveTo(x, y3);
+						gcodeSketch.MoveTo(x, y2);
+					}
+
+					gcodeSketch.LineTo(x, up ? y2 : y1);
+
+					x = x + step;
+
+					up = !up;
 				}
-
-				gcodeSketch.LineTo(x, up ? y2 : y1);
-
-				x = x + step;
-
-				up = !up;
 			}
 
 			x = rect.Left + 1.5;
@@ -194,14 +198,11 @@ namespace MatterHackers.MatterControl
 
 			gcodeSketch.WriteRaw("T1");
 			gcodeSketch.ResetE();
+			gcodeSketch.ResetSpeed();
 
 			gcodeSketch.MoveTo(rect.Left, rect.Top);
-			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
-			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
 			gcodeSketch.PenDown();
-
-			gcodeSketch.Speed = 800;
 
 			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
@@ -209,19 +210,25 @@ namespace MatterHackers.MatterControl
 			// Prime
 			this.PrimeHotend(gcodeSketch, towerRect);
 
-			gcodeSketch.Speed = 1000;
-
-			up = true;
-
-			// Draw calibration lines
-			for (var i = 0; i <= 40; i++)
+			if (this.DebugMode)
 			{
-				gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
-				gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
+				// Perimeters
+				rect = this.CreatePerimeters(gcodeSketch, rect);
+			}
+			else
+			{
+				up = true;
 
-				x = x + step;
+				// Draw calibration lines
+				for (var i = 0; i <= 40; i++)
+				{
+					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
-				up = !up;
+					x = x + step;
+
+					up = !up;
+				}
 			}
 
 			gcodeSketch.PenUp();
