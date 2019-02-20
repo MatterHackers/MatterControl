@@ -36,6 +36,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl
 		{
 			return Task.Run(async ()=>
 			{
-				string gcode = this.BuildTemplate(true);
+				string gcode = this.BuildTemplate(verticalLayout);
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
@@ -79,9 +80,19 @@ namespace MatterHackers.MatterControl
 
 				File.WriteAllText(outputPath, gcode);
 
+				// HACK: update state needed to be set before calling StartPrint
+				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
 				await printer.Connection.StartPrint(outputPath);
 
-				while (printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.FinishedPrint)
+				// Wait for print start
+				while (!printer.Connection.PrintIsActive)
+				{
+					Thread.Sleep(500);
+				}
+
+				// Wait for print finished
+				while (printer.Connection.PrintIsActive)
 				{
 					Thread.Sleep(500);
 				}
@@ -94,8 +105,11 @@ namespace MatterHackers.MatterControl
 
 			if (verticalLayout)
 			{
-				//turtle.Transform = Affine.NewTranslation(90, 160);
-				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(110, 45);
+				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(105, 45);
+			}
+			else
+			{
+				gcodeSketch.Transform = Affine.NewTranslation(75, 175);
 			}
 
 			var rect = new RectangleDouble(0, 0, 123, 30);
