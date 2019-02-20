@@ -131,19 +131,11 @@ namespace MatterHackers.MatterControl
 			var towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
 
-			// Draw purge box
-			while (towerRect.Width > 4)
-			{
-				towerRect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(towerRect);
-			}
+			// Prime
+			this.PrimeHotend(gcodeSketch, towerRect);
 
-			// Draw box
-			for (var i = 0; i < 3; i++)
-			{
-				rect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(rect);
-			}
+			// Perimeters
+			rect = this.CreatePerimeters(gcodeSketch, rect);
 
 			y1 = rect.YCenter + (nozzleWidth / 2);
 
@@ -211,12 +203,11 @@ namespace MatterHackers.MatterControl
 
 			gcodeSketch.Speed = 800;
 
-			// Draw purge box
-			while (towerRect.Width > 4)
-			{
-				towerRect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(towerRect);
-			}
+			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
+			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
+
+			// Prime
+			this.PrimeHotend(gcodeSketch, towerRect);
 
 			gcodeSketch.Speed = 1000;
 
@@ -236,6 +227,26 @@ namespace MatterHackers.MatterControl
 			gcodeSketch.PenUp();
 
 			return gcodeSketch.ToGCode();
+		}
+
+		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
+		{
+			for (var i = 0; i < 3; i++)
+			{
+				rect.Inflate(-nozzleWidth);
+				gcodeSketch.DrawRectangle(rect);
+			}
+
+			return rect;
+		}
+
+		private void PrimeHotend(GCodeSketch gcodeSketch, RectangleDouble towerRect)
+		{
+			while (towerRect.Width > 4)
+			{
+				towerRect.Inflate(-nozzleWidth);
+				gcodeSketch.DrawRectangle(towerRect);
+			}
 		}
 
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)
