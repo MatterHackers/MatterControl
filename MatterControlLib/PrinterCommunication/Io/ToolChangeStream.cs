@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private Queue<string> commandQueue = new Queue<string>();
 		private object locker = new object();
 		private int requestedExtruder;
-		private int extruderLastSwitchedTo;
+		private int activeExtruderIndex;
 		PrinterMove lastDestination = PrinterMove.Unknown;
 		int extruderCount = 0;
 
@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(printer, internalStream)
 		{
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+			activeExtruderIndex = printer.Connection.ActiveExtruderIndex;
 		}
 
 		private bool CheckIfNeedToSwitchExtruders(string lineIn)
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
-				&& extruderLastSwitchedTo != requestedExtruder) // is different than the last extruder set
+				&& activeExtruderIndex != requestedExtruder) // is different than the last extruder set
 			{
 				string gcodeToQueue = "";
 				switch (requestedExtruder)
@@ -99,7 +100,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedSwitch = true;
 				}
 
-				extruderLastSwitchedTo = requestedExtruder;
+				activeExtruderIndex = requestedExtruder;
 			}
 
 			return queuedSwitch;
@@ -143,7 +144,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (line.StartsWith("G28)"))
 			{
-				extruderLastSwitchedTo = 0;
+				activeExtruderIndex = 0;
 				requestedExtruder = 0;
 			}
 
