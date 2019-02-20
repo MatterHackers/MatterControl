@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 				{
 					this.AddChild(settingsRow = new SettingsRow(
-						"Calibrate Probe Offset".Localize(),
+						"Probe Offset".Localize(),
 						null,
 						theme,
 						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 				{
 					this.AddChild(settingsRow = new SettingsRow(
-						"Calibrate Nozzle Offsets".Localize(),
+						"Nozzle Offsets".Localize(),
 						null,
 						theme,
 						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
