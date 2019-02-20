@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl
 	{
 		private PrinterConfig printer;
 		private double[] activeOffsets;
+		private double nozzleWidth;
+		private int firstLayerSpeed;
 
 		public NozzleOffsetTemplatePrinter(PrinterConfig printer)
 		{
@@ -63,6 +65,9 @@ namespace MatterHackers.MatterControl
 				activeOffsets[20 - i] = i * leftStep * -1;
 				activeOffsets[20 + i] = i * rightStep;
 			}
+
+			nozzleWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			firstLayerSpeed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
 		}
 
 		public double[] ActiveOffsets => activeOffsets;
@@ -116,11 +121,9 @@ namespace MatterHackers.MatterControl
 
 			var originalRect = rect;
 
-			double nozzleWidth = 0.4;
-
 			int towerSize = 10;
 
-			gcodeSketch.Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
+			gcodeSketch.Speed = firstLayerSpeed;
 
 			double y1 = rect.Bottom;
 			gcodeSketch.MoveTo(rect.Left, y1);
