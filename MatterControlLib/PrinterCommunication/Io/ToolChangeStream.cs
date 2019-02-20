@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				if (gcodeToQueue.Trim().Length > 0)
 				{
+					var feedRate = printer.Connection.CurrentFeedRate;
 					if (gcodeToQueue.Contains("\n"))
 					{
 						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -96,6 +97,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						commandQueue.Enqueue(gcodeToQueue);
 					}
 
+					commandQueue.Enqueue($"G1 F{feedRate}");
 					commandQueue.Enqueue(lineIn);
 					queuedSwitch = true;
 				}

@@ -198,7 +198,6 @@ namespace MatterHackers.MatterControl
 
 			gcodeSketch.WriteRaw("T1");
 			gcodeSketch.ResetE();
-			gcodeSketch.ResetSpeed();
 
 			gcodeSketch.MoveTo(rect.Left, rect.Top);
 
