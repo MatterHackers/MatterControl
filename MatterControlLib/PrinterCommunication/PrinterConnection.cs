@@ -167,8 +167,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove currentDestination;
 
-		public double CurrentFeedRate { get { return currentDestination.feedRate; } }
-
 		private double currentSdBytes = 0;
 
 		private double fanSpeed;
@@ -181,7 +179,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public Stopwatch TimeHaveBeenHoldingTemperature { get; set; }
 
-		private PrinterMove lastReportedPosition;
+		private PrinterMove lastReportedPosition = PrinterMove.Unknown;
 
 		private GCodeSwitcher gCodeFileSwitcher0 = null;
 		private SendProgressStream sendProgressStream1 = null;

@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class FeedRateMultiplyerStream : GCodeStreamProxy
 	{
-		private PrinterMove lastDestination;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 
 		public FeedRateMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
