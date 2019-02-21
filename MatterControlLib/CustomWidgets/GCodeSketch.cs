@@ -51,9 +51,6 @@ namespace MatterHackers.MatterControl
 		{
 			sb = new StringBuilder();
 			writer = new StringWriter(sb);
-			writer.WriteLine("G92 E0");
-			writer.WriteLine("T0");
-			writer.WriteLine("G1 Z0.2 F{0}", this.Speed);
 		}
 
 		public Vector2 CurrentPosition { get; private set; }

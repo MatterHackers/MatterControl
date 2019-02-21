@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
 
 		public double[] ActiveOffsets => activeOffsets;
 
-		public bool DebugMode { get; private set; } = true;
+		public bool DebugMode { get; private set; } = false;
 
 		public Task PrintTemplate(bool verticalLayout)
 		{
@@ -107,7 +107,14 @@ namespace MatterHackers.MatterControl
 
 		private string BuildTemplate(bool verticalLayout)
 		{
-			var gcodeSketch = new GCodeSketch();
+			var gcodeSketch = new GCodeSketch()
+			{
+				Speed = firstLayerSpeed
+			};
+
+			//gcodeSketch.WriteRaw("G92 E0");
+			gcodeSketch.WriteRaw("T0");
+			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
 
 			if (verticalLayout)
 			{
