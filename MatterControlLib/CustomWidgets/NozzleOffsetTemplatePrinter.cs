@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private string BuildTemplate(bool verticalLayout)
+		public string BuildTemplate(bool verticalLayout)
 		{
 			var gcodeSketch = new GCodeSketch()
 			{

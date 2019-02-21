@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 
 		public double[] ActiveOffsets => templatePrinter.ActiveOffsets;
 
-		public async override void OnLoad(EventArgs args)
+		public override void OnLoad(EventArgs args)
 		{
 			if (!this.HasBeenClosed)
 			{
@@ -79,8 +79,36 @@ namespace MatterHackers.MatterControl
 			base.OnLoad(args);
 
 			// Replace with calibration template code
-			await templatePrinter.PrintTemplate(verticalLayout: true);
-			await templatePrinter.PrintTemplate(verticalLayout: false);
+			//await templatePrinter.PrintTemplate(verticalLayout: true);
+			//await templatePrinter.PrintTemplate(verticalLayout: false);
+
+			Task.Run(async () =>
+			{
+				string gcode1 = templatePrinter.BuildTemplate(verticalLayout: true);
+				string gcode2 = templatePrinter.BuildTemplate(verticalLayout: false);
+
+				string outputPath = Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"nozzle-offset-template-combined.gcode");
+
+				File.WriteAllText(outputPath, gcode1 + "\n" + gcode2);
+
+				// HACK: update state needed to be set before calling StartPrint
+				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+				await printer.Connection.StartPrint(outputPath);
+
+				// Wait for print start
+				while (!printer.Connection.PrintIsActive)
+				{
+					Thread.Sleep(500);
+				}
+
+				// Wait for print finished
+				while (printer.Connection.PrintIsActive)
+				{
+					Thread.Sleep(500);
+				}
 		}
 
 		public override void OnClosed(EventArgs e)
