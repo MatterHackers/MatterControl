@@ -97,7 +97,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						commandQueue.Enqueue(gcodeToQueue);
 					}
 
-					commandQueue.Enqueue($"G1 F{feedRate}");
+					if (feedRate != double.PositiveInfinity)
+					{
+						commandQueue.Enqueue($"G1 F{feedRate}");
+					}
+
 					commandQueue.Enqueue(lineIn);
 					queuedSwitch = true;
 				}
