@@ -96,7 +96,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (destination.feedRate != double.PositiveInfinity
 				&& destination.feedRate != start.feedRate)
 			{
-				sb.AppendFormat("F{0:0.##}", destination.feedRate);
+				if (destination.feedRate > 0)
+				{
+					sb.AppendFormat("F{0:0.##}", destination.feedRate);
+				}
 			}
 
 			return sb.ToString().Trim();
