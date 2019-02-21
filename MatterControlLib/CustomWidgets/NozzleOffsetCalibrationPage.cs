@@ -28,9 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -39,6 +46,9 @@ namespace MatterHackers.MatterControl
 		private NozzleOffsetTemplatePrinter templatePrinter;
 		private NozzleOffsetTemplateWidget xOffsetWidget;
 		private NozzleOffsetTemplateWidget yOffsetWidget;
+
+		private double activeYOffset = double.MinValue;
+		private double activeXOffset = double.MinValue;
 
 		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
 			: base(setupWizard)
@@ -58,11 +68,23 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(left: 4)
 			});
 
+			xOffsetWidget.OffsetChanged += (s, e) =>
+			{
+				activeXOffset = yOffsetWidget.ActiveOffset;
+				this.NextButton.Enabled = activeXOffset != double.MinValue && activeYOffset != double.MinValue;
+			};
+
 			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
 			{
 				Margin = new BorderDouble(top: 15),
 				Padding = new BorderDouble(top: 4)
 			});
+
+			yOffsetWidget.OffsetChanged += (s, e) =>
+			{
+				activeYOffset = yOffsetWidget.ActiveOffset;
+				this.NextButton.Enabled = activeXOffset != double.MinValue && activeYOffset != double.MinValue;
+			};
 
 			this.NextButton.Enabled = false;
 		}
@@ -109,6 +131,17 @@ namespace MatterHackers.MatterControl
 				{
 					Thread.Sleep(500);
 				}
+
+				if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+				{
+					printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+				}
+				else
+				{
+					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 20, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+				}
+			});
+
 		}
 
 		public override void OnClosed(EventArgs e)
