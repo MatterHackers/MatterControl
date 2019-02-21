@@ -237,6 +237,7 @@ namespace MatterHackers.MatterControl
 
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
 		{
+			gcodeSketch.WriteRaw("; CreatePerimeters");
 			for (var i = 0; i < 3; i++)
 			{
 				rect.Inflate(-nozzleWidth);
@@ -248,6 +249,8 @@ namespace MatterHackers.MatterControl
 
 		private void PrimeHotend(GCodeSketch gcodeSketch, RectangleDouble towerRect)
 		{
+			gcodeSketch.WriteRaw("; Priming");
+
 			while (towerRect.Width > 4)
 			{
 				towerRect.Inflate(-nozzleWidth);

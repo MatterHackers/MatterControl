@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class LevelingFunctions
 	{
 		private Vector2 bedSize;
-		private Vector3 lastDestinationWithLevelingApplied = new Vector3();
 		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
 		private PrinterSettings printerSettings;
 
@@ -121,7 +120,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private List<LevelingTriangle> Regions { get; } = new List<LevelingTriangle>();
 
-		public string ApplyLeveling(string lineBeingSent, Vector3 currentDestination)
+		public string ApplyLeveling(string lineBeingSent, Vector3 destination)
 		{
 			double extruderDelta = 0;
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
@@ -130,14 +129,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var newLine = new StringBuilder("G1");
 
-			if (lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z"))
+			// Position data is not optional for leveling - fall back to fixed defaults when not yet known
+			var correctedPosition = new Vector3(
+				(destination.X == double.PositiveInfinity) ? 0 : destination.X,
+				(destination.Y == double.PositiveInfinity) ? 0 : destination.Y,
+				(destination.Z == double.PositiveInfinity) ? 0 : destination.Z);
+
+			// level it
+			Vector3 outPosition = GetPositionWithZOffset(correctedPosition);
+
+			// Only output known positions
+			if (destination.X != double.PositiveInfinity)
 			{
-				Vector3 outPosition = GetPositionWithZOffset(currentDestination);
-
-				lastDestinationWithLevelingApplied = outPosition;
-
-				newLine.Append($" X{outPosition.X:0.##} Y{outPosition.Y:0.##} Z{outPosition.Z:0.##}");
+				newLine.Append($" X{outPosition.X:0.##}");
 			}
+
+			if (destination.Y != double.PositiveInfinity)
+			{
+				newLine.Append($" Y{outPosition.Y:0.##}");
+			}
+
+			newLine.Append($" Z{outPosition.Z:0.##}");
 
 			if (lineBeingSent.Contains("E"))
 			{
