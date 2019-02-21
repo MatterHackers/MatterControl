@@ -139,6 +139,10 @@ namespace MatterHackers.MatterControl
 				else
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 20, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+
+					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y, 
+						printer.Bed.Bounds.Top, 
+						printer.Settings.Helpers.ManualMovementSpeeds().Y);
 				}
 			});
 
