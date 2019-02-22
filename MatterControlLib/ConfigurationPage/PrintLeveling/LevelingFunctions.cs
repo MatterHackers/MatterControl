@@ -122,6 +122,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public string ApplyLeveling(string lineBeingSent, Vector3 destination)
 		{
+			bool hasMovement = lineBeingSent.Contains("X") || lineBeingSent.Contains("Y") || lineBeingSent.Contains("Z");
+			if (!hasMovement)
+			{
+				// Leave non-leveling lines untouched
+				return lineBeingSent;
+			}
+
 			double extruderDelta = 0;
 			GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref extruderDelta);
 			double feedRate = 0;
@@ -131,9 +138,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Position data is not optional for leveling - fall back to fixed defaults when not yet known
 			var correctedPosition = new Vector3(
-				(destination.X == double.PositiveInfinity) ? 0 : destination.X,
-				(destination.Y == double.PositiveInfinity) ? 0 : destination.Y,
-				(destination.Z == double.PositiveInfinity) ? 0 : destination.Z);
+			(destination.X == double.PositiveInfinity) ? 0 : destination.X,
+			(destination.Y == double.PositiveInfinity) ? 0 : destination.Y,
+			(destination.Z == double.PositiveInfinity) ? 0 : destination.Z);
 
 			// level it
 			Vector3 outPosition = GetPositionWithZOffset(correctedPosition);
