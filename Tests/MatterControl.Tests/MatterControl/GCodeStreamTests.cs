@@ -520,7 +520,7 @@ namespace MatterControl.Tests.MatterControl
 			string[] expected = new string[]
 			{
 				"; the printer is moving normally",
-				"G1 X10 Y10 Z10",
+				"G1 X10 Y10 Z10 E0",
 				"G1 E10",
 				"G1 E30",
 
@@ -652,7 +652,7 @@ namespace MatterControl.Tests.MatterControl
 			string[] expected = new string[]
 			{
 				"; the printer is moving normally",
-				"G1 X10 Y10 Z10",
+				"G1 X10 Y10 Z10 E0",
 				"G1 X11 E10",
 				"G1 X12 E30",
 				"; the printer pauses",
