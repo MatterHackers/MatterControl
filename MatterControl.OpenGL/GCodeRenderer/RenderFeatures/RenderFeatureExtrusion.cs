@@ -88,8 +88,8 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Extrusions) == RenderType.Extrusions)
 			{
-				Vector3Float start = this.GetStart(renderInfo);
-				Vector3Float end = this.GetEnd(renderInfo);
+				Vector3Float start = this.GetStart();
+				Vector3Float end = this.GetEnd();
 				double radius = GetRadius(renderInfo.CurrentRenderType);
 
 				Color lineColor;
@@ -141,8 +141,8 @@ namespace MatterHackers.GCodeVisualizer
 				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
 				if (graphics2DGl != null)
 				{
-					Vector3Float startF = this.GetStart(renderInfo);
-					Vector3Float endF = this.GetEnd(renderInfo);
+					Vector3Float startF = this.GetStart();
+					Vector3Float endF = this.GetEnd();
 					Vector2 start = new Vector2(startF.X, startF.Y);
 					renderInfo.Transform.transform(ref start);
 
@@ -160,8 +160,8 @@ namespace MatterHackers.GCodeVisualizer
 					stroke.LineCap = LineCap.Round;
 					stroke.LineJoin = LineJoin.Round;
 
-					Vector3Float start = this.GetStart(renderInfo);
-					Vector3Float end = this.GetEnd(renderInfo);
+					Vector3Float start = this.GetStart();
+					Vector3Float end = this.GetEnd();
 
 					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
 					pathStorage.Add(end.X, end.Y, ShapePath.FlagsAndCommand.LineTo);

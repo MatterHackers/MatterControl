@@ -40,12 +40,12 @@ namespace MatterHackers.GCodeVisualizer
 		protected Vector3Float end;
 		protected float travelSpeed;
 
-		protected Vector3Float GetStart(GCodeRenderInfo renderInfo)
+		protected Vector3Float GetStart()
 		{
 			return this.start;
 		}
 
-		protected Vector3Float GetEnd(GCodeRenderInfo renderInfo)
+		protected Vector3Float GetEnd()
 		{
 			return this.end;
 		}
@@ -63,8 +63,8 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
-				Vector3Float start = this.GetStart(renderInfo);
-				Vector3Float end = this.GetEnd(renderInfo);
+				Vector3Float start = this.GetStart();
+				Vector3Float end = this.GetEnd();
 				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), .1, 6, GCodeRenderer.TravelColor, .2);
 			}
 		}
@@ -80,8 +80,8 @@ namespace MatterHackers.GCodeVisualizer
 				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
 				if (graphics2DGl != null)
 				{
-					Vector3Float startF = this.GetStart(renderInfo);
-					Vector3Float endF = this.GetEnd(renderInfo);
+					Vector3Float startF = this.GetStart();
+					Vector3Float endF = this.GetEnd();
 					Vector2 start = new Vector2(startF.X, startF.Y);
 					renderInfo.Transform.transform(ref start);
 
@@ -104,8 +104,8 @@ namespace MatterHackers.GCodeVisualizer
 					stroke.LineCap = LineCap.Round;
 					stroke.LineJoin = LineJoin.Round;
 
-					Vector3Float start = this.GetStart(renderInfo);
-					Vector3Float end = this.GetEnd(renderInfo);
+					Vector3Float start = this.GetStart();
+					Vector3Float end = this.GetEnd();
 
 					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
 					if (end.X != start.X || end.Y != start.Y)
