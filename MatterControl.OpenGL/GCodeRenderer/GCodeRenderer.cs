@@ -207,12 +207,14 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					graphics2DGl.PreRender(Color.White);
 					GL.Begin(BeginMode.Triangles);
+
+					int lastFeature = endFeature - 1;
 					for (int i = startFeature; i < endFeature; i++)
 					{
 						RenderFeatureBase feature = renderFeatures[renderInfo.EndLayerIndex][i];
 						if (feature != null)
 						{
-							feature.Render(graphics2DGl, renderInfo);
+							feature.Render(graphics2DGl, renderInfo, highlightFeature: i == lastFeature);
 						}
 					}
 					GL.End();

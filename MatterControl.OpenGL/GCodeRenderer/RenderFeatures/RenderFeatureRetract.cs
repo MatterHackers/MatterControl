@@ -94,7 +94,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color))
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false)
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Retractions) == RenderType.Retractions)
 			{
@@ -104,9 +104,9 @@ namespace MatterHackers.GCodeVisualizer
 				renderInfo.Transform.transform(ref position);
 
 				var retractionColor = new Color(Color.Red, 200);
-				if (overrideColor != default(Color))
+				if (highlightFeature)
 				{
-					retractionColor = overrideColor;
+					retractionColor = RenderFeatureBase.HighlightColor;
 				}
 				else if (extrusionAmount > 0)
 				{

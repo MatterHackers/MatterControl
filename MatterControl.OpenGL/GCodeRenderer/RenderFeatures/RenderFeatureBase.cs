@@ -36,7 +36,13 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		protected int extruderIndex;
 
-		public abstract void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color));
+		public static Color HighlightColor { get; set; } = new Color("#D0F476");
+
+		public static Color StartColor { get; set; } = Color.Red;
+
+		public static Color EndColor { get; set; } = new Color("#008000");
+
+		public abstract void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false);
 
 		public abstract void CreateRender3DData(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, GCodeRenderInfo renderInfo);
 

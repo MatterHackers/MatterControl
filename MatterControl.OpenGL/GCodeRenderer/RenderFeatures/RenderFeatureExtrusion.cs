@@ -108,7 +108,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color))
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false)
 		{
 			if (renderInfo.CurrentRenderType.HasFlag(RenderType.Extrusions))
 			{
@@ -116,9 +116,9 @@ namespace MatterHackers.GCodeVisualizer
 
 				Color extrusionColor = Color.Black;
 
-				if (overrideColor != default(Color))
+				if (highlightFeature)
 				{
-					extrusionColor = overrideColor;
+					extrusionColor = RenderFeatureBase.HighlightColor;
 				}
 				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{
@@ -147,7 +147,14 @@ namespace MatterHackers.GCodeVisualizer
 					var endPoint = new Vector2(end.X, end.Y);
 					renderInfo.Transform.transform(ref endPoint);
 
-					graphics2DGl.DrawAALineRounded(startPoint, endPoint, extrusionLineWidths / 2, extrusionColor);
+					var eWidth = extrusionLineWidths / 2;
+
+					graphics2DGl.DrawAALineRounded(startPoint, endPoint, eWidth, extrusionColor);
+
+					if (highlightFeature)
+					{
+						Render3DStartEndMarkers(graphics2DGl, eWidth / 2, startPoint, endPoint);
+					}
 				}
 				else
 				{

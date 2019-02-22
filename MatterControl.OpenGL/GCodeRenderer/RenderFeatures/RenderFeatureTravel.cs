@@ -62,17 +62,18 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color))
+		protected void Render3DStartEndMarkers(Graphics2DOpenGL graphics2DGl, double radius, Vector2 startPoint, Vector2 endPoint)
+		{
+			graphics2DGl.DrawAACircle(startPoint, radius, RenderFeatureBase.StartColor);
+			graphics2DGl.DrawAACircle(endPoint, radius, RenderFeatureBase.EndColor);
+		}
+
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false)
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
-				double movementLineWidth = 0.35 * renderInfo.LayerScale;
-				var movementColor = new Color(10, 190, 15);
-
-				if (overrideColor != default(Color))
-				{
-					movementColor = overrideColor;
-				}
+				double movementLineWidth = 0.2 * renderInfo.LayerScale;
+				Color movementColor = (highlightFeature) ? RenderFeatureBase.HighlightColor : new Color(10, 190, 15);
 
 				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
