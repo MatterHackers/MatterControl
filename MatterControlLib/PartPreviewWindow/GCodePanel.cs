@@ -43,15 +43,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 		private ThemeConfig theme;
 		private PrinterConfig printer;
+		private PrinterTabPage printerTabPage;
 		private SectionWidget speedsWidget;
 		private GuiWidget loadedGCodeSection;
 
-		public GCodePanel(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
+		public GCodePanel(PrinterTabPage printerTabPage, PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
 			this.printer = printer;
+			this.printerTabPage = printerTabPage;
 
 			SectionWidget sectionWidget;
 
@@ -151,6 +153,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
+#if DEBUG
+				loadedGCodeSection.AddChild(
+					new SectionWidget(
+						"Debug".Localize(),
+						new GCodeDebugView(printerTabPage, printer.Bed.LoadedGCode, sceneContext, theme)
+						{
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 3),
+							Padding = new BorderDouble(15, 4)
+						},
+						theme)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
+#endif
 			}
 
 			// Enforce panel padding in sidebar

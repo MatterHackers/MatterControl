@@ -177,6 +177,22 @@ namespace MatterHackers.GCodeVisualizer
 			return renderFeatures[layerToCountFeaturesOn].Count;
 		}
 
+		public RenderFeatureBase this[int layerIndex, int featureIndex]
+		{
+			get
+			{
+				try
+				{
+					return renderFeatures[layerIndex][featureIndex - 1];
+				}
+				catch
+				{
+					// Lazy guard for invalid indexes - callers should test for non-null values
+					return null;
+				}
+			}
+		}
+
 		public void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
 		{
 			if (renderFeatures.Count > 0)

@@ -48,8 +48,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal GCode2DWidget gcode2DWidget;
 
 		private View3DConfig gcodeOptions;
+
 		private DoubleSolidSlider layerRenderRatioSlider;
-		public SliceLayerSelector LayerScrollbar { get; private set; }
+
 		private GCodePanel gcodePanel;
 		internal VerticalResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
@@ -148,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
-			gcodePanel = new GCodePanel(printer, sceneContext, theme)
+			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
 			{
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
@@ -228,6 +229,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 		}
+
+		public SliceLayerSelector LayerScrollbar { get; private set; }
+
+		public DoubleSolidSlider LayerFeaturesScrollbar => layerRenderRatioSlider;
 
 		public int LayerFeaturesIndex
 		{
