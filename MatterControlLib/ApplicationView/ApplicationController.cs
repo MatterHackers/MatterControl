@@ -1279,7 +1279,7 @@ namespace MatterHackers.MatterControl
 						using (new SelectionMaintainer(scene))
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
-						}						// Invalidate image to kick off rebuild of ImageConverter stack 
+						}						// Invalidate image to kick off rebuild of ImageConverter stack
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -3367,14 +3367,35 @@ If you experience adhesion problems, please re-run leveling."
 							break;
 
 						case Keys.Left:
-							// move or rotate view left
-							Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOpperation);
+							if (keyEvent.Control
+								&& !printerTabPage.sceneContext.ViewState.ModelView)
+							{
+								// Decrement slider
+								printerTabPage.LayerFeaturesIndex -= 1;
+							}
+							else
+							{
+								// move or rotate view left
+								Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOpperation);
+							}
+
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 							break;
 
 						case Keys.Right:
-							Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOpperation);
+							if (keyEvent.Control
+								&& !printerTabPage.sceneContext.ViewState.ModelView)
+							{
+								// Increment slider
+								printerTabPage.LayerFeaturesIndex += 1;
+							}
+							else
+							{
+								// move or rotate view right
+								Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOpperation);
+							}
+
 							keyEvent.Handled = true;
 							keyEvent.SuppressKeyPress = true;
 							break;

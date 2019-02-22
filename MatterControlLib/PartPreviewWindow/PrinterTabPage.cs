@@ -229,6 +229,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
 		}
 
+		public int LayerFeaturesIndex
+		{
+			get
+			{
+				var renderInfo = sceneContext.RenderInfo;
+				int layerIndex = renderInfo.EndLayerIndex - 1;
+				int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
+				int featureIndex = (int)(featuresOnLayer * renderInfo.FeatureToEndOnRatio0To1 + .5);
+
+				return Math.Max(0, Math.Min(featureIndex, featuresOnLayer));
+			}
+
+			set
+			{
+				var renderInfo = sceneContext.RenderInfo;
+				int layerIndex = renderInfo.EndLayerIndex - 1;
+				int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
+
+				var factor = (double)value / featuresOnLayer;
+
+				layerRenderRatioSlider.SecondValue = renderInfo.FeatureToEndOnRatio0To1 = Math.Max(0, Math.Min(factor, 1));
+			}
+		}
+
 		string pauseCaption = "Printer Paused".Localize();
 
 		private void ResumePrint(bool clickedOk)
