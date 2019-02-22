@@ -27,42 +27,38 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GCodeLayerDetailsView : GCodeDetailsPanel
+	public class GCodeDetailsPanel : FlowLayoutWidget
 	{
-		public GCodeLayerDetailsView(GCodeFile gCodeMemoryFile, ISceneContext sceneContext, ThemeConfig theme)
-			: base(theme)
+		protected ThemeConfig theme;
+
+		public GCodeDetailsPanel(ThemeConfig theme)
+			: base (FlowDirection.TopToBottom)
 		{
-			GuiWidget layerIndex = this.AddSetting("Number".Localize(), "");
-			GuiWidget layerTime = this.AddSetting("Time".Localize(), "");
-			GuiWidget layerTimeToHere = this.AddSetting("Time From Start".Localize(), "");
-			GuiWidget layerTimeFromHere = this.AddSetting("Time to End".Localize(), "");
-			GuiWidget layerHeight = this.AddSetting("Height".Localize(), "");
-			GuiWidget layerWidth = this.AddSetting("Layer Top".Localize(), "");
-			GuiWidget layerFanSpeeds = this.AddSetting("Fan Speed".Localize(), "");
+			this.theme = theme;
+		}
 
-			void UpdateLayerDisplay(object sender, EventArgs e)
+		protected TextWidget AddSetting(string title, string value)
+		{
+			var textWidget = new TextWidget(value, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
-				layerIndex.Text = $"{sceneContext.ActiveLayerIndex + 1}";
-				layerTime.Text = gCodeMemoryFile.LayerTime(sceneContext.ActiveLayerIndex);
-				layerTimeToHere.Text = gCodeMemoryFile.LayerTimeToHere(sceneContext.ActiveLayerIndex);
-				layerTimeFromHere.Text = gCodeMemoryFile.LayerTimeFromeHere(sceneContext.ActiveLayerIndex);
-				layerHeight.Text = $"{gCodeMemoryFile.GetLayerHeight(sceneContext.ActiveLayerIndex):0.###}";
-				layerWidth.Text = $"{gCodeMemoryFile.GetLayerTop(sceneContext.ActiveLayerIndex):0.###}";
-				var fanSpeed = gCodeMemoryFile.GetLayerFanSpeeds(sceneContext.ActiveLayerIndex);
-				layerFanSpeeds.Text = string.IsNullOrWhiteSpace(fanSpeed) ? "Unchanged" : fanSpeed;
-			}
+				AutoExpandBoundsToText = true,
+				VAnchor = VAnchor.Center
+			};
 
-			sceneContext.ActiveLayerChanged += UpdateLayerDisplay;
+			var settingsItem = new SettingsItem(
+				title,
+				textWidget,
+				theme,
+				enforceGutter: false);
 
-			// and do the initial setting
-			UpdateLayerDisplay(this, null);
+			this.AddChild(settingsItem);
+
+			return textWidget;
 		}
 	}
 }
