@@ -54,18 +54,18 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		public static double ExtruderWidth { get; set; } = .4;
 
+		public static Color TravelColor = Color.Green;
+
+		private static readonly bool Is32Bit = IntPtr.Size == 4;
+
 		private List<List<int>> featureStartIndex = new List<List<int>>();
 		private List<List<int>> featureEndIndex = new List<List<int>>();
 		private List<List<RenderFeatureBase>> renderFeatures = new List<List<RenderFeatureBase>>();
 
-		public static Color TravelColor = Color.Green;
-
+		private List<GCodeVertexBuffer> layerVertexBuffer;
+		private RenderType lastRenderType = RenderType.None;
+		private GCodeRenderInfo renderInfo;
 		private GCodeFile gCodeFileToDraw;
-		public GCodeFile GCodeFileToDraw => gCodeFileToDraw;
-
-		public ExtrusionColors ExtrusionColors { get; } = null;
-
-		public Color Gray { get; set; }
 
 		public GCodeRenderer(GCodeFile gCodeFileToDraw)
 		{
@@ -84,6 +84,12 @@ namespace MatterHackers.GCodeVisualizer
 				}
 			}
 		}
+
+		public GCodeFile GCodeFileToDraw => gCodeFileToDraw;
+
+		public ExtrusionColors ExtrusionColors { get; } = null;
+
+		public Color Gray { get; set; }
 
 		public void CreateFeaturesForLayerIfRequired(int layerToCreate)
 		{
@@ -273,10 +279,6 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		private List<GCodeVertexBuffer> layerVertexBuffer;
-		private RenderType lastRenderType = RenderType.None;
-
-		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		public void Render3D(GCodeRenderInfo renderInfo, DrawEventArgs e)
 		{
