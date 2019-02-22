@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl
 	{
 		private PrinterConfig printer;
 		private double[] activeOffsets;
+		private double nozzleWidth;
+		private int firstLayerSpeed;
 
 		public NozzleOffsetTemplatePrinter(PrinterConfig printer)
 		{
@@ -63,10 +65,14 @@ namespace MatterHackers.MatterControl
 				activeOffsets[20 - i] = i * leftStep * -1;
 				activeOffsets[20 + i] = i * rightStep;
 			}
+
+			nozzleWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			firstLayerSpeed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
 		}
 
 		public double[] ActiveOffsets => activeOffsets;
 
+		public bool DebugMode { get; private set; } = false;
 
 		public Task PrintTemplate(bool verticalLayout)
 		{
@@ -99,9 +105,16 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		private string BuildTemplate(bool verticalLayout)
+		public string BuildTemplate(bool verticalLayout)
 		{
-			var gcodeSketch = new GCodeSketch();
+			var gcodeSketch = new GCodeSketch()
+			{
+				Speed = firstLayerSpeed
+			};
+
+			//gcodeSketch.WriteRaw("G92 E0");
+			gcodeSketch.WriteRaw("T0");
+			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
 
 			if (verticalLayout)
 			{
@@ -116,11 +129,9 @@ namespace MatterHackers.MatterControl
 
 			var originalRect = rect;
 
-			double nozzleWidth = 0.4;
-
 			int towerSize = 10;
 
-			gcodeSketch.Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60);
+			gcodeSketch.Speed = firstLayerSpeed;
 
 			double y1 = rect.Bottom;
 			gcodeSketch.MoveTo(rect.Left, y1);
@@ -128,69 +139,64 @@ namespace MatterHackers.MatterControl
 			var towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
 
-			// Draw purge box
-			while (towerRect.Width > 4)
-			{
-				towerRect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(towerRect);
-			}
+			// Prime
+			this.PrimeHotend(gcodeSketch, towerRect);
 
-			// Draw box
-			for (var i = 0; i < 3; i++)
-			{
-				rect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(rect);
-			}
+			// Perimeters
+			rect = this.CreatePerimeters(gcodeSketch, rect);
 
-			y1 = rect.YCenter + (nozzleWidth / 2);
-
-			// Draw centerline
-			gcodeSketch.MoveTo(rect.Left, y1);
-			gcodeSketch.LineTo(rect.Right, y1);
-			y1 += nozzleWidth;
-			gcodeSketch.MoveTo(rect.Right, y1);
-			gcodeSketch.LineTo(rect.Left, y1);
-
-			y1 -= nozzleWidth / 2;
-
-			var x = rect.Left + 1.5;
-
+			double x, y2, y3;
 			double sectionHeight = rect.Height / 2;
-
+			bool up = true;
 			var step = (rect.Width - 3) / 40;
-			double y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
-			double y3 = y2 - 5;
 
-			var up = true;
-
-			bool drawGlpyphs = false;
-
-			// Draw calibration lines
-			for (var i = 0; i <= 40; i++)
+			if (!this.DebugMode)
 			{
-				gcodeSketch.MoveTo(x, up ? y1 : y2);
+				y1 = rect.YCenter + (nozzleWidth / 2);
 
-				if ((i % 5 == 0))
+				// Draw centerline
+				gcodeSketch.MoveTo(rect.Left, y1);
+				gcodeSketch.LineTo(rect.Right, y1);
+				y1 += nozzleWidth;
+				gcodeSketch.MoveTo(rect.Right, y1);
+				gcodeSketch.LineTo(rect.Left, y1);
+
+				y1 -= nozzleWidth / 2;
+
+				x = rect.Left + 1.5;
+
+				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
+				y3 = y2 - 5;
+
+				bool drawGlpyphs = false;
+
+				// Draw calibration lines
+				for (var i = 0; i <= 40; i++)
 				{
-					gcodeSketch.LineTo(x, y3);
+					gcodeSketch.MoveTo(x, up ? y1 : y2);
 
-					var currentPos = gcodeSketch.CurrentPosition;
+					if ((i % 5 == 0))
+					{
+						gcodeSketch.LineTo(x, y3);
 
-					gcodeSketch.Speed = 500;
+						var currentPos = gcodeSketch.CurrentPosition;
 
-					PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
+						gcodeSketch.Speed = 500;
 
-					gcodeSketch.Speed = 1800;
+						PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
 
-					gcodeSketch.MoveTo(x, y3);
-					gcodeSketch.MoveTo(x, y2);
+						gcodeSketch.Speed = 1800;
+
+						gcodeSketch.MoveTo(x, y3);
+						gcodeSketch.MoveTo(x, y2);
+					}
+
+					gcodeSketch.LineTo(x, up ? y2 : y1);
+
+					x = x + step;
+
+					up = !up;
 				}
-
-				gcodeSketch.LineTo(x, up ? y2 : y1);
-
-				x = x + step;
-
-				up = !up;
 			}
 
 			x = rect.Left + 1.5;
@@ -201,38 +207,62 @@ namespace MatterHackers.MatterControl
 			gcodeSketch.ResetE();
 
 			gcodeSketch.MoveTo(rect.Left, rect.Top);
-			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
-			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
 			gcodeSketch.PenDown();
 
-			gcodeSketch.Speed = 800;
+			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
+			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
-			// Draw purge box
-			while (towerRect.Width > 4)
+			// Prime
+			this.PrimeHotend(gcodeSketch, towerRect);
+
+			if (this.DebugMode)
 			{
-				towerRect.Inflate(-nozzleWidth);
-				gcodeSketch.DrawRectangle(towerRect);
+				// Perimeters
+				rect = this.CreatePerimeters(gcodeSketch, rect);
 			}
-
-			gcodeSketch.Speed = 1000;
-
-			up = true;
-
-			// Draw calibration lines
-			for (var i = 0; i <= 40; i++)
+			else
 			{
-				gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
-				gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
+				up = true;
 
-				x = x + step;
+				// Draw calibration lines
+				for (var i = 0; i <= 40; i++)
+				{
+					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
-				up = !up;
+					x = x + step;
+
+					up = !up;
+				}
 			}
 
 			gcodeSketch.PenUp();
 
 			return gcodeSketch.ToGCode();
+		}
+
+		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
+		{
+			gcodeSketch.WriteRaw("; CreatePerimeters");
+			for (var i = 0; i < 3; i++)
+			{
+				rect.Inflate(-nozzleWidth);
+				gcodeSketch.DrawRectangle(rect);
+			}
+
+			return rect;
+		}
+
+		private void PrimeHotend(GCodeSketch gcodeSketch, RectangleDouble towerRect)
+		{
+			gcodeSketch.WriteRaw("; Priming");
+
+			while (towerRect.Width > 4)
+			{
+				towerRect.Inflate(-nozzleWidth);
+				gcodeSketch.DrawRectangle(towerRect);
+			}
 		}
 
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)

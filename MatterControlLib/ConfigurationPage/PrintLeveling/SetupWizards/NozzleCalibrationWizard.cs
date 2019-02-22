@@ -104,12 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var calibrationPage = new NozzleOffsetCalibrationPrintPage(this, printer);
 			yield return calibrationPage;
 
-			yield return new NozzleOffsetCalibrationResultsPage(this, printer, calibrationPage.ActiveOffsets);
-
-			// TODO: ----------------------------------
-			yield return new CalibrateProbeLastPageInstructions(
-				this,
-				"Done".Localize());
+			yield return new NozzleOffsetCalibrationResultsPage(this, printer, calibrationPage.XOffset, calibrationPage.YOffset);
 		}
 	}
 }

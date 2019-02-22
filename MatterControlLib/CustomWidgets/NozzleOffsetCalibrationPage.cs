@@ -28,9 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -39,6 +46,8 @@ namespace MatterHackers.MatterControl
 		private NozzleOffsetTemplatePrinter templatePrinter;
 		private NozzleOffsetTemplateWidget xOffsetWidget;
 		private NozzleOffsetTemplateWidget yOffsetWidget;
+		private TextWidget xOffsetText;
+		private TextWidget yOffsetText;
 
 		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
 			: base(setupWizard)
@@ -51,25 +60,60 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			contentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
 				Padding = new BorderDouble(left: 4)
 			});
 
-			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
+			xOffsetWidget.OffsetChanged += (s, e) =>
+			{
+				this.XOffset = xOffsetWidget.ActiveOffset;
+				xOffsetText.Text = string.Format("{0}: {1:0.###}", "X Offset".Localize(), this.XOffset);
+
+				this.NextButton.Enabled = this.XOffset != double.MinValue && this.YOffset != double.MinValue;
+			};
+
+			var container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			contentRow.AddChild(container);
+
+			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
 			{
 				Margin = new BorderDouble(top: 15),
-				Padding = new BorderDouble(top: 4)
+				Padding = new BorderDouble(top: 4),
+				Width = 300
 			});
+
+			var verticalColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			container.AddChild(verticalColumn);
+
+			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			yOffsetWidget.OffsetChanged += (s, e) =>
+			{
+				this.YOffset = yOffsetWidget.ActiveOffset;
+				yOffsetText.Text = string.Format("{0}: {1:0.###}", "Y Offset".Localize(), this.YOffset);
+
+				this.NextButton.Enabled = this.XOffset != double.MinValue && this.YOffset != double.MinValue;
+			};
 
 			this.NextButton.Enabled = false;
 		}
 
-		public double[] ActiveOffsets => templatePrinter.ActiveOffsets;
+		public double YOffset { get; set; } = double.MinValue;
 
-		public async override void OnLoad(EventArgs args)
+		public double XOffset { get; set; } = double.MinValue;
+
+		public override void OnLoad(EventArgs args)
 		{
 			if (!this.HasBeenClosed)
 			{
@@ -79,8 +123,51 @@ namespace MatterHackers.MatterControl
 			base.OnLoad(args);
 
 			// Replace with calibration template code
-			await templatePrinter.PrintTemplate(verticalLayout: true);
-			await templatePrinter.PrintTemplate(verticalLayout: false);
+			//await templatePrinter.PrintTemplate(verticalLayout: true);
+			//await templatePrinter.PrintTemplate(verticalLayout: false);
+
+			Task.Run(async () =>
+			{
+				string gcode1 = templatePrinter.BuildTemplate(verticalLayout: true);
+				string gcode2 = templatePrinter.BuildTemplate(verticalLayout: false);
+
+				string outputPath = Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"nozzle-offset-template-combined.gcode");
+
+				File.WriteAllText(outputPath, gcode1 + "\n" + gcode2);
+
+				// HACK: update state needed to be set before calling StartPrint
+				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+				await printer.Connection.StartPrint(outputPath);
+
+				// Wait for print start
+				while (!printer.Connection.PrintIsActive)
+				{
+					Thread.Sleep(500);
+				}
+
+				// Wait for print finished
+				while (printer.Connection.PrintIsActive)
+				{
+					Thread.Sleep(500);
+				}
+
+				if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+				{
+					printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+				}
+				else
+				{
+					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 20, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+
+					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y, 
+						printer.Bed.Bounds.Top, 
+						printer.Settings.Helpers.ManualMovementSpeeds().Y);
+				}
+			});
+
 		}
 
 		public override void OnClosed(EventArgs e)

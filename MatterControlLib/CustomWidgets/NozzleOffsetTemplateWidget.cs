@@ -95,6 +95,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (value != _activeOffset)
 				{
+					_activeOffset = value;
 					this.OffsetChanged?.Invoke(this, null);
 				}
 			}

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class RelativeToAbsoluteStream : GCodeStreamProxy
 	{
-		protected PrinterMove lastDestination = new PrinterMove();
+		protected PrinterMove lastDestination = PrinterMove.Unknown;
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
 		bool xyzAbsoluteMode = true;

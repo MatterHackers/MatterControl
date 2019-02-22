@@ -28,42 +28,56 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
 {
 	public class NozzleOffsetCalibrationResultsPage : WizardPage
 	{
-		private TextWidget activeOffset;
-		private CalibrationLine calibrationLine;
-
-		public NozzleOffsetCalibrationResultsPage(ISetupWizard setupWizard, PrinterConfig printer, double[] activeOffsets)
+		public NozzleOffsetCalibrationResultsPage(ISetupWizard setupWizard, PrinterConfig printer, double xOffset, double yOffset)
 			: base(setupWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
 			this.Name = "Nozzle Offset Calibration Wizard";
 
-			var commonMargin = new BorderDouble(4, 2);
+			this.CreateTextField("Congratulations, your nozzle offsets have been collected and are ready to be saved. Click next to save and finish the wizard".Localize());
 
-			var row = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Absolute,
-				Padding = new BorderDouble(6, 0),
-				Height = 125
-			};
+			var row =  new SettingsRow(
+				"X Offset".Localize(),
+				null,
+				theme,
+				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
 			contentRow.AddChild(row);
 
-			contentRow.AddChild(activeOffset = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			row.AddChild(new TextWidget(xOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			var nextButton = theme.CreateDialogButton("Next".Localize());
+			row = new SettingsRow(
+				"Y Offset".Localize(),
+				null,
+				theme,
+				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
+			contentRow.AddChild(row);
+
+			row.AddChild(new TextWidget(yOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+			this.NextButton.Visible = false;
+
+			var nextButton = theme.CreateDialogButton("Finish".Localize());
 			nextButton.Name = "Begin calibration print";
 			nextButton.Click += (s, e) =>
 			{
+				// TODO: get extrude offset from oem layer
+				// printer.Settings.OemLayer.Get
+
+				// TODO: removed fixed index
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
-				hotendOffset.Y += double.Parse(activeOffset.Text);
+				hotendOffset.X += xOffset;
+				hotendOffset.Y += yOffset;
+
 				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
 			};
 

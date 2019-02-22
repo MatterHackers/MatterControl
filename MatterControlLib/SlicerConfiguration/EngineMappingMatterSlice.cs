@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.bed_shape,
 			SettingsKey.bed_size,
 			SettingsKey.bed_temperature,
+			SettingsKey.before_toolchange_gcode,
+			SettingsKey.before_toolchange_gcode_1,
 			SettingsKey.build_height,
 			SettingsKey.cancel_gcode,
 			SettingsKey.com_port,

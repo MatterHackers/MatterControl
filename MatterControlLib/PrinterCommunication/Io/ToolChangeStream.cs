@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				if (gcodeToQueue.Trim().Length > 0)
 				{
+					var feedRate = lastDestination.feedRate;
 					if (gcodeToQueue.Contains("\n"))
 					{
 						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -96,6 +97,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						commandQueue.Enqueue(gcodeToQueue);
 					}
 
+					if (feedRate != double.PositiveInfinity)
+					{
+						commandQueue.Enqueue($"G1 F{feedRate}");
+					}
+
 					commandQueue.Enqueue(lineIn);
 					queuedSwitch = true;
 				}
@@ -104,6 +110,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return queuedSwitch;
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			this.lastDestination.CopyKnowSettings(position);
+			internalStream.SetPrinterPosition(lastDestination);
 		}
 
 		public override string ReadLine()
