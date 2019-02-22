@@ -54,6 +54,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 {
 	public enum TurnOff { Now, AfterDelay }
 
+	[Flags]
+	public enum PositionReadType
+	{
+		None = 0,
+		HomeX = 1<<1,
+		HomeY = 1<<2,
+		HomeZ = 1<<3,
+		Other = 1<<4,
+		HomeAll = HomeX | HomeY | HomeZ,
+	}
+
 	public enum CommunicationStates
 	{
 		Disconnected,
@@ -102,6 +113,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler EnableChanged;
 
+		public event EventHandler HomingPositionChanged;
+
 		public event EventHandler HotendTemperatureRead;
 
 		public event EventHandler FanSpeedSet;
@@ -131,10 +144,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (waitingForPosition.ElapsedMilliseconds > 60000)
 				{
 					waitingForPosition.Reset();
-					PositionReadQueued = false;
+					PositionReadType = PositionReadType.None;
 				}
 
-				return waitingForPosition.IsRunning || PositionReadQueued;
+				return waitingForPosition.IsRunning || (PositionReadType != PositionReadType.None);
 			}
 		}
 
@@ -193,7 +206,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
 		private RequestTemperaturesStream requestTemperaturesStream10 = null;
 		private ProcessWriteRegexStream processWriteRegExStream11 = null;
-		//private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
+		private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -226,7 +239,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double totalSdBytes = 0;
 
-		private bool PositionReadQueued { get; set; } = false;
+		private PositionReadType PositionReadType { get; set; } = PositionReadType.None;
 		private Stopwatch waitingForPosition = new Stopwatch();
 
 		private ContainsStringLineActions WriteLineContainsCallBacks = new ContainsStringLineActions();
@@ -415,7 +428,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case CommunicationStates.Connected:
 						communicationPossible = true;
 						QueueLine("M115");
-						ReadPosition();
+						ReadPosition(PositionReadType.Other);
 						PrintingItemName = "";
 						break;
 
@@ -1054,7 +1067,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		/// </summary>
 		public void Disable()
 		{
-			if(this.CommunicationState == CommunicationStates.PrintingFromSd
+			if (this.CommunicationState == CommunicationStates.PrintingFromSd
 				|| (this.Paused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 			{
 				// don't turn off anything if we are printing from sd
@@ -1189,7 +1202,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			QueueLine(command);
-			ReadPosition();
 		}
 
 		public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
@@ -1315,7 +1327,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					QueueLine("M110 N1");
 					allCheckSumLinesSent.SetStartingIndex(1);
 					waitingForPosition.Reset();
-					PositionReadQueued = false;
+					PositionReadType = PositionReadType.None;
 				}
 			}
 		}
@@ -1507,15 +1519,15 @@ You will then need to logout and log back in to the computer for the changes to 
 			Console.WriteLine("Exiting ReadFromPrinter method: " + communicationState.ToString());
 		}
 
-		public void ReadPosition(bool forceToTopOfQueue = false)
+		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
 		{
 			QueueLine("M114", forceToTopOfQueue);
-			PositionReadQueued = true;
+			PositionReadType = positionReadType;
 		}
 
 		public void ReadSdProgress(string line)
 		{
-			if (line!= null)
+			if (line != null)
 			{
 				string sdProgressString = line.Substring("Sd printing byte ".Length);
 
@@ -1542,8 +1554,21 @@ You will then need to logout and log back in to the computer for the changes to 
 				totalGCodeStream.SetPrinterPosition(currentDestination);
 			}
 
+			if (PositionReadType.HasFlag(PositionReadType.HomeX))
+			{
+				HomingPosition = new Vector3(lastReportedPosition.position.X, HomingPosition.Y, HomingPosition.Z);
+			}
+			if (PositionReadType.HasFlag(PositionReadType.HomeY))
+			{
+				HomingPosition = new Vector3(HomingPosition.X, lastReportedPosition.position.Y, HomingPosition.Z);
+			}
+			if (PositionReadType.HasFlag(PositionReadType.HomeZ))
+			{
+				HomingPosition = new Vector3(HomingPosition.X, HomingPosition.Y, lastReportedPosition.position.Z);
+			}
+
 			waitingForPosition.Reset();
-			PositionReadQueued = false;
+			PositionReadType = PositionReadType.None;
 		}
 
 		public static void ParseTemperatureString(string temperatureString,
@@ -1790,7 +1815,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			string extraLines = "";
-			foreach(var line in addedLines)
+			foreach (var line in addedLines)
 			{
 				extraLines += line + "\n";
 			}
@@ -1864,7 +1889,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			PrintWasCanceled = false;
 
 			waitingForPosition.Reset();
-			PositionReadQueued = false;
+			PositionReadType = PositionReadType.None;
 
 			ClearQueuedGCode();
 			activePrintTask = printTaskToUse;
@@ -2037,7 +2062,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				CommunicationState = CommunicationStates.Connected;
 				QueueLine("M25"); // : Pause SD print
 				QueueLine("M26"); // : Set SD position
-											 // never leave the extruder and the bed hot
+								  // never leave the extruder and the bed hot
 				DonePrintingSdFile(null);
 			}
 		}
@@ -2149,12 +2174,8 @@ You will then need to logout and log back in to the computer for the changes to 
 			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
 			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
 
-#if true
-			totalGCodeStream = processWriteRegExStream11;
-#else
 			softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, processWriteRegExStream11);
 			totalGCodeStream = softwareEndstopsExStream12;
-#endif
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
 			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
@@ -2167,7 +2188,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			// Get the current position of the printer any time we reset our streams
-			ReadPosition();
+			ReadPosition(PositionReadType.Other);
 		}
 
 		private void SyncProgressToDB(CancellationToken cancellationToken)
@@ -2190,7 +2211,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (activePrintTask != null
-					    && babyStepsStream5 != null
+						&& babyStepsStream5 != null
 						&& activePrintTask.PercentDone < currentDone)
 					{
 						activePrintTask.PercentDone = currentDone;
@@ -2362,7 +2383,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						if (currentSentLine.EndsWith("; NO_PROCESSING"))
 						{
 							// make sure our processing pipe knows the translated position after a NO_PROCESSING
-							ReadPosition(true);
+							ReadPosition(PositionReadType.Other, true);
 						}
 
 						if (currentSentLine.Contains("M114")
@@ -2433,7 +2454,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		{
 			get
 			{
-				if(queuedCommandStream3 != null)
+				if (queuedCommandStream3 != null)
 				{
 					return queuedCommandStream3.Count;
 				}
@@ -2454,6 +2475,19 @@ You will then need to logout and log back in to the computer for the changes to 
 		/// plugs in or removes a filament position sensor.
 		/// </summary>
 		public bool FilamentPositionSensorDetected { get; internal set; }
+		public Vector3 HomingPosition
+		{
+			get => _homingPosition;
+
+			private set
+			{
+				if (value != _homingPosition)
+				{
+					_homingPosition = value;
+					HomingPositionChanged?.Invoke(this, null);
+				}
+			}
+		}
 
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
@@ -2581,13 +2615,33 @@ You will then need to logout and log back in to the computer for the changes to 
 				if (serialPort != null && serialPort.IsOpen)
 				{
 					// If we get a home command, ask the printer where it is after sending it.
-					if (lineWithoutChecksum.Contains("G28") // is a home
-						|| lineWithoutChecksum.Contains("G29") // is a bed level
-						|| lineWithoutChecksum.Contains("G30") // is a bed level
-						|| lineWithoutChecksum.Contains("G92") // is a reset of printer position
+					if (lineWithoutChecksum.StartsWith("G28") // is a home
+						|| lineWithoutChecksum.StartsWith("G29") // is a bed level
+						|| lineWithoutChecksum.StartsWith("G30") // is a bed level
+						|| lineWithoutChecksum.StartsWith("G92") // is a reset of printer position
 						|| (lineWithoutChecksum.StartsWith("T") && !lineWithoutChecksum.StartsWith("T:"))) // is a switch extruder (verify this is the right time to ask this)
 					{
-						ReadPosition(true);
+						PositionReadType readType = PositionReadType.Other;
+						if (lineWithoutChecksum.StartsWith("G28"))
+						{
+							if (lineWithoutChecksum.Contains("X"))
+							{
+								readType |= PositionReadType.HomeX;
+							}
+							if (lineWithoutChecksum.Contains("Y"))
+							{
+								readType |= PositionReadType.HomeY;
+							}
+							if (lineWithoutChecksum.Contains("Z"))
+							{
+								readType |= PositionReadType.HomeZ;
+							}
+							if (lineWithoutChecksum == "G28")
+							{
+								readType = PositionReadType.HomeAll;
+							}
+						}
+						ReadPosition(readType, true);
 					}
 
 					// write data to communication
@@ -2664,6 +2718,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		internal int currentReadThreadIndex = 0;
+		private Vector3 _homingPosition = Vector3.NegativeInfinity;
 
 		public class ReadThread
 		{
