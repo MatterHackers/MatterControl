@@ -78,6 +78,11 @@ namespace MatterHackers.MatterControl
 
 			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
+			_raygunClient = new RaygunClient("hQIlyUUZRGPyXVXbI6l1dA==") // this is the PC key
+			{
+				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
+			};
+			
 			//#if IS_WINDOWS
 			waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
 
