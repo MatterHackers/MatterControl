@@ -146,7 +146,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// put in a second one to use as a signal for the first being processed
 						printer.Connection.QueueLine("G4 P1");
 						// start heating up the extruder
-						printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
+						if (extruderIndex == 0)
+						{
+							printer.Connection.SetTargetHotendTemperature(0, printer.Settings.GetValue<double>(SettingsKey.temperature));
+						}
+						else
+						{
+							printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature + extruderIndex.ToString()));
+						}
 
 						var loadingSpeedMmPerS = printer.Settings.GetValue<double>(SettingsKey.load_filament_speed);
 						var loadLengthMm = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.unload_filament_length));
