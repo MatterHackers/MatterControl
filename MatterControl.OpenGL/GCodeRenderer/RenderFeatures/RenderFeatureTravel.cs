@@ -62,12 +62,17 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color))
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
 				double movementLineWidth = 0.35 * renderInfo.LayerScale;
 				var movementColor = new Color(10, 190, 15);
+
+				if (overrideColor != default(Color))
+				{
+					movementColor = overrideColor;
+				}
 
 				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{

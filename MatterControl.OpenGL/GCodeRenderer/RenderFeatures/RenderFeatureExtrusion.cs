@@ -108,7 +108,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, Color overrideColor = default(Color))
 		{
 			if (renderInfo.CurrentRenderType.HasFlag(RenderType.Extrusions))
 			{
@@ -116,7 +116,11 @@ namespace MatterHackers.GCodeVisualizer
 
 				Color extrusionColor = Color.Black;
 
-				if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
+				if (overrideColor != default(Color))
+				{
+					extrusionColor = overrideColor;
+				}
+				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{
 					extrusionColor = color;
 				}
