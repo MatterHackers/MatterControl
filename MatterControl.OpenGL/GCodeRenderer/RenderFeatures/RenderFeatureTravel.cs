@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,17 +38,12 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		protected Vector3Float start;
 		protected Vector3Float end;
+
 		protected float travelSpeed;
 
-		protected Vector3Float GetStart()
-		{
-			return this.start;
-		}
+		public Vector3Float Start => start;
 
-		protected Vector3Float GetEnd()
-		{
-			return this.end;
-		}
+		public Vector3Float End => end;
 
 		public RenderFeatureTravel(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed)
 			: base(extruderIndex)
@@ -63,8 +58,6 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
-				Vector3Float start = this.GetStart();
-				Vector3Float end = this.GetEnd();
 				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), .1, 6, GCodeRenderer.TravelColor, .2);
 			}
 		}
@@ -74,38 +67,34 @@ namespace MatterHackers.GCodeVisualizer
 			if ((renderInfo.CurrentRenderType & RenderType.Moves) == RenderType.Moves)
 			{
 				double movementLineWidth = 0.35 * renderInfo.LayerScale;
-				Color movementColor = new Color(10, 190, 15);
+				var movementColor = new Color(10, 190, 15);
 
-				// render the part using opengl
-				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-				if (graphics2DGl != null)
+				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
-					Vector3Float startF = this.GetStart();
-					Vector3Float endF = this.GetEnd();
-					Vector2 start = new Vector2(startF.X, startF.Y);
-					renderInfo.Transform.transform(ref start);
+					// render using opengl
+					var startPoint = new Vector2(start.X, start.Y);
+					renderInfo.Transform.transform(ref startPoint);
 
-					Vector2 end = new Vector2(endF.X, endF.Y);
-					renderInfo.Transform.transform(ref end);
+					var endPoint = new Vector2(end.X, end.Y);
+					renderInfo.Transform.transform(ref endPoint);
 
 					if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
 					{
 						movementColor = new Color(movementColor, 200);
 					}
 
-					graphics2DGl.DrawAALineRounded(start, end, movementLineWidth, movementColor);
+					graphics2DGl.DrawAALineRounded(startPoint, endPoint, movementLineWidth, movementColor);
 				}
 				else
 				{
-					VertexStorage pathStorage = new VertexStorage();
-					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
-					Stroke stroke = new Stroke(transformedPathStorage, movementLineWidth);
-
-					stroke.LineCap = LineCap.Round;
-					stroke.LineJoin = LineJoin.Round;
-
-					Vector3Float start = this.GetStart();
-					Vector3Float end = this.GetEnd();
+					// render using agg
+					var pathStorage = new VertexStorage();
+					var transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
+					var stroke = new Stroke(transformedPathStorage, movementLineWidth)
+					{
+						LineCap = LineCap.Round,
+						LineJoin = LineJoin.Round
+					};
 
 					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
 					if (end.X != start.X || end.Y != start.Y)

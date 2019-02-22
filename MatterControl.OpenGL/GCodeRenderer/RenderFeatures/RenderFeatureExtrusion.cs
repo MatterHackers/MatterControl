@@ -1,10 +1,5 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-/*
-Copyright (c) 2014, Lars Brubaker
+﻿/*
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,6 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -88,8 +87,6 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Extrusions) == RenderType.Extrusions)
 			{
-				Vector3Float start = this.GetStart();
-				Vector3Float end = this.GetEnd();
 				double radius = GetRadius(renderInfo.CurrentRenderType);
 
 				Color lineColor;
@@ -137,31 +134,27 @@ namespace MatterHackers.GCodeVisualizer
 					extrusionColor = new Color(extrusionColor, 200);
 				}
 
-				// render the part using opengl
-				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-				if (graphics2DGl != null)
+				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
-					Vector3Float startF = this.GetStart();
-					Vector3Float endF = this.GetEnd();
-					Vector2 start = new Vector2(startF.X, startF.Y);
-					renderInfo.Transform.transform(ref start);
+					// render using opengl
+					var startPoint = new Vector2(start.X, start.Y);
+					renderInfo.Transform.transform(ref startPoint);
 
-					Vector2 end = new Vector2(endF.X, endF.Y);
-					renderInfo.Transform.transform(ref end);
+					var endPoint = new Vector2(end.X, end.Y);
+					renderInfo.Transform.transform(ref endPoint);
 
-					graphics2DGl.DrawAALineRounded(start, end, extrusionLineWidths / 2, extrusionColor);
+					graphics2DGl.DrawAALineRounded(startPoint, endPoint, extrusionLineWidths / 2, extrusionColor);
 				}
 				else
 				{
-					VertexStorage pathStorage = new VertexStorage();
-					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
-					Stroke stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2);
-
-					stroke.LineCap = LineCap.Round;
-					stroke.LineJoin = LineJoin.Round;
-
-					Vector3Float start = this.GetStart();
-					Vector3Float end = this.GetEnd();
+					// render using agg
+					var pathStorage = new VertexStorage();
+					var transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
+					var stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2)
+					{
+						LineCap = LineCap.Round,
+						LineJoin = LineJoin.Round
+					};
 
 					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
 					pathStorage.Add(end.X, end.Y, ShapePath.FlagsAndCommand.LineTo);
