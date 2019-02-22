@@ -45,8 +45,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			CalculateBounds();
 
 			printer.Settings.SettingChanged += Settings_SettingChanged;
+			printer.Connection.HomingPositionChanged += Connection_HomingPositionChanged;
 
 			// Register to listen for position after home and update Bounds based on the axis homed and position info.
+		}
+
+		private void Connection_HomingPositionChanged(object sender, System.EventArgs e)
+		{
+			this.CalculateBounds();
 		}
 
 		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
@@ -63,39 +69,49 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void Dispose()
 		{
 			printer.Settings.SettingChanged -= Settings_SettingChanged;
+			printer.Connection.HomingPositionChanged -= Connection_HomingPositionChanged;
 
 			base.Dispose();
 		}
 
 		private void CalculateBounds()
 		{
-			var bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-			var printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-			var buildHeight = printer.Settings.GetValue<double>(SettingsKey.build_height);
-			if (buildHeight == 0)
+			// TODO: switch to printer.Bed.Bounds
+			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
+
+			// if the printer has leveling enabled
+			if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
-				buildHeight = double.PositiveInfinity;
+				// set to a big value to make sure we can get to any leveling position described (below the bed)
+				aabb.MinXYZ.Z = -100; 
 			}
 
-			// first set all the extruders to the bounds defined by the settings file
+			// find out if the printer knows some of its limits
+			var homingPosition = printer.Connection.HomingPosition;
+			// If we know the homing endstop positions, add them in.
+			for (int i = 0; i < 3; i++)
+			{
+				if (homingPosition[i] != double.NegativeInfinity)
+				{
+					// figure out which side of center it is on and modifiy the bounds
+					if (homingPosition[i] < aabb.Center[i])
+					{
+						aabb.MinXYZ[i] = homingPosition[i];
+					}
+					else
+					{
+						aabb.MaxXYZ[i] = homingPosition[i];
+					}
+				}
+			}
+
+			// first set all the extruders to the bounds defined by the aabb
 			for (int i = 0; i < extruderBounds.Length; i++)
 			{
-				extruderBounds[i] = new AxisAlignedBoundingBox(
-					printCenter.X - bedSize.X / 2, // min x
-					printCenter.Y - bedSize.Y / 2, // min y
-					0, // min z
-					printCenter.X + bedSize.X / 2, // max x
-					printCenter.Y + bedSize.Y / 2, // max y
-					buildHeight); // max z
-
+				extruderBounds[i] = aabb;
 			}
 
-			// if we have more constrained info for extruders, add that it
-
-			// If we know something about the homing positions, add them in.
-			// Specifically never go above a z homes max endstop.
-			// We may also want to add in all other know (measured) endstop postions.
-
+			// If we have more constrained info for extruders, add that it
 		}
 
 		public override string ReadLine()
@@ -137,11 +153,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void ClampToPrinter(ref PrinterMove moveToSend)
 		{
 			var bounds = extruderBounds[printer.Connection.ActiveExtruderIndex];
-			if (moveToSend.position.X < bounds.MinXYZ.X)
+			// clamp to each axis
+			for (int i = 0; i < 3; i++)
 			{
-				moveToSend.position.X = bounds.MinXYZ.X;
-				// If we clamp, than do not do any extrusion at all
-				moveToSend.extrusion = 0;
+				if (moveToSend.position[i] < bounds.MinXYZ[i])
+				{
+					moveToSend.position[i] = bounds.MinXYZ[i];
+					// If we clamp, than do not do any extrusion at all
+					moveToSend.extrusion = 0;
+				}
+				else if (moveToSend.position[i] > bounds.MaxXYZ[i])
+				{
+					moveToSend.position[i] = bounds.MaxXYZ[i];
+					// If we clamp, than do not do any extrusion at all
+					moveToSend.extrusion = 0;
+				}
 			}
 		}
 	}

@@ -92,6 +92,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					PrinterMove currentDestination = GetPosition(lineToSend, LastDestination);
 					var leveledLine = GetLeveledPosition(lineToSend, currentDestination);
+
+					// TODO: clamp to 0 - baby stepping - extruder z-offset, so we don't go below the bed (for the active extruder)
+
 					_lastDestination = currentDestination;
 
 					return leveledLine;
