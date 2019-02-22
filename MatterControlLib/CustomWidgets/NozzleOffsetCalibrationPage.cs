@@ -46,9 +46,8 @@ namespace MatterHackers.MatterControl
 		private NozzleOffsetTemplatePrinter templatePrinter;
 		private NozzleOffsetTemplateWidget xOffsetWidget;
 		private NozzleOffsetTemplateWidget yOffsetWidget;
-
-		private double activeYOffset = double.MinValue;
-		private double activeXOffset = double.MinValue;
+		private TextWidget xOffsetText;
+		private TextWidget yOffsetText;
 
 		public NozzleOffsetCalibrationPrintPage(ISetupWizard setupWizard, PrinterConfig printer)
 			: base(setupWizard)
@@ -61,8 +60,6 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
-			contentRow.AddChild(new TextWidget("Printing Guide...".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
 				Padding = new BorderDouble(left: 4)
@@ -70,26 +67,51 @@ namespace MatterHackers.MatterControl
 
 			xOffsetWidget.OffsetChanged += (s, e) =>
 			{
-				activeXOffset = yOffsetWidget.ActiveOffset;
-				this.NextButton.Enabled = activeXOffset != double.MinValue && activeYOffset != double.MinValue;
+				this.XOffset = xOffsetWidget.ActiveOffset;
+				xOffsetText.Text = string.Format("{0}: {1:0.###}", "X Offset".Localize(), this.XOffset);
+
+				this.NextButton.Enabled = this.XOffset != double.MinValue && this.YOffset != double.MinValue;
 			};
 
-			contentRow.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
+			var container = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			contentRow.AddChild(container);
+
+			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
 			{
 				Margin = new BorderDouble(top: 15),
-				Padding = new BorderDouble(top: 4)
+				Padding = new BorderDouble(top: 4),
+				Width = 300
 			});
+
+			var verticalColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+			container.AddChild(verticalColumn);
+
+			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
 			yOffsetWidget.OffsetChanged += (s, e) =>
 			{
-				activeYOffset = yOffsetWidget.ActiveOffset;
-				this.NextButton.Enabled = activeXOffset != double.MinValue && activeYOffset != double.MinValue;
+				this.YOffset = yOffsetWidget.ActiveOffset;
+				yOffsetText.Text = string.Format("{0}: {1:0.###}", "Y Offset".Localize(), this.YOffset);
+
+				this.NextButton.Enabled = this.XOffset != double.MinValue && this.YOffset != double.MinValue;
 			};
 
 			this.NextButton.Enabled = false;
 		}
 
-		public double[] ActiveOffsets => templatePrinter.ActiveOffsets;
+		public double YOffset { get; set; } = double.MinValue;
+
+		public double XOffset { get; set; } = double.MinValue;
 
 		public override void OnLoad(EventArgs args)
 		{
