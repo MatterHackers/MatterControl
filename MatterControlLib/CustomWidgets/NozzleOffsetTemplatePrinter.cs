@@ -74,36 +74,6 @@ namespace MatterHackers.MatterControl
 
 		public bool DebugMode { get; private set; } = false;
 
-		public Task PrintTemplate(bool verticalLayout)
-		{
-			return Task.Run(async ()=>
-			{
-				string gcode = this.BuildTemplate(verticalLayout);
-
-				string outputPath = Path.Combine(
-					ApplicationDataStorage.Instance.GCodeOutputPath,
-					$"nozzle-offset-template{ (verticalLayout ? 1 : 2) }.gcode");
-
-				File.WriteAllText(outputPath, gcode);
-
-				// HACK: update state needed to be set before calling StartPrint
-				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-
-				await printer.Connection.StartPrint(outputPath);
-
-				// Wait for print start
-				while (!printer.Connection.PrintIsActive)
-				{
-					Thread.Sleep(500);
-				}
-
-				// Wait for print finished
-				while (printer.Connection.PrintIsActive)
-				{
-					Thread.Sleep(500);
-				}
-			});
-		}
 
 		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
