@@ -164,6 +164,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer);
+			Vector3 probeStartPosition = new Vector3(probePosition, startProbeHeight);
 
 			int extruderPriorToMeasure = printer.Connection.ActiveExtruderIndex;
 
@@ -177,7 +178,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
 				this,
-				new Vector3(probePosition, startProbeHeight),
+				probeStartPosition,
 				$"{"Step".Localize()} 1 {"of".Localize()} {numberOfSamples}: {"Position".Localize()} 1 - {"Auto Calibrate".Localize()}",
 				autoProbePositions,
 				0);

@@ -63,12 +63,9 @@ namespace MatterHackers.MatterControl
 			this.setupWizard = setupWizard;
 			this.printer = setupWizard.Printer;
 
-			this.NextButton = new TextButton("Next".Localize(), theme)
-			{
-				Name = "Next Button",
-				BackgroundColor = theme.MinimalShade
-			};
-			this.NextButton.Click += (s, e) =>
+			var nextButton = theme.CreateDialogButton("Next".Localize());
+			nextButton.Name = "Next Button";
+			nextButton.Click += (s, e) =>
 			{
 				if (setupWizard.GetNextPage() is WizardPage wizardPage)
 				{
@@ -76,7 +73,11 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			this.AddPageAction(this.NextButton);
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
+
+			this.NextButton = nextButton;
 		}
 
 		protected GuiWidget CreateTextField(string text)

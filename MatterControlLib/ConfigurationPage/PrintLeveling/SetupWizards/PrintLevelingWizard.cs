@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -264,82 +265,75 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 
 			int i = 0;
-			foreach (var goalProbePosition in levelingPlan.GetPrintLevelPositionToSample())
+
+			var probePositions2 = levelingPlan.GetPrintLevelPositionToSample().ToList();
+
+			AutoProbePage autoProbePage = null;
+
+			if (printer.Settings.Helpers.UseZProbe())
 			{
-				if(this.WindowHasBeenClosed)
+				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePositions2, probePositions);
+				yield return autoProbePage;
+			}
+			else
+			{
+				foreach (var goalProbePosition in probePositions2)
 				{
-					// Make sure when the wizard is done we turn off the bed heating
-					printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
-
-					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-					{
-						printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
-					}
-
-					yield break;
-				}
-
-				var validProbePosition = EnsureInPrintBounds(printer.Settings, goalProbePosition);
-
-				if (printer.Settings.Helpers.UseZProbe())
-				{
-					yield return new AutoProbeFeedback(
-						this,
-						new Vector3(validProbePosition, startProbeHeight),
-						string.Format(
-							"{0} {1} {2} - {3}",
-							$"{"Step".Localize()} {i + 1} {"of".Localize()} {levelingPlan.ProbeCount}:",
-							"Position".Localize(),
-							i + 1,
-							"Auto Calibrate".Localize()),
-						probePositions,
-						i);
-
 					if (this.WindowHasBeenClosed)
 					{
+						// Make sure when the wizard is done we turn off the bed heating
+						printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+
+						if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+						{
+							printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+						}
+
 						yield break;
 					}
-				}
-				else
-				{
-					yield return new GetCoarseBedHeight(
-						this,
-						new Vector3(validProbePosition, startProbeHeight),
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							"Position".Localize(),
-							i + 1,
-							"Low Precision".Localize()),
-						probePositions,
-						i,
-						levelingStrings);
 
-					yield return new GetFineBedHeight(
-						this,
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							"Position".Localize(),
-							i + 1,
-							"Medium Precision".Localize()),
-						probePositions,
-						i,
-						levelingStrings);
+					var validProbePosition = EnsureInPrintBounds(printer, goalProbePosition);
 
-					yield return new GetUltraFineBedHeight(
-						this,
-						string.Format(
-							"{0} {1} {2} - {3}",
-							levelingStrings.GetStepString(levelingPlan.TotalSteps),
-							"Position".Localize(),
-							i + 1,
-							"High Precision".Localize()),
-						probePositions,
-						i,
-						levelingStrings);
+					{
+						yield return new GetCoarseBedHeight(
+							this,
+							new Vector3(validProbePosition, startProbeHeight),
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								"Position".Localize(),
+								i + 1,
+								"Low Precision".Localize()),
+							probePositions,
+							i,
+							levelingStrings);
+
+						yield return new GetFineBedHeight(
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								"Position".Localize(),
+								i + 1,
+								"Medium Precision".Localize()),
+							probePositions,
+							i,
+							levelingStrings);
+
+						yield return new GetUltraFineBedHeight(
+							this,
+							string.Format(
+								"{0} {1} {2} - {3}",
+								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								"Position".Localize(),
+								i + 1,
+								"High Precision".Localize()),
+							probePositions,
+							i,
+							levelingStrings);
+					}
+					i++;
 				}
-				i++;
 			}
 
 			yield return new LastPageInstructions(
@@ -349,10 +343,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions);
 		}
 
-		private Vector2 EnsureInPrintBounds(PrinterSettings printerSettings, Vector2 probePosition)
+		public static Vector2 EnsureInPrintBounds(PrinterConfig printer, Vector2 probePosition)
 		{
 			// check that the position is within the printing area and if not move it back in
-			if (printerSettings.Helpers.UseZProbe())
+			if (printer.Settings.Helpers.UseZProbe())
 			{
 				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
 				var actualNozzlePosition = probePosition - probeOffset;
