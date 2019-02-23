@@ -35,6 +35,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
@@ -147,6 +148,13 @@ namespace MatterHackers.MatterControl
 					{
 						_raygunClient.Send(e.Exception);
 					}
+
+					if (System.Windows.Forms.Application.OpenForms.Count > 0
+						&& !System.Windows.Forms.Application.OpenForms[0].InvokeRequired)
+					{
+						System.Windows.Forms.Application.Exit();
+					}
+
 				};
 
 				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
@@ -155,6 +163,7 @@ namespace MatterHackers.MatterControl
 					{
 						_raygunClient.Send(e.ExceptionObject as Exception);
 					}
+					System.Windows.Forms.Application.Exit();
 				};
 			}
 

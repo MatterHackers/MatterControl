@@ -327,15 +327,15 @@ namespace MatterHackers.MatterControl
 					watermarkImage = AggContext.StaticData.LoadImage(imagePathAndFile);
 				}
 
-				var xYRatio = printer.Bed.ViewerVolume.X / (double)printer.Bed.ViewerVolume.Y;
-				var scaledWidth = watermarkImage.Width;
-				var scaledHeight = watermarkImage.Height * xYRatio;
+				var xYRatio = printer.Bed.ViewerVolume.X / Math.Max(1, printer.Bed.ViewerVolume.Y);
+				var scaledWidth = Math.Max(1, watermarkImage.Width);
+				var scaledHeight = Math.Max(1, watermarkImage.Height * xYRatio);
 				Graphics2D bedGraphics = bedImage.NewGraphics2D();
 				bedGraphics.Render(
 					watermarkImage,
 					new Vector2(
 						(bedImage.Width - scaledWidth) / 2,
-						(bedImage.Height - scaledHeight) / 2),
+						Math.Max(0, (bedImage.Height - scaledHeight) / 2)),
 					scaledWidth, scaledHeight);
 			}
 		}
