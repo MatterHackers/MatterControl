@@ -193,6 +193,8 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
+		public bool GCodeInspector { get; set; } = false;
+
 		public void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
 		{
 			if (renderFeatures.Count > 0)
@@ -230,7 +232,7 @@ namespace MatterHackers.GCodeVisualizer
 						RenderFeatureBase feature = renderFeatures[renderInfo.EndLayerIndex][i];
 						if (feature != null)
 						{
-							feature.Render(graphics2DGl, renderInfo, highlightFeature: i == lastFeature);
+							feature.Render(graphics2DGl, renderInfo, highlightFeature: this.GCodeInspector && i == lastFeature);
 						}
 					}
 					GL.End();
