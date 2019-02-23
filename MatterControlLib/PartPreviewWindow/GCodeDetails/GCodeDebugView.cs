@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
 			int featureIndex = (int)(featuresOnLayer * renderInfo.FeatureToEndOnRatio0To1 + .5);
 
-			int activeFeatureIndex = Math.Max(0, Math.Min(featureIndex, featuresOnLayer));
+			int activeFeatureIndex = Math.Max(0, Math.Min(featureIndex, featuresOnLayer - 1));
 
 			if (sceneContext.GCodeRenderer[layerIndex, activeFeatureIndex] is RenderFeatureTravel line)
 			{
