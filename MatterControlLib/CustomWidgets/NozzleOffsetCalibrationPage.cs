@@ -133,6 +133,10 @@ namespace MatterHackers.MatterControl
 					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60)
 				};
 
+				//gcodeSketch.WriteRaw("G92 E0");
+				gcodeSketch.WriteRaw("; LAYER: 0");
+				gcodeSketch.WriteRaw("; LAYER_HEIGHT: 0.2");
+
 				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: true);
 				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: false);
 
@@ -167,8 +171,8 @@ namespace MatterHackers.MatterControl
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 20, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 
-					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y, 
-						printer.Bed.Bounds.Top, 
+					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y,
+						printer.Bed.Bounds.Top,
 						printer.Settings.Helpers.ManualMovementSpeeds().Y);
 				}
 			});
