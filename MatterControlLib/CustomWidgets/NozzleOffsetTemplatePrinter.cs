@@ -107,8 +107,7 @@ namespace MatterHackers.MatterControl
 
 		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
-			//gcodeSketch.WriteRaw("G92 E0");
-			gcodeSketch.WriteRaw("T0");
+			gcodeSketch.SetTool("T0");
 			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
 
 			if (verticalLayout)
@@ -198,8 +197,7 @@ namespace MatterHackers.MatterControl
 			y1 = rect.Top + (nozzleWidth * .5);
 			y2 = y1 - sectionHeight + (nozzleWidth * .5);
 
-			gcodeSketch.WriteRaw("T1");
-			gcodeSketch.ResetE();
+			gcodeSketch.SetTool("T1");
 
 			gcodeSketch.MoveTo(rect.Left, rect.Top);
 

@@ -70,6 +70,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public void SetTool(string toolChange)
+		{
+			this.WriteRaw(toolChange);
+			this.ResetE();
+		}
+
 		public void MoveTo(double x, double y, bool retract = false)
 		{
 			this.MoveTo(new Vector2(x, y), retract);
