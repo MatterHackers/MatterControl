@@ -183,7 +183,7 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				try
 				{
-					return renderFeatures[layerIndex][featureIndex - 1];
+					return renderFeatures[layerIndex][featureIndex];
 				}
 				catch
 				{

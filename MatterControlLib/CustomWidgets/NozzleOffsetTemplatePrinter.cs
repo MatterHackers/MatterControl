@@ -74,46 +74,10 @@ namespace MatterHackers.MatterControl
 
 		public bool DebugMode { get; private set; } = false;
 
-		public Task PrintTemplate(bool verticalLayout)
+
+		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
-			return Task.Run(async ()=>
-			{
-				string gcode = this.BuildTemplate(verticalLayout);
-
-				string outputPath = Path.Combine(
-					ApplicationDataStorage.Instance.GCodeOutputPath,
-					$"nozzle-offset-template{ (verticalLayout ? 1 : 2) }.gcode");
-
-				File.WriteAllText(outputPath, gcode);
-
-				// HACK: update state needed to be set before calling StartPrint
-				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-
-				await printer.Connection.StartPrint(outputPath);
-
-				// Wait for print start
-				while (!printer.Connection.PrintIsActive)
-				{
-					Thread.Sleep(500);
-				}
-
-				// Wait for print finished
-				while (printer.Connection.PrintIsActive)
-				{
-					Thread.Sleep(500);
-				}
-			});
-		}
-
-		public string BuildTemplate(bool verticalLayout)
-		{
-			var gcodeSketch = new GCodeSketch()
-			{
-				Speed = firstLayerSpeed
-			};
-
-			//gcodeSketch.WriteRaw("G92 E0");
-			gcodeSketch.WriteRaw("T0");
+			gcodeSketch.SetTool("T0");
 			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
 
 			if (verticalLayout)
@@ -203,8 +167,7 @@ namespace MatterHackers.MatterControl
 			y1 = rect.Top + (nozzleWidth * .5);
 			y2 = y1 - sectionHeight + (nozzleWidth * .5);
 
-			gcodeSketch.WriteRaw("T1");
-			gcodeSketch.ResetE();
+			gcodeSketch.SetTool("T1");
 
 			gcodeSketch.MoveTo(rect.Left, rect.Top);
 
@@ -238,8 +201,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			gcodeSketch.PenUp();
-
-			return gcodeSketch.ToGCode();
 		}
 
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)

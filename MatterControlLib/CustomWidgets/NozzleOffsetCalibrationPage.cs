@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl
 
 			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
 
-			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
 				Padding = new BorderDouble(left: 4)
@@ -85,18 +83,27 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(top: 15),
 				Padding = new BorderDouble(top: 4),
-				Width = 300
+				Width = 110
 			});
 
 			var verticalColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Margin = 40
 			};
 			container.AddChild(verticalColumn);
 
-			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Width = 200,
+				Margin = new BorderDouble(bottom: 10)
+			});
+
+			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Width = 200
+			});
 
 			yOffsetWidget.OffsetChanged += (s, e) =>
 			{
@@ -128,14 +135,23 @@ namespace MatterHackers.MatterControl
 
 			Task.Run(async () =>
 			{
-				string gcode1 = templatePrinter.BuildTemplate(verticalLayout: true);
-				string gcode2 = templatePrinter.BuildTemplate(verticalLayout: false);
+				var gcodeSketch = new GCodeSketch()
+				{
+					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60)
+				};
+
+				//gcodeSketch.WriteRaw("G92 E0");
+				gcodeSketch.WriteRaw("; LAYER: 0");
+				gcodeSketch.WriteRaw("; LAYER_HEIGHT: 0.2");
+
+				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: true);
+				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: false);
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					$"nozzle-offset-template-combined.gcode");
 
-				File.WriteAllText(outputPath, gcode1 + "\n" + gcode2);
+				File.WriteAllText(outputPath, gcodeSketch.ToGCode());
 
 				// HACK: update state needed to be set before calling StartPrint
 				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
@@ -162,8 +178,8 @@ namespace MatterHackers.MatterControl
 				{
 					printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 20, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 
-					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y, 
-						printer.Bed.Bounds.Top, 
+					printer.Connection.MoveAbsolute(PrinterConnection.Axis.Y,
+						printer.Bed.Bounds.Top,
 						printer.Settings.Helpers.ManualMovementSpeeds().Y);
 				}
 			});
