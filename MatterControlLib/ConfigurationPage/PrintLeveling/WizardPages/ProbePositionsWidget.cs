@@ -62,7 +62,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.VAnchor = VAnchor.Absolute;
 			this.theme = theme;
 
-			
 			extraLightColor = theme.BackgroundColor.Blend(theme.TextColor, 0.1);
 			lightColor = theme.BackgroundColor.Blend(theme.TextColor, 0.2);
 			opaqueMinimumAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay);
@@ -79,7 +78,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public bool RenderLevelingData { get; set; }
 
-		public bool SimplePoints { get; set; } 
+		public bool SimplePoints { get; set; }
 
 		public override void OnBoundsChanged(EventArgs e)
 		{

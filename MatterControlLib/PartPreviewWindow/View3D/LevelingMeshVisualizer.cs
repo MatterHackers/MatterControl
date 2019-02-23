@@ -145,43 +145,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static List<Vector3Float> GetOuterPoints(List<Vector3Float> vertices, Dictionary<Vector3Float, int> pointCounts, Vector2 bedCenter)
 		{
+			// Filter to only outer points
 			var outerPointsOnly = pointCounts.Where(kvp => kvp.Value <= 3).Select(kvp => kvp.Key).ToList();
-
 			var outerPoints = vertices.Where(p => outerPointsOnly.Contains(p)).ToList();
-			var p2 = (new[] { new Vector2(2, 2), new Vector2(2, -2), new Vector2(-2, 2), new Vector2(-2, -2) }).Select(v => new { V = v, M = v.GetAngle(), L = v.Length, D = MathHelper.RadiansToDegrees(v.GetAngle()) });
 
+			// Project to points with their computed angles and lengths
 			var computed = outerPoints.Select(p =>
 			{
 				var point = new Vector2(p) - bedCenter;
 
-				//var b = new Vector3Float(bedCenter.X, bedCenter.Y, 0);
-				//var angle = b.CalculateAngle(new Vector3Float(p.X, p.Y, 0));
-
-				//var a = p;
-
-				//var angle2 = Math.Atan2(a.X * b.Y - a.Y * b.X, a.X * b.X + a.Y * b.Y);
-				//var angle2 = Math.Atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y)
-
 				return new
 				{
-					V = p,
-					Mapped = point,
+					Point = p,
 					Angle = point.GetAngle(),
 					Lenth = point.Length
-					//Angle3 = angle,
-					//Angle2 = angle2,
-					//Degrees = MathHelper.RadiansToDegrees(angle),
-					//Degrees2 = MathHelper.RadiansToDegrees(angle2),
 				};
-			}).ToList();
+			});
 
-			//File.WriteAllText(
-			//	@"c:\temp\points.json",
-			//	JsonConvert.SerializeObject(computed, Formatting.Indented));
-
-			var ordered = computed.OrderBy(c => c.Angle).ThenBy(c => c.Lenth).ToList();
-
-			return ordered.Select(c => c.V).ToList();
+			// Return the original points ordered by angle/length
+			var ordered = computed.OrderBy(c => c.Angle).ThenBy(c => c.Lenth);
+			return ordered.Select(c => c.Point).ToList();
 		}
 	}
 }

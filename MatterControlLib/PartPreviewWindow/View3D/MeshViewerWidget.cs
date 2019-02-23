@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private List<IDrawable> drawables = new List<IDrawable>();
 		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
-		
+
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
 		public Color BuildVolumeColor { get; set; }
@@ -414,8 +414,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					DrawObject(item, transparentMeshes, e);
 				}
 			}
-
-
 
 			transparentMeshes.Sort(BackToFrontXY);
 
