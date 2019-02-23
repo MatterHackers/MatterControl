@@ -58,8 +58,6 @@ namespace MatterHackers.MatterControl
 
 			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
 
-			contentRow.AddChild(new TextWidget("Printing Calibration Guide".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
 			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
 				Padding = new BorderDouble(left: 4)
@@ -85,18 +83,27 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(top: 15),
 				Padding = new BorderDouble(top: 4),
-				Width = 300
+				Width = 110
 			});
 
 			var verticalColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Stretch,
+				Margin = 40
 			};
 			container.AddChild(verticalColumn);
 
-			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			verticalColumn.AddChild(xOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Width = 200,
+				Margin = new BorderDouble(bottom: 10)
+			});
+
+			verticalColumn.AddChild(yOffsetText = new TextWidget("".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Width = 200
+			});
 
 			yOffsetWidget.OffsetChanged += (s, e) =>
 			{
