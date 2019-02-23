@@ -64,24 +64,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private List<IDrawable> drawables = new List<IDrawable>();
 		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
-		private Mesh levelingDataMesh;
-
+		
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
 		public Color BuildVolumeColor { get; set; }
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (sceneContext.Printer is PrinterConfig printer)
-			{
-				levelingDataMesh = LevelingMeshVisualizer.BuildMeshFromLevelingData(printer);
-			}
-
 			drawables.AddRange(new IDrawable[]
 			{
 				new AxisIndicatorDrawable(),
 				new SceneTraceDataDrawable(sceneContext),
-				new AABBDrawable(sceneContext)
+				new AABBDrawable(sceneContext),
+				new LevelingDataDrawable(sceneContext)
 			});
 
 			itemDrawables.AddRange(new IDrawableItem[]
@@ -420,14 +415,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			// Render as solid
-			GLHelper.Render(levelingDataMesh,
-				Color.Blue,
-				Matrix4X4.Identity,
-				sceneContext.ViewState.RenderType,
-				Matrix4X4.Identity * World.ModelviewMatrix,
-				darkWireframe, 
-				() => Invalidate());
+
 
 			transparentMeshes.Sort(BackToFrontXY);
 
