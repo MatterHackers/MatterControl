@@ -115,7 +115,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = renderSpeeds,
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_speeds",
+						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
@@ -133,9 +135,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme, 
+						serializationKey: "gcode_panel_details",
+						expanded: true)
 					{
-						HAnchor = HAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
 
@@ -148,7 +152,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_layer_details",
+						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
