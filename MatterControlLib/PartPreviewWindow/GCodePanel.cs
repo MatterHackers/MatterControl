@@ -159,22 +159,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
-#if DEBUG
+
+				SectionWidget lineInspectorWidget;
+
 				loadedGCodeSection.AddChild(
-					new SectionWidget(
-						"Debug".Localize(),
+					lineInspectorWidget = new SectionWidget(
+						"Line Inspector".Localize(),
 						new GCodeDebugView(printerTabPage, printer.Bed.LoadedGCode, sceneContext, theme)
 						{
 							HAnchor = HAnchor.Stretch,
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_line_inspector",
+						expanded: false)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
-#endif
+
+				lineInspectorWidget.ExpandedChanged += (s, sectionVisible) =>
+				{
+					sceneContext.GCodeRenderer.GCodeInspector = sectionVisible;
+				};
+
+				sceneContext.GCodeRenderer.GCodeInspector = lineInspectorWidget.ContentPanel.Visible;
 			}
 
 			// Enforce panel padding in sidebar
