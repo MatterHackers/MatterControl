@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public List<Vector3> SampledPositions { get; }
 
-		private List<LevelingTriangle> Regions { get; } = new List<LevelingTriangle>();
+		public List<LevelingTriangle> Regions { get; } = new List<LevelingTriangle>();
 
 		public string ApplyLeveling(string lineBeingSent, Vector3 destination)
 		{
