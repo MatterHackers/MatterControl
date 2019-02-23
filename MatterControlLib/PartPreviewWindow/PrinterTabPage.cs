@@ -48,8 +48,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal GCode2DWidget gcode2DWidget;
 
 		private View3DConfig gcodeOptions;
+
 		private DoubleSolidSlider layerRenderRatioSlider;
-		public SliceLayerSelector LayerScrollbar { get; private set; }
+
 		private GCodePanel gcodePanel;
 		internal VerticalResizeContainer gcodeContainer;
 		internal PrinterActionsBar printerActionsBar;
@@ -148,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
-			gcodePanel = new GCodePanel(printer, sceneContext, theme)
+			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
 			{
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
@@ -227,6 +228,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.ApplicationEvent += ApplicationController_ApplicationEvent;
 
 			sceneContext.LoadedGCodeChanged += BedPlate_LoadedGCodeChanged;
+		}
+
+		public SliceLayerSelector LayerScrollbar { get; private set; }
+
+		public DoubleSolidSlider LayerFeaturesScrollbar => layerRenderRatioSlider;
+
+		public int LayerFeaturesIndex
+		{
+			get
+			{
+				var renderInfo = sceneContext.RenderInfo;
+				int layerIndex = renderInfo.EndLayerIndex - 1;
+				int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
+				int featureIndex = (int)(featuresOnLayer * renderInfo.FeatureToEndOnRatio0To1 + .5);
+
+				return Math.Max(0, Math.Min(featureIndex, featuresOnLayer));
+			}
+
+			set
+			{
+				var renderInfo = sceneContext.RenderInfo;
+				int layerIndex = renderInfo.EndLayerIndex - 1;
+				int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
+
+				var factor = (double)value / featuresOnLayer;
+
+				layerRenderRatioSlider.SecondValue = renderInfo.FeatureToEndOnRatio0To1 = Math.Max(0, Math.Min(factor, 1));
+			}
 		}
 
 		string pauseCaption = "Printer Paused".Localize();

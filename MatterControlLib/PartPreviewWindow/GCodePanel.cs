@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
@@ -36,7 +35,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -45,15 +43,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 		private ThemeConfig theme;
 		private PrinterConfig printer;
+		private PrinterTabPage printerTabPage;
 		private SectionWidget speedsWidget;
 		private GuiWidget loadedGCodeSection;
 
-		public GCodePanel(PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
+		public GCodePanel(PrinterTabPage printerTabPage, PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
 			this.printer = printer;
+			this.printerTabPage = printerTabPage;
 
 			SectionWidget sectionWidget;
 
@@ -115,7 +115,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Visible = renderSpeeds,
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_speeds",
+						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
@@ -133,9 +135,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_details",
+						expanded: true)
 					{
-						HAnchor = HAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
 
@@ -148,11 +152,39 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(bottom: 3),
 							Padding = new BorderDouble(15, 4)
 						},
-						theme)
+						theme,
+						serializationKey: "gcode_panel_layer_details",
+						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
+
+				SectionWidget lineInspectorWidget;
+
+				loadedGCodeSection.AddChild(
+					lineInspectorWidget = new SectionWidget(
+						"Line Inspector".Localize(),
+						new GCodeDebugView(printerTabPage, printer.Bed.LoadedGCode, sceneContext, theme)
+						{
+							HAnchor = HAnchor.Stretch,
+							Margin = new BorderDouble(bottom: 3),
+							Padding = new BorderDouble(15, 4)
+						},
+						theme,
+						serializationKey: "gcode_panel_line_inspector",
+						expanded: false)
+					{
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					});
+
+				lineInspectorWidget.ExpandedChanged += (s, sectionVisible) =>
+				{
+					sceneContext.GCodeRenderer.GCodeInspector = sectionVisible;
+				};
+
+				sceneContext.GCodeRenderer.GCodeInspector = lineInspectorWidget.ContentPanel.Visible;
 			}
 
 			// Enforce panel padding in sidebar

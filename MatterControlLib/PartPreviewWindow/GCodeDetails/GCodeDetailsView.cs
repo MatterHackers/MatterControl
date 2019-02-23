@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,19 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class GCodeDetailsView : FlowLayoutWidget
+	public class GCodeDetailsView : GCodeDetailsPanel
 	{
-		private ThemeConfig theme;
 		private GCodeFile gCodeMemoryFile;
 		private PrinterConfig printer;
 		private TextWidget costTextWidget;
@@ -48,48 +45,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private GuiWidget conditionalCostContainer;
 
 		public GCodeDetailsView(GCodeFile gCodeMemoryFile, PrinterConfig printer, ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
+			: base (theme)
 		{
-			this.theme = theme;
 			this.gCodeMemoryFile = gCodeMemoryFile;
 			this.printer = printer;
 
 			// put in the print time
-			AddSetting("Print Time".Localize(), gCodeMemoryFile.EstimatedPrintTime());
+			this.AddSetting("Print Time".Localize(), gCodeMemoryFile.EstimatedPrintTime());
 
 			// show the filament used
-			AddSetting("Filament Length".Localize(), gCodeMemoryFile.FilamentUsed(printer));
+			this.AddSetting("Filament Length".Localize(), gCodeMemoryFile.FilamentUsed(printer));
 
-			AddSetting("Filament Volume".Localize(), gCodeMemoryFile.FilamentVolume(printer));
+			this.AddSetting("Filament Volume".Localize(), gCodeMemoryFile.FilamentVolume(printer));
 
 			// Cost info is only displayed when available - conditionalCostPanel is invisible when cost <= 0
-			costTextWidget = AddSetting("Estimated Cost".Localize(), gCodeMemoryFile.EstimatedCost(printer));
+			costTextWidget = this.AddSetting("Estimated Cost".Localize(), gCodeMemoryFile.EstimatedCost(printer));
 
-			massTextWidget = AddSetting("Estimated Mass".Localize(), gCodeMemoryFile.EstimatedMass(printer));
+			massTextWidget = this.AddSetting("Estimated Mass".Localize(), gCodeMemoryFile.EstimatedMass(printer));
 
 			conditionalCostContainer = costTextWidget.Parent;
 			conditionalCostContainer.Visible = gCodeMemoryFile.TotalCost(printer) > 0;
 
+			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-		}
-
-		private TextWidget AddSetting(string title, string value)
-		{
-			var textWidget = new TextWidget(value, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
-			{
-				AutoExpandBoundsToText = true,
-				VAnchor = VAnchor.Center
-			};
-
-			var settingsItem = new SettingsItem(
-				title,
-				textWidget,
-				theme,
-				enforceGutter: false);
-
-			this.AddChild(settingsItem);
-
-			return textWidget;
 		}
 
 		public override void OnClosed(EventArgs e)

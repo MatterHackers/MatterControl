@@ -1,10 +1,5 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-/*
-Copyright (c) 2014, Lars Brubaker
+﻿/*
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,6 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -88,8 +87,6 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Extrusions) == RenderType.Extrusions)
 			{
-				Vector3Float start = this.GetStart(renderInfo);
-				Vector3Float end = this.GetEnd(renderInfo);
 				double radius = GetRadius(renderInfo.CurrentRenderType);
 
 				Color lineColor;
@@ -111,7 +108,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false)
 		{
 			if (renderInfo.CurrentRenderType.HasFlag(RenderType.Extrusions))
 			{
@@ -119,7 +116,11 @@ namespace MatterHackers.GCodeVisualizer
 
 				Color extrusionColor = Color.Black;
 
-				if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
+				if (highlightFeature)
+				{
+					extrusionColor = RenderFeatureBase.HighlightColor;
+				}
+				else if (renderInfo.CurrentRenderType.HasFlag(RenderType.SpeedColors))
 				{
 					extrusionColor = color;
 				}
@@ -137,31 +138,34 @@ namespace MatterHackers.GCodeVisualizer
 					extrusionColor = new Color(extrusionColor, 200);
 				}
 
-				// render the part using opengl
-				Graphics2DOpenGL graphics2DGl = graphics2D as Graphics2DOpenGL;
-				if (graphics2DGl != null)
+				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
-					Vector3Float startF = this.GetStart(renderInfo);
-					Vector3Float endF = this.GetEnd(renderInfo);
-					Vector2 start = new Vector2(startF.X, startF.Y);
-					renderInfo.Transform.transform(ref start);
+					// render using opengl
+					var startPoint = new Vector2(start.X, start.Y);
+					renderInfo.Transform.transform(ref startPoint);
 
-					Vector2 end = new Vector2(endF.X, endF.Y);
-					renderInfo.Transform.transform(ref end);
+					var endPoint = new Vector2(end.X, end.Y);
+					renderInfo.Transform.transform(ref endPoint);
 
-					graphics2DGl.DrawAALineRounded(start, end, extrusionLineWidths / 2, extrusionColor);
+					var eWidth = extrusionLineWidths / 2;
+
+					graphics2DGl.DrawAALineRounded(startPoint, endPoint, eWidth, extrusionColor);
+
+					if (highlightFeature)
+					{
+						Render3DStartEndMarkers(graphics2DGl, eWidth / 2, startPoint, endPoint);
+					}
 				}
 				else
 				{
-					VertexStorage pathStorage = new VertexStorage();
-					VertexSourceApplyTransform transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
-					Stroke stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2);
-
-					stroke.LineCap = LineCap.Round;
-					stroke.LineJoin = LineJoin.Round;
-
-					Vector3Float start = this.GetStart(renderInfo);
-					Vector3Float end = this.GetEnd(renderInfo);
+					// render using agg
+					var pathStorage = new VertexStorage();
+					var transformedPathStorage = new VertexSourceApplyTransform(pathStorage, renderInfo.Transform);
+					var stroke = new Stroke(transformedPathStorage, extrusionLineWidths / 2)
+					{
+						LineCap = LineCap.Round,
+						LineJoin = LineJoin.Round
+					};
 
 					pathStorage.Add(start.X, start.Y, ShapePath.FlagsAndCommand.MoveTo);
 					pathStorage.Add(end.X, end.Y, ShapePath.FlagsAndCommand.LineTo);

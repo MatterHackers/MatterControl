@@ -75,7 +75,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new AxisIndicatorDrawable(),
 				new SceneTraceDataDrawable(sceneContext),
-				new AABBDrawable(sceneContext)
+				new AABBDrawable(sceneContext),
+				new LevelingDataDrawable(sceneContext)
 			});
 
 			itemDrawables.AddRange(new IDrawableItem[]

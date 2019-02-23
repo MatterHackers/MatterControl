@@ -1,10 +1,5 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-
-/*
-Copyright (c) 2014, Lars Brubaker
+﻿/*
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,6 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.GCodeVisualizer
 {
@@ -66,7 +65,7 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Retractions) == RenderType.Retractions)
 			{
-				Vector3 position = new Vector3(this.position);
+				var position = new Vector3(this.position);
 
 				// retract and unretract are the extruder color
 				Color color = renderInfo.GetMaterialColor(extruderIndex);
@@ -95,31 +94,37 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
+		public override void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo, bool highlightFeature = false)
 		{
 			if ((renderInfo.CurrentRenderType & RenderType.Retractions) == RenderType.Retractions)
 			{
 				double radius = Radius(renderInfo.LayerScale);
-				Vector2 position = new Vector2(this.position.X, this.position.Y);
 
+				var position = new Vector2(this.position.X, this.position.Y);
 				renderInfo.Transform.transform(ref position);
 
-				Color retractionColor = new Color(Color.Red, 200);
-				if (extrusionAmount > 0)
+				var retractionColor = new Color(Color.Red, 200);
+				if (highlightFeature)
+				{
+					retractionColor = RenderFeatureBase.HighlightColor;
+				}
+				else if (extrusionAmount > 0)
 				{
 					// unretraction
 					retractionColor = new Color(Color.Blue, 200);
 				}
 
-				// render the part using opengl
 				if (graphics2D is Graphics2DOpenGL graphics2DGl)
 				{
+					// render using opengl
 					graphics2DGl.DrawAACircle(position, radius, retractionColor);
 				}
 				else
 				{
-					Ellipse extrusion = new Ellipse(position, radius);
-					graphics2D.Render(extrusion, retractionColor);
+					// render using agg
+					graphics2D.Render(
+						new Ellipse(position, radius), 
+						retractionColor);
 				}
 			}
 		}

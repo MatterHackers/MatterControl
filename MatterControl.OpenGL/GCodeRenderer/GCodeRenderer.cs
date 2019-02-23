@@ -54,18 +54,18 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		public static double ExtruderWidth { get; set; } = .4;
 
+		public static Color TravelColor = Color.Green;
+
+		private static readonly bool Is32Bit = IntPtr.Size == 4;
+
 		private List<List<int>> featureStartIndex = new List<List<int>>();
 		private List<List<int>> featureEndIndex = new List<List<int>>();
 		private List<List<RenderFeatureBase>> renderFeatures = new List<List<RenderFeatureBase>>();
 
-		public static Color TravelColor = Color.Green;
-
+		private List<GCodeVertexBuffer> layerVertexBuffer;
+		private RenderType lastRenderType = RenderType.None;
+		private GCodeRenderInfo renderInfo;
 		private GCodeFile gCodeFileToDraw;
-		public GCodeFile GCodeFileToDraw => gCodeFileToDraw;
-
-		public ExtrusionColors ExtrusionColors { get; } = null;
-
-		public Color Gray { get; set; }
 
 		public GCodeRenderer(GCodeFile gCodeFileToDraw)
 		{
@@ -84,6 +84,12 @@ namespace MatterHackers.GCodeVisualizer
 				}
 			}
 		}
+
+		public GCodeFile GCodeFileToDraw => gCodeFileToDraw;
+
+		public ExtrusionColors ExtrusionColors { get; } = null;
+
+		public Color Gray { get; set; }
 
 		public void CreateFeaturesForLayerIfRequired(int layerToCreate)
 		{
@@ -171,6 +177,24 @@ namespace MatterHackers.GCodeVisualizer
 			return renderFeatures[layerToCountFeaturesOn].Count;
 		}
 
+		public RenderFeatureBase this[int layerIndex, int featureIndex]
+		{
+			get
+			{
+				try
+				{
+					return renderFeatures[layerIndex][featureIndex - 1];
+				}
+				catch
+				{
+					// Lazy guard for invalid indexes - callers should test for non-null values
+					return null;
+				}
+			}
+		}
+
+		public bool GCodeInspector { get; set; } = false;
+
 		public void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
 		{
 			if (renderFeatures.Count > 0)
@@ -201,12 +225,14 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					graphics2DGl.PreRender(Color.White);
 					GL.Begin(BeginMode.Triangles);
+
+					int lastFeature = endFeature - 1;
 					for (int i = startFeature; i < endFeature; i++)
 					{
 						RenderFeatureBase feature = renderFeatures[renderInfo.EndLayerIndex][i];
 						if (feature != null)
 						{
-							feature.Render(graphics2DGl, renderInfo);
+							feature.Render(graphics2DGl, renderInfo, highlightFeature: this.GCodeInspector && i == lastFeature);
 						}
 					}
 					GL.End();
@@ -273,10 +299,6 @@ namespace MatterHackers.GCodeVisualizer
 			}
 		}
 
-		private List<GCodeVertexBuffer> layerVertexBuffer;
-		private RenderType lastRenderType = RenderType.None;
-
-		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		public void Render3D(GCodeRenderInfo renderInfo, DrawEventArgs e)
 		{
