@@ -128,14 +128,19 @@ namespace MatterHackers.MatterControl
 
 			Task.Run(async () =>
 			{
-				string gcode1 = templatePrinter.BuildTemplate(verticalLayout: true);
-				string gcode2 = templatePrinter.BuildTemplate(verticalLayout: false);
+				var gcodeSketch = new GCodeSketch()
+				{
+					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60)
+				};
+
+				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: true);
+				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: false);
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					$"nozzle-offset-template-combined.gcode");
 
-				File.WriteAllText(outputPath, gcode1 + "\n" + gcode2);
+				File.WriteAllText(outputPath, gcodeSketch.ToGCode());
 
 				// HACK: update state needed to be set before calling StartPrint
 				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;

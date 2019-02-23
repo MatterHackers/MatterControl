@@ -105,13 +105,8 @@ namespace MatterHackers.MatterControl
 			});
 		}
 
-		public string BuildTemplate(bool verticalLayout)
+		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
-			var gcodeSketch = new GCodeSketch()
-			{
-				Speed = firstLayerSpeed
-			};
-
 			//gcodeSketch.WriteRaw("G92 E0");
 			gcodeSketch.WriteRaw("T0");
 			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
@@ -238,8 +233,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			gcodeSketch.PenUp();
-
-			return gcodeSketch.ToGCode();
 		}
 
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
