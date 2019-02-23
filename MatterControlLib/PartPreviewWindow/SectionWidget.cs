@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -40,6 +41,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		protected ExpandCheckboxButton checkbox;
 		protected GuiWidget rightAlignedContent;
+
+		public event EventHandler<bool> ExpandedChanged;
 
 		private bool setContentVAnchor;
 
@@ -76,6 +79,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (expandingContent)
 					{
 						ContentPanel.Visible = checkbox.Checked;
+						this.ExpandedChanged?.Invoke(this, checkbox.Checked);
 					}
 					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
 					ContentPanel.Height = 10;
