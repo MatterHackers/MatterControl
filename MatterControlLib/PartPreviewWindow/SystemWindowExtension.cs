@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), double secondsToClose = 0)
 		{
 			var settingsRow = anchor.Widget as SettingsRow;
-			var popoverWidget = popup.Widget as SliceSettingsPopover;
+			var sliceSettingsPopover = popup.Widget as SliceSettingsPopover;
 
 			var hookedWidgets = new HashSet<GuiWidget>();
 			void anchor_Closed(object sender, EventArgs e)
@@ -142,9 +142,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							xPosition = altXPosition;
 
 							if (settingsRow != null
-								&& popoverWidget != null)
+								&& sliceSettingsPopover != null)
 							{
-								popoverWidget.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Left ? ArrowDirection.Right : ArrowDirection.Left;
+								sliceSettingsPopover.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Left ? ArrowDirection.Right : ArrowDirection.Left;
 							}
 						}
 					}
