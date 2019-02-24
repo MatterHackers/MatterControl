@@ -643,6 +643,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				OpenColor = openColor,
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
+				PopupBorderColor = Color.Transparent
 			};
 
 			libraryPopup.PopupHAnchor = HAnchor.Fit;

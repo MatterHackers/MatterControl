@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.DisabledColor = theme.DisabledColor;
 			this.HoverColor = theme.MinimalShade;
+			this.PopupBorderColor = AppContext.MenuTheme.BorderColor40;
 		}
 
 		public PopupMenuButton(ImageBuffer imageBuffer, ThemeConfig theme)
@@ -64,6 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HoverColor = theme.ToolbarButtonHover;
 			this.BackgroundColor = theme.ToolbarButtonBackground;
 			this.MouseDownColor = theme.ToolbarButtonDown;
+			this.PopupBorderColor = AppContext.MenuTheme.BorderColor40;
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)

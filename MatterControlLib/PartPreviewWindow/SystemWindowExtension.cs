@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -92,6 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var sliceSettingsPopover = popup.Widget as SliceSettingsPopover;
 
 			var hookedWidgets = new HashSet<GuiWidget>();
+
 			void anchor_Closed(object sender, EventArgs e)
 			{
 				if (popup.Widget is SliceSettingsPopover popover
@@ -195,11 +197,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble))
+		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), int borderWidth = 1)
 		{
 			var hookedParents = new HashSet<GuiWidget>();
 
 			List<IIgnoredPopupChild> ignoredWidgets = popup.Widget.Children.OfType<IIgnoredPopupChild>().ToList();
+
+			void widget_Draw(object sender, DrawEventArgs e)
+			{
+				e.Graphics2D.Render(
+					new Stroke(
+						new RoundedRect(popup.Widget.LocalBounds, 0),
+						borderWidth * 2),
+					AppContext.MenuTheme.BorderColor40);
+			}
 
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
@@ -248,6 +259,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			void CloseMenu()
 			{
+				popup.Widget.AfterDraw -= widget_Draw;
+
 				popup.Widget.Close();
 
 				anchor.Widget.Closed -= anchor_Closed;
@@ -305,6 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			popup.Widget.ContainsFocusChanged += FocusChanged;
+			popup.Widget.AfterDraw += widget_Draw;
 
 			widgetRelativeTo_PositionChanged(anchor.Widget, null);
 			anchor.Widget.Closed += anchor_Closed;
