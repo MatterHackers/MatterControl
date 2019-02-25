@@ -53,7 +53,11 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
 			contentRow.AddChild(row);
 
-			row.AddChild(new TextWidget(xOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			row.AddChild(new TextWidget(xOffset.ToString("0.###") + "mm", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 10)
+			});
 
 			row = new SettingsRow(
 				"Y Offset".Localize(),
@@ -62,7 +66,11 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
 			contentRow.AddChild(row);
 
-			row.AddChild(new TextWidget(yOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			row.AddChild(new TextWidget(yOffset.ToString("0.###") + "mm", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 10)
+			});
 
 			this.NextButton.Visible = false;
 
