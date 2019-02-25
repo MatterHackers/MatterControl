@@ -98,16 +98,16 @@ namespace MatterHackers.MatterControl
 		{
 			guiWidget.BackgroundColor = Color.Transparent;
 
+			// Buttons in toolbars should revert to ToolbarButtonHover when reset
+			bool parentIsToolbar = guiWidget.Parent?.Parent is Toolbar;
+
 			switch (guiWidget)
 			{
-				case PopupMenuButton menuButton:
-					menuButton.HoverColor = Color.Transparent;
-					break;
 				case SimpleFlowButton flowButton:
-					flowButton.HoverColor = Color.Transparent;
+					flowButton.HoverColor = (parentIsToolbar) ? this.ToolbarButtonHover : Color.Transparent;
 					break;
 				case SimpleButton button:
-					button.HoverColor = Color.Transparent;
+					button.HoverColor = (parentIsToolbar) ? this.ToolbarButtonHover : Color.Transparent;
 					break;
 			}
 		}
