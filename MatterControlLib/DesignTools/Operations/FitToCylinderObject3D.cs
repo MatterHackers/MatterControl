@@ -53,14 +53,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
-		private Vector3 boundsSize;
-
 		private AxisAlignedBoundingBox cacheAabb;
 
-		private Vector3 cacheBounds;
+		private bool rebuildAabbCache = true;
 
 		private Matrix4X4 cacheRequestedMatrix = new Matrix4X4();
-		private Matrix4X4 cacheThisMatrix;
 
 		public FitToCylinderObject3D()
 		{
@@ -85,29 +82,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var fitToBounds = new FitToCylinderObject3D();
 			using (fitToBounds.RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(itemToFit))
+				var startingAabb = itemToFit.GetAxisAlignedBoundingBox();
+
+				// add the fit item
+				var scaleItem = new Object3D();
+				fitToBounds.Children.Add(scaleItem);
+				scaleItem.Children.Add(itemToFit);
+
+				// create an object that just represents the bounds in the scene
+				var fitBounds = new Object3D()
 				{
-					var aabb = itemToFit.GetAxisAlignedBoundingBox();
-					var bounds = new Object3D()
-					{
-						Visible = false,
-						Color = new Color(Color.Red, 100),
-						Mesh = PlatonicSolids.CreateCube()
-					};
+					Visible = false,
+					Color = new Color(Color.Red, 100),
+					Mesh = PlatonicSolids.CreateCube()
+				};
+				// add the item that holds the bounds
+				fitToBounds.Children.Add(fitBounds);
 
-					// add all the children
-					var scaleItem = new Object3D();
-					fitToBounds.Children.Add(scaleItem);
-					scaleItem.Children.Add(itemToFit);
-					fitToBounds.Children.Add(bounds);
+				fitToBounds.Diameter = Math.Sqrt(startingAabb.XSize * startingAabb.XSize + startingAabb.YSize * startingAabb.YSize);
+				fitToBounds.SizeZ = startingAabb.ZSize;
 
-					fitToBounds.Diameter = Math.Sqrt(aabb.XSize * aabb.XSize + aabb.YSize * aabb.YSize);
-					fitToBounds.boundsSize.Z = aabb.ZSize;
+				fitToBounds.SizeZ = startingAabb.ZSize;
 
-					fitToBounds.SizeZ = aabb.ZSize;
+				await fitToBounds.Rebuild();
 
-					await fitToBounds.Rebuild();
-				}
+				var finalAabb = fitToBounds.GetAxisAlignedBoundingBox();
+				fitToBounds.Translate(startingAabb.Center - finalAabb.Center);
+				fitToBounds.rebuildAabbCache = true;
 			}
 
 			return fitToBounds;
@@ -127,9 +128,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (cacheRequestedMatrix != matrix
-					|| cacheThisMatrix != Matrix
-					|| cacheBounds != boundsSize)
+				if (rebuildAabbCache)
 				{
 					using (FitBounds.RebuildLock())
 					{
@@ -138,8 +137,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						FitBounds.Visible = false;
 					}
 					cacheRequestedMatrix = matrix;
-					cacheThisMatrix = Matrix;
-					cacheBounds = boundsSize;
+					rebuildAabbCache = false;
 				}
 
 				return cacheAabb;
@@ -168,7 +166,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
-				cacheThisMatrix = Matrix4X4.Identity;
+				rebuildAabbCache = true;
 				base.OnInvalidate(invalidateType);
 			}
 
@@ -339,15 +337,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var transformAabb = ItemWithTransform.GetAxisAlignedBoundingBox();
 				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
-				var fitSize = fitAabb.Size;
-				if (boundsSize.X != 0 && boundsSize.Y != 0 && boundsSize.Z != 0
-					&& (fitSize != boundsSize
-					|| fitAabb.Center != transformAabb.Center))
+				if (Diameter != 0 
+					&& SizeZ != 0
+					&& (fitAabb.XSize != Diameter || fitAabb.ZSize != SizeZ))
 				{
 					FitBounds.Matrix *= Matrix4X4.CreateScale(
-						boundsSize.X / fitSize.X,
-						boundsSize.Y / fitSize.Y,
-						boundsSize.Z / fitSize.Z);
+						fitAabb.XSize / Diameter,
+						fitAabb.YSize / Diameter,
+						fitAabb.ZSize / SizeZ);
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
 						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
 				}
@@ -360,6 +357,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var test = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
 				}
+
+				rebuildAabbCache = true;
 			}
 		}
 	}
