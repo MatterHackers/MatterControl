@@ -69,6 +69,13 @@ namespace MatterHackers.MatterControl
 				};
 				calibrationLine.Click += (s, e) =>
 				{
+					if (activeLine != null)
+					{
+						activeLine.IsActive = false;
+					}
+
+					calibrationLine.IsActive = true;
+					activeLine = calibrationLine;
 					this.ActiveOffset = activeOffsets[calibrationLine.OffsetIndex] * -1;
 				};
 				this.AddChild(calibrationLine);
@@ -87,6 +94,8 @@ namespace MatterHackers.MatterControl
 				}
 			}
 		}
+
+		private CalibrationLine activeLine;
 
 		public double ActiveOffset
 		{
