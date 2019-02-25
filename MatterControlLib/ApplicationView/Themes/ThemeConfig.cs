@@ -76,9 +76,9 @@ namespace MatterHackers.MatterControl
 
 		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
-			guiWidget.BackgroundColor = this.AccentMimimalOverlay;
+			guiWidget.BackgroundColor = new Color(this.AccentMimimalOverlay, 50);
 
-			Color hoverColor = new Color(this.AccentMimimalOverlay, 90);
+			Color hoverColor = this.AccentMimimalOverlay;
 
 			switch (guiWidget)
 			{
