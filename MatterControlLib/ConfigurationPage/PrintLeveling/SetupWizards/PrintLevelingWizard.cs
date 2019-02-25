@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingWizard : PrinterSetupWizard
 	{
+		double[] babySteppingValues = new double[4];
 		private LevelingPlan levelingPlan;
 
 		public PrintLevelingWizard(PrinterConfig printer)
@@ -48,6 +49,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.WindowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
 
 			this.Initialize();
+
+			// remember the current baby stepping values
+			babySteppingValues[0] = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			babySteppingValues[1] = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
+
+			// clear them while we measure the offsets
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 
 			pages = this.GetPages();
 			pages.MoveNext();
@@ -63,9 +72,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution)
 			};
-
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 
 			printer.Connection.QueueLine("T0");
 
@@ -114,6 +120,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// If leveling was on when we started, make sure it is on when we are done.
 			printer.Connection.AllowLeveling = true;
+
+			// set the baby stepping back to the last known good value
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValues[0].ToString());
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, babySteppingValues[1].ToString());
 
 			this.WindowHasBeenClosed = true;
 
@@ -334,6 +344,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 					i++;
 				}
+			}
+
+			// if we are not using a z-probe, reset the baby stepping at the successful conclusion of leveling
+			if (!printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
+			{
+				// clear the baby stepping so we don't save the old values
+				babySteppingValues[0] = 0;
+				babySteppingValues[1] = 0;
 			}
 
 			yield return new LastPageInstructions(
