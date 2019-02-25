@@ -48,6 +48,9 @@ namespace MatterHackers.MatterControl
 			this.MenuItemsTextHoverColor = menuTheme.TextColor;
 			this.MenuItemsBorderColor = menuTheme.DropList.Open.BackgroundColor;
 
+			// Popup border color
+			this.PopupBorderColor = AppContext.MenuTheme.BorderColor40;
+
 			this.theme = theme;
 
 			// Clear border/background set by base, use border color override
