@@ -67,18 +67,17 @@ namespace MatterHackers.MatterControl
 			this.NextButton.Visible = false;
 
 			var nextButton = theme.CreateDialogButton("Finish".Localize());
-			nextButton.Name = "Begin calibration print";
+			nextButton.Name = "FinishCalibration";
 			nextButton.Click += (s, e) =>
 			{
-				// TODO: get extrude offset from oem layer
-				// printer.Settings.OemLayer.Get
-
 				// TODO: removed fixed index
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
 				hotendOffset.X += xOffset;
 				hotendOffset.Y += yOffset;
 
 				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
+
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			theme.ApplyPrimaryActionStyle(nextButton);
