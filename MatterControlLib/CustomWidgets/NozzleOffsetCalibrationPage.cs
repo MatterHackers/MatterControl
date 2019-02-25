@@ -37,7 +37,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -122,11 +121,6 @@ namespace MatterHackers.MatterControl
 
 		public override void OnLoad(EventArgs args)
 		{
-			if (!this.HasBeenClosed)
-			{
-				this.NextButton.Enabled = true;
-			}
-
 			base.OnLoad(args);
 
 			// Replace with calibration template code
@@ -183,7 +177,6 @@ namespace MatterHackers.MatterControl
 						printer.Settings.Helpers.ManualMovementSpeeds().Y);
 				}
 			});
-
 		}
 
 		public override void OnClosed(EventArgs e)
