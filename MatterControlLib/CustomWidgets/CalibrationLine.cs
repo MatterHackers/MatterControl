@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 
 		private ThemeConfig theme;
 		private IVertexSource glyph = null;
+		private bool _isActive;
 
 		static CalibrationLine()
 		{
@@ -84,7 +85,20 @@ namespace MatterHackers.MatterControl
 			this.theme = theme;
 		}
 
-		public bool IsNegative { get; internal set; }
+		public bool IsActive
+		{
+			get => _isActive;
+			set
+			{
+				if (_isActive != value)
+				{
+					_isActive = value;
+					this.Invalidate();
+				}
+			}
+		}
+
+		public bool IsNegative { get; set; }
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
@@ -112,6 +126,8 @@ namespace MatterHackers.MatterControl
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			Color lineColor = this.IsActive ? theme.PrimaryAccentColor : theme.TextColor;
+
 			var centerX = this.LocalBounds.XCenter + .5;
 			var centerY = this.LocalBounds.YCenter - .5;
 
@@ -124,7 +140,7 @@ namespace MatterHackers.MatterControl
 				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : 9), centerY);
 			}
 
-			graphics2D.Line(start, end, theme.TextColor, 1);
+			graphics2D.Line(start, end, lineColor, 1);
 
 			// Draw line end
 			if (glyph != null)
@@ -132,7 +148,7 @@ namespace MatterHackers.MatterControl
 				graphics2D.Render(
 					glyph,
 					verticalLine ? new Vector2(centerX, 11) : new Vector2(this.Width - 11, centerY),
-					theme.TextColor);
+					lineColor);
 			}
 
 			// Draw negative adornment after glyphs 
@@ -142,7 +158,7 @@ namespace MatterHackers.MatterControl
 				graphics2D.Line(
 					verticalLine ? new Vector2(centerX, 0) : new Vector2(this.Width - 5, centerY),
 					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width, centerY),
-					theme.TextColor,
+					lineColor,
 					1);
 			}
 
@@ -160,7 +176,7 @@ namespace MatterHackers.MatterControl
 			triangle.LineTo(glyphSize, 0);
 			triangle.LineTo(glyphSize / 2, glyphSize);
 			triangle.ClosePolygon();
-			
+
 			//triangle.ClosePolygon();
 
 			var square = new VertexStorage();

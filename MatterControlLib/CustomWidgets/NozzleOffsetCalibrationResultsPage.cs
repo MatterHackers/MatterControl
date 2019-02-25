@@ -53,7 +53,11 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
 			contentRow.AddChild(row);
 
-			row.AddChild(new TextWidget(xOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			row.AddChild(new TextWidget(xOffset.ToString("0.###") + "mm", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 10)
+			});
 
 			row = new SettingsRow(
 				"Y Offset".Localize(),
@@ -62,23 +66,26 @@ namespace MatterHackers.MatterControl
 				AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons));
 			contentRow.AddChild(row);
 
-			row.AddChild(new TextWidget(yOffset.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+			row.AddChild(new TextWidget(yOffset.ToString("0.###") + "mm", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				VAnchor = VAnchor.Center,
+				Margin = new BorderDouble(right: 10)
+			});
 
 			this.NextButton.Visible = false;
 
 			var nextButton = theme.CreateDialogButton("Finish".Localize());
-			nextButton.Name = "Begin calibration print";
+			nextButton.Name = "FinishCalibration";
 			nextButton.Click += (s, e) =>
 			{
-				// TODO: get extrude offset from oem layer
-				// printer.Settings.OemLayer.Get
-
 				// TODO: removed fixed index
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
 				hotendOffset.X += xOffset;
 				hotendOffset.Y += yOffset;
 
 				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
+
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			theme.ApplyPrimaryActionStyle(nextButton);
