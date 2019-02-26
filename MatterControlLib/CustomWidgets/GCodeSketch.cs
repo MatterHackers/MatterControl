@@ -54,6 +54,12 @@ namespace MatterHackers.MatterControl
 			writer = new StringWriter(sb);
 		}
 
+		public double RetractLength { get; set; } = 1.2;
+
+		public int RetractSpeed { get; set; }
+
+		public int TravelSpeed { get; set; }
+		
 		public Vector2 CurrentPosition { get; private set; }
 
 		public Affine Transform { get; set; } = Affine.NewIdentity();
@@ -84,12 +90,10 @@ namespace MatterHackers.MatterControl
 
 		public void MoveTo(Vector2 position, bool retract = false)
 		{
-			//if (retract)
-			//{
-			//	currentE -= retractAmount;
-			//	retracted = true;
-			//	writer.WriteLine("G1 E{0:0.###}", currentE);
-			//}
+			if (retract)
+			{
+				this.Retract();
+			}
 
 			position = Transform.Transform(position);
 
@@ -97,14 +101,31 @@ namespace MatterHackers.MatterControl
 			this.CurrentPosition = position;
 		}
 
+		private void Retract()
+		{
+			currentE -= this.RetractLength;
+			retracted = true;
+			writer.WriteLine("G1 E{0:0.###} F{1:0.###}", currentE, this.RetractSpeed);
+		}
+
+		private void Unretract()
+		{
+			// Unretract
+			currentE += RetractLength;
+			retracted = false;
+			writer.WriteLine("G1 E{0:0.###} F{1:0.###}", currentE, this.RetractSpeed);
+		}
+
 		public void PenUp()
 		{
 			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - 1.2);
+			this.Retract();
 		}
 
 		public void PenDown()
 		{
 			writer.WriteLine("G1 Z0.2 E{0:0.###}", currentE);
+			this.Unretract();
 		}
 
 		public void LineTo(double x, double y)
@@ -114,12 +135,11 @@ namespace MatterHackers.MatterControl
 
 		public void LineTo(Vector2 position)
 		{
-			//if (retracted)
-			//{
-			//	// Unretract
-			//	currentE += retractAmount;
-			//	writer.WriteLine("G1 E{0:0.###}", currentE);
-			//}
+			bool hadRetract = retracted;
+			if (retracted)
+			{
+				this.Unretract();
+			}
 
 			position = Transform.Transform(position);
 
