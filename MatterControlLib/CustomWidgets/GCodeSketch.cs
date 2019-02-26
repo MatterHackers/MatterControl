@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 		private double currentE = 0;
 		private bool retracted = false;
 		private double currentSpeed = 0;
+		private double layerHeight = 0.2;
 
 		public GCodeSketch()
 		{
@@ -120,13 +121,18 @@ namespace MatterHackers.MatterControl
 
 		public void PenUp()
 		{
-			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - 1.2);
 			this.Retract();
+			this.WriteSpeedLine(
+				string.Format("G1 Z{0:0.###}", layerHeight + this.RetractLift),
+				this.TravelSpeed);
 		}
 
 		public void PenDown()
 		{
-			writer.WriteLine("G1 Z0.2 E{0:0.###}", currentE);
+			this.WriteSpeedLine(
+				string.Format("G1 Z{0:0.###}", layerHeight), 
+				this.TravelSpeed);
+
 			this.Unretract();
 		}
 
