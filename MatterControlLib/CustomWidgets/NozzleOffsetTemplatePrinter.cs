@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
 				y3 = y2 - 5;
 
-				bool drawGlpyphs = false;
+				bool drawGlyphs = false;
 
 				var inverseTransform = gcodeSketch.Transform;
 				inverseTransform.invert();
@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
 
 						gcodeSketch.Speed = 500;
 
-						PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
+						PrintLineEnd(gcodeSketch, drawGlyphs, i, currentPos);
 
 						gcodeSketch.Speed = 1800;
 
@@ -230,9 +230,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)
+		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos)
 		{
-			if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
+			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
 				var flattened = new FlattenCurves(vertexSource);
 
