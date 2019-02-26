@@ -131,7 +131,11 @@ namespace MatterHackers.MatterControl
 			{
 				var gcodeSketch = new GCodeSketch()
 				{
-					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60)
+					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60),
+					RetractLength = printer.Settings.GetValue<double>(SettingsKey.retract_length),
+					RetractSpeed = printer.Settings.GetValue<double>(SettingsKey.retract_speed) * 60,
+					RetractLift = printer.Settings.GetValue<double>(SettingsKey.retract_lift),
+					TravelSpeed = printer.Settings.GetValue<double>(SettingsKey.travel_speed) * 60,
 				};
 
 				//gcodeSketch.WriteRaw("G92 E0");

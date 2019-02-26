@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl
 		private StringBuilder sb;
 		private StringWriter writer;
 		private double currentE = 0;
-		private int _speed = 1500;
-		private double retractAmount = 1.2;
 		private bool retracted = false;
 
 		public GCodeSketch()
@@ -56,26 +54,17 @@ namespace MatterHackers.MatterControl
 
 		public double RetractLength { get; set; } = 1.2;
 
-		public int RetractSpeed { get; set; }
+		public double RetractSpeed { get; set; }
 
-		public int TravelSpeed { get; set; }
+		public double TravelSpeed { get; set; }
 		
 		public Vector2 CurrentPosition { get; private set; }
 
 		public Affine Transform { get; set; } = Affine.NewIdentity();
 
-		public int Speed
-		{
-			get => _speed;
-			set
-			{
-				if (value != _speed)
-				{
-					_speed = value;
-					writer.WriteLine("G1 F{0}", _speed);
-				}
-			}
-		}
+		public double Speed { get; set; } = 1500;
+
+		public double RetractLift { get; internal set; }
 
 		public void SetTool(string toolChange)
 		{
