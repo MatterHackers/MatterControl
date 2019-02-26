@@ -44,8 +44,9 @@ namespace MatterHackers.MatterControl
 		private StringBuilder sb;
 		private StringWriter writer;
 		private double currentE = 0;
-
-		public Affine Transform { get; set; } = Affine.NewIdentity();
+		private int _speed = 1500;
+		private double retractAmount = 1.2;
+		private bool retracted = false;
 
 		public GCodeSketch()
 		{
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl
 
 		public Vector2 CurrentPosition { get; private set; }
 
-		private int _speed = 1500;
+		public Affine Transform { get; set; } = Affine.NewIdentity();
 
 		public int Speed
 		{
@@ -80,9 +81,6 @@ namespace MatterHackers.MatterControl
 		{
 			this.MoveTo(new Vector2(x, y), retract);
 		}
-
-		private double retractAmount = 1.2;
-		private bool retracted = false;
 
 		public void MoveTo(Vector2 position, bool retract = false)
 		{
@@ -143,7 +141,7 @@ namespace MatterHackers.MatterControl
 			writer.Dispose();
 		}
 
-		internal void DrawRectangle(RectangleDouble rect)
+		public void DrawRectangle(RectangleDouble rect)
 		{
 			this.MoveTo(rect.Left, rect.Bottom);
 
