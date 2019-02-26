@@ -397,7 +397,7 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(.5, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 		}
 
