@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -306,12 +307,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public void AabbCalculatedCorrectlyForPinchedFitObjects()
-		{
-			DoAabbCalculatedCorrectlyForPinchedFitObjects();
-		}
-
-		async void DoAabbCalculatedCorrectlyForPinchedFitObjects()
+		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
