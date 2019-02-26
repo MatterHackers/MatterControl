@@ -230,6 +230,7 @@ namespace MatterHackers.MatterControl
 
 			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
+				turtle.WriteRaw("; LineEnd Marker");
 				var flattened = new FlattenCurves(vertexSource);
 
 				var verticies = flattened.Vertices();
@@ -267,7 +268,10 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!closed)
+				bool atStartingPosition = position == turtle.CurrentPosition;
+
+				if (!closed
+					&& !atStartingPosition)
 				{
 					turtle.LineTo((firstItem.position * scale) + currentPos);
 				}
@@ -275,10 +279,13 @@ namespace MatterHackers.MatterControl
 				// Restore original speed
 				turtle.Speed = originalSpeed;
 
-				// Return to original position
-				turtle.PenUp();
-				turtle.MoveTo(currentPos);
-				turtle.PenDown();
+				if (!atStartingPosition)
+				{
+					// Return to original position
+					turtle.PenUp();
+					turtle.MoveTo(currentPos);
+					turtle.PenDown();
+				}
 			}
 		}
 	}
