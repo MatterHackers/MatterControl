@@ -134,6 +134,9 @@ namespace MatterHackers.MatterControl
 
 				bool drawGlpyphs = false;
 
+				var inverseTransform = gcodeSketch.Transform;
+				inverseTransform.invert();
+
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
@@ -144,6 +147,7 @@ namespace MatterHackers.MatterControl
 						gcodeSketch.LineTo(x, y3);
 
 						var currentPos = gcodeSketch.CurrentPosition;
+						currentPos = inverseTransform.Transform(currentPos);
 
 						gcodeSketch.Speed = 500;
 
