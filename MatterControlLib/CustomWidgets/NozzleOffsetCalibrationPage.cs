@@ -185,8 +185,8 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Printing ||
-				printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Paused)
+			if (printer.Connection.CommunicationState == CommunicationStates.Printing ||
+				printer.Connection.CommunicationState == CommunicationStates.Paused)
 			{
 				printer.CancelPrint();
 			}

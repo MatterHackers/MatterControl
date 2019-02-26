@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
 				y3 = y2 - 5;
 
-				bool drawGlyphs = false;
+				bool drawGlyphs = true;
 
 				var inverseTransform = gcodeSketch.Transform;
 				inverseTransform.invert();
@@ -149,14 +149,7 @@ namespace MatterHackers.MatterControl
 						var currentPos = gcodeSketch.CurrentPosition;
 						currentPos = inverseTransform.Transform(currentPos);
 
-						gcodeSketch.Speed = 500;
-
 						PrintLineEnd(gcodeSketch, drawGlyphs, i, currentPos);
-
-						gcodeSketch.Speed = 1800;
-
-						gcodeSketch.MoveTo(x, y3);
-						gcodeSketch.MoveTo(x, y2);
 					}
 
 					gcodeSketch.LineTo(x, up ? y2 : y1);
@@ -195,7 +188,7 @@ namespace MatterHackers.MatterControl
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
-					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: false);
 					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
 					x = x + step;
@@ -232,6 +225,9 @@ namespace MatterHackers.MatterControl
 
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos)
 		{
+			var originalSpeed = turtle.Speed;
+			turtle.Speed = Math.Min(400, turtle.Speed);
+
 			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
 				var flattened = new FlattenCurves(vertexSource);
@@ -240,10 +236,11 @@ namespace MatterHackers.MatterControl
 				var firstItem = verticies.First();
 				var position = turtle.CurrentPosition;
 
-				var scale = 0.32;
+				var scale = 0.3;
 
 				if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
 				{
+					turtle.PenUp();
 					turtle.MoveTo((firstItem.position * scale) + currentPos);
 				}
 
@@ -254,7 +251,9 @@ namespace MatterHackers.MatterControl
 					switch (item.command)
 					{
 						case ShapePath.FlagsAndCommand.MoveTo:
+							turtle.PenUp();
 							turtle.MoveTo((item.position * scale) + currentPos);
+							turtle.PenDown();
 							break;
 
 						case ShapePath.FlagsAndCommand.LineTo:
@@ -272,6 +271,14 @@ namespace MatterHackers.MatterControl
 				{
 					turtle.LineTo((firstItem.position * scale) + currentPos);
 				}
+
+				// Restore original speed
+				turtle.Speed = originalSpeed;
+
+				// Return to original position
+				turtle.PenUp();
+				turtle.MoveTo(currentPos);
+				turtle.PenDown();
 			}
 		}
 	}
