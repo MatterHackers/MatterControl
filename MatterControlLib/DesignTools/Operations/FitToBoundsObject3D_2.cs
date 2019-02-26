@@ -35,6 +35,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,10 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private AxisAlignedBoundingBox cacheAabb;
 
-		private Vector3 cacheBounds;
-
-		private Matrix4X4 cacheRequestedMatrix = new Matrix4X4();
-		private Matrix4X4 cacheThisMatrix;
+		private bool rebuildAabbCache = true;
 
 		public FitToBoundsObject3D_2()
 		{
@@ -120,27 +118,32 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var fitToBounds = new FitToBoundsObject3D_2();
 			using (fitToBounds.RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(itemToFit))
+				var startingAabb = itemToFit.GetAxisAlignedBoundingBox();
+				itemToFit.Translate(-startingAabb.Center);
+
+				// add the fit item
+				var scaleItem = new Object3D();
+				fitToBounds.Children.Add(scaleItem);
+				scaleItem.Children.Add(itemToFit);
+
+				// create an object that just represents the bounds in the scene
+				var fitBounds = new Object3D()
 				{
-					var aabb = itemToFit.GetAxisAlignedBoundingBox();
-					var bounds = new Object3D()
-					{
-						Visible = false,
-						Color = new Color(Color.Red, 100),
-						Mesh = PlatonicSolids.CreateCube()
-					};
+					Visible = false,
+					Color = new Color(Color.Red, 100),
+					Mesh = PlatonicSolids.CreateCube()
+				};
+				// add the item that holds the bounds
+				fitToBounds.Children.Add(fitBounds);
 
-					// add all the children
-					var scaleItem = new Object3D();
-					fitToBounds.Children.Add(scaleItem);
-					scaleItem.Children.Add(itemToFit);
-					fitToBounds.Children.Add(bounds);
+				fitToBounds.boundsSize.X = startingAabb.XSize;
+				fitToBounds.boundsSize.Y = startingAabb.YSize;
+				fitToBounds.boundsSize.Z = startingAabb.ZSize;
+				await fitToBounds.Rebuild();
 
-					fitToBounds.boundsSize.X = aabb.XSize;
-					fitToBounds.boundsSize.Y = aabb.YSize;
-					fitToBounds.boundsSize.Z = aabb.ZSize;
-					await fitToBounds.Rebuild();
-				}
+				var finalAabb = fitToBounds.GetAxisAlignedBoundingBox();
+				fitToBounds.Translate(startingAabb.Center - finalAabb.Center);
+				fitToBounds.rebuildAabbCache = true;
 			}
 
 			return fitToBounds;
@@ -169,9 +172,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (cacheRequestedMatrix != matrix
-					|| cacheThisMatrix != Matrix
-					|| cacheBounds != boundsSize)
+				if (rebuildAabbCache)
 				{
 					using (FitBounds.RebuildLock())
 					{
@@ -179,9 +180,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
 						FitBounds.Visible = false;
 					}
-					cacheRequestedMatrix = matrix;
-					cacheThisMatrix = Matrix;
-					cacheBounds = boundsSize;
+
+					rebuildAabbCache = false;
 				}
 
 				return cacheAabb;
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
-				cacheThisMatrix = Matrix4X4.Identity;
+				rebuildAabbCache = true;
 				base.OnInvalidate(invalidateType);
 			}
 
@@ -227,9 +227,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					AdjustChildSize(null, null);
 
 					UpdateBoundsItem();
-
-					cacheRequestedMatrix = new Matrix4X4();
-					var after = this.GetAxisAlignedBoundingBox();
 				}
 			}
 
@@ -298,6 +295,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
 						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
 				}
+
+				rebuildAabbCache = true;
 			}
 		}
 	}

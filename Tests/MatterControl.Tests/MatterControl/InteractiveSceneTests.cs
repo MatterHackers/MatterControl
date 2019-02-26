@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace MatterControl.Tests.MatterControl
 {
@@ -306,12 +307,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public void AabbCalculatedCorrectlyForPinchedFitObjects()
-		{
-			DoAabbCalculatedCorrectlyForPinchedFitObjects();
-		}
-
-		async void DoAabbCalculatedCorrectlyForPinchedFitObjects()
+		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -401,7 +397,7 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(.5, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 		}
 
