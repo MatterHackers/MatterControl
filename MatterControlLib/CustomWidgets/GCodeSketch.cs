@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl
 		private StringWriter writer;
 		private double currentE = 0;
 		private bool retracted = false;
+		private double currentSpeed = 0;
 
 		public GCodeSketch()
 		{
@@ -86,7 +87,13 @@ namespace MatterHackers.MatterControl
 
 			position = Transform.Transform(position);
 
-			writer.WriteLine("G1 X{0:0.###} Y{1:0.###}", position.X, position.Y);
+			this.WriteSpeedLine(
+				string.Format(
+					"G1 X{0:0.###} Y{1:0.###}",
+					position.X,
+					position.Y),
+				this.TravelSpeed);
+
 			this.CurrentPosition = position;
 		}
 
@@ -94,7 +101,10 @@ namespace MatterHackers.MatterControl
 		{
 			currentE -= this.RetractLength;
 			retracted = true;
-			writer.WriteLine("G1 E{0:0.###} F{1:0.###}", currentE, this.RetractSpeed);
+
+			this.WriteSpeedLine(
+				string.Format("G1 E{0:0.###}", currentE), 
+				this.RetractSpeed);
 		}
 
 		private void Unretract()
@@ -102,7 +112,10 @@ namespace MatterHackers.MatterControl
 			// Unretract
 			currentE += RetractLength;
 			retracted = false;
-			writer.WriteLine("G1 E{0:0.###} F{1:0.###}", currentE, this.RetractSpeed);
+
+			this.WriteSpeedLine(
+				string.Format("G1 E{0:0.###}", currentE), 
+				this.RetractSpeed);
 		}
 
 		public void PenUp()
@@ -124,7 +137,6 @@ namespace MatterHackers.MatterControl
 
 		public void LineTo(Vector2 position)
 		{
-			bool hadRetract = retracted;
 			if (retracted)
 			{
 				this.Unretract();
@@ -135,9 +147,33 @@ namespace MatterHackers.MatterControl
 			var delta = this.CurrentPosition - position;
 			currentE += delta.Length * 0.06;
 
-			writer.WriteLine("G1 X{0} Y{1} E{2:0.###}", position.X, position.Y, currentE);
+			this.WriteSpeedLine(
+				string.Format(
+					"G1 X{0} Y{1} E{2:0.###}", 
+					position.X, 
+					position.Y, 
+					currentE),
+				this.Speed);
 
 			this.CurrentPosition = position;
+		}
+
+		/// <summary>
+		/// Write the given line, optionally pushing speeds if needed
+		/// </summary>
+		/// <param name="line">The line to write</param>
+		/// <param name="targetSpeed">The target movement speed</param>
+		public void WriteSpeedLine(string line, double targetSpeed)
+		{
+			if (currentSpeed == targetSpeed)
+			{
+				writer.WriteLine(line);
+			}
+			else
+			{
+				currentSpeed = targetSpeed;
+				writer.WriteLine("{0} F{1:0.###}", line, targetSpeed);
+			}
 		}
 
 		public string ToGCode()
