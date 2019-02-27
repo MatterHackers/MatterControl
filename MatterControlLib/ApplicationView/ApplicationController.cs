@@ -787,13 +787,13 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(FitToBoundsObject3D_2),
 					TitleResolver = () => "Fit to Bounds".Localize(),
-					Action = (sceneContext) =>
+					Action = async (sceneContext) =>
 					{
 						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						using (new SelectionMaintainer(scene))
 						{
-							var fit = FitToBoundsObject3D_2.Create(selectedItem.Clone()).Result;
+							var fit = await FitToBoundsObject3D_2.Create(selectedItem.Clone());
 							fit.MakeNameNonColliding();
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
@@ -807,13 +807,13 @@ namespace MatterHackers.MatterControl
 				{
 					OperationType = typeof(FitToCylinderObject3D),
 					TitleResolver = () => "Fit to Cylinder".Localize(),
-					Action = (sceneContext) =>
+					Action = async (sceneContext) =>
 					{
 						var scene = sceneContext.Scene;
 						var selectedItem = scene.SelectedItem;
 						using (new SelectionMaintainer(scene))
 						{
-							var fit = FitToCylinderObject3D.Create(selectedItem.Clone()).Result;
+							var fit = await FitToCylinderObject3D.Create(selectedItem.Clone());
 							fit.MakeNameNonColliding();
 
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
