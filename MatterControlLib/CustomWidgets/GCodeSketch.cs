@@ -44,8 +44,9 @@ namespace MatterHackers.MatterControl
 		private StringBuilder sb;
 		private StringWriter writer;
 		private double currentE = 0;
-
-		public Affine Transform { get; set; } = Affine.NewIdentity();
+		private bool retracted = false;
+		private double currentSpeed = 0;
+		private double layerHeight = 0.2;
 
 		public GCodeSketch()
 		{
@@ -53,22 +54,19 @@ namespace MatterHackers.MatterControl
 			writer = new StringWriter(sb);
 		}
 
+		public double RetractLength { get; set; } = 1.2;
+
+		public double RetractSpeed { get; set; }
+
+		public double TravelSpeed { get; set; }
+		
 		public Vector2 CurrentPosition { get; private set; }
 
-		private int _speed = 1500;
+		public Affine Transform { get; set; } = Affine.NewIdentity();
 
-		public int Speed
-		{
-			get => _speed;
-			set
-			{
-				if (value != _speed)
-				{
-					_speed = value;
-					writer.WriteLine("G1 F{0}", _speed);
-				}
-			}
-		}
+		public double Speed { get; set; } = 1500;
+
+		public double RetractLift { get; internal set; }
 
 		public void SetTool(string toolChange)
 		{
@@ -81,32 +79,61 @@ namespace MatterHackers.MatterControl
 			this.MoveTo(new Vector2(x, y), retract);
 		}
 
-		private double retractAmount = 1.2;
-		private bool retracted = false;
-
 		public void MoveTo(Vector2 position, bool retract = false)
 		{
-			//if (retract)
-			//{
-			//	currentE -= retractAmount;
-			//	retracted = true;
-			//	writer.WriteLine("G1 E{0:0.###}", currentE);
-			//}
+			if (retract)
+			{
+				this.Retract();
+			}
 
 			position = Transform.Transform(position);
 
-			writer.WriteLine("G1 X{0:0.###} Y{1:0.###}", position.X, position.Y);
+			this.WriteSpeedLine(
+				string.Format(
+					"G1 X{0:0.###} Y{1:0.###}",
+					position.X,
+					position.Y),
+				this.TravelSpeed);
+
 			this.CurrentPosition = position;
+		}
+
+		private void Retract()
+		{
+			currentE -= this.RetractLength;
+			retracted = true;
+
+			this.WriteSpeedLine(
+				string.Format("G1 E{0:0.###}", currentE), 
+				this.RetractSpeed);
+		}
+
+		private void Unretract()
+		{
+			// Unretract
+			currentE += RetractLength;
+			retracted = false;
+
+			this.WriteSpeedLine(
+				string.Format("G1 E{0:0.###}", currentE), 
+				this.RetractSpeed);
 		}
 
 		public void PenUp()
 		{
-			writer.WriteLine("G1 Z0.8 E{0:0.###}", currentE - 1.2);
+			this.Retract();
+			this.WriteSpeedLine(
+				string.Format("G1 Z{0:0.###}", layerHeight + this.RetractLift),
+				this.TravelSpeed);
 		}
 
 		public void PenDown()
 		{
-			writer.WriteLine("G1 Z0.2 E{0:0.###}", currentE);
+			this.WriteSpeedLine(
+				string.Format("G1 Z{0:0.###}", layerHeight), 
+				this.TravelSpeed);
+
+			this.Unretract();
 		}
 
 		public void LineTo(double x, double y)
@@ -116,21 +143,43 @@ namespace MatterHackers.MatterControl
 
 		public void LineTo(Vector2 position)
 		{
-			//if (retracted)
-			//{
-			//	// Unretract
-			//	currentE += retractAmount;
-			//	writer.WriteLine("G1 E{0:0.###}", currentE);
-			//}
+			if (retracted)
+			{
+				this.Unretract();
+			}
 
 			position = Transform.Transform(position);
 
 			var delta = this.CurrentPosition - position;
-			currentE += delta.Length * 0.06;
+			currentE += delta.Length * 0.048;
 
-			writer.WriteLine("G1 X{0} Y{1} E{2:0.###}", position.X, position.Y, currentE);
+			this.WriteSpeedLine(
+				string.Format(
+					"G1 X{0} Y{1} E{2:0.###}", 
+					position.X, 
+					position.Y, 
+					currentE),
+				this.Speed);
 
 			this.CurrentPosition = position;
+		}
+
+		/// <summary>
+		/// Write the given line, optionally pushing speeds if needed
+		/// </summary>
+		/// <param name="line">The line to write</param>
+		/// <param name="targetSpeed">The target movement speed</param>
+		public void WriteSpeedLine(string line, double targetSpeed)
+		{
+			if (currentSpeed == targetSpeed)
+			{
+				writer.WriteLine(line);
+			}
+			else
+			{
+				currentSpeed = targetSpeed;
+				writer.WriteLine("{0} F{1:0.###}", line, targetSpeed);
+			}
 		}
 
 		public string ToGCode()
@@ -143,7 +192,7 @@ namespace MatterHackers.MatterControl
 			writer.Dispose();
 		}
 
-		internal void DrawRectangle(RectangleDouble rect)
+		public void DrawRectangle(RectangleDouble rect)
 		{
 			this.MoveTo(rect.Left, rect.Bottom);
 

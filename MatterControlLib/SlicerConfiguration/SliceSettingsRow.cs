@@ -368,7 +368,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		}
 
-
 		public void UpdateStyle()
 		{
 			if (settingsContext.ContainsKey(settingData.SlicerConfigName))
@@ -378,7 +377,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case NamedSettingsLayers.All:
 						if (settingData.ShowAsOverride)
 						{
-							var defaultCascade = printer.Settings.defaultLayerCascade;
+							var defaultCascade = printer.Settings.GetDefaultLayerCascade();
 							var firstParentValue = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade.Skip(1));
 							var (currentValue, layerName) = printer.Settings.GetValueAndLayerName(settingData.SlicerConfigName, defaultCascade);
 

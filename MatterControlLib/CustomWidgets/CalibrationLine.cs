@@ -50,8 +50,7 @@ namespace MatterHackers.MatterControl
 
 		static CalibrationLine()
 		{
-			int glyphCenter = glyphSize / 2;
-			CalibrationLine.CreateGlyphs(glyphCenter);
+			CalibrationLine.CreateGlyphs();
 		}
 
 		public CalibrationLine(FlowDirection parentDirection, int glyphIndex, ThemeConfig theme)
@@ -131,13 +130,13 @@ namespace MatterHackers.MatterControl
 			var centerX = this.LocalBounds.XCenter + .5;
 			var centerY = this.LocalBounds.YCenter - .5;
 
-			var start = new Vector2(centerX, (glyph == null) ? 20 : 9);
+			var start = new Vector2(centerX, (glyph == null) ? 20 : (this.IsNegative) ? 6 : 9 );
 			var end = new Vector2(centerX, this.LocalBounds.Height);
 
 			if (!verticalLine)
 			{
 				start = new Vector2(0, centerY);
-				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : 9), centerY);
+				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : (this.IsNegative) ? 6 : 9), centerY);
 			}
 
 			graphics2D.Line(start, end, lineColor, 1);
@@ -145,73 +144,66 @@ namespace MatterHackers.MatterControl
 			// Draw line end
 			if (glyph != null)
 			{
+				int offset = IsNegative ? 18 : 11;
+
 				graphics2D.Render(
 					glyph,
-					verticalLine ? new Vector2(centerX, 11) : new Vector2(this.Width - 11, centerY),
+					verticalLine ? new Vector2(centerX, offset) : new Vector2(this.Width - offset, centerY),
 					lineColor);
-			}
-
-			// Draw negative adornment after glyphs 
-			if (glyph != null
-				&& this.IsNegative)
-			{
-				graphics2D.Line(
-					verticalLine ? new Vector2(centerX, 0) : new Vector2(this.Width - 5, centerY),
-					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width, centerY),
-					lineColor,
-					1);
 			}
 
 			base.OnDraw(graphics2D);
 		}
 
-		private static void CreateGlyphs(int glyphCenter)
+		private static void CreateGlyphs()
 		{
 			Glyphs = new Dictionary<int, IVertexSource>();
 
-			var half = -(glyphSize / 2);
+			var half = glyphSize / 2;
 
 			var triangle = new VertexStorage();
-			triangle.MoveTo(0, 0);
+			triangle.MoveTo(half, glyphSize);
+			triangle.LineTo(0, 0);
 			triangle.LineTo(glyphSize, 0);
-			triangle.LineTo(glyphSize / 2, glyphSize);
+			triangle.LineTo(half, glyphSize);
 			triangle.ClosePolygon();
 
-			//triangle.ClosePolygon();
-
 			var square = new VertexStorage();
-			square.MoveTo(0, 0);
+			square.MoveTo(half, glyphSize);
+			square.LineTo(0, glyphSize);
+			square.LineTo(0, 0);
 			square.LineTo(glyphSize, 0);
 			square.LineTo(glyphSize, glyphSize);
-			square.LineTo(0, glyphSize);
+			square.LineTo(half, glyphSize);
 			square.ClosePolygon();
 
 			var diamond = new VertexStorage();
-			diamond.MoveTo(glyphCenter, 0);
-			diamond.LineTo(glyphSize, glyphCenter);
-			diamond.LineTo(glyphCenter, glyphSize);
-			diamond.LineTo(0, glyphCenter);
+			diamond.MoveTo(half, glyphSize);
+			diamond.LineTo(0, half);
+			diamond.LineTo(half, 0);
+			diamond.LineTo(glyphSize, half);
+			diamond.LineTo(half, glyphSize);
 			diamond.ClosePolygon();
 
-			var circle = new Ellipse(new Vector2(glyphCenter, glyphCenter), glyphCenter);
+			var circle = new Ellipse(Vector2.Zero, half).Rotate(90, AngleType.Degrees).Translate(half, half);
 
-			var center = new VertexStorage();
-			center.MoveTo(0, 0);
-			center.LineTo(glyphCenter, glyphSize);
-			center.LineTo(glyphSize, 0);
-			center.LineTo(glyphCenter, glyphSize - 4);
-			center.LineTo(0, 0);
-			center.ClosePolygon();
+			var chevron = new VertexStorage();
+			chevron.MoveTo(half, glyphSize);
+			chevron.LineTo(0, 0);
+			chevron.LineTo(half, glyphSize - 4);
+			chevron.LineTo(glyphSize, 0);
+			chevron.LineTo(half, glyphSize);
+			chevron.ClosePolygon();
 
 			var transform = Affine.NewTranslation(-glyphSize / 2, -glyphSize);
 			Glyphs.Add(0, new VertexSourceApplyTransform(triangle, transform));
 			Glyphs.Add(5, new VertexSourceApplyTransform(diamond, transform));
 			Glyphs.Add(10, new VertexSourceApplyTransform(square, transform));
-			Glyphs.Add(15, new VertexSourceApplyTransform(circle, transform));
+			Glyphs.Add(15, new VertexSourceApplyTransform(chevron, transform));
 
-			Glyphs.Add(20, new VertexSourceApplyTransform(center, transform));
+			Glyphs.Add(20, new VertexSourceApplyTransform(circle, transform));
 
-			Glyphs.Add(25, new VertexSourceApplyTransform(circle, transform));
+			Glyphs.Add(25, new VertexSourceApplyTransform(chevron, transform));
 			Glyphs.Add(30, new VertexSourceApplyTransform(square, transform));
 			Glyphs.Add(35, new VertexSourceApplyTransform(diamond, transform));
 			Glyphs.Add(40, new VertexSourceApplyTransform(triangle, transform));

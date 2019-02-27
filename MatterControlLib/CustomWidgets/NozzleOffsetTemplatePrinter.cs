@@ -28,15 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -57,13 +52,12 @@ namespace MatterHackers.MatterControl
 			activeOffsets = new double[41];
 			activeOffsets[20] = 0;
 
-			var leftStep = 1.5d / 20;
-			var rightStep = 1.5d / 20;
+			var offsetStep = 1.2d / 20;
 
 			for (var i = 1; i <= 20; i++)
 			{
-				activeOffsets[20 - i] = i * leftStep * -1;
-				activeOffsets[20 + i] = i * rightStep;
+				activeOffsets[20 - i] = i * offsetStep * -1;
+				activeOffsets[20 + i] = i * offsetStep;
 			}
 
 			nozzleWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
@@ -73,7 +67,6 @@ namespace MatterHackers.MatterControl
 		public double[] ActiveOffsets => activeOffsets;
 
 		public bool DebugMode { get; private set; } = false;
-
 
 		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
@@ -109,7 +102,7 @@ namespace MatterHackers.MatterControl
 			// Perimeters
 			rect = this.CreatePerimeters(gcodeSketch, rect);
 
-			double x, y2, y3;
+			double x, y2, y3, y4;
 			double sectionHeight = rect.Height / 2;
 			bool up = true;
 			var step = (rect.Width - 3) / 40;
@@ -130,9 +123,13 @@ namespace MatterHackers.MatterControl
 				x = rect.Left + 1.5;
 
 				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
-				y3 = y2 - 5;
+				y3 = y2 - 2;
+				y4 = y2 - 5;
 
-				bool drawGlpyphs = false;
+				bool drawGlyphs = true;
+
+				var inverseTransform = gcodeSketch.Transform;
+				inverseTransform.invert();
 
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
@@ -141,18 +138,17 @@ namespace MatterHackers.MatterControl
 
 					if ((i % 5 == 0))
 					{
-						gcodeSketch.LineTo(x, y3);
+						gcodeSketch.LineTo(x, y4);
+
+						if (i < 20)
+						{
+							gcodeSketch.MoveTo(x, y3);
+						}
 
 						var currentPos = gcodeSketch.CurrentPosition;
+						currentPos = inverseTransform.Transform(currentPos);
 
-						gcodeSketch.Speed = 500;
-
-						PrintLineEnd(gcodeSketch, drawGlpyphs, i, currentPos);
-
-						gcodeSketch.Speed = 1800;
-
-						gcodeSketch.MoveTo(x, y3);
-						gcodeSketch.MoveTo(x, y2);
+						PrintLineEnd(gcodeSketch, drawGlyphs, i, currentPos);
 					}
 
 					gcodeSketch.LineTo(x, up ? y2 : y1);
@@ -191,7 +187,7 @@ namespace MatterHackers.MatterControl
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
-					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: true);
+					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: false);
 					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
 					x = x + step;
@@ -206,7 +202,7 @@ namespace MatterHackers.MatterControl
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
 		{
 			gcodeSketch.WriteRaw("; CreatePerimeters");
-			for (var i = 0; i < 3; i++)
+			for (var i = 0; i < 2; i++)
 			{
 				rect.Inflate(-nozzleWidth);
 				gcodeSketch.DrawRectangle(rect);
@@ -226,20 +222,29 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlpyphs, int i, Vector2 currentPos)
+		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos, bool lift = false)
 		{
-			if (drawGlpyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
+			var originalSpeed = turtle.Speed;
+			turtle.Speed = Math.Min(700, turtle.Speed);
+
+			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
+				turtle.WriteRaw("; LineEnd Marker");
 				var flattened = new FlattenCurves(vertexSource);
 
 				var verticies = flattened.Vertices();
 				var firstItem = verticies.First();
 				var position = turtle.CurrentPosition;
 
-				var scale = 0.32;
+				var scale = 0.3;
 
 				if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
 				{
+					if (lift)
+					{
+						turtle.PenUp();
+					}
+
 					turtle.MoveTo((firstItem.position * scale) + currentPos);
 				}
 
@@ -250,7 +255,17 @@ namespace MatterHackers.MatterControl
 					switch (item.command)
 					{
 						case ShapePath.FlagsAndCommand.MoveTo:
+							if (lift)
+							{
+								turtle.PenUp();
+							}
+
 							turtle.MoveTo((item.position * scale) + currentPos);
+
+							if (lift)
+							{
+								turtle.PenDown();
+							}
 							break;
 
 						case ShapePath.FlagsAndCommand.LineTo:
@@ -264,9 +279,23 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				if (!closed)
+				bool atStartingPosition = position == turtle.CurrentPosition;
+
+				if (!closed
+					&& !atStartingPosition)
 				{
 					turtle.LineTo((firstItem.position * scale) + currentPos);
+				}
+
+				// Restore original speed
+				turtle.Speed = originalSpeed;
+
+				if (!atStartingPosition)
+				{
+					// Return to original position
+					turtle.PenUp();
+					turtle.MoveTo(currentPos);
+					turtle.PenDown();
 				}
 			}
 		}

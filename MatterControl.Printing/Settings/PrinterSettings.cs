@@ -676,7 +676,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public IEnumerable<PrinterSettingsLayer> defaultLayerCascade
+		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
 		{
 			get
 			{
@@ -703,6 +703,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				yield return this.BaseLayer;
 			}
 		}
+
+		public IEnumerable<PrinterSettingsLayer> GetDefaultLayerCascade() => defaultLayerCascade;
+
 		[JsonIgnore]
 		public SettingsHelpers Helpers { get; set; }
 

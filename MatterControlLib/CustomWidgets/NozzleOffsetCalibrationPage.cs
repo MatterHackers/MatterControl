@@ -78,10 +78,10 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(container);
 
-			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
+			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.BottomToTop, theme)
 			{
 				Margin = new BorderDouble(top: 15),
-				Padding = new BorderDouble(top: 4),
+				Padding = new BorderDouble(bottom: 4),
 				Width = 110
 			});
 
@@ -131,7 +131,11 @@ namespace MatterHackers.MatterControl
 			{
 				var gcodeSketch = new GCodeSketch()
 				{
-					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60)
+					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60),
+					RetractLength = printer.Settings.GetValue<double>(SettingsKey.retract_length),
+					RetractSpeed = printer.Settings.GetValue<double>(SettingsKey.retract_speed) * 60,
+					RetractLift = printer.Settings.GetValue<double>(SettingsKey.retract_lift),
+					TravelSpeed = printer.Settings.GetValue<double>(SettingsKey.travel_speed) * 60,
 				};
 
 				//gcodeSketch.WriteRaw("G92 E0");
@@ -181,8 +185,8 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Printing ||
-				printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Paused)
+			if (printer.Connection.CommunicationState == CommunicationStates.Printing ||
+				printer.Connection.CommunicationState == CommunicationStates.Paused)
 			{
 				printer.CancelPrint();
 			}
