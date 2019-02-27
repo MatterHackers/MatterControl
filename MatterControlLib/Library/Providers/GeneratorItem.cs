@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <summary>
 		/// The delegate responsible for producing the item
 		/// </summary>
-		private Func<IObject3D> collector;
+		private Func<Task<IObject3D>> collector;
 
 		public GeneratorItem(Func<string> nameResolver)
 		{
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Library
 			this.IsProtected = true;
 		}
 
-		public GeneratorItem(Func<string> nameResolver, Func<IObject3D> collector, string category = null)
+		public GeneratorItem(Func<string> nameResolver, Func<Task<IObject3D>> collector, string category = null)
 		{
 			this.nameResolver = nameResolver;
 			this.collector = collector;
@@ -114,17 +114,17 @@ namespace MatterHackers.MatterControl.Library
 
 		public bool LocalContentExists => true;
 
-		public Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
+		public async Task<IObject3D> GetObject3D(Action<double, string> reportProgress)
 		{
-			var result = collector?.Invoke();
+			var object3D = await collector?.Invoke();
 
 			// If the content has not set a color, we'll assign from the running ColorRange
-			if (result.Color == Color.Transparent)
+			if (object3D.Color == Color.Transparent)
 			{
-				result.Color = this.Color;
+				object3D.Color = this.Color;
 			}
 
-			return Task.FromResult(result);
+			return object3D;
 		}
 	}
 }

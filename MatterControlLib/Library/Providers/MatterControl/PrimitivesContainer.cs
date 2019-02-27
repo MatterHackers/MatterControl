@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.Plugins.BrailleBuilder;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -55,57 +54,57 @@ namespace MatterHackers.MatterControl.Library
 			{
 				new GeneratorItem(
 					() => "Cube".Localize(),
-					() => CubeObject3D.Create())
+					() => Task.FromResult<IObject3D>(CubeObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Pyramid".Localize(),
-					() => PyramidObject3D.Create())
+					() => Task.FromResult<IObject3D>(PyramidObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Wedge".Localize(),
-					() => WedgeObject3D.Create())
+					() => Task.FromResult<IObject3D>(WedgeObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Wedge".Localize(),
-					() => HalfWedgeObject3D.Create())
+					() => Task.FromResult<IObject3D>(HalfWedgeObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Text".Localize(),
-					() => TextObject3D.Create().Result)
+					async () => await TextObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 #if DEBUG
 				new GeneratorItem(
 					() => "Text".Localize(),
-					() => TextPathObject3D.Create())
+					() => Task.FromResult<IObject3D>(TextPathObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
 					() => "Cylinder".Localize(),
-					() => CylinderObject3D.Create())
+					() => Task.FromResult<IObject3D>(CylinderObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Cone".Localize(),
-					() => ConeObject3D.Create().Result)
+					async () => await ConeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Cylinder".Localize(),
-					() => HalfCylinderObject3D.Create())
+					() => Task.FromResult<IObject3D>(HalfCylinderObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Torus".Localize(),
-					() => TorusObject3D.Create())
+					() => Task.FromResult<IObject3D>(TorusObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Ring".Localize(),
-					() => RingObject3D.Create())
+					() => Task.FromResult<IObject3D>(RingObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Sphere".Localize(),
-					() => SphereObject3D.Create())
+					() => Task.FromResult<IObject3D>(SphereObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Sphere".Localize(),
-					() => HalfSphereObject3D.Create())
+					() => Task.FromResult<IObject3D>(HalfSphereObject3D.Create()))
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Image Converter".Localize(),
@@ -129,7 +128,7 @@ namespace MatterHackers.MatterControl.Library
 						var constructedComponent = tempScene.SelectedItem;
 						tempScene.Children.Remove(constructedComponent);
 
-						return constructedComponent;
+						return Task.FromResult<IObject3D>(constructedComponent);
 					})
 					{ DateCreated = new System.DateTime(index++) },
 			};
