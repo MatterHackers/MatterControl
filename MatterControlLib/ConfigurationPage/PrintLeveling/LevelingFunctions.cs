@@ -41,14 +41,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
-		private PrinterSettings printerSettings;
+		private PrinterConfig printer;
 
-		public LevelingFunctions(PrinterSettings printerSettings, PrintLevelingData levelingData)
+		public LevelingFunctions(PrinterConfig printer, PrintLevelingData levelingData)
 		{
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
-			bedSize = printerSettings.GetValue<Vector2>(SettingsKey.bed_size);
+			bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 
 			// get the delaunay triangulation
 			var zDictionary = new Dictionary<(double, double), double>();
@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
 
-			var probeOffset = new Vector3(0, 0, printerSettings.GetValue<double>(SettingsKey.z_probe_z_offset));
+			var probeOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset));
 			// make all the triangle planes for these triangles
 			foreach (var triangle in triangles.Cells)
 			{

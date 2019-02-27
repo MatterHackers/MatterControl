@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
 					currentProbeOffset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
-					currentLevelingFunctions = new LevelingFunctions(printer.Settings, levelingData);
+					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
 				}
 
 				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);

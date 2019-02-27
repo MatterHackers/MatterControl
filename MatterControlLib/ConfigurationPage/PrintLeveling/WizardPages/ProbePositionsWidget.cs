@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (currentLevelingFunctions == null)
 				{
 					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-					currentLevelingFunctions = new LevelingFunctions(printer.Settings, levelingData);
+					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
 				}
 
 				var levelingTriangles = new VertexStorage();
