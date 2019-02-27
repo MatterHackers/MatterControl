@@ -187,23 +187,23 @@ namespace MatterHackers.MatterControl
 
 			var circle = new Ellipse(Vector2.Zero, half).Rotate(90, AngleType.Degrees).Translate(half, half);
 
-			var center = new VertexStorage();
-			center.MoveTo(half, glyphSize);
-			center.LineTo(0, 0);
-			center.LineTo(half, glyphSize - 4);
-			center.LineTo(glyphSize, 0);
-			center.LineTo(half, glyphSize);
-			center.ClosePolygon();
+			var chevron = new VertexStorage();
+			chevron.MoveTo(half, glyphSize);
+			chevron.LineTo(0, 0);
+			chevron.LineTo(half, glyphSize - 4);
+			chevron.LineTo(glyphSize, 0);
+			chevron.LineTo(half, glyphSize);
+			chevron.ClosePolygon();
 
 			var transform = Affine.NewTranslation(-glyphSize / 2, -glyphSize);
 			Glyphs.Add(0, new VertexSourceApplyTransform(triangle, transform));
 			Glyphs.Add(5, new VertexSourceApplyTransform(diamond, transform));
 			Glyphs.Add(10, new VertexSourceApplyTransform(square, transform));
-			Glyphs.Add(15, new VertexSourceApplyTransform(circle, transform));
+			Glyphs.Add(15, new VertexSourceApplyTransform(chevron, transform));
 
-			Glyphs.Add(20, new VertexSourceApplyTransform(center, transform));
+			Glyphs.Add(20, new VertexSourceApplyTransform(circle, transform));
 
-			Glyphs.Add(25, new VertexSourceApplyTransform(circle, transform));
+			Glyphs.Add(25, new VertexSourceApplyTransform(chevron, transform));
 			Glyphs.Add(30, new VertexSourceApplyTransform(square, transform));
 			Glyphs.Add(35, new VertexSourceApplyTransform(diamond, transform));
 			Glyphs.Add(40, new VertexSourceApplyTransform(triangle, transform));
