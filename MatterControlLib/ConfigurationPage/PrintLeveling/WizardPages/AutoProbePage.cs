@@ -33,6 +33,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -63,6 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.printer = printer;
 			this.probePositions = probePositions;
 
+			contentRow.BackgroundColor = Color.Transparent;
 			contentRow.AddChild(probePositionsWidget = new ProbePositionsWidget(printer, probePoints, probePositions, AppContext.Theme)
 			{
 				HAnchor = HAnchor.Stretch,

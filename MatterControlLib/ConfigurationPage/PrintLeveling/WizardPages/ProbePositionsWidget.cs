@@ -98,6 +98,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			graphics2D.FillRectangle(scaledBedRect, theme.SlightShade);
 			graphics2D.Rectangle(scaledBedRect, lightColor);
 
 			// Draw some basic bed gridlines
