@@ -52,13 +52,12 @@ namespace MatterHackers.MatterControl
 			activeOffsets = new double[41];
 			activeOffsets[20] = 0;
 
-			var leftStep = 1.5d / 20;
-			var rightStep = 1.5d / 20;
+			var offsetStep = 1.2d / 20;
 
 			for (var i = 1; i <= 20; i++)
 			{
-				activeOffsets[20 - i] = i * leftStep * -1;
-				activeOffsets[20 + i] = i * rightStep;
+				activeOffsets[20 - i] = i * offsetStep * -1;
+				activeOffsets[20 + i] = i * offsetStep;
 			}
 
 			nozzleWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
@@ -68,7 +67,6 @@ namespace MatterHackers.MatterControl
 		public double[] ActiveOffsets => activeOffsets;
 
 		public bool DebugMode { get; private set; } = false;
-
 
 		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
