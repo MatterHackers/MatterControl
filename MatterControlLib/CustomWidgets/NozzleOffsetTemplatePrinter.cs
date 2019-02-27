@@ -225,7 +225,7 @@ namespace MatterHackers.MatterControl
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos, bool lift = false)
 		{
 			var originalSpeed = turtle.Speed;
-			turtle.Speed = Math.Min(500, turtle.Speed);
+			turtle.Speed = Math.Min(700, turtle.Speed);
 
 			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
