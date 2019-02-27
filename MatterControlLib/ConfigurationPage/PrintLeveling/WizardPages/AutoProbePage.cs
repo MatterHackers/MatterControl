@@ -137,6 +137,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			probePositionsWidget.ActiveProbeIndex = probePoints.Count;
 
 			this.NextButton.Enabled = true;
+
+			// Auto advance
+			UiThread.RunOnIdle(this.NextButton.InvokeClick);
 		}
 
 		private void StartSampling(int probeIndex, Vector3 probePosition)
