@@ -78,10 +78,10 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(container);
 
-			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.TopToBottom, theme)
+			container.AddChild(yOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.BottomToTop, theme)
 			{
 				Margin = new BorderDouble(top: 15),
-				Padding = new BorderDouble(top: 4),
+				Padding = new BorderDouble(bottom: 4),
 				Width = 110
 			});
 
