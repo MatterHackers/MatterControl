@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl
 			position = Transform.Transform(position);
 
 			var delta = this.CurrentPosition - position;
-			currentE += delta.Length * 0.06;
+			currentE += delta.Length * 0.048;
 
 			this.WriteSpeedLine(
 				string.Format(
