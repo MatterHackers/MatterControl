@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos)
+		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos, bool lift = false)
 		{
 			var originalSpeed = turtle.Speed;
 			turtle.Speed = Math.Min(500, turtle.Speed);
@@ -240,7 +240,11 @@ namespace MatterHackers.MatterControl
 
 				if (firstItem.command != ShapePath.FlagsAndCommand.MoveTo)
 				{
-					turtle.PenUp();
+					if (lift)
+					{
+						turtle.PenUp();
+					}
+
 					turtle.MoveTo((firstItem.position * scale) + currentPos);
 				}
 
@@ -251,9 +255,17 @@ namespace MatterHackers.MatterControl
 					switch (item.command)
 					{
 						case ShapePath.FlagsAndCommand.MoveTo:
-							turtle.PenUp();
+							if (lift)
+							{
+								turtle.PenUp();
+							}
+
 							turtle.MoveTo((item.position * scale) + currentPos);
-							turtle.PenDown();
+
+							if (lift)
+							{
+								turtle.PenDown();
+							}
 							break;
 
 						case ShapePath.FlagsAndCommand.LineTo:
