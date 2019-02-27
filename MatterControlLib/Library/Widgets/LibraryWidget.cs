@@ -513,7 +513,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					// Clear basic filtering
 					libraryView.ClearFilter();
 				}
-				
+
 				searchContainer = null;
 			});
 		}
@@ -1007,13 +1007,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open Package".Localize(),
-				Action = (selectedItems, listView) =>
+				Action = async (selectedItems, listView) =>
 				{
 					var firstItem = selectedItems.First();
 
 					if (firstItem is ILibraryAsset libraryAsset)
 					{
-						var container = new McxContainer(libraryAsset);
+						var object3D = await libraryAsset.CreateContent(null);
+
+						var container = new McxContainer(object3D);
 						container.Load();
 
 						container.Parent = libraryContext.ActiveContainer;

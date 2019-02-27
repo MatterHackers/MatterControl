@@ -62,15 +62,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				HAnchor = HAnchor.Center
 			});
 
-			contentRow.AddChild(new ProbePositionsWidget(printer, probePositions.Select(p => new Vector2(p.position.X, p.position.Y)).ToList(), probePositions, theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-				RenderLevelingData = true,
-				RenderProbePath = false,
-				SimplePoints = true,
-			});
-
 			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
 
 			this.ShowWizardFinished();

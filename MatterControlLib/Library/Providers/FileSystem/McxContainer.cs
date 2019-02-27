@@ -42,9 +42,9 @@ namespace MatterHackers.MatterControl.Library
 		{
 		}
 
-		public McxContainer(ILibraryAsset libraryAsset)
+		public McxContainer(IObject3D sourceItem)
 		{
-			sourceItem = libraryAsset.CreateContent(null).Result;
+			this.sourceItem = sourceItem;
 			this.Name = sourceItem.Name;
 		}
 

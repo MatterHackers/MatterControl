@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -98,6 +99,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			var offset = Vector2.Zero;
+
+			if (this.Width > this.Height)
+			{
+				offset.X = (this.Width / 2) - (scaledBedRect.Width / 2);
+			}
+			else
+			{
+				offset.Y = (this.Height / 2) - (scaledBedRect.Height / 2);
+			}
+
+			graphics2D.PushTransform();
+			graphics2D.SetTransform(graphics2D.GetTransform() * Affine.NewTranslation(offset));
+
+			graphics2D.FillRectangle(scaledBedRect, theme.SlightShade);
 			graphics2D.Rectangle(scaledBedRect, lightColor);
 
 			// Draw some basic bed gridlines
@@ -172,6 +188,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						color: theme.TextColor);
 				}
 			}
+
+			graphics2D.PopTransform();
 
 			base.OnDraw(graphics2D);
 		}
