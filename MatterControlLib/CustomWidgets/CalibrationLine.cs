@@ -131,13 +131,13 @@ namespace MatterHackers.MatterControl
 			var centerX = this.LocalBounds.XCenter + .5;
 			var centerY = this.LocalBounds.YCenter - .5;
 
-			var start = new Vector2(centerX, (glyph == null) ? 20 : 9);
+			var start = new Vector2(centerX, (glyph == null) ? 20 : (this.IsNegative) ? 6 : 9 );
 			var end = new Vector2(centerX, this.LocalBounds.Height);
 
 			if (!verticalLine)
 			{
 				start = new Vector2(0, centerY);
-				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : 9), centerY);
+				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : (this.IsNegative) ? 6 : 9), centerY);
 			}
 
 			graphics2D.Line(start, end, lineColor, 1);
@@ -145,21 +145,12 @@ namespace MatterHackers.MatterControl
 			// Draw line end
 			if (glyph != null)
 			{
+				int offset = IsNegative ? 18 : 11;
+
 				graphics2D.Render(
 					glyph,
-					verticalLine ? new Vector2(centerX, 11) : new Vector2(this.Width - 11, centerY),
+					verticalLine ? new Vector2(centerX, offset) : new Vector2(this.Width - offset, centerY),
 					lineColor);
-			}
-
-			// Draw negative adornment after glyphs 
-			if (glyph != null
-				&& this.IsNegative)
-			{
-				graphics2D.Line(
-					verticalLine ? new Vector2(centerX, 0) : new Vector2(this.Width - 5, centerY),
-					verticalLine ? new Vector2(centerX, 5) : new Vector2(this.Width, centerY),
-					lineColor,
-					1);
 			}
 
 			base.OnDraw(graphics2D);

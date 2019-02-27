@@ -28,15 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -109,7 +104,7 @@ namespace MatterHackers.MatterControl
 			// Perimeters
 			rect = this.CreatePerimeters(gcodeSketch, rect);
 
-			double x, y2, y3;
+			double x, y2, y3, y4;
 			double sectionHeight = rect.Height / 2;
 			bool up = true;
 			var step = (rect.Width - 3) / 40;
@@ -130,7 +125,8 @@ namespace MatterHackers.MatterControl
 				x = rect.Left + 1.5;
 
 				y2 = y1 - sectionHeight - (nozzleWidth * 1.5);
-				y3 = y2 - 5;
+				y3 = y2 - 2;
+				y4 = y2 - 5;
 
 				bool drawGlyphs = true;
 
@@ -144,7 +140,12 @@ namespace MatterHackers.MatterControl
 
 					if ((i % 5 == 0))
 					{
-						gcodeSketch.LineTo(x, y3);
+						gcodeSketch.LineTo(x, y4);
+
+						if (i < 20)
+						{
+							gcodeSketch.MoveTo(x, y3);
+						}
 
 						var currentPos = gcodeSketch.CurrentPosition;
 						currentPos = inverseTransform.Transform(currentPos);
@@ -203,7 +204,7 @@ namespace MatterHackers.MatterControl
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
 		{
 			gcodeSketch.WriteRaw("; CreatePerimeters");
-			for (var i = 0; i < 3; i++)
+			for (var i = 0; i < 2; i++)
 			{
 				rect.Inflate(-nozzleWidth);
 				gcodeSketch.DrawRectangle(rect);
@@ -226,7 +227,7 @@ namespace MatterHackers.MatterControl
 		private static void PrintLineEnd(GCodeSketch turtle, bool drawGlyphs, int i, Vector2 currentPos)
 		{
 			var originalSpeed = turtle.Speed;
-			turtle.Speed = Math.Min(400, turtle.Speed);
+			turtle.Speed = Math.Min(500, turtle.Speed);
 
 			if (drawGlyphs && CalibrationLine.Glyphs.TryGetValue(i, out IVertexSource vertexSource))
 			{
