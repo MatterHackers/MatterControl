@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
@@ -49,8 +50,12 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 
+
 			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.z_probe_z_offset, "0");
+
+			var printer = new PrinterConfig(printerSettings);
+
 			// a 2 x 2 mesh that goes form 0 on the left to 10 on the right
 			{
 				var levelingData = new PrintLevelingData();
@@ -62,7 +67,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printerSettings, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
@@ -103,7 +108,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(5, 10, 5));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printerSettings, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer, levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);

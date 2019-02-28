@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
 		public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
 
+		public override string DebugInfo => "";
+
 		public void Cancel()
 		{
 			state = State.passthrough;

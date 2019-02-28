@@ -50,6 +50,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			activeExtruderIndex = printer.Connection.ActiveExtruderIndex;
 		}
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {lastDestination}";
+			}
+		}
+
 		private bool CheckIfNeedToSwitchExtruders(string lineIn)
 		{
 			bool queuedSwitch = false;
@@ -62,50 +70,76 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			TrackExtruderState(lineNoComment);
 
+			// check if there is a travel
 			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
 				&& activeExtruderIndex != requestedExtruder) // is different than the last extruder set
 			{
-				string gcodeToQueue = "";
+				string beforeGcodeToQueue = "";
+				string afterGcodeToQueue = "";
 				switch (requestedExtruder)
 				{
 					case 0:
-						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode).Replace("\\n", "\n");
 						break;
 					case 1:
-						gcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_1).Replace("\\n", "\n");
 						break;
 				}
 
-				if (gcodeToQueue.Trim().Length > 0)
+				var feedRate = lastDestination.feedRate;
+				var preSwitchPosition = lastDestination.position;
+				if (beforeGcodeToQueue.Trim().Length > 0)
 				{
-					var feedRate = lastDestination.feedRate;
-					if (gcodeToQueue.Contains("\n"))
+					string[] linesToWrite = beforeGcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
+					for (int i = 0; i < linesToWrite.Length; i++)
 					{
-						string[] linesToWrite = gcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
-						for (int i = 0; i < linesToWrite.Length; i++)
+						string gcodeLine = linesToWrite[i].Trim();
+						if (gcodeLine.Length > 0)
 						{
-							string gcodeLine = linesToWrite[i].Trim();
-							if (gcodeLine.Length > 0)
-							{
-								commandQueue.Enqueue(gcodeLine);
-							}
+							commandQueue.Enqueue(printer.ReplaceMacroValues(gcodeLine));
 						}
 					}
-					else
-					{
-						commandQueue.Enqueue(gcodeToQueue);
-					}
-
-					if (feedRate != double.PositiveInfinity)
-					{
-						commandQueue.Enqueue($"G1 F{feedRate}");
-					}
-
-					commandQueue.Enqueue(lineIn);
-					queuedSwitch = true;
 				}
 
+				if (afterGcodeToQueue.Trim().Length > 0)
+				{
+					string[] linesToWrite = afterGcodeToQueue.Split(new string[] { "\n" }, StringSplitOptions.None);
+					for (int i = 0; i < linesToWrite.Length; i++)
+					{
+						string gcodeLine = linesToWrite[i].Trim();
+						if (gcodeLine.Length > 0)
+						{
+							commandQueue.Enqueue(printer.ReplaceMacroValues(gcodeLine));
+						}
+					}
+				}
+
+				// move to selected tool to the last tool position at the travel speed
+				if (preSwitchPosition.X != double.PositiveInfinity
+					&& preSwitchPosition.Y != double.PositiveInfinity)
+				{
+					commandQueue.Enqueue($"G1 X{preSwitchPosition.X}Y{preSwitchPosition.Y}F{printer.Settings.XSpeed()}");
+				}
+
+				// move to the z position
+				if (preSwitchPosition.Z != double.PositiveInfinity)
+				{
+					commandQueue.Enqueue($"G1 Z{preSwitchPosition.Z}F{printer.Settings.ZSpeed()}");
+				}
+
+				// set the feedrate back to what was before we added any code
+				if (feedRate != double.PositiveInfinity)
+				{
+					commandQueue.Enqueue($"G1 F{feedRate}");
+				}
+
+				// and queue the travel
+				commandQueue.Enqueue(lineIn);
+
+				queuedSwitch = true;
 				activeExtruderIndex = requestedExtruder;
 			}
 
@@ -127,8 +161,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (commandQueue.Count > 0)
 				{
-					lineToSend = commandQueue.Dequeue();
-					lineToSend = printer.ReplaceMacroValues(lineToSend);
+					return commandQueue.Dequeue();
 				}
 			}
 

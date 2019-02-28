@@ -43,6 +43,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static double ExtrusionRatio { get; set; } = 1;
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"ExtrusionRatio = {ExtrusionRatio}";
+			}
+		}
+
 		public override string ReadLine()
 		{
 			var lineToSend = internalStream.ReadLine();

@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 		}
 
+		public override string DebugInfo => "";
+
 		public override string ReadLine()
 		{
 			if (printer.Settings.GetValue(SettingsKey.progress_reporting) != "None"

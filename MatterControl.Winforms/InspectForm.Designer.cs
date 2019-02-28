@@ -36,10 +36,14 @@
 			this.tabPage2 = new System.Windows.Forms.TabPage();
 			this.sceneTreeView = new System.Windows.Forms.TreeView();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
+			this.btnApply = new System.Windows.Forms.Button();
 			this.themeTreeView = new System.Windows.Forms.TreeView();
 			this.btnSaveTheme = new System.Windows.Forms.Button();
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-			this.btnApply = new System.Windows.Forms.Button();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.pipelineTree = new System.Windows.Forms.TreeView();
+			this.button1 = new System.Windows.Forms.Button();
+			this.textBox1 = new System.Windows.Forms.TextBox();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
@@ -48,6 +52,7 @@
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
+			this.tabPage4.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// splitContainer1
@@ -87,6 +92,7 @@
 			this.tabControl1.Controls.Add(this.tabPage1);
 			this.tabControl1.Controls.Add(this.tabPage2);
 			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
 			this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
@@ -158,6 +164,16 @@
 			this.tabPage3.Text = "Theme";
 			this.tabPage3.UseVisualStyleBackColor = true;
 			// 
+			// btnApply
+			// 
+			this.btnApply.Location = new System.Drawing.Point(438, 322);
+			this.btnApply.Name = "btnApply";
+			this.btnApply.Size = new System.Drawing.Size(75, 23);
+			this.btnApply.TabIndex = 3;
+			this.btnApply.Text = "Apply";
+			this.btnApply.UseVisualStyleBackColor = true;
+			this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+			// 
 			// themeTreeView
 			// 
 			this.themeTreeView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -190,15 +206,51 @@
 			this.propertyGrid1.TabIndex = 0;
 			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
-			// btnApply
+			// tabPage4
 			// 
-			this.btnApply.Location = new System.Drawing.Point(438, 322);
-			this.btnApply.Name = "btnApply";
-			this.btnApply.Size = new System.Drawing.Size(75, 23);
-			this.btnApply.TabIndex = 3;
-			this.btnApply.Text = "Apply";
-			this.btnApply.UseVisualStyleBackColor = true;
-			this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
+			this.tabPage4.Controls.Add(this.textBox1);
+			this.tabPage4.Controls.Add(this.button1);
+			this.tabPage4.Controls.Add(this.pipelineTree);
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Padding = new System.Windows.Forms.Padding(3);
+			this.tabPage4.Size = new System.Drawing.Size(600, 606);
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "tabPage4";
+			this.tabPage4.UseVisualStyleBackColor = true;
+			// 
+			// pipelineTree
+			// 
+			this.pipelineTree.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.pipelineTree.FullRowSelect = true;
+			this.pipelineTree.HideSelection = false;
+			this.pipelineTree.Location = new System.Drawing.Point(2, 5);
+			this.pipelineTree.Margin = new System.Windows.Forms.Padding(2);
+			this.pipelineTree.Name = "pipelineTree";
+			this.pipelineTree.Size = new System.Drawing.Size(592, 253);
+			this.pipelineTree.TabIndex = 3;
+			// 
+			// button1
+			// 
+			this.button1.Location = new System.Drawing.Point(509, 263);
+			this.button1.Name = "button1";
+			this.button1.Size = new System.Drawing.Size(75, 23);
+			this.button1.TabIndex = 4;
+			this.button1.Text = "button1";
+			this.button1.UseVisualStyleBackColor = true;
+			this.button1.Click += new System.EventHandler(this.button1_Click);
+			// 
+			// textBox1
+			// 
+			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.textBox1.Location = new System.Drawing.Point(17, 292);
+			this.textBox1.Multiline = true;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.Size = new System.Drawing.Size(567, 272);
+			this.textBox1.TabIndex = 5;
 			// 
 			// InspectForm
 			// 
@@ -219,6 +271,8 @@
 			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
+			this.tabPage4.ResumeLayout(false);
+			this.tabPage4.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -237,5 +291,9 @@
 		private System.Windows.Forms.Button btnSaveTheme;
 		private System.Windows.Forms.TreeView themeTreeView;
 		private System.Windows.Forms.Button btnApply;
+		private System.Windows.Forms.TabPage tabPage4;
+		private System.Windows.Forms.Button button1;
+		private System.Windows.Forms.TreeView pipelineTree;
+		private System.Windows.Forms.TextBox textBox1;
 	}
 }

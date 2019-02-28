@@ -50,6 +50,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// Register to listen for position after home and update Bounds based on the axis homed and position info.
 		}
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {lastDestination}";
+			}
+		}
+
 		private void Connection_HomingPositionChanged(object sender, System.EventArgs e)
 		{
 			this.CalculateBounds();

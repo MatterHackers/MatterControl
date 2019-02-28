@@ -116,6 +116,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return left;
 		}
 
+		public override string ToString() => $"{position} E{extrusion} F{feedRate}";
+
 		public void CopyKnowSettings(PrinterMove copyFrom)
 		{
 			if (copyFrom.position.X != double.PositiveInfinity)

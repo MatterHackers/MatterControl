@@ -58,6 +58,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		PositionSensorData positionSensorData = new PositionSensorData();
 
+		public override string DebugInfo => "";
+
 		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{

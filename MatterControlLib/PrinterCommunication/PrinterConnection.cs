@@ -2191,6 +2191,8 @@ You will then need to logout and log back in to the computer for the changes to 
 			ReadPosition(PositionReadType.Other);
 		}
 
+		public GCodeStream TotalGCodeStream => totalGCodeStream;
+
 		private void SyncProgressToDB(CancellationToken cancellationToken)
 		{
 			//var timer = Stopwatch.StartNew();

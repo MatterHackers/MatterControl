@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private QueuedCommandsStream queueStream;
 
+		public override string DebugInfo => "";
+
 		public ProcessWriteRegexStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(printer, internalStream)
 		{
