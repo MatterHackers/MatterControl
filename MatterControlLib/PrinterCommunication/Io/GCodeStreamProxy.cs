@@ -47,10 +47,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.internalStream = internalStream;
 		}
 
+		public GCodeStream InternalStream => internalStream;
+
+		public abstract string DebugInfo { get; }
+
 		public override void Dispose()
 		{
 			internalStream.Dispose();
 		}
+
 		public override string ReadLine()
 		{
 			if (internalStream != null)

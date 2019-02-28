@@ -68,6 +68,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public Vector3[] RuntimeOffsets { get => offsetStream.RuntimeOffsets; }
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {offsetStream.lastDestination}";
+			}
+		}
+
 		public override void Dispose()
 		{
 			offsetStream.Dispose();

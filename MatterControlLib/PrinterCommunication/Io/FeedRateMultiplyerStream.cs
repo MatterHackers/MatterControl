@@ -44,6 +44,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static double FeedRateRatio { get; set; } = 1;
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"FeedRateRatio = {FeedRateRatio}";
+			}
+		}
+
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			this.lastDestination.CopyKnowSettings(position);

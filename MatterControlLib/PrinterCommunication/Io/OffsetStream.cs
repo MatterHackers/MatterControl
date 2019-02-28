@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class OffsetStream : GCodeStreamProxy
 	{
 		private int extruderIndex = 0;
-		PrinterMove lastDestination = PrinterMove.Unknown;
+		public PrinterMove lastDestination = PrinterMove.Unknown;
 
 		Vector3[] extruderOffsets = new Vector3[4];
 
@@ -50,6 +50,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			extruderIndex = printer.Connection.ActiveExtruderIndex;
 
 			ReadExtruderOffsets();
+		}
+
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {lastDestination}";
+			}
 		}
 
 		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)

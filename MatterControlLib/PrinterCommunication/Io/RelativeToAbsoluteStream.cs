@@ -49,6 +49,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 		}
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {lastDestination}";
+			}
+		}
+
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			this.lastDestination.CopyKnowSettings(position);

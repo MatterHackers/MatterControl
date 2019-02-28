@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 		}
 
+		public override string DebugInfo => "";
+
 		public override string ReadLine()
 		{
 			if (!printer.Connection.WaitingForPositionRead

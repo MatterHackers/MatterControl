@@ -50,6 +50,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			activeExtruderIndex = printer.Connection.ActiveExtruderIndex;
 		}
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {lastDestination}";
+			}
+		}
+
 		private bool CheckIfNeedToSwitchExtruders(string lineIn)
 		{
 			bool queuedSwitch = false;

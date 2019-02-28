@@ -49,6 +49,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.activePrinting = activePrinting;
 		}
 
+		public override string DebugInfo
+		{
+			get
+			{
+				return $"Last Destination = {LastDestination}";
+			}
+		}
+
 		public bool AllowLeveling { get; set; }
 
 		public PrinterMove LastDestination => _lastDestination;
