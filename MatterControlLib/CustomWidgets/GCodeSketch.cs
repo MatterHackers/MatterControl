@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl
 
 		private void Retract()
 		{
+			this.WriteRaw("; Retract");
 			currentE -= this.RetractLength;
 			retracted = true;
 
@@ -111,6 +112,7 @@ namespace MatterHackers.MatterControl
 		private void Unretract()
 		{
 			// Unretract
+			this.WriteRaw("; Unretract");
 			currentE += RetractLength;
 			retracted = false;
 
@@ -121,6 +123,7 @@ namespace MatterHackers.MatterControl
 
 		public void PenUp()
 		{
+			this.WriteRaw("; PenUp");
 			this.Retract();
 			this.WriteSpeedLine(
 				string.Format("G1 Z{0:0.###}", layerHeight + this.RetractLift),
@@ -129,6 +132,7 @@ namespace MatterHackers.MatterControl
 
 		public void PenDown()
 		{
+			this.WriteRaw("; PenDown");
 			this.WriteSpeedLine(
 				string.Format("G1 Z{0:0.###}", layerHeight), 
 				this.TravelSpeed);
@@ -209,6 +213,7 @@ namespace MatterHackers.MatterControl
 
 		internal void ResetE()
 		{
+			this.WriteRaw("; Reset E");
 			currentE = 0;
 			writer.WriteLine("G92 E0");
 		}

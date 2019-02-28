@@ -71,7 +71,6 @@ namespace MatterHackers.MatterControl
 		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
 		{
 			gcodeSketch.SetTool("T0");
-			gcodeSketch.WriteRaw($"G1 Z0.2 F{firstLayerSpeed}");
 
 			if (verticalLayout)
 			{
@@ -92,6 +91,8 @@ namespace MatterHackers.MatterControl
 
 			double y1 = rect.Bottom;
 			gcodeSketch.MoveTo(rect.Left, y1);
+
+			gcodeSketch.PenDown();
 
 			var towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
@@ -158,6 +159,8 @@ namespace MatterHackers.MatterControl
 					up = !up;
 				}
 			}
+
+			gcodeSketch.PenUp();
 
 			x = rect.Left + 1.5;
 			y1 = rect.Top + (nozzleWidth * .5);
@@ -279,12 +282,13 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				bool atStartingPosition = position == turtle.CurrentPosition;
+				bool atStartingPosition = position.Equals(turtle.CurrentPosition, .1);
 
 				if (!closed
 					&& !atStartingPosition)
 				{
 					turtle.LineTo((firstItem.position * scale) + currentPos);
+					atStartingPosition = position.Equals(turtle.CurrentPosition, .1);
 				}
 
 				// Restore original speed
