@@ -1814,7 +1814,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.before_toolchange_gcode,
 					PresentationName = "Before Tool Change G-Code".Localize(),
-					HelpText = "G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					HelpText = "G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
@@ -1823,7 +1823,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.toolchange_gcode,
 					PresentationName = "After Tool Change G-Code".Localize(),
-					HelpText = "G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					HelpText = "G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -1841,7 +1841,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.toolchange_gcode_1,
 					PresentationName = "After Tool Change G-Code 2".Localize(),
-					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
