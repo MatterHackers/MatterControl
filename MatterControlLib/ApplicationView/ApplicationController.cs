@@ -2034,6 +2034,21 @@ namespace MatterHackers.MatterControl
 			return null;
 		}
 
+		public void OpenPrinter(PrinterInfo printerInfo)
+		{
+			if (this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerInfo.ID) is PrinterConfig printer
+				&& this.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.printer == printer) is ITab tab)
+			{
+				// Switch to existing printer tab
+				this.MainView.TabControl.ActiveTab = tab;
+			}
+			else
+			{
+				// Open new printer tab
+				this.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
+			}
+		}
+
 		public void OpenWorkspace(PartWorkspace workspace)
 		{
 			this.OnWorkspacesChanged(

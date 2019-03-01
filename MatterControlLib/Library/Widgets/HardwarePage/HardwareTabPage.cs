@@ -103,17 +103,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 					{
-						if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerInfo.ID) is PrinterConfig printer
-							&& ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.printer == printer) is ITab tab)
-						{
-							// Switch to existing printer tab
-							ApplicationController.Instance.MainView.TabControl.ActiveTab = tab;
-						}
-						else
-						{
-							// Open new printer tab
-							ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID).ConfigureAwait(false);
-						}
+						ApplicationController.Instance.OpenPrinter(printerInfo);
 					}
 				}
 			};
@@ -129,12 +119,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 						var openMenuItem = menu.CreateMenuItem("Open".Localize());
-						openMenuItem.Click += async (s2, e2) =>
+						openMenuItem.Click += (s2, e2) =>
 						{
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
 							{
-								// Open printer
-								await ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID);
+								ApplicationController.Instance.OpenPrinter(printerInfo);
 							}
 						};
 
