@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		PrinterMove lastDestination;
 		QueuedCommandsStream queuedCommands;
 		RectangleDouble boundsOfSkippedLayers = RectangleDouble.ZeroIntersection;
+		private string lastLine;
 
 		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
 
@@ -79,6 +80,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			string nextCommand = queuedCommands.ReadLine();
 			if (nextCommand != null)
 			{
+				lastLine = nextCommand;
 				return nextCommand;
 			}
 			
@@ -112,6 +114,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 
 					RecoveryState = RecoveryState.Raising;
+					lastLine = "";
 					return "";
 
 				// remove it from the part
@@ -123,6 +126,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G1 Z10 F{0}".FormatWith(printer.Settings.ZSpeed()));
 					queuedCommands.Add("G90 ; move absolute");
 					RecoveryState = RecoveryState.Homing;
+					lastLine = "";
 					return "";
 
 				// if top homing, home the extruder
@@ -200,6 +204,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							|| line.StartsWith("M107") // fan off
 							|| line.StartsWith("G92")) // set position
 						{
+							lastLine = line;
+
 							return line;
 						}
 					}
@@ -262,6 +268,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								return lineToSend;
 							}
 
+							lastLine = lineToSend;
+
 							return lineToSend;
 						}
 					}
@@ -276,5 +284,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			return null;
 		}
+
+		public override GCodeStream InternalStream => internalStream;
+
+		public override string DebugInfo => lastLine + $" {this.lastDestination}";
 	}
 }

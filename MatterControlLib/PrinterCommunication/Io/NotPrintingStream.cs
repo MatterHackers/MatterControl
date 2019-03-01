@@ -27,12 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
@@ -57,5 +51,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 		}
+
+		public override GCodeStream InternalStream => null;
+
+		public override string DebugInfo => "";
 	}
 }
