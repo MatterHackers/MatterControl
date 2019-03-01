@@ -512,7 +512,7 @@ namespace MatterHackers.MatterControl
 
 			var sb = new StringBuilder();
 
-			while (context is GCodeStreamProxy gCodeStream)
+			while (context is GCodeStream gCodeStream)
 			{
 				sb.AppendFormat("{0} {1}\r\n", gCodeStream.GetType().Name, gCodeStream.DebugInfo);
 				context = gCodeStream.InternalStream;

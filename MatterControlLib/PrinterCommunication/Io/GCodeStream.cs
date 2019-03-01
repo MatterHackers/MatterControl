@@ -60,6 +60,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public abstract GCodeStream InternalStream { get; }
+
+		public abstract string DebugInfo { get; }
+
 		public string CreateMovementLine(PrinterMove currentDestination)
 		{
 			return CreateMovementLine(currentDestination, PrinterMove.Unknown);

@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class GCodeFileStream : GCodeStream
 	{
 		private int printerCommandQueueLineIndex = -1;
-		public GCodeFile GCodeFile { get; }
+		private string lastLine = "";
 
 		public GCodeFileStream(GCodeFile fileStreaming, PrinterConfig printer, int startLine = 0)
 			: base(printer)
@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.GCodeFile = fileStreaming;
 			printerCommandQueueLineIndex = startLine;
 		}
+
+		public GCodeFile GCodeFile { get; }
 
 		public int LineIndex => printerCommandQueueLineIndex;
 
@@ -62,5 +64,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void Dispose()
 		{
 		}
+
+		public override GCodeStream InternalStream => null;
+
+		public override string DebugInfo => lastLine;
 	}
 }

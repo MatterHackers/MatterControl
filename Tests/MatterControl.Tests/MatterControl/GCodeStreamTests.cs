@@ -852,5 +852,9 @@ namespace MatterControl.Tests.MatterControl
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 		}
+
+		public override GCodeStream InternalStream => null;
+
+		public override string DebugInfo => "";
 	}
 }

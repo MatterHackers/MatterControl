@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
-using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterControl.Printing;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private GCodeMemoryFile switchToGCode = null;
 		private object locker = new object();
 		private List<string> commandQueue = new List<string>();
+
+		private string lastLine = "";
 
 		public GCodeSwitcher(string gcodeFilename, PrinterConfig printer, int startLine = 0)
 			: base(printer)
@@ -70,6 +72,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					var lineToSend = commandQueue[0];
 					commandQueue.RemoveAt(0);
+
+					lastLine = lineToSend;
+
 					return lineToSend;
 				}
 			}
@@ -128,7 +133,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 				}
 
-				return GCodeFile.Instruction(LineIndex++).Line;
+				lastLine = GCodeFile.Instruction(LineIndex++).Line;
+
+				return lastLine;
 			}
 
 			return null;
@@ -158,5 +165,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				});
 			}
 		}
+
+		public override GCodeStream InternalStream => null;
+
+		public override string DebugInfo => lastLine; 
 	}
 }

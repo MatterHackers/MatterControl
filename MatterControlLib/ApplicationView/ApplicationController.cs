@@ -1833,6 +1833,10 @@ namespace MatterHackers.MatterControl
 		{
 			try
 			{
+#if DEBUG
+				AggContext.StaticData.PurgeCache();
+#endif
+
 				this.IsReloading = true;
 
 				var reloadingOverlay = new GuiWidget

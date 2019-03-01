@@ -27,13 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
-using System.Collections.Generic;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -47,9 +40,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.internalStream = internalStream;
 		}
 
-		public GCodeStream InternalStream => internalStream;
-
-		public abstract string DebugInfo { get; }
+		public override GCodeStream InternalStream => internalStream;
 
 		public override void Dispose()
 		{
