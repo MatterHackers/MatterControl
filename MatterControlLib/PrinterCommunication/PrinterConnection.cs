@@ -194,19 +194,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private PrinterMove lastReportedPosition = PrinterMove.Unknown;
 
-		private GCodeSwitcher gCodeFileSwitcher0 = null;
-		private SendProgressStream sendProgressStream1 = null;
-		private PauseHandlingStream pauseHandlingStream2 = null;
-		private QueuedCommandsStream queuedCommandStream3 = null;
-		private RelativeToAbsoluteStream relativeToAbsoluteStream4 = null;
-		private BabyStepsStream babyStepsStream5 = null;
-		private PrintLevelingStream printLevelingStream6 = null;
-		private WaitForTempStream waitForTempStream7 = null;
-		private ExtrusionMultiplyerStream extrusionMultiplyerStream8 = null;
-		private FeedRateMultiplyerStream feedrateMultiplyerStream9 = null;
-		private RequestTemperaturesStream requestTemperaturesStream10 = null;
-		private ProcessWriteRegexStream processWriteRegExStream11 = null;
-		private SoftwareEndstopsStream softwareEndstopsExStream12 = null;
+		private GCodeSwitcher gCodeFileSwitcher = null;
+		private PauseHandlingStream pauseHandlingStream = null;
+		private QueuedCommandsStream queuedCommandStream = null;
+		private MaxLengthStream maxLengthStream;
+		private PrintLevelingStream printLevelingStream = null;
+		private WaitForTempStream waitForTempStream = null;
 
 		private GCodeStream totalGCodeStream = null;
 
@@ -531,7 +524,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public void SwitchToGCode(string gCodeFilePath)
 		{
-			gCodeFileSwitcher0.SwitchTo(gCodeFilePath);
+			gCodeFileSwitcher.SwitchTo(gCodeFilePath);
 		}
 
 		public string ComPort => Printer.Settings?.Helpers.ComPort();
@@ -565,9 +558,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileSwitcher0 != null)
+				if (gCodeFileSwitcher != null)
 				{
-					return gCodeFileSwitcher0?.GCodeFile?.GetLayerIndex(gCodeFileSwitcher0.LineIndex) ?? -1;
+					return gCodeFileSwitcher?.GCodeFile?.GetLayerIndex(gCodeFileSwitcher.LineIndex) ?? -1;
 				}
 
 				return -1;
@@ -620,9 +613,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 100.0;
 				}
 				else if (NumberOfLinesInCurrentPrint > 0
-					&& gCodeFileSwitcher0?.GCodeFile != null)
+					&& gCodeFileSwitcher?.GCodeFile != null)
 				{
-					return gCodeFileSwitcher0.GCodeFile.PercentComplete(gCodeFileSwitcher0.LineIndex);
+					return gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
 				}
 				else
 				{
@@ -737,12 +730,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileSwitcher0?.GCodeFile == null)
+				if (gCodeFileSwitcher?.GCodeFile == null)
 				{
 					return 0;
 				}
 
-				return gCodeFileSwitcher0.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileSwitcher0.LineIndex);
+				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileSwitcher.LineIndex);
 			}
 		}
 
@@ -776,22 +769,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public int TotalLayersInPrint => gCodeFileSwitcher0?.GCodeFile?.LayerCount ?? -1;
+		public int TotalLayersInPrint => gCodeFileSwitcher?.GCodeFile?.LayerCount ?? -1;
 
-		private int NumberOfLinesInCurrentPrint => gCodeFileSwitcher0?.GCodeFile?.LineCount ?? -1;
+		private int NumberOfLinesInCurrentPrint => gCodeFileSwitcher?.GCodeFile?.LineCount ?? -1;
 
 		public int TotalSecondsInPrint
 		{
 			get
 			{
-				if (gCodeFileSwitcher0?.GCodeFile?.LineCount > 0)
+				if (gCodeFileSwitcher?.GCodeFile?.LineCount > 0)
 				{
 					if (this.FeedRateRatio != 0)
 					{
-						return (int)(gCodeFileSwitcher0.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
+						return (int)(gCodeFileSwitcher.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
 					}
 
-					return (int)(gCodeFileSwitcher0.GCodeFile.TotalSecondsInPrint);
+					return (int)(gCodeFileSwitcher.GCodeFile.TotalSecondsInPrint);
 				}
 
 				return 0;
@@ -1709,7 +1702,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					return;
 				}
 
-				pauseHandlingStream2.DoPause(PauseHandlingStream.PauseReason.UserRequested);
+				pauseHandlingStream.DoPause(PauseHandlingStream.PauseReason.UserRequested);
 			}
 		}
 
@@ -1737,7 +1730,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				}
 				else
 				{
-					pauseHandlingStream2.Resume();
+					pauseHandlingStream.Resume();
 					CommunicationState = CommunicationStates.Printing;
 				}
 			}
@@ -1782,7 +1775,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					if (lineToWrite.Trim().Length > 0)
 					{
 						// insert the command into the printing queue at the head
-						queuedCommandStream3?.Add(lineToWrite, forceTopOfQueue);
+						queuedCommandStream?.Add(lineToWrite, forceTopOfQueue);
 					}
 				}
 			}
@@ -2074,7 +2067,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private void ClearQueuedGCode()
 		{
-			gCodeFileSwitcher0?.GCodeFile?.Clear();
+			gCodeFileSwitcher?.GCodeFile?.Clear();
 		}
 
 		private void DonePrintingSdFile(string line)
@@ -2127,58 +2120,65 @@ You will then need to logout and log back in to the computer for the changes to 
 			lineSinceUpdateHistory = 0;
 
 			totalGCodeStream?.Dispose();
+			totalGCodeStream = null;
 
-			GCodeStream firstStreamToRead = null;
+			GCodeStream accumulatedStream = null;
+
 			if (gcodeFilename != null)
 			{
-				gCodeFileSwitcher0 = new GCodeSwitcher(gcodeFilename, Printer);
+				gCodeFileSwitcher = new GCodeSwitcher(gcodeFilename, Printer);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					sendProgressStream1 = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher0, Printer, activePrintTask.PercentDone), Printer);
+					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, activePrintTask.PercentDone), Printer);
 					// And increment the recovery count
 					activePrintTask.RecoveryCount++;
 					activePrintTask.Commit();
 				}
 				else
 				{
-					sendProgressStream1 = new SendProgressStream(gCodeFileSwitcher0, Printer);
+					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, Printer);
 				}
 
-				pauseHandlingStream2 = new PauseHandlingStream(Printer, sendProgressStream1);
-				firstStreamToRead = pauseHandlingStream2;
+				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, accumulatedStream);
 			}
 			else
 			{
-				gCodeFileSwitcher0 = null;
-				firstStreamToRead = new NotPrintingStream(Printer);
+				gCodeFileSwitcher = null;
+				accumulatedStream = new NotPrintingStream(Printer);
 			}
 
-			queuedCommandStream3 = new QueuedCommandsStream(Printer, firstStreamToRead);
+			accumulatedStream = queuedCommandStream = new QueuedCommandsStream(Printer, accumulatedStream);
+
+			var processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
+			accumulatedStream = processWriteRegexStream;
+
+			accumulatedStream = new RelativeToAbsoluteStream(Printer, accumulatedStream);
+
 			if (ExtruderCount > 1)
 			{
-				var switchExtruderStream = new ToolChangeStream(Printer, queuedCommandStream3);
-				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, switchExtruderStream);
+				accumulatedStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream);
 			}
-			else
-			{
-				relativeToAbsoluteStream4 = new RelativeToAbsoluteStream(Printer, queuedCommandStream3);
-			}
-			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			babyStepsStream5 = new BabyStepsStream(Printer, relativeToAbsoluteStream4, enableLineSpliting ? 1 : 2000);
-			printLevelingStream6 = new PrintLevelingStream(Printer, babyStepsStream5, true);
-			waitForTempStream7 = new WaitForTempStream(Printer, printLevelingStream6);
-			extrusionMultiplyerStream8 = new ExtrusionMultiplyerStream(Printer, waitForTempStream7);
-			feedrateMultiplyerStream9 = new FeedRateMultiplyerStream(Printer, extrusionMultiplyerStream8);
-			requestTemperaturesStream10 = new RequestTemperaturesStream(Printer, feedrateMultiplyerStream9);
-			processWriteRegExStream11 = new ProcessWriteRegexStream(Printer, requestTemperaturesStream10, queuedCommandStream3);
 
-			softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, processWriteRegExStream11);
-			totalGCodeStream = softwareEndstopsExStream12;
+			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
+
+			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSpliting ? 1 : 2000);
+
+			accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
+			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
+			accumulatedStream = new ExtrusionMultiplyerStream(Printer, accumulatedStream);
+			accumulatedStream = new FeedRateMultiplyerStream(Printer, accumulatedStream);
+			accumulatedStream = new RequestTemperaturesStream(Printer, accumulatedStream);
+
+			var softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, accumulatedStream);
+			accumulatedStream = softwareEndstopsExStream12;
+
+			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegExStream11?.ProcessWriteRegEx("M110 N1");
+			var transformedCommand = processWriteRegexStream.ProcessWriteRegEx("M110 N1");
 			if (transformedCommand != null)
 			{
 				foreach (var line in transformedCommand)
@@ -2204,16 +2204,15 @@ You will then need to logout and log back in to the computer for the changes to 
 				double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
 
 				if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
-					&& gCodeFileSwitcher0 != null
+					&& gCodeFileSwitcher != null
 					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
 					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
-					|| lineSinceUpdateHistory + 20 < gCodeFileSwitcher0.LineIndex))
+					|| lineSinceUpdateHistory + 20 < gCodeFileSwitcher.LineIndex))
 				{
-					double currentDone = gCodeFileSwitcher0.GCodeFile.PercentComplete(gCodeFileSwitcher0.LineIndex);
+					double currentDone = gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (activePrintTask != null
-						&& babyStepsStream5 != null
 						&& activePrintTask.PercentDone < currentDone)
 					{
 						activePrintTask.PercentDone = currentDone;
@@ -2224,7 +2223,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						//timer.Restart();
 					}
 					secondsSinceUpdateHistory = secondsSinceStartedPrint;
-					lineSinceUpdateHistory = gCodeFileSwitcher0.LineIndex;
+					lineSinceUpdateHistory = gCodeFileSwitcher.LineIndex;
 				}
 
 				Thread.Sleep(5);
@@ -2287,13 +2286,13 @@ You will then need to logout and log back in to the computer for the changes to 
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
-			else if (waitForTempStream7?.HeatingBed ?? false)
+			else if (waitForTempStream?.HeatingBed ?? false)
 			{
 				// don't time the heating bed operation
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream7?.HeatingExtruder ?? false)
+			else if (waitForTempStream?.HeatingExtruder ?? false)
 			{
 				// don't time the heating extruder operation
 				timeSinceStartedPrint.Stop();
@@ -2456,9 +2455,9 @@ You will then need to logout and log back in to the computer for the changes to 
 		{
 			get
 			{
-				if (queuedCommandStream3 != null)
+				if (queuedCommandStream != null)
 				{
-					return queuedCommandStream3.Count;
+					return queuedCommandStream.Count;
 				}
 
 				return 0;
@@ -2467,8 +2466,8 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public bool AllowLeveling
 		{
-			get => printLevelingStream6.AllowLeveling;
-			set => printLevelingStream6.AllowLeveling = value;
+			get => printLevelingStream.AllowLeveling;
+			set => printLevelingStream.AllowLeveling = value;
 		}
 
 		/// <summary>
@@ -2704,14 +2703,14 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void MacroStart()
 		{
-			queuedCommandStream3?.Reset();
+			queuedCommandStream?.Reset();
 		}
 
 		public void MacroCancel()
 		{
-			babyStepsStream5?.CancelMoves();
-			waitForTempStream7?.Cancel();
-			queuedCommandStream3?.Cancel();
+			maxLengthStream?.Cancel();
+			waitForTempStream?.Cancel();
+			queuedCommandStream?.Cancel();
 		}
 
 		public void Dispose()

@@ -41,9 +41,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -289,21 +287,23 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
-				accumulatedStream = new ToolChangeStream(printer, accumulatedStream);
+				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queueStream);
 			}
 
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
 
 			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
 
+			accumulatedStream = new BabyStepsStream(printer, accumulatedStream);
+
 			if (levelingEnabled
 				&& printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 			{
-				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1);
+				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1);
 			}
 			else
 			{
-				accumulatedStream = new BabyStepsStream(printer, accumulatedStream, 1000);
+				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1000);
 			}
 
 			if (levelingEnabled)

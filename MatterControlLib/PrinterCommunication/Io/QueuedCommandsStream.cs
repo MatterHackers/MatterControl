@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Image;
@@ -38,7 +39,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
-		PrinterMove lastDestination = PrinterMove.Unknown;
 
 		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -51,22 +51,42 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			get
 			{
-				return $"Last Destination = {lastDestination}";
+				return "";
 			}
 		}
 
-		public void Add(string line, bool forceTopOfQueue = false)
+		public void Add(string lineIn, bool forceTopOfQueue = false)
 		{
 			// lock queue
 			lock (locker)
 			{
+				if (lineIn.Contains("\\n"))
+				{
+					lineIn = lineIn.Replace("\\n", "\n");
+				}
+
+				//Check line for line breaks, split and process separate if necessary
+				if (lineIn.Contains("\n"))
+				{
+					string[] linesToWrite = lineIn.Split(new string[] { "\n" }, StringSplitOptions.None);
+					for (int i = 0; i < linesToWrite.Length; i++)
+					{
+						string line = linesToWrite[i].Trim();
+						if (line.Length > 0)
+						{
+							this.Add(line);
+						}
+					}
+					return;
+				}
+
 				if (forceTopOfQueue)
 				{
-					commandQueue.Insert(0, line);
+					commandQueue.Insert(0, lineIn);
 				}
 				else
 				{
-					commandQueue.Add(line);
+					commandQueue.Add(lineIn);
 				}
 			}
 		}

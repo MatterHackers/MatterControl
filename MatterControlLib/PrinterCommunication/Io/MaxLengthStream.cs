@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -37,6 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		// 20 instruction per second
 		private double maxSecondsPerSegment = 1.0 / 20.0;
 		private List<PrinterMove> movesToSend = new List<PrinterMove>();
+		private int layerCount = -1;
 
 		public MaxLengthStream(PrinterConfig printer, GCodeStream internalStream, double maxSegmentLength)
 			: base(printer, internalStream)
@@ -74,6 +76,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					return lineToSend;
 				}
+
+				if (lineToSend != null
+					&& layerCount < 1
+					&& GCodeFile.IsLayerChange(lineToSend))
+				{
+					layerCount++;
+					if (layerCount == 1)
+					{
+						MaxSegmentLength = 5;
+					}
+				}
+
 
 				if (lineToSend != null
 					&& LineIsMovement(lineToSend))
