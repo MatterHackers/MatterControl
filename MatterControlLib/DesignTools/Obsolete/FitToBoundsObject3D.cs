@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		override public Task Rebuild()
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 

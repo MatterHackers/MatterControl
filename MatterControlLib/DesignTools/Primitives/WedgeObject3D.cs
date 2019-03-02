@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		override public Task Rebuild()
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())

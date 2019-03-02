@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.OnInvalidate(invalidateType);
 		}
 
-		override public Task Rebuild()
+		public override Task Rebuild()
 		{
 			using (RebuildLock())
 			{
