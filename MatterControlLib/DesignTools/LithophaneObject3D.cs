@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 			}
 		}
 
-		override public Task Rebuild()
+		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
 			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);

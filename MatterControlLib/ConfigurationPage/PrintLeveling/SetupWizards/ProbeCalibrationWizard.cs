@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Measure the nozzle offset".Localize(),
 				"{0}:\n\n\t• {1}\n\n{2}\n\n{3}".FormatWith(
 					"To complete the next few steps you will need".Localize(),
-					"A standard sheet of paper".Localize(),
+					"A sheet of paper".Localize(),
 					"We will use this paper to measure the distance between the nozzle and the bed.".Localize(),
 					"Click 'Next' to continue.".Localize()));
 

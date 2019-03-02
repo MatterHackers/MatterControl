@@ -136,8 +136,6 @@ namespace Markdig.Renderers.Agg.Inlines
 
 						if (response.IsSuccessStatusCode)
 						{
-							Console.WriteLine(task.Result.Headers);
-
 							response.Content.ReadAsStreamAsync().ContinueWith(streamTask =>
 							{
 								//response.Headers.TryGetValues("", s[""] == "" ||

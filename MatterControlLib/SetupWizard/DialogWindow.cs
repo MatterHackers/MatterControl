@@ -93,15 +93,35 @@ namespace MatterHackers.MatterControl
 
 			wizardWindow.ChangeToPage(setupWizard.CurrentPage);
 
+			// Set focus to ensure Enter/Esc key handlers are caught
+			setupWizard.CurrentPage.Focus();
+
 			EventHandler windowClosed = null;
+			EventHandler<KeyEventArgs> windowKeyDown = null;
 
 			windowClosed = (s, e) =>
 			{
 				setupWizard.Dispose();
 				wizardWindow.Closed -= windowClosed;
+				wizardWindow.KeyDown -= windowKeyDown;
+			};
+
+			windowKeyDown = (s, e) =>
+			{
+				switch (e.KeyCode)
+				{
+					// Auto-advance to next page on enter key
+					case Keys.Enter:
+						if (setupWizard.CurrentPage.NextButton.Enabled)
+						{
+							UiThread.RunOnIdle(() => setupWizard.CurrentPage.NextButton.InvokeClick());
+						}
+						break;
+				}
 			};
 
 			wizardWindow.Closed += windowClosed;
+			wizardWindow.KeyDown += windowKeyDown;
 
 			return wizardWindow;
 		}
