@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			public int ExtrusionDiscrepency { get; internal set; }
 		}
 
-		protected PrinterMove lastDestination = new PrinterMove();
+		protected PrinterMove lastDestination = PrinterMove.Unknown;
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
 		private PrinterMove moveLocationAtEndOfPauseCode;
