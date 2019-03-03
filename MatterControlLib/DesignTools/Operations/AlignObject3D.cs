@@ -364,8 +364,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// first align the anchor object
 					foreach (var child in list)
 					{
-						if (XAlign == Align.None
-							|| i == anchorIndex)
+						// only process te anchor object
+						if (i != anchorIndex)
+						{
+							i++;
+							continue;
+						}
+
+						if (XAlign == Align.None)
 						{
 							if (i < OriginalChildrenBounds.Count)
 							{
@@ -374,8 +380,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							}
 						}
 
-						if (YAlign == Align.None
-							|| i == anchorIndex)
+						if (YAlign == Align.None)
 						{
 							if (i < OriginalChildrenBounds.Count)
 							{
@@ -383,14 +388,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							}
 						}
 
-						if (ZAlign == Align.None
-							|| i == anchorIndex)
+						if (ZAlign == Align.None)
 						{
 							if (i < OriginalChildrenBounds.Count)
 							{
 								AlignAxis(2, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Z, 0, child);
 							}
 						}
+
 						i++;
 					}
 
@@ -398,23 +403,28 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					i = 0;
 					foreach (var child in list)
 					{
-						if (XAlign != Align.None
-							&& i != anchorIndex)
+						// skip the anchore object
+						if (i == anchorIndex)
+						{
+							i++;
+							continue;
+						}
+
+						if (XAlign != Align.None)
 						{
 							AlignAxis(0, XAlign, GetAlignToOffset(CurrentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
 						}
 
-						if (YAlign != Align.None
-							&& i != anchorIndex)
+						if (YAlign != Align.None)
 						{
 							AlignAxis(1, YAlign, GetAlignToOffset(CurrentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
 						}
 
-						if (ZAlign != Align.None
-							&& i != anchorIndex)
+						if (ZAlign != Align.None)
 						{
 							AlignAxis(2, ZAlign, GetAlignToOffset(CurrentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
 						}
+
 						i++;
 					}
 				}));

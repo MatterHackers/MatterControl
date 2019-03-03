@@ -48,10 +48,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		private Vector3 boundsSize;
 
-		private AxisAlignedBoundingBox cacheAabb;
-
-		private bool rebuildAabbCache = true;
-
 		public FitToBoundsObject3D_2()
 		{
 			Name = "Fit to Bounds".Localize();
@@ -143,7 +139,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				var finalAabb = fitToBounds.GetAxisAlignedBoundingBox();
 				fitToBounds.Translate(startingAabb.Center - finalAabb.Center);
-				fitToBounds.rebuildAabbCache = true;
 			}
 
 			return fitToBounds;
@@ -172,19 +167,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (rebuildAabbCache)
+				AxisAlignedBoundingBox bounds;
+				using (FitBounds.RebuildLock())
 				{
-					using (FitBounds.RebuildLock())
-					{
-						FitBounds.Visible = true;
-						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
-						FitBounds.Visible = false;
-					}
-
-					rebuildAabbCache = false;
+					FitBounds.Visible = true;
+					bounds = base.GetAxisAlignedBoundingBox(matrix);
+					FitBounds.Visible = false;
 				}
 
-				return cacheAabb;
+				return bounds;
 			}
 
 			return base.GetAxisAlignedBoundingBox(matrix);
@@ -210,7 +201,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
-				rebuildAabbCache = true;
 				base.OnInvalidate(invalidateType);
 			}
 
@@ -295,8 +285,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
 						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
 				}
-
-				rebuildAabbCache = true;
 			}
 		}
 	}

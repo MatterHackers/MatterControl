@@ -397,7 +397,7 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(.5, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 		}
 
@@ -534,7 +534,7 @@ namespace MatterControl.Tests.MatterControl
 			fit.SizeY = 10;
 			fit.SizeZ = 6;
 
-			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -3), new Vector3(5, 5, 3)), .01));
+			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
 
 			var bigCube = CubeObject3D.Create(20, 20, 20);
 
@@ -559,7 +559,7 @@ namespace MatterControl.Tests.MatterControl
 			alignAabb = align.GetAxisAlignedBoundingBox();
 			root.Children.Add(align);
 			var rootAabb = root.GetAxisAlignedBoundingBox();
-			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-17.5, -9.2, -10), new Vector3(17.5, 9.2, 10)), 1.0));
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 		}
 
 
