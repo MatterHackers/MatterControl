@@ -37,54 +37,62 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class BabyStepsStream : GCodeStreamProxy
 	{
-		private int layerCount = -1;
-		private MaxLengthStream maxLengthStream;
-		private OffsetStream offsetStream;
+		private int extruderIndex = 0;
+		public PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream, double startingMaxLength = 1)
+		public Vector3[] ExtruderOffsets { get; private set; } = new Vector3[4];
+
+		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			void Printer_SettingChanged(object s, StringEventArgs e)
-			{
-				if (e?.Data == SettingsKey.baby_step_z_offset)
-				{
-					offsetStream.RuntimeOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-				}
-				else if(e?.Data == SettingsKey.baby_step_z_offset_1)
-				{
-					offsetStream.RuntimeOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
-				}
-			}
-
 			printer.Settings.SettingChanged += Printer_SettingChanged;
-			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 
-			maxLengthStream = new MaxLengthStream(printer, internalStream, startingMaxLength);
-			offsetStream = new OffsetStream(maxLengthStream, printer);
-			offsetStream.RuntimeOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-			offsetStream.RuntimeOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
-			base.internalStream = offsetStream;
+			extruderIndex = printer.Connection.ActiveExtruderIndex;
+
+			ExtruderOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			ExtruderOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
 		}
-
-		public Vector3[] RuntimeOffsets { get => offsetStream.RuntimeOffsets; }
 
 		public override string DebugInfo
 		{
 			get
 			{
-				return $"Last Destination = {offsetStream.lastDestination}";
+				return $"Last Destination = {lastDestination}";
 			}
+		}
+
+		void Printer_SettingChanged(object s, StringEventArgs e)
+		{
+			if (e?.Data == SettingsKey.baby_step_z_offset)
+			{
+				ExtruderOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			}
+			else if (e?.Data == SettingsKey.baby_step_z_offset_1)
+			{
+				ExtruderOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
+			}
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			this.lastDestination.CopyKnowSettings(position);
+			if (extruderIndex < 4)
+			{
+				lastDestination.position -= ExtruderOffsets[extruderIndex];
+			}
+			internalStream.SetPrinterPosition(lastDestination);
 		}
 
 		public override void Dispose()
 		{
-			offsetStream.Dispose();
-			maxLengthStream.Dispose();
+			printer.Settings.SettingChanged -= Printer_SettingChanged;
+
+			base.Dispose();
 		}
 
 		public override string ReadLine()
 		{
-			string lineToSend = offsetStream.ReadLine();
+			string lineToSend = base.ReadLine();
 
 			if (lineToSend != null
 				&& lineToSend.EndsWith("; NO_PROCESSING"))
@@ -93,21 +101,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			if (lineToSend != null
-				&& layerCount < 1
-				&& GCodeFile.IsLayerChange(lineToSend))
+				&& lineToSend.StartsWith("T"))
 			{
-				layerCount++;
-				if (layerCount == 1)
+				int extruder = 0;
+				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruder))
 				{
-					maxLengthStream.MaxSegmentLength = 5;
+					extruderIndex = extruder;
 				}
 			}
-			return lineToSend;
-		}
 
-		public void CancelMoves()
-		{
-			maxLengthStream.Cancel();
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
+			{
+				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+
+				PrinterMove moveToSend = currentMove;
+				if (extruderIndex < 4)
+				{
+					moveToSend.position += ExtruderOffsets[extruderIndex];
+				}
+
+				if (moveToSend.HaveAnyPosition)
+				{
+					lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				}
+				lastDestination = currentMove;
+
+				return lineToSend;
+			}
+
+			return lineToSend;
 		}
 	}
 }

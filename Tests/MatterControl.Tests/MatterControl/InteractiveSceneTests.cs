@@ -397,7 +397,7 @@ namespace MatterControl.Tests.MatterControl
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
 				var rootAabb = root.GetAxisAlignedBoundingBox();
-				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(.5, -10, -10), new Vector3(21, 10, 10)), .001));
+				Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(1, -10, -10), new Vector3(21, 10, 10)), .001));
 			}
 		}
 
@@ -516,7 +516,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public void AabbCalculatedCorrectlyForCurvedFitObjects()
+		public async Task AabbCalculatedCorrectlyForAlignedFitObject()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -526,11 +526,54 @@ namespace MatterControl.Tests.MatterControl
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			AppContext.Platform.ProcessCommandline();
 
-			DoAabbCalculatedCorrectlyForCurvedFitObjects();
+			var root = new Object3D();
+			var cube = CubeObject3D.Create(20, 20, 20);
+			var fit = FitToBoundsObject3D_2.Create(cube).Result;
+
+			fit.SizeX = 10;
+			fit.SizeY = 10;
+			fit.SizeZ = 6;
+
+			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-5, -5, -10), new Vector3(5, 5, -4)), .01));
+
+			var bigCube = CubeObject3D.Create(20, 20, 20);
+
+			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 10)), .01));
+
+			var align = new AlignObject3D();
+			align.Children.Add(bigCube);
+			align.Children.Add(fit);
+
+			await align.Rebuild();
+			align.XAlign = Align.Center;
+			align.YAlign = Align.Center;
+			align.ZAlign = Align.Max;
+			align.Advanced = true;
+			align.ZOffset = 1;
+
+			await align.Rebuild();
+
+			var alignAabb = align.GetAxisAlignedBoundingBox();
+			Assert.IsTrue(alignAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
+
+			alignAabb = align.GetAxisAlignedBoundingBox();
+			root.Children.Add(align);
+			var rootAabb = root.GetAxisAlignedBoundingBox();
+			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 		}
 
-		public async void DoAabbCalculatedCorrectlyForCurvedFitObjects()
+
+		[Test, Category("InteractiveScene")]
+		public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.ProcessCommandline();
+
 			var root = new Object3D();
 			var cube = CubeObject3D.Create(20, 20, 20);
 			var fit = FitToBoundsObject3D_2.Create(cube).Result;
