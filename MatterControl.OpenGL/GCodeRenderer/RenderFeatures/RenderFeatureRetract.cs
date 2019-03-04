@@ -68,9 +68,9 @@ namespace MatterHackers.GCodeVisualizer
 				var position = new Vector3(this.position);
 
 				// retract and unretract are the extruder color
-				Color color = renderInfo.GetMaterialColor(extruderIndex);
+				Color color = renderInfo.GetMaterialColor(toolIndex);
 				// except for extruder 0 where they are the red and blue we are familiar with
-				if (extruderIndex == 0)
+				if (toolIndex == 0)
 				{
 					if (extrusionAmount > 0)
 					{

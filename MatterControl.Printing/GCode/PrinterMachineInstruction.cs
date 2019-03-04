@@ -71,14 +71,14 @@ namespace MatterControl.Printing
 			EPosition = copy.EPosition;
 			MovementType = copy.MovementType;
 			SecondsToEndFromHere = copy.SecondsToEndFromHere;
-			ExtruderIndex = copy.ExtruderIndex;
+			ToolIndex = copy.ToolIndex;
 		}
 
 		public enum MovementTypes { Absolute, Relative };
 
 		public float EPosition { get; set; }
 
-		public int ExtruderIndex { get; set; }
+		public int ToolIndex { get; set; }
 
 		public float FeedRate { get; set; }
 

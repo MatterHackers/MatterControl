@@ -34,7 +34,7 @@ namespace MatterHackers.GCodeVisualizer
 {
 	public abstract class RenderFeatureBase
 	{
-		protected int extruderIndex;
+		protected int toolIndex;
 
 		public static Color HighlightColor { get; set; } = new Color("#D0F476");
 
@@ -48,7 +48,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		public RenderFeatureBase(int extruderIndex)
 		{
-			this.extruderIndex = extruderIndex;
+			this.toolIndex = extruderIndex;
 		}
 
 		static public void CreateCylinder(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, Color color, double layerHeight)

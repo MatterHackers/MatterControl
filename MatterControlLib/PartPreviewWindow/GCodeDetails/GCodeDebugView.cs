@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget lengthWidget;
 		private TextWidget yInterceptWidget;
 		private TextWidget xInterceptWidget;
+		private TextWidget timeToToolChange;
 
 		public GCodeDebugView(PrinterTabPage printerTabPage, GCodeFile gCodeMemoryFile, ISceneContext sceneContext, ThemeConfig theme)
 			: base(theme)
@@ -59,6 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			slopeWidget = this.AddSetting("Slope".Localize(), "");
 			yInterceptWidget = this.AddSetting("Y Intercept".Localize(), "");
 			xInterceptWidget = this.AddSetting("X Intercept".Localize(), "");
+			timeToToolChange = this.AddSetting("Tool Change".Localize(), "");
 
 			// Register listeners
 			printerTabPage.LayerFeaturesScrollbar.SecondValueChanged += this.LayerFeaturesScrollbar_SecondValueChanged;
@@ -79,7 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int featuresOnLayer = sceneContext.GCodeRenderer.GetNumFeatures(layerIndex);
 			int featureIndex = (int)(featuresOnLayer * renderInfo.FeatureToEndOnRatio0To1 + .5);
 
-			int activeFeatureIndex = Math.Max(0, Math.Min(featureIndex, featuresOnLayer - 1));
+			int activeFeatureIndex = Math.Max(0, Math.Min(featureIndex, featuresOnLayer - 1) - 1);
 
 			if (sceneContext.GCodeRenderer[layerIndex, activeFeatureIndex] is RenderFeatureTravel line)
 			{
@@ -90,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				endPointWidget.Text = $"{end}";
 
 				var length = new Vector2(start).Distance(new Vector2(end));
-				lengthWidget.Text = $"{length}";
+				lengthWidget.Text = $"{length:0.###}";
 
 				// Slope
 				// m = (y_2 - y_1) / (x_2 - x_1)
@@ -99,15 +101,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// n = -x_1 * (y_2 - y_1) / (x_2 - x_1) + y_1
 
 				var slope = (end.Y - start.Y) / (end.X - start.X);
-				slopeWidget.Text = $"{slope}";
+				slopeWidget.Text = $"{slope:0.###}";
 
 				// -x_1 * (y_2 - y_1) / (x_2 - x_1) + y_1
 				var yIntercept = -start.X * slope + start.Y;
-				yInterceptWidget.Text = $"{yIntercept}";
+				yInterceptWidget.Text = $"{yIntercept:0.###}";
 
 				// x_1 - y_1*(x_2-x_1)/(y_2-y_1)
 				var xIntercept = start.X - start.Y * (end.X - start.X) / (end.Y - start.Y);
-				xInterceptWidget.Text = $"{xIntercept}";
+				xInterceptWidget.Text = $"{xIntercept:0.###}";
+
+				// put in the time until the next tool change
+				if(timeToToolChange != null)
+				{
+
+				}
 			}
 		}
 	}

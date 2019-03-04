@@ -128,15 +128,15 @@ namespace MatterHackers.GCodeVisualizer
 					if (Math.Abs(eMovement) > 0)
 					{
 						// this is a retraction
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, eMovement, currentInstruction.ExtruderIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, eMovement, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 					if (currentInstruction.Line.StartsWith("G10"))
 					{
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, -1, currentInstruction.ExtruderIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, -1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 					else if (currentInstruction.Line.StartsWith("G11"))
 					{
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, 1, currentInstruction.ExtruderIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, 1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 				}
 				else
@@ -150,7 +150,7 @@ namespace MatterHackers.GCodeVisualizer
 							new RenderFeatureExtrusion(
 								previousInstruction.Position,
 								currentInstruction.Position,
-								currentInstruction.ExtruderIndex,
+								currentInstruction.ToolIndex,
 								currentInstruction.FeedRate,
 								currentInstruction.EPosition - previousInstruction.EPosition,
 								gCodeFileToDraw.GetFilamentDiameter(),
@@ -164,7 +164,7 @@ namespace MatterHackers.GCodeVisualizer
 							new RenderFeatureTravel(
 								previousInstruction.Position,
 								currentInstruction.Position,
-								currentInstruction.ExtruderIndex,
+								currentInstruction.ToolIndex,
 								currentInstruction.FeedRate));
 					}
 				}
