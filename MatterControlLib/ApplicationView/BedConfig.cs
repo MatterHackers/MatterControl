@@ -140,6 +140,8 @@ namespace MatterHackers.MatterControl
 					await LoadGCodeContent(task.Stream);
 				}
 
+				// No content store for GCode
+				editContext.ContentStore = null;
 			}
 			else
 			{
@@ -248,7 +250,7 @@ namespace MatterHackers.MatterControl
 						new EditContext()
 						{
 							SourceItem = new FileSystemFileItem(firstFilePath),
-							ContentStore = null // No content store for GCode, otherwise PlatingHistory
+							ContentStore = null // No content store for GCode
 						});
 
 					return;
