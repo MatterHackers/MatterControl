@@ -140,9 +140,6 @@ namespace MatterHackers.MatterControl
 					await LoadGCodeContent(task.Stream);
 				}
 
-				this.Scene.Children.Modify(children => children.Clear());
-
-				editContext.FreezeGCode = true;
 			}
 			else
 			{
@@ -168,6 +165,10 @@ namespace MatterHackers.MatterControl
 					progressStatus.Progress0To1 = progress0To1;
 					reporter.Report(progressStatus);
 				});
+
+				this.Scene.Children.Modify(children => children.Clear());
+
+				this.EditContext.FreezeGCode = true;
 
 				return Task.CompletedTask;
 			});
