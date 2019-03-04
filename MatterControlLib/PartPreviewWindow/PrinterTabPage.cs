@@ -213,6 +213,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.LayerScrollbar.Margin = LayerScrollbar.Margin.Clone(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 4);
 
+			// On load, switch to gcode view if previously editing gcode file. Listeners would normally do this but workspace loads before this UI widget
+			if (this?.printerActionsBar?.modelViewButton is GuiWidget button)
+			{
+				button.Enabled = sceneContext.EditableScene;
+
+				if (sceneContext.ContentType == "gcode"
+					&& this?.printerActionsBar?.layers3DButton is GuiWidget gcodeButton)
+				{
+					gcodeButton.InvokeClick();
+				}
+			}
+
 			// Register listeners
 			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
 			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;

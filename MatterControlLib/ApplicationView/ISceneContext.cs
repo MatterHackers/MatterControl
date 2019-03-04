@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 	public interface ISceneContext
 	{
 		Vector2 BedCenter { get; }
-		
+
 		string ContentType { get; }
 
 		bool EditableScene { get; }
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 		Task LoadContent(EditContext editContext);
 
 		void LoadEmptyContent(EditContext editContext);
-		
+
 		Task LoadGCodeContent(Stream stream);
 
 		Task LoadIntoCurrent(EditContext editContext);
