@@ -200,6 +200,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				for (int regionIndex = 0; regionIndex < Regions.Count; regionIndex++)
 				{
 					var dist = (Regions[regionIndex].Center - currentDestination).LengthSquared;
+					if (Regions[regionIndex].PointInPolyXY(currentDestination.X, currentDestination.Y))
+					{
+						// we found the one it is in
+						return Regions[regionIndex];
+					}
 					if (dist < bestDist)
 					{
 						bestIndex = regionIndex;
@@ -238,6 +243,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				currentDestination.Z += hitDistance;
 
 				return currentDestination;
+			}
+
+			private int FindSideOfLine(Vector2 sidePoint0, Vector2 sidePoint1, Vector2 testPosition)
+			{
+				if (Vector2.Cross(testPosition - sidePoint0, sidePoint1 - sidePoint0) < 0)
+				{
+					return 1;
+				}
+
+				return -1;
+			}
+
+			public bool PointInPolyXY(double x, double y)
+			{
+				// check the bounding rect
+				Vector2 vertex0 = new Vector2(V0[0], V0[1]);
+				Vector2 vertex1 = new Vector2(V1[0], V1[1]);
+				Vector2 vertex2 = new Vector2(V2[0], V2[1]);
+				Vector2 hitPosition = new Vector2(x, y);
+				int sumOfLineSides = FindSideOfLine(vertex0, vertex1, hitPosition);
+				sumOfLineSides += FindSideOfLine(vertex1, vertex2, hitPosition);
+				sumOfLineSides += FindSideOfLine(vertex2, vertex0, hitPosition);
+				if (sumOfLineSides == -3 || sumOfLineSides == 3)
+				{
+					return true;
+				}
+
+				return false;
 			}
 		}
 	}

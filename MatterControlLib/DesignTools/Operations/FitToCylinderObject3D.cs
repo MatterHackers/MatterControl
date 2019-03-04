@@ -53,12 +53,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
-		private AxisAlignedBoundingBox cacheAabb;
-
-		private bool rebuildAabbCache = true;
-
-		private Matrix4X4 cacheRequestedMatrix = new Matrix4X4();
-
 		public FitToCylinderObject3D()
 		{
 			Name = "Fit to Cylinder".Localize();
@@ -108,7 +102,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				var finalAabb = fitToBounds.GetAxisAlignedBoundingBox();
 				fitToBounds.Translate(startingAabb.Center - finalAabb.Center);
-				fitToBounds.rebuildAabbCache = true;
 			}
 
 			return fitToBounds;
@@ -128,16 +121,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			if (Children.Count == 2)
 			{
-				if (rebuildAabbCache)
+				AxisAlignedBoundingBox cacheAabb;
+				using (FitBounds.RebuildLock())
 				{
-					using (FitBounds.RebuildLock())
-					{
-						FitBounds.Visible = true;
-						cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
-						FitBounds.Visible = false;
-					}
-					cacheRequestedMatrix = matrix;
-					rebuildAabbCache = false;
+					FitBounds.Visible = true;
+					cacheAabb = base.GetAxisAlignedBoundingBox(matrix);
+					FitBounds.Visible = false;
 				}
 
 				return cacheAabb;
@@ -166,7 +155,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Children))
 			{
-				rebuildAabbCache = true;
 				base.OnInvalidate(invalidateType);
 			}
 
@@ -181,10 +169,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				using (new CenterAndHeightMantainer(this))
 				{
 					AdjustChildSize(null, null);
-
 					UpdateBoundsItem();
-
-					cacheRequestedMatrix = new Matrix4X4();
 					var after = this.GetAxisAlignedBoundingBox();
 				}
 			}
@@ -323,11 +308,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					scale.Z = SizeZ / aabb.ZSize;
 				}
 
-				var minXy = Math.Min(scale.X, scale.Y);
-				scale.X = minXy;
-				scale.Y = minXy;
+				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, Matrix4X4.CreateScale(scale));
 
-				ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+				Matrix4X4 centering;
+				if (AlternateCentering)
+				{
+					centering = GetCenteringTransformVisualCenter(UntransformedChildren, Diameter / 2);
+				}
+				else
+				{
+					centering = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
+				}
+
+				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, centering);
 			}
 		}
 
@@ -342,23 +335,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					&& (fitAabb.XSize != Diameter || fitAabb.ZSize != SizeZ))
 				{
 					FitBounds.Matrix *= Matrix4X4.CreateScale(
-						fitAabb.XSize / Diameter,
-						fitAabb.YSize / Diameter,
-						fitAabb.ZSize / SizeZ);
+						Diameter / fitAabb.XSize,
+						Diameter / fitAabb.YSize,
+						SizeZ / fitAabb.ZSize);
 					FitBounds.Matrix *= Matrix4X4.CreateTranslation(
 						transformAabb.Center - FitBounds.GetAxisAlignedBoundingBox().Center);
 				}
-
-				if (AlternateCentering)
-				{
-					var test = GetCenteringTransformVisualCenter(UntransformedChildren, Diameter/2);
-				}
-				else
-				{
-					var test = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
-				}
-
-				rebuildAabbCache = true;
 			}
 		}
 	}
