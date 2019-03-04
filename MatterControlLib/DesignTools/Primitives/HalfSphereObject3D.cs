@@ -53,11 +53,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild();
 		}
 
-		public static HalfSphereObject3D Create()
+		public static async Task<HalfSphereObject3D> Create()
 		{
 			var item = new HalfSphereObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

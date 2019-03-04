@@ -57,17 +57,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild();
 		}
 
-		public static CylinderObject3D Create(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
+		public static async Task<CylinderObject3D> Create(double diameter, double height, int sides, Alignment alignment = Alignment.Z)
 		{
 			if (alignment == Alignment.Z)
 			{
 				return new CylinderObject3D(diameter, height, sides);
 			}
 
-			return Create(diameter, diameter, height, sides, alignment);
+			return await Create(diameter, diameter, height, sides, alignment);
 		}
 
-		public static CylinderObject3D Create(double diameterBottom, double diameterTop, double height, int sides, Alignment alignment = Alignment.Z)
+		public static async Task<CylinderObject3D> Create(double diameterBottom, double diameterTop, double height, int sides, Alignment alignment = Alignment.Z)
 		{
 			var item = new CylinderObject3D()
 			{
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Sides = sides,
 			};
 
-			item.Rebuild();
+			await item.Rebuild();
 			switch (alignment)
 			{
 				case Alignment.X:
@@ -103,11 +103,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		public static CylinderObject3D Create()
+		public static async Task<CylinderObject3D> Create()
 		{
 			var item = new CylinderObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

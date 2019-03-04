@@ -54,11 +54,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild();
 		}
 
-		public static SphereObject3D Create()
+		public static async Task<SphereObject3D> Create()
 		{
 			var item = new SphereObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

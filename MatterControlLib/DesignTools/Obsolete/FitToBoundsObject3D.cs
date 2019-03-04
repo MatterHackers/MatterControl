@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static FitToBoundsObject3D Create(IObject3D itemToFit)
+		public static async Task<FitToBoundsObject3D> Create(IObject3D itemToFit)
 		{
 			FitToBoundsObject3D fitToBounds = new FitToBoundsObject3D();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
@@ -162,6 +162,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var scaleItem = new Object3D();
 			fitToBounds.Children.Add(scaleItem);
 			scaleItem.Children.Add(itemToFit);
+
+			await fitToBounds.Rebuild();
 
 			return fitToBounds;
 		}

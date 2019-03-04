@@ -45,11 +45,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["HalfCylinder"];
 		}
 
-		public static HalfCylinderObject3D Create()
+		public static async Task<HalfCylinderObject3D> Create()
 		{
 			var item = new HalfCylinderObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

@@ -55,11 +55,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
 		}
 
-		public static TextPathObject3D Create()
+		public static async Task<TextPathObject3D> Create()
 		{
 			var item = new TextPathObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

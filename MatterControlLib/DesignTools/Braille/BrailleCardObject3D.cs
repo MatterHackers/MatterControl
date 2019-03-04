@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					basePlate = new SetCenterObject3D(basePlate, brailleLetter.GetCenter(), true, false, false);
 					this.Children.Add(basePlate);
 
-					IObject3D underline = CubeObject3D.Create(basePlate.XSize(), .2, 1);
+					IObject3D underline = await CubeObject3D.Create(basePlate.XSize(), .2, 1);
 					underline = new AlignObject3D(underline, FaceAlign.Bottom, brailleLetter, FaceAlign.Top);
 					underline = new AlignObject3D(underline, FaceAlign.Back | FaceAlign.Left, basePlate, FaceAlign.Front | FaceAlign.Left, 0, .01);
 					this.Children.Add(underline);

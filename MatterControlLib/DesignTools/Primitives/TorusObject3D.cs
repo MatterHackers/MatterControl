@@ -45,10 +45,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Torus"];
 		}
 
-		public static TorusObject3D Create()
+		public static async Task<TorusObject3D> Create()
 		{
 			var item = new TorusObject3D();
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

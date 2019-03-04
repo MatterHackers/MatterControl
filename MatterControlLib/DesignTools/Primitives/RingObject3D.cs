@@ -56,11 +56,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild();
 		}
 
-		public static RingObject3D Create()
+		public static async Task<RingObject3D> Create()
 		{
 			var item = new RingObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 
