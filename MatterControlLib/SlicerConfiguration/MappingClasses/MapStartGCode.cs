@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 
 			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
-			// don't set extruder 0 to heating if we already waited for it to reach temp
+			// set extruder 0 to heating if we did not already waited for it to reach temp
 			if (printer.Settings.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
 			{
 				if (extrudersUsed[0])
@@ -201,8 +201,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				if (extrudersUsed[extruderIndex])
 				{
 					// set the active extruder to the first one that will be printing
-					AddDefaultIfNotPresent(preStartGCode, "T{0}".FormatWith(extruderIndex), preStartGCodeLines, "set the active extruder to {0}".FormatWith(extruderIndex));
-					break; // then break so we don't set it to a different ones
+					preStartGCode.Add("T{0} ; {1}".FormatWith(extruderIndex, "set the active extruder to {0}".FormatWith(extruderIndex)));
+					// we have set the active extruder so don't set it to any other extruder
+					break;
 				}
 			}
 		}
