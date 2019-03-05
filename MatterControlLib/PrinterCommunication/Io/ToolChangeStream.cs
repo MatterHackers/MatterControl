@@ -115,18 +115,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return false;
 			}
 
-			postSwitchLine = lineIn;
 			var lineNoComment = lineIn.Split(';')[0];
 
 			TrackExtruderState(lineNoComment);
 
-			bool queuedSwitch = false;
 			// check if there is a travel
 			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
 				&& extruderIndex != requestedExtruder // is different than the last extruder set
 				&& !watingForBeforeGCode)
 			{
+				postSwitchLine = lineIn;
+
 				string beforeGcodeToQueue = "";
 				switch (requestedExtruder)
 				{
@@ -152,10 +152,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcode.AppendLine("\n" + compleatedBeforeGCodeString);
 				queuedCommandsStream.Add(gcode.ToString());
 
-				queuedSwitch = true;
+				return true;
 			}
 
-			return queuedSwitch;
+			return false;
 		}
 
 
@@ -172,6 +172,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					break;
 			}
 
+			PrinterMove newToolMove = GetPosition(postSwitchLine, PrinterMove.Unknown);
+			var newToolPosition = newToolMove.position;
+			var lineNoComment = postSwitchLine.Split(';')[0];
+
+			// if there is no extrusion we can move directly the desired position after the extruder switch. 
+			// Otherwise we need to go to the last position to start the extrusion.
+			if (!lineNoComment.Contains("E"))
+			{
+				newToolPosition.X = newToolPosition.X == double.PositiveInfinity ? preSwitchPosition.X : newToolPosition.X;
+				newToolPosition.Y = newToolPosition.Y == double.PositiveInfinity ? preSwitchPosition.Y : newToolPosition.Y;
+				newToolPosition.Z = newToolPosition.Y == double.PositiveInfinity ? preSwitchPosition.Z : newToolPosition.Z;
+			}
+
 			// put together the output we want to send
 			var gcode = new StringBuilder();
 
@@ -181,16 +194,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			// move to selected tool to the last tool position at the travel speed
-			if (preSwitchPosition.X != double.PositiveInfinity
-				&& preSwitchPosition.Y != double.PositiveInfinity)
+			if (newToolPosition.X != double.PositiveInfinity
+				&& newToolPosition.Y != double.PositiveInfinity)
 			{
-				gcode.AppendLine($"\n G1 X{preSwitchPosition.X}Y{preSwitchPosition.Y}F{printer.Settings.XSpeed()}");
+				gcode.AppendLine($"\n G1 X{newToolPosition.X}Y{newToolPosition.Y}F{printer.Settings.XSpeed()}");
 			}
 
 			// move to the z position
-			if (preSwitchPosition.Z != double.PositiveInfinity)
+			if (newToolPosition.Z != double.PositiveInfinity)
 			{
-				gcode.AppendLine($"G1 Z{preSwitchPosition.Z}F{printer.Settings.ZSpeed()}");
+				gcode.AppendLine($"G1 Z{newToolPosition.Z}F{printer.Settings.ZSpeed()}");
 			}
 
 			// set the feedrate back to what was before we added any code
