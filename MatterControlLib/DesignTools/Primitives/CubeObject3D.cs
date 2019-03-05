@@ -49,14 +49,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Depth { get; set; } = 20;
 		public double Height { get; set; } = 20;
 
-		public static CubeObject3D Create()
+		public static async Task<CubeObject3D> Create()
 		{
 			var item = new CubeObject3D();
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 
-		public static CubeObject3D Create(double x, double y, double z)
+		public static async Task<CubeObject3D> Create(double x, double y, double z)
 		{
 			var item = new CubeObject3D()
 			{
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = z,
 			};
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

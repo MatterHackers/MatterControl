@@ -59,11 +59,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rebuild();
 		}
 
-		public static BrailleObject3D Create()
+		public static async Task<BrailleObject3D> Create()
 		{
 			var item = new BrailleObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

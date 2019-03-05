@@ -54,19 +54,19 @@ namespace MatterHackers.MatterControl.Library
 			{
 				new GeneratorItem(
 					() => "Cube".Localize(),
-					() => Task.FromResult<IObject3D>(CubeObject3D.Create()))
+					async () => await CubeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Pyramid".Localize(),
-					() => Task.FromResult<IObject3D>(PyramidObject3D.Create()))
+					async () => await PyramidObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Wedge".Localize(),
-					() => Task.FromResult<IObject3D>(WedgeObject3D.Create()))
+					async () => await WedgeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Wedge".Localize(),
-					() => Task.FromResult<IObject3D>(HalfWedgeObject3D.Create()))
+					async () => await HalfWedgeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Text".Localize(),
@@ -75,12 +75,12 @@ namespace MatterHackers.MatterControl.Library
 #if DEBUG
 				new GeneratorItem(
 					() => "Text".Localize(),
-					() => Task.FromResult<IObject3D>(TextPathObject3D.Create()))
+					async () => await TextPathObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
 					() => "Cylinder".Localize(),
-					() => Task.FromResult<IObject3D>(CylinderObject3D.Create()))
+					async () => await CylinderObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Cone".Localize(),
@@ -88,23 +88,23 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Cylinder".Localize(),
-					() => Task.FromResult<IObject3D>(HalfCylinderObject3D.Create()))
+					async () => await HalfCylinderObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Torus".Localize(),
-					() => Task.FromResult<IObject3D>(TorusObject3D.Create()))
+					async () => await TorusObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Ring".Localize(),
-					() => Task.FromResult<IObject3D>(RingObject3D.Create()))
+					async () => await RingObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Sphere".Localize(),
-					() => Task.FromResult<IObject3D>(SphereObject3D.Create()))
+					async () => await SphereObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Half Sphere".Localize(),
-					() => Task.FromResult<IObject3D>(HalfSphereObject3D.Create()))
+					async () => await HalfSphereObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 				new GeneratorItem(
 					() => "Image Converter".Localize(),

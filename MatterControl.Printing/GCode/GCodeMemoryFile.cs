@@ -47,6 +47,7 @@ namespace MatterControl.Printing
 		private double diameterOfFilamentUsedMmCache = 0;
 
 		private List<double> layerHeights = new List<double>();
+		private List<int> toolChanges = new List<int>();
 		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
 
 		private bool foundFirstLayerMarker;
@@ -255,7 +256,7 @@ namespace MatterControl.Printing
 							double extruderIndex = 0;
 							if (GetFirstNumberAfter("T", lineString, ref extruderIndex))
 							{
-								machineInstructionForLine.ExtruderIndex = (int)extruderIndex;
+								machineInstructionForLine.ToolIndex = (int)extruderIndex;
 							}
 							break;
 
@@ -349,6 +350,8 @@ namespace MatterControl.Printing
 			Stopwatch maxProgressReport = new Stopwatch();
 			maxProgressReport.Start();
 
+			int currentTool = 0;
+
 			for (int lineIndex = 0; lineIndex < GCodeCommandQueue.Count; lineIndex++)
 			{
 				PrinterMachineInstruction instruction = GCodeCommandQueue[lineIndex];
@@ -385,6 +388,12 @@ namespace MatterControl.Printing
 					{
 						lastEPosition = ePosition;
 					}
+				}
+
+				if(instruction.ToolIndex != currentTool)
+				{
+					toolChanges.Add(lineIndex);
+					currentTool = instruction.ToolIndex;
 				}
 
 				if (feedRateMmPerMin > 0)

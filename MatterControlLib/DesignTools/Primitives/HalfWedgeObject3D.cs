@@ -43,11 +43,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["HalfWedge"];
 		}
 
-		public static HalfWedgeObject3D Create()
+		public static async Task<HalfWedgeObject3D> Create()
 		{
 			var item = new HalfWedgeObject3D();
 
-			item.Rebuild();
+			await item.Rebuild();
 			return item;
 		}
 

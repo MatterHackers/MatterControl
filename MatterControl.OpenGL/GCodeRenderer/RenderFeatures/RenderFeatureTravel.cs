@@ -45,10 +45,10 @@ namespace MatterHackers.GCodeVisualizer
 
 		public Vector3Float End => end;
 
-		public RenderFeatureTravel(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed)
-			: base(extruderIndex)
+		public RenderFeatureTravel(Vector3 start, Vector3 end, int toolIndex, double travelSpeed)
+			: base(toolIndex)
 		{
-			this.extruderIndex = extruderIndex;
+			this.toolIndex = toolIndex;
 			this.start = new Vector3Float(start);
 			this.end = new Vector3Float(end);
 			this.travelSpeed = (float)travelSpeed;

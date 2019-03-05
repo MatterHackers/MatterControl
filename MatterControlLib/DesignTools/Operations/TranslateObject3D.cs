@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public static TranslateObject3D Create(IObject3D itemToTranslate)
+		public static async Task<TranslateObject3D> Create(IObject3D itemToTranslate)
 		{
 			var translate = new TranslateObject3D();
 			var aabb = itemToTranslate.GetAxisAlignedBoundingBox();
@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var translateItem = new Object3D();
 			translate.Children.Add(translateItem);
 			translateItem.Children.Add(itemToTranslate);
+
+			await translate.Rebuild();
 
 			return translate;
 		}

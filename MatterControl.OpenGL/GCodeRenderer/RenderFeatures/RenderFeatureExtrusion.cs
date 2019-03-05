@@ -42,8 +42,8 @@ namespace MatterHackers.GCodeVisualizer
 		private Color color;
 		private Color gray;
 
-		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int extruderIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color, Color gray)
-			: base(start, end, extruderIndex, travelSpeed)
+		public RenderFeatureExtrusion(Vector3 start, Vector3 end, int toolIndex, double travelSpeed, double totalExtrusionMm, double filamentDiameterMm, double layerHeight, Color color, Color gray)
+			: base(start, end, toolIndex, travelSpeed)
 		{
 			this.color = color;
 			this.gray = gray;
@@ -101,7 +101,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else
 				{
-					lineColor = renderInfo.GetMaterialColor(extruderIndex);
+					lineColor = renderInfo.GetMaterialColor(toolIndex);
 				}
 
 				CreateCylinder(colorVertexData, indexData, new Vector3(start), new Vector3(end), radius, 6, lineColor, layerHeight);
@@ -130,7 +130,7 @@ namespace MatterHackers.GCodeVisualizer
 				}
 				else
 				{
-					extrusionColor = renderInfo.GetMaterialColor(extruderIndex);
+					extrusionColor = renderInfo.GetMaterialColor(toolIndex);
 				}
 
 				if (renderInfo.CurrentRenderType.HasFlag(RenderType.TransparentExtrusion))
