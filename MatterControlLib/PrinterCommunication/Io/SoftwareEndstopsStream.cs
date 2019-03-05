@@ -137,12 +137,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
 
-				PrinterMove moveToSend = currentMove;
-
-				if (moveToSend.HaveAnyPosition)
+				if (currentMove.HaveAnyPosition)
 				{
-					ClampToPrinter(ref moveToSend);
-					lineToSend = CreateMovementLine(moveToSend, lastDestination);
+					ClampToPrinter(ref currentMove);
+					lineToSend = CreateMovementLine(currentMove, lastDestination);
 				}
 				lastDestination = currentMove;
 
@@ -168,13 +166,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					moveToSend.position[i] = bounds.MinXYZ[i];
 					// If we clamp, than do not do any extrusion at all
-					moveToSend.extrusion = 0;
+					moveToSend.extrusion = lastDestination.extrusion;
 				}
 				else if (moveToSend.position[i] > bounds.MaxXYZ[i])
 				{
 					moveToSend.position[i] = bounds.MaxXYZ[i];
 					// If we clamp, than do not do any extrusion at all
-					moveToSend.extrusion = 0;
+					moveToSend.extrusion = lastDestination.extrusion;
 				}
 			}
 		}
