@@ -74,11 +74,11 @@ namespace MatterHackers.MatterControl
 
 			if (verticalLayout)
 			{
-				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(105, 45);
+				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(120, 45);
 			}
 			else
 			{
-				gcodeSketch.Transform = Affine.NewTranslation(75, 175);
+				gcodeSketch.Transform = Affine.NewTranslation(90, 175);
 			}
 
 			var rect = new RectangleDouble(0, 0, 123, 30);
