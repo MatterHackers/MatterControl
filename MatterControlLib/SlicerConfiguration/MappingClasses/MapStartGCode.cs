@@ -71,71 +71,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			}
 		}
 
-		public List<string> PostStartGCode(List<bool> extrudersUsed)
-		{
-			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
-			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-			List<string> postStartGCode = new List<string>();
-			postStartGCode.Add("; automatic settings after start_gcode");
-
-			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-
-			// set extruder 0 to heating if we did not already waited for it to reach temp
-			if (printer.Settings.GetValue(SettingsKey.heat_extruder_before_homing) != "1")
-			{
-				if (extrudersUsed[0])
-				{
-					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(0);
-					if (materialTemperature != 0)
-					{
-						string setTempString = $"M109 T0 S{materialTemperature}";
-						AddDefaultIfNotPresent(postStartGCode, setTempString, postStartGCodeLines, string.Format("wait for extruder {0} to reach temperature", 1));
-					}
-				}
-			}
-
-			if (extrudersUsed.Count > 1)
-			{
-				// start all the extruders heating
-				for (int extruderIndex0Based = 1; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
-				{
-					if (extruderIndex0Based < extrudersUsed.Count
-						&& extrudersUsed[extruderIndex0Based])
-					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
-						if (materialTemperature != 0)
-						{
-							// always heat the extruders that are used beyond extruder 0
-							postStartGCode.Add($"M104 T{extruderIndex0Based} S{materialTemperature} ; Start heating extruder{extruderIndex0Based + 1}");
-						}
-					}
-				}
-
-				// wait for them to finish
-				for (int extruderIndex0Based = 1; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
-				{
-					if (extruderIndex0Based < extrudersUsed.Count
-						&& extrudersUsed[extruderIndex0Based])
-					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
-						if (materialTemperature != 0)
-						{
-							// always heat the extruders that are used beyond extruder 0
-							postStartGCode.Add($"M109 T{extruderIndex0Based} S{materialTemperature} ; Finish heating extruder{extruderIndex0Based + 1}");
-						}
-					}
-				}
-			}
-
-			SwitchToFirstActiveExtruder(extrudersUsed, postStartGCodeLines, postStartGCode);
-			AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
-			postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
-			AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
-
-			return postStartGCode;
-		}
-
 		public List<string> PreStartGCode(List<bool> extrudersUsed)
 		{
 			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
@@ -148,8 +83,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0)
 			{
-				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
-				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
+				string setBedTempString = string.Format("M140 S{0}", bed_temperature);
+				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "start heating the bed");
 			}
 
 			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
@@ -170,7 +105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (printer.Settings.GetValue(SettingsKey.heat_extruder_before_homing) == "1")
+			if (printer.Settings.GetValue<bool>(SettingsKey.heat_extruder_before_homing))
 			{
 				for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
 				{
@@ -191,6 +126,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			preStartGCode.Add("; settings from start_gcode");
 
 			return preStartGCode;
+		}
+
+		public List<string> PostStartGCode(List<bool> extrudersUsed)
+		{
+			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
+			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+			List<string> postStartGCode = new List<string>();
+			postStartGCode.Add("; automatic settings after start_gcode");
+
+			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			if (bed_temperature > 0)
+			{
+				string setBedTempString = string.Format("M140 S{0}", bed_temperature);
+				AddDefaultIfNotPresent(postStartGCode, setBedTempString, postStartGCodeLines, "wait for bed temperature to be reached");
+			}
+
+			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+			// wait for them to finish
+			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)
+			{
+				if (extruderIndex0Based < extrudersUsed.Count
+					&& extrudersUsed[extruderIndex0Based])
+				{
+					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex0Based);
+					if (materialTemperature != 0)
+					{
+						// always heat the extruders that are used beyond extruder 0
+						postStartGCode.Add($"M109 T{extruderIndex0Based} S{materialTemperature} ; Finish heating extruder{extruderIndex0Based + 1}");
+					}
+				}
+			}
+
+			SwitchToFirstActiveExtruder(extrudersUsed, postStartGCodeLines, postStartGCode);
+			AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
+			postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
+			AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
+
+			return postStartGCode;
 		}
 
 		private void SwitchToFirstActiveExtruder(List<bool> extrudersUsed, string[] preStartGCodeLines, List<string> preStartGCode)
