@@ -383,6 +383,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
+		[JsonIgnore]
 		public string ActiveQualityKey
 		{
 			get
@@ -399,6 +400,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		[JsonIgnore]
 		public string ActiveMaterialKey
 		{
 			get => GetValue(SettingsKey.active_material_key);
