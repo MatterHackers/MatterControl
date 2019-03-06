@@ -76,10 +76,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return movementSpeeds["e0"];
 		}
 
-		//[JsonIgnore]
-		//public string DocumentPath => ProfileManager.Instance.ProfilePath(this.ID);
-
-		//[JsonIgnore]
 		public static bool AutoSave { get; set; } = true;
 
 		public static void Save(this PrinterSettings settings, bool clearBlackListSettings = false)

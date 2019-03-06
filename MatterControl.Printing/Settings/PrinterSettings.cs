@@ -289,17 +289,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		[OnDeserialized]
-		internal void OnDeserializedMethod(StreamingContext context)
-		{
-			QualityLayer = GetQualityLayer(ActiveQualityKey);
-
-			if (!string.IsNullOrEmpty(ActiveMaterialKey))
-			{
-				MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
-			}
-		}
-
 		public PrinterSettingsLayer OemLayer { get; set; }
 
 		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
@@ -451,7 +440,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			try
 			{
-				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath));
+				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
 			}
 			catch
 			{
@@ -1028,6 +1017,52 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.OnSettingChanged(settingsKey);
 			}
+		}
+
+		/// <summary>
+		/// Provides a one-way import mechanism for ActiveMaterialKey from the retired MaterialSettingsKeys array
+		/// </summary>
+		private class PrinterSettingsConverter : JsonConverter
+		{
+			public override bool CanConvert(Type objectType)
+			{
+				return objectType == typeof(PrinterSettings);
+			}
+
+			public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+			{
+				// Load object from reader
+				JObject jObject = JObject.Load(reader);
+
+				// Deserialize using default serializer
+				var settings = jObject.ToObject<PrinterSettings>();
+
+				// Look for and import retired MaterialSettingsKeys property
+				if (jObject["MaterialSettingsKeys"] is JArray materialSettingsKeys
+					&& materialSettingsKeys.Count > 0)
+				{
+					string firstValue = materialSettingsKeys[0].Value<string>();
+					settings.UserLayer[SettingsKey.active_material_key] = firstValue;
+				}
+
+				settings.QualityLayer = settings.GetQualityLayer(settings.ActiveQualityKey);
+
+				if (!string.IsNullOrEmpty(settings.ActiveMaterialKey))
+				{
+					settings.MaterialLayer = settings.GetMaterialLayer(settings.ActiveMaterialKey);
+				}
+
+				return settings;
+			}
+
+			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+			{
+				throw new NotImplementedException();
+			}
+
+			public override bool CanRead => true;
+
+			public override bool CanWrite => false;
 		}
 	}
 }

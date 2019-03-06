@@ -2488,10 +2488,11 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		/// <summary>
 		/// This gets set by the Pause Handling Stream when a change in the position sensor is seen.
-		/// It is improtant that this is not persisted, it is meant to function correctly if the user
+		/// It is important that this is not persisted, it is meant to function correctly if the user
 		/// plugs in or removes a filament position sensor.
 		/// </summary>
 		public bool FilamentPositionSensorDetected { get; internal set; }
+
 		public Vector3 HomingPosition
 		{
 			get => _homingPosition;
