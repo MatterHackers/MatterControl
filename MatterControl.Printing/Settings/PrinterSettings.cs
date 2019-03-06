@@ -361,11 +361,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.QualityLayers = printerSettings.QualityLayers;
 			this.UserLayer = printerSettings.UserLayer;
 
-			this.ActiveMaterialKey = printerSettings.ActiveMaterialKey;
-			this.ActiveQualityKey = printerSettings.ActiveQualityKey;
-
-			this.QualityLayer = GetQualityLayer(ActiveQualityKey);
-			this.MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
+			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
+			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
@@ -386,10 +383,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public string ActiveQualityKey
 		{
-			get
-			{
-				return GetValue(SettingsKey.active_quality_key);
-			}
+			get => GetValue(SettingsKey.active_quality_key);
 			set
 			{
 				if (this.ActiveQualityKey != value)
