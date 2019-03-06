@@ -43,8 +43,8 @@ namespace MatterHackers.GCodeVisualizer
 		private float mmPerSecond;
 		private Vector3Float position;
 
-		public RenderFeatureRetract(Vector3 position, double extrusionAmount, int extruderIndex, double mmPerSecond)
-			: base(extruderIndex)
+		public RenderFeatureRetract(int instructionIndex, Vector3 position, double extrusionAmount, int extruderIndex, double mmPerSecond)
+			: base(instructionIndex, extruderIndex)
 		{
 			this.extrusionAmount = (float)extrusionAmount;
 			this.mmPerSecond = (float)mmPerSecond;

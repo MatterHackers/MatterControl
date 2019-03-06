@@ -128,15 +128,15 @@ namespace MatterHackers.GCodeVisualizer
 					if (Math.Abs(eMovement) > 0)
 					{
 						// this is a retraction
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, eMovement, currentInstruction.ToolIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(instructionIndex, currentInstruction.Position, eMovement, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 					if (currentInstruction.Line.StartsWith("G10"))
 					{
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, -1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(instructionIndex, currentInstruction.Position, -1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 					else if (currentInstruction.Line.StartsWith("G11"))
 					{
-						renderFeaturesForLayer.Add(new RenderFeatureRetract(currentInstruction.Position, 1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
+						renderFeaturesForLayer.Add(new RenderFeatureRetract(instructionIndex, currentInstruction.Position, 1, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
 				}
 				else
@@ -148,6 +148,7 @@ namespace MatterHackers.GCodeVisualizer
 						Color extrusionColor = ExtrusionColors.GetColorForSpeed((float)currentInstruction.FeedRate);
 						renderFeaturesForLayer.Add(
 							new RenderFeatureExtrusion(
+								instructionIndex,
 								previousInstruction.Position,
 								currentInstruction.Position,
 								currentInstruction.ToolIndex,
@@ -162,6 +163,7 @@ namespace MatterHackers.GCodeVisualizer
 					{
 						renderFeaturesForLayer.Add(
 							new RenderFeatureTravel(
+								instructionIndex,
 								previousInstruction.Position,
 								currentInstruction.Position,
 								currentInstruction.ToolIndex,

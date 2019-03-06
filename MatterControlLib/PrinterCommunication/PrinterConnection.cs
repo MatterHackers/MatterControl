@@ -322,6 +322,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			});
 		}
 
+		/// <summary>
+		/// seconds until the next tool change while printing
+		/// </summary>
+		/// <returns></returns>
+		public (int toolIndex, double time) NextToolChange()
+		{
+			if (gCodeFileSwitcher.GCodeFile is GCodeMemoryFile gCodeMemoryFile)
+			{
+				return gCodeMemoryFile.NextToolChange(gCodeFileSwitcher.LineIndex);
+			}
+
+			return (0, 0);
+		}
+
 		private void ExtruderIndexSet(string line)
 		{
 			double extruderBeingSet = 0;
@@ -2159,6 +2173,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (ExtruderCount > 1)
 			{
 				accumulatedStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream);
+				accumulatedStream = new HotendTemperatureStream(Printer, accumulatedStream, queuedCommandStream);
 			}
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);

@@ -36,6 +36,10 @@ namespace MatterHackers.GCodeVisualizer
 	{
 		protected int toolIndex;
 
+		/// <summary>
+		/// The actual gcode line in the sourc gcode file
+		/// </summary>
+		public int InstructionIndex { get; private set; }
 		public static Color HighlightColor { get; set; } = new Color("#D0F476");
 
 		public static Color StartColor { get; set; } = Color.Red;
@@ -46,9 +50,10 @@ namespace MatterHackers.GCodeVisualizer
 
 		public abstract void CreateRender3DData(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, GCodeRenderInfo renderInfo);
 
-		public RenderFeatureBase(int extruderIndex)
+		public RenderFeatureBase(int instructionIndex, int toolIndex)
 		{
-			this.toolIndex = extruderIndex;
+			this.toolIndex = toolIndex;
+			this.InstructionIndex = instructionIndex;
 		}
 
 		static public void CreateCylinder(VectorPOD<ColorVertexData> colorVertexData, VectorPOD<int> indexData, Vector3 startPos, Vector3 endPos, double radius, int steps, Color color, double layerHeight)
