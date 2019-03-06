@@ -2440,7 +2440,16 @@ You will then need to logout and log back in to the computer for the changes to 
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders(TurnOff.Now);
+						if (SecondsPrinted < 60 * 10)
+						{
+							// The user may still be sitting at the machine, leave it heated for a period of time
+							TurnOffBedAndExtruders(TurnOff.AfterDelay);
+						}
+						else
+						{
+							// Turn off the heaters on long prints as the user is less likely to be around and interacting
+							TurnOffBedAndExtruders(TurnOff.Now);
+						}
 					}
 				}
 			}
