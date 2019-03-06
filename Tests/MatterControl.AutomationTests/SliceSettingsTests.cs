@@ -555,6 +555,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 120);
 		}
 
+		[Test]
+		public void CopyFromTest()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			var settings = new PrinterSettings();
+			settings.ID = "12345-print";
+			settings.SetValue(SettingsKey.auto_connect, "1");
+			settings.SetValue(SettingsKey.com_port, "some_com_port");
+			settings.SetValue(SettingsKey.cancel_gcode, "hello world");
+
+			settings.Macros.Add(new GCodeMacro() { Name = "Macro1", GCode = "G28 ; Home Printer" });
+
+			settings.StagedUserSettings["retract_restart_extra_time_to_apply"] = "4";
+			settings.StagedUserSettings["retract_restart_extra"] = "0.3";
+			settings.StagedUserSettings["bridge_fan_speed"] = "50";
+
+			var sha1 = settings.ComputeSHA1();
+
+			var clone = new PrinterSettings();
+			clone.CopyFrom(settings);
+
+			Assert.AreEqual(settings.ToJson(), clone.ToJson(), "Cloned settings via CopyFrom should equal source");
+			Assert.AreEqual(sha1, clone.ComputeSHA1(), "Cloned settings via CopyFrom should equal source");
+		}
+
 		private void CloseAllPrinterTabs(AutomationRunner testRunner)
 		{
 			// Close all printer tabs
