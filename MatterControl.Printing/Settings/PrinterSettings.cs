@@ -1037,8 +1037,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Deserialize using default serializer
 				var settings = jObject.ToObject<PrinterSettings>();
 
-				// Look for and import retired MaterialSettingsKeys property
-				if (jObject["MaterialSettingsKeys"] is JArray materialSettingsKeys
+				// Look for and import retired MaterialSettingsKeys property if ActiveMaterialKey unset
+				if (string.IsNullOrWhiteSpace(settings.ActiveMaterialKey)
+					&& jObject["MaterialSettingsKeys"] is JArray materialSettingsKeys
 					&& materialSettingsKeys.Count > 0)
 				{
 					string firstValue = materialSettingsKeys[0].Value<string>();
