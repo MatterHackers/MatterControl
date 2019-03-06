@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AddChild(pullDownContainer);
 
 			// Register listeners
-			printer.Settings.MaterialPresetChanged += ActiveSliceSettings_MaterialPresetChanged;
 			printer.Settings.SettingChanged += Printer_SettingChanged;
 		}
 
@@ -126,21 +125,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var presetsContext = new PresetsContext(printer.Settings.MaterialLayers, layerToEdit)
 						{
 							LayerType = NamedSettingsLayers.Material,
-							SetAsActive = (materialKey) =>
-							{
-								printer.Settings.ActiveMaterialKey = materialKey;
-							},
+							SetAsActive = (materialKey) => printer.Settings.ActiveMaterialKey = materialKey,
 							DeleteLayer = () =>
 							{
-								var materialKeys = printer.Settings.MaterialSettingsKeys;
-								for (var i = 0; i < materialKeys.Count; i++)
-								{
-									if (materialKeys[i] == presetsID)
-									{
-										materialKeys[i] = "";
-									}
-								}
-
 								printer.Settings.ActiveMaterialKey = "";
 								printer.Settings.MaterialLayers.Remove(layerToEdit);
 								printer.Settings.Save();
@@ -220,7 +207,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Settings.MaterialPresetChanged -= ActiveSliceSettings_MaterialPresetChanged;
 			printer.Settings.SettingChanged -= Printer_SettingChanged;
 
 			base.OnClosed(e);
@@ -230,15 +216,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (stringEvent != null
 				&& (stringEvent.Data == SettingsKey.default_material_presets
+					|| stringEvent.Data == SettingsKey.active_material_key
 					|| stringEvent.Data == SettingsKey.layer_name))
 			{
 				RebuildDropDownList();
 			}
-		}
-
-		private void ActiveSliceSettings_MaterialPresetChanged(object sender, EventArgs e)
-		{
-			RebuildDropDownList();
 		}
 
 		private DropDownList CreateDropdown()

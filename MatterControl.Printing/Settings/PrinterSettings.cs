@@ -64,13 +64,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public event EventHandler<StringEventArgs> SettingChanged;
 
-		public event EventHandler MaterialPresetChanged;
-
-		public void OnMaterialPresetChanged()
-		{
-			MaterialPresetChanged?.Invoke(null, null);
-		}
-
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
@@ -292,7 +285,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (this.UserLayer.TryGetValue(settingsKey, out userOverride))
 			{
 				this.UserLayer.Remove(settingsKey);
-				this.StagedUserSettings.Add(settingsKey, userOverride);
+				this.StagedUserSettings[settingsKey] = userOverride;
 			}
 		}
 
@@ -357,22 +350,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void CopyFrom(PrinterSettings printerSettings)
 		{
-			//this.OemLayer.Clear();
-			//foreach(var kvp in printerSettings.OemLayer)
-			//{
-			//	this.OemLayer.Add(kvp.Key, kvp.Value);
-			//}
-
 			this.OemLayer = printerSettings.OemLayer;
 			this.MaterialLayers = printerSettings.MaterialLayers;
 			this.QualityLayers = printerSettings.QualityLayers;
 			this.UserLayer = printerSettings.UserLayer;
 
-			this.ActiveMaterialKey = printerSettings.ActiveMaterialKey;
-			this.ActiveQualityKey = printerSettings.ActiveQualityKey;
-
-			this.QualityLayer = GetQualityLayer(ActiveQualityKey);
-			this.MaterialLayer = GetMaterialLayer(ActiveMaterialKey);
+			this.ID = printerSettings.ID;
+			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
+			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
+			this.StagedUserSettings = printerSettings.StagedUserSettings;
+			this.Macros = printerSettings.Macros;
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
@@ -390,48 +377,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
+		[JsonIgnore]
 		public string ActiveQualityKey
 		{
-			get
-			{
-				return GetValue(SettingsKey.active_quality_key);
-			}
+			get => GetValue(SettingsKey.active_quality_key);
 			set
 			{
-				SetValue(SettingsKey.active_quality_key, value);
-				QualityLayer = GetQualityLayer(value);
-
-				this.OnSettingChanged(SettingsKey.active_quality_key);
+				if (this.ActiveQualityKey != value)
+				{
+					SetValue(SettingsKey.active_quality_key, value);
+					QualityLayer = GetQualityLayer(value);
+				}
 			}
 		}
 
+		[JsonIgnore]
 		public string ActiveMaterialKey
 		{
-			get
-			{
-				if (MaterialSettingsKeys.Count > 0)
-				{
-					return MaterialSettingsKeys[0];
-				}
-
-				return null;
-			}
+			get => GetValue(SettingsKey.active_material_key);
 			set
 			{
-				if (MaterialSettingsKeys.Count == 0 || value != MaterialSettingsKeys[0])
+				if (this.ActiveMaterialKey != value)
 				{
-					MaterialSettingsKeys.Clear();
-					MaterialSettingsKeys.Add(value);
+					SetValue(SettingsKey.active_material_key, value);
 					MaterialLayer = GetMaterialLayer(value);
-					this.OnMaterialPresetChanged();
-
-					this.OnSettingChanged(SettingsKey.active_material_key);
 				}
 			}
 		}
-
-		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
-
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
