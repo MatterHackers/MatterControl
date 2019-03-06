@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (this.UserLayer.TryGetValue(settingsKey, out userOverride))
 			{
 				this.UserLayer.Remove(settingsKey);
-				this.StagedUserSettings.Add(settingsKey, userOverride);
+				this.StagedUserSettings[settingsKey] = userOverride;
 			}
 		}
 
