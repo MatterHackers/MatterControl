@@ -328,12 +328,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		/// <returns></returns>
 		public (int toolIndex, double time) NextToolChange(int toolToLookFor = -1)
 		{
-			if (gCodeFileSwitcher.GCodeFile is GCodeMemoryFile gCodeMemoryFile)
+			if (gCodeFileSwitcher != null
+				&& gCodeFileSwitcher.GCodeFile is GCodeMemoryFile gCodeMemoryFile)
 			{
 				return gCodeMemoryFile.NextToolChange(gCodeFileSwitcher.LineIndex, -1, toolToLookFor);
 			}
 
-			return (0, 0);
+			return (-1, 0);
 		}
 
 		private void ExtruderIndexSet(string line)

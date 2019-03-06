@@ -79,14 +79,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
-			// check if any extruders need to start heating back up
-			for (int i = 0; i < toolCount; i++)
+			// check if we need to turn on extruders while printing
+			if (printer.Connection.Printing)
 			{
-				var timeUntilUsed = printer.Connection.NextToolChange(i).time;
-				var targetTemp = printer.Settings.Helpers.ExtruderTargetTemperature(i);
-				if (timeUntilUsed < timeToReheat)
+				// check if any extruders need to start heating back up
+				for (int i = 0; i < toolCount; i++)
 				{
-					printer.Connection.SetTargetHotendTemperature(i, targetTemp);
+					var timeUntilUsed = printer.Connection.NextToolChange(i).time;
+					var targetTemp = printer.Settings.Helpers.ExtruderTargetTemperature(i);
+					if (timeUntilUsed < timeToReheat
+						&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp)
+					{
+						printer.Connection.SetTargetHotendTemperature(i, targetTemp);
+					}
 				}
 			}
 
@@ -94,7 +99,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				var nextToolIndex = currentToolIndex;
 				GCodeFile.GetFirstNumberAfter("T", line, ref nextToolIndex);
-				if(nextToolIndex != currentToolIndex)
+				if(printer.Connection.Printing
+					&& nextToolIndex != currentToolIndex)
 				{
 					// get the time to the next tool switch
 					var timeToNextToolChange = printer.Connection.NextToolChange().time;
