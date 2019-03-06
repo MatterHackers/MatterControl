@@ -350,19 +350,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void CopyFrom(PrinterSettings printerSettings)
 		{
-			//this.OemLayer.Clear();
-			//foreach(var kvp in printerSettings.OemLayer)
-			//{
-			//	this.OemLayer.Add(kvp.Key, kvp.Value);
-			//}
-
 			this.OemLayer = printerSettings.OemLayer;
 			this.MaterialLayers = printerSettings.MaterialLayers;
 			this.QualityLayers = printerSettings.QualityLayers;
 			this.UserLayer = printerSettings.UserLayer;
 
+			this.ID = printerSettings.ID;
 			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
 			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
+			this.StagedUserSettings = printerSettings.StagedUserSettings;
+			this.Macros = printerSettings.Macros;
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
