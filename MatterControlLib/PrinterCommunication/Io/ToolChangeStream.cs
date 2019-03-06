@@ -273,12 +273,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return;
 			}
 
-			if (line.StartsWith("G28)"))
-			{
-				extruderIndex = 0;
-				requestedExtruder = 0;
-			}
-
 			if (line.StartsWith("T"))
 			{
 				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);

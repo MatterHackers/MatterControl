@@ -100,6 +100,8 @@ Advanced
         temperature2
         temperature3
         bed_temperature
+        inactive_cool_down
+        seconds_to_reheat
     Advanced
       Material
       Temperatures

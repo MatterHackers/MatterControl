@@ -352,16 +352,22 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
+				var settings = this.printer.Settings;
+				var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
+				var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
+				var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
+				var multiplier = settings.GetValue<double>(SettingsKey.print_time_estimate_multiplier) / 100.0;
+
 				this.ApplyStreamPipelineAndExport(
 					new GCodeFileStream(
 						GCodeFile.Load(
 							gcodeFilename,
-							new Vector4(),
-							new Vector4(),
-							new Vector4(),
-							Vector4.One,
-							CancellationToken.None)
-							, printer),
+							new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
+							new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
+							new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
+							new Vector4(multiplier, multiplier, multiplier, multiplier),
+							CancellationToken.None),
+						printer),
 					outputPath);
 			}
 			catch (Exception e)
