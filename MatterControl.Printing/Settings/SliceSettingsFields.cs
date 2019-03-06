@@ -104,6 +104,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.inactive_cool_down,
+					PresentationName = "Inactive Cool Down".Localize(),
+					HelpText = "The amount to lower the temperature when the hotend is inactive.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "°C",
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "30"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.seconds_to_reheat,
+					PresentationName = "Warm up Time".Localize(),
+					HelpText = "The time it takes to heat back up from a cool down.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "s",
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "20"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.load_filament_length,
 					PresentationName = "Load Filament Length".Localize(),
 					HelpText = "The amount of filament to insert into the printer when loading.".Localize(),

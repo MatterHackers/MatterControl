@@ -88,6 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string inactive_cool_down = nameof(inactive_cool_down);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
 		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);
 		public const string infill_type = nameof(infill_type);
@@ -137,6 +138,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string running_clean_markdown2 = nameof(running_clean_markdown2);
 		public const string running_clean_1_markdown = nameof(running_clean_1_markdown);
+		public const string seconds_to_reheat = nameof(seconds_to_reheat);
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
