@@ -38,8 +38,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodeDebugView : GCodeDetailsPanel
 	{
+		private GCodeFile gCodeFile;
 		private PrinterTabPage printerTabPage;
 		private ISceneContext sceneContext;
+		private GCodeMemoryFile gCodeMemoryFile;
 		private TextWidget startPointWidget;
 		private TextWidget endPointWidget;
 		private TextWidget slopeWidget;
@@ -47,20 +49,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private TextWidget yInterceptWidget;
 		private TextWidget xInterceptWidget;
 		private TextWidget timeToToolChange;
+		private TextWidget rawLine;
 
-		public GCodeDebugView(PrinterTabPage printerTabPage, GCodeFile gCodeMemoryFile, ISceneContext sceneContext, ThemeConfig theme)
+		public GCodeDebugView(PrinterTabPage printerTabPage, GCodeFile gCodeFile, ISceneContext sceneContext, ThemeConfig theme)
 			: base(theme)
 		{
+			this.gCodeFile = gCodeFile;
 			this.printerTabPage = printerTabPage;
 			this.sceneContext = sceneContext;
+
+			gCodeMemoryFile = gCodeFile as GCodeMemoryFile;
+			if (gCodeMemoryFile != null)
+			{
+				rawLine = this.AddSetting("G-Code Line".Localize(), "");
+			}
 
 			startPointWidget = this.AddSetting("Start".Localize(), "");
 			endPointWidget = this.AddSetting("End".Localize(), "");
 			lengthWidget = this.AddSetting("Length".Localize(), "");
-			slopeWidget = this.AddSetting("Slope".Localize(), "");
-			yInterceptWidget = this.AddSetting("Y Intercept".Localize(), "");
-			xInterceptWidget = this.AddSetting("X Intercept".Localize(), "");
-			timeToToolChange = this.AddSetting("Tool Change".Localize(), "");
+			//slopeWidget = this.AddSetting("Slope".Localize(), "");
+			//yInterceptWidget = this.AddSetting("Y Intercept".Localize(), "");
+			//xInterceptWidget = this.AddSetting("X Intercept".Localize(), "");
+			if (gCodeMemoryFile != null)
+			{
+				timeToToolChange = this.AddSetting("Time to Tool Change".Localize(), "");
+			}
 
 			// Register listeners
 			printerTabPage.LayerFeaturesScrollbar.SecondValueChanged += this.LayerFeaturesScrollbar_SecondValueChanged;
@@ -85,6 +98,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.GCodeRenderer[layerIndex, activeFeatureIndex] is RenderFeatureTravel line)
 			{
+				if (rawLine != null)
+				{
+					rawLine.Text = gCodeMemoryFile.Instruction(line.InstructionIndex).Line;
+				}
+
 				var start = line.Start;
 				var end = line.End;
 
@@ -101,20 +119,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// n = -x_1 * (y_2 - y_1) / (x_2 - x_1) + y_1
 
 				var slope = (end.Y - start.Y) / (end.X - start.X);
-				slopeWidget.Text = $"{slope:0.###}";
+				if (slopeWidget != null)
+				{
+					slopeWidget.Text = $"{slope:0.###}";
+				}
 
-				// -x_1 * (y_2 - y_1) / (x_2 - x_1) + y_1
-				var yIntercept = -start.X * slope + start.Y;
-				yInterceptWidget.Text = $"{yIntercept:0.###}";
+				if (yInterceptWidget != null)
+				{
+					// -x_1 * (y_2 - y_1) / (x_2 - x_1) + y_1
+					var yIntercept = -start.X * slope + start.Y;
+					yInterceptWidget.Text = $"{yIntercept:0.###}";
+				}
 
-				// x_1 - y_1*(x_2-x_1)/(y_2-y_1)
-				var xIntercept = start.X - start.Y * (end.X - start.X) / (end.Y - start.Y);
-				xInterceptWidget.Text = $"{xIntercept:0.###}";
+				if (xInterceptWidget != null)
+				{
+					// x_1 - y_1*(x_2-x_1)/(y_2-y_1)
+					var xIntercept = start.X - start.Y * (end.X - start.X) / (end.Y - start.Y);
+					xInterceptWidget.Text = $"{xIntercept:0.###}";
+				}
 
 				// put in the time until the next tool change
-				if(timeToToolChange != null)
+				if (timeToToolChange != null)
 				{
-
+					var toolChange = gCodeMemoryFile.NextToolChange(line.InstructionIndex);
+					if (toolChange.time < double.PositiveInfinity)
+					{
+						timeToToolChange.Text = $"T{toolChange.toolIndex} : {toolChange.time:0.00}s";
+					}
+					else
+					{
+						timeToToolChange.Text = $"No More Changes";
+					}
 				}
 			}
 		}

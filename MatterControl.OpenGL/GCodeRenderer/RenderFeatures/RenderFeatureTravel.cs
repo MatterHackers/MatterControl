@@ -45,8 +45,8 @@ namespace MatterHackers.GCodeVisualizer
 
 		public Vector3Float End => end;
 
-		public RenderFeatureTravel(Vector3 start, Vector3 end, int toolIndex, double travelSpeed)
-			: base(toolIndex)
+		public RenderFeatureTravel(int instructionIndex, Vector3 start, Vector3 end, int toolIndex, double travelSpeed)
+			: base(instructionIndex, toolIndex)
 		{
 			this.toolIndex = toolIndex;
 			this.start = new Vector3Float(start);

@@ -185,12 +185,13 @@ namespace MatterControl.Printing
 			}
 			else
 			{
-				return new GCodeMemoryFile(fileName,
+				return GCodeMemoryFile.Load(fileName,
 					maxAccelerationMmPerS2,
 					maxVelocityMmPerS,
 					velocitySameAsStopMmPerS,
 					speedMultiplier,
-					cancellationToken);
+					cancellationToken,
+					null);
 			}
 		}
 

@@ -40,78 +40,34 @@ namespace MatterControl.Printing
 {
 	public class GCodeMemoryFile : GCodeFile
 	{
-		private double parsingLastZ;
-		private bool gcodeHasExplicitLayerChangeInfo = false;
-
-		private double filamentUsedMmCache = 0;
 		private double diameterOfFilamentUsedMmCache = 0;
-
-		private List<double> layerHeights = new List<double>();
-		private List<int> toolChanges = new List<int>();
-		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
-
+		private double filamentDiameterCache = 0;
+		private double filamentUsedMmCache = 0;
 		private bool foundFirstLayerMarker;
+		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
+		private bool gcodeHasExplicitLayerChangeInfo = false;
+		private int lastPrintLine;
+		private List<double> layerHeights = new List<double>();
+		private double parsingLastZ;
+		private List<int> toolChanges = new List<int>();
 
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
 		}
 
-		public GCodeMemoryFile(string pathAndFileName,
-			Vector4 maxAccelerationMmPerS2,
-			Vector4 maxVelocityMmPerS,
-			Vector4 velocitySameAsStopMmPerS,
-			Vector4 speedMultiplier,
-			CancellationToken cancellationToken, bool gcodeHasExplicitLayerChangeInfo = false)
-		{
-			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
+		public List<int> IndexOfLayerStart { get; private set; } = new List<int>();
 
-			var loadedFile = GCodeMemoryFile.Load(pathAndFileName,
-				maxAccelerationMmPerS2,
-				maxVelocityMmPerS,
-				velocitySameAsStopMmPerS,
-				speedMultiplier,
-				cancellationToken, null);
-			if (loadedFile != null)
-			{
-				this.IndexOfLayerStart = loadedFile.IndexOfLayerStart;
-				this.parsingLastZ = loadedFile.parsingLastZ;
-				this.GCodeCommandQueue = loadedFile.GCodeCommandQueue;
-			}
-		}
-
-		public override PrinterMachineInstruction Instruction(int index)
+		public override int LayerCount
 		{
-			return GCodeCommandQueue[index];
+			get { return IndexOfLayerStart.Count; }
 		}
 
 		public override int LineCount => GCodeCommandQueue.Count;
 
-		public override void Clear()
-		{
-			IndexOfLayerStart.Clear();
-			GCodeCommandQueue.Clear();
-		}
+		public HashSet<float> Speeds { get; private set; }
 
 		public override double TotalSecondsInPrint => Instruction(0).SecondsToEndFromHere;
-
-		public void Add(PrinterMachineInstruction printerMachineInstruction)
-		{
-			Insert(LineCount, printerMachineInstruction);
-		}
-
-		public void Insert(int insertIndex, PrinterMachineInstruction printerMachineInstruction)
-		{
-			for (int i = 0; i < IndexOfLayerStart.Count; i++)
-			{
-				if (insertIndex < IndexOfLayerStart[i])
-				{
-					IndexOfLayerStart[i]++;
-				}
-			}
-
-			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
-		}
 
 		public static GCodeMemoryFile Load(Stream fileStream,
 			Vector4 maxAccelerationMmPerS2,
@@ -170,20 +126,342 @@ namespace MatterControl.Printing
 			return null;
 		}
 
-		private static IEnumerable<string> CustomSplit(string newtext, char splitChar)
+		public void Add(PrinterMachineInstruction printerMachineInstruction)
 		{
-			int endOfLastFind = 0;
-			int positionOfSplitChar = newtext.IndexOf(splitChar);
-			while (positionOfSplitChar != -1)
+			Insert(LineCount, printerMachineInstruction);
+		}
+
+		public override void Clear()
+		{
+			IndexOfLayerStart.Clear();
+			GCodeCommandQueue.Clear();
+		}
+
+		public override RectangleDouble GetBounds()
+		{
+			RectangleDouble bounds = new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
+			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
 			{
-				string text = newtext.Substring(endOfLastFind, positionOfSplitChar - endOfLastFind).Trim();
-				yield return text;
-				endOfLastFind = positionOfSplitChar + 1;
-				positionOfSplitChar = newtext.IndexOf(splitChar, endOfLastFind);
+				bounds.Left = Math.Min(state.Position.X, bounds.Left);
+				bounds.Right = Math.Max(state.Position.X, bounds.Right);
+				bounds.Bottom = Math.Min(state.Position.Y, bounds.Bottom);
+				bounds.Top = Math.Max(state.Position.Y, bounds.Top);
 			}
 
-			string lastText = newtext.Substring(endOfLastFind);
-			yield return lastText;
+			return bounds;
+		}
+
+		public override double GetFilamentCubicMm(double filamentDiameterMm)
+		{
+			double filamentUsedMm = GetFilamentUsedMm(filamentDiameterMm);
+			double filamentRadius = filamentDiameterMm / 2;
+			double areaSquareMm = (filamentRadius * filamentRadius) * Math.PI;
+
+			return areaSquareMm * filamentUsedMm;
+		}
+
+		public override double GetFilamentDiameter()
+		{
+			if (filamentDiameterCache == 0)
+			{
+				// check the beginning of the file for the filament diameter
+				for (int i = 0; i < Math.Min(100, GCodeCommandQueue.Count); i++)
+				{
+					if (FindDiameter(i, ref filamentDiameterCache))
+					{
+						break;
+					}
+				}
+
+				// check the end of the file for the filament diameter
+				if (filamentDiameterCache == 0)
+				{
+					// didn't find it, so look at the end of the file for filament_diameter =
+					for (int i = GCodeCommandQueue.Count - 1; i > Math.Max(0, GCodeCommandQueue.Count - 100); i--)
+					{
+						if (FindDiameter(i, ref filamentDiameterCache))
+						{
+							break;
+						}
+					}
+				}
+
+				if (filamentDiameterCache == 0)
+				{
+					// it is still 0 so set it to something so we render
+					filamentDiameterCache = 1.75;
+				}
+			}
+
+			return filamentDiameterCache;
+		}
+
+		public override double GetFilamentUsedMm(double filamentDiameter)
+		{
+			if (filamentUsedMmCache == 0 || filamentDiameter != diameterOfFilamentUsedMmCache)
+			{
+				double lastEPosition = 0;
+				double filamentMm = 0;
+				for (int i = 0; i < GCodeCommandQueue.Count; i++)
+				{
+					PrinterMachineInstruction instruction = GCodeCommandQueue[i];
+					//filamentMm += instruction.EPosition;
+
+					string lineToParse = instruction.Line;
+					if (lineToParse.StartsWith("G0") || lineToParse.StartsWith("G1"))
+					{
+						double ePosition = lastEPosition;
+						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
+						{
+							if (instruction.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
+							{
+								double deltaEPosition = ePosition - lastEPosition;
+								filamentMm += deltaEPosition;
+							}
+							else
+							{
+								filamentMm += ePosition;
+							}
+
+							lastEPosition = ePosition;
+						}
+					}
+					else if (lineToParse.StartsWith("G92"))
+					{
+						double ePosition = 0;
+						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
+						{
+							lastEPosition = ePosition;
+						}
+					}
+				}
+
+				filamentUsedMmCache = filamentMm;
+				diameterOfFilamentUsedMmCache = filamentDiameter;
+			}
+
+			return filamentUsedMmCache;
+		}
+
+		public override double GetFilamentWeightGrams(double filamentDiameterMm, double densityGramsPerCubicCm)
+		{
+			double cubicMmPerCubicCm = 1000;
+			double gramsPerCubicMm = densityGramsPerCubicCm / cubicMmPerCubicCm;
+			double cubicMms = GetFilamentCubicMm(filamentDiameterMm);
+			return cubicMms * gramsPerCubicMm;
+		}
+
+		public override int GetFirstLayerInstruction(int layerIndex)
+		{
+			if (layerIndex < IndexOfLayerStart.Count)
+			{
+				return IndexOfLayerStart[layerIndex];
+			}
+
+			// else return the last instruction
+			return GCodeCommandQueue.Count - 1;
+		}
+
+		/// <summary>
+		/// Get the height of the bottom of this layer as measure from the bed
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
+		public double GetLayerBottom(int layerIndex)
+		{
+			double total = 0;
+			for (int i = 0; i < layerIndex; i++)
+			{
+				total += GetLayerHeight(i);
+			}
+			return total;
+		}
+
+		/// <summary>
+		/// Get the height of this layer (from the top of the previous layer to the top of this layer).
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
+		public override double GetLayerHeight(int layerIndex)
+		{
+			if (layerHeights.Count > 0)
+			{
+				if (layerIndex < layerHeights.Count)
+				{
+					return layerHeights[layerIndex];
+				}
+
+				return 0;
+			}
+
+			if (IndexOfLayerStart.Count > 2)
+			{
+				return GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
+			}
+
+			return .5;
+		}
+
+		public override int GetLayerIndex(int instructionIndex)
+		{
+			if (instructionIndex >= 0
+				&& instructionIndex <= LineCount)
+			{
+				for (var i = IndexOfLayerStart.Count - 1; i >= 0; i--)
+				{
+					var lineStart = IndexOfLayerStart[i];
+
+					if (instructionIndex >= lineStart)
+					{
+						return i;
+					}
+				}
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Get the height of the top of this layer as measure from the bed
+		/// </summary>
+		/// <param name="layerIndex"></param>
+		/// <returns></returns>
+		public override double GetLayerTop(int layerIndex)
+		{
+			double total = 0;
+			for (int i = 0; i <= layerIndex; i++)
+			{
+				total += GetLayerHeight(i);
+			}
+			return total;
+		}
+
+		public override Vector2 GetWeightedCenter()
+		{
+			MatterHackers.VectorMath.Vector2 total = new MatterHackers.VectorMath.Vector2();
+			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
+			{
+				total += new MatterHackers.VectorMath.Vector2(state.Position.X, state.Position.Y);
+			}
+
+			return total / GCodeCommandQueue.Count;
+		}
+
+		public void Insert(int insertIndex, PrinterMachineInstruction printerMachineInstruction)
+		{
+			for (int i = 0; i < IndexOfLayerStart.Count; i++)
+			{
+				if (insertIndex < IndexOfLayerStart[i])
+				{
+					IndexOfLayerStart[i]++;
+				}
+			}
+
+			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
+		}
+
+		public override PrinterMachineInstruction Instruction(int index)
+		{
+			return GCodeCommandQueue[index];
+		}
+
+		public override bool IsExtruding(int instructionIndexToCheck)
+		{
+			if (instructionIndexToCheck > 1 && instructionIndexToCheck < GCodeCommandQueue.Count)
+			{
+				double extrusionLength = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
+				if (extrusionLength > 0)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public (int toolIndex, double time) NextToolChange(int instructionIndex, int currentToolIndex = -1)
+		{
+			int nextToolChange = -1;
+			// find the first tool change that we are less than
+			for (int i = 0; i < toolChanges.Count; i++)
+			{
+				if (instructionIndex < toolChanges[i]
+					&& GCodeCommandQueue[toolChanges[i]].ToolIndex != currentToolIndex)
+				{
+					nextToolChange = i;
+					break;
+				}
+			}
+
+			if (nextToolChange >= 0)
+			{
+				var toolIndex = GCodeCommandQueue[toolChanges[nextToolChange]].ToolIndex;
+				var time = GCodeCommandQueue[instructionIndex].SecondsToEndFromHere - GCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
+				return (toolIndex, time);
+			}
+
+			// there are no more tool changes
+			return (currentToolIndex, double.PositiveInfinity);
+		}
+
+		public override double PercentComplete(int instructionIndex)
+		{
+			if (GCodeCommandQueue.Count > 0)
+			{
+				return Math.Min(99.9, (double)instructionIndex / (double)GCodeCommandQueue.Count * 100);
+			}
+
+			return 100;
+		}
+
+		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
+		{
+			int currentLayer = GetLayerIndex(instructionIndex);
+
+			if (currentLayer > -1)
+			{
+				int startIndex = IndexOfLayerStart[currentLayer];
+
+				int endIndex = LineCount - 1;
+
+				if (currentLayer < LayerCount - 1)
+				{
+					endIndex = IndexOfLayerStart[currentLayer + 1];
+				}
+				else
+				{
+					// Improved last layer percent complete - seek endIndex to 'MatterSlice Completed' line, otherwise leave at LineCount - 1
+					if (lastPrintLine == -1)
+					{
+						string line = "";
+						lastPrintLine = instructionIndex;
+						do
+						{
+							line = GCodeCommandQueue[Math.Min(GCodeCommandQueue.Count - 1, lastPrintLine)].Line;
+							lastPrintLine++;
+						} while (line != "; MatterSlice Completed Successfully"
+							&& lastPrintLine < endIndex);
+					}
+
+					endIndex = lastPrintLine;
+				}
+
+				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);
+				return deltaFromStart / (double)(endIndex - startIndex);
+			}
+
+			return 0;
+		}
+
+		public void Save(string dest)
+		{
+			using (StreamWriter file = new StreamWriter(dest))
+			{
+				foreach (PrinterMachineInstruction instruction in GCodeCommandQueue)
+				{
+					file.WriteLine(instruction.Line);
+				}
+			}
 		}
 
 		private static int CountNumLines(string gCodeString)
@@ -198,6 +476,22 @@ namespace MatterControl.Printing
 			}
 
 			return crCount + 1;
+		}
+
+		private static IEnumerable<string> CustomSplit(string newtext, char splitChar)
+		{
+			int endOfLastFind = 0;
+			int positionOfSplitChar = newtext.IndexOf(splitChar);
+			while (positionOfSplitChar != -1)
+			{
+				string text = newtext.Substring(endOfLastFind, positionOfSplitChar - endOfLastFind).Trim();
+				yield return text;
+				endOfLastFind = positionOfSplitChar + 1;
+				positionOfSplitChar = newtext.IndexOf(splitChar, endOfLastFind);
+			}
+
+			string lastText = newtext.Substring(endOfLastFind);
+			yield return lastText;
 		}
 
 		private static GCodeMemoryFile ParseFileContents(string gCodeString,
@@ -288,11 +582,7 @@ namespace MatterControl.Printing
 							break;
 
 						default:
-#if DEBUG
-							throw new NotImplementedException();
-#else
 							break;
-#endif
 					}
 				}
 
@@ -390,7 +680,7 @@ namespace MatterControl.Printing
 					}
 				}
 
-				if(instruction.ToolIndex != currentTool)
+				if (instruction.ToolIndex != currentTool)
 				{
 					toolChanges.Add(lineIndex);
 					currentTool = instruction.ToolIndex;
@@ -436,34 +726,160 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public override double PercentComplete(int instructionIndex)
+		private bool FindDiameter(int lineIndex, ref double filamentDiameterCache)
 		{
-			if (GCodeCommandQueue.Count > 0)
+			if (GetFirstNumberAfter("filamentDiameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
 			{
-				return Math.Min(99.9, (double)instructionIndex / (double)GCodeCommandQueue.Count * 100);
+				return true;
 			}
 
-			return 100;
-		}
-
-		public override int GetFirstLayerInstruction(int layerIndex)
-		{
-			if (layerIndex < IndexOfLayerStart.Count)
+			if (GetFirstNumberAfter("; filament_diameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
 			{
-				return IndexOfLayerStart[layerIndex];
+				return true;
 			}
 
-			// else return the last instruction
-			return GCodeCommandQueue.Count - 1;
+			return false;
 		}
 
-		public override int LayerCount
+		private void ParseGLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
-			get { return IndexOfLayerStart.Count; }
-		}
+			// take off any comments before we check its length
+			int commentIndex = lineString.IndexOf(';');
+			if (commentIndex != -1)
+			{
+				lineString = lineString.Substring(0, commentIndex);
+			}
 
-		public HashSet<float> Speeds { get; private set; }
-		public List<int> IndexOfLayerStart { get; set; } = new List<int>();
+			string[] splitOnSpace = lineString.Split(' ');
+			string onlyNumber = splitOnSpace[0].Substring(1).Trim();
+			switch (onlyNumber)
+			{
+				case "0":
+					goto case "1";
+
+				case "4":
+				case "04":
+					// wait a given number of milliseconds
+					break;
+
+				case "1":
+					// get the x y z to move to
+					{
+						double ePosition = processingMachineState.EPosition;
+						var position = processingMachineState.Position;
+						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Relative)
+						{
+							position = Vector3.Zero;
+							ePosition = 0;
+						}
+
+						GCodeFile.GetFirstNumberAfter("X", lineString, ref position.X);
+						GCodeFile.GetFirstNumberAfter("Y", lineString, ref position.Y);
+						GCodeFile.GetFirstNumberAfter("Z", lineString, ref position.Z);
+						GCodeFile.GetFirstNumberAfter("E", lineString, ref ePosition);
+
+						double feedrate = 0;
+						if (GCodeFile.GetFirstNumberAfter("F", lineString, ref feedrate))
+						{
+							processingMachineState.FeedRate = (float)feedrate;
+						}
+
+						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
+						{
+							processingMachineState.Position = position;
+							processingMachineState.EPosition = (float)ePosition;
+						}
+						else
+						{
+							processingMachineState.Position += position;
+							processingMachineState.EPosition += (float)ePosition;
+						}
+					}
+
+					if (!gcodeHasExplicitLayerChangeInfo)
+					{
+						if (processingMachineState.Z != parsingLastZ || IndexOfLayerStart.Count == 0)
+						{
+							// if we changed z or there is a movement and we have never started a layer index
+							IndexOfLayerStart.Add(GCodeCommandQueue.Count);
+						}
+					}
+					parsingLastZ = processingMachineState.Position.Z;
+					break;
+
+				case "10": // firmware retract
+					break;
+
+				case "11": // firmware unretract
+					break;
+
+				case "21":
+					// set to metric
+					break;
+
+				case "28":
+					// G28 	Return to home position (machine zero, aka machine reference point)
+					break;
+
+				case "29":
+					// G29 Probe the z-bed in 3 places
+					break;
+
+				case "30":
+					// G30 Probe z in current position
+					break;
+
+				case "90": // G90 is Absolute Distance Mode
+					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Absolute;
+					break;
+
+				case "91": // G91 is Incremental Distance Mode
+					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Relative;
+					break;
+
+				case "92":
+					{
+						// set current head position values (used to reset origin)
+						double value = 0;
+						if (GCodeFile.GetFirstNumberAfter("X", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.X;
+							processingMachineState.X = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("Y", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.Y;
+							processingMachineState.Y = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("Z", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.Z;
+							processingMachineState.Z = value;
+						}
+						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref value))
+						{
+							processingMachineState.PositionSet |= PositionSet.E;
+							processingMachineState.EPosition = (float)value;
+						}
+					}
+					break;
+
+				case "130":
+					//Set Digital Potentiometer value
+					break;
+
+				case "161":
+					// home x,y axis minimum
+					break;
+
+				case "162":
+					// home z axis maximum
+					break;
+
+				default:
+					break;
+			}
+		}
 
 		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
 		{
@@ -629,438 +1045,19 @@ namespace MatterControl.Printing
 
 				case "565": // M565: Set Z probe offset
 					break;
+
 				case "1200"://M1200 Makerbot Fake gCode command for start build notification
 					break;
+
 				case "1201"://M1201 Makerbot Fake gCode command for end build notification
 					break;
+
 				case "1202"://M1202 Makerbot Fake gCode command for reset board
 					break;
 
 				default:
 					break;
 			}
-		}
-
-		private void ParseGLine(string lineString, PrinterMachineInstruction processingMachineState)
-		{
-			// take off any comments before we check its length
-			int commentIndex = lineString.IndexOf(';');
-			if (commentIndex != -1)
-			{
-				lineString = lineString.Substring(0, commentIndex);
-			}
-
-			string[] splitOnSpace = lineString.Split(' ');
-			string onlyNumber = splitOnSpace[0].Substring(1).Trim();
-			switch (onlyNumber)
-			{
-				case "0":
-					goto case "1";
-
-				case "4":
-				case "04":
-					// wait a given number of milliseconds
-					break;
-
-				case "1":
-					// get the x y z to move to
-					{
-						double ePosition = processingMachineState.EPosition;
-						var position = processingMachineState.Position;
-						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Relative)
-						{
-							position = Vector3.Zero;
-							ePosition = 0;
-						}
-
-						GCodeFile.GetFirstNumberAfter("X", lineString, ref position.X);
-						GCodeFile.GetFirstNumberAfter("Y", lineString, ref position.Y);
-						GCodeFile.GetFirstNumberAfter("Z", lineString, ref position.Z);
-						GCodeFile.GetFirstNumberAfter("E", lineString, ref ePosition);
-
-						double feedrate = 0;
-						if (GCodeFile.GetFirstNumberAfter("F", lineString, ref feedrate))
-						{
-							processingMachineState.FeedRate = (float)feedrate;
-						}
-
-						if (processingMachineState.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
-						{
-							processingMachineState.Position = position;
-							processingMachineState.EPosition = (float)ePosition;
-						}
-						else
-						{
-							processingMachineState.Position += position;
-							processingMachineState.EPosition += (float)ePosition;
-						}
-					}
-
-					if (!gcodeHasExplicitLayerChangeInfo)
-					{
-						if (processingMachineState.Z != parsingLastZ || IndexOfLayerStart.Count == 0)
-						{
-							// if we changed z or there is a movement and we have never started a layer index
-							IndexOfLayerStart.Add(GCodeCommandQueue.Count);
-						}
-					}
-					parsingLastZ = processingMachineState.Position.Z;
-					break;
-
-				case "10": // firmware retract
-					break;
-
-				case "11": // firmware unretract
-					break;
-
-				case "21":
-					// set to metric
-					break;
-
-				case "28":
-					// G28 	Return to home position (machine zero, aka machine reference point)
-					break;
-
-				case "29":
-					// G29 Probe the z-bed in 3 places
-					break;
-
-				case "30":
-					// G30 Probe z in current position
-					break;
-
-				case "90": // G90 is Absolute Distance Mode
-					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Absolute;
-					break;
-
-				case "91": // G91 is Incremental Distance Mode
-					processingMachineState.MovementType = PrinterMachineInstruction.MovementTypes.Relative;
-					break;
-
-				case "92":
-					{
-						// set current head position values (used to reset origin)
-						double value = 0;
-						if (GCodeFile.GetFirstNumberAfter("X", lineString, ref value))
-						{
-							processingMachineState.PositionSet |= PositionSet.X;
-							processingMachineState.X = value;
-						}
-						if (GCodeFile.GetFirstNumberAfter("Y", lineString, ref value))
-						{
-							processingMachineState.PositionSet |= PositionSet.Y;
-							processingMachineState.Y = value;
-						}
-						if (GCodeFile.GetFirstNumberAfter("Z", lineString, ref value))
-						{
-							processingMachineState.PositionSet |= PositionSet.Z;
-							processingMachineState.Z = value;
-						}
-						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref value))
-						{
-							processingMachineState.PositionSet |= PositionSet.E;
-							processingMachineState.EPosition = (float)value;
-						}
-					}
-					break;
-
-				case "130":
-					//Set Digital Potentiometer value
-					break;
-
-				case "161":
-					// home x,y axis minimum
-					break;
-
-				case "162":
-					// home z axis maximum
-					break;
-
-				default:
-					break;
-			}
-		}
-
-		public override Vector2 GetWeightedCenter()
-		{
-			MatterHackers.VectorMath.Vector2 total = new MatterHackers.VectorMath.Vector2();
-			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
-			{
-				total += new MatterHackers.VectorMath.Vector2(state.Position.X, state.Position.Y);
-			}
-
-			return total / GCodeCommandQueue.Count;
-		}
-
-		public override RectangleDouble GetBounds()
-		{
-			RectangleDouble bounds = new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
-			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
-			{
-				bounds.Left = Math.Min(state.Position.X, bounds.Left);
-				bounds.Right = Math.Max(state.Position.X, bounds.Right);
-				bounds.Bottom = Math.Min(state.Position.Y, bounds.Bottom);
-				bounds.Top = Math.Max(state.Position.Y, bounds.Top);
-			}
-
-			return bounds;
-		}
-
-		public override bool IsExtruding(int instructionIndexToCheck)
-		{
-			if (instructionIndexToCheck > 1 && instructionIndexToCheck < GCodeCommandQueue.Count)
-			{
-				double extrusionLength = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
-				if (extrusionLength > 0)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public override double GetFilamentUsedMm(double filamentDiameter)
-		{
-			if (filamentUsedMmCache == 0 || filamentDiameter != diameterOfFilamentUsedMmCache)
-			{
-				double lastEPosition = 0;
-				double filamentMm = 0;
-				for (int i = 0; i < GCodeCommandQueue.Count; i++)
-				{
-					PrinterMachineInstruction instruction = GCodeCommandQueue[i];
-					//filamentMm += instruction.EPosition;
-
-					string lineToParse = instruction.Line;
-					if (lineToParse.StartsWith("G0") || lineToParse.StartsWith("G1"))
-					{
-						double ePosition = lastEPosition;
-						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
-						{
-							if (instruction.MovementType == PrinterMachineInstruction.MovementTypes.Absolute)
-							{
-								double deltaEPosition = ePosition - lastEPosition;
-								filamentMm += deltaEPosition;
-							}
-							else
-							{
-								filamentMm += ePosition;
-							}
-
-							lastEPosition = ePosition;
-						}
-					}
-					else if (lineToParse.StartsWith("G92"))
-					{
-						double ePosition = 0;
-						if (GetFirstNumberAfter("E", lineToParse, ref ePosition))
-						{
-							lastEPosition = ePosition;
-						}
-					}
-				}
-
-				filamentUsedMmCache = filamentMm;
-				diameterOfFilamentUsedMmCache = filamentDiameter;
-			}
-
-			return filamentUsedMmCache;
-		}
-
-		public override double GetFilamentCubicMm(double filamentDiameterMm)
-		{
-			double filamentUsedMm = GetFilamentUsedMm(filamentDiameterMm);
-			double filamentRadius = filamentDiameterMm / 2;
-			double areaSquareMm = (filamentRadius * filamentRadius) * Math.PI;
-
-			return areaSquareMm * filamentUsedMm;
-		}
-
-		public override double GetFilamentWeightGrams(double filamentDiameterMm, double densityGramsPerCubicCm)
-		{
-			double cubicMmPerCubicCm = 1000;
-			double gramsPerCubicMm = densityGramsPerCubicCm / cubicMmPerCubicCm;
-			double cubicMms = GetFilamentCubicMm(filamentDiameterMm);
-			return cubicMms * gramsPerCubicMm;
-		}
-
-		public void Save(string dest)
-		{
-			using (StreamWriter file = new StreamWriter(dest))
-			{
-				foreach (PrinterMachineInstruction instruction in GCodeCommandQueue)
-				{
-					file.WriteLine(instruction.Line);
-				}
-			}
-		}
-
-		double filamentDiameterCache = 0;
-		public override double GetFilamentDiameter()
-		{
-			if (filamentDiameterCache == 0)
-			{
-				// check the beginning of the file for the filament diameter
-				for (int i = 0; i < Math.Min(100, GCodeCommandQueue.Count); i++)
-				{
-					if (FindDiameter(i, ref filamentDiameterCache))
-					{
-						break;
-					}
-				}
-
-				// check the end of the file for the filament diameter
-				if (filamentDiameterCache == 0)
-				{
-					// didn't find it, so look at the end of the file for filament_diameter =
-					for (int i = GCodeCommandQueue.Count - 1; i > Math.Max(0, GCodeCommandQueue.Count - 100); i--)
-					{
-						if (FindDiameter(i, ref filamentDiameterCache))
-						{
-							break;
-						}
-					}
-				}
-
-				if (filamentDiameterCache == 0)
-				{
-					// it is still 0 so set it to something so we render
-					filamentDiameterCache = 1.75;
-				}
-			}
-
-			return filamentDiameterCache;
-		}
-
-		private bool FindDiameter(int lineIndex, ref double filamentDiameterCache)
-		{
-			if (GetFirstNumberAfter("filamentDiameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
-			{
-				return true;
-			}
-
-			if (GetFirstNumberAfter("; filament_diameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		/// <summary>
-		/// Get the height of this layer (from the top of the previous layer to the top of this layer).
-		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
-		public override double GetLayerHeight(int layerIndex)
-		{
-			if (layerHeights.Count > 0)
-			{
-				if (layerIndex < layerHeights.Count)
-				{
-					return layerHeights[layerIndex];
-				}
-
-				return 0;
-			}
-
-			if (IndexOfLayerStart.Count > 2)
-			{
-				return GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
-			}
-
-			return .5;
-		}
-
-		/// <summary>
-		/// Get the height of the top of this layer as measure from the bed
-		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
-		public override double GetLayerTop(int layerIndex)
-		{
-			double total = 0;
-			for (int i = 0; i <= layerIndex; i++)
-			{
-				total += GetLayerHeight(i);
-			}
-			return total;
-		}
-
-		/// <summary>
-		/// Get the height of the bottom of this layer as measure from the bed
-		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
-		public double GetLayerBottom(int layerIndex)
-		{
-			double total = 0;
-			for (int i = 0; i < layerIndex; i++)
-			{
-				total += GetLayerHeight(i);
-			}
-			return total;
-		}
-
-		public override int GetLayerIndex(int instructionIndex)
-		{
-			if (instructionIndex >= 0
-				&& instructionIndex <= LineCount)
-			{
-				for (var i = IndexOfLayerStart.Count - 1; i >= 0; i--)
-				{
-					var lineStart = IndexOfLayerStart[i];
-
-					if (instructionIndex >= lineStart)
-					{
-						return i;
-					}
-				}
-			}
-
-			return -1;
-		}
-
-		private static int lastPrintLine = -1;
-
-		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
-		{
-			int currentLayer = GetLayerIndex(instructionIndex);
-
-			if (currentLayer > -1)
-			{
-				int startIndex = IndexOfLayerStart[currentLayer];
-
-				int endIndex = LineCount - 1;
-
-				if (currentLayer < LayerCount - 1)
-				{
-					endIndex = IndexOfLayerStart[currentLayer + 1];
-				}
-				else
-				{
-					// Improved last layer percent complete - seek endIndex to 'MatterSlice Completed' line, otherwise leave at LineCount - 1
-					if (lastPrintLine == -1)
-					{
-						string line = "";
-						lastPrintLine = instructionIndex;
-						do
-						{
-							line = GCodeCommandQueue[Math.Min(GCodeCommandQueue.Count - 1, lastPrintLine)].Line;
-							lastPrintLine++;
-
-						} while (line != "; MatterSlice Completed Successfully"
-							&& lastPrintLine < endIndex);
-					}
-
-					endIndex = lastPrintLine;
-				}
-
-				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);
-				return deltaFromStart / (double)(endIndex - startIndex);
-			}
-
-			return 0;
 		}
 	}
 }
