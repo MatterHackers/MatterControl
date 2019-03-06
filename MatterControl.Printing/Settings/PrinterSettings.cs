@@ -64,13 +64,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public event EventHandler<StringEventArgs> SettingChanged;
 
-		public event EventHandler MaterialPresetChanged;
-
-		public void OnMaterialPresetChanged()
-		{
-			MaterialPresetChanged?.Invoke(null, null);
-		}
-
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
@@ -398,40 +391,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			set
 			{
-				SetValue(SettingsKey.active_quality_key, value);
-				QualityLayer = GetQualityLayer(value);
-
-				this.OnSettingChanged(SettingsKey.active_quality_key);
+				if (this.ActiveQualityKey != value)
+				{
+					SetValue(SettingsKey.active_quality_key, value);
+					QualityLayer = GetQualityLayer(value);
+				}
 			}
 		}
 
 		public string ActiveMaterialKey
 		{
-			get
-			{
-				if (MaterialSettingsKeys.Count > 0)
-				{
-					return MaterialSettingsKeys[0];
-				}
-
-				return null;
-			}
+			get => GetValue(SettingsKey.active_material_key);
 			set
 			{
-				if (MaterialSettingsKeys.Count == 0 || value != MaterialSettingsKeys[0])
+				if (this.ActiveMaterialKey != value)
 				{
-					MaterialSettingsKeys.Clear();
-					MaterialSettingsKeys.Add(value);
+					SetValue(SettingsKey.active_material_key, value);
 					MaterialLayer = GetMaterialLayer(value);
-					this.OnMaterialPresetChanged();
-
-					this.OnSettingChanged(SettingsKey.active_material_key);
 				}
 			}
 		}
-
-		public List<string> MaterialSettingsKeys { get; set; } = new List<string>();
-
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
