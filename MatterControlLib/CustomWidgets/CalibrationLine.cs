@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 	public class CalibrationLine : GuiWidget
 	{
 		public static Dictionary<int, IVertexSource> Glyphs { get; private set; }
-		private static int glyphSize = 8;
+		private static int glyphSize = 10;
 
 		private bool mouseInBounds;
 		private bool verticalLine;
@@ -57,13 +57,13 @@ namespace MatterHackers.MatterControl
 		{
 			if (parentDirection == FlowDirection.LeftToRight)
 			{
-				this.Width = 8;
+				this.Width = glyphSize;
 				this.HAnchor = HAnchor.Absolute;
 				this.VAnchor = VAnchor.Stretch;
 			}
 			else
 			{
-				this.Height = 8;
+				this.Height = glyphSize;
 				this.HAnchor = HAnchor.Stretch;
 				this.VAnchor = VAnchor.Absolute;
 			}
