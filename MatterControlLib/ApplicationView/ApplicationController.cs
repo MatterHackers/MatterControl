@@ -1829,7 +1829,7 @@ namespace MatterHackers.MatterControl
 		public bool IsReloading { get; private set; } = false;
 
 		// TODO: No longer contains async child methods. Leaving async compatible pattern in place in case it's needed in the near future, revert back to void if not
-		public Task ReloadAll()
+		public async Task ReloadAll()
 		{
 			try
 			{
@@ -1854,6 +1854,8 @@ namespace MatterHackers.MatterControl
 
 				AppContext.RootSystemWindow.AddChild(reloadingOverlay);
 
+				await Task.Delay(50);
+
 				GuiWidget.LayoutCount = 0;
 
 				using (new QuickTimer($"ReloadAll_{reloadCount++}:"))
@@ -1877,8 +1879,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
-
-			return Task.CompletedTask;
 		}
 
 		static int reloadCount = 0;
