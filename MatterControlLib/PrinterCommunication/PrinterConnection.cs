@@ -2440,7 +2440,16 @@ You will then need to logout and log back in to the computer for the changes to 
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						TurnOffBedAndExtruders(TurnOff.Now);
+						if (SecondsPrinted < 60 * 10)
+						{
+							// The user may still be sitting at the machine, leave it heated for a period of time
+							TurnOffBedAndExtruders(TurnOff.AfterDelay);
+						}
+						else
+						{
+							// Turn off the heaters on long prints as the user is less likely to be around and interacting
+							TurnOffBedAndExtruders(TurnOff.Now);
+						}
 					}
 				}
 			}
@@ -2488,10 +2497,11 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		/// <summary>
 		/// This gets set by the Pause Handling Stream when a change in the position sensor is seen.
-		/// It is improtant that this is not persisted, it is meant to function correctly if the user
+		/// It is important that this is not persisted, it is meant to function correctly if the user
 		/// plugs in or removes a filament position sensor.
 		/// </summary>
 		public bool FilamentPositionSensorDetected { get; internal set; }
+
 		public Vector3 HomingPosition
 		{
 			get => _homingPosition;

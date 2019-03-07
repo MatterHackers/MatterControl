@@ -82,6 +82,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				temps[i] = printer.Settings.Helpers.ExtruderTargetTemperature(i);
 			}
 
+			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
+			double targetBedTemp = 0;
+			if (hasHeatedBed)
+			{
+				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			}
+
 			yield return new WaitForTempPage(
 				this,
 				"Waiting For Printer To Heat".Localize(),
@@ -90,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					+ "\n"
 					+ "Warning! The tip of the nozzle will be HOT!".Localize() + "\n"
 					+ "Avoid contact with your skin.".Localize(),
-				0,
+				targetBedTemp,
 				temps);
 
 			// add in the homing printer page

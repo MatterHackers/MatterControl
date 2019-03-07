@@ -381,24 +381,27 @@ namespace MatterControl.Printing
 
 		public (int toolIndex, double time) NextToolChange(int instructionIndex, int currentToolIndex = -1, int toolToLookFor = -1)
 		{
-			int nextToolChange = -1;
-			// find the first tool change that we are less than
-			for (int i = 0; i < toolChanges.Count; i++)
+			if (GCodeCommandQueue.Count > 0)
 			{
-				if (instructionIndex < toolChanges[i]
-					&& GCodeCommandQueue[toolChanges[i]].ToolIndex != currentToolIndex
-					&& (toolToLookFor == -1 || GCodeCommandQueue[toolChanges[i]].ToolIndex == toolToLookFor))
+				int nextToolChange = -1;
+				// find the first tool change that we are less than
+				for (int i = 0; i < toolChanges.Count; i++)
 				{
-					nextToolChange = i;
-					break;
+					if (instructionIndex < toolChanges[i]
+						&& GCodeCommandQueue[toolChanges[i]].ToolIndex != currentToolIndex
+						&& (toolToLookFor == -1 || GCodeCommandQueue[toolChanges[i]].ToolIndex == toolToLookFor))
+					{
+						nextToolChange = i;
+						break;
+					}
 				}
-			}
 
-			if (nextToolChange >= 0)
-			{
-				var toolIndex = GCodeCommandQueue[toolChanges[nextToolChange]].ToolIndex;
-				var time = GCodeCommandQueue[instructionIndex].SecondsToEndFromHere - GCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
-				return (toolIndex, time);
+				if (nextToolChange >= 0)
+				{
+					var toolIndex = GCodeCommandQueue[toolChanges[nextToolChange]].ToolIndex;
+					var time = GCodeCommandQueue[instructionIndex].SecondsToEndFromHere - GCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
+					return (toolIndex, time);
+				}
 			}
 
 			// there are no more tool changes
