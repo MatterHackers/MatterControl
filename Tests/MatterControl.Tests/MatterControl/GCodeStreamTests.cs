@@ -727,6 +727,101 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
+		public void ToolChangeStreamTests()
+		{
+			string[] inputLines = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"G1 X10 Y10 Z10 E0",
+				"T0",
+				"G1 X10 Y10 Z10 E0",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				// the code to switch to t1
+				"; waiting for move on T1",
+				"",
+				"; simulated before toolchange 1 gcode",
+				"T1",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange 1 gcode",
+				"G1 X9 Y8 Z7.1 F3000", // the F comes from the x movement speed
+				"G1 Z7.1 F315", // the F comes from the z movement speed
+				"G1 Z7.1 F2500", // restore the feedrate
+				"G1 Z7.1",
+				// the code to switch back to t0
+				"; waiting for move on T0",
+				"",
+				"; simulated before toolchange gcode",
+				"T0",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange gcode",
+				"G1 F3000", // the F comes from the x movement speed
+				"G1 F315", // the F comes from the z movement speed
+				"G1 F2500", // restore the feedrate
+				"G1",
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
+				null,
+			};
+
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// this is the pause and resume from the Eris
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			// setup for dual extrusion
+			printer.Settings.SetValue(SettingsKey.extruder_count, "2");
+
+			printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
+
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "; simulated after toolchange gcode");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "; simulated after toolchange 1 gcode");
+
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "; simulated before toolchange gcode");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "; simulated before toolchange 1 gcode");
+
+			// set some data for T1
+			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, ".1");
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+
+			int expectedIndex = 0;
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[expectedIndex++];
+
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
+
+			while (actualLine != null)
+			{
+				expectedLine = expected[expectedIndex++];
+
+				actualLine = testStream.ReadLine();
+				if (actualLine == "G92 E0")
+				{
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
+				}
+
+				if(expectedLine != actualLine)
+				{
+					int a = 0;
+				}
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			}
+		}
+
+		[Test, Category("GCodeStream")]
 		public void WriteReplaceStreamTests()
 		{
 			string[] inputLines = new string[]

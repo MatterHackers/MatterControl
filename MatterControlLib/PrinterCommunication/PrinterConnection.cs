@@ -2174,7 +2174,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (ExtruderCount > 1)
 			{
 				accumulatedStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream);
-				accumulatedStream = new HotendTemperatureStream(Printer, accumulatedStream, queuedCommandStream);
 			}
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);

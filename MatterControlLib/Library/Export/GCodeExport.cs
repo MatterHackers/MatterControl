@@ -288,7 +288,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream);
-				accumulatedStream = new HotendTemperatureStream(printer, accumulatedStream, queuedCommandStream);
 			}
 
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
