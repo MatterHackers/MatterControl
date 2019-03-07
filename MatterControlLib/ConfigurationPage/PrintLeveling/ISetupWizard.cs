@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -38,6 +39,8 @@ namespace MatterHackers.MatterControl
 		string WindowTitle { get; }
 
 		WizardPage GetNextPage();
+
+		Vector2 WindowSize { get; }
 
 		WizardPage CurrentPage { get; }
 	}

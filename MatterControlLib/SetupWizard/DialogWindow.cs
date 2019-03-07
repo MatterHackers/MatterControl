@@ -89,6 +89,11 @@ namespace MatterHackers.MatterControl
 			DialogWindow wizardWindow = GetWindow(setupWizard.GetType());
 			wizardWindow.Title = setupWizard.WindowTitle;
 
+			if (setupWizard.WindowSize != Vector2.Zero)
+			{
+				wizardWindow.Size = setupWizard.WindowSize;
+			}
+
 			SetSizeAndShow(wizardWindow, setupWizard.CurrentPage);
 
 			wizardWindow.ChangeToPage(setupWizard.CurrentPage);
@@ -133,16 +138,17 @@ namespace MatterHackers.MatterControl
 			set => base.MinimumSize = value;
 		}
 
-		public static void SetSizeAndShow(DialogWindow wizardWindow, DialogPage wizardPage)
+		public static void SetSizeAndShow(DialogWindow dialogWindow, DialogPage wizardPage)
 		{
-			if (wizardPage.WindowSize != Vector2.Zero)
+			if (dialogWindow.Size == Vector2.Zero 
+				&& wizardPage.WindowSize != Vector2.Zero)
 			{
-				wizardWindow.Size = wizardPage.WindowSize;
+				dialogWindow.Size = wizardPage.WindowSize;
 			}
 
-			wizardWindow.AlwaysOnTopOfMain = wizardPage.AlwaysOnTopOfMain;
+			dialogWindow.AlwaysOnTopOfMain = wizardPage.AlwaysOnTopOfMain;
 
-			wizardWindow.ShowAsSystemWindow();
+			dialogWindow.ShowAsSystemWindow();
 		}
 
 		public static bool IsOpen(Type type) => allWindows.ContainsKey(type);
