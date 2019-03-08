@@ -103,12 +103,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// track the tool state
 			if (lineToSend.StartsWith("T"))
 			{
-				GCodeFile.GetFirstNumberAfter("T", lineToSend, ref requestedTool);
-				if (SendState == SendStates.Normal)
+				int changeCommandTool = -1;
+				if(GCodeFile.GetFirstNumberAfter("T", lineToSend, ref changeCommandTool)
+					&& changeCommandTool != activeTool)
 				{
-					SendState = SendStates.WaitingForMove;
-					// don't queue the tool change until after the before gcode has been sent
-					return $"; waiting for move on T{requestedTool}";
+					requestedTool = changeCommandTool;
+					if (SendState == SendStates.Normal)
+					{
+						SendState = SendStates.WaitingForMove;
+						// don't queue the tool change until after the before gcode has been sent
+						return $"; waiting for move on T{requestedTool}";
+					}
+				}
+			}
+			// check if there is a temperature change request
+			else if (lineToSend.StartsWith("M104") || lineToSend.StartsWith("M109"))
+			{
+				double toolBeingSet = -1;
+				// if there is a tool specification
+				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref toolBeingSet))
+				{
+					if (toolBeingSet != activeTool)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						queuedCommandsStream.Add("T{0} ; NO_PROCESSING".FormatWith(activeTool));
+					}
 				}
 			}
 
@@ -149,7 +168,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
-		private void ManageCoolDownAndOffTemps()
+		private void ManageCoolDownAndOffTemps(StringBuilder gcode)
 		{
 			// get the time to the next tool switch
 			var timeToNextToolChange = printer.Connection.NextToolChange().time;
@@ -161,9 +180,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				// we do not switch tools again, turn off any that are not currently printing
 				for (int i = 0; i < extruderCount; i++)
 				{
-					if (i != requestedTool)
+					if (i != requestedTool
+						&& i != activeTool)
 					{
-						printer.Connection.QueueLine($"M104 T{i} S0");
+						gcode.AppendLine($"M104 T{i} S0");
 					}
 				}
 			}
@@ -176,15 +196,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (nextTimeThisTool == double.PositiveInfinity)
 				{
 					// turn off its heat
-					printer.Connection.QueueLine($"M104 T{activeTool} S0");
+					gcode.AppendLine($"M104 T{activeTool} S0");
 				}
 				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
 				else if (nextTimeThisTool > timeToReheat)
 				{
-					var targetTemp = printer.Settings.Helpers.ExtruderTargetTemperature(activeTool);
+					var targetTemp = PrintingTemperature(activeTool);
 					targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
-					printer.Connection.QueueLine($"M104 T{activeTool} S{targetTemp}");
+					gcode.AppendLine($"M104 T{activeTool} S{targetTemp}");
 				}
+			}
+		}
+
+		double PrintingTemperature(int toolIndex)
+		{
+			switch(toolIndex)
+			{
+				default:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature);
+
+				case 1:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature1);
+
+				case 2:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature2);
+
+				case 3:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature3);
 			}
 		}
 
@@ -192,7 +230,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
-			bool setATemp = false;
 			// check if we need to turn on extruders while printing
 			// check if any extruders need to start heating back up
 			for (int i = 0; i < extruderCount; i++)
@@ -203,22 +240,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					&& nextToolChange.time < timeToReheat
 					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp)
 				{
-					printer.Connection.QueueLine($"M104 T{i} S0");
-					setATemp = true;
+					printer.Connection.QueueLine($"M104 T{i} S{targetTemp}");
 				}
-			}
-
-			// for smoothie, make sure we have the right extruder active
-			if (setATemp)
-			{
-				printer.Connection.QueueLine($"T{activeTool}");
 			}
 		}
 
 		private void QueueAfterGCode()
 		{
-			ManageCoolDownAndOffTemps();
-
 			string afterGcodeToQueue = "";
 			switch (requestedTool)
 			{
@@ -247,12 +275,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// put together the output we want to send
 			var gcode = new StringBuilder();
 
-			// ensure our next tool is at temp (the one we are switching to)
-			var nextToolTargetTemp = printer.Connection.GetTargetHotendTemperature(requestedTool);
-			if (printer.Connection.GetActualHotendTemperature(requestedTool) < nextToolTargetTemp - 3)
+			// If the printer is heating, make sure we are at temp before switching extruders
+			var nextToolTargetTemp = PrintingTemperature(requestedTool);
+			var currentPrinterTargeTemp = printer.Connection.GetTargetHotendTemperature(requestedTool);
+			if (currentPrinterTargeTemp > 0
+				&& printer.Connection.GetActualHotendTemperature(requestedTool) < nextToolTargetTemp - 3)
 			{
+				// ensure our next tool is at temp (the one we are switching to)
 				gcode.AppendLine($"M109 T{requestedTool} S{nextToolTargetTemp}");
-				gcode.AppendLine($"T{requestedTool}");
 			}
 
 			if (afterGcodeToQueue.Trim().Length > 0)
@@ -319,8 +349,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					gcode.Append(printer.ReplaceMacroValues(beforeGcodeToQueue));
 				}
 
+				gcode.Append("\n");
+
+				ManageCoolDownAndOffTemps(gcode);
+
 				// send the actual tool change
-				gcode.AppendLine("\n" + $"T{requestedTool}");
+				gcode.AppendLine($"T{requestedTool}");
+
 				// send the marker to let us know we have sent the before gcode
 				gcode.AppendLine(compleatedBeforeGCodeString);
 

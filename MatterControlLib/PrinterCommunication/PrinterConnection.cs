@@ -331,7 +331,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			if (gCodeFileSwitcher != null
 				&& gCodeFileSwitcher.GCodeFile is GCodeMemoryFile gCodeMemoryFile)
 			{
-				return gCodeMemoryFile.NextToolChange(gCodeFileSwitcher.LineIndex, -1, toolToLookFor);
+				var timeToTool = gCodeMemoryFile.NextToolChange(gCodeFileSwitcher.LineIndex, -1, toolToLookFor);
+				return timeToTool;
 			}
 
 			return (-1, 0);
@@ -1873,11 +1874,6 @@ You will then need to logout and log back in to the computer for the changes to 
 				if (this.IsConnected)
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
-					if (ActiveExtruderIndex != hotendIndex0Based)
-					{
-						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
-						QueueLine("T{0}".FormatWith(ActiveExtruderIndex));
-					}
 				}
 			}
 		}
