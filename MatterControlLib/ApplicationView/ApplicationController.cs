@@ -2432,37 +2432,6 @@ namespace MatterHackers.MatterControl
 				}
 				else // there are no errors continue printing
 				{
-					// check that current bed temp is within 10 degrees of leveling temp
-					var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
-					var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
-					if (enabled || required)
-					{
-						double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
-							printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
-							: 0;
-						PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
-						if (!levelingData.IssuedLevelingTempWarning
-							&& Math.Abs(requiredLevelingTemp - levelingData.BedTemperature) > 10)
-						{
-							// Show a warning that leveling may be a good idea if better adhesion needed
-							UiThread.RunOnIdle(() =>
-							{
-								StyledMessageBox.ShowMessageBox(
-									@"Leveling data created with bed temperature of: {0}°C
-Current bed temperature: {1}°C
-
-If you experience adhesion problems, please re-run leveling."
-									.FormatWith(levelingData.BedTemperature, requiredLevelingTemp),
-									"Leveling data warning");
-
-								levelingData.IssuedLevelingTempWarning = true;
-								printer.Settings.Helpers.SetPrintLevelingData(levelingData);
-								printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-								printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
-							});
-						}
-					}
-
 					// clear the output cache prior to starting a print
 					printer.Connection.TerminalLog.Clear();
 

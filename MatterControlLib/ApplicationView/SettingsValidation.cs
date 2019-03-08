@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -131,9 +130,10 @@ namespace MatterHackers.MatterControl
 
 				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 
-				// Print recovery can only work with a manually leveled or software leveled bed. Hardware leveling does not work.
+				// Print recovery is incompatible with firmware leveling - ensure not enabled in startGCode
 				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled))
 				{
+					// Ensure we don't have hardware leveling commands in the start gcode.
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -158,9 +158,12 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				var levelingRequired = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+
+				if (levelingEnabled || levelingRequired)
 				{
+					// Ensure we don't have hardware leveling commands in the start gcode.
 					foreach (string startGCodeLine in startGCode)
 					{
 						if (startGCodeLine.StartsWith("G29"))
@@ -182,6 +185,41 @@ namespace MatterHackers.MatterControl
 									Details = "Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.".Localize(),
 								});
 						}
+					}
+
+					bool heatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
+
+					double bedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+
+					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+
+					if (heatedBed
+						&& !levelingData.IssuedLevelingTempWarning
+						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10)
+					{
+						errors.Add(
+							new ValidationError()
+							{
+								Error = "Bed Leveling Temperature".Localize(),
+								Details = string.Format(
+									"Bed Leveling data created at {0}°C versus current {1}°C".Localize(),
+									levelingData.BedTemperature,
+									bedTemperature),
+								ErrorLevel = ValidationErrorLevel.Warning,
+								FixAction = new NamedAction()
+								{
+									Title = "Dismiss",
+									Action = () =>
+									{
+										// Get active leveling - ensure we pull the leveling data at the moment of dismiss invoke
+										PrintLevelingData leveling = printer.Settings.Helpers.GetPrintLevelingData();
+										leveling.IssuedLevelingTempWarning = true;
+
+										// Store leveling data with IssuedLevelingTempWarning set
+										printer.Settings.Helpers.SetPrintLevelingData(leveling);
+									}
+								}
+							});
 					}
 				}
 
