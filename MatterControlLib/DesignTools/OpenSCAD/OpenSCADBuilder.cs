@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class OpenSCADBuilder : IObject3DEditor
 	{
-		private View3DWidget view3DWidget;
 		private OpenScadObject3D item;
 
 		public string Name => "Builder";
@@ -86,7 +85,7 @@ namespace MatterHackers.MatterControl.Library
 			return dictionary;
 		}
 
-		public GuiWidget Create(IObject3D object3D, ThemeConfig theme)
+		public GuiWidget Create(IObject3D object3D, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			this.item = object3D as OpenScadObject3D;
 
