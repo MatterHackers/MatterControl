@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		IEnumerable<Type> IObject3DEditor.SupportedTypes() => new[] { typeof(ImageObject3D) };
 
-		public GuiWidget Create(IObject3D item, ThemeConfig theme)
+		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{

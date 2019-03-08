@@ -47,9 +47,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ThemeConfig theme;
 		private Color opaqueMinimumAccent;
 		private Color opaqueAccent;
-		private Vector2 bedSize;
+		private RectangleDouble bedBounds;
+
+		//private Vector2 bedSize;
 		private bool circularBed;
-		private RectangleDouble scaledBedRect;
 		private Color extraLightColor;
 		private Color lightColor;
 		private double scalingFactor;
@@ -68,8 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			opaqueMinimumAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay);
 			opaqueAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(140));
 
-			bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-			//printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			bedBounds = printer.Bed.Bounds;
 			circularBed = printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular;
 		}
 
@@ -85,39 +85,49 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			if (this.Height > this.Width)
 			{
-				scalingFactor = this.Width / bedSize.X;
+				scalingFactor = this.Width / bedBounds.Width;
 			}
 			else
 			{
-				scalingFactor = this.Height / bedSize.Y;
+				scalingFactor = this.Height / bedBounds.Height;
 			}
-
-			scaledBedRect = new RectangleDouble(0, 0, bedSize.X * scalingFactor, bedSize.Y * scalingFactor);
 
 			base.OnBoundsChanged(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
+			var inverseScale = 1 / scalingFactor;
+
 			var offset = Vector2.Zero;
 
+			//graphics2D.PushTransform();
+
+			// Reset to zero
+			var existing = graphics2D.GetTransform();
+			existing.translation(out double x, out double y);
+			offset.X += x;
+			offset.Y += y;
+
+			// Center
 			if (this.Width > this.Height)
 			{
-				offset.X = (this.Width / 2) - (scaledBedRect.Width / 2);
+				offset.X += (this.Width / 2) - (bedBounds.Width * scalingFactor / 2);
 			}
 			else
 			{
-				offset.Y = (this.Height / 2) - (scaledBedRect.Height / 2);
+				offset.Y += (this.Height / 2) - (bedBounds.Height * scalingFactor / 2);
 			}
 
-			graphics2D.PushTransform();
-			graphics2D.SetTransform(graphics2D.GetTransform() * Affine.NewTranslation(offset));
+			// Offset considering bed bounds
+			offset.X -= bedBounds.Left * scalingFactor;
+			offset.Y -= bedBounds.Bottom * scalingFactor;
 
-			graphics2D.FillRectangle(scaledBedRect, theme.SlightShade);
-			graphics2D.Rectangle(scaledBedRect, lightColor);
+			// Apply transform
+			graphics2D.SetTransform(Affine.NewScaling(scalingFactor) * Affine.NewTranslation(offset));
 
-			// Draw some basic bed gridlines
-			this.RenderBedGrid(graphics2D);
+			// Draw the bed
+			this.RenderBed(graphics2D);
 
 			// Build hotend path
 			if (this.RenderProbePath)
@@ -137,11 +147,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				foreach (var region in currentLevelingFunctions.Regions)
 				{
-					levelingTriangles.MoveTo(region.V0.X * scalingFactor, region.V0.Y * scalingFactor);
+					levelingTriangles.MoveTo(region.V0.X, region.V0.Y);
 
-					levelingTriangles.LineTo(region.V1.X * scalingFactor, region.V1.Y * scalingFactor);
-					levelingTriangles.LineTo(region.V2.X * scalingFactor, region.V2.Y * scalingFactor);
-					levelingTriangles.LineTo(region.V0.X * scalingFactor, region.V0.Y * scalingFactor);
+					levelingTriangles.LineTo(region.V1.X, region.V1.Y);
+					levelingTriangles.LineTo(region.V2.X, region.V2.Y);
+					levelingTriangles.LineTo(region.V0.X, region.V0.Y);
 				}
 
 				graphics2D.Render(
@@ -153,14 +163,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int i = 0;
 			foreach (var position in probePoints)
 			{
-				var center = new Vector2(position.X * scalingFactor, position.Y * scalingFactor);
+				var center = new Vector2(position.X, position.Y);
 
 				var circleColor = lightColor;
 
 				if (this.SimplePoints)
 				{
 					graphics2D.Render(
-						new Ellipse(center, 4),
+						new Ellipse(center, 4 * inverseScale),
 						opaqueMinimumAccent);
 				}
 				else
@@ -175,7 +185,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 
 					graphics2D.Render(
-						new Ellipse(center, 8),
+						new Ellipse(center, 8 * inverseScale),
 						circleColor);
 
 					graphics2D.DrawString(
@@ -184,12 +194,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						center.Y,
 						justification: Agg.Font.Justification.Center,
 						baseline: Agg.Font.Baseline.BoundsCenter,
-						pointSize: theme.FontSize7,
+						pointSize: theme.FontSize7 * inverseScale,
 						color: theme.TextColor);
 				}
 			}
 
-			graphics2D.PopTransform();
+			//graphics2D.PopTransform();
 
 			base.OnDraw(graphics2D);
 		}
@@ -199,11 +209,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var firstPosition = probePoints.First();
 
 			var path = new VertexStorage();
-			path.MoveTo(firstPosition.X * scalingFactor, firstPosition.Y * scalingFactor);
+			path.MoveTo(firstPosition.X, firstPosition.Y);
 
 			foreach (var position in probePoints)
 			{
-				var center = new Vector2(position.X * scalingFactor, position.Y * scalingFactor);
+				var center = new Vector2(position.X, position.Y);
 				path.LineTo(center);
 			}
 
@@ -213,20 +223,50 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				theme.AccentMimimalOverlay);
 		}
 
-		private void RenderBedGrid(Graphics2D graphics2D)
+		private void RenderBed(Graphics2D graphics2D)
 		{
-			var steps = bedSize.X / 20;
-			for (var j = 1; j < steps; j++)
+			if (circularBed)
 			{
-				var step = j * 20 * scalingFactor;
-				graphics2D.Line(step, 0, step, scaledBedRect.Height, extraLightColor); // X
-			}
+				var radius = bedBounds.Width / 2;
 
-			steps = bedSize.Y / 20;
-			for (var j = 1; j < steps; j++)
+				var lineCount = bedBounds.Width / 2 / 10;
+				var steps = radius / lineCount;
+
+				var bedShape = new Ellipse(Vector2.Zero, radius);
+				graphics2D.Render(bedShape, theme.SlightShade);
+				graphics2D.Render(new Stroke(bedShape), lightColor);
+
+				var moreAlpha = extraLightColor.WithAlpha(150);
+
+				for (var i = 0; i < lineCount; i++)
+				{
+					graphics2D.Render(
+						new Stroke(
+							new Ellipse(Vector2.Zero, radius - (i * steps))),
+						moreAlpha);
+				}
+			}
+			else
 			{
-				var step = j * 20 * scalingFactor;
-				graphics2D.Line(0, step, scaledBedRect.Width, step, extraLightColor); // Y
+				graphics2D.FillRectangle(bedBounds, theme.SlightShade);
+				graphics2D.Rectangle(bedBounds, lightColor);
+
+				var x = bedBounds.Left;
+				var y = bedBounds.Bottom;
+
+				var steps = bedBounds.Width / 20;
+				for (var j = 1; j < steps; j++)
+				{
+					var step = j * 20;
+					graphics2D.Line(x + step, y, x + step, y + bedBounds.Height, extraLightColor); // X
+				}
+
+				steps = bedBounds.Height / 20;
+				for (var j = 1; j < steps; j++)
+				{
+					var step = j * 20;
+					graphics2D.Line(x, y + step, x + bedBounds.Width, y + step, extraLightColor); // Y
+				}
 			}
 		}
 	}

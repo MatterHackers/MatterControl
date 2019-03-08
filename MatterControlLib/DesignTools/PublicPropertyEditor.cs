@@ -112,16 +112,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public const BindingFlags OwnedPropertiesOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
-		public GuiWidget Create(IObject3D item, ThemeConfig theme)
+		public GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme)
 		{
 			var mainContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
 			};
-
-			// TODO: Long term we should have a solution where editors can extend Draw and Undo without this hack
-			var view3DWidget = ApplicationController.Instance.DragDropData.View3DWidget;
-			var undoBuffer = view3DWidget.sceneContext.Scene.UndoBuffer;
 
 			if (item != null)
 			{
@@ -158,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					// Create SectionWidget for SectionStartAttributes
 					if (property.PropertyInfo.GetCustomAttributes(true).OfType<SectionEndAttribute>().Any())
 					{
-						// Push scope back to mainContainer on 
+						// Push scope back to mainContainer on
 						scope = mainContainer;
 					}
 
@@ -473,7 +469,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					field.Initialize(0);
 					RegisterValueChanged(field,
-						(valueString) => 
+						(valueString) =>
 						{
 							var childrenSelector = new SelectedChildren();
 							foreach (var child in valueString.Split(','))
@@ -553,7 +549,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.Checked = boolValue;
 
-				RegisterValueChanged(field, 
+				RegisterValueChanged(field,
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)(value)) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field);
@@ -630,7 +626,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is IObject3D item
 				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
-				rowContainer = iObject3DEditor.Create(item, theme);
+				rowContainer = iObject3DEditor.Create(item, undoBuffer, theme);
 			}
 
 			// remember the row name and widget
