@@ -433,7 +433,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Dictionary<IObject3D, TreeNode> keyValues = new Dictionary<IObject3D, TreeNode>();
+		private Dictionary<IObject3D, TreeNode> treeNodesByObject = new Dictionary<IObject3D, TreeNode>();
 
 		private void RebuildTree()
 		{
@@ -443,7 +443,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Top level selection only - rebuild tree
 			treeNodeContainer.CloseAllChildren();
 
-			keyValues.Clear();
+			treeNodesByObject.Clear();
 
 			foreach (var child in sceneContext.Scene.Children)
 			{
@@ -452,7 +452,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
-				var rootNode = Object3DTreeBuilder.BuildTree(child, keyValues, theme);
+				var rootNode = Object3DTreeBuilder.BuildTree(child, treeNodesByObject, theme);
 				treeNodeContainer.AddChild(rootNode);
 				rootNode.TreeView = treeView;
 			}
@@ -460,7 +460,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Ensure selectedItem is selected
 			var selectedItem = sceneContext.Scene.SelectedItem;
 			if (selectedItem != null
-				&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+				&& treeNodesByObject.TryGetValue(selectedItem, out TreeNode treeNode))
 			{
 				treeView.SelectedNode = treeNode;
 			}
@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
 
 			// Build workspace actions, each having a unique ID
-			var actions = new [] 
+			var actions = new []
 			{
 				new NamedAction()
 				{
@@ -1870,7 +1870,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Change tree selection to current node
 				if (selectedItem != null
-					&& keyValues.TryGetValue(selectedItem, out TreeNode treeNode))
+					&& treeNodesByObject.TryGetValue(selectedItem, out TreeNode treeNode))
 				{
 					treeView.SelectedNode = treeNode;
 				}
