@@ -137,26 +137,26 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (new CenterAndHeightMantainer(this))
 					{
-						this.Children.Modify((List<IObject3D> list) =>
+						this.Children.Modify(list =>
 						{
 							list.Clear();
 
 							var offest = 0.0;
 							double pointsToMm = 0.352778;
-							foreach (var letter in NameToWrite.ToCharArray())
+
+							foreach (var letter in this.NameToWrite.ToCharArray())
 							{
-								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(Font), PointSize))
+								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
 								{
 									ResolutionScale = 10
 								};
-								var scalledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
-								IObject3D letterObject = new Object3D()
-								{
-									Mesh = VertexSourceToMesh.Extrude(scalledLetterPrinter, Height)
-								};
+								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
 
-								letterObject.Matrix = Matrix4X4.CreateTranslation(offest, 0, 0);
-								list.Add(letterObject);
+								list.Add(new Object3D()
+								{
+									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
+									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0)
+								});
 
 								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
 							}
