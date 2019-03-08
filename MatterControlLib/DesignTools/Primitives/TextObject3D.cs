@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var rebuildLock = RebuildLock();
 
 			return ApplicationController.Instance.Tasks.Execute(
-				"Mirror".Localize(),
+				"Generating Text Meshes".Localize(),
 				null,
 				(reporter, cancellationToken) =>
 				{
