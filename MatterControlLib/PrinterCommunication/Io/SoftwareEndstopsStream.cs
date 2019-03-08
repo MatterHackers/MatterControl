@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void CalculateBounds()
 		{
-			// TODO: switch to printer.Bed.Bounds
+			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
 
 			// if the printer has leveling enabled
@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// find out if the printer knows some of its limits
 			var homingPosition = printer.Connection.HomingPosition;
 			// If we know the homing endstop positions, add them in.
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < extruderCount; i++)
 			{
 				if (homingPosition[i] != double.NegativeInfinity)
 				{
@@ -113,13 +113,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				}
 			}
 
-			// first set all the extruders to the bounds defined by the aabb
+			// set all the extruders to the bounds defined by the aabb
 			for (int i = 0; i < extruderBounds.Length; i++)
 			{
 				extruderBounds[i] = aabb;
 			}
 
-			// If we have more constrained info for extruders, add that it
+			// If we have more constrained info for extruders, add that in
 		}
 
 		public override string ReadLine()
