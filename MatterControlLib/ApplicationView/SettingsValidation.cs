@@ -159,7 +159,10 @@ namespace MatterHackers.MatterControl
 				}
 
 				// If we have print leveling turned on then make sure we don't have any leveling commands in the start gcode.
-				if (settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				var levelingRequired = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+
+				if (levelingEnabled || levelingRequired)
 				{
 					foreach (string startGCodeLine in startGCode)
 					{
