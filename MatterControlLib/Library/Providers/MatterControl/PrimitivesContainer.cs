@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new System.DateTime(index++) },
 #if DEBUG
 				new GeneratorItem(
-					() => "Text".Localize(),
+					() => "Text2".Localize(),
 					async () => await TextPathObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 #endif
