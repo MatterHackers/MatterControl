@@ -83,7 +83,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var levelingStrings = new LevelingStrings();
 
-			var title = "Load Material".Localize();
 			var instructions = "Please select the material you want to load.".Localize();
 			if(extruderCount > 1)
 			{
@@ -91,7 +90,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
+			yield return new SelectMaterialPage(this, "Load Material".Localize(), instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
 				WindowTitle = WindowTitle
 			};
@@ -255,7 +254,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								}
 							}
 
-							if (progressBar.RatioComplete == 1 
+							if (progressBar.RatioComplete == 1
 								&& remainingLengthMm <= .001)
 							{
 								UiThread.ClearInterval(runningGCodeCommands);
