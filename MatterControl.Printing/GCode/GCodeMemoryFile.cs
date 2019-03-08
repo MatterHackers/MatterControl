@@ -402,6 +402,15 @@ namespace MatterControl.Printing
 					var time = GCodeCommandQueue[instructionIndex].SecondsToEndFromHere - GCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
 					return (toolIndex, time);
 				}
+				else
+				{
+					// don't turn of extruders if we will end the print within 10 minutes
+					if (instructionIndex < GCodeCommandQueue.Count
+						&& GCodeCommandQueue[instructionIndex].SecondsToEndFromHere < 60 * 10)
+					{
+						return (toolToLookFor, 60 * 10);
+					}
+				}
 			}
 
 			// there are no more tool changes

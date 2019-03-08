@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
 using MatterHackers.Agg;
@@ -39,65 +38,27 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class ToolChangeStream : GCodeStreamProxy
 	{
-		private bool watingForBeforeGCode = false;
-		private int requestedExtruder;
-		private int extruderIndex;
-		PrinterMove lastDestination = PrinterMove.Unknown;
-		private QueuedCommandsStream queuedCommandsStream;
-		int extruderCount = 0;
-		Vector3[] extruderOffsets = new Vector3[4];
+		private readonly string compleatedBeforeGCodeString = "; COMPLEATED_BEFORE_GCODE";
+		private int activeTool;
+		private int extruderCount = 0;
+		private Vector3[] extruderOffsets = new Vector3[4];
+		private PrinterMove lastDestination = PrinterMove.Unknown;
+		private string postSwitchLine;
 		private double preSwitchFeedRate;
 		private Vector3 preSwitchPosition;
-		private string postSwitchLine;
-		private readonly string compleatedBeforeGCodeString = "; COMPLEATED_BEFORE_GCODE";
+		private QueuedCommandsStream queuedCommandsStream;
+		private int requestedTool;
+		enum SendStates { Normal, WaitingForMove, SendingBefore }
+		private SendStates SendState = SendStates.Normal;
 
 		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream)
 			: base(printer, internalStream)
 		{
 			this.queuedCommandsStream = queuedCommandsStream;
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-			extruderIndex = printer.Connection.ActiveExtruderIndex;
+			activeTool = printer.Connection.ActiveExtruderIndex;
 			printer.Settings.SettingChanged += Settings_SettingChanged;
 			ReadExtruderOffsets();
-		}
-
-		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
-		{
-			if (stringEvent != null)
-			{
-				// if the offsets change update them (unless we are actively printing)
-				if (stringEvent.Data == SettingsKey.extruder_offset
-					&& !printer.Connection.Printing
-					&& !printer.Connection.Paused)
-				{
-					ReadExtruderOffsets();
-				}
-			}
-		}
-
-		private void ReadExtruderOffsets()
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
-			}
-		}
-
-		public override void Dispose()
-		{
-			printer.Settings.SettingChanged -= Settings_SettingChanged;
-
-			base.Dispose();
-		}
-
-		public override void SetPrinterPosition(PrinterMove position)
-		{
-			this.lastDestination.CopyKnowSettings(position);
-			if (extruderIndex < 4)
-			{
-				lastDestination.position += extruderOffsets[extruderIndex];
-			}
-			internalStream.SetPrinterPosition(lastDestination);
 		}
 
 		public override string DebugInfo
@@ -108,65 +69,191 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		private bool QueueBeforeIfNeedToSwitchExtruders(string lineIn)
+		public override void Dispose()
 		{
-			if (lineIn == null)
-			{
-				return false;
-			}
+			printer.Settings.SettingChanged -= Settings_SettingChanged;
 
-			var lineNoComment = lineIn.Split(';')[0];
-
-			TrackExtruderState(lineNoComment);
-
-			// check if there is a travel
-			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
-				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
-				&& extruderIndex != requestedExtruder // is different than the last extruder set
-				&& !watingForBeforeGCode)
-			{
-				postSwitchLine = lineIn;
-
-				string beforeGcodeToQueue = "";
-				switch (requestedExtruder)
-				{
-					case 0:
-						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
-						break;
-					case 1:
-						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
-						break;
-				}
-
-				preSwitchFeedRate = lastDestination.feedRate;
-				preSwitchPosition = lastDestination.position;
-
-				// put together the output we want to send
-				var gcode = new StringBuilder();
-				if (beforeGcodeToQueue.Trim().Length > 0)
-				{
-					watingForBeforeGCode = true;
-					gcode.Append(printer.ReplaceMacroValues(beforeGcodeToQueue));
-				}
-
-				gcode.AppendLine("\n" + compleatedBeforeGCodeString);
-				queuedCommandsStream.Add(gcode.ToString());
-
-				return true;
-			}
-
-			return false;
+			base.Dispose();
 		}
 
+		public override string ReadLine()
+		{
+			string lineToSend = base.ReadLine();
+
+			if(lineToSend == null)
+			{
+				return null;
+			}
+
+			if (lineToSend.EndsWith("; NO_PROCESSING"))
+			{
+				return lineToSend;
+			}
+
+			// check if any of the heaters we will be switching to need to start heating
+			ManageReHeating(lineToSend);
+
+			if (lineToSend == compleatedBeforeGCodeString)
+			{
+				activeTool = requestedTool;
+				SendState = SendStates.Normal;
+				QueueAfterGCode();
+			}
+
+			// track the tool state
+			if (lineToSend.StartsWith("T"))
+			{
+				int changeCommandTool = -1;
+				if(GCodeFile.GetFirstNumberAfter("T", lineToSend, ref changeCommandTool)
+					&& changeCommandTool != activeTool)
+				{
+					requestedTool = changeCommandTool;
+					if (SendState == SendStates.Normal)
+					{
+						SendState = SendStates.WaitingForMove;
+						// don't queue the tool change until after the before gcode has been sent
+						return $"; waiting for move on T{requestedTool}";
+					}
+				}
+			}
+			// check if there is a temperature change request
+			else if (lineToSend.StartsWith("M104") || lineToSend.StartsWith("M109"))
+			{
+				double toolBeingSet = -1;
+				// if there is a tool specification
+				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref toolBeingSet))
+				{
+					if (toolBeingSet != activeTool)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						queuedCommandsStream.Add("T{0} ; NO_PROCESSING".FormatWith(activeTool));
+					}
+				}
+			}
+
+			if (QueueBeforeIfNeedToSwitchExtruders(lineToSend))
+			{
+				return "";
+			}
+
+			if (LineIsMovement(lineToSend))
+			{
+				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+
+				PrinterMove moveToSend = currentMove;
+				if (activeTool < 4)
+				{
+					moveToSend.position -= extruderOffsets[activeTool];
+				}
+
+				if (moveToSend.HaveAnyPosition)
+				{
+					lineToSend = CreateMovementLine(moveToSend, lastDestination);
+				}
+				lastDestination = currentMove;
+
+				return lineToSend;
+			}
+
+			return lineToSend;
+		}
+
+		public override void SetPrinterPosition(PrinterMove position)
+		{
+			this.lastDestination.CopyKnowSettings(position);
+			if (activeTool < 4)
+			{
+				lastDestination.position += extruderOffsets[activeTool];
+			}
+			internalStream.SetPrinterPosition(lastDestination);
+		}
+
+		private void ManageCoolDownAndOffTemps(StringBuilder gcode)
+		{
+			// get the time to the next tool switch
+			var timeToNextToolChange = printer.Connection.NextToolChange().time;
+			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
+
+			// if we do not switch again
+			if (timeToNextToolChange == double.PositiveInfinity)
+			{
+				// we do not switch tools again, turn off any that are not currently printing
+				for (int i = 0; i < extruderCount; i++)
+				{
+					if (i != requestedTool
+						&& i != activeTool)
+					{
+						gcode.AppendLine($"M104 T{i} S0");
+					}
+				}
+			}
+			else // there are more tool changes in the future
+			{
+				// get the next time we will use the current tool
+				var nextTimeThisTool = printer.Connection.NextToolChange(activeTool).time;
+
+				// if we do not use this tool again
+				if (nextTimeThisTool == double.PositiveInfinity)
+				{
+					// turn off its heat
+					gcode.AppendLine($"M104 T{activeTool} S0");
+				}
+				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
+				else if (nextTimeThisTool > timeToReheat)
+				{
+					var targetTemp = PrintingTemperature(activeTool);
+					targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
+					gcode.AppendLine($"M104 T{activeTool} S{targetTemp}");
+				}
+			}
+		}
+
+		double PrintingTemperature(int toolIndex)
+		{
+			switch(toolIndex)
+			{
+				default:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature);
+
+				case 1:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature1);
+
+				case 2:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature2);
+
+				case 3:
+					return printer.Settings.GetValue<double>(SettingsKey.temperature3);
+			}
+		}
+
+		private void ManageReHeating(string line)
+		{
+			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
+
+			// check if we need to turn on extruders while printing
+			// check if any extruders need to start heating back up
+			for (int i = 0; i < extruderCount; i++)
+			{
+				var nextToolChange = printer.Connection.NextToolChange(i);
+				var targetTemp = printer.Settings.Helpers.ExtruderTargetTemperature(i);
+				if (nextToolChange.toolIndex >= 0
+					&& nextToolChange.time < timeToReheat
+					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp)
+				{
+					printer.Connection.QueueLine($"M104 T{i} S{targetTemp}");
+				}
+			}
+		}
 
 		private void QueueAfterGCode()
 		{
 			string afterGcodeToQueue = "";
-			switch (requestedExtruder)
+			switch (requestedTool)
 			{
 				case 0:
 					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode).Replace("\\n", "\n");
 					break;
+
 				case 1:
 					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_1).Replace("\\n", "\n");
 					break;
@@ -176,7 +263,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			var newToolPosition = newToolMove.position;
 			var lineNoComment = postSwitchLine.Split(';')[0];
 
-			// if there is no extrusion we can move directly the desired position after the extruder switch. 
+			// if there is no extrusion we can move directly the desired position after the extruder switch.
 			// Otherwise we need to go to the last position to start the extrusion.
 			if (!lineNoComment.Contains("E"))
 			{
@@ -187,6 +274,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			// put together the output we want to send
 			var gcode = new StringBuilder();
+
+			// If the printer is heating, make sure we are at temp before switching extruders
+			var nextToolTargetTemp = PrintingTemperature(requestedTool);
+			var currentPrinterTargeTemp = printer.Connection.GetTargetHotendTemperature(requestedTool);
+			if (currentPrinterTargeTemp > 0
+				&& printer.Connection.GetActualHotendTemperature(requestedTool) < nextToolTargetTemp - 3)
+			{
+				// ensure our next tool is at temp (the one we are switching to)
+				gcode.AppendLine($"M109 T{requestedTool} S{nextToolTargetTemp}");
+			}
 
 			if (afterGcodeToQueue.Trim().Length > 0)
 			{
@@ -218,64 +315,79 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			queuedCommandsStream.Add(gcode.ToString());
 		}
 
-		public override string ReadLine()
+		private bool QueueBeforeIfNeedToSwitchExtruders(string lineIn)
 		{
-			string lineToSend = base.ReadLine();
+			var lineNoComment = lineIn.Split(';')[0];
 
-			if (lineToSend != null
-				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			// check if there is a travel
+			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
+				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
+				&& activeTool != requestedTool // is different than the last extruder set
+				&& SendState == SendStates.WaitingForMove)
 			{
-				return lineToSend;
-			}
+				postSwitchLine = lineIn;
 
-			if(lineToSend == compleatedBeforeGCodeString)
-			{
-				extruderIndex = requestedExtruder;
-				watingForBeforeGCode = false;
-				QueueAfterGCode();
-			}
-
-			if (QueueBeforeIfNeedToSwitchExtruders(lineToSend))
-			{
-				return "";
-			}
-
-			TrackExtruderState(lineToSend);
-
-			if (lineToSend != null
-				&& LineIsMovement(lineToSend))
-			{
-				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
-
-				PrinterMove moveToSend = currentMove;
-				if (extruderIndex < 4)
+				string beforeGcodeToQueue = "";
+				switch (requestedTool)
 				{
-					moveToSend.position -= extruderOffsets[extruderIndex];
+					case 0:
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						break;
+
+					case 1:
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						break;
 				}
 
-				if (moveToSend.HaveAnyPosition)
-				{
-					lineToSend = CreateMovementLine(moveToSend, lastDestination);
-				}
-				lastDestination = currentMove;
+				preSwitchFeedRate = lastDestination.feedRate;
+				preSwitchPosition = lastDestination.position;
 
-				return lineToSend;
+				// put together the output we want to send
+				var gcode = new StringBuilder();
+				if (beforeGcodeToQueue.Trim().Length > 0)
+				{
+					gcode.Append(printer.ReplaceMacroValues(beforeGcodeToQueue));
+				}
+
+				gcode.Append("\n");
+
+				ManageCoolDownAndOffTemps(gcode);
+
+				// send the actual tool change
+				gcode.AppendLine($"T{requestedTool}");
+
+				// send the marker to let us know we have sent the before gcode
+				gcode.AppendLine(compleatedBeforeGCodeString);
+
+				queuedCommandsStream.Add(gcode.ToString());
+
+				SendState = SendStates.SendingBefore;
+
+				return true;
 			}
 
-
-			return lineToSend;
+			return false;
 		}
 
-		private void TrackExtruderState(string line)
+		private void ReadExtruderOffsets()
 		{
-			if (line == null)
+			for (int i = 0; i < 4; i++)
 			{
-				return;
+				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
 			}
+		}
 
-			if (line.StartsWith("T"))
+		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
+		{
+			if (stringEvent != null)
 			{
-				GCodeFile.GetFirstNumberAfter("T", line, ref requestedExtruder);
+				// if the offsets change update them (unless we are actively printing)
+				if (stringEvent.Data == SettingsKey.extruder_offset
+					&& !printer.Connection.Printing
+					&& !printer.Connection.Paused)
+				{
+					ReadExtruderOffsets();
+				}
 			}
 		}
 	}

@@ -78,20 +78,7 @@ namespace MatterControl.Tests.MatterControl
 			PrinterConfig printer = null;
 
 			MaxLengthStream maxLengthStream = new MaxLengthStream(printer, new TestGCodeStream(printer, lines), 6);
-
-			int expectedIndex = 0;
-			string actualLine = maxLengthStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
-
-			while (actualLine != null)
-			{
-				actualLine = maxLengthStream.ReadLine();
-				expectedLine = expected[expectedIndex++];
-
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from MaxLengthStream");
-			}
+			ValidateStreamResponse(expected, maxLengthStream);
 		}
 
 		[Test]
@@ -141,27 +128,7 @@ namespace MatterControl.Tests.MatterControl
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				if (actualLine == "G92 E0")
-				{
-					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
-				}
-
-				expectedLine = expected[expectedIndex++];
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		[Test]
@@ -199,22 +166,7 @@ namespace MatterControl.Tests.MatterControl
 			printer.Settings.SetValue(SettingsKey.write_regex, write_filter);
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				expectedLine = expected[expectedIndex++];
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		[Test]
@@ -244,22 +196,7 @@ namespace MatterControl.Tests.MatterControl
 			printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "1");
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				expectedLine = expected[expectedIndex++];
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		[Test]
@@ -301,22 +238,7 @@ namespace MatterControl.Tests.MatterControl
 			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				expectedLine = expected[expectedIndex++];
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		public static GCodeStream CreateTestGCodeStream(PrinterConfig printer, string[] inputLines, out List<GCodeStream> streamList)
@@ -400,27 +322,7 @@ namespace MatterControl.Tests.MatterControl
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				if (actualLine == "G92 E0")
-				{
-					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
-				}
-
-				expectedLine = expected[expectedIndex++];
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -455,25 +357,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
-
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-
-			while (actualLine != null)
-			{
-				actualLine = testStream.ReadLine();
-				if (actualLine == "G92 Z0")
-				{
-					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 0));
-				}
-
-				expectedLine = expected[expectedIndex++];
-
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			}
+			ValidateStreamResponse(expected, testStream);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -544,20 +428,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
-
-			int expectedIndex = 0;
-			string actualLine = pauseHandlingStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
-
-			while (actualLine != null)
-			{
-				expectedLine = expected[expectedIndex++];
-				actualLine = pauseHandlingStream.ReadLine();
-
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
-			}
+			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
 		[Test, Category("GCodeStream"), Ignore("WIP")]
@@ -612,20 +483,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			var pauseHandlingStream = new SoftwareEndstopsStream(printer, new TestGCodeStream(printer, inputLines));
-
-			int expectedIndex = 0;
-			string actualLine = pauseHandlingStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
-
-			while (actualLine != null)
-			{
-				expectedLine = expected[expectedIndex++];
-				actualLine = pauseHandlingStream.ReadLine();
-
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
-			}
+			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -696,33 +554,189 @@ namespace MatterControl.Tests.MatterControl
 			printer.Settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
 
 			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
-			PauseHandlingStream pauseStream = null;
-			foreach (var stream in streamList)
-			{
-				if (stream as PauseHandlingStream != null)
-				{
-					pauseStream = (PauseHandlingStream)stream;
-					break;
-				}
-			}
+			ValidateStreamResponse(expected, pauseHandlingStream, streamList);
+		}
 
+		[Test, Category("GCodeStream")]
+		public void ToolChangeNoHeatNoExtrusion()
+		{
+			string[] inputLines = new string[]
+			{
+				// send some movement comands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"G1 X10 Y10 Z10 E0",
+				"T0",
+				"G1 X10 Y10 Z10 E0",
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				// the code to switch to t1
+				"; waiting for move on T1",
+				"",
+				"; simulated before toolchange 1 gcode",
+				"T1",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange 1 gcode",
+				"G1 X9 Y8 Z7.1 F3000", // the F comes from the x movement speed
+				"G1 Z7.1 F315", // the F comes from the z movement speed
+				"G1 Z7.1 F2500", // restore the feedrate
+				"G1 Z7.1",
+				// the code to switch back to t0
+				"; waiting for move on T0",
+				"",
+				"; simulated before toolchange gcode",
+				"T0",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange gcode",
+				"G1 F3000", // the F comes from the x movement speed
+				"G1 F315", // the F comes from the z movement speed
+				"G1 F2500", // restore the feedrate
+				"G1",
+				null,
+			};
+
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+			ValidateStreamResponse(expected, testStream);
+		}
+
+		[Test, Category("GCodeStream")]
+		public void ToolChangeHeatNoExtrusion()
+		{
+			string[] inputLines = new string[]
+			{
+				// tell the printer to heat up
+				"M104 T1 S240", // start with T0 to test smoothie temp change code
+				"M104 T0 S230",
+				// send some movement comands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"G1 X10 Y10 Z10 E0",
+				"T0",
+				"G1 X10 Y10 Z10 E0",
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"M104 T1 S240",
+				"T0 ; NO_PROCESSING",
+				"M104 T0 S230",
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				// the code to switch to t1
+				"; waiting for move on T1",
+				"",
+				"; simulated before toolchange 1 gcode",
+				"T1",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange 1 gcode",
+				"G1 X9 Y8 Z7.1 F3000", // the F comes from the x movement speed
+				"G1 Z7.1 F315", // the F comes from the z movement speed
+				"G1 Z7.1 F2500", // restore the feedrate
+				"G1 Z7.1",
+				// the code to switch back to t0
+				"; waiting for move on T0",
+				"",
+				"; simulated before toolchange gcode",
+				"T0",
+				"; COMPLEATED_BEFORE_GCODE",
+				"; simulated after toolchange gcode",
+				"G1 F3000", // the F comes from the x movement speed
+				"G1 F315", // the F comes from the z movement speed
+				"G1 F2500", // restore the feedrate
+				"G1",
+				null,
+			};
+
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+			ValidateStreamResponse(expected, testStream);
+		}
+
+		private static PrinterConfig SetupToolChangeSettings()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// this is the pause and resume from the Eris
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			// setup for dual extrusion
+			printer.Settings.SetValue(SettingsKey.extruder_count, "2");
+
+			printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
+
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "; simulated after toolchange gcode");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "; simulated after toolchange 1 gcode");
+
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "; simulated before toolchange gcode");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "; simulated before toolchange 1 gcode");
+
+			// set some data for T1
+			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, ".1");
+			return printer;
+		}
+
+		private static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
+		{
 			int expectedIndex = 0;
-			string actualLine = pauseHandlingStream.ReadLine();
+			string actualLine = testStream.ReadLine();
 			string expectedLine = expected[expectedIndex++];
 
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+			Debug.WriteLine(actualLine);
 
 			while (actualLine != null)
 			{
 				expectedLine = expected[expectedIndex++];
-				actualLine = pauseHandlingStream.ReadLine();
-				//Debug.WriteLine("\"{0}\",".FormatWith(actualLine));
-				if (actualLine == "; do_resume")
+
+				actualLine = testStream.ReadLine();
+				if (actualLine == "G92 E0")
 				{
-					pauseStream.Resume();
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
 				}
 
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from PauseHandlingStream");
+
+				if (actualLine == "G92 Z0")
+				{
+					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 0));
+				}
+
+				if (actualLine == "; do_resume")
+				{
+					PauseHandlingStream pauseStream = null;
+					foreach (var stream in streamList)
+					{
+						if (stream as PauseHandlingStream != null)
+						{
+							pauseStream = (PauseHandlingStream)stream;
+							pauseStream.Resume();
+						}
+					}
+				}
+
+				if (expectedLine != actualLine)
+				{
+					int a = 0;
+				}
+
+				Debug.WriteLine(actualLine);
+				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			}
 		}
 
@@ -767,19 +781,7 @@ namespace MatterControl.Tests.MatterControl
 			var inputLinesStream = new TestGCodeStream(printer, inputLines);
 			var queueStream = new QueuedCommandsStream(printer, inputLinesStream);
 			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
-
-			int expectedIndex = 0;
-			string actualLine = writeStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
-
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
-
-			while (actualLine != null)
-			{
-				expectedLine = expected[expectedIndex++];
-				actualLine = writeStream.ReadLine();
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from ProcessWriteRegexStream");
-			}
+			ValidateStreamResponse(expected, writeStream);
 		}
 
 		[Test, Category("GCodeStream")]
