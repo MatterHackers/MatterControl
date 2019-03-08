@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
@@ -39,6 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
+			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 645 * GuiWidget.DeviceScale);
 
 			pages = this.GetPages();
 			pages.MoveNext();

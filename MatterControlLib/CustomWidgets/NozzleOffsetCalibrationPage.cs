@@ -57,9 +57,15 @@ namespace MatterHackers.MatterControl
 
 			templatePrinter = new NozzleOffsetTemplatePrinter(printer);
 
+			contentRow.Padding = theme.DefaultContainerPadding;
+
 			contentRow.AddChild(xOffsetWidget = new NozzleOffsetTemplateWidget(templatePrinter.ActiveOffsets, FlowDirection.LeftToRight, theme)
 			{
-				Padding = new BorderDouble(left: 4)
+				Padding = new BorderDouble(left: 4),
+				HAnchor = HAnchor.Absolute,
+				VAnchor = VAnchor.Absolute,
+				Height = 110,
+				Width = 420
 			});
 
 			xOffsetWidget.OffsetChanged += (s, e) =>
@@ -82,6 +88,9 @@ namespace MatterHackers.MatterControl
 			{
 				Margin = new BorderDouble(top: 15),
 				Padding = new BorderDouble(bottom: 4),
+				VAnchor = VAnchor.Absolute,
+				HAnchor = HAnchor.Absolute,
+				Height = 420,
 				Width = 110
 			});
 

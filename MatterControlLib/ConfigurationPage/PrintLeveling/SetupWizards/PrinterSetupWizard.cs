@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -46,6 +47,8 @@ namespace MatterHackers.MatterControl
 		public PrinterConfig Printer => printer;
 
 		public WizardPage CurrentPage => pages.Current;
+
+		public Vector2 WindowSize { get; protected set; }
 
 		public WizardPage GetNextPage()
 		{
