@@ -85,9 +85,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (validationError.FixAction is NamedAction action)
 				{
 					// Show fix button
-					var button = new IconButton(fixIcon, theme)
+					var button = new LinkLabel(action.Title, theme, pointSize: theme.FontSize10)
 					{
-						ToolTipText = action.Title
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(right: 8)
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))
