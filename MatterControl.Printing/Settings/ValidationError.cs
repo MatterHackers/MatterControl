@@ -39,11 +39,19 @@ namespace MatterHackers.MatterControl
 
 	public class ValidationError
 	{
+		public ValidationError(string id)
+		{
+			this.ID = id;
+		}
+
+		public string ID { get; }
+
 		public string Error { get; set; }
 
 		public string Details { get; set; }
 
 		public ValidationErrorLevel ErrorLevel { get; set; } = ValidationErrorLevel.Error;
+
 		public NamedAction FixAction { get; set; }
 	}
 }

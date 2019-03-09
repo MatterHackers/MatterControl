@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
 			if (supportGenerator.RequiresSupport())
 			{
-				errors.Add(new ValidationError()
+				errors.Add(new ValidationError("UnsupportedParts")
 				{
 					Error = "Unsupported Parts Detected".Localize(),
 					Details = "Some parts are unsupported and require support structures to print correctly".Localize(),
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl
 						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10)
 					{
 						errors.Add(
-							new ValidationError()
+							new ValidationError("BedLevelingTemperature")
 							{
 								Error = "Bed Leveling Temperature".Localize(),
 								Details = string.Format(
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl
 						+ "\n    • " + "Z Offset".Localize();
 
 					errors.Add(
-						new ValidationError()
+						new ValidationError("ZOffset0TooLarge")
 						{
 							Error = "Z Offset is too large.".Localize(),
 							Details = string.Format(
@@ -253,7 +253,7 @@ namespace MatterHackers.MatterControl
 						+ "\n    • " + "Z Offset 2".Localize();
 
 					errors.Add(
-						new ValidationError()
+						new ValidationError("ZOffset1TooLarge")
 						{
 							Error = "Z Offset 2 is too large.".Localize(),
 							Details = string.Format(
@@ -394,7 +394,7 @@ namespace MatterHackers.MatterControl
 			catch (Exception e)
 			{
 				errors.Add(
-					new ValidationError()
+					new ValidationError("ExceptionDuringSliceSettingsValidation")
 					{
 						Error = "Unexpected error validating settings".Localize(),
 						Details = e.Message
@@ -416,7 +416,7 @@ namespace MatterHackers.MatterControl
 			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
 			if (!printerIsConnected)
 			{
-				errors.Add(new ValidationError()
+				errors.Add(new ValidationError("PrinterDisconnected")
 				{
 					Error = "Printer Disconnected".Localize(),
 					Details = "Connect to your printer to continue".Localize()
@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl
 			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
 			if (ApplicationController.PrinterNeedsToRunSetup(printer))
 			{
-				errors.Add(new ValidationError()
+				errors.Add(new ValidationError("PrinterSetupRequired")
 				{
 					Error = "Printer Setup Required".Localize(),
 					Details = "Printer Setup must be run before printing".Localize(),

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return new List<ValidationError>()
 			{
-				new ValidationError()
+				new ValidationError("ItemToSTLExportInvalid")
 				{
 					Error = "Item cannot be exported as STL".Localize(),
 					Details = firstItem?.ToString() ?? ""
