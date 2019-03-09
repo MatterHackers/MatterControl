@@ -100,7 +100,10 @@ namespace MatterHackers.MatterControl
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Bottom);
 
 			// Prime
-			this.PrimeHotend(gcodeSketch, towerRect);
+			if (verticalLayout)
+			{
+				this.PrimeHotend(gcodeSketch, towerRect);
+			}
 
 			// Perimeters
 			rect = this.CreatePerimeters(gcodeSketch, rect);
@@ -180,7 +183,10 @@ namespace MatterHackers.MatterControl
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
 			// Prime
-			this.PrimeHotend(sketch2, towerRect);
+			if (verticalLayout)
+			{
+				this.PrimeHotend(sketch2, towerRect);
+			}
 
 			if (this.DebugMode)
 			{
