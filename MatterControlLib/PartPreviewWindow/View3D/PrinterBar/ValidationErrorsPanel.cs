@@ -88,7 +88,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var button = new LinkLabel(action.Title, theme, pointSize: theme.FontSize10)
 					{
 						VAnchor = VAnchor.Center,
-						Margin = new BorderDouble(right: 8)
+						Margin = new BorderDouble(right: 8),
+						Enabled = action.IsEnabled == null  || action.IsEnabled()
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))

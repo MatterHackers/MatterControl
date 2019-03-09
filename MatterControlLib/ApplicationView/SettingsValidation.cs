@@ -34,6 +34,7 @@ using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -208,16 +209,15 @@ namespace MatterHackers.MatterControl
 								ErrorLevel = ValidationErrorLevel.Warning,
 								FixAction = new NamedAction()
 								{
-									Title = "Dismiss",
+									Title = "Recalibrate",
 									Action = () =>
 									{
-										// Get active leveling - ensure we pull the leveling data at the moment of dismiss invoke
-										PrintLevelingData leveling = printer.Settings.Helpers.GetPrintLevelingData();
-										leveling.IssuedLevelingTempWarning = true;
-
-										// Store leveling data with IssuedLevelingTempWarning set
-										printer.Settings.Helpers.SetPrintLevelingData(leveling);
-									}
+										UiThread.RunOnIdle(() =>
+										{
+											DialogWindow.Show(new PrintLevelingWizard(printer));
+										});
+									},
+									IsEnabled =() => printer.Connection.IsConnected
 								}
 							});
 					}
