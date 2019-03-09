@@ -44,7 +44,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.theme = theme;
 			this.DisabledColor = theme.DisabledColor;
-			this.HoverColor = theme.MinimalShade;
+			this.HoverColor = theme.SlightShade;
+			this.MouseDownColor = theme.MinimalShade;
 			this.PopupBorderColor = AppContext.MenuTheme.BorderColor40;
 		}
 
