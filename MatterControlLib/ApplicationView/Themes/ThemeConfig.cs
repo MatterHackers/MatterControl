@@ -211,6 +211,7 @@ namespace MatterHackers.MatterControl
 		public Color BedBackgroundColor { get; set; }
 		public Color PrimaryAccentColor { get; set; }
 		public Color SectionBackgroundColor { get; set; }
+		public Color PopupBorderColor { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
