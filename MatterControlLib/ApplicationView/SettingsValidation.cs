@@ -419,7 +419,17 @@ namespace MatterHackers.MatterControl
 				errors.Add(new ValidationError("PrinterDisconnected")
 				{
 					Error = "Printer Disconnected".Localize(),
-					Details = "Connect to your printer to continue".Localize()
+					Details = "Connect to your printer to continue".Localize(),
+					FixAction = new NamedAction()
+					{
+						Title = "Connect".Localize(),
+						Action = () =>
+						{
+							// TODO: Extract the behavior in the Connect/Disconnect button from widget land so we can reuse a common implementation
+							printer.Connection.HaltConnectionThread();
+							printer.Connection.Connect();
+						}
+					}
 				});
 			}
 
