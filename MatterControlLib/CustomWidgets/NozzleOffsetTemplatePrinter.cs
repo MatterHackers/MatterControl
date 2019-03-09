@@ -68,17 +68,19 @@ namespace MatterHackers.MatterControl
 
 		public bool DebugMode { get; private set; } = false;
 
-		public void BuildTemplate(GCodeSketch gcodeSketch, bool verticalLayout)
+		public void BuildTemplate(GCodeSketch gcodeSketch, GCodeSketch sketch2, bool verticalLayout)
 		{
 			gcodeSketch.SetTool("T0");
 
 			if (verticalLayout)
 			{
 				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(120, 45);
+				sketch2.Transform = gcodeSketch.Transform;
 			}
 			else
 			{
 				gcodeSketch.Transform = Affine.NewTranslation(90, 175);
+				sketch2.Transform = gcodeSketch.Transform;
 			}
 
 			var rect = new RectangleDouble(0, 0, 123, 30);
@@ -166,17 +168,19 @@ namespace MatterHackers.MatterControl
 			y1 = rect.Top + (nozzleWidth * .5);
 			y2 = y1 - sectionHeight + (nozzleWidth * .5);
 
-			gcodeSketch.SetTool("T1");
+			sketch2.PenUp();
 
-			gcodeSketch.MoveTo(rect.Left, rect.Top);
+			sketch2.SetTool("T1");
 
-			gcodeSketch.PenDown();
+			sketch2.MoveTo(rect.Left, rect.Top);
+
+			sketch2.PenDown();
 
 			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
 			towerRect.Offset(originalRect.Left - towerSize, originalRect.Top - towerSize);
 
 			// Prime
-			this.PrimeHotend(gcodeSketch, towerRect);
+			this.PrimeHotend(sketch2, towerRect);
 
 			if (this.DebugMode)
 			{
@@ -190,8 +194,8 @@ namespace MatterHackers.MatterControl
 				// Draw calibration lines
 				for (var i = 0; i <= 40; i++)
 				{
-					gcodeSketch.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: false);
-					gcodeSketch.LineTo(x + activeOffsets[i], up ? y2 : y1);
+					sketch2.MoveTo(x + activeOffsets[i], up ? y1 : y2, retract: false);
+					sketch2.LineTo(x + activeOffsets[i], up ? y2 : y1);
 
 					x = x + step;
 
@@ -199,7 +203,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			gcodeSketch.PenUp();
+			sketch2.PenUp();
 		}
 
 		private RectangleDouble CreatePerimeters(GCodeSketch gcodeSketch, RectangleDouble rect)
