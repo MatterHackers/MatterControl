@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 
 			Task.Run(async () =>
 			{
-				var gcodeSketch = new GCodeSketch()
+				var sketch1 = new GCodeSketch()
 				{
 					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60),
 					RetractLength = printer.Settings.GetValue<double>(SettingsKey.retract_length),
@@ -147,18 +147,27 @@ namespace MatterHackers.MatterControl
 					TravelSpeed = printer.Settings.GetValue<double>(SettingsKey.travel_speed) * 60,
 				};
 
-				//gcodeSketch.WriteRaw("G92 E0");
-				gcodeSketch.WriteRaw("; LAYER: 0");
-				gcodeSketch.WriteRaw("; LAYER_HEIGHT: 0.2");
+				var sketch2 = new GCodeSketch()
+				{
+					Speed = sketch1.Speed,
+					RetractLength = sketch1.RetractLength,
+					RetractSpeed = sketch1.RetractSpeed,
+					RetractLift = sketch1.RetractLift,
+					TravelSpeed = sketch1.TravelSpeed
+				};
 
-				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: true);
-				templatePrinter.BuildTemplate(gcodeSketch, verticalLayout: false);
+				//gcodeSketch.WriteRaw("G92 E0");
+				sketch1.WriteRaw("; LAYER: 0");
+				sketch1.WriteRaw("; LAYER_HEIGHT: 0.2");
+
+				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: true);
+				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: false);
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
 					$"nozzle-offset-template-combined.gcode");
 
-				File.WriteAllText(outputPath, gcodeSketch.ToGCode());
+				File.WriteAllText(outputPath, sketch1.ToGCode() + "\r\n" + sketch2.ToGCode());
 
 				// HACK: update state needed to be set before calling StartPrint
 				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
