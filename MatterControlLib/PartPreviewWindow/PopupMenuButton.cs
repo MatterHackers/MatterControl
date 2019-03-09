@@ -139,13 +139,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			get
 			{
-				if (this.MouseCaptured
+				if (!menuVisible
+					&& this.MouseCaptured
 					&& mouseInBounds
 					&& this.Enabled)
 				{
 					return this.MouseDownColor;
 				}
-				else if (this.mouseInBounds
+				else if (!menuVisible
+					&& this.mouseInBounds
 					&& this.Enabled)
 				{
 					return this.HoverColor;
