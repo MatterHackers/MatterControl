@@ -268,7 +268,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return new List<ValidationError>
 			{
-				new ValidationError()
+				new ValidationError("ItemCannotBeExported")
 				{
 					Error = "Item cannot be exported".Localize(),
 					Details = firstItem?.ToString() ?? ""

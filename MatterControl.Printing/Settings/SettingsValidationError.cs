@@ -35,6 +35,7 @@ namespace MatterHackers.MatterControl
 	public class SettingsValidationError : ValidationError
 	{
 		public SettingsValidationError(string settingsName)
+			: base(settingsName)
 		{
 			this.CanonicalSettingsName = settingsName;
 			this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;

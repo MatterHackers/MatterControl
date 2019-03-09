@@ -196,8 +196,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
-				var hasErrorsOrWarnings = errors.Any();
+				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
+					&& UserSettings.Instance.get($"Ignore_{e.ID}") != "true");
 
+				var hasErrorsOrWarnings = hasErrors || hasWarnings;
 				if (hasErrorsOrWarnings)
 				{
 					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();

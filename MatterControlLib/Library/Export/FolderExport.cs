@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return new List<ValidationError>()
 			{
-				new ValidationError()
+				new ValidationError("NoItemsToExport")
 				{
 					Error = "No items to Export".Localize()
 				}

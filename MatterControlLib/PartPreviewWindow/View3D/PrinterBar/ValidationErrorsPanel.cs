@@ -53,6 +53,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))
 			{
+				if (validationError.ErrorLevel == ValidationErrorLevel.Warning
+					&& UserSettings.Instance.get($"Ignore_{validationError.ID}") == "true")
+				{
+					continue;
+				}
+
 				string errorText, errorDetails;
 
 				var settingsValidationError = validationError as SettingsValidationError;
@@ -79,9 +85,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (validationError.FixAction is NamedAction action)
 				{
 					// Show fix button
-					var button = new IconButton(fixIcon, theme)
+					var button = new LinkLabel(action.Title, theme, pointSize: theme.FontSize10)
 					{
-						ToolTipText = action.Title
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(right: 8),
+						Enabled = action.IsEnabled == null  || action.IsEnabled()
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))
@@ -104,6 +112,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Selectable = false
 					};
 					row.AddChild(button);
+				}
+
+				if (validationError.ErrorLevel == ValidationErrorLevel.Warning)
+				{
+					var dismissButton = theme.CreateSmallResetButton();
+					dismissButton.HAnchor = HAnchor.Absolute;
+					dismissButton.Margin = new BorderDouble(right: theme.ButtonHeight / 2 - dismissButton.Width / 2);
+					dismissButton.Name = "Dismiss " + validationError.ID;
+					dismissButton.ToolTipText = "Dismiss".Localize();
+					dismissButton.Click += (sender, e) =>
+					{
+						UserSettings.Instance.set($"Ignore_{validationError.ID}", "true");
+					};
+
+					row.AddChild(dismissButton);
 				}
 
 				this.AddChild(row);
