@@ -46,6 +46,7 @@
   "BorderColor": "#657B83",
   "BorderColor40": "#D3C492",
   "BorderColor20": "#F3EFE2",
+  "PopupBorderColor": "#D5CFBF",
   "RowBorder": "#DBD9CB",
   "DropList": {
     "Open": {

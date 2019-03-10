@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					new Stroke(
 						new RoundedRect(popup.Widget.LocalBounds, 0),
 						borderWidth * 2),
-					AppContext.MenuTheme.BorderColor40);
+					AppContext.Theme.PopupBorderColor);
 			}
 
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)

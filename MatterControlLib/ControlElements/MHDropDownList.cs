@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			this.MenuItemsBorderColor = menuTheme.DropList.Open.BackgroundColor;
 
 			// Popup border color
-			this.PopupBorderColor = AppContext.MenuTheme.BorderColor40;
+			this.PopupBorderColor = theme.PopupBorderColor;
 
 			this.theme = theme;
 

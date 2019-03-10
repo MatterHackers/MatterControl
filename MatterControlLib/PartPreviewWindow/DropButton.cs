@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class DropButton : SimpleButton
 	{
-		public bool MenuVisible { get; private set; } 
+		public bool MenuVisible { get; private set; }
 
 		public DropButton(ThemeConfig theme)
 			: base(theme)

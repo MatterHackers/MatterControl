@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bedMenuButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Options Menu",
-				//ToolTipText = "Options",
+				ToolTipText = "Bed",
 				Enabled = true,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Center,

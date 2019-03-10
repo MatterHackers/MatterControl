@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					BackgroundColor = menuTheme.BackgroundColor
 				};
 
-				printPanel.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor)
+				printPanel.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Left
 				});
@@ -91,7 +91,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit,
 					Padding = 5,
 					MinimumSize = new Vector2(400, 65),
-					Margin = new BorderDouble(top: 10),
 				};
 				printPanel.AddChild(optionsPanel);
 
