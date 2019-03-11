@@ -79,20 +79,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						string lineToSend = base.ReadLine();
 
-						if (lineToSend != null
-							&& lineToSend.EndsWith("; NO_PROCESSING"))
+						if(lineToSend == null)
+						{
+							return null;
+						}
+
+						if (lineToSend.EndsWith("; NO_PROCESSING"))
 						{
 							return lineToSend;
 						}
 
-						if (lineToSend != null
-							&& lineToSend.StartsWith("M"))
+						if (lineToSend.StartsWith("M"))
 						{
 							// initial test is just to see if it is an M109
 							if (lineToSend.StartsWith("M109")) // extruder set and wait temp
 							{
-								if (lineToSend.Contains("F") // If it has a control character F (auto temp)
-									|| !lineToSend.Contains("S")) // if it is a reset (has no S temperature)
+								var lineNoComment = lineToSend.Split(';')[0];
+
+								if (lineNoComment.Contains("F") // If it has a control character F (auto temp)
+									|| !lineNoComment.Contains("S")) // if it is a reset (has no S temperature)
 								{
 									// don't replace it
 									return lineToSend;
