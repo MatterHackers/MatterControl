@@ -48,7 +48,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			if (!printer.Connection.WaitingForPositionRead
 				&& nextReadTimeMs < UiThread.CurrentTimerMs
-				&& printer.Connection.IsConnected)
+				&& printer.Connection.IsConnected
+				&& (printer.Connection.Printing || printer.Connection.MonitorPrinterTemperature))
 			{
 				nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 				return "M105";
