@@ -146,21 +146,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
-				var center = aabb.Center;
-				var worldMatrix = this.WorldMatrix();
+			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+			var center = aabb.Center;
+			var worldMatrix = this.WorldMatrix();
 
-				var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
-				var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-				//var leftW = Vector3Ex.Transform(, worldMatrix);
-				var right = Vector3Ex.Transform(center + new Vector3(SizeX / 2, 0, 0), worldMatrix);
-				// layer.World.Render3DLine(left, right, Agg.Color.Red);
-				layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);
-			}
+			var minXyz = center - new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+			var maxXyz = center + new Vector3(SizeX / 2, SizeY / 2, SizeZ / 2);
+			var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
+			layer.World.RenderAabb(bounds, worldMatrix, Color.Red, 1, 1);
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)

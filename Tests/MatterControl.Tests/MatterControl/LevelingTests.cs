@@ -49,8 +49,6 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-
-
 			var printerSettings = new PrinterSettings();
 			printerSettings.SetValue(SettingsKey.z_probe_z_offset, "0");
 
