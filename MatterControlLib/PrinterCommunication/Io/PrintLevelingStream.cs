@@ -138,6 +138,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 			else
 			{
+				this._lastDestination.CopyKnowSettings(position);
 				internalStream.SetPrinterPosition(position);
 			}
 		}

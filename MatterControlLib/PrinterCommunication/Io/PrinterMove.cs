@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return left;
 		}
 
-		public override string ToString() => $"{position} E{extrusion} F{feedRate}";
+		public override string ToString() => $"{position} E{extrusion:0.###} F{feedRate:0.###}";
 
 		public void CopyKnowSettings(PrinterMove copyFrom)
 		{

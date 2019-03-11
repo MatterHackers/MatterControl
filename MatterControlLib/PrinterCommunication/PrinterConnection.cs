@@ -2338,6 +2338,10 @@ You will then need to logout and log back in to the computer for the changes to 
 				// heat and wait will allow a long wait time for ok
 				return 60;
 			}
+			else if(lastInstruction.StartsWith("G28"))
+			{
+				return 30;
+			}
 
 			// any other move we allow up to 10 seconds for response
 			return 10 * timeMultiple;
