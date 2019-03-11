@@ -173,6 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string perimeter_speed = nameof(perimeter_speed);
 		public const string solid_infill_speed = nameof(solid_infill_speed);
 		public const string support_material_speed = nameof(support_material_speed);
+		public const string interface_layer_speed = nameof(interface_layer_speed);
 		public const string travel_speed = nameof(travel_speed);
 		public const string retract_speed = nameof(retract_speed);
 		public const string create_raft = nameof(create_raft);

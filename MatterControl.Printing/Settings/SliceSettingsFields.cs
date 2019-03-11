@@ -1735,6 +1735,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.interface_layer_speed,
+					PresentationName = "Interface Layer".Localize(),
+					HelpText = "The speed at which interface layers will print.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ShowIfSet = "!sla_printer",
+					Units = "mm/s",
+					DefaultValue = "60"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.support_material_xy_distance,
 					PresentationName = "X and Y Distance".Localize(),
 					HelpText = "The distance the support material will be from the object in the X and Y directions.".Localize(),
