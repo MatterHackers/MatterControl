@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 
 			tabControl.ActiveTabChanged += (s, e) =>
 			{
-				if (tabControl.SelectedTabIndex == 1)
+				if (tabControl.SelectedTabIndex == 0)
 				{
 					markdownWidget.Markdown = editWidget.Text;
 				}

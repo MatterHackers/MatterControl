@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (homingPosition[i] != double.NegativeInfinity)
 				{
-					// figure out which side of center it is on and modifiy the bounds
+					// figure out which side of center it is on and modify the bounds
 					if (homingPosition[i] < aabb.Center[i])
 					{
 						aabb.MinXYZ[i] = homingPosition[i];

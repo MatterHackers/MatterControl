@@ -170,8 +170,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				listenForConnectFailed = true;
 				connectStartMs = UiThread.CurrentTimerMs;
 
-				if (!printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing)
-					&& AppContext.Platform.HasPermissionToDevice(printer))
+				if (AppContext.Platform.HasPermissionToDevice(printer))
 				{
 					printer.Connection.HaltConnectionThread();
 					printer.Connection.Connect();
