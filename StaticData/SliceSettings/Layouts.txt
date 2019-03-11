@@ -41,6 +41,7 @@ Advanced
         external_perimeter_speed
       Other
         support_material_speed
+        interface_layer_speed
         bridge_speed
         travel_speed
         number_of_first_layers
