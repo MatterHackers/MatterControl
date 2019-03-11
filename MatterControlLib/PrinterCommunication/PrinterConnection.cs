@@ -2325,13 +2325,22 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private int ExpectedWaitSeconds(string lastInstruction)
 		{
-			if (lastInstruction.Contains("G0 ") || lastInstruction.Contains("G1 "))
+			var timeMultiple = noOkResendCount + 1;
+			if (lastInstruction.StartsWith("G0 ")
+				|| lastInstruction.Contains("G1 "))
 			{
 				// for moves we wait only as much as 2 seconds
-				return 2;
+				return 2 * timeMultiple;
+			}
+			else if(lastInstruction.StartsWith("M109 ")
+				|| lastInstruction.StartsWith("M190 "))
+			{
+				// heat and wait will allow a long wait time for ok
+				return 60;
 			}
 
-			return 10;
+			// any other move we allow up to 10 seconds for response
+			return 10 * timeMultiple;
 		}
 
 		private void TryWriteNextLineFromGCodeFile()
@@ -2360,6 +2369,7 @@ You will then need to logout and log back in to the computer for the changes to 
 							// The theory is that we may have received a transmission error (like 'OP' rather than 'OK')
 							// and in that event we don't want the print to just stop and wait forever.
 							currentLineIndexToSend = Math.Max(0, currentLineIndexToSend--); // we are going to resend the last command
+							noOkResendCount++;
 						}
 						else
 						{
@@ -2368,6 +2378,10 @@ You will then need to logout and log back in to the computer for the changes to 
 						}
 					}
 				}
+			}
+			else
+			{
+				noOkResendCount = 0;
 			}
 
 			lock (locker)
@@ -2741,6 +2755,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		internal int currentReadThreadIndex = 0;
 		private Vector3 _homingPosition = Vector3.NegativeInfinity;
+		private int noOkResendCount;
 
 		public class ReadThread
 		{
