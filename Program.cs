@@ -106,17 +106,23 @@ namespace MatterHackers.MatterControl
 				return;
 			}
 			//#endif
+			try
+			{
 
-			var serviceHost = new ServiceHost(
-				typeof(LocalService),
-				new Uri[] { new Uri("net.pipe://localhost/") });
+				var serviceHost = new ServiceHost(
+					typeof(LocalService),
+					new Uri[] { new Uri("net.pipe://localhost/") });
 
-			serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
-			serviceHost.Open();
+				serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
+				serviceHost.Open();
 
-			Console.Write(
-				"Service started: {0};",
-				string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
+				Console.Write(
+					"Service started: {0};",
+					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
+			}catch (Exception e)
+			{
+				Console.WriteLine(e.Message);
+			}
 
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
