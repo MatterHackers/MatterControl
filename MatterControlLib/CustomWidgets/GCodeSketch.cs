@@ -45,6 +45,7 @@ namespace MatterHackers.MatterControl
 		private StringWriter writer;
 		private double currentE = 0;
 		private bool retracted = false;
+		private bool penUp = false;
 		private double currentSpeed = 0;
 		private double layerHeight = 0.2;
 
@@ -112,7 +113,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void Unretract()
+		public void Unretract()
 		{
 			if (retracted)
 			{
@@ -129,21 +130,31 @@ namespace MatterHackers.MatterControl
 
 		public void PenUp()
 		{
-			this.WriteRaw("; PenUp");
-			this.Retract();
-			this.WriteSpeedLine(
-				string.Format("G1 Z{0:0.###}", layerHeight + this.RetractLift),
-				this.TravelSpeed);
+			if (!penUp)
+			{
+				penUp = true;
+
+				this.WriteRaw("; PenUp");
+				this.Retract();
+				this.WriteSpeedLine(
+					string.Format("G1 Z{0:0.###}", layerHeight + this.RetractLift),
+					this.TravelSpeed);
+			}
 		}
 
 		public void PenDown()
 		{
-			this.WriteRaw("; PenDown");
-			this.WriteSpeedLine(
-				string.Format("G1 Z{0:0.###}", layerHeight), 
-				this.TravelSpeed);
+			if (penUp)
+			{
+				penUp = false;
 
-			this.Unretract();
+				this.WriteRaw("; PenDown");
+				this.WriteSpeedLine(
+					string.Format("G1 Z{0:0.###}", layerHeight),
+					this.TravelSpeed);
+
+				this.Unretract();
+			}
 		}
 
 		public void LineTo(double x, double y)

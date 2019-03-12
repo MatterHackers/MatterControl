@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// remove it from the part
 				case RecoveryState.Raising:
-					// We don't know where the printer is for sure (it make have been turned off). Disable leveling until we know where it is.
+					// We don't know where the printer is for sure (it may have been turned off). Disable leveling until we know where it is.
 					printer.Connection.AllowLeveling = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
