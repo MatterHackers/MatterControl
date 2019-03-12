@@ -84,34 +84,32 @@ namespace MatterHackers.MatterControl
 				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
 			};
 			
-			//#if IS_WINDOWS
-			waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
-
-			if (!created)
+			if(AggContext.OperatingSystem == OSType.Windows)
 			{
-				// If an instance is already running, create a service proxy and execute ShellOpenFile
-				var proxy = new ServiceProxy();
+				waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
 
-				// and at least one argument is an acceptable shell file extension
-				var itemsToAdd = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
-				if (itemsToAdd.Any())
+				if (!created)
 				{
-					// notify the running instance of the event
-					proxy.ShellOpenFile(itemsToAdd.ToArray());
+					// If an instance is already running, create a service proxy and execute ShellOpenFile
+					var proxy = new ServiceProxy();
+
+					// and at least one argument is an acceptable shell file extension
+					var itemsToAdd = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+					if (itemsToAdd.Any())
+					{
+						// notify the running instance of the event
+						proxy.ShellOpenFile(itemsToAdd.ToArray());
+					}
+
+					System.Threading.Thread.Sleep(1000);
+
+					// Finally, close the process spawned by Explorer.exe
+					return;
 				}
-
-				System.Threading.Thread.Sleep(1000);
-
-				// Finally, close the process spawned by Explorer.exe
-				return;
-			}
-			//#endif
-			try
-			{
-
+				//#endif
 				var serviceHost = new ServiceHost(
-					typeof(LocalService),
-					new Uri[] { new Uri("net.pipe://localhost/") });
+				typeof(LocalService),
+				new Uri[] { new Uri("net.pipe://localhost/mattercontrol") });
 
 				serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
 				serviceHost.Open();
@@ -119,11 +117,8 @@ namespace MatterHackers.MatterControl
 				Console.Write(
 					"Service started: {0};",
 					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
-			}catch (Exception e)
-			{
-				Console.WriteLine(e.Message);
 			}
-
+			
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", optional: true)
