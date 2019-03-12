@@ -100,25 +100,31 @@ namespace MatterHackers.MatterControl
 
 		private void Retract()
 		{
-			this.WriteRaw("; Retract");
-			currentE -= this.RetractLength;
-			retracted = true;
+			if (currentE > 0)
+			{
+				this.WriteRaw("; Retract");
+				currentE -= this.RetractLength;
+				retracted = true;
 
-			this.WriteSpeedLine(
-				string.Format("G1 E{0:0.###}", currentE), 
-				this.RetractSpeed);
+				this.WriteSpeedLine(
+					string.Format("G1 E{0:0.###}", currentE),
+					this.RetractSpeed);
+			}
 		}
 
 		private void Unretract()
 		{
-			// Unretract
-			this.WriteRaw("; Unretract");
-			currentE += RetractLength;
-			retracted = false;
+			if (retracted)
+			{
+				// Unretract
+				this.WriteRaw("; Unretract");
+				currentE += RetractLength;
+				retracted = false;
 
-			this.WriteSpeedLine(
-				string.Format("G1 E{0:0.###}", currentE), 
-				this.RetractSpeed);
+				this.WriteSpeedLine(
+					string.Format("G1 E{0:0.###}", currentE),
+					this.RetractSpeed);
+			}
 		}
 
 		public void PenUp()
