@@ -160,6 +160,9 @@ namespace MatterHackers.MatterControl
 				sketch1.WriteRaw("; LAYER: 0");
 				sketch1.WriteRaw("; LAYER_HEIGHT: 0.2");
 
+				sketch1.SetTool("T0");
+				sketch2.SetTool("T1");
+
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: true);
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: false);
 

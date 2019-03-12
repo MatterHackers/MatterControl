@@ -70,8 +70,6 @@ namespace MatterHackers.MatterControl
 
 		public void BuildTemplate(GCodeSketch gcodeSketch, GCodeSketch sketch2, bool verticalLayout)
 		{
-			gcodeSketch.SetTool("T0");
-
 			if (verticalLayout)
 			{
 				gcodeSketch.Transform = Affine.NewRotation(MathHelper.DegreesToRadians(90)) * Affine.NewTranslation(120, 45);
@@ -172,11 +170,7 @@ namespace MatterHackers.MatterControl
 			y2 = y1 - sectionHeight + (nozzleWidth * .5);
 
 			sketch2.PenUp();
-
-			sketch2.SetTool("T1");
-
 			sketch2.MoveTo(rect.Left, rect.Top);
-
 			sketch2.PenDown();
 
 			towerRect = new RectangleDouble(0, 0, towerSize, towerSize);
