@@ -160,11 +160,16 @@ namespace MatterHackers.MatterControl
 				sketch1.WriteRaw("; LAYER: 0");
 				sketch1.WriteRaw("; LAYER_HEIGHT: 0.2");
 
+
 				sketch1.SetTool("T0");
 				sketch2.SetTool("T1");
+				sketch1.PenUp();
 
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: true);
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: false);
+
+				sketch1.Unretract();
+				sketch2.Unretract();
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
