@@ -216,11 +216,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Vector3 ExtruderOffset(int extruderIndex)
 		{
-			if(extruderIndex == 0)
-			{
-				return Vector3.Zero;
-			}
-
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;

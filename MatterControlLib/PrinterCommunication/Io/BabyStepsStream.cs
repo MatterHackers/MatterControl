@@ -38,9 +38,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class BabyStepsStream : GCodeStreamProxy
 	{
 		private int extruderIndex = 0;
+		private Vector3[] extruderOffsets = new Vector3[4];
+
 		public PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public Vector3[] ExtruderOffsets { get; private set; } = new Vector3[4];
+		public Vector3[] BabbyStepOffsets { get; private set; } = new Vector3[4];
 
 		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -49,8 +51,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			extruderIndex = printer.Connection.ActiveExtruderIndex;
 
-			ExtruderOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-			ExtruderOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
+			BabbyStepOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			BabbyStepOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
+
+			ReadExtruderOffsets();
+		}
+
+
+		private void ReadExtruderOffsets()
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
+			}
 		}
 
 		public override string DebugInfo
@@ -65,11 +78,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
-				ExtruderOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+				BabbyStepOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
 			}
 			else if (e?.Data == SettingsKey.baby_step_z_offset_1)
 			{
-				ExtruderOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
+				BabbyStepOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
+			}
+			// if the offsets change update them (unless we are actively printing)
+			else if (e?.Data == SettingsKey.extruder_offset
+				&& !printer.Connection.Printing
+				&& !printer.Connection.Paused)
+			{
+				ReadExtruderOffsets();
 			}
 		}
 
@@ -78,7 +98,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.lastDestination.CopyKnowSettings(position);
 			if (extruderIndex < 4)
 			{
-				lastDestination.position -= ExtruderOffsets[extruderIndex];
+				lastDestination.position -= BabbyStepOffsets[extruderIndex];
+				lastDestination.position += extruderOffsets[extruderIndex];
 			}
 			internalStream.SetPrinterPosition(lastDestination);
 		}
@@ -118,7 +139,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				PrinterMove moveToSend = currentMove;
 				if (extruderIndex < 4)
 				{
-					moveToSend.position += ExtruderOffsets[extruderIndex];
+					moveToSend.position += BabbyStepOffsets[extruderIndex];
+					moveToSend.position -= extruderOffsets[extruderIndex];
 				}
 
 				if (moveToSend.HaveAnyPosition)

@@ -41,7 +41,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private readonly string compleatedBeforeGCodeString = "; COMPLEATED_BEFORE_GCODE";
 		private int activeTool;
 		private int extruderCount = 0;
-		private Vector3[] extruderOffsets = new Vector3[4];
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 		private string postSwitchLine;
 		private double preSwitchFeedRate;
@@ -57,8 +56,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			this.queuedCommandsStream = queuedCommandsStream;
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			activeTool = printer.Connection.ActiveExtruderIndex;
-			printer.Settings.SettingChanged += Settings_SettingChanged;
-			ReadExtruderOffsets();
 		}
 
 		public override string DebugInfo
@@ -67,13 +64,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				return $"Last Destination = {lastDestination}";
 			}
-		}
-
-		public override void Dispose()
-		{
-			printer.Settings.SettingChanged -= Settings_SettingChanged;
-
-			base.Dispose();
 		}
 
 		public override string ReadLine()
@@ -138,21 +128,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (LineIsMovement(lineToSend))
 			{
-				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
-
-				PrinterMove moveToSend = currentMove;
-				if (activeTool < 4)
-				{
-					moveToSend.position -= extruderOffsets[activeTool];
-				}
-
-				if (moveToSend.HaveAnyPosition)
-				{
-					lineToSend = CreateMovementLine(moveToSend, lastDestination);
-				}
-				lastDestination = currentMove;
-
-				return lineToSend;
+				lastDestination = GetPosition(lineToSend, lastDestination);
 			}
 
 			return lineToSend;
@@ -161,10 +137,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void SetPrinterPosition(PrinterMove position)
 		{
 			this.lastDestination.CopyKnowSettings(position);
-			if (activeTool < 4)
-			{
-				lastDestination.position += extruderOffsets[activeTool];
-			}
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
@@ -367,28 +339,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			return false;
-		}
-
-		private void ReadExtruderOffsets()
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
-			}
-		}
-
-		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
-		{
-			if (stringEvent != null)
-			{
-				// if the offsets change update them (unless we are actively printing)
-				if (stringEvent.Data == SettingsKey.extruder_offset
-					&& !printer.Connection.Printing
-					&& !printer.Connection.Paused)
-				{
-					ReadExtruderOffsets();
-				}
-			}
 		}
 	}
 }
