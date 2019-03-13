@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 			return output;
 		}
 
-		public static void ArrangeOnBed(List<IObject3D> object3DList, IObject3D scene, Vector3 bedCenter)
+		public static void ArrangeOnBed(List<IObject3D> object3DList, Vector3 bedCenter)
 		{
 			// move them all out of the way
 			for (int i = 0; i < object3DList.Count; i++)
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl
 				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).MinXYZ;
 				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
-				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, scene.Children);
+				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, object3DList);
 
 				currentRatioDone += ratioPerMeshGroup;
 
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl
 			var aabb = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z);
 
-			// keep moving the item until its in an open slot 
+			// keep moving the item until its in an open slot
 			MoveToOpenPosition(objectToAdd, itemsToAvoid);
 		}
 
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl
 				if (!partPlaced)
 				{
 					yStep = currentSize;
-					// check top edge 
+					// check top edge
 					for (xStep = 0; xStep < currentSize; xStep++)
 					{
 						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);

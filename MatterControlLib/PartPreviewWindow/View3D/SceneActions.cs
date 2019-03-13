@@ -161,7 +161,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Clear selection to ensure all root level children are arranged on the bed
 				scene.SelectedItem = null;
 
-				PlatingHelper.ArrangeOnBed(scene.Children.ToList(), scene, bedCenter);
+				var children = scene.Children.ToList();
+				var clonedChildren = children.Select(c => c.Clone()).ToList();
+
+				PlatingHelper.ArrangeOnBed(clonedChildren, bedCenter);
+
+				scene.UndoBuffer.AddAndDo(new ReplaceCommand(children, clonedChildren));
 			});
 		}
 

@@ -585,9 +585,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					ID = "ArrangeAll",
 					Title = "Arrange All Parts".Localize(),
-					Action = () =>
+					Action = async () =>
 					{
-						sceneContext.Scene.AutoArrangeChildren(this.BedCenter);
+						await sceneContext.Scene.AutoArrangeChildren(this.BedCenter).ConfigureAwait(false);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 				},
