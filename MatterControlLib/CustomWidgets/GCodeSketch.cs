@@ -32,6 +32,7 @@ using System.IO;
 using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -43,16 +44,23 @@ namespace MatterHackers.MatterControl
 	{
 		private StringBuilder sb;
 		private StringWriter writer;
+		private PrinterConfig printer;
+		private double nozzleDiameter;
+		private double filamentDiameterMm;
 		private double currentE = 0;
 		private bool retracted = false;
 		private bool penUp = false;
 		private double currentSpeed = 0;
 		private double layerHeight = 0.2;
 
-		public GCodeSketch()
+		public GCodeSketch(PrinterConfig printer)
 		{
 			sb = new StringBuilder();
 			writer = new StringWriter(sb);
+
+			this.printer = printer;
+			nozzleDiameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			filamentDiameterMm = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
 		}
 
 		public double RetractLength { get; set; } = 1.2;
@@ -157,6 +165,26 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public static double ExtrudeAmount(PrinterConfig printer, double widthMm, double heightMm, double lengthMm)
+		{
+			var filamentDiameterMm = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
+
+			var volumeMm3 = widthMm * heightMm * lengthMm;
+			var areaMm2 = Math.PI * Math.Pow(filamentDiameterMm / 2, 2);
+			var filamentLengthMm = volumeMm3 / areaMm2;
+
+			return filamentLengthMm;
+		}
+
+		public double ExtrudeAmount(double widthMm, double heightMm, double lengthMm)
+		{
+			var volumeMm3 = widthMm * heightMm * lengthMm;
+			var areaMm2 = Math.PI * Math.Pow(filamentDiameterMm / 2, 2);
+			var filamentLengthMm = volumeMm3 / areaMm2;
+
+			return filamentLengthMm;
+		}
+
 		public void LineTo(double x, double y)
 		{
 			this.LineTo(new Vector2(x, y));
@@ -172,7 +200,7 @@ namespace MatterHackers.MatterControl
 			position = Transform.Transform(position);
 
 			var delta = this.CurrentPosition - position;
-			currentE += delta.Length * 0.048;
+			currentE += this.ExtrudeAmount(nozzleDiameter, layerHeight, delta.Length);
 
 			this.WriteSpeedLine(
 				string.Format(

@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 
 			Task.Run(async () =>
 			{
-				var sketch1 = new GCodeSketch()
+				var sketch1 = new GCodeSketch(printer)
 				{
 					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60),
 					RetractLength = printer.Settings.GetValue<double>(SettingsKey.retract_length),
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 					TravelSpeed = printer.Settings.GetValue<double>(SettingsKey.travel_speed) * 60,
 				};
 
-				var sketch2 = new GCodeSketch()
+				var sketch2 = new GCodeSketch(printer)
 				{
 					Speed = sketch1.Speed,
 					RetractLength = sketch1.RetractLength,
