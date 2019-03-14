@@ -275,7 +275,7 @@ namespace MatterControl.Printing
 
 		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
 		{
-			if (ByteCount != 0)
+			if (ByteCount > 0)
 			{
 				return BytePosition / (double)ByteCount;
 			}
