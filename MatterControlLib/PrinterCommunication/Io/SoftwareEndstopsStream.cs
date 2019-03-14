@@ -87,6 +87,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
 
+			// if the printer has no heigt set than allow it to go up any amount
+			if(aabb.ZSize < 10)
+			{
+				aabb.MaxXYZ.Z = 200;
+			}
+
 			// if the printer has leveling enabled
 			if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
@@ -98,22 +104,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				aabb.MinXYZ.Z = -3;
 			}
 
-			// find out if the printer knows some of its limits
+			// let the z endstop set the max z bounds
 			var homingPosition = printer.Connection.HomingPosition;
 			// If we know the homing endstop positions, add them in.
-			for (int i = 0; i < extruderCount; i++)
+			if (homingPosition.Z != double.NegativeInfinity)
 			{
-				if (homingPosition[i] != double.NegativeInfinity)
+				// Figure out which side of center it is on and modify the bounds
+				// If the z is less than 20 we assume the printer is bottom homing
+				if (homingPosition.Z < aabb.Center.Z)
 				{
-					// figure out which side of center it is on and modify the bounds
-					if (homingPosition[i] < aabb.Center[i])
-					{
-						aabb.MinXYZ[i] = homingPosition[i];
-					}
-					else
-					{
-						aabb.MaxXYZ[i] = homingPosition[i];
-					}
+					aabb.MinXYZ.Z = homingPosition.Z;
+				}
+				else
+				{
+					aabb.MaxXYZ.Z = homingPosition.Z;
 				}
 			}
 
