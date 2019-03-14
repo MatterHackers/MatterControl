@@ -344,8 +344,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IObject3D itemToLayFlat = null;
 			Mesh meshWithLowest = null;
 
+			var items = objectToLayFlat.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
+			if(!items.Any())
+			{
+				items = objectToLayFlat.VisibleMeshes();
+			}
+
 			// Process each child, checking for the lowest vertex
-			foreach (var itemToCheck in objectToLayFlat.VisibleMeshes())
+			foreach (var itemToCheck in items)
 			{
 				var meshToCheck = itemToCheck.Mesh.GetConvexHull(false);
 
@@ -461,7 +467,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				objectToLayFlat.Matrix = objectToLayFlatGroup.ApplyAtBoundsCenter(partLevelMatrix);
 			}
 
-			PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
+			if (objectToLayFlatGroup is Object3D object3D)
+			{
+				AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity, (item) =>
+				{
+					return item.OutputType != PrintOutputTypes.Support;
+				});
+				Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
+
+				object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
+			}
+			else
+			{
+				PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
+			}
 			scene.UndoBuffer.Add(new TransformCommand(objectToLayFlatGroup, preLayFlatMatrix, objectToLayFlatGroup.Matrix));
 		}
 

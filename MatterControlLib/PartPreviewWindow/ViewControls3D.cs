@@ -684,7 +684,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.Scene.SelectionChanged += (s, e) =>
 			{
-				iconButton.Enabled = sceneContext.Scene.SelectedItem != null;
+				iconButton.Selectable = sceneContext.Scene.SelectedItem != null;
 			};
 
 			// Remove right Padding for drop style
