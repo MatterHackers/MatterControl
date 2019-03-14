@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig printer;
 		private double nozzleDiameter;
 		private double filamentDiameterMm;
+		private double printerExtrusionMultiplier;
 		private double currentE = 0;
 		private bool retracted = false;
 		private bool penUp = false;
@@ -61,6 +62,7 @@ namespace MatterHackers.MatterControl
 			this.printer = printer;
 			nozzleDiameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 			filamentDiameterMm = printer.Settings.GetValue<double>(SettingsKey.filament_diameter);
+			printerExtrusionMultiplier = printer.Settings.GetValue<double>(SettingsKey.extrusion_multiplier);
 		}
 
 		public double RetractLength { get; set; } = 1.2;
@@ -187,10 +189,20 @@ namespace MatterHackers.MatterControl
 
 		public void LineTo(double x, double y)
 		{
-			this.LineTo(new Vector2(x, y));
+			this.LineTo(new Vector2(x, y), printerExtrusionMultiplier);
+		}
+
+		public void LineTo(double x, double y, double extrusionMultiplier)
+		{
+			this.LineTo(new Vector2(x, y), extrusionMultiplier);
 		}
 
 		public void LineTo(Vector2 position)
+		{
+			this.LineTo(position, printerExtrusionMultiplier);
+		}
+
+		public void LineTo(Vector2 position, double extrusionMultiplier)
 		{
 			if (retracted)
 			{
@@ -200,7 +212,7 @@ namespace MatterHackers.MatterControl
 			position = Transform.Transform(position);
 
 			var delta = this.CurrentPosition - position;
-			currentE += this.ExtrudeAmount(nozzleDiameter, layerHeight, delta.Length);
+			currentE += this.ExtrudeAmount(nozzleDiameter, layerHeight, delta.Length) * extrusionMultiplier;
 
 			this.WriteSpeedLine(
 				string.Format(
