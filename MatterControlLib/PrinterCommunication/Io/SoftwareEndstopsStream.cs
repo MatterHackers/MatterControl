@@ -93,6 +93,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				// set to a big value to make sure we can get to any leveling position described (below the bed)
 				aabb.MinXYZ.Z = -100; 
 			}
+			else // leave a little bit of room for baby stepping
+			{
+				aabb.MinXYZ.Z = -3;
+			}
 
 			// find out if the printer knows some of its limits
 			var homingPosition = printer.Connection.HomingPosition;
