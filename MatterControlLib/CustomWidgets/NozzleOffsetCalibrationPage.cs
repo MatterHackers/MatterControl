@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl
 				// HACK: update state needed to be set before calling StartPrint
 				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 
-				await printer.Connection.StartPrint(outputPath);
+				await printer.Connection.StartPrint(outputPath, allowRecovery: false);
 
 				// Wait for print start
 				while (!printer.Connection.PrintIsActive)
