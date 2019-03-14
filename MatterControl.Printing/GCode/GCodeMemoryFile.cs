@@ -460,10 +460,14 @@ namespace MatterControl.Printing
 				}
 
 				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);
-				return deltaFromStart / (double)(endIndex - startIndex);
+				var length = endIndex - startIndex;
+				if (length > 0)
+				{
+					return deltaFromStart / (double)(length);
+				}
 			}
 
-			return 0;
+			return 1;
 		}
 
 		public void Save(string dest)

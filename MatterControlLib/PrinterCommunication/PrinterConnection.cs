@@ -1880,7 +1880,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private CancellationTokenSource printingCancellation;
 
-		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null)
+		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool allowRecovery = true)
 		{
 			if (!this.IsConnected || Printing)
 			{
@@ -1923,7 +1923,8 @@ You will then need to logout and log back in to the computer for the changes to 
 							activePrintItem.PrintItem.Commit();
 						}
 
-						if (activePrintTask == null)
+						if (activePrintTask == null
+							&& allowRecovery)
 						{
 							// TODO: Fix printerItemID int requirement
 							activePrintTask = new PrintTask
