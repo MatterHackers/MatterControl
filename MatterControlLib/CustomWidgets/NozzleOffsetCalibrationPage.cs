@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute,
 				Height = 110,
-				Width = 420
+				Width = 480
 			});
 
 			xOffsetWidget.OffsetChanged += (s, e) =>
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(bottom: 4),
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
-				Height = 420,
+				Height = 480,
 				Width = 110
 			});
 
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl
 
 			Task.Run(async () =>
 			{
-				var sketch1 = new GCodeSketch()
+				var sketch1 = new GCodeSketch(printer)
 				{
 					Speed = (int)(printer.Settings.GetValue<double>(SettingsKey.first_layer_speed) * 60),
 					RetractLength = printer.Settings.GetValue<double>(SettingsKey.retract_length),
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 					TravelSpeed = printer.Settings.GetValue<double>(SettingsKey.travel_speed) * 60,
 				};
 
-				var sketch2 = new GCodeSketch()
+				var sketch2 = new GCodeSketch(printer)
 				{
 					Speed = sketch1.Speed,
 					RetractLength = sketch1.RetractLength,
@@ -168,8 +168,6 @@ namespace MatterHackers.MatterControl
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: true);
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: false);
 
-				sketch1.Unretract();
-				sketch2.Unretract();
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
