@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute,
 				Height = 110,
-				Width = 420
+				Width = 480
 			});
 
 			xOffsetWidget.OffsetChanged += (s, e) =>
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl
 				Padding = new BorderDouble(bottom: 4),
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
-				Height = 420,
+				Height = 480,
 				Width = 110
 			});
 
