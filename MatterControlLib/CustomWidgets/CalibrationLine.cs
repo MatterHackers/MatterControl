@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl
 
 		private ThemeConfig theme;
 		private IVertexSource glyph = null;
+		private Stroke glyphStroke;
 		private bool _isActive;
 
 		static CalibrationLine()
@@ -57,13 +58,13 @@ namespace MatterHackers.MatterControl
 		{
 			if (parentDirection == FlowDirection.LeftToRight)
 			{
-				this.Width = glyphSize;
+				this.Width = glyphSize + 1;
 				this.HAnchor = HAnchor.Absolute;
 				this.VAnchor = VAnchor.Stretch;
 			}
 			else
 			{
-				this.Height = glyphSize;
+				this.Height = glyphSize + 1;
 				this.HAnchor = HAnchor.Stretch;
 				this.VAnchor = VAnchor.Absolute;
 			}
@@ -79,6 +80,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.glyph = glyph;
+				this.glyphStroke = new Stroke(glyph.Scale(0.8));
 			}
 
 			this.theme = theme;
@@ -127,16 +129,16 @@ namespace MatterHackers.MatterControl
 		{
 			Color lineColor = this.IsActive ? theme.PrimaryAccentColor : theme.TextColor;
 
-			var centerX = this.LocalBounds.XCenter + .5;
-			var centerY = this.LocalBounds.YCenter - .5;
+			var centerX = this.LocalBounds.XCenter;
+			var centerY = this.LocalBounds.YCenter;
 
-			var start = new Vector2(centerX, (glyph == null) ? 20 : (this.IsNegative) ? 6 : 9 );
+			var start = new Vector2(centerX, (glyph == null) ? 20 : (this.IsNegative) ? 6 : 12);
 			var end = new Vector2(centerX, this.LocalBounds.Height);
 
 			if (!verticalLine)
 			{
 				start = new Vector2(0, centerY);
-				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : (this.IsNegative) ? 6 : 9), centerY);
+				end = new Vector2(this.LocalBounds.Width - ((glyph == null) ? 20 : (this.IsNegative) ? 6 : 12), centerY);
 			}
 
 			graphics2D.Line(start, end, lineColor, 1);
@@ -144,10 +146,10 @@ namespace MatterHackers.MatterControl
 			// Draw line end
 			if (glyph != null)
 			{
-				int offset = IsNegative ? 18 : 11;
+				int offset = IsNegative ? 17 : 11;
 
 				graphics2D.Render(
-					glyph,
+					glyphStroke,
 					verticalLine ? new Vector2(centerX, offset) : new Vector2(this.Width - offset, centerY),
 					lineColor);
 			}
