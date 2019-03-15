@@ -168,8 +168,6 @@ namespace MatterHackers.MatterControl
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: true);
 				templatePrinter.BuildTemplate(sketch1, sketch2, verticalLayout: false);
 
-				sketch1.Unretract();
-				sketch2.Unretract();
 
 				string outputPath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
