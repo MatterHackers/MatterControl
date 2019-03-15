@@ -56,8 +56,8 @@ namespace MatterHackers.MatterControl
 		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
 
 		// heating status
-		private bool waitingForBedHeat = false;
-		private bool waitingForExtruderHeat = false;
+		enum HeatingStatus { None, Bed, T0, T1 }
+		private HeatingStatus waitingForHeat = HeatingStatus.None;
 		private double heatDistance = 0;
 		private double heatStart = 0;
 
@@ -215,8 +215,11 @@ namespace MatterHackers.MatterControl
 							case DetailedPrintingState.HeatingBed:
 								return "Waiting for Bed to Heat to".Localize() + $" {this.Connection.TargetBedTemperature}°C";
 
-							case DetailedPrintingState.HeatingExtruder:
-								return "Waiting for Extruder to Heat to".Localize() + $" {this.Connection.GetTargetHotendTemperature(0)}°C";
+							case DetailedPrintingState.HeatingT0:
+								return "Waiting for Extruder 1 to Heat to".Localize() + $" {this.Connection.GetTargetHotendTemperature(0)}°C";
+
+							case DetailedPrintingState.HeatingT1:
+								return "Waiting for Extruder 2 to Heat to".Localize() + $" {this.Connection.GetTargetHotendTemperature(1)}°C";
 
 							case DetailedPrintingState.Printing:
 							default:
@@ -288,14 +291,14 @@ namespace MatterHackers.MatterControl
 							this,
 							(reporter, cancellationToken) =>
 							{
-								waitingForBedHeat = true;
-								waitingForExtruderHeat = false;
+								waitingForHeat = HeatingStatus.Bed;
 
 								var progressStatus = new ProgressStatus();
 								heatStart = printerConnection.ActualBedTemperature;
 								heatDistance = Math.Abs(printerConnection.TargetBedTemperature - heatStart);
 
-								while (heatDistance > 0 && waitingForBedHeat)
+								while (heatDistance > 0 
+									&& waitingForHeat == HeatingStatus.Bed)
 								{
 									var remainingDistance = Math.Abs(printerConnection.TargetBedTemperature - printerConnection.ActualBedTemperature);
 									progressStatus.Status = $"Heating Bed ({printerConnection.ActualBedTemperature:0}/{printerConnection.TargetBedTemperature:0})";
@@ -312,25 +315,56 @@ namespace MatterHackers.MatterControl
 							});
 						break;
 
-					case DetailedPrintingState.HeatingExtruder:
+					case DetailedPrintingState.HeatingT0:
 						ApplicationController.Instance.Tasks.Execute(
-							"Heating Extruder".Localize(),
+							"Heating Nozzle 1".Localize(),
 							this,
 							(reporter, cancellationToken) =>
 							{
-								waitingForBedHeat = false;
-								waitingForExtruderHeat = true;
+								waitingForHeat = HeatingStatus.T0;
 
 								var progressStatus = new ProgressStatus();
 
 								heatStart = printerConnection.GetActualHotendTemperature(0);
 								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - heatStart);
 
-								while (heatDistance > 0 && waitingForExtruderHeat)
+								while (heatDistance > 0 
+									&& waitingForHeat == HeatingStatus.T0)
 								{
 									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(0) - printerConnection.GetActualHotendTemperature(0));
 									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
-									progressStatus.Status = $"Heating Extruder ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
+									progressStatus.Status = $"Heating Nozzle ({printerConnection.GetActualHotendTemperature(0):0}/{printerConnection.GetTargetHotendTemperature(0):0})";
+									reporter.Report(progressStatus);
+									Thread.Sleep(1000);
+								}
+
+								return Task.CompletedTask;
+							},
+							new RunningTaskOptions()
+							{
+								ReadOnlyReporting = true
+							});
+						break;
+
+					case DetailedPrintingState.HeatingT1:
+						ApplicationController.Instance.Tasks.Execute(
+							"Heating Nozzle 2".Localize(),
+							this,
+							(reporter, cancellationToken) =>
+							{
+								waitingForHeat = HeatingStatus.T1;
+
+								var progressStatus = new ProgressStatus();
+
+								heatStart = printerConnection.GetActualHotendTemperature(1);
+								heatDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(1) - heatStart);
+
+								while (heatDistance > 0
+									&& waitingForHeat == HeatingStatus.T1)
+								{
+									var currentDistance = Math.Abs(printerConnection.GetTargetHotendTemperature(1) - printerConnection.GetActualHotendTemperature(1));
+									progressStatus.Progress0To1 = (heatDistance - currentDistance) / heatDistance;
+									progressStatus.Status = $"Heating Nozzle ({printerConnection.GetActualHotendTemperature(1):0}/{printerConnection.GetTargetHotendTemperature(1):0})";
 									reporter.Report(progressStatus);
 									Thread.Sleep(1000);
 								}
@@ -347,16 +381,14 @@ namespace MatterHackers.MatterControl
 					case DetailedPrintingState.Printing:
 					default:
 						// clear any existing waiting states
-						waitingForBedHeat = false;
-						waitingForExtruderHeat = false;
+						waitingForHeat = HeatingStatus.None;
 						break;
 				}
 			}
 			else
 			{
-				// turn of any running temp feedback tasks
-				waitingForBedHeat = false;
-				waitingForExtruderHeat = false;
+				// turn off any running temp feedback tasks
+				waitingForHeat = HeatingStatus.None;
 			}
 		}
 

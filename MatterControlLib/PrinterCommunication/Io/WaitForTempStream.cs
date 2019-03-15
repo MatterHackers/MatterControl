@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double ignoreRequestIfBelowTemp = 20;
 		private double sameTempRangeBed = 3;
 		private double sameTempRangeHotend = 1;
-		private State state = State.passthrough;
+		private State state = State.Passthrough;
 		private double targetTemp = 0;
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
 
@@ -55,27 +55,28 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public WaitForTempStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			state = State.passthrough;
+			state = State.Passthrough;
 		}
 
 		private enum State
-		{ passthrough, waitingForExtruderTemp, waitingForBedTemp };
+		{ Passthrough, WaitingForBedTemp, WaitingForT0Temp, WaitingForT1Temp };
 
-		public bool HeatingBed { get { return state == State.waitingForBedTemp; } }
-		public bool HeatingExtruder { get { return state == State.waitingForExtruderTemp; } }
+		public bool HeatingBed { get { return state == State.WaitingForBedTemp; } }
+		public bool HeatingT0 { get { return state == State.WaitingForT0Temp; } }
+		public bool HeatingT1 { get { return state == State.WaitingForT1Temp; } }
 
 		public override string DebugInfo => "";
 
 		public void Cancel()
 		{
-			state = State.passthrough;
+			state = State.Passthrough;
 		}
 
 		public override string ReadLine()
 		{
 			switch (state)
 			{
-				case State.passthrough:
+				case State.Passthrough:
 					{
 						string lineToSend = base.ReadLine();
 
@@ -111,7 +112,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
 								if (targetTemp > ignoreRequestIfBelowTemp)
 								{
-									state = State.waitingForExtruderTemp;
+									if (extruderIndex == 1)
+									{
+										state = State.WaitingForT1Temp;
+									}
+									else
+									{
+										state = State.WaitingForT0Temp;
+									}
 									timeHaveBeenAtTemp.Reset();
 								}
 								else
@@ -131,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									{
 										waitWhenCooling = gotR;
 										lineToSend = "M140 S" + targetTemp.ToString();
-										state = State.waitingForBedTemp;
+										state = State.WaitingForBedTemp;
 										timeHaveBeenAtTemp.Reset();
 									}
 									else
@@ -151,7 +159,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						return lineToSend;
 					}
 
-				case State.waitingForExtruderTemp:
+				case State.WaitingForT0Temp:
+				case State.WaitingForT1Temp:
 					{
 						double extruderTemp = printer.Connection.GetActualHotendTemperature((int)extruderIndex);
 						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend 
@@ -165,7 +174,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							|| printer.Connection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
-							state = State.passthrough;
+							state = State.Passthrough;
 							return "";
 						}
 						else
@@ -176,7 +185,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 					}
 
-				case State.waitingForBedTemp:
+				case State.WaitingForBedTemp:
 					{
 						double bedTemp = printer.Connection.ActualBedTemperature;
 						bool tempWithinRange;
@@ -200,7 +209,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							|| printer.Connection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
-							state = State.passthrough;
+							state = State.Passthrough;
 							return "";
 						}
 						else
