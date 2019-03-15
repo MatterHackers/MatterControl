@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		ConnectionLost
 	};
 
-	public enum DetailedPrintingState { HomingAxis, HeatingBed, HeatingExtruder, Printing };
+	public enum DetailedPrintingState { HomingAxis, HeatingBed, HeatingT0, HeatingT1, Printing };
 
 	public enum FirmwareTypes { Unknown, Repetier, Marlin, Sprinter };
 
@@ -2304,11 +2304,17 @@ You will then need to logout and log back in to the computer for the changes to 
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
-			else if (waitForTempStream?.HeatingExtruder ?? false)
+			else if (waitForTempStream?.HeatingT0 ?? false)
 			{
 				// don't time the heating extruder operation
 				timeSinceStartedPrint.Stop();
-				DetailedPrintingState = DetailedPrintingState.HeatingExtruder;
+				DetailedPrintingState = DetailedPrintingState.HeatingT0;
+			}
+			if (waitForTempStream?.HeatingT1 ?? false)
+			{
+				// don't time the heating extruder operation
+				timeSinceStartedPrint.Stop();
+				DetailedPrintingState = DetailedPrintingState.HeatingT1;
 			}
 			else
 			{

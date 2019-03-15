@@ -237,7 +237,8 @@ namespace MatterHackers.MatterControl
 						{
 							case DetailedPrintingState.HomingAxis:
 							case DetailedPrintingState.HeatingBed:
-							case DetailedPrintingState.HeatingExtruder:
+							case DetailedPrintingState.HeatingT0:
+							case DetailedPrintingState.HeatingT1:
 							case DetailedPrintingState.Printing:
 								fanControlsContainer?.SetEnabled(true);
 								macroControlsContainer?.SetEnabled(false);
