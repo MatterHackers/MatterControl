@@ -144,6 +144,11 @@ namespace MatterHackers.MatterControl.DesignTools
 								var transformedMesh = originalMesh.Copy(CancellationToken.None);
 								var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
+								// split the mesh along the x axis
+								double numRotations = aabb.XSize / circumference;
+								double numberOfCuts = numRotations * MinSidesPerRotation;
+								//SplitMeshAlongX(transformedMesh, numberOfCuts);
+
 								if (!BendCcw)
 								{
 									// rotate around so it will bend correctly
@@ -190,6 +195,36 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		private Mesh SplitMeshAlongX(Mesh mesh, double numberOfCuts)
+		{
+			var result = new Mesh();
+			var splitSections = new List<Mesh>();
+			for(int i = 0; i<numberOfCuts; i++)
+			{
+				// add a mesh to hold all the polygons that need to be split for each split section
+				splitSections.Add(new Mesh());
+			}
+
+			var bounds = mesh.GetAxisAlignedBoundingBox();
+
+			// add the face to every split section it crosses a side of
+			foreach (var face in mesh.Faces)
+			{
+				var faceBounds = face.GetAxisAlignedBoundingBox(mesh);
+			}
+
+			// foreach split section, cut all the polygons that cross the sides of it
+			foreach (var sectionMesh in splitSections)
+			{
+				// find what cut needs to be done to each face
+				// add the cut faces back to result
+			}
+
+			// clean the result
+
+			return result;
 		}
 	}
 }
