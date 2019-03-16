@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				_image = new ImageBuffer(16, 16);
 
-				this.HighlightRegion.AddChild(imageWidget = new ImageWidget(this.Image)
+				this.HighlightRegion.AddChild(imageWidget = new ImageWidget(this.Image, listenForImageChanged: false)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(right: 4),

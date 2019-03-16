@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 {
 	public class NozzleOffsetTemplateWidget : FlowLayoutWidget
 	{
-		private double _activeOffset;
+		private double? _activeOffset = null;
 		private ThemeConfig theme;
 
 		public event EventHandler OffsetChanged;
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 
 		public double ActiveOffset
 		{
-			get => _activeOffset;
+			get => _activeOffset ?? 0;
 			set
 			{
 				if (value != _activeOffset)
