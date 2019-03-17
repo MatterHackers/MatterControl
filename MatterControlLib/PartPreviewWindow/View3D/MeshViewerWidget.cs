@@ -281,6 +281,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				drawColor = new Color(Color.Yellow, 120);
 			}
+			else if(item.WorldOutputType() == PrintOutputTypes.WipeTower)
+			{
+				drawColor = new Color(Color.Cyan, 120);
+			}
 
 			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
 			if (sceneContext.Printer != null)
