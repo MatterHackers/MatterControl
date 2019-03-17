@@ -78,13 +78,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
+				var currentOffset = BabbyStepOffsets[0].Z;
 				BabbyStepOffsets[0] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-				printer.Connection.ReadPosition(PositionReadType.Other);
+				lastDestination.position.Z = lastDestination.position.Z - currentOffset + BabbyStepOffsets[0].Z;
 			}
 			else if (e?.Data == SettingsKey.baby_step_z_offset_1)
 			{
+				var currentOffset = BabbyStepOffsets[1].Z;
 				BabbyStepOffsets[1] = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1));
-				printer.Connection.ReadPosition(PositionReadType.Other);
+				lastDestination.position.Z = lastDestination.position.Z - currentOffset + BabbyStepOffsets[1].Z;
 			}
 			// if the offsets change update them (unless we are actively printing)
 			else if (e?.Data == SettingsKey.extruder_offset
@@ -92,7 +94,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& !printer.Connection.Paused)
 			{
 				ReadExtruderOffsets();
-				printer.Connection.ReadPosition(PositionReadType.Other);
 			}
 		}
 
