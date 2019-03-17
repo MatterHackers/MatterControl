@@ -107,14 +107,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					// left + spaces + blocks + right
 					var baseWidth = (2 * spaceBetween) + (4 * spaceBetween) + (5 * width) + (2 * spaceBetween);
 					shape.LineTo(baseWidth, 0);
-					shape.LineTo(baseWidth, depth);
-					shape.LineTo(0, depth);
 					if (Direction == Layout.Vertical)
 					{
-						var origin = new Vector2(0, depth / 2);
-						var delta = new Vector2(0, depth / 2);
+						var origin = new Vector2(baseWidth, depth / 2);
+						var delta = new Vector2(0, -depth / 2);
 						var count = 15;
-						for(int i=0; i<count; i++)
+						for (int i = 0; i < count; i++)
 						{
 							delta.Rotate(MathHelper.Tau / 2 / count);
 							shape.LineTo(origin + delta);
@@ -122,8 +120,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 					else
 					{
-						shape.LineTo(-depth, depth / 2); // a point on the left
+						shape.LineTo(baseWidth+depth, depth / 2); // a point on the left
 					}
+					shape.LineTo(baseWidth, depth);
+					shape.LineTo(0, depth);
+
 					var baseMesh = shape.Extrude(ChangeHeight);
 					content.Children.Add(new Object3D()
 					{
