@@ -56,6 +56,16 @@ namespace MatterHackers.MatterControl.Library
 					() => "Cube".Localize(),
 					async () => await CubeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+#if DEBUG
+				new GeneratorItem(
+					() => "Calibration Tab".Localize(),
+					async () => await XyCalibrationTabObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "Calibration Face".Localize(),
+					async () => await XyCalibrationFaceObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+#endif
 				new GeneratorItem(
 					() => "Pyramid".Localize(),
 					async () => await PyramidObject3D.Create())
