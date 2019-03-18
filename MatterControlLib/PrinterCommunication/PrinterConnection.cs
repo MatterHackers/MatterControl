@@ -345,35 +345,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (extruder > -1)
 				{
-					if (printer.Connection.Printing
-						&& (printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT0
-							|| printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT1))
+					if (this.Printing
+						&& (this.DetailedPrintingState == DetailedPrintingState.HeatingT0
+							|| this.DetailedPrintingState == DetailedPrintingState.HeatingT1))
 					{
 					}
 					else
 					{
-						double goalTemp = printer.Connection.GetTargetHotendTemperature(extruder);
+						double goalTemp = this.GetTargetHotendTemperature(extruder);
 						if (goalTemp > 0)
 						{
 							var newGoal = printer.Settings.GetValue<double>(stringEvent.Data);
-							printer.Connection.SetTargetHotendTemperature(extruder, newGoal);
+							this.SetTargetHotendTemperature(extruder, newGoal);
 						}
 					}
 				}
 
 				if (stringEvent.Data == SettingsKey.bed_temperature)
 				{
-					if (printer.Connection.Printing
-						&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingBed)
+					if (this.Printing
+						&& this.DetailedPrintingState == DetailedPrintingState.HeatingBed)
 					{
 					}
 					else
 					{
-						double goalTemp = printer.Connection.TargetBedTemperature;
+						double goalTemp = this.TargetBedTemperature;
 						if (goalTemp > 0)
 						{
 							var newGoal = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
-							printer.Connection.TargetBedTemperature = newGoal;
+							this.TargetBedTemperature = newGoal;
 						}
 					}
 				}
