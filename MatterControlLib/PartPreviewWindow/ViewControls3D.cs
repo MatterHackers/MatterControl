@@ -443,6 +443,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// add the create support before the align
 					if (namedAction.OperationType == typeof(AlignObject3D))
 					{
+						this.AddChild(CreateWipeTowerButton(theme));
 						this.AddChild(CreateSupportButton(theme));
 					}
 
@@ -649,6 +650,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			return libraryPopup;
+		}
+
+		private GuiWidget CreateWipeTowerButton(ThemeConfig theme)
+		{
+			var iconButton = new IconButton(
+				AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, theme.InvertIcons),
+				theme)
+			{
+				ToolTipText = "Create Wipe Tower".Localize(),
+			};
+
+			iconButton.Click += (s, e) =>
+			{
+				var scene = sceneContext.Scene;
+				var selectedItem = scene.SelectedItem;
+				if (selectedItem != null)
+				{
+					bool allAreWipeTower = false;
+					if (selectedItem is SelectionGroupObject3D)
+					{
+						allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
+					}
+					else
+					{
+						allAreWipeTower = selectedItem.OutputType == PrintOutputTypes.WipeTower;
+					}
+
+					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
+				}
+			};
+
+			sceneContext.Scene.SelectionChanged += (s, e) =>
+			{
+				iconButton.Enabled = sceneContext.Scene.SelectedItem != null;
+			};
+
+			return iconButton;
 		}
 
 		private GuiWidget CreateSupportButton(ThemeConfig theme)

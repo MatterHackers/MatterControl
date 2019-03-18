@@ -653,6 +653,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			progressContainer.AddChild(bottomRow);
 
+			var resliceMessageRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Visible = false
+			};
+			progressContainer.AddChild(resliceMessageRow);
+
 			var timeContainer = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
@@ -709,30 +717,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								printer.ViewState.ViewMode = PartViewMode.Layers3D;
 							}
 
-							// when it is done queue it to the change to gcode stream
-							var message2 = "Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.".Localize();
-							var caption2 = "Switch to new G-Code?".Localize();
-							StyledMessageBox.ShowMessageBox(async (clickedOk2) =>
-							{
-								if (clickedOk2)
-								{
-									if (printer.Connection != null
-										&& (printer.Connection.Printing || printer.Connection.Paused))
-									{
-										printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath(printer));
-										bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
-									}
-								}
-								else
-								{
-									await ApplicationController.Instance.SliceItemLoadOutput(
-										printer,
-										printer.Bed.Scene,
-										bottomRow.Name);
-								}
-								activelySlicing = false;
-								resliceButton.Enabled = true;
-							}, message2, caption2, StyledMessageBox.MessageType.YES_NO, "Switch".Localize(), "Cancel".Localize());
+							resliceMessageRow.Visible = true;
+							resliceMessageRow.VAnchor = VAnchor.Absolute;
+							resliceMessageRow.VAnchor = VAnchor.Fit;
 						}
 						else
 						{
@@ -741,6 +728,63 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					});
 				};
 				bottomRow.AddChild(resliceButton);
+
+				// setup the message row
+				{
+					// when it is done queue it to the change to gcode stream
+					var switchMessage = "Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.".Localize();
+					resliceMessageRow.AddChild(new WrappedTextWidget(switchMessage, theme.DefaultFontSize, textColor: theme.TextColor)
+					{
+						Margin = new BorderDouble(7, 3)
+					});
+
+					var switchButtonRow = new FlowLayoutWidget(FlowDirection.RightToLeft)
+					{
+						HAnchor = HAnchor.Stretch
+					};
+
+					resliceMessageRow.AddChild(switchButtonRow);
+
+					var switchButton = new TextButton("Switch", theme)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(5),
+						Name = "Switch Button"
+					};
+					switchButtonRow.AddChild(switchButton);
+					switchButton.Click += (s, e) =>
+					{
+						if (printer.Connection != null
+							&& (printer.Connection.Printing || printer.Connection.Paused))
+						{
+							printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath(printer));
+							bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
+						}
+
+						activelySlicing = false;
+						resliceButton.Enabled = true;
+						resliceMessageRow.Visible = false;
+					};
+
+					var cancelButton = new TextButton("Cancel", theme)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = new BorderDouble(5),
+						Name = "Cancel Re-Slice Button"
+					};
+					switchButtonRow.AddChild(cancelButton);
+					cancelButton.Click += async (s, e) =>
+					{
+						await ApplicationController.Instance.SliceItemLoadOutput(
+							printer,
+							printer.Bed.Scene,
+							bottomRow.Name);
+
+						activelySlicing = false;
+						resliceButton.Enabled = true;
+						resliceMessageRow.Visible = false;
+					};
+				}
 			}
 
 			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", theme.InvertIcons))

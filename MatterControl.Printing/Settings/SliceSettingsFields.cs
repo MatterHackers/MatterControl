@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.layer_to_pause,
 					PresentationName = "Layer(s) To Pause".Localize(),
-					HelpText = "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \".Localize()16; 37\".",
+					HelpText = "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".".Localize(),
 					DataEditType = DataEditTypes.STRING,
 					ShowIfSet = "!sla_printer",
 					ResetAtEndOfPrint = true,

@@ -132,12 +132,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
-
 					// if we added user generated support
 					if (supportObjects.Any())
 					{
 						// add a flag to the merge rules to let us know there was support
 						mergeRules += ",S" + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount);
+					}
+
+					var wipeTowerObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.WipeTower);
+					// if we added user generated wipe tower
+					if (wipeTowerObjects.Any())
+					{
+						// add a flag to the merge rules to let us know there was a wipe tower
+						mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
 					}
 
 					mergeRules += " ";
