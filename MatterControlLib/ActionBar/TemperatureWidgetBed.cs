@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Register listeners
 			printer.Connection.BedTemperatureRead += Connection_BedTemperatureRead;
+			printer.Connection.BedTargetTemperatureChanged += this.Connection_BedTargetTemperatureChanged;
+
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.ActualBedTemperature;
@@ -96,15 +98,7 @@ namespace MatterHackers.MatterControl.ActionBar
 					ToggleAction = (itemChecked) =>
 					{
 						var goalTemp = itemChecked ? printer.Settings.GetValue<double>(SettingsKey.bed_temperature) : 0;
-
-						if (itemChecked)
-						{
-							SetTargetTemperature(goalTemp);
-						}
-						else
-						{
-							SetTargetTemperature(0);
-						}
+						printer.Connection.TargetBedTemperature = goalTemp;
 					}
 				},
 				enforceGutter: false));
@@ -167,13 +161,6 @@ namespace MatterHackers.MatterControl.ActionBar
 						var temp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 						graph.GoalValue = temp;
 
-						// TODO: Why is this only when enabled? How does it get set to
-						if (heatToggle.Checked)
-						{
-							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?
-							SetTargetTemperature(temp);
-						}
-
 						settingsRow.UpdateStyle();
 					}
 				}
@@ -187,44 +174,25 @@ namespace MatterHackers.MatterControl.ActionBar
 			return widget;
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (heatToggle != null)
-			{
-				heatToggle.Checked = printer.Connection.TargetBedTemperature != 0;
-			}
-
-			base.OnDraw(graphics2D);
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
 			printer.Connection.BedTemperatureRead -= Connection_BedTemperatureRead;
+			printer.Connection.BedTargetTemperatureChanged -= this.Connection_BedTargetTemperatureChanged;
+
 			UiThread.ClearInterval(runningInterval);
 
 			base.OnClosed(e);
 		}
 
-		protected override void SetTargetTemperature(double targetTemp)
-		{
-			double goalTemp = (int)(targetTemp + .5);
-			if (printer.Connection.Printing
-				&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingBed
-				&& goalTemp != printer.Connection.TargetBedTemperature)
-			{
-				string message = string.Format(waitingForBedToHeatMessage, printer.Connection.TargetBedTemperature, sliceSettingsNote);
-				StyledMessageBox.ShowMessageBox(message, waitingForBedToHeatTitle);
-			}
-			else
-			{
-				printer.Connection.TargetBedTemperature = (int)(targetTemp + .5);
-			}
-		}
-
 		private void Connection_BedTemperatureRead(object s, EventArgs e)
 		{
 			DisplayCurrentTemperature();
+		}
+
+		private void Connection_BedTargetTemperatureChanged(object sender, EventArgs e)
+		{
+			heatToggle.Checked = printer.Connection.TargetBedTemperature != 0;
 		}
 	}
 }

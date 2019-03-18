@@ -117,6 +117,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler HotendTemperatureRead;
 
+		public event EventHandler<int> HotendTargetTemperatureChanged;
+		public event EventHandler BedTargetTemperatureChanged;
+
 		public event EventHandler FanSpeedSet;
 
 		public event EventHandler FirmwareVersionRead;
@@ -320,6 +323,61 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				this.OnIdle();
 				Thread.Sleep(10);
 			});
+
+			printer.Settings.SettingChanged += (s, stringEvent) =>
+			{
+				var extruder = -1;
+				switch (stringEvent.Data)
+				{
+					case SettingsKey.temperature:
+						extruder = 0;
+						break;
+					case SettingsKey.temperature1:
+						extruder = 1;
+						break;
+					case SettingsKey.temperature2:
+						extruder = 2;
+						break;
+					case SettingsKey.temperature3:
+						extruder = 3;
+						break;
+				}
+
+				if (extruder > -1)
+				{
+					if (printer.Connection.Printing
+						&& (printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT0
+							|| printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT1))
+					{
+					}
+					else
+					{
+						double goalTemp = printer.Connection.GetTargetHotendTemperature(extruder);
+						if (goalTemp > 0)
+						{
+							var newGoal = printer.Settings.GetValue<double>(stringEvent.Data);
+							printer.Connection.SetTargetHotendTemperature(extruder, newGoal);
+						}
+					}
+				}
+
+				if (stringEvent.Data == SettingsKey.bed_temperature)
+				{
+					if (printer.Connection.Printing
+						&& printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingBed)
+					{
+					}
+					else
+					{
+						double goalTemp = printer.Connection.TargetBedTemperature;
+						if (goalTemp > 0)
+						{
+							var newGoal = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+							printer.Connection.TargetBedTemperature = newGoal;
+						}
+					}
+				}
+			};
 		}
 
 		/// <summary>
@@ -781,6 +839,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
 					}
+					BedTargetTemperatureChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -837,6 +896,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 						_targetBedTemperature = tempBeingSet;
+						BedTargetTemperatureChanged?.Invoke(this, null);
 					}
 				}
 				catch
@@ -1119,11 +1179,11 @@ You will then need to logout and log back in to the computer for the changes to 
 			double tempBeingSet = 0;
 			if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
 			{
-				double exturderIndex = 0;
-				if (GCodeFile.GetFirstNumberAfter("T", line, ref exturderIndex))
+				int extruderIndex = 0;
+				if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					int hotendIndex0Based = Math.Min((int)exturderIndex, MAX_EXTRUDERS - 1);
+					int hotendIndex0Based = Math.Min(extruderIndex, MAX_EXTRUDERS - 1);
 					targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
 				}
 				else
@@ -1131,6 +1191,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
 				}
+				HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
 			}
 		}
 
@@ -1875,6 +1936,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
 				}
+				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
 			}
 		}
 

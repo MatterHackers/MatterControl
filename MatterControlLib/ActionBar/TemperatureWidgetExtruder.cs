@@ -207,6 +207,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Register listeners
 			printer.Connection.HotendTemperatureRead += Connection_HotendTemperatureRead;
+			printer.Connection.HotendTargetTemperatureChanged += this.Connection_HotendTargetTemperatureChanged;
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);
@@ -241,13 +242,13 @@ namespace MatterHackers.MatterControl.ActionBar
 				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
-					Checked = false,
+					Checked = printer.Connection.GetTargetHotendTemperature(hotendIndex) > 0,
 					ToggleAction = (itemChecked) =>
 					{
 						if (itemChecked)
 						{
 							// Set to goal temp
-							SetTargetTemperature(printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex));
+							printer.Connection.SetTargetHotendTemperature(hotendIndex, printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex));
 						}
 						else
 						{
@@ -296,6 +297,14 @@ namespace MatterHackers.MatterControl.ActionBar
 			var valueField = temperatureRow.Descendants<MHNumberEdit>().FirstOrDefault();
 			valueField.Name = "Temperature Input";
 
+			valueField.ActuallNumberEdit.EditComplete += (s, e) =>
+			{
+				if (printer.Connection.GetTargetHotendTemperature(hotendIndex) > 0)
+				{
+					printer.Settings.SetValue(TemperatureKey, valueField.Value.ToString());
+				}
+			};
+
 			var settingsRow = temperatureRow.DescendantsAndSelf<SliceSettingsRow>().FirstOrDefault();
 
 			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
@@ -316,17 +325,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 					if (stringEvent.Data == this.TemperatureKey)
 					{
-						var temp = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
-
-						graph.GoalValue = temp;
-
-						// TODO: Why is this only when enabled?
-						if (heatToggle.Checked)
-						{
-							// TODO: Why is a UI widget who is listening to model events driving this behavior? What when it's not loaded?
-							SetTargetTemperature(temp);
-						}
-
+						graph.GoalValue = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
 						settingsRow.UpdateStyle();
 					}
 				}
@@ -433,45 +432,25 @@ namespace MatterHackers.MatterControl.ActionBar
 			return widget;
 		}
 
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (heatToggle != null)
-			{
-				heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(hotendIndex) != 0;
-			}
-
-			base.OnDraw(graphics2D);
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
 			printer.Connection.HotendTemperatureRead -= Connection_HotendTemperatureRead;
+			printer.Connection.HotendTargetTemperatureChanged -= this.Connection_HotendTargetTemperatureChanged;
+
 			UiThread.ClearInterval(runningInterval);
 
 			base.OnClosed(e);
 		}
 
-		protected override void SetTargetTemperature(double targetTemp)
-		{
-			double goalTemp = (int)(targetTemp + .5);
-			if (printer.Connection.Printing
-				&& (printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT0
-					|| printer.Connection.DetailedPrintingState == DetailedPrintingState.HeatingT1)
-				&& goalTemp != printer.Connection.GetTargetHotendTemperature(hotendIndex))
-			{
-				string message = string.Format(waitingForExtruderToHeatMessage, printer.Connection.GetTargetHotendTemperature(hotendIndex), sliceSettingsNote);
-				StyledMessageBox.ShowMessageBox(message, "Waiting For Extruder To Heat".Localize());
-			}
-			else
-			{
-				printer.Connection.SetTargetHotendTemperature(hotendIndex, (int)(targetTemp + .5));
-			}
-		}
-
 		private void Connection_HotendTemperatureRead(object s, EventArgs e)
 		{
 			DisplayCurrentTemperature();
+		}
+
+		private void Connection_HotendTargetTemperatureChanged(object sender, int extruderIndex)
+		{
+			heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(extruderIndex) != 0;
 		}
 	}
 }
