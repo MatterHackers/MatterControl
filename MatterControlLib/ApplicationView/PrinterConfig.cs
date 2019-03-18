@@ -89,6 +89,10 @@ namespace MatterHackers.MatterControl
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.PrintFinished += Connection_PrintFinished;
 
+			// Initialize bed settings
+			this.ReloadBedSettings();
+			this.Bed.InvalidateBedMesh();
+
 			this.Settings.SettingChanged += Printer_SettingChanged;
 
 			if (!string.IsNullOrEmpty(this.Settings.GetValue(SettingsKey.baud_rate)))
@@ -170,20 +174,7 @@ namespace MatterHackers.MatterControl
 
 		public PrinterViewState ViewState { get; }
 
-		private PrinterSettings _settings = PrinterSettings.Empty;
-		public PrinterSettings Settings
-		{
-			get => _settings;
-			private set
-			{
-				if (_settings != value)
-				{
-					_settings = value;
-					this.ReloadBedSettings();
-					this.Bed.InvalidateBedMesh();
-				}
-			}
-		}
+		public PrinterSettings Settings { get; } = PrinterSettings.Empty;
 
 		[JsonIgnore]
 		public PrinterConnection Connection { get; }
@@ -252,7 +243,7 @@ namespace MatterHackers.MatterControl
 
 		public void SwapToSettings(PrinterSettings printerSettings)
 		{
-			_settings.CopyFrom(printerSettings);
+			this.Settings.CopyFrom(printerSettings);
 
 			// TODO: Why reload all after swap? We need to rebuild the printer tab only and should have messaging to do so...
 			UiThread.RunOnIdle(() =>
