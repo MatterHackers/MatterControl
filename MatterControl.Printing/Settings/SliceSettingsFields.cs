@@ -2049,6 +2049,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.emulate_endstops,
+					PresentationName = "Emulate Endstops".Localize(),
+					HelpText = "Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.".Localize(),
+					ShowIfSet = "!sla_printer",
+					DataEditType = DataEditTypes.CHECK_BOX,
+					DefaultValue = "0",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.enable_sailfish_communication,
 					PresentationName = "Sailfish Communication".Localize(),
 					HelpText = "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)".Localize(),

@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.com_port,
 			SettingsKey.connect_gcode,
 			SettingsKey.created_date,
+			SettingsKey.emulate_endstops,
 			SettingsKey.enable_line_splitting,
 			SettingsKey.enable_network_printing,
 			SettingsKey.enable_retractions,

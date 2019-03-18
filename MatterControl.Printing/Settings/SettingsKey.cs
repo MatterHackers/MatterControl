@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string default_material_presets = nameof(default_material_presets);
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
+		public const string emulate_endstops = nameof(emulate_endstops);
 		public const string enable_line_splitting = nameof(enable_line_splitting);
 		public const string enable_network_printing = nameof(enable_network_printing);
 		public const string enable_retractions = nameof(enable_retractions);
