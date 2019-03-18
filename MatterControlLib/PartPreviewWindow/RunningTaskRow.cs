@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				FillColor = theme.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
 				Margin = new BorderDouble(32, 7, theme.ButtonHeight * 2 + 14, 0),
+				Visible = !taskDetails.IsExpanded
 			};
 			rowContainer.AddChild(progressBar);
 
@@ -211,6 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			expandButton.Checked = isExpanded;
 			progressBar.FillColor = isExpanded ? theme.Shade : theme.PrimaryAccentColor;
 			detailsPanel.Visible = isExpanded;
+			progressBar.Visible = !isExpanded;
 		}
 
 		public override void OnClosed(EventArgs e)
