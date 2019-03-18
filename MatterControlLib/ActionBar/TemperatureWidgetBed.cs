@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
-					Checked = false,
+					Checked = printer.Connection.TargetBedTemperature > 0,
 					ToggleAction = (itemChecked) =>
 					{
 						var goalTemp = itemChecked ? printer.Settings.GetValue<double>(SettingsKey.bed_temperature) : 0;
