@@ -219,6 +219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (stringEvent != null
 				&& (stringEvent.Data == SettingsKey.default_material_presets
 					|| stringEvent.Data == SettingsKey.active_material_key
+					|| stringEvent.Data == SettingsKey.active_quality_key
 					|| stringEvent.Data == SettingsKey.layer_name))
 			{
 				RebuildDropDownList();
