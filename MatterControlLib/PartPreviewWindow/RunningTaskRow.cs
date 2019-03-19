@@ -169,8 +169,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					stopAction.Invoke();
+					stopAction.Invoke(() =>
+					{
+						stopButton.Enabled = true;
+					});
 				}
+
+				stopButton.Enabled = false;
 			};
 			topRow.AddChild(stopButton);
 

@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl
 
 					double bedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 
-					PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+					PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 					if (heatedBed
 						&& !levelingData.IssuedLevelingTempWarning

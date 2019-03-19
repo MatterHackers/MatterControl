@@ -1560,7 +1560,7 @@ namespace MatterHackers.MatterControl
 
 						while (printerConnection.SecondsToHoldTemperature > 0
 							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinuHoldingTemperature)
+							&& printerConnection.ContinueHoldingTemperature)
 						{
 							if (paused)
 							{
@@ -1605,7 +1605,7 @@ namespace MatterHackers.MatterControl
 							printerConnection.TimeHaveBeenHoldingTemperature.Start();
 						}),
 						ResumeToolTip = "Resume automatic heater shutdown".Localize(),
-						StopAction = () => UiThread.RunOnIdle(() =>
+						StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
 						{
 							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
 						}),
@@ -2611,9 +2611,9 @@ namespace MatterHackers.MatterControl
 						printer.Connection.Resume();
 					}),
 					ResumeToolTip = "Resume Print".Localize(),
-					StopAction = () => UiThread.RunOnIdle(() =>
+					StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
 					{
-						printer.CancelPrint();
+						printer.CancelPrint(abortCancel);
 					}),
 					StopToolTip = "Cancel Print".Localize(),
 				});
@@ -3025,7 +3025,7 @@ namespace MatterHackers.MatterControl
 
 		public Action PauseAction { get; set; }
 		public Action ResumeAction { get; set; }
-		public Action StopAction { get; set; }
+		public Action<Action> StopAction { get; set; }
 
 		public string StopToolTip { get; set; } = "Cancel".Localize();
 		public string ResumeToolTip { get; set; } = "Resume".Localize();

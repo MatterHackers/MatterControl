@@ -154,7 +154,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public bool ContinuHoldingTemperature { get; set; }
+		public bool ContinueHoldingTemperature { get; set; }
+
 		public double SecondsToHoldTemperature { get; private set; }
 
 		public TerminalLog TerminalLog { get; }
@@ -831,7 +832,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get => _targetBedTemperature;
 			set
 			{
-				ContinuHoldingTemperature = false;
+				ContinueHoldingTemperature = false;
 				if (_targetBedTemperature != value)
 				{
 					_targetBedTemperature = value;
@@ -1930,7 +1931,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (targetHotendTemperature[hotendIndex0Based] != temperature
 				|| forceSend)
 			{
-				ContinuHoldingTemperature = false;
+				ContinueHoldingTemperature = false;
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				if (this.IsConnected)
 				{
@@ -2610,9 +2611,9 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 			else
 			{
-				bool currentlyWaiting = ContinuHoldingTemperature && TimeHaveBeenHoldingTemperature.IsRunning && TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature;
+				bool currentlyWaiting = ContinueHoldingTemperature && TimeHaveBeenHoldingTemperature.IsRunning && TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature;
 				SecondsToHoldTemperature = TimeToHoldTemperature;
-				ContinuHoldingTemperature = true;
+				ContinueHoldingTemperature = true;
 				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
 				if (!currentlyWaiting)
 				{
@@ -2621,25 +2622,25 @@ You will then need to logout and log back in to the computer for the changes to 
 					Task.Run(() =>
 					{
 						while (TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature
-							&& ContinuHoldingTemperature)
+							&& ContinueHoldingTemperature)
 						{
 							if (CommunicationState == CommunicationStates.PreparingToPrint
 								|| Printing)
 							{
-								ContinuHoldingTemperature = false;
+								ContinueHoldingTemperature = false;
 							}
 
 							if (!AnyHeatIsOn)
 							{
-								ContinuHoldingTemperature = false;
+								ContinueHoldingTemperature = false;
 							}
 
-							SecondsToHoldTemperature = ContinuHoldingTemperature ? Math.Max(0, TimeToHoldTemperature - TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds) : 0;
+							SecondsToHoldTemperature = ContinueHoldingTemperature ? Math.Max(0, TimeToHoldTemperature - TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds) : 0;
 							Thread.Sleep(100);
 						}
 
 						// times up turn off heaters
-						if (ContinuHoldingTemperature
+						if (ContinueHoldingTemperature
 							&& !Printing
 							&& !Paused)
 						{
@@ -2659,6 +2660,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		// this is to make it misbehave, chaos monkey, bad checksum
 		//int checkSumCount = 1;
+
 		private void WriteChecksumLine(string lineToWrite)
 		{
 			bool sendLineWithChecksum = true;

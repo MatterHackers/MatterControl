@@ -31,6 +31,7 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
+	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 	using MatterHackers.DataConverters3D;
@@ -106,7 +107,8 @@ namespace MatterHackers.MatterControl
 		/// Conditionally cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
 		/// </summary>
 		/// <returns>A boolean value indicating if the print was canceled</returns>
-		public static void CancelPrint(this PrinterConfig printer)
+		/// <param name="abortCancel">The action to run if the user aborts the Cancel operation</param>
+		public static void CancelPrint(this PrinterConfig printer, Action abortCancel = null)
 		{
 			if (printer.Connection.SecondsPrinted > 120)
 			{
@@ -117,6 +119,11 @@ namespace MatterHackers.MatterControl
 						{
 							UiThread.RunOnIdle(() => printer.Connection.Stop());
 						}
+						else
+						{
+							abortCancel?.Invoke();
+						}
+
 					},
 					"Cancel the current print?".Localize(),
 					"Cancel Print?".Localize(),

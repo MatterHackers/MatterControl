@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 			if (levelingData != null
 				&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true

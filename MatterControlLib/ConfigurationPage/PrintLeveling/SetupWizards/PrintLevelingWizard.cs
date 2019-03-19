@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var levelingStrings = new LevelingStrings();
 
 			// If no leveling data has been calculated
-			bool showWelcomeScreen = printer.Settings.Helpers.GetPrintLevelingData().SampledPositions.Count == 0
+			bool showWelcomeScreen = printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count == 0
 				&& !ProbeCalibrationWizard.UsingZProbe(printer);
 
 			if (showWelcomeScreen)

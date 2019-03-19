@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 			var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 			if (required && levelingData == null)

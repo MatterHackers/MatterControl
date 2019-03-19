@@ -185,13 +185,19 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				try
 				{
-					return renderFeatures[layerIndex][featureIndex];
+					var layer = renderFeatures[layerIndex];
+
+					if (featureIndex < layer.Count)
+					{
+						return layer[featureIndex];
+					}
 				}
 				catch
 				{
-					// Lazy guard for invalid indexes - callers should test for non-null values
-					return null;
 				}
+
+				// Callers should test for non-null values
+				return null;
 			}
 		}
 
