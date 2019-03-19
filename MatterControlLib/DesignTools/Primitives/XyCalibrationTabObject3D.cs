@@ -45,14 +45,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Calibration Tab".Localize();
 		}
 
-		public enum Layout { Horizontal, Vertical }
-		public Layout Direction { get; set; } = Layout.Horizontal;
-
 		[DisplayName("Material")]
 		public int CalibrationMaterialIndex { get; set; } = 1;
 		public double ChangeHeight { get; set; } = .4;
 		public double Offset { get; set; } = .5;
 		public double NozzleWidth = .4;
+		public double WipeTowerSize { get; set; } = 10;
+
+		private double TabDepth => NozzleWidth * TabScale * 5;
+		private double TabScale => 3;
+		private double TabWidth => NozzleWidth * TabScale * 3;
 
 		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1, 
 			double changeHeight = .4, double offset = .5, double nozzleWidth = .4)
@@ -95,70 +97,95 @@ namespace MatterHackers.MatterControl.DesignTools
 						list.Clear();
 					});
 
-					var content = new Object3D();
-
-					var scale = 3.0;
-					var width = NozzleWidth * scale * 3;
-					var depth = NozzleWidth * scale * 5;
-					var spaceBetween = NozzleWidth * scale;
-
-					var shape = new VertexStorage();
-					shape.MoveTo(0, 0);
-					// left + spaces + blocks + right
-					var baseWidth = (2 * spaceBetween) + (4 * spaceBetween) + (5 * width) + (2 * spaceBetween);
-					shape.LineTo(baseWidth, 0);
-					if (Direction == Layout.Vertical)
+					var calibrateX = GetTab(true);
+					this.Children.Add(calibrateX);
+					var calibrateY = GetTab(false);
+					this.Children.Add(calibrateY);
+					// add in the corner connecter
+					this.Children.Add(new Object3D()
 					{
-						var origin = new Vector2(baseWidth, depth / 2);
-						var delta = new Vector2(0, -depth / 2);
-						var count = 15;
-						for (int i = 0; i < count; i++)
-						{
-							delta.Rotate(MathHelper.Tau / 2 / count);
-							shape.LineTo(origin + delta);
-						}
-					}
-					else
-					{
-						shape.LineTo(baseWidth+depth, depth / 2); // a point on the left
-					}
-					shape.LineTo(baseWidth, depth);
-					shape.LineTo(0, depth);
-
-					content.Children.Add(new Object3D()
-					{
-						Mesh = shape.Extrude(ChangeHeight),
+						Mesh = PlatonicSolids.CreateCube(),
+						Matrix = Matrix4X4.CreateTranslation(-1 / 2.0, 1 / 2.0, 1 / 2.0) * Matrix4X4.CreateScale(TabDepth, TabDepth, ChangeHeight),
 						Color = Color.LightBlue
 					});
 
-					var position = new Vector2(width / 2 + 2 * spaceBetween, depth / 2 - Offset * 2);
-					var step = new Vector2(spaceBetween + width, Offset);
-					for (int i=0; i<5; i++)
+					if (WipeTowerSize > 0)
 					{
-						var cube = PlatonicSolids.CreateCube();
-						content.Children.Add(new Object3D()
+						// add in the wipe tower
+						this.Children.Add(new Object3D()
 						{
-							Mesh = cube,
-							Color = Color.Yellow,
-							Matrix = Matrix4X4.CreateScale(width, depth, ChangeHeight)
-								// translate by 1.5 as it is a centered cube (.5) plus the base (1) = 1.5
-								* Matrix4X4.CreateTranslation(position.X, position.Y, ChangeHeight * 1.5),
-							MaterialIndex = CalibrationMaterialIndex
+							Mesh = PlatonicSolids.CreateCube(),
+							Matrix = Matrix4X4.CreateTranslation(1 / 2.0, 1 / 2.0, 1 / 2.0)
+								* Matrix4X4.CreateScale(WipeTowerSize, WipeTowerSize, ChangeHeight * 2)
+								* Matrix4X4.CreateTranslation(TabDepth * 1, TabDepth * 2, 0),
+							OutputType = PrintOutputTypes.WipeTower
 						});
-						position += step;
 					}
-
-					if (Direction == Layout.Vertical)
-					{
-						content.Matrix = Matrix4X4.CreateRotationZ(MathHelper.Tau / 4);
-					}
-
-					this.Children.Add(content);
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
+		}
+
+		private Object3D GetTab(bool calibrateX)
+		{
+			var content = new Object3D();
+
+			var spaceBetween = NozzleWidth * TabScale;
+
+			var shape = new VertexStorage();
+			shape.MoveTo(0, 0);
+			// left + spaces + blocks + right
+			var baseWidth = (2 * spaceBetween) + (4 * spaceBetween) + (5 * TabWidth) + (2 * spaceBetween);
+			shape.LineTo(baseWidth, 0);
+			if (calibrateX)
+			{
+				var origin = new Vector2(baseWidth, TabDepth / 2);
+				var delta = new Vector2(0, -TabDepth / 2);
+				var count = 15;
+				for (int i = 0; i < count; i++)
+				{
+					delta.Rotate(MathHelper.Tau / 2 / count);
+					shape.LineTo(origin + delta);
+				}
+			}
+			else
+			{
+				shape.LineTo(baseWidth + TabDepth, TabDepth / 2); // a point on the left
+			}
+			shape.LineTo(baseWidth, TabDepth);
+			shape.LineTo(0, TabDepth);
+
+			content.Children.Add(new Object3D()
+			{
+				Mesh = shape.Extrude(ChangeHeight),
+				Color = Color.LightBlue
+			});
+
+			var position = new Vector2(TabWidth / 2 + 2 * spaceBetween, TabDepth / 2 - Offset * 2);
+			var step = new Vector2(spaceBetween + TabWidth, Offset);
+			for (int i = 0; i < 5; i++)
+			{
+				var cube = PlatonicSolids.CreateCube();
+				content.Children.Add(new Object3D()
+				{
+					Mesh = cube,
+					Color = Color.Yellow,
+					Matrix = Matrix4X4.CreateScale(TabWidth, TabDepth, ChangeHeight)
+						// translate by 1.5 as it is a centered cube (.5) plus the base (1) = 1.5
+						* Matrix4X4.CreateTranslation(position.X, position.Y, ChangeHeight * 1.5),
+					MaterialIndex = CalibrationMaterialIndex
+				});
+				position += step;
+			}
+
+			if (calibrateX)
+			{
+				content.Matrix = Matrix4X4.CreateRotationZ(MathHelper.Tau / 4) * Matrix4X4.CreateTranslation(0, TabDepth, 0);
+			}
+
+			return content;
 		}
 	}
 }
