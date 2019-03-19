@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -32,13 +32,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -147,8 +145,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						var metaData = item.settingData;
 
-					// Show matching items
-					item.widget.Visible = metaData.SlicerConfigName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+						// Show matching items
+						item.widget.Visible = metaData.SlicerConfigName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
 							|| metaData.HelpText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
 					}
 
@@ -406,6 +404,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool firstRow = true;
 			GuiWidget settingsRow = null;
 
+			var presetsView = (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality);
+			var ignoredPresets = new HashSet<string> { SettingsKey.temperature1, SettingsKey.temperature2, SettingsKey.temperature3 };
+
 			using (groupPanel.LayoutLock())
 			{
 				foreach (var subGroup in group.SubGroups)
@@ -415,7 +416,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						// Note: tab sections may disappear if / when they are empty, as controlled by:
 						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = CheckIfShouldBeShown(settingData, settingsContext);
+						bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
+							&& CheckIfShouldBeShown(settingData, settingsContext);
 
 						if (printer.EngineMappingsMatterSlice.MapContains(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
