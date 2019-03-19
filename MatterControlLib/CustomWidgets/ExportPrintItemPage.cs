@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.Library.Export;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
@@ -49,7 +50,8 @@ namespace MatterHackers.MatterControl
 		private Dictionary<RadioButton, IExportPlugin> exportPluginButtons;
 		private IEnumerable<ILibraryItem> libraryItems;
 
-		bool centerOnBed;
+		private bool centerOnBed;
+		private FlowLayoutWidget validationPanel;
 
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed, PrinterConfig printer)
 		{
@@ -63,6 +65,14 @@ namespace MatterHackers.MatterControl
 			var commonMargin = new BorderDouble(4, 2);
 
 			bool isFirstItem = true;
+
+			// Must be constructed before plugins are initialized
+			var exportButton = theme.CreateDialogButton("Export".Localize());
+			validationPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
 
 			// GCode export
 			exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
@@ -105,6 +115,34 @@ namespace MatterHackers.MatterControl
 				};
 				contentRow.AddChild(pluginButton);
 
+				if (plugin is GCodeExport)
+				{
+					var gcodeExportButton = pluginButton;
+					gcodeExportButton.CheckedStateChanged += (s, e) =>
+					{
+						validationPanel.CloseAllChildren();
+
+						if (gcodeExportButton.Checked)
+						{
+							var errors = printer.ValidateSettings();
+
+							exportButton.Enabled = !errors.Any(item => item.ErrorLevel == ValidationErrorLevel.Error);
+
+							validationPanel.AddChild(
+								new ValidationErrorsPanel(
+									errors,
+									AppContext.Theme)
+								{
+									HAnchor = HAnchor.Stretch
+								});
+						}
+						else
+						{
+							exportButton.Enabled = true;
+						}
+					};
+				}
+
 				if (isFirstItem)
 				{
 					pluginButton.Checked = true;
@@ -122,10 +160,12 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
+
 				exportPluginButtons.Add(pluginButton, plugin);
 			}
 
-			contentRow.AddChild(new VerticalSpacer());
+			ContentRow.AddChild(new VerticalSpacer());
+			contentRow.AddChild(validationPanel);
 
 			// TODO: make this work on the mac and then delete this if
 			if (AggContext.OperatingSystem == OSType.Windows
@@ -139,7 +179,6 @@ namespace MatterHackers.MatterControl
 				contentRow.AddChild(showInFolderAfterSave);
 			}
 
-			var exportButton = theme.CreateDialogButton("Export".Localize());
 			exportButton.Name = "Export Button";
 			exportButton.Click += (s, e) =>
 			{
@@ -234,6 +273,7 @@ namespace MatterHackers.MatterControl
 											{
 												gCodeExport.CenterOnBed = centerOnBed;
 											}
+
 											exportErrors = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
 										}
 
@@ -241,9 +281,15 @@ namespace MatterHackers.MatterControl
 										{
 											ShowFileIfRequested(savePath);
 										}
-										else
+										else 
 										{
-											ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
+											bool showGenerateErrors = !(activePlugin is GCodeExport);
+
+											// Only show errors in Generate if not GCodeExport - GCodeExport shows validation errors before Generate call
+											if (showGenerateErrors)
+											{
+												ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
+											}
 										}
 									});
 							}
