@@ -167,9 +167,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SetAsActive = (qualityKey) => printer.Settings.ActiveQualityKey = qualityKey,
 							DeleteLayer = () =>
 							{
-								printer.Settings.ActiveQualityKey = "";
 								printer.Settings.QualityLayers.Remove(layerToEdit);
 								printer.Settings.Save();
+
+								// Clear QualityKey after removing layer to ensure listeners see update
+								printer.Settings.ActiveQualityKey = "";
 							}
 						};
 
