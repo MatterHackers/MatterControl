@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,22 +39,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class PresetsContext
-	{
-		public List<PrinterSettingsLayer> PresetLayers { get; }
-		public PrinterSettingsLayer PersistenceLayer { get; set; }
-		public Action<string> SetAsActive { get; set; }
-		public Action DeleteLayer { get; set; }
-
-		public NamedSettingsLayers LayerType { get; set; }
-
-		public PresetsContext(List<PrinterSettingsLayer> settingsLayers, PrinterSettingsLayer activeLayer)
-		{
-			this.PersistenceLayer = activeLayer;
-			this.PresetLayers = settingsLayers;
-		}
-	}
-
 	public class SlicePresetsPage : DialogPage
 	{
 		private static Regex numberMatch = new Regex("\\s*\\(\\d+\\)", RegexOptions.Compiled);
