@@ -146,6 +146,28 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					settingsRow.BorderColor = Color.Transparent;
 					settingsRow.AddChild(calibrateButton);
+
+					// in progress new calibration page
+					this.AddChild(settingsRow = new SettingsRow(
+						"New Nozzle Offsets".Localize(),
+						null,
+						theme,
+						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
+
+					var xyCalibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
+					{
+						VAnchor = VAnchor.Center,
+						Margin = theme.ButtonSpacing,
+						ToolTipText = "Calibrate Nozzle Offsets".Localize()
+					};
+
+					xyCalibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(new NozzleXyCalibrationWizard(printer));
+					});
+
+					settingsRow.BorderColor = Color.Transparent;
+					settingsRow.AddChild(xyCalibrateButton);
 				}
 			}
 
