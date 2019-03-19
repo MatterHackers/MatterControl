@@ -1560,7 +1560,7 @@ namespace MatterHackers.MatterControl
 
 						while (printerConnection.SecondsToHoldTemperature > 0
 							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinuHoldingTemperature)
+							&& printerConnection.ContinueHoldingTemperature)
 						{
 							if (paused)
 							{
