@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -251,14 +251,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return Vector3.Zero;
 		}
 
-		public void ExportAsCuraConfig()
-		{
-			throw new NotImplementedException();
-		}
-
 		public Vector3 ManualMovementSpeeds()
 		{
-			Vector3 feedRate = new Vector3(3000, 3000, 315);
+			var feedRate = new Vector3(3000, 3000, 315);
 
 			string savedSettings = printerSettings.GetValue(SettingsKey.manual_movement_speeds);
 			if (!string.IsNullOrEmpty(savedSettings))
@@ -274,7 +269,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Dictionary<string, double> GetMovementSpeeds()
 		{
-			Dictionary<string, double> speeds = new Dictionary<string, double>();
+			var speeds = new Dictionary<string, double>();
 			string movementSpeedsString = GetMovementSpeedsString();
 			string[] allSpeeds = movementSpeedsString.Split(',');
 			for (int i = 0; i < allSpeeds.Length / 2; i++)
