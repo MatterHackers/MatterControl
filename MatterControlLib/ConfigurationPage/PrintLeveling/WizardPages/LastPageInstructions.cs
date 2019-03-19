@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 			levelingData.SampledPositions.Clear();
 
 			for (int i = 0; i < probePositions.Count; i++)
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			levelingData.IssuedLevelingTempWarning = false;
 
 			// Invoke setter forcing persistence of leveling data
-			printer.Settings.Helpers.SetPrintLevelingData(levelingData);
+			printer.Settings.Helpers.PrintLevelingData = levelingData;
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
 			printer.Connection.AllowLeveling = true;

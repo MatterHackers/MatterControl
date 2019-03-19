@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SettingsHelpers
 	{
 		private PrinterSettings printerSettings;
+		private PrintLevelingData _printLevelingData = null;
 
 		public SettingsHelpers(PrinterSettings printerSettings)
 		{
@@ -127,27 +128,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			printerSettings.SetValue(SettingsKey.printer_name, name);
 		}
 
-		public PrintLevelingData GetPrintLevelingData()
+		public PrintLevelingData PrintLevelingData
 		{
-			PrintLevelingData printLevelingData = null;
-			var jsonData = printerSettings.GetValue(SettingsKey.print_leveling_data);
-			if (!string.IsNullOrEmpty(jsonData))
+			get
 			{
-				printLevelingData = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
-			}
+				if (_printLevelingData == null)
+				{
+					// Load from settings if missing
+					var jsonData = printerSettings.GetValue(SettingsKey.print_leveling_data);
+					if (!string.IsNullOrEmpty(jsonData))
+					{
+						_printLevelingData = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
+					}
 
-			// if it is still null
-			if (printLevelingData == null)
+					// TODO: When this case is hit, it's certain to produce impossible to troubleshoot behavior where leveled printers suddenly act erratically. 
+					// Investigate a better solution - ideally we'd mark that leveling is invalid and have a validation error preventing printing/export/general use
+					if (_printLevelingData == null)
+					{
+						_printLevelingData = new PrintLevelingData();
+					}
+				}
+
+				return _printLevelingData;
+			}
+			set
 			{
-				printLevelingData = new PrintLevelingData();
+				// Store new reference
+				_printLevelingData = value;
+
+				// Persist to settings
+				printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(value));
 			}
-
-			return printLevelingData;
-		}
-
-		public void SetPrintLevelingData(PrintLevelingData data)
-		{
-			printerSettings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(data));
 		}
 
 		public void DoPrintLeveling(bool doLeveling)

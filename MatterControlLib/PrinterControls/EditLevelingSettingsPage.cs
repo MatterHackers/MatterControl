@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 			var positions = new List<Vector3>();
 
-			PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 			for (int i = 0; i < levelingData.SampledPositions.Count; i++)
 			{
 				positions.Add(levelingData.SampledPositions[i]);
@@ -138,14 +138,14 @@ namespace MatterHackers.MatterControl
 			savePresetsButton.Name = "Save Leveling Button";
 			savePresetsButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				PrintLevelingData newLevelingData = printer.Settings.Helpers.GetPrintLevelingData();
+				PrintLevelingData newLevelingData = printer.Settings.Helpers.PrintLevelingData;
 
 				for (int i = 0; i < newLevelingData.SampledPositions.Count; i++)
 				{
 					newLevelingData.SampledPositions[i] = positions[i];
 				}
 
-				printer.Settings.Helpers.SetPrintLevelingData(newLevelingData);
+				printer.Settings.Helpers.PrintLevelingData = newLevelingData;
 				this.DialogWindow.Close();
 			});
 			this.AddPageAction(savePresetsButton);
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
 							//File.WriteAllText(saveParams.FileName, printer.Settings.GetValue(SettingsKey.print_leveling_data));
 
 							// Export CSV data
-							PrintLevelingData levelingData = printer.Settings.Helpers.GetPrintLevelingData();
+							PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 							using (StreamWriter file =
 								   new StreamWriter(saveParams.FileName)) {
 								for (int i = 0; i < levelingData.SampledPositions.Count; i++) {
