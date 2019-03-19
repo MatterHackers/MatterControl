@@ -2660,6 +2660,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		// this is to make it misbehave, chaos monkey, bad checksum
 		//int checkSumCount = 1;
+
 		private void WriteChecksumLine(string lineToWrite)
 		{
 			bool sendLineWithChecksum = true;
