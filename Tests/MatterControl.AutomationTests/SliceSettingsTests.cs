@@ -253,6 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// click the remove override and have it change to default temp
 					testRunner.ClickByName("Restore temperature");
+					testRunner.WaitFor(() => hipsGoalTemp == emulator.CurrentExtruder.TargetTemperature);
 					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
 
 					// type in 60 and have the heater turn on
@@ -282,7 +283,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("{Enter}");
 					testRunner.Delay();
 					testRunner.ClickByName("Load Filament Button");
-					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Load Filament");
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
 					testRunner.Delay();
 					testRunner.ClickByName("Cancel Wizard Button");
@@ -291,7 +292,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Hotend 0");
 					testRunner.ClickByName("Load Filament Button");
-					testRunner.ClickByName("Next Button");
+					testRunner.ClickByName("Load Filament");
 					testRunner.Delay();
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
 					var systemWindow = testRunner.GetWidgetByName("Cancel Wizard Button", out SystemWindow containingWindow);

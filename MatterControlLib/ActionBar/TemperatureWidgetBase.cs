@@ -141,8 +141,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.goalTempIndicator.Text = $"{targetTemperature:0.#}";
 		}
 
-		protected virtual void SetTargetTemperature(double targetTemp) { }
-
 		public override void OnLoad(EventArgs args)
 		{
 			this.EnableControls();
