@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						bool printerCanPrint = true;
 						if (printerCanPrint)
 						{
-							DialogWindow.Show(new XyCalibrationWizard(printer));
+							DialogWindow.Show(new XyCalibrationWizard(printer, 1));
 						}
 						else
 						{

@@ -38,9 +38,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
-		public XyCalibrationWizard(PrinterConfig printer)
+		private int extruderToCalibrateIndex;
+		XyCalibrationData xyCalibrationData;
+		private bool startPrint;
+
+		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex, XyCalibrationData xyCalibrationData = null, bool startPrint = false)
 			: base(printer)
 		{
+			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
+			this.xyCalibrationData = xyCalibrationData;
+			this.startPrint = startPrint;
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 
@@ -70,17 +77,40 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private IEnumerator<WizardPage> GetPages()
 		{
-			var xyCalibrationData = new XyCalibrationData();
+			if (xyCalibrationData == null)
+			{
+				xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
 
-			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
+				yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 
-			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
+				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
+			}
+			else // we are returing to the wizard and need to collect the data
+			{
+				if (!startPrint)
+				{
+					yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
+				}
+
+				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+			}
 		}
 	}
 
 	public class XyCalibrationData
 	{
+		public XyCalibrationData(int extruderToCalibrateIndex)
+		{
+			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
+		}
+
+		public int ExtruderToCalibrateIndex { get; private set; }
 		public enum QualityType { Coarse, Normal, Fine }
 		public QualityType Quality { get; set; } = QualityType.Normal;
+		/// <summary>
+		/// The index of the calibration print that was picked
+		/// </summary>
+		public int XPick { get; set; } = -1;
+		public int YPick { get; set; } = -1;
 	}
 }
