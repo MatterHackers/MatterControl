@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private static Dictionary<Type, DialogWindow> allWindows = new Dictionary<Type, DialogWindow>();
 		private ThemeConfig theme;
 
-		private DialogWindow()
+		protected DialogWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
 			theme = ApplicationController.Instance.Theme;
@@ -176,7 +177,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public void ChangeToPage(DialogPage pageToChangeTo)
+		public virtual void ChangeToPage(DialogPage pageToChangeTo)
 		{
 			activePage = pageToChangeTo;
 
@@ -187,7 +188,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
+		public virtual DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
 			var panel = new PanelType
 			{
