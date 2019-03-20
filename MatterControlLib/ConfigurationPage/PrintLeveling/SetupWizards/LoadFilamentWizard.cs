@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
+			this.Title = "Load Filament".Localize();
 
 			// Initialize - store startup temp and extruder index
 			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, "Load Material".Localize(), instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			var theme = ApplicationController.Instance.Theme;

@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public NozzleCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
+			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 
 			pages = this.GetPages();
@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Nozzle Offset Calibration".Localize(),
 				"Offset Calibration required. We'll now print a calibration guide on the printer to tune your nozzle offsets".Localize())
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);

@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 	{
 		PrinterConfig Printer { get; }
 
-		string WindowTitle { get; }
+		string Title { get; }
 
 		WizardPage GetNextPage();
 

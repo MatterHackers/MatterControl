@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 		public static DialogWindow Show(ISetupWizard setupWizard)
 		{
 			DialogWindow wizardWindow = GetWindow(setupWizard.GetType());
-			wizardWindow.Title = setupWizard.WindowTitle;
+			wizardWindow.Title = setupWizard.Title;
 
 			if (setupWizard.WindowSize != Vector2.Zero)
 			{

@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl
 			this.printer = printer;
 		}
 
-		public string WindowTitle { get; protected set; }
+		public string Title { get; protected set; }
 
 		public PrinterConfig Printer => printer;
 

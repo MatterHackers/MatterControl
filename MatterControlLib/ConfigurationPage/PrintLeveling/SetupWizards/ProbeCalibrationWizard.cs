@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
+			this.Title = "Probe Calibration".Localize();
 
 			// Initialize - turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
 						"The next few screens will walk your through calibrating your printer.".Localize()))
 				{
-					WindowTitle = WindowTitle
+					WindowTitle = Title
 				};
 			}
 
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"We should be done in less than five minutes.".Localize(),
 					"Click 'Next' to continue.".Localize()))
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			// add in the homing printer page
