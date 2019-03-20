@@ -43,15 +43,31 @@ namespace MatterHackers.MatterControl
 		private ImageBuffer hoverIcon;
 		private double iconXOffset;
 		private double iconYOffset;
+		private bool _active;
 
 		public WizardStageRow(string text, string helpText, ISetupWizard stage, ThemeConfig theme)
-			: base (text, helpText, theme)
+			: base(text, helpText, theme)
 		{
 			this.stage = stage;
 			this.Cursor = Cursors.Hand;
 
 			detailIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
 			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
+		}
+
+		public bool Active
+		{
+			get => _active;
+			set
+			{
+				_active = value;
+			}
+		}
+
+		public override Color BackgroundColor
+		{
+			get => (_active) ? theme.AccentMimimalOverlay : base.BackgroundColor;
+			set => base.BackgroundColor = value;
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
@@ -70,10 +86,13 @@ namespace MatterHackers.MatterControl
 		{
 			base.OnDraw(graphics2D);
 
-			graphics2D.Render(
-				mouseInBounds ? hoverIcon : detailIcon,
-				iconXOffset, 
-				iconYOffset);
+			if (!this.Active)
+			{
+				graphics2D.Render(
+					mouseInBounds ? hoverIcon : detailIcon,
+					iconXOffset,
+					iconYOffset);
+			}
 		}
 	}
 }

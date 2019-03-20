@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl
 		private DialogPage activePage;
 		private GuiWidget rightPanel;
 		private bool footerHeightAcquired = false;
+		private WizardStageRow activeStageButton;
 
 		public StagedSetupWizard(IEnumerable<ISetupWizard> stages)
 		{
@@ -76,10 +77,19 @@ namespace MatterHackers.MatterControl
 
 				stageWidget.Click += (s, e) =>
 				{
+					if (activeStageButton != null)
+					{
+						activeStageButton.Active = false;
+					}
+
 					stage.Reset();
 					stage.MoveNext();
 
 					activeStage = stage;
+
+					activeStageButton = stageWidget;
+					activeStageButton.Active = true;
+
 					this.ChangeToPage(stage.Current);
 				};
 
