@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 						.05,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-						8).GetAwaiter().GetResult();
+						6).GetAwaiter().GetResult();
 					break;
 
 				default:
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl
 						.1,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-						8).GetAwaiter().GetResult();
+						6).GetAwaiter().GetResult();
 					break;
 			}
 

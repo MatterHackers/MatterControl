@@ -109,8 +109,8 @@ namespace MatterHackers.MatterControl
 		{
 			// save the offsets to the extruder
 			var hotendOffset = printer.Settings.Helpers.ExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex);
-			hotendOffset.X += xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.XPick;
-			hotendOffset.Y += xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.YPick;
+			hotendOffset.X -= xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.XPick;
+			hotendOffset.Y -= xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.YPick;
 
 			printer.Settings.Helpers.SetExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex, hotendOffset);
 
