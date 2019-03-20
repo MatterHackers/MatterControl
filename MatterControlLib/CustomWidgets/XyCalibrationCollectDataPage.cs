@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Fit | HAnchor.Left
 			};
 			contentRow.AddChild(yButtonsGroup);
+			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
 			yButtons = new List<RadioButton>();
 			yButtons.Add(new RadioButton("-2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("-1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
@@ -89,7 +90,17 @@ namespace MatterHackers.MatterControl
 			yButtons.Add(new RadioButton("+2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			foreach (var button in yButtons)
 			{
-				yButtonsGroup.AddChild(button);
+				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
+				yButtonsGroup.AddChild(column);
+
+				button.HAnchor = HAnchor.Center;
+				column.AddChild(button);
+				column.AddChild(new TextWidget(button.Text, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					HAnchor = HAnchor.Left
+				});
+				button.Text = "";
+
 				button.CheckedStateChanged += YButton_CheckedStateChanged;
 			}
 		}
@@ -97,6 +108,12 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(EventArgs e)
 		{
 			// save the offsets to the extruder
+			var hotendOffset = printer.Settings.Helpers.ExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex);
+			hotendOffset.X += xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.XPick;
+			hotendOffset.Y += xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.YPick;
+
+			printer.Settings.Helpers.SetExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex, hotendOffset);
+
 			base.OnClosed(e);
 		}
 

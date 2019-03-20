@@ -82,16 +82,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
 
 				yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
-
+				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
+			}
+			else if(startPrint)
+			{
 				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
 			}
 			else // we are returing to the wizard and need to collect the data
 			{
-				if (!startPrint)
-				{
-					yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
-				}
-
+				yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
 				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
 			}
 		}
@@ -112,5 +111,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		/// </summary>
 		public int XPick { get; set; } = -1;
 		public int YPick { get; set; } = -1;
+		public double Offset { get; set; } = .1;
 	}
 }

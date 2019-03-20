@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
+			var doneCalibratingButton = theme.CreateDialogButton("Done".Localize());
 			bool printAgain = false;
 
 			// check if we picked an outside of the calibration
@@ -53,6 +54,11 @@ namespace MatterHackers.MatterControl
 				|| xyCalibrationData.YPick == 4)
 			{
 				// offer to re-run the calibration with the same settings as last time
+				contentRow.AddChild(new TextWidget("Your printer has been ajusted but we need to run callibration again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					Margin = new Agg.BorderDouble(0, 15, 0, 0)
+				});
+				doneCalibratingButton = theme.CreateDialogButton("Print Again".Localize());
 				printAgain = true;
 			}
 			else
@@ -65,16 +71,46 @@ namespace MatterHackers.MatterControl
 						{
 							Margin = new Agg.BorderDouble(0, 15, 0, 0)
 						});
+						doneCalibratingButton = theme.CreateDialogButton("Print Next".Localize());
+						// switch to normal calibration
+						xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
 						printAgain = true;
 						break;
 
 					case XyCalibrationData.QualityType.Normal:
 						// let the user know they are done with calibration, but if they would like they can print a fine calibration for even better results
 						// add a button to request fine calibration
+						var normalMessage = "Your nozzles should now be calibrated.".Localize();
+						normalMessage += "\n\n" + "You can continue to ultra fine calibration, but for most uses this is not necessary.".Localize();
+						contentRow.AddChild(new TextWidget(normalMessage, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+						{
+							Margin = new Agg.BorderDouble(0, 15, 0, 0)
+						});
+						var startFineCalibratingButton = theme.CreateDialogButton("Print Ultra Fine Calibration".Localize());
+						startFineCalibratingButton.HAnchor = HAnchor.Fit | HAnchor.Right;
+						startFineCalibratingButton.VAnchor = VAnchor.Absolute;
+						startFineCalibratingButton.Name = "Fine Calibration Print";
+						startFineCalibratingButton.Click += (s, e) =>
+						{
+							// close this dialog
+							this.DialogWindow.CloseOnIdle();
+							UiThread.RunOnIdle(() =>
+							{
+								// switch to fine
+								xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+								// start up at the print window
+								DialogWindow.Show(new XyCalibrationWizard(printer, xyCalibrationData.ExtruderToCalibrateIndex, xyCalibrationData, true));
+							});
+						};
+						contentRow.AddChild(startFineCalibratingButton);
 						break;
 
 					case XyCalibrationData.QualityType.Fine:
 						// done!
+						contentRow.AddChild(new TextWidget("Offset Calibration complete.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+						{
+							Margin = new Agg.BorderDouble(0, 15, 0, 0)
+						});
 						break;
 				}
 			}
@@ -82,7 +118,6 @@ namespace MatterHackers.MatterControl
 			// this is the last page of the wizard hide the next button
 			this.NextButton.Visible = false;
 
-			var doneCalibratingButton = theme.CreateDialogButton(printAgain ? "Start Print".Localize() : "Done".Localize());
 			doneCalibratingButton.Name = "Done Calibration Print";
 			doneCalibratingButton.Click += (s, e) =>
 			{

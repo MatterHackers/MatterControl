@@ -58,17 +58,29 @@ namespace MatterHackers.MatterControl
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Coarse
 			});
-			coarseCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
+			coarseCalibration.CheckedStateChanged += (s, e) =>
+			{
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
+				xyCalibrationData.Offset = .5;
+			};
 			contentRow.AddChild(normalCalibration = new RadioButton("Normal Calibration: Start here".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Normal
 			});
-			normalCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
+			normalCalibration.CheckedStateChanged += (s, e) =>
+			{
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
+				xyCalibrationData.Offset = .1;
+			};
 			contentRow.AddChild(fineCalibration = new RadioButton("Fine Calibration: When you want that extra precision".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Fine
 			});
-			fineCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+			fineCalibration.CheckedStateChanged += (s, e) =>
+			{
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+				xyCalibrationData.Offset = .05;
+			};
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 
 			this.CreateTextField("Congratulations, your nozzle offsets have been collected and are ready to be saved. Click next to save and finish the wizard".Localize());
 
-			var row =  new SettingsRow(
+			var row = new SettingsRow(
 				"X Offset".Localize(),
 				null,
 				theme,
@@ -71,6 +71,26 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 10)
 			});
+
+			this.NextButton.Visible = false;
+
+			var nextButton = theme.CreateDialogButton("Finish".Localize());
+			nextButton.Name = "FinishCalibration";
+			nextButton.Click += (s, e) =>
+			{
+				// TODO: removed fixed index
+				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
+				hotendOffset.X += xOffset;
+				hotendOffset.Y += yOffset;
+
+				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
+
+				this.DialogWindow.CloseOnIdle();
+			};
+
+			theme.ApplyPrimaryActionStyle(nextButton);
+
+			this.AddPageAction(nextButton);
 		}
 	}
 }
