@@ -36,6 +36,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
@@ -65,6 +66,93 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
 			Assert.IsTrue(loadedItem.Children.Count == 1);
+		}
+
+		[Test]
+		public async Task AutoArrangeChildrenTests()
+		{
+			// arange a single item around the origin
+			{
+				var scene = new InteractiveScene();
+				Object3D cube1;
+				scene.Children.Add(cube1 = new Object3D()
+				{
+					Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+					Matrix = Matrix4X4.CreateTranslation(34, 22, 10)
+				});
+
+				Assert.IsTrue(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+
+				await scene.AutoArrangeChildren(Vector3.Zero);
+
+				Assert.IsTrue(new AxisAlignedBoundingBox(-10, -10, 0, 10, 10, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+			}
+
+			// arange a single item around a typical bed center
+			{
+				var scene = new InteractiveScene();
+				Object3D cube1;
+				scene.Children.Add(cube1 = new Object3D()
+				{
+					Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+					Matrix = Matrix4X4.CreateTranslation(34, 22, 10)
+				});
+
+				Assert.IsTrue(new AxisAlignedBoundingBox(24, 12, 0, 44, 32, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+
+				await scene.AutoArrangeChildren(new Vector3(100, 100, 0));
+
+				Assert.IsTrue(new AxisAlignedBoundingBox(90, 90, 0, 110, 110, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
+			}
+
+			// arange 4 items
+			{
+				var scene = new InteractiveScene();
+				for (int i = 0; i < 4; i++)
+				{
+					scene.Children.Add(new Object3D()
+					{
+						Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+						Matrix = Matrix4X4.CreateTranslation(i * 134, i * -122, 10)
+					});
+				}
+
+				var sceneAabb = scene.GetAxisAlignedBoundingBox();
+				Assert.Greater(sceneAabb.XSize, 60);
+				Assert.Greater(sceneAabb.YSize, 60);
+
+				await scene.AutoArrangeChildren(Vector3.Zero);
+
+				sceneAabb = scene.GetAxisAlignedBoundingBox();
+				Assert.Less(sceneAabb.XSize, 60);
+				Assert.Less(sceneAabb.YSize, 60);
+			}
+
+			// arange 4 items, starting with 1 selected
+			{
+				var scene = new InteractiveScene();
+				Object3D child = null;
+				for (int i = 0; i < 4; i++)
+				{
+					scene.Children.Add(child = new Object3D()
+					{
+						Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+						Matrix = Matrix4X4.CreateTranslation(i * 134, i * -122, 10)
+					});
+				}
+
+				scene.SelectedItem = child;
+
+				var sceneAabb = scene.GetAxisAlignedBoundingBox();
+				Assert.Greater(sceneAabb.XSize, 60);
+				Assert.Greater(sceneAabb.YSize, 60);
+
+				await scene.AutoArrangeChildren(Vector3.Zero);
+
+				sceneAabb = scene.GetAxisAlignedBoundingBox();
+				Assert.Less(sceneAabb.XSize, 60);
+				Assert.Less(sceneAabb.YSize, 60);
+			}
 		}
 
 		[Test]
