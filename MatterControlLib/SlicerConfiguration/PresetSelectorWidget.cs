@@ -250,7 +250,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem(AggContext.StaticData.LoadIcon("icon_plus.png", 16, 16), "Add New Setting".Localize() + "...", "new");
+			MenuItem addNewPreset = dropDownList.AddItem(
+				AggContext.StaticData.LoadIcon("icon_plus.png", 16, 16),
+				"Add New Setting".Localize() + "...",
+				"new",
+				pointSize: theme.DefaultFontSize);
 			addNewPreset.Selected += (s, e) =>
 			{
 				var newLayer = new PrinterSettingsLayer();
