@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				alreadyLoadedButton.Click += (s, e) =>
 				{
-					this.DialogWindow.CloseOnIdle();
+					this.DialogWindow.ClosePage();
 					switch (extruderIndex)
 					{
 						case 0:

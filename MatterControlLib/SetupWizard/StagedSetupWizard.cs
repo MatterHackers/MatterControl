@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		internal void FinishWizard()
+		public override void ClosePage()
 		{
 			ISetupWizard nextStage = stages.FirstOrDefault(s => s.SetupRequired);
 

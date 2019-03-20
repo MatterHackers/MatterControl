@@ -113,10 +113,7 @@ namespace MatterHackers.MatterControl
 
 			doneButton.Click += (s, e) =>
 			{
-				if (this.DialogWindow is StagedSetupWizard setupWindow)
-				{
-					setupWindow.FinishWizard();
-				}
+				this.DialogWindow.ClosePage();
 			};
 
 			this.AddPageAction(doneButton);

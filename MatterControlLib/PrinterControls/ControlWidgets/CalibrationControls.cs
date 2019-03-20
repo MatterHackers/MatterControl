@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					ToolTipText = "Run Calibration".Localize()
 				};
+
 				runWizardButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -81,7 +82,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 							},
 							() =>
 							{
-								var homePage = new DialogPage("Close".Localize())
+								var homePage = new WizardSummaryPage()
 								{
 									HeaderText = "Printer Calibration"
 								};

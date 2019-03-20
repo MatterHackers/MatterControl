@@ -189,6 +189,12 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
+		public virtual void ClosePage()
+		{
+			// Close this dialog window
+			this.CloseOnIdle();
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);

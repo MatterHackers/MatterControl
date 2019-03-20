@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl
 
 				if (!abortCancel)
 				{
-					this.DialogWindow?.CloseOnIdle();
+					this.DialogWindow?.ClosePage();
 				}
 			};
 
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl
 
 						if (!abortCancel)
 						{
-							this.DialogWindow?.CloseOnIdle();
+							this.DialogWindow?.ClosePage();
 						}
 					}
 				};
