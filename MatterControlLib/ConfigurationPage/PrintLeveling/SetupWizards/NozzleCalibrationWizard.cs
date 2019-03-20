@@ -43,8 +43,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 
-			pages = this.GetPages();
-			pages.MoveNext();
+			// Capture enumerator, moving to first item
+			this.Reset();
+			this.MoveNext();
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
@@ -67,7 +68,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new WizardPage(
 				this,

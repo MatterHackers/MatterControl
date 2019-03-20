@@ -95,8 +95,8 @@ namespace MatterHackers.MatterControl
 			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 			allWindows[type] = wizardWindow;
 
-			SetSizeAndShow(wizardWindow, activeStage.CurrentPage);
-			wizardWindow.ChangeToPage(activeStage.CurrentPage);
+			SetSizeAndShow(wizardWindow, activeStage.Current);
+			wizardWindow.ChangeToPage(activeStage.Current);
 
 			return wizardWindow;
 		}
@@ -111,12 +111,12 @@ namespace MatterHackers.MatterControl
 				wizardWindow.Size = setupWizard.WindowSize;
 			}
 
-			SetSizeAndShow(wizardWindow, setupWizard.CurrentPage);
+			SetSizeAndShow(wizardWindow, setupWizard.Current);
 
-			wizardWindow.ChangeToPage(setupWizard.CurrentPage);
+			wizardWindow.ChangeToPage(setupWizard.Current);
 
 			// Set focus to ensure Enter/Esc key handlers are caught
-			setupWizard.CurrentPage.Focus();
+			setupWizard.Current.Focus();
 
 			EventHandler windowClosed = null;
 			EventHandler<KeyEventArgs> windowKeyDown = null;
@@ -134,9 +134,9 @@ namespace MatterHackers.MatterControl
 				{
 					// Auto-advance to next page on enter key
 					case Keys.Enter:
-						if (setupWizard.CurrentPage.NextButton.Enabled)
+						if (setupWizard.Current is WizardPage currentPage && currentPage.NextButton.Enabled)
 						{
-							UiThread.RunOnIdle(() => setupWizard.CurrentPage.NextButton.InvokeClick());
+							UiThread.RunOnIdle(() => currentPage.NextButton.InvokeClick());
 						}
 						break;
 				}

@@ -54,8 +54,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// clear them while we measure the offsets
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
-			pages = this.GetPages();
-			pages.MoveNext();
+			// Capture enumerator, moving to first item
+			this.Reset();
+			this.MoveNext();
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var levelingStrings = new LevelingStrings();
 			var autoProbePositions = new List<ProbePosition>(3);

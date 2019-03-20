@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections;
 using System.Collections.Generic;
 using MatterHackers.VectorMath;
 
@@ -34,7 +35,7 @@ namespace MatterHackers.MatterControl
 {
 	public abstract class PrinterSetupWizard : ISetupWizard
 	{
-		protected IEnumerator<WizardPage> pages;
+		private IEnumerator<WizardPage> pages;
 		protected PrinterConfig printer;
 
 		public PrinterSetupWizard(PrinterConfig printer)
@@ -42,23 +43,30 @@ namespace MatterHackers.MatterControl
 			this.printer = printer;
 		}
 
+		protected abstract IEnumerator<WizardPage> GetPages();
+
 		public string Title { get; protected set; }
 
 		public PrinterConfig Printer => printer;
 
-		public WizardPage CurrentPage => pages.Current;
+		public WizardPage Current => pages.Current;
+
+		object IEnumerator.Current => pages.Current;
 
 		public Vector2 WindowSize { get; protected set; }
 
-		public WizardPage GetNextPage()
+		public bool MoveNext()
 		{
 			// Shutdown active page
 			pages.Current?.Close();
 
 			// Advance
-			pages.MoveNext();
+			return pages.MoveNext();
+		}
 
-			return pages.Current;
+		public void Reset()
+		{
+			pages = this.GetPages();
 		}
 
 		public abstract void Dispose();

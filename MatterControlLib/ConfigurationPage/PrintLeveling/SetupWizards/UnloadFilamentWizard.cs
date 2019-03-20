@@ -50,8 +50,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Title = "Unload Filament".Localize();
 			this.extruderIndex = extruderIndex;
 
-			pages = this.GetPages();
-			pages.MoveNext();
+			// Capture enumerator, moving to first item
+			this.Reset();
+			this.MoveNext();
 		}
 
 		public override void Dispose()
@@ -59,7 +60,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 

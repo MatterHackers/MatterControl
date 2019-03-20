@@ -67,7 +67,8 @@ namespace MatterHackers.MatterControl
 			nextButton.Name = "Next Button";
 			nextButton.Click += (s, e) =>
 			{
-				if (setupWizard.GetNextPage() is WizardPage wizardPage)
+				setupWizard.MoveNext();
+				if (setupWizard.Current is WizardPage wizardPage)
 				{
 					this.DialogWindow.ChangeToPage(wizardPage);
 				}

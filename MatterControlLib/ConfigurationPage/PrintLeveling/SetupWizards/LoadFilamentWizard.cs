@@ -57,8 +57,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
 
-			pages = this.GetPages();
-			pages.MoveNext();
+			// Capture enumerator, moving to first item
+			this.Reset();
+			this.MoveNext();
 		}
 
 		public override void Dispose()
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
