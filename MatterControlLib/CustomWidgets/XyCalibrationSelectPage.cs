@@ -143,12 +143,19 @@ namespace MatterHackers.MatterControl
 				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
 				scene.Children.Add(item);
 				// switch to 3D view
+				// register callbacks for print compleation
 				// start the calibration print
 			};
 
 			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
 
 			this.AddPageAction(startCalibrationPrint);
+		}
+
+		void PrintHasCompleated()
+		{
+			// if we are done callibrating
+			printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 		}
 	}
 }

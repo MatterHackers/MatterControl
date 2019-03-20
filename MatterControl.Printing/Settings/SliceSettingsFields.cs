@@ -906,6 +906,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.xy_offsets_have_been_calibrated,
+					PresentationName = "X Y Nozzle Offsets Have Been Calibrated".Localize(),
+					HelpText = "Flag keeping track if xy calibration wizard has been run.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowIfSet = "!has_hardware_leveling",
+					DefaultValue = "0",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.filament_has_been_loaded,
 					PresentationName = "Filament Has Been Loaded".Localize(),
 					HelpText = "Flag for the state of our filament loaded.".Localize(),
