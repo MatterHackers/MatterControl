@@ -127,6 +127,20 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
+		internal void FinishWizard()
+		{
+			ISetupWizard nextStage = stages.FirstOrDefault(s => s.SetupRequired);
+
+			if (nextStage != null)
+			{
+				this.ActiveStage = nextStage;
+				return;
+			}
+
+			// Move to next unfinished wizard or move to summary/home page
+			this.ChangeToPage(homePageGenerator());
+		}
+
 		public override DialogPage ChangeToPage<PanelType>()
 		{
 			return base.ChangeToPage<PanelType>();
