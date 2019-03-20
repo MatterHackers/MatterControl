@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
 			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			this.Connection.DetailedPrintingStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.PrintFinished += Connection_PrintFinished;
 
 			// Initialize bed settings
@@ -480,6 +481,7 @@ namespace MatterHackers.MatterControl
 			// Unregister listeners
 			this.Settings.SettingChanged -= Printer_SettingChanged;
 			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			this.Connection.DetailedPrintingStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
 			this.Connection.PrintFinished -= Connection_PrintFinished;
 			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
