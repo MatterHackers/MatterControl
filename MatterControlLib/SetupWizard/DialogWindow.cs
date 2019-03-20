@@ -91,12 +91,11 @@ namespace MatterHackers.MatterControl
 			var activeStage = wizardStages.First();
 			var type = activeStage.GetType();
 
-			DialogWindow wizardWindow = new StagedSetupWizard(stages);
+			var wizardWindow = new StagedSetupWizard(stages);
 			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 			allWindows[type] = wizardWindow;
 
 			SetSizeAndShow(wizardWindow, activeStage.Current);
-			wizardWindow.ChangeToPage(activeStage.Current);
 
 			return wizardWindow;
 		}
