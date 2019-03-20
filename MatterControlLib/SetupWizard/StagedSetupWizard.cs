@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public StagedSetupWizard(IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		public StagedSetupWizard(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
 		{
 			this.stages = stages;
 			this.homePageGenerator = homePageGenerator;
@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch
 			});
 
-			this.Title = activeStage.Title;
+			this.Title = title;
 			this.Size = new Vector2(1200, 700);
 			this.AddChild(row);
 		}
