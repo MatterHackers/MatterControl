@@ -2117,7 +2117,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.z_offset,
 					PresentationName = "Z Offset".Localize(),
-					HelpText = "The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.".Localize(),
+					HelpText = "DEPRECATED: replaced with extruder_offset".Localize(),
 					DataEditType = DataEditTypes.OFFSET,
 					Units = "mm",
 					DefaultValue = "0"
