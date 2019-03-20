@@ -167,9 +167,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							SetAsActive = (qualityKey) => printer.Settings.ActiveQualityKey = qualityKey,
 							DeleteLayer = () =>
 							{
-								printer.Settings.ActiveQualityKey = "";
 								printer.Settings.QualityLayers.Remove(layerToEdit);
 								printer.Settings.Save();
+
+								// Clear QualityKey after removing layer to ensure listeners see update
+								printer.Settings.ActiveQualityKey = "";
 							}
 						};
 
@@ -216,7 +218,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			if (stringEvent != null
 				&& (stringEvent.Data == SettingsKey.default_material_presets
-					|| stringEvent.Data == SettingsKey.active_material_key
+					|| (layerType == NamedSettingsLayers.Material && stringEvent.Data == SettingsKey.active_material_key)
+					|| (layerType == NamedSettingsLayers.Quality && stringEvent.Data == SettingsKey.active_quality_key)
 					|| stringEvent.Data == SettingsKey.layer_name))
 			{
 				RebuildDropDownList();
@@ -247,7 +250,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				menuItem.Selected += MenuItem_Selected;
 			}
 
-			MenuItem addNewPreset = dropDownList.AddItem(AggContext.StaticData.LoadIcon("icon_plus.png", 16, 16), "Add New Setting".Localize() + "...", "new");
+			MenuItem addNewPreset = dropDownList.AddItem(
+				AggContext.StaticData.LoadIcon("icon_plus.png", 16, 16),
+				"Add New Setting".Localize() + "...",
+				"new",
+				pointSize: theme.DefaultFontSize);
 			addNewPreset.Selected += (s, e) =>
 			{
 				var newLayer = new PrinterSettingsLayer();
