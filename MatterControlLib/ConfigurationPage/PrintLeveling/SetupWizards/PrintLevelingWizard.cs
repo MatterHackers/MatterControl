@@ -61,6 +61,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer);
+
 		private void Initialize()
 		{
 			// turn off print leveling

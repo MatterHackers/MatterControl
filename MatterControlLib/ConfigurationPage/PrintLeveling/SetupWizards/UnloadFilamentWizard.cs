@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool SetupRequired => false;
+
 		public override void Dispose()
 		{
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);

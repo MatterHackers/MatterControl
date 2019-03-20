@@ -48,6 +48,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool SetupRequired => NeedsToBeRun(printer);
+
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
 			// we have a probe that we are using and we have not done leveling yet

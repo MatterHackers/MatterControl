@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl
 
 		protected abstract IEnumerator<WizardPage> GetPages();
 
+		public abstract bool SetupRequired { get; }
+
 		public string Title { get; protected set; }
 
 		public PrinterConfig Printer => printer;

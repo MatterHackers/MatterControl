@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.SetTargetHotendTemperature(extruderIndex, this.TemperatureAtStart);
 		}
 
+		public override bool SetupRequired => NeedsToBeRun0(printer) || NeedsToBeRun1(printer);
+
 		public static bool NeedsToBeRun0(PrinterConfig printer)
 		{
 			return !printer.Settings.GetValue<bool>(SettingsKey.filament_has_been_loaded);

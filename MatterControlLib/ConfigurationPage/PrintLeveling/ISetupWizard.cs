@@ -40,5 +40,7 @@ namespace MatterHackers.MatterControl
 		string Title { get; }
 
 		Vector2 WindowSize { get; }
+
+		bool SetupRequired { get; }
 	}
 }
