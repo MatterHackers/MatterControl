@@ -72,12 +72,27 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new ISetupWizard[]
-						{
-							new PrintLevelingWizard(printer),
-							new ProbeCalibrationWizard(printer),
-							new NozzleCalibrationWizard(printer)
-						});
+						DialogWindow.Show(
+							new ISetupWizard[]
+							{
+								new PrintLevelingWizard(printer),
+								new ProbeCalibrationWizard(printer),
+								new NozzleCalibrationWizard(printer)
+							},
+							() =>
+							{
+								var homePage = new DialogPage("Close".Localize())
+								{
+									HeaderText = "Printer Calibration"
+								};
+
+								homePage.ContentRow.AddChild(new WrappedTextWidget(
+									@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dictum sagittis lectus, eget interdum erat aliquam et. Cras fermentum eleifend urna, non lacinia diam egestas eu. Morbi et ullamcorper ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris sed nisl sapien. Aenean bibendum nec massa et pulvinar. Praesent sagittis lorem ut ornare cursus. Pellentesque non dolor sem. Donec at imperdiet massa. Vestibulum faucibus diam non tincidunt fermentum. Morbi lacus ligula, dictum sit amet purus ac, viverra tincidunt nisi. Quisque eget justo viverra, pulvinar sapien quis, pellentesque.
+
+Fusce faucibus dictum convallis.Nulla molestie purus a nibh sodales consequat.Morbi lacus nisl, scelerisque in tincidunt nec, tempus sed metus.Aenean in dictum enim.Nunc pretium tellus sem, eu egestas lacus consectetur non.Mauris posuere viverra maximus.Praesent sit amet accumsan nisl.Quisque rutrum ultricies posuere.Nulla facilisi.Nulla augue dolor, facilisis sed nibh sed, bibendum malesuada erat.".Replace("\r\n", "\n")));
+
+								return homePage;
+							});
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
