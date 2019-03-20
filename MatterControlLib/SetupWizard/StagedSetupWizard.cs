@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
@@ -38,15 +39,44 @@ namespace MatterHackers.MatterControl
 	public class StagedSetupWizard : DialogWindow
 	{
 		private IEnumerable<ISetupWizard> stages;
+		private Func<DialogPage> homePageGenerator;
 		private FlowLayoutWidget leftPanel;
 		private DialogPage activePage;
 		private GuiWidget rightPanel;
 		private bool footerHeightAcquired = false;
-		private WizardStageRow activeStageButton;
+		private ISetupWizard _activeStage;
 
-		public StagedSetupWizard(IEnumerable<ISetupWizard> stages)
+		private Dictionary<ISetupWizard, WizardStageRow> stageButtons = new Dictionary<ISetupWizard, WizardStageRow>();
+
+		public ISetupWizard ActiveStage
+		{
+			get => _activeStage;
+			set
+			{
+				if (_activeStage != null 
+					&& stageButtons.TryGetValue(_activeStage, out WizardStageRow activeButton))
+				{
+					activeButton.Active = false;
+				}
+
+				_activeStage = value;
+
+				if (stageButtons.TryGetValue(_activeStage, out WizardStageRow stageButton))
+				{
+					stageButton.Active = true;
+				}
+
+				_activeStage.Reset();
+				_activeStage.MoveNext();
+
+				this.ChangeToPage(_activeStage.Current); ;
+			}
+		}
+
+		public StagedSetupWizard(IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
 		{
 			this.stages = stages;
+			this.homePageGenerator = homePageGenerator;
 
 			var activeStage = stages.First();
 			var theme = AppContext.Theme;
@@ -67,7 +97,7 @@ namespace MatterHackers.MatterControl
 			});
 
 			int i = 1;
-			foreach(var stage in stages)
+			foreach (var stage in stages)
 			{
 				var stageWidget = new WizardStageRow(
 					$"{i++}. {stage.Title}",
@@ -75,22 +105,11 @@ namespace MatterHackers.MatterControl
 					stage,
 					theme);
 
+				stageButtons.Add(stage, stageWidget);
+
 				stageWidget.Click += (s, e) =>
 				{
-					if (activeStageButton != null)
-					{
-						activeStageButton.Active = false;
-					}
-
-					stage.Reset();
-					stage.MoveNext();
-
-					activeStage = stage;
-
-					activeStageButton = stageWidget;
-					activeStageButton.Active = true;
-
-					this.ChangeToPage(stage.Current);
+					this.ActiveStage = stage;
 				};
 
 				leftPanel.AddChild(stageWidget);
