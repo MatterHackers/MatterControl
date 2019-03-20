@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -57,16 +57,33 @@ namespace MatterHackers.MatterControl
 			};
 			row.AddChild(leftPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				BackgroundColor = theme.AccentMimimalOverlay,
+				BackgroundColor = theme.MinimalShade,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Stretch,
 				Margin = new BorderDouble(right: theme.DefaultContainerPadding),
+				Padding = theme.DefaultContainerPadding,
 				Width = 250
 			});
 
+			int i = 1;
 			foreach(var stage in stages)
 			{
-				leftPanel.AddChild(new TextWidget(stage.Title, pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+				var stageWidget = new WizardStageRow(
+					$"{i++}. {stage.Title}",
+					"",
+					stage,
+					theme);
+
+				stageWidget.Click += (s, e) =>
+				{
+					stage.Reset();
+					stage.MoveNext();
+
+					activeStage = stage;
+					this.ChangeToPage(stage.Current);
+				};
+
+				leftPanel.AddChild(stageWidget);
 			}
 
 			row.AddChild(rightPanel = new GuiWidget()
