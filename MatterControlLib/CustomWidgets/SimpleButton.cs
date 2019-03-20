@@ -192,7 +192,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected ImageWidget imageWidget;
 		protected ImageBuffer image;
 
-		public IconButton(ThemeConfig theme)
+		private IconButton(ThemeConfig theme)
 			: base(theme)
 		{
 		}
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Height = theme.ButtonHeight;
 			this.Width = theme.ButtonHeight;
 
-			imageWidget = new ImageWidget(icon)
+			imageWidget = new ImageWidget(icon, listenForImageChanged: false)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Center,
@@ -493,10 +493,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public HoverIconButton(ImageBuffer icon, ImageBuffer hoverIcon, ThemeConfig theme)
-			: base(theme)
+			: base(icon, theme)
 		{
-			this.image = icon;
-
 			normalImage = icon;
 			hoverImage = hoverIcon;
 
