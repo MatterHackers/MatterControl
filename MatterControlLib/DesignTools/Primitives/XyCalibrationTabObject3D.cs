@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class XyCalibrationTabObject3D : Object3D
 	{
+		public double NozzleWidth = .4;
+
 		public XyCalibrationTabObject3D()
 		{
 			Name = "Calibration Tab".Localize();
@@ -47,16 +49,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("Material")]
 		public int CalibrationMaterialIndex { get; set; } = 1;
+
+		public override bool CanFlatten => true;
 		public double ChangeHeight { get; set; } = .4;
 		public double Offset { get; set; } = .5;
-		public double NozzleWidth = .4;
 		public double WipeTowerSize { get; set; } = 10;
 
 		private double TabDepth => NozzleWidth * TabScale * 5;
 		private double TabScale => 3;
 		private double TabWidth => NozzleWidth * TabScale * 3;
 
-		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1, 
+		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1,
 			double changeHeight = .4, double offset = .5, double nozzleWidth = .4)
 		{
 			var item = new XyCalibrationTabObject3D()

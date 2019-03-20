@@ -71,26 +71,6 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(right: 10)
 			});
-
-			this.NextButton.Visible = false;
-
-			var nextButton = theme.CreateDialogButton("Finish".Localize());
-			nextButton.Name = "FinishCalibration";
-			nextButton.Click += (s, e) =>
-			{
-				// TODO: removed fixed index
-				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
-				hotendOffset.X += xOffset;
-				hotendOffset.Y += yOffset;
-
-				printer.Settings.Helpers.SetExtruderOffset(1, hotendOffset);
-
-				this.DialogWindow.CloseOnIdle();
-			};
-
-			theme.ApplyPrimaryActionStyle(nextButton);
-
-			this.AddPageAction(nextButton);
 		}
 	}
 }

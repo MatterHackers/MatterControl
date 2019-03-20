@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("Material")]
 		public int CalibrationMaterialIndex { get; set; } = 1;
 
+		public override bool CanFlatten => true;
 		public double ChangingHeight { get; set; } = .4;
 		public int Layers { get; set; } = 10;
 		public double Offset { get; set; } = .5;
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double TabWidth => NozzleWidth * TabScale * 3;
 
 		public static async Task<XyCalibrationFaceObject3D> Create(int calibrationMaterialIndex = 1,
-							double baseHeight = 1, double changingHeight = .2, double offset = .5, double nozzleWidth = .4, double wipeTowerSize = 10, int layers = 10)
+							double baseHeight = 1, double changingHeight = .2, double offset = .5, double nozzleWidth = .4, double wipeTowerSize = 10, int layers = 8)
 		{
 			var item = new XyCalibrationFaceObject3D()
 			{
@@ -123,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						this.Children.Add(new Object3D()
 						{
 							Mesh = PlatonicSolids.CreateCube(),
-							Matrix = Matrix4X4.CreateTranslation(1 / 2.0, 1 / 2.0, 1 / 2.0) 
+							Matrix = Matrix4X4.CreateTranslation(1 / 2.0, 1 / 2.0, 1 / 2.0)
 								* Matrix4X4.CreateScale(WipeTowerSize, WipeTowerSize, BaseHeight + Layers * ChangingHeight)
 								* Matrix4X4.CreateTranslation(TabDepth * 1, TabDepth * 2, 0),
 							OutputType = PrintOutputTypes.WipeTower

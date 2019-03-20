@@ -29,15 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class NozzleXyCalibrationWizard : PrinterSetupWizard
+	public class XyCalibrationWizard : PrinterSetupWizard
 	{
-		public NozzleXyCalibrationWizard(PrinterConfig printer)
+		public XyCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
@@ -69,18 +70,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private IEnumerator<WizardPage> GetPages()
 		{
-			yield return new WizardPage(
-				this,
-				"Nozzle Offset Calibration".Localize(),
-				"Offset Calibration required. We'll now print a calibration guide on the printer to tune your nozzle offsets".Localize())
-			{
-				WindowTitle = WindowTitle
-			};
+			var xyCalibrationData = new XyCalibrationData();
 
-			var calibrationPage = new NozzleOffsetCalibrationPrintPage(this, printer);
-			yield return calibrationPage;
+			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 
-			yield return new NozzleOffsetCalibrationResultsPage(this, printer, calibrationPage.XOffset, calibrationPage.YOffset);
+			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
 		}
+	}
+
+	public class XyCalibrationData
+	{
+		public enum QualityType { Coarse, Normal, Fine }
+		public QualityType Quality { get; set; } = QualityType.Normal;
 	}
 }

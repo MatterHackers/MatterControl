@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					xyCalibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new NozzleXyCalibrationWizard(printer));
+						DialogWindow.Show(new XyCalibrationWizard(printer));
 					});
 
 					settingsRow.BorderColor = Color.Transparent;
