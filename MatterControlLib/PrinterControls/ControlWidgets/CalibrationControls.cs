@@ -72,7 +72,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new PrintLevelingWizard(printer));
+						DialogWindow.Show(new ISetupWizard[]
+						{
+							new PrintLevelingWizard(printer),
+							new ProbeCalibrationWizard(printer),
+							new NozzleCalibrationWizard(printer)
+						});
 					});
 				};
 				settingsRow.AddChild(runWizardButton);

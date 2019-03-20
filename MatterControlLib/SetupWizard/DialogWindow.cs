@@ -85,6 +85,22 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
+		public static DialogWindow Show(IEnumerable<ISetupWizard> stages)
+		{
+			var wizardStages = stages.ToList();
+			var activeStage = wizardStages.First();
+			var type = activeStage.GetType();
+
+			DialogWindow wizardWindow = new StagedSetupWizard(stages);
+			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
+			allWindows[type] = wizardWindow;
+
+			SetSizeAndShow(wizardWindow, activeStage.CurrentPage);
+			wizardWindow.ChangeToPage(activeStage.CurrentPage);
+
+			return wizardWindow;
+		}
+
 		public static DialogWindow Show(ISetupWizard setupWizard)
 		{
 			DialogWindow wizardWindow = GetWindow(setupWizard.GetType());

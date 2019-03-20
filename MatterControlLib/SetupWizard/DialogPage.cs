@@ -118,6 +118,7 @@ namespace MatterHackers.MatterControl
 			// Create the footer (button) container
 			footerRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
+				Name = "FooterRow",
 				HAnchor = HAnchor.Fit | HAnchor.Right,
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(0, 6),
