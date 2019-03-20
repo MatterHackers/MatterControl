@@ -301,6 +301,12 @@ namespace MatterHackers.MatterControl.Library.Export
 				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
 			}
 
+			if (printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			{
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(printer, accumulatedStream);
+				accumulatedStream = softwareEndstopsExStream12;
+			}
+
 			// this is added to ensure we are rewriting the G0 G1 commands as needed
 			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
 

@@ -669,6 +669,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Add new items
 			foreach (var taskItem in tasks.RunningTasks.Where(t => !displayedTasks.Contains(t)))
 			{
+				// TODO: find out how we are getting a null task item in the list
+				if (taskItem == null)
+				{
+					continue;
+				}
+
 				var runningTaskPanel = new RunningTaskStatusPanel("", taskItem, theme)
 				{
 					HAnchor = HAnchor.Absolute,

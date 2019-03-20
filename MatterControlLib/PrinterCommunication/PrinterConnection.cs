@@ -2247,8 +2247,11 @@ You will then need to logout and log back in to the computer for the changes to 
 			accumulatedStream = new FeedRateMultiplyerStream(Printer, accumulatedStream);
 			accumulatedStream = new RequestTemperaturesStream(Printer, accumulatedStream);
 
-			var softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, accumulatedStream);
-			accumulatedStream = softwareEndstopsExStream12;
+			if (Printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			{
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, accumulatedStream);
+				accumulatedStream = softwareEndstopsExStream12;
+			}
 
 			totalGCodeStream = accumulatedStream;
 

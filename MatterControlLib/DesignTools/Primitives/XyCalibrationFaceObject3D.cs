@@ -38,20 +38,23 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class XyCalibrationTabObject3D : Object3D
+	public class XyCalibrationFaceObject3D : Object3D
 	{
 		public double NozzleWidth = .4;
 
-		public XyCalibrationTabObject3D()
+		public XyCalibrationFaceObject3D()
 		{
-			Name = "Calibration Tab".Localize();
+			Name = "Calibration Faces".Localize();
 		}
+
+		public double BaseHeight { get; set; } = .4;
 
 		[DisplayName("Material")]
 		public int CalibrationMaterialIndex { get; set; } = 1;
 
 		public override bool CanFlatten => true;
-		public double ChangeHeight { get; set; } = .4;
+		public double ChangingHeight { get; set; } = .4;
+		public int Layers { get; set; } = 10;
 		public double Offset { get; set; } = .5;
 		public double WipeTowerSize { get; set; } = 10;
 
@@ -59,13 +62,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double TabScale => 3;
 		private double TabWidth => NozzleWidth * TabScale * 3;
 
-		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1,
-			double changeHeight = .4, double offset = .5, double nozzleWidth = .4)
+		public static async Task<XyCalibrationFaceObject3D> Create(int calibrationMaterialIndex = 1,
+							double baseHeight = 1, double changingHeight = .2, double offset = .5, double nozzleWidth = .4, double wipeTowerSize = 10, int layers = 8)
 		{
-			var item = new XyCalibrationTabObject3D()
+			var item = new XyCalibrationFaceObject3D()
 			{
+				WipeTowerSize = wipeTowerSize,
+				Layers = layers,
 				CalibrationMaterialIndex = calibrationMaterialIndex,
-				ChangeHeight = changeHeight,
+				BaseHeight = baseHeight,
+				ChangingHeight = changingHeight,
 				Offset = offset,
 				NozzleWidth = nozzleWidth
 			};
@@ -108,7 +114,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					this.Children.Add(new Object3D()
 					{
 						Mesh = PlatonicSolids.CreateCube(),
-						Matrix = Matrix4X4.CreateTranslation(-1 / 2.0, 1 / 2.0, 1 / 2.0) * Matrix4X4.CreateScale(TabDepth, TabDepth, ChangeHeight),
+						Matrix = Matrix4X4.CreateTranslation(-1 / 2.0, 1 / 2.0, 1 / 2.0) * Matrix4X4.CreateScale(TabDepth, TabDepth, BaseHeight),
 						Color = Color.LightBlue
 					});
 
@@ -119,7 +125,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = PlatonicSolids.CreateCube(),
 							Matrix = Matrix4X4.CreateTranslation(1 / 2.0, 1 / 2.0, 1 / 2.0)
-								* Matrix4X4.CreateScale(WipeTowerSize, WipeTowerSize, ChangeHeight * 2)
+								* Matrix4X4.CreateScale(WipeTowerSize, WipeTowerSize, BaseHeight + Layers * ChangingHeight)
 								* Matrix4X4.CreateTranslation(TabDepth * 1, TabDepth * 2, 0),
 							OutputType = PrintOutputTypes.WipeTower
 						});
@@ -162,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			content.Children.Add(new Object3D()
 			{
-				Mesh = shape.Extrude(ChangeHeight),
+				Mesh = shape.Extrude(BaseHeight),
 				Color = Color.LightBlue
 			});
 
@@ -170,16 +176,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			var step = new Vector2(spaceBetween + TabWidth, Offset);
 			for (int i = 0; i < 5; i++)
 			{
-				var cube = PlatonicSolids.CreateCube();
-				content.Children.Add(new Object3D()
+				for (int j = 0; j < Layers; j++)
 				{
-					Mesh = cube,
-					Color = Color.Yellow,
-					Matrix = Matrix4X4.CreateScale(TabWidth, TabDepth, ChangeHeight)
-						// translate by 1.5 as it is a centered cube (.5) plus the base (1) = 1.5
-						* Matrix4X4.CreateTranslation(position.X, position.Y, ChangeHeight * 1.5),
-					MaterialIndex = CalibrationMaterialIndex
-				});
+					var calibrationMaterial = (j % 2 == 0);
+					var cube = PlatonicSolids.CreateCube();
+					var yOffset = calibrationMaterial ? position.Y : TabDepth / 2;
+					var offset = Matrix4X4.CreateTranslation(position.X, yOffset, BaseHeight + .5 * ChangingHeight + j * ChangingHeight);
+					content.Children.Add(new Object3D()
+					{
+						Mesh = cube,
+						Color = Color.Yellow,
+						Matrix = Matrix4X4.CreateScale(TabWidth, TabDepth, ChangingHeight) * offset,
+						MaterialIndex = calibrationMaterial ? CalibrationMaterialIndex : 0
+					});
+				}
 				position += step;
 			}
 
