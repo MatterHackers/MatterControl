@@ -39,11 +39,11 @@ namespace MatterHackers.MatterControl
 	public class WizardStageRow : SettingsRow
 	{
 		private ISetupWizard stage;
-		private ImageBuffer detailIcon;
+		private ImageBuffer completedIcon;
+		private ImageBuffer setupIcon;
 		private ImageBuffer hoverIcon;
 		private double iconXOffset;
 		private double iconYOffset;
-		private bool _active;
 
 		public WizardStageRow(string text, string helpText, ISetupWizard stage, ThemeConfig theme)
 			: base(text, helpText, theme)
@@ -51,31 +51,25 @@ namespace MatterHackers.MatterControl
 			this.stage = stage;
 			this.Cursor = Cursors.Hand;
 
-			detailIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
+			completedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
+			setupIcon = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
 			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 		}
 
-		public bool Active
-		{
-			get => _active;
-			set
-			{
-				_active = value;
-			}
-		}
+		public bool Active { get; set; }
 
 		public override Color BackgroundColor
 		{
-			get => (_active) ? theme.AccentMimimalOverlay : base.BackgroundColor;
+			get => (Active) ? theme.AccentMimimalOverlay : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			if (detailIcon != null)
+			if (completedIcon != null)
 			{
-				iconXOffset = LocalBounds.Right - detailIcon.Width - theme.DefaultContainerPadding;
-				iconYOffset = LocalBounds.YCenter - (detailIcon.Height / 2);
+				iconXOffset = LocalBounds.Right - completedIcon.Width - theme.DefaultContainerPadding;
+				iconYOffset = LocalBounds.YCenter - (completedIcon.Height / 2);
 				hoverIcon = hoverIcon.AlphaToPrimaryAccent();
 			}
 
@@ -89,7 +83,7 @@ namespace MatterHackers.MatterControl
 			if (!this.Active)
 			{
 				graphics2D.Render(
-					mouseInBounds ? hoverIcon : detailIcon,
+					(mouseInBounds) ? hoverIcon : (stage.SetupRequired) ? setupIcon : completedIcon,
 					iconXOffset,
 					iconYOffset);
 			}
