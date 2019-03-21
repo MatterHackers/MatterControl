@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
-		private DetailedPrintingState _printingStatePrivate;
+		private DetailedPrintingState _detailedPrintingState;
 
 		private ContainsStringLineActions ReadLineContainsCallBacks = new ContainsStringLineActions();
 
@@ -758,12 +758,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public DetailedPrintingState DetailedPrintingState
 		{
-			get => _printingStatePrivate;
+			get => _detailedPrintingState;
 			set
 			{
-				if (_printingStatePrivate != value)
+				if (_detailedPrintingState != value)
 				{
-					_printingStatePrivate = value;
+					_detailedPrintingState = value;
 					DetailedPrintingStateChanged?.Invoke(this, null);
 				}
 			}
