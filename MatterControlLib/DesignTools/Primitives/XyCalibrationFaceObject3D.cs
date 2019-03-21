@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					this.Children.Add(calibrateX);
 					var calibrateY = GetTab(false);
 					this.Children.Add(calibrateY);
-					// add in the corner connecter
+					// add in the corner connector
 					this.Children.Add(new Object3D()
 					{
 						Mesh = PlatonicSolids.CreateCube(),

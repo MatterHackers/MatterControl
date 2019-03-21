@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
 			}
-			else // we are returing to the wizard and need to collect the data
+			else // we are returning to the wizard and need to collect the data
 			{
 				yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
 				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
