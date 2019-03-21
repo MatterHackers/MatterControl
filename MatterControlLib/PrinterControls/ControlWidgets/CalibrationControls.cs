@@ -163,7 +163,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					xyCalibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new XyCalibrationWizard(printer));
+						// TODO: check that we are able to print (no errors)
+						bool printerCanPrint = true;
+						if (printerCanPrint)
+						{
+							DialogWindow.Show(new XyCalibrationWizard(printer, 1));
+						}
+						else
+						{
+							// show the error dialog for printer errors and warnings
+						}
 					});
 
 					settingsRow.BorderColor = Color.Transparent;

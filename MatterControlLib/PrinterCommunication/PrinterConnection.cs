@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler BedTemperatureRead;
 
 		public event EventHandler CommunicationStateChanged;
+		public event EventHandler DetailedPrintingStateChanged;
 
 		public event EventHandler ConnectionFailed;
 
@@ -592,7 +593,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 
 					communicationState = value;
-					OnCommunicationStateChanged(null);
+					CommunicationStateChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -763,7 +764,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				if (_printingStatePrivate != value)
 				{
 					_printingStatePrivate = value;
-					OnCommunicationStateChanged(null);
+					DetailedPrintingStateChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -1322,29 +1323,6 @@ You will then need to logout and log back in to the computer for the changes to 
 				QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
-		}
-
-		public void OnCommunicationStateChanged(EventArgs e)
-		{
-			// Call instance event
-			CommunicationStateChanged?.Invoke(this, e);
-#if __ANDROID__
-
-			//Path to the printer output file
-			string pathToPrintOutputFile = Path.Combine(ApplicationDataStorage.Instance.PublicDataStoragePath, "print_output.txt");
-
-			if (CommunicationState == CommunicationStates.FinishedPrint)
-			{
-				//Only write to the text file if file exists
-				if (File.Exists(pathToPrintOutputFile))
-				{
-					Task.Run(() =>
-					{
-						File.WriteAllLines(pathToPrintOutputFile, this.TerminalLog.PrinterLines);
-					});
-				}
-			}
-#endif
 		}
 
 		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)

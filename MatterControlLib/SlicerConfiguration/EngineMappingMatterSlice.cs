@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.use_z_probe,
 			SettingsKey.validate_layer_height,
 			SettingsKey.write_regex,
+			SettingsKey.xy_offsets_have_been_calibrated,
 			SettingsKey.z_offset,
 			SettingsKey.z_probe_samples,
 			SettingsKey.z_probe_xy_offset,

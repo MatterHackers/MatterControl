@@ -27,14 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -62,93 +58,29 @@ namespace MatterHackers.MatterControl
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Coarse
 			});
-			coarseCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
+			coarseCalibration.CheckedStateChanged += (s, e) =>
+			{
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
+				xyCalibrationData.Offset = .5;
+			};
 			contentRow.AddChild(normalCalibration = new RadioButton("Normal Calibration: Start here".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Normal
 			});
-			normalCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
+			normalCalibration.CheckedStateChanged += (s, e) =>
+			{
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
+				xyCalibrationData.Offset = .1;
+			};
 			contentRow.AddChild(fineCalibration = new RadioButton("Fine Calibration: When you want that extra precision".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Fine
 			});
-			fineCalibration.CheckedStateChanged += (s, e) => xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
-		}
-	}
-
-	public class XyCalibrationStartPrintPage : WizardPage
-	{
-		public XyCalibrationStartPrintPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
-			: base(setupWizard)
-		{
-			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize();
-			this.Name = "Nozzle Offset Calibration Wizard";
-
-			var content = "Here is what we are going to do:".Localize();
-			content += "\n\n    • " + "Stash your current bed".Localize();
-			content += "\n    • " + "Print the calibration object".Localize();
-			content += "\n    • " + "Collect data".Localize();
-			content += "\n    • " + "Restore your current bed, after all calibration is complete".Localize();
-
-			contentRow.AddChild(this.CreateTextField(content));
-
-			contentRow.Padding = theme.DefaultContainerPadding;
-
-			this.NextButton.Visible = false;
-
-			var startCalibrationPrint = theme.CreateDialogButton("Start Print".Localize());
-			startCalibrationPrint.Name = "Start Calibration Print";
-			startCalibrationPrint.Click += (s, e) =>
+			fineCalibration.CheckedStateChanged += (s, e) =>
 			{
-				this.DialogWindow.CloseOnIdle();
-				// stash the current bed
-				var scene = printer.Bed.Scene;
-				scene.Children.Modify((list) => list.Clear());
-				IObject3D item = null;
-				// add the calibration object to the bed
-				switch(xyCalibrationData.Quality)
-				{
-					case XyCalibrationData.QualityType.Coarse:
-						item = XyCalibrationTabObject3D.Create(1,
-							Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, printer.Settings.GetValue<double>(SettingsKey.layer_height) * 2),
-							.5,
-							printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
-						break;
-
-					case XyCalibrationData.QualityType.Fine:
-						item = XyCalibrationFaceObject3D.Create(1,
-							printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2,
-							printer.Settings.GetValue<double>(SettingsKey.layer_height),
-							.05,
-							printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
-							printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-							8).GetAwaiter().GetResult();
-						break;
-
-					default:
-						item = XyCalibrationFaceObject3D.Create(1,
-							printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2,
-							printer.Settings.GetValue<double>(SettingsKey.layer_height),
-							.1,
-							printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
-							printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-							8).GetAwaiter().GetResult();
-						break;
-				}
-
-				// move the part to the center of the bed
-				var bedBounds = printer.Bed.Bounds;
-				var aabb = item.GetAxisAlignedBoundingBox();
-				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
-				scene.Children.Add(item);
-				// switch to 3D view
-				// start the calibration print
+				xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+				xyCalibrationData.Offset = .05;
 			};
-
-			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
-
-			this.AddPageAction(startCalibrationPrint);
 		}
 	}
 }
