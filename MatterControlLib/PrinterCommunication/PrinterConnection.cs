@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
-		private DetailedPrintingState _printingStatePrivate;
+		private DetailedPrintingState _detailedPrintingState;
 
 		private ContainsStringLineActions ReadLineContainsCallBacks = new ContainsStringLineActions();
 
@@ -758,12 +758,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public DetailedPrintingState DetailedPrintingState
 		{
-			get => _printingStatePrivate;
+			get => _detailedPrintingState;
 			set
 			{
-				if (_printingStatePrivate != value)
+				if (_detailedPrintingState != value)
 				{
-					_printingStatePrivate = value;
+					_detailedPrintingState = value;
 					DetailedPrintingStateChanged?.Invoke(this, null);
 				}
 			}
@@ -2354,7 +2354,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingT0;
 			}
-			if (waitForTempStream?.HeatingT1 ?? false)
+			else if (waitForTempStream?.HeatingT1 ?? false)
 			{
 				// don't time the heating extruder operation
 				timeSinceStartedPrint.Stop();
