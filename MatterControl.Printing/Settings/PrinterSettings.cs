@@ -906,15 +906,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public ulong GetLongHashCode()
+		public ulong GetGCodeCacheKey()
 		{
 			var bigStringForHashCode = new StringBuilder();
 
-			foreach (var keyValue in this.BaseLayer)
+			// Loop over all known settings
+			foreach (var keyValue in PrinterSettings.SettingsData)
 			{
 				// Add key/value to accumulating string for hash
-				SliceSettingData data = PrinterSettings.SettingsData[keyValue.Key];
-				if (data?.RebuildGCodeOnChange == true)
+				if (keyValue.Value?.RebuildGCodeOnChange == true)
 				{
 					bigStringForHashCode.Append(keyValue.Key);
 					bigStringForHashCode.Append(this.GetValue(keyValue.Key));
