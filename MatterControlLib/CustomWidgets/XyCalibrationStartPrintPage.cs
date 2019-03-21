@@ -108,6 +108,7 @@ namespace MatterHackers.MatterControl
 		private void RestoreBedAndClearPrinterCallbacks()
 		{
 			printer.Connection.Disposed -= Connection_Disposed;
+			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 		}
 
 		private void Connection_CommunicationStateChanged(object sender, EventArgs e)

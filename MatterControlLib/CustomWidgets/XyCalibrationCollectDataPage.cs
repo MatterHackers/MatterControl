@@ -40,6 +40,7 @@ namespace MatterHackers.MatterControl
 		private List<RadioButton> xButtons;
 		private XyCalibrationData xyCalibrationData;
 		private List<RadioButton> yButtons;
+		private bool HaveWrittenData = false;
 
 		public XyCalibrationCollectDataPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
 			: base(setupWizard)
@@ -108,7 +109,7 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(EventArgs e)
 		{
 			// save the offsets to the extruder
-			if (!HasBeenClosed
+			if (!HaveWrittenData
 				&& xyCalibrationData.XPick != -1
 				&& xyCalibrationData.YPick != -1)
 			{
@@ -117,6 +118,7 @@ namespace MatterHackers.MatterControl
 				hotendOffset.Y -= xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex, hotendOffset);
+				HaveWrittenData = true;
 			}
 
 			base.OnClosed(e);
