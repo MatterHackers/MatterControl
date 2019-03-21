@@ -2354,7 +2354,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				timeSinceStartedPrint.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingT0;
 			}
-			if (waitForTempStream?.HeatingT1 ?? false)
+			else if (waitForTempStream?.HeatingT1 ?? false)
 			{
 				// don't time the heating extruder operation
 				timeSinceStartedPrint.Stop();
