@@ -108,7 +108,8 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(EventArgs e)
 		{
 			// save the offsets to the extruder
-			if (xyCalibrationData.XPick != -1
+			if (!HasBeenClosed
+				&& xyCalibrationData.XPick != -1
 				&& xyCalibrationData.YPick != -1)
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex);
