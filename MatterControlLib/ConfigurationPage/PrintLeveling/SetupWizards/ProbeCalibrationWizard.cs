@@ -61,6 +61,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
+		public override bool Visible
+		{
+			get
+			{
+				return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
+			}
+		}
+
+		public override bool Enabled => true;
+
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
 			// we have a probe that we are using and we have not done leveling yet

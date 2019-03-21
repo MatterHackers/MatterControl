@@ -48,6 +48,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+
+		public override bool Enabled => true;
+
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
 		public static bool NeedsToBeRun(PrinterConfig printer)

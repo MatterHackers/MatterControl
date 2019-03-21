@@ -57,6 +57,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool SetupRequired => false;
 
+		public override bool Visible => true;
+
+		public override bool Enabled => true;
+
 		public override void Dispose()
 		{
 			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);

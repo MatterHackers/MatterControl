@@ -97,20 +97,20 @@ namespace MatterHackers.MatterControl
 			});
 
 			int i = 1;
-			foreach (var stage in stages)
+			foreach (var stage in stages.Where(s => s.Visible))
 			{
 				var stageWidget = new WizardStageRow(
 					$"{i++}. {stage.Title}",
 					"",
 					stage,
 					theme);
-
-				stageButtons.Add(stage, stageWidget);
-
+				stageWidget.Enabled = stage.Enabled;
 				stageWidget.Click += (s, e) =>
 				{
 					this.ActiveStage = stage;
 				};
+
+				stageButtons.Add(stage, stageWidget);
 
 				leftPanel.AddChild(stageWidget);
 			}

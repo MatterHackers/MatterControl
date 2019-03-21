@@ -42,5 +42,9 @@ namespace MatterHackers.MatterControl
 		Vector2 WindowSize { get; }
 
 		bool SetupRequired { get; }
+
+		bool Visible { get; }
+
+		bool Enabled { get; }
 	}
 }

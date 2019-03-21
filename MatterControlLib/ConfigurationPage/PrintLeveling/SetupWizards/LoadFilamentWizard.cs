@@ -62,6 +62,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool Visible => true;
+
+		public override bool Enabled => true;
+
 		public override void Dispose()
 		{
 			printer.Connection.SetTargetHotendTemperature(extruderIndex, this.TemperatureAtStart);

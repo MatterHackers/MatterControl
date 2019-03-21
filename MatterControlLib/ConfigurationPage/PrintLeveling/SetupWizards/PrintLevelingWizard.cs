@@ -61,6 +61,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.MoveNext();
 		}
 
+		public override bool Visible
+		{
+			get
+			{
+				return printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+			}
+		}
+
+		public override bool Enabled => true;
+
 		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer);
 
 		private void Initialize()

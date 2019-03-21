@@ -47,6 +47,10 @@ namespace MatterHackers.MatterControl
 
 		public abstract bool SetupRequired { get; }
 
+		public abstract bool Visible { get; }
+
+		public abstract bool Enabled { get; }
+
 		public string Title { get; protected set; }
 
 		public PrinterConfig Printer => printer;
