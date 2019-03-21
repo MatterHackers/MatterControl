@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl
 		private XyCalibrationData xyCalibrationData;
 		private List<RadioButton> yButtons;
 		private bool HaveWrittenData = false;
+		private bool pageCanceled;
 
 		public XyCalibrationCollectDataPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
 			: base(setupWizard)
@@ -66,11 +67,13 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(xButtonsGroup);
 			xButtons = new List<RadioButton>();
+			xButtons.Add(new RadioButton("-3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("-2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("-1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton(" 0".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("+1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("+2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("+3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			foreach (var button in xButtons)
 			{
 				xButtonsGroup.AddChild(button);
@@ -84,11 +87,13 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(yButtonsGroup);
 			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
 			yButtons = new List<RadioButton>();
+			yButtons.Add(new RadioButton("-3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("-2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("-1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton(" 0".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("+1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("+2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("+3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			foreach (var button in yButtons)
 			{
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
@@ -106,16 +111,23 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		protected override void OnCancel(out bool abortCancel)
+		{
+			pageCanceled = true;
+			base.OnCancel(out abortCancel);
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			// save the offsets to the extruder
-			if (!HaveWrittenData
+			if (!pageCanceled
+				&& !HaveWrittenData
 				&& xyCalibrationData.XPick != -1
 				&& xyCalibrationData.YPick != -1)
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex);
-				hotendOffset.X -= xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.XPick;
-				hotendOffset.Y -= xyCalibrationData.Offset * -2 + xyCalibrationData.Offset * xyCalibrationData.YPick;
+				hotendOffset.X -= xyCalibrationData.Offset * -3 + xyCalibrationData.Offset * xyCalibrationData.XPick;
+				hotendOffset.Y -= xyCalibrationData.Offset * -3 + xyCalibrationData.Offset * xyCalibrationData.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex, hotendOffset);
 				HaveWrittenData = true;

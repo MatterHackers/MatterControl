@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -48,6 +49,8 @@ namespace MatterHackers.MatterControl
 			this.Name = "Nozzle Offset Calibration Wizard";
 
 			contentRow.Padding = theme.DefaultContainerPadding;
+			// default to normal offset
+			xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
 
 			contentRow.AddChild(new TextWidget("Choose the calibration you would like to perform.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
@@ -61,7 +64,7 @@ namespace MatterHackers.MatterControl
 			coarseCalibration.CheckedStateChanged += (s, e) =>
 			{
 				xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
-				xyCalibrationData.Offset = .5;
+				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 			};
 			contentRow.AddChild(normalCalibration = new RadioButton("Normal Calibration: Start here".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
@@ -70,7 +73,7 @@ namespace MatterHackers.MatterControl
 			normalCalibration.CheckedStateChanged += (s, e) =>
 			{
 				xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
-				xyCalibrationData.Offset = .1;
+				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
 			};
 			contentRow.AddChild(fineCalibration = new RadioButton("Fine Calibration: When you want that extra precision".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
@@ -79,7 +82,7 @@ namespace MatterHackers.MatterControl
 			fineCalibration.CheckedStateChanged += (s, e) =>
 			{
 				xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
-				xyCalibrationData.Offset = .05;
+				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
 			};
 		}
 	}

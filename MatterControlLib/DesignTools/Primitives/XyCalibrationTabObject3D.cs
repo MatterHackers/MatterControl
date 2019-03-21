@@ -140,7 +140,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			var shape = new VertexStorage();
 			shape.MoveTo(0, 0);
 			// left + spaces + blocks + right
-			var baseWidth = (2 * spaceBetween) + (4 * spaceBetween) + (5 * TabWidth) + (2 * spaceBetween);
+			var sampleCount = 7;
+			var baseWidth = (2 * spaceBetween) + ((sampleCount - 1) * spaceBetween) + (sampleCount * TabWidth) + (2 * spaceBetween);
 			shape.LineTo(baseWidth, 0);
 			if (calibrateX)
 			{
@@ -168,7 +169,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var position = new Vector2(TabWidth / 2 + 2 * spaceBetween, TabDepth / 2 - Offset * 2);
 			var step = new Vector2(spaceBetween + TabWidth, Offset);
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < sampleCount; i++)
 			{
 				var cube = PlatonicSolids.CreateCube();
 				content.Children.Add(new Object3D()

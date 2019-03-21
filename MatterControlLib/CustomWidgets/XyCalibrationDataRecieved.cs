@@ -49,9 +49,9 @@ namespace MatterHackers.MatterControl
 
 			// check if we picked an outside of the calibration
 			if (xyCalibrationData.XPick == 0
-				|| xyCalibrationData.XPick == 4
+				|| xyCalibrationData.XPick == 6
 				|| xyCalibrationData.YPick == 0
-				|| xyCalibrationData.YPick == 4)
+				|| xyCalibrationData.YPick == 6)
 			{
 				// offer to re-run the calibration with the same settings as last time
 				contentRow.AddChild(new TextWidget("Your printer has been ajusted but we need to run callibration again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
