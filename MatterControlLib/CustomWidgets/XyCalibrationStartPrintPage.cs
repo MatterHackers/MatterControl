@@ -34,6 +34,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -119,18 +120,18 @@ namespace MatterHackers.MatterControl
 			switch (printer.Connection.CommunicationState)
 			{
 				// We are no longer running this calibration, unwind anything that we have done
-				case PrinterCommunication.CommunicationStates.Disconnected:
-				case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-				case PrinterCommunication.CommunicationStates.FailedToConnect:
-				case PrinterCommunication.CommunicationStates.ConnectionLost:
-				case PrinterCommunication.CommunicationStates.PrintingFromSd:
+				case CommunicationStates.Disconnected:
+				case CommunicationStates.AttemptingToConnect:
+				case CommunicationStates.FailedToConnect:
+				case CommunicationStates.ConnectionLost:
+				case CommunicationStates.PrintingFromSd:
 					RestoreBedAndClearPrinterCallbacks();
 					// the print has been canceled cancel the wizard (or switch back to the begining and show)
 					this.DialogWindow.CloseOnIdle();
 					break;
 
 				// The print has finished, open the window to collect our calibration results
-				case PrinterCommunication.CommunicationStates.FinishedPrint:
+				case CommunicationStates.FinishedPrint:
 					// open up the next part of the wizard
 					UiThread.RunOnIdle(() =>
 					{
@@ -139,14 +140,6 @@ namespace MatterHackers.MatterControl
 					});
 					// close down our listening to the printer and restore the bed
 					RestoreBedAndClearPrinterCallbacks();
-					break;
-
-				// printing the calibration normally
-				case PrinterCommunication.CommunicationStates.Connected:
-				case PrinterCommunication.CommunicationStates.PreparingToPrint:
-				case PrinterCommunication.CommunicationStates.Printing:
-				case PrinterCommunication.CommunicationStates.Paused:
-				case PrinterCommunication.CommunicationStates.Disconnecting:
 					break;
 			}
 		}
