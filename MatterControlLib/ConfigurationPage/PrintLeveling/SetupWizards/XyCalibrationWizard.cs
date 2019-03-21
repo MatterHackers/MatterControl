@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -45,14 +44,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
+			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 
 			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
 
-			pages = this.GetPages();
-			pages.MoveNext();
+			// Capture enumerator, moving to first item
+			this.Reset();
+			this.MoveNext();
+
 		}
+
+		public override bool SetupRequired => NeedsToBeRun(printer);
+
+		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+
+		public override bool Enabled => true;
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
@@ -74,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
