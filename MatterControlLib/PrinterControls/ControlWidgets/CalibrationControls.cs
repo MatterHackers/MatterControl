@@ -54,10 +54,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 				SettingsRow settingsRow;
 
 				this.AddChild(settingsRow = new SettingsRow(
-					"Bed Leveling".Localize(),
+					"Printer Calibration".Localize(),
 					null,
-					theme,
-					AggContext.StaticData.LoadIcon("leveling_32x32.png", 16, 16, theme.InvertIcons)));
+					theme));
 
 				// run leveling button
 				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
@@ -121,86 +120,6 @@ Fusce faucibus dictum convallis.Nulla molestie purus a nibh sodales consequat.Mo
 					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
 					
 					settingsRow.AddChild(printLevelingSwitch);
-				}
-
-				// add in the controls for configuring probe offset
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
-				{
-					this.AddChild(settingsRow = new SettingsRow(
-						"Probe Offset".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var runCalibrateProbeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Probe Offset".Localize()
-					};
-					runCalibrateProbeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new ProbeCalibrationWizard(printer));
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(runCalibrateProbeButton);
-				}
-
-				if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
-				{
-					this.AddChild(settingsRow = new SettingsRow(
-						"Nozzle Offsets".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var calibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Nozzle Offsets".Localize()
-					};
-
-					calibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new NozzleCalibrationWizard(printer));
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(calibrateButton);
-
-					// in progress new calibration page
-					this.AddChild(settingsRow = new SettingsRow(
-						"New Nozzle Offsets".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var xyCalibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Nozzle Offsets".Localize()
-					};
-
-					xyCalibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						// TODO: check that we are able to print (no errors)
-						bool printerCanPrint = true;
-						if (printerCanPrint)
-						{
-							DialogWindow.Show(new XyCalibrationWizard(printer, 1));
-						}
-						else
-						{
-							// show the error dialog for printer errors and warnings
-						}
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(xyCalibrateButton);
 				}
 			}
 
