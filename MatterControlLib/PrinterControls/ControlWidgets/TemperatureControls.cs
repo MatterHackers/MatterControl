@@ -117,8 +117,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 
 			// Register listeners
-			printer.Connection.CommunicationStateChanged += onPrinterStatusChanged;
-			printer.Connection.EnableChanged += onPrinterStatusChanged;
+			printer.Connection.CommunicationStateChanged += Printer_StatusChanged;
+			printer.Connection.EnableChanged += Printer_StatusChanged;
 			SetVisibleControls();
 		}
 
@@ -130,13 +130,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Connection.CommunicationStateChanged -= onPrinterStatusChanged;
-			printer.Connection.EnableChanged -= onPrinterStatusChanged;
+			printer.Connection.CommunicationStateChanged -= Printer_StatusChanged;
+			printer.Connection.EnableChanged -= Printer_StatusChanged;
 
 			base.OnClosed(e);
 		}
 
-		private void onPrinterStatusChanged(object sender, EventArgs e)
+		private void Printer_StatusChanged(object sender, EventArgs e)
 		{
 			SetVisibleControls();
 			UiThread.RunOnIdle(this.Invalidate);

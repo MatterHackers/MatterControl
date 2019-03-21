@@ -112,9 +112,9 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() => tuningAdjustmentControlsContainer.Width = tuningAdjustmentControlsContainer.Width + 1);
 
 			// Register listeners
-			printer.Connection.CommunicationStateChanged += OnPrinterStatusChanged;
-			printer.Connection.DetailedPrintingStateChanged += OnPrinterStatusChanged;
-			printer.Connection.EnableChanged += OnPrinterStatusChanged;
+			printer.Connection.CommunicationStateChanged += Printer_StatusChanged;
+			printer.Connection.DetailedPrintingStateChanged += Printer_StatusChanged;
+			printer.Connection.EnableChanged += Printer_StatusChanged;
 
 			SetVisibleControls();
 		}
@@ -164,14 +164,14 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Connection.CommunicationStateChanged -= OnPrinterStatusChanged;
-			printer.Connection.DetailedPrintingStateChanged -= OnPrinterStatusChanged;
-			printer.Connection.EnableChanged -= OnPrinterStatusChanged;
+			printer.Connection.CommunicationStateChanged -= Printer_StatusChanged;
+			printer.Connection.DetailedPrintingStateChanged -= Printer_StatusChanged;
+			printer.Connection.EnableChanged -= Printer_StatusChanged;
 
 			base.OnClosed(e);
 		}
 
-		private void OnPrinterStatusChanged(object sender, EventArgs e)
+		private void Printer_StatusChanged(object sender, EventArgs e)
 		{
 			SetVisibleControls();
 			UiThread.RunOnIdle(this.Invalidate);
