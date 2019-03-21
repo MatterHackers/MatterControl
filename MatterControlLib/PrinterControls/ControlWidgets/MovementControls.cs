@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// Display the current baby step offset stream values
-			var offsetStreamLabel = new TextWidget(((extruderCount == 1) ? "Z Offset".Localize() : "Z Offset 1".Localize()) + ":", pointSize: 8)
+			var offsetStreamLabel = new TextWidget("Z Offset".Localize() + ":", pointSize: 8)
 			{
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(left: 10),
@@ -168,24 +168,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			toolbar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget(printer.Settings, theme, 0);
+			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
 			toolbar.AddChild(ztuningWidget);
-
-			if(extruderCount > 1)
-			{
-				// Display the current baby step offset stream values
-				var offsetStreamLabel2 = new TextWidget("Z Offset 2".Localize() + ":", pointSize: 8)
-				{
-					TextColor = theme.TextColor,
-					Margin = new BorderDouble(left: 10),
-					AutoExpandBoundsToText = true,
-					VAnchor = VAnchor.Center
-				};
-				toolbar.AddChild(offsetStreamLabel2);
-
-				var ztuningWidget2 = new ZTuningWidget(printer.Settings, theme, 1);
-				toolbar.AddChild(ztuningWidget2);
-			}
 
 			toolbar.AddChild(new HorizontalSpacer());
 
@@ -271,11 +255,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private ThemeConfig theme;
 		private PrinterSettings printerSettings;
-		private int extruderIndex;
 
-		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, int extruderIndex)
+		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme)
 		{
-			this.extruderIndex = extruderIndex;
 			this.theme = theme;
 			this.printerSettings = printerSettings;
 			this.HAnchor = HAnchor.Fit;
@@ -293,10 +275,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(zOffsetStreamContainer);
 
 			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			if (extruderIndex == 1)
-			{
-				zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
-			}
 			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
@@ -308,18 +286,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			clearZOffsetButton = theme.CreateSmallResetButton();
 			clearZOffsetButton.Name = "Clear ZOffset button";
-			clearZOffsetButton.ToolTipText = extruderIndex == 0 ? "Clear ZOffset".Localize() : "Clear ZOffset 2".Localize();
+			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
 			clearZOffsetButton.Visible = zoffset != 0;
 			clearZOffsetButton.Click += (sender, e) =>
 			{
-				if (extruderIndex == 0)
-				{
-					printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
-				}
-				else
-				{
-					printerSettings.SetValue(SettingsKey.baby_step_z_offset_1, "0");
-				}
+				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
 			};
 			zOffsetStreamContainer.AddChild(clearZOffsetButton);
 
@@ -337,14 +308,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
-			if ((e?.Data == SettingsKey.baby_step_z_offset && extruderIndex == 0)
-				|| (e?.Data == SettingsKey.baby_step_z_offset_1 && extruderIndex == 1))
+			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
 				double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				if(extruderIndex == 1)
-				{
-					zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
-				}
 				bool hasOverriddenZOffset = (zoffset != 0);
 
 				zOffsetStreamContainer.BackgroundColor = hasOverriddenZOffset ? theme.PresetColors.UserOverride : theme.MinimalShade;

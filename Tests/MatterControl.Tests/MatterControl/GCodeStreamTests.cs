@@ -688,7 +688,6 @@ namespace MatterControl.Tests.MatterControl
 
 			// set some data for T1
 			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, ".1");
 			return printer;
 		}
 

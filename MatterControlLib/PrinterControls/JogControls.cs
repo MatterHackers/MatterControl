@@ -397,18 +397,9 @@ namespace MatterHackers.MatterControl
 			{
 				if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 				{
-					if (printer.Connection.ActiveExtruderIndex == 0)
-					{
-						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-						currentZ += moveAmountPositive;
-						printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-					}
-					else if(printer.Connection.ActiveExtruderIndex == 1)
-					{
-						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
-						currentZ += moveAmountPositive;
-						printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, currentZ.ToString("0.##"));
-					}
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ += moveAmountPositive;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 					e.Handled = true;
 				}
 				else
@@ -422,18 +413,9 @@ namespace MatterHackers.MatterControl
 			{
 				if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 				{
-					if (printer.Connection.ActiveExtruderIndex == 0)
-					{
-						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-						currentZ += moveAmountPositive;
-						printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-					}
-					else if (printer.Connection.ActiveExtruderIndex == 1)
-					{
-						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
-						currentZ += moveAmountPositive;
-						printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, currentZ.ToString("0.##"));
-					}
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ += moveAmountPositive;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 
 					e.Handled = true;
 				}
@@ -730,18 +712,9 @@ namespace MatterHackers.MatterControl
 				{
 					if (moveAxis == PrinterConnection.Axis.Z) // only works on z
 					{
-						if (printer.Connection.ActiveExtruderIndex == 0)
-						{
-							var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-							currentZ += this.MoveAmount;
-							printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-						}
-						else if (printer.Connection.ActiveExtruderIndex == 1)
-						{
-							var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_1);
-							currentZ += this.MoveAmount;
-							printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, currentZ.ToString("0.##"));
-						}
+						var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+						currentZ += this.MoveAmount;
+						printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
 					}
 				}
 				else

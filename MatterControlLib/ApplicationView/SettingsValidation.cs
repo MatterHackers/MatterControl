@@ -243,26 +243,6 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (extruderCount > 1
-					&& Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset_1)) > 2)
-				{
-					// Static path generation for non-SliceSettings value
-					var location = "Location".Localize() + ":"
-						+ "\n" + "Controls".Localize()
-						+ "\n  • " + "Movement".Localize()
-						+ "\n    • " + "Z Offset 2".Localize();
-
-					errors.Add(
-						new ValidationError("ZOffset1TooLarge")
-						{
-							Error = "Z Offset 2 is too large.".Localize(),
-							Details = string.Format(
-								"{0}\n\n{1}",
-								"The Z Offset for your second extruder, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
-								location)
-						});
-				}
-
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					errors.Add(
