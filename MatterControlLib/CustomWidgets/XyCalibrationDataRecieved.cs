@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 				{
 					case XyCalibrationData.QualityType.Coarse:
 						// if we are on coarse calibration offer to move down to normal
-						contentRow.AddChild(new TextWidget("Coarse calibration complete, you should now do a fine calibration to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+						contentRow.AddChild(new TextWidget("Coarse calibration complete, we will now do a fine calibration to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 						{
 							Margin = new Agg.BorderDouble(0, 15, 0, 0)
 						});
