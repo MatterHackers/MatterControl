@@ -158,25 +158,17 @@ namespace MatterHackers.MatterControl
 				case XyCalibrationData.QualityType.Coarse:
 					item = XyCalibrationTabObject3D.Create(1,
 						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, printer.Settings.GetValue<double>(SettingsKey.layer_height) * 2),
-						.5,
+						xyCalibrationData.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
 					break;
 
+				case XyCalibrationData.QualityType.Normal:
 				case XyCalibrationData.QualityType.Fine:
-					item = XyCalibrationFaceObject3D.Create(1,
-						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2,
-						printer.Settings.GetValue<double>(SettingsKey.layer_height),
-						.05,
-						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
-						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-						6).GetAwaiter().GetResult();
-					break;
-
 				default:
 					item = XyCalibrationFaceObject3D.Create(1,
 						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2,
 						printer.Settings.GetValue<double>(SettingsKey.layer_height),
-						.1,
+						xyCalibrationData.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
 						6).GetAwaiter().GetResult();
