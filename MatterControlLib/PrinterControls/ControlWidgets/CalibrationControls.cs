@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 							{
 								new PrintLevelingWizard(printer),
 								new ProbeCalibrationWizard(printer),
-								new NozzleCalibrationWizard(printer)
+								new XyCalibrationWizard(printer, 1)
 							},
 							() =>
 							{
