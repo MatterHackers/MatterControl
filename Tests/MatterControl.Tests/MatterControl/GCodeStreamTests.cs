@@ -585,10 +585,10 @@ namespace MatterControl.Tests.MatterControl
 				"T1",
 				"; COMPLEATED_BEFORE_GCODE",
 				"; simulated after toolchange 1 gcode",
-				"G1 X9 Y8 Z7.1 F3000", // the F comes from the x movement speed
-				"G1 X9 Y8 Z7.1 F315", // the F comes from the z movement speed
-				"G1 X9 Y8 Z7.1 F2500", // restore the feedrate
-				"G1 X9 Y8 Z7.1",
+				"G1 X9 Y8 Z7 F3000", // the F comes from the x movement speed
+				"G1 X9 Y8 Z7 F315", // the F comes from the z movement speed
+				"G1 X9 Y8 Z7 F2500", // restore the feedrate
+				"G1 X9 Y8 Z7",
 				// the code to switch back to t0
 				"; waiting for move on T0",
 				"",
@@ -643,10 +643,10 @@ namespace MatterControl.Tests.MatterControl
 				"T1",
 				"; COMPLEATED_BEFORE_GCODE",
 				"; simulated after toolchange 1 gcode",
-				"G1 X9 Y8 Z7.1 F3000", // the F comes from the x movement speed
-				"G1 X9 Y8 Z7.1 F315", // the F comes from the z movement speed
-				"G1 X9 Y8 Z7.1 F2500", // restore the feedrate
-				"G1 X9 Y8 Z7.1",
+				"G1 X9 Y8 Z7 F3000", // the F comes from the x movement speed
+				"G1 X9 Y8 Z7 F315", // the F comes from the z movement speed
+				"G1 X9 Y8 Z7 F2500", // restore the feedrate
+				"G1 X9 Y8 Z7",
 				// the code to switch back to t0
 				"; waiting for move on T0",
 				"",
@@ -688,7 +688,6 @@ namespace MatterControl.Tests.MatterControl
 
 			// set some data for T1
 			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_1, ".1");
 			return printer;
 		}
 
