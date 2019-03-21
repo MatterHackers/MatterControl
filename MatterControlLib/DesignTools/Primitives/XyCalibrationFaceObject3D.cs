@@ -176,6 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var step = new Vector2(spaceBetween + TabWidth, Offset);
 			for (int i = 0; i < 5; i++)
 			{
+				var offsetMultiple = i - 2;
 				for (int j = 0; j < Layers; j++)
 				{
 					var calibrationMaterial = (j % 2 == 0);
@@ -189,7 +190,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						item.MaterialIndex = CalibrationMaterialIndex;
 						item.Color = Color.Yellow;
-						item.Matrix = Matrix4X4.CreateScale(TabWidth, TabDepth, ChangingHeight) * Matrix4X4.CreateTranslation(position.X, TabDepth / 2, BaseHeight + .5 * ChangingHeight + j * ChangingHeight);
+						item.Matrix = Matrix4X4.CreateScale(TabWidth, TabDepth, ChangingHeight) * Matrix4X4.CreateTranslation(position.X, position.Y + Offset * offsetMultiple, BaseHeight + .5 * ChangingHeight + j * ChangingHeight);
 					}
 					else
 					{
