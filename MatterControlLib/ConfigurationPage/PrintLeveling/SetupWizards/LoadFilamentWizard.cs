@@ -53,10 +53,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Title = "Load Filament".Localize();
 
 			this.extruderIndex = extruderIndex;
-
-			// Capture enumerator, moving to first item
-			this.Reset();
-			this.MoveNext();
 		}
 
 		public double TemperatureAtStart { get; private set; }

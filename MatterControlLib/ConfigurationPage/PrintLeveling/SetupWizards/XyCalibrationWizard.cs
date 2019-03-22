@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
 		private int extruderToCalibrateIndex;
-		XyCalibrationData xyCalibrationData;
+		private XyCalibrationData xyCalibrationData;
 
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
@@ -46,10 +46,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
-
-			// Capture enumerator, moving to first item
-			this.Reset();
-			this.MoveNext();
 		}
 
 		public override bool SetupRequired => NeedsToBeRun(printer);

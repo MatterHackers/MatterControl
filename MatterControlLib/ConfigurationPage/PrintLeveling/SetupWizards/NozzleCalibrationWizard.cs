@@ -42,10 +42,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
-
-			// Capture enumerator, moving to first item
-			this.Reset();
-			this.MoveNext();
 		}
 
 		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;

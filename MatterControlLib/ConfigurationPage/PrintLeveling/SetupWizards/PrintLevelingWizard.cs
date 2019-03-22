@@ -48,10 +48,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.Title = "Print Leveling".Localize();
-
-			// Capture enumerator, moving to first item
-			this.Reset();
-			this.MoveNext();
 		}
 
 		public override bool Visible

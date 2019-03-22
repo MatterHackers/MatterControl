@@ -65,6 +65,10 @@ namespace MatterHackers.MatterControl
 
 				_activeStage = value;
 
+				// Reset enumerator, move to first item
+				_activeStage.Reset();
+				_activeStage.MoveNext();
+
 				if (stageButtons.TryGetValue(_activeStage, out WizardStageRow stageButton))
 				{
 					stageButton.Active = true;

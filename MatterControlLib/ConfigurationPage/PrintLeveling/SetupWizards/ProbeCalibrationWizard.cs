@@ -44,10 +44,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.Title = "Probe Calibration".Localize();
-
-			// Capture enumerator, moving to first item
-			this.Reset();
-			this.MoveNext();
 		}
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
