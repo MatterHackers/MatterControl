@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl
 				|| xyCalibrationData.YPick == 6)
 			{
 				// offer to re-run the calibration with the same settings as last time
-				contentRow.AddChild(new TextWidget("Your printer has been ajusted but we need to run callibration again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				contentRow.AddChild(new TextWidget("Your printer has been adjusted but we need to run calibrating again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					Margin = new Agg.BorderDouble(0, 15, 0, 0)
 				});
@@ -122,8 +123,10 @@ namespace MatterHackers.MatterControl
 
 				doneCalibratingButton.Click += (s, e) =>
 				{
-					// close this window
-					this.DialogWindow.CloseOnIdle();
+					printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
+
+					// close this wizard
+					this.DialogWindow.ClosePage();
 				};
 			}
 		}

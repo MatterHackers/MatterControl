@@ -28,9 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -192,12 +189,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return item;
-		}
-
-		void PrintHasCompleated()
-		{
-			// if we are done calibrating
-			printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 		}
 	}
 }
