@@ -28,12 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -68,11 +71,9 @@ namespace MatterHackers.MatterControl
 			startCalibrationPrint.Name = "Start Calibration Print";
 			startCalibrationPrint.Click += async (s, e) =>
 			{
-				// stash the current bed
-				var scene = printer.Bed.Scene;
-				scene.Children.Modify((list) => list.Clear());
+				var scene = new Object3D();
 
-				// create the item we are adding
+				// create the calibration objects
 				IObject3D item = CreateCalibrationObject(printer, xyCalibrationData);
 
 				// add the calibration object to the bed
@@ -82,26 +83,41 @@ namespace MatterHackers.MatterControl
 				var bedBounds = printer.Bed.Bounds;
 				var aabb = item.GetAxisAlignedBoundingBox();
 				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
-				// switch to 3D view
+
 				// register callbacks for print completion
-				printer.Connection.Disposed += Connection_Disposed;
-				printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+				printer.Connection.Disposed += this.Connection_Disposed;
+				printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
 
 				this.MoveToNextPage();
 
 				// hide this window
 				this.DialogWindow.Visible = false;
 
-				// Save the bed that we have created before starting print operation
-				await printer.Bed.SaveChanges(null, CancellationToken.None);
+				string gcodePath = EditContext.GCodeFilePath(printer, scene);
 
-				// start the calibration print
-				await ApplicationController.Instance.PrintPart(
-					printer.Bed.EditContext,
+				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+				(bool slicingSucceeded, string finalGCodePath) = await ApplicationController.Instance.SliceItemLoadOutput(
 					printer,
-					null,
-					CancellationToken.None);
+					scene,
+					gcodePath);
 
+				// Only start print if slicing completed
+				if (slicingSucceeded)
+				{
+					await printer.Bed.LoadContent(new EditContext()
+					{
+						SourceItem = new FileSystemFileItem(gcodePath),
+						ContentStore = null // No content store for GCode
+					});
+
+					await printer.Connection.StartPrint(finalGCodePath, allowRecovery: false);
+					ApplicationController.Instance.MonitorPrintTask(printer);
+				}
+				else
+				{
+					printer.Connection.CommunicationState = CommunicationStates.Connected;
+				}
 			};
 
 			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
