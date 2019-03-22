@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 				scene.Children.Modify((list) => list.Clear());
 
 				// create the item we are adding
-				IObject3D item = CreateCorectCalibrationObject(printer, xyCalibrationData);
+				IObject3D item = CreateCalibrationObject(printer, xyCalibrationData);
 
 				// add the calibration object to the bed
 				scene.Children.Add(item);
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 				case CommunicationStates.ConnectionLost:
 				case CommunicationStates.PrintingFromSd:
 					RestoreBedAndClearPrinterCallbacks();
-					// the print has been canceled cancel the wizard (or switch back to the begining and show)
+					// the print has been canceled cancel the wizard (or switch back to the beginning and show)
 					this.DialogWindow.CloseOnIdle();
 					break;
 
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl
 			RestoreBedAndClearPrinterCallbacks();
 		}
 
-		private static IObject3D CreateCorectCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
+		private static IObject3D CreateCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
 		{
 			IObject3D item;
 			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
@@ -180,7 +180,7 @@ namespace MatterHackers.MatterControl
 
 		void PrintHasCompleated()
 		{
-			// if we are done callibrating
+			// if we are done calibrating
 			printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 		}
 	}
