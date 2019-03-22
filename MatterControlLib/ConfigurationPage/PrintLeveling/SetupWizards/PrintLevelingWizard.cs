@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private double babySteppingValue;
 		private LevelingPlan levelingPlan;
+		private bool wizardExited;
 
 		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
@@ -126,8 +127,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public bool WindowHasBeenClosed { get; private set; }
-
 		public override void Dispose()
 		{
 			// If leveling was on when we started, make sure it is on when we are done.
@@ -136,7 +135,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// set the baby stepping back to the last known good value
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValue.ToString());
 
-			this.WindowHasBeenClosed = true;
+			wizardExited = true;
 
 			// make sure we raise the probe on close
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
