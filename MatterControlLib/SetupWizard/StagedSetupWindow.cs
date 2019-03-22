@@ -65,15 +65,17 @@ namespace MatterHackers.MatterControl
 
 				_activeStage = value;
 
-				// Reset enumerator, move to first item
-				_activeStage.Reset();
-				_activeStage.MoveNext();
+				if (_activeStage == null)
+				{
+					return;
+				}
 
 				if (stageButtons.TryGetValue(_activeStage, out WizardStageRow stageButton))
 				{
 					stageButton.Active = true;
 				}
 
+				// Reset enumerator, move to first item
 				_activeStage.Reset();
 				_activeStage.MoveNext();
 
@@ -155,21 +157,10 @@ namespace MatterHackers.MatterControl
 
 		public override void ClosePage()
 		{
-			ISetupWizard nextStage = stages.FirstOrDefault(s => s.SetupRequired);
-
-			if (nextStage != null)
-			{
-				this.ActiveStage = nextStage;
-				return;
-			}
-			else
-			{
-				// Shutdown the active wizard
-				this.ActiveStage?.Dispose();
-			}
-
-			// Move to next unfinished wizard or move to summary/home page
+			// Move to the summary/home page
 			this.ChangeToPage(homePageGenerator());
+
+			this.ActiveStage = null;
 		}
 
 		public override DialogPage ChangeToPage<PanelType>()
