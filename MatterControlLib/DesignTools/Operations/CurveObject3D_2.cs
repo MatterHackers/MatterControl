@@ -107,101 +107,100 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMantainer(this))
+					this.Translate(-rotationOffset);
+					SourceContainer.Visible = true;
+					RemoveAllButSource();
+
+					// remember the current matrix then clear it so the parts will rotate at the original wrapped position
+					var currentMatrix = Matrix;
+					Matrix = Matrix4X4.Identity;
+
+					var aabb = this.GetAxisAlignedBoundingBox();
+					if (Diameter == double.MinValue)
 					{
-						this.Translate(-rotationOffset);
-						SourceContainer.Visible = true;
-						RemoveAllButSource();
+						// uninitialized set to a reasonable value
+						Diameter = (int)aabb.XSize;
+						// TODO: ensure that the editor display value is updated
+					}
 
-						// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-						var currentMatrix = Matrix;
-						Matrix = Matrix4X4.Identity;
+					if (Diameter > 0)
+					{
+						var radius = Diameter / 2;
+						var circumference = MathHelper.Tau * radius;
+						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
 
-						var aabb = this.GetAxisAlignedBoundingBox();
-						if (Diameter == double.MinValue)
+						rotationOffset = rotationCenter;
+						if (!BendCcw)
 						{
-							// uninitialized set to a reasonable value
-							Diameter = (int)aabb.XSize;
-							// TODO: ensure that the editor display value is updated
+							// fix the stored center so we draw correctly
+							rotationOffset.Y = aabb.MinXYZ.Y - radius;
 						}
 
-						if (Diameter > 0)
+						foreach (var sourceItem in SourceContainer.VisibleMeshes())
 						{
-							var radius = Diameter / 2;
-							var circumference = MathHelper.Tau * radius;
-							var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
+							var originalMesh = sourceItem.Mesh;
+							var transformedMesh = originalMesh.Copy(CancellationToken.None);
+							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
-							rotationOffset = rotationCenter;
+							// split the mesh along the x axis
+							double numRotations = aabb.XSize / circumference;
+							double numberOfCuts = numRotations * MinSidesPerRotation;
+							//SplitMeshAlongX(transformedMesh, numberOfCuts);
+
 							if (!BendCcw)
 							{
-								// fix the stored center so we draw correctly
-								rotationOffset.Y = aabb.MinXYZ.Y - radius;
+								// rotate around so it will bend correctly
+								itemMatrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
+								itemMatrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
+								itemMatrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
 							}
 
-							foreach (var sourceItem in SourceContainer.VisibleMeshes())
+							// transform into this space
+							transformedMesh.Transform(itemMatrix);
+
+							for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 							{
-								var originalMesh = sourceItem.Mesh;
-								var transformedMesh = originalMesh.Copy(CancellationToken.None);
-								var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
+								var position = transformedMesh.Vertices[i];
 
-								// split the mesh along the x axis
-								double numRotations = aabb.XSize / circumference;
-								double numberOfCuts = numRotations * MinSidesPerRotation;
-								//SplitMeshAlongX(transformedMesh, numberOfCuts);
+								var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
+								var distanceFromCenter = rotationCenter.Y - position.Y;
 
-								if (!BendCcw)
-								{
-									// rotate around so it will bend correctly
-									itemMatrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
-									itemMatrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-									itemMatrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
-								}
-
-								var invItemMatrix = itemMatrix.Inverted;
-
-								for (int i = 0; i < transformedMesh.Vertices.Count; i++)
-								{
-									var worldPosition = transformedMesh.Vertices[i].Transform((Matrix4X4)itemMatrix);
-
-									var angleToRotate = ((worldPosition.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
-									var distanceFromCenter = rotationCenter.Y - worldPosition.Y;
-
-									var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
-									rotatePosition.Z = worldPosition.Z;
-									var worldWithBend = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
-
-									transformedMesh.Vertices[i] = worldWithBend.Transform(invItemMatrix) - new Vector3Float(rotationOffset);
-								}
-
-								transformedMesh.MarkAsChanged();
-								transformedMesh.CalculateNormals();
-
-								var newMesh = new Object3D()
-								{
-									Mesh = transformedMesh
-								};
-								newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
-								this.Children.Add(newMesh);
+								var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
+								rotatePosition.Z = position.Z;
+								transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
 							}
 
-							// set the matrix back
-							Matrix = currentMatrix;
-							this.Translate(new Vector3(rotationOffset));
-							SourceContainer.Visible = false;
-							rebuildLocks.Dispose();
+							// transform back into item local space
+							transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationOffset) * itemMatrix.Inverted);
+
+							transformedMesh.MarkAsChanged();
+							transformedMesh.CalculateNormals();
+
+							var newMesh = new Object3D()
+							{
+								Mesh = transformedMesh
+							};
+							newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+							this.Children.Add(newMesh);
 						}
-						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+
+						// set the matrix back
+						Matrix = currentMatrix;
+						this.Translate(new Vector3(rotationOffset));
+						SourceContainer.Visible = false;
+						rebuildLocks.Dispose();
 					}
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 					return Task.CompletedTask;
 				});
 		}
 
-		private Mesh SplitMeshAlongX(Mesh mesh, double numberOfCuts)
+		private Mesh SplitMeshAlongX(Mesh mesh, List<double> xCuts)
 		{
 			var result = new Mesh();
 			var splitSections = new List<Mesh>();
-			for(int i = 0; i<numberOfCuts; i++)
+			for(int i = 0; i< xCuts.Count; i++)
 			{
 				// add a mesh to hold all the polygons that need to be split for each split section
 				splitSections.Add(new Mesh());
