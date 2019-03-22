@@ -155,7 +155,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								list.Add(new Object3D()
 								{
 									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
-									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0)
+									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
+									Name = letter.ToString()
 								});
 
 								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;

@@ -130,13 +130,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			}
 
 			var removeObjects = this.Children
-				.Where((i) => ItemInSubtractList(i))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
+				.Where(i => ItemInSubtractList(i))
+				.SelectMany(h => h.DescendantsAndSelf())
+				.Where(c => c.OwnerID == this.ID).ToList();
 			var keepObjects = this.Children
-				.Where((i) => !ItemInSubtractList(i))
-				.SelectMany((h) => h.DescendantsAndSelf())
-				.Where((c) => c.OwnerID == this.ID).ToList();
+				.Where(i => !ItemInSubtractList(i))
+				.SelectMany(h => h.DescendantsAndSelf())
+				.Where(c => c.OwnerID == this.ID).ToList();
 
 			if (removeObjects.Any()
 				&& keepObjects.Any())

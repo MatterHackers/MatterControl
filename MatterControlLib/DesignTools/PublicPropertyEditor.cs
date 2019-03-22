@@ -640,11 +640,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return new ImageWidget(imageBuffer);
 		}
 
-		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceCantainer, ThemeConfig theme)
+		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme)
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			var sourceChildren = sourceCantainer.SourceContainer.VisibleMeshes().ToList();
+			var parentOfSubtractTargets = sourceContainer.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+			var sourceChildren = parentOfSubtractTargets.Children.ToList();
 
 			var objectChecks = new Dictionary<ICheckbox, IObject3D>();
 
