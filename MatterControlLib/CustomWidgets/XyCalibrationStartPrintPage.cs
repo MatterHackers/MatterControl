@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 				printer.Connection.Disposed += Connection_Disposed;
 				printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
-				this.NextButton.InvokeClick();
+				this.MoveToNextPage();
 
 				// hide this window
 				this.DialogWindow.Visible = false;

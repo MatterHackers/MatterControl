@@ -67,11 +67,7 @@ namespace MatterHackers.MatterControl
 			nextButton.Name = "Next Button";
 			nextButton.Click += (s, e) =>
 			{
-				setupWizard.MoveNext();
-				if (setupWizard.Current is WizardPage wizardPage)
-				{
-					this.DialogWindow.ChangeToPage(wizardPage);
-				}
+				this.MoveToNextPage();
 			};
 
 			theme.ApplyPrimaryActionStyle(nextButton);
@@ -79,6 +75,15 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(nextButton);
 
 			this.NextButton = nextButton;
+		}
+
+		protected void MoveToNextPage()
+		{
+			setupWizard.MoveNext();
+			if (setupWizard.Current is WizardPage wizardPage)
+			{
+				this.DialogWindow.ChangeToPage(wizardPage);
+			}
 		}
 
 		protected GuiWidget CreateTextField(string text)
