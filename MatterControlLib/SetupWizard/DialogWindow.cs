@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl
 
 			var homePage = homePageGenerator();
 
-			var wizardWindow = new StagedSetupWizard(title, stages, homePageGenerator);
+			var wizardWindow = new StagedSetupWindow(title, stages, homePageGenerator);
 			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 			allWindows[type] = wizardWindow;
 

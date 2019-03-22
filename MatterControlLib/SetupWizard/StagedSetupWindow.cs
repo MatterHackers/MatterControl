@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class StagedSetupWizard : DialogWindow
+	public class StagedSetupWindow : DialogWindow
 	{
 		private IEnumerable<ISetupWizard> stages;
 		private Func<DialogPage> homePageGenerator;
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public StagedSetupWizard(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		public StagedSetupWindow(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
 		{
 			this.stages = stages;
 			this.homePageGenerator = homePageGenerator;
