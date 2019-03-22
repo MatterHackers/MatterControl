@@ -62,8 +62,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double TabScale => 3;
 		private double TabWidth => NozzleWidth * TabScale * 3;
 
-		public static async Task<XyCalibrationFaceObject3D> Create(int calibrationMaterialIndex = 1,
-							double baseHeight = 1, double changingHeight = .2, double offset = .5, double nozzleWidth = .4, double wipeTowerSize = 10, int layers = 8)
+		public static async Task<XyCalibrationFaceObject3D> Create(int calibrationMaterialIndex,
+							double baseHeight, double changingHeight, double offset, double nozzleWidth, double wipeTowerSize, int layers)
 		{
 			var item = new XyCalibrationFaceObject3D()
 			{

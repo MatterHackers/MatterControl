@@ -86,8 +86,10 @@ namespace MatterHackers.MatterControl
 				printer.Connection.Disposed += Connection_Disposed;
 				printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
-				// close this window
-				this.DialogWindow.CloseOnIdle();
+				this.NextButton.InvokeClick();
+
+				// hide this window
+				this.DialogWindow.Visible = false;
 
 				// Save the bed that we have created before starting print operation
 				await printer.Bed.SaveChanges(null, CancellationToken.None);
@@ -98,6 +100,7 @@ namespace MatterHackers.MatterControl
 					printer,
 					null,
 					CancellationToken.None);
+
 			};
 
 			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
@@ -122,6 +125,8 @@ namespace MatterHackers.MatterControl
 				case PrinterCommunication.CommunicationStates.ConnectionLost:
 				case PrinterCommunication.CommunicationStates.PrintingFromSd:
 					RestoreBedAndClearPrinterCallbacks();
+					// the print has been canceled cancel the wizard (or switch back to the begining and show)
+					this.DialogWindow.CloseOnIdle();
 					break;
 
 				// The print has finished, open the window to collect our calibration results
@@ -129,7 +134,8 @@ namespace MatterHackers.MatterControl
 					// open up the next part of the wizard
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new XyCalibrationWizard(printer, xyCalibrationData.ExtruderToCalibrateIndex, xyCalibrationData));
+						// show the window
+						this.DialogWindow.Visible = true;
 					});
 					// close down our listening to the printer and restore the bed
 					RestoreBedAndClearPrinterCallbacks();
@@ -168,6 +174,7 @@ namespace MatterHackers.MatterControl
 				default:
 					item = XyCalibrationFaceObject3D.Create(1,
 						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
+						layerHeight,
 						xyCalibrationData.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
