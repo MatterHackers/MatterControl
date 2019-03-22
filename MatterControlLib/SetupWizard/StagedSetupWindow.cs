@@ -56,8 +56,12 @@ namespace MatterHackers.MatterControl
 				if (_activeStage != null 
 					&& stageButtons.TryGetValue(_activeStage, out WizardStageRow activeButton))
 				{
+					// Mark the leftnav widget as inactive
 					activeButton.Active = false;
 				}
+
+				// Shutdown the active Wizard
+				_activeStage?.Dispose();
 
 				_activeStage = value;
 
@@ -78,7 +82,6 @@ namespace MatterHackers.MatterControl
 			this.stages = stages;
 			this.homePageGenerator = homePageGenerator;
 
-			var activeStage = stages.First();
 			var theme = AppContext.Theme;
 
 			var row = new FlowLayoutWidget()
@@ -154,6 +157,11 @@ namespace MatterHackers.MatterControl
 			{
 				this.ActiveStage = nextStage;
 				return;
+			}
+			else
+			{
+				// Shutdown the active wizard
+				this.ActiveStage?.Dispose();
 			}
 
 			// Move to next unfinished wizard or move to summary/home page
