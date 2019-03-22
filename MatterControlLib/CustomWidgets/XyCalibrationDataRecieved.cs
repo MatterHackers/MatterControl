@@ -44,8 +44,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
-			var doneCalibratingButton = theme.CreateDialogButton("Done".Localize());
-			bool printAgain = false;
+			xyCalibrationData.PrintAgain = false;
 
 			// check if we picked an outside of the calibration
 			if (xyCalibrationData.XPick == 0
@@ -58,8 +57,8 @@ namespace MatterHackers.MatterControl
 				{
 					Margin = new Agg.BorderDouble(0, 15, 0, 0)
 				});
-				doneCalibratingButton = theme.CreateDialogButton("Print Again".Localize());
-				printAgain = true;
+
+				xyCalibrationData.PrintAgain = true;
 			}
 			else
 			{
@@ -67,14 +66,14 @@ namespace MatterHackers.MatterControl
 				{
 					case XyCalibrationData.QualityType.Coarse:
 						// if we are on coarse calibration offer to move down to normal
-						contentRow.AddChild(new TextWidget("Coarse calibration complete, we will now do a fine calibration to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+						contentRow.AddChild(new TextWidget("Coarse calibration complete, we will now do a normal calibration to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 						{
 							Margin = new Agg.BorderDouble(0, 15, 0, 0)
 						});
-						doneCalibratingButton = theme.CreateDialogButton("Print Next".Localize());
+
 						// switch to normal calibration
 						xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
-						printAgain = true;
+						xyCalibrationData.PrintAgain = true;
 						break;
 
 					case XyCalibrationData.QualityType.Normal:
@@ -92,15 +91,11 @@ namespace MatterHackers.MatterControl
 						startFineCalibratingButton.Name = "Fine Calibration Print";
 						startFineCalibratingButton.Click += (s, e) =>
 						{
-							// close this dialog
-							this.DialogWindow.CloseOnIdle();
-							UiThread.RunOnIdle(() =>
-							{
-								// switch to fine
-								xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
-								// start up at the print window
-								DialogWindow.Show(new XyCalibrationWizard(printer, xyCalibrationData.ExtruderToCalibrateIndex, xyCalibrationData, true));
-							});
+							// switch to fine
+							xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+							// start up at the print window
+							xyCalibrationData.PrintAgain = true;
+							this.NextButton.InvokeClick();
 						};
 						contentRow.AddChild(startFineCalibratingButton);
 						break;
@@ -115,26 +110,22 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			// this is the last page of the wizard hide the next button
-			this.NextButton.Visible = false;
-
-			doneCalibratingButton.Name = "Done Calibration Print";
-			doneCalibratingButton.Click += (s, e) =>
+			if (!xyCalibrationData.PrintAgain)
 			{
-				// close this window
-				this.DialogWindow.CloseOnIdle();
-				if (printAgain)
+				// this is the last page of the wizard hide the next button
+				this.NextButton.Visible = false;
+
+				var doneCalibratingButton = theme.CreateDialogButton("Done".Localize());
+				doneCalibratingButton.Name = "Done Calibration Print";
+				theme.ApplyPrimaryActionStyle(doneCalibratingButton);
+				this.AddPageAction(doneCalibratingButton);
+
+				doneCalibratingButton.Click += (s, e) =>
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new XyCalibrationWizard(printer, xyCalibrationData.ExtruderToCalibrateIndex, xyCalibrationData, true));
-					});
-				}
-			};
-
-			theme.ApplyPrimaryActionStyle(doneCalibratingButton);
-
-			this.AddPageAction(doneCalibratingButton);
+					// close this window
+					this.DialogWindow.CloseOnIdle();
+				};
+			}
 		}
 	}
 }

@@ -82,12 +82,14 @@ namespace MatterHackers.MatterControl
 				var aabb = item.GetAxisAlignedBoundingBox();
 				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
 				// switch to 3D view
-				// register callbacks for print compleation
+				// register callbacks for print completion
 				printer.Connection.Disposed += Connection_Disposed;
 				printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
-				// close this window
-				this.DialogWindow.CloseOnIdle();
+				this.NextButton.InvokeClick();
+
+				// hide this window
+				this.DialogWindow.Visible = false;
 
 				// Save the bed that we have created before starting print operation
 				await printer.Bed.SaveChanges(null, CancellationToken.None);
@@ -98,6 +100,7 @@ namespace MatterHackers.MatterControl
 					printer,
 					null,
 					CancellationToken.None);
+
 			};
 
 			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
@@ -122,20 +125,23 @@ namespace MatterHackers.MatterControl
 				case PrinterCommunication.CommunicationStates.ConnectionLost:
 				case PrinterCommunication.CommunicationStates.PrintingFromSd:
 					RestoreBedAndClearPrinterCallbacks();
+					// the print has been canceled cancel the wizard (or switch back to the begining and show)
+					this.DialogWindow.CloseOnIdle();
 					break;
 
-				// The print hase finished, open the window to collect our calibration results
+				// The print has finished, open the window to collect our calibration results
 				case PrinterCommunication.CommunicationStates.FinishedPrint:
 					// open up the next part of the wizard
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new XyCalibrationWizard(printer, xyCalibrationData.ExtruderToCalibrateIndex, xyCalibrationData));
+						// show the window
+						this.DialogWindow.Visible = true;
 					});
-					// close down our listening to the printer and restor the bed
+					// close down our listening to the printer and restore the bed
 					RestoreBedAndClearPrinterCallbacks();
 					break;
 
-				// printing the calibration normaly
+				// printing the calibration normally
 				case PrinterCommunication.CommunicationStates.Connected:
 				case PrinterCommunication.CommunicationStates.PreparingToPrint:
 				case PrinterCommunication.CommunicationStates.Printing:
@@ -153,11 +159,12 @@ namespace MatterHackers.MatterControl
 		private static IObject3D CreateCorectCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
 		{
 			IObject3D item;
+			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
 			switch (xyCalibrationData.Quality)
 			{
 				case XyCalibrationData.QualityType.Coarse:
 					item = XyCalibrationTabObject3D.Create(1,
-						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, printer.Settings.GetValue<double>(SettingsKey.layer_height) * 2),
+						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
 						xyCalibrationData.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
 					break;
@@ -166,8 +173,8 @@ namespace MatterHackers.MatterControl
 				case XyCalibrationData.QualityType.Fine:
 				default:
 					item = XyCalibrationFaceObject3D.Create(1,
-						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2,
-						printer.Settings.GetValue<double>(SettingsKey.layer_height),
+						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
+						layerHeight,
 						xyCalibrationData.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),

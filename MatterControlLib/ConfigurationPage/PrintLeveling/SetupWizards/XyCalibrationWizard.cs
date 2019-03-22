@@ -40,16 +40,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private int extruderToCalibrateIndex;
 		XyCalibrationData xyCalibrationData;
-		private bool startPrint;
 
-		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex, XyCalibrationData xyCalibrationData = null, bool startPrint = false)
+		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
 			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
-			this.xyCalibrationData = xyCalibrationData;
-			this.startPrint = startPrint;
 			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
+
+			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
 
 			pages = this.GetPages();
 			pages.MoveNext();
@@ -77,19 +76,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private IEnumerator<WizardPage> GetPages()
 		{
-			if (xyCalibrationData == null)
-			{
-				xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
-
-				yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
-				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-			}
-			else if(startPrint)
+			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
+			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
+			yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
+			yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+			// loop untile we are done calibrating
+			while (xyCalibrationData.PrintAgain)
 			{
 				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-			}
-			else // we are returing to the wizard and need to collect the data
-			{
 				yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
 				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
 			}
@@ -112,5 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public int XPick { get; set; } = -1;
 		public int YPick { get; set; } = -1;
 		public double Offset { get; set; } = .1;
+		public bool PrintAgain { get; set; }
 	}
 }
