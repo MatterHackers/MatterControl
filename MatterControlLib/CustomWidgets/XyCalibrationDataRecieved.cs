@@ -116,12 +116,12 @@ namespace MatterHackers.MatterControl
 				// this is the last page of the wizard hide the next button
 				this.NextButton.Visible = false;
 
-				var doneCalibratingButton = theme.CreateDialogButton("Done".Localize());
-				doneCalibratingButton.Name = "Done Calibration Print";
-				theme.ApplyPrimaryActionStyle(doneCalibratingButton);
-				this.AddPageAction(doneCalibratingButton);
+				var doneButton = theme.CreateDialogButton("Done".Localize());
+				doneButton.Name = "Done Calibration Print";
+				theme.ApplyPrimaryActionStyle(doneButton);
+				this.AddPageAction(doneButton);
 
-				doneCalibratingButton.Click += (s, e) =>
+				doneButton.Click += (s, e) =>
 				{
 					printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 
