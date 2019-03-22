@@ -45,15 +45,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.Title = "Probe Calibration".Localize();
 
-			// Initialize - turn off print leveling
-			printer.Connection.AllowLeveling = false;
-
-			// remember the current baby stepping values
-			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-
-			// clear them while we measure the offsets
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-
 			// Capture enumerator, moving to first item
 			this.Reset();
 			this.MoveNext();
@@ -132,6 +123,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					WindowTitle = Title
 				};
 			}
+
+			// Initialize - turn off print leveling
+			printer.Connection.AllowLeveling = false;
+
+			// remember the current baby stepping values
+			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+
+			// clear them while we measure the offsets
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			// show what steps will be taken
 			yield return new WizardPage(

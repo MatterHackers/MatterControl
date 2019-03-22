@@ -49,14 +49,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.Title = "Print Leveling".Localize();
 
-			this.Initialize();
-
-			// remember the current baby stepping values
-			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-
-			// clear them while we measure the offsets
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-
 			// Capture enumerator, moving to first item
 			this.Reset();
 			this.MoveNext();
@@ -77,6 +69,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void Initialize()
 		{
+			// remember the current baby stepping values
+			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+
+			// clear them while we measure the offsets
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
 
@@ -150,12 +148,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
-			for (int j = 0; j < levelingPlan.ProbeCount; j++)
-			{
-				probePositions.Add(new ProbePosition());
-			}
-
 			var levelingStrings = new LevelingStrings();
 
 			// If no leveling data has been calculated
@@ -174,6 +166,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					WindowTitle = Title
 				};
+			}
+
+			// Switch to raw mode and construct leveling structures
+			this.Initialize();
+
+			// var probePositions = new List<ProbePosition>(Enumerable.Range(0, levelingPlan.ProbeCount).Select(p => new ProbePosition()));
+			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
+			for (int j = 0; j < levelingPlan.ProbeCount; j++)
+			{
+				probePositions.Add(new ProbePosition());
 			}
 
 			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);

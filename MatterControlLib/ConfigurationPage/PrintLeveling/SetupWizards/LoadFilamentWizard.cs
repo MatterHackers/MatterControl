@@ -44,7 +44,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private bool showAlreadyLoadedButton;
 
-		public double TemperatureAtStart { get; private set; }
 		private int extruderIndex;
 
 		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
@@ -53,14 +52,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
 			this.Title = "Load Filament".Localize();
 
-			// Initialize - store startup temp and extruder index
-			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
 
 			// Capture enumerator, moving to first item
 			this.Reset();
 			this.MoveNext();
 		}
+
+		public double TemperatureAtStart { get; private set; }
 
 		public override bool Visible => true;
 
@@ -86,6 +85,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
+			// Initialize - store startup temp and extruder index
+			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
+
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			var levelingStrings = new LevelingStrings();

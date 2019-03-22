@@ -47,12 +47,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 
-			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
-
 			// Capture enumerator, moving to first item
 			this.Reset();
 			this.MoveNext();
-
 		}
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
@@ -83,6 +80,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
+			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
+
 			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
