@@ -61,34 +61,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				suppressNormalDraw = true;
 
-				var removeObjects = this.SourceContainer.VisibleMeshes()
-					.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
-				var keepObjects = this.SourceContainer.VisibleMeshes()
-					.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+				var parentOfPaintTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
-				foreach (var item in removeObjects)
+				var paintObjects = parentOfPaintTargets.Children
+					.Where((i) => SelectedChildren
+					.Contains(i.Name))
+					.SelectMany(c => c.VisibleMeshes())
+					.ToList();
+
+				foreach (var item in paintObjects)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(SourceContainer), 128)));
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 128)));
 				}
 
-				foreach (var item in keepObjects)
+				var keepObjects = parentOfPaintTargets.Children
+					.Where((i) => !SelectedChildren
+					.Contains(i.Name))
+					.ToList();
+
+				foreach (var keepItem in keepObjects)
 				{
-					var subtractChild = this.Children.Where(i => i.Name == item.Name).FirstOrDefault();
-					if (subtractChild != null)
+					var isPaintChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
+					foreach (var item in keepItem.VisibleMeshes())
 					{
-						GLHelper.Render(subtractChild.Mesh,
-							subtractChild.Color,
-							subtractChild.WorldMatrix(),
-							RenderTypes.Outlines,
-							subtractChild.WorldMatrix() * layer.World.ModelviewMatrix);
-					}
-					else
-					{
-						GLHelper.Render(item.Mesh,
-							item.WorldColor(SourceContainer),
-							item.WorldMatrix(),
-							RenderTypes.Outlines,
-							item.WorldMatrix() * layer.World.ModelviewMatrix);
+						if (isPaintChild)
+						{
+							GLHelper.Render(item.Mesh,
+								item.WorldColor(),
+								item.WorldMatrix(),
+								RenderTypes.Outlines,
+								item.WorldMatrix() * layer.World.ModelviewMatrix);
+
+							//suppressNormalDraw = false;
+						}
+						else
+						{
+							GLHelper.Render(item.Mesh,
+								item.WorldColor(this.SourceContainer),
+								item.WorldMatrix(),
+								RenderTypes.Outlines,
+								item.WorldMatrix() * layer.World.ModelviewMatrix);
+						}
 					}
 				}
 			}
@@ -146,15 +159,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
 
-			var participants = SourceContainer.VisibleMeshes();
-			if (participants.Count() < 2)
+			var parentOfPaintTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+			if (parentOfPaintTargets.Children.Count() < 2)
 			{
-				if (participants.Count() == 1)
+				if (parentOfPaintTargets.Children.Count() == 1)
 				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(participants.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = participants.First().Mesh;
-					this.Children.Add(newMesh);
+					this.Children.Add(SourceContainer.Clone());
 					SourceContainer.Visible = false;
 				}
 				return;
@@ -162,21 +173,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			SubtractObject3D_2.CleanUpSelectedChildrenNames(this);
 
-			var paintObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
-			var keepObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+			var paintObjects = parentOfPaintTargets.Children
+				.Where((i) => SelectedChildren
+				.Contains(i.Name))
+				.SelectMany(c => c.VisibleMeshes())
+				.ToList();
+
+			var keepItems = parentOfPaintTargets.Children
+				.Where((i) => !SelectedChildren
+				.Contains(i.Name));
+
+			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
 
 			if (paintObjects.Any()
-				&& keepObjects.Any())
+				&& keepVisibleItems.Any())
 			{
-				var totalOperations = paintObjects.Count * keepObjects.Count;
+				var totalOperations = paintObjects.Count * keepVisibleItems.Count;
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
 				progressStatus.Status = "Do CSG";
-				foreach (var keep in keepObjects)
+				foreach (var keep in keepVisibleItems)
 				{
 					var keepResultsMesh = keep.Mesh;
 					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
@@ -201,7 +219,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 							Visible = false
 						};
 						// copy all the properties but the matrix
-						paintResultsItem.CopyProperties(paint, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+						paintResultsItem.CopyWorldProperties(paint, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 						// and add it to this
 						this.Children.Add(paintResultsItem);
 
@@ -218,7 +236,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						Visible = false
 					};
 					// copy all the properties but the matrix
-					keepResultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+					keepResultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
 					this.Children.Add(keepResultsItem);
 				}

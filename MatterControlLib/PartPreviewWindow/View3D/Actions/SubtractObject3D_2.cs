@@ -60,34 +60,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				suppressNormalDraw = true;
 
-				var removeObjects = this.SourceContainer.VisibleMeshes()
-					.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
-				var keepObjects = this.SourceContainer.VisibleMeshes()
-					.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+				var removeObjects = parentOfSubtractTargets.Children
+					.Where((i) => SelectedChildren
+					.Contains(i.Name))
+					.SelectMany(c => c.VisibleMeshes())
+					.ToList();
 
 				foreach (var item in removeObjects)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(SourceContainer), 128)));
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 128)));
 				}
 
-				foreach (var item in keepObjects)
+				var keepObjects = parentOfSubtractTargets.Children
+					.Where((i) => !SelectedChildren
+					.Contains(i.Name))
+					.ToList();
+
+				foreach (var keepItem in keepObjects)
 				{
-					var subtractChild = this.Children.Where(i => i.Name == item.Name).FirstOrDefault();
-					if (subtractChild != null)
+					var isSubtractChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
+					foreach (var keepVisibleItem in keepItem.VisibleMeshes())
 					{
-						GLHelper.Render(subtractChild.Mesh,
-							subtractChild.Color,
-							subtractChild.WorldMatrix(),
-							RenderTypes.Outlines,
-							subtractChild.WorldMatrix() * layer.World.ModelviewMatrix);
-					}
-					else
-					{
-						GLHelper.Render(item.Mesh,
-							item.WorldColor(SourceContainer),
-							item.WorldMatrix(),
-							RenderTypes.Outlines,
-							item.WorldMatrix() * layer.World.ModelviewMatrix);
+						if (isSubtractChild)
+						{
+							GLHelper.Render(keepVisibleItem.Mesh,
+								Color.Transparent,
+								keepVisibleItem.WorldMatrix(),
+								RenderTypes.Outlines,
+								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
+							suppressNormalDraw = false;
+						}
+						else
+						{
+							GLHelper.Render(keepVisibleItem.Mesh,
+								keepVisibleItem.WorldColor(this.SourceContainer),
+								keepVisibleItem.WorldMatrix(),
+								RenderTypes.Outlines,
+								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
+						}
 					}
 				}
 			}
@@ -152,15 +164,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
 
-			var visibleMeshes = SourceContainer.VisibleMeshes();
-			if (visibleMeshes.Count() < 2)
+			var parentOfSubtractTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+			if (parentOfSubtractTargets.Children.Count() < 2)
 			{
-				if (visibleMeshes.Count() == 1)
+				if (parentOfSubtractTargets.Children.Count() == 1)
 				{
-					var newMesh = new Object3D();
-					newMesh.CopyProperties(visibleMeshes.First(), Object3DPropertyFlags.All);
-					newMesh.Mesh = visibleMeshes.First().Mesh;
-					this.Children.Add(newMesh);
+					this.Children.Add(SourceContainer.Clone());
 					SourceContainer.Visible = false;
 				}
 				return;
@@ -168,26 +178,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			CleanUpSelectedChildrenNames(this);
 
-			var removeObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => SelectedChildren.Contains(i.Name)).ToList();
-			var keepObjects = this.SourceContainer.VisibleMeshes()
-				.Where((i) => !SelectedChildren.Contains(i.Name)).ToList();
+			var removeVisibleItems = parentOfSubtractTargets.Children
+				.Where((i) => SelectedChildren
+				.Contains(i.Name))
+				.SelectMany(c => c.VisibleMeshes())
+				.ToList();
 
-			if (removeObjects.Any()
-				&& keepObjects.Any())
+			var keepItems = parentOfSubtractTargets.Children
+				.Where((i) => !SelectedChildren
+				.Contains(i.Name));
+
+			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
+
+			if (removeVisibleItems.Any()
+				&& keepVisibleItems.Any())
 			{
-				var totalOperations = removeObjects.Count * keepObjects.Count;
+				var totalOperations = removeVisibleItems.Count * keepVisibleItems.Count;
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
 				ProgressStatus progressStatus = new ProgressStatus();
 				progressStatus.Status = "Do CSG";
-				foreach (var keep in keepObjects)
+				foreach (var keep in keepVisibleItems)
 				{
 					var resultsMesh = keep.Mesh;
 					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
 
-					foreach (var remove in removeObjects)
+					foreach (var remove in removeVisibleItems)
 					{
 						resultsMesh = BooleanProcessing.Do(resultsMesh, keepWorldMatrix,
 							remove.Mesh, remove.WorldMatrix(SourceContainer),
@@ -209,7 +226,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						Visible = false
 					};
 					// copy all the properties but the matrix
-					resultsItem.CopyProperties(keep, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
+					resultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
 					this.Children.Add(resultsItem);
 				}
@@ -235,8 +252,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		{
 			if (item is ISelectableChildContainer selectableChildContainer)
 			{
-				var allVisibleNames = item.SourceContainer.VisibleMeshes().Select(i => i.Name);
-				// remove any names from SelectedChildren that are not in visible meshes
+				var parentOfSubtractTargets = item.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.Name);
+				// remove any names from SelectedChildren that are not a child we can select
 				foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
 				{
 					if (!allVisibleNames.Contains(name))
