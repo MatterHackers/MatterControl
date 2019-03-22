@@ -91,6 +91,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection : IDisposable
 	{
+		public static event EventHandler AnyCommunicationStateChanged;
+
 		public event EventHandler Disposed;
 
 		public event EventHandler TemporarilyHoldingTemp;
@@ -595,6 +597,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 					communicationState = value;
 					CommunicationStateChanged?.Invoke(this, null);
+					AnyCommunicationStateChanged?.Invoke(this, null);
 				}
 			}
 		}
