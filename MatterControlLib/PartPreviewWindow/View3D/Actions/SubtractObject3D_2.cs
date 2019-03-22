@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				suppressNormalDraw = true;
 
-				var parentOfSubtractTargets = SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
 				var removeObjects = parentOfSubtractTargets.Children
 					.Where((i) => SelectedChildren
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				foreach (var item in removeObjects)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(SourceContainer), 128)));
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 128)));
 				}
 
 				var keepObjects = parentOfSubtractTargets.Children
@@ -80,25 +80,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				foreach (var keepItem in keepObjects)
 				{
-					var subtractChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
-					foreach (var item in keepItem.VisibleMeshes())
+					var isSubtractChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
+					foreach (var keepVisibleItem in keepItem.VisibleMeshes())
 					{
-						if (subtractChild)
+						if (isSubtractChild)
 						{
-							GLHelper.Render(item.Mesh,
-								Color.Transparent, // item.Color,
-								item.WorldMatrix(),
+							GLHelper.Render(keepVisibleItem.Mesh,
+								Color.Transparent,
+								keepVisibleItem.WorldMatrix(),
 								RenderTypes.Outlines,
-								item.WorldMatrix() * layer.World.ModelviewMatrix);
+								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
 							suppressNormalDraw = false;
 						}
 						else
 						{
-							GLHelper.Render(item.Mesh,
-								item.WorldColor(SourceContainer),
-								item.WorldMatrix(),
+							GLHelper.Render(keepVisibleItem.Mesh,
+								keepVisibleItem.WorldColor(this.SourceContainer),
+								keepVisibleItem.WorldMatrix(),
 								RenderTypes.Outlines,
-								item.WorldMatrix() * layer.World.ModelviewMatrix);
+								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
 						}
 					}
 				}
