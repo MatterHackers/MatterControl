@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingWizard : PrinterSetupWizard
 	{
-		double babySteppingValue;
+		private double babySteppingValue;
 		private LevelingPlan levelingPlan;
 
 		public PrintLevelingWizard(PrinterConfig printer)
@@ -287,20 +287,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int i = 0;
 
-			var probePositions2 = levelingPlan.GetPrintLevelPositionToSample().ToList();
+			var probePoints = levelingPlan.GetPrintLevelPositionToSample().ToList();
 
 			AutoProbePage autoProbePage = null;
 
 			if (printer.Settings.Helpers.UseZProbe())
 			{
-				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePositions2, probePositions);
+				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);
 				yield return autoProbePage;
 			}
 			else
 			{
-				foreach (var goalProbePosition in probePositions2)
+				foreach (var goalProbePoint in probePoints)
 				{
-					if (this.WindowHasBeenClosed)
+					if (wizardExited)
 					{
 						// Make sure when the wizard is done we turn off the bed heating
 						printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						yield break;
 					}
 
-					var validProbePosition = EnsureInPrintBounds(printer, goalProbePosition);
+					var validProbePosition = EnsureInPrintBounds(printer, goalProbePoint);
 
 					{
 						yield return new GetCoarseBedHeight(
