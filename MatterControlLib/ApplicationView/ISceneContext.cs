@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 		void InvalidateBedMesh();
 
 		void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter);
-		void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter);
+		void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter);
 
 		Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems);
 

@@ -554,7 +554,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void LoadGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
+		public void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter)
 		{
 			if (File.Exists(filePath))
 			{

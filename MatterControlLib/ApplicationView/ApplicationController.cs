@@ -2777,7 +2777,7 @@ namespace MatterHackers.MatterControl
 
 				innerProgress.Report(status);
 
-				printer.Bed.LoadGCode(gcodeFilePath, token, (progress0to1, statusText) =>
+				printer.Bed.LoadActiveSceneGCode(gcodeFilePath, token, (progress0to1, statusText) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
