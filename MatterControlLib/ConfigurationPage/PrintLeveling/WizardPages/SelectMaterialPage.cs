@@ -59,7 +59,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 				loadFilamentButton.Click += (s, e) =>
 				{
-					if(base.setupWizard.GetNextPage() is WizardPage wizardPage)
+					base.setupWizard.MoveNext();
+					if(base.setupWizard.Current is WizardPage wizardPage)
 					{
 						this.DialogWindow.ChangeToPage(wizardPage);
 					}
@@ -80,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				alreadyLoadedButton.Click += (s, e) =>
 				{
-					this.DialogWindow.CloseOnIdle();
+					this.DialogWindow.ClosePage();
 					switch (extruderIndex)
 					{
 						case 0:

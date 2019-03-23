@@ -28,12 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -67,12 +68,10 @@ namespace MatterHackers.MatterControl
 			startCalibrationPrint.Name = "Start Calibration Print";
 			startCalibrationPrint.Click += async (s, e) =>
 			{
-				// stash the current bed
-				var scene = printer.Bed.Scene;
-				scene.Children.Modify((list) => list.Clear());
+				var scene = new Object3D();
 
-				// create the item we are adding
-				IObject3D item = CreateCorectCalibrationObject(printer, xyCalibrationData);
+				// create the calibration objects
+				IObject3D item = CreateCalibrationObject(printer, xyCalibrationData);
 
 				// add the calibration object to the bed
 				scene.Children.Add(item);
@@ -81,26 +80,41 @@ namespace MatterHackers.MatterControl
 				var bedBounds = printer.Bed.Bounds;
 				var aabb = item.GetAxisAlignedBoundingBox();
 				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
-				// switch to 3D view
-				// register callbacks for print completion
-				printer.Connection.Disposed += Connection_Disposed;
-				printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 
-				this.NextButton.InvokeClick();
+				// register callbacks for print completion
+				printer.Connection.Disposed += this.Connection_Disposed;
+				printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
+
+				this.MoveToNextPage();
 
 				// hide this window
 				this.DialogWindow.Visible = false;
 
-				// Save the bed that we have created before starting print operation
-				await printer.Bed.SaveChanges(null, CancellationToken.None);
+				string gcodePath = EditContext.GCodeFilePath(printer, scene);
 
-				// start the calibration print
-				await ApplicationController.Instance.PrintPart(
-					printer.Bed.EditContext,
+				printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+				(bool slicingSucceeded, string finalGCodePath) = await ApplicationController.Instance.SliceItemLoadOutput(
 					printer,
-					null,
-					CancellationToken.None);
+					scene,
+					gcodePath);
 
+				// Only start print if slicing completed
+				if (slicingSucceeded)
+				{
+					await printer.Bed.LoadContent(new EditContext()
+					{
+						SourceItem = new FileSystemFileItem(gcodePath),
+						ContentStore = null // No content store for GCode
+					});
+
+					await printer.Connection.StartPrint(finalGCodePath, allowRecovery: false);
+					ApplicationController.Instance.MonitorPrintTask(printer);
+				}
+				else
+				{
+					printer.Connection.CommunicationState = CommunicationStates.Connected;
+				}
 			};
 
 			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
@@ -119,18 +133,18 @@ namespace MatterHackers.MatterControl
 			switch (printer.Connection.CommunicationState)
 			{
 				// We are no longer running this calibration, unwind anything that we have done
-				case PrinterCommunication.CommunicationStates.Disconnected:
-				case PrinterCommunication.CommunicationStates.AttemptingToConnect:
-				case PrinterCommunication.CommunicationStates.FailedToConnect:
-				case PrinterCommunication.CommunicationStates.ConnectionLost:
-				case PrinterCommunication.CommunicationStates.PrintingFromSd:
+				case CommunicationStates.Disconnected:
+				case CommunicationStates.AttemptingToConnect:
+				case CommunicationStates.FailedToConnect:
+				case CommunicationStates.ConnectionLost:
+				case CommunicationStates.PrintingFromSd:
 					RestoreBedAndClearPrinterCallbacks();
-					// the print has been canceled cancel the wizard (or switch back to the begining and show)
+					// the print has been canceled cancel the wizard (or switch back to the beginning and show)
 					this.DialogWindow.CloseOnIdle();
 					break;
 
 				// The print has finished, open the window to collect our calibration results
-				case PrinterCommunication.CommunicationStates.FinishedPrint:
+				case CommunicationStates.FinishedPrint:
 					// open up the next part of the wizard
 					UiThread.RunOnIdle(() =>
 					{
@@ -140,14 +154,6 @@ namespace MatterHackers.MatterControl
 					// close down our listening to the printer and restore the bed
 					RestoreBedAndClearPrinterCallbacks();
 					break;
-
-				// printing the calibration normally
-				case PrinterCommunication.CommunicationStates.Connected:
-				case PrinterCommunication.CommunicationStates.PreparingToPrint:
-				case PrinterCommunication.CommunicationStates.Printing:
-				case PrinterCommunication.CommunicationStates.Paused:
-				case PrinterCommunication.CommunicationStates.Disconnecting:
-					break;
 			}
 		}
 
@@ -156,7 +162,7 @@ namespace MatterHackers.MatterControl
 			RestoreBedAndClearPrinterCallbacks();
 		}
 
-		private static IObject3D CreateCorectCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
+		private static IObject3D CreateCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
 		{
 			IObject3D item;
 			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
@@ -183,12 +189,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			return item;
-		}
-
-		void PrintHasCompleated()
-		{
-			// if we are done callibrating
-			printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 		}
 	}
 }

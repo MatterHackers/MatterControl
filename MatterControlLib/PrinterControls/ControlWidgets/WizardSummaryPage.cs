@@ -27,54 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections;
-using System.Collections.Generic;
-using MatterHackers.VectorMath;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.PrinterControls
 {
-	public abstract class PrinterSetupWizard : ISetupWizard
+	public class WizardSummaryPage : DialogPage
 	{
-		private IEnumerator<WizardPage> pages;
-		protected PrinterConfig printer;
-
-		public PrinterSetupWizard(PrinterConfig printer)
+		public WizardSummaryPage()
+			: base("Close".Localize())
 		{
-			this.printer = printer;
 		}
 
-		protected abstract IEnumerator<WizardPage> GetPages();
-
-		public abstract bool SetupRequired { get; }
-
-		public abstract bool Visible { get; }
-
-		public abstract bool Enabled { get; }
-
-		public string Title { get; protected set; }
-
-		public PrinterConfig Printer => printer;
-
-		public WizardPage Current => pages.Current;
-
-		object IEnumerator.Current => pages.Current;
-
-		public Vector2 WindowSize { get; protected set; }
-
-		public bool MoveNext()
+		protected override void OnCancel(out bool abortCancel)
 		{
-			// Shutdown active page
-			pages.Current?.Close();
+			this.DialogWindow.CloseOnIdle();
 
-			// Advance
-			return pages.MoveNext();
+			abortCancel = true;
+
+			base.OnCancel(out abortCancel);
 		}
-
-		public void Reset()
-		{
-			pages = this.GetPages();
-		}
-
-		public abstract void Dispose();
 	}
 }

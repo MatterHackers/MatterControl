@@ -40,28 +40,37 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingWizard : PrinterSetupWizard
 	{
-		double babySteppingValue;
+		private double babySteppingValue;
 		private LevelingPlan levelingPlan;
+		private bool wizardExited;
 
 		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.WindowTitle = string.Format("{0} - {1}", ApplicationController.Instance.ProductName, "Print Leveling Wizard".Localize());
+			this.Title = "Print Leveling".Localize();
+		}
 
-			this.Initialize();
+		public override bool Visible
+		{
+			get
+			{
+				return printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+			}
+		}
 
+		public override bool Enabled => true;
+
+		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer);
+
+		private void Initialize()
+		{
 			// remember the current baby stepping values
 			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
 
 			// clear them while we measure the offsets
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
-			pages = this.GetPages();
-			pages.MoveNext();
-		}
-
-		private void Initialize()
-		{
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
 
@@ -112,8 +121,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public bool WindowHasBeenClosed { get; private set; }
-
 		public override void Dispose()
 		{
 			// If leveling was on when we started, make sure it is on when we are done.
@@ -122,7 +129,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// set the baby stepping back to the last known good value
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValue.ToString());
 
-			this.WindowHasBeenClosed = true;
+			wizardExited = true;
 
 			// make sure we raise the probe on close
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
@@ -135,14 +142,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
-			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
-			for (int j = 0; j < levelingPlan.ProbeCount; j++)
-			{
-				probePositions.Add(new ProbePosition());
-			}
-
 			var levelingStrings = new LevelingStrings();
 
 			// If no leveling data has been calculated
@@ -159,8 +160,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
 						"The next few screens will walk your through calibrating your printer.".Localize()))
 				{
-					WindowTitle = WindowTitle
+					WindowTitle = Title
 				};
+			}
+
+			// Switch to raw mode and construct leveling structures
+			this.Initialize();
+
+			// var probePositions = new List<ProbePosition>(Enumerable.Range(0, levelingPlan.ProbeCount).Select(p => new ProbePosition()));
+			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
+			for (int j = 0; j < levelingPlan.ProbeCount; j++)
+			{
+				probePositions.Add(new ProbePosition());
 			}
 
 			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
@@ -207,7 +218,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Print Leveling Overview".Localize(),
 				buildWelcomeText())
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			yield return new HomePrinterPage(
@@ -273,20 +284,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int i = 0;
 
-			var probePositions2 = levelingPlan.GetPrintLevelPositionToSample().ToList();
+			var probePoints = levelingPlan.GetPrintLevelPositionToSample().ToList();
 
 			AutoProbePage autoProbePage = null;
 
 			if (printer.Settings.Helpers.UseZProbe())
 			{
-				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePositions2, probePositions);
+				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);
 				yield return autoProbePage;
 			}
 			else
 			{
-				foreach (var goalProbePosition in probePositions2)
+				foreach (var goalProbePoint in probePoints)
 				{
-					if (this.WindowHasBeenClosed)
+					if (wizardExited)
 					{
 						// Make sure when the wizard is done we turn off the bed heating
 						printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
@@ -299,7 +310,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						yield break;
 					}
 
-					var validProbePosition = EnsureInPrintBounds(printer, goalProbePosition);
+					var validProbePosition = EnsureInPrintBounds(printer, goalProbePoint);
 
 					{
 						yield return new GetCoarseBedHeight(

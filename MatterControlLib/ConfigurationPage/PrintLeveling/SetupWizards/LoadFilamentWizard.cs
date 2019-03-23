@@ -44,27 +44,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private bool showAlreadyLoadedButton;
 
-		public double TemperatureAtStart { get; private set; }
 		private int extruderIndex;
 
 		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Load Filament Wizard".Localize();
+			this.Title = "Load Filament".Localize();
 
-			// Initialize - store startup temp and extruder index
-			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
 			this.extruderIndex = extruderIndex;
-
-			pages = this.GetPages();
-			pages.MoveNext();
 		}
+
+		public double TemperatureAtStart { get; private set; }
+
+		public override bool Visible => true;
+
+		public override bool Enabled => true;
 
 		public override void Dispose()
 		{
 			printer.Connection.SetTargetHotendTemperature(extruderIndex, this.TemperatureAtStart);
 		}
+
+		public override bool SetupRequired => NeedsToBeRun0(printer) || NeedsToBeRun1(printer);
 
 		public static bool NeedsToBeRun0(PrinterConfig printer)
 		{
@@ -77,8 +79,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
+			// Initialize - store startup temp and extruder index
+			this.TemperatureAtStart = printer.Connection.GetTargetHotendTemperature(extruderIndex);
+
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			var levelingStrings = new LevelingStrings();
@@ -92,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// select the material
 			yield return new SelectMaterialPage(this, "Load Material".Localize(), instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			var theme = ApplicationController.Instance.Theme;

@@ -43,20 +43,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Probe Calibration Wizard".Localize();
-
-			// Initialize - turn off print leveling
-			printer.Connection.AllowLeveling = false;
-
-			// remember the current baby stepping values
-			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-
-			// clear them while we measure the offsets
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-
-			pages = this.GetPages();
-			pages.MoveNext();
+			this.Title = "Probe Calibration".Localize();
 		}
+
+		public override bool SetupRequired => NeedsToBeRun(printer);
+
+		public override bool Visible
+		{
+			get
+			{
+				return printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
+			}
+		}
+
+		public override bool Enabled => true;
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
@@ -93,7 +94,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var levelingStrings = new LevelingStrings();
 			var autoProbePositions = new List<ProbePosition>(3);
@@ -115,9 +116,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
 						"The next few screens will walk your through calibrating your printer.".Localize()))
 				{
-					WindowTitle = WindowTitle
+					WindowTitle = Title
 				};
 			}
+
+			// Initialize - turn off print leveling
+			printer.Connection.AllowLeveling = false;
+
+			// remember the current baby stepping values
+			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+
+			// clear them while we measure the offsets
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
 
 			// show what steps will be taken
 			yield return new WizardPage(
@@ -132,7 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"We should be done in less than five minutes.".Localize(),
 					"Click 'Next' to continue.".Localize()))
 			{
-				WindowTitle = WindowTitle
+				WindowTitle = Title
 			};
 
 			// add in the homing printer page

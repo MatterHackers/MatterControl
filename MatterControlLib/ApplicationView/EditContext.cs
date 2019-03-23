@@ -81,6 +81,27 @@ namespace MatterHackers.MatterControl
 			return GCodePath(printer);
 		}
 
+		public static string GCodeFilePath(PrinterConfig printer, IObject3D object3D)
+		{
+			using (var memoryStream = new MemoryStream())
+			{
+				// Write JSON
+				object3D.SaveTo(memoryStream);
+
+				// Reposition
+				memoryStream.Position = 0;
+
+				// Calculate
+				string fileHashCode = HashGenerator.ComputeSHA1(memoryStream);
+
+				ulong settingsHashCode = printer.Settings.GetGCodeCacheKey();
+
+				return Path.Combine(
+					ApplicationDataStorage.Instance.GCodeOutputPath,
+					$"{fileHashCode}_{ settingsHashCode}.gcode");
+			}
+		}
+
 		internal void Save(IObject3D scene)
 		{
 			if (!this.FreezeGCode)
@@ -119,7 +140,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
-				ulong settingsHashCode = printer.Settings.GetLongHashCode();
+				ulong settingsHashCode = printer.Settings.GetGCodeCacheKey();
 
 				return Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,

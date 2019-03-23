@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				string configFilePath = Path.Combine(
 					ApplicationDataStorage.Instance.GCodeOutputPath,
-					string.Format("config_{0}.ini", printer.Settings.GetLongHashCode().ToString()));
+					string.Format("config_{0}.ini", printer.Settings.GetGCodeCacheKey().ToString()));
 
 				progressStatus.Status = "Starting slicer";
 				sliceProgressReporter.Report(progressStatus);

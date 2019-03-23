@@ -28,20 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public interface ISetupWizard : IDisposable
+	public interface ISetupWizard : IDisposable, IEnumerator<WizardPage>
 	{
 		PrinterConfig Printer { get; }
 
-		string WindowTitle { get; }
-
-		WizardPage GetNextPage();
+		string Title { get; }
 
 		Vector2 WindowSize { get; }
 
-		WizardPage CurrentPage { get; }
+		bool SetupRequired { get; }
+
+		bool Visible { get; }
+
+		bool Enabled { get; }
 	}
 }

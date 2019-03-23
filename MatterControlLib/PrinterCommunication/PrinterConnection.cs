@@ -91,6 +91,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 	/// </summary>
 	public class PrinterConnection : IDisposable
 	{
+		public static event EventHandler AnyCommunicationStateChanged;
+
 		public event EventHandler Disposed;
 
 		public event EventHandler TemporarilyHoldingTemp;
@@ -99,6 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler BedTemperatureRead;
 
 		public event EventHandler CommunicationStateChanged;
+		
 		public event EventHandler DetailedPrintingStateChanged;
 
 		public event EventHandler ConnectionFailed;
@@ -231,7 +234,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private Stopwatch timeSinceRecievedOk = new Stopwatch();
 
-		private Stopwatch timeSinceStartedPrint = new Stopwatch();
+		private Stopwatch timePrinting = new Stopwatch();
 
 		private Stopwatch timeWaitingForSdProgress = new Stopwatch();
 
@@ -543,7 +546,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									{
 										PrePauseCommunicationState = CommunicationStates.PrintingFromSd;
 									}
-									timeSinceStartedPrint.Stop();
+									timePrinting.Stop();
 								}
 								else if (value == CommunicationStates.FinishedPrint)
 								{
@@ -560,13 +563,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
-									timeSinceStartedPrint.Stop();
+									timePrinting.Stop();
 									PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
 								}
 								else
 								{
-									timeSinceStartedPrint.Stop();
-									timeSinceStartedPrint.Reset();
+									timePrinting.Stop();
+									timePrinting.Reset();
 								}
 							}
 							break;
@@ -577,23 +580,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								// changing to printing
 								if (value == CommunicationStates.Printing)
 								{
-									timeSinceStartedPrint.Start();
+									timePrinting.Start();
 								}
 							}
 							break;
 
 						default:
-							if (!timeSinceStartedPrint.IsRunning
+							if (!timePrinting.IsRunning
 								&& value == CommunicationStates.Printing)
 							{
 								// If we are just starting to print (we know we were not paused or it would have stopped above)
-								timeSinceStartedPrint.Restart();
+								timePrinting.Restart();
 							}
 							break;
 					}
 
 					communicationState = value;
 					CommunicationStateChanged?.Invoke(this, null);
+					AnyCommunicationStateChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -821,7 +825,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				if (Printing || Paused || PrintIsFinished)
 				{
-					return (int)(timeSinceStartedPrint.ElapsedMilliseconds / 1000);
+					return (int)(timePrinting.ElapsedMilliseconds / 1000);
 				}
 
 				return 0;
@@ -2257,9 +2261,9 @@ You will then need to logout and log back in to the computer for the changes to 
 				&& this.CommunicationState != CommunicationStates.FinishedPrint
 				&& this.communicationState != CommunicationStates.Connected)
 			{
-				double secondsSinceStartedPrint = timeSinceStartedPrint.Elapsed.TotalSeconds;
+				double secondsSinceStartedPrint = timePrinting.Elapsed.TotalSeconds;
 
-				if (timeSinceStartedPrint.Elapsed.TotalSeconds > 0
+				if (timePrinting.Elapsed.TotalSeconds > 0
 					&& gCodeFileSwitcher != null
 					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
 					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
@@ -2339,25 +2343,25 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (lineBeingSetToPrinter.StartsWith("G28"))
 			{
 				// don't time the homing operation
-				timeSinceStartedPrint.Stop();
+				timePrinting.Stop();
 				DetailedPrintingState = DetailedPrintingState.HomingAxis;
 			}
 			else if (waitForTempStream?.HeatingBed ?? false)
 			{
 				// don't time the heating bed operation
-				timeSinceStartedPrint.Stop();
+				timePrinting.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingBed;
 			}
 			else if (waitForTempStream?.HeatingT0 ?? false)
 			{
 				// don't time the heating extruder operation
-				timeSinceStartedPrint.Stop();
+				timePrinting.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingT0;
 			}
 			else if (waitForTempStream?.HeatingT1 ?? false)
 			{
 				// don't time the heating extruder operation
-				timeSinceStartedPrint.Stop();
+				timePrinting.Stop();
 				DetailedPrintingState = DetailedPrintingState.HeatingT1;
 			}
 			else
@@ -2365,7 +2369,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				// make sure we time all of the printing that we are doing
 				if (this.Printing && !this.Paused)
 				{
-					timeSinceStartedPrint.Start();
+					timePrinting.Start();
 				}
 				DetailedPrintingState = DetailedPrintingState.Printing;
 			}

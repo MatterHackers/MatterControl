@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected const bool debugLayout = false;
 		protected ThemeConfig theme;
 
-		private bool mouseInBounds = false;
+		protected bool mouseInBounds = false;
 		private Color hoverColor;
 		private bool fullRowSelect;
 		private GuiWidget settingsLabel;

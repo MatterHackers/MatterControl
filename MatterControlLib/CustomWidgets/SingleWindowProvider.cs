@@ -143,8 +143,32 @@ namespace MatterHackers.Agg.UI
 
 				movable.TitleBar.AddChild(titleBarRow);
 
+				void SystemWindow_VisibleChanged(object sender, EventArgs e)
+				{
+					if (systemWindow.Visible)
+					{
+						_openWindows.Add(overlayWindow);
+						this.TopWindow = overlayWindow;
+
+						overlayWindow.Visible = true;
+					}
+					else
+					{
+						_openWindows.Remove(overlayWindow);
+						this.TopWindow = _openWindows.LastOrDefault();
+
+						overlayWindow.Visible = false;
+					}
+
+					platformWindow.ShowSystemWindow(TopWindow);
+				};
+
+				systemWindow.VisibleChanged += SystemWindow_VisibleChanged;
+
 				systemWindow.Closed += (s, e) =>
 				{
+					systemWindow.VisibleChanged -= SystemWindow_VisibleChanged;
+
 					overlayWindow.Close();
 				};
 

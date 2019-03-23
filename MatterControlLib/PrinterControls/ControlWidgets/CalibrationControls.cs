@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -54,10 +54,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 				SettingsRow settingsRow;
 
 				this.AddChild(settingsRow = new SettingsRow(
-					"Bed Leveling".Localize(),
+					"Printer Calibration".Localize(),
 					null,
-					theme,
-					AggContext.StaticData.LoadIcon("leveling_32x32.png", 16, 16, theme.InvertIcons)));
+					theme));
 
 				// run leveling button
 				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
@@ -68,11 +67,35 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 					ToolTipText = "Run Calibration".Localize()
 				};
+
 				runWizardButton.Click += (s, e) =>
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(new PrintLevelingWizard(printer));
+						DialogWindow.Show(
+							"Printer Calibration",
+							new ISetupWizard[]
+							{
+								new PrintLevelingWizard(printer),
+								new ProbeCalibrationWizard(printer),
+								new XyCalibrationWizard(printer, 1)
+							},
+							() =>
+							{
+								var homePage = new WizardSummaryPage()
+								{
+									HeaderText = "Printer Calibration"
+								};
+
+								homePage.ContentRow.AddChild(new WrappedTextWidget(
+									@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce dictum sagittis lectus, eget interdum erat aliquam et. Cras fermentum eleifend urna, non lacinia diam egestas eu. Morbi et ullamcorper ex. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Mauris sed nisl sapien. Aenean bibendum nec massa et pulvinar. Praesent sagittis lorem ut ornare cursus. Pellentesque non dolor sem. Donec at imperdiet massa. Vestibulum faucibus diam non tincidunt fermentum. Morbi lacus ligula, dictum sit amet purus ac, viverra tincidunt nisi. Quisque eget justo viverra, pulvinar sapien quis, pellentesque.
+
+Fusce faucibus dictum convallis.Nulla molestie purus a nibh sodales consequat.Morbi lacus nisl, scelerisque in tincidunt nec, tempus sed metus.Aenean in dictum enim.Nunc pretium tellus sem, eu egestas lacus consectetur non.Mauris posuere viverra maximus.Praesent sit amet accumsan nisl.Quisque rutrum ultricies posuere.Nulla facilisi.Nulla augue dolor, facilisis sed nibh sed, bibendum malesuada erat.".Replace("\r\n", "\n"),
+									pointSize: theme.DefaultFontSize,
+									textColor: theme.TextColor));
+
+								return homePage;
+							});
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
@@ -97,86 +120,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
 					
 					settingsRow.AddChild(printLevelingSwitch);
-				}
-
-				// add in the controls for configuring probe offset
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
-				{
-					this.AddChild(settingsRow = new SettingsRow(
-						"Probe Offset".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var runCalibrateProbeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Probe Offset".Localize()
-					};
-					runCalibrateProbeButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new ProbeCalibrationWizard(printer));
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(runCalibrateProbeButton);
-				}
-
-				if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
-				{
-					this.AddChild(settingsRow = new SettingsRow(
-						"Nozzle Offsets".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var calibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Nozzle Offsets".Localize()
-					};
-
-					calibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new NozzleCalibrationWizard(printer));
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(calibrateButton);
-
-					// in progress new calibration page
-					this.AddChild(settingsRow = new SettingsRow(
-						"New Nozzle Offsets".Localize(),
-						null,
-						theme,
-						AggContext.StaticData.LoadIcon("probing_32x32.png", 16, 16, theme.InvertIcons)));
-
-					var xyCalibrateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = theme.ButtonSpacing,
-						ToolTipText = "Calibrate Nozzle Offsets".Localize()
-					};
-
-					xyCalibrateButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						// TODO: check that we are able to print (no errors)
-						bool printerCanPrint = true;
-						if (printerCanPrint)
-						{
-							DialogWindow.Show(new XyCalibrationWizard(printer, 1));
-						}
-						else
-						{
-							// show the error dialog for printer errors and warnings
-						}
-					});
-
-					settingsRow.BorderColor = Color.Transparent;
-					settingsRow.AddChild(xyCalibrateButton);
 				}
 			}
 

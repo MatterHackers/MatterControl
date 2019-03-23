@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private static Dictionary<Type, DialogWindow> allWindows = new Dictionary<Type, DialogWindow>();
 		private ThemeConfig theme;
 
-		private DialogWindow()
+		protected DialogWindow()
 			: base(500 * GuiWidget.DeviceScale, 500 * GuiWidget.DeviceScale)
 		{
 			theme = ApplicationController.Instance.Theme;
@@ -84,22 +85,40 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
+		public static DialogWindow Show(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		{
+			var wizardStages = stages.ToList();
+			var type = homePageGenerator.GetType();
+
+			var homePage = homePageGenerator();
+
+			var wizardWindow = new StagedSetupWindow(title, stages, homePageGenerator);
+			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
+			allWindows[type] = wizardWindow;
+
+			SetSizeAndShow(wizardWindow, homePage);
+
+			wizardWindow.ChangeToPage(homePage);
+
+			return wizardWindow;
+		}
+
 		public static DialogWindow Show(ISetupWizard setupWizard)
 		{
 			DialogWindow wizardWindow = GetWindow(setupWizard.GetType());
-			wizardWindow.Title = setupWizard.WindowTitle;
+			wizardWindow.Title = setupWizard.Title;
 
 			if (setupWizard.WindowSize != Vector2.Zero)
 			{
 				wizardWindow.Size = setupWizard.WindowSize;
 			}
 
-			SetSizeAndShow(wizardWindow, setupWizard.CurrentPage);
+			SetSizeAndShow(wizardWindow, setupWizard.Current);
 
-			wizardWindow.ChangeToPage(setupWizard.CurrentPage);
+			wizardWindow.ChangeToPage(setupWizard.Current);
 
 			// Set focus to ensure Enter/Esc key handlers are caught
-			setupWizard.CurrentPage.Focus();
+			setupWizard.Current.Focus();
 
 			EventHandler windowClosed = null;
 			EventHandler<KeyEventArgs> windowKeyDown = null;
@@ -117,9 +136,9 @@ namespace MatterHackers.MatterControl
 				{
 					// Auto-advance to next page on enter key
 					case Keys.Enter:
-						if (setupWizard.CurrentPage.NextButton.Enabled)
+						if (setupWizard.Current is WizardPage currentPage && currentPage.NextButton.Enabled)
 						{
-							UiThread.RunOnIdle(() => setupWizard.CurrentPage.NextButton.InvokeClick());
+							UiThread.RunOnIdle(() => currentPage.NextButton.InvokeClick());
 						}
 						break;
 				}
@@ -170,13 +189,19 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
+		public virtual void ClosePage()
+		{
+			// Close this dialog window
+			this.CloseOnIdle();
+		}
+
 		public override void OnClosed(EventArgs e)
 		{
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
 		}
 
-		public void ChangeToPage(DialogPage pageToChangeTo)
+		public virtual void ChangeToPage(DialogPage pageToChangeTo)
 		{
 			activePage = pageToChangeTo;
 
@@ -187,7 +212,7 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
-		public DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
+		public virtual DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
 			var panel = new PanelType
 			{

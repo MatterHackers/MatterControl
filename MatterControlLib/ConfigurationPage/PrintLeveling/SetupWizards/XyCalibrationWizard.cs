@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -39,20 +38,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
 		private int extruderToCalibrateIndex;
-		XyCalibrationData xyCalibrationData;
+		private XyCalibrationData xyCalibrationData;
 
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
 			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
-			this.WindowTitle = $"{ApplicationController.Instance.ProductName} - " + "Nozzle Calibration Wizard".Localize();
+			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
-
-			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
-
-			pages = this.GetPages();
-			pages.MoveNext();
 		}
+
+		public override bool SetupRequired => NeedsToBeRun(printer);
+
+		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+
+		public override bool Enabled => true;
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
@@ -74,13 +74,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
-		private IEnumerator<WizardPage> GetPages()
+		protected override IEnumerator<WizardPage> GetPages()
 		{
+			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
+
 			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
-			// loop untile we are done calibrating
+			
+			// loop until we are done calibrating
 			while (xyCalibrationData.PrintAgain)
 			{
 				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
