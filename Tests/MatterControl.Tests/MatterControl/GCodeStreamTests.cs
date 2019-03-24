@@ -27,8 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -37,6 +42,8 @@ using MatterHackers.MatterControl.Library.Export;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.PrinterEmulator;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 
@@ -610,7 +617,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public void ToolChangeHeatNoExtrusion()
+		public Task ToolChangeHeatNoExtrusion()
 		{
 			string[] inputLines = new string[]
 			{
@@ -663,8 +670,9 @@ namespace MatterControl.Tests.MatterControl
 
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-			ValidateStreamResponse(expected, testStream);
+			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
+
+			return Task.CompletedTask;
 		}
 
 		private static PrinterConfig SetupToolChangeSettings()
@@ -737,6 +745,62 @@ namespace MatterControl.Tests.MatterControl
 				Debug.WriteLine(actualLine);
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			}
+		}
+
+		private static async System.Threading.Tasks.Task ValidateStreamResponseWhilePrintingAsync(string[] expected, PrinterConfig printer, string[] inputGCode)
+		{
+			// make sure we are not getting feedback we don't have in the expected results
+			printer.Connection.MonitorPrinterTemperature = false;
+
+			// set up our serial port finding
+			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
+			{
+				return new Emulator();
+			};
+
+			int expectedIndex = 0;
+
+			// register to listen to the printer responses
+			printer.Connection.LineSent += (s, actualLine) =>
+			{
+				if (printer.Connection.Printing)
+				{
+					string expectedLine = expected[expectedIndex++];
+					Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+				}
+			};
+
+			// set up the emulator
+			printer.Settings.SetValue($"{Environment.MachineName}_com_port", "Emulator");
+			// connect to the emulator
+			printer.Connection.Connect();
+			var time = Stopwatch.StartNew();
+			while (!printer.Connection.IsConnected
+				&& time.ElapsedMilliseconds < (1000 * 60 * 3))
+			{
+				Thread.Sleep(1000);
+			}
+			
+			// start a print
+			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", inputGCode)));
+			await printer.Connection.StartPrint(inputStream);
+
+			// wait for the print to finish (or 3 minutes to pass)
+			time = Stopwatch.StartNew();
+			while(//printer.Connection.Printing
+				//&& 
+				time.ElapsedMilliseconds < (1000 * 60 * 3))
+			{
+				Thread.Sleep(1000);
+				//printer.Connection.upda
+			}
+
+			Assert.AreEqual(expectedIndex, expected.Length, "We should have seen all the expected lines");
+		}
+
+		private static void Connection_LineReceived(object sender, string e)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		[Test, Category("GCodeStream")]

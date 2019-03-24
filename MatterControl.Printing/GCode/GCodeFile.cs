@@ -111,14 +111,12 @@ namespace MatterControl.Printing
 				|| lineString.StartsWith("; layer ");
 		}
 
-		public static bool FileTooBigToLoad(string fileName)
+		public static bool FileTooBigToLoad(Stream fileStream)
 		{
-			if (File.Exists(fileName)
-				&& Is32Bit)
+			if (Is32Bit)
 			{
-				FileInfo info = new FileInfo(fileName);
 				// Let's make sure we can load a file this big
-				if (info.Length > Max32BitFileSize)
+				if (fileStream.Length > Max32BitFileSize)
 				{
 					// It is too big to load
 					return true;
@@ -172,20 +170,20 @@ namespace MatterControl.Printing
 			return false;
 		}
 
-		public static GCodeFile Load(string fileName, 
+		public static GCodeFile Load(Stream fileStream, 
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplier,
 			CancellationToken cancellationToken)
 		{
-			if (FileTooBigToLoad(fileName))
+			if (FileTooBigToLoad(fileStream))
 			{
-				return new GCodeFileStreamed(fileName);
+				return new GCodeFileStreamed(fileStream);
 			}
 			else
 			{
-				return GCodeMemoryFile.Load(fileName,
+				return GCodeMemoryFile.Load(fileStream,
 					maxAccelerationMmPerS2,
 					maxVelocityMmPerS,
 					velocitySameAsStopMmPerS,

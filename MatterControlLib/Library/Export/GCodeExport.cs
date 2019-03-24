@@ -356,7 +356,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				this.ApplyStreamPipelineAndExport(
 					new GCodeFileStream(
 						GCodeFile.Load(
-							gcodeFilename,
+							new StreamReader(gcodeFilename).BaseStream,
 							new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
 							new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 							new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),

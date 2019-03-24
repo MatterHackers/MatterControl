@@ -1927,6 +1927,12 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool allowRecovery = true)
 		{
+			var gcodeStream = new StreamReader(gcodeFilename);
+			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, allowRecovery);
+		}
+
+		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, PrintTask printTaskToUse = null, bool allowRecovery = true)
+		{
 			if (!this.IsConnected || Printing)
 			{
 				return;
@@ -1946,7 +1952,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			await Task.Run(() =>
 			{
 				// LoadGCodeToPrint
-				CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
+				CreateStreamProcessors(gcodeStream, this.RecoveryIsEnabled);
 			});
 
 			// DoneLoadingGCodeToPrint
@@ -1968,7 +1974,8 @@ You will then need to logout and log back in to the computer for the changes to 
 							activePrintItem.PrintItem.Commit();
 						}
 
-						if (activePrintTask == null
+						if (gcodeFileNameForTask !=null
+							&& activePrintTask == null
 							&& allowRecovery)
 						{
 							// TODO: Fix printerItemID int requirement
@@ -1978,7 +1985,7 @@ You will then need to logout and log back in to the computer for the changes to 
 								PrinterId = this.Printer.Settings.ID.GetHashCode(),
 								PrintName = activePrintItem.PrintItem.Name,
 								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = gcodeFilename,
+								PrintingGCodeFileName = gcodeFileNameForTask,
 								PrintComplete = false
 							};
 
@@ -2171,7 +2178,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		private void CreateStreamProcessors(string gcodeFilename, bool recoveryEnabled)
+		private void CreateStreamProcessors(Stream gcodeStream, bool recoveryEnabled)
 		{
 			secondsSinceUpdateHistory = 0;
 			lineSinceUpdateHistory = 0;
@@ -2181,9 +2188,9 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			GCodeStream accumulatedStream = null;
 
-			if (gcodeFilename != null)
+			if (gcodeStream != null)
 			{
-				gCodeFileSwitcher = new GCodeSwitcher(gcodeFilename, Printer);
+				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
@@ -2220,7 +2227,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
 
-			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			bool enableLineSpliting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSpliting ? 1 : 2000);
 
 			accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
