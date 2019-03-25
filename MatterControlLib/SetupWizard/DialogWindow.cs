@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl
 			this.Padding = new BorderDouble(defaultPadding, defaultPadding, defaultPadding, 2);
 		}
 
+		public bool UseChildWindowSize { get; protected set; } = true;
+
 		public static void Close(Type type)
 		{
 			if (allWindows.TryGetValue(type, out DialogWindow existingWindow))
@@ -159,7 +161,7 @@ namespace MatterHackers.MatterControl
 
 		public static void SetSizeAndShow(DialogWindow dialogWindow, DialogPage wizardPage)
 		{
-			if (dialogWindow.Size == Vector2.Zero 
+			if (dialogWindow.UseChildWindowSize 
 				&& wizardPage.WindowSize != Vector2.Zero)
 			{
 				dialogWindow.Size = wizardPage.WindowSize;

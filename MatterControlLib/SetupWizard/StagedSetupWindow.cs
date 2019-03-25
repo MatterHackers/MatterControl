@@ -132,6 +132,10 @@ namespace MatterHackers.MatterControl
 
 			this.Title = title;
 			this.Size = new Vector2(1200, 700);
+
+			// Multi-part wizard should not try to resize per page
+			this.UseChildWindowSize = false;
+
 			this.AddChild(row);
 		}
 
