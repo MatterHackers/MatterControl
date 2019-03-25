@@ -39,9 +39,9 @@ namespace MatterHackers.MatterControl
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
-		public List<string> PrinterLines = new List<string>();
+		public List<(string line, bool output)> PrinterLines = new List<(string line, bool output)>();
 
-		public RootedObjectEventHandler HasChanged = new RootedObjectEventHandler();
+		public event EventHandler<(string line, bool output)> HasChanged;
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
 		public TerminalLog(PrinterConnection printerConnection)
@@ -59,9 +59,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void OnHasChanged(EventArgs e)
+		private void OnHasChanged((string line, bool output) lineData)
 		{
-			HasChanged.CallEvents(this, e);
+			HasChanged?.Invoke(this, lineData);
 			if (PrinterLines.Count > maxLinesToBuffer)
 			{
 				Clear();
@@ -70,25 +70,30 @@ namespace MatterHackers.MatterControl
 
 		private void Printer_LineReceived(object sender, string line)
 		{
-			PrinterLines.Add(line);
-			OnHasChanged(new StringEventArgs("<-" + line));
+			PrinterLines.Add((line, false));
+			OnHasChanged((line, false));
 		}
 
 		private void Printer_LineSent(object sender, string line)
 		{
-			PrinterLines.Add(line);
-			OnHasChanged(new StringEventArgs("->" + line));
+			PrinterLines.Add((line, true));
+			OnHasChanged((line, true));
 		}
 
 		public void WriteLine(string line)
 		{
-			PrinterLines.Add(line);
-			OnHasChanged(new StringEventArgs(line));
+			this.WriteLine((line, true));
+		}
+
+		public void WriteLine((string line, bool output) lineData)
+		{
+			PrinterLines.Add(lineData);
+			OnHasChanged(lineData);
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
 		{
-			OnHasChanged(null);
+			OnHasChanged((null, true));
 
 			if (e is ConnectFailedEventArgs args)
 			{
@@ -113,12 +118,12 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 
-				PrinterLines.Add("Connection Failed".Localize() + ": " + message);
+				PrinterLines.Add(("Connection Failed".Localize() + ": " + message, true));
 			}
 
 			StringEventArgs eventArgs = new StringEventArgs("Lost connection to printer.");
-			PrinterLines.Add(eventArgs.Data);
-			OnHasChanged(eventArgs);
+			PrinterLines.Add((eventArgs.Data, true));
+			OnHasChanged((eventArgs.Data, true));
 		}
 
 		public void Clear()
@@ -128,7 +133,7 @@ namespace MatterHackers.MatterControl
 				PrinterLines.Clear();
 			}
 
-			OnHasChanged(null);
+			OnHasChanged((null, true));
 		}
 	}
 }

@@ -128,8 +128,13 @@ namespace MatterControl.Printing
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, int startIndex = 0, string stopCheckingString = ";")
 		{
+			return GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref readValue, out _, startIndex, stopCheckingString);
+		}
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
+		{
 			double doubleValue = readValue;
-			if(GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, startIndex, stopCheckingString))
+			if(GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, out numberEnd, startIndex, stopCheckingString))
 			{
 				readValue = (int)doubleValue;
 				return true;
@@ -140,6 +145,11 @@ namespace MatterControl.Printing
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0, string stopCheckingString = ";")
 		{
+			return GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref readValue, out _, startIndex, stopCheckingString);
+		}
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
+		{
 			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, Math.Min(stringWithNumber.Length, startIndex));
 			int stopPos = stringWithNumber.IndexOf(stopCheckingString);
 			if (stringPos != -1
@@ -147,10 +157,12 @@ namespace MatterControl.Printing
 			{
 				stringPos += stringToCheckAfter.Length;
 				readValue = agg_basics.ParseDouble(stringWithNumber, ref stringPos, true);
+				numberEnd = stringPos;
 
 				return true;
 			}
 
+			numberEnd = -1;
 			return false;
 		}
 

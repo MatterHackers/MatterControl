@@ -30,21 +30,27 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
 	public class TerminalWidget : FlowLayoutWidget, ICloseableTab
 	{
-		private CheckBox filterOutput;
 		private CheckBox autoUppercase;
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
 		private PrinterConfig printer;
+		private string writeFailedWaring = "WARNING: Write Failed!".Localize();
+		private string cantAccessPath = "Can't access '{0}'.".Localize();
+
+		private List<string> commandHistory = new List<string>();
+		private int commandHistoryIndex = 0;
 
 		public TerminalWidget(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -61,32 +67,14 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(headerRow);
 
-			filterOutput = new CheckBox("Filter Output".Localize(), textSize: theme.DefaultFontSize)
-			{
-				TextColor = theme.TextColor,
-				VAnchor = VAnchor.Bottom,
-			};
-			filterOutput.CheckedStateChanged += (s, e) =>
-			{
-				if (filterOutput.Checked)
-				{
-					textScrollWidget.SetLineStartFilter(new string[] { "<-wait", "<-ok", "<-T" });
-				}
-				else
-				{
-					textScrollWidget.SetLineStartFilter(null);
-				}
-
-				UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalFilterOutput, filterOutput.Checked);
-			};
-			headerRow.AddChild(filterOutput);
+			headerRow.AddChild(CreateFilterOptions(theme));
 
 			autoUppercase = new CheckBox("Auto Uppercase".Localize(), textSize: theme.DefaultFontSize)
 			{
 				Margin = new BorderDouble(left: 25),
 				Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalAutoUppercase, true),
 				TextColor = theme.TextColor,
-				VAnchor = VAnchor.Bottom
+				VAnchor = VAnchor.Center
 			};
 			autoUppercase.CheckedStateChanged += (s, e) =>
 			{
@@ -119,6 +107,72 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.SlightShade,
 				Margin = 0
 			});
+
+			textScrollWidget.LineFilterFunction = lineData =>
+			{
+				var line = lineData.line;
+				var lineWithoutChecksum = line;
+				var outputLine = line;
+
+				if (lineWithoutChecksum.StartsWith("N"))
+				{
+					int lineNumber = 0;
+					if (GCodeFile.GetFirstNumberAfter("N", lineWithoutChecksum, ref lineNumber, out int numberEnd))
+					{
+						lineWithoutChecksum = lineWithoutChecksum.Substring(numberEnd).Trim();
+						int checksumStart = lineWithoutChecksum.IndexOf('*');
+						if (checksumStart != -1)
+						{
+							lineWithoutChecksum = lineWithoutChecksum.Substring(0, checksumStart);
+							// and set this as the output if desired
+							if(!UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true))
+							{
+								outputLine = lineWithoutChecksum;
+							}
+						}
+					}
+				}
+
+				if (lineWithoutChecksum.StartsWith("ok")
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowOks, true))
+				{
+					return null;
+				}
+				else if (lineWithoutChecksum.StartsWith("M105")
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempRequests, true))
+				{
+					return null;
+				}
+				else if ((lineWithoutChecksum.StartsWith("G0 ") || lineWithoutChecksum.StartsWith("G1 "))
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowMovementRequests, true))
+				{
+					return null;
+				}
+				else if (( lineWithoutChecksum.StartsWith("T") || lineWithoutChecksum.StartsWith("ok T"))
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempResponse, true))
+				{
+					return null;
+				}
+				else if (lineWithoutChecksum.StartsWith("wait")
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, true))
+				{
+					return null;
+				}
+
+				if (UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true))
+				{
+					if (lineData.output)
+					{
+						outputLine = "->" + outputLine;
+					}
+					else
+					{
+						outputLine = "<-" + outputLine;
+					}
+				}
+
+				return outputLine;
+			};
 
 			// Input Row
 			var inputRow = new FlowLayoutWidget(FlowDirection.LeftToRight)
@@ -228,10 +282,10 @@ namespace MatterHackers.MatterControl
 									{
 										Debug.Print(ex.Message);
 
-										printer.Connection.TerminalLog.PrinterLines.Add("");
-										printer.Connection.TerminalLog.PrinterLines.Add(writeFaildeWaring);
-										printer.Connection.TerminalLog.PrinterLines.Add(cantAccessPath.FormatWith(filePathToSave));
-										printer.Connection.TerminalLog.PrinterLines.Add("");
+										printer.Connection.TerminalLog.PrinterLines.Add(("", true));
+										printer.Connection.TerminalLog.PrinterLines.Add((writeFailedWaring, true));
+										printer.Connection.TerminalLog.PrinterLines.Add((cantAccessPath.FormatWith(filePathToSave), true));
+										printer.Connection.TerminalLog.PrinterLines.Add(("", true));
 
 										UiThread.RunOnIdle(() =>
 										{
@@ -250,20 +304,83 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 		}
 
-#if !__ANDROID__
-		public override void OnLoad(EventArgs args)
+		private GuiWidget CreateFilterOptions(ThemeConfig theme)
 		{
-			filterOutput.Checked = UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalFilterOutput, false);
-			UiThread.RunOnIdle(manualCommandTextEdit.Focus);
-			base.OnLoad(args);
+			var filterOptionsButton = new PopupMenuButton("Filter Options", theme)
+			{
+				VAnchor = VAnchor.Center
+			};
+
+			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+			filterOptionsButton.PopupContent = popupMenu;
+
+			// put in options for filtering various output
+			popupMenu.CreateBoolMenuItem(
+				"Show 'Ok' response".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowOks, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowOks, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Checksum".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowChecksum, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show In / Out Indicators".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowInputOutputMarks, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Temperature Requests".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempRequests, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowTempRequests, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Movement Requests".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowMovementRequests, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowMovementRequests, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Temperature Responses".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempResponse, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowTempResponse, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"Show Wait Responses".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowWaitResponse, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			return filterOptionsButton;
 		}
-#endif
-
-		string writeFaildeWaring = "WARNING: Write Failed!".Localize();
-		string cantAccessPath = "Can't access '{0}'.".Localize();
-
-		private List<string> commandHistory = new List<string>();
-		private int commandHistoryIndex = 0;
 
 		private void SendManualCommand()
 		{

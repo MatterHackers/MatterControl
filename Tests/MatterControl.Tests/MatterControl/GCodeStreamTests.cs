@@ -783,6 +783,7 @@ namespace MatterControl.Tests.MatterControl
 			
 			// start a print
 			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", inputGCode)));
+			printer.Connection.CommunicationState = MatterHackers.MatterControl.PrinterCommunication.CommunicationStates.PreparingToPrint;
 			await printer.Connection.StartPrint(inputStream);
 
 			// wait for the print to finish (or 3 minutes to pass)

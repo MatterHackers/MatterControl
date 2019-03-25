@@ -1964,34 +1964,37 @@ You will then need to logout and log back in to the computer for the changes to 
 
 				case CommunicationStates.PreparingToPrint:
 					{
-						string filePath = this.Printer.Bed.EditContext.SourceFilePath;
-						string fileName = Path.GetFileName(filePath);
-
-						var activePrintItem = new PrintItemWrapper(new PrintItem(fileName, filePath));
-
-						if (activePrintItem.PrintItem.Id == 0)
+						if (gcodeFileNameForTask != null)
 						{
-							activePrintItem.PrintItem.Commit();
-						}
+							string filePath = this.Printer.Bed.EditContext.SourceFilePath;
+							string fileName = Path.GetFileName(filePath);
 
-						if (gcodeFileNameForTask !=null
-							&& activePrintTask == null
-							&& allowRecovery)
-						{
-							// TODO: Fix printerItemID int requirement
-							activePrintTask = new PrintTask
+							var activePrintItem = new PrintItemWrapper(new PrintItem(fileName, filePath));
+
+							if (activePrintItem.PrintItem.Id == 0)
 							{
-								PrintStart = DateTime.Now,
-								PrinterId = this.Printer.Settings.ID.GetHashCode(),
-								PrintName = activePrintItem.PrintItem.Name,
-								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = gcodeFileNameForTask,
-								PrintComplete = false
-							};
+								activePrintItem.PrintItem.Commit();
+							}
 
-							activePrintTask.Commit();
+							if (gcodeFileNameForTask != null
+								&& activePrintTask == null
+								&& allowRecovery)
+							{
+								// TODO: Fix printerItemID int requirement
+								activePrintTask = new PrintTask
+								{
+									PrintStart = DateTime.Now,
+									PrinterId = this.Printer.Settings.ID.GetHashCode(),
+									PrintName = activePrintItem.PrintItem.Name,
+									PrintItemId = activePrintItem.PrintItem.Id,
+									PrintingGCodeFileName = gcodeFileNameForTask,
+									PrintComplete = false
+								};
 
-							Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+								activePrintTask.Commit();
+
+								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+							}
 						}
 					}
 
