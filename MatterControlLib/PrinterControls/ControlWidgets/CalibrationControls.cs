@@ -36,6 +36,7 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
@@ -74,6 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					{
 						DialogWindow.Show(
 							"Printer Calibration",
+							new Vector2(1200, 700),
 							new ISetupWizard[]
 							{
 								new PrintLevelingWizard(printer),

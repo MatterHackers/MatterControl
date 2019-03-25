@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
-		public static DialogWindow Show(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		public static DialogWindow Show(string title, Vector2 windowSize, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
 		{
 			var wizardStages = stages.ToList();
 			var type = homePageGenerator.GetType();
@@ -97,6 +97,8 @@ namespace MatterHackers.MatterControl
 			var wizardWindow = new StagedSetupWindow(title, stages, homePageGenerator);
 			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 			allWindows[type] = wizardWindow;
+
+			wizardWindow.Size = windowSize;
 
 			SetSizeAndShow(wizardWindow, homePage);
 

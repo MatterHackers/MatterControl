@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -131,7 +130,6 @@ namespace MatterHackers.MatterControl
 			});
 
 			this.Title = title;
-			this.Size = new Vector2(1200, 700);
 
 			// Multi-part wizard should not try to resize per page
 			this.UseChildWindowSize = false;
