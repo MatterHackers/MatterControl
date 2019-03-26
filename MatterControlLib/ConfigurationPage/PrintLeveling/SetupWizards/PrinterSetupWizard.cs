@@ -75,6 +75,8 @@ namespace MatterHackers.MatterControl
 			pages = this.GetPages();
 		}
 
-		public abstract void Dispose();
+		public virtual void Dispose()
+		{
+		}
 	}
 }

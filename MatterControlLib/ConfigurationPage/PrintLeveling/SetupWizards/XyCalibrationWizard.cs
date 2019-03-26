@@ -60,10 +60,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated);
 		}
 
-		public override void Dispose()
-		{
-		}
-
 		public static bool UsingZProbe(PrinterConfig printer)
 		{
 			var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
