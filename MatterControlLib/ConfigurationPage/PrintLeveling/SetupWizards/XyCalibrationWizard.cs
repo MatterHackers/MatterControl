@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -37,6 +39,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
+		private EditContext originalEditContext;
+
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
@@ -82,10 +86,29 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
+		public async override void Dispose()
+		{
+			if (originalEditContext != null
+				&& printer.Bed.EditContext != originalEditContext)
+			{
+				await printer.Bed.LoadContent(originalEditContext);
+			}
+
+			base.Dispose();
+		}
+
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new XyCalibrationSelectPage(this);
 			yield return new XyCalibrationStartPrintPage(this);
+
+			originalEditContext = printer.Bed.EditContext;
+
+			Task.Run(() =>
+			{
+				printer.Bed.SaveChanges(null, CancellationToken.None);
+			});
+
 			yield return new XyCalibrationCollectDataPage(this);
 			yield return new XyCalibrationDataRecieved(this);
 			

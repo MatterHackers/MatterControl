@@ -147,6 +147,10 @@ namespace MatterHackers.MatterControl
 			{
 				// Load last item or fall back to empty if unsuccessful
 				var content = await editContext.SourceItem.CreateContent(null) ?? new Object3D();
+
+				loadedGCode = null;
+				this.GCodeRenderer = null;
+
 				this.Scene.Load(content);
 			}
 
