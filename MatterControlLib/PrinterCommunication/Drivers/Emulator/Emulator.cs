@@ -280,9 +280,9 @@ namespace MatterHackers.PrinterEmulator
 				shuttingDown = true;
 
 				HeatedBed.Stop();
-				foreach (var extuder in Extruders)
+				foreach (var extruder in Extruders)
 				{
-					extuder.Stop();
+					extruder.Stop();
 				}
 			}
 		}

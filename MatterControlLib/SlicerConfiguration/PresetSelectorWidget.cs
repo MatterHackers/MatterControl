@@ -289,12 +289,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					else // try to find the right material based on the extruders temperature
 					{
 						settingsKey = null;
-						var extuderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature1).ToString();
+						var extruderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature1).ToString();
 						foreach(var materialLayer in printer.Settings.MaterialLayers)
 						{
 							if(materialLayer.TryGetValue(SettingsKey.temperature, out string _temp))
 							{
-								if(_temp == extuderTemp)
+								if(_temp == extruderTemp)
 								{
 									settingsKey = materialLayer.LayerID;
 								}
