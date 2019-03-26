@@ -90,25 +90,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		static PrinterSettings()
 		{
-			// Load settings
-			PrinterSettings.SettingsData = LoadAllSettings();
+			// Convert settings array into dictionary on initial load using settings key (SlicerConfigName)
+			PrinterSettings.SettingsData = SliceSettingsFields.AllSettings().ToDictionary(s => s.SlicerConfigName);
 
 			PrinterSettings.Layout = new SettingsLayout();
 
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
-		}
-
-		private static Dictionary<string, SliceSettingData> LoadAllSettings()
-		{
-			var settings = new Dictionary<string, SliceSettingData>();
-
-			foreach (var settingsData in SliceSettingsFields.AllSettings())
-			{
-				settings.Add(settingsData.SlicerConfigName, settingsData);
-			}
-
-			return settings;
 		}
 
 		//static SettingsOrganizerValidateAgainstJson()
