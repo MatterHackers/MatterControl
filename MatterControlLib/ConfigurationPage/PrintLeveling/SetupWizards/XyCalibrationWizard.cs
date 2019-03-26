@@ -92,23 +92,4 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 	}
-
-	public class XyCalibrationData
-	{
-		public XyCalibrationData(int extruderToCalibrateIndex)
-		{
-			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
-		}
-
-		public int ExtruderToCalibrateIndex { get; private set; }
-		public enum QualityType { Coarse, Normal, Fine }
-		public QualityType Quality { get; set; } = QualityType.Normal;
-		/// <summary>
-		/// The index of the calibration print that was picked
-		/// </summary>
-		public int XPick { get; set; } = -1;
-		public int YPick { get; set; } = -1;
-		public double Offset { get; set; } = .1;
-		public bool PrintAgain { get; set; }
-	}
 }
