@@ -86,10 +86,6 @@
       <Project>{93bebfdf-b81a-4344-ab82-0dbf58b234cd}</Project>
       <Name>MatterControlLib</Name>
     </ProjectReference>
-    <ProjectReference Include="PluginSystem\MatterControlPluginSystem.csproj">
-      <Project>{865172a0-a1a9-49c2-9386-f2fdb4e141b7}</Project>
-      <Name>MatterControlPluginSystem</Name>
-    </ProjectReference>
     <ProjectReference Include="PrinterDriverInstaller\InfInstaller.csproj">
       <Project>{990a9ad3-b6a4-407b-9dfc-9c722af7c9b9}</Project>
       <Name>InfInstaller</Name>

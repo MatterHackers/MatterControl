@@ -76,9 +76,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Community.CsharpSqlite\Community.CsharpSqlite.csproj">
       <Project>{f1653f20-d47d-4f29-8c55-3c835542af5f}</Project>
       <Name>Community.CsharpSqlite</Name>
