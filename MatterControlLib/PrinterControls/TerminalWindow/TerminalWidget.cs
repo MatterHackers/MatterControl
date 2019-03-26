@@ -111,26 +111,14 @@ namespace MatterHackers.MatterControl
 			textScrollWidget.LineFilterFunction = lineData =>
 			{
 				var line = lineData.line;
-				var lineWithoutChecksum = line;
 				var outputLine = line;
 
-				if (lineWithoutChecksum.StartsWith("N"))
+				var lineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(line);
+
+				// and set this as the output if desired
+				if (!UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true))
 				{
-					int lineNumber = 0;
-					if (GCodeFile.GetFirstNumberAfter("N", lineWithoutChecksum, ref lineNumber, out int numberEnd))
-					{
-						lineWithoutChecksum = lineWithoutChecksum.Substring(numberEnd).Trim();
-						int checksumStart = lineWithoutChecksum.IndexOf('*');
-						if (checksumStart != -1)
-						{
-							lineWithoutChecksum = lineWithoutChecksum.Substring(0, checksumStart);
-							// and set this as the output if desired
-							if(!UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true))
-							{
-								outputLine = lineWithoutChecksum;
-							}
-						}
-					}
+					outputLine = lineWithoutChecksum;
 				}
 
 				if (lineWithoutChecksum.StartsWith("ok")

@@ -59,7 +59,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		private enum State
-		{ Passthrough, WaitingForBedTemp, WaitingForT0Temp, WaitingForT1Temp };
+		{
+			Passthrough,
+			WaitingForBedTemp,
+			WaitingForT0Temp,
+			WaitingForT1Temp
+		};
 
 		public bool HeatingBed { get { return state == State.WaitingForBedTemp; } }
 		public bool HeatingT0 { get { return state == State.WaitingForT0Temp; } }

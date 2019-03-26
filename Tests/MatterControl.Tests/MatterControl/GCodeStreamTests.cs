@@ -565,10 +565,11 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public void ToolChangeNoHeatNoExtrusion()
+		public Task ToolChangeNoHeatNoExtrusion()
 		{
 			string[] inputLines = new string[]
 			{
+				"T0",
 				// send some movement comands with tool switching
 				"; the printer is moving normally",
 				"G1 X10 Y10 Z10 E0 F2500",
@@ -583,37 +584,33 @@ namespace MatterControl.Tests.MatterControl
 
 			string[] expected = new string[]
 			{
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				// the code to switch to t1
-				"; waiting for move on T1",
-				"",
-				"; simulated before toolchange 1 gcode",
-				"T1",
-				"; COMPLEATED_BEFORE_GCODE",
-				"; simulated after toolchange 1 gcode",
-				"G1 X9 Y8 Z7 F3000", // the F comes from the x movement speed
-				"G1 X9 Y8 Z7 F315", // the F comes from the z movement speed
-				"G1 X9 Y8 Z7 F2500", // restore the feedrate
-				"G1 X9 Y8 Z7",
-				// the code to switch back to t0
-				"; waiting for move on T0",
-				"",
-				"; simulated before toolchange gcode",
+				"M114",
 				"T0",
-				"; COMPLEATED_BEFORE_GCODE",
-				"; simulated after toolchange gcode",
-				"G1 F3000", // the F comes from the x movement speed
-				"G1 F315", // the F comes from the z movement speed
-				"G1 F2500", // restore the feedrate
+				"M114",
+				"G1 X10 Y10 Z10 F2500",
+				"G1 Y111",
+				"T1",
+				"M114", // after a tool change we inject an M114
+				"G1 Y220",
+				"G1 X9 Y8 F3000",
+				"G1 Z7 F315",
+				"G1 F2500", // 11
 				"G1",
+				"G1 X332",
+				"T0", // 14
+				"M114",
+				"G1 X444",
+				"G1 X10 Y10 F3000",
+				"G1 Z10 F315",
+				"G1 F2500",
+				"G1",
+				"Communication State: FinishedPrint",
 				null,
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-
-			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-			ValidateStreamResponse(expected, testStream);
+			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
+			return Task.CompletedTask;
 		}
 
 		[Test, Category("GCodeStream")]
@@ -669,9 +666,7 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-
 			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
-
 			return Task.CompletedTask;
 		}
 
@@ -688,11 +683,11 @@ namespace MatterControl.Tests.MatterControl
 
 			printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 
-			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "; simulated after toolchange gcode");
-			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "; simulated after toolchange 1 gcode");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "G1 X333");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "G1 X444");
 
-			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "; simulated before toolchange gcode");
-			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "; simulated before toolchange 1 gcode");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "G1 Y111");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "G1 Y222");
 
 			// set some data for T1
 			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
@@ -766,7 +761,8 @@ namespace MatterControl.Tests.MatterControl
 				if (printer.Connection.Printing)
 				{
 					string expectedLine = expected[expectedIndex++];
-					Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+					var actualLineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(actualLine);
+					Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
 				}
 			};
 
@@ -788,15 +784,13 @@ namespace MatterControl.Tests.MatterControl
 
 			// wait for the print to finish (or 3 minutes to pass)
 			time = Stopwatch.StartNew();
-			while(//printer.Connection.Printing
-				//&& 
-				time.ElapsedMilliseconds < (1000 * 60 * 3))
+			while(printer.Connection.Printing
+				&& time.ElapsedMilliseconds < (1000 * 60 * 3))
 			{
 				Thread.Sleep(1000);
-				//printer.Connection.upda
 			}
 
-			Assert.AreEqual(expectedIndex, expected.Length, "We should have seen all the expected lines");
+			Assert.AreEqual(expectedIndex + 1, expected.Length, "We should have seen all the expected lines");
 		}
 
 		private static void Connection_LineReceived(object sender, string e)

@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler BedTemperatureRead;
 
 		public event EventHandler CommunicationStateChanged;
-		
+
 		public event EventHandler DetailedPrintingStateChanged;
 
 		public event EventHandler ConnectionFailed;
@@ -423,23 +423,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// PrinterSettings/Options {{
 
-		public int BaudRate { get; set; } = 250000;
+		public int BaudRate
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
+				{
+					return 250000;
+				}
 
-		public double FeedRateRatio { get; set; } = 1;
+				return Printer.Settings.GetValue<int>(SettingsKey.baud_rate);
+			}
+		}
 
-		public string ConnectGCode { get; set; } = "";
+		public double FeedRateRatio => Printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 
-		public string CancelGCode { get; set; } = "";
+		public string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
 
-		public int ExtruderCount { get; set; }
+		public string CancelGCode => Printer.Settings.GetValue(SettingsKey.cancel_gcode);
 
-		public bool SendWithChecksum { get; set; }
+		public int ExtruderCount => Printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
-		public bool EnableNetworkPrinting { get; set; }
+		public bool SendWithChecksum => Printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
 
-		public bool AutoReleaseMotors { get; set; }
+		public bool EnableNetworkPrinting => Printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
 
-		public bool RecoveryIsEnabled { get; set; }
+		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
+
+		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
 		public string LastPrintedItemName { get; private set; } = "";
 		public string PrintingItemName { get; set; } = "";
 
@@ -448,12 +459,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private string _readLineReplacementString = "";
 		public string ReadLineReplacementString
 		{
-			get => _readLineReplacementString;
-			set
+			get
 			{
-				if (value != _readLineReplacementString)
+				var readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
+				if(readRegEx != _readLineReplacementString)
 				{
-					_readLineReplacementString = value;
+					_readLineReplacementString = readRegEx;
 
 					// Clear and rebuild the replacement list
 					readLineReplacements.Clear();
@@ -469,6 +480,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 					}
 				}
+
+				return _readLineReplacementString;
 			}
 		}
 
@@ -527,7 +540,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					LineSent?.Invoke(this, string.Format("Communication State: {0}\n", value));
+					LineSent?.Invoke(this, string.Format("Communication State: {0}", value));
 
 					switch (communicationState)
 					{
@@ -564,7 +577,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timePrinting.Stop();
-									PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
+									{
+										PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+									}
 								}
 								else
 								{

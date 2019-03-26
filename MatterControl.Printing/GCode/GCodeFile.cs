@@ -131,6 +131,25 @@ namespace MatterControl.Printing
 			return GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref readValue, out _, startIndex, stopCheckingString);
 		}
 
+		public static string GetLineWithoutChecksum(string inLine)
+		{
+			if (inLine.StartsWith("N"))
+			{
+				int lineNumber = 0;
+				if (GCodeFile.GetFirstNumberAfter("N", inLine, ref lineNumber, out int numberEnd))
+				{
+					var outLine = inLine.Substring(numberEnd).Trim();
+					int checksumStart = outLine.IndexOf('*');
+					if (checksumStart != -1)
+					{
+						return outLine.Substring(0, checksumStart);
+					}
+				}
+			}
+
+			return inLine;
+		}
+
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
 		{
 			double doubleValue = readValue;
