@@ -37,17 +37,15 @@ using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using static MatterHackers.MatterControl.ConfigurationPage.PrintLeveling.XyCalibrationWizard;
 
 namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationStartPrintPage : WizardPage
 	{
-		private XyCalibrationData xyCalibrationData;
-
-		public XyCalibrationStartPrintPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
-			: base(setupWizard)
+		public XyCalibrationStartPrintPage(XyCalibrationWizard calibrationWizard, PrinterConfig printer)
+			: base(calibrationWizard)
 		{
-			this.xyCalibrationData = xyCalibrationData;
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize();
 			this.Name = "Nozzle Offset Calibration Wizard";
@@ -71,7 +69,7 @@ namespace MatterHackers.MatterControl
 				var scene = new Object3D();
 
 				// create the calibration objects
-				IObject3D item = CreateCalibrationObject(printer, xyCalibrationData);
+				IObject3D item = CreateCalibrationObject(printer, calibrationWizard);
 
 				// add the calibration object to the bed
 				scene.Children.Add(item);
@@ -162,33 +160,27 @@ namespace MatterHackers.MatterControl
 			RestoreBedAndClearPrinterCallbacks();
 		}
 
-		private static IObject3D CreateCalibrationObject(PrinterConfig printer, XyCalibrationData xyCalibrationData)
+		private static IObject3D CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)
 		{
-			IObject3D item;
 			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
-			switch (xyCalibrationData.Quality)
-			{
-				case XyCalibrationData.QualityType.Coarse:
-					item = XyCalibrationTabObject3D.Create(1,
-						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
-						xyCalibrationData.Offset,
-						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
-					break;
 
-				case XyCalibrationData.QualityType.Normal:
-				case XyCalibrationData.QualityType.Fine:
+			switch (calibrationWizard.Quality)
+			{
+				case QualityType.Coarse:
+					return XyCalibrationTabObject3D.Create(1,
+						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
+						calibrationWizard.Offset,
+						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
+
 				default:
-					item = XyCalibrationFaceObject3D.Create(1,
+					return XyCalibrationFaceObject3D.Create(1,
 						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
 						layerHeight,
-						xyCalibrationData.Offset,
+						calibrationWizard.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
 						6).GetAwaiter().GetResult();
-					break;
 			}
-
-			return item;
 		}
 	}
 }

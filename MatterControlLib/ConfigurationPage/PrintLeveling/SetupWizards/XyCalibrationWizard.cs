@@ -37,15 +37,28 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
-		private int extruderToCalibrateIndex;
-
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
-			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
+			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
+
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 		}
+
+		public enum QualityType { Coarse, Normal, Fine }
+
+		public int ExtruderToCalibrateIndex { get; }
+
+		public QualityType Quality { get; set; } = QualityType.Normal;
+
+		/// <summary>
+		/// The index of the calibration print that was picked
+		/// </summary>
+		public int XPick { get; set; } = -1;
+		public int YPick { get; set; } = -1;
+		public double Offset { get; set; } = .1;
+		public bool PrintAgain { get; set; }
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
@@ -71,19 +84,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			var wizardState = new XyCalibrationData(extruderToCalibrateIndex);
-
-			yield return new XyCalibrationSelectPage(this, printer, wizardState);
-			yield return new XyCalibrationStartPrintPage(this, printer, wizardState);
-			yield return new XyCalibrationCollectDataPage(this, printer, wizardState);
-			yield return new XyCalibrationDataRecieved(this, printer, wizardState);
+			yield return new XyCalibrationSelectPage(this, printer);
+			yield return new XyCalibrationStartPrintPage(this, printer);
+			yield return new XyCalibrationCollectDataPage(this, printer);
+			yield return new XyCalibrationDataRecieved(this, printer);
 			
 			// loop until we are done calibrating
-			while (wizardState.PrintAgain)
+			while (this.PrintAgain)
 			{
-				yield return new XyCalibrationStartPrintPage(this, printer, wizardState);
-				yield return new XyCalibrationCollectDataPage(this, printer, wizardState);
-				yield return new XyCalibrationDataRecieved(this, printer, wizardState);
+				yield return new XyCalibrationStartPrintPage(this, printer);
+				yield return new XyCalibrationCollectDataPage(this, printer);
+				yield return new XyCalibrationDataRecieved(this, printer);
 			}
 		}
 	}
