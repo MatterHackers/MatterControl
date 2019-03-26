@@ -187,13 +187,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var offsetsVector3 = new List<Vector3>();
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
-			var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
 
 			foreach (string offset in offsets)
 			{
 				string[] xyz = offset.Split('x');
 				if (xyz.Length == 2)
 				{
+					var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
 					offsetsVector3.Add(new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), -zOffset));
 				}
 				else
@@ -202,9 +202,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			if (offsetsVector3.Count < extruderIndex)
+			while (offsetsVector3.Count < extruderIndex)
 			{
-				offsetsVector3.Add(new Vector3(0, 0, -zOffset));
+				offsetsVector3.Add(Vector3.Zero);
 			}
 
 			offsetsVector3[extruderIndex] = newOffset;
@@ -230,14 +230,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string currentOffsets = printerSettings.GetValue(SettingsKey.extruder_offset);
 			string[] offsets = currentOffsets.Split(',');
 			int count = 0;
-			var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
+
 			foreach (string offset in offsets)
 			{
 				if (count == extruderIndex)
 				{
 					string[] xyz = offset.Split('x');
+
 					if (xyz.Length == 2)
 					{
+						// Import deprecated z_offset data if missing
+						var zOffset = printerSettings.GetValue<double>(SettingsKey.z_offset);
 						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), -zOffset);
 					}
 					else
