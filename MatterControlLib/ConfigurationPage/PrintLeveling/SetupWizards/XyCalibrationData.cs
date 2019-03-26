@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public int ExtruderToCalibrateIndex { get; }
 
-
 		public QualityType Quality { get; set; } = QualityType.Normal;
 
 		/// <summary>

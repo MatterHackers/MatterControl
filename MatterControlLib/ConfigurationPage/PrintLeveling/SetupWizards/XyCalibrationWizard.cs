@@ -71,19 +71,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			var xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
+			var wizardState = new XyCalibrationData(extruderToCalibrateIndex);
 
-			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+			yield return new XyCalibrationSelectPage(this, printer, wizardState);
+			yield return new XyCalibrationStartPrintPage(this, printer, wizardState);
+			yield return new XyCalibrationCollectDataPage(this, printer, wizardState);
+			yield return new XyCalibrationDataRecieved(this, printer, wizardState);
 			
 			// loop until we are done calibrating
-			while (xyCalibrationData.PrintAgain)
+			while (wizardState.PrintAgain)
 			{
-				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-				yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
-				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+				yield return new XyCalibrationStartPrintPage(this, printer, wizardState);
+				yield return new XyCalibrationCollectDataPage(this, printer, wizardState);
+				yield return new XyCalibrationDataRecieved(this, printer, wizardState);
 			}
 		}
 	}
