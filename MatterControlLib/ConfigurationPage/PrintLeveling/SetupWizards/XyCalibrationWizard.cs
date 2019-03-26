@@ -38,7 +38,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
 		private int extruderToCalibrateIndex;
-		private XyCalibrationData xyCalibrationData;
 
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
@@ -72,7 +71,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
+			var xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
 
 			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
 			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
