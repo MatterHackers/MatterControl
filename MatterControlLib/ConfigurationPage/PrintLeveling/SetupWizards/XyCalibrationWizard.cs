@@ -84,17 +84,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			yield return new XyCalibrationSelectPage(this, printer);
-			yield return new XyCalibrationStartPrintPage(this, printer);
-			yield return new XyCalibrationCollectDataPage(this, printer);
-			yield return new XyCalibrationDataRecieved(this, printer);
+			yield return new XyCalibrationSelectPage(this);
+			yield return new XyCalibrationStartPrintPage(this);
+			yield return new XyCalibrationCollectDataPage(this);
+			yield return new XyCalibrationDataRecieved(this);
 			
 			// loop until we are done calibrating
 			while (this.PrintAgain)
 			{
-				yield return new XyCalibrationStartPrintPage(this, printer);
-				yield return new XyCalibrationCollectDataPage(this, printer);
-				yield return new XyCalibrationDataRecieved(this, printer);
+				yield return new XyCalibrationStartPrintPage(this);
+				yield return new XyCalibrationCollectDataPage(this);
+				yield return new XyCalibrationDataRecieved(this);
 			}
 		}
 	}

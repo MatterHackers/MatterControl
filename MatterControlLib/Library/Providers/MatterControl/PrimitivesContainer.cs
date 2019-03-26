@@ -35,6 +35,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -56,6 +57,12 @@ namespace MatterHackers.MatterControl.Library
 					() => "Cube".Localize(),
 					async () => await CubeObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+#if DEBUG
+				new GeneratorItem(
+					() => "Calibration Tab".Localize(),
+					async () => await XyCalibrationTabObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+#endif
 				new GeneratorItem(
 					() => "Pyramid".Localize(),
 					async () => await PyramidObject3D.Create())

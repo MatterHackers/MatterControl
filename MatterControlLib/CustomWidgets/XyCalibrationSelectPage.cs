@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 		private RadioButton normalCalibration;
 		private RadioButton fineCalibration;
 
-		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard, PrinterConfig printer)
+		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();

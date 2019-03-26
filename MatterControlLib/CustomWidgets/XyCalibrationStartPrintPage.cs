@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationStartPrintPage : WizardPage
 	{
-		public XyCalibrationStartPrintPage(XyCalibrationWizard calibrationWizard, PrinterConfig printer)
+		public XyCalibrationStartPrintPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();

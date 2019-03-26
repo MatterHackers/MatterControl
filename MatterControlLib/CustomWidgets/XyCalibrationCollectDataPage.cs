@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 		private bool pageCanceled;
 		private XyCalibrationWizard calibrationWizard;
 
-		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard, PrinterConfig printer)
+		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.calibrationWizard = calibrationWizard;

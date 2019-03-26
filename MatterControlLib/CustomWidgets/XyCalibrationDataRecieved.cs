@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationDataRecieved : WizardPage
 	{
-		public XyCalibrationDataRecieved(XyCalibrationWizard calibrationWizard, PrinterConfig printer)
+		public XyCalibrationDataRecieved(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl
 						{
 							Margin = new Agg.BorderDouble(0, 15, 0, 0)
 						});
+
 						var startFineCalibratingButton = theme.CreateDialogButton("Print Ultra Fine Calibration".Localize());
 						startFineCalibratingButton.HAnchor = HAnchor.Fit | HAnchor.Right;
 						startFineCalibratingButton.VAnchor = VAnchor.Absolute;
