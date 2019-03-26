@@ -27,19 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class XyCalibrationData
 	{
+		public enum QualityType { Coarse, Normal, Fine }
+
 		public XyCalibrationData(int extruderToCalibrateIndex)
 		{
 			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
 		}
 
-		public int ExtruderToCalibrateIndex { get; private set; }
-		public enum QualityType { Coarse, Normal, Fine }
+		public int ExtruderToCalibrateIndex { get; }
+
+
 		public QualityType Quality { get; set; } = QualityType.Normal;
+
 		/// <summary>
 		/// The index of the calibration print that was picked
 		/// </summary>
