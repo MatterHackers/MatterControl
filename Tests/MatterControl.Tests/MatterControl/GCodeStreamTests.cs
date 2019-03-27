@@ -824,8 +824,8 @@ namespace MatterControl.Tests.MatterControl
 					{
 						int a = 0;
 					}
-					Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
-					//Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
+					//Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
+					Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
 				}
 			};
 

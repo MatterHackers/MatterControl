@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -69,7 +70,7 @@ namespace MatterHackers.MatterControl
 				var scene = new Object3D();
 
 				// create the calibration objects
-				IObject3D item = CreateCalibrationObject(printer, calibrationWizard);
+				IObject3D item = await CreateCalibrationObject(printer, calibrationWizard);
 
 				// add the calibration object to the bed
 				scene.Children.Add(item);
@@ -160,26 +161,26 @@ namespace MatterHackers.MatterControl
 			RestoreBedAndClearPrinterCallbacks();
 		}
 
-		private static IObject3D CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)
+		private static async Task<IObject3D> CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)
 		{
 			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
 
 			switch (calibrationWizard.Quality)
 			{
 				case QualityType.Coarse:
-					return XyCalibrationTabObject3D.Create(1,
+					return await XyCalibrationTabObject3D.Create(1,
 						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
 						calibrationWizard.Offset,
-						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter)).GetAwaiter().GetResult();
+						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 				default:
-					return XyCalibrationFaceObject3D.Create(1,
+					return await XyCalibrationFaceObject3D.Create(1,
 						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
 						layerHeight,
 						calibrationWizard.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-						6).GetAwaiter().GetResult();
+						6);
 			}
 		}
 	}
