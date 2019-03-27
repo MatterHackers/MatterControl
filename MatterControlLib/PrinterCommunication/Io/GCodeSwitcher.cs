@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
@@ -44,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string lastLine = "";
 
-		public GCodeSwitcher(string gcodeFilename, PrinterConfig printer, int startLine = 0)
+		public GCodeSwitcher(Stream gcodeStream, PrinterConfig printer, int startLine = 0)
 			: base(printer)
 		{
 			var settings = this.printer.Settings;
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
 			var multiplier = settings.GetValue<double>(SettingsKey.print_time_estimate_multiplier) / 100.0;
 
-			var fileStreaming = GCodeFile.Load(gcodeFilename,
+			var fileStreaming = GCodeFile.Load(gcodeStream,
 				new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
 				new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
@@ -164,7 +165,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
 					var multiplier = settings.GetValue<double>(SettingsKey.print_time_estimate_multiplier) / 100.0;
 
-					var switchToGCode = GCodeFile.Load(gcodeFilename,
+					var switchToGCode = GCodeFile.Load(new StreamReader(gcodeFilename).BaseStream,
 						new Vector4(maxAcceleration, maxAcceleration, maxAcceleration, maxAcceleration),
 						new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 						new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),

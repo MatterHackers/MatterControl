@@ -111,14 +111,12 @@ namespace MatterControl.Printing
 				|| lineString.StartsWith("; layer ");
 		}
 
-		public static bool FileTooBigToLoad(string fileName)
+		public static bool FileTooBigToLoad(Stream fileStream)
 		{
-			if (File.Exists(fileName)
-				&& Is32Bit)
+			if (Is32Bit)
 			{
-				FileInfo info = new FileInfo(fileName);
 				// Let's make sure we can load a file this big
-				if (info.Length > Max32BitFileSize)
+				if (fileStream.Length > Max32BitFileSize)
 				{
 					// It is too big to load
 					return true;
@@ -130,8 +128,32 @@ namespace MatterControl.Printing
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, int startIndex = 0, string stopCheckingString = ";")
 		{
+			return GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref readValue, out _, startIndex, stopCheckingString);
+		}
+
+		public static string GetLineWithoutChecksum(string inLine)
+		{
+			if (inLine.StartsWith("N"))
+			{
+				int lineNumber = 0;
+				if (GCodeFile.GetFirstNumberAfter("N", inLine, ref lineNumber, out int numberEnd))
+				{
+					var outLine = inLine.Substring(numberEnd).Trim();
+					int checksumStart = outLine.IndexOf('*');
+					if (checksumStart != -1)
+					{
+						return outLine.Substring(0, checksumStart);
+					}
+				}
+			}
+
+			return inLine;
+		}
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
+		{
 			double doubleValue = readValue;
-			if(GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, startIndex, stopCheckingString))
+			if(GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, out numberEnd, startIndex, stopCheckingString))
 			{
 				readValue = (int)doubleValue;
 				return true;
@@ -142,6 +164,11 @@ namespace MatterControl.Printing
 
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, int startIndex = 0, string stopCheckingString = ";")
 		{
+			return GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref readValue, out _, startIndex, stopCheckingString);
+		}
+
+		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref double readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
+		{
 			int stringPos = stringWithNumber.IndexOf(stringToCheckAfter, Math.Min(stringWithNumber.Length, startIndex));
 			int stopPos = stringWithNumber.IndexOf(stopCheckingString);
 			if (stringPos != -1
@@ -149,10 +176,12 @@ namespace MatterControl.Printing
 			{
 				stringPos += stringToCheckAfter.Length;
 				readValue = agg_basics.ParseDouble(stringWithNumber, ref stringPos, true);
+				numberEnd = stringPos;
 
 				return true;
 			}
 
+			numberEnd = -1;
 			return false;
 		}
 
@@ -172,20 +201,20 @@ namespace MatterControl.Printing
 			return false;
 		}
 
-		public static GCodeFile Load(string fileName, 
+		public static GCodeFile Load(Stream fileStream, 
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplier,
 			CancellationToken cancellationToken)
 		{
-			if (FileTooBigToLoad(fileName))
+			if (FileTooBigToLoad(fileStream))
 			{
-				return new GCodeFileStreamed(fileName);
+				return new GCodeFileStreamed(fileStream);
 			}
 			else
 			{
-				return GCodeMemoryFile.Load(fileName,
+				return GCodeMemoryFile.Load(fileStream,
 					maxAccelerationMmPerS2,
 					maxVelocityMmPerS,
 					velocitySameAsStopMmPerS,

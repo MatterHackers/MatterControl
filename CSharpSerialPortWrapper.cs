@@ -36,7 +36,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 	{
 		private SerialPort port;
 
-		internal CSharpSerialPortWrapper(string serialPortName)
+		public CSharpSerialPortWrapper(string serialPortName)
 		{
 			if (FrostedSerialPortFactory.GetAppropriateFactory("RepRap").IsWindows)
 			{

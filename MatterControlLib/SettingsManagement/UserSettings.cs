@@ -35,6 +35,13 @@ namespace MatterHackers.MatterControl
 		public const string GcodeViewerRenderRetractions = nameof(GcodeViewerRenderRetractions);
 		public const string GcodeViewerSimulateExtrusion = nameof(GcodeViewerSimulateExtrusion);
 		public const string GcodeViewerTransparentExtrusion = nameof(GcodeViewerTransparentExtrusion);
+		public const string TerminalShowInputOutputMarks = nameof(TerminalShowInputOutputMarks);
+		public const string TerminalShowChecksum = nameof(TerminalShowChecksum);
+		public const string TerminalShowOks = nameof(TerminalShowOks);
+		public const string TerminalShowMovementRequests = nameof(TerminalShowMovementRequests);
+		public const string TerminalShowTempRequests = nameof(TerminalShowTempRequests);
+		public const string TerminalShowTempResponse = nameof(TerminalShowTempResponse);
+		public const string TerminalShowWaitResponse = nameof(TerminalShowWaitResponse);
 		public const string Language = nameof(Language);
 		public const string LayerViewDefault = nameof(LayerViewDefault);
 		public const string LayerViewSyncToPrint = nameof(LayerViewSyncToPrint);
@@ -66,7 +73,6 @@ namespace MatterHackers.MatterControl
 		public const string SnapGridDistance = nameof(SnapGridDistance);
 		public const string SoftwareLicenseAccepted = nameof(SoftwareLicenseAccepted);
 		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);
-		public const string TerminalFilterOutput = nameof(TerminalFilterOutput);
 		public const string TerminalTabVisible = nameof(TerminalTabVisible);
 		public const string ThemeName = nameof(ThemeName);
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);

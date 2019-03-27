@@ -28,8 +28,12 @@ namespace MatterHackers.PrinterEmulator
 {
 	public class EmulatorPortFactory : FrostedSerialPortFactory
 	{
-		override protected string GetDriverType() => "Emulator";
-		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings) => new Emulator();
+		protected override string GetDriverType() => "Emulator";
+
+		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
+		{
+			return new Emulator();
+		}
 
 		public override IFrostedSerialPort CreateAndOpen(string serialPortName, PrinterSettings settings, int baudRate, bool DtrEnableOnConnect)
 		{

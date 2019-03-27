@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
@@ -40,14 +41,22 @@ namespace MatterHackers.MatterControl
 	{
 		object locker = new object();
 
-		private string[] StartLineStringFilters = null;
+		private Func<(string line, bool output), string> _lineFilterFunction;
+		public Func<(string line, bool output), string> LineFilterFunction
+		{
+			get => _lineFilterFunction;
+			set
+			{
+				_lineFilterFunction = value;
+				RebuildFilteredList();
+			}
+		}
 
-		private EventHandler unregisterEvents;
-
-		private List<string> allSourceLines;
+		private List<(string line, bool output)> allSourceLines;
 		private List<string> visibleLines;
 
-		private TypeFacePrinter printer = null;
+		private TypeFacePrinter typeFacePrinter = null;
+		private PrinterConfig printer = null;
 
 		public Color TextColor = new Color(102, 102, 102);
 		private int forceStartLine = -1;
@@ -82,98 +91,69 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public int NumVisibleLines => (int)Math.Ceiling(Height / printer.TypeFaceStyle.EmSizeInPixels); 
+		public int NumVisibleLines => (int)Math.Ceiling(Height / typeFacePrinter.TypeFaceStyle.EmSizeInPixels); 
 
-		public TextScrollWidget(PrinterConfig printer, List<string> sourceLines)
+		public TextScrollWidget(PrinterConfig printer, List<(string line, bool output)> sourceLines)
 		{
-			this.printer = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
-			this.printer.DrawFromHintedCache = true;
+			this.printer = printer;
+			printer.Connection.TerminalLog.HasChanged += RecievedNewLine;
+			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
+			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
-			this.visibleLines = sourceLines;
-			printer.Connection.TerminalLog.HasChanged.RegisterEvent(RecievedNewLine, ref unregisterEvents);
+			this.visibleLines = sourceLines.Select(ld => ld.line).ToList();
 		}
 
-		private void ConditionalyAddToVisible(string line)
+		private void ConditionalyAddToVisible((string line, bool output) lineData)
 		{
-			if (StartLineStringFilters != null
-				&& StartLineStringFilters.Length > 0)
+			var line = lineData.line;
+			if (LineFilterFunction != null)
 			{
-				bool lineIsVisible = true;
-				foreach (string startFilter in StartLineStringFilters)
-				{
-					if (line == null
-						|| line.Contains("M105")
-						|| line.Length < 3
-						|| line.StartsWith(startFilter))
-					{
-						lineIsVisible = false;
-						break;
-					}
-				}
+				line = LineFilterFunction(lineData);
+			}
 
-				if (lineIsVisible)
-				{
-					visibleLines.Add(line);
-				}
+			if(!string.IsNullOrEmpty(line))
+			{
+				visibleLines.Add(line);
 			}
 		}
 
-		private void RecievedNewLine(object sender, EventArgs e)
+		private void RecievedNewLine(object sender, (string line, bool output) lineData)
 		{
-			var stringEvent = e as StringEventArgs;
-			if (stringEvent != null)
+			if (lineData.line != null)
 			{
-				ConditionalyAddToVisible(stringEvent.Data);
+				ConditionalyAddToVisible(lineData);
 			}
 			else // the list changed in some big way (probably cleared)
 			{
-				if (StartLineStringFilters != null
-					&& StartLineStringFilters.Length > 0)
-				{
-					CreateFilteredList();
-				}
+				RebuildFilteredList();
 			}
 
 			Invalidate();
 		}
 
-		private void CreateFilteredList()
+		public void RebuildFilteredList()
 		{
 			lock (locker)
 			{
 				visibleLines = new List<string>();
-				string[] allSourceLinesTemp = allSourceLines.ToArray();
-				foreach (string line in allSourceLinesTemp)
+				(string, bool)[] allSourceLinesTemp = allSourceLines.ToArray();
+				foreach (var lineData in allSourceLinesTemp)
 				{
-					ConditionalyAddToVisible(line);
+					ConditionalyAddToVisible(lineData);
 				}
-			}
-		}
-
-		public void SetLineStartFilter(string[] startLineStringsToFilter)
-		{
-			if (startLineStringsToFilter != null
-				&& startLineStringsToFilter.Length > 0)
-			{
-				StartLineStringFilters = startLineStringsToFilter;
-				CreateFilteredList();
-			}
-			else
-			{
-				visibleLines = allSourceLines;
 			}
 		}
 
 		public void WriteToFile(string filePath)
 		{
 			// Make a copy so we don't have it change while writing.
-			string[] allSourceLinesTemp = allSourceLines.ToArray();
+			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.line).ToArray();
 			System.IO.File.WriteAllLines(filePath, allSourceLinesTemp);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			unregisterEvents?.Invoke(this, null);
+			printer.Connection.TerminalLog.HasChanged -= RecievedNewLine;
 			base.OnClosed(e);
 		}
 
@@ -183,7 +163,7 @@ namespace MatterHackers.MatterControl
 
 			int numLinesToDraw = NumVisibleLines;
 
-			double y = LocalBounds.Bottom + printer.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
+			double y = LocalBounds.Bottom + typeFacePrinter.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
 			lock (visibleLines)
 			{
 				lock (locker)
@@ -210,13 +190,13 @@ namespace MatterHackers.MatterControl
 						{
 							if (visibleLines[lineIndex] != null)
 							{
-								printer.Text = visibleLines[lineIndex];
-								printer.Origin = new Vector2(Bounds.Left + 2, y);
-								printer.Render(graphics2D, TextColor);
+								typeFacePrinter.Text = visibleLines[lineIndex];
+								typeFacePrinter.Origin = new Vector2(Bounds.Left + 2, y);
+								typeFacePrinter.Render(graphics2D, TextColor);
 							}
 						}
-						y -= printer.TypeFaceStyle.EmSizeInPixels;
-						if (y < -printer.TypeFaceStyle.EmSizeInPixels)
+						y -= typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
+						if (y < -typeFacePrinter.TypeFaceStyle.EmSizeInPixels)
 						{
 							break;
 						}

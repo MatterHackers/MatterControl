@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler BedTemperatureRead;
 
 		public event EventHandler CommunicationStateChanged;
-		
+
 		public event EventHandler DetailedPrintingStateChanged;
 
 		public event EventHandler ConnectionFailed;
@@ -423,23 +423,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		// PrinterSettings/Options {{
 
-		public int BaudRate { get; set; } = 250000;
+		public int BaudRate
+		{
+			get
+			{
+				if (!string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
+				{
+					return 250000;
+				}
 
-		public double FeedRateRatio { get; set; } = 1;
+				return Printer.Settings.GetValue<int>(SettingsKey.baud_rate);
+			}
+		}
 
-		public string ConnectGCode { get; set; } = "";
+		public double FeedRateRatio => Printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 
-		public string CancelGCode { get; set; } = "";
+		public string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
 
-		public int ExtruderCount { get; set; }
+		public string CancelGCode => Printer.Settings.GetValue(SettingsKey.cancel_gcode);
 
-		public bool SendWithChecksum { get; set; }
+		public int ExtruderCount => Printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
-		public bool EnableNetworkPrinting { get; set; }
+		public bool SendWithChecksum => Printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
 
-		public bool AutoReleaseMotors { get; set; }
+		public bool EnableNetworkPrinting => Printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
 
-		public bool RecoveryIsEnabled { get; set; }
+		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
+
+		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
 		public string LastPrintedItemName { get; private set; } = "";
 		public string PrintingItemName { get; set; } = "";
 
@@ -448,12 +459,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private string _readLineReplacementString = "";
 		public string ReadLineReplacementString
 		{
-			get => _readLineReplacementString;
-			set
+			get
 			{
-				if (value != _readLineReplacementString)
+				var readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
+				if(readRegEx != _readLineReplacementString)
 				{
-					_readLineReplacementString = value;
+					_readLineReplacementString = readRegEx;
 
 					// Clear and rebuild the replacement list
 					readLineReplacements.Clear();
@@ -469,6 +480,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						}
 					}
 				}
+
+				return _readLineReplacementString;
 			}
 		}
 
@@ -527,7 +540,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					LineSent?.Invoke(this, string.Format("Communication State: {0}\n", value));
+					LineSent?.Invoke(this, string.Format("Communication State: {0}", value));
 
 					switch (communicationState)
 					{
@@ -564,7 +577,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									// Set this early as we always want our functions to know the state we are in.
 									communicationState = value;
 									timePrinting.Stop();
-									PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
+									{
+										PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+									}
 								}
 								else
 								{
@@ -924,7 +940,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			TerminalLog.Clear();
-			//Attempt connecting to a specific printer
+
+			// Attempt connecting to a specific printer
 			this.FirmwareType = FirmwareTypes.Unknown;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -1878,13 +1895,14 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 		#endregion // ProcessRead
 
+		// Check is serial port is in the list of available serial ports
 		public bool SerialPortIsAvailable(string portName)
-		//Check is serial port is in the list of available serial ports
 		{
 			if (IsNetworkPrinting())
 			{
 				return true;
 			}
+
 			try
 			{
 				string[] portNames = FrostedSerialPort.GetPortNames();
@@ -1927,6 +1945,12 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool allowRecovery = true)
 		{
+			var gcodeStream = new StreamReader(gcodeFilename);
+			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, allowRecovery);
+		}
+
+		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, PrintTask printTaskToUse = null, bool allowRecovery = true)
+		{
 			if (!this.IsConnected || Printing)
 			{
 				return;
@@ -1946,7 +1970,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			await Task.Run(() =>
 			{
 				// LoadGCodeToPrint
-				CreateStreamProcessors(gcodeFilename, this.RecoveryIsEnabled);
+				CreateStreamProcessors(gcodeStream, this.RecoveryIsEnabled);
 			});
 
 			// DoneLoadingGCodeToPrint
@@ -1958,33 +1982,37 @@ You will then need to logout and log back in to the computer for the changes to 
 
 				case CommunicationStates.PreparingToPrint:
 					{
-						string filePath = this.Printer.Bed.EditContext.SourceFilePath;
-						string fileName = Path.GetFileName(filePath);
-
-						var activePrintItem = new PrintItemWrapper(new PrintItem(fileName, filePath));
-
-						if (activePrintItem.PrintItem.Id == 0)
+						if (gcodeFileNameForTask != null)
 						{
-							activePrintItem.PrintItem.Commit();
-						}
+							string filePath = this.Printer.Bed.EditContext.SourceFilePath;
+							string fileName = Path.GetFileName(filePath);
 
-						if (activePrintTask == null
-							&& allowRecovery)
-						{
-							// TODO: Fix printerItemID int requirement
-							activePrintTask = new PrintTask
+							var activePrintItem = new PrintItemWrapper(new PrintItem(fileName, filePath));
+
+							if (activePrintItem.PrintItem.Id == 0)
 							{
-								PrintStart = DateTime.Now,
-								PrinterId = this.Printer.Settings.ID.GetHashCode(),
-								PrintName = activePrintItem.PrintItem.Name,
-								PrintItemId = activePrintItem.PrintItem.Id,
-								PrintingGCodeFileName = gcodeFilename,
-								PrintComplete = false
-							};
+								activePrintItem.PrintItem.Commit();
+							}
 
-							activePrintTask.Commit();
+							if (gcodeFileNameForTask != null
+								&& activePrintTask == null
+								&& allowRecovery)
+							{
+								// TODO: Fix printerItemID int requirement
+								activePrintTask = new PrintTask
+								{
+									PrintStart = DateTime.Now,
+									PrinterId = this.Printer.Settings.ID.GetHashCode(),
+									PrintName = activePrintItem.PrintItem.Name,
+									PrintItemId = activePrintItem.PrintItem.Id,
+									PrintingGCodeFileName = gcodeFileNameForTask,
+									PrintComplete = false
+								};
 
-							Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+								activePrintTask.Commit();
+
+								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+							}
 						}
 					}
 
@@ -2171,7 +2199,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		private void CreateStreamProcessors(string gcodeFilename, bool recoveryEnabled)
+		private void CreateStreamProcessors(Stream gcodeStream, bool recoveryEnabled)
 		{
 			secondsSinceUpdateHistory = 0;
 			lineSinceUpdateHistory = 0;
@@ -2181,9 +2209,9 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			GCodeStream accumulatedStream = null;
 
-			if (gcodeFilename != null)
+			if (gcodeStream != null)
 			{
-				gCodeFileSwitcher = new GCodeSwitcher(gcodeFilename, Printer);
+				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
 				if (this.RecoveryIsEnabled
 					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
@@ -2220,7 +2248,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
 
-			bool enableLineSpliting = gcodeFilename != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			bool enableLineSpliting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSpliting ? 1 : 2000);
 
 			accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);

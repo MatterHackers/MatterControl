@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private int requestedTool;
 		enum SendStates { Normal, WaitingForMove, SendingBefore }
 		private SendStates SendState = SendStates.Normal;
+		private double[] targetTemps = new double[4];
 
 		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream)
 			: base(printer, internalStream)
@@ -78,6 +79,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend.EndsWith("; NO_PROCESSING"))
 			{
 				return lineToSend;
+			}
+
+			if (lineToSend.StartsWith("M109") || lineToSend.StartsWith("M104"))
+			{
+				int toolTemp = 0;
+				int toolIndex = activeTool;
+				GCodeFile.GetFirstNumberAfter("T", lineToSend, ref toolIndex);
+				GCodeFile.GetFirstNumberAfter("S", lineToSend, ref toolTemp);
+				targetTemps[toolIndex] = toolTemp;
 			}
 
 			// check if any of the heaters we will be switching to need to start heating
@@ -173,28 +183,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
 				else if (nextTimeThisTool > timeToReheat)
 				{
-					var targetTemp = PrintingTemperature(activeTool);
+					var targetTemp = targetTemps[activeTool];
 					targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
-					gcode.AppendLine($"M104 T{activeTool} S{targetTemp}");
+					if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
+					{
+						gcode.AppendLine($"M104 T{activeTool} S{targetTemp}");
+					}
 				}
-			}
-		}
-
-		double PrintingTemperature(int toolIndex)
-		{
-			switch(toolIndex)
-			{
-				default:
-					return printer.Settings.GetValue<double>(SettingsKey.temperature);
-
-				case 1:
-					return printer.Settings.GetValue<double>(SettingsKey.temperature1);
-
-				case 2:
-					return printer.Settings.GetValue<double>(SettingsKey.temperature2);
-
-				case 3:
-					return printer.Settings.GetValue<double>(SettingsKey.temperature3);
 			}
 		}
 
@@ -207,12 +202,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			for (int i = 0; i < extruderCount; i++)
 			{
 				var nextToolChange = printer.Connection.NextToolChange(i);
-				var targetTemp = printer.Settings.Helpers.ExtruderTargetTemperature(i);
+				var targetTemp = targetTemps[i];
+				var setTempLine = $"M104 T{i} S{targetTemp}";
 				if (nextToolChange.toolIndex >= 0
 					&& nextToolChange.time < timeToReheat
-					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp)
+					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp
+					&& line != setTempLine)
 				{
-					printer.Connection.QueueLine($"M104 T{i} S{targetTemp}");
+					printer.Connection.QueueLine(setTempLine);
 				}
 			}
 		}
@@ -248,7 +245,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			var gcode = new StringBuilder();
 
 			// If the printer is heating, make sure we are at temp before switching extruders
-			var nextToolTargetTemp = PrintingTemperature(requestedTool);
+			var nextToolTargetTemp = targetTemps[requestedTool];
 			var currentPrinterTargeTemp = printer.Connection.GetTargetHotendTemperature(requestedTool);
 			if (currentPrinterTargeTemp > 0
 				&& printer.Connection.GetActualHotendTemperature(requestedTool) < nextToolTargetTemp - 3)

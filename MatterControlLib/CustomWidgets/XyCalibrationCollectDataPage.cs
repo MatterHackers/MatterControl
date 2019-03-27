@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
-			contentRow.AddChild(new TextWidget("Choose the calibration you would like to perform.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			contentRow.AddChild(new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				Margin = new Agg.BorderDouble(0, 15, 0, 0)
 			});
