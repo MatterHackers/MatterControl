@@ -113,6 +113,14 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			this.parity = parity;
 		}
 
+		public static bool MockPortsForTest { get; set; } = false;
+
+#if DEBUG
+		public static bool AllowEmulator { get; set; } = true;
+#else
+		public static bool AllowEmulator { get; set; } = false;
+#endif
+
 		// On non-Android platforms simply return true as port access validation isn't applicable
 		public static bool EnsureDeviceAccess()
 		{
@@ -141,12 +149,10 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			return filteredPorts.Any() ? filteredPorts : allPorts;
 		}
 
-		public static bool MockPortsForTest = false;
-
 		public static string[] GetPortNames(bool filter = true)
 		{
 			var p = Environment.OSVersion.Platform;
-			List<string> serial_ports = new List<string>();
+			var serial_ports = new List<string>();
 
 			// Are we on Unix?
 			if (MockPortsForTest)
@@ -193,9 +199,10 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				}
 			}
 
-#if DEBUG
-			serial_ports.Add("Emulator");
-#endif
+			if (AllowEmulator)
+			{
+				serial_ports.Add("Emulator");
+			}
 
 			return FilterPortsForMac(serial_ports).ToArray();
 		}

@@ -940,7 +940,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			TerminalLog.Clear();
-			//Attempt connecting to a specific printer
+
+			// Attempt connecting to a specific printer
 			this.FirmwareType = FirmwareTypes.Unknown;
 
 			// On Android, there will never be more than one serial port available for us to connect to. Override the current .ComPort value to account for
@@ -1894,13 +1895,14 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 		#endregion // ProcessRead
 
+		// Check is serial port is in the list of available serial ports
 		public bool SerialPortIsAvailable(string portName)
-		//Check is serial port is in the list of available serial ports
 		{
 			if (IsNetworkPrinting())
 			{
 				return true;
 			}
+
 			try
 			{
 				string[] portNames = FrostedSerialPort.GetPortNames();

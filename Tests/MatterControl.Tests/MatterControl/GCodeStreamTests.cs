@@ -804,6 +804,8 @@ namespace MatterControl.Tests.MatterControl
 				return new Emulator();
 			};
 
+			FrostedSerialPort.AllowEmulator = true;
+
 			int expectedIndex = 0;
 
 			// register to listen to the printer responses
