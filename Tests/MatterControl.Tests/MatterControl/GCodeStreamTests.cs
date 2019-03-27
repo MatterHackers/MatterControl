@@ -565,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public Task ToolChangeNoHeatNoExtrusion()
+		public async Task ToolChangeNoHeatNoExtrusion()
 		{
 			string[] inputLines = new string[]
 			{
@@ -609,12 +609,11 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
-			return Task.CompletedTask;
+			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
 		}
 
 		[Test, Category("GCodeStream")]
-		public Task ToolChangeHeatNoExtrusion()
+		public async Task ToolChangeHeatNoExtrusion()
 		{
 			string[] inputLines = new string[]
 			{
@@ -669,12 +668,11 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
-			return Task.CompletedTask;
+			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
 		}
 
 		[Test, Category("GCodeStream")]
-		public Task ToolChangeHeatT0NoExtrusion()
+		public async Task ToolChangeHeatT0NoExtrusion()
 		{
 			string[] inputLines = new string[]
 			{
@@ -723,8 +721,7 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			ValidateStreamResponseWhilePrintingAsync(expected, printer, inputLines).GetAwaiter().GetResult();
-			return Task.CompletedTask;
+			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
 		}
 
 		private static PrinterConfig SetupToolChangeSettings()
@@ -799,7 +796,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		private static async System.Threading.Tasks.Task ValidateStreamResponseWhilePrintingAsync(string[] expected, PrinterConfig printer, string[] inputGCode)
+		private static async Task ValidateStreamResponseWhilePrinting(string[] expected, PrinterConfig printer, string[] inputGCode)
 		{
 			// set up our serial port finding
 			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
