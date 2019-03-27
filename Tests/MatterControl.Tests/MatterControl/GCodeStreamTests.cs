@@ -835,7 +835,7 @@ namespace MatterControl.Tests.MatterControl
 			printer.Connection.Connect();
 			var time = Stopwatch.StartNew();
 			while (!printer.Connection.IsConnected
-				&& time.ElapsedMilliseconds < (1000 * 60 * 3))
+				&& time.ElapsedMilliseconds < (1000 * 60 * 1))
 			{
 				Thread.Sleep(1000);
 			}
