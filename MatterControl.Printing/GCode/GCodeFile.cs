@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 using System;
 using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.VectorMath;
@@ -36,7 +38,7 @@ namespace MatterControl.Printing
 {
 	public abstract class GCodeFile
 	{
-		public static string PostProcessedExtension = ".postprocessed.gcode";
+		public const string PostProcessedExtension = ".postprocessed.gcode";
 
 #if __ANDROID__
 		protected const int Max32BitFileSize = 10000000; // 10 megs
@@ -104,11 +106,39 @@ namespace MatterControl.Printing
 			return checksum;
 		}
 
-		public static bool IsLayerChange(string lineString)
+		private static Regex firstDigitsAfterToken = new Regex("\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+		private static string[] layerLineStartTokens = new[]
 		{
-			return lineString.StartsWith("; LAYER:")
-				|| lineString.StartsWith(";LAYER:")
-				|| lineString.StartsWith("; layer ");
+			"; LAYER:",
+			";LAYER:",
+			"; layer ",
+		};
+
+		public static bool IsLayerChange(string line)
+		{
+			return layerLineStartTokens.Any(l => line.StartsWith(l));
+		}
+
+		public static int GetLayerNumber(string line)
+		{
+			var layerToken = layerLineStartTokens.FirstOrDefault(t => line.StartsWith(t));
+
+			if (layerToken != null)
+			{
+				line = line.Substring(layerToken.Length);
+
+				// Find the first digits after the layer start token
+				var match = firstDigitsAfterToken.Match(line);
+
+				if (match.Success
+					&& int.TryParse(match.Value, out int layerNumber))
+				{
+					return layerNumber;
+				}
+			}
+
+			return 0;
 		}
 
 		public static bool FileTooBigToLoad(Stream fileStream)
