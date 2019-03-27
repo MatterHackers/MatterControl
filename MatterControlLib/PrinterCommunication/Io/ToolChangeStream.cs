@@ -203,11 +203,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				var nextToolChange = printer.Connection.NextToolChange(i);
 				var targetTemp = targetTemps[i];
+				var setTempLine = $"M104 T{i} S{targetTemp}";
 				if (nextToolChange.toolIndex >= 0
 					&& nextToolChange.time < timeToReheat
-					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp)
+					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp
+					&& line != setTempLine)
 				{
-					printer.Connection.QueueLine($"M104 T{i} S{targetTemp}");
+					printer.Connection.QueueLine(setTempLine);
 				}
 			}
 		}
