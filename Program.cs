@@ -35,9 +35,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -47,7 +45,7 @@ using SQLiteWin32;
 
 namespace MatterHackers.MatterControl
 {
-	class Program
+	public class Program
 	{
 		private static EventWaitHandle waitHandle;
 
@@ -60,7 +58,7 @@ namespace MatterHackers.MatterControl
 		private static string mainServiceName = "";
 
 		[STAThread]
-		static void Main(string[] args)
+		public static void Main(string[] args)
 		{
 			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -83,8 +81,8 @@ namespace MatterHackers.MatterControl
 			{
 				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
 			};
-			
-			if(AggContext.OperatingSystem == OSType.Windows)
+
+			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
 
@@ -106,7 +104,8 @@ namespace MatterHackers.MatterControl
 					// Finally, close the process spawned by Explorer.exe
 					return;
 				}
-				//#endif
+
+				// #endif
 				var serviceHost = new ServiceHost(
 				typeof(LocalService),
 				new Uri[] { new Uri("net.pipe://localhost/mattercontrol") });
@@ -118,7 +117,7 @@ namespace MatterHackers.MatterControl
 					"Service started: {0};",
 					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
 			}
-			
+
 			// Load optional user configuration
 			IConfiguration config = new ConfigurationBuilder()
 				.AddJsonFile("appsettings.json", optional: true)
@@ -145,7 +144,7 @@ namespace MatterHackers.MatterControl
 			{
 				System.Windows.Forms.Application.ThreadException += (s, e) =>
 				{
-					if(raygunNotificationCount++ < RaygunMaxNotifications)
+					if (raygunNotificationCount++ < RaygunMaxNotifications)
 					{
 						_raygunClient.Send(e.Exception);
 					}
@@ -155,7 +154,6 @@ namespace MatterHackers.MatterControl
 					{
 						System.Windows.Forms.Application.Exit();
 					}
-
 				};
 
 				AppDomain.CurrentDomain.UnhandledException += (s, e) =>
@@ -164,6 +162,7 @@ namespace MatterHackers.MatterControl
 					{
 						_raygunClient.Send(e.ExceptionObject as Exception);
 					}
+
 					System.Windows.Forms.Application.Exit();
 				};
 			}
@@ -178,7 +177,7 @@ namespace MatterHackers.MatterControl
 			config.Bind("MatterControl", MatterHackers.MatterControl.AppContext.Options);
 
 			// Get startup bounds from MatterControl and construct system window
-			//var systemWindow = new DesktopMainWindow(400, 200)
+			// var systemWindow = new DesktopMainWindow(400, 200)
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
 			var systemWindow = Application.LoadRootWindow(width, height);

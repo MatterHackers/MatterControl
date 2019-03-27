@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				string[] xyz = offset.Split('x');
 				if (xyz.Length == 2)
 				{
+					// Import deprecated z_offset data if missing
 					var zOffset = printer.Settings.GetValue<double>(SettingsKey.z_offset);
 					corrected += xyz[0] + "x" + xyz[1] + "x" + (-zOffset).ToString();
 				}

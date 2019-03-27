@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl
 			this.Padding = new BorderDouble(defaultPadding, defaultPadding, defaultPadding, 2);
 		}
 
+		public bool UseChildWindowSize { get; protected set; } = true;
+
 		public static void Close(Type type)
 		{
 			if (allWindows.TryGetValue(type, out DialogWindow existingWindow))
@@ -85,7 +87,7 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
-		public static DialogWindow Show(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		public static DialogWindow Show(string title, Vector2 windowSize, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
 		{
 			var wizardStages = stages.ToList();
 			var type = homePageGenerator.GetType();
@@ -95,6 +97,8 @@ namespace MatterHackers.MatterControl
 			var wizardWindow = new StagedSetupWindow(title, stages, homePageGenerator);
 			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
 			allWindows[type] = wizardWindow;
+
+			wizardWindow.Size = windowSize;
 
 			SetSizeAndShow(wizardWindow, homePage);
 
@@ -159,7 +163,7 @@ namespace MatterHackers.MatterControl
 
 		public static void SetSizeAndShow(DialogWindow dialogWindow, DialogPage wizardPage)
 		{
-			if (dialogWindow.Size == Vector2.Zero 
+			if (dialogWindow.UseChildWindowSize 
 				&& wizardPage.WindowSize != Vector2.Zero)
 			{
 				dialogWindow.Size = wizardPage.WindowSize;

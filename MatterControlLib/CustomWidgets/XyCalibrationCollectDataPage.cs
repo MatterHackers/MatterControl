@@ -38,15 +38,15 @@ namespace MatterHackers.MatterControl
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
 		private List<RadioButton> xButtons;
-		private XyCalibrationData xyCalibrationData;
 		private List<RadioButton> yButtons;
 		private bool HaveWrittenData = false;
 		private bool pageCanceled;
+		private XyCalibrationWizard calibrationWizard;
 
-		public XyCalibrationCollectDataPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
-			: base(setupWizard)
+		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard)
+			: base(calibrationWizard)
 		{
-			this.xyCalibrationData = xyCalibrationData;
+			this.calibrationWizard = calibrationWizard;
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
 			this.Name = "Nozzle Offset Calibration Wizard";
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 				Margin = new Agg.BorderDouble(0, 15, 0, 0)
 			});
 
-			// disable the next button until we recieve data about both the x and y axis alignment
+			// disable the next button until we receive data about both the x and y axis alignment
 			NextButton.Enabled = false;
 
 			var xButtonsGroup = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -122,14 +122,14 @@ namespace MatterHackers.MatterControl
 			// save the offsets to the extruder
 			if (!pageCanceled
 				&& !HaveWrittenData
-				&& xyCalibrationData.XPick != -1
-				&& xyCalibrationData.YPick != -1)
+				&& calibrationWizard.XPick != -1
+				&& calibrationWizard.YPick != -1)
 			{
-				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex);
-				hotendOffset.X -= xyCalibrationData.Offset * -3 + xyCalibrationData.Offset * xyCalibrationData.XPick;
-				hotendOffset.Y -= xyCalibrationData.Offset * -3 + xyCalibrationData.Offset * xyCalibrationData.YPick;
+				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex);
+				hotendOffset.X -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.XPick;
+				hotendOffset.Y -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.YPick;
 
-				printer.Settings.Helpers.SetExtruderOffset(xyCalibrationData.ExtruderToCalibrateIndex, hotendOffset);
+				printer.Settings.Helpers.SetExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex, hotendOffset);
 				HaveWrittenData = true;
 			}
 
@@ -138,8 +138,8 @@ namespace MatterHackers.MatterControl
 
 		private void CheckIfCanAdvance()
 		{
-			if (xyCalibrationData.YPick != -1
-				&& xyCalibrationData.XPick != -1)
+			if (calibrationWizard.YPick != -1
+				&& calibrationWizard.XPick != -1)
 			{
 				NextButton.Enabled = true;
 			}
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (button == sender)
 				{
-					xyCalibrationData.XPick = i;
+					calibrationWizard.XPick = i;
 					break;
 				}
 				i++;
@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (button == sender)
 				{
-					xyCalibrationData.YPick = i;
+					calibrationWizard.YPick = i;
 					break;
 				}
 				i++;

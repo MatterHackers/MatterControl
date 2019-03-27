@@ -31,13 +31,14 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using static MatterHackers.MatterControl.ConfigurationPage.PrintLeveling.XyCalibrationWizard;
 
 namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationDataRecieved : WizardPage
 	{
-		public XyCalibrationDataRecieved(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
-			: base(setupWizard)
+		public XyCalibrationDataRecieved(XyCalibrationWizard calibrationWizard)
+			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
@@ -45,13 +46,13 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
-			xyCalibrationData.PrintAgain = false;
+			calibrationWizard.PrintAgain = false;
 
 			// check if we picked an outside of the calibration
-			if (xyCalibrationData.XPick == 0
-				|| xyCalibrationData.XPick == 6
-				|| xyCalibrationData.YPick == 0
-				|| xyCalibrationData.YPick == 6)
+			if (calibrationWizard.XPick == 0
+				|| calibrationWizard.XPick == 6
+				|| calibrationWizard.YPick == 0
+				|| calibrationWizard.YPick == 6)
 			{
 				// offer to re-run the calibration with the same settings as last time
 				contentRow.AddChild(new TextWidget("Your printer has been adjusted but we need to run calibrating again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
@@ -59,13 +60,13 @@ namespace MatterHackers.MatterControl
 					Margin = new Agg.BorderDouble(0, 15, 0, 0)
 				});
 
-				xyCalibrationData.PrintAgain = true;
+				calibrationWizard.PrintAgain = true;
 			}
 			else
 			{
-				switch (xyCalibrationData.Quality)
+				switch (calibrationWizard.Quality)
 				{
-					case XyCalibrationData.QualityType.Coarse:
+					case QualityType.Coarse:
 						// if we are on coarse calibration offer to move down to normal
 						contentRow.AddChild(new TextWidget("Coarse calibration complete, we will now do a normal calibration to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 						{
@@ -73,11 +74,11 @@ namespace MatterHackers.MatterControl
 						});
 
 						// switch to normal calibration
-						xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
-						xyCalibrationData.PrintAgain = true;
+						calibrationWizard.Quality = QualityType.Normal;
+						calibrationWizard.PrintAgain = true;
 						break;
 
-					case XyCalibrationData.QualityType.Normal:
+					case QualityType.Normal:
 						// let the user know they are done with calibration, but if they would like they can print a fine calibration for even better results
 						// add a button to request fine calibration
 						var normalMessage = "Your nozzles should now be calibrated.".Localize();
@@ -86,6 +87,7 @@ namespace MatterHackers.MatterControl
 						{
 							Margin = new Agg.BorderDouble(0, 15, 0, 0)
 						});
+
 						var startFineCalibratingButton = theme.CreateDialogButton("Print Ultra Fine Calibration".Localize());
 						startFineCalibratingButton.HAnchor = HAnchor.Fit | HAnchor.Right;
 						startFineCalibratingButton.VAnchor = VAnchor.Absolute;
@@ -93,15 +95,15 @@ namespace MatterHackers.MatterControl
 						startFineCalibratingButton.Click += (s, e) =>
 						{
 							// switch to fine
-							xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
+							calibrationWizard.Quality = QualityType.Fine;
 							// start up at the print window
-							xyCalibrationData.PrintAgain = true;
+							calibrationWizard.PrintAgain = true;
 							this.NextButton.InvokeClick();
 						};
 						contentRow.AddChild(startFineCalibratingButton);
 						break;
 
-					case XyCalibrationData.QualityType.Fine:
+					case QualityType.Fine:
 						// done!
 						contentRow.AddChild(new TextWidget("Offset Calibration complete.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 						{
@@ -111,7 +113,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			if (!xyCalibrationData.PrintAgain)
+			if (!calibrationWizard.PrintAgain)
 			{
 				// this is the last page of the wizard hide the next button
 				this.NextButton.Visible = false;

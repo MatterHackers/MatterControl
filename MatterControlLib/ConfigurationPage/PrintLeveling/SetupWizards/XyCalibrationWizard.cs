@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -37,16 +39,30 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class XyCalibrationWizard : PrinterSetupWizard
 	{
-		private int extruderToCalibrateIndex;
-		private XyCalibrationData xyCalibrationData;
+		private EditContext originalEditContext;
 
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
-			this.extruderToCalibrateIndex = extruderToCalibrateIndex;
+			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
+
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 		}
+
+		public enum QualityType { Coarse, Normal, Fine }
+
+		public int ExtruderToCalibrateIndex { get; }
+
+		public QualityType Quality { get; set; } = QualityType.Normal;
+
+		/// <summary>
+		/// The index of the calibration print that was picked
+		/// </summary>
+		public int XPick { get; set; } = -1;
+		public int YPick { get; set; } = -1;
+		public double Offset { get; set; } = .1;
+		public bool PrintAgain { get; set; }
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
@@ -60,10 +76,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return UsingZProbe(printer) && !printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated);
 		}
 
-		public override void Dispose()
-		{
-		}
-
 		public static bool UsingZProbe(PrinterConfig printer)
 		{
 			var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
@@ -74,41 +86,39 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe);
 		}
 
+		public async override void Dispose()
+		{
+			if (originalEditContext != null
+				&& printer.Bed.EditContext != originalEditContext)
+			{
+				await printer.Bed.LoadContent(originalEditContext);
+			}
+
+			base.Dispose();
+		}
+
 		protected override IEnumerator<WizardPage> GetPages()
 		{
-			this.xyCalibrationData = new XyCalibrationData(extruderToCalibrateIndex);
+			yield return new XyCalibrationSelectPage(this);
+			yield return new XyCalibrationStartPrintPage(this);
 
-			yield return new XyCalibrationSelectPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
-			yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+			originalEditContext = printer.Bed.EditContext;
+
+			Task.Run(() =>
+			{
+				printer.Bed.SaveChanges(null, CancellationToken.None);
+			});
+
+			yield return new XyCalibrationCollectDataPage(this);
+			yield return new XyCalibrationDataRecieved(this);
 			
 			// loop until we are done calibrating
-			while (xyCalibrationData.PrintAgain)
+			while (this.PrintAgain)
 			{
-				yield return new XyCalibrationStartPrintPage(this, printer, xyCalibrationData);
-				yield return new XyCalibrationCollectDataPage(this, printer, xyCalibrationData);
-				yield return new XyCalibrationDataRecieved(this, printer, xyCalibrationData);
+				yield return new XyCalibrationStartPrintPage(this);
+				yield return new XyCalibrationCollectDataPage(this);
+				yield return new XyCalibrationDataRecieved(this);
 			}
 		}
-	}
-
-	public class XyCalibrationData
-	{
-		public XyCalibrationData(int extruderToCalibrateIndex)
-		{
-			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
-		}
-
-		public int ExtruderToCalibrateIndex { get; private set; }
-		public enum QualityType { Coarse, Normal, Fine }
-		public QualityType Quality { get; set; } = QualityType.Normal;
-		/// <summary>
-		/// The index of the calibration print that was picked
-		/// </summary>
-		public int XPick { get; set; } = -1;
-		public int YPick { get; set; } = -1;
-		public double Offset { get; set; } = .1;
-		public bool PrintAgain { get; set; }
 	}
 }

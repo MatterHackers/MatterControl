@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using static MatterHackers.MatterControl.ConfigurationPage.PrintLeveling.XyCalibrationWizard;
 
 namespace MatterHackers.MatterControl
 {
@@ -41,8 +41,8 @@ namespace MatterHackers.MatterControl
 		private RadioButton normalCalibration;
 		private RadioButton fineCalibration;
 
-		public XyCalibrationSelectPage(ISetupWizard setupWizard, PrinterConfig printer, XyCalibrationData xyCalibrationData)
-			: base(setupWizard)
+		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
+			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 			// default to normal offset
-			xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
+			calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
 
 			contentRow.AddChild(new TextWidget("Choose the calibration you would like to perform.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
@@ -59,30 +59,30 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(coarseCalibration = new RadioButton("Coarse Calibration: If your printer is way off".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
-				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Coarse
+				Checked = calibrationWizard.Quality == QualityType.Coarse
 			});
 			coarseCalibration.CheckedStateChanged += (s, e) =>
 			{
-				xyCalibrationData.Quality = XyCalibrationData.QualityType.Coarse;
-				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
+				calibrationWizard.Quality = QualityType.Coarse;
+				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 			};
 			contentRow.AddChild(normalCalibration = new RadioButton("Normal Calibration: Start here".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
-				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Normal
+				Checked = calibrationWizard.Quality == QualityType.Normal
 			});
 			normalCalibration.CheckedStateChanged += (s, e) =>
 			{
-				xyCalibrationData.Quality = XyCalibrationData.QualityType.Normal;
-				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
+				calibrationWizard.Quality = QualityType.Normal;
+				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
 			};
 			contentRow.AddChild(fineCalibration = new RadioButton("Fine Calibration: When you want that extra precision".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
-				Checked = xyCalibrationData.Quality == XyCalibrationData.QualityType.Fine
+				Checked = calibrationWizard.Quality == QualityType.Fine
 			});
 			fineCalibration.CheckedStateChanged += (s, e) =>
 			{
-				xyCalibrationData.Quality = XyCalibrationData.QualityType.Fine;
-				xyCalibrationData.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
+				calibrationWizard.Quality = QualityType.Fine;
+				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
 			};
 		}
 	}
