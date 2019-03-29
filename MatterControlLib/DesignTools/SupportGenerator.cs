@@ -80,10 +80,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class SupportGenerator
 	{
+		private double minimumSupportHeight;
 		private InteractiveScene scene;
 
-		public SupportGenerator(InteractiveScene scene)
+		public SupportGenerator(InteractiveScene scene, double minimumSupportHeight)
 		{
+			this.minimumSupportHeight = minimumSupportHeight;
 			this.scene = scene;
 		}
 
@@ -160,73 +162,101 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancelationToken)
 		{
-			ProgressStatus status = new ProgressStatus();
-			status.Status = "Enter";
-			progress?.Report(status);
-
-			// Get visible meshes for each of them 
-			var supportCandidates = scene.Children.SelectMany(i => i.VisibleMeshes());
-
 			var selectedItem = scene.SelectedItem;
-			if (selectedItem != null)
-			{
-				supportCandidates = selectedItem.VisibleMeshes();
-			}
 
-			AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty();
-			foreach (var candidate in supportCandidates)
+			using (new SelectionMaintainer(scene))
 			{
-				allBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
-			}
+				ProgressStatus status = new ProgressStatus();
+				status.Status = "Enter";
+				progress?.Report(status);
 
-			// create the gird of possible support
-			var gridBounds = new RectangleDouble(Math.Floor((double)(allBounds.MinXYZ.X / PillarSize)),
-				Math.Floor((double)(allBounds.MinXYZ.Y / PillarSize)),
-				Math.Ceiling(allBounds.MaxXYZ.X / PillarSize),
-				Math.Ceiling(allBounds.MaxXYZ.Y / PillarSize));
-			var partBounds = new RectangleDouble(gridBounds.Left * PillarSize,
-				gridBounds.Bottom * PillarSize,
-				gridBounds.Right * PillarSize,
-				gridBounds.Top * PillarSize);
+				// Get visible meshes for each of them 
+				var supportCandidates = scene.Children.SelectMany(i => i.VisibleMeshes());
 
-			int gridWidth = (int)gridBounds.Width;
-			int gridHeight = (int)gridBounds.Height;
-			var supportGrid = new List<List<List<(bool isBottom, double z)>>>();
-			for (int x = 0; x < gridWidth; x++)
-			{
-				supportGrid.Add(new List<List<(bool, double)>>());
-				for (int y = 0; y < gridHeight; y++)
+				if (selectedItem != null)
 				{
-					supportGrid[x].Add(new List<(bool, double)>());
+					supportCandidates = selectedItem.VisibleMeshes();
 				}
+
+				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty();
+				foreach (var candidate in supportCandidates)
+				{
+					allBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
+				}
+
+				// create the gird of possible support
+				var gridBounds = new RectangleDouble(Math.Floor((double)(allBounds.MinXYZ.X / PillarSize)),
+					Math.Floor((double)(allBounds.MinXYZ.Y / PillarSize)),
+					Math.Ceiling(allBounds.MaxXYZ.X / PillarSize),
+					Math.Ceiling(allBounds.MaxXYZ.Y / PillarSize));
+				var partBounds = new RectangleDouble(gridBounds.Left * PillarSize,
+					gridBounds.Bottom * PillarSize,
+					gridBounds.Right * PillarSize,
+					gridBounds.Top * PillarSize);
+
+				int gridWidth = (int)gridBounds.Width;
+				int gridHeight = (int)gridBounds.Height;
+				var supportGrid = new List<List<List<(bool isBottom, double z)>>>();
+				for (int x = 0; x < gridWidth; x++)
+				{
+					supportGrid.Add(new List<List<(bool, double)>>());
+					for (int y = 0; y < gridHeight; y++)
+					{
+						supportGrid[x].Add(new List<(bool, double)>());
+					}
+				}
+
+				// get all the support plane intersections
+				status.Status = "Trace";
+				progress?.Report(status);
+				var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, supportCandidates);
+
+				status.Status = "Columns";
+				progress?.Report(status);
+
+				// minimum height requiring support is 1/2 the layer height
+				AddSupportColumns(gridBounds, detectedPlanes);
+
+				// this is the theory for regions rather than pillars
+				// separate the faces into face patch groups (these are the new support tops)
+				// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
+				// make a new patch group at the z of the hit (these will be the bottoms)
+				// find the outline of the patch groups (these will be the walls of the top and bottom patches
+				// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
+
+				return Task.CompletedTask;
 			}
-
-			// get all the support plane intersections
-			status.Status = "Trace";
-			progress?.Report(status);
-			var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, supportCandidates);
-
-			status.Status = "Columns";
-			progress?.Report(status);
-
-			AddSupportColumns(gridBounds, detectedPlanes);
-
-			// this is the theory for regions rather than pillars
-			// separate the faces into face patch groups (these are the new support tops)
-			// project all the vertices of each patch group down until they hit an up face in the scene (or 0)
-			// make a new patch group at the z of the hit (these will be the bottoms)
-			// find the outline of the patch groups (these will be the walls of the top and bottom patches
-			// make a new mesh object with the top, bottom and walls, add it to the scene and mark it as support
-
-			return Task.CompletedTask;
 		}
 
 		public void RemoveExisting()
 		{
-			scene.SelectedItem = null;
-			var existingSupports = scene.Descendants().Where(i => i.GetType() == typeof(GeneratedSupportObject3D));
+			var selectedItem = scene.SelectedItem;
+			var bedBounds = new RectangleDouble(Vector2.NegativeInfinity, Vector2.PositiveInfinity);
+			if(selectedItem != null)
+			{
+				var aabb = selectedItem.GetAxisAlignedBoundingBox();
+				bedBounds = new RectangleDouble(new Vector2(aabb.MinXYZ), new Vector2(aabb.MaxXYZ));
+			}
 
-			scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
+			using (new SelectionMaintainer(scene))
+			{
+				var existingSupports = scene.Descendants().Where(i =>
+				{
+					if(i.GetType() == typeof(GeneratedSupportObject3D))
+					{
+						// we have a support, check if it is within the bounds of the selected object
+						var xyCenter = new Vector2(i.GetAxisAlignedBoundingBox().Center);
+						if (bedBounds.Contains(xyCenter))
+						{
+							return true;
+						}
+					}
+
+					return false;
+				});
+
+				scene.UndoBuffer.AddAndDo(new DeleteCommand(scene, existingSupports.ToList()));
+			}
 		}
 
 		public bool RequiresSupport()
@@ -296,12 +326,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			var halfPillar = PillarSize / 2;
 			foreach (var kvp in detectedPlanes)
 			{
-				if (kvp.Value.Count == 0)
+				var planes = kvp.Value;
+
+				if (planes.Count == 0)
 				{
 					continue;
 				}
 
-				kvp.Value.Sort((a, b) =>
+				planes.Sort((a, b) =>
 				{
 					return a.z.CompareTo(b.z);
 				});
@@ -311,18 +343,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (fromBed)
 				{
-					var planes = kvp.Value;
 					var nextPlaneIsBottom = planes.Count > 1 && planes[1].bottom;
-					// if the next plane (the one above the bed) is a bottom, we have a part on the bed and will not generate support
-					if (!nextPlaneIsBottom || planes[1].z > 0.0001)
+					if (!nextPlaneIsBottom // if the next plane is a top, we don't have any space from the bed to the part to put support
+						|| planes[1].z > minimumSupportHeight) // if the next plane is a bottom and is not far enough away, there is no space to put any support
 					{
-						var firstBottomAboveBed = GetNextBottom(0, kvp.Value);
-						var firstTopAboveBed = GetNextTop(0, kvp.Value);
+						var firstBottomAboveBed = GetNextBottom(0, planes);
+						var firstTopAboveBed = GetNextTop(0, planes);
 
 						if (firstBottomAboveBed >= 0
 							&& firstBottomAboveBed < firstTopAboveBed)
 						{
-							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, kvp.Value[firstBottomAboveBed].z + .01);
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, planes[firstBottomAboveBed].z + .01);
 						}
 					}
 				}
@@ -331,33 +362,36 @@ namespace MatterHackers.MatterControl.DesignTools
 					int i = 0;
 					double lastTopZ = 0;
 					int lastBottom = i;
+					var nextPlaneIsBottom = planes.Count > 1 && planes[1].bottom;
+					// if the next plane (the one above the bed) is a bottom, we have a part on the bed and will not generate support
+					if (nextPlaneIsBottom && planes[1].z <= minimumSupportHeight)
+					{
+						// go up to the next top
+						i = GetNextTop(i, planes);
+						lastTopZ = planes[i].z;
+					}
+
 					do
 					{
-						// if the first plane is a top, move to the last top before we find a bottom
-						if (i == 0
-							&& !kvp.Value[i].bottom)
-						{
-							i = GetNextTop(i + 1, kvp.Value);
-							if (i < kvp.Value.Count)
-							{
-								lastTopZ = kvp.Value[i].z;
-							}
-						}
 						lastBottom = i;
 						// find all open arreas in the list and add support
-						i = GetNextBottom(i, kvp.Value);
-						if (i >= 0
-							&& i < kvp.Value.Count
-							&& kvp.Value[i].bottom)
+						i = GetNextBottom(i, planes);
+						if (i >= 0)
 						{
-							AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, kvp.Value[i].z);
+							if (i < planes.Count
+								&& planes[i].bottom)
+							{
+								AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, planes[i].z);
+							}
+							i = GetNextTop(i + 1, planes);
+							if (i < planes.Count)
+							{
+								lastTopZ = planes[i].z;
+							}
 						}
-						i = GetNextTop(i + 1, kvp.Value);
-						if (i < kvp.Value.Count)
-						{
-							lastTopZ = kvp.Value[i].z;
-						}
-					} while (i != lastBottom && i < kvp.Value.Count);
+					} while (i != -1
+						&& i != lastBottom 
+						&& i < planes.Count);
 				}
 			}
 

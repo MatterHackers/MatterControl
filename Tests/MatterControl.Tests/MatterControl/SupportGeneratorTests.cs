@@ -47,6 +47,8 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("Support Generator")]
 		public async Task SupportsFromBedTests()
 		{
+			var minimumSupportHeight = .05;
+
 			// Set the static data to point to the directory of MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
@@ -67,14 +69,14 @@ namespace MatterControl.Tests.MatterControl
 				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z + 15);
 				scene.Children.Add(cube);
 
-				var supportGenerator = new SupportGenerator(scene);
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.Greater(scene.Children.Count, 1, "We should have added some support");
 				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
 				{
 					Assert.AreEqual(0, support.GetAxisAlignedBoundingBox().MinXYZ.Z, .001, "Support columns are all on the bed");
-					Assert.AreEqual(15, support.GetAxisAlignedBoundingBox().ZSize, 15, "Support columns should be the right height from the bed");
+					Assert.AreEqual(15, support.GetAxisAlignedBoundingBox().ZSize, .02, "Support columns should be the right height from the bed");
 				}
 			}
 
@@ -102,7 +104,36 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
 				scene.Children.Add(cubeInAair);
 
-				var supportGenerator = new SupportGenerator(scene);
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
+			}
+
+			// make a cube on the bed and another cube exactily on top of it and ensure that support is not generated
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//   |       |
+			//   |       |
+			//___|_______|___
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
+				scene.Children.Add(cubeInAair);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
@@ -130,7 +161,7 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
 				scene.Children.Add(cubeInAair);
 
-				var supportGenerator = new SupportGenerator(scene);
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
@@ -161,7 +192,7 @@ namespace MatterControl.Tests.MatterControl
 				cube30AboveBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb30Above.MinXYZ.Z + 30);
 				scene.Children.Add(cube30AboveBed);
 
-				var supportGenerator = new SupportGenerator(scene);
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
 				await supportGenerator.Create(null, CancellationToken.None);
 
@@ -169,8 +200,189 @@ namespace MatterControl.Tests.MatterControl
 				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
 				{
 					Assert.AreEqual(0, support.GetAxisAlignedBoundingBox().MinXYZ.Z, .001, "Support columns are all on the bed");
-					Assert.AreEqual(5, support.GetAxisAlignedBoundingBox().ZSize, 15, "Support columns should be the right height from the bed");
+					Assert.AreEqual(5, support.GetAxisAlignedBoundingBox().ZSize, .02, "Support columns should be the right height from the bed");
 				}
+			}
+		}
+
+		[Test, Category("Support Generator")]
+		public async Task SupportsEverywhereTests()
+		{
+			var minimumSupportHeight = .05;
+
+			// Set the static data to point to the directory of MatterControl
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// make a single cube in the air and ensure that support is generated
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//
+			//______________
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cube = await CubeObject3D.Create(20, 20, 20);
+				var aabb = cube.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z + 15);
+				scene.Children.Add(cube);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.Greater(scene.Children.Count, 1, "We should have added some support");
+				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
+				{
+					Assert.AreEqual(0, support.GetAxisAlignedBoundingBox().MinXYZ.Z, .001, "Support columns are all on the bed");
+					Assert.AreEqual(15, support.GetAxisAlignedBoundingBox().ZSize, .02, "Support columns should be the right height from the bed");
+				}
+			}
+
+			// make a cube on the bed and single cube in the air and ensure that support is not generated
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//   _________
+			//   |       |
+			//   |       |
+			//___|_______|___
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
+				scene.Children.Add(cubeInAair);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.Greater(scene.Children.Count, 2, "We should have added some support");
+				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
+				{
+					Assert.AreEqual(20, support.GetAxisAlignedBoundingBox().MinXYZ.Z, .001, "Support columns are all on the first cube");
+					Assert.AreEqual(5, support.GetAxisAlignedBoundingBox().ZSize, .02, "Support columns should be the right height from the bed");
+				}
+			}
+
+			// make a cube on the bed and single cube in the air that intersects it and ensure that support is not generated
+			//    _________
+			//    |       |
+			//    |______ |  // top cube actually exactly on top of bottom cube
+			//   ||______||
+			//   |       |
+			//___|_______|___
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
+				scene.Children.Add(cubeInAair);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
+			}
+
+			// make a cube on the bed and another cube exactily on top of it and ensure that support is not generated
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//   |       |
+			//   |       |
+			//___|_______|___
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
+				scene.Children.Add(cubeInAair);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
+			}
+
+			// Make a cube above the bed and a second above that. Ensure only one set of support material
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//_______________
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cube5AboveBed = await CubeObject3D.Create(20, 20, 20);
+				var aabb5Above = cube5AboveBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cube5AboveBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb5Above.MinXYZ.Z + 5);
+				scene.Children.Add(cube5AboveBed);
+
+				var cube30AboveBed = await CubeObject3D.Create(20, 20, 20);
+				var aabb30Above = cube30AboveBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cube30AboveBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb30Above.MinXYZ.Z + 30);
+				scene.Children.Add(cube30AboveBed);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				await supportGenerator.Create(null, CancellationToken.None);
+
+				Assert.Greater(scene.Children.Count, 2, "We should have added some support");
+				var bedSupportCount = 0;
+				var airSupportCount = 0;
+				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
+				{
+					var aabb = support.GetAxisAlignedBoundingBox();
+					Assert.AreEqual(5, aabb.ZSize, .001, "Support columns should be the right height from the bed");
+					if (aabb.MinXYZ.Z > -.001 && aabb.MinXYZ.Z < .001) // it is on the bed
+					{
+						// keep track of the count
+						bedSupportCount++;
+					}
+					else
+					{
+						airSupportCount++;
+						// make sure it is the right height
+						Assert.AreEqual(25, aabb.MinXYZ.Z, .001, "Support columns are all on the bed");
+					}
+				}
+
+				Assert.AreEqual(bedSupportCount, airSupportCount, "Same number of support columns in each space.");
 			}
 		}
 

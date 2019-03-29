@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// last let's check if there is any support in the scene and if it looks like it is needed
-			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+			var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
 			if (supportGenerator.RequiresSupport())
 			{
 				errors.Add(new ValidationError("UnsupportedParts")
