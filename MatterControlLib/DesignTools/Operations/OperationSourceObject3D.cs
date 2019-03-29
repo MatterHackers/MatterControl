@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				}
 
 				// and replace us with the children
-				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren, false);
 				if (undoBuffer != null)
 				{
 					undoBuffer.AddAndDo(replaceCommand);
