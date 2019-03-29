@@ -55,7 +55,20 @@ namespace MatterHackers.MatterControl
 
 		public PrinterConfig Printer => printer;
 
-		public WizardPage Current => pages.Current;
+		public WizardPage Current
+		{
+			get
+			{
+				if (pages == null)
+				{
+					// Reset enumerator, move to first item
+					this.Reset();
+					this.MoveNext();
+				}
+
+				return pages.Current;
+			}
+		}
 
 		object IEnumerator.Current => pages.Current;
 
