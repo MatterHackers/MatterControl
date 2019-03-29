@@ -59,13 +59,13 @@ namespace MatterHackers.MatterControl
 			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// last let's check if there is any support in the scene and if it looks like it is needed
-			var supportGenerator = new SupportGenerator(printer.Bed.Scene);
+			var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
 			if (supportGenerator.RequiresSupport())
 			{
 				errors.Add(new ValidationError("UnsupportedParts")
 				{
-					Error = "Unsupported Parts Detected".Localize(),
-					Details = "Some parts are unsupported and require support structures to print correctly".Localize(),
+					Error = "Possible Unsupported Parts Detected".Localize(),
+					Details = "Some parts may require support structures to print correctly".Localize(),
 					ErrorLevel = ValidationErrorLevel.Warning,
 					FixAction = new NamedAction()
 					{
@@ -439,7 +439,7 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			// Concat printer and settings errors
+			// Concatenate printer and settings errors
 			errors.AddRange(printer.ValidateSettings());
 
 			return errors;

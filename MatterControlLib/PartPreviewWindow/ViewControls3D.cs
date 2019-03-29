@@ -44,6 +44,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -728,11 +729,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Remove right Padding for drop style
 			iconButton.Padding = iconButton.Padding.Clone(right: 0);
 
+			var minimumSupportHeight = .05;
+			if (sceneContext.Printer != null)
+			{
+				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
+			}
+
 			toggleSupportButton = new PopupMenuButton(iconButton, theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
-				DynamicPopupContent = () => new GenerateSupportPanel(AppContext.MenuTheme, sceneContext.Scene),
+				DynamicPopupContent = () => new GenerateSupportPanel(AppContext.MenuTheme, sceneContext.Scene, minimumSupportHeight),
 				PopupHAnchor = HAnchor.Fit,
 				PopupVAnchor = VAnchor.Fit,
 				MakeScrollable = false,
