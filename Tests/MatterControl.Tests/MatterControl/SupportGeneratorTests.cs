@@ -80,6 +80,27 @@ namespace MatterControl.Tests.MatterControl
 				}
 			}
 
+			// make a single cube in the bed and ensure that no support is generated
+			//   _________
+			//   |       |
+			// __|       |__
+			//   |_______|
+			//
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cube = await CubeObject3D.Create(20, 20, 20);
+				var aabb = cube.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z - 5);
+				scene.Children.Add(cube);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(1, scene.Children.Count, "We should not have added any support");
+			}
+
 			// make a cube on the bed and single cube in the air and ensure that support is not generated
 			//   _________
 			//   |       |
@@ -95,14 +116,14 @@ namespace MatterControl.Tests.MatterControl
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z - 5);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
+				scene.Children.Add(cubeInAir);
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
@@ -110,7 +131,38 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
-			// make a cube on the bed and another cube exactily on top of it and ensure that support is not generated
+			// make a single cube in the bed and another cube on top, ensure that no support is generated
+			//   _________
+			//   |       |
+			//   |       |
+			//   |_______|
+			//   _________
+			//   |       |
+			// __|       |__
+			//   |_______|
+			//
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
+				scene.Children.Add(cubeInAir);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
+			}
+
+			// make a cube on the bed and another cube exactly on top of it and ensure that support is not generated
 			//   _________
 			//   |       |
 			//   |       |
@@ -127,11 +179,11 @@ namespace MatterControl.Tests.MatterControl
 				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
+				scene.Children.Add(cubeInAir);
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
@@ -155,11 +207,43 @@ namespace MatterControl.Tests.MatterControl
 				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
+				scene.Children.Add(cubeInAir);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
+			}
+
+			// Make a cube on the bed and single cube in the air that intersects it. 
+			// SELECT the cube on top
+			// Ensure that support is not generated.
+			//    _________
+			//    |       |
+			//    |______ |  // top cube actually exactly on top of bottom cube
+			//   ||______||
+			//   |       |
+			//___|_______|___
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
+				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				scene.Children.Add(cubeOnBed);
+
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
+				// move it so the bottom is 15 above the bed
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
+				scene.Children.Add(cubeInAir);
+
+				scene.SelectedItem = cubeInAir;
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
@@ -259,11 +343,11 @@ namespace MatterControl.Tests.MatterControl
 				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
+				scene.Children.Add(cubeInAir);
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
@@ -292,11 +376,11 @@ namespace MatterControl.Tests.MatterControl
 				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
+				scene.Children.Add(cubeInAir);
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
@@ -304,7 +388,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
-			// make a cube on the bed and another cube exactily on top of it and ensure that support is not generated
+			// make a cube on the bed and another cube exactly on top of it and ensure that support is not generated
 			//   _________
 			//   |       |
 			//   |       |
@@ -321,11 +405,11 @@ namespace MatterControl.Tests.MatterControl
 				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
-				var cubeInAair = await CubeObject3D.Create(20, 20, 20);
-				var aabbAir = cubeInAair.GetAxisAlignedBoundingBox();
+				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
+				var aabbAir = cubeInAir.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeInAair.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
-				scene.Children.Add(cubeInAair);
+				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
+				scene.Children.Add(cubeInAir);
 
 				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
 				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;

@@ -171,24 +171,29 @@ namespace MatterHackers.MatterControl.DesignTools
 				progress?.Report(status);
 
 				// Get visible meshes for each of them 
-				var supportCandidates = scene.Children.SelectMany(i => i.VisibleMeshes());
+				var allBedItems = scene.Children.SelectMany(i => i.VisibleMeshes());
 
+				AxisAlignedBoundingBox suppoortBounds = AxisAlignedBoundingBox.Empty();
 				if (selectedItem != null)
 				{
-					supportCandidates = selectedItem.VisibleMeshes();
+					foreach (var candidate in selectedItem.VisibleMeshes())
+					{
+						suppoortBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
+					}
 				}
-
-				AxisAlignedBoundingBox allBounds = AxisAlignedBoundingBox.Empty();
-				foreach (var candidate in supportCandidates)
+				else
 				{
-					allBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
+					foreach (var candidate in allBedItems)
+					{
+						suppoortBounds += candidate.GetAxisAlignedBoundingBox(candidate.Matrix.Inverted * candidate.WorldMatrix());
+					}
 				}
 
 				// create the gird of possible support
-				var gridBounds = new RectangleDouble(Math.Floor((double)(allBounds.MinXYZ.X / PillarSize)),
-					Math.Floor((double)(allBounds.MinXYZ.Y / PillarSize)),
-					Math.Ceiling(allBounds.MaxXYZ.X / PillarSize),
-					Math.Ceiling(allBounds.MaxXYZ.Y / PillarSize));
+				var gridBounds = new RectangleDouble(Math.Floor((double)(suppoortBounds.MinXYZ.X / PillarSize)),
+					Math.Floor((double)(suppoortBounds.MinXYZ.Y / PillarSize)),
+					Math.Ceiling(suppoortBounds.MaxXYZ.X / PillarSize),
+					Math.Ceiling(suppoortBounds.MaxXYZ.Y / PillarSize));
 				var partBounds = new RectangleDouble(gridBounds.Left * PillarSize,
 					gridBounds.Bottom * PillarSize,
 					gridBounds.Right * PillarSize,
@@ -209,7 +214,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// get all the support plane intersections
 				status.Status = "Trace";
 				progress?.Report(status);
-				var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, supportCandidates);
+				var detectedPlanes = DetectRequiredSupportByTracing(gridBounds, allBedItems);
 
 				status.Status = "Columns";
 				progress?.Report(status);
@@ -374,7 +379,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					do
 					{
 						lastBottom = i;
-						// find all open arreas in the list and add support
+						// find all open areas in the list and add support
 						i = GetNextBottom(i, planes);
 						if (i >= 0)
 						{
@@ -400,6 +405,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
 		{
+			var allBounds = supportCandidates.GetAxisAlignedBoundingBox();
+			var rayStartZ = allBounds.MinXYZ.Z - 1;
+
 			var traceData = GetTraceData(supportCandidates);
 
 			// keep a list of all the detected planes in each support column
@@ -428,7 +436,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
 
 							// detect all the bottom plans (surfaces that might need support
-							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, -.001), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
+							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, rayStartZ), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
 							do
 							{
 								upHit = traceData.GetClosestIntersection(upRay);
@@ -442,7 +450,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							} while (upHit != null);
 
 							// detect all the up plans (surfaces that will have support on top of them)
-							upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, 0), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
+							upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, rayStartZ), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
 							do
 							{
 								upHit = traceData.GetClosestIntersection(upRay);
@@ -557,7 +565,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			supportVerts = new List<Vector3Float>();
 			supportFaces = new FaceList();
 
-			// find all the down faces from the support cindidates
+			// find all the down faces from the support candidates
 			AddSupportFaces(supportCandidates, 
 				supportVerts, 
 				supportFaces, 
