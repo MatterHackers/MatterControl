@@ -470,7 +470,7 @@ namespace MatterControl.Tests.MatterControl
 			string[] expected = new string[]
 			{
 				// move without extrusion
-				"G1 X100 Y100 Z0 E0", // strat position
+				"G1 X100 Y100 Z0 E0", // start position
 				"G1 X0", // clamped x
 				"", // move while outside
 				"G1 Y110", // first position back in bounds
@@ -570,7 +570,7 @@ namespace MatterControl.Tests.MatterControl
 			string[] inputLines = new string[]
 			{
 				"T0",
-				// send some movement comands with tool switching
+				// send some movement commands with tool switching
 				"; the printer is moving normally",
 				"G1 X10 Y10 Z10 E0 F2500",
 				"T1",
@@ -621,7 +621,7 @@ namespace MatterControl.Tests.MatterControl
 				// tell the printer to heat up
 				"M104 T1 S240", // start with T0 to test smoothie temp change code
 				"M104 T0 S230",
-				// send some movement comands with tool switching
+				// send some movement commands with tool switching
 				"; the printer is moving normally",
 				"G1 X10 Y10 Z10 E0 F2500",
 				"T1",
@@ -679,7 +679,7 @@ namespace MatterControl.Tests.MatterControl
 				"T0",
 				// tell the printer to heat up
 				"M104 T0 S230",
-				// send some movement comands with tool switching
+				// send some movement commands with tool switching
 				"; the printer is moving normally",
 				"G1 X10 Y10 Z10 E0 F2500",
 				"T1",
