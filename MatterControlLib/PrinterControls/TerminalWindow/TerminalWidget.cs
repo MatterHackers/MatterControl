@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(headerRow);
 
-			headerRow.AddChild(CreateFilterOptions(theme));
+			headerRow.AddChild(CreateVisibilityOptions(theme));
 
 			autoUppercase = new CheckBox("Auto Uppercase".Localize(), textSize: theme.DefaultFontSize)
 			{
@@ -111,38 +111,45 @@ namespace MatterHackers.MatterControl
 			textScrollWidget.LineFilterFunction = lineData =>
 			{
 				var line = lineData.line;
+				var output = lineData.output;
 				var outputLine = line;
 
 				var lineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(line);
 
 				// and set this as the output if desired
-				if (!UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true))
+				if (output
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true))
 				{
 					outputLine = lineWithoutChecksum;
 				}
 
-				if (lineWithoutChecksum.StartsWith("ok")
+				if (!output
+					&& lineWithoutChecksum == "ok"
 					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowOks, true))
 				{
 					return null;
 				}
-				else if (lineWithoutChecksum.StartsWith("M105")
+				else if (output
+					&& lineWithoutChecksum.StartsWith("M105")
 					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempRequests, true))
 				{
 					return null;
 				}
-				else if ((lineWithoutChecksum.StartsWith("G0 ") || lineWithoutChecksum.StartsWith("G1 "))
+				else if (output
+					&& (lineWithoutChecksum.StartsWith("G0 ") || lineWithoutChecksum.StartsWith("G1 "))
 					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowMovementRequests, true))
 				{
 					return null;
 				}
-				else if (( lineWithoutChecksum.StartsWith("T") || lineWithoutChecksum.StartsWith("ok T"))
+				else if (!output
+					&& (lineWithoutChecksum.StartsWith("T") || lineWithoutChecksum.StartsWith("ok T"))
 					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempResponse, true))
 				{
 					return null;
 				}
-				else if (lineWithoutChecksum.StartsWith("wait")
-					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, true))
+				else if (!output
+					&& lineWithoutChecksum == "wait"
+					&& !UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, false))
 				{
 					return null;
 				}
@@ -292,29 +299,20 @@ namespace MatterHackers.MatterControl
 			this.AnchorAll();
 		}
 
-		private GuiWidget CreateFilterOptions(ThemeConfig theme)
+		private GuiWidget CreateVisibilityOptions(ThemeConfig theme)
 		{
-			var filterOptionsButton = new PopupMenuButton("Filter Options", theme)
+			var visibilityOptionsButton = new PopupMenuButton("Visibility Options", theme)
 			{
 				VAnchor = VAnchor.Center
 			};
 
 			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-			filterOptionsButton.PopupContent = popupMenu;
+			visibilityOptionsButton.PopupContent = popupMenu;
 
 			// put in options for filtering various output
 			popupMenu.CreateBoolMenuItem(
-				"Show 'Ok' response".Localize(),
-				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowOks, true),
-				(isChecked) =>
-				{
-					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowOks, isChecked);
-					textScrollWidget.RebuildFilteredList();
-				});
-
-			popupMenu.CreateBoolMenuItem(
-				"Show Checksum".Localize(),
+				"Line Checksums".Localize(),
 				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowChecksum, true),
 				(isChecked) =>
 				{
@@ -323,7 +321,7 @@ namespace MatterHackers.MatterControl
 				});
 
 			popupMenu.CreateBoolMenuItem(
-				"Show In / Out Indicators".Localize(),
+				"In / Out Indicators".Localize(),
 				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true),
 				(isChecked) =>
 				{
@@ -331,8 +329,11 @@ namespace MatterHackers.MatterControl
 					textScrollWidget.RebuildFilteredList();
 				});
 
+			// request section
+			popupMenu.CreateSeparator();
+
 			popupMenu.CreateBoolMenuItem(
-				"Show Temperature Requests".Localize(),
+				"Temperature Requests".Localize(),
 				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempRequests, true),
 				(isChecked) =>
 				{
@@ -341,7 +342,7 @@ namespace MatterHackers.MatterControl
 				});
 
 			popupMenu.CreateBoolMenuItem(
-				"Show Movement Requests".Localize(),
+				"Movement Requests".Localize(),
 				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowMovementRequests, true),
 				(isChecked) =>
 				{
@@ -349,8 +350,11 @@ namespace MatterHackers.MatterControl
 					textScrollWidget.RebuildFilteredList();
 				});
 
+			// response section
+			popupMenu.CreateSeparator();
+
 			popupMenu.CreateBoolMenuItem(
-				"Show Temperature Responses".Localize(),
+				"Temperature Responses".Localize(),
 				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowTempResponse, true),
 				(isChecked) =>
 				{
@@ -359,15 +363,24 @@ namespace MatterHackers.MatterControl
 				});
 
 			popupMenu.CreateBoolMenuItem(
-				"Show Wait Responses".Localize(),
-				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, true),
+				"'Ok' Responses".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowOks, true),
+				(isChecked) =>
+				{
+					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowOks, isChecked);
+					textScrollWidget.RebuildFilteredList();
+				});
+
+			popupMenu.CreateBoolMenuItem(
+				"'Wait' Responses".Localize(),
+				() => UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowWaitResponse, false),
 				(isChecked) =>
 				{
 					UserSettings.Instance.Fields.SetBool(UserSettingsKey.TerminalShowWaitResponse, isChecked);
 					textScrollWidget.RebuildFilteredList();
 				});
 
-			return filterOptionsButton;
+			return visibilityOptionsButton;
 		}
 
 		private void SendManualCommand()
