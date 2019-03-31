@@ -2263,6 +2263,8 @@ You will then need to logout and log back in to the computer for the changes to 
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
+			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+
 			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
@@ -2506,6 +2508,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						}
 
 						currentSentLine = currentSentLine.Trim();
+
 						// Check if there is anything in front of the ;.
 						if (currentSentLine.Split(';')[0].Trim().Length > 0)
 						{

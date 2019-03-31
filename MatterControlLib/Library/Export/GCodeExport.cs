@@ -275,12 +275,14 @@ namespace MatterHackers.MatterControl.Library.Export
 			var queuedCommandStream = new QueuedCommandsStream(printer, gCodeBaseStream);
 			GCodeStream accumulatedStream = queuedCommandStream;
 
+			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
+
+			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
+
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream);
 			}
-
-			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
 
 			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
 
@@ -307,8 +309,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
-			// this is added to ensure we are rewriting the G0 G1 commands as needed
-			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
+			accumulatedStream = new RemoveNOPsStream(printer, accumulatedStream);
 
 			return accumulatedStream;
 		}
