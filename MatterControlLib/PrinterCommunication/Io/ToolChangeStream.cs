@@ -290,7 +290,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			// check if there is a travel
 			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
-				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
+				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // has a move axis in it
 				&& activeTool != requestedTool // is different than the last extruder set
 				&& SendState == SendStates.WaitingForMove)
 			{
