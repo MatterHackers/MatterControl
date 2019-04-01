@@ -55,6 +55,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		public object Peek()
+		{
+			// lock queue
+			lock (locker)
+			{
+				if (commandQueue.Count > 0)
+				{
+					return commandQueue[0];
+				}
+			}
+
+			return null;
+		}
+
 		public string LastAdd()
 		{
 			// lock queue

@@ -303,7 +303,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E-4",
 				"G1 E-5",
 				"G90",
-				"",
+				"", // 10
 				"G1 E-4 F150",
 				"G1 E-3",
 				"G1 E-2",
@@ -312,15 +312,15 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E1",
 				"G1 E2",
 				"G1 E3",
-				"G90",
+				"",
 				"G4 P0",
 				"G92 E0",
 				"G4 P0",
 				"",
 				"G1 E-1 F301",
 				"G1 E-2",
-				"G90",
-				null,
+				"",
+				 null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -415,18 +415,15 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 Z10 E0",
 				"G1 E10",
 				"G1 E30",
-
 				"; the printer pauses",
 				"", // G91 is removed
 				"G1 Z20 E20 F12000", // altered to be absolute
 				"G90",
-
 				"; the user moves the printer",
-
 				"; the printer un-pauses",
 				"", // G91 is removed
 				"G1 Z10 E30.8",
-				"G90",
+				"", // G90 is removed
 				null,
 			};
 
@@ -536,12 +533,12 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X12 Y10 Z10 F3000",
 				"",
 				"G1 Z0 E30.8 F12000",
-				"G90",
+				"", // G90 removed
 				"M114",
 				"",
 				"G1 X12.1 F1800",
 				"G1 X12.2",
-				"G90",
+				"", // G90 removed
 				"G1 X12.33 Z1.667 E32.333",
 				"G1 X12.47 Z3.333 E33.867",
 				"G1 X12.6 Z5 E35.4",
@@ -722,12 +719,16 @@ namespace MatterControl.Tests.MatterControl
 				"M114", // we always ask position after tool assignment
 				"G1 X10 Y10 Z10 F2500", // go to the position requested
 				"T1", // switch to do extrusion
+				"G92 E0", // set the extrusion after switch (for smoothie)
 				"G1 E10", // the first extrusion on T1
 				"T0", // switch back to T0
-				"M114",
+				"G92 E10", // set the extrusion after switch (for smoothie)
+				"M114", // 10
 				"T1",
+				"G92 E10", // set the extrusion after switch (for smoothie)
 				"G1 E20", // a second extrusion without changing back to T0
-				"T0", // the no move switch back to T0
+				"T0", // the 'no move' switch back to T0
+				"G92 E20", // set the extrusion after switch (for smoothie)
 				"M114",
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested

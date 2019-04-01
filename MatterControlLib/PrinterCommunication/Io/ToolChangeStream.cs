@@ -183,13 +183,29 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& !lineNoComment.Contains("Y")
 				&& !lineNoComment.Contains("Z"))
 			{
-				// switch extruders
-				queuedCommands.Enqueue($"T{requestedTool}");
-				// send the extrusion
-				queuedCommands.Enqueue(lineNoComment + " ; NO_PROCESSING");
-				// switch back
-				queuedCommands.Enqueue($"T{activeTool}");
-				return "";
+				double ePosition = 0;
+
+				if (GCodeFile.GetFirstNumberAfter("E", lineNoComment, ref ePosition))
+				{
+					// switch extruders
+					queuedCommands.Enqueue($"T{requestedTool}");
+
+					// if we know the current E position before the switch
+					// set the E value to the previous E value. 
+					if (lastDestination.extrusion != double.PositiveInfinity)
+					{
+						// On Marlin E position is share between extruders and this code has no utility
+						// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
+						queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+					}
+					// send the extrusion
+					queuedCommands.Enqueue(lineNoComment + " ; NO_PROCESSING");
+					// switch back
+					queuedCommands.Enqueue($"T{activeTool}");
+					lastDestination.extrusion = ePosition;
+					queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+					return "";
+				}
 			}
 
 			if (QueueBeforeIfNeedToSwitchExtruders(lineToSend, lineNoComment))
