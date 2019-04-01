@@ -3,7 +3,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage
 {
@@ -12,7 +11,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 		public class ToggleSwitchConfig
 		{
 			public bool Checked { get; set; }
+
 			public string Name { get; set; }
+
 			public Action<bool> ToggleAction { get; set; }
 		}
 

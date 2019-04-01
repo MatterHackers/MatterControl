@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		protected void DisplayCurrentTemperature()
 		{
-			int actualTemperature =  this.ActualTemperature;
+			int actualTemperature = this.ActualTemperature;
 			int targetTemperature = this.TargetTemperature;
 
 			if (targetTemperature > 0)
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			base.OnClosed(e);
 		}
 
-		bool? isEnabled = null;
+		private bool? isEnabled = null;
 
 		private void Connection_CommunicationStateChanged(object s, EventArgs e)
 		{

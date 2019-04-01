@@ -65,12 +65,12 @@ namespace MatterHackers.MatterControl.ActionBar
 				var loadButton = theme.CreateDialogButton("Load".Localize());
 				loadButton.ToolTipText = "Load filament".Localize();
 				loadButton.Name = "Load Filament Button";
-				loadButton.Click += (s, e) =>UiThread.RunOnIdle(() =>
+				loadButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
 					DialogWindow.Show(
 						new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
 				});
-				
+
 				loadUnloadButtonRow.AddChild(loadButton);
 
 				var unloadButton = theme.CreateDialogButton("Unload".Localize());
@@ -211,6 +211,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		}
 
 		protected override int ActualTemperature => (int)printer.Connection.GetActualHotendTemperature(this.hotendIndex);
+
 		protected override int TargetTemperature => (int)printer.Connection.GetTargetHotendTemperature(this.hotendIndex);
 
 		private string TemperatureKey
@@ -237,6 +238,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			widget.AddChild(container);
 
 			GuiWidget hotendRow;
+
 			container.AddChild(hotendRow = new SettingsItem(
 				printer.Settings.Helpers.NumberOfHotends() == 1 ? "Hotend".Localize() : "Hotend {0}".Localize().FormatWith(hotendIndex + 1),
 				menuTheme,
@@ -259,7 +261,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				},
 				enforceGutter: false));
 
-			var toggleWidget = hotendRow.Children.Where(o => o is ICheckbox).FirstOrDefault();
+			var toggleWidget = hotendRow.Children.FirstOrDefault(o => o is ICheckbox);
 			toggleWidget.Name = "Toggle Heater";
 
 			heatToggle = toggleWidget as ICheckbox;
