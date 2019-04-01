@@ -133,7 +133,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FilamentRunout?.Invoke(this, printPauseEventArgs);
 		}
 
-		public event EventHandler<PrintFinishedEventArgs> PrintFinished;
+		public event EventHandler<string> PrintFinished;
+		public event EventHandler PrintCanceled;
 
 		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
 
@@ -579,7 +580,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Stop();
 									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
 									{
-										PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+										PrintFinished?.Invoke(this, Printer.Bed.EditContext.SourceItem.Name);
 									}
 								}
 								else
@@ -2532,6 +2533,8 @@ You will then need to logout and log back in to the computer for the changes to 
 						ReleaseMotors();
 						TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						this.PrintWasCanceled = false;
+						// and finally notify anyone that wants to know
+						PrintCanceled?.Invoke(this, null);
 					}
 					else if (communicationState == CommunicationStates.Printing)// we finished printing normally
 					{
@@ -2957,16 +2960,6 @@ You will then need to logout and log back in to the computer for the changes to 
 		UnauthorizedAccessException,
 		ConnectionLost,
 		UsbDisconnected
-	}
-
-	public class PrintFinishedEventArgs : EventArgs
-	{
-		public PrintFinishedEventArgs(string name)
-		{
-			this.ItemName = name;
-		}
-
-		public string ItemName { get; }
 	}
 
 	public class PrintPauseEventArgs : EventArgs

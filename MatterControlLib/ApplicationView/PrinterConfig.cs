@@ -84,6 +84,8 @@ namespace MatterHackers.MatterControl
 
 			// Register listeners
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.PrintFinished += ApplicationController.Instance.Connection_PrintFinished;
+			this.Connection.PrintCanceled += ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
 			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
@@ -247,7 +249,7 @@ namespace MatterHackers.MatterControl
 			this.Bed.BedShape = this.Settings.GetValue<BedShape>(SettingsKey.bed_shape);
 		}
 
-		private void Connection_PrintFinished(object s, EventArgs e)
+		private void Connection_PrintFinished(object s, string printName)
 		{
 			// clear single use setting on print completion
 			foreach (var keyValue in this.Settings.BaseLayer)
@@ -424,6 +426,8 @@ namespace MatterHackers.MatterControl
 			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
 			this.Connection.PrintFinished -= Connection_PrintFinished;
 			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.PrintFinished -= ApplicationController.Instance.Connection_PrintFinished;
+			this.Connection.PrintCanceled -= ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
 
 			macroReplacements = null;
