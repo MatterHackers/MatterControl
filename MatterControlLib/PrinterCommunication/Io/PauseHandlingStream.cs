@@ -228,13 +228,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			if (GCodeFile.IsLayerChange(lineToSend))
 			{
-				string layerNumber = lineToSend.Split(':')[1];
+				int layerNumber = GCodeFile.GetLayerNumber(lineToSend);
+
 				if (PauseOnLayer(layerNumber))
 				{
-					// make the string 1 based (the internal code is 0 based)
-					int layerIndex;
-					int.TryParse(layerNumber, out layerIndex);
-					DoPause(PauseReason.PauseLayerReached, layerIndex + 1);
+					this.DoPause(
+						PauseReason.PauseLayerReached,
+						// make the layer 1 based (the internal code is 0 based)
+						layerNumber + 1);
 				}
 			}
 			else if (lineToSend.StartsWith("M226")
@@ -318,18 +319,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		private bool PauseOnLayer(string layer)
+		private bool PauseOnLayer(int layerNumber)
 		{
-			int layerNumber;
 			var printerRecoveryStream = internalStream as PrintRecoveryStream;
 
-			if (int.TryParse(layer, out layerNumber)
-				&& printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber)
+			if (printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber)
 				&& (printerRecoveryStream == null
 					|| printerRecoveryStream.RecoveryState == RecoveryState.PrintingToEnd))
 			{
 				return true;
 			}
+
 			return false;
 		}
 	}

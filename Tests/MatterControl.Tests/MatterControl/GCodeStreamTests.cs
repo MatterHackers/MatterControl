@@ -126,7 +126,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z10 F1800",
 				"M114",
 				"M109 S[temperature]",
-				 null,
+				null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -160,7 +160,7 @@ namespace MatterControl.Tests.MatterControl
 				"M117 Ready ",
 				"M119",
 				"switch filament; WRITE_RAW",
-				 null,
+				null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -192,7 +192,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0 Y0 Z0 E0 F1000",
 				"G1 X10",
-				 null,
+				null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -234,7 +234,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X8 Y0 Z-0.1",
 				"G1 X9 Y0 Z-0.1",
 				"G1 X10 Y0 Z-0.1",
-				 null,
+				null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -320,7 +320,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E-1 F301",
 				"G1 E-2",
 				"G90",
-				 null,
+				null,
 			};
 
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
@@ -822,7 +822,7 @@ namespace MatterControl.Tests.MatterControl
 					}
 
 					string expectedLine = expected[expectedIndex++];
-					if(expectedLine != actualLineWithoutChecksum)
+					if (expectedLine != actualLineWithoutChecksum)
 					{
 						int a = 0;
 					}
@@ -841,7 +841,7 @@ namespace MatterControl.Tests.MatterControl
 			{
 				Thread.Sleep(1000);
 			}
-			
+
 			// start a print
 			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", inputGCode)));
 			printer.Connection.CommunicationState = MatterHackers.MatterControl.PrinterCommunication.CommunicationStates.PreparingToPrint;
@@ -849,7 +849,7 @@ namespace MatterControl.Tests.MatterControl
 
 			// wait for the print to finish (or 3 minutes to pass)
 			time = Stopwatch.StartNew();
-			while(printer.Connection.Printing
+			while (printer.Connection.Printing
 				&& time.ElapsedMilliseconds < (1000 * 60 * 3))
 			{
 				Thread.Sleep(1000);
@@ -861,6 +861,14 @@ namespace MatterControl.Tests.MatterControl
 		private static void Connection_LineReceived(object sender, string e)
 		{
 			throw new System.NotImplementedException();
+		}
+
+		[Test]
+		public void KnownLayerLinesTest()
+		{
+			Assert.AreEqual(8, GCodeFile.GetLayerNumber("; layer 8, Z = 0.800"), "Simplify3D ~ 2019");
+			Assert.AreEqual(1, GCodeFile.GetLayerNumber("; LAYER:1"), "Cura/MatterSlice");
+			Assert.AreEqual(7, GCodeFile.GetLayerNumber(";LAYER:7"), "Slic3r Prusa Edition 1.38.7-prusa3d on 2018-04-25");
 		}
 
 		[Test, Category("GCodeStream")]
@@ -903,7 +911,8 @@ namespace MatterControl.Tests.MatterControl
 
 			var inputLinesStream = new TestGCodeStream(printer, inputLines);
 			var queueStream = new QueuedCommandsStream(printer, inputLinesStream);
-			ProcessWriteRegexStream writeStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
+
+			var writeStream = new ProcessWriteRegexStream(printer, queueStream, queueStream);
 			ValidateStreamResponse(expected, writeStream);
 		}
 

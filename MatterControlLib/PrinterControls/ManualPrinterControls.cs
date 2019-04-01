@@ -37,14 +37,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
 {
-	public static class EnabledWidgetExtensions
-	{
-		public static void SetEnabled(this GuiWidget guiWidget, bool enabled)
-		{
-			guiWidget.Enabled = enabled;
-		}
-	}
-
 	public class ManualPrinterControls : ScrollableWidget, ICloseableTab
 	{
 		public static event EventHandler<ManualPrinterControls> AddPluginControls;
