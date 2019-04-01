@@ -565,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("GCodeStream")]
-		public async Task ToolChangeNoHeatNoExtrusion()
+		public async Task ToolChangeNoHeat()
 		{
 			string[] inputLines = new string[]
 			{
@@ -577,43 +577,177 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 Z10 E0",
 				"T0",
 				"G1 X10 Y10 Z10 E0",
-				// now do the same thing with a long enough print to cause
-				// cooling and heating
 				null,
 			};
 
 			string[] expected = new string[]
 			{
-				"M114",
-				"T0",
-				"M114",
-				"G1 X10 Y10 Z10 F2500",
-				"G1 Y111",
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"G1 Y111", // the pre switch T1 code
+				"M114", // always sent after a ; NO_PROCESSING command
 				"T1",
 				"M114", // after a tool change we inject an M114
-				"G1 Y220",
-				"G1 X9 Y8 F3000",
-				"G1 Z7 F315",
-				"G1 F2500", // 11
-				"G1",
-				"G1 X332",
-				"T0", // 14
-				"M114",
-				"G1 X444",
-				"G1 X10 Y10 F3000",
+				"G1 Y222", // the post switch T1 code
+				"M114", // always sent after a ; NO_PROCESSING command
+				"G1 X9 Y8 F3000", // the destination position with consideration of T1 offset
+				"G1 Z7 F315", // we set xy than z, so this is the z
+				"G1 F2500", // we then reset the F after the pre and post gcode run
+				"G1 X111", // pre T0 code
+				"M114", // always sent after a ; NO_PROCESSING command
+				"T0",
+				"M114", // always send after switch
+				"G1 X222", // post switch T0 code
+				"M114", // always sent after a ; NO_PROCESSING command
+				"G1 X10 Y10 F3000", // return to extruder position
 				"G1 Z10 F315",
 				"G1 F2500",
-				"G1",
 				"Communication State: FinishedPrint",
 				null,
 			};
 
+			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
-			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
+
+			// validate that no heater is heated at anytime during the print
+			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
+			{
+				if (printer.Connection.GetTargetHotendTemperature(extruderIndex) > 0)
+				{
+					Assert.Fail("No hotend should ever change temp during this test.");
+				}
+			};
+
+			await RunSimulatedPrint(printer, inputLines, expected);
+		}
+
+		// A test that proves that: T0, no move, T1, T0, move does not send switch extruder gcode
+		[Test, Category("GCodeStream")]
+		public async Task NoToolChangeIfNoMove()
+		{
+			string[] inputLines = new string[]
+			{
+				"T0",
+				// send some movement commands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"T0",
+				"G1 X11 Y11 Z11 E0 F2500",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"G1 X11 Y11 Z11", // go to the position requested
+				"Communication State: FinishedPrint",
+				null,
+			};
+
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			await RunSimulatedPrint(printer, inputLines, expected);
+		}
+
+		// A test that proves that: T0, no move, T1, temp set, T0, move does not send switch extruder gcode
+		// but there is the correct extruder set, T1, then temp, than T0
+		[Test, Category("GCodeStream")]
+		public async Task ToolChangeTempSetWithNoMove()
+		{
+			string[] inputLines = new string[]
+			{
+				"T0",
+				// send some movement commands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"M104 S100",
+				"T0",
+				"G1 X11 Y11 Z11 E0 F2500",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"T1", // switch to T1 for temp
+				"M104 S100", // set the temp
+				"T0", // smoothie command to ensure still on T0 after temp set
+				"M114", // always ask position after T
+				"M114", // erroneous extra M114, FIX at some point
+				"G1 X11 Y11 Z11", // go to the position requested
+				"Communication State: FinishedPrint",
+				null,
+			};
+
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			await RunSimulatedPrint(printer, inputLines, expected);
+		}
+
+		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode 
+		// but does switch to and back for extrude
+		[Test, Category("GCodeStream")]
+		public async Task NoMoveOnToolChangeButWithExtrude()
+		{
+			string[] inputLines = new string[]
+			{
+				"T0",
+				// send some movement commands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"G1 E10",
+				"G1 E20",
+				"T0",
+				"G1 E30",
+				"G1 X11 Y11 Z11 E30 F2500",
+				null,
+			};
+
+			string[] expected = new string[]
+			{
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"T1", // switch to do extrusion
+				"G1 E10", // the first extrusion on T1
+				"T0", // switch back to T0
+				"M114",
+				"M114",
+				"M114", // 10
+				"T1",
+				"G1 E20", // a second extrusion without changing back to T0
+				"T0", // the no move switch back to T0
+				"M114",
+				"M114",
+				"M114",
+				"G1 E30", // extrude on T0
+				"G1 X11 Y11 Z11", // go to the position requested
+				"Communication State: FinishedPrint",
+				null,
+			};
+
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			await RunSimulatedPrint(printer, inputLines, expected);
 		}
 
 		[Test, Category("GCodeStream")]
-		public async Task ToolChangeHeatNoExtrusion()
+		public async Task ToolChangeTempAndSwitch()
 		{
 			string[] inputLines = new string[]
 			{
@@ -633,46 +767,14 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			string[] expected = new string[]
-			{
-				"M114",
-				"T0",
-				"M114",
-				"M104 T1 S240",
-				"T0", // temp switching set extruder after for smoothie
-				"M114", // 6
-				"M114",
-				"M104 T0 S230",
-				"G1 X10 Y10 Z10 F2500",
-				"G1 Y111",
-				"M104 T0 S200",
-				"T1",
-				"M114", // after a tool change we inject an M114
-				"M104 T1 S240",
-				"G1 Y220",
-				"G1 X9 Y8 F3000",
-				"G1 Z7 F315",
-				"G1 F2500",
-				"G1",
-				"G1 X332",
-				"M104 T1 S210",
-				"T0",
-				"M114",
-				"G1 X444",
-				"G1 X10 Y10 F3000",
-				"G1 Z10 F315",
-				"G1 F2500",
-				"G1",
-				"Communication State: FinishedPrint",
-				null
-			};
+			// validate that both temperatures get set and only once each
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
+			await RunSimulatedPrint(printer, inputLines, null);
 		}
 
 		[Test, Category("GCodeStream")]
-		public async Task ToolChangeHeatT0NoExtrusion()
+		public async Task ToolChangeHeatOnlyT0()
 		{
 			string[] inputLines = new string[]
 			{
@@ -691,37 +793,13 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			string[] expected = new string[]
-			{
-				"M114",
-				"T0",
-				"M114",
-				"M104 T0 S230",
-				"G1 X10 Y10 Z10 F2500",
-				"G1 Y111",
-				"M104 T0 S200",
-				"T1",
-				"M114",
-				"G1 Y220",
-				"G1 X9 Y8 F3000",
-				"G1 Z7 F315",
-				"G1 F2500",
-				"G1",
-				"G1 X332",
-				"T0",
-				"M114",
-				"M104 T0 S200",
-				"G1 X444",
-				"G1 X10 Y10 F3000",
-				"G1 Z10 F315",
-				"G1 F2500",
-				"G1",
-				"Communication State: FinishedPrint",
-				null
-			};
-
 			PrinterConfig printer = SetupToolChangeSettings();
-			await ValidateStreamResponseWhilePrinting(expected, printer, inputLines);
+			// register to make sure that T0 is heated (only once) and T1 is not heated
+			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
+			{
+				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(1));
+			};
+			await RunSimulatedPrint(printer, inputLines, null);
 		}
 
 		private static PrinterConfig SetupToolChangeSettings()
@@ -737,11 +815,11 @@ namespace MatterControl.Tests.MatterControl
 
 			printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 
-			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "G1 X333");
-			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "G1 X444");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "G1 X111 ; NO_PROCESSING");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "G1 X222 ; NO_PROCESSING");
 
-			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "G1 Y111");
-			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "G1 Y222");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "G1 Y111 ; NO_PROCESSING");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "G1 Y222 ; NO_PROCESSING");
 
 			// set some data for T1
 			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
@@ -796,7 +874,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		private static async Task ValidateStreamResponseWhilePrinting(string[] expected, PrinterConfig printer, string[] inputGCode)
+		private static async Task RunSimulatedPrint(PrinterConfig printer, string[] inputGCode, string[] expected)
 		{
 			// set up our serial port finding
 			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
@@ -808,34 +886,38 @@ namespace MatterControl.Tests.MatterControl
 
 			int expectedIndex = 0;
 
-			// register to listen to the printer responses
-			printer.Connection.LineSent += (s, actualLine) =>
+			if (expected != null)
 			{
-				if (printer.Connection.Printing)
+				// register to listen to the printer responses
+				printer.Connection.LineSent += (s, actualLine) =>
 				{
-					var actualLineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(actualLine);
-
-					// this is so that we ignore temperature monitoring
-					if(actualLineWithoutChecksum.StartsWith("M105"))
+					if (printer.Connection.Printing)
 					{
-						return;
-					}
+						var actualLineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(actualLine);
 
-					string expectedLine = expected[expectedIndex++];
-					if (expectedLine != actualLineWithoutChecksum)
-					{
-						int a = 0;
+						// this is so that we ignore temperature monitoring
+						if (actualLineWithoutChecksum.StartsWith("M105"))
+						{
+							return;
+						}
+
+						string expectedLine = expected[expectedIndex++];
+						if (expectedLine != actualLineWithoutChecksum)
+						{
+							int a = 0;
+						}
+						//Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
+						Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
 					}
-					//Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
-					Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
-				}
-			};
+				};
+			}
 
 			// set up the emulator
 			printer.Settings.SetValue($"{Environment.MachineName}_com_port", "Emulator");
 			// connect to the emulator
 			printer.Connection.Connect();
 			var time = Stopwatch.StartNew();
+			// wait for the printer to be connected
 			while (!printer.Connection.IsConnected
 				&& time.ElapsedMilliseconds < (1000 * 60 * 1))
 			{
@@ -855,7 +937,10 @@ namespace MatterControl.Tests.MatterControl
 				Thread.Sleep(1000);
 			}
 
-			Assert.AreEqual(expectedIndex + 1, expected.Length, "We should have seen all the expected lines");
+			if (expected != null)
+			{
+				Assert.AreEqual(expectedIndex + 1, expected.Length, "We should have seen all the expected lines");
+			}
 		}
 
 		private static void Connection_LineReceived(object sender, string e)
