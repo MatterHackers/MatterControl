@@ -448,9 +448,12 @@ namespace MatterHackers.MatterControl.ActionBar
 			DisplayCurrentTemperature();
 		}
 
-		private void Connection_HotendTargetTemperatureChanged(object sender, int extruderIndex)
+		private void Connection_HotendTargetTemperatureChanged(object sender, int changedHotendIndex)
 		{
-			heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(extruderIndex) != 0;
+			if (this.hotendIndex == changedHotendIndex)
+			{
+				heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(changedHotendIndex) != 0;
+			}
 		}
 	}
 }
