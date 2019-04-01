@@ -1591,8 +1591,13 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
 		{
-			QueueLine("M114", forceToTopOfQueue);
-			PositionReadType = positionReadType;
+			var lastAddd = queuedCommandStream.LastAdd();
+			if (lastAddd == null
+				|| lastAddd != "M114")
+			{
+				QueueLine("M114", forceToTopOfQueue);
+				PositionReadType = positionReadType;
+			}
 		}
 
 		public void ReadSdProgress(string line)

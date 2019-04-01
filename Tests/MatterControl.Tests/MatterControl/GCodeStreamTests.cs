@@ -684,7 +684,6 @@ namespace MatterControl.Tests.MatterControl
 				"M104 S100", // set the temp
 				"T0", // smoothie command to ensure still on T0 after temp set
 				"M114", // always ask position after T
-				"M114", // erroneous extra M114, FIX at some point
 				"G1 X11 Y11 Z11", // go to the position requested
 				"Communication State: FinishedPrint",
 				null,
@@ -726,13 +725,9 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E10", // the first extrusion on T1
 				"T0", // switch back to T0
 				"M114",
-				"M114",
-				"M114", // 10
 				"T1",
 				"G1 E20", // a second extrusion without changing back to T0
 				"T0", // the no move switch back to T0
-				"M114",
-				"M114",
 				"M114",
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested
@@ -768,9 +763,43 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			// validate that both temperatures get set and only once each
+			string[] expected = new string[]
+			{
+				"M114",
+				"T0",
+				"M114",
+				"M104 T1 S240", // initial heating
+				"M104 T0 S230",
+				"T0",
+				"M114",
+				"G1 X10 Y10 Z10 F2500",
+				"G1 Y111",
+				"M114",
+				"T1",
+				"M114",
+				"M104 T1 S240", // **** BUG **** this should not be here
+				"T1",
+				"M114",
+				"G1 Y222",
+				"M114",
+				"G1 X9 Y8 F3000",
+				"G1 Z7 F315",
+				"G1 F2500",
+				"G1 X111",
+				"M114",
+				"T0",
+				"M114",
+				"G1 X222",
+				"M114",
+				"G1 X10 Y10 F3000",
+				"G1 Z10 F315",
+				"G1 F2500",
+				"Communication State: FinishedPrint",
+				null
+			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			await RunSimulatedPrint(printer, inputLines, null);
+			await RunSimulatedPrint(printer, inputLines, expected);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -798,6 +827,35 @@ namespace MatterControl.Tests.MatterControl
 			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
 			{
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(1));
+			};
+			await RunSimulatedPrint(printer, inputLines, null);
+		}
+
+		[Test, Category("GCodeStream")]
+		public async Task ToolChangeHeatOnlyT1()
+		{
+			string[] inputLines = new string[]
+			{
+				"T0",
+				// tell the printer to heat up
+				"M104 T1 S230",
+				// send some movement commands with tool switching
+				"; the printer is moving normally",
+				"G1 X10 Y10 Z10 E0 F2500",
+				"T1",
+				"G1 X10 Y10 Z10 E0",
+				"T0",
+				"G1 X10 Y10 Z10 E0",
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
+				null,
+			};
+
+			PrinterConfig printer = SetupToolChangeSettings();
+			// register to make sure that T0 is heated (only once) and T1 is not heated
+			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
+			{
+				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
 			};
 			await RunSimulatedPrint(printer, inputLines, null);
 		}
@@ -901,13 +959,20 @@ namespace MatterControl.Tests.MatterControl
 							return;
 						}
 
-						string expectedLine = expected[expectedIndex++];
-						if (expectedLine != actualLineWithoutChecksum)
+						if (true)
 						{
-							int a = 0;
+							string expectedLine = expected[expectedIndex++];
+							if (expectedLine != actualLineWithoutChecksum)
+							{
+								int a = 0;
+							}
+
+							Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
 						}
-						//Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
-						Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
+						else
+						{
+							Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
+						}
 					}
 				};
 			}
