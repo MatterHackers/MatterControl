@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 		public TextScrollWidget(PrinterConfig printer, List<(string line, bool output)> sourceLines)
 		{
 			this.printer = printer;
-			printer.Connection.TerminalLog.HasChanged += RecievedNewLine;
+			printer.Connection.TerminalLog.LineAdded += RecievedNewLine;
 			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
 			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			printer.Connection.TerminalLog.HasChanged -= RecievedNewLine;
+			printer.Connection.TerminalLog.LineAdded -= RecievedNewLine;
 			base.OnClosed(e);
 		}
 

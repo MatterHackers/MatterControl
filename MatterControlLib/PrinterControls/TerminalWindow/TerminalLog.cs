@@ -59,13 +59,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public event EventHandler<(string line, bool output)> HasChanged;
+		public event EventHandler<(string line, bool output)> LineAdded;
 
 		public List<(string line, bool output)> PrinterLines { get; } = new List<(string line, bool output)>();
 
-		private void OnHasChanged((string line, bool output) lineData)
+		private void OnLineAdded((string line, bool output) lineData)
 		{
-			HasChanged?.Invoke(this, lineData);
+			LineAdded?.Invoke(this, lineData);
+
 			if (PrinterLines.Count > maxLinesToBuffer)
 			{
 				Clear();
@@ -75,13 +76,13 @@ namespace MatterHackers.MatterControl
 		private void Printer_LineReceived(object sender, string line)
 		{
 			PrinterLines.Add((line, false));
-			OnHasChanged((line, false));
+			OnLineAdded((line, false));
 		}
 
 		private void Printer_LineSent(object sender, string line)
 		{
 			PrinterLines.Add((line, true));
-			OnHasChanged((line, true));
+			OnLineAdded((line, true));
 		}
 
 		public void WriteLine(string line)
@@ -92,12 +93,12 @@ namespace MatterHackers.MatterControl
 		public void WriteLine((string line, bool output) lineData)
 		{
 			PrinterLines.Add(lineData);
-			OnHasChanged(lineData);
+			OnLineAdded(lineData);
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
 		{
-			OnHasChanged((null, true));
+			OnLineAdded((null, true));
 
 			if (e is ConnectFailedEventArgs args)
 			{
@@ -127,17 +128,18 @@ namespace MatterHackers.MatterControl
 
 			StringEventArgs eventArgs = new StringEventArgs("Lost connection to printer.");
 			PrinterLines.Add((eventArgs.Data, true));
-			OnHasChanged((eventArgs.Data, true));
+			OnLineAdded((eventArgs.Data, true));
 		}
 
 		public void Clear()
 		{
-			lock(PrinterLines)
+			lock (PrinterLines)
 			{
 				PrinterLines.Clear();
 			}
 
-			OnHasChanged((null, true));
+			OnLineAdded((null, true));
+		}
 
 		public void Dispose()
 		{
@@ -145,6 +147,8 @@ namespace MatterHackers.MatterControl
 			printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
 			printerConnection.LineReceived -= Printer_LineReceived;
 			printerConnection.LineSent -= Printer_LineSent;
+
+			printerConnection = null;
 		}
 	}
 }
