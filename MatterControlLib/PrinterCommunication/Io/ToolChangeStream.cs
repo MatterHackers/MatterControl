@@ -100,7 +100,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				// check if this command contains a tool specification
 				GCodeFile.GetFirstNumberAfter("T", lineToSend, ref requestedToolForTempChange);
 
-				targetTemps[requestedToolForTempChange] = toolTemp;
+				if (!lineToSend.Contains("; INACTIVE_COOL_DOWN"))
+				{
+					targetTemps[requestedToolForTempChange] = toolTemp;
+				}
 			}
 
 			// check if any of the heaters we will be switching to need to start heating
@@ -264,7 +267,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
 					if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
 					{
-						gcode.AppendLine($"M104 T{activeTool} S{targetTemp}");
+						gcode.AppendLine($"M104 T{activeTool} S{targetTemp} ; INACTIVE_COOL_DOWN");
 					}
 				}
 			}
