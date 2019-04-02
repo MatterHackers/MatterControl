@@ -35,19 +35,22 @@ using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class TerminalLog
+	public class TerminalLog : IDisposable
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
+		private PrinterConnection printerConnection;
+
 		public TerminalLog(PrinterConnection printerConnection)
 		{
+			// Register event listeners
 			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
-			printerConnection.Disposed += (s, e) => printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
-
 			printerConnection.LineReceived += Printer_LineReceived;
 			printerConnection.LineSent += Printer_LineSent;
+
+			this.printerConnection = printerConnection;
 
 			if (Is32Bit)
 			{
@@ -135,6 +138,13 @@ namespace MatterHackers.MatterControl
 			}
 
 			OnHasChanged((null, true));
+
+		public void Dispose()
+		{
+			// Unregister event listeners
+			printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
+			printerConnection.LineReceived -= Printer_LineReceived;
+			printerConnection.LineSent -= Printer_LineSent;
 		}
 	}
 }
