@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 
 					// assert the leveling is working
-					Assert.AreEqual(11.15, emulator.ZPosition);
+					Assert.AreEqual(11.25, emulator.ZPosition);
 
 					testRunner.CancelPrint();
 
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// the user types in the pause layer 1 based and we are 0 based, so we should be on: user 2, printer 1.
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 					// assert the leveling is working
-					Assert.AreEqual(12.15, emulator.ZPosition);
+					Assert.AreEqual(12.25, emulator.ZPosition);
 
 					testRunner.CancelPrint();
 
@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
 
 					// assert the leveling is working
-					Assert.AreEqual(5.15, emulator.ZPosition);
+					Assert.AreEqual(5.25, emulator.ZPosition);
 				}
 
 				return Task.CompletedTask;

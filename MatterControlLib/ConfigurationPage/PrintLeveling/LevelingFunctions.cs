@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
 					var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
 					// add all the regions
-					Regions.Add(new LevelingTriangle(v0 - probeZOffset, v1 - probeZOffset, v2 - probeZOffset));
+					Regions.Add(new LevelingTriangle(v0 + probeZOffset, v1 + probeZOffset, v2 + probeZOffset));
 				}
 			}
 		}
