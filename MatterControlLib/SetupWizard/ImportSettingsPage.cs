@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 						string importSettingSuccessMessage = string.Format("You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.".Localize(), sectionName, layerName);
 
 						DialogWindow.ChangeToPage(
-							new ImportSucceeded(importSettingSuccessMessage)
+							new ImportSucceededPage(importSettingSuccessMessage)
 							{
 								DialogWindow = this.DialogWindow,
 							});
@@ -233,18 +233,6 @@ namespace MatterHackers.MatterControl
 		private static void DisplayFailedToImportMessage(string settingsFilePath)
 		{
 			StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(settingsFilePath)), "Unable to Import".Localize());
-		}
-	}
-
-	public class ImportSucceeded : DialogPage
-	{
-		public ImportSucceeded(string successMessage) :
-			base("Done".Localize())
-		{
-			this.WindowTitle = "Import Wizard".Localize();
-			this.HeaderText = "Import Successful".Localize();
-
-			contentRow.AddChild(new WrappedTextWidget(successMessage, textColor: theme.TextColor));
 		}
 	}
 }

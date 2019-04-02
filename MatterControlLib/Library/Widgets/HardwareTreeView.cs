@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								{
 									string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
 									DialogWindow.Show(
-										new ImportSucceeded(
+										new ImportSucceededPage(
 											importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
 								}
 								else
