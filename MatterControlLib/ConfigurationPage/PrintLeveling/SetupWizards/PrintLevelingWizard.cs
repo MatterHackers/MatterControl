@@ -373,8 +373,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// check that the position is within the printing area and if not move it back in
 			if (printer.Settings.Helpers.UseZProbe())
 			{
-				var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
-				var actualNozzlePosition = probePosition - probeOffset;
+				var probeOffset2D = new Vector2(printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset));
+				var actualNozzlePosition = probePosition - probeOffset2D;
 
 				// clamp this to the bed bounds
 				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				Vector2 adjustedPosition = bedBounds.Clamp(actualNozzlePosition);
 
 				// and push it back into the probePosition
-				probePosition = adjustedPosition + probeOffset;
+				probePosition = adjustedPosition + probeOffset2D;
 			}
 
 			return probePosition;

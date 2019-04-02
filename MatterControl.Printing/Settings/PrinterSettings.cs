@@ -809,15 +809,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(Vector2))
 			{
-				string[] twoValues = GetValue(settingsKey).Split(',');
-				if (twoValues.Length != 2)
-				{
-					throw new Exception("Not parsing {0} as a Vector2".FormatWith(settingsKey));
-				}
 				Vector2 valueAsVector2 = new Vector2();
-				valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
-				valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
+
+				string[] twoValues = GetValue(settingsKey).Split(',');
+				if (twoValues.Length == 2)
+				{
+					valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
+					valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
+				}
 				return (T)(object)(valueAsVector2);
+			}
+			else if(typeof(T) == typeof(Vector3))
+			{
+				Vector3 valueAsVector3 = new Vector3();
+
+				var value = GetValue(settingsKey);
+				if(value.StartsWith("["))
+				{
+					value = value.Substring(1);
+				}
+				if (value.EndsWith("]"))
+				{
+					value = value.Substring(0, value.Length - 1);
+				}
+
+				string[] threeValues = value.Split(',');
+				if (threeValues.Length == 3)
+				{
+					valueAsVector3.X = Helpers.ParseDouble(threeValues[0]);
+					valueAsVector3.Y = Helpers.ParseDouble(threeValues[1]);
+					valueAsVector3.Z = Helpers.ParseDouble(threeValues[2]);
+				}
+				return (T)(object)(valueAsVector3);
 			}
 			else if (typeof(T) == typeof(double))
 			{
@@ -1039,6 +1062,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (!string.IsNullOrEmpty(settings.ActiveMaterialKey))
 				{
 					settings.MaterialLayer = settings.GetMaterialLayer(settings.ActiveMaterialKey);
+				}
+
+				// Migrate the old probe settings into the new probe settings
+				string value = settings.GetValue(SettingsKey.probe_offset);
+				if (string.IsNullOrEmpty(value))
+				{
+					var valueAsVector3 = new Vector3();
+					// read it out of the legacy data
+					var oldZOffset = settings.GetValue<double>("z_probe_z_offset");
+					var oldXYOffset = settings.GetValue<Vector2>("z_probe_xy_offset");
+
+					valueAsVector3.X = oldXYOffset.X;
+					valueAsVector3.Y = oldXYOffset.Y;
+					valueAsVector3.Z = -oldZOffset;
+
+					settings.SetValue(SettingsKey.probe_offset, $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}");
 				}
 
 				return settings;

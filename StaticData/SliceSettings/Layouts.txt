@@ -155,6 +155,7 @@ Printer
     Leveling
       Print Leveling
         print_leveling_solution
+        probe_paper_width
         leveling_sample_points
         probe_offset_sample_point
         print_leveling_required_to_print
@@ -162,8 +163,7 @@ Printer
         print_leveling_probe_start
         use_z_probe
         z_probe_samples
-        z_probe_xy_offset
-        z_probe_z_offset
+        probe_offset
         z_servo_depolyed_angle
         z_servo_retracted_angle
     Features

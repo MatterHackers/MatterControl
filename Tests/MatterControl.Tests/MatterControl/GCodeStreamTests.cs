@@ -242,6 +242,7 @@ namespace MatterControl.Tests.MatterControl
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
+			printer.Settings.SetValue(SettingsKey.probe_offset, "0,0,-.1");
 			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);

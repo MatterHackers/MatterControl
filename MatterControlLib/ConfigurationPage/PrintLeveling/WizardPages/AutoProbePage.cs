@@ -161,8 +161,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			adjustedProbePosition = probeStartPosition;
 
 			// subtract out the probe offset
-			var probeOffset = printer.Settings.GetValue<Vector2>(SettingsKey.z_probe_xy_offset);
-			adjustedProbePosition -= new Vector3(probeOffset);
+			var probeOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+			// we are only interested in the xy position
+			probeOffset.Z = 0;
+			adjustedProbePosition -= probeOffset;
 
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);

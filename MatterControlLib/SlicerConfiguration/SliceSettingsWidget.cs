@@ -739,8 +739,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.OFFSET3:
-					placeFieldInDedicatedRow = true;
-					uiField = new ExtruderOffsetField(printer, settingsContext, settingData.SlicerConfigName, theme.TextColor, theme);
+					if (settingData.SlicerConfigName == "extruder_offset")
+					{
+						placeFieldInDedicatedRow = true;
+						uiField = new ExtruderOffsetField(printer, settingsContext, settingData.SlicerConfigName, theme.TextColor, theme);
+					}
+					else
+					{
+						uiField = new Vector3Field(theme);
+					}
 					break;
 #if !__ANDROID__
 				case SliceSettingData.DataEditTypes.IP_LIST:

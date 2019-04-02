@@ -936,17 +936,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.z_probe_z_offset,
-					PresentationName = "Probe Z Offset".Localize(),
-					HelpText = "The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).".Localize(),
-					DataEditType = DataEditTypes.DOUBLE,
-					Units = "mm",
-					ShowIfSet = "!has_hardware_leveling",
-					DefaultValue = ".1",
-					RebuildGCodeOnChange = false
-				},
-				new SliceSettingData()
-				{
 					SlicerConfigName = SettingsKey.use_z_probe,
 					PresentationName = "Use Automatic Z Probe".Localize(),
 					HelpText = "Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.".Localize(),
@@ -960,16 +949,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.z_probe_xy_offset,
-					PresentationName = "Probe XY Offset".Localize(),
-					HelpText = "The distance the z probe is from the extruder in x and y.".Localize(),
-					DataEditType = DataEditTypes.VECTOR2,
+					SlicerConfigName = SettingsKey.probe_offset,
+					PresentationName = "Probe Offset".Localize(),
+					HelpText = "The offset from T0 to the probe.".Localize(),
+					DataEditType = DataEditTypes.OFFSET3,
 					Units = "mm",
 					ShowAsOverride = true,
-					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
+					ShowIfSet = "!sla_printer&!has_hardware_leveling&has_z_probe&use_z_probe",
 					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
-					DefaultValue = "0,0"
+					DefaultValue = ""
 				},
 				new SliceSettingData()
 				{

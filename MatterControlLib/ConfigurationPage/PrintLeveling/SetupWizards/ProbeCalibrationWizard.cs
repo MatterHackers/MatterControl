@@ -215,12 +215,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Click 'Next' to continue.".Localize()));
 
 			// we currently only support calibrating 2 extruders
-			for (int i = 0; i < Math.Min(extruderCount, 2); i++)
+			for (int extruderIndex = 0; extruderIndex < Math.Min(extruderCount, 2); extruderIndex++)
 			{
 				if (extruderCount > 1)
 				{
 					// reset the extruder that was active
-					printer.Connection.QueueLine($"T{i}");
+					printer.Connection.QueueLine($"T{extruderIndex}");
 				}
 
 				// do the manual prob of the same position
@@ -261,18 +261,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					0,
 					levelingStrings);
 
-				if (i == 0)
+				if (extruderIndex == 0)
 				{
-					// make sure we don't have leveling data
+					// set the probe z offset
 					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
-					printer.Settings.SetValue(SettingsKey.z_probe_z_offset, newProbeOffset.ToString("0.###"));
+					var probe_offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+					probe_offset.Z = -newProbeOffset;
+					printer.Settings.SetValue(SettingsKey.probe_offset, probe_offset.ToString());
 				}
-				else if (i == 1)
+				else if (extruderIndex == 1)
 				{
 					// store the offset into the extruder offset z position
 					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
-					var hotend0Offset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
-					var newZOffset = newProbeOffset - hotend0Offset;
+					var hotend0Offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+					var newZOffset = newProbeOffset + hotend0Offset.Z;
 					printer.Settings.Helpers.SetExtruderZOffset(1, newZOffset);
 				}
 			}
