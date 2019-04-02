@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.print_time_estimate_multiplier,
 			SettingsKey.printer_name,
 			SettingsKey.probe_has_been_calibrated,
+			SettingsKey.probe_offset,
 			SettingsKey.probe_offset_sample_point,
 			SettingsKey.progress_reporting,
 			SettingsKey.read_regex,
@@ -139,8 +140,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.xy_offsets_have_been_calibrated,
 			SettingsKey.z_offset,
 			SettingsKey.z_probe_samples,
-			SettingsKey.z_probe_xy_offset,
-			SettingsKey.z_probe_z_offset,
 			SettingsKey.z_servo_depolyed_angle,
 			SettingsKey.z_servo_retracted_angle,
 		};

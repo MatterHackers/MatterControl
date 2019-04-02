@@ -819,6 +819,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
 				return (T)(object)(valueAsVector2);
 			}
+			else if(typeof(T) == typeof(Vector3))
+			{
+				string value = GetValue(settingsKey);
+				Vector3 valueAsVector3 = new Vector3();
+				if (string.IsNullOrEmpty(value))
+				{
+					// read it out of the legacy data
+					var oldZOffset = GetValue<double>("z_probe_z_offset");
+					var oldXYOffset = GetValue<Vector2>("z_probe_xy_offset");
+
+					valueAsVector3.X = oldXYOffset.X;
+					valueAsVector3.Y = oldXYOffset.Y;
+					valueAsVector3.Z = -oldZOffset;
+				}
+				else // parse it into the correct parts
+				{
+					int a = 0;
+				}
+			}
 			else if (typeof(T) == typeof(double))
 			{
 				if (settingsValue.Contains("%"))

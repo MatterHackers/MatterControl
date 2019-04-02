@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -37,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private PrinterMove _lastDestination = PrinterMove.Unknown;
 		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
-		private double currentProbeOffset;
+		private Vector3 currentProbeZOffset;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
 
@@ -152,10 +153,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				if (currentLevelingFunctions == null
-					|| currentProbeOffset != printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset)
+					|| currentProbeZOffset != printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset)
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
-					currentProbeOffset = printer.Settings.GetValue<double>(SettingsKey.z_probe_z_offset);
+					currentProbeZOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
 				}
 

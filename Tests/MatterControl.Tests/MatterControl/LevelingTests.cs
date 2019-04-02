@@ -50,7 +50,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printerSettings = new PrinterSettings();
-			printerSettings.SetValue(SettingsKey.z_probe_z_offset, "0");
+			printerSettings.SetValue(SettingsKey.probe_offset, Vector3.Zero.ToString());
 
 			var printer = new PrinterConfig(printerSettings);
 
