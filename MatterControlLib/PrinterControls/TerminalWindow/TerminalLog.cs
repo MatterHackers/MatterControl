@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 
 			if (PrinterLines.Count > maxLinesToBuffer)
 			{
-				Clear();
+				this.Clear();
 			}
 		}
 
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 				switch (args.Reason)
 				{
 					case ConnectionFailure.AlreadyConnected:
-						message = "You can only connect when not currently connected.".Localize();
+						message = "You can only connect when not currently connected".Localize();
 						break;
 					case ConnectionFailure.UnsupportedBaudRate:
 						message = "Unsupported Baud Rate".Localize();
@@ -126,13 +126,10 @@ namespace MatterHackers.MatterControl
 						break;
 				}
 
-				WriteLine("Connection Failed".Localize() + ": " + message);
+				this.WriteLine("Connection Failed".Localize() + ": " + message);
 			}
 
-			OnLineAdded(
-				new TerminalLine(
-					"Lost connection to printer.",
-					TerminalLine.MessageDirection.ToTerminal));
+			this.WriteLine("Lost connection to printer");
 		}
 
 		public void Clear()
@@ -142,8 +139,7 @@ namespace MatterHackers.MatterControl
 				PrinterLines.Clear();
 			}
 
-			OnLineAdded(
-				new TerminalLine("", TerminalLine.MessageDirection.ToTerminal));
+			this.WriteLine("");
 		}
 
 		public void Dispose()

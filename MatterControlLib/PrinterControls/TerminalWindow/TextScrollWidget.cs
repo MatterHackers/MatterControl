@@ -106,12 +106,12 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ConditionalyAddToVisible(TerminalLine lineData)
+		private void ConditionalyAddToVisible(TerminalLine terminalLine)
 		{
-			var line = lineData.Line;
+			var line = terminalLine.Line;
 			if (LineFilterFunction != null)
 			{
-				line = LineFilterFunction(lineData);
+				line = LineFilterFunction(terminalLine);
 			}
 
 			if (!string.IsNullOrEmpty(line))
@@ -120,11 +120,11 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void TerminalLog_LineAdded(object sender, TerminalLine lineData)
+		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
-			if (lineData.Line != null)
+			if (terminalLine.Line != null)
 			{
-				ConditionalyAddToVisible(lineData);
+				ConditionalyAddToVisible(terminalLine);
 			}
 			else // the list changed in some big way (probably cleared)
 			{
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 		public void RebuildFilteredList()
 		{
 			lock (locker)
-			{
+			{   
 				visibleLines = new List<string>();
 				var allSourceLinesTemp = allSourceLines.ToArray();
 				foreach (var lineData in allSourceLinesTemp)
