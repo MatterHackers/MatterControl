@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler Disposed;
 
 		public event EventHandler TemporarilyHoldingTemp;
+
 		public event EventHandler<string> ErrorReported;
 
 		public event EventHandler BedTemperatureRead;
@@ -122,6 +123,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler HotendTemperatureRead;
 
 		public event EventHandler<int> HotendTargetTemperatureChanged;
+
 		public event EventHandler BedTargetTemperatureChanged;
 
 		public event EventHandler FanSpeedSet;
@@ -165,7 +167,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public TerminalLog TerminalLog { get; }
 
-		public EventHandler AtxPowerStateChanged;
+		public event EventHandler AtxPowerStateChanged;
 
 		private bool atxPowerIsOn = false;
 
@@ -452,7 +454,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
 
 		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
+
 		public string LastPrintedItemName { get; private set; } = "";
+
 		public string PrintingItemName { get; set; } = "";
 
 		private List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
