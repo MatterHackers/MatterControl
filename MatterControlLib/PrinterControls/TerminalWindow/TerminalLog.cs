@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,11 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
 {
@@ -39,9 +39,6 @@ namespace MatterHackers.MatterControl
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
-		public List<(string line, bool output)> PrinterLines = new List<(string line, bool output)>();
-
-		public event EventHandler<(string line, bool output)> HasChanged;
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
 		public TerminalLog(PrinterConnection printerConnection)
@@ -58,6 +55,10 @@ namespace MatterHackers.MatterControl
 				maxLinesToBuffer = 450000;
 			}
 		}
+
+		public event EventHandler<(string line, bool output)> HasChanged;
+
+		public List<(string line, bool output)> PrinterLines { get; } = new List<(string line, bool output)>();
 
 		private void OnHasChanged((string line, bool output) lineData)
 		{
