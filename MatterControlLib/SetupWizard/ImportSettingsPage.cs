@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl
 						var printerSettingsLayer = new PrinterSettingsLayer();
 						printer.Settings.Merge(printerSettingsLayer, settingsToImport, sourceFilter, copyName);
 
-						var layerName = (printerSettingsLayer.ContainsKey(SettingsKey.layer_name)) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
+						var layerName = printerSettingsLayer.ContainsKey(SettingsKey.layer_name) ? printerSettingsLayer[SettingsKey.layer_name] : "none";
 
 						string sectionName = destIsMaterial ? "Material".Localize() : "Quality".Localize();
 

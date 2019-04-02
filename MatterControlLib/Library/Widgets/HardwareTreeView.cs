@@ -110,27 +110,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			importPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
 				AggContext.FileDialogs.OpenFileDialog(
-					new OpenFileDialogParams(
-						"settings files|*.ini;*.printer;*.slice"),
-						(result) =>
+					new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
+					(result) =>
+					{
+						if (!string.IsNullOrEmpty(result.FileName)
+							&& File.Exists(result.FileName))
 						{
-							if (!string.IsNullOrEmpty(result.FileName)
-								&& File.Exists(result.FileName))
+							// simpleTabs.RemoveTab(simpleTabs.ActiveTab);
+							if (ProfileManager.ImportFromExisting(result.FileName))
 							{
-								//simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-								if (ProfileManager.ImportFromExisting(result.FileName))
-								{
-									string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-									DialogWindow.Show(
-										new ImportSucceededPage(
-											importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
-								}
-								else
-								{
-									StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
-								}
+								string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
+								DialogWindow.Show(
+									new ImportSucceededPage(
+										importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
 							}
-						});
+							else
+							{
+								StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
+							}
+						}
+					});
 			});
 			mainRow.AddChild(importPrinter);
 
@@ -170,7 +169,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			printersNode.Nodes.Clear();
 
-			//Add the menu items to the menu itself
+			// Add the menu items to the menu itself
 			foreach (var printer in ProfileManager.Instance.ActiveProfiles.OrderBy(p => p.Name))
 			{
 				var printerNode = new TreeNode(theme)
@@ -200,7 +199,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			printersNode.Nodes.Clear();
 
-			//Add the menu items to the menu itself
+			// Add the menu items to the menu itself
 			foreach (var printer in ApplicationController.Instance.ActivePrinters)
 			{
 				string printerName = printer.Settings.GetValue(SettingsKey.printer_name);
