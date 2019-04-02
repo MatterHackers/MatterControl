@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl
 		private MHTextEditWidget manualCommandTextEdit;
 		private TextScrollWidget textScrollWidget;
 		private PrinterConfig printer;
-		private string writeFailedWaring = "WARNING: Write Failed!".Localize();
-		private string cantAccessPath = "Can't access '{0}'.".Localize();
 
 		private List<string> commandHistory = new List<string>();
 		private int commandHistoryIndex = 0;
@@ -110,8 +108,8 @@ namespace MatterHackers.MatterControl
 
 			textScrollWidget.LineFilterFunction = lineData =>
 			{
-				var line = lineData.line;
-				var output = lineData.output;
+				var line = lineData.Line;
+				var output = lineData.Direction == TerminalLine.MessageDirection.ToPrinter;
 				var outputLine = line;
 
 				var lineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(line);
@@ -156,7 +154,7 @@ namespace MatterHackers.MatterControl
 
 				if (UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true))
 				{
-					if (lineData.output)
+					if (output)
 					{
 						outputLine = "->" + outputLine;
 					}
@@ -267,6 +265,7 @@ namespace MatterHackers.MatterControl
 							if (!string.IsNullOrEmpty(saveParams.FileName))
 							{
 								string filePathToSave = saveParams.FileName;
+
 								if (filePathToSave != null && filePathToSave != "")
 								{
 									try
@@ -277,10 +276,10 @@ namespace MatterHackers.MatterControl
 									{
 										Debug.Print(ex.Message);
 
-										printer.Connection.TerminalLog.PrinterLines.Add(("", true));
-										printer.Connection.TerminalLog.PrinterLines.Add((writeFailedWaring, true));
-										printer.Connection.TerminalLog.PrinterLines.Add((cantAccessPath.FormatWith(filePathToSave), true));
-										printer.Connection.TerminalLog.PrinterLines.Add(("", true));
+										printer.Connection.TerminalLog.WriteLine("");
+										printer.Connection.TerminalLog.WriteLine("WARNING: Write Failed!".Localize());
+										printer.Connection.TerminalLog.WriteLine("Can't access".Localize() + " " + filePathToSave);
+										printer.Connection.TerminalLog.WriteLine("");
 
 										UiThread.RunOnIdle(() =>
 										{

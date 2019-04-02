@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 		private object locker = new object();
 
-		private List<(string line, bool output)> allSourceLines;
+		private List<TerminalLine> allSourceLines;
 		private List<string> visibleLines;
 
 		private TypeFacePrinter typeFacePrinter = null;
@@ -49,16 +49,16 @@ namespace MatterHackers.MatterControl
 
 		private int forceStartLine = -1;
 
-		private Func<(string line, bool output), string> _lineFilterFunction;
+		private Func<TerminalLine, string> _lineFilterFunction;
 
-		public TextScrollWidget(PrinterConfig printer, List<(string line, bool output)> sourceLines)
+		public TextScrollWidget(PrinterConfig printer, List<TerminalLine> sourceLines)
 		{
 			this.printer = printer;
 			printer.Connection.TerminalLog.LineAdded += TerminalLog_LineAdded;
 			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
 			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
-			this.visibleLines = sourceLines.Select(ld => ld.line).ToList();
+			this.visibleLines = sourceLines.Select(ld => ld.Line).ToList();
 		}
 
 		public double Position0To1
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 
 		public Color TextColor { get; set; } = new Color(102, 102, 102);
 
-		public Func<(string line, bool output), string> LineFilterFunction
+		public Func<TerminalLine, string> LineFilterFunction
 		{
 			get => _lineFilterFunction;
 			set
@@ -106,23 +106,23 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ConditionalyAddToVisible((string line, bool output) lineData)
+		private void ConditionalyAddToVisible(TerminalLine lineData)
 		{
-			var line = lineData.line;
+			var line = lineData.Line;
 			if (LineFilterFunction != null)
 			{
 				line = LineFilterFunction(lineData);
 			}
 
-			if(!string.IsNullOrEmpty(line))
+			if (!string.IsNullOrEmpty(line))
 			{
 				visibleLines.Add(line);
 			}
 		}
 
-		private void TerminalLog_LineAdded(object sender, (string line, bool output) lineData)
+		private void TerminalLog_LineAdded(object sender, TerminalLine lineData)
 		{
-			if (lineData.line != null)
+			if (lineData.Line != null)
 			{
 				ConditionalyAddToVisible(lineData);
 			}
@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl
 			lock (locker)
 			{
 				visibleLines = new List<string>();
-				(string, bool)[] allSourceLinesTemp = allSourceLines.ToArray();
+				var allSourceLinesTemp = allSourceLines.ToArray();
 				foreach (var lineData in allSourceLinesTemp)
 				{
 					ConditionalyAddToVisible(lineData);
@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 		public void WriteToFile(string filePath)
 		{
 			// Make a copy so we don't have it change while writing.
-			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.line).ToArray();
+			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.Line).ToArray();
 			System.IO.File.WriteAllLines(filePath, allSourceLinesTemp);
 		}
 

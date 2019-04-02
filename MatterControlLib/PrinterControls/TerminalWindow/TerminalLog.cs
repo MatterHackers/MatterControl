@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -59,13 +58,15 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public event EventHandler<(string line, bool output)> LineAdded;
+		public event EventHandler<TerminalLine> LineAdded;
 
-		public List<(string line, bool output)> PrinterLines { get; } = new List<(string line, bool output)>();
+		public List<TerminalLine> PrinterLines { get; } = new List<TerminalLine>();
 
-		private void OnLineAdded((string line, bool output) lineData)
+		private void OnLineAdded(TerminalLine terminalLine)
 		{
-			LineAdded?.Invoke(this, lineData);
+			PrinterLines.Add(terminalLine);
+
+			LineAdded?.Invoke(this, terminalLine);
 
 			if (PrinterLines.Count > maxLinesToBuffer)
 			{
@@ -75,36 +76,35 @@ namespace MatterHackers.MatterControl
 
 		private void Printer_LineReceived(object sender, string line)
 		{
-			PrinterLines.Add((line, false));
-			OnLineAdded((line, false));
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.FromPrinter));
 		}
 
 		private void Printer_LineSent(object sender, string line)
 		{
-			PrinterLines.Add((line, true));
-			OnLineAdded((line, true));
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.ToPrinter));
 		}
 
 		public void WriteLine(string line)
 		{
-			this.WriteLine((line, true));
-		}
-
-		public void WriteLine((string line, bool output) lineData)
-		{
-			PrinterLines.Add(lineData);
-			OnLineAdded(lineData);
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.ToTerminal));
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
 		{
-			OnLineAdded((null, true));
-
 			if (e is ConnectFailedEventArgs args)
 			{
 				string message;
 
-				switch(args.Reason)
+				switch (args.Reason)
 				{
 					case ConnectionFailure.AlreadyConnected:
 						message = "You can only connect when not currently connected.".Localize();
@@ -118,17 +118,21 @@ namespace MatterHackers.MatterControl
 					case ConnectionFailure.PortNotFound:
 						message = "Port not found".Localize();
 						break;
+					case ConnectionFailure.PortUnavailable:
+						message = "Port not available".Localize();
+						break;
 					default:
 						message = "Unknown Reason".Localize();
 						break;
 				}
 
-				PrinterLines.Add(("Connection Failed".Localize() + ": " + message, true));
+				WriteLine("Connection Failed".Localize() + ": " + message);
 			}
 
-			StringEventArgs eventArgs = new StringEventArgs("Lost connection to printer.");
-			PrinterLines.Add((eventArgs.Data, true));
-			OnLineAdded((eventArgs.Data, true));
+			OnLineAdded(
+				new TerminalLine(
+					"Lost connection to printer.",
+					TerminalLine.MessageDirection.ToTerminal));
 		}
 
 		public void Clear()
@@ -138,7 +142,8 @@ namespace MatterHackers.MatterControl
 				PrinterLines.Clear();
 			}
 
-			OnLineAdded((null, true));
+			OnLineAdded(
+				new TerminalLine("", TerminalLine.MessageDirection.ToTerminal));
 		}
 
 		public void Dispose()
