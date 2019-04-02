@@ -2907,6 +2907,22 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() => this.ShellFileOpened?.Invoke(this, file));
 		}
 
+		public void Connection_PrintFinished(object sender, string e)
+		{
+			// TODO: show a long running task asking about print feedback and up-selling more materials
+			// Ask about the print, offer help if needed.
+			// Let us know how your print came out.
+		}
+
+		public void Connection_PrintCanceled(object sender, EventArgs e)
+		{
+			// TODO: show a long running task showing support options 
+			// add links to forum, articles and documentation
+			// support: "https://www.matterhackers.com/support#mattercontrol"
+			// documentation: "https://www.matterhackers.com/mattercontrol/support"
+			// forum: "https://forums.matterhackers.com/recent"
+		}
+
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }

@@ -43,6 +43,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		bool xyzAbsoluteMode = true;
 		bool eAbsoluteMode = true;
+		private bool haveSentG90;
 
 		public RelativeToAbsoluteStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -78,6 +79,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					xyzAbsoluteMode = true;
 					eAbsoluteMode = true;
+					if (haveSentG90)
+					{
+						// If we have already set the printer to absolute mode, do not send it again.
+						// This will guarantee we send it once and then we don't send it again (as this ensures we never send a G91).
+						return "";
+					}
+					haveSentG90 = true;
 				}
 
 				if (lineToProcess.StartsWith("M83"))

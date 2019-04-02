@@ -133,7 +133,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			FilamentRunout?.Invoke(this, printPauseEventArgs);
 		}
 
-		public event EventHandler<PrintFinishedEventArgs> PrintFinished;
+		public event EventHandler<string> PrintFinished;
+		public event EventHandler PrintCanceled;
 
 		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
 
@@ -579,7 +580,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Stop();
 									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
 									{
-										PrintFinished?.Invoke(this, new PrintFinishedEventArgs(Printer.Bed.EditContext.SourceItem.Name));
+										PrintFinished?.Invoke(this, Printer.Bed.EditContext.SourceItem.Name);
 									}
 								}
 								else
@@ -1591,8 +1592,13 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
 		{
-			QueueLine("M114", forceToTopOfQueue);
-			PositionReadType = positionReadType;
+			var nextIssue = queuedCommandStream.Peek();
+			if (nextIssue == null
+				|| nextIssue != "M114")
+			{
+				QueueLine("M114", forceToTopOfQueue);
+				PositionReadType = positionReadType;
+			}
 		}
 
 		public void ReadSdProgress(string line)
@@ -2263,6 +2269,8 @@ You will then need to logout and log back in to the computer for the changes to 
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
+			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+
 			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
@@ -2506,6 +2514,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						}
 
 						currentSentLine = currentSentLine.Trim();
+
 						// Check if there is anything in front of the ;.
 						if (currentSentLine.Split(';')[0].Trim().Length > 0)
 						{
@@ -2524,6 +2533,8 @@ You will then need to logout and log back in to the computer for the changes to 
 						ReleaseMotors();
 						TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						this.PrintWasCanceled = false;
+						// and finally notify anyone that wants to know
+						PrintCanceled?.Invoke(this, null);
 					}
 					else if (communicationState == CommunicationStates.Printing)// we finished printing normally
 					{
@@ -2949,16 +2960,6 @@ You will then need to logout and log back in to the computer for the changes to 
 		UnauthorizedAccessException,
 		ConnectionLost,
 		UsbDisconnected
-	}
-
-	public class PrintFinishedEventArgs : EventArgs
-	{
-		public PrintFinishedEventArgs(string name)
-		{
-			this.ItemName = name;
-		}
-
-		public string ItemName { get; }
 	}
 
 	public class PrintPauseEventArgs : EventArgs

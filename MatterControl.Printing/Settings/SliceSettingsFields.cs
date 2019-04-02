@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C",
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "30"
+					DefaultValue = "0"
 				},
 				new SliceSettingData()
 				{
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "s",
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "20"
+					DefaultValue = "0"
 				},
 				new SliceSettingData()
 				{

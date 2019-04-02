@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
 using MatterHackers.Agg;
@@ -50,6 +51,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		enum SendStates { Normal, WaitingForMove, SendingBefore }
 		private SendStates SendState = SendStates.Normal;
 		private double[] targetTemps = new double[4];
+		private Queue<string> queuedCommands = new Queue<string>();
 
 		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream)
 			: base(printer, internalStream)
@@ -69,6 +71,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
+			if(queuedCommands.Count > 0)
+			{
+				return queuedCommands.Dequeue();
+			}
+
 			string lineToSend = base.ReadLine();
 
 			if(lineToSend == null)
@@ -81,13 +88,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return lineToSend;
 			}
 
+			var requestedToolForTempChange = -1;
+			// if we see a temp command remember what heat we are setting
 			if (lineToSend.StartsWith("M109") || lineToSend.StartsWith("M104"))
 			{
 				int toolTemp = 0;
-				int toolIndex = activeTool;
-				GCodeFile.GetFirstNumberAfter("T", lineToSend, ref toolIndex);
+				// get the temp we are setting
 				GCodeFile.GetFirstNumberAfter("S", lineToSend, ref toolTemp);
-				targetTemps[toolIndex] = toolTemp;
+				// set it to the tool we will be changing to
+				requestedToolForTempChange = requestedTool;
+				// check if this command contains a tool specification
+				GCodeFile.GetFirstNumberAfter("T", lineToSend, ref requestedToolForTempChange);
+
+				targetTemps[requestedToolForTempChange] = toolTemp;
 			}
 
 			// check if any of the heaters we will be switching to need to start heating
@@ -100,38 +113,102 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				QueueAfterGCode();
 			}
 
-			// track the tool state
-			if (lineToSend.StartsWith("T"))
+			var lineNoComment = lineToSend.Split(';')[0];
+
+			// if this command is a temperature change request
+			if (requestedToolForTempChange != -1)
+			{
+				if (requestedToolForTempChange == activeTool)
+				{
+					queuedCommands.Enqueue(lineToSend);
+					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+					queuedCommands.Enqueue($"T{activeTool}");
+					return "";
+				}
+				// if we are waiting to switch to the next tool
+				else if (activeTool != requestedTool)
+				{
+					// if this command does not include the extruder to switch to, than we need to switch before sending it
+					if (!lineNoComment.Contains("T"))
+					{
+						queuedCommands.Enqueue($"T{requestedTool}");
+					}
+					// then send the heat command
+					queuedCommands.Enqueue(lineToSend);
+					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+					queuedCommands.Enqueue($"T{activeTool}");
+					return "";
+				}
+			}
+			// if this is a tool change request
+			else if (lineToSend.StartsWith("T"))
 			{
 				int changeCommandTool = -1;
-				if(GCodeFile.GetFirstNumberAfter("T", lineToSend, ref changeCommandTool)
-					&& changeCommandTool != activeTool)
+				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref changeCommandTool))
 				{
-					requestedTool = changeCommandTool;
-					if (SendState == SendStates.Normal)
+					if (changeCommandTool == activeTool)
 					{
-						SendState = SendStates.WaitingForMove;
-						// don't queue the tool change until after the before gcode has been sent
-						return $"; waiting for move on T{requestedTool}";
+						if(SendState == SendStates.WaitingForMove)
+						{
+							// we have switch back to our starting tool without a move
+							// change back to normal processing and don't change tools
+							SendState = SendStates.Normal;
+							var lastRequestedTool = requestedTool;
+							// set the requested tool
+							requestedTool = changeCommandTool;
+							// don't send the change are we are on the right tool now
+							return $"; switch back without move from T{lastRequestedTool} to T{activeTool}";
+						}
+					}
+					else // we are switching tools
+					{
+						if (SendState == SendStates.Normal)
+						{
+							SendState = SendStates.WaitingForMove;
+							// set the requested tool
+							requestedTool = changeCommandTool;
+							// don't queue the tool change until after the before gcode has been sent
+							return $"; waiting for move on T{requestedTool}";
+						}
 					}
 				}
 			}
-			// check if there is a temperature change request
-			else if (lineToSend.StartsWith("M104") || lineToSend.StartsWith("M109"))
+			// if it is only an extrusion move
+			if (SendState == SendStates.WaitingForMove
+				&& activeTool != requestedTool // is different than the last extruder set
+				&& (lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
+				&& lineNoComment.Contains("E") // it is an extrusion move
+				// and have no other position information
+				&& !lineNoComment.Contains("X")
+				&& !lineNoComment.Contains("Y")
+				&& !lineNoComment.Contains("Z"))
 			{
-				double toolBeingSet = -1;
-				// if there is a tool specification
-				if (GCodeFile.GetFirstNumberAfter("T", lineToSend, ref toolBeingSet))
+				double ePosition = 0;
+
+				if (GCodeFile.GetFirstNumberAfter("E", lineNoComment, ref ePosition))
 				{
-					if (toolBeingSet != activeTool)
+					// switch extruders
+					queuedCommands.Enqueue($"T{requestedTool}");
+
+					// if we know the current E position before the switch
+					// set the E value to the previous E value. 
+					if (lastDestination.extrusion != double.PositiveInfinity)
 					{
-						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
-						queuedCommandsStream.Add("T{0} ; NO_PROCESSING".FormatWith(activeTool));
+						// On Marlin E position is share between extruders and this code has no utility
+						// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
+						queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
 					}
+					// send the extrusion
+					queuedCommands.Enqueue(lineNoComment + " ; NO_PROCESSING");
+					// switch back
+					queuedCommands.Enqueue($"T{activeTool}");
+					lastDestination.extrusion = ePosition;
+					queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+					return "";
 				}
 			}
 
-			if (QueueBeforeIfNeedToSwitchExtruders(lineToSend))
+			if (QueueBeforeIfNeedToSwitchExtruders(lineToSend, lineNoComment))
 			{
 				return "";
 			}
@@ -284,15 +361,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			queuedCommandsStream.Add(gcode.ToString());
 		}
 
-		private bool QueueBeforeIfNeedToSwitchExtruders(string lineIn)
+		private bool QueueBeforeIfNeedToSwitchExtruders(string lineIn, string lineNoComment)
 		{
-			var lineNoComment = lineIn.Split(';')[0];
-
 			// check if there is a travel
-			if ((lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
-				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z")) // hase a move axis in it
+			if (SendState == SendStates.WaitingForMove
 				&& activeTool != requestedTool // is different than the last extruder set
-				&& SendState == SendStates.WaitingForMove)
+				&& (lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
+				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z"))) // has a move axis in it
 			{
 				postSwitchLine = lineIn;
 
