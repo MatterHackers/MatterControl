@@ -497,7 +497,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		internal static bool ImportFromExisting(string settingsFilePath)
+		internal static bool ImportFromExisting(string settingsFilePath, bool clearBlackList = true)
 		{
 			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
 			{
@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
 						}
 
-						printerSettings.Save(clearBlackListSettings: true);
+						printerSettings.Save(clearBlackList);
 						importSuccessful = true;
 					}
 					break;
@@ -592,7 +592,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							printerSettings.Helpers.SetName(printerInfo.Name);
 
-							printerSettings.Save(clearBlackListSettings: true);
+							printerSettings.Save(clearBlackList);
 							importSuccessful = true;
 						}
 					}

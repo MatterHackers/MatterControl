@@ -156,7 +156,6 @@ namespace MatterHackers.MatterControl
 				{
 					switch (lineData.Direction)
 					{
-
 						case TerminalLine.MessageDirection.FromPrinter:
 							outputLine = "→ " + outputLine;
 							break;

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private EventHandler unregisterEvents;
 
 		public HardwareTreeView(ThemeConfig theme)
-			: base (theme)
+			: base(theme)
 		{
 			rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -109,27 +109,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			importPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				AggContext.FileDialogs.OpenFileDialog(
-					new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
-					(result) =>
-					{
-						if (!string.IsNullOrEmpty(result.FileName)
-							&& File.Exists(result.FileName))
-						{
-							// simpleTabs.RemoveTab(simpleTabs.ActiveTab);
-							if (ProfileManager.ImportFromExisting(result.FileName))
-							{
-								string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
-								DialogWindow.Show(
-									new ImportSucceededPage(
-										importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(result.FileName))));
-							}
-							else
-							{
-								StyledMessageBox.ShowMessageBox("Oops! Settings file '{0}' did not contain any settings we could import.".Localize().FormatWith(Path.GetFileName(result.FileName)), "Unable to Import".Localize());
-							}
-						}
-					});
+				DialogWindow.Show(new CloneSettingsPage());
 			});
 			mainRow.AddChild(importPrinter);
 
@@ -160,6 +140,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}, ref unregisterEvents);
 		}
 
+		
 		public static void CreatePrinterProfilesTree(TreeNode printersNode, ThemeConfig theme)
 		{
 			if (printersNode == null)

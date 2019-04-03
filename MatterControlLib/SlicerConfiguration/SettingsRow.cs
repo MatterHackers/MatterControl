@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					Mate = new MateOptions(alignLeft ? MateEdge.Right : MateEdge.Left, MateEdge.Top),
 					AltMate = new MateOptions(alignLeft ? MateEdge.Left : MateEdge.Right, MateEdge.Bottom),
-					//Offset = new RectangleDouble(12, 0, 12, 0)
+					// Offset = new RectangleDouble(12, 0, 12, 0)
 				},
 				secondsToClose: closeSeconds);
 
