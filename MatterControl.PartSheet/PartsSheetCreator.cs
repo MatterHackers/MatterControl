@@ -39,6 +39,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
@@ -63,10 +64,6 @@ namespace MatterHackers.MatterControl.Plugins
 
 		private string pathAndFileToSaveTo;
 
-		public event EventHandler DoneSaving;
-
-		public event EventHandler UpdateRemainingItems;
-
 		public class FileNameAndPresentationName
 		{
 			public string fileName;
@@ -79,7 +76,7 @@ namespace MatterHackers.MatterControl.Plugins
 			}
 		}
 
-		private IEnumerable<ILibraryAssetStream> itemSource;
+		private List<ILibraryAssetStream> itemSource;
 		private List<PartImage> partImagesToPrint = new List<PartImage>();
 		private const double inchesPerMm = 0.0393701;
 
@@ -115,102 +112,116 @@ namespace MatterHackers.MatterControl.Plugins
 			SheetDpi = 300;
 			SheetSizeInches = new Vector2(8.5, 11);
 
-			this.itemSource = itemSource;
+			this.itemSource = itemSource.ToList();
 		}
 
-		private void OnDoneSaving()
+		public Task SaveSheets()
 		{
-			DoneSaving?.Invoke(this, new StringEventArgs(Path.GetFileName("Saving to PDF")));
-		}
-
-		public async Task SaveSheets()
-		{
-			await Task.Run((Func<Task>)(async () =>
-			{
-				currentlySaving = true;
-				// first create images for all the parts
-				foreach (var item in itemSource)
+			return ApplicationController.Instance.Tasks.Execute(
+				"Export Part Sheet".Localize(),
+				null,
+				async (reporter, cancelationToken) =>
 				{
-					var object3D = await item.CreateContent();
+					var progressStatus = new ProgressStatus();
 
-					var loadedMeshGroups = object3D.VisibleMeshes().ToList();
-					if (loadedMeshGroups?.Count > 0)
+					var processCount = 0.0;
+					currentlySaving = true;
+					// first create images for all the parts
+					foreach (var item in itemSource)
 					{
-						AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].WorldMatrix());
+						progressStatus.Status = item.Name;
+						reporter.Report(progressStatus);
 
-						for (int i = 1; i < loadedMeshGroups.Count; i++)
+						var xxx = itemSource.Count();
+						var yyy = itemSource.FirstOrDefault()?.Name;
+
+						var object3D = await item.CreateContent();
+
+						var loadedMeshGroups = object3D.VisibleMeshes().ToList();
+						if (loadedMeshGroups?.Count > 0)
 						{
-							aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
+							AxisAlignedBoundingBox aabb = loadedMeshGroups[0].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[0].WorldMatrix());
+
+							for (int i = 1; i < loadedMeshGroups.Count; i++)
+							{
+								aabb = AxisAlignedBoundingBox.Union(aabb, loadedMeshGroups[i].Mesh.GetAxisAlignedBoundingBox(loadedMeshGroups[i].WorldMatrix()));
+							}
+
+							RectangleDouble bounds2D = new RectangleDouble(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.X, aabb.MaxXYZ.Y);
+							double widthInMM = bounds2D.Width + PartMarginMM * 2;
+							double textSpaceMM = 5;
+							double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
+
+							TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
+							double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
+							Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
+
+							ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
+							typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
+
+							Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
+
+							RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
+							double strokeWidth = .5 * PixelPerMM;
+							rectBounds.Inflate(-strokeWidth / 2);
+							RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
+							partGraphics2D.Render(rect, Color.LightGray);
+							Stroke rectOutline = new Stroke(rect, strokeWidth);
+							partGraphics2D.Render(rectOutline, Color.DarkGray);
+
+							foreach (var meshGroup in loadedMeshGroups)
+							{
+								PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, Color.Black);
+							}
+							partGraphics2D.Render(typeFacePrinter, Color.Black);
+
+							partImagesToPrint.Add(new PartImage(imageOfPart));
 						}
 
-						RectangleDouble bounds2D = new RectangleDouble(aabb.MinXYZ.X, aabb.MinXYZ.Y, aabb.MaxXYZ.X, aabb.MaxXYZ.Y);
-						double widthInMM = bounds2D.Width + PartMarginMM * 2;
-						double textSpaceMM = 5;
-						double heightMM = textSpaceMM + bounds2D.Height + PartMarginMM * 2;
-
-						TypeFacePrinter typeFacePrinter = new TypeFacePrinter(item.Name, 28, Vector2.Zero, Justification.Center, Baseline.BoundsCenter);
-						double sizeOfNameX = typeFacePrinter.GetSize().X + PartMarginPixels * 2;
-						Vector2 sizeOfRender = new Vector2(widthInMM * PixelPerMM, heightMM * PixelPerMM);
-
-						ImageBuffer imageOfPart = new ImageBuffer((int)(Math.Max(sizeOfNameX, sizeOfRender.X)), (int)(sizeOfRender.Y));
-						typeFacePrinter.Origin = new Vector2(imageOfPart.Width / 2, (textSpaceMM / 2) * PixelPerMM);
-
-						Graphics2D partGraphics2D = imageOfPart.NewGraphics2D();
-
-						RectangleDouble rectBounds = new RectangleDouble(0, 0, imageOfPart.Width, imageOfPart.Height);
-						double strokeWidth = .5 * PixelPerMM;
-						rectBounds.Inflate(-strokeWidth / 2);
-						RoundedRect rect = new RoundedRect(rectBounds, PartMarginMM * PixelPerMM);
-						partGraphics2D.Render(rect, Color.LightGray);
-						Stroke rectOutline = new Stroke(rect, strokeWidth);
-						partGraphics2D.Render(rectOutline, Color.DarkGray);
-
-						foreach (var meshGroup in loadedMeshGroups)
-						{
-							PolygonMesh.Rendering.OrthographicZProjection.DrawTo(partGraphics2D, meshGroup.Mesh, meshGroup.WorldMatrix(), new Vector2(-bounds2D.Left + PartMarginMM, -bounds2D.Bottom + textSpaceMM + PartMarginMM), PixelPerMM, Color.Black);
-						}
-						partGraphics2D.Render(typeFacePrinter, Color.Black);
-
-						partImagesToPrint.Add(new PartImage(imageOfPart));
+						progressStatus.Progress0To1 = Math.Min(processCount / itemSource.Count, .95);
+						reporter.Report(progressStatus);
+						processCount++;
 					}
 
-					UpdateRemainingItems?.Invoke(this, new StringEventArgs(item.Name));
-				}
+					progressStatus.Status = "Saving".Localize();
+					reporter.Report(progressStatus);
 
-				partImagesToPrint.Sort(BiggestToLittlestImages);
+					partImagesToPrint.Sort(BiggestToLittlestImages);
 
-				PdfDocument document = new PdfDocument();
-				document.Info.Title = "MatterHackers Parts Sheet";
-				document.Info.Author = "MatterHackers Inc.";
-				document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
-				document.Info.Keywords = "MatterControl, STL, 3D Printing";
+					PdfDocument document = new PdfDocument();
+					document.Info.Title = "MatterHackers Parts Sheet";
+					document.Info.Author = "MatterHackers Inc.";
+					document.Info.Subject = "This is a list of the parts that are in a queue from MatterControl.";
+					document.Info.Keywords = "MatterControl, STL, 3D Printing";
 
-				int nextPartToPrintIndex = 0;
-				int plateNumber = 1;
-				bool done = false;
+					int nextPartToPrintIndex = 0;
+					int plateNumber = 1;
+					bool done = false;
 
-				while (!done && nextPartToPrintIndex < partImagesToPrint.Count)
-				{
-					PdfPage pdfPage = document.AddPage();
-					CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
-				}
+					while (!done && nextPartToPrintIndex < partImagesToPrint.Count)
+					{
+						PdfPage pdfPage = document.AddPage();
+						CreateOnePage(plateNumber++, ref nextPartToPrintIndex, pdfPage);
+					}
 
-				try
-				{
-					// save the final document
-					document.Save(pathAndFileToSaveTo);
+					try
+					{
+						// save the final document
+						document.Save(pathAndFileToSaveTo);
 
-					// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
-					// to show the file (at least on Windows).
-					Process.Start(pathAndFileToSaveTo);
-				}
-				catch (Exception)
-				{
-				}
+						// Now try and open the document. This will launch whatever PDF viewer is on the system and ask it
+						// to show the file (at least on Windows).
+						Process.Start(pathAndFileToSaveTo);
+					}
+					catch (Exception)
+					{
+					}
 
-				OnDoneSaving();
-				currentlySaving = false;
-			}));
+					currentlySaving = false;
+
+					progressStatus.Progress0To1 = 1;
+					reporter.Report(progressStatus);
+				});
 		}
 
 		private static int BiggestToLittlestImages(PartImage one, PartImage two)
