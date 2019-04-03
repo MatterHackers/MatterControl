@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,27 +39,30 @@ namespace MatterHackers.MatterControl
 {
 	public class TextScrollWidget : GuiWidget
 	{
-		object locker = new object();
+		private object locker = new object();
 
-		private Func<(string line, bool output), string> _lineFilterFunction;
-		public Func<(string line, bool output), string> LineFilterFunction
-		{
-			get => _lineFilterFunction;
-			set
-			{
-				_lineFilterFunction = value;
-				RebuildFilteredList();
-			}
-		}
-
-		private List<(string line, bool output)> allSourceLines;
+		private List<TerminalLine> allSourceLines;
 		private List<string> visibleLines;
 
 		private TypeFacePrinter typeFacePrinter = null;
 		private PrinterConfig printer = null;
 
-		public Color TextColor = new Color(102, 102, 102);
 		private int forceStartLine = -1;
+
+		private Func<TerminalLine, string> _lineFilterFunction;
+
+		public TextScrollWidget(PrinterConfig printer, List<TerminalLine> sourceLines)
+		{
+			this.printer = printer;
+			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
+			this.typeFacePrinter.DrawFromHintedCache = true;
+			this.allSourceLines = sourceLines;
+			this.visibleLines = sourceLines.Select(ld => ld.Line).ToList();
+
+			// Register listeners
+			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
+			printer.Connection.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
+		}
 
 		public double Position0To1
 		{
@@ -71,7 +74,7 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					return ((visibleLines.Count - (double)forceStartLine) / visibleLines.Count);
+					return (visibleLines.Count - (double)forceStartLine) / visibleLines.Count;
 				}
 			}
 
@@ -87,48 +90,49 @@ namespace MatterHackers.MatterControl
 				{
 					forceStartLine = -1;
 				}
+
 				Invalidate();
 			}
 		}
 
-		public int NumVisibleLines => (int)Math.Ceiling(Height / typeFacePrinter.TypeFaceStyle.EmSizeInPixels); 
+		public int NumVisibleLines => (int)Math.Ceiling(Height / typeFacePrinter.TypeFaceStyle.EmSizeInPixels);
 
-		public TextScrollWidget(PrinterConfig printer, List<(string line, bool output)> sourceLines)
+		public Color TextColor { get; set; } = new Color(102, 102, 102);
+
+		public Func<TerminalLine, string> LineFilterFunction
 		{
-			this.printer = printer;
-			printer.Connection.TerminalLog.HasChanged += RecievedNewLine;
-			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
-			this.typeFacePrinter.DrawFromHintedCache = true;
-			this.allSourceLines = sourceLines;
-			this.visibleLines = sourceLines.Select(ld => ld.line).ToList();
+			get => _lineFilterFunction;
+			set
+			{
+				_lineFilterFunction = value;
+				RebuildFilteredList();
+			}
 		}
 
-		private void ConditionalyAddToVisible((string line, bool output) lineData)
+		private void ConditionalyAddToVisible(TerminalLine terminalLine)
 		{
-			var line = lineData.line;
+			var line = terminalLine.Line;
+
 			if (LineFilterFunction != null)
 			{
-				line = LineFilterFunction(lineData);
+				line = LineFilterFunction(terminalLine);
 			}
 
-			if(!string.IsNullOrEmpty(line))
+			if (!string.IsNullOrEmpty(line))
 			{
 				visibleLines.Add(line);
 			}
 		}
 
-		private void RecievedNewLine(object sender, (string line, bool output) lineData)
+		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
-			if (lineData.line != null)
-			{
-				ConditionalyAddToVisible(lineData);
-			}
-			else // the list changed in some big way (probably cleared)
-			{
-				RebuildFilteredList();
-			}
+			this.ConditionalyAddToVisible(terminalLine);
+			this.Invalidate();
+		}
 
-			Invalidate();
+		private void TerminalLog_LogCleared(object sender, EventArgs e)
+		{
+			this.RebuildFilteredList();
 		}
 
 		public void RebuildFilteredList()
@@ -136,7 +140,7 @@ namespace MatterHackers.MatterControl
 			lock (locker)
 			{
 				visibleLines = new List<string>();
-				(string, bool)[] allSourceLinesTemp = allSourceLines.ToArray();
+				var allSourceLinesTemp = allSourceLines.ToArray();
 				foreach (var lineData in allSourceLinesTemp)
 				{
 					ConditionalyAddToVisible(lineData);
@@ -147,19 +151,22 @@ namespace MatterHackers.MatterControl
 		public void WriteToFile(string filePath)
 		{
 			// Make a copy so we don't have it change while writing.
-			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.line).ToArray();
+			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.Line).ToArray();
 			System.IO.File.WriteAllLines(filePath, allSourceLinesTemp);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
-			printer.Connection.TerminalLog.HasChanged -= RecievedNewLine;
+			// Unregister listeners
+			printer.Connection.TerminalLog.LineAdded -= this.TerminalLog_LineAdded;
+			printer.Connection.TerminalLog.LogCleared -= this.TerminalLog_LogCleared;
+
 			base.OnClosed(e);
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			RectangleDouble Bounds = LocalBounds;
+			RectangleDouble bounds = LocalBounds;
 
 			int numLinesToDraw = NumVisibleLines;
 
@@ -183,6 +190,7 @@ namespace MatterHackers.MatterControl
 							startLineIndex = Math.Min(forceStartLine, startLineIndex);
 						}
 					}
+
 					int endLineIndex = visibleLines.Count;
 					for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
 					{
@@ -191,10 +199,11 @@ namespace MatterHackers.MatterControl
 							if (visibleLines[lineIndex] != null)
 							{
 								typeFacePrinter.Text = visibleLines[lineIndex];
-								typeFacePrinter.Origin = new Vector2(Bounds.Left + 2, y);
+								typeFacePrinter.Origin = new Vector2(bounds.Left + 2, y);
 								typeFacePrinter.Render(graphics2D, TextColor);
 							}
 						}
+
 						y -= typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
 						if (y < -typeFacePrinter.TypeFaceStyle.EmSizeInPixels)
 						{
@@ -210,15 +219,15 @@ namespace MatterHackers.MatterControl
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseWheel(mouseEvent);
-			double scrollDelta = (mouseEvent.WheelDelta / ((visibleLines.Count) * 60.0));
+			double scrollDelta = mouseEvent.WheelDelta / (visibleLines.Count * 60.0);
 
-			if (scrollDelta < 0)//Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
+			if (scrollDelta < 0) // Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
 			{
 				scrollDelta *= 2;
 			}
-			else if (Position0To1 == 0)//IF we scroll up at the bottom get pop out from the "on screen" chunk
+			else if (Position0To1 == 0) // If we scroll up at the bottom get pop out from the "on screen" chunk
 			{
-				scrollDelta = (NumVisibleLines / (double)visibleLines.Count);
+				scrollDelta = NumVisibleLines / (double)visibleLines.Count;
 			}
 
 			double newPos = Position0To1 + scrollDelta;
@@ -247,7 +256,7 @@ namespace MatterHackers.MatterControl
 				&& !keyEvent.Shift)
 			{
 				double startingScrollPosition = Position0To1;
-				double scrollDelta = (NumVisibleLines / (double)visibleLines.Count);
+				double scrollDelta = NumVisibleLines / (double)visibleLines.Count;
 				double newPos = Position0To1;
 
 				switch (keyEvent.KeyCode)

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,30 +27,29 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using System;
 using System.Collections.Generic;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl
 {
-	public class TerminalLog
+	public class TerminalLog : IDisposable
 	{
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
 
-		public List<(string line, bool output)> PrinterLines = new List<(string line, bool output)>();
-
-		public event EventHandler<(string line, bool output)> HasChanged;
 		private int maxLinesToBuffer = int.MaxValue - 1;
+
+		private PrinterConnection printerConnection;
 
 		public TerminalLog(PrinterConnection printerConnection)
 		{
+			// Register event listeners
 			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
-			printerConnection.Disposed += (s, e) => printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
-
 			printerConnection.LineReceived += Printer_LineReceived;
 			printerConnection.LineSent += Printer_LineSent;
+
+			this.printerConnection = printerConnection;
 
 			if (Is32Bit)
 			{
@@ -59,50 +58,58 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void OnHasChanged((string line, bool output) lineData)
+		public event EventHandler<TerminalLine> LineAdded;
+
+		public event EventHandler LogCleared;
+
+		public List<TerminalLine> PrinterLines { get; } = new List<TerminalLine>();
+
+		private void OnLineAdded(TerminalLine terminalLine)
 		{
-			HasChanged?.Invoke(this, lineData);
+			PrinterLines.Add(terminalLine);
+
+			LineAdded?.Invoke(this, terminalLine);
+
 			if (PrinterLines.Count > maxLinesToBuffer)
 			{
-				Clear();
+				this.Clear();
 			}
 		}
 
 		private void Printer_LineReceived(object sender, string line)
 		{
-			PrinterLines.Add((line, false));
-			OnHasChanged((line, false));
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.FromPrinter));
 		}
 
 		private void Printer_LineSent(object sender, string line)
 		{
-			PrinterLines.Add((line, true));
-			OnHasChanged((line, true));
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.ToPrinter));
 		}
 
 		public void WriteLine(string line)
 		{
-			this.WriteLine((line, true));
-		}
-
-		public void WriteLine((string line, bool output) lineData)
-		{
-			PrinterLines.Add(lineData);
-			OnHasChanged(lineData);
+			this.OnLineAdded(
+				new TerminalLine(
+					line,
+					TerminalLine.MessageDirection.ToTerminal));
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
 		{
-			OnHasChanged((null, true));
-
 			if (e is ConnectFailedEventArgs args)
 			{
 				string message;
 
-				switch(args.Reason)
+				switch (args.Reason)
 				{
 					case ConnectionFailure.AlreadyConnected:
-						message = "You can only connect when not currently connected.".Localize();
+						message = "You can only connect when not currently connected".Localize();
 						break;
 					case ConnectionFailure.UnsupportedBaudRate:
 						message = "Unsupported Baud Rate".Localize();
@@ -113,27 +120,38 @@ namespace MatterHackers.MatterControl
 					case ConnectionFailure.PortNotFound:
 						message = "Port not found".Localize();
 						break;
+					case ConnectionFailure.PortUnavailable:
+						message = "Port not available".Localize();
+						break;
 					default:
 						message = "Unknown Reason".Localize();
 						break;
 				}
 
-				PrinterLines.Add(("Connection Failed".Localize() + ": " + message, true));
+				this.WriteLine("Connection Failed".Localize() + ": " + message);
 			}
 
-			StringEventArgs eventArgs = new StringEventArgs("Lost connection to printer.");
-			PrinterLines.Add((eventArgs.Data, true));
-			OnHasChanged((eventArgs.Data, true));
+			this.WriteLine("Lost connection to printer");
 		}
 
 		public void Clear()
 		{
-			lock(PrinterLines)
+			lock (PrinterLines)
 			{
 				PrinterLines.Clear();
 			}
 
-			OnHasChanged((null, true));
+			this.LogCleared?.Invoke(this, null);
+		}
+
+		public void Dispose()
+		{
+			// Unregister event listeners
+			printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
+			printerConnection.LineReceived -= Printer_LineReceived;
+			printerConnection.LineSent -= Printer_LineSent;
+
+			printerConnection = null;
 		}
 	}
 }
