@@ -156,11 +156,11 @@ namespace MatterHackers.MatterControl
 				{
 					if (output)
 					{
-						outputLine = "->" + outputLine;
+						outputLine = "→ " + outputLine;
 					}
 					else
 					{
-						outputLine = "<-" + outputLine;
+						outputLine = "← " + outputLine;
 					}
 				}
 
