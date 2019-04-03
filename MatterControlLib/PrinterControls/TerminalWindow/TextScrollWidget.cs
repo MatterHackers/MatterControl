@@ -54,11 +54,14 @@ namespace MatterHackers.MatterControl
 		public TextScrollWidget(PrinterConfig printer, List<TerminalLine> sourceLines)
 		{
 			this.printer = printer;
-			printer.Connection.TerminalLog.LineAdded += TerminalLog_LineAdded;
 			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
 			this.typeFacePrinter.DrawFromHintedCache = true;
 			this.allSourceLines = sourceLines;
 			this.visibleLines = sourceLines.Select(ld => ld.Line).ToList();
+
+			// Register listeners
+			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
+			printer.Connection.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
 		}
 
 		public double Position0To1
@@ -109,6 +112,7 @@ namespace MatterHackers.MatterControl
 		private void ConditionalyAddToVisible(TerminalLine terminalLine)
 		{
 			var line = terminalLine.Line;
+
 			if (LineFilterFunction != null)
 			{
 				line = LineFilterFunction(terminalLine);
@@ -122,16 +126,13 @@ namespace MatterHackers.MatterControl
 
 		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
-			if (terminalLine.Line != null)
-			{
-				ConditionalyAddToVisible(terminalLine);
-			}
-			else // the list changed in some big way (probably cleared)
-			{
-				RebuildFilteredList();
-			}
+			this.ConditionalyAddToVisible(terminalLine);
+			this.Invalidate();
+		}
 
-			Invalidate();
+		private void TerminalLog_LogCleared(object sender, EventArgs e)
+		{
+			this.RebuildFilteredList();
 		}
 
 		public void RebuildFilteredList()
@@ -156,7 +157,10 @@ namespace MatterHackers.MatterControl
 
 		public override void OnClosed(EventArgs e)
 		{
-			printer.Connection.TerminalLog.LineAdded -= TerminalLog_LineAdded;
+			// Unregister listeners
+			printer.Connection.TerminalLog.LineAdded -= this.TerminalLog_LineAdded;
+			printer.Connection.TerminalLog.LogCleared -= this.TerminalLog_LogCleared;
+
 			base.OnClosed(e);
 		}
 
