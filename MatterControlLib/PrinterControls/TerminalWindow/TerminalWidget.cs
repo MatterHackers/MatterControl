@@ -154,13 +154,18 @@ namespace MatterHackers.MatterControl
 
 				if (UserSettings.Instance.Fields.GetBool(UserSettingsKey.TerminalShowInputOutputMarks, true))
 				{
-					if (output)
+					switch (lineData.Direction)
 					{
-						outputLine = "→ " + outputLine;
-					}
-					else
-					{
-						outputLine = "← " + outputLine;
+
+						case TerminalLine.MessageDirection.FromPrinter:
+							outputLine = "→ " + outputLine;
+							break;
+						case TerminalLine.MessageDirection.ToPrinter:
+							outputLine = "← " + outputLine;
+							break;
+						case TerminalLine.MessageDirection.ToTerminal:
+							outputLine = "* " + outputLine;
+							break;
 					}
 				}
 
