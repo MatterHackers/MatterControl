@@ -44,17 +44,7 @@ namespace MatterHackers.MatterControl.Plugins
 									{
 										if (!string.IsNullOrEmpty(saveParams.FileName))
 										{
-											var feedbackWindow = new SavePartsSheetFeedbackWindow(
-												printItems.Count(),
-												printItems.FirstOrDefault()?.Name,
-												AppContext.Theme.BackgroundColor);
-
 											var currentPartsInQueue = new PartsSheet(printItems, saveParams.FileName);
-											currentPartsInQueue.UpdateRemainingItems += feedbackWindow.StartingNextPart;
-											currentPartsInQueue.DoneSaving += feedbackWindow.DoneSaving;
-
-											feedbackWindow.ShowAsSystemWindow();
-
 											currentPartsInQueue.SaveSheets().ConfigureAwait(false);
 										}
 									});
