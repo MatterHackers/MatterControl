@@ -139,7 +139,9 @@ namespace MatterHackers.MatterControl
 				PrinterLines.Clear();
 			}
 
-			this.WriteLine("");
+			// HACK: Writing null is has the effect of clearing the terminal log as the widgets clear thier visibleLines list on null.
+			// Ideally we'd have something more explicit in place that handles the behavior as the effect is less than obvious
+			this.WriteLine(null);
 		}
 
 		public void Dispose()

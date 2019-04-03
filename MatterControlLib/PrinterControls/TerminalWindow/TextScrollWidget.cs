@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 		public void RebuildFilteredList()
 		{
 			lock (locker)
-			{   
+			{
 				visibleLines = new List<string>();
 				var allSourceLinesTemp = allSourceLines.ToArray();
 				foreach (var lineData in allSourceLinesTemp)
