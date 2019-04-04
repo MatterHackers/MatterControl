@@ -157,6 +157,20 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
+		public void NextIncompleteStage()
+		{
+			ISetupWizard nextStage = stages.FirstOrDefault(s => s.SetupRequired);
+
+			if (nextStage != null)
+			{
+				this.ActiveStage = nextStage;
+			}
+			else
+			{
+				this.ClosePage();
+			}
+		}
+
 		public override void ClosePage()
 		{
 			// Move to the summary/home page

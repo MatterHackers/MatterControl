@@ -106,13 +106,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.OnLoad(args);
 		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// give instruction about how to load filament if the user has not gotten them
-			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-
-			base.OnClosed(e);
-		}
 	}
 }

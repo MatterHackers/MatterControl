@@ -1621,53 +1621,6 @@ namespace MatterHackers.MatterControl
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer);
 		}
 
-		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
-		{
-			// run probe calibration first if we need to
-			if (ProbeCalibrationWizard.NeedsToBeRun(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new ProbeCalibrationWizard(printer));
-				});
-				return true;
-			}
-
-			// run the leveling wizard if we need to
-			if (LevelingValidation.NeedsToBeRun(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new PrintLevelingWizard(printer));
-				});
-				return true;
-			}
-
-			// run load filament if we need to
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(
-						new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
-				});
-				return true;
-			}
-
-			// run load filament for extruder 1 if we need to
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(
-						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
-				});
-				return true;
-			}
-
-			return false;
-		}
-
 		public void Shutdown()
 		{
 			// Ensure all threads shutdown gracefully on close
