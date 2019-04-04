@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -226,6 +227,37 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Homing The Printer".Localize(),
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 				useZProbe);
+
+			// if there is a level_x_cariage_markdown oem markdown page
+			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_cariage_markdown)))
+			{
+				var levelXCariagePage = new WizardPage(this, "Level X Carriage".Localize(), "")
+				{
+					PageLoad = (page) =>
+					{
+						// release the motors so the z-axis can be moved
+						printer.Connection.ReleaseMotors();
+
+						var markdownText = printer.Settings.GetValue(SettingsKey.level_x_cariage_markdown);
+						var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme);
+						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+						page.ContentRow.AddChild(markdownWidget);
+					},
+					PageClose = () =>
+					{
+						// home the printer again to make sure we are ready to level (same behavior as homing page)
+						printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+
+						if (!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+						{
+							// move so we don't heat the printer while the nozzle is touching the bed
+							printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+						}
+					}
+
+				};
+				yield return levelXCariagePage;
+			}
 
 			// figure out the heating requirements
 			double targetBedTemp = 0;

@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.ip_port,
 			SettingsKey.laser_speed_025,
 			SettingsKey.laser_speed_100,
+			SettingsKey.level_x_cariage_markdown,
 			SettingsKey.leveling_sample_points,
 			SettingsKey.load_filament_length,
 			SettingsKey.load_filament_speed,
