@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl
 
 				// register callbacks for print completion
 				printer.Connection.Disposed += this.Connection_Disposed;
+				printer.Connection.PrintCanceled += this.Connection_PrintCanceled;
 				printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
 
 				this.MoveToNextPage();
@@ -121,39 +122,47 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(startCalibrationPrint);
 		}
 
+		private void Connection_PrintCanceled(object sender, EventArgs e)
+		{
+			this.ReturnToCalibrationWizard();
+
+			// Exit the calibration and return to wizard home page
+			this.DialogWindow.ClosePage();
+		}
+
 		private void UnregisterPrinterEvents()
 		{
-			printer.Connection.Disposed -= Connection_Disposed;
-			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			printer.Connection.Disposed -= this.Connection_Disposed;
+			printer.Connection.CommunicationStateChanged -= this.Connection_CommunicationStateChanged;
+			printer.Connection.PrintCanceled -= this.Connection_PrintCanceled;
 		}
 
 		private void Connection_CommunicationStateChanged(object sender, EventArgs e)
 		{
 			switch (printer.Connection.CommunicationState)
 			{
-				// We are no longer running this calibration, unwind anything that we have done
 				case CommunicationStates.Disconnected:
 				case CommunicationStates.AttemptingToConnect:
 				case CommunicationStates.FailedToConnect:
 				case CommunicationStates.ConnectionLost:
 				case CommunicationStates.PrintingFromSd:
-					this.UnregisterPrinterEvents();
-					// the print has been canceled cancel the wizard (or switch back to the beginning and show)
-					this.DialogWindow.CloseOnIdle();
-					break;
-
-				// The print has finished, open the window to collect our calibration results
 				case CommunicationStates.FinishedPrint:
-					// open up the next part of the wizard
-					UiThread.RunOnIdle(() =>
-					{
-						// show the window
-						this.DialogWindow.Visible = true;
-					});
+					// We are no longer printing, exit and return to where we started
+					this.ReturnToCalibrationWizard();
 
-					this.UnregisterPrinterEvents();
 					break;
 			}
+		}
+
+		private void ReturnToCalibrationWizard()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// Restore the original DialogWindow
+				this.DialogWindow.Visible = true;
+			});
+
+			this.UnregisterPrinterEvents();
 		}
 
 		private void Connection_Disposed(object sender, EventArgs e)
@@ -168,13 +177,15 @@ namespace MatterHackers.MatterControl
 			switch (calibrationWizard.Quality)
 			{
 				case QualityType.Coarse:
-					return await XyCalibrationTabObject3D.Create(1,
+					return await XyCalibrationTabObject3D.Create(
+						1,
 						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
 						calibrationWizard.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 				default:
-					return await XyCalibrationFaceObject3D.Create(1,
+					return await XyCalibrationFaceObject3D.Create(
+						1,
 						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
 						layerHeight,
 						calibrationWizard.Offset,
