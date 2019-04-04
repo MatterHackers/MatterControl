@@ -99,7 +99,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					button.Click += (s, e) =>
 					{
+						// Invoke FixAction
 						action.Action.Invoke();
+
+						// Close popup on FixAction button click
+						if (this.Parents<PopupWidget>().FirstOrDefault() is PopupWidget popupWidget)
+						{
+							UiThread.RunOnIdle(popupWidget.CloseMenu);
+						}
 					};
 
 					row.AddChild(button);

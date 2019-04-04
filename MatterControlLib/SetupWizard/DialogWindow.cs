@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl
 
 		public static void SetSizeAndShow(DialogWindow dialogWindow, DialogPage wizardPage)
 		{
-			if (dialogWindow.UseChildWindowSize 
+			if (dialogWindow.UseChildWindowSize
 				&& wizardPage.WindowSize != Vector2.Zero)
 			{
 				dialogWindow.Size = wizardPage.WindowSize;

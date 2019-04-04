@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(startCalibrationPrint);
 		}
 
-		private void RestoreBedAndClearPrinterCallbacks()
+		private void UnregisterPrinterEvents()
 		{
 			printer.Connection.Disposed -= Connection_Disposed;
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl
 				case CommunicationStates.FailedToConnect:
 				case CommunicationStates.ConnectionLost:
 				case CommunicationStates.PrintingFromSd:
-					RestoreBedAndClearPrinterCallbacks();
+					this.UnregisterPrinterEvents();
 					// the print has been canceled cancel the wizard (or switch back to the beginning and show)
 					this.DialogWindow.CloseOnIdle();
 					break;
@@ -150,15 +150,15 @@ namespace MatterHackers.MatterControl
 						// show the window
 						this.DialogWindow.Visible = true;
 					});
-					// close down our listening to the printer and restore the bed
-					RestoreBedAndClearPrinterCallbacks();
+
+					this.UnregisterPrinterEvents();
 					break;
 			}
 		}
 
 		private void Connection_Disposed(object sender, EventArgs e)
 		{
-			RestoreBedAndClearPrinterCallbacks();
+			this.UnregisterPrinterEvents();
 		}
 
 		private static async Task<IObject3D> CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)

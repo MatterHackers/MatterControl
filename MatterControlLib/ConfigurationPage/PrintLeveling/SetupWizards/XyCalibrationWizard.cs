@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new XyCalibrationCollectDataPage(this);
 			yield return new XyCalibrationDataRecieved(this);
-			
+
 			// loop until we are done calibrating
 			while (this.PrintAgain)
 			{
