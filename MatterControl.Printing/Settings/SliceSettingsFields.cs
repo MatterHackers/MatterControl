@@ -958,7 +958,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer&!has_hardware_leveling&has_z_probe&use_z_probe",
 					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
-					DefaultValue = ""
+					DefaultValue = "0,0,0"
 				},
 				new SliceSettingData()
 				{

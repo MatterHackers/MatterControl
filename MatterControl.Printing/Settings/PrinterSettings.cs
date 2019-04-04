@@ -1066,22 +1066,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Migrate the old probe settings into the new probe settings
-				string value = settings.GetValue(SettingsKey.probe_offset);
-				if (string.IsNullOrEmpty(value))
+				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
 				{
-					var valueAsVector3 = new Vector3();
-					// read it out of the legacy data
-					var oldZOffset = settings.GetValue<double>("z_probe_z_offset");
-					var oldXYOffset = settings.GetValue<Vector2>("z_probe_xy_offset");
+					MigrateProbeOffset(settings.OemLayer);
+				}
 
-					valueAsVector3.X = oldXYOffset.X;
-					valueAsVector3.Y = oldXYOffset.Y;
-					valueAsVector3.Z = -oldZOffset;
-
-					settings.SetValue(SettingsKey.probe_offset, $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}");
+				// if we have not copied the oem layer settigns key
+				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
+				{
+					MigrateProbeOffset(settings.UserLayer);
 				}
 
 				return settings;
+			}
+
+			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer)
+			{
+				var valueAsVector3 = new Vector3();
+				// read it out of the legacy data
+				valueAsVector3.Z = -agg_basics.ParseDouble(settingsLayer["z_probe_z_offset"], false);
+				var probeXyOffset = settingsLayer["z_probe_xy_offset"];
+				if (!string.IsNullOrEmpty(probeXyOffset))
+				{
+					var split = probeXyOffset.Split(',');
+					if (split.Length == 2)
+					{
+						valueAsVector3.X = agg_basics.ParseDouble(split[0], false);
+						valueAsVector3.Y = agg_basics.ParseDouble(split[1], false);
+					}
+				}
+
+				settingsLayer[SettingsKey.probe_offset] = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
+
+				// clear it
+				settingsLayer.Remove("z_probe_z_offset");
+				settingsLayer.Remove("z_probe_xy_offset");
 			}
 
 			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
