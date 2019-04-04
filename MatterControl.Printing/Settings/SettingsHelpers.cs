@@ -80,18 +80,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}).ToArray();
 		}
 
-		internal double ParseDouble(string firstLayerValueString)
-		{
-			double firstLayerValue;
-
-			if (!double.TryParse(firstLayerValueString, out firstLayerValue))
-			{
-				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
-			}
-
-			return firstLayerValue;
-		}
-
 		public void SetBaudRate(string baudRate)
 		{
 			printerSettings.SetValue(SettingsKey.baud_rate, baudRate);

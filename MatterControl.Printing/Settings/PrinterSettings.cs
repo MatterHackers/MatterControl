@@ -819,8 +819,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (settingsValue.Contains("%"))
 				{
-					string onlyNumber = settingsValue.Replace("%", "");
-					double ratio = Helpers.ParseDouble(onlyNumber) / 100;
+					// Remove % and parse out double value
+					double.TryParse(settingsValue.Replace("%", ""), out double doubleValue);
+
+					double ratio =  doubleValue / 100;
 
 					if (settingsKey == SettingsKey.first_layer_height)
 					{
