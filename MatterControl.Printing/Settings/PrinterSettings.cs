@@ -809,39 +809,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(Vector2))
 			{
-				Vector2 valueAsVector2 = new Vector2();
-
-				string[] twoValues = GetValue(settingsKey).Split(',');
-				if (twoValues.Length == 2)
-				{
-					valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
-					valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
-				}
-
-				return (T)(object)(valueAsVector2);
+				return (T)(object)(Vector2.Parse(GetValue(settingsKey)));
 			}
 			else if(typeof(T) == typeof(Vector3))
 			{
-				Vector3 valueAsVector3 = new Vector3();
-
-				var value = GetValue(settingsKey);
-				if(value.StartsWith("["))
-				{
-					value = value.Substring(1);
-				}
-				if (value.EndsWith("]"))
-				{
-					value = value.Substring(0, value.Length - 1);
-				}
-
-				string[] threeValues = value.Split(',');
-				if (threeValues.Length == 3)
-				{
-					valueAsVector3.X = Helpers.ParseDouble(threeValues[0]);
-					valueAsVector3.Y = Helpers.ParseDouble(threeValues[1]);
-					valueAsVector3.Z = Helpers.ParseDouble(threeValues[2]);
-				}
-				return (T)(object)(valueAsVector3);
+				return (T)(object)(Vector3.Parse(GetValue(settingsKey)));
 			}
 			else if (typeof(T) == typeof(double))
 			{
@@ -1101,15 +1073,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				var newValue = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
-				if (!settingsLayer.ContainsKey(SettingsKey.probe_offset))
-				{
-					settingsLayer.Add(SettingsKey.probe_offset, newValue);
-				}
-				else
-				{
-					settingsLayer[SettingsKey.probe_offset] = newValue;
-				}
+				settingsLayer[SettingsKey.probe_offset] = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
 
 				// clear it
 				settingsLayer.Remove("z_probe_z_offset");
