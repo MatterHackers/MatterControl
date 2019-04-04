@@ -1101,14 +1101,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				var newValue = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
 				if (!settingsLayer.ContainsKey(SettingsKey.probe_offset))
 				{
-					settingsLayer.Add(SettingsKey.probe_offset, newValue);
+					settingsLayer.Add(SettingsKey.probe_offset, valueAsVector3.ToString());
 				}
 				else
 				{
-					settingsLayer[SettingsKey.probe_offset] = newValue;
+					settingsLayer[SettingsKey.probe_offset] = valueAsVector3.ToString();
 				}
 
 				// clear it
