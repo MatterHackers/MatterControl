@@ -1071,7 +1071,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					MigrateProbeOffset(settings.OemLayer);
 				}
 
-				// if we have not copied the oem layer settigns key
+				// if we have not copied the oem layer settings key
 				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
 				{
 					MigrateProbeOffset(settings.UserLayer);
@@ -1084,19 +1084,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var valueAsVector3 = new Vector3();
 				// read it out of the legacy data
-				valueAsVector3.Z = -agg_basics.ParseDouble(settingsLayer["z_probe_z_offset"], false);
-				var probeXyOffset = settingsLayer["z_probe_xy_offset"];
-				if (!string.IsNullOrEmpty(probeXyOffset))
+				double.TryParse(settingsLayer["z_probe_z_offset"], out valueAsVector3.Z);
+				// and negate it as it was stored in the opposite direction before
+				valueAsVector3.Z = -valueAsVector3.Z;
+				if (settingsLayer.ContainsKey("z_probe_xy_offset"))
 				{
-					var split = probeXyOffset.Split(',');
-					if (split.Length == 2)
+					var probeXyOffset = settingsLayer["z_probe_xy_offset"];
+					if (!string.IsNullOrEmpty(probeXyOffset))
 					{
-						valueAsVector3.X = agg_basics.ParseDouble(split[0], false);
-						valueAsVector3.Y = agg_basics.ParseDouble(split[1], false);
+						var split = probeXyOffset.Split(',');
+						if (split.Length == 2)
+						{
+							double.TryParse(split[0], out valueAsVector3.X);
+							double.TryParse(split[1], out valueAsVector3.Y);
+						}
 					}
 				}
 
-				settingsLayer[SettingsKey.probe_offset] = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
+				var newValue = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
+				if (!settingsLayer.ContainsKey(SettingsKey.probe_offset))
+				{
+					settingsLayer.Add(SettingsKey.probe_offset, newValue);
+				}
+				else
+				{
+					settingsLayer[SettingsKey.probe_offset] = newValue;
+				}
 
 				// clear it
 				settingsLayer.Remove("z_probe_z_offset");
