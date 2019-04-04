@@ -461,32 +461,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
 
-		private string _readLineReplacementString = "";
-		public string ReadLineReplacementString
+		public void InitializeReadLineReplacements()
 		{
-			get
+			var readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
+
+			// Clear and rebuild the replacement list
+			readLineReplacements.Clear();
+
+			foreach (string regExLine in readRegEx.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
 			{
-				var readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
-				if(readRegEx != _readLineReplacementString)
+				var matches = getQuotedParts.Matches(regExLine);
+				if (matches.Count == 2)
 				{
-					_readLineReplacementString = readRegEx;
-
-					// Clear and rebuild the replacement list
-					readLineReplacements.Clear();
-
-					foreach (string regExLine in _readLineReplacementString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
-					{
-						var matches = getQuotedParts.Matches(regExLine);
-						if (matches.Count == 2)
-						{
-							var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-							var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-							readLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-						}
-					}
+					var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+					var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+					readLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
 				}
-
-				return _readLineReplacementString;
 			}
 		}
 
@@ -2245,6 +2235,9 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			accumulatedStream = queuedCommandStream = new QueuedCommandsStream(Printer, accumulatedStream);
+
+			// ensure that our read-line replacements are updated at the same time we build our write line replacements
+			InitializeReadLineReplacements();
 
 			var processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
