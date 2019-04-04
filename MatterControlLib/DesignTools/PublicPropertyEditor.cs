@@ -366,7 +366,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.Vector2 = vector2;
 				RegisterValueChanged(field,
-					(valueString) => { return Vector2.Parse(valueString); },
+					(valueString) => Vector2.Parse(valueString),
 					(value) =>
 					{
 						var s = ((Vector2)value).ToString();
@@ -379,13 +379,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new Vector3Field(theme);
 				field.Initialize(0);
 				field.Vector3 = vector3;
-				RegisterValueChanged(field,
-					(valueString) => { return Vector3.Parse(valueString); },
+
+				RegisterValueChanged(
+					field,
+					(valueString) => Vector3.Parse(valueString),
 					(value) =>
 					{
 						var s = ((Vector3)value).ToString();
 						return s.Substring(1, s.Length - 2);
 					});
+
 				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is DirectionVector directionVector)

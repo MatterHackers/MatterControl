@@ -83,10 +83,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		internal double ParseDouble(string firstLayerValueString)
 		{
 			double firstLayerValue;
+
 			if (!double.TryParse(firstLayerValueString, out firstLayerValue))
 			{
 				throw new Exception(string.Format("Format cannot be parsed. FirstLayerHeight '{0}'", firstLayerValueString));
 			}
+
 			return firstLayerValue;
 		}
 

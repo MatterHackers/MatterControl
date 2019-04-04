@@ -739,7 +739,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
-		public T GetValue<T>(string settingsKey, IEnumerable<PrinterSettingsLayer> layerCascade = null) where T : IConvertible
+		public T GetValue<T>(string settingsKey, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 #if DEBUG
 			ValidateType<T>(settingsKey);
@@ -817,6 +817,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					valueAsVector2.X = Helpers.ParseDouble(twoValues[0]);
 					valueAsVector2.Y = Helpers.ParseDouble(twoValues[1]);
 				}
+
 				return (T)(object)(valueAsVector2);
 			}
 			else if(typeof(T) == typeof(Vector3))
