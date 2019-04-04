@@ -1066,22 +1066,54 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				// Migrate the old probe settings into the new probe settings
-				string value = settings.GetValue(SettingsKey.probe_offset);
-				if (string.IsNullOrEmpty(value))
+				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
 				{
-					var valueAsVector3 = new Vector3();
-					// read it out of the legacy data
-					var oldZOffset = settings.GetValue<double>("z_probe_z_offset");
-					var oldXYOffset = settings.GetValue<Vector2>("z_probe_xy_offset");
+					MigrateProbeOffset(settings.OemLayer);
+				}
 
-					valueAsVector3.X = oldXYOffset.X;
-					valueAsVector3.Y = oldXYOffset.Y;
-					valueAsVector3.Z = -oldZOffset;
-
-					settings.SetValue(SettingsKey.probe_offset, $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}");
+				// if we have not copied the oem layer settings key
+				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
+				{
+					MigrateProbeOffset(settings.UserLayer);
 				}
 
 				return settings;
+			}
+
+			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer)
+			{
+				var valueAsVector3 = new Vector3();
+				// read it out of the legacy data
+				double.TryParse(settingsLayer["z_probe_z_offset"], out valueAsVector3.Z);
+				// and negate it as it was stored in the opposite direction before
+				valueAsVector3.Z = -valueAsVector3.Z;
+				if (settingsLayer.ContainsKey("z_probe_xy_offset"))
+				{
+					var probeXyOffset = settingsLayer["z_probe_xy_offset"];
+					if (!string.IsNullOrEmpty(probeXyOffset))
+					{
+						var split = probeXyOffset.Split(',');
+						if (split.Length == 2)
+						{
+							double.TryParse(split[0], out valueAsVector3.X);
+							double.TryParse(split[1], out valueAsVector3.Y);
+						}
+					}
+				}
+
+				var newValue = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
+				if (!settingsLayer.ContainsKey(SettingsKey.probe_offset))
+				{
+					settingsLayer.Add(SettingsKey.probe_offset, newValue);
+				}
+				else
+				{
+					settingsLayer[SettingsKey.probe_offset] = newValue;
+				}
+
+				// clear it
+				settingsLayer.Remove("z_probe_z_offset");
+				settingsLayer.Remove("z_probe_xy_offset");
 			}
 
 			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
