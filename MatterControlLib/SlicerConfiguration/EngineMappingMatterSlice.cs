@@ -205,7 +205,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new MappedSetting(printer, SettingsKey.slowdown_below_layer_time, "minimumLayerTimeSeconds"),
 				new MappedSetting(printer, SettingsKey.support_air_gap, "supportAirGap"),
 				new MappedSetting(printer, SettingsKey.support_material_infill_angle, "supportInfillStartingAngle"),
-				new MappedSetting(printer, SettingsKey.support_material_percent, "supportPercent"),
 				new MappedSetting(printer, SettingsKey.support_material_spacing, "supportLineSpacing"),
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.support_material_speed, "supportMaterialSpeed", "infill_speed"),
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.interface_layer_speed, "interfaceLayerSpeed", "infill_speed"),

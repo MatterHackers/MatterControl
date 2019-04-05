@@ -221,7 +221,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string support_material_infill_angle = nameof(support_material_infill_angle);
 		public const string support_material_interface_extruder = nameof(support_material_interface_extruder);
 		public const string support_material_interface_layers = nameof(support_material_interface_layers);
-		public const string support_material_percent = nameof(support_material_percent);
 		public const string support_material_spacing = nameof(support_material_spacing);
 		public const string support_material_speed = nameof(support_material_speed);
 		public const string support_material_xy_distance = nameof(support_material_xy_distance);

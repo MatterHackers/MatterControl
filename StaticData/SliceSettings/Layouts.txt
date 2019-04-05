@@ -76,9 +76,6 @@ Advanced
         create_brim
         brims
   Support
-    Support
-      Support
-        support_material_percent
     Advanced
       Support Options
         support_material_create_perimeter
