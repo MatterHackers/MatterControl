@@ -1179,7 +1179,6 @@ You will then need to logout and log back in to the computer for the changes to 
 					serialPort.Dispose();
 				}
 				serialPort = null;
-				CommunicationState = CommunicationStates.Disconnected;
 			}
 			else
 			{
@@ -1187,6 +1186,8 @@ You will then need to logout and log back in to the computer for the changes to 
 				TurnOffBedAndExtruders(TurnOff.Now);
 				FanSpeed0To255 = 0;
 			}
+
+			CommunicationState = CommunicationStates.Disconnected;
 		}
 
 		public void HotendTemperatureWasWritenToPrinter(string line)
