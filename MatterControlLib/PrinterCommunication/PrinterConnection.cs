@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
+				if (string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
 				{
 					return 250000;
 				}
