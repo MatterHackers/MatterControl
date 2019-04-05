@@ -77,11 +77,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.OnLoad(args);
 		}
-
-		public override void OnClosed(EventArgs e)
-		{
-			// move from this wizard to the print leveling wizard if needed
-			ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, theme);
-		}
 	}
 }

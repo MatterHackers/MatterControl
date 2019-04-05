@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		public void ShowWizardFinished()
+		protected void ShowWizardFinished()
 		{
 			var doneButton = new TextButton("Done".Localize(), theme)
 			{
@@ -118,7 +118,14 @@ namespace MatterHackers.MatterControl
 
 			doneButton.Click += (s, e) =>
 			{
-				this.DialogWindow.ClosePage();
+				if (this.DialogWindow is StagedSetupWindow setupWindow)
+				{
+					setupWindow.NextIncompleteStage();
+				}
+				else
+				{
+					this.DialogWindow.ClosePage();
+				}
 			};
 
 			this.AddPageAction(doneButton);

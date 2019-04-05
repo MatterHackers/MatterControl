@@ -1621,53 +1621,6 @@ namespace MatterHackers.MatterControl
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer);
 		}
 
-		public bool RunAnyRequiredPrinterSetup(PrinterConfig printer, ThemeConfig theme)
-		{
-			// run probe calibration first if we need to
-			if (ProbeCalibrationWizard.NeedsToBeRun(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new ProbeCalibrationWizard(printer));
-				});
-				return true;
-			}
-
-			// run the leveling wizard if we need to
-			if (LevelingValidation.NeedsToBeRun(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(new PrintLevelingWizard(printer));
-				});
-				return true;
-			}
-
-			// run load filament if we need to
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(
-						new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
-				});
-				return true;
-			}
-
-			// run load filament for extruder 1 if we need to
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(
-						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
-				});
-				return true;
-			}
-
-			return false;
-		}
-
 		public void Shutdown()
 		{
 			// Ensure all threads shutdown gracefully on close
@@ -2414,10 +2367,15 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				// If leveling is required or is currently on
-				if(this.RunAnyRequiredPrinterSetup(printer, this.Theme))
+				if (PrinterCalibrationWizard.SetupRequired(printer))
 				{
-					// We need to calibrate. So, don't print this part.
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new PrinterCalibrationWizard(printer, AppContext.Theme),
+							advanceToIncompleteStage: true);
+					});
+
 					return;
 				}
 

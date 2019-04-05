@@ -385,7 +385,17 @@ namespace MatterHackers.MatterControl
 		{
 			if (sender is PrinterConfig printer)
 			{
-				ApplicationController.Instance.RunAnyRequiredPrinterSetup(printer, ApplicationController.Instance.Theme);
+				if (PrinterCalibrationWizard.SetupRequired(printer))
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new PrinterCalibrationWizard(printer, AppContext.Theme),
+							advanceToIncompleteStage: true);
+					});
+
+					return;
+				}
 			}
 		}
 

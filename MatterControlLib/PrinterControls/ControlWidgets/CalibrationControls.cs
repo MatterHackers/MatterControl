@@ -72,30 +72,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(
-							"Printer Calibration".Localize(),
-							new Vector2(1200, 700),
-							new ISetupWizard[]
-							{
-								new PrintLevelingWizard(printer),
-								new ProbeCalibrationWizard(printer),
-								new XyCalibrationWizard(printer, 1)
-							},
-							() =>
-							{
-								var homePage = new WizardSummaryPage()
-								{
-									HeaderText = "Printer Setup & Calibration".Localize()
-								};
-
-								homePage.ContentRow.AddChild(
-									new WrappedTextWidget(
-										@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
-										pointSize: theme.DefaultFontSize,
-										textColor: theme.TextColor));
-
-								return homePage;
-							});
+						DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 					});
 				};
 				settingsRow.AddChild(runWizardButton);
