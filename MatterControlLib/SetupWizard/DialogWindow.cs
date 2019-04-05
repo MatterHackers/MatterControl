@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
-		public static DialogWindow Show(IStagedSetupWizard setupWizard)
+		public static DialogWindow Show(IStagedSetupWizard setupWizard, bool advanceToIncompleteStage = false)
 		{
 			var type = setupWizard.GetType();
 
@@ -100,7 +100,14 @@ namespace MatterHackers.MatterControl
 			var homePage = setupWizard.HomePageGenerator();
 			SetSizeAndShow(wizardWindow, homePage);
 
-			wizardWindow.ChangeToPage(homePage);
+			if (advanceToIncompleteStage)
+			{
+				wizardWindow.NextIncompleteStage();
+			}
+			else
+			{
+				wizardWindow.ChangeToPage(homePage);
+			}
 
 			return wizardWindow;
 		}
