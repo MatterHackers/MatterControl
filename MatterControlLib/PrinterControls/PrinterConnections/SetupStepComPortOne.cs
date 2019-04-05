@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.IO;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using System.IO;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				HAnchor = HAnchor.Stretch
 			};
 
-			BorderDouble elementMargin = new BorderDouble(top: 5);
+			var elementMargin = new BorderDouble(top: 5);
 
 			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
 			{

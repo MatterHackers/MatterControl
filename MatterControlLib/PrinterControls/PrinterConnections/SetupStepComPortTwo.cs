@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@ using System;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -113,35 +112,37 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		public FlowLayoutWidget createPrinterConnectionMessageContainer()
 		{
-			FlowLayoutWidget container = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			container.VAnchor = VAnchor.Stretch;
-			container.Margin = new BorderDouble(5);
-			BorderDouble elementMargin = new BorderDouble(top: 5);
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(5)
+			};
 
-			string printerMessageOneText = "MatterControl will now attempt to auto-detect printer.".Localize();
-			TextWidget printerMessageOne = new TextWidget(printerMessageOneText, 0, 0, 10);
-			printerMessageOne.Margin = new BorderDouble(0, 10, 0, 5);
-			printerMessageOne.TextColor = theme.TextColor;
-			printerMessageOne.HAnchor = HAnchor.Stretch;
-			printerMessageOne.Margin = elementMargin;
+			var elementMargin = new BorderDouble(top: 5);
 
-			string printerMessageFourBeg = "Connect printer (make sure it is on)".Localize();
-			string printerMessageFourFull = string.Format("1.) {0}.", printerMessageFourBeg);
-			TextWidget printerMessageFour = new TextWidget(printerMessageFourFull, 0, 0, 12);
-			printerMessageFour.TextColor = theme.TextColor;
-			printerMessageFour.HAnchor = HAnchor.Stretch;
-			printerMessageFour.Margin = elementMargin;
+			var printerMessageOne = new TextWidget("MatterControl will now attempt to auto-detect printer.".Localize(), 0, 0, 10)
+			{
+				Margin = elementMargin,
+				TextColor = theme.TextColor,
+				HAnchor = HAnchor.Stretch
+			};
+			container.AddChild(printerMessageOne);
 
-			string printerMessageFiveTxtBeg = "Press".Localize();
-			string printerMessageFiveTxtEnd = "Connect".Localize();
-			string printerMessageFiveTxtFull = string.Format("2.) {0} '{1}'.", printerMessageFiveTxtBeg, printerMessageFiveTxtEnd);
-			TextWidget printerMessageFive = new TextWidget(printerMessageFiveTxtFull, 0, 0, 12);
-			printerMessageFive.TextColor = theme.TextColor;
-			printerMessageFive.HAnchor = HAnchor.Stretch;
-			printerMessageFive.Margin = elementMargin;
+			var printerMessageFour = new TextWidget(string.Format("1.) {0}.", "Connect printer (make sure it is on)".Localize()), 0, 0, 12)
+			{
+				TextColor = theme.TextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
+			container.AddChild(printerMessageFour);
 
-			GuiWidget vSpacer = new GuiWidget();
-			vSpacer.VAnchor = VAnchor.Stretch;
+
+			var printerMessageFive = new TextWidget(string.Format("2.) {0} '{1}'.", "Press".Localize(), "Connect".Localize()), 0, 0, 12)
+			{
+				TextColor = theme.TextColor,
+				HAnchor = HAnchor.Stretch,
+				Margin = elementMargin
+			};
 
 			printerErrorMessage = new TextWidget("", 0, 0, 10)
 			{
@@ -150,20 +151,19 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			};
-
-			container.AddChild(printerMessageOne);
-			container.AddChild(printerMessageFour);
 			container.AddChild(printerErrorMessage);
 
-			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "insert usb.png"));
-			removeImage.SetRecieveBlender(new BlenderPreMultBGRA());
+			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "insert usb.png")).SetPreMultiply();
 			container.AddChild(new ImageWidget(removeImage)
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(0, 10),
 			});
 
-			container.AddChild(vSpacer);
+			container.AddChild(new GuiWidget
+			{
+				VAnchor = VAnchor.Stretch
+			});
 
 			container.HAnchor = HAnchor.Stretch;
 			return container;
