@@ -37,8 +37,6 @@ namespace MatterHackers.MatterControl
 {
 	public class StagedSetupWindow : DialogWindow
 	{
-		private IEnumerable<ISetupWizard> stages;
-		private Func<DialogPage> homePageGenerator;
 		private FlowLayoutWidget leftPanel;
 		private DialogPage activePage;
 		private GuiWidget rightPanel;
@@ -46,6 +44,7 @@ namespace MatterHackers.MatterControl
 		private ISetupWizard _activeStage;
 
 		private Dictionary<ISetupWizard, WizardStageRow> stageButtons = new Dictionary<ISetupWizard, WizardStageRow>();
+		private IStagedSetupWizard setupWizard;
 
 		public ISetupWizard ActiveStage
 		{
@@ -82,10 +81,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public StagedSetupWindow(string title, IEnumerable<ISetupWizard> stages, Func<DialogPage> homePageGenerator)
+		public StagedSetupWindow(IStagedSetupWizard setupWizard)
 		{
-			this.stages = stages;
-			this.homePageGenerator = homePageGenerator;
+			this.setupWizard = setupWizard;
 
 			var theme = AppContext.Theme;
 
@@ -105,7 +103,7 @@ namespace MatterHackers.MatterControl
 			});
 
 			int i = 1;
-			foreach (var stage in stages.Where(s => s.Visible))
+			foreach (var stage in setupWizard.Stages.Where(s => s.Visible))
 			{
 				var stageWidget = new WizardStageRow(
 					$"{i++}. {stage.Title}",
@@ -129,7 +127,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Stretch
 			});
 
-			this.Title = title;
+			this.Title = setupWizard.Title;
 
 			// Multi-part wizard should not try to resize per page
 			this.UseChildWindowSize = false;
@@ -159,7 +157,7 @@ namespace MatterHackers.MatterControl
 
 		public void NextIncompleteStage()
 		{
-			ISetupWizard nextStage = stages.FirstOrDefault(s => s.SetupRequired);
+			ISetupWizard nextStage = setupWizard.Stages.FirstOrDefault(s => s.SetupRequired);
 
 			if (nextStage != null)
 			{
@@ -173,8 +171,8 @@ namespace MatterHackers.MatterControl
 
 		public override void ClosePage()
 		{
-			// Move to the summary/home page
-			this.ChangeToPage(homePageGenerator());
+			// Construct and move to the summary/home page
+			this.ChangeToPage(setupWizard.HomePageGenerator());
 
 			this.ActiveStage = null;
 		}
