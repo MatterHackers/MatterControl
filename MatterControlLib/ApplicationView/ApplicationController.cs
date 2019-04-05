@@ -2881,6 +2881,58 @@ namespace MatterHackers.MatterControl
 			// forum: "https://forums.matterhackers.com/recent"
 		}
 
+		public void ConnectToPrinter(PrinterConfig printer)
+		{
+			if (!printer.Settings.PrinterSelected)
+			{
+				return;
+			}
+
+			bool listenForConnectFailed = true;
+			long connectStartMs = UiThread.CurrentTimerMs;
+
+			void Connection_Failed(object s, EventArgs e)
+			{
+#if !__ANDROID__
+				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
+				// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
+				// Connect button started the task
+				if (listenForConnectFailed
+					&& UiThread.CurrentTimerMs - connectStartMs < 25000)
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						// User initiated connect attempt failed, show port selection dialog
+						DialogWindow.Show(new SetupStepComPortOne(printer));
+					});
+				}
+#endif
+				ClearEvents();
+			}
+
+			void Connection_Succeeded(object s, EventArgs e)
+			{
+				ClearEvents();
+			}
+
+			void ClearEvents()
+			{
+				listenForConnectFailed = false;
+
+				printer.Connection.ConnectionFailed -= Connection_Failed;
+				printer.Connection.ConnectionSucceeded -= Connection_Succeeded;
+			}
+
+			printer.Connection.ConnectionFailed += Connection_Failed;
+			printer.Connection.ConnectionSucceeded += Connection_Succeeded;
+
+			if (AppContext.Platform.HasPermissionToDevice(printer))
+			{
+				printer.Connection.HaltConnectionThread();
+				printer.Connection.Connect();
+			}
+		}
+
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }

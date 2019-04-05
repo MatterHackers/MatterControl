@@ -47,9 +47,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 		private PrinterConfig printer;
 
-		private bool listenForConnectFailed = false;
-		private long connectStartMs;
-
 		public PrinterConnectButton(PrinterConfig printer, ThemeConfig theme)
 		{
 			this.printer = printer;
@@ -71,10 +68,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			{
 				if (connectButton.Enabled)
 				{
-					if (printer.Settings.PrinterSelected)
-					{
-						UserRequestedConnectToActivePrinter();
-					}
+					ApplicationController.Instance.ConnectToPrinter(printer);
 				}
 			};
 			this.AddChild(connectButton);
@@ -94,7 +88,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			};
 			cancelConnectButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				listenForConnectFailed = false;
 				printer.CancelPrint();
 				cancelConnectButton.Enabled = false;
 			});
@@ -147,7 +140,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-			printer.Connection.ConnectionFailed += Connection_Failed;
 
 			this.SetVisibleStates();
 		}
@@ -156,43 +148,8 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			// Unregister listeners
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
-			printer.Connection.ConnectionFailed -= Connection_Failed;
 
 			base.OnClosed(e);
-		}
-
-		public void UserRequestedConnectToActivePrinter()
-		{
-			if (printer.Settings.PrinterSelected)
-			{
-				listenForConnectFailed = true;
-				connectStartMs = UiThread.CurrentTimerMs;
-
-				if (AppContext.Platform.HasPermissionToDevice(printer))
-				{
-					printer.Connection.HaltConnectionThread();
-					printer.Connection.Connect();
-				}
-			}
-		}
-
-		private void Connection_Failed(object s, EventArgs e)
-		{
-#if !__ANDROID__
-			// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
-			// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
-			// Connect button started the task
-			if (listenForConnectFailed
-				&& UiThread.CurrentTimerMs - connectStartMs < 25000)
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					// User initiated connect attempt failed, show port selection dialog
-					DialogWindow.Show(new SetupStepComPortOne(printer));
-				});
-			}
-#endif
-			listenForConnectFailed = false;
 		}
 
 		private void SetChildVisible(GuiWidget visibleChild, bool enabled)
@@ -230,7 +187,6 @@ namespace MatterHackers.MatterControl.ActionBar
 					break;
 
 				default:
-					listenForConnectFailed = false;
 					SetChildVisible(disconnectButton, true);
 					break;
 			}
