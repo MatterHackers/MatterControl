@@ -156,7 +156,13 @@ namespace TcpipDriver
 				// Attempt to connect Message to just the console
 				this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
 				socket.Connect(ipEndPoint);
-				stream = new NetworkStream(socket);
+
+				stream = new NetworkStream(socket)
+				{
+					WriteTimeout = tempWriteTimeout,
+					ReadTimeout = tempReadTimeout
+				};
+
 				this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
 				if (this.BaudRate != 0)
 				{
@@ -172,12 +178,6 @@ namespace TcpipDriver
 				ApplicationController.Instance.LogError("Exception:" + e.Message);
 			}
 
-			//These were set before and are now set in the stream
-			// if (stream != null)
-			{
-				stream.WriteTimeout = tempWriteTimeout;
-				stream.ReadTimeout = tempReadTimeout;
-			}
 		}
 
 		private void LogInfo(string message)
