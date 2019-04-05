@@ -426,12 +426,7 @@ namespace MatterHackers.MatterControl
 					FixAction = new NamedAction()
 					{
 						Title = "Connect".Localize(),
-						Action = () =>
-						{
-							// TODO: Extract the behavior in the Connect/Disconnect button from widget land so we can reuse a common implementation
-							printer.Connection.HaltConnectionThread();
-							printer.Connection.Connect();
-						}
+						Action = () => ApplicationController.Instance.ConnectToPrinter(printer)
 					}
 				});
 			}
