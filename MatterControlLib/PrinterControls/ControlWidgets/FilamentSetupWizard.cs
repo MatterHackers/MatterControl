@@ -29,35 +29,35 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class PrinterCalibrationWizard : IStagedSetupWizard
+	public class FilamentSetupWizard : IStagedSetupWizard
 	{
-		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
+		public FilamentSetupWizard(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.Stages = new ISetupWizard[]
+			this.Stages = Enumerable.Range(0, printer.Settings.Helpers.NumberOfHotends()).Select(i =>
 			{
-				new PrintLevelingWizard(printer),
-				new ProbeCalibrationWizard(printer),
-				new XyCalibrationWizard(printer, 1)
-			};
+				return new LoadFilamentWizard(printer, extruderIndex: i, showAlreadyLoadedButton: true);
+			}).ToList();
 
 			this.HomePageGenerator = () =>
 			{
 				var homePage = new WizardSummaryPage()
 				{
-					HeaderText = "Printer Setup & Calibration".Localize()
+					HeaderText = "Load Filament".Localize()
 				};
 
 				homePage.ContentRow.AddChild(
 					new WrappedTextWidget(
-						@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
+						@"Select the hotend on the left to continue".Replace("\r\n", "\n"),
 						pointSize: theme.DefaultFontSize,
 						textColor: theme.TextColor));
 
@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public string Title { get; } = "Printer Calibration".Localize();
+		public string Title { get; } = "Load Filament".Localize();
 
 		public Vector2 WindowSize { get; } = new Vector2(1200, 700);
 
@@ -75,9 +75,33 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer)
 		{
-			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
-				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
-				|| FilamentSetupWizard.SetupRequired(printer);
+			return SetupRequired(printer, 0)
+				|| SetupRequired(printer, 1);
+		}
+
+		public static bool SetupRequired(PrinterConfig printer, int extruderIndex)
+		{
+			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+
+			string filamentKey;
+
+			switch (extruderIndex)
+			{
+				case 0:
+					filamentKey = SettingsKey.filament_has_been_loaded;
+					break;
+
+				case 1:
+					filamentKey = SettingsKey.filament_1_has_been_loaded;
+					break;
+
+				default:
+					// TODO: Seems like more than index 0/1 should be supported but SettingsKeys do not exist
+					return false;
+			}
+
+			return extruderCount > 1 
+				&& !printer.Settings.GetValue<bool>(filamentKey);
 		}
 	}
 }
