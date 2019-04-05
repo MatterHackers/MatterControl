@@ -152,7 +152,24 @@ namespace TcpipDriver
 		public void Open()
 		{
 			this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-			socket.Connect(ipEndPoint);
+
+			// Connect with timeout
+			int timeoutMs = 8000;
+			long startedMs = UiThread.CurrentTimerMs;
+			IAsyncResult result = socket.BeginConnect(ipEndPoint, null, null);
+			result.AsyncWaitHandle.WaitOne(timeoutMs, true);
+
+			if (socket.Connected)
+			{
+				socket.EndConnect(result);
+			}
+			else
+			{
+				socket.Close();
+
+				long elapsedMs = UiThread.CurrentTimerMs - startedMs;
+				throw new Exception(elapsedMs >= timeoutMs ? "Connection timeout".Localize() : "Failed to connect server".Localize());
+			}
 
 			stream = new NetworkStream(socket)
 			{
