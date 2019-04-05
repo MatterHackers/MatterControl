@@ -2367,10 +2367,15 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				// If leveling is required or is currently on
-				if(this.RunAnyRequiredPrinterSetup(printer, this.Theme))
+				if (PrinterCalibrationWizard.SetupRequired(printer))
 				{
-					// We need to calibrate. So, don't print this part.
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new PrinterCalibrationWizard(printer, AppContext.Theme),
+							advanceToIncompleteStage: true);
+					});
+
 					return;
 				}
 
