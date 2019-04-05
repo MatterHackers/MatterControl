@@ -533,7 +533,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					LineSent?.Invoke(this, string.Format("Communication State: {0}", value));
+					this.TerminalLog.WriteLine(string.Format("Communication State: {0}", value));
 
 					switch (communicationState)
 					{
@@ -2872,8 +2872,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					{
 					}
 
-					// TODO: Consider if passing non-printer messages through LineSent is acceptable or if a dedicated event would add clarity
-					printerConnection?.LineSent?.Invoke(this, "Read Thread Has Exited.\n");
+					printerConnection.TerminalLog.WriteLine("Read Thread Has Exited");
 					numRunning--;
 				});
 			}
