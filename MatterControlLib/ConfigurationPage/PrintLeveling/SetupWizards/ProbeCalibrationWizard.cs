@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
 					var probe_offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 					probe_offset.Z = -newProbeOffset;
-					printer.Settings.SetValue(SettingsKey.probe_offset, probe_offset.ToString());
+					printer.Settings.SetValue(SettingsKey.probe_offset, $"{probe_offset.X},{probe_offset.Y},{probe_offset.Z}");
 				}
 				else if (extruderIndex == 1)
 				{

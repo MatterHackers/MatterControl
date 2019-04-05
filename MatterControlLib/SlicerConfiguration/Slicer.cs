@@ -39,6 +39,8 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.PolygonMesh;
@@ -173,7 +175,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// TODO: Use existing AssetsPath property
 					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
-					outputItems.Add((item.WorldMatrix(), Path.Combine(assetsDirectory, item.MeshPath)));
+					var itemWorldMatrix = item.WorldMatrix();
+					if (item is GeneratedSupportObject3D generatedSupportObject3D)
+					{
+						// grow the support columns by the amount they are reduced by
+						var aabb = item.GetAxisAlignedBoundingBox();
+						var xyScale = (aabb.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabb.XSize;
+						itemWorldMatrix = itemWorldMatrix.ApplyAtCenter(aabb, Matrix4X4.CreateScale(xyScale, xyScale, 1));
+					}
+					outputItems.Add((itemWorldMatrix, Path.Combine(assetsDirectory, item.MeshPath)));
 					mergeString += $"({savedStlCount++}";
 					first = false;
 				}

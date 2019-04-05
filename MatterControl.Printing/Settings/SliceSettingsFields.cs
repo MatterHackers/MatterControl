@@ -1644,17 +1644,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					QuickMenuSettings = { { "Little", "10" }, { "Standard","50" }, { "Lots", "90" } },
-					SlicerConfigName = SettingsKey.support_material_percent,
-					PresentationName = "Support Percent".Localize(),
-					HelpText = "The percent of the extrusion width that can be overlapped and still generate.".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					ShowIfSet = "!sla_printer",
-					Units = "%",
-					DefaultValue = "50"
-				},
-				new SliceSettingData()
-				{
 					SlicerConfigName = SettingsKey.support_material_infill_angle,
 					PresentationName = "Infill Angle".Localize(),
 					HelpText = "The angle at which the support material lines will be drawn.".Localize(),
