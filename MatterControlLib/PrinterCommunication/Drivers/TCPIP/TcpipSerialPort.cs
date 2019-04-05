@@ -151,35 +151,25 @@ namespace TcpipDriver
 
 		public void Open()
 		{
-			try
+			this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+			socket.Connect(ipEndPoint);
+
+			stream = new NetworkStream(socket)
 			{
-				// Attempt to connect Message to just the console
-				this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-				socket.Connect(ipEndPoint);
+				WriteTimeout = tempWriteTimeout,
+				ReadTimeout = tempReadTimeout
+			};
 
-				stream = new NetworkStream(socket)
-				{
-					WriteTimeout = tempWriteTimeout,
-					ReadTimeout = tempReadTimeout
-				};
-
-				this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-				if (this.BaudRate != 0)
-				{
-					//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
-					byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
-					Write(bytes, 0, bytes.Length);
-					//Set baud and reset board
-					SetBaudRate(this.BaudRate);
-				}
-			}
-			catch (Exception e)
+			this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+			if (this.BaudRate != 0)
 			{
-				ApplicationController.Instance.LogError("Exception:" + e.Message);
+				//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
+				byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
+				Write(bytes, 0, bytes.Length);
+				//Set baud and reset board
+				SetBaudRate(this.BaudRate);
 			}
-
 		}
-
 		private void LogInfo(string message)
 		{
 			ApplicationController.Instance.LogInfo(message);
