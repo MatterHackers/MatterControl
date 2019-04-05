@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// <summary>
 		/// The amount to reduce the pillars so they are separated in the 3D view
 		/// </summary>
-		private double reduceAmount => .99;
+		public static double ColumnReduceAmount => 1;
 
 		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancelationToken)
 		{
@@ -318,6 +318,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Mesh = PlatonicSolids.CreateCube(1, 1, 1)
 			};
+			// make it just a bit small so they always overlap correctly
+			var reduceAmount = ColumnReduceAmount * .99;
 			support.Matrix = Matrix4X4.CreateScale(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ)
 				* Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2);
 
