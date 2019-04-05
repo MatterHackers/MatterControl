@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 
 			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
 
-			// last let's check if there is any support in the scene and if it looks like it is needed
+			// Check to see if supports are required
 			var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
 			if (supportGenerator.RequiresSupport())
 			{
@@ -80,6 +80,29 @@ namespace MatterHackers.MatterControl
 								 supportsPopup.InvokeClick();
 							 }
 						 }
+					}
+				});
+			}
+
+			if (FilamentSetupWizard.SetupRequired(printer))
+			{
+				errors.Add(new ValidationError("FilamentSetup")
+				{
+					Error = "Unknown filament loaded".Localize(),
+					Details = "Set active material to continue".Localize(),
+					ErrorLevel = ValidationErrorLevel.Warning,
+					FixAction = new NamedAction()
+					{
+						Title = "Load Filament".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								DialogWindow.Show(
+									new FilamentSetupWizard(printer, AppContext.Theme),
+									advanceToIncompleteStage: true);
+							});
+						}
 					}
 				});
 			}
@@ -403,12 +426,7 @@ namespace MatterHackers.MatterControl
 					FixAction = new NamedAction()
 					{
 						Title = "Connect".Localize(),
-						Action = () =>
-						{
-							// TODO: Extract the behavior in the Connect/Disconnect button from widget land so we can reuse a common implementation
-							printer.Connection.HaltConnectionThread();
-							printer.Connection.Connect();
-						}
+						Action = () => ApplicationController.Instance.ConnectToPrinter(printer)
 					}
 				});
 			}
