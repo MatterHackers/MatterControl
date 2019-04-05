@@ -102,7 +102,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += PrinterStatusChanged;
-			printer.Connection.EnableChanged += PrinterStatusChanged;
 
 			SetVisibleControls();
 		}
@@ -129,7 +128,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			// Unregister listeners
 			printer.Settings.PrintLevelingEnabledChanged -= Settings_PrintLevelingEnabledChanged;
 			printer.Connection.CommunicationStateChanged -= PrinterStatusChanged;
-			printer.Connection.EnableChanged -= PrinterStatusChanged;
 
 			base.OnClosed(e);
 		}

@@ -147,7 +147,6 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-			printer.Connection.EnableChanged += Connection_EnableChanged;
 			printer.Connection.ConnectionFailed += Connection_Failed;
 
 			this.SetVisibleStates();
@@ -157,7 +156,6 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			// Unregister listeners
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
-			printer.Connection.EnableChanged -= Connection_EnableChanged;
 			printer.Connection.ConnectionFailed -= Connection_Failed;
 
 			base.OnClosed(e);
@@ -236,11 +234,6 @@ namespace MatterHackers.MatterControl.ActionBar
 					SetChildVisible(disconnectButton, true);
 					break;
 			}
-		}
-
-		private void Connection_EnableChanged(object s, EventArgs e)
-		{
-			SetVisibleStates();
 		}
 
 		private void Connection_CommunicationStateChanged(object s, EventArgs e)

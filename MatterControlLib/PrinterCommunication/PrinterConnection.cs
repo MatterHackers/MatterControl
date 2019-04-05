@@ -116,8 +116,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler DestinationChanged;
 
-		public event EventHandler EnableChanged;
-
 		public event EventHandler HomingPositionChanged;
 
 		public event EventHandler HotendTemperatureRead;
@@ -1189,7 +1187,6 @@ You will then need to logout and log back in to the computer for the changes to 
 				TurnOffBedAndExtruders(TurnOff.Now);
 				FanSpeed0To255 = 0;
 			}
-			OnEnabledChanged(null);
 		}
 
 		public void HotendTemperatureWasWritenToPrinter(string line)
@@ -1349,7 +1346,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			ConnectionFailed?.Invoke(this, eventArgs);
 
 			CommunicationState = CommunicationStates.Disconnected;
-			OnEnabledChanged(eventArgs);
 		}
 
 		private void OnIdle()
@@ -2338,11 +2334,6 @@ You will then need to logout and log back in to the computer for the changes to 
 		private void OnBedTemperatureRead(EventArgs e)
 		{
 			BedTemperatureRead?.Invoke(this, e);
-		}
-
-		private void OnEnabledChanged(EventArgs e)
-		{
-			EnableChanged?.Invoke(this, e);
 		}
 
 		private void OnHotendTemperatureRead(EventArgs e)
