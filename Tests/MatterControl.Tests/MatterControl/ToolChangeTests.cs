@@ -50,6 +50,13 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 {
 	public class ToolChangeTests
 	{
+		[SetUp]
+		public void TestSetup()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
+
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeNoHeat()
 		{
@@ -348,9 +355,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 		private static PrinterConfig SetupToolChangeSettings()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			// this is the pause and resume from the Eris
 			var printer = new PrinterConfig(new PrinterSettings());
 
