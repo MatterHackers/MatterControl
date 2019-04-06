@@ -575,7 +575,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 Z10 E0",
 				"T0",
 				"G1 X10 Y10 Z10 E0",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -602,7 +601,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 F3000", // return to extruder position
 				"G1 Z10 F315",
 				"G1 F2500",
-				null,
 			};
 
 			// create a printer for dual extrusion printing
@@ -633,7 +631,6 @@ namespace MatterControl.Tests.MatterControl
 				"T1",
 				"T0",
 				"G1 X11 Y11 Z11 E0 F2500",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -643,7 +640,6 @@ namespace MatterControl.Tests.MatterControl
 				"M114", // we always ask position after tool assignment
 				"G1 X10 Y10 Z10 F2500", // go to the position requested
 				"G1 X11 Y11 Z11", // go to the position requested
-				null,
 			};
 
 			// create a printer for dual extrusion printing
@@ -667,7 +663,6 @@ namespace MatterControl.Tests.MatterControl
 				"M104 S100",
 				"T0",
 				"G1 X11 Y11 Z11 E0 F2500",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -681,7 +676,6 @@ namespace MatterControl.Tests.MatterControl
 				"T0", // smoothie command to ensure still on T0 after temp set
 				"M114", // always ask position after T
 				"G1 X11 Y11 Z11", // go to the position requested
-				null,
 			};
 
 			// create a printer for dual extrusion printing
@@ -707,7 +701,6 @@ namespace MatterControl.Tests.MatterControl
 				"T0",
 				"G1 E30",
 				"G1 X11 Y11 Z11 E30 F2500",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -757,7 +750,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 Z10 E0",
 				// now do the same thing with a long enough print to cause
 				// cooling and heating
-				null,
 			};
 
 			// validate that both temperatures get set and only once each
@@ -792,7 +784,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y10 F3000",
 				"G1 Z10 F315",
 				"G1 F2500",
-				null
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
