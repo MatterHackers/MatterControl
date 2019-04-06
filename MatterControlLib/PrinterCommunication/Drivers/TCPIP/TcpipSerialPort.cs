@@ -3,13 +3,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace TcpipDriver
 {
-	class TcpipSerialPort :IFrostedSerialPort
+	class TcpipSerialPort : IFrostedSerialPort
 	{
 		// Telnet protocol characters
 		const byte IAC = 255;  // escape
@@ -70,7 +72,7 @@ namespace TcpipDriver
 		{
 			get
 			{
-				if(stream.DataAvailable)
+				if (stream.DataAvailable)
 				{
 					int bytesRead = stream.Read(readBuffer, bufferIndex, readBuffer.Length);
 					bufferIndex += bytesRead;
@@ -106,7 +108,7 @@ namespace TcpipDriver
 
 			set
 			{
-				if(stream != null)
+				if (stream != null)
 				{
 					stream.ReadTimeout = value;
 				}
@@ -128,7 +130,7 @@ namespace TcpipDriver
 
 			set
 			{
-				if(stream != null)
+				if (stream != null)
 				{
 					stream.WriteTimeout = value;
 				}
@@ -151,32 +153,48 @@ namespace TcpipDriver
 
 		public void Open()
 		{
-			try
+			this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+
+			// Connect with timeout
+			int timeoutMs = 8000;
+			long startedMs = UiThread.CurrentTimerMs;
+			IAsyncResult result = socket.BeginConnect(ipEndPoint, null, null);
+			result.AsyncWaitHandle.WaitOne(timeoutMs, true);
+
+			if (socket.Connected)
 			{
-				// Attempt to connect Message to just the console
-				this.LogInfo("Attempting to connect to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-				socket.Connect(ipEndPoint);
-				stream = new NetworkStream(socket);
-				this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-				if (this.BaudRate != 0)
+				socket.EndConnect(result);
+			}
+			else
+			{
+				socket.Close();
+
+				long elapsedMs = UiThread.CurrentTimerMs - startedMs;
+				if (elapsedMs >= timeoutMs)
 				{
-					//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
-					byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
-					Write(bytes, 0, bytes.Length);
-					//Set baud and reset board
-					SetBaudRate(this.BaudRate);
+					throw new TimeoutException("Connection timed out".Localize());
+				}
+				else
+				{
+					throw new Exception("Failed to connect server".Localize());
 				}
 			}
-			catch (Exception e)
-			{
-				ApplicationController.Instance.LogError("Exception:" + e.Message);
-			}
 
-			//These were set before and are now set in the stream
-			// if (stream != null)
+			stream = new NetworkStream(socket)
 			{
-				stream.WriteTimeout = tempWriteTimeout;
-				stream.ReadTimeout = tempReadTimeout;
+				WriteTimeout = tempWriteTimeout,
+				ReadTimeout = tempReadTimeout
+			};
+
+			this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
+
+			if (this.BaudRate != 0)
+			{
+				//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
+				byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
+				Write(bytes, 0, bytes.Length);
+				//Set baud and reset board
+				SetBaudRate(this.BaudRate);
 			}
 		}
 
@@ -256,9 +274,9 @@ namespace TcpipDriver
 			{
 				socket?.Close();
 			}
-			catch{ }
+			catch { }
 
-			for(int i =0; i< 5; i++)
+			for (int i = 0; i < 5; i++)
 			{
 				ipEndPoint = new IPEndPoint(ipAddress, port);
 				socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -269,7 +287,7 @@ namespace TcpipDriver
 					socket.Connect(ipEndPoint);
 					stream = new NetworkStream(socket);
 					this.LogInfo("Connected to: " + ipEndPoint.Address + " on port " + ipEndPoint.Port);
-					
+
 					// Send telnet handshake
 					byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
 					Write(bytes, 0, bytes.Length);
@@ -278,7 +296,7 @@ namespace TcpipDriver
 				catch (Exception e)
 				{
 					ApplicationController.Instance.LogError("Exception:" + e.Message);
-					Thread.Sleep((int)(500 * Math.Pow(i,2)));
+					Thread.Sleep((int)(500 * Math.Pow(i, 2)));
 				}
 			}
 

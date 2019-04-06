@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (!string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
+				if (string.IsNullOrEmpty(Printer.Settings.GetValue(SettingsKey.baud_rate)))
 				{
 					return 250000;
 				}
@@ -495,12 +495,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 				{
 					case CommunicationStates.AttemptingToConnect:
 						PrintingItemName = "";
-#if DEBUG
-						if (serialPort == null)
-						{
-							throw new Exception("The serial port should be constructed prior to setting this or we can fail our connection on a write before it has a chance to be created.");
-						}
-#endif
+
+						// TODO: Investigate the validity of this claim/warning
+//#if DEBUG
+//						if (serialPort == null)
+//						{
+//							throw new Exception("The serial port should be constructed prior to setting this or we can fail our connection on a write before it has a chance to be created.");
+//						}
+//#endif
 						break;
 
 					case CommunicationStates.Connected:
@@ -533,7 +535,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 				if (communicationState != value)
 				{
-					LineSent?.Invoke(this, string.Format("Communication State: {0}", value));
+					this.TerminalLog.WriteLine(string.Format("Communication State: {0}", value));
 
 					switch (communicationState)
 					{
@@ -987,6 +989,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								{
 									try
 									{
+										// AttemptingToConnect must come before we open the port, as TcipSerialPort does not return immediately and
+										// we're actually doing the bulk of the connection time in CreateAndOpen
+										CommunicationState = CommunicationStates.AttemptingToConnect;
+
 										serialPort = portFactory.CreateAndOpen(serialPortName, Printer.Settings, baudRate, true);
 #if __ANDROID__
 										ToggleHighLowHigh(serialPort);
@@ -994,8 +1000,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// TODO: Review and reconsider the cases where this was required
 										// wait a bit of time to let the firmware start up
 										//Thread.Sleep(500);
-
-										CommunicationState = CommunicationStates.AttemptingToConnect;
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 
@@ -1095,6 +1099,10 @@ You will then need to logout and log back in to the computer for the changes to 
 												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize(), useMarkdown: true);
 											});
 										}
+									}
+									catch (TimeoutException)
+									{
+										OnConnectionFailed(ConnectionFailure.ConnectionTimeout);
 									}
 									catch (Exception ex)
 									{
@@ -2872,8 +2880,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					{
 					}
 
-					// TODO: Consider if passing non-printer messages through LineSent is acceptable or if a dedicated event would add clarity
-					printerConnection?.LineSent?.Invoke(this, "Read Thread Has Exited.\n");
+					printerConnection.TerminalLog.WriteLine("Read Thread Has Exited");
 					numRunning--;
 				});
 			}
@@ -2949,7 +2956,8 @@ You will then need to logout and log back in to the computer for the changes to 
 		InvalidOperationException,
 		UnauthorizedAccessException,
 		ConnectionLost,
-		UsbDisconnected
+		UsbDisconnected,
+		ConnectionTimeout
 	}
 
 	public class PrintPauseEventArgs : EventArgs
