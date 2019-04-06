@@ -684,7 +684,7 @@ namespace MatterControl.Tests.MatterControl
 			await RunSimulatedPrint(printer, inputLines, expected);
 		}
 
-		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode 
+		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
 		// but does switch to and back for extrude
 		[Test, Category("GCodeStream")]
 		public async Task NoMoveOnToolChangeButWithExtrude()
@@ -996,11 +996,6 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		private static void Connection_LineReceived(object sender, string e)
-		{
-			throw new System.NotImplementedException();
-		}
-
 		[Test]
 		public void KnownLayerLinesTest()
 		{
@@ -1061,7 +1056,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, (int) FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
+			Assert.AreEqual(1, (int)FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
 			PrinterConfig printer = null;
 			var gcodeStream = new FeedRateMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
@@ -1083,7 +1078,7 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			Assert.AreEqual(1, (int) ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+			Assert.AreEqual(1, (int)ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
 			PrinterConfig printer = null;
 			var gcodeStream = new ExtrusionMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
