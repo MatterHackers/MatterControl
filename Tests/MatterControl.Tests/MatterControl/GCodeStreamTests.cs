@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -615,7 +616,9 @@ namespace MatterControl.Tests.MatterControl
 				}
 			};
 
-			await RunSimulatedPrint(printer, inputLines, expected);
+			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			Assert.AreEqual(expected, sentLines);
+
 		}
 
 		// A test that proves that: T0, no move, T1, T0, move does not send switch extruder gcode
@@ -645,7 +648,9 @@ namespace MatterControl.Tests.MatterControl
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			await RunSimulatedPrint(printer, inputLines, expected);
+			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			Assert.AreEqual(expected, sentLines);
+
 		}
 
 		// A test that proves that: T0, no move, T1, temp set, T0, move does not send switch extruder gcode
@@ -681,7 +686,8 @@ namespace MatterControl.Tests.MatterControl
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			await RunSimulatedPrint(printer, inputLines, expected);
+			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			Assert.AreEqual(expected, sentLines);
 		}
 
 		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
@@ -723,13 +729,13 @@ namespace MatterControl.Tests.MatterControl
 				"M114",
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested
-				null,
 			};
 
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			await RunSimulatedPrint(printer, inputLines, expected);
+			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			Assert.AreEqual(expected, sentLines);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -787,7 +793,9 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
-			await RunSimulatedPrint(printer, inputLines, expected);
+
+			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			Assert.AreEqual(expected, sentLines);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -811,12 +819,14 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			PrinterConfig printer = SetupToolChangeSettings();
+
 			// register to make sure that T0 is heated (only once) and T1 is not heated
 			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
 			{
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(1));
 			};
-			await RunSimulatedPrint(printer, inputLines, null);
+
+			await RunSimulatedPrint(printer, inputLines);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -845,7 +855,8 @@ namespace MatterControl.Tests.MatterControl
 			{
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
 			};
-			await RunSimulatedPrint(printer, inputLines, null);
+
+			await RunSimulatedPrint(printer, inputLines);
 		}
 
 		private static PrinterConfig SetupToolChangeSettings()
@@ -920,61 +931,40 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
-		private static async Task RunSimulatedPrint(PrinterConfig printer, string[] inputGCode, string[] expected)
+		private static async Task<List<string>> RunSimulatedPrint(PrinterConfig printer, string[] inputGCode)
 		{
 			// set up our serial port finding
-			FrostedSerialPortFactory.GetPlatformSerialPort = (serialPortName) =>
+			FrostedSerialPortFactory.GetPlatformSerialPort = (_) =>
 			{
 				return new Emulator();
 			};
 
 			FrostedSerialPort.AllowEmulator = true;
 
-			int expectedIndex = 0;
+			var sentLines = new List<string>();
 
-			if (expected != null)
+			// register to listen to the printer responses
+			printer.Connection.LineSent += (s, line) =>
 			{
-				// register to listen to the printer responses
-				printer.Connection.LineSent += (s, actualLine) =>
+				if (printer.Connection.Printing)
 				{
-					if (printer.Connection.Printing)
-					{
-						var actualLineWithoutChecksum = GCodeFile.GetLineWithoutChecksum(actualLine);
-
-						// this is so that we ignore temperature monitoring
-						if (actualLineWithoutChecksum.StartsWith("M105"))
-						{
-							return;
-						}
-
-						if (true)
-						{
-							string expectedLine = expected[expectedIndex++];
-							if (expectedLine != actualLineWithoutChecksum)
-							{
-								int a = 0;
-							}
-
-							Assert.AreEqual(expectedLine, actualLineWithoutChecksum, "Unexpected response from testStream");
-						}
-						else
-						{
-							Debug.WriteLine("\"" + actualLineWithoutChecksum + "\",");
-						}
-					}
-				};
-			}
+					sentLines.Add(line);
+				}
+			};
 
 			// set up the emulator
 			printer.Settings.SetValue($"{Environment.MachineName}_com_port", "Emulator");
+
 			// connect to the emulator
 			printer.Connection.Connect();
-			var time = Stopwatch.StartNew();
+
+			var timer = Stopwatch.StartNew();
+
 			// wait for the printer to be connected
 			while (!printer.Connection.IsConnected
-				&& time.ElapsedMilliseconds < (1000 * 60 * 1))
+				&& timer.ElapsedMilliseconds < (1000 * 40))
 			{
-				Thread.Sleep(1000);
+				Thread.Sleep(100);
 			}
 
 			// start a print
@@ -982,18 +972,16 @@ namespace MatterControl.Tests.MatterControl
 			printer.Connection.CommunicationState = MatterHackers.MatterControl.PrinterCommunication.CommunicationStates.PreparingToPrint;
 			await printer.Connection.StartPrint(inputStream);
 
-			// wait for the print to finish (or 3 minutes to pass)
-			time = Stopwatch.StartNew();
+			// wait up to 40 seconds for the print to finish
+			timer = Stopwatch.StartNew();
 			while (printer.Connection.Printing
-				&& time.ElapsedMilliseconds < (1000 * 60 * 3))
+				&& timer.ElapsedMilliseconds < (1000 * 40))
 			{
-				Thread.Sleep(1000);
+				Thread.Sleep(100);
 			}
 
-			if (expected != null)
-			{
-				Assert.AreEqual(expectedIndex + 1, expected.Length, "We should have seen all the expected lines");
-			}
+			// Project to string without checksum which is not an M105 request
+			return sentLines.Select(l => GCodeFile.GetLineWithoutChecksum(l)).Where(l => !l.StartsWith("M105")).ToList();
 		}
 
 		[Test]
