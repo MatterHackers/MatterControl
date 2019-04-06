@@ -39,6 +39,7 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PrinterEmulator;
@@ -48,6 +49,7 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl.ToolChanges
 {
+	[TestFixture, Category("GCodeStream")]
 	public class ToolChangeTests
 	{
 		[SetUp]
@@ -57,10 +59,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task ToolChangeNoHeat()
 		{
-			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// validate that no heater is heated at anytime during the print
@@ -113,10 +114,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		}
 
 		// A test that proves that: T0, no move, T1, T0, move does not send switch extruder gcode
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task NoToolChangeIfNoMove()
 		{
-			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// Collect gcode sent through stream processors
@@ -144,10 +144,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 		// A test that proves that: T0, no move, T1, temp set, T0, move does not send switch extruder gcode
 		// but there is the correct extruder set, T1, then temp, than T0
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task ToolChangeTempSetWithNoMove()
 		{
-			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// Collect gcode sent through stream processors
@@ -179,10 +178,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
 		// but does switch to and back for extrude
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task NoMoveOnToolChangeButWithExtrude()
 		{
-			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// Collect gcode sent through stream processors
@@ -223,7 +221,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task ToolChangeTempAndSwitch()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -280,7 +278,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task ToolChangeHeatOnlyT0()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -306,7 +304,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				// cooling and heating
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public async Task ToolChangeHeatOnlyT1()
 		{
 			var printer = ToolChangeTests.CreatePrinter();
@@ -406,7 +404,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			}
 
 			// start a print
-			printer.Connection.CommunicationState = MatterHackers.MatterControl.PrinterCommunication.CommunicationStates.PreparingToPrint;
+			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 			await printer.Connection.StartPrint(inputStream);
 
 			// wait up to 40 seconds for the print to finish
