@@ -510,17 +510,13 @@ namespace MatterControl.Tests.MatterControl
 		private static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
 		{
 			int lineIndex = 0;
+
+			// Advance
 			string actualLine = testStream.ReadLine();
 			string expectedLine = expected[lineIndex++];
 
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
-
 			while (actualLine != null)
 			{
-				expectedLine = expected[lineIndex++];
-
-				actualLine = testStream.ReadLine();
 				if (actualLine == "G92 E0")
 				{
 					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
@@ -551,6 +547,13 @@ namespace MatterControl.Tests.MatterControl
 
 				Debug.WriteLine(actualLine);
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+
+				// Advance
+				actualLine = testStream.ReadLine();
+				if (lineIndex < expected.Length)
+				{
+					expectedLine = expected[lineIndex++];
+				}
 			}
 		}
 
@@ -662,7 +665,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public override string ReadLine()
 		{
-			return lines[index++];
+			return index < lines.Length ? lines[index++] : null;
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
