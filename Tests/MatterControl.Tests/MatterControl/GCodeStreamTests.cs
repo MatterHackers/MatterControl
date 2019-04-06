@@ -534,16 +534,16 @@ namespace MatterControl.Tests.MatterControl
 
 		private static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
 		{
-			int expectedIndex = 0;
+			int lineIndex = 0;
 			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
+			string expectedLine = expected[lineIndex++];
 
 			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
 			Debug.WriteLine(actualLine);
 
 			while (actualLine != null)
 			{
-				expectedLine = expected[expectedIndex++];
+				expectedLine = expected[lineIndex++];
 
 				actualLine = testStream.ReadLine();
 				if (actualLine == "G92 E0")
