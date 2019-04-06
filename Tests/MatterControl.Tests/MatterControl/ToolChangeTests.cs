@@ -65,7 +65,21 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X10 Y10 Z10 E0",
 			};
 
-			string[] expected = new string[]
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			// validate that no heater is heated at anytime during the print
+			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
+			{
+				if (printer.Connection.GetTargetHotendTemperature(extruderIndex) > 0)
+				{
+					Assert.Fail("No hotend should ever change temp during this test.");
+				}
+			};
+
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
+
+			var expected = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -91,19 +105,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 F2500",
 			};
 
-			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
-
-			// validate that no heater is heated at anytime during the print
-			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
-			{
-				if (printer.Connection.GetTargetHotendTemperature(extruderIndex) > 0)
-				{
-					Assert.Fail("No hotend should ever change temp during this test.");
-				}
-			};
-
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -122,7 +123,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X11 Y11 Z11 E0 F2500",
 			};
 
-			string[] expected = new string[]
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
+
+			var expected = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -131,10 +137,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
 
-			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
-
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -155,7 +157,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X11 Y11 Z11 E0 F2500",
 			};
 
-			string[] expected = new string[]
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
+
+			var expected = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -167,11 +174,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"M114", // always ask position after T
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-
-			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
-
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -194,7 +196,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X11 Y11 Z11 E30 F2500",
 			};
 
-			string[] expected = new string[]
+			// create a printer for dual extrusion printing
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
+
+			var expected = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -215,11 +222,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-
-			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
-
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -243,8 +245,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				// cooling and heating
 			};
 
+			PrinterConfig printer = SetupToolChangeSettings();
+
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
+
 			// validate that both temperatures get set and only once each
-			string[] expected = new string[]
+			var expected = new string[]
 			{
 				"M114",
 				"T0",
@@ -276,10 +282,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 Z10 F315",
 				"G1 F2500",
 			};
-
-			PrinterConfig printer = SetupToolChangeSettings();
-
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
