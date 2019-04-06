@@ -1100,6 +1100,10 @@ You will then need to logout and log back in to the computer for the changes to 
 											});
 										}
 									}
+									catch (TimeoutException)
+									{
+										OnConnectionFailed(ConnectionFailure.ConnectionTimeout);
+									}
 									catch (Exception ex)
 									{
 										TerminalLog.WriteLine("Exception:" + ex.Message);
@@ -2952,7 +2956,8 @@ You will then need to logout and log back in to the computer for the changes to 
 		InvalidOperationException,
 		UnauthorizedAccessException,
 		ConnectionLost,
-		UsbDisconnected
+		UsbDisconnected,
+		ConnectionTimeout
 	}
 
 	public class PrintPauseEventArgs : EventArgs

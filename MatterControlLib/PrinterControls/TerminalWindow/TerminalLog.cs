@@ -123,6 +123,9 @@ namespace MatterHackers.MatterControl
 					case ConnectionFailure.PortUnavailable:
 						message = "Port not available".Localize();
 						break;
+					case ConnectionFailure.ConnectionTimeout:
+						message = "Connection timed out".Localize();
+						break;
 					default:
 						message = "Unknown Reason".Localize();
 						break;

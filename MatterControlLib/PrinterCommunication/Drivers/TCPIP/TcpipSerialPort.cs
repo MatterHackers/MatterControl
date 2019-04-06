@@ -170,7 +170,14 @@ namespace TcpipDriver
 				socket.Close();
 
 				long elapsedMs = UiThread.CurrentTimerMs - startedMs;
-				throw new Exception(elapsedMs >= timeoutMs ? "Connection timeout".Localize() : "Failed to connect server".Localize());
+				if (elapsedMs >= timeoutMs)
+				{
+					throw new TimeoutException("Connection timed out".Localize());
+				}
+				else
+				{
+					throw new Exception("Failed to connect server".Localize());
+				}
 			}
 
 			stream = new NetworkStream(socket)
