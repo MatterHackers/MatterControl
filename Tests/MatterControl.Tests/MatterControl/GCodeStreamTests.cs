@@ -45,6 +45,13 @@ namespace MatterControl.Tests.MatterControl
 	[TestFixture, RunInApplicationDomain, Category("GCodeStream")]
 	public class GCodeStreamTests
 	{
+		[SetUp]
+		public void TestSetup()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
+
 		[Test]
 		public void MaxLengthStreamTests()
 		{
@@ -71,9 +78,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X0 Y0 Z0 E0 F500",
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			PrinterConfig printer = null;
 
@@ -122,9 +126,6 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
@@ -156,9 +157,6 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			var write_filter = "\"^(G28)\", \"G28,M280 P0 S10.6,G4 P400,M280 P0 S7,G4 P400,M117 Ready \"";
@@ -187,9 +185,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10",
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
@@ -229,9 +224,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y0 Z-0.1",
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
@@ -317,9 +309,6 @@ namespace MatterControl.Tests.MatterControl
 				 null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
@@ -352,9 +341,6 @@ namespace MatterControl.Tests.MatterControl
 				"G28",
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
@@ -421,9 +407,6 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 			ValidateStreamResponse(expected, pauseHandlingStream);
@@ -475,9 +458,6 @@ namespace MatterControl.Tests.MatterControl
 
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			var pauseHandlingStream = new SoftwareEndstopsStream(printer, new TestGCodeStream(printer, inputLines));
@@ -541,9 +521,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X13 Z10 E40",
 				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// this is the pause and resume from the Eris
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -642,9 +619,6 @@ namespace MatterControl.Tests.MatterControl
 				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			printer.Settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
@@ -660,8 +634,6 @@ namespace MatterControl.Tests.MatterControl
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, (int)FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
@@ -682,8 +654,6 @@ namespace MatterControl.Tests.MatterControl
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, (int)ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
