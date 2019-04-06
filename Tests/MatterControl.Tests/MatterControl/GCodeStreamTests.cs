@@ -62,7 +62,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X18 Y0 Z0 F2500",
 				"G28",
 				"G1 X0 Y0 Z0 E0 F500",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -76,7 +75,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X18",
 				"G28",
 				"G1 X0 Y0 Z0 E0 F500",
-				null,
 			};
 
 			PrinterConfig printer = null;
@@ -103,7 +101,6 @@ namespace MatterControl.Tests.MatterControl
 				"G0 Z10 F1800",
 				"M114",
 				"M109 S[temperature]",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -123,7 +120,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z10 F1800",
 				"M114",
 				"M109 S[temperature]",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -139,7 +135,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G28",
 				"M119",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -154,7 +149,6 @@ namespace MatterControl.Tests.MatterControl
 				"M117 Ready ",
 				"M119",
 				"switch filament; WRITE_RAW",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -174,7 +168,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0Y0Z0E0 F1000",
 				"G1 X10 Y0 Z0 F1000",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -183,11 +176,9 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0 Y0 Z0 E0 F1000",
 				"G1 X10",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "1");
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
@@ -202,7 +193,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X0Y0Z0E0F1000",
 				"G1 X0Y0Z0E1F1000",
 				"G1 X10 Y0 Z0 F1000",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -222,11 +212,9 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X8 Y0 Z-0.1",
 				"G1 X9 Y0 Z-0.1",
 				"G1 X10 Y0 Z-0.1",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.probe_offset, "0,0,-.1");
 			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
 
@@ -273,7 +261,6 @@ namespace MatterControl.Tests.MatterControl
 				"G91",
 				"G1 E-2 F301",
 				"G90",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -306,7 +293,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E-1 F301",
 				"G1 E-2",
 				"",
-				 null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -324,7 +310,6 @@ namespace MatterControl.Tests.MatterControl
 				"G92 Z0",
 				"G1 Z5 F300",
 				"G28",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -339,7 +324,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z4",
 				"G1 Z5",
 				"G28",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -384,7 +368,6 @@ namespace MatterControl.Tests.MatterControl
 				"G91",
 				"G1 Z-10 E10.8 F12000",
 				"G90",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -404,7 +387,6 @@ namespace MatterControl.Tests.MatterControl
 				"", // G91 is removed
 				"G1 Z10 E30.8",
 				"", // G90 is removed
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -435,8 +417,6 @@ namespace MatterControl.Tests.MatterControl
 				// test y max
 				// test z min
 				// test z max
-
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -455,8 +435,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X-100E10", // move left off the bed
 				"G1 Y110E20", // move while outside bounds
 				"G1 X100E30", // move back on
-
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -481,7 +459,6 @@ namespace MatterControl.Tests.MatterControl
 
 				// move some more
 				"G1 X13 Y10 Z10 E40",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -519,12 +496,10 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X12.73 Z6.667 E36.933",
 				"G1 X12.87 Z8.333 E38.467",
 				"G1 X13 Z10 E40",
-				null,
 			};
 
 			// this is the pause and resume from the Eris
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
 			printer.Settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
 
@@ -550,7 +525,6 @@ namespace MatterControl.Tests.MatterControl
 				{
 					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
 				}
-
 
 				if (actualLine == "G92 Z0")
 				{
@@ -601,7 +575,6 @@ namespace MatterControl.Tests.MatterControl
 				"G28 X0",
 				"M107",
 				"M107 ; extra stuff",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -616,11 +589,9 @@ namespace MatterControl.Tests.MatterControl
 				"M115",
 				"; none",
 				"; none ; extra stuff",
-				null,
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
 
 			var inputLinesStream = new TestGCodeStream(printer, inputLines);
