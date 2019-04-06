@@ -60,18 +60,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeNoHeat()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"G1 X10 Y10 Z10 E0",
-				"T0",
-				"G1 X10 Y10 Z10 E0",
-			};
-
 			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
@@ -84,9 +72,19 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				}
 			};
 
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 X10 Y10 Z10 E0
+				T0
+				G1 X10 Y10 Z10 E0");
 
-			var expected = new string[]
+			// Validate
+			var expectedLines = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -111,31 +109,28 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 Z10 F315",
 				"G1 F2500",
 			};
-
-			Assert.AreEqual(expected, sentLines);
+			Assert.AreEqual(expectedLines, sentLines);
 		}
 
 		// A test that proves that: T0, no move, T1, T0, move does not send switch extruder gcode
 		[Test, Category("GCodeStream")]
 		public async Task NoToolChangeIfNoMove()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"T0",
-				"G1 X11 Y11 Z11 E0 F2500",
-			};
-
 			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				T0
+				G1 X11 Y11 Z11 E0 F2500");
 
-			var expected = new string[]
+			// Validate
+			var expectedLines = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -144,7 +139,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
 
-			Assert.AreEqual(expected, sentLines);
+			Assert.AreEqual(expectedLines, sentLines);
 		}
 
 		// A test that proves that: T0, no move, T1, temp set, T0, move does not send switch extruder gcode
@@ -152,24 +147,22 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeTempSetWithNoMove()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"M104 S100",
-				"T0",
-				"G1 X11 Y11 Z11 E0 F2500",
-			};
-
 			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				M104 S100
+				T0
+				G1 X11 Y11 Z11 E0 F2500");
 
-			var expected = new string[]
+			// Validate
+			var expectedLines = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -181,7 +174,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"M114", // always ask position after T
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-			Assert.AreEqual(expected, sentLines);
+			Assert.AreEqual(expectedLines, sentLines);
 		}
 
 		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
@@ -189,26 +182,24 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		[Test, Category("GCodeStream")]
 		public async Task NoMoveOnToolChangeButWithExtrude()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"G1 E10",
-				"G1 E20",
-				"T0",
-				"G1 E30",
-				"G1 X11 Y11 Z11 E30 F2500",
-			};
-
 			// create a printer for dual extrusion printing
 			var printer = ToolChangeTests.CreatePrinter();
 
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 E10
+				G1 E20
+				T0
+				G1 E30
+				G1 X11 Y11 Z11 E30 F2500");
 
-			var expected = new string[]
+			// Validate
+			var expectedLines = new string[]
 			{
 				"M114", // initial position request
 				"T0", // initial tool assignment (part of starting a default print)
@@ -229,35 +220,32 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-			Assert.AreEqual(expected, sentLines);
+			Assert.AreEqual(expectedLines, sentLines);
 		}
 
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeTempAndSwitch()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// tell the printer to heat up
-				"M104 T1 S240", // start with T0 to test smoothie temp change code
-				"M104 T0 S230",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"G1 X10 Y10 Z10 E0",
-				"T0",
-				"G1 X10 Y10 Z10 E0",
-				// now do the same thing with a long enough print to cause
-				// cooling and heating
-			};
-
 			var printer = ToolChangeTests.CreatePrinter();
 
-			var sentLines = await printer.RunSimulatedPrint(inputLines);
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; tell the printer to heat up
+				M104 T1 S240 ; start with T0 to test smoothie temp change code
+				M104 T0 S230
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 X10 Y10 Z10 E0
+				T0
+				G1 X10 Y10 Z10 E0");
+				// now do the same thing with a long enough print to cause
+				// cooling and heating);
 
-			// validate that both temperatures get set and only once each
-			var expected = new string[]
+			// Validate
+			var expectedLines = new string[]
 			{
 				"M114",
 				"T0",
@@ -289,29 +277,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 Z10 F315",
 				"G1 F2500",
 			};
-			Assert.AreEqual(expected, sentLines);
+			Assert.AreEqual(expectedLines, sentLines);
 		}
 
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeHeatOnlyT0()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// tell the printer to heat up
-				"M104 T0 S230",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"G1 X10 Y10 Z10 E0",
-				"T0",
-				"G1 X10 Y10 Z10 E0",
-				// now do the same thing with a long enough print to cause
-				// cooling and heating
-				null,
-			};
-
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// register to make sure that T0 is heated (only once) and T1 is not heated
@@ -320,29 +291,24 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(1));
 			};
 
-			await printer.RunSimulatedPrint(inputLines);
+			await printer.RunSimulatedPrint(
+				@"T0
+				; tell the printer to heat up
+				M104 T0 S230
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 X10 Y10 Z10 E0
+				T0
+				G1 X10 Y10 Z10 E0");
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
 		}
 
 		[Test, Category("GCodeStream")]
 		public async Task ToolChangeHeatOnlyT1()
 		{
-			string[] inputLines = new string[]
-			{
-				"T0",
-				// tell the printer to heat up
-				"M104 T1 S230",
-				// send some movement commands with tool switching
-				"; the printer is moving normally",
-				"G1 X10 Y10 Z10 E0 F2500",
-				"T1",
-				"G1 X10 Y10 Z10 E0",
-				"T0",
-				"G1 X10 Y10 Z10 E0",
-				// now do the same thing with a long enough print to cause
-				// cooling and heating
-				null,
-			};
-
 			var printer = ToolChangeTests.CreatePrinter();
 
 			// register to make sure that T0 is heated (only once) and T1 is not heated
@@ -351,7 +317,19 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
 			};
 
-			await printer.RunSimulatedPrint(inputLines);
+			await printer.RunSimulatedPrint(
+				@"T0
+				; tell the printer to heat up
+				M104 T1 S230
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 X10 Y10 Z10 E0
+				T0
+				G1 X10 Y10 Z10 E0");
+				// now do the same thing with a long enough print to cause
+				// cooling and heating
 		}
 
 		private static PrinterConfig CreatePrinter()
@@ -379,7 +357,19 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 	public static class ExtensionMethods
 	{
-		public static async Task<List<string>> RunSimulatedPrint(this PrinterConfig printer, string[] inputGCode)
+		public static Task<List<string>> RunSimulatedPrint(this PrinterConfig printer, string[] inputGCode)
+		{
+			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", inputGCode)));
+			return RunSimulatedPrint(printer, inputStream);
+		}
+
+		public static Task<List<string>> RunSimulatedPrint(this PrinterConfig printer, string gcode)
+		{
+			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(gcode));
+			return RunSimulatedPrint(printer, inputStream);
+		}
+
+		public static async Task<List<string>> RunSimulatedPrint(this PrinterConfig printer, Stream inputStream)
 		{
 			// set up our serial port finding
 			FrostedSerialPortFactory.GetPlatformSerialPort = (_) =>
@@ -416,7 +406,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			}
 
 			// start a print
-			var inputStream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", inputGCode)));
 			printer.Connection.CommunicationState = MatterHackers.MatterControl.PrinterCommunication.CommunicationStates.PreparingToPrint;
 			await printer.Connection.StartPrint(inputStream);
 
