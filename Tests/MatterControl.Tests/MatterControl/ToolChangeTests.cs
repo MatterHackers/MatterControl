@@ -138,7 +138,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X10 Y10 Z10 F2500", // go to the position requested
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
-
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 

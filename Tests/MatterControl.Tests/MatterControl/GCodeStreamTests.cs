@@ -42,10 +42,10 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, RunInApplicationDomain]
+	[TestFixture, RunInApplicationDomain, Category("GCodeStream")]
 	public class GCodeStreamTests
 	{
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void MaxLengthStreamTests()
 		{
 			string[] lines = new string[]
@@ -259,7 +259,7 @@ namespace MatterControl.Tests.MatterControl
 			return totalGCodeStream;
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void CorrectEOutputPositions()
 		{
 			string[] inputLines = new string[]
@@ -326,7 +326,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void CorrectZOutputPositions()
 		{
 			string[] inputLines = new string[]
@@ -361,7 +361,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void PauseHandlingStreamTests()
 		{
 			int readX = 50;
@@ -429,7 +429,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test, Category("GCodeStream"), Ignore("WIP")]
+		[Test, Ignore("WIP")]
 		public void SoftwareEndstopstreamTests()
 		{
 			string[] inputLines = new string[]
@@ -484,7 +484,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void MorePauseHandlingStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -611,7 +611,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(7, GCodeFile.GetLayerNumber(";LAYER:7"), "Slic3r Prusa Edition 1.38.7-prusa3d on 2018-04-25");
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void WriteReplaceStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -656,7 +656,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, writeStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
@@ -678,7 +678,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;
