@@ -73,7 +73,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			};
 
 			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			// validate that no heater is heated at anytime during the print
 			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
@@ -131,7 +131,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			};
 
 			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			var sentLines = await printer.RunSimulatedPrint(inputLines);
 
@@ -165,7 +165,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			};
 
 			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			var sentLines = await printer.RunSimulatedPrint(inputLines);
 
@@ -204,7 +204,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			};
 
 			// create a printer for dual extrusion printing
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			var sentLines = await printer.RunSimulatedPrint(inputLines);
 
@@ -252,7 +252,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				// cooling and heating
 			};
 
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			var sentLines = await printer.RunSimulatedPrint(inputLines);
 
@@ -312,7 +312,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				null,
 			};
 
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
 
 			// register to make sure that T0 is heated (only once) and T1 is not heated
 			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
@@ -343,7 +343,8 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				null,
 			};
 
-			PrinterConfig printer = SetupToolChangeSettings();
+			var printer = ToolChangeTests.CreatePrinter();
+
 			// register to make sure that T0 is heated (only once) and T1 is not heated
 			printer.Connection.HotendTargetTemperatureChanged += (s, extruderIndex) =>
 			{
@@ -353,7 +354,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			await printer.RunSimulatedPrint(inputLines);
 		}
 
-		private static PrinterConfig SetupToolChangeSettings()
+		private static PrinterConfig CreatePrinter()
 		{
 			// this is the pause and resume from the Eris
 			var printer = new PrinterConfig(new PrinterSettings());
