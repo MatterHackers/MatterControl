@@ -46,7 +46,7 @@ using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 
-namespace MatterControl.Tests.MatterControl
+namespace MatterControl.Tests.MatterControl.ToolChanges
 {
 	public class ToolChangeTests
 	{
@@ -103,7 +103,7 @@ namespace MatterControl.Tests.MatterControl
 				}
 			};
 
-			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -134,7 +134,7 @@ namespace MatterControl.Tests.MatterControl
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -171,7 +171,7 @@ namespace MatterControl.Tests.MatterControl
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -219,7 +219,7 @@ namespace MatterControl.Tests.MatterControl
 			// create a printer for dual extrusion printing
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -279,7 +279,7 @@ namespace MatterControl.Tests.MatterControl
 
 			PrinterConfig printer = SetupToolChangeSettings();
 
-			var sentLines = await RunSimulatedPrint(printer, inputLines);
+			var sentLines = await printer.RunSimulatedPrint(inputLines);
 			Assert.AreEqual(expected, sentLines);
 		}
 
@@ -311,7 +311,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(1));
 			};
 
-			await RunSimulatedPrint(printer, inputLines);
+			await printer.RunSimulatedPrint(inputLines);
 		}
 
 		[Test, Category("GCodeStream")]
@@ -341,7 +341,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
 			};
 
-			await RunSimulatedPrint(printer, inputLines);
+			await printer.RunSimulatedPrint(inputLines);
 		}
 
 		private static PrinterConfig SetupToolChangeSettings()
@@ -365,10 +365,14 @@ namespace MatterControl.Tests.MatterControl
 
 			// set some data for T1
 			printer.Settings.Helpers.SetExtruderOffset(1, new Vector3(1, 2, 3));
+
 			return printer;
 		}
+	}
 
-		private static async Task<List<string>> RunSimulatedPrint(PrinterConfig printer, string[] inputGCode)
+	public static class ExtensionMethods
+	{
+		public static async Task<List<string>> RunSimulatedPrint(this PrinterConfig printer, string[] inputGCode)
 		{
 			// set up our serial port finding
 			FrostedSerialPortFactory.GetPlatformSerialPort = (_) =>
