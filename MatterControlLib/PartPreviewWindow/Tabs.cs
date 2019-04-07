@@ -466,7 +466,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// TODO: Use caching
 						// Attempt to load image
-						ApplicationController.Instance.DownloadToImageAsync(imageWidget.Image, imageUrl, true);
+						WebCache.RetrieveImageAsync(imageWidget.Image, imageUrl, true);
 					}
 					catch { }
 				}

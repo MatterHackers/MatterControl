@@ -87,7 +87,7 @@ namespace Markdig.Renderers.Agg.Inlines
 
 				if (url.StartsWith("http"))
 				{
-					ApplicationController.Instance.DownloadToImageSequenceAsync(imageSequence, url);
+					WebCache.RetrieveImageSquenceAsync(imageSequence, url);
 				}
 			}
 			else
@@ -99,7 +99,7 @@ namespace Markdig.Renderers.Agg.Inlines
 
 				if (url.StartsWith("http"))
 				{
-					ApplicationController.Instance.DownloadToImageAsync(imageBuffer, url, false);
+					WebCache.RetrieveImageAsync(imageBuffer, url, false);
 				}
 			}
 		}

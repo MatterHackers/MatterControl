@@ -1514,6 +1514,8 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
+
+			WebCache.CachePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "WebCache");
 		}
 
 		public void Connection_ErrorReported(object sender, string line)
@@ -2135,132 +2137,6 @@ namespace MatterHackers.MatterControl
 
 				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
 				return SHA1;
-			}
-		}
-
-		/// <summary>
-		/// Download an image from the web into the specified ImageBuffer
-		/// </summary>
-		/// <param name="uri"></param>
-		public void DownloadToImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
-		{
-			WebClient client = new WebClient();
-			client.DownloadDataCompleted += (sender, e) =>
-			{
-				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
-				{
-					Stream stream = new MemoryStream(e.Result);
-
-					this.LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, stream);
-				}
-				catch
-				{
-				}
-			};
-
-			try
-			{
-				client.DownloadDataAsync(new Uri(uriToLoad));
-			}
-			catch
-			{
-			}
-		}
-
-		private HttpClient httpClient = new HttpClient();
-
-		public async Task LoadRemoteImage(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
-		{
-			try
-			{
-				using (var stream = await httpClient.GetStreamAsync(uriToLoad))
-				{
-					this.LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, stream);
-				};
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error loading image: " + uriToLoad);
-				Trace.WriteLine(ex.Message);
-			}
-
-		}
-
-		private void LoadImageInto(ImageBuffer imageToLoadInto, bool scaleToImageX, IRecieveBlenderByte scalingBlender, Stream stream)
-		{
-			if (scalingBlender == null)
-			{
-				scalingBlender = new BlenderBGRA();
-			}
-
-			ImageBuffer unScaledImage = new ImageBuffer(10, 10);
-			if (scaleToImageX)
-			{
-				// scale the loaded image to the size of the target image
-				AggContext.StaticData.LoadImageData(stream, unScaledImage);
-
-				// If the source image (the one we downloaded) is more than twice as big as our dest image.
-				while (unScaledImage.Width > imageToLoadInto.Width * 2)
-				{
-					// The image sampler we use is a 2x2 filter so we need to scale by a max of 1/2 if we want to get good results.
-					// So we scale as many times as we need to get the Image to be the right size.
-					// If this were going to be a non-uniform scale we could do the x and y separately to get better results.
-					ImageBuffer halfImage = new ImageBuffer(unScaledImage.Width / 2, unScaledImage.Height / 2, 32, scalingBlender);
-					halfImage.NewGraphics2D().Render(unScaledImage, 0, 0, 0, halfImage.Width / (double)unScaledImage.Width, halfImage.Height / (double)unScaledImage.Height);
-					unScaledImage = halfImage;
-				}
-
-				double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
-				imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
-				imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
-			}
-			else
-			{
-				AggContext.StaticData.LoadImageData(stream, imageToLoadInto);
-			}
-
-			imageToLoadInto.MarkImageChanged();
-		}
-
-		/// <summary>
-		/// Download an image from the web into the specified ImageSequence
-		/// </summary>
-		/// <param name="uri"></param>
-		public void DownloadToImageSequenceAsync(ImageSequence imageSequenceToLoadInto, string uriToLoad)
-		{
-			WebClient client = new WebClient();
-			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
-			{
-				try // if we get a bad result we can get a target invocation exception. In that case just don't show anything
-				{
-					Task.Run(() =>
-					{
-						// scale the loaded image to the size of the target image
-						byte[] raw = e.Result;
-						Stream stream = new MemoryStream(raw);
-
-						var asyncImageSequence = new ImageSequence();
-
-						AggContext.StaticData.LoadImageSequenceData(stream, asyncImageSequence);
-
-						UiThread.RunOnIdle(() =>
-						{
-							imageSequenceToLoadInto.Copy(asyncImageSequence);
-							imageSequenceToLoadInto.Invalidate();
-						});
-					});
-				}
-				catch
-				{
-				}
-			};
-
-			try
-			{
-				client.DownloadDataAsync(new Uri(uriToLoad));
-			}
-			catch
-			{
 			}
 		}
 

@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 						VAnchor = VAnchor.Top
 					});
 
-					ApplicationController.Instance.DownloadToImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
+					WebCache.RetrieveImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
 
 					var descriptionBackground = new GuiWidget()
 					{
@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					foreach(var item in product.ProductListing.AddOns)
 					{
 						var icon = new ImageBuffer(80, 0);
-						ApplicationController.Instance.DownloadToImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+						WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
 
 						var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
 						{

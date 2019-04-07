@@ -80,40 +80,14 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public ImageBuffer GetIcon(string oemName)
 		{
-			string cachePath = ApplicationController.CacheablePath("OemIcons", oemName + ".png");
-			try
-			{
-				if (File.Exists(cachePath))
-				{
-					return AggContext.ImageIO.LoadImage(cachePath);
-				}
-				else
-				{
-					var imageBuffer = new ImageBuffer(16, 16);
+			var imageBuffer = new ImageBuffer(16, 16);
 
-					ApplicationController.Instance.LoadRemoteImage(
-						imageBuffer,
-						ApplicationController.Instance.GetFavIconUrl(oemName),
-						scaleToImageX: false).ContinueWith(t =>
-						{
-							try
-							{
-								AggContext.ImageIO.SaveImageData(cachePath, imageBuffer);
-							}
-							catch (Exception ex)
-							{
-								Console.Write(ex.Message);
-							}
-						});
+			WebCache.RetrieveImageAsync(
+				imageBuffer,
+				ApplicationController.Instance.GetFavIconUrl(oemName),
+				scaleToImageX: false);
 
-					return imageBuffer;
-				}
-			}
-			catch
-			{
-			}
-
-			return new ImageBuffer(16, 16);
+			return imageBuffer;
 		}
 
 
