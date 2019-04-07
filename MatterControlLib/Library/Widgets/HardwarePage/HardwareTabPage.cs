@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			treeView.ScrollArea.HAnchor = HAnchor.Stretch;
 
-			treeView.AfterSelect += async (s, e) =>
+			treeView.AfterSelect += (s, e) =>
 			{
 				if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
 				{

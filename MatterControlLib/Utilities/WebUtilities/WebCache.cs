@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using System;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
@@ -52,6 +53,37 @@ namespace MatterHackers.MatterControl
 				// make sure it exists
 				Directory.CreateDirectory(value);
 			}
+		}
+
+		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
+		{
+			var longHash = uriToLoad.GetLongHashCode();
+
+			string textFileName = Path.Combine(CachePath, longHash.ToString() + ".txt");
+
+			string fileText = null;
+			if (File.Exists(textFileName))
+			{
+				try
+				{
+					fileText = File.ReadAllText(textFileName);
+					updateResult?.Invoke(fileText);
+				}
+				catch
+				{
+				}
+			}
+
+			Task.Run(async () =>
+			{
+				var client = new HttpClient();
+				var text = await client.GetStringAsync(uriToLoad);
+				if (text != fileText)
+				{
+					File.WriteAllText(textFileName, text);
+					updateResult?.Invoke(text);
+				}
+			});
 		}
 
 		/// <summary>
