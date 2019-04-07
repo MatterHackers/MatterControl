@@ -42,10 +42,17 @@ using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
 {
-	[TestFixture, RunInApplicationDomain]
+	[TestFixture, RunInApplicationDomain, Category("GCodeStream")]
 	public class GCodeStreamTests
 	{
-		[Test, Category("GCodeStream")]
+		[SetUp]
+		public void TestSetup()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+		}
+
+		[Test]
 		public void MaxLengthStreamTests()
 		{
 			string[] lines = new string[]
@@ -55,7 +62,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X18 Y0 Z0 F2500",
 				"G28",
 				"G1 X0 Y0 Z0 E0 F500",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -69,11 +75,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X18",
 				"G28",
 				"G1 X0 Y0 Z0 E0 F500",
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			PrinterConfig printer = null;
 
@@ -99,7 +101,6 @@ namespace MatterControl.Tests.MatterControl
 				"G0 Z10 F1800",
 				"M114",
 				"M109 S[temperature]",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -119,11 +120,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z10 F1800",
 				"M114",
 				"M109 S[temperature]",
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
@@ -138,7 +135,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G28",
 				"M119",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -153,11 +149,7 @@ namespace MatterControl.Tests.MatterControl
 				"M117 Ready ",
 				"M119",
 				"switch filament; WRITE_RAW",
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
@@ -176,7 +168,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0Y0Z0E0 F1000",
 				"G1 X10 Y0 Z0 F1000",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -185,14 +176,9 @@ namespace MatterControl.Tests.MatterControl
 			{
 				"G1 X0 Y0 Z0 E0 F1000",
 				"G1 X10",
-				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "1");
 
 			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
@@ -207,7 +193,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X0Y0Z0E0F1000",
 				"G1 X0Y0Z0E1F1000",
 				"G1 X10 Y0 Z0 F1000",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -227,14 +212,9 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X8 Y0 Z-0.1",
 				"G1 X9 Y0 Z-0.1",
 				"G1 X10 Y0 Z-0.1",
-				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.probe_offset, "0,0,-.1");
 			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
 
@@ -259,7 +239,7 @@ namespace MatterControl.Tests.MatterControl
 			return totalGCodeStream;
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void CorrectEOutputPositions()
 		{
 			string[] inputLines = new string[]
@@ -281,7 +261,6 @@ namespace MatterControl.Tests.MatterControl
 				"G91",
 				"G1 E-2 F301",
 				"G90",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -314,11 +293,7 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E-1 F301",
 				"G1 E-2",
 				"",
-				 null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
@@ -326,7 +301,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void CorrectZOutputPositions()
 		{
 			string[] inputLines = new string[]
@@ -335,7 +310,6 @@ namespace MatterControl.Tests.MatterControl
 				"G92 Z0",
 				"G1 Z5 F300",
 				"G28",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -350,18 +324,14 @@ namespace MatterControl.Tests.MatterControl
 				"G1 Z4",
 				"G1 Z5",
 				"G28",
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 			ValidateStreamResponse(expected, testStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void PauseHandlingStreamTests()
 		{
 			int readX = 50;
@@ -398,7 +368,6 @@ namespace MatterControl.Tests.MatterControl
 				"G91",
 				"G1 Z-10 E10.8 F12000",
 				"G90",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -418,18 +387,14 @@ namespace MatterControl.Tests.MatterControl
 				"", // G91 is removed
 				"G1 Z10 E30.8",
 				"", // G90 is removed
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			GCodeStream pauseHandlingStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test, Category("GCodeStream"), Ignore("WIP")]
+		[Test, Ignore("WIP")]
 		public void SoftwareEndstopstreamTests()
 		{
 			string[] inputLines = new string[]
@@ -452,8 +417,6 @@ namespace MatterControl.Tests.MatterControl
 				// test y max
 				// test z min
 				// test z max
-
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -472,19 +435,14 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X-100E10", // move left off the bed
 				"G1 Y110E20", // move while outside bounds
 				"G1 X100E30", // move back on
-
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
 			var pauseHandlingStream = new SoftwareEndstopsStream(printer, new TestGCodeStream(printer, inputLines));
 			ValidateStreamResponse(expected, pauseHandlingStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void MorePauseHandlingStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -501,7 +459,6 @@ namespace MatterControl.Tests.MatterControl
 
 				// move some more
 				"G1 X13 Y10 Z10 E40",
-				null,
 			};
 
 			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
@@ -539,15 +496,10 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X12.73 Z6.667 E36.933",
 				"G1 X12.87 Z8.333 E38.467",
 				"G1 X13 Z10 E40",
-				null,
 			};
-
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// this is the pause and resume from the Eris
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.pause_gcode, "G91\nG1 Z10 E - 10 F12000\n  G90");
 			printer.Settings.SetValue(SettingsKey.resume_gcode, "G91\nG1 Z-10 E10.8 F12000\nG90");
 
@@ -557,23 +509,18 @@ namespace MatterControl.Tests.MatterControl
 
 		private static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
 		{
-			int expectedIndex = 0;
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[expectedIndex++];
+			int lineIndex = 0;
 
-			Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-			Debug.WriteLine(actualLine);
+			// Advance
+			string actualLine = testStream.ReadLine();
+			string expectedLine = expected[lineIndex++];
 
 			while (actualLine != null)
 			{
-				expectedLine = expected[expectedIndex++];
-
-				actualLine = testStream.ReadLine();
 				if (actualLine == "G92 E0")
 				{
 					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
 				}
-
 
 				if (actualLine == "G92 Z0")
 				{
@@ -600,6 +547,13 @@ namespace MatterControl.Tests.MatterControl
 
 				Debug.WriteLine(actualLine);
 				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
+
+				// Advance
+				actualLine = testStream.ReadLine();
+				if (lineIndex < expected.Length)
+				{
+					expectedLine = expected[lineIndex++];
+				}
 			}
 		}
 
@@ -611,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual(7, GCodeFile.GetLayerNumber(";LAYER:7"), "Slic3r Prusa Edition 1.38.7-prusa3d on 2018-04-25");
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void WriteReplaceStreamTests()
 		{
 			string[] inputLines = new string[]
@@ -624,7 +578,6 @@ namespace MatterControl.Tests.MatterControl
 				"G28 X0",
 				"M107",
 				"M107 ; extra stuff",
-				null,
 			};
 
 			string[] expected = new string[]
@@ -639,14 +592,9 @@ namespace MatterControl.Tests.MatterControl
 				"M115",
 				"; none",
 				"; none ; extra stuff",
-				null,
 			};
 
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
-
 			var printer = new PrinterConfig(new PrinterSettings());
-
 			printer.Settings.SetValue(SettingsKey.write_regex, "\"^(G28)\",\"G28,M115\"\\n\"^(M107)\",\"; none\"");
 
 			var inputLinesStream = new TestGCodeStream(printer, inputLines);
@@ -656,12 +604,10 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, writeStream);
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void FeedRateRatioChangesFeedRate()
 		{
 			string line;
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, (int)FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
@@ -678,12 +624,10 @@ namespace MatterControl.Tests.MatterControl
 			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
 		}
 
-		[Test, Category("GCodeStream")]
+		[Test]
 		public void ExtrusionRatioChangesExtrusionAmount()
 		{
 			string line;
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
-			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			Assert.AreEqual(1, (int)ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
@@ -721,7 +665,7 @@ namespace MatterControl.Tests.MatterControl
 
 		public override string ReadLine()
 		{
-			return lines[index++];
+			return index < lines.Length ? lines[index++] : null;
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
