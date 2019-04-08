@@ -1039,14 +1039,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settings.MaterialLayer = settings.GetMaterialLayer(settings.ActiveMaterialKey);
 				}
 
-				// Migrate the old probe settings into the new probe settings
+				// Migrate deprecated OemLayer probe setting
 				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
 				{
 					MigrateProbeOffset(settings.OemLayer);
 				}
 
-				// if we have not copied the oem layer settings key
-				if (settings.OemLayer.ContainsKey("z_probe_z_offset"))
+				// Migrate deprecated UserLayer probe setting
+				if (settings.UserLayer.ContainsKey("z_probe_z_offset"))
 				{
 					MigrateProbeOffset(settings.UserLayer);
 				}
