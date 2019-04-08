@@ -55,37 +55,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
-		{
-			var longHash = uriToLoad.GetLongHashCode();
-
-			string textFileName = Path.Combine(CachePath, longHash.ToString() + ".txt");
-
-			string fileText = null;
-			if (File.Exists(textFileName))
-			{
-				try
-				{
-					fileText = File.ReadAllText(textFileName);
-					updateResult?.Invoke(fileText);
-				}
-				catch
-				{
-				}
-			}
-
-			Task.Run(async () =>
-			{
-				var client = new HttpClient();
-				var text = await client.GetStringAsync(uriToLoad);
-				if (text != fileText)
-				{
-					File.WriteAllText(textFileName, text);
-					updateResult?.Invoke(text);
-				}
-			});
-		}
-
 		/// <summary>
 		/// Download an image from the web into the specified ImageBuffer
 		/// </summary>
@@ -229,6 +198,37 @@ namespace MatterHackers.MatterControl
 			catch
 			{
 			}
+		}
+
+		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
+		{
+			var longHash = uriToLoad.GetLongHashCode();
+
+			string textFileName = Path.Combine(CachePath, longHash.ToString() + ".txt");
+
+			string fileText = null;
+			if (File.Exists(textFileName))
+			{
+				try
+				{
+					fileText = File.ReadAllText(textFileName);
+					updateResult?.Invoke(fileText);
+				}
+				catch
+				{
+				}
+			}
+
+			Task.Run(async () =>
+			{
+				var client = new HttpClient();
+				var text = await client.GetStringAsync(uriToLoad);
+				if (text != fileText)
+				{
+					File.WriteAllText(textFileName, text);
+					updateResult?.Invoke(text);
+				}
+			});
 		}
 
 		private static void LoadImageInto(ImageBuffer imageToLoadInto, bool scaleToImageX, IRecieveBlenderByte scalingBlender, Stream stream)
