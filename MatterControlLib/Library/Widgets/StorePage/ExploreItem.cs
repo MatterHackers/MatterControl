@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					Margin = new BorderDouble(right: ItemSpacing)
 				};
 
-				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
+				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.icon, true, new BlenderPreMultBGRA());
 				this.AddChild(imageWidget);
 			}
 			else if (item.widget_url != null)
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Center,
 				};
 
-				imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
+				imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, item.widget_url, true, new BlenderPreMultBGRA());
 				whiteBackground.AddChild(imageWidget);
 			}
 

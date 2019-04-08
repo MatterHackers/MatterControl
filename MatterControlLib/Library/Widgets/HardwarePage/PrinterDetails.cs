@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 	{
 		private ThemeConfig theme;
 		private PrinterInfo printerInfo;
+		private FlowLayoutWidget productDataContainer;
 
 		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -97,139 +98,147 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 				if (!string.IsNullOrWhiteSpace(storeID))
 				{
-					var product = (await LoadProductData(storeID)).ProductSku;
-					// put in controls from the feed that show relevant printer information
-
-					var row = new FlowLayoutWidget()
+					try
 					{
-						HAnchor = HAnchor.Stretch,
-						Margin = new BorderDouble(top: theme.DefaultContainerPadding)
-					};
-					this.AddChild(row);
-
-					var image = new ImageBuffer(150, 10);
-					row.AddChild(new ImageWidget(image)
+						// put in controls from the feed that show relevant printer information
+						WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{storeID}?IncludeListingData=True",
+							(json) =>
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									var result = JsonConvert.DeserializeObject<ProductSidData>(json);
+									productDataContainer.RemoveAllChildren();
+									CreateProductDataWidgets(printerSettings, result.ProductSku);
+								});
+							});
+					}
+					catch (Exception ex)
 					{
-						Margin = new BorderDouble(right: theme.DefaultContainerPadding),
-						VAnchor = VAnchor.Top
+						Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
+					}
+
+					// add a section to hold the data about the printer
+					this.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						HAnchor = HAnchor.Stretch
 					});
 
-					ApplicationController.Instance.DownloadToImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
-
-					var descriptionBackground = new GuiWidget()
-					{
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit | VAnchor.Top,
-						Padding = theme.DefaultContainerPadding
-					};
-
-					var description = new MarkdownWidget(theme)
-					{
-						MinimumSize = new VectorMath.Vector2(350, 0),
-						HAnchor = HAnchor.Stretch,
-						VAnchor = VAnchor.Fit,
-						Markdown = product.ProductDescription.Trim()
-					};
-					descriptionBackground.AddChild(description);
-					descriptionBackground.BeforeDraw += (s, e) =>
-					{
-						var rect = new RoundedRect(descriptionBackground.LocalBounds, 3);
-						e.Graphics2D.Render(rect, theme.SlightShade);
-					};
-
-					row.AddChild(descriptionBackground);
-
-					var padding = theme.DefaultContainerPadding;
-
-					var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						Padding = new BorderDouble(padding, padding, padding, 0),
-						HAnchor = HAnchor.Stretch
-					};
-
-					var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
-					this.AddChild(addonsSection);
-					theme.ApplyBoxStyle(addonsSection);
-					addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
-
-					foreach(var item in product.ProductListing.AddOns)
-					{
-						var icon = new ImageBuffer(80, 0);
-						ApplicationController.Instance.DownloadToImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
-
-						var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
-						{
-							HAnchor = HAnchor.Stretch,
-							Cursor = Cursors.Hand
-						};
-
-						foreach(var child in addOnRow.Children)
-						{
-							child.Selectable = false;
-						}
-
-						addOnRow.Click += (s, e) =>
-						{
-							ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
-						};
-
-						addonsColumn.AddChild(addOnRow);
-					}
-
-					if (false)
-					{
-						var settingsPanel = new GuiWidget()
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Stretch,
-							MinimumSize = new VectorMath.Vector2(20, 20),
-							DebugShowBounds = true
-						};
-
-						settingsPanel.Load += (s, e) =>
-						{
-							var printer = new PrinterConfig(printerSettings);
-
-							var settingsContext = new SettingsContext(
-								printer,
-								null,
-								NamedSettingsLayers.All);
-
-							settingsPanel.AddChild(
-								new ConfigurePrinterWidget(settingsContext, printer, theme)
-								{
-									HAnchor = HAnchor.Stretch,
-									VAnchor = VAnchor.Stretch,
-								});
-						};
-
-						this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
-						{
-							VAnchor = VAnchor.Stretch
-						});
-					}
 				}
 			}
 
 			base.OnLoad(args);
 		}
 
-		public async Task<ProductSidData> LoadProductData(string sid)
+		private void CreateProductDataWidgets(PrinterSettings printerSettings, ProductSkuData product)
 		{
-			try
+			var row = new FlowLayoutWidget()
 			{
-				var client = new HttpClient();
-				string json = await client.GetStringAsync($"https://mh-pls-prod.appspot.com/p/1/product-sid/{sid}?IncludeListingData=True");
+				HAnchor = HAnchor.Stretch,
+				Margin = new BorderDouble(top: theme.DefaultContainerPadding)
+			};
+			productDataContainer.AddChild(row);
 
-				var result = JsonConvert.DeserializeObject<ProductSidData>(json);
-				return result;
-			}
-			catch (Exception ex)
+			var image = new ImageBuffer(150, 10);
+			row.AddChild(new ImageWidget(image)
 			{
-				Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
+				Margin = new BorderDouble(right: theme.DefaultContainerPadding),
+				VAnchor = VAnchor.Top
+			});
+
+			WebCache.RetrieveImageAsync(image, product.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+			var descriptionBackground = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				Padding = theme.DefaultContainerPadding
+			};
+
+			var description = new MarkdownWidget(theme)
+			{
+				MinimumSize = new VectorMath.Vector2(350, 0),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Markdown = product.ProductDescription.Trim()
+			};
+			descriptionBackground.AddChild(description);
+			descriptionBackground.BeforeDraw += (s, e) =>
+			{
+				var rect = new RoundedRect(descriptionBackground.LocalBounds, 3);
+				e.Graphics2D.Render(rect, theme.SlightShade);
+			};
+
+			row.AddChild(descriptionBackground);
+
+			var padding = theme.DefaultContainerPadding;
+
+			var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(padding, padding, padding, 0),
+				HAnchor = HAnchor.Stretch
+			};
+
+			var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
+			productDataContainer.AddChild(addonsSection);
+			theme.ApplyBoxStyle(addonsSection);
+			addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
+
+			foreach (var item in product.ProductListing.AddOns)
+			{
+				var icon = new ImageBuffer(80, 0);
+				WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+				var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
+				{
+					HAnchor = HAnchor.Stretch,
+					Cursor = Cursors.Hand
+				};
+
+				foreach (var child in addOnRow.Children)
+				{
+					child.Selectable = false;
+				}
+
+				addOnRow.Click += (s, e) =>
+				{
+					ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
+				};
+
+				addonsColumn.AddChild(addOnRow);
 			}
 
-			return null;
+			if (false)
+			{
+				var settingsPanel = new GuiWidget()
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
+					MinimumSize = new VectorMath.Vector2(20, 20),
+					DebugShowBounds = true
+				};
+
+				settingsPanel.Load += (s, e) =>
+				{
+					var printer = new PrinterConfig(printerSettings);
+
+					var settingsContext = new SettingsContext(
+						printer,
+						null,
+						NamedSettingsLayers.All);
+
+					settingsPanel.AddChild(
+						new ConfigurePrinterWidget(settingsContext, printer, theme)
+						{
+							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Stretch,
+						});
+				};
+
+				this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
+				{
+					VAnchor = VAnchor.Stretch
+				});
+			}
 		}
 
 		private GuiWidget AddHeading(ImageBuffer icon, string text)

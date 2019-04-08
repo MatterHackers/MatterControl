@@ -124,36 +124,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			Reset();
 		}
 
-		public ImageBuffer LoadImageAsset(string uri)
-		{
-			string filePath = Path.Combine("Images", "Macros", uri);
-			bool imageOnDisk = false;
-			if (uri.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
-			{
-				try
-				{
-					imageOnDisk = AggContext.StaticData.FileExists(filePath);
-				}
-				catch
-				{
-					imageOnDisk = false;
-				}
-			}
-
-			if (imageOnDisk)
-			{
-				return AggContext.StaticData.LoadImage(filePath);
-			}
-			else
-			{
-				var imageBuffer = new ImageBuffer(320, 10);
-
-				ApplicationController.Instance.DownloadToImageAsync(imageBuffer, uri, true);
-
-				return imageBuffer;
-			}
-		}
-
 		public override string ReadLine()
 		{
 			string lineToSend = null;

@@ -35,6 +35,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.VersionManagement
@@ -42,11 +43,6 @@ namespace MatterHackers.MatterControl.VersionManagement
 	public class ResponseErrorEventArgs : EventArgs
 	{
 		public JsonResponseDictionary ResponseValues { get; set; }
-	}
-
-	public class ResponseSuccessEventArgs<ResponseType> : EventArgs
-	{
-		public ResponseType ResponseItem { get; set; }
 	}
 
 	public class WebRequestBase<ResponseType> where ResponseType : class
@@ -65,7 +61,9 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
 
-		public event EventHandler<ResponseSuccessEventArgs<ResponseType>> RequestSucceeded;
+		public event EventHandler<ResponseType> RequestSucceeded;
+
+		public event EventHandler<ResponseType> CacheMiss;
 		public static void Request(string requestUrl, string[] requestStringPairs)
 		{
 			WebRequestBase<ResponseType> tempRequest = new WebRequestBase<ResponseType>();
@@ -97,9 +95,12 @@ namespace MatterHackers.MatterControl.VersionManagement
 			}
 		}
 
-		public async void Request()
+		public async void Request(ulong longHash = 0)
 		{
-			await Task.Run((Action)SendRequest);
+			await Task.Run(() =>
+			{
+				SendRequest(longHash);
+			});
 		}
 
 		//This gets called after failure or success
@@ -115,17 +116,39 @@ namespace MatterHackers.MatterControl.VersionManagement
 			ApplicationController.WebRequestFailed?.Invoke();
 		}
 
-		protected void OnRequestSuceeded(ResponseType responseItem)
+		protected void OnRequestSucceeded(ResponseType responseItem)
 		{
-			RequestSucceeded?.Invoke(this, new ResponseSuccessEventArgs<ResponseType>() { ResponseItem = responseItem });
+			RequestSucceeded?.Invoke(this, responseItem);
 			ApplicationController.WebRequestSucceeded?.Invoke();
 		}
 
-		protected void SendRequest()
+		protected void SendRequest(ulong longHash)
 		{
+			string cacheFileName = Path.Combine(WebCache.CachePath, longHash.ToString() + ".txt");
+			string cacheText = null;
+
+			if (longHash != 0
+				&& CacheMiss != null)
+			{
+				if (File.Exists(cacheFileName))
+				{
+					try
+					{
+						ResponseType cacheResponse = null;
+						cacheText = File.ReadAllText(cacheFileName);
+						cacheResponse = JsonConvert.DeserializeObject<ResponseType>(cacheText);
+
+						OnRequestSucceeded(cacheResponse);
+					}
+					catch
+					{
+					}
+				}
+			}
+
 			RequestManager requestManager = new RequestManager();
 
-// Prevent constant exceptions on debug builds when stepping through code. In debug, let requests stay in limbo until resumed and prevent the timeout exceptions
+			// Prevent constant exceptions on debug builds when stepping through code. In debug, let requests stay in limbo until resumed and prevent the timeout exceptions
 #if !DEBUG
 			requestManager.Timeout = this.Timeout;
 #endif
@@ -154,7 +177,28 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			if (responseItem != null)
 			{
-				OnRequestSuceeded(responseItem);
+				if (CacheMiss != null
+					&& longHash != 0)
+				{
+					if (cacheText == null || cacheText != requestManager.LastResponse)
+					{
+						File.WriteAllText(cacheFileName, requestManager.LastResponse);
+						if (cacheText != null)
+						{
+							// we already sent back the succeeded response, send a cache miss
+							CacheMiss(this, responseItem);
+						}
+						else
+						{
+							// send back the succeeded response 
+							OnRequestSucceeded(responseItem);
+						}
+					}
+				}
+				else
+				{
+					OnRequestSucceeded(responseItem);
+				}
 			}
 			else
 			{

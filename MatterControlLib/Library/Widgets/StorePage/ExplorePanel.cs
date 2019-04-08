@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								};
 							}
 
-							imageWidget.Load += (s, e) => ApplicationController.Instance.DownloadToImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
+							imageWidget.Load += (s, e) => WebCache.RetrieveImageAsync(image, content.image_url, false, new BlenderPreMultBGRA());
 							this.AddChild(imageWidget);
 						}
 					}

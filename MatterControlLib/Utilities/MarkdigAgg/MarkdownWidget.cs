@@ -96,7 +96,22 @@ namespace Markdig.Agg
 				markdownDocument.BaseUri = uri;
 
 				this.sourceArticle = sourceArticle;
-				this.Markdown = webClient.DownloadString(uri);
+
+				try
+				{
+					// put in controls from the feed that show relevant printer information
+					WebCache.RetrieveText(uri.ToString(),
+						(markDown) =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								this.Markdown = markDown;
+							});
+						});
+				}
+				catch
+				{
+				}
 			}
 			catch
 			{
