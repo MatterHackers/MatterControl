@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
@@ -151,6 +152,42 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private List<(Regex Regex, string Replacement)> _writeLineReplacements = new List<(Regex Regex, string Replacement)>();
+
+		private string writeRegexString = "";
+
+		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
+
+
+		public List<(Regex Regex, string Replacement)> WriteLineReplacements
+		{
+			get
+			{
+				lock (_writeLineReplacements)
+				{
+					if (writeRegexString != printerSettings.GetValue(SettingsKey.write_regex))
+					{
+						_writeLineReplacements.Clear();
+						writeRegexString = printerSettings.GetValue(SettingsKey.write_regex);
+
+						foreach (string regExLine in writeRegexString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
+						{
+							var matches = getQuotedParts.Matches(regExLine);
+							if (matches.Count == 2)
+							{
+								var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+								var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+								_writeLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+							}
+						}
+					}
+				}
+
+				return _writeLineReplacements;
+			}
+		}
+
+	
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
