@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
 					queuedCommands.Enqueue($"T{activeTool}");
-					return lineToSend;
+					return $"{lineToSend.Substring(0, 4)} T{requestedToolForTempChange} S{targetTemps[requestedToolForTempChange]}";
 				}
 				// if we are waiting to switch to the next tool
 				else if (activeTool != requestedTool)
