@@ -177,7 +177,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			if (responseItem != null)
 			{
-				if (CacheMiss != null)
+				if (CacheMiss != null
+					&& longHash != 0)
 				{
 					if (cacheText == null || cacheText != requestManager.LastResponse)
 					{
