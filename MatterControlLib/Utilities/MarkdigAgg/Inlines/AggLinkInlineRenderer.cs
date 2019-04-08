@@ -77,34 +77,30 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			this.Url = url;
 
-			bool showAnimations = true;
-			if (showAnimations)
-			{
-				var imageSequence = new ImageSequence(icon);
-				//var sequenceWidget = new ImageSequenceWidget(imageSequence);
-				var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence);
-				this.AddChild(sequenceWidget);
+			imageSequence = new ImageSequence(icon);
+			//var sequenceWidget = new ImageSequenceWidget(imageSequence);
+			var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence);
+			this.AddChild(sequenceWidget);
+		}
 
-				if (url.StartsWith("http"))
-				{
-					WebCache.RetrieveImageSquenceAsync(imageSequence, url);
-				}
-			}
-			else
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			if(!hasBeenLoaded)
 			{
-				var imageBuffer = new ImageBuffer(icon);
-				//var imageWidget = new ImageWidget(imageBuffer);
-				var imageWidget = new ResponsiveImageWidget(imageBuffer);
-				this.AddChild(imageWidget);
-
-				if (url.StartsWith("http"))
+				if (Url.StartsWith("http"))
 				{
-					WebCache.RetrieveImageAsync(imageBuffer, url, false);
+					WebCache.RetrieveImageSquenceAsync(imageSequence, Url);
 				}
+
+				hasBeenLoaded = true;
 			}
+			base.OnDraw(graphics2D);
 		}
 
 		public string Url { get; }
+
+		private ImageSequence imageSequence;
+		private bool hasBeenLoaded;
 	}
 
 	public class ImageLinkAdvancedX : FlowLayoutWidget
