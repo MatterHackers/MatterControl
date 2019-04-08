@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			foreach (string regExLine in readRegEx.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
 			{
-				var matches = getQuotedParts.Matches(regExLine);
+				var matches = ProcessWriteRegexStream.GetQuotedParts.Matches(regExLine);
 				if (matches.Count == 2)
 				{
 					var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
@@ -1002,8 +1002,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										//Thread.Sleep(500);
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-
-										serialPort.Write("M105\n");
+										foreach (var line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", this.Printer))
+										{
+											WriteRaw(line, line);
+										}
 
 										var sb = new StringBuilder();
 
@@ -1864,8 +1866,6 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		#region ProcessRead
-		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-
 		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
 		{
 			var addedLines = new List<string>();
@@ -2244,7 +2244,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			// ensure that our read-line replacements are updated at the same time we build our write line replacements
 			InitializeReadLineReplacements();
 
-			var processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
+			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
 
 			accumulatedStream = new RelativeToAbsoluteStream(Printer, accumulatedStream);
@@ -2276,7 +2276,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = processWriteRegexStream.ProcessWriteRegEx("M110 N1");
+			var transformedCommand = ProcessWriteRegexStream.ProcessWriteRegEx("M110 N1", this.Printer);
 			if (transformedCommand != null)
 			{
 				foreach (var line in transformedCommand)
@@ -2853,6 +2853,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		internal int currentReadThreadIndex = 0;
 		private Vector3 _homingPosition = Vector3.NegativeInfinity;
 		private int noOkResendCount;
+		private ProcessWriteRegexStream processWriteRegexStream;
 
 		public class ReadThread
 		{

@@ -463,9 +463,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.extrusion_multiplier,
 					PresentationName = "Extrusion Multiplier".Localize(),
 					HelpText = "All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
+					Units = "Ratio or %",
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "100%"
 				},
 				new SliceSettingData()
 				{

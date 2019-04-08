@@ -166,8 +166,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"T0", // initial tool assignment (part of starting a default print)
 				"M114", // we always ask position after tool assignment
 				"G1 X10 Y10 Z10 F2500", // go to the position requested
-				"T1", // switch to T1 for temp
-				"M104 S100", // set the temp
+				"M104 T1 S100", // set the temp for T1
 				"T0", // smoothie command to ensure still on T0 after temp set
 				"M114", // always ask position after T
 				"G1 X11 Y11 Z11", // go to the position requested
@@ -248,17 +247,15 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"T0",
 				"M114",
 				"M104 T1 S240", // initial heating
-				"M104 T0 S230",
 				"T0",
 				"M114",
+				"M104 T0 S230",
 				"G1 X10 Y10 Z10 F2500",
 				"G1 Y111",
 				"M114",
 				"T1",
 				"M114",
 				"M104 T1 S240", // **** BUG **** this should not be here
-				"T1",
-				"M114",
 				"G1 Y222",
 				"M114",
 				"G1 X9 Y8 F3000",

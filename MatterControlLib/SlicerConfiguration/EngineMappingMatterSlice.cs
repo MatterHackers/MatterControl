@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.air_gap_speed, "airGapSpeed", SettingsKey.infill_speed),
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.bottom_infill_speed, "bottomInfillSpeed", SettingsKey.infill_speed),
 				new MappedToBoolString(printer, SettingsKey.bridge_over_infill, "bridgeOverInfill"),
-				new MappedSetting(printer, SettingsKey.extrusion_multiplier, "extrusionMultiplier"),
+				new AsPercentOrDirect(printer, SettingsKey.extrusion_multiplier, "extrusionMultiplier"),
 				new MappedSetting(printer, SettingsKey.fill_angle, "infillStartingAngle"),
 				new AsPercentOfReferenceOrDirect(printer, SettingsKey.infill_overlap_perimeter, "infillExtendIntoPerimeter", SettingsKey.nozzle_diameter, change0ToReference: false),
 				new OverrideSpeedOnSlaPrinters(printer, SettingsKey.infill_speed, "infillSpeed", SettingsKey.infill_speed),

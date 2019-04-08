@@ -121,12 +121,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// if this command is a temperature change request
 			if (requestedToolForTempChange != -1)
 			{
-				if (requestedToolForTempChange == activeTool)
+				if (requestedToolForTempChange != activeTool)
 				{
-					queuedCommands.Enqueue(lineToSend);
 					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
 					queuedCommands.Enqueue($"T{activeTool}");
-					return "";
+					return $"{lineToSend.Substring(0, 4)} T{requestedToolForTempChange} S{targetTemps[requestedToolForTempChange]}";
 				}
 				// if we are waiting to switch to the next tool
 				else if (activeTool != requestedTool)
@@ -136,11 +135,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						queuedCommands.Enqueue($"T{requestedTool}");
 					}
-					// then send the heat command
-					queuedCommands.Enqueue(lineToSend);
 					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
 					queuedCommands.Enqueue($"T{activeTool}");
-					return "";
+					// then send the heat command
+					return lineToSend;
 				}
 			}
 			// if this is a tool change request

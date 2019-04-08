@@ -27,12 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -40,11 +37,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private PrinterMove currentMove = PrinterMove.Unknown;
 
-		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-
-		private List<(Regex Regex, string Replacement)> WriteLineReplacements = new List<(Regex Regex, string Replacement)>();
-
-		private string writeRegexString = "";
+		public static Regex GetQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
 		private QueuedCommandsStream queueStream;
 
@@ -77,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return baseLine;
 			}
 
-			var lines = ProcessWriteRegEx(baseLine);
+			var lines = ProcessWriteRegEx(baseLine, printer);
 			for (int i = lines.Count - 1; i >= 1; i--)
 			{
 				queueStream.Add(lines[i], true);
@@ -106,26 +99,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public List<string> ProcessWriteRegEx(string lineToWrite)
+		public static List<string> ProcessWriteRegEx(string lineToWrite, PrinterConfig printer)
 		{
-			lock (WriteLineReplacements)
-			{
-				if (writeRegexString != printer.Settings.GetValue(SettingsKey.write_regex))
-				{
-					WriteLineReplacements.Clear();
-					writeRegexString = printer.Settings.GetValue(SettingsKey.write_regex);
-					foreach (string regExLine in writeRegexString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
-					{
-						var matches = getQuotedParts.Matches(regExLine);
-						if (matches.Count == 2)
-						{
-							var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-							var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-							WriteLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-						}
-					}
-				}
-			}
+			var WriteLineReplacements = printer.Settings.Helpers.WriteLineReplacements;
 
 			var linesToWrite = new List<string>();
 			linesToWrite.Add(lineToWrite);
