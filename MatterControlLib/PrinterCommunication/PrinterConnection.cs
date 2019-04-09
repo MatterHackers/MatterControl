@@ -2244,9 +2244,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			// ensure that our read-line replacements are updated at the same time we build our write line replacements
 			InitializeReadLineReplacements();
 
-			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
-			accumulatedStream = processWriteRegexStream;
-
 			accumulatedStream = new RelativeToAbsoluteStream(Printer, accumulatedStream);
 
 			if (ExtruderCount > 1)
@@ -2273,6 +2270,9 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+
+			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
+			accumulatedStream = processWriteRegexStream;
 
 			totalGCodeStream = accumulatedStream;
 

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -237,6 +238,24 @@ namespace MatterControl.Tests.MatterControl
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
 
 			return totalGCodeStream;
+		}
+
+		[Test]
+		public void RegexReplacementStreamIsLast()
+		{
+			var printer = new PrinterConfig(new PrinterSettings());
+			var context = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, new []{ "" }), true);
+
+			var streamProcessors = new List<GCodeStream>();
+
+			while (context is GCodeStream gCodeStream)
+			{
+				streamProcessors.Add(context);
+				context = gCodeStream.InternalStream;
+			}
+
+			Assert.IsTrue(streamProcessors.First() is ProcessWriteRegexStream, "ProcessWriteRegexStream should be the last stream in the stack");
+
 		}
 
 		[Test]
