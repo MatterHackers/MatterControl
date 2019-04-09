@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		protected void SendRequest(ulong longHash)
 		{
 			string cacheFileName = Path.Combine(WebCache.CachePath, longHash.ToString() + ".txt");
-			string cacheText = null;
+			ResponseType cacheResponse = null;
 
 			if (longHash != 0
 				&& CacheMiss != null)
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				{
 					try
 					{
-						ResponseType cacheResponse = null;
+						string cacheText = null;
 						cacheText = File.ReadAllText(cacheFileName);
 						cacheResponse = JsonConvert.DeserializeObject<ResponseType>(cacheText);
 
@@ -180,10 +180,10 @@ namespace MatterHackers.MatterControl.VersionManagement
 				if (CacheMiss != null
 					&& longHash != 0)
 				{
-					if (cacheText == null || cacheText != requestManager.LastResponse)
+					if (cacheResponse == null || !cacheResponse.Equals(responseItem))
 					{
 						File.WriteAllText(cacheFileName, requestManager.LastResponse);
-						if (cacheText != null)
+						if (cacheResponse != null)
 						{
 							// we already sent back the succeeded response, send a cache miss
 							CacheMiss(this, responseItem);

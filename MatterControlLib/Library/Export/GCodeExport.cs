@@ -282,6 +282,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream);
+				accumulatedStream = new ToolSpeedMultiplierStream(printer, accumulatedStream);
 			}
 
 			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;

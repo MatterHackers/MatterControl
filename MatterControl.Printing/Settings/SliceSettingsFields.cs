@@ -1772,6 +1772,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.t1_extrusion_move_speed_multiplier,
+					PresentationName = "Extruder 2 Speed".Localize(),
+					HelpText = "Modify T1 speeds during extrusion moves by the ratio or percent.".Localize(),
+					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
+					Units = "Ratio or %",
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "100%"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.temperature2,
 					PresentationName = "Extruder 3 Temperature".Localize(),
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),

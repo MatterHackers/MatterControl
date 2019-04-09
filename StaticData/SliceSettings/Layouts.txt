@@ -46,6 +46,7 @@ Advanced
         travel_speed
         number_of_first_layers
         bridge_over_infill
+        t1_extrusion_move_speed_multiplier
     Fan
       Fan
         min_fan_speed_layer_time
@@ -76,7 +77,7 @@ Advanced
         create_brim
         brims
   Support
-    Advanced
+    Support
       Support Options
         support_material_create_perimeter
         support_material_interface_layers
