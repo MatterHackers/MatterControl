@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl
 
 		public void NextIncompleteStage()
 		{
-			ISetupWizard nextStage = setupWizard.Stages.FirstOrDefault(s => s.SetupRequired);
+			ISetupWizard nextStage = setupWizard.Stages.FirstOrDefault(s => s.SetupRequired && s.Enabled);
 
 			if (nextStage != null)
 			{
