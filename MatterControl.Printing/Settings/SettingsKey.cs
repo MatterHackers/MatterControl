@@ -225,6 +225,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string support_material_speed = nameof(support_material_speed);
 		public const string support_material_xy_distance = nameof(support_material_xy_distance);
 		public const string support_type = nameof(support_type);
+		public const string t1_extrusion_move_speed_multiplier = nameof(t1_extrusion_move_speed_multiplier);
 		public const string temperature = nameof(temperature);
 		public const string temperature1 = nameof(temperature1);
 		public const string temperature2 = nameof(temperature2);

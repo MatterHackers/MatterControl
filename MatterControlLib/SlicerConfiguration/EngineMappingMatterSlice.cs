@@ -129,6 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.send_with_checksum,
 			SettingsKey.show_reset_connection,
 			SettingsKey.sla_printer,
+			SettingsKey.t1_extrusion_move_speed_multiplier,
 			SettingsKey.temperature,
 			SettingsKey.temperature1,
 			SettingsKey.temperature2,

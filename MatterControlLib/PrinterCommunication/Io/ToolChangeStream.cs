@@ -61,13 +61,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			activeTool = printer.Connection.ActiveExtruderIndex;
 		}
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {lastDestination}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {lastDestination}";
 
 		public override string ReadLine()
 		{

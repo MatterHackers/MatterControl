@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			GuiWidget settingsRow = null;
 
 			var presetsView = (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality);
-			var ignoredPresets = new HashSet<string> { SettingsKey.temperature1, SettingsKey.temperature2, SettingsKey.temperature3 };
+			var ignoredPresets = new HashSet<string> { SettingsKey.temperature1, SettingsKey.temperature2, SettingsKey.temperature3, SettingsKey.t1_extrusion_move_speed_multiplier };
 
 			using (groupPanel.LayoutLock())
 			{
