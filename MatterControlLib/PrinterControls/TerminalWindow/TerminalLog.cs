@@ -94,10 +94,23 @@ namespace MatterHackers.MatterControl
 
 		public void WriteLine(string line)
 		{
-			this.OnLineAdded(
-				new TerminalLine(
-					line,
-					TerminalLine.MessageDirection.ToTerminal));
+			if (line.Contains("\n"))
+			{
+				foreach (var segment in line.Replace("\r\n", "\n").Split('\n'))
+				{
+					this.OnLineAdded(
+						new TerminalLine(
+							segment,
+							TerminalLine.MessageDirection.ToTerminal));
+				}
+			}
+			else
+			{
+				this.OnLineAdded(
+					new TerminalLine(
+						line,
+						TerminalLine.MessageDirection.ToTerminal));
+			}
 		}
 
 		private void Instance_ConnectionFailed(object sender, EventArgs e)
