@@ -275,8 +275,6 @@ namespace MatterHackers.MatterControl.Library.Export
 			var queuedCommandStream = new QueuedCommandsStream(printer, gCodeBaseStream);
 			GCodeStream accumulatedStream = queuedCommandStream;
 
-			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
-
 			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
 
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
@@ -311,6 +309,8 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 
 			accumulatedStream = new RemoveNOPsStream(printer, accumulatedStream);
+
+			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
 
 			return accumulatedStream;
 		}

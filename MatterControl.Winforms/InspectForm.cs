@@ -509,16 +509,7 @@ namespace MatterHackers.MatterControl
 		private void button1_Click(object sender, EventArgs e)
 		{
 			var context = ApplicationController.Instance.ActivePrinters.First().Connection.TotalGCodeStream;
-
-			var sb = new StringBuilder();
-
-			while (context is GCodeStream gCodeStream)
-			{
-				sb.AppendFormat("{0} {1}\r\n", gCodeStream.GetType().Name, gCodeStream.DebugInfo);
-				context = gCodeStream.InternalStream;
-			}
-
-			textBox1.Text = sb.ToString();
+			textBox1.Text = context.GetDebugState();
 		}
 	}
 }

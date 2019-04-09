@@ -101,15 +101,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public static List<string> ProcessWriteRegEx(string lineToWrite, PrinterConfig printer)
 		{
-			var WriteLineReplacements = printer.Settings.Helpers.WriteLineReplacements;
-
 			var linesToWrite = new List<string>();
 			linesToWrite.Add(lineToWrite);
 
 			var addedLines = new List<string>();
 			for (int i = 0; i < linesToWrite.Count; i++)
 			{
-				foreach (var item in WriteLineReplacements)
+				foreach (var item in printer.Settings.Helpers.WriteLineReplacements)
 				{
 					var splitReplacement = item.Replacement.Split(',');
 					if (splitReplacement.Length > 0)
