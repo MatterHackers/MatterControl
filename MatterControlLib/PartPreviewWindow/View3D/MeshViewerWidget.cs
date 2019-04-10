@@ -281,26 +281,50 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				drawColor = new Color(Color.Yellow, 120);
 			}
-			else if(item.WorldOutputType() == PrintOutputTypes.WipeTower)
+			else if (item.WorldOutputType() == PrintOutputTypes.WipeTower)
 			{
 				drawColor = new Color(Color.Cyan, 120);
 			}
-
-			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
-			if (sceneContext.Printer != null)
+			else if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
 			{
-				if (!sceneContext.Printer.InsideBuildVolume(item))
-				{
-					drawColor = new Color(drawColor, 65);
-				}
-			}
-
-			// check if we should be rendering materials (this overrides the other colors)
-			if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
-			{
+				// check if we should be rendering materials (this overrides the other colors)
 				drawColor = MaterialRendering.Color(item.WorldMaterialIndex());
 			}
 
+			if (sceneContext.Printer is PrinterConfig printer)
+			{
+				if (printer.InsideBuildVolume(item))
+				{
+					if (printer.Settings.Helpers.NumberOfHotends() > 1)
+					{
+						var materialIndex = item.WorldMaterialIndex();
+						if (materialIndex == -1)
+						{
+							materialIndex = 0;
+						}
+
+						// Determine if the given item is outside the bounds of the given extruder
+						if (materialIndex < printer.Bed.HotendBounds.Length)
+						{
+							var itemAABB = item.GetAxisAlignedBoundingBox();
+							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
+
+							var hotendBounds = printer.Bed.HotendBounds[materialIndex];
+							if (!hotendBounds.Contains(itemBounds))
+							{
+								// Draw in Red if on the bed but outside of the bounds for the hotend
+								drawColor = Color.Red.WithAlpha(90);
+							}
+						}
+					}
+				}
+				else
+				{
+					// Outside of printer build volume 
+					drawColor = new Color(drawColor, 65);
+				}
+			}
+			
 			if(drawColor.alpha != 255
 				&& item is Object3D item3D)
 			{

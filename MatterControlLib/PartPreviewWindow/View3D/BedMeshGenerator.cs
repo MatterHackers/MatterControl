@@ -80,6 +80,23 @@ namespace MatterHackers.MatterControl
 
 			ImageBuffer bedplateImage = CreatePrintBedImage(printer);
 
+			if (printer.Settings.Helpers.NumberOfHotends() == 2
+				&& printer.Bed.BedShape == BedShape.Rectangular)
+			{
+				var xScale = bedplateImage.Width / printer.Bed.Bounds.Width;
+
+				int alpha = 100;
+
+				var graphics = bedplateImage.NewGraphics2D();
+				graphics.FillRectangle(
+					new RectangleDouble(0, 0, printer.Settings.Helpers.ExtruderOffset(1).X * xScale, bedplateImage.Height),
+					Color.Red.WithAlpha(alpha));
+
+				graphics.FillRectangle(
+					new RectangleDouble(bedplateImage.Width - (printer.Settings.Helpers.ExtruderOffset(1).X * xScale), 0, bedplateImage.Width, bedplateImage.Height),
+					Color.Green.WithAlpha(alpha));
+			}
+
 			switch (printer.Bed.BedShape)
 			{
 				case BedShape.Rectangular:
