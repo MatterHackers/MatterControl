@@ -76,10 +76,11 @@ namespace MatterHackers.MatterControl
 
 			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
 
+			this.Settings = settings;
+
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			this.Settings = settings;
 			this.Connection = new PrinterConnection(this);
 
 			// Register listeners
