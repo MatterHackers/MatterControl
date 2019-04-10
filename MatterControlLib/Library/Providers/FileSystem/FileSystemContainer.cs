@@ -243,7 +243,10 @@ namespace MatterHackers.MatterControl.Library
 				return;
 			}
 
-			directoryWatcher.EnableRaisingEvents = false;
+			if (directoryWatcher != null)
+			{
+				directoryWatcher.EnableRaisingEvents = false;
+			}
 
 			Directory.CreateDirectory(this.FullPath);
 
@@ -293,7 +296,10 @@ namespace MatterHackers.MatterControl.Library
 				}
 			});
 
-			directoryWatcher.EnableRaisingEvents = false;
+			if (directoryWatcher != null)
+			{
+				directoryWatcher.EnableRaisingEvents = false;
+			}
 
 			if (this.isDirty)
 			{
