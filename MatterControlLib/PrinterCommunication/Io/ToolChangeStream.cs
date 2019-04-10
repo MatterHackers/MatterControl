@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -39,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class ToolChangeStream : GCodeStreamProxy
 	{
-		private readonly string compleatedBeforeGCodeString = "; COMPLEATED_BEFORE_GCODE";
+		private readonly string completedBeforeGCodeString = "; COMPLETED_BEFORE_GCODE";
 		private int activeTool;
 		private int extruderCount = 0;
 		private PrinterMove lastDestination = PrinterMove.Unknown;
@@ -103,7 +102,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// check if any of the heaters we will be switching to need to start heating
 			ManageReHeating(lineToSend);
 
-			if (lineToSend == compleatedBeforeGCodeString)
+			if (lineToSend == completedBeforeGCodeString)
 			{
 				activeTool = requestedTool;
 				SendState = SendStates.Normal;
@@ -396,7 +395,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcode.AppendLine($"T{requestedTool}");
 
 				// send the marker to let us know we have sent the before gcode
-				gcode.AppendLine(compleatedBeforeGCodeString);
+				gcode.AppendLine(completedBeforeGCodeString);
 
 				queuedCommandsStream.Add(gcode.ToString());
 
