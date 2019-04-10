@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Kevin Pope, John Lewin
+Copyright (c) 2019, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 	public class PrintLibraryWidget : GuiWidget, IIgnoredPopupChild
 	{
 		private FlowLayoutWidget buttonPanel;
+		private ILibraryContext libraryContext;
 		private LibraryListView libraryView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
@@ -60,7 +61,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private ThemeConfig theme;
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
-		private PartWorkspace workspace;
 
 		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace, ThemeConfig theme, PopupMenuButton popupMenuButton)
 		{
@@ -68,11 +68,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.mainViewWidget = mainViewWidget;
 			this.Padding = 0;
 			this.AnchorAll();
-			this.workspace = workspace;
 
 			var allControls = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
-			libraryView = new LibraryListView(workspace.LibraryView, theme)
+			libraryContext = workspace.LibraryView;
+
+			libraryView = new LibraryListView(libraryContext, theme)
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
@@ -80,10 +81,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1)
 			};
-
-			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
-
-			workspace.LibraryView.ContainerChanged += Library_ContainerChanged;
 
 			navBar = new OverflowBar(theme)
 			{
@@ -289,7 +286,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					searchContainer = ApplicationController.Instance.Library.ActiveContainer;
+					searchContainer = libraryView.ActiveContainer;
 
 					breadCrumbWidget.Visible = false;
 					searchPanel.Visible = true;
@@ -311,15 +308,26 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
+
+			// Register listeners
+			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+			libraryContext.ContainerChanged += Library_ContainerChanged;
 		}
 
 		private void PerformSearch()
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				if (ApplicationController.Instance.Library.ActiveContainer.CustomSearch is ICustomSearch customSearch)
+				if (libraryContext.ActiveContainer.CustomSearch is ICustomSearch customSearch)
 				{
-					customSearch.ApplyFilter(searchInput.Text.Trim(), ApplicationController.Instance.Library);
+					// Do custom search
+					customSearch.ApplyFilter(searchInput.Text.Trim(), libraryContext);
+				}
+				else
+				{
+					// Do basic filtering
+					// filter the view with a predicate, applying the active sort
+					libraryView.ApplyFilter(searchInput.Text.Trim());
 				}
 			});
 		}
@@ -333,13 +341,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			UiThread.RunOnIdle(() =>
 			{
-				if (searchContainer.CustomSearch is ICustomSearch customSearch)
+				if (libraryContext.ActiveContainer.CustomSearch is ICustomSearch customSearch)
 				{
+					// Clear custom search
 					customSearch.ClearFilter();
-				}
 
-				// Restore the original ActiveContainer before search started - some containers may change context
-				ApplicationController.Instance.Library.ActiveContainer = searchContainer;
+					// Restore the original ActiveContainer before search started - some containers may change context
+					libraryContext.ActiveContainer = searchContainer;
+				}
+				else
+				{
+					// Clear basic filtering
+					libraryView.ClearFilter();
+				}
 
 				searchContainer = null;
 			});
@@ -435,13 +449,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (libraryView?.ActiveContainer != null)
+			// Unregister listeners
+			libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+			libraryContext.ContainerChanged -= Library_ContainerChanged;
+			if (libraryView.ActiveContainer != null)
 			{
 				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-				libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
-
-				workspace.LibraryView.ContainerChanged -= Library_ContainerChanged;
 			}
+
+			mainViewWidget = null;
 
 			base.OnClosed(e);
 		}
@@ -481,7 +497,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public override void OnLoad(EventArgs args)
 		{
 			// Defer creating menu items until plugins have loaded
-			LibraryWidget.CreateMenuActions(libraryView, menuActions, workspace.LibraryView, mainViewWidget, theme, allowPrint: true);
+			LibraryWidget.CreateMenuActions(libraryView, menuActions, libraryContext, mainViewWidget, theme, allowPrint: true);
 
 			navBar.OverflowButton.Name = "Print Library Overflow Menu";
 			navBar.ExtendOverflowMenu = (popupMenu) =>

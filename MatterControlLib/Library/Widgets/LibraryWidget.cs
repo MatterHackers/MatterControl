@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -86,10 +86,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Border = new BorderDouble(top: 1),
 				DoubleClickAction = LibraryListView.DoubleClickActions.PreviewItem
 			};
-
-			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
-
-			libraryContext.ContainerChanged += Library_ContainerChanged;
 
 			navBar = new OverflowBar(theme)
 			{
@@ -368,6 +364,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AnchorAll();
 
 			this.AddChild(allControls);
+
+			// Register listeners
+			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+			libraryContext.ContainerChanged += Library_ContainerChanged;
 		}
 
 		private void LoadRootLibraryNodes(FlowLayoutWidget rootColumn)
@@ -1036,10 +1036,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (libraryView?.ActiveContainer != null)
+			// Unregister listeners
+			libraryView.SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+			libraryContext.ContainerChanged -= Library_ContainerChanged;
+			if (libraryView.ActiveContainer != null)
 			{
 				libraryView.ActiveContainer.ContentChanged -= UpdateStatus;
-				libraryContext.ContainerChanged -= Library_ContainerChanged;
 			}
 
 			mainViewWidget = null;
