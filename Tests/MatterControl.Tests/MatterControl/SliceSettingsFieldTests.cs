@@ -98,11 +98,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new DoubleField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -128,11 +129,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task PositiveDoubleFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new PositiveDoubleField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -158,11 +160,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new IntField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -188,11 +191,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleOrPercentFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new DoubleOrPercentField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -233,11 +237,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntOrMmFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new IntOrMmField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -286,6 +291,7 @@ namespace MatterControl.Tests.MatterControl
 
 			await ValidateAgainstValueMap(
 				field,
+				theme,
 				(f) => (f.Content.Children<DropDownList>().FirstOrDefault() as DropDownList).SelectedLabel,
 				new List<ValueMap>()
 				{
@@ -336,13 +342,13 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task MultilineStringFieldTest()
 		{
-			var theme = new ThemeConfig();
-			theme.RebuildTheme();
-
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+			
 			var testField = new MultilineStringField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -469,18 +475,16 @@ namespace MatterControl.Tests.MatterControl
 		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
 		/// <param name="valuesMap">A map of input to expected values</param>
 		/// <returns></returns>
-		public static Task ValidateAgainstValueMap(UIField field, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
+		public static Task ValidateAgainstValueMap(UIField field, ThemeConfig theme, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
 		{
 			// *************** Enable to investigate/debug/develop new/existing tests ************************
-			bool investigateDebugTests = false;
-			var perItemDelay = (investigateDebugTests) ? 500 : 0;
+			bool investigateDebugTests = true;
+			var perItemDelay = (investigateDebugTests) ? 1000 : 0;
 
-			var testsWindow = new UIFieldTestWindow(400, 200, field);
+			var testsWindow = new UIFieldTestWindow(400, 200, field, theme);
 
 			return testsWindow.RunTest((testRunner) =>
 			{
-				var primaryFieldWidget = field.Content as MHNumberEdit;
-
 				foreach (var item in valuesMap)
 				{
 					testsWindow.SetAndValidateValues(item.ExpectedValue, item.InputValue, collectValueFromWidget, perItemDelay);

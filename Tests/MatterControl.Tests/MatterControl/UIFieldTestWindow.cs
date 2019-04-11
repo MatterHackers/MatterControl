@@ -43,11 +43,9 @@ namespace MatterControl.Tests.MatterControl
 
 		private UIField field;
 
-		public UIFieldTestWindow(int width, int height, UIField field)
+		public UIFieldTestWindow(int width, int height, UIField field, ThemeConfig theme)
 			: base(width, height)
 		{
-			var theme = new ThemeConfig();
-
 			this.BackgroundColor = new Color(56, 56, 56);
 
 			GuiWidget column, row;

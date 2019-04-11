@@ -66,14 +66,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			string[] xyzValueStrings = this.Value?.Split(',');
-			if (xyzValueStrings == null
-				|| xyzValueStrings.Length != 3)
+			string[] xyzStrings = this.Value?.Split(',');
+			if (xyzStrings == null
+				|| xyzStrings.Length != 3)
 			{
-				xyzValueStrings = new string[] { "0", "0", "0" };
+				xyzStrings = new string[] { "0", "0", "0" };
 			}
 
-			double.TryParse(xyzValueStrings[0], out double currentXValue);
+			double.TryParse(xyzStrings[0], out double currentXValue);
 
 			xEditWidget = new MHNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
@@ -85,7 +85,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}",
+					string.Format(
+						"{0},{1},{2}",
 						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
 						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
 						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
@@ -94,7 +95,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			container.AddChild(xEditWidget);
 
-			double.TryParse(xyzValueStrings[1], out double currentYValue);
+			double.TryParse(xyzStrings[1], out double currentYValue);
 
 			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
@@ -106,16 +107,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}",
-					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-					yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-					zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format(
+						"{0},{1},{2}",
+						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
 			container.AddChild(yEditWidget);
 
-			double.TryParse(xyzValueStrings[2], out double currentZValue);
+			double.TryParse(xyzStrings[2], out double currentZValue);
 
 			zEditWidget = new MHNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
 			{
@@ -127,10 +129,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}",
-					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-					yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-					zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format(
+						"{0},{1},{2}",
+						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
@@ -147,19 +150,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			string[] xyzValueStrings3 = this.Value.Split(',');
-			if (xyzValueStrings3.Length != 3)
+			string[] xyzStrings = this.Value.Split(',');
+			if (xyzStrings.Length != 3)
 			{
-				xyzValueStrings3 = new string[] { "0", "0", "0" };
+				xyzStrings = new string[] { "0", "0", "0" };
 			}
 
-			double.TryParse(xyzValueStrings3[0], out double currentValue);
+			double.TryParse(xyzStrings[0], out double currentValue);
 			xEditWidget.ActuallNumberEdit.Value = currentValue;
 
-			double.TryParse(xyzValueStrings3[1], out currentValue);
+			double.TryParse(xyzStrings[1], out currentValue);
 			yEditWidget.ActuallNumberEdit.Value = currentValue;
 
-			double.TryParse(xyzValueStrings3[2], out currentValue);
+			double.TryParse(xyzStrings[2], out currentValue);
 			zEditWidget.ActuallNumberEdit.Value = currentValue;
 
 			base.OnValueChanged(fieldChangedEventArgs);
