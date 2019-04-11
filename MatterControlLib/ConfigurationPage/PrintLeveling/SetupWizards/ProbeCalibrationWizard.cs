@@ -152,6 +152,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings.HomingPageInstructions(true, false),
 				false);
 
+			// if there is a level_x_carriage_markdown oem markdown page
+			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))
+			{
+				yield return PrintLevelingWizard.GetLevelXCarriagePage(this, printer);
+			}
+
 			if (LevelingValidation.NeedsToBeRun(printer))
 			{
 				// start heating up the bed as that will be needed next

@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.level_x_cariage_markdown,
+					SlicerConfigName = SettingsKey.level_x_carriage_markdown,
 					PresentationName = "Level X Carriage Page".Localize(),
 					HelpText = "The Markdown that will be shown during print leveling to help get the X carriage level.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
