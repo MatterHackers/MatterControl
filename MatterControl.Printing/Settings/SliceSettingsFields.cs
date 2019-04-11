@@ -1792,6 +1792,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.nozzle1_inset,
+					PresentationName = "Nozzle 1 Inset".Localize(),
+					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
+					DataEditType = DataEditTypes.BOUNDS,
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "200"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.nozzle2_inset,
+					PresentationName = "Nozzle 2 Inset".Localize(),
+					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
+					DataEditType = DataEditTypes.BOUNDS,
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = "200"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.temperature3,
 					PresentationName = "Extruder 4 Temperature".Localize(),
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),

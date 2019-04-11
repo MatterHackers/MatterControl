@@ -325,7 +325,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					drawColor = new Color(drawColor, 65);
 				}
 			}
-			
+
 			if(drawColor.alpha != 255
 				&& item is Object3D item3D)
 			{

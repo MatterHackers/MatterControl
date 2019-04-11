@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void OnSettingChanged(string slicerConfigName)
 		{
-			if (slicerConfigName == SettingsKey.extruder_offset)
+			if (slicerConfigName == SettingsKey.nozzle1_inset
+				|| slicerConfigName == SettingsKey.nozzle2_inset)
 			{
 				this.ResetHotendBounds();
 			}
@@ -368,10 +369,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var bounds = this.BedBounds;
 
+			RectangleDouble GetHotendBounds(int index)
+			{
+				string settingsKey = index == 0 ? SettingsKey.nozzle1_inset : SettingsKey.nozzle2_inset;
+				var inset = this.GetValue<Vector4>(settingsKey);
+
+				return new RectangleDouble(
+					bounds.Left - inset.X,
+					bounds.Bottom - inset.Y,
+					bounds.Right - inset.Z,
+					bounds.Top - inset.W);
+			}
+
 			this.HotendBounds = new[]
 			{
-				new RectangleDouble(0, 0, bounds.Width - this.Helpers.ExtruderOffset(1).X, bounds.Height),
-				new RectangleDouble(this.Helpers.ExtruderOffset(1).X, 0, bounds.Right, bounds.Height)
+				GetHotendBounds(0),
+				GetHotendBounds(1),
 			};
 		}
 
@@ -815,11 +828,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(Vector2))
 			{
-				return (T)(object)(Vector2.Parse(GetValue(settingsKey)));
+				return (T)(object)Vector2.Parse(settingsValue);
 			}
 			else if(typeof(T) == typeof(Vector3))
 			{
-				return (T)(object)(Vector3.Parse(GetValue(settingsKey)));
+				return (T)(object)Vector3.Parse(settingsValue);
+			}
+			else if (typeof(T) == typeof(Vector4))
+			{
+				return (T)(object)Vector4.Parse(settingsValue);
 			}
 			else if (typeof(T) == typeof(double))
 			{
