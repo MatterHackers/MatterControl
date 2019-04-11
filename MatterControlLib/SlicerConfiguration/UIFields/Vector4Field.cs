@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class Vector4Field : UIField
 	{
-		public static int VectorXYZWEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+		public static int VectorXYZWEditWidth = (int)(45 * GuiWidget.DeviceScale + .5);
 
 		private MHNumberEdit xEditWidget;
 		private MHNumberEdit yEditWidget;
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}{3}",
+					string.Format("{0},{1},{2},{3}",
 						xEditWidget.ActuallNumberEdit.Value.ToString(),
 						yEditWidget.ActuallNumberEdit.Value.ToString(),
 						zEditWidget.ActuallNumberEdit.Value.ToString(),
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}{3}",
+					string.Format("{0},{1},{2},{3}",
 						xEditWidget.ActuallNumberEdit.Value.ToString(),
 						yEditWidget.ActuallNumberEdit.Value.ToString(),
 						zEditWidget.ActuallNumberEdit.Value.ToString(),
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}{3}",
+					string.Format("{0},{1},{2},{3}",
 						xEditWidget.ActuallNumberEdit.Value.ToString(),
 						yEditWidget.ActuallNumberEdit.Value.ToString(),
 						zEditWidget.ActuallNumberEdit.Value.ToString(),
@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			wEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1},{2}{3}",
+					string.Format("{0},{1},{2},{3}",
 						xEditWidget.ActuallNumberEdit.Value.ToString(),
 						yEditWidget.ActuallNumberEdit.Value.ToString(),
 						zEditWidget.ActuallNumberEdit.Value.ToString(),

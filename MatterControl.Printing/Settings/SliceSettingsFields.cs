@@ -1797,7 +1797,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "200"
+					DefaultValue = ""
 				},
 				new SliceSettingData()
 				{
@@ -1806,7 +1806,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "200"
+					DefaultValue = ""
 				},
 				new SliceSettingData()
 				{
