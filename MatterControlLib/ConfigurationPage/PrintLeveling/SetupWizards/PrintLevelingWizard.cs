@@ -228,35 +228,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
 				useZProbe);
 
-			// if there is a level_x_cariage_markdown oem markdown page
-			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_cariage_markdown)))
+			// if there is a level_x_carriage_markdown oem markdown page
+			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))
 			{
-				var levelXCariagePage = new WizardPage(this, "Level X Carriage".Localize(), "")
-				{
-					PageLoad = (page) =>
-					{
-						// release the motors so the z-axis can be moved
-						printer.Connection.ReleaseMotors();
-
-						var markdownText = printer.Settings.GetValue(SettingsKey.level_x_cariage_markdown);
-						var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme);
-						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
-						page.ContentRow.AddChild(markdownWidget);
-					},
-					PageClose = () =>
-					{
-						// home the printer again to make sure we are ready to level (same behavior as homing page)
-						printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
-
-						if (!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-						{
-							// move so we don't heat the printer while the nozzle is touching the bed
-							printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
-						}
-					}
-
-				};
-				yield return levelXCariagePage;
+				yield return GetLevelXCarriagePage(this, printer);
 			}
 
 			// figure out the heating requirements
@@ -398,6 +373,36 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Print Leveling Wizard".Localize(),
 				useZProbe,
 				probePositions);
+		}
+
+		public static WizardPage GetLevelXCarriagePage(ISetupWizard setupWizard, PrinterConfig printer)
+		{
+			var levelXCarriagePage = new WizardPage(setupWizard, "Level X Carriage".Localize(), "")
+			{
+				PageLoad = (page) =>
+				{
+					// release the motors so the z-axis can be moved
+					printer.Connection.ReleaseMotors();
+
+					var markdownText = printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown);
+					var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme);
+					markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+					page.ContentRow.AddChild(markdownWidget);
+				},
+				PageClose = () =>
+				{
+					// home the printer again to make sure we are ready to level (same behavior as homing page)
+					printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+
+					if (!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+					{
+						// move so we don't heat the printer while the nozzle is touching the bed
+						printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+					}
+				}
+
+			};
+			return levelXCarriagePage;
 		}
 
 		public static Vector2 EnsureInPrintBounds(PrinterConfig printer, Vector2 probePosition)
