@@ -304,12 +304,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 
 						// Determine if the given item is outside the bounds of the given extruder
-						if (materialIndex < printer.Bed.HotendBounds.Length)
+						if (materialIndex < printer.Settings.HotendBounds.Length)
 						{
 							var itemAABB = item.GetAxisAlignedBoundingBox();
 							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
 
-							var hotendBounds = printer.Bed.HotendBounds[materialIndex];
+							var hotendBounds = printer.Settings.HotendBounds[materialIndex];
 							if (!hotendBounds.Contains(itemBounds))
 							{
 								// Draw in Red if on the bed but outside of the bounds for the hotend

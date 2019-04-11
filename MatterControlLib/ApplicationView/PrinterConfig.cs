@@ -444,7 +444,6 @@ namespace MatterHackers.MatterControl
 			macroReplacements = null;
 
 			// Dispose children
-			this.Bed.Dispose();
 			this.Connection.Dispose();
 
 			this.Disposed?.Invoke(this, null);

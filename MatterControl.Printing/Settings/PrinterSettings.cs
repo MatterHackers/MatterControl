@@ -66,6 +66,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void OnSettingChanged(string slicerConfigName)
 		{
+			if (slicerConfigName == SettingsKey.extruder_offset)
+			{
+				this.ResetHotendBounds();
+			}
+
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
@@ -359,6 +364,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		private void ResetHotendBounds()
+		{
+			var bounds = this.BedBounds;
+
+			this.HotendBounds = new[]
+			{
+				new RectangleDouble(0, 0, bounds.Width - this.Helpers.ExtruderOffset(1).X, bounds.Height),
+				new RectangleDouble(this.Helpers.ExtruderOffset(1).X, 0, bounds.Right, bounds.Height)
+			};
+		}
+
+		/// <summary>
+		/// Gets the bounds that are accessible for a given hotend
+		/// </summary>
+		public RectangleDouble[] HotendBounds { get; private set; }
+
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
 
@@ -418,6 +439,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void OnDeserialize()
 		{
+			this.ResetHotendBounds();
 		}
 
 		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)

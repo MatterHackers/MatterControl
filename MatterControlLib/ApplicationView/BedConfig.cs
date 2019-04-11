@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.PolygonMesh;
 	using MatterHackers.VectorMath;
 
-	public class BedConfig : ISceneContext, IDisposable
+	public class BedConfig : ISceneContext
 	{
 		public event EventHandler ActiveLayerChanged;
 
@@ -79,47 +79,7 @@ namespace MatterHackers.MatterControl
 			this.historyContainer = historyContainer;
 			this.Printer = printer;
 			this.ViewState = new SceneContextViewState(this);
-
-			if (printer != null)
-			{
-				this.ResetHotendBounds();
-
-				// Register listeners
-				printer.Settings.SettingChanged += Settings_SettingChanged;
-			}
 		}
-
-		public void Dispose()
-		{
-			// Unregister listeners
-			this.Printer.Settings.SettingChanged -= Settings_SettingChanged;
-		}
-
-		private void Settings_SettingChanged(object sender, StringEventArgs e)
-		{
-			if (this.Printer != null
-				&& e.Data == SettingsKey.extruder_offset)
-			{
-				this.ResetHotendBounds();
-			}
-		}
-
-		private void ResetHotendBounds()
-		{
-			var bounds = this.Printer.Settings.BedBounds;
-			var printer = this.Printer;
-
-			this.HotendBounds = new[]
-			{
-				new RectangleDouble(0, 0, bounds.Width - printer.Settings.Helpers.ExtruderOffset(1).X, bounds.Height),
-				new RectangleDouble(printer.Settings.Helpers.ExtruderOffset(1).X, 0, bounds.Right, bounds.Height)
-			};
-		}
-
-		/// <summary>
-		/// Gets the bounds that are accessible for a given hotend
-		/// </summary>
-		public RectangleDouble[] HotendBounds { get; private set; }
 
 		public void LoadEmptyContent(EditContext editContext)
 		{
