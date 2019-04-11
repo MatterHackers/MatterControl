@@ -375,8 +375,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var inset = this.GetValue<Vector4>(settingsKey);
 
 				return new RectangleDouble(
-					bounds.Left - inset.X,
-					bounds.Bottom - inset.Y,
+					bounds.Left + inset.X,
+					bounds.Bottom + inset.Y,
 					bounds.Right - inset.Z,
 					bounds.Top - inset.W);
 			}
