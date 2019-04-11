@@ -113,7 +113,7 @@ namespace MatterControl.Tests.MatterControl
 			column.AddChild(widgetUnderTest);
 		}
 
-		public void SetAndValidateValues(string expectedValue, string inputValue, Func<UIField, string> collectValueFromWidget, int delay = 500)
+		public void SetAndValidateValues(string expectedValue, string inputValue, Func<UIField, string> collectValueFromWidget, int delay = 200)
 		{
 			// Set expected and source
 			this.ExpectedText.Text = expectedValue;

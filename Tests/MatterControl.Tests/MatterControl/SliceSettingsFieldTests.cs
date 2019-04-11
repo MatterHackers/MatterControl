@@ -377,6 +377,32 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
+		[Test]
+		public async Task Vector4FieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			Vector4Field.VectorXYZWEditWidth = 50;
+
+			var testField = new Vector4Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) => 
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
+					{"1,2,3,4", "1,2,3,4"},
+					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
+					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
+					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
 		[Test, Ignore("Not Implemented")]
 		public void ListFieldTest()
 		{
@@ -481,7 +507,7 @@ namespace MatterControl.Tests.MatterControl
 			bool investigateDebugTests = true;
 			var perItemDelay = (investigateDebugTests) ? 1000 : 0;
 
-			var testsWindow = new UIFieldTestWindow(400, 200, field, theme);
+			var testsWindow = new UIFieldTestWindow(500, 200, field, theme);
 
 			return testsWindow.RunTest((testRunner) =>
 			{
