@@ -371,6 +371,32 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
+
+
+		[Test]
+		public async Task Vector2FieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new Vector2Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2", "0.1,0.2"},
+					{"1,2", "1,2"},
+					{",2", "0,2"}, // Empty components should revert to 0s
+					{"x,2", "0,2"}, // Non-numeric components should revert to 0s
+					{"2", "0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
 		[Test]
 		public async Task Vector3FieldTest()
 		{
@@ -441,12 +467,6 @@ namespace MatterControl.Tests.MatterControl
 
 		[Test, Ignore("Not Implemented")]
 		public void ReadOnlyTextFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void Vector2FieldTest()
 		{
 			Assert.Fail();
 		}
