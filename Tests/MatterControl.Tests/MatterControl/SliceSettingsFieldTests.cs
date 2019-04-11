@@ -447,6 +447,30 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
+		[Test]
+		public async Task BoundsFieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new BoundsField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
+					{"1,2,3,4", "1,2,3,4"},
+					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
+					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
+					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
 		[Test, Ignore("Not Implemented")]
 		public void ListFieldTest()
 		{

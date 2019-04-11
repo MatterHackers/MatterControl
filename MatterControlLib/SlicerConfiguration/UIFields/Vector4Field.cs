@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private ThemeConfig theme;
 
+		protected char[] labels = new[] { 'X', 'Y', 'Z', 'W' };
+
 		public Vector4Field(ThemeConfig theme)
 		{
 			this.theme = theme;
@@ -74,7 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, labels[0] /* X */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -96,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, labels[1] /* Y */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -118,7 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[2], out double currentZValue);
 
-			zEditWidget = new MHNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
+			zEditWidget = new MHNumberEdit(currentZValue, theme, labels[2] /* Z */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -140,7 +142,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			double.TryParse(xyzValueStrings[3], out double currentWValue);
 
-			wEditWidget = new MHNumberEdit(currentZValue, theme, 'W', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
+			wEditWidget = new MHNumberEdit(currentZValue, theme, labels[3] /* W */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
