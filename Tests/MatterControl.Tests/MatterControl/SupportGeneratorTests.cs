@@ -533,6 +533,33 @@ namespace MatterControl.Tests.MatterControl
 				int top = SupportGenerator.GetNextTop(0, planes, 0);
 				Assert.AreEqual(3, top);
 			}
+
+			// actual output from a dual extrusion print that should have no support
+			{
+				var planes = new List<(double z, bool bottom)>()
+				{
+					(0, true),
+					(0, true),
+					(0, true),
+					(0, true),
+					(0, false),
+					(0.0302, true),
+					(0.0497, true),
+					(0.762, true),
+					(0.762, true),
+					(0.762, false),
+					(0.762, false),
+					(15.95, false),
+					(15.9697, false),
+					(16, false),
+					(16, false),
+					(16, false),
+					(16, false),
+				};
+
+				int bottom = SupportGenerator.GetNextBottom(0, planes, .1);
+				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
+			}
 		}
 	}
 }
