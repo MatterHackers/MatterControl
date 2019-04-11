@@ -371,10 +371,28 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void Vector3FieldTest()
+		[Test]
+		public async Task Vector3FieldTest()
 		{
-			Assert.Fail();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new Vector3Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3", "0.1,0.2,0.3"},
+					{"1,2,3", "1,2,3"},
+					{",2,", "0,2,0"}, // Empty components should revert to 0s
+					{"x,2,y", "0,2,0"}, // Non-numeric components should revert to 0s
+					{",2", "0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
 		}
 
 		[Test]

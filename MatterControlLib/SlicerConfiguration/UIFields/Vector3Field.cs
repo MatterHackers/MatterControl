@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
 
@@ -49,11 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Vector3 Vector3
 		{
-			get
-			{
-				return new Vector3(xEditWidget.Value, yEditWidget.Value, zEditWidget.Value);
-			}
-
+			get => new Vector3(xEditWidget.Value, yEditWidget.Value, zEditWidget.Value);
 			set
 			{
 				xEditWidget.Value = value.X;
@@ -144,8 +140,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override string ConvertValue(string newValue)
 		{
-			// Ensure we have a two value CSV or force to '0,0'
-			return (newValue?.Split(',').Length == 3) ? newValue.Trim() : "0,0,0";
+			// Ensure we have a three value CSV or force to '0,0,0'
+			string[] xyzwStrings = newValue.Split(',');
+			if (xyzwStrings.Length != 3)
+			{
+				xyzwStrings = new string[] { "0", "0", "0" };
+			}
+
+			// Convert string segments to double, then back to expected CSV string
+			return string.Join(
+				",",
+				xyzwStrings.Select(s =>
+				{
+					double.TryParse(s, out double doubleValue);
+					return doubleValue.ToString();
+				}).ToArray());
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
@@ -156,14 +165,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				xyzStrings = new string[] { "0", "0", "0" };
 			}
 
-			double.TryParse(xyzStrings[0], out double currentValue);
-			xEditWidget.ActuallNumberEdit.Value = currentValue;
-
-			double.TryParse(xyzStrings[1], out currentValue);
-			yEditWidget.ActuallNumberEdit.Value = currentValue;
-
-			double.TryParse(xyzStrings[2], out currentValue);
-			zEditWidget.ActuallNumberEdit.Value = currentValue;
+			xEditWidget.Text = xyzStrings[0];
+			yEditWidget.Text = xyzStrings[1];
+			zEditWidget.Text = xyzStrings[2];
 
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
