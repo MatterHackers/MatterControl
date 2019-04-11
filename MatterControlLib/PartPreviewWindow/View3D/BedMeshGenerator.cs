@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 			return bedImage;
 		}
 
-		public static (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
+		public static (Mesh bed, Mesh volume, ImageBuffer bedImage) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
 			Mesh printerBed = null;
 			Mesh buildVolume = null;
@@ -79,23 +79,6 @@ namespace MatterHackers.MatterControl
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
 			ImageBuffer bedplateImage = CreatePrintBedImage(printer);
-
-			if (printer.Settings.Helpers.NumberOfHotends() == 2
-				&& printer.Bed.BedShape == BedShape.Rectangular)
-			{
-				var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
-
-				int alpha = 100;
-
-				var graphics = bedplateImage.NewGraphics2D();
-				graphics.FillRectangle(
-					new RectangleDouble(0, 0, printer.Settings.Helpers.ExtruderOffset(1).X * xScale, bedplateImage.Height),
-					Color.Red.WithAlpha(alpha));
-
-				graphics.FillRectangle(
-					new RectangleDouble(bedplateImage.Width - (printer.Settings.Helpers.ExtruderOffset(1).X * xScale), 0, bedplateImage.Width, bedplateImage.Height),
-					Color.Green.WithAlpha(alpha));
-			}
 
 			switch (printer.Bed.BedShape)
 			{
@@ -147,7 +130,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			return (printerBed, buildVolume);
+			return (printerBed, buildVolume, bedplateImage);
 		}
 
 		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)

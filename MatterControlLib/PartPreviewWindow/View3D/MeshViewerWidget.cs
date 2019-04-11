@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
@@ -486,6 +487,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
+			this.UpdateFloorImage(selectedItem);
+
 			DrawInteractionVolumes(e);
 
 			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent))
@@ -519,6 +522,84 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
 				}
+			}
+		}
+
+		int activeBedHotendClippingImage = -1;
+
+		private void UpdateFloorImage(IObject3D selectedItem)
+		{
+			if (sceneContext.Printer == null)
+			{
+				return;
+			}
+
+			var bed = sceneContext as BedConfig;
+			var printer = sceneContext.Printer;
+
+			int hotendIndex;
+
+			if (selectedItem == null)
+			{
+				hotendIndex = -1;
+			}
+			else
+			{
+				var worldMaterialIndex = selectedItem.WorldMaterialIndex();
+				if (worldMaterialIndex == -1)
+				{
+					worldMaterialIndex = 0;
+				}
+
+				hotendIndex = worldMaterialIndex;
+			}
+
+			if (activeBedHotendClippingImage != hotendIndex)
+			{
+				ImageBuffer bedplateImage;
+				if (hotendIndex == -1)
+				{
+					// Reset back to default
+					bedplateImage = bed.GeneratedBedImage;
+				}
+				else
+				{
+					bedplateImage = new ImageBuffer(bed.GeneratedBedImage);
+
+					if (printer.Settings.Helpers.NumberOfHotends() == 2
+						&& printer.Bed.BedShape == BedShape.Rectangular)
+					{
+						var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
+
+						int alpha = 100;
+
+						var graphics = bedplateImage.NewGraphics2D();
+
+						var invalidColor = Color.DarkGray.WithAlpha(120);
+						// Color.Red.WithAlpha(alpha)
+						if (hotendIndex == 1)
+						{
+							graphics.FillRectangle(
+								new RectangleDouble(0, 0, printer.Settings.Helpers.ExtruderOffset(1).X * xScale, bedplateImage.Height),
+								invalidColor);
+						}
+						else
+						{
+							graphics.FillRectangle(
+								new RectangleDouble(bedplateImage.Width - (printer.Settings.Helpers.ExtruderOffset(1).X * xScale), 0, bedplateImage.Width, bedplateImage.Height),
+								invalidColor);
+						}
+					}
+				}
+
+				foreach (var texture in bed.Mesh.FaceTextures)
+				{
+					texture.Value.image = bedplateImage;
+				}
+
+				bed.Mesh.PropertyBag.Clear();
+
+				activeBedHotendClippingImage = hotendIndex;
 			}
 		}
 
