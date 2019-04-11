@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 		private void ResetHotendBounds()
 		{
-			var bounds = this.Bounds;
+			var bounds = this.Printer.Settings.BedBounds;
 			var printer = this.Printer;
 
 			this.HotendBounds = new[]
@@ -544,19 +544,7 @@ namespace MatterHackers.MatterControl
 		public bool EditableScene => this.EditContext?.FreezeGCode != true;
 
 		public string ContentType { get; private set; }
-		public RectangleDouble Bounds
-		{
-			get
-			{
-				var bedSize = Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-				var printCenter = Printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-				return new RectangleDouble(printCenter.X - bedSize.X / 2,
-					printCenter.Y - bedSize.Y / 2,
-					printCenter.X + bedSize.X / 2,
-					printCenter.Y + bedSize.Y / 2);
-			}
-		}
 
 		/// <summary>
 		/// Return the axis aligned bounding box of the bed

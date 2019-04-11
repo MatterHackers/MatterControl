@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl
 			if (printer.Settings.Helpers.NumberOfHotends() == 2
 				&& printer.Bed.BedShape == BedShape.Rectangular)
 			{
-				var xScale = bedplateImage.Width / printer.Bed.Bounds.Width;
+				var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
 
 				int alpha = 100;
 

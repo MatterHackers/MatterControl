@@ -314,6 +314,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
+		// Properties
+
 		[JsonIgnore]
 		public string ActiveQualityKey
 		{
@@ -339,6 +341,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SetValue(SettingsKey.active_material_key, value);
 					MaterialLayer = GetMaterialLayer(value);
 				}
+			}
+		}
+
+		[JsonIgnore]
+		public RectangleDouble BedBounds
+		{
+			get
+			{
+				var bedSize = this.GetValue<Vector2>(SettingsKey.bed_size);
+				var printCenter = this.GetValue<Vector2>(SettingsKey.print_center);
+
+				return new RectangleDouble(printCenter.X - bedSize.X / 2,
+					printCenter.Y - bedSize.Y / 2,
+					printCenter.X + bedSize.X / 2,
+					printCenter.Y + bedSize.Y / 2);
 			}
 		}
 

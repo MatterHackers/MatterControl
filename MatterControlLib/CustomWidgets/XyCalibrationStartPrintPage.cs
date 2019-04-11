@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 				scene.Children.Add(item);
 
 				// move the part to the center of the bed
-				var bedBounds = printer.Bed.Bounds;
+				var bedBounds = printer.Settings.BedBounds;
 				var aabb = item.GetAxisAlignedBoundingBox();
 				item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
 
