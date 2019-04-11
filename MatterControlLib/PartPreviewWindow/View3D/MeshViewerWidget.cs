@@ -34,6 +34,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
@@ -567,28 +568,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					bedplateImage = new ImageBuffer(bed.GeneratedBedImage);
 
 					if (printer.Settings.Helpers.NumberOfHotends() == 2
-						&& printer.Bed.BedShape == BedShape.Rectangular)
+						&& printer.Bed.BedShape == BedShape.Rectangular
+						&& (hotendIndex == 0 || hotendIndex == 1))
 					{
 						var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
+						var yScale = bedplateImage.Height / printer.Settings.BedBounds.Height;
 
-						int alpha = 100;
+						int alpha = 120;
 
 						var graphics = bedplateImage.NewGraphics2D();
 
-						var invalidColor = Color.DarkGray.WithAlpha(120);
-						// Color.Red.WithAlpha(alpha)
-						if (hotendIndex == 1)
-						{
-							graphics.FillRectangle(
-								new RectangleDouble(0, 0, printer.Settings.Helpers.ExtruderOffset(1).X * xScale, bedplateImage.Height),
-								invalidColor);
-						}
-						else
-						{
-							graphics.FillRectangle(
-								new RectangleDouble(bedplateImage.Width - (printer.Settings.Helpers.ExtruderOffset(1).X * xScale), 0, bedplateImage.Width, bedplateImage.Height),
-								invalidColor);
-						}
+						var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+
+						var scaledBounds = new RectangleDouble(
+							hotendBounds.Left * xScale,
+							hotendBounds.Bottom * yScale,
+							hotendBounds.Right * xScale,
+							hotendBounds.Top * yScale);
+
+						var imageBounds = bedplateImage.GetBounds();
+
+						var dimRegion = new VertexStorage();
+						dimRegion.MoveTo(imageBounds.Left, imageBounds.Bottom);
+						dimRegion.LineTo(imageBounds.Right, imageBounds.Bottom);
+						dimRegion.LineTo(imageBounds.Right, imageBounds.Top);
+						dimRegion.LineTo(imageBounds.Left, imageBounds.Top);
+
+						var targetRect = new VertexStorage();
+						targetRect.MoveTo(scaledBounds.Right, scaledBounds.Bottom);
+						targetRect.LineTo(scaledBounds.Left, scaledBounds.Bottom);
+						targetRect.LineTo(scaledBounds.Left, scaledBounds.Top);
+						targetRect.LineTo(scaledBounds.Right, scaledBounds.Top);
+
+						var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+						graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
+
+						//graphics2D.Render(new Stroke(new RoundedRect(scaledBounds, 0), 2), Color.White.WithAlpha(50));
 					}
 				}
 
