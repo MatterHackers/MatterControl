@@ -482,10 +482,10 @@ namespace MatterControl.Tests.MatterControl
 					(10, false), // top at 10 (the top of the box)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes);
+				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
 				Assert.AreEqual(1, bottom); // we get the bottom
 
-				int bottom1 = SupportGenerator.GetNextBottom(1, planes);
+				int bottom1 = SupportGenerator.GetNextBottom(1, planes, 0);
 				Assert.AreEqual(-1, bottom1, "There are no more bottoms so we get back a -1.");
 			}
 
@@ -500,7 +500,7 @@ namespace MatterControl.Tests.MatterControl
 					(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes);
+				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
@@ -515,7 +515,7 @@ namespace MatterControl.Tests.MatterControl
 					(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes);
+				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
@@ -526,11 +526,12 @@ namespace MatterControl.Tests.MatterControl
 					(0, false),
 					(5, true), 
 					(10, false),
-					(20, false)
+					(20, false),
+					(25, true)
 				};
 
-				int top = SupportGenerator.GetNextTop(0, planes);
-				Assert.AreEqual(2, top);
+				int top = SupportGenerator.GetNextTop(0, planes, 0);
+				Assert.AreEqual(3, top);
 			}
 		}
 	}

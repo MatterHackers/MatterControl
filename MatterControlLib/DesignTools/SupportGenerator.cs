@@ -354,11 +354,9 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (!nextPlaneIsBottom // if the next plane is a top, we don't have any space from the bed to the part to put support
 						|| planes[1].z > minimumSupportHeight) // if the next plane is a bottom and is not far enough away, there is no space to put any support
 					{
-						var firstBottomAboveBed = GetNextBottom(0, planes);
-						var firstTopAboveBed = GetNextTop(0, planes);
+						var firstBottomAboveBed = GetNextBottom(0, planes, minimumSupportHeight);
 
-						if (firstBottomAboveBed >= 0
-							&& firstBottomAboveBed < firstTopAboveBed)
+						if (firstBottomAboveBed >= 0)
 						{
 							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, planes[firstBottomAboveBed].z + .01);
 						}
@@ -368,21 +366,26 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					int i = 0;
 					double lastTopZ = 0;
-					int lastBottom = i;
+					int lastBottom = -1;
 					var nextPlaneIsBottom = planes.Count > 1 && planes[1].bottom;
 					// if the next plane (the one above the bed) is a bottom, we have a part on the bed and will not generate support
 					if (nextPlaneIsBottom && planes[1].z <= minimumSupportHeight)
 					{
 						// go up to the next top
-						i = GetNextTop(i, planes);
-						lastTopZ = planes[i].z;
+						i = GetNextTop(i, planes, minimumSupportHeight);
+						if (i >= 0)
+						{
+							lastTopZ = planes[i].z;
+						}
 					}
 
-					do
+					while (i != -1
+						&& i != lastBottom
+						&& i < planes.Count)
 					{
 						lastBottom = i;
 						// find all open areas in the list and add support
-						i = GetNextBottom(i, planes);
+						i = GetNextBottom(i, planes, minimumSupportHeight);
 						if (i >= 0)
 						{
 							if (i < planes.Count
@@ -390,15 +393,14 @@ namespace MatterHackers.MatterControl.DesignTools
 							{
 								AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, planes[i].z);
 							}
-							i = GetNextTop(i + 1, planes);
-							if (i < planes.Count)
+							i = GetNextTop(i + 1, planes, minimumSupportHeight);
+							if (i >= 0
+								&& i < planes.Count)
 							{
 								lastTopZ = planes[i].z;
 							}
 						}
-					} while (i != -1
-						&& i != lastBottom 
-						&& i < planes.Count);
+					}
 				}
 			}
 
@@ -472,71 +474,70 @@ namespace MatterHackers.MatterControl.DesignTools
 			return detectedPlanes;
 		}
 
-		public static int GetNextBottom(int i, List<(double z, bool bottom)> planes)
+		public static int GetNextBottom(int i, List<(double z, bool bottom)> planes, double skipDist)
 		{
-			// if we are starting this search from a top
-			if(i < planes.Count // valid i
-				&& !planes[i].bottom // starting on a top
-				&& planes.Count > i + 1 // valid next layer
-				&& planes[i + 1].bottom // next layer is a bottom
-				&& planes[i + 1].z <= planes[i].z) // next layer is <= or current top z
+			while (i < planes.Count)
 			{
-				// skip all the bottoms that are the same as our current top
-				while (i < planes.Count
-					&& planes.Count > i + 1
-					&& planes[i + 1].bottom)
+				// if we are on a bottom
+				if (planes[i].bottom)
 				{
+					// move up to the next plane and re-evaluate
 					i++;
 				}
-			}
-
-			bool foundBottom = false;
-
-			// all the tops
-			while (i < planes.Count
-				&& !planes[i].bottom)
-			{
-				i++;
-				if(i <planes.Count
-					&& planes[i].bottom)
+				else // we are on a top
 				{
-					foundBottom = true;
+					// if the next plane is a bottom and more than skipDistanc away
+					if (i + 1 < planes.Count
+						&& planes[i + 1].bottom
+						&& planes[i + 1].z > planes[i].z + skipDist)
+					{
+						// this is the next bottom we are looking for
+						return i + 1;
+					}
+					else // move up to the next plane and re-evaluate
+					{
+						i++;
+					}
 				}
-			}
-
-			// then look for the last bottom before next top
-			while (i < planes.Count
-				&& planes[i].bottom
-				&& planes.Count > i + 1
-				&& planes[i + 1].bottom)
-			{
-				i++;
-				foundBottom = true;
-			}
-
-			if (foundBottom)
-			{
-				return i;
 			}
 
 			return -1;
 		}
 
-		public static int GetNextTop(int i, List<(double z, bool bottom)> planes)
+		public static int GetNextTop(int i, List<(double z, bool bottom)> planes, double skipDist)
 		{
-			if(i < planes.Count
-				&& !planes[i].bottom)
+			if (!planes[i].bottom)
 			{
+				// skip the one we are
 				i++;
 			}
 
-			while (i < planes.Count
-				&& planes[i].bottom)
+			while (i < planes.Count)
 			{
-				i++;
+				// if we are on a bottom
+				if (planes[i].bottom)
+				{
+					// move up to the next plane and re-evaluate
+					i++;
+				}
+				else // we are on a top
+				{
+					// if the next plane is a bottom and more than skipDistanc away
+					if (i + 1 < planes.Count
+						&& planes[i + 1].bottom
+						&& planes[i + 1].z > planes[i].z + skipDist)
+					{
+						// this is the next top we are looking for
+						return i;
+					}
+					else // move up to the next plane and re-evaluate
+					{
+						i++;
+					}
+				}
 			}
 
-			return i;
+			return -1;
 		}
 
 		// function to get all the columns that need support generation
