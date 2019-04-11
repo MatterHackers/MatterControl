@@ -405,12 +405,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			try
 			{
-				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
+				var settings = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
+				settings.OnDeserialize();
+
+				return settings;
 			}
 			catch
 			{
 				return null;
 			}
+		}
+
+		private void OnDeserialize()
+		{
 		}
 
 		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
