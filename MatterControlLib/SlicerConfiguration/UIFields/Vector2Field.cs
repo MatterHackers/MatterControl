@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString("0.###"), yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString(), yEditWidget.ActuallNumberEdit.Value.ToString()),
+					string.Format("{0},{1}", xEditWidget.ActuallNumberEdit.Value.ToString("0.###"), yEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
