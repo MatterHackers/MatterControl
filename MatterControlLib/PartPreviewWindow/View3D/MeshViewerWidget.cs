@@ -32,10 +32,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -565,6 +567,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
+					// Create new image from current bed texture image
 					bedplateImage = new ImageBuffer(bed.GeneratedBedImage);
 
 					if (printer.Settings.Helpers.NumberOfHotends() == 2
@@ -574,13 +577,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
 						var yScale = bedplateImage.Height / printer.Settings.BedBounds.Height;
 
-						int alpha = 120;
+						int alpha = 80;
 
 						var graphics = bedplateImage.NewGraphics2D();
 
 						var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
 
-						var scaledBounds = new RectangleDouble(
+						// Scale hotendBounds into textures units
+						hotendBounds = new RectangleDouble(
 							hotendBounds.Left * xScale,
 							hotendBounds.Bottom * yScale,
 							hotendBounds.Right * xScale,
@@ -595,15 +599,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						dimRegion.LineTo(imageBounds.Left, imageBounds.Top);
 
 						var targetRect = new VertexStorage();
-						targetRect.MoveTo(scaledBounds.Right, scaledBounds.Bottom);
-						targetRect.LineTo(scaledBounds.Left, scaledBounds.Bottom);
-						targetRect.LineTo(scaledBounds.Left, scaledBounds.Top);
-						targetRect.LineTo(scaledBounds.Right, scaledBounds.Top);
+						targetRect.MoveTo(hotendBounds.Right, hotendBounds.Bottom);
+						targetRect.LineTo(hotendBounds.Left, hotendBounds.Bottom);
+						targetRect.LineTo(hotendBounds.Left, hotendBounds.Top);
+						targetRect.LineTo(hotendBounds.Right, hotendBounds.Top);
+						targetRect.ClosePolygon();
 
 						var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
 						graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
 
-						//graphics2D.Render(new Stroke(new RoundedRect(scaledBounds, 0), 2), Color.White.WithAlpha(50));
+						string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
+
+						var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
+						var printerBounds = stringPrinter.GetBounds();
+
+						int textPadding = 8;
+
+						var textBounds = printerBounds;
+						textBounds.Inflate(textPadding);
+
+						var cornerRect = new RectangleDouble(hotendBounds.Right - textBounds.Width, hotendBounds.Top - textBounds.Height, hotendBounds.Right, hotendBounds.Top);
+
+						graphics.Render(
+							new RoundedRectShape(cornerRect, bottomLeftRadius: 6),
+							theme.PrimaryAccentColor);
+
+						graphics.DrawString(
+							hotendTitle,
+							hotendBounds.Right - textPadding,
+							cornerRect.Bottom + (cornerRect.Height / 2 - printerBounds.Height / 2) + 1,
+							theme.DefaultFontSize,
+							justification: Justification.Right,
+							baseline: Baseline.Text,
+							color: Color.White,
+							bold: true);
+
+						graphics.Render(new Stroke(targetRect, 1), theme.PrimaryAccentColor);
 					}
 				}
 
