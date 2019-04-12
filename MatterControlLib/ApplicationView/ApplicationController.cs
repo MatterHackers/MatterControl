@@ -2750,11 +2750,48 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_PrintCanceled(object sender, EventArgs e)
 		{
-			// TODO: show a long running task showing support options 
-			// add links to forum, articles and documentation
-			// support: "https://www.matterhackers.com/support#mattercontrol"
-			// documentation: "https://www.matterhackers.com/mattercontrol/support"
-			// forum: "https://forums.matterhackers.com/recent"
+			if (sender is PrinterConnection printerConnection)
+			{
+				// TODO: show a long running task showing support options 
+				// add links to forum, articles and documentation
+				// support: "https://www.matterhackers.com/support#mattercontrol"
+				// documentation: "https://www.matterhackers.com/mattercontrol/support"
+				// forum: "https://forums.matterhackers.com/recent"
+
+				string markdownText = "A sample notification message";
+
+				ShowNotification(markdownText, () =>
+				{
+					return true;
+				});
+			}
+		}
+
+		private void ShowNotification(string markdownText, Func<bool> keepShowing)
+		{
+			if (!string.IsNullOrEmpty(markdownText))
+			{
+				bool stopped = false;
+				Tasks.Execute("Notification", null, (reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+
+					while (keepShowing() && !stopped)
+					{
+						Thread.Sleep(200);
+					}
+
+					return Task.CompletedTask;
+				},
+				taskActions: new RunningTaskOptions()
+				{
+					StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
+					{
+						stopped = true;
+					}),
+					StopToolTip = "Dismiss".Localize()
+				});
+			}
 		}
 
 		public void ConnectToPrinter(PrinterConfig printer)
