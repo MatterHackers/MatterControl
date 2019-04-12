@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
-				//BackgroundColor = new Color(theme.Colors.PrimaryBackgroundColor, 128),
+				// BackgroundColor = new Color(theme.Colors.PrimaryBackgroundColor, 128),
 				MinimumSize = new Vector2(275, 140),
 			};
 

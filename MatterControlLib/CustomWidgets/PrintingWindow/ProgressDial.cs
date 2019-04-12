@@ -95,10 +95,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public double CompletedRatio
 		{
-			get { return completedRatio; }
-			set
-			{
-				if (completedRatio != value)
+            get
+            {
+                return completedRatio;
+            }
+
+            set
+            {
+                if (completedRatio != value)
 				{
 					completedRatio = Math.Min(value, 1);
 
@@ -115,25 +119,33 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						percentCompleteWidget.Text = $"{Math.Min(99.9, percentComplete):0.0}%";
 					}
 				}
-			}
+            }
 		}
 
 		public double LayerCompletedRatio
 		{
-			get { return layerCompletedRatio; }
-			set
-			{
-				if (layerCompletedRatio != value)
+            get
+            {
+                return layerCompletedRatio;
+            }
+
+            set
+            {
+                if (layerCompletedRatio != value)
 				{
 					layerCompletedRatio = value;
 					this.Invalidate();
 				}
-			}
+            }
 		}
 
 		public int LayerIndex
 		{
-			get { return layerCount; }
+			get
+			{
+				return layerCount;
+			}
+
 			set
 			{
 				if (layerCount != value)
@@ -145,7 +157,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					}
 					else
 					{
-						layerCountWidget.Text = "Layer".Localize() + " " + (layerCount+1);
+						layerCountWidget.Text = "Layer".Localize() + " " + (layerCount + 1);
 					}
 				}
 			}

@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using global::MatterControl.Printing;
+	using Markdig.Agg;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
@@ -495,6 +496,14 @@ namespace MatterHackers.MatterControl
 				if (!string.IsNullOrEmpty(OemSettings.Instance.AffiliateCode)
 					&& targetUri.Contains("matterhackers.com"))
 				{
+					string internalLink = "";
+					// if we have a trailing internal link
+					if (targetUri.Contains("#"))
+					{
+						internalLink = targetUri.Substring(targetUri.IndexOf("#"));
+						targetUri = targetUri.Substring(0, targetUri.Length - internalLink.Length);
+					}
+
 					if (targetUri.Contains("?"))
 					{
 						targetUri += $"&aff={OemSettings.Instance.AffiliateCode}";
@@ -503,8 +512,9 @@ namespace MatterHackers.MatterControl
 					{
 						targetUri += $"?aff={OemSettings.Instance.AffiliateCode}";
 					}
-
+					targetUri += internalLink;
 				}
+
 				Process.Start(targetUri);
 			});
 		}
@@ -2743,18 +2753,90 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_PrintFinished(object sender, string e)
 		{
-			// TODO: show a long running task asking about print feedback and up-selling more materials
-			// Ask about the print, offer help if needed.
-			// Let us know how your print came out.
+			if (sender is PrinterConnection printerConnection)
+			{
+				// show a long running task asking about print feedback and up-selling more materials
+				// Ask about the print, offer help if needed.
+				// Let us know how your print came out.
+				string markdownText = @"Shop supplies and accessories:
+- [Filament](https://www.matterhackers.com/store/c/3d-printer-filament)
+- [Bed Adhesives](https://www.matterhackers.com/store/c/3d-printer-adhesive)
+- [Digital Designs](https://www.matterhackers.com/store/c/digital-designs)
+
+Support and tutorials:
+- [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
+- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
+- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
+- [User Forum](https://forums.matterhackers.com/recent)";
+
+				var time = Stopwatch.StartNew();
+				ShowNotification("Print Completed".Localize(), markdownText, () =>
+				{
+					// leave the message on screen for 3 minutes or until another print starts
+					return !printerConnection.Printing
+							&& time.ElapsedMilliseconds < 3 * 60 * 1000;
+				});
+			}
 		}
 
 		public void Connection_PrintCanceled(object sender, EventArgs e)
 		{
-			// TODO: show a long running task showing support options 
-			// add links to forum, articles and documentation
-			// support: "https://www.matterhackers.com/support#mattercontrol"
-			// documentation: "https://www.matterhackers.com/mattercontrol/support"
-			// forum: "https://forums.matterhackers.com/recent"
+			if (sender is PrinterConnection printerConnection)
+			{
+				// show a long running task showing support options
+				// add links to forum, articles and documentation
+				// support: "https://www.matterhackers.com/support#mattercontrol"
+				// documentation: "https://www.matterhackers.com/mattercontrol/support"
+				// forum: "https://forums.matterhackers.com/recent"
+
+				string markdownText = @"Looks like you canceled this print. If you need help, here are some links that might be useful.
+- [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
+- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
+- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
+- [User Forum](https://forums.matterhackers.com/recent)";
+
+				var time = Stopwatch.StartNew();
+				ShowNotification("Print Canceled".Localize(), markdownText, () =>
+				{
+					// leave the message on screen for 3 minutes or until another print starts
+					return !printerConnection.Printing
+						&& time.ElapsedMilliseconds < 3 * 60 * 1000;
+				});
+			}
+		}
+
+		private void ShowNotification(string title, string markdownText, Func<bool> keepShowing)
+		{
+			if (!string.IsNullOrEmpty(markdownText))
+			{
+				bool stopped = false;
+				_ = Tasks.Execute(title,
+					null,
+					(reporter, cancellationToken) =>
+					{
+						var progressStatus = new ProgressStatus();
+
+						while (keepShowing() && !stopped)
+						{
+							Thread.Sleep(200);
+						}
+
+						return Task.CompletedTask;
+					},
+					taskActions: new RunningTaskOptions()
+					{
+						ExpansionSerializationKey = $"{title}_expanded",
+						StopAction = (abortCancel) => UiThread.RunOnIdle(() => stopped = true),
+						StopToolTip = "Dismiss".Localize(),
+						RichProgressWidget = () => new MarkdownWidget(Theme)
+						{
+							Markdown = markdownText,
+							HAnchor = HAnchor.Stretch,
+							VAnchor = VAnchor.Fit,
+							Margin = new BorderDouble(5),
+						},
+					});
+			}
 		}
 
 		public void ConnectToPrinter(PrinterConfig printer)
@@ -2817,6 +2899,7 @@ namespace MatterHackers.MatterControl
 		public class StartupTask
 		{
 			public string Title { get; set; }
+
 			public int Priority { get; set; }
 			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
 		}
