@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					newValue += ",";
 				}
-				newValue += $"{offset.X}x{offset.Y}x{offset.Z}";
+				newValue += $"{offset.X:0.###}x{offset.Y:0.###}x{offset.Z:0.###}";
 				first = false;
 			}
 

@@ -86,9 +86,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.SetValue(
 					string.Format("{0},{1},{2}",
-						xEditWidget.ActuallNumberEdit.Value.ToString(),
-						yEditWidget.ActuallNumberEdit.Value.ToString(),
-						zEditWidget.ActuallNumberEdit.Value.ToString()),
+						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.SetValue(
 					string.Format("{0},{1},{2}",
-					xEditWidget.ActuallNumberEdit.Value.ToString(),
-					yEditWidget.ActuallNumberEdit.Value.ToString(),
-					zEditWidget.ActuallNumberEdit.Value.ToString()),
+					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
@@ -128,9 +128,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.SetValue(
 					string.Format("{0},{1},{2}",
-					xEditWidget.ActuallNumberEdit.Value.ToString(),
-					yEditWidget.ActuallNumberEdit.Value.ToString(),
-					zEditWidget.ActuallNumberEdit.Value.ToString()),
+					xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
+					zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
 					userInitiated: true);
 			};
 
