@@ -85,9 +85,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					GLHelper.Render(
 						sceneContext.Mesh,
-						this.LookingDownOnBed ? bedColor : underBedColor, 
-						RenderTypes.Shaded, 
-						world.ModelviewMatrix);
+						this.LookingDownOnBed ? Color.Red : underBedColor,
+						RenderTypes.Shaded,
+						world.ModelviewMatrix,
+						blendTexture: !this.LookingDownOnBed);
 
 					if (sceneContext.PrinterShape != null)
 					{
