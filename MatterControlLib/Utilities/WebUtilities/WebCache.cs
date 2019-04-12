@@ -27,15 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
@@ -54,6 +55,8 @@ namespace MatterHackers.MatterControl
 				Directory.CreateDirectory(value);
 			}
 		}
+
+		private static HashSet<string> savedImages = new HashSet<string>();
 
 		/// <summary>
 		/// Download an image from the web into the specified ImageBuffer
@@ -75,6 +78,7 @@ namespace MatterHackers.MatterControl
 				{
 				}
 			}
+
 			WebClient client = new WebClient();
 			client.DownloadDataCompleted += (sender, e) =>
 			{
@@ -83,7 +87,13 @@ namespace MatterHackers.MatterControl
 					Stream stream = new MemoryStream(e.Result);
 
 					LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, stream);
-					Task.Run(() => AggContext.ImageIO.SaveImageData(imageFileName, imageToLoadInto));
+					if (imageToLoadInto.Width > 0
+						&& imageToLoadInto.Height > 0
+						&& !savedImages.Contains(imageFileName))
+					{
+						savedImages.Add(imageFileName);
+						AggContext.ImageIO.SaveImageData(imageFileName, imageToLoadInto);
+					}
 				}
 				catch
 				{
@@ -256,12 +266,9 @@ namespace MatterHackers.MatterControl
 				}
 
 				double finalScale = imageToLoadInto.Width / (double)unScaledImage.Width;
-				UiThread.RunOnIdle(() =>
-				{
-					imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
-					imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
-					imageToLoadInto.MarkImageChanged();
-				});
+				imageToLoadInto.Allocate(imageToLoadInto.Width, (int)(unScaledImage.Height * finalScale), imageToLoadInto.Width * (imageToLoadInto.BitDepth / 8), imageToLoadInto.BitDepth);
+				imageToLoadInto.NewGraphics2D().Render(unScaledImage, 0, 0, 0, finalScale, finalScale);
+				imageToLoadInto.MarkImageChanged();
 			}
 			else
 			{
