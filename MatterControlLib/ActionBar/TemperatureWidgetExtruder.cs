@@ -278,6 +278,19 @@ namespace MatterHackers.MatterControl.ActionBar
 			alwaysEnabled.Add(temperatureRow);
 			alwaysEnabled.Add(hotendRow);
 
+			if (hotendIndex == 1)
+			{
+				// add the extrusion movement speed multiplier
+				var extruderMultiplier = SliceSettingsTabView.CreateItemRow(PrinterSettings.SettingsData[SettingsKey.t1_extrusion_move_speed_multiplier],
+					settingsContext,
+					printer,
+					menuTheme,
+					ref tabIndex,
+					allUiFields);
+				container.AddChild(extruderMultiplier);
+				alwaysEnabled.Add(extruderMultiplier);
+			}
+
 			// add in the temp graph
 			var graph = new DataViewGraph()
 			{

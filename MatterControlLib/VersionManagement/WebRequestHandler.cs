@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 	{
 		protected Dictionary<string, string> requestValues;
 		protected string uri;
+		private static object locker = new object();
 
 		public WebRequestBase()
 		{
@@ -63,7 +64,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public event EventHandler<ResponseType> RequestSucceeded;
 
-		public event EventHandler<ResponseType> CacheMiss;
+		public event EventHandler<ResponseType> ReloadRequest;
+
 		public static void Request(string requestUrl, string[] requestStringPairs)
 		{
 			WebRequestBase<ResponseType> tempRequest = new WebRequestBase<ResponseType>();
@@ -103,7 +105,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			});
 		}
 
-		//This gets called after failure or success
+		// This gets called after failure or success
 		protected void OnRequestComplete()
 		{
 			RequestComplete?.Invoke(this, null);
@@ -128,7 +130,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			ResponseType cacheResponse = null;
 
 			if (longHash != 0
-				&& CacheMiss != null)
+				&& ReloadRequest != null)
 			{
 				if (File.Exists(cacheFileName))
 				{
@@ -177,20 +179,24 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 			if (responseItem != null)
 			{
-				if (CacheMiss != null
+				if (ReloadRequest != null
 					&& longHash != 0)
 				{
 					if (cacheResponse == null || !cacheResponse.Equals(responseItem))
 					{
-						File.WriteAllText(cacheFileName, requestManager.LastResponse);
+						lock (locker)
+						{
+							File.WriteAllText(cacheFileName, requestManager.LastResponse);
+						}
+
 						if (cacheResponse != null)
 						{
 							// we already sent back the succeeded response, send a cache miss
-							CacheMiss(this, responseItem);
+							ReloadRequest(this, responseItem);
 						}
 						else
 						{
-							// send back the succeeded response 
+							// send back the succeeded response
 							OnRequestSucceeded(responseItem);
 						}
 					}
@@ -212,12 +218,12 @@ namespace MatterHackers.MatterControl.VersionManagement
 	/// <summary>
 	/// Provides a WebReqeustBase implementation that allows the caller to specify the serialization object used by the WebRequestBase http post
 	/// </summary>
-	/// <typeparam name="RequestType">The type which will be passed to the Request method, stored in a local instance and serialized for the http post</typeparam>
-	public class WebRequest2<RequestType> : WebRequestBase where RequestType : class
+	/// <typeparam name="TRequestType">The type which will be passed to the Request method, stored in a local instance and serialized for the http post</typeparam>
+	public class WebRequest2<TRequestType> : WebRequestBase where TRequestType : class
 	{
-		private RequestType localRequestValues;
+		private TRequestType localRequestValues;
 
-		public void Request(string requestUrl, RequestType requestValues)
+		public void Request(string requestUrl, TRequestType requestValues)
 		{
 			this.uri = requestUrl;
 			localRequestValues = requestValues;
@@ -235,6 +241,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 	{
 		protected Dictionary<string, string> requestValues;
 		protected string uri;
+
 		public WebRequestBase()
 		{
 			requestValues = new Dictionary<string, string>();
@@ -251,6 +258,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public event EventHandler<ResponseErrorEventArgs> RequestFailed;
 
 		public event EventHandler RequestSucceeded;
+
 		public static void Request(string requestUrl, string[] requestStringPairs)
 		{
 			WebRequestBase tempRequest = new WebRequestBase();
