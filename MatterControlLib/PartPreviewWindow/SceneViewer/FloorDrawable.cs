@@ -358,6 +358,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
 
+			if (hotendIndex == 2)
+			{
+				hotendTitle = "Nozzles ".Localize() + "1 & 2";
+			}
+
 			var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
 			var printerBounds = stringPrinter.GetBounds();
 
