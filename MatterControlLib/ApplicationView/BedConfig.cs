@@ -436,12 +436,6 @@ namespace MatterHackers.MatterControl
 		private Mesh _bedMesh;
 
 		[JsonIgnore]
-		public ImageBuffer ActiveBedImage { get; private set; }
-
-		[JsonIgnore]
-		public ImageBuffer GeneratedBedImage { get; private set; }
-
-		[JsonIgnore]
 		public Mesh Mesh
 		{
 			get
@@ -449,9 +443,7 @@ namespace MatterHackers.MatterControl
 				if (_bedMesh == null)
 				{
 					// Load bed and build volume meshes
-					(_bedMesh, _buildVolumeMesh, this.ActiveBedImage) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
-
-					this.GeneratedBedImage = new ImageBuffer(this.ActiveBedImage);
+					(_bedMesh, _buildVolumeMesh) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
 
 					Task.Run(() =>
 					{

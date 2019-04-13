@@ -47,9 +47,6 @@ namespace MatterHackers.MatterControl
 	{
 		private static ImageBuffer watermarkImage = null;
 
-		private static Color bedBaseColor = new Color(245, 245, 255);
-		private static Color bedMarkingsColor = Color.Black;
-
 		public static ImageBuffer CreatePrintBedImage(PrinterConfig printer)
 		{
 			ImageBuffer bedImage;
@@ -71,14 +68,17 @@ namespace MatterHackers.MatterControl
 			return bedImage;
 		}
 
-		public static (Mesh bed, Mesh volume, ImageBuffer bedImage) CreatePrintBedAndVolume(PrinterConfig printer)
+		public static (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
 			Mesh printerBed = null;
 			Mesh buildVolume = null;
 
 			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
-			ImageBuffer bedplateImage = CreatePrintBedImage(printer);
+			// Temporarily assign a placeholder image as the mesh texture. This will be replaced with a themed image by the view
+			var placeHolderImage = new ImageBuffer(5, 5);
+			var graphics = placeHolderImage.NewGraphics2D();
+			graphics.Clear(Color.Gray.WithAlpha(40));
 
 			switch (printer.Bed.BedShape)
 			{
@@ -90,14 +90,13 @@ namespace MatterHackers.MatterControl
 						{
 							buildVolume.Vertices[i] = buildVolume.Vertices[i] + new Vector3Float(0, 0, displayVolumeToBuild.Z / 2);
 						}
+
 						var bspTree = FaceBspTree.Create(buildVolume);
 						buildVolume.FaceBspTree = bspTree;
 					}
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
-					{
-						printerBed.PlaceTextureOnFaces(0, bedplateImage);
-					}
+					printerBed.PlaceTextureOnFaces(0, placeHolderImage);
 					break;
 
 				case BedShape.Circular:
@@ -108,7 +107,7 @@ namespace MatterHackers.MatterControl
 						}
 
 						printerBed = VertexSourceToMesh.Extrude(new Ellipse(new Vector2(), displayVolumeToBuild.X / 2, displayVolumeToBuild.Y / 2), 1.8);
-						printerBed.PlaceTextureOnFaces(0, bedplateImage);
+						printerBed.PlaceTextureOnFaces(0, placeHolderImage);
 					}
 					break;
 
@@ -130,7 +129,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			return (printerBed, buildVolume, bedplateImage);
+			return (printerBed, buildVolume);
 		}
 
 		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)
@@ -150,9 +149,12 @@ namespace MatterHackers.MatterControl
 				skip = 5;
 			}
 
+			var theme = AppContext.Theme;
+			var bedMarkingsColor = theme.BedGridColors.Line;
+
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
+			graphics2D.Clear(theme.BedColor);
 
 			var originPixels = new Vector2();
 			{
@@ -189,7 +191,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Ellipse bedCircle = new Ellipse(bedplateImage.Width/2, bedplateImage.Height/2, bedplateImage.Width/2, bedplateImage.Height/2);
-			graphics2D.Render(bedCircle, bedBaseColor);
+			graphics2D.Render(bedCircle, theme.BedColor);
 			//graphics2D.Clear(bedBaseColor);
 
 			{
@@ -263,9 +265,13 @@ namespace MatterHackers.MatterControl
 				skip = 5;
 			}
 
+			var theme = AppContext.Theme;
+			var bedMarkingsColor = theme.BedGridColors.Line;
+
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
+			graphics2D.Clear(theme.BedColor);
+
 
 			{
 				double lineDist = bedplateImage.Width / (displayVolumeToBuild.X / divisor);
