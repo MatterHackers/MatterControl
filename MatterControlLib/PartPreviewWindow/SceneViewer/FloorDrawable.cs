@@ -117,16 +117,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				GL.Disable(EnableCap.Lighting);
 
+				// Draw grid background with active BedColor
 				GL.Color4(theme.BedColor);
-
 				GL.Begin(BeginMode.TriangleStrip);
+				GL.Vertex3(-width, -width, 0);
 				GL.Vertex3(-width, width, 0);
-				GL.Vertex3(width, width, 0);
-				GL.Vertex3(-width, -width, 0);
-
-				GL.Vertex3(-width, -width, 0);
-				GL.Vertex3(width, width, 0);
 				GL.Vertex3(width, -width, 0);
+				GL.Vertex3(width, width, 0);
 				GL.End();
 
 				GL.Disable(EnableCap.Texture2D);
