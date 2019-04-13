@@ -38,13 +38,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class FloorDrawable : IDrawable
 	{
-		private GridColors gridColors;
 		private ISceneContext sceneContext;
 		private InteractionLayer.EditorType editorType;
 		private ThemeConfig theme;
 		private Color buildVolumeColor;
-		private Color bedColor;
-		private Color underBedColor;
 
 		public FloorDrawable(InteractionLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
@@ -53,16 +50,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.editorType = editorType;
 			this.theme = theme;
 
-			bedColor = theme.ResolveColor(Color.White, theme.BackgroundColor.WithAlpha(111));
-			underBedColor = new Color(bedColor, bedColor.alpha / 4);
-
-			gridColors = new GridColors()
 			{
-				Gray = theme.ResolveColor(theme.BackgroundColor, theme.GetBorderColor((theme.IsDarkTheme ? 35 : 55))),
-				Red = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Red, (theme.IsDarkTheme ? 105 : 170))),
-				Green = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Green, (theme.IsDarkTheme ? 105 : 170))),
-				Blue = theme.ResolveColor(theme.BackgroundColor, new Color(Color.Blue, 195))
-			};
 		}
 
 		public bool Enabled { get; set; }
@@ -85,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					GLHelper.Render(
 						sceneContext.Mesh,
-						this.LookingDownOnBed ? Color.Red : underBedColor,
+						theme.UnderBedColor,
 						RenderTypes.Shaded,
 						world.ModelviewMatrix,
 						blendTexture: !this.LookingDownOnBed);
@@ -140,12 +128,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private class GridColors
 		{
-			public Color Red { get; set; }
-			public Color Green { get; set; }
-			public Color Blue { get; set; }
-			public Color Gray { get; set; }
 		}
 	}
 }

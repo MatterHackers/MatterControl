@@ -202,6 +202,32 @@ namespace MatterHackers.MatterControl
 		public Color BorderColor { get; set; }
 		public Color BorderColor40 { get; set; }
 		public Color BorderColor20 { get; set; }
+
+		internal void EnsureDefaults()
+		{
+			if (this.BedColor == Color.Transparent)
+			{
+				this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
+			}
+
+			if (this.UnderBedColor == Color.Transparent)
+			{
+				this.UnderBedColor = new Color(this.BedColor, this.BedColor.alpha / 4);
+			}
+
+			if (this.BedGridColors == null
+				|| (this.BedGridColors.Line == Color.Transparent && this.BedGridColors.Red == Color.Transparent))
+			{
+				this.BedGridColors = new GridColors()
+				{
+					Line = Color.Black,
+					Red = this.ResolveColor(this.BackgroundColor, new Color(Color.Red, this.IsDarkTheme ? 105 : 170)),
+					Green = this.ResolveColor(this.BackgroundColor, new Color(Color.Green, this.IsDarkTheme ? 105 : 170)),
+					Blue = this.ResolveColor(this.BackgroundColor, new Color(Color.Blue, 195))
+				};
+			}
+		}
+
 		public Color RowBorder { get; set; }
 
 		public DropListStyle DropList { get; set; } = new DropListStyle();
@@ -212,6 +238,14 @@ namespace MatterHackers.MatterControl
 		public Color PrimaryAccentColor { get; set; }
 		public Color SectionBackgroundColor { get; set; }
 		public Color PopupBorderColor { get; set; }
+
+		public Color BedColor { get; set; }
+
+		public Color UnderBedColor { get; set; }
+
+		public Color BedLabelColor { get; set; }
+
+		public GridColors BedGridColors { get; set; }
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -532,5 +566,13 @@ namespace MatterHackers.MatterControl
 		public Color MaterialPreset { get; set; } = Color.Orange;
 		public Color QualityPreset { get; set; } = Color.Yellow;
 		public Color UserOverride { get; set; } = new Color(68, 95, 220, 150);
+	}
+
+	public class GridColors
+	{
+		public Color Red { get; set; }
+		public Color Green { get; set; }
+		public Color Blue { get; set; }
+		public Color Line { get; set; }
 	}
 }

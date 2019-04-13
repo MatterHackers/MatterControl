@@ -47,9 +47,6 @@ namespace MatterHackers.MatterControl
 	{
 		private static ImageBuffer watermarkImage = null;
 
-		private static Color bedBaseColor = new Color(245, 245, 255);
-		private static Color bedMarkingsColor = Color.Black;
-
 		public static ImageBuffer CreatePrintBedImage(PrinterConfig printer)
 		{
 			ImageBuffer bedImage;
@@ -148,9 +145,12 @@ namespace MatterHackers.MatterControl
 				skip = 5;
 			}
 
+			var theme = AppContext.Theme;
+			var bedMarkingsColor = theme.BedGridColors.Line;
+
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
+			graphics2D.Clear(theme.BedColor);
 
 			var originPixels = new Vector2();
 			{
@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			Ellipse bedCircle = new Ellipse(bedplateImage.Width/2, bedplateImage.Height/2, bedplateImage.Width/2, bedplateImage.Height/2);
-			graphics2D.Render(bedCircle, bedBaseColor);
+			graphics2D.Render(bedCircle, theme.BedColor);
 			//graphics2D.Clear(bedBaseColor);
 
 			{
@@ -261,9 +261,13 @@ namespace MatterHackers.MatterControl
 				skip = 5;
 			}
 
+			var theme = AppContext.Theme;
+			var bedMarkingsColor = theme.BedGridColors.Line;
+
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
-			graphics2D.Clear(bedBaseColor);
+			graphics2D.Clear(theme.BedColor);
+
 
 			{
 				double lineDist = bedplateImage.Width / (displayVolumeToBuild.X / divisor);
