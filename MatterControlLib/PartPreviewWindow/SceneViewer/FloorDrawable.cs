@@ -91,11 +91,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				GL.Disable(EnableCap.Texture2D);
-				GL.Disable(EnableCap.Blend);
+				int width = 600;
+
 				GL.Disable(EnableCap.Lighting);
 
-				int width = 600;
+				GL.Color4(theme.BedColor);
+
+				GL.Begin(BeginMode.TriangleStrip);
+				GL.Vertex3(-width, width, 0);
+				GL.Vertex3(width, width, 0);
+				GL.Vertex3(-width, -width, 0);
+
+				GL.Vertex3(-width, -width, 0);
+				GL.Vertex3(width, width, 0);
+				GL.Vertex3(width, -width, 0);
+				GL.End();
+
+				GL.Disable(EnableCap.Texture2D);
+				GL.Disable(EnableCap.Blend);
 
 				GL.Begin(BeginMode.Lines);
 				{
