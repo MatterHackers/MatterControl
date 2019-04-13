@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class FloorDrawable : IDrawable
+	public class FloorDrawable : IDrawable, IDisposable
 	{
 		private ISceneContext sceneContext;
 		private InteractionLayer.EditorType editorType;
@@ -66,7 +66,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.printer = sceneContext.Printer;
 
+			// Register listeners
+			if (printer != null)
 			{
+				printer.Settings.SettingChanged += this.Settings_SettingChanged;
+			}
 		}
 
 		public bool Enabled { get; set; }
@@ -160,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void UpdateFloorImage(IObject3D selectedItem)
+		private void UpdateFloorImage(IObject3D selectedItem, bool clearToPlaceholderImage = true)
 		{
 			// Early exit for invalid cases
 			if (loadingTextures
@@ -187,11 +191,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Task.Run(() =>
 				{
-					var placeHolderImage = new ImageBuffer(5, 5);
-					var graphics = placeHolderImage.NewGraphics2D();
-					graphics.Clear(theme.BedColor);
+					// On first draw we might take a few 100ms to generate textures and this
+					// ensures we get a theme colored bed appearing on screen before out main
+					// textures are finished generating
+					if (clearToPlaceholderImage)
+					{
+						var placeHolderImage = new ImageBuffer(5, 5);
+						var graphics = placeHolderImage.NewGraphics2D();
+						graphics.Clear(theme.BedColor);
 
-					SetActiveTexture(placeHolderImage);
+						SetActiveTexture(placeHolderImage);
+					}
 
 					try
 					{
@@ -218,6 +228,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					loadingTextures = false;
 				});
 
+			}
+		}
+
+		private void Settings_SettingChanged(object sender, StringEventArgs e)
+		{
+			string settingsKey = e.Data;
+
+			// Invalidate bed textures on related settings change
+			if (settingsKey == SettingsKey.nozzle1_inset
+				|| settingsKey == SettingsKey.nozzle2_inset
+				|| settingsKey == SettingsKey.bed_size
+				|| settingsKey == SettingsKey.print_center)
+			{
+				activeBedHotendClippingImage = -1;
+
+				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
+				bedTextures = null;
+				this.UpdateFloorImage(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
 			}
 		}
 
@@ -312,7 +340,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			graphics.Render(new Stroke(targetRect, 1), theme.PrimaryAccentColor);
 		}
 
+		public void Dispose()
 		{
+			// Unregister listeners
+			sceneContext.Printer.Settings.SettingChanged -= this.Settings_SettingChanged;
 		}
 	}
 }
