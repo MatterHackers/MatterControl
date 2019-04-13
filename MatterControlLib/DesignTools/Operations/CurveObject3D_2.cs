@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
-		// this needs to serialize but not be editable
-		public Vector3 rotationOffset;
+		// this needs to serialize but not be editable (so public but not a get set)
+		public Vector3 RotationOffset;
 
 		public CurveObject3D_2()
 		{
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					this.Translate(-rotationOffset);
+					this.Translate(-RotationOffset);
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
 
@@ -128,12 +128,22 @@ namespace MatterHackers.MatterControl.DesignTools
 						var radius = Diameter / 2;
 						var circumference = MathHelper.Tau * radius;
 						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
+						double numRotations = aabb.XSize / circumference;
+						double numberOfCuts = numRotations * MinSidesPerRotation;
+						double cutSize = aabb.XSize / numberOfCuts;
+						double cutPosition = aabb.MinXYZ.X;
+						var cuts = new List<double>();
+						for (int i = 0; i < numberOfCuts; i++)
+						{
+							cuts.Add(cutPosition);
+							cutPosition += cutSize;
+						}
 
-						rotationOffset = rotationCenter;
+						RotationOffset = rotationCenter;
 						if (!BendCcw)
 						{
 							// fix the stored center so we draw correctly
-							rotationOffset.Y = aabb.MinXYZ.Y - radius;
+							RotationOffset.Y = aabb.MinXYZ.Y - radius;
 						}
 
 						foreach (var sourceItem in SourceContainer.VisibleMeshes())
@@ -143,9 +153,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
 							// split the mesh along the x axis
-							double numRotations = aabb.XSize / circumference;
-							double numberOfCuts = numRotations * MinSidesPerRotation;
-							//SplitMeshAlongX(transformedMesh, numberOfCuts);
+							SplitMeshAlongX(transformedMesh, cuts);
 
 							if (!BendCcw)
 							{
@@ -171,7 +179,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 
 							// transform back into item local space
-							transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationOffset) * itemMatrix.Inverted);
+							transformedMesh.Transform(Matrix4X4.CreateTranslation(-RotationOffset) * itemMatrix.Inverted);
 
 							transformedMesh.MarkAsChanged();
 							transformedMesh.CalculateNormals();
@@ -186,21 +194,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// set the matrix back
 						Matrix = currentMatrix;
-						this.Translate(new Vector3(rotationOffset));
+						this.Translate(new Vector3(RotationOffset));
 						SourceContainer.Visible = false;
 						rebuildLocks.Dispose();
 					}
+
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 					return Task.CompletedTask;
 				});
 		}
 
-		private Mesh SplitMeshAlongX(Mesh mesh, List<double> xCuts)
+		public static Mesh SplitMeshAlongX(Mesh mesh, List<double> cuts)
 		{
 			var result = new Mesh();
 			var splitSections = new List<Mesh>();
-			for(int i = 0; i< xCuts.Count; i++)
+			for (int i = 0; i < cuts.Count; i++)
 			{
 				// add a mesh to hold all the polygons that need to be split for each split section
 				splitSections.Add(new Mesh());
@@ -208,18 +217,32 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var bounds = mesh.GetAxisAlignedBoundingBox();
 
+			var vertices = mesh.Vertices;
+
 			// add the face to every split section it crosses a side of
 			foreach (var face in mesh.Faces)
 			{
 				var faceBounds = face.GetAxisAlignedBoundingBox(mesh);
+				for (int i = 0; i < cuts.Count; i++)
+				{
+					// if the face right >= cuts[0] (left)
+					// and face left <= cuts[1] (right)
+					if (faceBounds.MaxXYZ.X <= cuts[i]
+						&& faceBounds.MinXYZ.X >= cuts[i + 1])
+					{
+						var subMesh = splitSections[i];
+						subMesh.CreateFace(new Vector3Float[] { vertices[face.v0], vertices[face.v1], vertices[face.v2] });
+					}
+				}
 			}
 
 			// foreach split section, cut all the polygons that cross the sides of it
 			foreach (var sectionMesh in splitSections)
 			{
 				// find what cut needs to be done to each face
-				// add the cut faces back to result
 			}
+
+			// union all the faces back into results
 
 			// clean the result
 
