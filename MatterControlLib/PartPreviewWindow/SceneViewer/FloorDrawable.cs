@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (sceneContext.PrinterShape != null)
 					{
-						GLHelper.Render(sceneContext.PrinterShape, bedColor, RenderTypes.Shaded, world.ModelviewMatrix);
+						GLHelper.Render(sceneContext.PrinterShape, theme.BedColor, RenderTypes.Shaded, world.ModelviewMatrix);
 					}
 				}
 

@@ -42,6 +42,14 @@
       "LightTextColor": "#9aabb1"
     }
   },
+  "BedColor": "#EFE8D7",
+  "UnderBedColor": "#DBD5C522",
+  "BedGridColors": {
+    "Red": "#7F0000",
+    "Green": "#267F00",
+    "Blue": "#0026FF",
+    "Line": "#B5B0A4"
+  },
   "LightTextColor": "#00000000",
   "BorderColor": "#657B83",
   "BorderColor40": "#D3C492",
