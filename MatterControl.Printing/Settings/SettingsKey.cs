@@ -256,5 +256,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
+		public const string nozzle1_inset = nameof(nozzle1_inset);
+		public const string nozzle2_inset = nameof(nozzle2_inset);
 	}
 }

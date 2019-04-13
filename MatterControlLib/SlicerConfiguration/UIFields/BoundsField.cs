@@ -27,32 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-
-namespace MatterHackers.MeshVisualizer
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public static class MaterialRendering
+	public class BoundsField : Vector4Field
 	{
-		/// <summary>
-		/// Get the color for a given extruder, falling back to extruder 0 color on -1 (unassigned)
-		/// </summary>
-		/// <param name="materialIndex">The extruder/material index to resolve</param>
-		/// <returns>The color for the given extruder</returns>
-		public static Color Color(int materialIndex)
+		public BoundsField(ThemeConfig theme)
+			: base (theme)
 		{
-			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
-		}
-
-		/// <summary>
-		/// Get the color for a given extruder, falling back to the supplied color on -1 (unassigned)
-		/// </summary>
-		/// <param name="materialIndex">The extruder/material index to resolve</param>
-		/// <param name="unassignedColor">The color to use when the extruder/material has not been assigned</param>
-		/// <returns>The color for the given extruder</returns>
-		public static Color Color(int materialIndex, Color unassignedColor)
-		{
-			return (materialIndex == -1) ? unassignedColor : ColorF.FromHSL(materialIndex / 10.0, .99, .49).ToColor();
+			labels = new[] { 'L', 'B', 'R', 'T' };
 		}
 	}
 }

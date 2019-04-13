@@ -66,6 +66,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void OnSettingChanged(string slicerConfigName)
 		{
+			if (slicerConfigName == SettingsKey.nozzle1_inset
+				|| slicerConfigName == SettingsKey.nozzle2_inset)
+			{
+				this.ResetHotendBounds();
+			}
+
 			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
@@ -98,46 +104,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Empty = new PrinterSettings() { ID = "EmptyProfile" };
 			Empty.UserLayer[SettingsKey.printer_name] = "Empty Printer";
 		}
-
-		//static SettingsOrganizerValidateAgainstJson()
-		//{
-		//	string propertiesFileContents = AggContext.StaticData.ReadAllText(Path.Combine("SliceSettings", "Properties.json"));
-		//	var propertiesJsonData = JsonConvert.DeserializeObject<List<SliceSettingData>>(propertiesFileContents);
-
-		//	SettingsData = new Dictionary<string, SliceSettingData>();
-
-		//	foreach (var settingsData in propertiesJsonData)
-		//	{
-		//		SettingsData.Add(settingsData.SlicerConfigName, settingsData);
-		//	}
-
-		//	var SettingsData2 = new Dictionary<string, SliceSettingData>();
-
-		//	foreach (var settingsData in Gah.GetSettings())
-		//	{
-		//		SettingsData2.Add(settingsData.SlicerConfigName, settingsData);
-		//	}
-
-		//	var i = 0;
-
-		//	foreach (var key in SettingsData.Keys)
-		//	{
-		//		var itemA = SettingsData[key];
-		//		var itemSA = JsonConvert.SerializeObject(itemA, Formatting.Indented);
-
-		//		var itemB = SettingsData2[key];
-		//		var itemSB = JsonConvert.SerializeObject(itemB, Formatting.Indented);
-
-		//		if (itemSA != itemSB)
-		//		{
-		//			File.WriteAllText($@"c:\temp\sa{i}.txt", itemSA);
-		//			File.WriteAllText($@"c:\temp\sb{i}.txt", itemSB);
-
-		//			i += 1;
-		//			Console.WriteLine();
-		//		}
-		//	}
-		//}
 
 		public PrinterSettings()
 		{
@@ -354,6 +320,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
+		// Properties
+
 		[JsonIgnore]
 		public string ActiveQualityKey
 		{
@@ -381,6 +349,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 		}
+
+		[JsonIgnore]
+		public RectangleDouble BedBounds
+		{
+			get
+			{
+				var bedSize = this.GetValue<Vector2>(SettingsKey.bed_size);
+				var printCenter = this.GetValue<Vector2>(SettingsKey.print_center);
+
+				return new RectangleDouble(printCenter.X - bedSize.X / 2,
+					printCenter.Y - bedSize.Y / 2,
+					printCenter.X + bedSize.X / 2,
+					printCenter.Y + bedSize.Y / 2);
+			}
+		}
+
+		private void ResetHotendBounds()
+		{
+			var bounds = this.BedBounds;
+
+			RectangleDouble GetHotendBounds(int index)
+			{
+				string settingsKey = index == 0 ? SettingsKey.nozzle1_inset : SettingsKey.nozzle2_inset;
+				var inset = this.GetValue<Vector4>(settingsKey);
+
+				return new RectangleDouble(
+					bounds.Left + inset.X,
+					bounds.Bottom + inset.Y,
+					bounds.Right - inset.Z,
+					bounds.Top - inset.W);
+			}
+
+			this.HotendBounds = new[]
+			{
+				GetHotendBounds(0),
+				GetHotendBounds(1),
+			};
+		}
+
+		/// <summary>
+		/// Gets the bounds that are accessible for a given hotend
+		/// </summary>
+		public RectangleDouble[] HotendBounds { get; private set; }
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;
@@ -428,12 +439,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			try
 			{
-				return JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
+				var settings = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
+				settings.OnDeserialize();
+
+				return settings;
 			}
 			catch
 			{
 				return null;
 			}
+		}
+
+		private void OnDeserialize()
+		{
+			this.ResetHotendBounds();
 		}
 
 		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
@@ -809,11 +828,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(Vector2))
 			{
-				return (T)(object)(Vector2.Parse(GetValue(settingsKey)));
+				return (T)(object)Vector2.Parse(settingsValue);
 			}
 			else if(typeof(T) == typeof(Vector3))
 			{
-				return (T)(object)(Vector3.Parse(GetValue(settingsKey)));
+				return (T)(object)Vector3.Parse(settingsValue);
+			}
+			else if (typeof(T) == typeof(Vector4))
+			{
+				return (T)(object)Vector4.Parse(settingsValue);
 			}
 			else if (typeof(T) == typeof(double))
 			{

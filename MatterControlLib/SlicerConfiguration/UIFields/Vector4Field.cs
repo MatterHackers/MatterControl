@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,28 +33,33 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class Vector3Field : UIField
+	public class Vector4Field : UIField
 	{
-		public static readonly int VectorXYZEditWidth = (int)(60 * GuiWidget.DeviceScale + .5);
+		public static int VectorXYZWEditWidth = (int)(45 * GuiWidget.DeviceScale + .5);
 
 		private MHNumberEdit xEditWidget;
 		private MHNumberEdit yEditWidget;
 		private MHNumberEdit zEditWidget;
+		private MHNumberEdit wEditWidget;
+
 		private ThemeConfig theme;
 
-		public Vector3Field(ThemeConfig theme)
+		protected char[] labels = new[] { 'X', 'Y', 'Z', 'W' };
+
+		public Vector4Field(ThemeConfig theme)
 		{
 			this.theme = theme;
 		}
 
-		public Vector3 Vector3
+		public Vector4 Vector4
 		{
-			get => new Vector3(xEditWidget.Value, yEditWidget.Value, zEditWidget.Value);
+			get => new Vector4(xEditWidget.Value, yEditWidget.Value, zEditWidget.Value, wEditWidget.Value);
 			set
 			{
 				xEditWidget.Value = value.X;
 				yEditWidget.Value = value.Y;
 				zEditWidget.Value = value.Z;
+				wEditWidget.Value = value.W;
 			}
 		}
 
@@ -62,16 +67,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			string[] xyzStrings = this.Value?.Split(',');
-			if (xyzStrings == null
-				|| xyzStrings.Length != 3)
+			string[] xyzValueStrings = this.Value?.Split(',');
+			if (xyzValueStrings == null
+				|| xyzValueStrings.Length != 4)
 			{
-				xyzStrings = new string[] { "0", "0", "0" };
+				xyzValueStrings = new string[] { "0", "0", "0", "0" };
 			}
 
-			double.TryParse(xyzStrings[0], out double currentXValue);
+			double.TryParse(xyzValueStrings[0], out double currentXValue);
 
-			xEditWidget = new MHNumberEdit(currentXValue, theme, 'X', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			xEditWidget = new MHNumberEdit(currentXValue, theme, labels[0] /* X */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,
@@ -81,19 +86,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			xEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format(
-						"{0},{1},{2}",
-						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format("{0},{1},{2},{3}",
+						xEditWidget.ActuallNumberEdit.Value.ToString(),
+						yEditWidget.ActuallNumberEdit.Value.ToString(),
+						zEditWidget.ActuallNumberEdit.Value.ToString(),
+						wEditWidget.ActuallNumberEdit.Value.ToString()),
 					userInitiated: true);
 			};
 
 			container.AddChild(xEditWidget);
 
-			double.TryParse(xyzStrings[1], out double currentYValue);
+			double.TryParse(xyzValueStrings[1], out double currentYValue);
 
-			yEditWidget = new MHNumberEdit(currentYValue, theme, 'Y', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			yEditWidget = new MHNumberEdit(currentYValue, theme, labels[1] /* Y */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -103,19 +108,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			yEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format(
-						"{0},{1},{2}",
-						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format("{0},{1},{2},{3}",
+						xEditWidget.ActuallNumberEdit.Value.ToString(),
+						yEditWidget.ActuallNumberEdit.Value.ToString(),
+						zEditWidget.ActuallNumberEdit.Value.ToString(),
+						wEditWidget.ActuallNumberEdit.Value.ToString()),
 					userInitiated: true);
 			};
 
 			container.AddChild(yEditWidget);
 
-			double.TryParse(xyzStrings[2], out double currentZValue);
+			double.TryParse(xyzValueStrings[2], out double currentZValue);
 
-			zEditWidget = new MHNumberEdit(currentZValue, theme, 'Z', allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZEditWidth, tabIndex: tabIndex)
+			zEditWidget = new MHNumberEdit(currentZValue, theme, labels[2] /* Z */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex + 1,
@@ -125,26 +130,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			zEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				this.SetValue(
-					string.Format(
-						"{0},{1},{2}",
-						xEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						yEditWidget.ActuallNumberEdit.Value.ToString("0.###"),
-						zEditWidget.ActuallNumberEdit.Value.ToString("0.###")),
+					string.Format("{0},{1},{2},{3}",
+						xEditWidget.ActuallNumberEdit.Value.ToString(),
+						yEditWidget.ActuallNumberEdit.Value.ToString(),
+						zEditWidget.ActuallNumberEdit.Value.ToString(),
+						wEditWidget.ActuallNumberEdit.Value.ToString()),
 					userInitiated: true);
 			};
 
 			container.AddChild(zEditWidget);
+
+			double.TryParse(xyzValueStrings[3], out double currentWValue);
+
+			wEditWidget = new MHNumberEdit(currentZValue, theme, labels[3] /* W */, allowNegatives: true, allowDecimals: true, pixelWidth: VectorXYZWEditWidth, tabIndex: tabIndex)
+			{
+				ToolTipText = this.HelpText,
+				TabIndex = tabIndex + 1,
+				SelectAllOnFocus = true,
+				Margin = theme.ButtonSpacing
+			};
+			wEditWidget.ActuallNumberEdit.EditComplete += (sender, e) =>
+			{
+				this.SetValue(
+					string.Format("{0},{1},{2},{3}",
+						xEditWidget.ActuallNumberEdit.Value.ToString(),
+						yEditWidget.ActuallNumberEdit.Value.ToString(),
+						zEditWidget.ActuallNumberEdit.Value.ToString(),
+						wEditWidget.ActuallNumberEdit.Value.ToString()),
+					userInitiated: true);
+			};
+
+			container.AddChild(wEditWidget);
 
 			this.Content = container;
 		}
 
 		protected override string ConvertValue(string newValue)
 		{
-			// Ensure we have a three value CSV or force to '0,0,0'
+			// Ensure we have a four value CSV or force to '0,0,0,0'
 			string[] xyzwStrings = newValue.Split(',');
-			if (xyzwStrings.Length != 3)
+			if (xyzwStrings.Length != 4)
 			{
-				xyzwStrings = new string[] { "0", "0", "0" };
+				xyzwStrings = new string[] { "0", "0", "0", "0" };
 			}
 
 			// Convert string segments to double, then back to expected CSV string
@@ -159,15 +186,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			string[] xyzStrings = this.Value.Split(',');
-			if (xyzStrings.Length != 3)
+			string[] xyzwStrings = this.Value.Split(',');
+			if (xyzwStrings.Length != 4)
 			{
-				xyzStrings = new string[] { "0", "0", "0" };
+				xyzwStrings = new string[] { "0", "0", "0", "0" };
 			}
 
-			xEditWidget.Text = xyzStrings[0];
-			yEditWidget.Text = xyzStrings[1];
-			zEditWidget.Text = xyzStrings[2];
+			xEditWidget.Text = xyzwStrings[0];
+			yEditWidget.Text = xyzwStrings[1];
+			zEditWidget.Text = xyzwStrings[2];
+			wEditWidget.Text = xyzwStrings[3];
 
 			base.OnValueChanged(fieldChangedEventArgs);
 		}

@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl
 	using System.Linq;
 	using System.Threading;
 	using MatterHackers.Agg;
+	using MatterHackers.Agg.Image;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.Localizations;
@@ -435,15 +436,22 @@ namespace MatterHackers.MatterControl
 		private Mesh _bedMesh;
 
 		[JsonIgnore]
+		public ImageBuffer ActiveBedImage { get; private set; }
+
+		[JsonIgnore]
+		public ImageBuffer GeneratedBedImage { get; private set; }
+
+		[JsonIgnore]
 		public Mesh Mesh
 		{
 			get
 			{
 				if (_bedMesh == null)
 				{
-
 					// Load bed and build volume meshes
-					(_bedMesh, _buildVolumeMesh) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
+					(_bedMesh, _buildVolumeMesh, this.ActiveBedImage) = BedMeshGenerator.CreatePrintBedAndVolume(Printer);
+
+					this.GeneratedBedImage = new ImageBuffer(this.ActiveBedImage);
 
 					Task.Run(() =>
 					{
@@ -504,19 +512,7 @@ namespace MatterHackers.MatterControl
 		public bool EditableScene => this.EditContext?.FreezeGCode != true;
 
 		public string ContentType { get; private set; }
-		public RectangleDouble Bounds
-		{
-			get
-			{
-				var bedSize = Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-				var printCenter = Printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 
-				return new RectangleDouble(printCenter.X - bedSize.X / 2,
-					printCenter.Y - bedSize.Y / 2,
-					printCenter.X + bedSize.X / 2,
-					printCenter.Y + bedSize.Y / 2);
-			}
-		}
 
 		/// <summary>
 		/// Return the axis aligned bounding box of the bed

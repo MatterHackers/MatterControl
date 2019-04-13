@@ -147,6 +147,8 @@ Printer
       Extruders
         extruder_count
         nozzle_diameter
+        nozzle1_inset
+        nozzle2_inset
         extruders_share_temperature
         extruder_offset
   Features

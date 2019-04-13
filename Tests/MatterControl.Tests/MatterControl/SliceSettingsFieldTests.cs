@@ -98,11 +98,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new DoubleField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -128,11 +129,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task PositiveDoubleFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new PositiveDoubleField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -158,11 +160,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new IntField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
@@ -188,11 +191,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task DoubleOrPercentFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new DoubleOrPercentField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -233,11 +237,12 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task IntOrMmFieldTest()
 		{
-			var theme = new ThemeConfig();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
 			var testField = new IntOrMmField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -286,6 +291,7 @@ namespace MatterControl.Tests.MatterControl
 
 			await ValidateAgainstValueMap(
 				field,
+				theme,
 				(f) => (f.Content.Children<DropDownList>().FirstOrDefault() as DropDownList).SelectedLabel,
 				new List<ValueMap>()
 				{
@@ -336,13 +342,13 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task MultilineStringFieldTest()
 		{
-			var theme = new ThemeConfig();
-			theme.RebuildTheme();
-
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+			
 			var testField = new MultilineStringField(theme);
 
 			await ValidateAgainstValueMap(
 				testField,
+				theme,
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
@@ -365,10 +371,104 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void Vector3FieldTest()
+
+
+		[Test]
+		public async Task Vector2FieldTest()
 		{
-			Assert.Fail();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new Vector2Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2", "0.1,0.2"},
+					{"1,2", "1,2"},
+					{",2", "0,2"}, // Empty components should revert to 0s
+					{"x,2", "0,2"}, // Non-numeric components should revert to 0s
+					{"2", "0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
+		[Test]
+		public async Task Vector3FieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new Vector3Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3", "0.1,0.2,0.3"},
+					{"1,2,3", "1,2,3"},
+					{",2,", "0,2,0"}, // Empty components should revert to 0s
+					{"x,2,y", "0,2,0"}, // Non-numeric components should revert to 0s
+					{",2", "0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
+		[Test]
+		public async Task Vector4FieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			Vector4Field.VectorXYZWEditWidth = 50;
+
+			var testField = new Vector4Field(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) => 
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
+					{"1,2,3,4", "1,2,3,4"},
+					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
+					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
+					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
+		}
+
+		[Test]
+		public async Task BoundsFieldTest()
+		{
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var testField = new BoundsField(theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
+					{"1,2,3,4", "1,2,3,4"},
+					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
+					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
+					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
@@ -391,12 +491,6 @@ namespace MatterControl.Tests.MatterControl
 
 		[Test, Ignore("Not Implemented")]
 		public void ReadOnlyTextFieldTest()
-		{
-			Assert.Fail();
-		}
-
-		[Test, Ignore("Not Implemented")]
-		public void Vector2FieldTest()
 		{
 			Assert.Fail();
 		}
@@ -469,18 +563,16 @@ namespace MatterControl.Tests.MatterControl
 		/// <param name="collectValueFromWidget">A delegate to resolve the currently displayed widget value</param>
 		/// <param name="valuesMap">A map of input to expected values</param>
 		/// <returns></returns>
-		public static Task ValidateAgainstValueMap(UIField field, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
+		public static Task ValidateAgainstValueMap(UIField field, ThemeConfig theme, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
 		{
 			// *************** Enable to investigate/debug/develop new/existing tests ************************
-			bool investigateDebugTests = false;
-			var perItemDelay = (investigateDebugTests) ? 500 : 0;
+			bool investigateDebugTests = true;
+			var perItemDelay = (investigateDebugTests) ? 1000 : 0;
 
-			var testsWindow = new UIFieldTestWindow(400, 200, field);
+			var testsWindow = new UIFieldTestWindow(500, 200, field, theme);
 
 			return testsWindow.RunTest((testRunner) =>
 			{
-				var primaryFieldWidget = field.Content as MHNumberEdit;
-
 				foreach (var item in valuesMap)
 				{
 					testsWindow.SetAndValidateValues(item.ExpectedValue, item.InputValue, collectValueFromWidget, perItemDelay);

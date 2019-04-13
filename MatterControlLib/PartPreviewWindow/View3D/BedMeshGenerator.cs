@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 			return bedImage;
 		}
 
-		public static (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
+		public static (Mesh bed, Mesh volume, ImageBuffer bedImage) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
 			Mesh printerBed = null;
 			Mesh buildVolume = null;
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			return (printerBed, buildVolume);
+			return (printerBed, buildVolume, bedplateImage);
 		}
 
 		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)

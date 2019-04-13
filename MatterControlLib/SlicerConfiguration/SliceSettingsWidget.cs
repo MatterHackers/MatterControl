@@ -738,6 +738,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new Vector3Field(theme);
 					break;
 
+				case SliceSettingData.DataEditTypes.VECTOR4:
+					uiField = new Vector4Field(theme);
+					break;
+
+				case SliceSettingData.DataEditTypes.BOUNDS:
+					uiField = new BoundsField(theme);
+					break;
+
 				case SliceSettingData.DataEditTypes.OFFSET3:
 					if (settingData.SlicerConfigName == "extruder_offset")
 					{

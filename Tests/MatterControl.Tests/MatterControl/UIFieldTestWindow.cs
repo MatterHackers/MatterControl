@@ -43,11 +43,9 @@ namespace MatterControl.Tests.MatterControl
 
 		private UIField field;
 
-		public UIFieldTestWindow(int width, int height, UIField field)
+		public UIFieldTestWindow(int width, int height, UIField field, ThemeConfig theme)
 			: base(width, height)
 		{
-			var theme = new ThemeConfig();
-
 			this.BackgroundColor = new Color(56, 56, 56);
 
 			GuiWidget column, row;
@@ -115,7 +113,7 @@ namespace MatterControl.Tests.MatterControl
 			column.AddChild(widgetUnderTest);
 		}
 
-		public void SetAndValidateValues(string expectedValue, string inputValue, Func<UIField, string> collectValueFromWidget, int delay = 500)
+		public void SetAndValidateValues(string expectedValue, string inputValue, Func<UIField, string> collectValueFromWidget, int delay = 200)
 		{
 			// Set expected and source
 			this.ExpectedText.Text = expectedValue;

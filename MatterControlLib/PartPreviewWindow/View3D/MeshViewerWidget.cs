@@ -32,11 +32,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
@@ -281,24 +285,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				drawColor = new Color(Color.Yellow, 120);
 			}
-			else if(item.WorldOutputType() == PrintOutputTypes.WipeTower)
+			else if (item.WorldOutputType() == PrintOutputTypes.WipeTower)
 			{
 				drawColor = new Color(Color.Cyan, 120);
 			}
-
-			// If there is a printer - check if the object is within the bed volume (has no AABB outside the bed volume)
-			if (sceneContext.Printer != null)
+			else if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
 			{
-				if (!sceneContext.Printer.InsideBuildVolume(item))
-				{
-					drawColor = new Color(drawColor, 65);
-				}
+				// check if we should be rendering materials (this overrides the other colors)
+				drawColor = MaterialRendering.Color(item.WorldMaterialIndex());
 			}
 
-			// check if we should be rendering materials (this overrides the other colors)
-			if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
+			if (sceneContext.Printer is PrinterConfig printer)
 			{
-				drawColor = MaterialRendering.Color(item.WorldMaterialIndex());
+				if (printer.InsideBuildVolume(item))
+				{
+					if (printer.Settings.Helpers.NumberOfHotends() > 1)
+					{
+						var materialIndex = item.WorldMaterialIndex();
+						if (materialIndex == -1)
+						{
+							materialIndex = 0;
+						}
+
+						// Determine if the given item is outside the bounds of the given extruder
+						if (materialIndex < printer.Settings.HotendBounds.Length)
+						{
+							var itemAABB = item.GetAxisAlignedBoundingBox();
+							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
+
+							var hotendBounds = printer.Settings.HotendBounds[materialIndex];
+							if (!hotendBounds.Contains(itemBounds))
+							{
+								// Draw in Red if on the bed but outside of the bounds for the hotend
+								drawColor = Color.Red.WithAlpha(90);
+							}
+						}
+					}
+				}
+				else
+				{
+					// Outside of printer build volume 
+					drawColor = new Color(drawColor, 65);
+				}
 			}
 
 			if(drawColor.alpha != 255
@@ -462,6 +490,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
 			}
 
+			this.UpdateFloorImage(selectedItem);
+
 			DrawInteractionVolumes(e);
 
 			foreach (var drawable in drawables.Where(d => d.DrawStage == DrawStage.TransparentContent))
@@ -495,6 +525,127 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					drawable.Draw(this, e, Matrix4X4.Identity, this.World);
 				}
+			}
+		}
+
+		int activeBedHotendClippingImage = -1;
+
+		private void UpdateFloorImage(IObject3D selectedItem)
+		{
+			if (sceneContext.Printer == null)
+			{
+				return;
+			}
+
+			var bed = sceneContext as BedConfig;
+			var printer = sceneContext.Printer;
+
+			int hotendIndex;
+
+			if (selectedItem == null)
+			{
+				hotendIndex = -1;
+			}
+			else
+			{
+				var worldMaterialIndex = selectedItem.WorldMaterialIndex();
+				if (worldMaterialIndex == -1)
+				{
+					worldMaterialIndex = 0;
+				}
+
+				hotendIndex = worldMaterialIndex;
+			}
+
+			if (activeBedHotendClippingImage != hotendIndex)
+			{
+				ImageBuffer bedplateImage;
+				if (hotendIndex == -1)
+				{
+					// Reset back to default
+					bedplateImage = bed.GeneratedBedImage;
+				}
+				else
+				{
+					// Create new image from current bed texture image
+					bedplateImage = new ImageBuffer(bed.GeneratedBedImage);
+
+					if (printer.Settings.Helpers.NumberOfHotends() == 2
+						&& printer.Bed.BedShape == BedShape.Rectangular
+						&& (hotendIndex == 0 || hotendIndex == 1))
+					{
+						var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
+						var yScale = bedplateImage.Height / printer.Settings.BedBounds.Height;
+
+						int alpha = 80;
+
+						var graphics = bedplateImage.NewGraphics2D();
+
+						var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+
+						// Scale hotendBounds into textures units
+						hotendBounds = new RectangleDouble(
+							hotendBounds.Left * xScale,
+							hotendBounds.Bottom * yScale,
+							hotendBounds.Right * xScale,
+							hotendBounds.Top * yScale);
+
+						var imageBounds = bedplateImage.GetBounds();
+
+						var dimRegion = new VertexStorage();
+						dimRegion.MoveTo(imageBounds.Left, imageBounds.Bottom);
+						dimRegion.LineTo(imageBounds.Right, imageBounds.Bottom);
+						dimRegion.LineTo(imageBounds.Right, imageBounds.Top);
+						dimRegion.LineTo(imageBounds.Left, imageBounds.Top);
+
+						var targetRect = new VertexStorage();
+						targetRect.MoveTo(hotendBounds.Right, hotendBounds.Bottom);
+						targetRect.LineTo(hotendBounds.Left, hotendBounds.Bottom);
+						targetRect.LineTo(hotendBounds.Left, hotendBounds.Top);
+						targetRect.LineTo(hotendBounds.Right, hotendBounds.Top);
+						targetRect.ClosePolygon();
+
+						var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+						graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
+
+						string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
+
+						var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
+						var printerBounds = stringPrinter.GetBounds();
+
+						int textPadding = 8;
+
+						var textBounds = printerBounds;
+						textBounds.Inflate(textPadding);
+
+						var cornerRect = new RectangleDouble(hotendBounds.Right - textBounds.Width, hotendBounds.Top - textBounds.Height, hotendBounds.Right, hotendBounds.Top);
+
+						graphics.Render(
+							new RoundedRectShape(cornerRect, bottomLeftRadius: 6),
+							theme.PrimaryAccentColor);
+
+						graphics.DrawString(
+							hotendTitle,
+							hotendBounds.Right - textPadding,
+							cornerRect.Bottom + (cornerRect.Height / 2 - printerBounds.Height / 2) + 1,
+							theme.DefaultFontSize,
+							justification: Justification.Right,
+							baseline: Baseline.Text,
+							color: Color.White,
+							bold: true);
+
+						graphics.Render(new Stroke(targetRect, 1), theme.PrimaryAccentColor);
+					}
+				}
+
+				foreach (var texture in bed.Mesh.FaceTextures)
+				{
+					texture.Value.image = bedplateImage;
+				}
+
+				bed.Mesh.PropertyBag.Clear();
+
+				activeBedHotendClippingImage = hotendIndex;
 			}
 		}
 
