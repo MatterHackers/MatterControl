@@ -129,14 +129,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string settingsKey = e.Data;
 
 			// Invalidate bed textures on related settings change
-			if ((settingsKey == SettingsKey.nozzle1_inset
+			if (settingsKey == SettingsKey.nozzle1_inset
 				|| settingsKey == SettingsKey.nozzle2_inset
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center)
-				&& sceneContext.Scene.SelectedItem is IObject3D selectedItem)
 			{
 				activeBedHotendClippingImage = -1;
-				this.UpdateFloorImage(selectedItem);
+				this.UpdateFloorImage(sceneContext.Scene.SelectedItem);
 				this.Invalidate();
 			}
 		}

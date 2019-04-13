@@ -95,9 +95,7 @@ namespace MatterHackers.MatterControl
 					}
 
 					printerBed = PlatonicSolids.CreateCube(displayVolumeToBuild.X, displayVolumeToBuild.Y, 1.8);
-					{
-						printerBed.PlaceTextureOnFaces(0, bedplateImage);
-					}
+					printerBed.PlaceTextureOnFaces(0, bedplateImage);
 					break;
 
 				case BedShape.Circular:
