@@ -35,6 +35,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
@@ -117,6 +118,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			sceneContext.Scene.SelectionChanged += this.Scene_SelectionChanged;
+			if (sceneContext.Printer != null)
+			{
+				sceneContext.Printer.Settings.SettingChanged += this.Settings_SettingChanged;
+			}
+		}
+
+		private void Settings_SettingChanged(object sender, StringEventArgs e)
+		{
+			string settingsKey = e.Data;
+
+			// Invalidate bed textures on related settings change
+			if ((settingsKey == SettingsKey.nozzle1_inset
+				|| settingsKey == SettingsKey.nozzle2_inset
+				|| settingsKey == SettingsKey.bed_size
+				|| settingsKey == SettingsKey.print_center)
+				&& sceneContext.Scene.SelectedItem is IObject3D selectedItem)
+			{
+				activeBedHotendClippingImage = -1;
+				this.UpdateFloorImage(selectedItem);
+				this.Invalidate();
+			}
 		}
 
 		public void RegisterDrawable(IDrawable drawable)
@@ -229,6 +251,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseDown(mouseEvent);
@@ -316,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				mouseDownIAVolume = null;
-				
+
 				if (anyInteractionVolumeHit)
 				{
 					iaVolume.OnMouseUp(mouseEvent3D);
@@ -334,6 +358,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (renderSource != null)
 			{
 				renderSource.BeforeDraw -= RenderSource_BeforeDraw;
+			}
+
+			if (sceneContext.Printer != null)
+			{
+				sceneContext.Printer.Settings.SettingChanged -= this.Settings_SettingChanged;
 			}
 
 			// If implemented, invoke Dispose on Drawables
@@ -426,7 +455,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				UserSettings.Instance.set(UserSettingsKey.SnapGridDistance, value.ToString());
 			}
-		} 
+		}
 
 		public GuiWidget GuiSurface => this;
 	}
