@@ -181,6 +181,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (activeBedHotendClippingImage != hotendIndex)
 				{
+					// Clamp to the range that's currently supported
+					if (hotendIndex > 1)
+					{
+						hotendIndex = -1;
+					}
+
 					this.SetActiveTexture(bedTextures[hotendIndex + 1]);
 					activeBedHotendClippingImage = hotendIndex;
 				}
