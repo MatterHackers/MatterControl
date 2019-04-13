@@ -324,7 +324,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					// Outside of printer build volume 
+					// Outside of printer build volume
 					drawColor = new Color(drawColor, 65);
 				}
 			}

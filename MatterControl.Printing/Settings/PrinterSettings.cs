@@ -67,7 +67,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			if (slicerConfigName == SettingsKey.nozzle1_inset
-				|| slicerConfigName == SettingsKey.nozzle2_inset)
+				|| slicerConfigName == SettingsKey.nozzle2_inset
+				|| slicerConfigName == SettingsKey.bed_size
+				|| slicerConfigName == SettingsKey.print_center)
 			{
 				this.ResetHotendBounds();
 			}
