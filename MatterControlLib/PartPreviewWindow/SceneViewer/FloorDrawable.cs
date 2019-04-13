@@ -222,8 +222,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
 						GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
 
-						// TODO:
-						// GenerateNozzleLimitsTexture(printer, 3, bedTextures[3]);
+						// Special case for union of both hotends
+						GenerateNozzleLimitsTexture(printer, 2, bedTextures[3]);
 					}
 					catch
 					{
@@ -270,6 +270,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return -1;
 			}
 
+			// HACK: hard-coded index for unioned T0/T1 limits
+			if (selectedItem?.OutputType == PrintOutputTypes.WipeTower)
+			{
+				return 2;
+			}
+
 			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
 			if (worldMaterialIndex == -1)
 			{
@@ -288,7 +294,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var graphics = bedplateImage.NewGraphics2D();
 
-			var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+			RectangleDouble hotendBounds;
+
+			if (hotendIndex == 2)
+			{
+				var hotend0 = printer.Settings.HotendBounds[0];
+				var hotend1 = printer.Settings.HotendBounds[1];
+
+				hotend0.IntersectWithRectangle(hotend1);
+
+				hotendBounds = hotend0;
+			}
+			else
+			{
+				hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+			}
 
 			// move relative to the texture origin, move to the bed lower left position
 			var bedBounds = printer.Settings.BedBounds;

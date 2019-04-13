@@ -669,6 +669,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (selectedItem != null)
 				{
 					bool allAreWipeTower = false;
+
 					if (selectedItem is SelectionGroupObject3D)
 					{
 						allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
