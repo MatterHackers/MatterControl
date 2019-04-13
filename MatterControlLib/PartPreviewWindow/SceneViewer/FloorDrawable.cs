@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int width = 600;
 
 				GL.Disable(EnableCap.Lighting);
+				GL.Disable(EnableCap.CullFace);
 
 				// Draw grid background with active BedColor
 				GL.Color4(theme.BedColor);
