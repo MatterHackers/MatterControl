@@ -205,27 +205,10 @@ namespace MatterHackers.MatterControl
 
 		internal void EnsureDefaults()
 		{
-			if (this.BedColor == Color.Transparent)
-			{
-				this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
-			}
-
-			if (this.UnderBedColor == Color.Transparent)
-			{
-				this.UnderBedColor = new Color(this.BedColor, this.BedColor.alpha / 4);
-			}
-
-			if (this.BedGridColors == null
-				|| (this.BedGridColors.Line == Color.Transparent && this.BedGridColors.Red == Color.Transparent))
-			{
-				this.BedGridColors = new GridColors()
-				{
-					Line = Color.Black,
-					Red = this.ResolveColor(this.BackgroundColor, new Color(Color.Red, this.IsDarkTheme ? 105 : 170)),
-					Green = this.ResolveColor(this.BackgroundColor, new Color(Color.Green, this.IsDarkTheme ? 105 : 170)),
-					Blue = this.ResolveColor(this.BackgroundColor, new Color(Color.Blue, 195))
-				};
-			}
+			//if (this.BedColor == Color.Transparent)
+			//{
+			//	this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
+			//}
 		}
 
 		public Color RowBorder { get; set; }
