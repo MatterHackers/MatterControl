@@ -42,6 +42,16 @@
       "LightTextColor": "#6e6e6e"
     }
   },
+  "BedColor": "#999",
+  "UnderBedColor": "#EEE5",
+  "PrinterBedTextColor": "#222",
+  "HotendLimitsBackgroundColor": "#00000050",
+  "BedGridColors": {
+    "Red": "#7F0000",
+    "Green": "#267F00",
+    "Blue": "#0026FF",
+    "Line": "#666"
+  },
   "LightTextColor": "#00000000",
   "BorderColor": "#C8C8C8",
   "BorderColor40": "#2B2B2B",
