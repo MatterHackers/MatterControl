@@ -28,8 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -41,7 +48,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 		private InteractionLayer.EditorType editorType;
 		private ThemeConfig theme;
+		private PrinterConfig printer;
+
 		private Color buildVolumeColor;
+
+		private int activeBedHotendClippingImage = -1;
+
+		private ImageBuffer[] bedTextures = null;
+
+		private bool loadingTextures = false;
 
 		public FloorDrawable(InteractionLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
@@ -49,6 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.sceneContext = sceneContext;
 			this.editorType = editorType;
 			this.theme = theme;
+			this.printer = sceneContext.Printer;
 
 			{
 		}
@@ -71,6 +87,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)
 				{
+					this.UpdateFloorImage(sceneContext.Scene.SelectedItem);
+
 					GLHelper.Render(
 						sceneContext.Mesh,
 						theme.UnderBedColor,
@@ -140,6 +158,158 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				GL.End();
 			}
+		}
+
+		private void UpdateFloorImage(IObject3D selectedItem)
+		{
+			// Early exit for invalid cases
+			if (loadingTextures
+				|| printer == null
+				|| printer.Settings.Helpers.NumberOfHotends() != 2
+				|| printer.Bed.BedShape != BedShape.Rectangular)
+			{
+				return;
+			}
+
+			if (bedTextures != null)
+			{
+				int hotendIndex = GetActiveHotendIndex(selectedItem);
+
+				if (activeBedHotendClippingImage != hotendIndex)
+				{
+					this.SetActiveTexture(bedTextures[hotendIndex + 1]);
+					activeBedHotendClippingImage = hotendIndex;
+				}
+			}
+			else
+			{
+				loadingTextures = true;
+
+				Task.Run(() =>
+				{
+					var placeHolderImage = new ImageBuffer(5, 5);
+					var graphics = placeHolderImage.NewGraphics2D();
+					graphics.Clear(theme.BedColor);
+
+					SetActiveTexture(placeHolderImage);
+
+					try
+					{
+						var bedImage = BedMeshGenerator.CreatePrintBedImage(sceneContext.Printer);
+
+						bedTextures = new[]
+						{
+							bedImage,					// No limits, basic themed bed
+							new ImageBuffer(bedImage),	// T0 limits
+							new ImageBuffer(bedImage),	// T1 limits
+							new ImageBuffer(bedImage)	// Unioned T0 & T1 limits
+						};
+
+						GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
+						GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
+
+						// TODO:
+						// GenerateNozzleLimitsTexture(printer, 3, bedTextures[3]);
+					}
+					catch
+					{
+					}
+
+					loadingTextures = false;
+				});
+
+			}
+		}
+
+		private void SetActiveTexture(ImageBuffer bedTexture)
+		{
+			foreach (var texture in printer.Bed.Mesh.FaceTextures)
+			{
+				texture.Value.image = bedTexture;
+			}
+
+			printer.Bed.Mesh.PropertyBag.Clear();
+		}
+
+		private static int GetActiveHotendIndex(IObject3D selectedItem)
+		{
+			if (selectedItem == null)
+			{
+				return -1;
+			}
+
+			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
+			if (worldMaterialIndex == -1)
+			{
+				worldMaterialIndex = 0;
+			}
+
+			return worldMaterialIndex;
+		}
+
+		private void GenerateNozzleLimitsTexture(PrinterConfig printer, int hotendIndex, ImageBuffer bedplateImage)
+		{
+			var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
+			var yScale = bedplateImage.Height / printer.Settings.BedBounds.Height;
+
+			int alpha = 80;
+
+			var graphics = bedplateImage.NewGraphics2D();
+
+			var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+
+			// Scale hotendBounds into textures units
+			hotendBounds = new RectangleDouble(
+				hotendBounds.Left * xScale,
+				hotendBounds.Bottom * yScale,
+				hotendBounds.Right * xScale,
+				hotendBounds.Top * yScale);
+
+			var imageBounds = bedplateImage.GetBounds();
+
+			var dimRegion = new VertexStorage();
+			dimRegion.MoveTo(imageBounds.Left, imageBounds.Bottom);
+			dimRegion.LineTo(imageBounds.Right, imageBounds.Bottom);
+			dimRegion.LineTo(imageBounds.Right, imageBounds.Top);
+			dimRegion.LineTo(imageBounds.Left, imageBounds.Top);
+
+			var targetRect = new VertexStorage();
+			targetRect.MoveTo(hotendBounds.Right, hotendBounds.Bottom);
+			targetRect.LineTo(hotendBounds.Left, hotendBounds.Bottom);
+			targetRect.LineTo(hotendBounds.Left, hotendBounds.Top);
+			targetRect.LineTo(hotendBounds.Right, hotendBounds.Top);
+			targetRect.ClosePolygon();
+
+			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
+			graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
+
+			string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
+
+			var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
+			var printerBounds = stringPrinter.GetBounds();
+
+			int textPadding = 8;
+
+			var textBounds = printerBounds;
+			textBounds.Inflate(textPadding);
+
+			var cornerRect = new RectangleDouble(hotendBounds.Right - textBounds.Width, hotendBounds.Top - textBounds.Height, hotendBounds.Right, hotendBounds.Top);
+
+			graphics.Render(
+				new RoundedRectShape(cornerRect, bottomLeftRadius: 6),
+				theme.PrimaryAccentColor);
+
+			graphics.DrawString(
+				hotendTitle,
+				hotendBounds.Right - textPadding,
+				cornerRect.Bottom + (cornerRect.Height / 2 - printerBounds.Height / 2) + 1,
+				theme.DefaultFontSize,
+				justification: Justification.Right,
+				baseline: Baseline.Text,
+				color: Color.White,
+				bold: true);
+
+			graphics.Render(new Stroke(targetRect, 1), theme.PrimaryAccentColor);
 		}
 
 		{

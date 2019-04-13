@@ -134,8 +134,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center)
 			{
-				activeBedHotendClippingImage = -1;
-				this.UpdateFloorImage(sceneContext.Scene.SelectedItem);
 				this.Invalidate();
 			}
 		}
