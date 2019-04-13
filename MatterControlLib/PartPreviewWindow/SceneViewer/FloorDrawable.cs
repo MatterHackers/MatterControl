@@ -112,9 +112,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				GL.Begin(BeginMode.Lines);
 				{
+					GL.Color4(theme.BedGridColors.Line);
+
 					for (int i = -width; i <= width; i += 50)
 					{
-						GL.Color4(gridColors.Gray);
 						GL.Vertex3(i, width, 0);
 						GL.Vertex3(i, -width, 0);
 
@@ -123,17 +124,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// X axis
-					GL.Color4(gridColors.Red);
+					GL.Color4(theme.BedGridColors.Red);
 					GL.Vertex3(width, 0, 0);
 					GL.Vertex3(-width, 0, 0);
 
 					// Y axis
-					GL.Color4(gridColors.Green);
+					GL.Color4(theme.BedGridColors.Green);
 					GL.Vertex3(0, width, 0);
 					GL.Vertex3(0, -width, 0);
 
 					// Z axis
-					GL.Color4(gridColors.Blue);
+					GL.Color4(theme.BedGridColors.Blue);
 					GL.Vertex3(0, 0, 10);
 					GL.Vertex3(0, 0, -10);
 				}
