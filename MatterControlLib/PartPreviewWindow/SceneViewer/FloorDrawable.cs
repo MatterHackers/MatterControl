@@ -292,6 +292,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
 
+			// move relative to the texture origin, move to the bed lower left position
+			var bedBounds = printer.Settings.BedBounds;
+
+			hotendBounds.Offset(-bedBounds.Left, -bedBounds.Bottom);
+
 			// Scale hotendBounds into textures units
 			hotendBounds = new RectangleDouble(
 				hotendBounds.Left * xScale,
