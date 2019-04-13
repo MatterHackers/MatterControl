@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl
 
 		public Color UnderBedColor { get; set; }
 
-		public Color BedLabelColor { get; set; }
+		public Color PrinterBedTextColor { get; set; }
 
 		public GridColors BedGridColors { get; set; }
 
