@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -180,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (activeBedHotendClippingImage != hotendIndex)
 				{
 					// Clamp to the range that's currently supported
-					if (hotendIndex > 1)
+					if (hotendIndex > 2)
 					{
 						hotendIndex = -1;
 					}
@@ -274,6 +276,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (selectedItem?.OutputType == PrintOutputTypes.WipeTower)
 			{
 				return 2;
+			}
+
+			if (selectedItem is SelectionGroupObject3D)
+			{
+				var materials = new HashSet<int>(selectedItem.Children.Select(i => i.MaterialIndex));
+
+				if (materials.Count == 1)
+				{
+					return materials.First();
+				}
+				else
+				{
+					return 2;
+				}
 			}
 
 			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
