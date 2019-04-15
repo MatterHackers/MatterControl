@@ -44,6 +44,7 @@
   },
   "BedColor": "#EFE8D7",
   "UnderBedColor": "#DBD5C522",
+  "PrinterBedTextColor": "#777",
   "BedGridColors": {
     "Red": "#7F0000",
     "Green": "#267F00",

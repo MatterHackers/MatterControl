@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var theme = AppContext.Theme;
-			var bedMarkingsColor = theme.BedGridColors.Line;
+			var bedMarkingsColor = theme.PrinterBedTextColor;
 
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
@@ -266,7 +266,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			var theme = AppContext.Theme;
-			var bedMarkingsColor = theme.BedGridColors.Line;
+			var bedMarkingsColor = theme.PrinterBedTextColor;
 
 			var bedplateImage = new ImageBuffer(1024, 1024);
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();

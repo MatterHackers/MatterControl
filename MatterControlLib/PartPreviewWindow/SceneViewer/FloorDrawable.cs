@@ -28,6 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -116,6 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				int width = 600;
 
 				GL.Disable(EnableCap.Lighting);
+				GL.Disable(EnableCap.CullFace);
 
 				// Draw grid background with active BedColor
 				GL.Color4(theme.BedColor);
@@ -179,7 +182,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (activeBedHotendClippingImage != hotendIndex)
 				{
 					// Clamp to the range that's currently supported
-					if (hotendIndex > 1)
+					if (hotendIndex > 2)
 					{
 						hotendIndex = -1;
 					}
@@ -221,8 +224,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
 						GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
 
-						// TODO:
-						// GenerateNozzleLimitsTexture(printer, 3, bedTextures[3]);
+						// Special case for union of both hotends
+						GenerateNozzleLimitsTexture(printer, 2, bedTextures[3]);
 					}
 					catch
 					{
@@ -269,6 +272,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return -1;
 			}
 
+			// HACK: hard-coded index for unioned T0/T1 limits
+			if (selectedItem?.OutputType == PrintOutputTypes.WipeTower)
+			{
+				return 2;
+			}
+
+			if (selectedItem is SelectionGroupObject3D)
+			{
+				var materials = new HashSet<int>(selectedItem.Children.Select(i => i.MaterialIndex));
+
+				if (materials.Count == 1)
+				{
+					return materials.First();
+				}
+				else
+				{
+					return 2;
+				}
+			}
+
 			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
 			if (worldMaterialIndex == -1)
 			{
@@ -287,7 +310,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var graphics = bedplateImage.NewGraphics2D();
 
-			var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+			RectangleDouble hotendBounds;
+
+			if (hotendIndex == 2)
+			{
+				var hotend0 = printer.Settings.HotendBounds[0];
+				var hotend1 = printer.Settings.HotendBounds[1];
+
+				hotend0.IntersectWithRectangle(hotend1);
+
+				hotendBounds = hotend0;
+			}
+			else
+			{
+				hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+			}
 
 			// move relative to the texture origin, move to the bed lower left position
 			var bedBounds = printer.Settings.BedBounds;
@@ -320,6 +357,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
 
 			string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
+
+			if (hotendIndex == 2)
+			{
+				hotendTitle = "Nozzles ".Localize() + "1 & 2";
+			}
 
 			var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
 			var printerBounds = stringPrinter.GetBounds();

@@ -307,17 +307,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							materialIndex = 0;
 						}
 
+						bool isWipeTower = selectedItem?.OutputType == PrintOutputTypes.WipeTower;
+
 						// Determine if the given item is outside the bounds of the given extruder
-						if (materialIndex < printer.Settings.HotendBounds.Length)
+						if (materialIndex < printer.Settings.HotendBounds.Length
+							|| isWipeTower)
 						{
 							var itemAABB = item.GetAxisAlignedBoundingBox();
 							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
 
-							var hotendBounds = printer.Settings.HotendBounds[materialIndex];
-							if (!hotendBounds.Contains(itemBounds))
+							var activeHotends = new HashSet<int>(new[] { materialIndex });
+
+							if (isWipeTower)
 							{
-								// Draw in Red if on the bed but outside of the bounds for the hotend
-								drawColor = Color.Red.WithAlpha(90);
+								activeHotends.Add(0);
+								activeHotends.Add(1);
+							}
+
+							// Validate against active hotends
+							foreach(var hotendIndex in activeHotends)
+							{
+								var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+								if (!hotendBounds.Contains(itemBounds))
+								{
+									// Draw in red outside of the bounds for the hotend
+									drawColor = Color.Red.WithAlpha(90);
+								}
 							}
 						}
 					}
