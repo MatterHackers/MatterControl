@@ -57,11 +57,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public QualityType Quality { get; set; } = QualityType.Normal;
 
 		/// <summary>
-		/// The index of the calibration print that was picked
+		/// Gets or sets the index of the X calibration item that was selected by the user.
 		/// </summary>
 		public int XPick { get; set; } = -1;
+
 		public int YPick { get; set; } = -1;
+
 		public double Offset { get; set; } = .1;
+
 		public bool PrintAgain { get; set; }
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
@@ -97,9 +100,59 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.Dispose();
 		}
 
+		public bool allowChildClose = true;
+
+		public bool childRequestedClose = false;
+
+		public override bool ClosePage()
+		{
+			childRequestedClose = true;
+			return allowChildClose;
+		}
+
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new XyCalibrationSelectPage(this);
+
+			// run load filament if we need to
+			if (LoadFilamentWizard.NeedsToBeRun0(printer))
+			{
+				using (var tool0FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true))
+				{
+					allowChildClose = false;
+					childRequestedClose = false;
+
+					var pages = tool0FilamentWizard.GetWizardPages();
+
+					while (!childRequestedClose
+						&& pages.MoveNext())
+					{
+						yield return pages.Current;
+					}
+
+					allowChildClose = true;
+				}
+			}
+
+			if (LoadFilamentWizard.NeedsToBeRun1(printer))
+			{
+				using (var tool1FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true))
+				{
+					allowChildClose = false;
+					childRequestedClose = false;
+
+					var pages = tool1FilamentWizard.GetWizardPages();
+
+					while (!childRequestedClose
+						&& pages.MoveNext())
+					{
+						yield return pages.Current;
+					}
+
+					allowChildClose = true;
+				}
+			}
+
 			yield return new XyCalibrationStartPrintPage(this);
 
 			originalEditContext = printer.Bed.EditContext;
