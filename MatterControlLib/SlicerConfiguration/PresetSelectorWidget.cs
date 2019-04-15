@@ -26,7 +26,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
-//#define DO_IN_PLACE_EDIT
+// #define DO_IN_PLACE_EDIT
 
 using System;
 using System.Collections.Generic;
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class PresetSelectorWidget : FlowLayoutWidget
 	{
-		public DropDownList DropDownList;
+		private DropDownList dropDownList;
 		private string defaultMenuItemText = "- none -".Localize();
 		private GuiWidget editButton;
 		private int extruderIndex;
@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public FlowLayoutWidget GetPulldownContainer()
 		{
-			DropDownList = CreateDropdown();
+			dropDownList = CreateDropdown();
 
 			var container = new FlowLayoutWidget()
 			{
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Edit Selected Setting".Localize(),
-				Enabled = DropDownList.SelectedIndex != -1,
+				Enabled = dropDownList.SelectedIndex != -1,
 				VAnchor = VAnchor.Center,
 				Margin = new BorderDouble(left: 6)
 			};
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			container.AddChild(DropDownList);
+			container.AddChild(dropDownList);
 			container.AddChild(editButton);
 
 			return container;
@@ -199,7 +199,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
-			//base.OnDrawBackground(graphics2D);
+			// base.OnDrawBackground(graphics2D);
 			if (this.BackgroundColor != Color.Transparent)
 			{
 				graphics2D.Render(new RoundedRect(this.LocalBounds, 5), this.BackgroundColor);
@@ -290,13 +290,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						settingsKey = null;
 						var extruderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature1).ToString();
-						foreach(var materialLayer in printer.Settings.MaterialLayers)
+
+						// first try to find the temp in the temperature1 settings
+						bool foundTemp = false;
+						foreach (var materialLayer in printer.Settings.MaterialLayers)
 						{
-							if(materialLayer.TryGetValue(SettingsKey.temperature, out string _temp))
+							if (materialLayer.TryGetValue(SettingsKey.temperature1, out string temp))
 							{
-								if(_temp == extruderTemp)
+								if (temp == extruderTemp)
 								{
 									settingsKey = materialLayer.LayerID;
+									foundTemp = true;
+								}
+							}
+						}
+
+						if (!foundTemp)
+						{
+							// search for the temp in T0 temperature settings
+							foreach (var materialLayer in printer.Settings.MaterialLayers)
+							{
+								if (materialLayer.TryGetValue(SettingsKey.temperature, out string temp))
+								{
+									if (temp == extruderTemp)
+									{
+										settingsKey = materialLayer.LayerID;
+									}
 								}
 							}
 						}
@@ -352,8 +371,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					var selectedMaterial = activeSettings.MaterialLayers.Where(l => l.LayerID == item.Value).FirstOrDefault();
 					if (selectedMaterial != null)
 					{
-						selectedMaterial.TryGetValue(SettingsKey.temperature, out string _temperature);
-						activeSettings.SetValue(SettingsKey.temperature1, _temperature);
+						// first check if the material has an explicit temperature for T1
+						if (selectedMaterial.TryGetValue(SettingsKey.temperature1, out string temperature1))
+						{
+							activeSettings.SetValue(SettingsKey.temperature1, temperature1);
+						}
+						else
+						{
+							selectedMaterial.TryGetValue(SettingsKey.temperature, out string temperature);
+							activeSettings.SetValue(SettingsKey.temperature1, temperature);
+						}
 					}
 					else
 					{
