@@ -49,8 +49,8 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
-		// this needs to serialize but not be editable
-		public Vector3 rotationOffset;
+		// this needs to serialize but not be editable (so public but not a get set)
+		public Vector3 RotationOffset;
 
 		public CurveObject3D_2()
 		{
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinSidesPerRotation { get; set; } = 3;
+		public double MinSidesPerRotation { get; set; } = 10;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Where to start the bend as a percent of the width of the part")]
@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					this.Translate(-rotationOffset);
+					this.Translate(-RotationOffset);
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
 
@@ -128,12 +128,22 @@ namespace MatterHackers.MatterControl.DesignTools
 						var radius = Diameter / 2;
 						var circumference = MathHelper.Tau * radius;
 						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
+						double numRotations = aabb.XSize / circumference;
+						double numberOfCuts = numRotations * MinSidesPerRotation;
+						double cutSize = aabb.XSize / numberOfCuts;
+						double cutPosition = aabb.MinXYZ.X + cutSize;
+						var cuts = new List<double>();
+						for (int i = 0; i < numberOfCuts; i++)
+						{
+							cuts.Add(cutPosition);
+							cutPosition += cutSize;
+						}
 
-						rotationOffset = rotationCenter;
+						RotationOffset = rotationCenter;
 						if (!BendCcw)
 						{
 							// fix the stored center so we draw correctly
-							rotationOffset.Y = aabb.MinXYZ.Y - radius;
+							RotationOffset.Y = aabb.MinXYZ.Y - radius;
 						}
 
 						foreach (var sourceItem in SourceContainer.VisibleMeshes())
@@ -141,11 +151,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							var originalMesh = sourceItem.Mesh;
 							var transformedMesh = originalMesh.Copy(CancellationToken.None);
 							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
-
-							// split the mesh along the x axis
-							double numRotations = aabb.XSize / circumference;
-							double numberOfCuts = numRotations * MinSidesPerRotation;
-							//SplitMeshAlongX(transformedMesh, numberOfCuts);
 
 							if (!BendCcw)
 							{
@@ -157,6 +162,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							// transform into this space
 							transformedMesh.Transform(itemMatrix);
+
+							// split the mesh along the x axis
+							SplitMeshAlongX(transformedMesh, cuts, cutSize / 8);
 
 							for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 							{
@@ -171,7 +179,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 
 							// transform back into item local space
-							transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationOffset) * itemMatrix.Inverted);
+							transformedMesh.Transform(Matrix4X4.CreateTranslation(-RotationOffset) * itemMatrix.Inverted);
 
 							transformedMesh.MarkAsChanged();
 							transformedMesh.CalculateNormals();
@@ -186,44 +194,81 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// set the matrix back
 						Matrix = currentMatrix;
-						this.Translate(new Vector3(rotationOffset));
+						this.Translate(new Vector3(RotationOffset));
 						SourceContainer.Visible = false;
 						rebuildLocks.Dispose();
 					}
+
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 
 					return Task.CompletedTask;
 				});
 		}
 
-		private Mesh SplitMeshAlongX(Mesh mesh, List<double> xCuts)
+		public static void SplitMeshAlongX(Mesh mesh, List<double> cuts, double onPlaneDistance)
 		{
-			var result = new Mesh();
-			var splitSections = new List<Mesh>();
-			for(int i = 0; i< xCuts.Count; i++)
+			var faceSplit = false;
+			do
 			{
-				// add a mesh to hold all the polygons that need to be split for each split section
-				splitSections.Add(new Mesh());
+				faceSplit = false;
+				for (int i = 0; i < mesh.Faces.Count; i++)
+				{
+					for (int j = 0; j < cuts.Count; j++)
+					{
+						if (mesh.SplitFace(i, new Plane(Vector3.UnitX, cuts[j]), .1))
+						{
+							faceSplit = true;
+							i = mesh.Faces.Count;
+							break;
+						}
+					}
+				}
+			} while (faceSplit);
+			return;
+
+			List<Vector3Float> finalVertices = new List<Vector3Float>();
+			List<Face> finalFaces = new List<Face>();
+
+			var planes = cuts.Select(c => new Plane(Vector3.UnitX, c)).ToArray();
+
+			for (int i = 0; i < mesh.Faces.Count; i++)
+			{
+				var face = mesh.Faces[i];
+				var vertices = mesh.Vertices;
+
+				for (int j = 0; j < cuts.Count; j++)
+				{
+					List<Vector3Float> newVertices = new List<Vector3Float>();
+					List<Face> newFaces = new List<Face>();
+
+					if (face.Split(vertices, planes[j], newFaces, newVertices, onPlaneDistance))
+					{
+						// remove the faces left of the cut
+						// if there are still faces to and another cut to the right
+						if (j < cuts.Count - 1)
+						{
+							// take the faces we just got back and also clip them against the cut to the right
+						}
+						else // add the faces to the list
+						{
+
+						}
+					}
+					else // the face was not cut
+					{
+						// if the face is to the left of the cut
+						// add it to the list of final faces
+					}
+				}
 			}
 
-			var bounds = mesh.GetAxisAlignedBoundingBox();
-
-			// add the face to every split section it crosses a side of
-			foreach (var face in mesh.Faces)
-			{
-				var faceBounds = face.GetAxisAlignedBoundingBox(mesh);
-			}
-
-			// foreach split section, cut all the polygons that cross the sides of it
-			foreach (var sectionMesh in splitSections)
-			{
-				// find what cut needs to be done to each face
-				// add the cut faces back to result
-			}
+			// add the new data we have built
+			mesh.Vertices = finalVertices;
+			mesh.Faces.Clear();
+			mesh.Faces.AddRange(finalFaces);
 
 			// clean the result
-
-			return result;
+			mesh.CleanAndMerge();
 		}
 	}
 }

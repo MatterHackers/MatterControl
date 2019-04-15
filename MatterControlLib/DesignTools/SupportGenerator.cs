@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var selectedItem = scene.SelectedItem;
 			var bedBounds = new RectangleDouble(Vector2.NegativeInfinity, Vector2.PositiveInfinity);
-			if(selectedItem != null)
+			if (selectedItem != null)
 			{
 				var aabb = selectedItem.GetAxisAlignedBoundingBox();
 				bedBounds = new RectangleDouble(new Vector2(aabb.MinXYZ), new Vector2(aabb.MaxXYZ));
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var existingSupports = scene.Descendants().Where(i =>
 				{
-					if(i.GetType() == typeof(GeneratedSupportObject3D))
+					if (i.GetType() == typeof(GeneratedSupportObject3D))
 					{
 						// we have a support, check if it is within the bounds of the selected object
 						var xyCenter = new Vector2(i.GetAxisAlignedBoundingBox().Center);
@@ -569,14 +569,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			supportFaces = new FaceList();
 
 			// find all the down faces from the support candidates
-			AddSupportFaces(supportCandidates, 
-				supportVerts, 
-				supportFaces, 
+			AddSupportFaces(supportCandidates,
+				supportVerts,
+				supportFaces,
 				(angle) => angle <= MaxOverHangAngle);
 
 			// find all the up faces from everything on the bed
-			AddSupportFaces(scene.Children.SelectMany(i => i.VisibleMeshes()), 
-				supportVerts, 
+			AddSupportFaces(scene.Children.SelectMany(i => i.VisibleMeshes()),
+				supportVerts,
 				supportFaces,
 				(angle) => angle >= 90);
 

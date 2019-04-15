@@ -53,61 +53,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public static class Teselate
-	{
-		public static void SplitEdges(List<Vector3> vL, FaceList fL, double maxLength)
-		{
-			//var maxLengthSqrd = maxLength * maxLength;
-			//var facesToRemove = new HashSet<int>();
-			//// check every face
-			//for (int faceIndex = 0; faceIndex < fL.Count; faceIndex++)
-			//{
-			//	var face = fL[faceIndex];
-			//	// check the edge of every face
-			//	for (int i = 0; i < 3; i++)
-			//	{
-			//		var endIndex = face[((i + 1) % 3)];
-			//		var startIndex = face[i];
-			//		var start = vL[startIndex];
-			//		var end = vL[endIndex];
-			//		var lengthSqrd = (end.X - start.X) * (end.X - start.X);
-			//		//var lengthSqrd = (end - start).LengthSquared;
-			//		// if the edge is > maxXLength
-			//		if (lengthSqrd > maxLengthSqrd)
-			//		{
-			//			int lastIndex = face[((i + 2) % 3)];
-			//			// add a new vertex at the split
-			//			var newPosition = (start + end) / 2;
-			//			var newIndex = vL.Count;
-			//			vL.Add(newPosition);
-			//			// add two new faces
-			//			// start, new, last
-			//			fL.Add(new int[] { startIndex, newIndex, lastIndex });
-			//			// new, end, last
-			//			fL.Add(new int[] { newIndex, endIndex, lastIndex });
-			//			// mark this face for removal
-			//			facesToRemove.Add(faceIndex);
-			//			// go on to next face
-			//			break;
-			//		}
-			//	}
-			//}
-
-			//// remove all the faces that are marked for removal (make a new list with only keep)
-			//var fLN = new FaceList();
-			//for (int i = 0; i < fL.Count; i++)
-			//{
-			//	if (!facesToRemove.Contains(i))
-			//	{
-			//		fLN.Add(fL[i]);
-			//	}
-			//}
-
-			//fL.Clear();
-			//fL.AddRange(fLN);
-		}
-	}
-
 	[Obsolete("Use CurveObject3D_2 instead", false)]
 	public class CurveObject3D : MeshWrapperObject3D, IEditorDraw
 	{
@@ -218,33 +163,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						var matrixInv = matrix.Inverted;
 
 						var curvedMesh = object3Ds.meshCopy.Mesh;
-
-						// split long edges so it will be curved
-						if (false)
-						{
-							double numRotations = aabb.XSize / circumference;
-							double numberOfCuts = numRotations * MinSidesPerRotation;
-							var maxXLength = aabb.XSize / numberOfCuts;
-							var maxXLengthSqrd = maxXLength * maxXLength;
-
-							// convert the mesh into vertex and face arrays
-							double[] v;
-							int[] f;
-							v = curvedMesh.Vertices.ToDoubleArray(object3Ds.meshCopy.Matrix);
-							f = curvedMesh.Faces.ToIntArray();
-
-							// make lists so we can add to them
-							var vL = v.ToVector3List();
-							vL.Transform(matrix);
-							var fL = new FaceList(f, curvedMesh.Vertices);
-
-							Teselate.SplitEdges(vL, fL, maxXLength);
-							vL.Transform(matrixInv);
-
-							// convert the lists back into the mesh
-							object3Ds.meshCopy.Mesh = new Mesh(vL, fL);
-							curvedMesh = object3Ds.meshCopy.Mesh;
-						}
 
 						for (int i = 0; i < curvedMesh.Vertices.Count; i++)
 						{
