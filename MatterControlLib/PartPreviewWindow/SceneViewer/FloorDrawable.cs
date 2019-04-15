@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Color buildVolumeColor;
 
-		private int activeBedHotendClippingImage = -1;
+		private int activeBedHotendClippingImage = int.MinValue;
 
 		private ImageBuffer[] bedTextures = null;
 
