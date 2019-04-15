@@ -80,8 +80,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class SupportGenerator
 	{
-		private double minimumSupportHeight;
-		private InteractiveScene scene;
+		private readonly double minimumSupportHeight;
+		private readonly InteractiveScene scene;
 
 		public SupportGenerator(InteractiveScene scene, double minimumSupportHeight)
 		{
@@ -427,14 +427,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					// add a single plane at the bed so we always know the bed is a top
 					detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
-					detectedPlanes[(x, y)].Add((0, false));
 
 					IntersectInfo upHit = null;
-
 					for (double yOffset = -1; yOffset <= 1; yOffset++)
 					{
 						for (double xOffset = -1; xOffset <= 1; xOffset++)
 						{
+							var singlXyPlanes = new List<(double z, bool bottom)>();
+							singlXyPlanes.Add((0, false));
+
 							var halfPillar = PillarSize / 2;
 							var yPos = (gridBounds.Bottom + y) * PillarSize + halfPillar + (yOffset * halfPillar);
 							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
@@ -446,7 +447,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, true));
+									singlXyPlanes.Add((upHit.HitPosition.Z, true));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
@@ -460,12 +461,14 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, false));
+									singlXyPlanes.Add((upHit.HitPosition.Z, false));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
 								}
 							} while (upHit != null);
+
+							// union the sigleXyPlanes into detectedPlanes[(x, y)]
 						}
 					}
 				}

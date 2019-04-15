@@ -36,6 +36,8 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Tests.Automation;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 using NUnit.Framework;
 
@@ -467,6 +469,28 @@ namespace MatterControl.Tests.MatterControl
 				}
 
 				Assert.AreEqual(bedSupportCount, airSupportCount, "Same number of support columns in each space.");
+			}
+
+			// load a complex part that should have no support required
+			{
+				InteractiveScene scene = new InteractiveScene();
+
+				var meshPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "NoSupportNeeded.stl");
+
+				var supportObject = new Object3D()
+				{
+					Mesh = StlProcessing.Load(meshPath, CancellationToken.None)
+				};
+
+				var aabbCube = supportObject.GetAxisAlignedBoundingBox();
+				// move it so the bottom is on the bed
+				supportObject.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbCube.MinXYZ.Z);
+				scene.Children.Add(supportObject);
+
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				await supportGenerator.Create(null, CancellationToken.None);
+				Assert.AreEqual(1, scene.Children.Count, "We should not have added support");
 			}
 		}
 
