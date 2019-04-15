@@ -256,13 +256,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (settingsKey == SettingsKey.nozzle1_inset
 				|| settingsKey == SettingsKey.nozzle2_inset
 				|| settingsKey == SettingsKey.bed_size
-				|| settingsKey == SettingsKey.print_center)
+				|| settingsKey == SettingsKey.print_center
+				|| settingsKey == SettingsKey.extruder_count)
 			{
 				activeBedHotendClippingImage = -1;
 
 				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
 				bedTextures = null;
-				this.UpdateFloorImage(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
+				this.EnsureBedTexture(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
 			}
 		}
 
