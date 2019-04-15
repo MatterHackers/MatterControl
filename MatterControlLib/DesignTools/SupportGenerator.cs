@@ -80,8 +80,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class SupportGenerator
 	{
-		private readonly double minimumSupportHeight;
-		private readonly InteractiveScene scene;
+		private double minimumSupportHeight;
+		private InteractiveScene scene;
 
 		public SupportGenerator(InteractiveScene scene, double minimumSupportHeight)
 		{
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var selectedItem = scene.SelectedItem;
 			var bedBounds = new RectangleDouble(Vector2.NegativeInfinity, Vector2.PositiveInfinity);
-			if(selectedItem != null)
+			if (selectedItem != null)
 			{
 				var aabb = selectedItem.GetAxisAlignedBoundingBox();
 				bedBounds = new RectangleDouble(new Vector2(aabb.MinXYZ), new Vector2(aabb.MaxXYZ));
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var existingSupports = scene.Descendants().Where(i =>
 				{
-					if(i.GetType() == typeof(GeneratedSupportObject3D))
+					if (i.GetType() == typeof(GeneratedSupportObject3D))
 					{
 						// we have a support, check if it is within the bounds of the selected object
 						var xyCenter = new Vector2(i.GetAxisAlignedBoundingBox().Center);
@@ -427,15 +427,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					// add a single plane at the bed so we always know the bed is a top
 					detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
+					detectedPlanes[(x, y)].Add((0, false));
 
 					IntersectInfo upHit = null;
+
 					for (double yOffset = -1; yOffset <= 1; yOffset++)
 					{
 						for (double xOffset = -1; xOffset <= 1; xOffset++)
 						{
-							var singlXyPlanes = new List<(double z, bool bottom)>();
-							singlXyPlanes.Add((0, false));
-
 							var halfPillar = PillarSize / 2;
 							var yPos = (gridBounds.Bottom + y) * PillarSize + halfPillar + (yOffset * halfPillar);
 							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
@@ -447,7 +446,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									singlXyPlanes.Add((upHit.HitPosition.Z, true));
+									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, true));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
@@ -461,14 +460,12 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									singlXyPlanes.Add((upHit.HitPosition.Z, false));
+									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, false));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
 								}
 							} while (upHit != null);
-
-							// union the sigleXyPlanes into detectedPlanes[(x, y)]
 						}
 					}
 				}
@@ -572,14 +569,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			supportFaces = new FaceList();
 
 			// find all the down faces from the support candidates
-			AddSupportFaces(supportCandidates, 
-				supportVerts, 
-				supportFaces, 
+			AddSupportFaces(supportCandidates,
+				supportVerts,
+				supportFaces,
 				(angle) => angle <= MaxOverHangAngle);
 
 			// find all the up faces from everything on the bed
-			AddSupportFaces(scene.Children.SelectMany(i => i.VisibleMeshes()), 
-				supportVerts, 
+			AddSupportFaces(scene.Children.SelectMany(i => i.VisibleMeshes()),
+				supportVerts,
 				supportFaces,
 				(angle) => angle >= 90);
 
