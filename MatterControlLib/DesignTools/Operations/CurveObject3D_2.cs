@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							transformedMesh.Transform(itemMatrix);
 
 							// split the mesh along the x axis
-							SplitMeshAlongX(transformedMesh, cuts);
+							SplitMeshAlongX(transformedMesh, cuts, cutSize / 8);
 
 							for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 							{
@@ -205,13 +205,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				});
 		}
 
-		public static void SplitMeshAlongX(Mesh mesh, List<double> cuts)
+		public static void SplitMeshAlongX(Mesh mesh, List<double> cuts, double onPlaneDistance)
 		{
 			var faceSplit = false;
 			do
 			{
 				faceSplit = false;
-				for(int i=0; i<mesh.Faces.Count; i++)
+				for (int i = 0; i < mesh.Faces.Count; i++)
 				{
 					for (int j = 0; j < cuts.Count; j++)
 					{
@@ -226,46 +226,49 @@ namespace MatterHackers.MatterControl.DesignTools
 			} while (faceSplit);
 			return;
 
-			var result = new Mesh();
-			var splitSections = new List<Mesh>();
-			for (int i = 0; i < cuts.Count; i++)
+			List<Vector3Float> finalVertices = new List<Vector3Float>();
+			List<Face> finalFaces = new List<Face>();
+
+			var planes = cuts.Select(c => new Plane(Vector3.UnitX, c)).ToArray();
+
+			for (int i = 0; i < mesh.Faces.Count; i++)
 			{
-				// add a mesh to hold all the polygons that need to be split for each split section
-				splitSections.Add(new Mesh());
-			}
+				var face = mesh.Faces[i];
+				var vertices = mesh.Vertices;
 
-			var bounds = mesh.GetAxisAlignedBoundingBox();
-
-			var vertices = mesh.Vertices;
-
-			// add the face to every split section it crosses a side of
-			foreach (var face in mesh.Faces)
-			{
-				var faceBounds = face.GetAxisAlignedBoundingBox(mesh);
-				for (int i = 0; i < cuts.Count; i++)
+				for (int j = 0; j < cuts.Count; j++)
 				{
-					// if the face right >= cuts[0] (left)
-					// and face left <= cuts[1] (right)
-					if (faceBounds.MaxXYZ.X <= cuts[i]
-						&& faceBounds.MinXYZ.X >= cuts[i + 1])
+					List<Vector3Float> newVertices = new List<Vector3Float>();
+					List<Face> newFaces = new List<Face>();
+
+					if (face.Split(vertices, planes[j], newFaces, newVertices, onPlaneDistance))
 					{
-						var subMesh = splitSections[i];
-						subMesh.CreateFace(new Vector3Float[] { vertices[face.v0], vertices[face.v1], vertices[face.v2] });
+						// remove the faces left of the cut
+						// if there are still faces to and another cut to the right
+						if (j < cuts.Count - 1)
+						{
+							// take the faces we just got back and also clip them against the cut to the right
+						}
+						else // add the faces to the list
+						{
+
+						}
+					}
+					else // the face was not cut
+					{
+						// if the face is to the left of the cut
+						// add it to the list of final faces
 					}
 				}
 			}
 
-			// foreach split section, cut all the polygons that cross the sides of it
-			foreach (var sectionMesh in splitSections)
-			{
-				// find what cut needs to be done to each face
-			}
-
-			// union all the faces back into results
+			// add the new data we have built
+			mesh.Vertices = finalVertices;
+			mesh.Faces.Clear();
+			mesh.Faces.AddRange(finalFaces);
 
 			// clean the result
-
-			return;
+			mesh.CleanAndMerge();
 		}
 	}
 }
