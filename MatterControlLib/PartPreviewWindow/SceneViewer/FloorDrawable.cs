@@ -278,21 +278,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return 2;
 			}
 
-			if (selectedItem is SelectionGroupObject3D)
-			{
-				var materials = new HashSet<int>(selectedItem.Children.Select(i => i.MaterialIndex));
+			int worldMaterialIndex;
 
-				if (materials.Count == 1)
-				{
-					return materials.First();
-				}
-				else
-				{
-					return 2;
-				}
+			var materials = new HashSet<int>(selectedItem.DescendantsAndSelf().Select(i => i.WorldMaterialIndex()));
+			if (materials.Count == 1)
+			{
+				worldMaterialIndex = materials.First();
+			}
+			else
+			{
+				// TODO: More work needed here to choose a correct index. For now, considering count > 1 to be tools 1 & 2
+				worldMaterialIndex = 2;
 			}
 
-			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
+			// Convert default material (-1) to T0
 			if (worldMaterialIndex == -1)
 			{
 				worldMaterialIndex = 0;
