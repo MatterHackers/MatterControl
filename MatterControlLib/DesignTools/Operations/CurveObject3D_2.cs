@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinSidesPerRotation { get; set; } = 3;
+		public double MinSidesPerRotation { get; set; } = 10;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Where to start the bend as a percent of the width of the part")]
@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						double numRotations = aabb.XSize / circumference;
 						double numberOfCuts = numRotations * MinSidesPerRotation;
 						double cutSize = aabb.XSize / numberOfCuts;
-						double cutPosition = aabb.MinXYZ.X;
+						double cutPosition = aabb.MinXYZ.X + cutSize;
 						var cuts = new List<double>();
 						for (int i = 0; i < numberOfCuts; i++)
 						{
@@ -152,9 +152,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							var transformedMesh = originalMesh.Copy(CancellationToken.None);
 							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
-							// split the mesh along the x axis
-							SplitMeshAlongX(transformedMesh, cuts);
-
 							if (!BendCcw)
 							{
 								// rotate around so it will bend correctly
@@ -165,6 +162,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							// transform into this space
 							transformedMesh.Transform(itemMatrix);
+
+							// split the mesh along the x axis
+							SplitMeshAlongX(transformedMesh, cuts);
 
 							for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 							{
@@ -205,8 +205,27 @@ namespace MatterHackers.MatterControl.DesignTools
 				});
 		}
 
-		public static Mesh SplitMeshAlongX(Mesh mesh, List<double> cuts)
+		public static void SplitMeshAlongX(Mesh mesh, List<double> cuts)
 		{
+			var faceSplit = false;
+			do
+			{
+				faceSplit = false;
+				for(int i=0; i<mesh.Faces.Count; i++)
+				{
+					for (int j = 0; j < cuts.Count; j++)
+					{
+						if (mesh.SplitFace(i, new Plane(Vector3.UnitX, cuts[j]), .1))
+						{
+							faceSplit = true;
+							i = mesh.Faces.Count;
+							break;
+						}
+					}
+				}
+			} while (faceSplit);
+			return;
+
 			var result = new Mesh();
 			var splitSections = new List<Mesh>();
 			for (int i = 0; i < cuts.Count; i++)
@@ -246,7 +265,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// clean the result
 
-			return result;
+			return;
 		}
 	}
 }
