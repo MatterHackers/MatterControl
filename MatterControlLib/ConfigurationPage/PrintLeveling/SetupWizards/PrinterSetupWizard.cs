@@ -74,6 +74,11 @@ namespace MatterHackers.MatterControl
 
 		public Vector2 WindowSize { get; protected set; }
 
+		public virtual bool ClosePage()
+		{
+			return true;
+		}
+
 		public bool MoveNext()
 		{
 			// Shutdown active page

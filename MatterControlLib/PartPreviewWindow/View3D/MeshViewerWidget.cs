@@ -307,13 +307,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							materialIndex = 0;
 						}
 
-						bool isWipeTower = selectedItem?.OutputType == PrintOutputTypes.WipeTower;
+						bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
 
 						// Determine if the given item is outside the bounds of the given extruder
 						if (materialIndex < printer.Settings.HotendBounds.Length
 							|| isWipeTower)
 						{
-							var itemAABB = item.GetAxisAlignedBoundingBox();
+							var itemAABB = item.WorldAxisAlignedBoundingBox();
 							var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
 
 							var activeHotends = new HashSet<int>(new[] { materialIndex });

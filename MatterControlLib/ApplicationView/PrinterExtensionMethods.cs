@@ -34,9 +34,11 @@ namespace MatterHackers.MatterControl
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.SlicerConfiguration;
+	using MatterHackers.VectorMath;
 
 	public static class PrinterExtensionMethods
 	{
@@ -90,23 +92,67 @@ namespace MatterHackers.MatterControl
 			return true;
 		}
 
+		private static bool InsideHotendBounds(this PrinterConfig printer, IObject3D item)
+		{
+			if (printer.Settings.Helpers.NumberOfHotends() == 1)
+			{
+				return true;
+			}
+
+			var materialIndex = item.WorldMaterialIndex();
+			if (materialIndex == -1)
+			{
+				materialIndex = 0;
+			}
+
+			bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
+
+			// Determine if the given item is outside the bounds of the given extruder
+			if (materialIndex < printer.Settings.HotendBounds.Length
+				|| isWipeTower)
+			{
+				var itemAABB = item.WorldAxisAlignedBoundingBox();
+				var itemBounds = new RectangleDouble(new Vector2(itemAABB.MinXYZ), new Vector2(itemAABB.MaxXYZ));
+
+				var activeHotends = new HashSet<int>(new[] { materialIndex });
+
+				if (isWipeTower)
+				{
+					activeHotends.Add(0);
+					activeHotends.Add(1);
+				}
+
+				// Validate against active hotends
+				foreach (var hotendIndex in activeHotends)
+				{
+					var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+					if (!hotendBounds.Contains(itemBounds))
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// Filters items from a given source returning only persistable items inside the Build Volume
 		/// </summary>
 		/// <param name="source">The source content to filter</param>
 		/// <param name="printer">The printer config to consider</param>
-		/// <returns></returns>
+		/// <returns>An enumerable set of printable items</returns>
 		public static IEnumerable<IObject3D> PrintableItems(this PrinterConfig printer, IObject3D source)
 		{
-			return source.VisibleMeshes().Where(item => printer.InsideBuildVolume(item) 
-														&& item.WorldPersistable()
+			return source.VisibleMeshes().Where(item => item.WorldPersistable()
+														&& printer.InsideBuildVolume(item)
+														&& printer.InsideHotendBounds(item)
 														&& !item.GetType().GetCustomAttributes(typeof(NonPrintableAttribute), true).Any());
 		}
 
 		/// <summary>
 		/// Conditionally cancels prints within the first two minutes or interactively prompts the user to confirm cancellation
 		/// </summary>
-		/// <returns>A boolean value indicating if the print was canceled</returns>
 		/// <param name="abortCancel">The action to run if the user aborts the Cancel operation</param>
 		public static void CancelPrint(this PrinterConfig printer, Action abortCancel = null)
 		{

@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Color buildVolumeColor;
 
-		private int activeBedHotendClippingImage = -1;
+		private int activeBedHotendClippingImage = int.MinValue;
 
 		private ImageBuffer[] bedTextures = null;
 
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)
 				{
-					this.UpdateFloorImage(sceneContext.Scene.SelectedItem);
+					this.EnsureBedTexture(sceneContext.Scene.SelectedItem);
 
 					GLHelper.Render(
 						sceneContext.Mesh,
@@ -164,34 +164,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void UpdateFloorImage(IObject3D selectedItem, bool clearToPlaceholderImage = true)
+		private void EnsureBedTexture(IObject3D selectedItem, bool clearToPlaceholderImage = true)
 		{
 			// Early exit for invalid cases
 			if (loadingTextures
-				|| printer == null
-				|| printer.Settings.Helpers.NumberOfHotends() != 2
-				|| printer.Bed.BedShape != BedShape.Rectangular)
+				|| printer == null)
 			{
 				return;
 			}
 
-			if (bedTextures != null)
-			{
-				int hotendIndex = GetActiveHotendIndex(selectedItem);
-
-				if (activeBedHotendClippingImage != hotendIndex)
-				{
-					// Clamp to the range that's currently supported
-					if (hotendIndex > 2)
-					{
-						hotendIndex = -1;
-					}
-
-					this.SetActiveTexture(bedTextures[hotendIndex + 1]);
-					activeBedHotendClippingImage = hotendIndex;
-				}
-			}
-			else
+			if (bedTextures == null)
 			{
 				loadingTextures = true;
 
@@ -213,19 +195,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var bedImage = BedMeshGenerator.CreatePrintBedImage(sceneContext.Printer);
 
-						bedTextures = new[]
+						if (printer.Settings.Helpers.NumberOfHotends() > 1)
 						{
-							bedImage,					// No limits, basic themed bed
-							new ImageBuffer(bedImage),	// T0 limits
-							new ImageBuffer(bedImage),	// T1 limits
-							new ImageBuffer(bedImage)	// Unioned T0 & T1 limits
-						};
+							bedTextures = new[]
+							{
+								bedImage,					// No limits, basic themed bed
+								new ImageBuffer(bedImage),	// T0 limits
+								new ImageBuffer(bedImage),	// T1 limits
+								new ImageBuffer(bedImage)	// Unioned T0 & T1 limits
+							};
 
-						GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
-						GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
+							GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
+							GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
 
-						// Special case for union of both hotends
-						GenerateNozzleLimitsTexture(printer, 2, bedTextures[3]);
+							// Special case for union of both hotends
+							GenerateNozzleLimitsTexture(printer, 2, bedTextures[3]);
+						}
+						else
+						{
+							bedTextures = new[]
+							{
+								bedImage,                   // No limits, basic themed bed
+							};
+
+							this.SetActiveTexture(bedTextures[0]);
+							activeBedHotendClippingImage = 0;
+						}
 					}
 					catch
 					{
@@ -233,7 +228,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					loadingTextures = false;
 				});
+			}
+			else if (printer.Settings.Helpers.NumberOfHotends() > 1
+				&& printer.Bed.BedShape == BedShape.Rectangular)
+			{
+				int hotendIndex = GetActiveHotendIndex(selectedItem);
 
+				if (activeBedHotendClippingImage != hotendIndex)
+				{
+					// Clamp to the range that's currently supported
+					if (hotendIndex > 2)
+					{
+						hotendIndex = -1;
+					}
+
+					this.SetActiveTexture(bedTextures[hotendIndex + 1]);
+					activeBedHotendClippingImage = hotendIndex;
+				}
 			}
 		}
 
@@ -245,13 +256,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (settingsKey == SettingsKey.nozzle1_inset
 				|| settingsKey == SettingsKey.nozzle2_inset
 				|| settingsKey == SettingsKey.bed_size
-				|| settingsKey == SettingsKey.print_center)
+				|| settingsKey == SettingsKey.print_center
+				|| settingsKey == SettingsKey.extruder_count)
 			{
 				activeBedHotendClippingImage = -1;
 
 				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
 				bedTextures = null;
-				this.UpdateFloorImage(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
+				this.EnsureBedTexture(sceneContext.Scene.SelectedItem, clearToPlaceholderImage: false);
 			}
 		}
 
@@ -278,21 +290,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return 2;
 			}
 
-			if (selectedItem is SelectionGroupObject3D)
-			{
-				var materials = new HashSet<int>(selectedItem.Children.Select(i => i.MaterialIndex));
+			int worldMaterialIndex;
 
-				if (materials.Count == 1)
-				{
-					return materials.First();
-				}
-				else
-				{
-					return 2;
-				}
+			var materials = new HashSet<int>(selectedItem.DescendantsAndSelf().Select(i => i.WorldMaterialIndex()));
+			if (materials.Count == 1)
+			{
+				worldMaterialIndex = materials.First();
+			}
+			else
+			{
+				// TODO: More work needed here to choose a correct index. For now, considering count > 1 to be tools 1 & 2
+				worldMaterialIndex = 2;
 			}
 
-			var worldMaterialIndex = selectedItem.WorldMaterialIndex();
+			// Convert default material (-1) to T0
 			if (worldMaterialIndex == -1)
 			{
 				worldMaterialIndex = 0;

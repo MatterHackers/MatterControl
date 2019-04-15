@@ -46,5 +46,11 @@ namespace MatterHackers.MatterControl
 		bool Visible { get; }
 
 		bool Enabled { get; }
+
+		/// <summary>
+		/// Allow the wizard to participate in the ClosePage process, optionally aborting the close if needed.
+		/// </summary>
+		/// <returns>A value indicating if the owning window should be closed on page close.</returns>
+		bool ClosePage();
 	}
 }
