@@ -218,9 +218,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								bedImage,                   // No limits, basic themed bed
 							};
 
-							this.SetActiveTexture(bedTextures[0]);
 							activeBedHotendClippingImage = 0;
 						}
+
+						this.SetActiveTexture(bedTextures[0]);
 					}
 					catch
 					{
