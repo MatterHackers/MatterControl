@@ -1006,6 +1006,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName("Already Loaded Button");
 			}
+
+			// Close the staged wizard window
+			testRunner.ClickByName("Cancel Wizard Button");
 		}
 
 		/// <summary>
