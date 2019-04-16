@@ -343,7 +343,7 @@ namespace MatterControl.Tests.MatterControl
 		public async Task MultilineStringFieldTest()
 		{
 			var theme = MatterHackers.MatterControl.AppContext.Theme;
-			
+
 			var testField = new MultilineStringField(theme);
 
 			await ValidateAgainstValueMap(
@@ -433,7 +433,7 @@ namespace MatterControl.Tests.MatterControl
 			await ValidateAgainstValueMap(
 				testField,
 				theme,
-				(field) => 
+				(field) =>
 				{
 					return string.Join(",", field.Content.Children.OfType<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
 				},
@@ -566,7 +566,7 @@ namespace MatterControl.Tests.MatterControl
 		public static Task ValidateAgainstValueMap(UIField field, ThemeConfig theme, Func<UIField, string> collectValueFromWidget, IEnumerable<ValueMap> valuesMap)
 		{
 			// *************** Enable to investigate/debug/develop new/existing tests ************************
-			bool investigateDebugTests = true;
+			bool investigateDebugTests = false;
 			var perItemDelay = (investigateDebugTests) ? 1000 : 0;
 
 			var testsWindow = new UIFieldTestWindow(500, 200, field, theme);
