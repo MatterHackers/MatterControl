@@ -258,9 +258,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				|| settingsKey == SettingsKey.nozzle2_inset
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center
-				|| settingsKey == SettingsKey.extruder_count)
+				|| settingsKey == SettingsKey.extruder_count
+				|| settingsKey == SettingsKey.bed_shape)
 			{
-				activeBedHotendClippingImage = -1;
+				activeBedHotendClippingImage = int.MinValue;
 
 				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
 				bedTextures = null;
@@ -276,6 +277,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			printer.Bed.Mesh.PropertyBag.Clear();
+
+			ApplicationController.Instance.MainView.Invalidate();
 		}
 
 		private static int GetActiveHotendIndex(IObject3D selectedItem)
