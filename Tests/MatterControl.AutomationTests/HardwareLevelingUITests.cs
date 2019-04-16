@@ -47,13 +47,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// make sure it is showing the correct button
 					testRunner.OpenPrintPopupMenu(false, false);
 
-					// HACK: automatically resuming setup wizard. Long term we want a better plan
+					var startPrintButton = testRunner.GetWidgetByName("Start Print Button", out _);
+
+					Assert.IsFalse(startPrintButton.Enabled, "Start Print should not be enabled");
+
 					testRunner.ClickByName("SetupPrinter");
 
 					testRunner.Complete9StepLeveling();
 
+					testRunner.OpenPrintPopupMenu(false, false);
+
 					// make sure the button has changed to start print
-					Assert.IsTrue(testRunner.WaitForName("PrintPopupMenu"), "Start Print should be visible after leveling the printer");
+					startPrintButton = testRunner.GetWidgetByName("Start Print Button", out _);
+					Assert.IsTrue(startPrintButton.Enabled, "Start Print should be enabled after running printer setup");
 					Assert.IsFalse(testRunner.WaitForName("SetupPrinter", .5), "Finish Setup should not be visible after leveling the printer");
 
 					// reset to defaults and make sure print leveling is cleared
@@ -70,7 +76,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			});
+			}, maxTimeToRun: 90);
 		}
 	}
 }
