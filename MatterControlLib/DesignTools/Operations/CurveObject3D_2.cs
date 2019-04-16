@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinSidesPerRotation { get; set; } = 10;
+		public double MinSidesPerRotation { get; set; } = 30;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Where to start the bend as a percent of the width of the part")]
@@ -207,23 +207,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static void SplitMeshAlongX(Mesh mesh, List<double> cuts, double onPlaneDistance)
 		{
-			var faceSplit = false;
-			do
+			for (int j = 0; j < cuts.Count; j++)
 			{
-				faceSplit = false;
-				for (int i = 0; i < mesh.Faces.Count; i++)
-				{
-					for (int j = 0; j < cuts.Count; j++)
-					{
-						if (mesh.SplitFace(i, new Plane(Vector3.UnitX, cuts[j]), .1))
-						{
-							faceSplit = true;
-							i = mesh.Faces.Count;
-							break;
-						}
-					}
-				}
-			} while (faceSplit);
+				mesh.Split(new Plane(Vector3.UnitX, cuts[j]), .1);
+			}
 			return;
 
 			List<Vector3Float> finalVertices = new List<Vector3Float>();
