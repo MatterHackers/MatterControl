@@ -110,6 +110,7 @@ namespace MatterHackers.MatterControl
 					"",
 					stage,
 					theme);
+				stageWidget.Name = stage.Title + " Row";
 				stageWidget.Enabled = stage.Enabled;
 				stageWidget.Click += (s, e) =>
 				{

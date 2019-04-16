@@ -126,6 +126,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// now run leveling again and make sure we get the same result
 					testRunner.SwitchToControlsTab();
 					testRunner.ClickByName("Run Leveling Button");
+
+					testRunner.ClickByName("Print Leveling Row");
+
 					testRunner.Complete9StepLeveling(2);
 
 					testRunner.OpenPrintPopupMenu();
