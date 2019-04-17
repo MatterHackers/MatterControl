@@ -233,8 +233,8 @@ namespace MatterControl.Tests.MatterControl
 			streamList.Add(new WaitForTempStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new BabyStepsStream(printer, streamList[streamList.Count - 1]));
 			streamList.Add(new MaxLengthStream(printer, streamList[streamList.Count - 1], 1));
-			streamList.Add(new ExtrusionMultiplyerStream(printer, streamList[streamList.Count - 1]));
-			streamList.Add(new FeedRateMultiplyerStream(printer, streamList[streamList.Count - 1]));
+			streamList.Add(new ExtrusionMultiplierStream(printer, streamList[streamList.Count - 1]));
+			streamList.Add(new FeedRateMultiplierStream(printer, streamList[streamList.Count - 1]));
 			GCodeStream totalGCodeStream = streamList[streamList.Count - 1];
 
 			return totalGCodeStream;
@@ -628,16 +628,16 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			Assert.AreEqual(1, (int)FeedRateMultiplyerStream.FeedRateRatio, "FeedRateRatio should default to 1");
+			Assert.AreEqual(1, (int)FeedRateMultiplierStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
 			PrinterConfig printer = null;
-			var gcodeStream = new FeedRateMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
+			var gcodeStream = new FeedRateMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
 			line = gcodeStream.ReadLine();
 
 			Assert.AreEqual("G1 X10 F1000", line, "FeedRate should remain unchanged when FeedRateRatio is 1.0");
 
-			FeedRateMultiplyerStream.FeedRateRatio = 2;
+			FeedRateMultiplierStream.FeedRateRatio = 2;
 
 			line = gcodeStream.ReadLine();
 			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
@@ -648,22 +648,22 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			Assert.AreEqual(1, (int)ExtrusionMultiplyerStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
+			Assert.AreEqual(1, (int)ExtrusionMultiplierStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
 			PrinterConfig printer = null;
-			var gcodeStream = new ExtrusionMultiplyerStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
+			var gcodeStream = new ExtrusionMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 
 			line = gcodeStream.ReadLine();
 			// Move back to E0
 			gcodeStream.ReadLine();
 
-			Assert.AreEqual("G1 E10", line, "ExtrusionMultiplyer should remain unchanged when FeedRateRatio is 1.0");
+			Assert.AreEqual("G1 E10", line, "ExtrusionMultiplier should remain unchanged when FeedRateRatio is 1.0");
 
-			ExtrusionMultiplyerStream.ExtrusionRatio = 2;
+			ExtrusionMultiplierStream.ExtrusionRatio = 2;
 
 			line = gcodeStream.ReadLine();
 
-			Assert.AreEqual("G1 E24", line, "ExtrusionMultiplyer should scale from E12 to E24 when ExtrusionRatio is 2x");
+			Assert.AreEqual("G1 E24", line, "ExtrusionMultiplier should scale from E12 to E24 when ExtrusionRatio is 2x");
 		}
 	}
 

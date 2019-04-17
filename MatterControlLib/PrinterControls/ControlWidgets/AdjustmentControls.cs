@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
-					Value = FeedRateMultiplyerStream.FeedRateRatio,
+					Value = FeedRateMultiplierStream.FeedRateRatio,
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Center,
 					TotalWidthInPixels = sliderWidth,
@@ -90,16 +90,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 				feedRateRatioSlider.SliderReleased += (s, e) =>
 				{
 					// Update state for runtime use
-					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
+					FeedRateMultiplierStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
 					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
-						FeedRateMultiplyerStream.FeedRateRatio.ToString());
+						FeedRateMultiplierStream.FeedRateRatio.ToString());
 				};
 				settingsRow.AddChild(feedRateRatioSlider);
 
-				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplyerStream.FeedRateRatio, 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				feedRateValue = new MHNumberEdit(Math.Round(FeedRateMultiplierStream.FeedRateRatio, 2), theme, allowDecimals: true, minValue: minFeedRateRatio, maxValue: maxFeedRateRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Feed Rate NumberEdit",
 					SelectAllOnFocus = true,
@@ -112,12 +112,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 					feedRateRatioSlider.Value = feedRateValue.ActuallNumberEdit.Value;
 
 					// Update state for runtime use
-					FeedRateMultiplyerStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
+					FeedRateMultiplierStream.FeedRateRatio = Math.Round(feedRateRatioSlider.Value, 2);
 
 					// Persist data for future use
 					printer.Settings.SetValue(
 						SettingsKey.feedrate_ratio,
-						FeedRateMultiplyerStream.FeedRateRatio.ToString());
+						FeedRateMultiplierStream.FeedRateRatio.ToString());
 				};
 				settingsRow.AddChild(feedRateValue);
 			}
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(5, 0),
-					Value = ExtrusionMultiplyerStream.ExtrusionRatio
+					Value = ExtrusionMultiplierStream.ExtrusionRatio
 				};
 				theme.ApplySliderStyle(extrusionRatioSlider);
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
@@ -148,16 +148,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 				extrusionRatioSlider.SliderReleased += (s, e) =>
 				{
 					// Update state for runtime use
-					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
+					ExtrusionMultiplierStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
 					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
-						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
+						ExtrusionMultiplierStream.ExtrusionRatio.ToString());
 				};
 				settingsRow.AddChild(extrusionRatioSlider);
 
-				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplyerStream.ExtrusionRatio, 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
+				extrusionValue = new MHNumberEdit(Math.Round(ExtrusionMultiplierStream.ExtrusionRatio, 2), theme, allowDecimals: true, minValue: minExtrutionRatio, maxValue: maxExtrusionRatio, pixelWidth: 40 * GuiWidget.DeviceScale)
 				{
 					Name = "Extrusion Multiplier NumberEdit",
 					SelectAllOnFocus = true,
@@ -170,12 +170,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 					extrusionRatioSlider.Value = extrusionValue.ActuallNumberEdit.Value;
 
 					// Update state for runtime use
-					ExtrusionMultiplyerStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
+					ExtrusionMultiplierStream.ExtrusionRatio = Math.Round(extrusionRatioSlider.Value, 2);
 
 					// Persist data for future use
 					printer.Settings.SetValue(
 						SettingsKey.extrusion_ratio,
-						ExtrusionMultiplyerStream.ExtrusionRatio.ToString());
+						ExtrusionMultiplierStream.ExtrusionRatio.ToString());
 				};
 				settingsRow.AddChild(extrusionValue);
 			}

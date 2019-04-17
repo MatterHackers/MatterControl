@@ -501,8 +501,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForName("Cancel Wizard Button");
 
 				// Set custom adjustment values
-				FeedRateMultiplyerStream.FeedRateRatio = initialFeedRate;
-				ExtrusionMultiplyerStream.ExtrusionRatio = initialExtrusionRate;
+				FeedRateMultiplierStream.FeedRateRatio = initialFeedRate;
+				ExtrusionMultiplierStream.ExtrusionRatio = initialExtrusionRate;
 
 				// Then validate that they are picked up
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
@@ -703,11 +703,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.AreEqual(targetFeedRate, slider.Value, $"Unexpected Feed Rate Slider Value - {scope}");
 
 			// Assert the changes took effect on the model
-			testRunner.WaitFor(() => targetExtrusionRate == ExtrusionMultiplyerStream.ExtrusionRatio);
-			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplyerStream.ExtrusionRatio, $"Unexpected Extrusion Rate - {scope}");
+			testRunner.WaitFor(() => targetExtrusionRate == ExtrusionMultiplierStream.ExtrusionRatio);
+			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplierStream.ExtrusionRatio, $"Unexpected Extrusion Rate - {scope}");
 
-			testRunner.WaitFor(() => targetFeedRate == FeedRateMultiplyerStream.FeedRateRatio);
-			Assert.AreEqual(targetFeedRate, FeedRateMultiplyerStream.FeedRateRatio, $"Unexpected Feed Rate - {scope}");
+			testRunner.WaitFor(() => targetFeedRate == FeedRateMultiplierStream.FeedRateRatio);
+			Assert.AreEqual(targetFeedRate, FeedRateMultiplierStream.FeedRateRatio, $"Unexpected Feed Rate - {scope}");
 		}
 	}
 }
