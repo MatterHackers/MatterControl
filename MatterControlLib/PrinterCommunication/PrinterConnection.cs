@@ -2254,13 +2254,13 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
 
-			bool enableLineSpliting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSpliting ? 1 : 2000);
+			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
 			accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
-			accumulatedStream = new ExtrusionMultiplyerStream(Printer, accumulatedStream);
-			accumulatedStream = new FeedRateMultiplyerStream(Printer, accumulatedStream);
+			accumulatedStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);
+			accumulatedStream = new FeedRateMultiplierStream(Printer, accumulatedStream);
 			accumulatedStream = new RequestTemperaturesStream(Printer, accumulatedStream);
 
 			if (Printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))

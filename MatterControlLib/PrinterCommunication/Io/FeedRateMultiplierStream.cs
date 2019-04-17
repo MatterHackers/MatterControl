@@ -27,70 +27,58 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
+using System;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class ExtrusionMultiplyerStream : GCodeStreamProxy
+	public class FeedRateMultiplierStream : GCodeStreamProxy
 	{
-		private double currentActualExtrusionPosition = 0;
-		private double previousGcodeRequestedExtrusionPosition = 0;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public ExtrusionMultiplyerStream(PrinterConfig printer, GCodeStream internalStream)
+		public FeedRateMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}
 
-		public static double ExtrusionRatio { get; set; } = 1;
+		public static double FeedRateRatio { get; set; } = 1;
 
-		public override string DebugInfo
+		public override string DebugInfo => $"Last Destination = {lastDestination}";
+
+		public override void SetPrinterPosition(PrinterMove position)
 		{
-			get
-			{
-				return $"ExtrusionRatio = {ExtrusionRatio}";
-			}
+			this.lastDestination.CopyKnowSettings(position);
+			internalStream.SetPrinterPosition(this.lastDestination);
 		}
 
 		public override string ReadLine()
 		{
-			var lineToSend = internalStream.ReadLine();
+			string lineToSend = internalStream.ReadLine();
+
 			if (lineToSend != null
 				&& lineToSend.EndsWith("; NO_PROCESSING"))
 			{
 				return lineToSend;
 			}
 
-			return ApplyExtrusionMultiplier(lineToSend);
-		}
-
-		private string ApplyExtrusionMultiplier(string lineBeingSent)
-		{
-			if (lineBeingSent != null)
+			if (lineToSend != null
+				&& LineIsMovement(lineToSend))
 			{
-				if (LineIsMovement(lineBeingSent))
+				PrinterMove currentMove = GetPosition(lineToSend, this.lastDestination);
+
+				PrinterMove moveToSend = currentMove;
+				moveToSend.feedRate *= FeedRateRatio;
+
+				if (moveToSend.HaveAnyPosition)
 				{
-					double gcodeRequestedExtrusionPosition = 0;
-					if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
-					{
-						double delta = gcodeRequestedExtrusionPosition - previousGcodeRequestedExtrusionPosition;
-						double newActualExtruderPosition = currentActualExtrusionPosition + delta * ExtrusionRatio;
-						lineBeingSent = GCodeFile.ReplaceNumberAfter('E', lineBeingSent, newActualExtruderPosition);
-						previousGcodeRequestedExtrusionPosition = gcodeRequestedExtrusionPosition;
-						currentActualExtrusionPosition = newActualExtruderPosition;
-					}
+					lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
 				}
-				else if (lineBeingSent.StartsWith("G92"))
-				{
-					double gcodeRequestedExtrusionPosition = 0;
-					if (GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref gcodeRequestedExtrusionPosition))
-					{
-						previousGcodeRequestedExtrusionPosition = gcodeRequestedExtrusionPosition;
-						currentActualExtrusionPosition = gcodeRequestedExtrusionPosition;
-					}
-				}
+				this.lastDestination = currentMove;
+				return lineToSend;
 			}
 
-			return lineBeingSent;
+			return lineToSend;
 		}
 	}
 }
