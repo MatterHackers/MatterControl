@@ -147,8 +147,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Notify listeners of a ProfileListChange event due to this printers removal
 				ProfileManager.ProfilesListChanged.CallEvents(this, null);
 
-				// Force sync after marking for delete if assigned
-				ApplicationController.SyncPrinterProfiles?.Invoke("SettingsHelpers.SetMarkedForDelete()", null);
+				// Queue sync after marking printer for delete
+				ApplicationController.QueueCloudProfileSync?.Invoke("SettingsHelpers.SetMarkedForDelete()");
 			});
 		}
 
@@ -691,8 +691,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			ProfilesListChanged.CallEvents(null, null);
 
-			// Force sync after any collection change event
-			ApplicationController.SyncPrinterProfiles?.Invoke("ProfileManager.Profiles_CollectionChanged()", null);
+			// Queue sync after any collection change event
+			ApplicationController.QueueCloudProfileSync?.Invoke("ProfileManager.Profiles_CollectionChanged()");
 		}
 
 		private void Printer_SettingsChanged(object sender, StringEventArgs e)
