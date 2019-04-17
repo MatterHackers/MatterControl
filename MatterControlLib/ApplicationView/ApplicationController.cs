@@ -553,7 +553,9 @@ namespace MatterHackers.MatterControl
 		public static Func<PrinterInfo, string, Task<PrinterSettings>> GetPrinterProfileAsync;
 
 		// Executes the user printer profile sync logic in the webservices plugin
-		public static Func<string, IProgress<ProgressStatus>, Task> SyncPrinterProfiles;
+		public static Func<string, IProgress<ProgressStatus>, Task> SyncCloudProfiles;
+
+		public static Action<string> QueueCloudProfileSync;
 
 		// Returns all public printer profiles from the webservices plugin
 		public static Func<Task<OemProfileDictionary>> GetPublicProfileList;
