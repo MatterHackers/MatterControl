@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -67,6 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.editorType = editorType;
 			this.theme = theme;
 			this.printer = sceneContext.Printer;
+			this.EnsureBedTexture(selectedItem: null);
 
 			// Register listeners
 			if (printer != null)
