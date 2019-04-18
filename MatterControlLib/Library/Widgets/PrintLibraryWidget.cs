@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private OverflowBar navBar;
 		private GuiWidget searchButton;
 
-		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace, ThemeConfig theme, PopupMenuButton popupMenuButton)
+		public PrintLibraryWidget(MainViewWidget mainViewWidget, PartWorkspace workspace,  ThemeConfig theme, Color libraryBackground, PopupMenuButton popupMenuButton)
 		{
 			this.theme = theme;
 			this.mainViewWidget = mainViewWidget;
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
 				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
-				BackgroundColor = theme.BackgroundColor,
+				BackgroundColor = libraryBackground,
 				Border = new BorderDouble(top: 1)
 			};
 
