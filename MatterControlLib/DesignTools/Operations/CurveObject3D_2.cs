@@ -44,6 +44,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -57,10 +58,36 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Curve".Localize();
 		}
 
+		//public enum Measure { Diameter, Angle, Turns }
+
+		//public Measure Specify { get; set; }
+
 		[DisplayName("Bend Up")]
 		public bool BendCcw { get; set; } = true;
 
 		public double Diameter { get; set; } = double.MinValue;
+		//public double Angle { get; set; } = double.MinValue;
+
+
+		//[JsonIgnore]
+		//public double Turns
+		//{
+		//	get
+		//	{
+		//		// Turns = XSize / (Tau * (Diameter / 2));
+		//		var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+
+		//		return aabb.XSize / (MathHelper.Tau * (Diameter / 2));
+		//	}
+		//	set
+		//	{
+		//		// Diameter = ((XSize / Turns) / Tau) * 2
+
+		//		var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+
+		//		Diameter = (aabb.XSize / value) / MathHelper.Tau * 2;
+		//	}
+		//}
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
@@ -209,53 +236,26 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			for (int j = 0; j < cuts.Count; j++)
 			{
+				mesh.Split(new Plane(Vector3.UnitX, cuts[j]), .1, (clipData) =>
+				{
+					// if two distances are less than 0
+					if ((clipData.Dist[0] < 0 && clipData.Dist[1] < 0)
+						|| (clipData.Dist[1] < 0 && clipData.Dist[2] < 0)
+						|| (clipData.Dist[2] < 0 && clipData.Dist[0] < 0))
+					{
+						return true;
+					}
+
+					return false;
+				});
+			}
+
+			for (int j = cuts.Count - 1; j >= 0; j--)
+			{
 				mesh.Split(new Plane(Vector3.UnitX, cuts[j]), .1);
 			}
+
 			return;
-
-			List<Vector3Float> finalVertices = new List<Vector3Float>();
-			List<Face> finalFaces = new List<Face>();
-
-			var planes = cuts.Select(c => new Plane(Vector3.UnitX, c)).ToArray();
-
-			for (int i = 0; i < mesh.Faces.Count; i++)
-			{
-				var face = mesh.Faces[i];
-				var vertices = mesh.Vertices;
-
-				for (int j = 0; j < cuts.Count; j++)
-				{
-					List<Vector3Float> newVertices = new List<Vector3Float>();
-					List<Face> newFaces = new List<Face>();
-
-					if (face.Split(vertices, planes[j], newFaces, newVertices, onPlaneDistance))
-					{
-						// remove the faces left of the cut
-						// if there are still faces to and another cut to the right
-						if (j < cuts.Count - 1)
-						{
-							// take the faces we just got back and also clip them against the cut to the right
-						}
-						else // add the faces to the list
-						{
-
-						}
-					}
-					else // the face was not cut
-					{
-						// if the face is to the left of the cut
-						// add it to the list of final faces
-					}
-				}
-			}
-
-			// add the new data we have built
-			mesh.Vertices = finalVertices;
-			mesh.Faces.Clear();
-			mesh.Faces.AddRange(finalFaces);
-
-			// clean the result
-			mesh.CleanAndMerge();
 		}
 	}
 }
