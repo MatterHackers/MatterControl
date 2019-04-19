@@ -37,24 +37,13 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
 	public static class WebCache
 	{
 		private static string _cachePath = ".";
-
-		public static string CachePath
-		{
-			get => _cachePath;
-
-			set
-			{
-				_cachePath = value;
-				// make sure it exists
-				Directory.CreateDirectory(value);
-			}
-		}
 
 		private static HashSet<string> savedImages = new HashSet<string>();
 
@@ -65,7 +54,8 @@ namespace MatterHackers.MatterControl
 		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
-			string imageFileName = Path.Combine(CachePath, longHash.ToString() + ".png");
+
+			var imageFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".png");
 
 			if (File.Exists(imageFileName))
 			{
@@ -118,8 +108,9 @@ namespace MatterHackers.MatterControl
 			var asyncImageSequence = new ImageSequence();
 
 			var longHash = uriToLoad.GetLongHashCode();
-			string pngFileName = Path.Combine(CachePath, longHash.ToString() + ".png");
-			string gifFileName = Path.Combine(CachePath, longHash.ToString() + ".gif");
+			var pngFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".png");
+			var gifFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".gif");
+
 
 			if (File.Exists(pngFileName))
 			{
@@ -214,7 +205,7 @@ namespace MatterHackers.MatterControl
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
-			string textFileName = Path.Combine(CachePath, longHash.ToString() + ".txt");
+			var textFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".txt");
 
 			string fileText = null;
 			if (File.Exists(textFileName))

@@ -31,6 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -126,7 +127,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		protected void SendRequest(ulong longHash)
 		{
-			string cacheFileName = Path.Combine(WebCache.CachePath, longHash.ToString() + ".txt");
+			var cacheFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".txt");
 			ResponseType cacheResponse = null;
 
 			if (longHash != 0

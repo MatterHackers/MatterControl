@@ -1530,8 +1530,6 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
-
-			WebCache.CachePath = Path.Combine(ApplicationDataStorage.ApplicationUserDataPath, "data", "temp", "WebCache");
 		}
 
 		public void Connection_ErrorReported(object sender, string line)
