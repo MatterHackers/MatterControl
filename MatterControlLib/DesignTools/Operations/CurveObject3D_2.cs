@@ -106,7 +106,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var currentMatrixInv = Matrix.Inverted;
 				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
 
-				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Red);
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 150, Color.Red, Color.Transparent);
+				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, (int)Math.Max(0, this.MinSidesPerRotation), Color.Transparent, Color.Red);
 			}
 
 			// turn the lighting back on
