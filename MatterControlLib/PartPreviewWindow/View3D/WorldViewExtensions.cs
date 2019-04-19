@@ -38,29 +38,41 @@ namespace MatterHackers.MeshVisualizer
 {
 	public static class WorldViewExtensions
 	{
-		public static void RenderCylinderOutline(this WorldView world, Matrix4X4 worldMatrix, Vector3 center, double Diameter, double Height, int sides, Color color, double lineWidth = 1, double extendLineLength = 0)
+		public static void RenderCylinderOutline(this WorldView world, Matrix4X4 worldMatrix, Vector3 center, double diameter, double height, int sides, Color color, double lineWidth = 1, double extendLineLength = 0)
+		{
+			world.RenderCylinderOutline(worldMatrix, center, diameter, height, sides, color, color, lineWidth, extendLineLength);
+		}
+
+		public static void RenderCylinderOutline(this WorldView world, Matrix4X4 worldMatrix, Vector3 center, double diameter, double height, int sides, Color color1, Color color2, double lineWidth = 1, double extendLineLength = 0)
 		{
 			GLHelper.PrepareFor3DLineRender(true);
 			Frustum frustum = world.GetClippingFrustum();
 			for (int i = 0; i < sides; i++)
 			{
-				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * Diameter / 2;
-				var sideTop = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, Height / 2), worldMatrix);
-				var sideBottom = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, -Height / 2), worldMatrix);
-				var rotated2Point = new Vector3(Math.Cos(MathHelper.Tau * (i + 1) / sides), Math.Sin(MathHelper.Tau * (i + 1) / sides), 0) * Diameter / 2;
+				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * diameter / 2;
+				var sideTop = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, height / 2), worldMatrix);
+				var sideBottom = Vector3Ex.Transform(center + rotatedPoint + new Vector3(0, 0, -height / 2), worldMatrix);
+				var rotated2Point = new Vector3(Math.Cos(MathHelper.Tau * (i + 1) / sides), Math.Sin(MathHelper.Tau * (i + 1) / sides), 0) * diameter / 2;
 				var topStart = sideTop;
-				var topEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, Height / 2), worldMatrix);
+				var topEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, height / 2), worldMatrix);
 				var bottomStart = sideBottom;
-				var bottomEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, -Height / 2), worldMatrix);
+				var bottomEnd = Vector3Ex.Transform(center + rotated2Point + new Vector3(0, 0, -height / 2), worldMatrix);
 
 				if (extendLineLength > 0)
 				{
 					GLHelper.ExtendLineEnds(ref sideTop, ref sideBottom, extendLineLength);
 				}
 
-				world.Render3DLineNoPrep(frustum, sideTop, sideBottom, color, lineWidth);
-				world.Render3DLineNoPrep(frustum, topStart, topEnd, color, lineWidth);
-				world.Render3DLineNoPrep(frustum, bottomStart, bottomEnd, color, lineWidth);
+				if (color2 != Color.Transparent)
+				{
+					world.Render3DLineNoPrep(frustum, sideTop, sideBottom, color2, lineWidth);
+				}
+
+				if (color1 != Color.Transparent)
+				{
+					world.Render3DLineNoPrep(frustum, topStart, topEnd, color1, lineWidth);
+					world.Render3DLineNoPrep(frustum, bottomStart, bottomEnd, color1, lineWidth);
+				}
 			}
 
 			// turn the lighting back on
