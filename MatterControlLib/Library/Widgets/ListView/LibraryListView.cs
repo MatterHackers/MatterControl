@@ -103,6 +103,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public override Color BackgroundColor
+		{
+			get => loadingIndicator.Visible ? loadingBackgroundColor : base.BackgroundColor;
+			set => base.BackgroundColor = value;
+		}
+
 		public bool ShowItems { get; set; } = true;
 
 		public bool AllowContextMenu { get; set; } = true;
@@ -343,7 +349,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// </summary>
 		public GuiWidget ListContentView
 		{
-			get { return contentView; }
+			get => contentView;
 			set
 			{
 				if (value is IListContentView)
@@ -425,7 +431,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							{
 								(contentView as IListContentView)?.ClearItems();
 
-								this.BackgroundColor = loadingBackgroundColor;
 								contentView.Visible = false;
 								loadingIndicator.Visible = true;
 
@@ -435,7 +440,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								});
 
 								loadingIndicator.Visible = false;
-								this.BackgroundColor = Color.Transparent;
 								contentView.Visible = true;
 
 								container.Parent = ActiveContainer;
