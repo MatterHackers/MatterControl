@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var startingAngle = StartingAngle;
 					var endingAngle = EndingAngle;

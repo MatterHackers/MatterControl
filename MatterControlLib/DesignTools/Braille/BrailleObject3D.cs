@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					this.Children.Modify(list =>
 				{

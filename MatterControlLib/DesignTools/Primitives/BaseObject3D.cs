@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var firstChild = this.Children.FirstOrDefault();
 
@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMantainer(this))
+					using (new CenterAndHeightMaintainer(this))
 					{
 						var firstChild = this.Children.FirstOrDefault();
 

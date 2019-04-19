@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMantainer(this))
+					using (new CenterAndHeightMaintainer(this))
 					{
 						this.Children.Modify(list =>
 						{

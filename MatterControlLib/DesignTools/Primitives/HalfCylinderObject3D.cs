@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 180, ref valuesChanged);
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var path = new VertexStorage();
 					path.MoveTo(Width / 2, 0);

@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					AdjustChildSize(null, null);
 

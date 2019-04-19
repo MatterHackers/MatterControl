@@ -71,7 +71,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public async Task AutoArrangeChildrenTests()
 		{
-			// arange a single item around the origin
+			// arrange a single item around the origin
 			{
 				var scene = new InteractiveScene();
 				Object3D cube1;
@@ -88,7 +88,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				Assert.IsTrue(new AxisAlignedBoundingBox(-10, -10, 0, 10, 10, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
 			}
 
-			// arange a single item around a typical bed center
+			// arrange a single item around a typical bed center
 			{
 				var scene = new InteractiveScene();
 				Object3D cube1;
@@ -105,7 +105,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				Assert.IsTrue(new AxisAlignedBoundingBox(90, 90, 0, 110, 110, 20).Equals(cube1.GetAxisAlignedBoundingBox(), .001));
 			}
 
-			// arange 4 items
+			// arrange 4 items
 			{
 				var scene = new InteractiveScene();
 				for (int i = 0; i < 4; i++)
@@ -128,7 +128,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				Assert.Less(sceneAabb.YSize, 60);
 			}
 
-			// arange 4 items, starting with 1 selected
+			// arrange 4 items, starting with 1 selected
 			{
 				var scene = new InteractiveScene();
 				Object3D child = null;

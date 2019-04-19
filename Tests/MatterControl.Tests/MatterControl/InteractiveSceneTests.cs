@@ -402,7 +402,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public async Task ScaleObjectMantainsCorrectAabb()
+		public async Task ScaleObjectMaintainsCorrectAabb()
 		{
 			// build cube with scale and undo
 			{
@@ -455,7 +455,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public async Task ScaleAndRotateMantainsCorrectAabb()
+		public async Task ScaleAndRotateMaintainsCorrectAabb()
 		{
 			{
 				// create a simple cube with translation
@@ -490,7 +490,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public async Task RotateMantainsCorrectAabb()
+		public async Task RotateMaintainsCorrectAabb()
 		{
 			{
 				// create a simple cube with translation

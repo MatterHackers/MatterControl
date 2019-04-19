@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					// first align the anchor object
 					foreach (var child in list)
 					{
-						// only process te anchor object
+						// only process the anchor object
 						if (i != anchorIndex)
 						{
 							i++;
@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					i = 0;
 					foreach (var child in list)
 					{
-						// skip the anchore object
+						// skip the anchor object
 						if (i == anchorIndex)
 						{
 							i++;

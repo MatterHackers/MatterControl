@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
-			// TODO: color and output type could have special consideration that would not require a rebulid
-			// They could jus propagate the color and output type to the corecty child and everything would be good
+			// TODO: color and output type could have special consideration that would not require a rebuild
+			// They could just propagate the color and output type to the correctly child and everything would be good
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)

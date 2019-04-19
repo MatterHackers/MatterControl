@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);

@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var innerDiameter = Math.Min(OuterDiameter - .1, InnerDiameter);
 
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var poleRadius = (OuterDiameter / 2 - innerDiameter / 2) / 2;
 					var toroidRadius = innerDiameter / 2 + poleRadius;

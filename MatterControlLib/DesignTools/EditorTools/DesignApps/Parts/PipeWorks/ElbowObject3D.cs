@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					// validate the some of the values and store in user data if changed
 					InnerDiameter = ValidateValue(InnerDiameter, "PipeWorksInnerDiameter", 15);

@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					this.DebugDepth("Rebuild");
 
-					using (new CenterAndHeightMantainer(this))
+					using (new CenterAndHeightMaintainer(this))
 					{
 						var newChildren = new List<IObject3D>();
 

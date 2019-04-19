@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var startingAabb = this.GetAxisAlignedBoundingBox();
 					// remove whatever rotation has been applied (they go in reverse order)
