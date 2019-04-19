@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 180, ref valuesChanged);
 				LongitudeSides = agg_basics.Clamp(LongitudeSides, 3, 360, ref valuesChanged);
 
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var radius = Diameter / 2;
 					var angleDelta = MathHelper.Tau / 4 / LatitudeSides;

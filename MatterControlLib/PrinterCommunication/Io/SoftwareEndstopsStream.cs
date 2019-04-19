@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
 
-			// if the printer has no heigt set than allow it to go up any amount
+			// if the printer has no height set than allow it to go up any amount
 			if(aabb.ZSize < 10)
 			{
 				aabb.MaxXYZ.Z = 200;

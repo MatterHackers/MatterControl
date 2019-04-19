@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 
 		/// <summary>
-		/// Set the visability of a property line item in the property editor
+		/// Set the visibility of a property line item in the property editor
 		/// </summary>
 		/// <param name="editRowName"></param>
 		/// <param name="change"></param>

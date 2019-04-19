@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		/// <summary>
 		/// Union a and b together. This can either return a single item with a mesh on it
-		/// or a group item that has the a and be itmes as children
+		/// or a group item that has the a and be items as children
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="b"></param>

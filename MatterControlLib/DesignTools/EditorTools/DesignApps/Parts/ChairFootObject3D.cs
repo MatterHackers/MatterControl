@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					AngleDegrees = 45;
 				}
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					// This would be better expressed as the desired offset height (height from ground to bottom of chair leg).
 					double angleRadians = MathHelper.DegreesToRadians(AngleDegrees);

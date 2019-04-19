@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 360, ref valuesChanged);
 
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					var startingAngle = StartingAngle;
 					var endingAngle = EndingAngle;

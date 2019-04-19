@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
 				}

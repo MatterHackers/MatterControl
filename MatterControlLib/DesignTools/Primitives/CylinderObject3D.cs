@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Height = Math.Max(Height, .001);
 				Diameter = Math.Max(Diameter, .1);
 
-				using (new CenterAndHeightMantainer(this))
+				using (new CenterAndHeightMaintainer(this))
 				{
 					if (!Advanced)
 					{
