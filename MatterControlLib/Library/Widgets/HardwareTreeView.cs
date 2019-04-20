@@ -83,17 +83,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Height = forcedHeight,
 				Width = forcedHeight
 			};
-
 			createPrinter.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				if (ApplicationController.Instance.AnyPrintTaskRunning)
-				{
-					StyledMessageBox.ShowMessageBox("Please wait until the print has finished and try again.".Localize(), "Can't add printers while printing".Localize());
-				}
-				else
-				{
-					DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
-				}
+				DialogWindow.Show(PrinterSetup.GetBestStartPage(PrinterSetup.StartPageOptions.ShowMakeModel));
 			});
 			mainRow.AddChild(createPrinter);
 

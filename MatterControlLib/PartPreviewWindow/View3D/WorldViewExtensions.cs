@@ -47,6 +47,7 @@ namespace MatterHackers.MeshVisualizer
 		{
 			GLHelper.PrepareFor3DLineRender(true);
 			Frustum frustum = world.GetClippingFrustum();
+
 			for (int i = 0; i < sides; i++)
 			{
 				var rotatedPoint = new Vector3(Math.Cos(MathHelper.Tau * i / sides), Math.Sin(MathHelper.Tau * i / sides), 0) * diameter / 2;

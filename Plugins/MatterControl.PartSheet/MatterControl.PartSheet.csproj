@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>MatterHackers Inc.</Company>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\..\bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PDFsharp" Version="1.50.5147" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\MatterControl.Common\MatterControl.Common.csproj">
+      <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
+      <Name>MatterControl.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\MatterControlLib\MatterControlLib.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\agg\Agg.csproj">
+    </ProjectReference>
+    <ProjectReference Include="..\..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
+    <ProjectReference Include="..\..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

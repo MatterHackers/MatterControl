@@ -96,7 +96,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Typography.OpenFont", "Subm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.Common", "MatterControl.Common\MatterControl.Common.csproj", "{50505F12-985B-4C5F-8DAB-D5BEA734CD51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.PartSheet", "MatterControl.PartSheet\MatterControl.PartSheet.csproj", "{312CE0DD-0F8F-4366-96A4-44D0AAEF60AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MatterControl.PartSheet", "Plugins\MatterControl.PartSheet\MatterControl.PartSheet.csproj", "{312CE0DD-0F8F-4366-96A4-44D0AAEF60AA}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
