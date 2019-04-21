@@ -1792,7 +1792,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.nozzle1_inset,
+					SlicerConfigName = SettingsKey.t0_inset,
 					PresentationName = "Nozzle 1 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
@@ -1801,7 +1801,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.nozzle2_inset,
+					SlicerConfigName = SettingsKey.t1_inset,
 					PresentationName = "Nozzle 2 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,

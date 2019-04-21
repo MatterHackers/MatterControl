@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "start heating the bed");
 			}
 
-			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfHotends();
+			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfTools();
 
 			// Start heating all the extruder that we are going to use.
 			for (int extruderIndex0Based = 0; extruderIndex0Based < numberOfHeatedExtruders; extruderIndex0Based++)

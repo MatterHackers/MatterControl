@@ -129,8 +129,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string settingsKey = e.Data;
 
 			// Invalidate bed textures on related settings change
-			if (settingsKey == SettingsKey.nozzle1_inset
-				|| settingsKey == SettingsKey.nozzle2_inset
+			if (settingsKey == SettingsKey.t0_inset
+				|| settingsKey == SettingsKey.t1_inset
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center)
 			{
