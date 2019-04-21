@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Stretch;
 			this.printer = printer;
 
-			int hotendCount = printer.Settings.Helpers.NumberOfHotends();
+			int hotendCount = printer.Settings.Helpers.NumberOfTools();
 
 			// add in the hotend controls
 			for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)

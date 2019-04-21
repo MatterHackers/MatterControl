@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer.InsideBuildVolume(item))
 				{
-					if (printer.Settings.Helpers.NumberOfHotends() > 1)
+					if (printer.Settings.Helpers.NumberOfTools() > 1)
 					{
 						var materialIndex = item.WorldMaterialIndex();
 						if (materialIndex == -1)
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
 
 						// Determine if the given item is outside the bounds of the given extruder
-						if (materialIndex < printer.Settings.HotendBounds.Length
+						if (materialIndex < printer.Settings.ToolBounds.Length
 							|| isWipeTower)
 						{
 							var itemAABB = item.WorldAxisAlignedBoundingBox();
@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// Validate against active hotends
 							foreach(var hotendIndex in activeHotends)
 							{
-								var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+								var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
 								if (!hotendBounds.Contains(itemBounds))
 								{
 									// Draw in red outside of the bounds for the hotend

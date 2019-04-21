@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Color buildVolumeColor;
 
-		private int activeBedHotendClippingImage = int.MinValue;
+		private int activeBedToolClippingImage = int.MinValue;
 
 		private ImageBuffer[] bedTextures = null;
 
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var bedImage = BedMeshGenerator.CreatePrintBedImage(sceneContext.Printer);
 
-						if (printer.Settings.Helpers.NumberOfHotends() > 1)
+						if (printer.Settings.Helpers.NumberOfTools() > 1)
 						{
 							bedTextures = new[]
 							{
@@ -207,11 +207,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								new ImageBuffer(bedImage)	// Unioned T0 & T1 limits
 							};
 
-							GenerateNozzleLimitsTexture(printer, 0, bedTextures[1]);
-							GenerateNozzleLimitsTexture(printer, 1, bedTextures[2]);
+							GenerateToolLimitsTexture(printer, 0, bedTextures[1]);
+							GenerateToolLimitsTexture(printer, 1, bedTextures[2]);
 
-							// Special case for union of both hotends
-							GenerateNozzleLimitsTexture(printer, 2, bedTextures[3]);
+							// Special case for union of both tools
+							GenerateToolLimitsTexture(printer, 2, bedTextures[3]);
 						}
 						else
 						{
@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								bedImage,                   // No limits, basic themed bed
 							};
 
-							activeBedHotendClippingImage = 0;
+							activeBedToolClippingImage = 0;
 						}
 
 						this.SetActiveTexture(bedTextures[0]);
@@ -232,21 +232,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					loadingTextures = false;
 				});
 			}
-			else if (printer.Settings.Helpers.NumberOfHotends() > 1
+			else if (printer.Settings.Helpers.NumberOfTools() > 1
 				&& printer.Bed.BedShape == BedShape.Rectangular)
 			{
-				int hotendIndex = GetActiveHotendIndex(selectedItem);
+				int toolIndex = GetActiveToolIndex(selectedItem);
 
-				if (activeBedHotendClippingImage != hotendIndex)
+				if (activeBedToolClippingImage != toolIndex)
 				{
 					// Clamp to the range that's currently supported
-					if (hotendIndex > 2)
+					if (toolIndex > 2)
 					{
-						hotendIndex = -1;
+						toolIndex = -1;
 					}
 
-					this.SetActiveTexture(bedTextures[hotendIndex + 1]);
-					activeBedHotendClippingImage = hotendIndex;
+					this.SetActiveTexture(bedTextures[toolIndex + 1]);
+					activeBedToolClippingImage = toolIndex;
 				}
 			}
 		}
@@ -256,14 +256,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			string settingsKey = e.Data;
 
 			// Invalidate bed textures on related settings change
-			if (settingsKey == SettingsKey.nozzle1_inset
-				|| settingsKey == SettingsKey.nozzle2_inset
+			if (settingsKey == SettingsKey.t0_inset
+				|| settingsKey == SettingsKey.t1_inset
 				|| settingsKey == SettingsKey.bed_size
 				|| settingsKey == SettingsKey.print_center
 				|| settingsKey == SettingsKey.extruder_count
 				|| settingsKey == SettingsKey.bed_shape)
 			{
-				activeBedHotendClippingImage = int.MinValue;
+				activeBedToolClippingImage = int.MinValue;
 
 				// Force texture rebuild, don't clear allowing redraws of the stale data until rebuilt
 				bedTextures = null;
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.MainView.Invalidate();
 		}
 
-		private static int GetActiveHotendIndex(IObject3D selectedItem)
+		private static int GetActiveToolIndex(IObject3D selectedItem)
 		{
 			if (selectedItem == null)
 			{
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return worldMaterialIndex;
 		}
 
-		private void GenerateNozzleLimitsTexture(PrinterConfig printer, int hotendIndex, ImageBuffer bedplateImage)
+		private void GenerateToolLimitsTexture(PrinterConfig printer, int toolIndex, ImageBuffer bedplateImage)
 		{
 			var xScale = bedplateImage.Width / printer.Settings.BedBounds.Width;
 			var yScale = bedplateImage.Height / printer.Settings.BedBounds.Height;
@@ -327,33 +327,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var graphics = bedplateImage.NewGraphics2D();
 
-			RectangleDouble hotendBounds;
+			RectangleDouble toolBounds;
 
-			if (hotendIndex == 2)
+			if (toolIndex == 2)
 			{
-				var hotend0 = printer.Settings.HotendBounds[0];
-				var hotend1 = printer.Settings.HotendBounds[1];
+				var tool0Bounds = printer.Settings.ToolBounds[0];
+				var tool1Bounds = printer.Settings.ToolBounds[1];
 
-				hotend0.IntersectWithRectangle(hotend1);
+				tool0Bounds.IntersectWithRectangle(tool1Bounds);
 
-				hotendBounds = hotend0;
+				toolBounds = tool0Bounds;
 			}
 			else
 			{
-				hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+				toolBounds = printer.Settings.ToolBounds[toolIndex];
 			}
 
 			// move relative to the texture origin, move to the bed lower left position
 			var bedBounds = printer.Settings.BedBounds;
 
-			hotendBounds.Offset(-bedBounds.Left, -bedBounds.Bottom);
+			toolBounds.Offset(-bedBounds.Left, -bedBounds.Bottom);
 
-			// Scale hotendBounds into textures units
-			hotendBounds = new RectangleDouble(
-				hotendBounds.Left * xScale,
-				hotendBounds.Bottom * yScale,
-				hotendBounds.Right * xScale,
-				hotendBounds.Top * yScale);
+			// Scale toolBounds into textures units
+			toolBounds = new RectangleDouble(
+				toolBounds.Left * xScale,
+				toolBounds.Bottom * yScale,
+				toolBounds.Right * xScale,
+				toolBounds.Top * yScale);
 
 			var imageBounds = bedplateImage.GetBounds();
 
@@ -364,23 +364,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			dimRegion.LineTo(imageBounds.Left, imageBounds.Top);
 
 			var targetRect = new VertexStorage();
-			targetRect.MoveTo(hotendBounds.Right, hotendBounds.Bottom);
-			targetRect.LineTo(hotendBounds.Left, hotendBounds.Bottom);
-			targetRect.LineTo(hotendBounds.Left, hotendBounds.Top);
-			targetRect.LineTo(hotendBounds.Right, hotendBounds.Top);
+			targetRect.MoveTo(toolBounds.Right, toolBounds.Bottom);
+			targetRect.LineTo(toolBounds.Left, toolBounds.Bottom);
+			targetRect.LineTo(toolBounds.Left, toolBounds.Top);
+			targetRect.LineTo(toolBounds.Right, toolBounds.Top);
 			targetRect.ClosePolygon();
 
 			var overlayMinusTargetRect = new CombinePaths(dimRegion, targetRect);
 			graphics.Render(overlayMinusTargetRect, new Color(Color.Black, alpha));
 
-			string hotendTitle = string.Format("{0} {1}", "Nozzle ".Localize(), hotendIndex + 1);
+			string toolTitle = string.Format("{0} {1}", "Tool ".Localize(), toolIndex + 1);
 
-			if (hotendIndex == 2)
+			if (toolIndex == 2)
 			{
-				hotendTitle = "Nozzles ".Localize() + "1 & 2";
+				toolTitle = "Tools ".Localize() + "1 & 2";
 			}
 
-			var stringPrinter = new TypeFacePrinter(hotendTitle, theme.DefaultFontSize, bold: true);
+			var stringPrinter = new TypeFacePrinter(toolTitle, theme.DefaultFontSize, bold: true);
 			var printerBounds = stringPrinter.GetBounds();
 
 			int textPadding = 8;
@@ -388,15 +388,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var textBounds = printerBounds;
 			textBounds.Inflate(textPadding);
 
-			var cornerRect = new RectangleDouble(hotendBounds.Right - textBounds.Width, hotendBounds.Top - textBounds.Height, hotendBounds.Right, hotendBounds.Top);
+			var cornerRect = new RectangleDouble(toolBounds.Right - textBounds.Width, toolBounds.Top - textBounds.Height, toolBounds.Right, toolBounds.Top);
 
 			graphics.Render(
 				new RoundedRectShape(cornerRect, bottomLeftRadius: 6),
 				theme.PrimaryAccentColor);
 
 			graphics.DrawString(
-				hotendTitle,
-				hotendBounds.Right - textPadding,
+				toolTitle,
+				toolBounds.Right - textPadding,
 				cornerRect.Bottom + (cornerRect.Height / 2 - printerBounds.Height / 2) + 1,
 				theme.DefaultFontSize,
 				justification: Justification.Right,

@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void OnSettingChanged(string slicerConfigName)
 		{
-			if (slicerConfigName == SettingsKey.nozzle1_inset
-				|| slicerConfigName == SettingsKey.nozzle2_inset
+			if (slicerConfigName == SettingsKey.t0_inset
+				|| slicerConfigName == SettingsKey.t1_inset
 				|| slicerConfigName == SettingsKey.bed_size
 				|| slicerConfigName == SettingsKey.print_center)
 			{
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			RectangleDouble GetHotendBounds(int index)
 			{
-				string settingsKey = index == 0 ? SettingsKey.nozzle1_inset : SettingsKey.nozzle2_inset;
+				string settingsKey = index == 0 ? SettingsKey.t0_inset : SettingsKey.t1_inset;
 				var inset = this.GetValue<Vector4>(settingsKey);
 
 				return new RectangleDouble(
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					bounds.Top - inset.W);
 			}
 
-			this.HotendBounds = new[]
+			this.ToolBounds = new[]
 			{
 				GetHotendBounds(0),
 				GetHotendBounds(1),
@@ -393,7 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Gets the bounds that are accessible for a given hotend
 		/// </summary>
-		public RectangleDouble[] HotendBounds { get; private set; }
+		public RectangleDouble[] ToolBounds { get; private set; }
 
 		[JsonIgnore]
 		public bool AutoSave { get; set; } = true;

@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 
 		private static bool InsideHotendBounds(this PrinterConfig printer, IObject3D item)
 		{
-			if (printer.Settings.Helpers.NumberOfHotends() == 1)
+			if (printer.Settings.Helpers.NumberOfTools() == 1)
 			{
 				return true;
 			}
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 			bool isWipeTower = item?.OutputType == PrintOutputTypes.WipeTower;
 
 			// Determine if the given item is outside the bounds of the given extruder
-			if (materialIndex < printer.Settings.HotendBounds.Length
+			if (materialIndex < printer.Settings.ToolBounds.Length
 				|| isWipeTower)
 			{
 				var itemAABB = item.WorldAxisAlignedBoundingBox();
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 				// Validate against active hotends
 				foreach (var hotendIndex in activeHotends)
 				{
-					var hotendBounds = printer.Settings.HotendBounds[hotendIndex];
+					var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
 					if (!hotendBounds.Contains(itemBounds))
 					{
 						return false;
