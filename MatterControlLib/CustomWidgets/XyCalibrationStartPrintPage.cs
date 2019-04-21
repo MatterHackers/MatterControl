@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl
 						ContentStore = null // No content store for GCode
 					});
 
-					await printer.Connection.StartPrint(finalGCodePath, allowRecovery: false);
+					await printer.Connection.StartPrint(finalGCodePath, calibrationPrint: true);
 					ApplicationController.Instance.MonitorPrintTask(printer);
 				}
 				else
