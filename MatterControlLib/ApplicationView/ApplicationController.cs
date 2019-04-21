@@ -2763,7 +2763,9 @@ namespace MatterHackers.MatterControl
 				// show a long running task asking about print feedback and up-selling more materials
 				// Ask about the print, offer help if needed.
 				// Let us know how your print came out.
-				string markdownText = @"Shop supplies and accessories:
+				string markdownText = @"**Find more at MatterHackers**
+
+Supplies and accessories:
 - [Filament](https://www.matterhackers.com/store/c/3d-printer-filament)
 - [Bed Adhesives](https://www.matterhackers.com/store/c/3d-printer-adhesive)
 - [Digital Designs](https://www.matterhackers.com/store/c/digital-designs)
@@ -2775,7 +2777,7 @@ Support and tutorials:
 - [User Forum](https://forums.matterhackers.com/recent)";
 
 				var time = Stopwatch.StartNew();
-				ShowNotification("Print Completed".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
+				ShowNotification("Congratulations Print Complete".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
 			}
 		}
 
@@ -2828,9 +2830,11 @@ Support and tutorials:
 				UiThread.RunOnIdle(() =>
 				{
 					StyledMessageBox.ShowMessageBox(null,
-						markdownText, title,
-						extraWidgetsToAdd: new[] { hideAfterPrintMessage },
-						StyledMessageBox.MessageType.OK, useMarkdown: true);
+						markdownText,
+						title,
+						new[] { hideAfterPrintMessage },
+						StyledMessageBox.MessageType.OK,
+						useMarkdown: true);
 				});
 			}
 		}
