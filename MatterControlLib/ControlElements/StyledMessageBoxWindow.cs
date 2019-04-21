@@ -80,20 +80,21 @@ namespace MatterHackers.MatterControl
 				responseCallback = callback;
 				unwrappedMessage = message;
 
-				var scrollable = new ScrollableWidget(true);
-				scrollable.AnchorAll();
-				scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
-				contentRow.AddChild(scrollable);
-
 				if (useMarkdown)
 				{
-					scrollable.AddChild(messageContainer = new MarkdownWidget(theme)
+					contentRow.AddChild(messageContainer = new MarkdownWidget(theme)
 					{
 						Markdown = message,
 					});
 				}
 				else
 				{
+
+					var scrollable = new ScrollableWidget(true);
+					scrollable.AnchorAll();
+					scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+					contentRow.AddChild(scrollable);
+
 					scrollable.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
 					{
 						AutoExpandBoundsToText = true,

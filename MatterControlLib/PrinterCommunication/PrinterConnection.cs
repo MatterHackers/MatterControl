@@ -1946,20 +1946,23 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
+		public bool CalibrationPrint { get; private set; }
 		private CancellationTokenSource printingCancellation;
 
-		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool allowRecovery = true)
+		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool calibrationPrint = false)
 		{
 			var gcodeStream = new StreamReader(gcodeFilename);
-			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, allowRecovery);
+			await StartPrint(gcodeStream.BaseStream, gcodeFilename, printTaskToUse, calibrationPrint);
 		}
 
-		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, PrintTask printTaskToUse = null, bool allowRecovery = true)
+		public async Task StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, PrintTask printTaskToUse = null, bool calibrationPrint = false)
 		{
 			if (!this.IsConnected || Printing)
 			{
 				return;
 			}
+
+			this.CalibrationPrint = calibrationPrint;
 
 			printingCancellation = new CancellationTokenSource();
 
@@ -2001,7 +2004,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 							if (gcodeFileNameForTask != null
 								&& activePrintTask == null
-								&& allowRecovery)
+								&& CalibrationPrint)
 							{
 								// TODO: Fix printerItemID int requirement
 								activePrintTask = new PrintTask

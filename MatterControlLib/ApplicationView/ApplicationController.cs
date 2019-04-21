@@ -2757,7 +2757,8 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_PrintFinished(object sender, string e)
 		{
-			if (sender is PrinterConnection printerConnection)
+			if (sender is PrinterConnection printerConnection
+				&& !printerConnection.CalibrationPrint)
 			{
 				// show a long running task asking about print feedback and up-selling more materials
 				// Ask about the print, offer help if needed.
@@ -2774,18 +2775,14 @@ Support and tutorials:
 - [User Forum](https://forums.matterhackers.com/recent)";
 
 				var time = Stopwatch.StartNew();
-				ShowNotification("Print Completed".Localize(), markdownText, () =>
-				{
-					// leave the message on screen for 3 minutes or until another print starts
-					return !printerConnection.Printing
-							&& time.ElapsedMilliseconds < 3 * 60 * 1000;
-				});
+				ShowNotification("Print Completed".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
 			}
 		}
 
 		public void Connection_PrintCanceled(object sender, EventArgs e)
 		{
-			if (sender is PrinterConnection printerConnection)
+			if (sender is PrinterConnection printerConnection
+				&& !printerConnection.CalibrationPrint)
 			{
 				// show a long running task showing support options
 				// add links to forum, articles and documentation
@@ -2800,46 +2797,41 @@ Support and tutorials:
 - [User Forum](https://forums.matterhackers.com/recent)";
 
 				var time = Stopwatch.StartNew();
-				ShowNotification("Print Canceled".Localize(), markdownText, () =>
-				{
-					// leave the message on screen for 3 minutes or until another print starts
-					return !printerConnection.Printing
-						&& time.ElapsedMilliseconds < 3 * 60 * 1000;
-				});
+				ShowNotification("Print Canceled".Localize(), markdownText, UserSettingsKey.ShownPrintCanceledMessage);
 			}
 		}
 
-		private void ShowNotification(string title, string markdownText, Func<bool> keepShowing)
+		private void ShowNotification(string title, string markdownText, string userKey)
 		{
-			if (!string.IsNullOrEmpty(markdownText))
+			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
 			{
-				bool stopped = false;
-				_ = Tasks.Execute(title,
-					null,
-					(reporter, cancellationToken) =>
-					{
-						var progressStatus = new ProgressStatus();
+				TextColor = AppContext.Theme.TextColor,
+				Margin = new BorderDouble(top: 6, left: 6),
+				HAnchor = Agg.UI.HAnchor.Left,
+				Checked = ApplicationSettings.Instance.get(userKey) == "false"
+			};
+			hideAfterPrintMessage.Click += (s, e1) =>
+			{
+				if (hideAfterPrintMessage.Checked)
+				{
+					ApplicationSettings.Instance.set(userKey, "false");
+				}
+				else
+				{
+					ApplicationSettings.Instance.set(userKey, "true");
+				}
+			};
 
-						while (keepShowing() && !stopped)
-						{
-							Thread.Sleep(200);
-						}
-
-						return Task.CompletedTask;
-					},
-					taskActions: new RunningTaskOptions()
-					{
-						ExpansionSerializationKey = $"{title}_expanded",
-						StopAction = (abortCancel) => UiThread.RunOnIdle(() => stopped = true),
-						StopToolTip = "Dismiss".Localize(),
-						RichProgressWidget = () => new MarkdownWidget(Theme)
-						{
-							Markdown = markdownText,
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Fit,
-							Margin = new BorderDouble(5),
-						},
-					});
+			if (!hideAfterPrintMessage.Checked
+				&& !string.IsNullOrEmpty(markdownText))
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox(null,
+						markdownText, title,
+						extraWidgetsToAdd: new[] { hideAfterPrintMessage },
+						StyledMessageBox.MessageType.OK, useMarkdown: true);
+				});
 			}
 		}
 
