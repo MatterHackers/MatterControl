@@ -50,9 +50,6 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
-		// this needs to serialize but not be editable (so public but not a get set)
-		public Vector3 RotationOffset;
-
 		public CurveObject3D_2()
 		{
 			Name = "Curve".Localize();
@@ -135,7 +132,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					this.Translate(-RotationOffset);
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
 
@@ -155,7 +151,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var radius = Diameter / 2;
 						var circumference = MathHelper.Tau * radius;
-						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100), aabb.MaxXYZ.Y + radius, aabb.Center.Z);
 						double numRotations = aabb.XSize / circumference;
 						double numberOfCuts = numRotations * MinSidesPerRotation;
 						double cutSize = aabb.XSize / numberOfCuts;
@@ -167,26 +162,15 @@ namespace MatterHackers.MatterControl.DesignTools
 							cutPosition += cutSize;
 						}
 
-						RotationOffset = rotationCenter;
-						if (!BendCcw)
-						{
-							// fix the stored center so we draw correctly
-							RotationOffset.Y = aabb.MinXYZ.Y - radius;
-						}
+						var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100),
+							BendCcw ? aabb.MaxXYZ.Y + radius : aabb.MinXYZ.Y - radius, 
+							aabb.Center.Z);
 
 						foreach (var sourceItem in SourceContainer.VisibleMeshes())
 						{
 							var originalMesh = sourceItem.Mesh;
 							var transformedMesh = originalMesh.Copy(CancellationToken.None);
 							var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
-
-							if (!BendCcw)
-							{
-								// rotate around so it will bend correctly
-								itemMatrix *= Matrix4X4.CreateTranslation(0, -aabb.MaxXYZ.Y, 0);
-								itemMatrix *= Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
-								itemMatrix *= Matrix4X4.CreateTranslation(0, aabb.MaxXYZ.Y - aabb.YSize, 0);
-							}
 
 							// transform into this space
 							transformedMesh.Transform(itemMatrix);
@@ -200,6 +184,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 								var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
 								var distanceFromCenter = rotationCenter.Y - position.Y;
+								if(!BendCcw)
+								{
+									angleToRotate = -angleToRotate;
+									distanceFromCenter = -distanceFromCenter;
+								}
 
 								var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 								rotatePosition.Z = position.Z;
@@ -207,7 +196,11 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 
 							// transform back into item local space
-							transformedMesh.Transform(Matrix4X4.CreateTranslation(-RotationOffset) * itemMatrix.Inverted);
+							transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
+							if (!BendCcw)
+							{
+								transformedMesh.Transform(Matrix4X4.CreateTranslation(0, -aabb.YSize * 2, 0));
+							}
 
 							transformedMesh.MarkAsChanged();
 							transformedMesh.CalculateNormals();
@@ -217,12 +210,12 @@ namespace MatterHackers.MatterControl.DesignTools
 								Mesh = transformedMesh
 							};
 							newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+							newMesh.Translate(new Vector3(rotationCenter));
 							this.Children.Add(newMesh);
 						}
 
 						// set the matrix back
 						Matrix = currentMatrix;
-						this.Translate(new Vector3(RotationOffset));
 						SourceContainer.Visible = false;
 						rebuildLocks.Dispose();
 					}
