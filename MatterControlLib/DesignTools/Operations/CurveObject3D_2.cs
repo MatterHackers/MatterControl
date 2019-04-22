@@ -70,12 +70,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var distance = Diameter / 2 + aabb.YSize / 2;
-			var center = aabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
+			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var distance = Diameter / 2 + sourceAabb.YSize / 2;
+			var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
+			center.X -= sourceAabb.YSize / 2 - (StartPercent / 100.0) * sourceAabb.YSize;
 
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, aabb.ZSize, 150, Color.Red, Color.Transparent);
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, aabb.ZSize, (int)Math.Max(0, this.MinSidesPerRotation), Color.Transparent, Color.Red);
+			// render the top and bottom rings
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
+
+			// render the split lines
+			var radius = Diameter / 2;
+			var circumference = MathHelper.Tau * radius;
+			var xxx = sourceAabb.YSize * (StartPercent / 100.0);
+			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
@@ -113,8 +121,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				valuesChanged = true;
 			}
 
-			var originalAabb = this.GetAxisAlignedBoundingBox();
-
 			var rebuildLocks = this.RebuilLockAll();
 
 			return ApplicationController.Instance.Tasks.Execute(
@@ -122,21 +128,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					SourceContainer.Visible = true;
-					RemoveAllButSource();
-
-					// remember the current matrix then clear it so the parts will rotate at the original wrapped position
-					var currentMatrix = Matrix;
-					Matrix = Matrix4X4.Identity;
-
-					var aabb = this.GetAxisAlignedBoundingBox();
+					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
 					var radius = Diameter / 2;
 					var circumference = MathHelper.Tau * radius;
-					double numRotations = aabb.XSize / circumference;
+					double numRotations = sourceAabb.XSize / circumference;
 					double numberOfCuts = numRotations * MinSidesPerRotation;
-					double cutSize = aabb.XSize / numberOfCuts;
-					double cutPosition = aabb.MinXYZ.X + cutSize;
+					double cutSize = sourceAabb.XSize / numberOfCuts;
+					double cutPosition = sourceAabb.MinXYZ.X + cutSize;
 					var cuts = new List<double>();
 					for (int i = 0; i < numberOfCuts; i++)
 					{
@@ -144,9 +143,11 @@ namespace MatterHackers.MatterControl.DesignTools
 						cutPosition += cutSize;
 					}
 
-					var rotationCenter = new Vector3(aabb.MinXYZ.X + (aabb.MaxXYZ.X - aabb.MinXYZ.X) * (StartPercent / 100),
-						BendCcw ? aabb.MaxXYZ.Y + radius : aabb.MinXYZ.Y - radius,
-						aabb.Center.Z);
+					var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (StartPercent / 100),
+						BendCcw ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
+						sourceAabb.Center.Z);
+
+					var curvedChildren = new List<IObject3D>();
 
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
@@ -174,32 +175,39 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var rotatePosition = new Vector3Float(Math.Cos(angleToRotate), Math.Sin(angleToRotate), 0) * distanceFromCenter;
 							rotatePosition.Z = position.Z;
-							transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + aabb.MaxXYZ.Y, 0);
+							transformedMesh.Vertices[i] = rotatePosition + new Vector3Float(rotationCenter.X, radius + sourceAabb.MaxXYZ.Y, 0);
 						}
 
 						// transform back into item local space
 						transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
-						if (!BendCcw)
-						{
-							transformedMesh.Transform(Matrix4X4.CreateTranslation(0, -aabb.YSize * 2, 0));
-						}
 
 						transformedMesh.MarkAsChanged();
 						transformedMesh.CalculateNormals();
 
-						var newMesh = new Object3D()
+						var curvedChild = new Object3D()
 						{
 							Mesh = transformedMesh
 						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
-						newMesh.Translate(new Vector3(rotationCenter));
-						this.Children.Add(newMesh);
+						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All);
+						curvedChild.Visible = true;
+						curvedChild.Translate(new Vector3(rotationCenter));
+						if (!BendCcw)
+						{
+							curvedChild.Translate(0, -sourceAabb.YSize - Diameter, 0);
+						}
 
-						// set the matrix back
-						Matrix = currentMatrix;
-						SourceContainer.Visible = false;
-						rebuildLocks.Dispose();
+						curvedChildren.Add(curvedChild);
 					}
+
+					RemoveAllButSource();
+					this.SourceContainer.Visible = false;
+
+					this.Children.Modify((list) =>
+					{
+						list.AddRange(curvedChildren);
+					});
+
+					rebuildLocks.Dispose();
 
 					if (valuesChanged)
 					{
