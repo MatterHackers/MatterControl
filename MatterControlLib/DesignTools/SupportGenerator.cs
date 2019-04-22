@@ -365,7 +365,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (!nextPlaneIsBottom // if the next plane is a top, we don't have any space from the bed to the part to put support
 						|| planes[1].Z > minimumSupportHeight) // if the next plane is a bottom and is not far enough away, there is no space to put any support
 					{
-						var firstBottomAboveBed = planes.GetNextBottom(0, minimumSupportHeight);
+						var firstBottomAboveBed = planes.GetNextBottom(0);
 
 						if (firstBottomAboveBed >= 0)
 						{
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					if (nextPlaneIsBottom && planes[1].Z <= minimumSupportHeight)
 					{
 						// go up to the next top
-						i = planes.GetNextTop(i, minimumSupportHeight);
+						i = planes.GetNextTop(i);
 						if (i >= 0)
 						{
 							lastTopZ = planes[i].Z;
@@ -396,7 +396,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						lastBottom = i;
 						// find all open areas in the list and add support
-						i = planes.GetNextBottom(i, minimumSupportHeight);
+						i = planes.GetNextBottom(i);
 						if (i >= 0)
 						{
 							if (i < planes.Count
@@ -405,7 +405,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, planes[i].Z);
 							}
 
-							i = planes.GetNextTop(i + 1, minimumSupportHeight);
+							i = planes.GetNextTop(i + 1);
 							if (i >= 0
 								&& i < planes.Count)
 							{
@@ -433,7 +433,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public class HitPlanes : List<HitPlane>
 		{
-			public int GetNextBottom(int i, double skipDist)
+			private double minimumSupportHeight;
+
+			public HitPlanes(double minimumSupportHeight)
+			{
+				this.minimumSupportHeight = minimumSupportHeight;
+			}
+
+			public int GetNextBottom(int i)
 			{
 				HitPlanes planes = this;
 
@@ -450,7 +457,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if the next plane is a bottom and more than skipDistanc away
 						if (i + 1 < planes.Count
 							&& planes[i + 1].Bottom
-							&& planes[i + 1].Z > planes[i].Z + skipDist)
+							&& planes[i + 1].Z > planes[i].Z + minimumSupportHeight)
 						{
 							// this is the next bottom we are looking for
 							return i + 1;
@@ -465,7 +472,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				return -1;
 			}
 
-			public int GetNextTop(int i, double skipDist)
+			public int GetNextTop(int i)
 			{
 				HitPlanes planes = this;
 
@@ -488,7 +495,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						// if the next plane is a bottom and more than skipDistanc away
 						if (i + 1 < planes.Count
 							&& planes[i + 1].Bottom
-							&& planes[i + 1].Z > planes[i].Z + skipDist)
+							&& planes[i + 1].Z > planes[i].Z + minimumSupportHeight)
 						{
 							// this is the next top we are looking for
 							return i;
@@ -523,7 +530,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				for (int x = 0; x < gridWidth; x++)
 				{
 					// add a single plane at the bed so we always know the bed is a top
-					detectedPlanes.Add((x, y), new HitPlanes());
+					detectedPlanes.Add((x, y), new HitPlanes(minimumSupportHeight));
 					detectedPlanes[(x, y)].Add(new HitPlane(0, false));
 					for (double yOffset = -1; yOffset <= 1; yOffset++)
 					{

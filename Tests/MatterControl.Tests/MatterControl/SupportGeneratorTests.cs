@@ -61,9 +61,9 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			//   |_______|
 			//
-			//______________
+			// ______________
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				var aabb = cube.GetAxisAlignedBoundingBox();
@@ -71,8 +71,10 @@ namespace MatterControl.Tests.MatterControl
 				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z + 15);
 				scene.Children.Add(cube);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.Greater(scene.Children.Count, 1, "We should have added some support");
 				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
@@ -87,9 +89,8 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			// __|       |__
 			//   |_______|
-			//
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				var aabb = cube.GetAxisAlignedBoundingBox();
@@ -97,23 +98,25 @@ namespace MatterControl.Tests.MatterControl
 				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z - 5);
 				scene.Children.Add(cube);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(1, scene.Children.Count, "We should not have added any support");
 			}
 
 			// make a cube on the bed and single cube in the air and ensure that support is not generated
-			//   _________
-			//   |       |
-			//   |       |
-			//   |_______|
-			//   _________
-			//   |       |
-			//   |       |
-			//___|_______|___
+			//    _________
+			//    |       |
+			//    |       |
+			//    |_______|
+			//    _________
+			//    |       |
+			//    |       |
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -127,8 +130,10 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
@@ -142,9 +147,8 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			// __|       |__
 			//   |_______|
-			//
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -158,22 +162,24 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
 			// make a cube on the bed and another cube exactly on top of it and ensure that support is not generated
-			//   _________
-			//   |       |
-			//   |       |
-			//   |_______|
-			//   |       |
-			//   |       |
-			//___|_______|___
+			//    _________
+			//    |       |
+			//    |       |
+			//    |_______|
+			//    |       |
+			//    |       |
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -187,21 +193,23 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
 			// make a cube on the bed and single cube in the air that intersects it and ensure that support is not generated
-			//    _________
+			//     _________
+			//     |       |
+			//     |______ |  // top cube actually exactly on top of bottom cube
+			//    ||______||
 			//    |       |
-			//    |______ |  // top cube actually exactly on top of bottom cube
-			//   ||______||
-			//   |       |
-			//___|_______|___
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -215,23 +223,25 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
-			// Make a cube on the bed and single cube in the air that intersects it. 
+			// Make a cube on the bed and single cube in the air that intersects it.
 			// SELECT the cube on top
 			// Ensure that support is not generated.
-			//    _________
+			//     _________
+			//     |       |
+			//     |______ |  // top cube actually exactly on top of bottom cube
+			//    ||______||
 			//    |       |
-			//    |______ |  // top cube actually exactly on top of bottom cube
-			//   ||______||
-			//   |       |
-			//___|_______|___
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -247,8 +257,10 @@ namespace MatterControl.Tests.MatterControl
 
 				scene.SelectedItem = cubeInAir;
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
@@ -262,9 +274,9 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			//   |       |
 			//   |_______|
-			//_______________
+			// _______________
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cube5AboveBed = await CubeObject3D.Create(20, 20, 20);
 				var aabb5Above = cube5AboveBed.GetAxisAlignedBoundingBox();
@@ -278,8 +290,10 @@ namespace MatterControl.Tests.MatterControl
 				cube30AboveBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb30Above.MinXYZ.Z + 30);
 				scene.Children.Add(cube30AboveBed);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 
 				Assert.Greater(scene.Children.Count, 1, "We should have added some support");
@@ -306,9 +320,9 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			//   |_______|
 			//
-			//______________
+			// ______________
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cube = await CubeObject3D.Create(20, 20, 20);
 				var aabb = cube.GetAxisAlignedBoundingBox();
@@ -316,8 +330,10 @@ namespace MatterControl.Tests.MatterControl
 				cube.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z + 15);
 				scene.Children.Add(cube);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.Normal
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.Greater(scene.Children.Count, 1, "We should have added some support");
 				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
@@ -328,16 +344,16 @@ namespace MatterControl.Tests.MatterControl
 			}
 
 			// make a cube on the bed and single cube in the air and ensure that support is not generated
-			//   _________
-			//   |       |
-			//   |       |
-			//   |_______|
-			//   _________
-			//   |       |
-			//   |       |
-			//___|_______|___
+			//    _________
+			//    |       |
+			//    |       |
+			//    |_______|
+			//    _________
+			//    |       |
+			//    |       |
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -351,8 +367,10 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 25);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.Normal
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.Greater(scene.Children.Count, 2, "We should have added some support");
 				foreach (var support in scene.Children.Where(i => i.OutputType == PrintOutputTypes.Support))
@@ -363,14 +381,14 @@ namespace MatterControl.Tests.MatterControl
 			}
 
 			// make a cube on the bed and single cube in the air that intersects it and ensure that support is not generated
-			//    _________
+			//     _________
+			//     |       |
+			//     |______ |  // top cube actually exactly on top of bottom cube
+			//    ||______||
 			//    |       |
-			//    |______ |  // top cube actually exactly on top of bottom cube
-			//   ||______||
-			//   |       |
-			//___|_______|___
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -384,22 +402,24 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 15);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.Normal
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
 
 			// make a cube on the bed and another cube exactly on top of it and ensure that support is not generated
-			//   _________
-			//   |       |
-			//   |       |
-			//   |_______|
-			//   |       |
-			//   |       |
-			//___|_______|___
+			//    _________
+			//    |       |
+			//    |       |
+			//    |_______|
+			//    |       |
+			//    |       |
+			// ___|_______|___
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
@@ -413,8 +433,10 @@ namespace MatterControl.Tests.MatterControl
 				cubeInAir.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbAir.MinXYZ.Z + 20);
 				scene.Children.Add(cubeInAir);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.From_Bed;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.From_Bed
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 				Assert.AreEqual(2, scene.Children.Count, "We should not have added support");
 			}
@@ -428,9 +450,9 @@ namespace MatterControl.Tests.MatterControl
 			//   |       |
 			//   |       |
 			//   |_______|
-			//_______________
+			// _______________
 			{
-				InteractiveScene scene = new InteractiveScene();
+				var scene = new InteractiveScene();
 
 				var cube5AboveBed = await CubeObject3D.Create(20, 20, 20);
 				var aabb5Above = cube5AboveBed.GetAxisAlignedBoundingBox();
@@ -444,8 +466,10 @@ namespace MatterControl.Tests.MatterControl
 				cube30AboveBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabb30Above.MinXYZ.Z + 30);
 				scene.Children.Add(cube30AboveBed);
 
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight)
+				{
+					SupportType = SupportGenerator.SupportGenerationType.Normal
+				};
 				await supportGenerator.Create(null, CancellationToken.None);
 
 				Assert.Greater(scene.Children.Count, 2, "We should have added some support");
@@ -500,23 +524,23 @@ namespace MatterControl.Tests.MatterControl
 		{
 			// a box in the air
 			{
-				var planes = new SupportGenerator.HitPlanes()
+				var planes = new SupportGenerator.HitPlanes(0)
 				{
 					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
 					new SupportGenerator.HitPlane(5, true),   // bottom at 5 (the bottom of a box)
 					new SupportGenerator.HitPlane(10, false), // top at 10 (the top of the box)
 				};
 
-				int bottom = planes.GetNextBottom(0, 0);
+				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(1, bottom); // we get the bottom
 
-				int bottom1 = planes.GetNextBottom(1, 0);
+				int bottom1 = planes.GetNextBottom(1);
 				Assert.AreEqual(-1, bottom1, "There are no more bottoms so we get back a -1.");
 			}
 
 			// two boxes, the bottom touching the bed, the top touching the bottom
 			{
-				var planes = new SupportGenerator.HitPlanes()
+				var planes = new SupportGenerator.HitPlanes(0)
 				{
 					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
 					new SupportGenerator.HitPlane(0, true),  // bottom at 0 (box a on bed)
@@ -525,13 +549,13 @@ namespace MatterControl.Tests.MatterControl
 					new SupportGenerator.HitPlane(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = planes.GetNextBottom(0, 0);
+				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
 			// two boxes, the bottom touching the bed, the top inside the bottom
 			{
-				var planes = new SupportGenerator.HitPlanes()
+				var planes = new SupportGenerator.HitPlanes(0)
 				{
 					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
 					new SupportGenerator.HitPlane(0, true),  // bottom at 0 (box a on bed)
@@ -540,13 +564,13 @@ namespace MatterControl.Tests.MatterControl
 					new SupportGenerator.HitPlane(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = planes.GetNextBottom(0, 0);
+				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
 			// get next top skips any tops before checking for bottom
 			{
-				var planes = new SupportGenerator.HitPlanes()
+				var planes = new SupportGenerator.HitPlanes(0)
 				{
 					new SupportGenerator.HitPlane(0, false),
 					new SupportGenerator.HitPlane(5, true),
@@ -555,13 +579,13 @@ namespace MatterControl.Tests.MatterControl
 					new SupportGenerator.HitPlane(25, true)
 				};
 
-				int top = planes.GetNextTop(0, 0);
+				int top = planes.GetNextTop(0);
 				Assert.AreEqual(3, top);
 			}
 
 			// actual output from a dual extrusion print that should have no support
 			{
-				var planes = new SupportGenerator.HitPlanes()
+				var planes = new SupportGenerator.HitPlanes(.1)
 				{
 					new SupportGenerator.HitPlane(0, true),
 					new SupportGenerator.HitPlane(0, true),
@@ -582,7 +606,7 @@ namespace MatterControl.Tests.MatterControl
 					new SupportGenerator.HitPlane(16, false),
 				};
 
-				int bottom = planes.GetNextBottom(0, .1);
+				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 		}
