@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class ProbeCalibrationWizard : PrinterSetupWizard
 	{
-		double babySteppingValue;
+		private double babySteppingValue;
 
 		public ProbeCalibrationWizard(PrinterConfig printer)
 			: base(printer)

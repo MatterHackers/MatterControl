@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl
 		{
 			this.Stages = new ISetupWizard[]
 			{
-				new PrintLevelingWizard(printer),
 				new ProbeCalibrationWizard(printer),
+				new PrintLevelingWizard(printer),
 				new XyCalibrationWizard(printer, 1)
 			};
 

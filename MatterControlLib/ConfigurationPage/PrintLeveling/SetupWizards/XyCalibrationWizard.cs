@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 
-		public override bool Enabled => true;
+		public override bool Enabled => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
