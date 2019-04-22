@@ -393,6 +393,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Gets the bounds that are accessible for a given hotend
 		/// </summary>
+		[JsonIgnore]
 		public RectangleDouble[] ToolBounds { get; private set; }
 
 		[JsonIgnore]
