@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Enum keyed on name to friendly name
 			List<(string key, string value)> names = null;
 			var selectedName = "";
-			if (property.source is SelectedChildContainer item)
+			if (property.Source is SelectedChildContainer item)
 			{
 				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
 				if (item.SelectedChild.Count == 1)
