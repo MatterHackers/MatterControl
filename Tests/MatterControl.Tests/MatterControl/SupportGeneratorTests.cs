@@ -610,7 +610,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
-			// simplify working as expected
+			// simplify working as expected (planes with space turns into tow start end sets)
 			{
 				var planes = new SupportGenerator.HitPlanes(.1)
 				{
@@ -639,6 +639,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(4, planes.Count, "After simplify there should be two ranges");
 			}
 
+			// pile of plats turns into 1 start end
 			{
 				var planes = new SupportGenerator.HitPlanes(.1)
 				{
@@ -663,6 +664,80 @@ namespace MatterControl.Tests.MatterControl
 
 				planes.Simplify();
 				Assert.AreEqual(2, planes.Count, "After simplify there should one range");
+				Assert.IsTrue(planes[0].Bottom, "Is Bottom");
+				Assert.IsFalse(planes[1].Bottom, "Is Top");
+			}
+
+			// merge of two overlapping sets tuns into one set
+			{
+				var planes0 = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(25, false),
+				};
+
+				var planes1 = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(16, true),
+					new SupportGenerator.HitPlane(20, false),
+				};
+
+				planes0.Merge(planes1);
+				Assert.AreEqual(2, planes0.Count, "After merge there should one range");
+				Assert.AreEqual(0, planes0[0].Z);
+				Assert.IsTrue(planes0[0].Bottom);
+				Assert.AreEqual(25, planes0[1].Z);
+				Assert.IsFalse(planes0[1].Bottom);
+			}
+
+			// merge of two non-overlapping sets stays two sets
+			{
+				var planes0 = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(16, false),
+				};
+
+				var planes1 = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(17, true),
+					new SupportGenerator.HitPlane(20, false),
+				};
+
+				planes0.Merge(planes1);
+				Assert.AreEqual(4, planes0.Count, "After merge there should be two ranges");
+				Assert.AreEqual(0, planes0[0].Z);
+				Assert.IsTrue(planes0[0].Bottom);
+				Assert.AreEqual(16, planes0[1].Z);
+				Assert.IsFalse(planes0[1].Bottom);
+				Assert.AreEqual(17, planes0[2].Z);
+				Assert.IsTrue(planes0[2].Bottom);
+				Assert.AreEqual(20, planes0[3].Z);
+				Assert.IsFalse(planes0[3].Bottom);
+			}
+
+			// merge of two overlapping sets (within tolerance turns into one set
+			{
+				var planes0 = new SupportGenerator.HitPlanes(5)
+				{
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(16, false),
+				};
+
+				var planes1 = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(17, true),
+					new SupportGenerator.HitPlane(20, false),
+				};
+
+				planes0.Merge(planes1);
+				Assert.AreEqual(2, planes0.Count, "After merge there should one range");
+				Assert.AreEqual(0, planes0[0].Z, "Starts at 0");
+				Assert.IsTrue(planes0[0].Bottom, "Is Bottom");
+				Assert.AreEqual(20, planes0[1].Z, "Goes to 20");
+				Assert.IsFalse(planes0[1].Bottom, "Is Top");
 			}
 		}
 	}

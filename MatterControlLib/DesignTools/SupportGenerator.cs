@@ -490,11 +490,43 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			public void Merge(HitPlanes other)
 			{
-				this.Simplify();
 				other.Simplify();
+				this.Simplify();
 
 				// now both lists are only start->end, start->end
 				// merge them, considering minimumSupportHeight
+				for (int i = 0; i < this.Count; i += 2)
+				{
+					for (int j = 0; j < other.Count; j += 2)
+					{
+						// check if they overlap and other is not completely contained in this
+						if (this[i].Z <= other[i + 1].Z + minimumSupportHeight
+							&& this[i + 1].Z >= other[i].Z - minimumSupportHeight
+							&& (this[i].Z > other[i].Z || this[i + 1].Z < other[i + 1].Z))
+						{
+							// set this range to be the union
+							this[i] = new HitPlane(Math.Min(this[i].Z, other[i].Z), true);
+							this[i + 1] = new HitPlane(Math.Max(this[i + 1].Z, other[i + 1].Z), false);
+							// fix up the planes in this
+							this.Simplify();
+							// and start at the beginning again
+							i -= 2;
+							// drop out of the j loop
+							break;
+						}
+						else if (this[i + 1].Z < other[i].Z)
+						{
+							// we are beyond the end of this
+							// add every additional set and return
+							for (int k = j; k < other.Count; k++)
+							{
+								this.Add(other[k]);
+							}
+
+							return;
+						}
+					}
+				}
 			}
 
 			public int GetNextBottom(int i)
