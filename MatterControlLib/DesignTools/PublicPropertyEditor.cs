@@ -53,12 +53,13 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public IObject3D Item { get; private set; }
 
-		public object source;
+		public object Source { get; private set; }
+
 		public PropertyInfo PropertyInfo { get; private set; }
 
 		public EditableProperty(PropertyInfo p, object source)
 		{
-			this.source = source;
+			this.Source = source;
 			this.Item = source as IObject3D;
 			this.PropertyInfo = p;
 		}
@@ -75,19 +76,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
 		}
 
-		public object Value => PropertyInfo.GetGetMethod().Invoke(source, null);
+		public object Value => PropertyInfo.GetGetMethod().Invoke(Source, null);
 
 		/// <summary>
-		/// Use reflection to set property value
+		/// Use reflection to set property value.
 		/// </summary>
-		/// <param name="value"></param>
+		/// <param name="value">The value to set through reflection.</param>
 		public void SetValue(object value)
 		{
-			this.PropertyInfo.GetSetMethod().Invoke(source, new Object[] { value });
+			this.PropertyInfo.GetSetMethod().Invoke(Source, new object[] { value });
 		}
 
 		public string DisplayName => GetDisplayName(PropertyInfo);
+
 		public string Description => GetDescription(PropertyInfo);
+
 		public Type PropertyType => PropertyInfo.PropertyType;
 	}
 
@@ -99,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IObject3D) };
 
-		private static Type[] allowedTypes =
+		private static readonly Type[] allowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Color),
@@ -168,8 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
-				var showUpdate = context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() as ShowUpdateButtonAttribute;
-				if (showUpdate != null)
+				if (context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate)
 				{
 					var updateButton = new TextButton("Update".Localize(), theme)
 					{
@@ -297,7 +299,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						oldValue = valueToString(property.Value);
 					}
 
-					//field.Content
+					// field.Content
 					if (undoBuffer != null)
 					{
 						undoBuffer.AddAndDo(new UndoRedoActions(() =>
@@ -429,14 +431,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				var row2 = CreateSettingsColumn("Offset", field2);
 
 				// update this when changed
-				EventHandler<InvalidateArgs> updateData = (s, e) =>
+				void UpdateData(object s, InvalidateArgs e)
 				{
 					field2.Vector3 = ((DirectionAxis)property.Value).Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
-				};
-				property.Item.Invalidated += updateData;
+				}
+
+				property.Item.Invalidated += UpdateData;
 				field2.Content.Closed += (s, e) =>
 				{
-					property.Item.Invalidated -= updateData;
+					property.Item.Invalidated -= UpdateData;
 				};
 
 				// update functions
@@ -479,6 +482,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							{
 								childrenSelector.Add(child);
 							}
+
 							return childrenSelector;
 						});
 
@@ -500,7 +504,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
 				rowContainer = CreateSettingsColumn(property);
-				rowContainer.AddChild(CreateImageDisplay(imageBuffer, property.Item, theme));
+				rowContainer.AddChild(new ImageWidget(imageBuffer));
 			}
 #if !__ANDROID__
 			else if (propertyValue is List<string> stringList)
@@ -545,21 +549,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			// create a bool editor
 			else if (propertyValue is bool boolValue)
 			{
+				// create a bool editor
 				var field = new ToggleboxField(theme);
 				field.Initialize(0);
 				field.Checked = boolValue;
 
 				RegisterValueChanged(field,
 					(valueString) => { return valueString == "1"; },
-					(value) => { return ((bool)(value)) ? "1" : "0"; });
+					(value) => { return ((bool)value) ? "1" : "0"; });
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			// create a string editor
 			else if (propertyValue is string stringValue)
 			{
+				// create a string editor
 				var field = new TextField(theme);
 				field.Initialize(0);
 				field.SetValue(stringValue, false);
@@ -575,11 +579,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					spacer.HAnchor = HAnchor.Absolute;
 					spacer.Width = Math.Max(0, 100 - label.Width);
 				}
-
 			}
-			// create a char editor
 			else if (propertyValue is char charValue)
 			{
+				// create a char editor
 				var field = new CharField(theme);
 				field.Initialize(0);
 				field.SetValue(charValue.ToString(), false);
@@ -592,9 +595,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field);
 			}
-			// create an enum editor
 			else if (property.PropertyType.IsEnum)
 			{
+				// create an enum editor
 				UIField field;
 				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
 				if (iconsAttribute != null)
@@ -625,10 +628,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsRow(property, field, theme);
 			}
-			// Use known IObject3D editors
 			else if (propertyValue is IObject3D item
 				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)
 			{
+				// Use known IObject3D editors
 				rowContainer = iObject3DEditor.Create(item, undoBuffer, theme);
 			}
 
@@ -636,11 +639,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			context.editRows.Add(property.PropertyInfo.Name, rowContainer);
 
 			return rowContainer;
-		}
-
-		private static GuiWidget CreateImageDisplay(ImageBuffer imageBuffer, IObject3D parent, ThemeConfig theme)
-		{
-			return new ImageWidget(imageBuffer);
 		}
 
 		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme)
@@ -735,14 +733,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var children = parent.Children.ToList();
 
-			Dictionary<ICheckbox, IObject3D> objectChecks = new Dictionary<ICheckbox, IObject3D>();
+			var objectChecks = new Dictionary<ICheckbox, IObject3D>();
 
-			List<GuiWidget> radioSiblings = new List<GuiWidget>();
+			var radioSiblings = new List<GuiWidget>();
 			for (int i = 0; i < children.Count; i++)
 			{
 				var itemIndex = i;
 				var child = children[itemIndex];
-				FlowLayoutWidget rowContainer = new FlowLayoutWidget();
+				var rowContainer = new FlowLayoutWidget();
 
 				GuiWidget selectWidget;
 				if (children.Count == 2)
@@ -768,7 +766,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				objectChecks.Add((ICheckbox)selectWidget, child);
 
 				rowContainer.AddChild(selectWidget);
-				ICheckbox checkBox = selectWidget as ICheckbox;
+				var checkBox = selectWidget as ICheckbox;
 
 				checkBox.CheckedStateChanged += (s, e) =>
 				{
@@ -789,7 +787,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							}
 						}
 
-						if(parent is MeshWrapperObject3D meshWrapper)
+						if (parent is MeshWrapperObject3D meshWrapper)
 						{
 							using (meshWrapper.RebuildLock())
 							{
@@ -810,8 +808,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockLink = context.item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() as UnlockLinkAttribute;
-			if (unlockLink != null
+			if (context.item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() is UnlockLinkAttribute unlockLink
 				&& !string.IsNullOrEmpty(unlockLink.UnlockPageLink)
 				&& !context.item.Persistable)
 			{
@@ -840,8 +837,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockLink = context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() as WebPageLinkAttribute;
-			if (unlockLink != null)
+			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
 				var row = CreateSettingsRow("Website".Localize());
 
