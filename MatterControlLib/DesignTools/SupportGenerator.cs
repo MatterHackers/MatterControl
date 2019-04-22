@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class SupportGenerator
 	{
 		private double minimumSupportHeight;
-		private InteractiveScene scene;
+		private readonly InteractiveScene scene;
 
 		public SupportGenerator(InteractiveScene scene, double minimumSupportHeight)
 		{
@@ -89,7 +89,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.scene = scene;
 		}
 
-		public enum SupportGenerationType { Normal, From_Bed }
+		public enum SupportGenerationType
+		{
+			Normal,
+			From_Bed
+		}
 
 		public double MaxOverHangAngle
 		{
@@ -99,11 +103,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					return 45;
 				}
+
 				var value = UserSettings.Instance.GetValue<double>(UserSettingsKey.SupportMaxOverHangAngle);
 				if (value < 0)
 				{
 					return 0;
 				}
+
 				if (value > 90)
 				{
 					value = 90;
@@ -130,6 +136,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return value;
 			}
+
 			set
 			{
 				UserSettings.Instance.set(UserSettingsKey.SupportPillarSize, value.ToString());
@@ -156,7 +163,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		/// <summary>
-		/// The amount to reduce the pillars so they are separated in the 3D view
+		/// Gets the amount to reduce the pillars so they are separated in the 3D view.
 		/// </summary>
 		public static double ColumnReduceAmount => 1;
 
@@ -166,14 +173,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (new SelectionMaintainer(scene))
 			{
-				ProgressStatus status = new ProgressStatus();
-				status.Status = "Enter";
+				var status = new ProgressStatus
+				{
+					Status = "Enter"
+				};
 				progress?.Report(status);
 
-				// Get visible meshes for each of them 
+				// Get visible meshes for each of them
 				var allBedItems = scene.Children.SelectMany(i => i.VisibleMeshes());
 
-				AxisAlignedBoundingBox suppoortBounds = AxisAlignedBoundingBox.Empty();
+				var suppoortBounds = AxisAlignedBoundingBox.Empty();
 				if (selectedItem != null)
 				{
 					foreach (var candidate in selectedItem.VisibleMeshes())
@@ -289,6 +298,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								break;
 							}
 						}
+
 						if (aboveBed)
 						{
 							var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
@@ -314,6 +324,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				// less than 10 micros high, don't ad it
 				return;
 			}
+
 			var support = new GeneratedSupportObject3D()
 			{
 				Mesh = PlatonicSolids.CreateCube(1, 1, 1)
@@ -326,7 +337,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			holder.Children.Add(support);
 		}
 
-		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), List<(double z, bool bottom)>> detectedPlanes)
+		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), HitPlanes> detectedPlanes)
 		{
 			IObject3D supportColumnsToAdd = new Object3D();
 			bool fromBed = SupportType == SupportGenerationType.From_Bed;
@@ -342,7 +353,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				planes.Sort((a, b) =>
 				{
-					return a.z.CompareTo(b.z);
+					return a.Z.CompareTo(b.Z);
 				});
 
 				var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize + halfPillar;
@@ -350,15 +361,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (fromBed)
 				{
-					var nextPlaneIsBottom = planes.Count > 1 && planes[1].bottom;
+					var nextPlaneIsBottom = planes.Count > 1 && planes[1].Bottom;
 					if (!nextPlaneIsBottom // if the next plane is a top, we don't have any space from the bed to the part to put support
-						|| planes[1].z > minimumSupportHeight) // if the next plane is a bottom and is not far enough away, there is no space to put any support
+						|| planes[1].Z > minimumSupportHeight) // if the next plane is a bottom and is not far enough away, there is no space to put any support
 					{
-						var firstBottomAboveBed = GetNextBottom(0, planes, minimumSupportHeight);
+						var firstBottomAboveBed = planes.GetNextBottom(0, minimumSupportHeight);
 
 						if (firstBottomAboveBed >= 0)
 						{
-							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, planes[firstBottomAboveBed].z + .01);
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, planes[firstBottomAboveBed].Z + .01);
 						}
 					}
 				}
@@ -367,15 +378,15 @@ namespace MatterHackers.MatterControl.DesignTools
 					int i = 0;
 					double lastTopZ = 0;
 					int lastBottom = -1;
-					var nextPlaneIsBottom = planes.Count > 1 && planes[1].bottom;
+					var nextPlaneIsBottom = planes.Count > 1 && planes[1].Bottom;
 					// if the next plane (the one above the bed) is a bottom, we have a part on the bed and will not generate support
-					if (nextPlaneIsBottom && planes[1].z <= minimumSupportHeight)
+					if (nextPlaneIsBottom && planes[1].Z <= minimumSupportHeight)
 					{
 						// go up to the next top
-						i = GetNextTop(i, planes, minimumSupportHeight);
+						i = planes.GetNextTop(i, minimumSupportHeight);
 						if (i >= 0)
 						{
-							lastTopZ = planes[i].z;
+							lastTopZ = planes[i].Z;
 						}
 					}
 
@@ -385,19 +396,20 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						lastBottom = i;
 						// find all open areas in the list and add support
-						i = GetNextBottom(i, planes, minimumSupportHeight);
+						i = planes.GetNextBottom(i, minimumSupportHeight);
 						if (i >= 0)
 						{
 							if (i < planes.Count
-								&& planes[i].bottom)
+								&& planes[i].Bottom)
 							{
-								AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, planes[i].z);
+								AddSupportColumn(supportColumnsToAdd, xPos, yPos, lastTopZ, planes[i].Z);
 							}
-							i = GetNextTop(i + 1, planes, minimumSupportHeight);
+
+							i = planes.GetNextTop(i + 1, minimumSupportHeight);
 							if (i >= 0
 								&& i < planes.Count)
 							{
-								lastTopZ = planes[i].z;
+								lastTopZ = planes[i].Z;
 							}
 						}
 					}
@@ -407,7 +419,92 @@ namespace MatterHackers.MatterControl.DesignTools
 			scene.UndoBuffer.AddAndDo(new InsertCommand(scene, supportColumnsToAdd.Children, false));
 		}
 
-		private Dictionary<(int x, int y), List<(double z, bool bottom)>> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
+		public struct HitPlane
+		{
+			public double Z;
+			public bool Bottom;
+
+			public HitPlane(double z, bool bottom)
+			{
+				this.Z = z;
+				this.Bottom = bottom;
+			}
+		}
+
+		public class HitPlanes : List<HitPlane>
+		{
+			public int GetNextBottom(int i, double skipDist)
+			{
+				HitPlanes planes = this;
+
+				while (i < planes.Count)
+				{
+					// if we are on a bottom
+					if (planes[i].Bottom)
+					{
+						// move up to the next plane and re-evaluate
+						i++;
+					}
+					else // we are on a top
+					{
+						// if the next plane is a bottom and more than skipDistanc away
+						if (i + 1 < planes.Count
+							&& planes[i + 1].Bottom
+							&& planes[i + 1].Z > planes[i].Z + skipDist)
+						{
+							// this is the next bottom we are looking for
+							return i + 1;
+						}
+						else // move up to the next plane and re-evaluate
+						{
+							i++;
+						}
+					}
+				}
+
+				return -1;
+			}
+
+			public int GetNextTop(int i, double skipDist)
+			{
+				HitPlanes planes = this;
+
+				if (!planes[i].Bottom)
+				{
+					// skip the one we are
+					i++;
+				}
+
+				while (i < planes.Count)
+				{
+					// if we are on a bottom
+					if (planes[i].Bottom)
+					{
+						// move up to the next plane and re-evaluate
+						i++;
+					}
+					else // we are on a top
+					{
+						// if the next plane is a bottom and more than skipDistanc away
+						if (i + 1 < planes.Count
+							&& planes[i + 1].Bottom
+							&& planes[i + 1].Z > planes[i].Z + skipDist)
+						{
+							// this is the next top we are looking for
+							return i;
+						}
+						else // move up to the next plane and re-evaluate
+						{
+							i++;
+						}
+					}
+				}
+
+				return -1;
+			}
+		}
+
+		private Dictionary<(int x, int y), HitPlanes> DetectRequiredSupportByTracing(RectangleDouble gridBounds, IEnumerable<IObject3D> supportCandidates)
 		{
 			var allBounds = supportCandidates.GetAxisAlignedBoundingBox();
 			var rayStartZ = allBounds.MinXYZ.Z - 1;
@@ -415,7 +512,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var traceData = GetTraceData(supportCandidates);
 
 			// keep a list of all the detected planes in each support column
-			var detectedPlanes = new Dictionary<(int x, int y), List<(double z, bool bottom)>>();
+			var detectedPlanes = new Dictionary<(int x, int y), HitPlanes>();
 
 			int gridWidth = (int)gridBounds.Width;
 			int gridHeight = (int)gridBounds.Height;
@@ -426,11 +523,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				for (int x = 0; x < gridWidth; x++)
 				{
 					// add a single plane at the bed so we always know the bed is a top
-					detectedPlanes.Add((x, y), new List<(double z, bool bottom)>());
-					detectedPlanes[(x, y)].Add((0, false));
-
-					IntersectInfo upHit = null;
-
+					detectedPlanes.Add((x, y), new HitPlanes());
+					detectedPlanes[(x, y)].Add(new HitPlane(0, false));
 					for (double yOffset = -1; yOffset <= 1; yOffset++)
 					{
 						for (double xOffset = -1; xOffset <= 1; xOffset++)
@@ -441,17 +535,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							// detect all the bottom plans (surfaces that might need support
 							var upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, rayStartZ), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
+							IntersectInfo upHit;
 							do
 							{
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, true));
+									detectedPlanes[(x, y)].Add(new HitPlane(upHit.HitPosition.Z, true));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
 								}
-							} while (upHit != null);
+							}
+							while (upHit != null);
 
 							// detect all the up plans (surfaces that will have support on top of them)
 							upRay = new Ray(new Vector3(xPos + .000013, yPos - .00027, rayStartZ), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
@@ -460,103 +556,19 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									detectedPlanes[(x, y)].Add((upHit.HitPosition.Z, false));
+									detectedPlanes[(x, y)].Add(new HitPlane(upHit.HitPosition.Z, false));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001), Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
 								}
-							} while (upHit != null);
+							}
+							while (upHit != null);
 						}
 					}
 				}
 			}
 
 			return detectedPlanes;
-		}
-
-		public static int GetNextBottom(int i, List<(double z, bool bottom)> planes, double skipDist)
-		{
-			while (i < planes.Count)
-			{
-				// if we are on a bottom
-				if (planes[i].bottom)
-				{
-					// move up to the next plane and re-evaluate
-					i++;
-				}
-				else // we are on a top
-				{
-					// if the next plane is a bottom and more than skipDistanc away
-					if (i + 1 < planes.Count
-						&& planes[i + 1].bottom
-						&& planes[i + 1].z > planes[i].z + skipDist)
-					{
-						// this is the next bottom we are looking for
-						return i + 1;
-					}
-					else // move up to the next plane and re-evaluate
-					{
-						i++;
-					}
-				}
-			}
-
-			return -1;
-		}
-
-		public static int GetNextTop(int i, List<(double z, bool bottom)> planes, double skipDist)
-		{
-			if (!planes[i].bottom)
-			{
-				// skip the one we are
-				i++;
-			}
-
-			while (i < planes.Count)
-			{
-				// if we are on a bottom
-				if (planes[i].bottom)
-				{
-					// move up to the next plane and re-evaluate
-					i++;
-				}
-				else // we are on a top
-				{
-					// if the next plane is a bottom and more than skipDistanc away
-					if (i + 1 < planes.Count
-						&& planes[i + 1].bottom
-						&& planes[i + 1].z > planes[i].z + skipDist)
-					{
-						// this is the next top we are looking for
-						return i;
-					}
-					else // move up to the next plane and re-evaluate
-					{
-						i++;
-					}
-				}
-			}
-
-			return -1;
-		}
-
-		// function to get all the columns that need support generation
-		private IEnumerable<(int x, int y)> GetSupportCorrodinates(ImageBuffer supportNeededImage)
-		{
-			var buffer = supportNeededImage.GetBuffer();
-			// check if the image has any alpha set to something other than 255
-			for (int y = 0; y < supportNeededImage.Height; y++)
-			{
-				var yOffset = supportNeededImage.GetBufferOffsetY(y);
-				for (int x = 0; x < supportNeededImage.Width; x++)
-				{
-					// get the alpha at this pixel
-					//if (buffer[yOffset + x] > 0)
-					{
-						yield return (x, y);
-					}
-				}
-			}
 		}
 
 		private IPrimitive GetTraceData(IEnumerable<IObject3D> supportCandidates)

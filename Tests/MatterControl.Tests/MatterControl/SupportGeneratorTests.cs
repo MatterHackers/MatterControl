@@ -471,7 +471,7 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(bedSupportCount, airSupportCount, "Same number of support columns in each space.");
 			}
 
-			// load a complex part that should have no support required (not ready yet)
+			// load a complex part that should have no support required
 			if(false)
 			{
 				InteractiveScene scene = new InteractiveScene();
@@ -500,89 +500,89 @@ namespace MatterControl.Tests.MatterControl
 		{
 			// a box in the air
 			{
-				var planes = new List<(double z, bool bottom)>()
+				var planes = new SupportGenerator.HitPlanes()
 				{
-					(0, false),  // top at 0 (the bed)
-					(5, true),   // bottom at 5 (the bottom of a box)
-					(10, false), // top at 10 (the top of the box)
+					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
+					new SupportGenerator.HitPlane(5, true),   // bottom at 5 (the bottom of a box)
+					new SupportGenerator.HitPlane(10, false), // top at 10 (the top of the box)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
+				int bottom = planes.GetNextBottom(0, 0);
 				Assert.AreEqual(1, bottom); // we get the bottom
 
-				int bottom1 = SupportGenerator.GetNextBottom(1, planes, 0);
+				int bottom1 = planes.GetNextBottom(1, 0);
 				Assert.AreEqual(-1, bottom1, "There are no more bottoms so we get back a -1.");
 			}
 
 			// two boxes, the bottom touching the bed, the top touching the bottom
 			{
-				var planes = new List<(double z, bool bottom)>()
+				var planes = new SupportGenerator.HitPlanes()
 				{
-					(0, false),  // top at 0 (the bed)
-					(0, true),  // bottom at 0 (box a on bed)
-					(10, false), // top at 10 (box a top)
-					(10, true), // bottom at 10 (box b bottom)
-					(20, false) // top at 20 (box b top)
+					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
+					new SupportGenerator.HitPlane(0, true),  // bottom at 0 (box a on bed)
+					new SupportGenerator.HitPlane(10, false), // top at 10 (box a top)
+					new SupportGenerator.HitPlane(10, true), // bottom at 10 (box b bottom)
+					new SupportGenerator.HitPlane(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
+				int bottom = planes.GetNextBottom(0, 0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
 			// two boxes, the bottom touching the bed, the top inside the bottom
 			{
-				var planes = new List<(double z, bool bottom)>()
+				var planes = new SupportGenerator.HitPlanes()
 				{
-					(0, false),  // top at 0 (the bed)
-					(0, true),  // bottom at 0 (box a on bed)
-					(5, true), // bottom at 5 (box b bottom)
-					(10, false), // top at 10 (box a top)
-					(20, false) // top at 20 (box b top)
+					new SupportGenerator.HitPlane(0, false),  // top at 0 (the bed)
+					new SupportGenerator.HitPlane(0, true),  // bottom at 0 (box a on bed)
+					new SupportGenerator.HitPlane(5, true), // bottom at 5 (box b bottom)
+					new SupportGenerator.HitPlane(10, false), // top at 10 (box a top)
+					new SupportGenerator.HitPlane(20, false) // top at 20 (box b top)
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes, 0);
+				int bottom = planes.GetNextBottom(0, 0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
 			// get next top skips any tops before checking for bottom
 			{
-				var planes = new List<(double z, bool bottom)>()
+				var planes = new SupportGenerator.HitPlanes()
 				{
-					(0, false),
-					(5, true), 
-					(10, false),
-					(20, false),
-					(25, true)
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(10, false),
+					new SupportGenerator.HitPlane(20, false),
+					new SupportGenerator.HitPlane(25, true)
 				};
 
-				int top = SupportGenerator.GetNextTop(0, planes, 0);
+				int top = planes.GetNextTop(0, 0);
 				Assert.AreEqual(3, top);
 			}
 
 			// actual output from a dual extrusion print that should have no support
 			{
-				var planes = new List<(double z, bool bottom)>()
+				var planes = new SupportGenerator.HitPlanes()
 				{
-					(0, true),
-					(0, true),
-					(0, true),
-					(0, true),
-					(0, false),
-					(0.0302, true),
-					(0.0497, true),
-					(0.762, true),
-					(0.762, true),
-					(0.762, false),
-					(0.762, false),
-					(15.95, false),
-					(15.9697, false),
-					(16, false),
-					(16, false),
-					(16, false),
-					(16, false),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(0.0302, true),
+					new SupportGenerator.HitPlane(0.0497, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(15.95, false),
+					new SupportGenerator.HitPlane(15.9697, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
 				};
 
-				int bottom = SupportGenerator.GetNextBottom(0, planes, .1);
+				int bottom = planes.GetNextBottom(0, .1);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 		}
