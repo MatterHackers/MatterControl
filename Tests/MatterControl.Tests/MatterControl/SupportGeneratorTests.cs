@@ -609,6 +609,61 @@ namespace MatterControl.Tests.MatterControl
 				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
+
+			// simplify working as expected
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(0.0302, true),
+					new SupportGenerator.HitPlane(0.0497, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(15.95, false),
+					new SupportGenerator.HitPlane(15.9697, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(25, false),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(4, planes.Count, "After simplify there should be two ranges");
+			}
+
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, true),
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(0.0302, true),
+					new SupportGenerator.HitPlane(0.0497, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, true),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(0.762, false),
+					new SupportGenerator.HitPlane(15.95, false),
+					new SupportGenerator.HitPlane(15.9697, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(16, false),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count, "After simplify there should one range");
+			}
 		}
 	}
 }

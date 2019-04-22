@@ -429,6 +429,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.Z = z;
 				this.Bottom = bottom;
 			}
+
+			public override string ToString()
+			{
+				return $"Z={Z:0.###} Bottom={Bottom}";
+			}
 		}
 
 		public class HitPlanes : List<HitPlane>
@@ -438,6 +443,58 @@ namespace MatterHackers.MatterControl.DesignTools
 			public HitPlanes(double minimumSupportHeight)
 			{
 				this.minimumSupportHeight = minimumSupportHeight;
+			}
+
+			/// <summary>
+			/// Modify the list to have Bottom <-> Top, Bottom <-> Top items exactly.
+			/// Remove any internal Planes that are not required. This may reduce the set to no items.
+			/// </summary>
+			public void Simplify()
+			{
+				// sort the list on Z
+				this.Sort((a, b) =>
+				{
+					return a.Z.CompareTo(b.Z);
+				});
+
+				// remove items until the first item is a bottom
+				while (Count > 0 && !this[0].Bottom)
+				{
+					this.RemoveAt(0);
+				}
+
+				// remove any items that are between a bottom and a top
+				int currentBottom = 0;
+				while (Count > currentBottom)
+				{
+					var top = GetNextTop(currentBottom);
+					if (top != -1)
+					{
+						// remove everything between the top and the bottom
+						for (int i = top - 1; i > currentBottom; i--)
+						{
+							this.RemoveAt(i);
+						}
+
+						// move the bottom up past the current top
+						currentBottom += 2;
+					}
+					else // there is not a top above this bottom
+					{
+						// remove the bottom
+						this.RemoveAt(currentBottom);
+						break;
+					}
+				}
+			}
+
+			public void Merge(HitPlanes other)
+			{
+				this.Simplify();
+				other.Simplify();
+
+				// now both lists are only start->end, start->end
+				// merge them, considering minimumSupportHeight
 			}
 
 			public int GetNextBottom(int i)
@@ -472,9 +529,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				return -1;
 			}
 
-			public int GetNextTop(int i)
+			public int GetNextTop(int start)
 			{
 				HitPlanes planes = this;
+
+				var i = start;
 
 				if (!planes[i].Bottom)
 				{
@@ -502,6 +561,17 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 						else // move up to the next plane and re-evaluate
 						{
+							// if we started on a bottom
+							// and we are the last top
+							// and we are far enough away from the start bottom
+							if (this[start].Bottom
+								&& i == this.Count - 1
+								&& this[i].Z - this[start].Z > minimumSupportHeight)
+							{
+								// we are on the last top of the part and have move up from some other part
+								return i;
+							}
+
 							i++;
 						}
 					}
