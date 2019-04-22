@@ -107,9 +107,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				valuesChanged = true;
 			}
 
-			if (MinSidesPerRotation < 0 || MinSidesPerRotation > 360)
+			if (MinSidesPerRotation < 3 || MinSidesPerRotation > 360)
 			{
-				MinSidesPerRotation = Math.Min(360, Math.Max(0, MinSidesPerRotation));
+				MinSidesPerRotation = Math.Min(360, Math.Max(3, MinSidesPerRotation));
 				valuesChanged = true;
 			}
 
