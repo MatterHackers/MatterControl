@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var distance = Diameter / 2 + sourceAabb.YSize / 2;
 			var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
-			center.X -= sourceAabb.YSize / 2 - (StartPercent / 100.0) * sourceAabb.YSize;
+			center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
 
 			// render the top and bottom rings
 			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, 100, Color.Red, Color.Transparent);
@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// render the split lines
 			var radius = Diameter / 2;
 			var circumference = MathHelper.Tau * radius;
-			var xxx = sourceAabb.YSize * (StartPercent / 100.0);
+			var xxx = sourceAabb.XSize * (StartPercent / 100.0);
 			var startAngle = MathHelper.Tau * 3 / 4 - xxx / circumference * MathHelper.Tau;
 			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, sourceAabb.ZSize, (int)Math.Max(0, Math.Min(100, this.MinSidesPerRotation)), Color.Transparent, Color.Red, phase: startAngle);
 
