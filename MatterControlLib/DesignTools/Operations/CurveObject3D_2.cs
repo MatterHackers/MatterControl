@@ -96,16 +96,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				// we want to measure the
-				var currentMatrixInv = Matrix.Inverted;
-				var aabb = this.GetAxisAlignedBoundingBox(currentMatrixInv);
+			var currentMatrixInv = Matrix.Inverted;
+			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var center = aabb.Center + new Vector3(0, Diameter / 2 + aabb.YSize / 2, 0);
 
-				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 150, Color.Red, Color.Transparent);
-				layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, (int)Math.Max(0, this.MinSidesPerRotation), Color.Transparent, Color.Red);
-			}
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, aabb.ZSize, 150, Color.Red, Color.Transparent);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, Diameter, aabb.ZSize, (int)Math.Max(0, this.MinSidesPerRotation), Color.Transparent, Color.Red);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
