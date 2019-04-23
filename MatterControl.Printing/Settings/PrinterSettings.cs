@@ -1074,38 +1074,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// Migrate deprecated UserLayer probe setting
 				if (settings.UserLayer.ContainsKey("z_probe_z_offset"))
 				{
-					MigrateProbeOffset(settings.UserLayer);
+					MigrateProbeOffset(settings.UserLayer, settings.GetValue<Vector3>(SettingsKey.probe_offset));
 				}
 
 				return settings;
 			}
 
-			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer)
+			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer, Vector3 position = default)
 			{
-				var valueAsVector3 = new Vector3();
-				// read it out of the legacy data
-				double.TryParse(settingsLayer["z_probe_z_offset"], out valueAsVector3.Z);
-				// and negate it as it was stored in the opposite direction before
-				valueAsVector3.Z = -valueAsVector3.Z;
-				if (settingsLayer.ContainsKey("z_probe_xy_offset"))
+				if (settingsLayer.ContainsKey("z_probe_xy_offset")
+					|| settingsLayer.ContainsKey("z_probe_z_offset"))
 				{
-					var probeXyOffset = settingsLayer["z_probe_xy_offset"];
-					if (!string.IsNullOrEmpty(probeXyOffset))
+					if (double.TryParse(settingsLayer["z_probe_z_offset"], out double zOffset))
 					{
-						var split = probeXyOffset.Split(',');
-						if (split.Length == 2)
+						// and  negate it as it was stored in the opposite direction before
+						position.Z = -zOffset;
+					}
+
+					if (settingsLayer.ContainsKey("z_probe_xy_offset"))
+					{
+						var probeXyOffset = settingsLayer["z_probe_xy_offset"];
+						if (!string.IsNullOrEmpty(probeXyOffset))
 						{
-							double.TryParse(split[0], out valueAsVector3.X);
-							double.TryParse(split[1], out valueAsVector3.Y);
+							var split = probeXyOffset.Split(',');
+							if (split.Length == 2)
+							{
+								double.TryParse(split[0], out position.X);
+								double.TryParse(split[1], out position.Y);
+							}
 						}
 					}
+
+					settingsLayer[SettingsKey.probe_offset] = $"{position.X},{position.Y},{position.Z}";
+
+					// clear it
+					settingsLayer.Remove("z_probe_z_offset");
+					settingsLayer.Remove("z_probe_xy_offset");
 				}
-
-				settingsLayer[SettingsKey.probe_offset] = $"{valueAsVector3.X},{valueAsVector3.Y},{valueAsVector3.Z}";
-
-				// clear it
-				settingsLayer.Remove("z_probe_z_offset");
-				settingsLayer.Remove("z_probe_xy_offset");
 			}
 
 			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -1116,6 +1121,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public override bool CanRead => true;
 
 			public override bool CanWrite => false;
+		}
+
+		public class OrderedContractResolver : DefaultContractResolver
+		{
+			protected override System.Collections.Generic.IList<JsonProperty> CreateProperties(System.Type type, MemberSerialization memberSerialization)
+			{
+				return base.CreateProperties(type, memberSerialization).OrderBy(p => p.PropertyName).ToList();
+			}
 		}
 	}
 }
