@@ -303,14 +303,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			var newToolPosition = newToolMove.position;
 			var lineNoComment = postSwitchLine.Split(';')[0];
 
-			// if there is no extrusion we can move directly the desired position after the extruder switch.
+			// if there is no extrusion we can move directly to the desired position after the extruder switch.
 			// Otherwise we need to go to the last position to start the extrusion.
 			if (!lineNoComment.Contains("E"))
 			{
 				newToolPosition.X = newToolPosition.X == double.PositiveInfinity ? preSwitchPosition.X : newToolPosition.X;
 				newToolPosition.Y = newToolPosition.Y == double.PositiveInfinity ? preSwitchPosition.Y : newToolPosition.Y;
-				newToolPosition.Z = newToolPosition.Y == double.PositiveInfinity ? preSwitchPosition.Z : newToolPosition.Z;
 			}
+
+			// no matter what happens with the x and y we want to set our z if we have one before
+			newToolPosition.Z = newToolPosition.Z == double.PositiveInfinity ? preSwitchPosition.Z : newToolPosition.Z;
 
 			// put together the output we want to send
 			var gcode = new StringBuilder();
