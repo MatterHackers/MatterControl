@@ -939,6 +939,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		#endregion
 
 		private static HashSet<string> knownSettings;
+
 		[JsonIgnore]
 		public static HashSet<string> KnownSettings
 		{
@@ -1121,14 +1122,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			public override bool CanRead => true;
 
 			public override bool CanWrite => false;
-		}
-
-		public class OrderedContractResolver : DefaultContractResolver
-		{
-			protected override System.Collections.Generic.IList<JsonProperty> CreateProperties(System.Type type, MemberSerialization memberSerialization)
-			{
-				return base.CreateProperties(type, memberSerialization).OrderBy(p => p.PropertyName).ToList();
-			}
 		}
 	}
 }
