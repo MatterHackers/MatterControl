@@ -1081,7 +1081,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return settings;
 			}
 
-			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer, Vector3 position = default)
+			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer, Vector3 position = default(Vector3))
 			{
 				if (settingsLayer.ContainsKey("z_probe_xy_offset")
 					|| settingsLayer.ContainsKey("z_probe_z_offset"))
