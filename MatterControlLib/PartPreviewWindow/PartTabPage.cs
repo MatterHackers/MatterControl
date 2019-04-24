@@ -28,15 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -56,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected LibraryListView favoritesBar;
 
 		public PartTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
-			: base (tabTitle)
+			: base(tabTitle)
 		{
 			this.sceneContext = workspace.SceneContext;
 			this.theme = theme;

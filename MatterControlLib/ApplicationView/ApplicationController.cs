@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 
 	public class WorkspacesChangedEventArgs : EventArgs
 	{
-		public WorkspacesChangedEventArgs(PartWorkspace workspace,  OperationType operation)
+		public WorkspacesChangedEventArgs(PartWorkspace workspace, OperationType operation)
 		{
 			this.Operation = operation;
 			this.Workspace = workspace;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 			if (staticData.DirectoryExists(themesPath))
 			{
 				var themeFiles = staticData.GetDirectories(themesPath).SelectMany(d => staticData.GetFiles(d).Where(p => Path.GetExtension(p) == ".json"));
-				foreach(var themeFile in themeFiles)
+				foreach (var themeFile in themeFiles)
 				{
 					themes[Path.GetFileNameWithoutExtension(themeFile)] = themeFile;
 				}
@@ -361,7 +361,7 @@ namespace MatterHackers.MatterControl
 			// Persist all pending changes in all workspaces to disk
 			foreach (var workspace in this.Workspaces)
 			{
-				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...",  workspace, workspace.SceneContext.SaveChanges);
+				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
 			}
 
 			// Project workspace definitions to serializable structure
@@ -1295,7 +1295,7 @@ namespace MatterHackers.MatterControl
 						using (new SelectionMaintainer(scene))
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
-						}						// Invalidate image to kick off rebuild of ImageConverter stack
+						}                       // Invalidate image to kick off rebuild of ImageConverter stack
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -1660,7 +1660,7 @@ namespace MatterHackers.MatterControl
 
 		public static TypeFace GetTypeFace(NamedTypeFace Name)
 		{
-			if(!TypeFaceCache.ContainsKey(Name))
+			if (!TypeFaceCache.ContainsKey(Name))
 			{
 				TypeFace typeFace = new TypeFace();
 				var file = Path.Combine("Fonts", $"{Name}.ttf");
@@ -1724,8 +1724,8 @@ namespace MatterHackers.MatterControl
 			if (LoadCachedFile(cacheKey, cacheScope) is string cachedFile)
 			{
 				// Load from cache and deserialize
-					return Task.FromResult(
-						JsonConvert.DeserializeObject<T>(cachedFile));
+				return Task.FromResult(
+					JsonConvert.DeserializeObject<T>(cachedFile));
 			}
 
 			try
@@ -1873,6 +1873,7 @@ namespace MatterHackers.MatterControl
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
 		public string ShortProductName => "MatterControl";
+
 		public string ProductName => "MatterHackers: MatterControl";
 
 		public void SwitchToPurchasedLibrary()
@@ -2029,7 +2030,6 @@ namespace MatterHackers.MatterControl
 
 			this.Workspaces.Add(workspace);
 		}
-
 
 		private string loadedUserTabs = null;
 
@@ -2190,12 +2190,15 @@ namespace MatterHackers.MatterControl
 		public IEnumerable<SceneSelectionOperation> RegisteredSceneOperations => registeredSceneOperations;
 
 		public static IObject3D ClipboardItem { get; internal set; }
+
 		public Action<ILibraryItem> ShareLibraryItem { get; set; }
 
 		public List<PartWorkspace> Workspaces { get; } = new List<PartWorkspace>();
 
 		public AppViewState ViewState { get; } = new AppViewState();
+
 		public Uri HelpArticleSource { get; set; }
+
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
 
 		public string MainTabKey { get; internal set; }
@@ -2203,12 +2206,13 @@ namespace MatterHackers.MatterControl
 		public static List<StartupAction> StartupActions { get; } = new List<StartupAction>();
 
 		public static List<StartupTask> StartupTasks { get; } = new List<StartupTask>();
+
 		public static Type ServicesStatusType { get; set; }
 
 		public bool PrinterTabSelected { get; set; } = false;
 
 		/// <summary>
-		/// Indicates if any ActivePrinter is running a print task, either in paused or printing states
+		/// Gets a value indicating whether any ActivePrinter is running a print task, either in paused or printing states
 		/// </summary>
 		public bool AnyPrintTaskRunning => this.ActivePrinters.Any(p => p.Connection.Printing || p.Connection.Paused || p.Connection.CommunicationState == CommunicationStates.PreparingToPrint);
 
@@ -2272,7 +2276,7 @@ namespace MatterHackers.MatterControl
 				printer.Connection.PrintingItemName = printItemName;
 
 				var errors = printer.ValidateSettings();
-				if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
+				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
 					this.ShowValidationErrors("Export Error".Localize(), errors);
 				}
@@ -3307,7 +3311,7 @@ Support and tutorials:
 							break;
 
 						case Keys.Insert:
-							if(keyEvent.Shift)
+							if (keyEvent.Shift)
 							{
 								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
@@ -3331,7 +3335,7 @@ Support and tutorials:
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}
-							foreach(var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
+							foreach (var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
 							{
 								interactionVolume.CancelOpperation();
 							}

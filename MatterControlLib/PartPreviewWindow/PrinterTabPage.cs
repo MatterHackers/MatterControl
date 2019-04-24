@@ -37,7 +37,6 @@ using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.StyledMessageBox;
 
