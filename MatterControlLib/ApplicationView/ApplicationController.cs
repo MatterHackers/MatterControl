@@ -61,7 +61,6 @@ namespace MatterHackers.MatterControl
 	using Agg.Image;
 	using CustomWidgets;
 	using global::MatterControl.Printing;
-	using Markdig.Agg;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
@@ -116,9 +115,14 @@ namespace MatterHackers.MatterControl
 		}
 
 		public OperationType Operation { get; }
+
 		public PartWorkspace Workspace { get; }
 
-		public enum OperationType { Add, Remove }
+		public enum OperationType
+		{
+			Add,
+			Remove,
+		}
 	}
 
 	public static class AppContext
