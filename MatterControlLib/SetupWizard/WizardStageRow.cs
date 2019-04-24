@@ -32,6 +32,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
@@ -40,7 +41,9 @@ namespace MatterHackers.MatterControl
 	{
 		private ISetupWizard stage;
 		private ImageBuffer completedIcon;
+		private ImageBuffer disabledCompletedIcon = null;
 		private ImageBuffer setupIcon;
+		private ImageBuffer disabledSetupIcon = null;
 		private ImageBuffer hoverIcon;
 		private double iconXOffset;
 		private double iconYOffset;
@@ -56,7 +59,14 @@ namespace MatterHackers.MatterControl
 			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 		}
 
+
 		public bool Active { get; set; }
+
+		public override Cursors Cursor
+		{
+			get => this.Active ? Cursors.Default : base.Cursor;
+			set => base.Cursor = value;
+		}
 
 		public override Color BackgroundColor
 		{
@@ -83,9 +93,53 @@ namespace MatterHackers.MatterControl
 			if (!this.Active)
 			{
 				graphics2D.Render(
-					(mouseInBounds) ? hoverIcon : (stage.SetupRequired) ? setupIcon : completedIcon,
+					this.StageIcon,
 					iconXOffset,
 					iconYOffset);
+			}
+		}
+
+		private ImageBuffer StageIcon
+		{
+			get
+			{
+				ImageBuffer icon;
+
+				if (mouseInBounds
+					&& this.Enabled)
+				{
+					icon = hoverIcon;
+				}
+				else if (stage.SetupRequired)
+				{
+					icon = setupIcon;
+
+					if (!this.Enabled)
+					{
+						if (disabledSetupIcon == null)
+						{
+							disabledSetupIcon = icon.AjustAlpha(0.2);
+						}
+
+						icon = disabledSetupIcon;
+					}
+				}
+				else
+				{
+					icon = completedIcon;
+
+					if (!this.Enabled)
+					{
+						if (disabledCompletedIcon == null)
+						{
+							disabledCompletedIcon = icon.AjustAlpha(0.2);
+						}
+
+						icon = disabledCompletedIcon;
+					}
+				}
+
+				return icon;
 			}
 		}
 	}

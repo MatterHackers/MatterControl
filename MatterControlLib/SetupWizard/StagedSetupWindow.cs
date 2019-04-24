@@ -59,6 +59,12 @@ namespace MatterHackers.MatterControl
 					activeButton.Active = false;
 				}
 
+				// Ensure all or only the active stage is enabled
+				foreach (var kvp in rowsByStage)
+				{
+					kvp.Value.Enabled = value == null || kvp.Key == value;
+				}
+
 				// Shutdown the active Wizard
 				_activeStage?.Dispose();
 
@@ -115,7 +121,11 @@ namespace MatterHackers.MatterControl
 				stageWidget.Enabled = stage.Enabled;
 				stageWidget.Click += (s, e) =>
 				{
-					this.ActiveStage = stage;
+					// Only allow leftnav when not running SetupWizard
+					if (this.ActiveStage == null)
+					{
+						this.ActiveStage = stage;
+					}
 				};
 
 				rowsByStage.Add(stage, stageWidget);
