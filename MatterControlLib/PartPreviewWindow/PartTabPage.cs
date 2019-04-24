@@ -28,15 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -47,7 +43,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal View3DWidget view3DWidget;
 		internal ISceneContext sceneContext;
 		internal PrinterConfig printer;
-		protected PartWorkspace workspace;
 		protected ViewControls3D viewControls3D;
 		protected ThemeConfig theme;
 		protected GuiWidget view3DContainer;
@@ -56,14 +51,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		protected LibraryListView favoritesBar;
 
 		public PartTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
-			: base (tabTitle)
+			: base(tabTitle)
 		{
 			this.sceneContext = workspace.SceneContext;
 			this.theme = theme;
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = 0;
 			this.printer = workspace.Printer;
-			this.workspace = workspace;
+			this.Workspace = workspace;
 
 			bool isPrinterType = this is PrinterTabPage;
 
@@ -207,6 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 		}
+
+		public PartWorkspace Workspace { get; }
 
 		public override void OnFocusChanged(EventArgs e)
 		{

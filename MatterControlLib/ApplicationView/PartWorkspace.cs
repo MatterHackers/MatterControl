@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,8 +38,6 @@ namespace MatterHackers.MatterControl
 {
 	public class PartWorkspace
 	{
-		private ISceneContext _sceneContext { get; }
-
 		public PartWorkspace()
 		{
 		}
@@ -69,22 +67,20 @@ namespace MatterHackers.MatterControl
 
 		public PartWorkspace(ISceneContext bedConfig)
 		{
-			var extraContainers = new List<ILibraryContainerLink>();
-
 			// Create a new library context for the SaveAs view
 			this.LibraryView = new LibraryConfig()
 			{
 				ActiveContainer = new WrappedLibraryContainer(ApplicationController.Instance.Library.RootLibaryContainer)
 			};
 
-			_sceneContext = bedConfig;
-			Name = _sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+			this.SceneContext = bedConfig;
+			Name = bedConfig.EditContext?.SourceItem?.Name ?? "Unknown";
 		}
 
 		public string Name { get; set; }
 
 		[JsonIgnore]
-		public ISceneContext SceneContext => _sceneContext;
+		public ISceneContext SceneContext { get; }
 
 		public EditContext EditContext { get; set; }
 

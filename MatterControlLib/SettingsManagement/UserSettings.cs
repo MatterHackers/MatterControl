@@ -79,6 +79,7 @@ namespace MatterHackers.MatterControl
 		public const string ThemeName = nameof(ThemeName);
 		public const string ThumbnailRenderingMode = nameof(ThumbnailRenderingMode);
 		public const string UpdateFeedType = nameof(UpdateFeedType);
+		public const string MainTabKey = nameof(MainTabKey);
 	}
 
 	public class UserSettings
