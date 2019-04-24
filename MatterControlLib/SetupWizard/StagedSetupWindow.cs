@@ -43,7 +43,8 @@ namespace MatterHackers.MatterControl
 		private bool footerHeightAcquired = false;
 		private ISetupWizard _activeStage;
 
-		private Dictionary<ISetupWizard, WizardStageRow> stageButtons = new Dictionary<ISetupWizard, WizardStageRow>();
+		private Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
+
 		private IStagedSetupWizard setupWizard;
 
 		public ISetupWizard ActiveStage
@@ -51,8 +52,8 @@ namespace MatterHackers.MatterControl
 			get => _activeStage;
 			set
 			{
-				if (_activeStage != null 
-					&& stageButtons.TryGetValue(_activeStage, out WizardStageRow activeButton))
+				if (_activeStage != null
+					&& rowsByStage.TryGetValue(_activeStage, out WizardStageRow activeButton))
 				{
 					// Mark the leftnav widget as inactive
 					activeButton.Active = false;
@@ -68,7 +69,7 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				if (stageButtons.TryGetValue(_activeStage, out WizardStageRow stageButton))
+				if (rowsByStage.TryGetValue(_activeStage, out WizardStageRow stageButton))
 				{
 					stageButton.Active = true;
 				}
@@ -117,7 +118,7 @@ namespace MatterHackers.MatterControl
 					this.ActiveStage = stage;
 				};
 
-				stageButtons.Add(stage, stageWidget);
+				rowsByStage.Add(stage, stageWidget);
 
 				leftPanel.AddChild(stageWidget);
 			}
