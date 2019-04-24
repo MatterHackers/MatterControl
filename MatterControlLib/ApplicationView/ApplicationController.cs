@@ -2224,7 +2224,11 @@ namespace MatterHackers.MatterControl
 
 		public Dictionary<string, HelpArticle> HelpArticlesByID { get; set; }
 
-		public string MainTabKey { get; internal set; }
+		public string MainTabKey
+		{
+			get => UserSettings.Instance.get(UserSettingsKey.MainTabKey);
+			set => UserSettings.Instance.set(UserSettingsKey.MainTabKey, value);
+		}
 
 		public static List<StartupAction> StartupActions { get; } = new List<StartupAction>();
 
