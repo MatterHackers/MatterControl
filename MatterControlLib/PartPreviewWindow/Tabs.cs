@@ -284,6 +284,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Call AddTab(widget, int) in base explicitly
 				base.AddTab(tabWidget, widgetPosition - firstTabPosition, widgetPosition);
 
+				tabTrailer.LastTab = this.AllTabs.LastOrDefault();
+
 				// Listen for tab changes and update links
 				/*
 				newTab.VisibleChanged += (s, e) =>
@@ -332,6 +334,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabB.PreviousTab = tabA;
 				}
 			}
+
+			tabTrailer.LastTab = this.AllTabs.LastOrDefault();
 		}
 
 		public Func<GuiWidget> NewTabPage { get; set; }
