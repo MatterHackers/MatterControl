@@ -395,22 +395,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Workspaces_Changed(object sender, WorkspacesChangedEventArgs e)
 		{
-			var activePrinter = e.Workspace.Printer;
+			var workspace = e.Workspace;
+			var activePrinter = workspace.Printer;
 
 			if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add
 				|| e.Operation == WorkspacesChangedEventArgs.OperationType.Restore)
 			{
-				ChromeTab newTab;
-
-				// Create and switch to new printer tab
-				if (activePrinter?.Settings.PrinterSelected == true)
-				{
-					newTab = this.CreatePrinterTab(e.Workspace, theme);
-				}
-				else
-				{
-					newTab = this.CreatePartTab(e.Workspace);
-				}
+				// Create printer or part tab
+				bool isPrinter = activePrinter?.Settings.PrinterSelected == true;
+				ChromeTab newTab = isPrinter ? CreatePrinterTab(workspace, theme) : CreatePartTab(workspace);
 
 				// Activate tab with previously active key
 				if (newTab.Key == ApplicationController.Instance.MainTabKey)
