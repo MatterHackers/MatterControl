@@ -122,6 +122,7 @@ namespace MatterHackers.MatterControl
 		{
 			Add,
 			Remove,
+			Restore
 		}
 	}
 
@@ -465,6 +466,14 @@ namespace MatterHackers.MatterControl
 		public void OnWorkspacesChanged(WorkspacesChangedEventArgs e)
 		{
 			this.WorkspacesChanged?.Invoke(this, e);
+
+			if (e.Operation != WorkspacesChangedEventArgs.OperationType.Restore)
+			{
+				UiThread.RunOnIdle(async() =>
+				{
+					await ApplicationController.Instance.PersistUserTabs();
+				});
+			}
 		}
 
 		public string GetFavIconUrl(string oemName)
@@ -2027,12 +2036,22 @@ namespace MatterHackers.MatterControl
 
 		public void OpenWorkspace(PartWorkspace workspace)
 		{
+			this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Add);
+		}
+
+		private void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
+		{
 			this.OnWorkspacesChanged(
 					new WorkspacesChangedEventArgs(
 						workspace,
-						WorkspacesChangedEventArgs.OperationType.Add));
+						operationType));
 
 			this.Workspaces.Add(workspace);
+		}
+
+		public void RestoreWorkspace(PartWorkspace workspace)
+		{
+			this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
 		}
 
 		private string loadedUserTabs = null;
@@ -2111,7 +2130,7 @@ namespace MatterHackers.MatterControl
 								workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
 							}
 
-							this.OpenWorkspace(workspace);
+							this.RestoreWorkspace(workspace);
 						}
 					}
 				}

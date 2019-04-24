@@ -397,7 +397,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var activePrinter = e.Workspace.Printer;
 
-			if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add)
+			if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add
+				|| e.Operation == WorkspacesChangedEventArgs.OperationType.Restore)
 			{
 					// Create and switch to new printer tab
 					if (activePrinter?.Settings.PrinterSelected == true)
