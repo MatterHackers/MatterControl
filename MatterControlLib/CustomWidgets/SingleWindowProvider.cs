@@ -163,11 +163,33 @@ namespace MatterHackers.Agg.UI
 					platformWindow.ShowSystemWindow(TopWindow);
 				};
 
+				void SystemWindow_BoundsChanged(object sender, EventArgs e)
+				{
+					var position = movable.Position;
+
+					// Adjust Y
+					if (position.Y + movable.Height > overlayWindow.Height)
+					{
+						position.Y = overlayWindow.Height - movable.Height;
+					}
+
+					// Adjust X
+					if (position.X + movable.Width > overlayWindow.Width)
+					{
+						position.X = Math.Max(0, overlayWindow.Width - movable.Width);
+					}
+
+					movable.Position = position;
+				}
+
+				overlayWindow.BoundsChanged += SystemWindow_BoundsChanged;
+
 				systemWindow.VisibleChanged += SystemWindow_VisibleChanged;
 
 				systemWindow.Closed += (s, e) =>
 				{
 					systemWindow.VisibleChanged -= SystemWindow_VisibleChanged;
+					overlayWindow.BoundsChanged -= SystemWindow_BoundsChanged;
 
 					overlayWindow.Close();
 				};
