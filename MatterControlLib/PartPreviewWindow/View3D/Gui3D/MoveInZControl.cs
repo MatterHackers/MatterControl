@@ -261,7 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		public override void CancelOpperation()
+		public override void CancelOperation()
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				InteractionContext.Scene.ShowSelectionShadow = true;
 			}
 
-			base.CancelOpperation();
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem)

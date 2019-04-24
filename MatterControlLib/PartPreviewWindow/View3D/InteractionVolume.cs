@@ -148,7 +148,7 @@ namespace MatterHackers.MeshVisualizer
 			InteractionContext.GuiSurface.Invalidate();
 		}
 
-		public virtual void CancelOpperation()
+		public virtual void CancelOperation()
 		{
 
 		}
