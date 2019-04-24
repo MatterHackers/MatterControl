@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal View3DWidget view3DWidget;
 		internal ISceneContext sceneContext;
 		internal PrinterConfig printer;
-		protected PartWorkspace workspace;
 		protected ViewControls3D viewControls3D;
 		protected ThemeConfig theme;
 		protected GuiWidget view3DContainer;
@@ -59,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = 0;
 			this.printer = workspace.Printer;
-			this.workspace = workspace;
+			this.Workspace = workspace;
 
 			bool isPrinterType = this is PrinterTabPage;
 
@@ -203,6 +202,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AnchorAll();
 		}
+
+		public PartWorkspace Workspace { get; }
 
 		public override void OnFocusChanged(EventArgs e)
 		{
