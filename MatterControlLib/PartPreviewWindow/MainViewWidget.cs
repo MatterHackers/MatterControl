@@ -409,8 +409,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						tabControl.ActiveTab = this.CreatePartTab(e.Workspace);
 					}
-
-					tabControl.RefreshTabPointers();
 			}
 			else
 			{
@@ -420,9 +418,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& tab.TabContent is PrinterTabPage printerPage)
 				{
 					tabControl.RemoveTab(tab);
-					tabControl.RefreshTabPointers();
 				}
 			}
+
+			tabControl.RefreshTabPointers();
 		}
 
 		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
