@@ -400,15 +400,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (e.Operation == WorkspacesChangedEventArgs.OperationType.Add
 				|| e.Operation == WorkspacesChangedEventArgs.OperationType.Restore)
 			{
-					// Create and switch to new printer tab
-					if (activePrinter?.Settings.PrinterSelected == true)
-					{
-						tabControl.ActiveTab = this.CreatePrinterTab(e.Workspace, theme);
-					}
-					else
-					{
-						tabControl.ActiveTab = this.CreatePartTab(e.Workspace);
-					}
+				ChromeTab newTab;
+
+				// Create and switch to new printer tab
+				if (activePrinter?.Settings.PrinterSelected == true)
+				{
+					newTab = this.CreatePrinterTab(e.Workspace, theme);
+				}
+				else
+				{
+					newTab = this.CreatePartTab(e.Workspace);
+				}
+
+				// Activate tab with previously active key
+				if (newTab.Key == ApplicationController.Instance.MainTabKey)
+				{
+					tabControl.ActiveTab = newTab;
+				}
 			}
 			else
 			{
