@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -78,14 +79,14 @@ namespace MatterHackers.MatterControl
 						column.FlowDirection = FlowDirection.LeftToRight;
 
 						var offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
-						column.AddChild(new TextWidget("Z Offset".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-						{
-							Margin = new BorderDouble(bottom: 4)
-						});
-						column.AddChild(new TextWidget(offset.Z.ToString("0.###"), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-						{
-							Margin = new BorderDouble(bottom: 4)
-						});
+
+						column.AddChild(
+							new ValueTag(
+								"Z Offset".Localize(),
+								offset.Z.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11));
 
 						widget = column;
 					}
