@@ -351,31 +351,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			scene.UndoBuffer.AddAndDo(new InsertCommand(scene, supportColumnsToAdd.Children, false));
 		}
 
-		private void AddSupportFaces(IEnumerable<IObject3D> supportCandidates, List<Vector3Float> supportVerts, FaceList supportFaces, Func<double, bool> doAdd)
+		private void AddSupportFaces(IEnumerable<IObject3D> supportCandidates, List<Vector3Float> supportVerts, FaceList supportFaces)
 		{
 			foreach (var item in supportCandidates)
 			{
-				// add all the down faces to supportNeededImage
+				// add all the faces
 				var matrix = item.WorldMatrix(scene);
 				for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
 				{
 					var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
-					var angle = MathHelper.RadiansToDegrees(Math.Acos(face0Normal.Dot(-Vector3Float.UnitZ)));
 
-					if (doAdd(angle))
-					{
-						var face = item.Mesh.Faces[faceIndex];
-						var verts = new int[] { face.v0, face.v1, face.v2 };
-						var p0 = item.Mesh.Vertices[face.v0].Transform(matrix);
-						var p1 = item.Mesh.Vertices[face.v1].Transform(matrix);
-						var p2 = item.Mesh.Vertices[face.v2].Transform(matrix);
-						var vc = supportVerts.Count;
-						supportVerts.Add(p0);
-						supportVerts.Add(p1);
-						supportVerts.Add(p2);
+					var face = item.Mesh.Faces[faceIndex];
+					var verts = new int[] { face.v0, face.v1, face.v2 };
+					var p0 = item.Mesh.Vertices[face.v0].Transform(matrix);
+					var p1 = item.Mesh.Vertices[face.v1].Transform(matrix);
+					var p2 = item.Mesh.Vertices[face.v2].Transform(matrix);
+					var vc = supportVerts.Count;
+					supportVerts.Add(p0);
+					supportVerts.Add(p1);
+					supportVerts.Add(p2);
 
-						supportFaces.Add(vc, vc + 1, vc + 2, face0Normal);
-					}
+					supportFaces.Add(vc, vc + 1, vc + 2, face0Normal);
 				}
 			}
 		}
@@ -404,11 +400,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					supportColumnData.Add((x, y), supportColumn);
 
 					// create support plans at this xy
-					var thisTracePlanes = new HitPlanes(minimumSupportHeight);
 					for (double yOffset = -1; yOffset <= 1; yOffset++)
 					{
 						for (double xOffset = -1; xOffset <= 1; xOffset++)
 						{
+							var thisTracePlanes = new HitPlanes(minimumSupportHeight);
 							var halfPillar = PillarSize / 2;
 							var yPos = (gridBounds.Bottom + y) * PillarSize + halfPillar + (yOffset * halfPillar);
 							var xPos = (gridBounds.Left + x) * PillarSize + halfPillar + (xOffset * halfPillar);
@@ -421,7 +417,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, true));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001) + offset, Vector3.UnitZ, intersectionType: IntersectionType.FrontFace);
@@ -436,7 +433,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, false));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits
 									upRay = new Ray(new Vector3(xPos, yPos, upHit.HitPosition.Z + .001) + offset, Vector3.UnitZ, intersectionType: IntersectionType.BackFace);
@@ -446,8 +444,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var debugPlanes = new HitPlanes(minimumSupportHeight);
 							debugPlanes.AddRange(thisTracePlanes);
-							debugPlanes.Sort();
-							var lineSupport = new SupportColumn(thisTracePlanes, minimumSupportHeight);
+							debugPlanes.Sort(MaxOverHangAngle);
+							var lineSupport = new SupportColumn(thisTracePlanes, minimumSupportHeight, MaxOverHangAngle);
 
 							if (lineSupport.Count > 0)
 							{
@@ -472,17 +470,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			supportVerts = new List<Vector3Float>();
 			supportFaces = new FaceList();
 
-			// find all the down faces from the support candidates
+			// find all the faces from the support candidates
 			AddSupportFaces(supportCandidates,
 				supportVerts,
-				supportFaces,
-				(angle) => angle <= MaxOverHangAngle);
-
-			// find all the up faces from everything on the bed
-			AddSupportFaces(scene.Children.SelectMany(i => i.VisibleMeshes()),
-				supportVerts,
-				supportFaces,
-				(angle) => angle >= 90);
+				supportFaces);
 
 			return CreateTraceData(supportFaces, supportVerts);
 		}
@@ -492,63 +483,32 @@ namespace MatterHackers.MatterControl.DesignTools
 			public double Z;
 
 			public HitPlane(double z, bool bottom)
+				: this(z, bottom ? 0 : 180)
+			{
+			}
+
+			public HitPlane(double z, double angle)
 			{
 				this.Z = z;
 
-				this.Side = bottom ? SideEnum.Bottom : SideEnum.Top;
+				this.Angle = angle;
 			}
 
-			public enum SideEnum
+			public bool Bottom(double maxOverHangAngle = 45)
 			{
-				Bottom,
-				Top
+				return Angle <= maxOverHangAngle;
 			}
 
-			public bool Bottom
+			public double Angle { get; set; }
+
+			public bool Top(double maxOverHangAngle = 45)
 			{
-				get
-				{
-					return Side == SideEnum.Bottom;
-				}
-
-				set
-				{
-					if (value)
-					{
-						Side = SideEnum.Bottom;
-					}
-					else
-					{
-						Side = SideEnum.Top;
-					}
-				}
-			}
-
-			public SideEnum Side { get; set; }
-
-			public bool Top
-			{
-				get
-				{
-					return Side == SideEnum.Top;
-				}
-
-				set
-				{
-					if (value)
-					{
-						Side = SideEnum.Top;
-					}
-					else
-					{
-						Side = SideEnum.Bottom;
-					}
-				}
+				return Angle > maxOverHangAngle;
 			}
 
 			public override string ToString()
 			{
-				return $"Z={Z:0.###} {(Bottom ? "Bottom" : "Top")}";
+				return $"Z={Z:0.###} {(Bottom(45) ? "Bottom" : "Top")}";
 			}
 		}
 
@@ -579,28 +539,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			/// </summary>
 			/// <param name="inputPlanes">The planes to consider while creating the support regions.</param>
 			/// <param name="minimumSupportHeight">The minimum distance between support regions.</param>
-			public SupportColumn(HitPlanes inputPlanes, double minimumSupportHeight)
+			/// <param name="maxOverHangAngle">The maximum angle that will be treated as a bottom.</param>
+			public SupportColumn(HitPlanes inputPlanes, double minimumSupportHeight, double maxOverHangAngle = 45)
 				: this(minimumSupportHeight)
 			{
 				var hitPlanes = new HitPlanes(inputPlanes.MinimumSupportHeight);
 				hitPlanes.AddRange(inputPlanes);
-				hitPlanes.Simplify();
+				hitPlanes.Simplify(maxOverHangAngle);
 
-				var currentBottom = 0.0;
-				int i = 0;
+				var i = 0;
+				var currentTop = 0.0;
 				// if the first bottom is more than the min distance
 				if (hitPlanes.Count > 1 && hitPlanes[i].Z <= minimumSupportHeight)
 				{
-					currentBottom = hitPlanes[i + 1].Z;
+					currentTop = hitPlanes[i + 1].Z;
 					i += 2;
 				}
 
 				for (; i < hitPlanes.Count / 2 * 2; i += 2)
 				{
-					if (hitPlanes[i].Z > currentBottom + minimumSupportHeight)
+					if (hitPlanes[i].Z > currentTop + minimumSupportHeight)
 					{
-						this.Add((currentBottom, hitPlanes[i].Z));
-						currentBottom = hitPlanes[i + 1].Z;
+						this.Add((currentTop, hitPlanes[i].Z));
+						currentTop = hitPlanes[i + 1].Z;
 					}
 				}
 			}
@@ -610,6 +571,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (this.Count == 0)
 				{
 					this.AddRange(other);
+					return;
 				}
 
 				// merge them, considering minimumSupportHeight
@@ -632,16 +594,17 @@ namespace MatterHackers.MatterControl.DesignTools
 							// drop out of the j loop
 							break;
 						}
-						else if (this[i].end < other[j].start)
+						else if (this[i].end < other[j].start
+							&& i < this.Count - 1
+							&& this[i + 1].start > other[j].end)
 						{
 							// we are beyond the end of this
 							// add every additional set and return
-							for (int k = j; k < other.Count; k++)
-							{
-								this.Add(other[k]);
-							}
-
-							return;
+							this.Insert(i + 1, other[j]);
+							this.RemoveOverLaps();
+							i--;
+							// drop out of the j loop
+							break;
 						}
 					}
 				}
@@ -649,7 +612,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			private void RemoveOverLaps()
 			{
-				throw new NotImplementedException();
+				// merge them, considering minimumSupportHeight
+				for (int i = 0; i < this.Count; i++)
+				{
+					for (int j = i + 1; j < this.Count; j++)
+					{
+						// check this is an overlap with the next segment
+						if (this[i].start <= this[j].end + minimumSupportHeight
+							&& this[i].end >= this[j].start - minimumSupportHeight
+							&& (this[i].start >= this[j].start || this[i].end <= this[j].end))
+						{
+							// set this range to be the union
+							this[i] = (Math.Min(this[i].start, this[j].start),
+								Math.Max(this[i].end, this[j].end));
+							// fix up the planes in this
+							this.RemoveAt(j);
+							// and start at the beginning again
+							i--;
+							// drop out of the j loop
+							break;
+						}
+					}
+				}
 			}
 		}
 
@@ -662,12 +646,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				this.MinimumSupportHeight = minimumSupportHeight;
 			}
 
-			public int GetNextBottom(int i)
+			public int GetNextBottom(int i, double maxOverHangAngle = 45)
 			{
 				while (i < this.Count)
 				{
 					// if we are on a bottom
-					if (this[i].Bottom)
+					if (this[i].Bottom(maxOverHangAngle))
 					{
 						// move up to the next plane and re-evaluate
 						i++;
@@ -676,7 +660,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						// if the next plane is a bottom and more than minimumSupportHeight away
 						if (i + 1 < this.Count
-							&& this[i + 1].Bottom
+							&& this[i + 1].Bottom(maxOverHangAngle)
 							&& this[i + 1].Z > this[i].Z + MinimumSupportHeight)
 						{
 							// this is the next bottom we are looking for
@@ -692,24 +676,37 @@ namespace MatterHackers.MatterControl.DesignTools
 				return -1;
 			}
 
-			public int GetNextTop(int start)
+			public int GetNextTop(int start, double maxOverHangAngle = 45)
 			{
 				var i = start;
 
 				if (this.Count > 0
-					&& !this[i].Bottom)
+					&& !this[i].Bottom(maxOverHangAngle))
 				{
 					// skip the one we are
 					i++;
 				}
 
-				return AdvanceToTop(i, start);
+				return AdvanceToTop(i, start, maxOverHangAngle);
 			}
 
 			public new void Sort()
 			{
+				throw new NotImplementedException("Call Sort(double maxOverHangAngle) instead");
+			}
+
+			public void Sort(double maxOverHangAngle)
+			{
 				this.Sort((a, b) =>
 				{
+					// one is a top and the other is a bottom, sort by tops first
+					if (((a.Top(maxOverHangAngle) && b.Bottom(maxOverHangAngle)) || (a.Bottom(maxOverHangAngle) && b.Top(maxOverHangAngle)))
+						&& a.Z < b.Z + MinimumSupportHeight / 2
+						&& a.Z > b.Z - MinimumSupportHeight / 2)
+					{
+						return a.Top(MinimumSupportHeight) ? 1 : -1;
+					}
+
 					return a.Z.CompareTo(b.Z);
 				});
 			}
@@ -718,26 +715,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			/// Modify the list to have Bottom - Top, Bottom - Top items exactly.
 			/// Remove any internal Planes that are not required. This may reduce the set to no items.
 			/// </summary>
-			public void Simplify()
+			/// <param name="maxOverHangAngle">The max angle to consider a bottom.</param>
+			public void Simplify(double maxOverHangAngle = 45)
 			{
 				// sort the list on Z
-				this.Sort();
+				this.Sort(maxOverHangAngle);
 
+				var highestPlane = double.NegativeInfinity;
 				var lastRemoveWasBottom = false;
 				// remove anything that is below 0
 				while (Count > 0
-					&& (this[0].Z < 0
-						|| (this[0].Top && this[0].Z == 0)))
+					&& this[0].Z < 0)
 				{
-					lastRemoveWasBottom = this[0].Bottom;
+					if (this[0].Z > highestPlane)
+					{
+						highestPlane = this[0].Z;
+						lastRemoveWasBottom = this[0].Bottom(maxOverHangAngle);
+					}
+
 					this.RemoveAt(0);
 				}
 
 				// if the first item is a top then add a bottom at 0
-				if ((Count > 0 && this[0].Top)
+				if ((Count > 0 && this[0].Top(maxOverHangAngle)
+					&& this[0].Z > 0)
 					|| lastRemoveWasBottom)
 				{
 					this.Insert(0, new HitPlane(0, true));
+				}
+
+				// if the first item is still a top, remove it
+				while (Count > 0
+					&& this[0].Top(maxOverHangAngle))
+				{
+					this.RemoveAt(0);
 				}
 
 				// remove any items that are between a bottom and a top
@@ -746,7 +757,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				while (Count > currentBottom
 					&& currentBottom != -1)
 				{
-					var top = GetNextTop(currentBottom);
+					var top = GetNextTop(currentBottom, maxOverHangAngle);
 					if (top != -1)
 					{
 						// remove everything between the bottom and the top
@@ -756,26 +767,33 @@ namespace MatterHackers.MatterControl.DesignTools
 						}
 
 						top = currentBottom + 1;
-
-						// move the bottom up past the current top
-						currentBottom = GetNextBottom(top);
-
-						// remove everything between the bottom and the new top
-						if (currentBottom != -1)
+						if (this[top].Z - this[currentBottom].Z < MinimumSupportHeight)
 						{
-							for (int i = currentBottom - 1; i > top; i--)
-							{
-								this.RemoveAt(i);
-							}
+							// also remove the top
+							this.RemoveAt(top);
 						}
+						else
+						{
+							// move the bottom up past the current top
+							currentBottom = GetNextBottom(top, maxOverHangAngle);
 
-						currentBottom = top + 1;
+							// remove everything between the bottom and the new top
+							if (currentBottom != -1)
+							{
+								for (int i = currentBottom - 1; i > top; i--)
+								{
+									this.RemoveAt(i);
+								}
+							}
+
+							currentBottom = top + 1;
+						}
 					}
 					else // not another top
 					{
 						// if the last plane is a bottom add a top above it at the minimum distance
 						if (this.Count > 0
-							&& this[this.Count - 1].Bottom)
+							&& this[this.Count - 1].Bottom(maxOverHangAngle))
 						{
 							var topHeight = this[this.Count - 1].Z + MinimumSupportHeight;
 							// remove all the bottoms from current up to last (but keep the actual last)
@@ -793,12 +811,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			private int AdvanceToTop(int i, int start)
+			private int AdvanceToTop(int i, int start, double maxOverHangAngle)
 			{
 				while (i < this.Count)
 				{
 					// if we are on a bottom
-					if (this[i].Bottom)
+					if (this[i].Bottom(maxOverHangAngle))
 					{
 						// move up to the next plane and re-evaluate
 						i++;
@@ -807,7 +825,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						// if the next plane is a bottom and more than minimumSupportHeight away
 						if (i + 1 < this.Count
-							&& this[i + 1].Bottom
+							&& this[i + 1].Bottom(maxOverHangAngle)
 							&& this[i + 1].Z > this[i].Z + MinimumSupportHeight)
 						{
 							// this is the next top we are looking for
@@ -818,7 +836,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							// if we started on a bottom
 							// and we are the last top
 							// and we are far enough away from the start bottom
-							if (this[start].Bottom
+							if (this[start].Bottom(maxOverHangAngle)
 								&& i == this.Count - 1
 								&& this[i].Z - this[start].Z > MinimumSupportHeight)
 							{
