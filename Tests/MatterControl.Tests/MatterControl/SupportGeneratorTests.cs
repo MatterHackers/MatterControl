@@ -121,7 +121,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z - 5);
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
 				scene.Children.Add(cubeOnBed);
 
 				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
@@ -153,7 +153,7 @@ namespace MatterControl.Tests.MatterControl
 				var cubeOnBed = await CubeObject3D.Create(20, 20, 20);
 				var aabbBed = cubeOnBed.GetAxisAlignedBoundingBox();
 				// move it so the bottom is 15 above the bed
-				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z);
+				cubeOnBed.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbBed.MinXYZ.Z - 5);
 				scene.Children.Add(cubeOnBed);
 
 				var cubeInAir = await CubeObject3D.Create(20, 20, 20);
@@ -443,13 +443,13 @@ namespace MatterControl.Tests.MatterControl
 
 			// Make a cube above the bed and a second above that. Ensure only one set of support material
 			//   _________
+			//   |       | 50
 			//   |       |
-			//   |       |
-			//   |_______|
+			//   |_______| 30
 			//   _________
+			//   |       | 25
 			//   |       |
-			//   |       |
-			//   |_______|
+			//   |_______| 5
 			// _______________
 			{
 				var scene = new InteractiveScene();
@@ -494,29 +494,35 @@ namespace MatterControl.Tests.MatterControl
 
 				Assert.AreEqual(bedSupportCount, airSupportCount, "Same number of support columns in each space.");
 			}
+		}
+
+		[Test, Category("Support Generation")]
+		public async Task ComplexPartNoSupport()
+		{
+			// Set the static data to point to the directory of MatterControl
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// load a complex part that should have no support required
-			if(false)
+			var minimumSupportHeight = .05;
+			InteractiveScene scene = new InteractiveScene();
+
+			var meshPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "NoSupportNeeded.stl");
+
+			var supportObject = new Object3D()
 			{
-				InteractiveScene scene = new InteractiveScene();
+				Mesh = StlProcessing.Load(meshPath, CancellationToken.None)
+			};
 
-				var meshPath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "NoSupportNeeded.stl");
+			var aabbCube = supportObject.GetAxisAlignedBoundingBox();
+			// move it so the bottom is on the bed
+			supportObject.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbCube.MinXYZ.Z);
+			scene.Children.Add(supportObject);
 
-				var supportObject = new Object3D()
-				{
-					Mesh = StlProcessing.Load(meshPath, CancellationToken.None)
-				};
-
-				var aabbCube = supportObject.GetAxisAlignedBoundingBox();
-				// move it so the bottom is on the bed
-				supportObject.Matrix = Matrix4X4.CreateTranslation(0, 0, -aabbCube.MinXYZ.Z);
-				scene.Children.Add(supportObject);
-
-				var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-				supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
-				await supportGenerator.Create(null, CancellationToken.None);
-				Assert.AreEqual(1, scene.Children.Count, "We should not have added support");
-			}
+			var supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
+			supportGenerator.SupportType = SupportGenerator.SupportGenerationType.Normal;
+			await supportGenerator.Create(null, CancellationToken.None);
+			Assert.AreEqual(1, scene.Children.Count, "We should not have added support");
 		}
 
 		[Test, Category("Support Generator")]
@@ -536,6 +542,11 @@ namespace MatterControl.Tests.MatterControl
 
 				int bottom1 = planes.GetNextBottom(1);
 				Assert.AreEqual(-1, bottom1, "There are no more bottoms so we get back a -1.");
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(1, supports.Count);
+				Assert.AreEqual(0, supports[0].start);
+				Assert.AreEqual(5, supports[0].end);
 			}
 
 			// two boxes, the bottom touching the bed, the top touching the bottom
@@ -551,6 +562,9 @@ namespace MatterControl.Tests.MatterControl
 
 				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(0, supports.Count);
 			}
 
 			// two boxes, the bottom touching the bed, the top inside the bottom
@@ -566,6 +580,9 @@ namespace MatterControl.Tests.MatterControl
 
 				int bottom = planes.GetNextBottom(0);
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(0, supports.Count);
 			}
 
 			// get next top skips any tops before checking for bottom
@@ -581,6 +598,13 @@ namespace MatterControl.Tests.MatterControl
 
 				int top = planes.GetNextTop(0);
 				Assert.AreEqual(3, top);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(2, supports.Count);
+				Assert.AreEqual(0, supports[0].start);
+				Assert.AreEqual(5, supports[0].end);
+				Assert.AreEqual(20, supports[1].start);
+				Assert.AreEqual(25, supports[1].end);
 			}
 
 			// actual output from a dual extrusion print that should have no support
@@ -610,7 +634,158 @@ namespace MatterControl.Tests.MatterControl
 				Assert.AreEqual(-1, bottom, "The boxes are sitting on the bed and no support is required");
 			}
 
-			// simplify working as expected (planes with space turns into tow start end sets)
+			// make sure we have a valid range even when there is no top
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// top at 0
+					new SupportGenerator.HitPlane(0, false),
+					// area needing support
+					new SupportGenerator.HitPlane(20, true),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(20, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(20.1, planes[1].Z);
+			}
+
+			// make sure we user last support height if greater than first plus min distance
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// top at 0
+					new SupportGenerator.HitPlane(0, false),
+					// area needing support
+					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(22, true),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(20, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(22.1, planes[1].Z);
+			}
+
+			// make sure we remove extra bottoms and have a valid range even when there is no top
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// top at 0
+					new SupportGenerator.HitPlane(0, false),
+					// area needing support
+					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(20.001, true),
+					new SupportGenerator.HitPlane(20.002, true),
+					new SupportGenerator.HitPlane(20.003, true),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(20, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(20.103, planes[1].Z);
+			}
+
+			// simple gap
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// area needing support
+					new SupportGenerator.HitPlane(20, true),
+					// bad extra top
+					new SupportGenerator.HitPlane(22, false),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(20, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(22, planes[1].Z);
+			}
+
+			// many start top planes
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(0, false),
+					new SupportGenerator.HitPlane(1, false),
+					new SupportGenerator.HitPlane(2, false),
+					new SupportGenerator.HitPlane(3, false),
+					// area needing support
+					new SupportGenerator.HitPlane(20, true),
+					// bad extra top
+					new SupportGenerator.HitPlane(22, true),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(4, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(3, planes[1].Z);
+				Assert.IsTrue(planes[2].Bottom);
+				Assert.AreEqual(20, planes[2].Z);
+				Assert.IsTrue(planes[3].Top);
+				Assert.AreEqual(22.1, planes[3].Z);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(1, supports.Count);
+				Assert.AreEqual(3, supports[0].start);
+				Assert.AreEqual(20, supports[0].end);
+			}
+
+			// handle invalid date (can happen during the trace in edge cases)
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false),
+					// area needing support
+					new SupportGenerator.HitPlane(20, false),
+					// bad extra top
+					new SupportGenerator.HitPlane(22, false),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(22, planes[1].Z);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(0, supports.Count);
+			}
+
+			// handle invalid date (can happen during the trace in edge cases)
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// bottom at 0
+					new SupportGenerator.HitPlane(0, true),
+					// bottom at 20
+					new SupportGenerator.HitPlane(20, true),
+					// bottom at 22
+					new SupportGenerator.HitPlane(22, true),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(22.1, planes[1].Z);
+			}
+
+			// simplify working as expected (planes with space turns into two start end sets)
 			{
 				var planes = new SupportGenerator.HitPlanes(.1)
 				{
@@ -631,15 +806,29 @@ namespace MatterControl.Tests.MatterControl
 					new SupportGenerator.HitPlane(16, false),
 					new SupportGenerator.HitPlane(16, false),
 					new SupportGenerator.HitPlane(16, false),
+					// area needing support
 					new SupportGenerator.HitPlane(20, true),
 					new SupportGenerator.HitPlane(25, false),
 				};
 
 				planes.Simplify();
-				Assert.AreEqual(4, planes.Count, "After simplify there should be two ranges");
+				Assert.AreEqual(4, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(16, planes[1].Z);
+				Assert.IsTrue(planes[2].Bottom);
+				Assert.AreEqual(20, planes[2].Z);
+				Assert.IsTrue(planes[3].Top);
+				Assert.AreEqual(25, planes[3].Z);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(1, supports.Count);
+				Assert.AreEqual(16, supports[0].start);
+				Assert.AreEqual(20, supports[0].end);
 			}
 
-			// pile of plats turns into 1 start end
+			// pile of plates turns into 0 start end
 			{
 				var planes = new SupportGenerator.HitPlanes(.1)
 				{
@@ -663,81 +852,210 @@ namespace MatterControl.Tests.MatterControl
 				};
 
 				planes.Simplify();
-				Assert.AreEqual(2, planes.Count, "After simplify there should one range");
-				Assert.IsTrue(planes[0].Bottom, "Is Bottom");
-				Assert.IsFalse(planes[1].Bottom, "Is Top");
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(16, planes[1].Z);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(0, supports.Count);
 			}
 
-			// merge of two overlapping sets tuns into one set
+			// a test with an actual part starting below the bed
 			{
-				var planes0 = new SupportGenerator.HitPlanes(.1)
+				var planes = new SupportGenerator.HitPlanes(.1)
 				{
-					new SupportGenerator.HitPlane(0, true),
-					new SupportGenerator.HitPlane(16, false),
-					new SupportGenerator.HitPlane(20, true),
+					new SupportGenerator.HitPlane(-.9961, true),
+					new SupportGenerator.HitPlane(-.9962, false),
+					new SupportGenerator.HitPlane(-.9963, true),
+					new SupportGenerator.HitPlane(-.9964, false),
+					new SupportGenerator.HitPlane(-.9965, true),
+					new SupportGenerator.HitPlane(-.9966, false),
+					new SupportGenerator.HitPlane(13.48, true),
+					new SupportGenerator.HitPlane(13.48, false),
+					new SupportGenerator.HitPlane(14.242, false),
+				};
+
+				planes.Simplify();
+				Assert.AreEqual(2, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(0, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(14.242, planes[1].Z);
+
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(0, supports.Count);
+			}
+
+			{
+				var planes = new SupportGenerator.HitPlanes(.1)
+				{
+					// top at 0
+					new SupportGenerator.HitPlane(0, false),
+					// bottom at 5
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(5, true),
+					new SupportGenerator.HitPlane(5, true),
+					// top at 25
 					new SupportGenerator.HitPlane(25, false),
+					new SupportGenerator.HitPlane(25, false),
+					new SupportGenerator.HitPlane(25, false),
+					new SupportGenerator.HitPlane(25, false),
+					new SupportGenerator.HitPlane(25, false),
+					new SupportGenerator.HitPlane(25, false),
+					// bottom at 30
+					new SupportGenerator.HitPlane(30, true),
+					new SupportGenerator.HitPlane(30, true),
+					new SupportGenerator.HitPlane(30, true),
+					new SupportGenerator.HitPlane(30, true),
+					new SupportGenerator.HitPlane(30, true),
+					new SupportGenerator.HitPlane(30, true),
+					// top at 50
+					new SupportGenerator.HitPlane(50, false),
+					new SupportGenerator.HitPlane(50, false),
+					new SupportGenerator.HitPlane(50, false),
+					new SupportGenerator.HitPlane(50, false),
+					new SupportGenerator.HitPlane(50, false),
 				};
 
-				var planes1 = new SupportGenerator.HitPlanes(.1)
-				{
-					new SupportGenerator.HitPlane(16, true),
-					new SupportGenerator.HitPlane(20, false),
-				};
+				planes.Simplify();
+				Assert.AreEqual(4, planes.Count);
+				Assert.IsTrue(planes[0].Bottom);
+				Assert.AreEqual(5, planes[0].Z);
+				Assert.IsTrue(planes[1].Top);
+				Assert.AreEqual(25, planes[1].Z);
+				Assert.IsTrue(planes[2].Bottom);
+				Assert.AreEqual(30, planes[2].Z);
+				Assert.IsTrue(planes[3].Top);
+				Assert.AreEqual(50, planes[3].Z);
 
-				planes0.Merge(planes1);
-				Assert.AreEqual(2, planes0.Count, "After merge there should one range");
-				Assert.AreEqual(0, planes0[0].Z);
-				Assert.IsTrue(planes0[0].Bottom);
-				Assert.AreEqual(25, planes0[1].Z);
-				Assert.IsFalse(planes0[1].Bottom);
+				var supports = new SupportGenerator.SupportColumn(planes, 0);
+				Assert.AreEqual(2, supports.Count);
+				Assert.AreEqual(0, supports[0].start);
+				Assert.AreEqual(5, supports[0].end);
+				Assert.AreEqual(25, supports[1].start);
+				Assert.AreEqual(30, supports[1].end);
 			}
 
-			// merge of two non-overlapping sets stays two sets
 			{
+				// two parts with a support gap between them
 				var planes0 = new SupportGenerator.HitPlanes(.1)
 				{
-					new SupportGenerator.HitPlane(0, true),
-					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(0, true), // bottom of part
+					new SupportGenerator.HitPlane(15, false), // top of part
 				};
+				var support0 = new SupportGenerator.SupportColumn(planes0, .1);
+				Assert.AreEqual(0, support0.Count);
 
+				// a part that will fill the support gap
 				var planes1 = new SupportGenerator.HitPlanes(.1)
 				{
-					new SupportGenerator.HitPlane(17, true),
-					new SupportGenerator.HitPlane(20, false),
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(20, true), // bottom of part
+					new SupportGenerator.HitPlane(30, false), // top of part
 				};
+				var support1 = new SupportGenerator.SupportColumn(planes1, .1);
+				Assert.AreEqual(1, support1.Count);
+				Assert.AreEqual(0, support1[0].start);
+				Assert.AreEqual(20, support1[0].end);
 
-				planes0.Merge(planes1);
-				Assert.AreEqual(4, planes0.Count, "After merge there should be two ranges");
-				Assert.AreEqual(0, planes0[0].Z);
-				Assert.IsTrue(planes0[0].Bottom);
-				Assert.AreEqual(16, planes0[1].Z);
-				Assert.IsFalse(planes0[1].Bottom);
-				Assert.AreEqual(17, planes0[2].Z);
-				Assert.IsTrue(planes0[2].Bottom);
-				Assert.AreEqual(20, planes0[3].Z);
-				Assert.IsFalse(planes0[3].Bottom);
+				support0.Union(support1);
+				Assert.AreEqual(1, support0.Count);
+				Assert.AreEqual(0, support0[0].start);
+				Assert.AreEqual(20, support0[0].end);
 			}
 
-			// merge of two overlapping sets (within tolerance turns into one set
+			// merge of two overlapping sets tuns into 0 set
 			{
-				var planes0 = new SupportGenerator.HitPlanes(5)
+				// two parts with a support gap between them
+				var planes0 = new SupportGenerator.HitPlanes(.1)
 				{
-					new SupportGenerator.HitPlane(0, true),
-					new SupportGenerator.HitPlane(16, false),
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(10, true), // bottom of part
+					new SupportGenerator.HitPlane(20, false), // top of part
 				};
 
+				planes0.Simplify();
+				Assert.AreEqual(2, planes0.Count);
+				Assert.IsTrue(planes0[0].Bottom);
+				Assert.AreEqual(10, planes0[0].Z);
+				Assert.IsTrue(planes0[1].Top);
+				Assert.AreEqual(20, planes0[1].Z);
+
+				var support0 = new SupportGenerator.SupportColumn(planes0, .1);
+
+				// a part that will fill the support gap
 				var planes1 = new SupportGenerator.HitPlanes(.1)
 				{
-					new SupportGenerator.HitPlane(17, true),
-					new SupportGenerator.HitPlane(20, false),
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(0, true), // bottom of part
+					new SupportGenerator.HitPlane(15, false), // top of part
 				};
 
-				planes0.Merge(planes1);
-				Assert.AreEqual(2, planes0.Count, "After merge there should one range");
-				Assert.AreEqual(0, planes0[0].Z, "Starts at 0");
-				Assert.IsTrue(planes0[0].Bottom, "Is Bottom");
-				Assert.AreEqual(20, planes0[1].Z, "Goes to 20");
-				Assert.IsFalse(planes0[1].Bottom, "Is Top");
+				planes1.Simplify();
+				Assert.AreEqual(2, planes1.Count);
+				Assert.IsTrue(planes1[0].Bottom);
+				Assert.AreEqual(0, planes1[0].Z);
+				Assert.IsTrue(planes1[1].Top);
+				Assert.AreEqual(15, planes1[1].Z);
+
+				var support1 = new SupportGenerator.SupportColumn(planes1, .1);
+
+				support0.Union(support1);
+				Assert.AreEqual(1, support0.Count);
+				Assert.AreEqual(0, support0[0].start);
+				Assert.AreEqual(10, support0[0].end);
+			}
+
+			{
+				// two parts with a support gap between them
+				var support0 = new SupportGenerator.SupportColumn(new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(10, true), // bottom of part
+					new SupportGenerator.HitPlane(20, false), // top of part
+				}, .1);
+
+				// a part that will fill the support gap
+				var support1 = new SupportGenerator.SupportColumn(new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(0, true), // bottom of part
+					new SupportGenerator.HitPlane(15, false), // top of part
+				}, .1);
+
+				support0.Union(support1);
+				Assert.AreEqual(1, support0.Count);
+				Assert.AreEqual(0, support0[0].start);
+				Assert.AreEqual(10, support0[0].end);
+			}
+
+			{
+				// two parts with a support gap between them
+				var support0 = new SupportGenerator.SupportColumn(new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(10, true), // bottom of part
+					new SupportGenerator.HitPlane(20, false), // top of part
+				}, .1);
+
+				// a part that will fill the support gap
+				var support1 = new SupportGenerator.SupportColumn(new SupportGenerator.HitPlanes(.1)
+				{
+					new SupportGenerator.HitPlane(0, false), // bed
+					new SupportGenerator.HitPlane(0, true), // bottom of part
+					new SupportGenerator.HitPlane(15, false), // top of part
+				}, .1);
+
+				support1.Union(support0);
+				Assert.AreEqual(1, support1.Count);
+				Assert.AreEqual(0, support1[0].start);
+				Assert.AreEqual(10, support1[0].end);
 			}
 		}
 	}
