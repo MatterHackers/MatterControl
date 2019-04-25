@@ -3195,7 +3195,7 @@ Support and tutorials:
 				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 				var offsetDist = 50;
-				var arrowKeyOpperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
+				var arrowKeyOperation = keyEvent.Shift ? TrackBallTransformType.Translation : TrackBallTransformType.Rotation;
 
 				var gcode2D = systemWindow.Descendants<GCode2DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
 
@@ -3364,7 +3364,7 @@ Support and tutorials:
 							}
 							foreach (var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
 							{
-								interactionVolume.CancelOpperation();
+								interactionVolume.CancelOperation();
 							}
 							break;
 
@@ -3378,7 +3378,7 @@ Support and tutorials:
 							else
 							{
 								// move or rotate view left
-								Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOpperation);
+								Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOperation);
 							}
 
 							keyEvent.Handled = true;
@@ -3395,7 +3395,7 @@ Support and tutorials:
 							else
 							{
 								// move or rotate view right
-								Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOpperation);
+								Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOperation);
 							}
 
 							keyEvent.Handled = true;
@@ -3411,7 +3411,7 @@ Support and tutorials:
 							}
 							else
 							{
-								Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOpperation);
+								Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOperation);
 							}
 
 							keyEvent.Handled = true;
@@ -3427,7 +3427,7 @@ Support and tutorials:
 							}
 							else
 							{
-								Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOpperation);
+								Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOperation);
 							}
 
 							keyEvent.Handled = true;
@@ -3532,11 +3532,11 @@ Support and tutorials:
 			return systemWindow;
 		}
 
-		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType opperation)
+		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType operation)
 		{
 			var center = view3D.TrackballTumbleWidget.LocalBounds.Center;
 
-			view3D.TrackballTumbleWidget.TrackBallController.OnMouseDown(center, Matrix4X4.Identity, opperation);
+			view3D.TrackballTumbleWidget.TrackBallController.OnMouseDown(center, Matrix4X4.Identity, operation);
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseMove(center + offset);
 			view3D.TrackballTumbleWidget.TrackBallController.OnMouseUp();
 			view3D.TrackballTumbleWidget.Invalidate();

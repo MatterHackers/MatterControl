@@ -298,7 +298,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		public override void CancelOpperation()
+		public override void CancelOperation()
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
@@ -312,7 +312,7 @@ namespace MatterHackers.Plugins.EditorTools
 				InteractionContext.Scene.ShowSelectionShadow = true;
 			}
 
-			base.CancelOpperation();
+			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem)

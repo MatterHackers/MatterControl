@@ -27,13 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using MatterHackers.Agg;
+using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 		public static Mesh Do(Mesh inMeshA, Matrix4X4 matrixA, 
 			Mesh inMeshB, Matrix4X4 matrixB, 
-			int opperation, 
+			int operation, 
 			IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
 		{
 			var libiglExe = "libigl_boolean.exe";
@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					int fcCount;
 					DoBooleanOpperation(va, va.Length, fa, fa.Length,
 						vb, vb.Length, fb, fb.Length,
-						opperation,
+						operation,
 						out pVc, out vcCount, out pFc, out fcCount);
 
 					var vcArray = new double[vcCount];
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var meshB = inMeshB.Copy(CancellationToken.None);
 			meshB.Transform(matrixB);
 
-			switch (opperation)
+			switch (operation)
 			{
 				case 0:
 					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
