@@ -48,7 +48,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.Printer is PrinterConfig printer)
 			{
-				levelingDataMesh = LevelingMeshVisualizer.BuildMeshFromLevelingData(printer);
+				try
+				{
+					levelingDataMesh = LevelingMeshVisualizer.BuildMeshFromLevelingData(printer);
+				}
+				catch
+				{
+					// Create empty mesh if exception thrown building leveling mesh
+					levelingDataMesh = new Mesh();
+				}
 			}
 		}
 
