@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class PrintLevelingWizard : PrinterSetupWizard
 	{
 		private double babySteppingValue;
-		private LevelingPlan levelingPlan;
 		private bool wizardExited;
 
 		public PrintLevelingWizard(PrinterConfig printer)
@@ -50,6 +49,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			this.Title = "Print Leveling".Localize();
 		}
+
+		public LevelingPlan LevelingPlan { get; set; }
 
 		public override bool Visible
 		{
@@ -86,35 +87,35 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.LevelingSystem)
 			{
 				case LevelingSystem.Probe3Points:
-					levelingPlan = new LevelWizard3Point(printer);
+					LevelingPlan = new LevelWizard3Point(printer);
 					break;
 
 				case LevelingSystem.Probe7PointRadial:
-					levelingPlan = new LevelWizard7PointRadial(printer);
+					LevelingPlan = new LevelWizard7PointRadial(printer);
 					break;
 
 				case LevelingSystem.Probe13PointRadial:
-					levelingPlan = new LevelWizard13PointRadial(printer);
+					LevelingPlan = new LevelWizard13PointRadial(printer);
 					break;
 
 				case LevelingSystem.Probe100PointRadial:
-					levelingPlan = new LevelWizard100PointRadial(printer);
+					LevelingPlan = new LevelWizard100PointRadial(printer);
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 3, 3);
+					LevelingPlan = new LevelWizardMesh(printer, 3, 3);
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 5, 5);
+					LevelingPlan = new LevelWizardMesh(printer, 5, 5);
 					break;
 
 				case LevelingSystem.Probe10x10Mesh:
-					levelingPlan = new LevelWizardMesh(printer, 10, 10);
+					LevelingPlan = new LevelWizardMesh(printer, 10, 10);
 					break;
 
 				case LevelingSystem.ProbeCustom:
-					levelingPlan = new LevelWizardCustom(printer);
+					LevelingPlan = new LevelWizardCustom(printer);
 					break;
 
 				default:
@@ -169,8 +170,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Initialize();
 
 			// var probePositions = new List<ProbePosition>(Enumerable.Range(0, levelingPlan.ProbeCount).Select(p => new ProbePosition()));
-			var probePositions = new List<ProbePosition>(levelingPlan.ProbeCount);
-			for (int j = 0; j < levelingPlan.ProbeCount; j++)
+			var probePositions = new List<ProbePosition>(LevelingPlan.ProbeCount);
+			for (int j = 0; j < LevelingPlan.ProbeCount; j++)
 			{
 				probePositions.Add(new ProbePosition());
 			}
@@ -184,10 +185,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				var secondsPerManualSpot = 10 * 3;
 				var secondsPerAutomaticSpot = 3 * zProbeSamples;
-				var secondsToCompleteWizard = levelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
+				var secondsToCompleteWizard = LevelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
 				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
 
-				int numberOfSteps = levelingPlan.ProbeCount;
+				int numberOfSteps = LevelingPlan.ProbeCount;
 				int numberOfMinutes = (int)Math.Round(secondsToCompleteWizard / 60.0);
 
 				if (hasHeatedBed)
@@ -291,7 +292,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int i = 0;
 
-			var probePoints = levelingPlan.GetPrintLevelPositionToSample().ToList();
+			var probePoints = LevelingPlan.GetPrintLevelPositionToSample().ToList();
 
 			AutoProbePage autoProbePage = null;
 
@@ -325,7 +326,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							new Vector3(validProbePosition, startProbeHeight),
 							string.Format(
 								"{0} {1} {2} - {3}",
-								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								levelingStrings.GetStepString(LevelingPlan.TotalSteps),
 								"Position".Localize(),
 								i + 1,
 								"Low Precision".Localize()),
@@ -337,7 +338,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							this,
 							string.Format(
 								"{0} {1} {2} - {3}",
-								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								levelingStrings.GetStepString(LevelingPlan.TotalSteps),
 								"Position".Localize(),
 								i + 1,
 								"Medium Precision".Localize()),
@@ -349,7 +350,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							this,
 							string.Format(
 								"{0} {1} {2} - {3}",
-								levelingStrings.GetStepString(levelingPlan.TotalSteps),
+								levelingStrings.GetStepString(LevelingPlan.TotalSteps),
 								"Position".Localize(),
 								i + 1,
 								"High Precision".Localize()),
