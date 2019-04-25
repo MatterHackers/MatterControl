@@ -40,6 +40,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -298,7 +299,8 @@ namespace MatterHackers.MatterControl.Library.Export
 				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1000);
 			}
 
-			if (levelingEnabled)
+			if (levelingEnabled
+				&& !LevelingValidation.NeedsToBeRun(printer))
 			{
 				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
 			}

@@ -2245,7 +2245,11 @@ You will then need to logout and log back in to the computer for the changes to 
 			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
-			accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
+			if (!LevelingValidation.NeedsToBeRun(Printer))
+			{
+				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
+			}
+
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
 			accumulatedStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);
 			accumulatedStream = new FeedRateMultiplierStream(Printer, accumulatedStream);
@@ -2584,8 +2588,18 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public bool AllowLeveling
 		{
-			get => printLevelingStream.AllowLeveling;
-			set => printLevelingStream.AllowLeveling = value;
+			set
+			{
+				if (printLevelingStream != null)
+				{
+					printLevelingStream.AllowLeveling = value;
+				}
+				else if (value)
+				{
+					// we are requesting it turned back on, re-build the leveling stream
+					CreateStreamProcessors();
+				}
+			}
 		}
 
 		/// <summary>
