@@ -2041,12 +2041,12 @@ namespace MatterHackers.MatterControl
 
 		private void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
+			this.Workspaces.Add(workspace);
+
 			this.OnWorkspacesChanged(
 					new WorkspacesChangedEventArgs(
 						workspace,
 						operationType));
-
-			this.Workspaces.Add(workspace);
 		}
 
 		public void RestoreWorkspace(PartWorkspace workspace)
