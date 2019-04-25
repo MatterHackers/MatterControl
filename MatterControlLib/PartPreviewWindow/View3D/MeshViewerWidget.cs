@@ -75,6 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnLoad(EventArgs args)
 		{
+#if DEBUG
 			drawables.AddRange(new IDrawable[]
 			{
 				new AxisIndicatorDrawable(),
@@ -82,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new AABBDrawable(sceneContext),
 				new LevelingDataDrawable(sceneContext)
 			});
-
+#endif
 			itemDrawables.AddRange(new IDrawableItem[]
 			{
 				new SelectedItemDrawable(sceneContext, this),
