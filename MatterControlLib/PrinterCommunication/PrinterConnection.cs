@@ -42,6 +42,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrintQueue;
@@ -1032,7 +1033,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										CommunicationState = CommunicationStates.Connected;
 										*/
 
-										CreateStreamProcessors(null, false);
+										CreateStreamProcessors();
 
 										TurnOffBedAndExtruders(TurnOff.Now); // make sure our ui and the printer agree and that the printer is in a known state (not heating).
 										haveReportedError = false;
@@ -1709,7 +1710,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						}
 						serialPort = null;
 						// make sure we clear out the stream processors
-						CreateStreamProcessors(null, false);
+						CreateStreamProcessors();
 						CommunicationState = CommunicationStates.Disconnected;
 
 						// We were connected to a printer so try to reconnect
@@ -2191,7 +2192,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		private void CreateStreamProcessors(Stream gcodeStream, bool recoveryEnabled)
+		private void CreateStreamProcessors(Stream gcodeStream = null, bool recoveryEnabled = false)
 		{
 			secondsSinceUpdateHistory = 0;
 			lineSinceUpdateHistory = 0;
@@ -2528,7 +2529,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						this.PrintJobName = null;
 
 						// get us back to the no printing setting (this will clear the queued commands)
-						CreateStreamProcessors(null, false);
+						CreateStreamProcessors();
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
