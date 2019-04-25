@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,13 +36,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class Popover : FlowLayoutWidget
 	{
-		private IVertexSource tabShape = null;
-		private Stroke tabStroke;
+		protected IVertexSource tabShape = null;
+		protected Stroke tabStroke;
 		private Color _tagColor;
 		private BorderDouble originalPadding;
 
 		/// <summary>
-		/// Constructs a new Popover with the given parameters
+		/// Initializes a new instance of the <see cref="Popover"/> class.
 		/// </summary>
 		/// <param name="arrowDirection">The direction the popover arrow should point</param>
 		/// <param name="padding">The padding of the control, adjusted internally to account for arrow region</param>
@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.autoBorderColor = autoBorderColor;
 		}
 
-		public Color TagColor
+		public virtual Color TagColor
 		{
 			get => _tagColor;
 			set
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RebuildShape();
 		}
 
-		protected void RebuildShape()
+		protected virtual void RebuildShape()
 		{
 			tabShape = Popover.GetShape(this.ArrowDirection, this.LocalBounds, this.NotchSize, this.ArrowOffset);
 			tabStroke = new Stroke(tabShape);
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int NotchSize { get; }
 
-		private static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
+		protected static IVertexSource GetShape(ArrowDirection arrowDirection, RectangleDouble rect, double notchSize, double p2)
 		{
 			// See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 
