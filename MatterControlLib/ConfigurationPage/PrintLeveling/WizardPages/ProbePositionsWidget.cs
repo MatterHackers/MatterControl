@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class ProbePositionsWidget : GuiWidget
 	{
 		private List<Vector2> probePoints;
-		private List<ProbePosition> probePositions;
 		private PrinterConfig printer;
 		private ThemeConfig theme;
 		private Color opaqueMinimumAccent;
@@ -58,10 +57,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private double scalingFactor;
 		private LevelingFunctions currentLevelingFunctions = null;
 
-		public ProbePositionsWidget(PrinterConfig printer, List<Vector2> probePoints, List<ProbePosition> probePositions, ThemeConfig theme)
+		public ProbePositionsWidget(PrinterConfig printer, List<Vector2> probePoints, ThemeConfig theme)
 		{
 			this.probePoints = probePoints;
-			this.probePositions = probePositions;
 			this.printer = printer;
 			this.VAnchor = VAnchor.Absolute;
 			this.theme = theme;

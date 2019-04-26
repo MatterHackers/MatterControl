@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl
 								Margin = new BorderDouble(bottom: 4)
 							});
 
-							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), positions.Select(v => new ProbePosition() { position = v }).ToList(), theme)
+							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
 								HAnchor = HAnchor.Absolute,
 								VAnchor = VAnchor.Absolute,
