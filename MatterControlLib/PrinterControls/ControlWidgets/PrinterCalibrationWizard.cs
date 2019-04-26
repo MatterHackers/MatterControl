@@ -134,11 +134,7 @@ namespace MatterHackers.MatterControl
 							};
 							column.AddChild(probeWidget);
 
-							var row = new FlowLayoutWidget();
-
-							row.AddChild(column);
-
-							widget = row;
+							widget = column;
 						}
 					}
 
@@ -196,6 +192,7 @@ namespace MatterHackers.MatterControl
 					theme.ApplyBoxStyle(section);
 
 					section.Margin = section.Margin.Clone(left: 0);
+					section.ShowExpansionIcon = false;
 
 					if (stage.SetupRequired)
 					{
@@ -213,7 +210,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				Margin = new BorderDouble(15, theme.DefaultContainerPadding, theme.DefaultContainerPadding, 4)
+				Margin = new BorderDouble(theme.DefaultContainerPadding, theme.DefaultContainerPadding, theme.DefaultContainerPadding, 4)
 			};
 		}
 

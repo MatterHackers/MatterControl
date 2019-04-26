@@ -121,6 +121,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ICheckbox Checkbox => checkbox;
 
+		public bool ShowExpansionIcon
+		{
+			get => checkbox.ShowIcon;
+			set
+			{
+				checkbox.ShowIcon = value;
+				checkbox.Padding = value ? 0 : new BorderDouble(left: this.ContentPanel.Margin.Left);
+			}
+		}
+
 		public GuiWidget ContentPanel { get; private set; }
 
 		public void SetContentWidget(GuiWidget guiWidget)
