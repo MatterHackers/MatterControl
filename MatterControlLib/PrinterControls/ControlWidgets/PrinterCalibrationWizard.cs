@@ -86,7 +86,11 @@ namespace MatterHackers.MatterControl
 								offset.Z.ToString("0.###"),
 								new BorderDouble(12, 5, 2, 5),
 								5,
-								11));
+								11)
+							{
+								Margin = new BorderDouble(bottom: 4),
+								MinimumSize = new Vector2(125, 0)
+							});
 
 						widget = column;
 					}
@@ -136,6 +140,48 @@ namespace MatterHackers.MatterControl
 
 							widget = row;
 						}
+					}
+
+					if (stage is XyCalibrationWizard xyWizard)
+					{
+						var column = CreateColumn(theme);
+						column.FlowDirection = FlowDirection.LeftToRight;
+
+						var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
+
+						var tool2Column = new FlowLayoutWidget(FlowDirection.TopToBottom);
+						column.AddChild(tool2Column);
+
+						tool2Column.AddChild(
+							new TextWidget("Tool".Localize() + " 2", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+							{
+								Margin = new BorderDouble(bottom: 4)
+							});
+
+						tool2Column.AddChild(
+							new ValueTag(
+								"X Offset".Localize(),
+								hotendOffset.X.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11)
+							{
+								Margin = new BorderDouble(bottom: 4),
+								MinimumSize = new Vector2(125, 0)
+							});
+
+						tool2Column.AddChild(
+							new ValueTag(
+								"Y Offset".Localize(),
+								hotendOffset.Y.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11)
+							{
+								MinimumSize = new Vector2(125, 0)
+							});
+
+						widget = column;
 					}
 
 					if (stage.SetupRequired)
