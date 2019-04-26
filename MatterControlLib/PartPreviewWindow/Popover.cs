@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (autoBorderColor)
 				{
-					this.BorderColor = TagColor.WithLightnessAdjustment(AppContext.Theme.IsDarkTheme ? 1.3 : .8).ToColor();
+					this.BorderColor = TagColor.AdjustLightness(AppContext.Theme.IsDarkTheme ? 1.3 : .8).ToColor();
 				}
 			}
 		}

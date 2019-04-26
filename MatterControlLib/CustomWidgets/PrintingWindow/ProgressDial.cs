@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public ProgressDial(ThemeConfig theme)
 		{
 			primaryAccentColor = theme.PrimaryAccentColor;
-			primaryAccentShade = theme.PrimaryAccentColor.WithLightnessAdjustment(0.7).ToColor();
+			primaryAccentShade = theme.PrimaryAccentColor.AdjustLightness(0.7).ToColor();
 
 			percentCompleteWidget = new TextWidget("", pointSize: 22, textColor: theme.TextColor)
 			{
