@@ -232,8 +232,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			foreach (var position in probePoints)
 			{
-				var center = new Vector2(position.X, position.Y);
-				path.LineTo(center);
+				path.LineTo(position.X, position.Y);
 			}
 
 			// Render total path before probe points
