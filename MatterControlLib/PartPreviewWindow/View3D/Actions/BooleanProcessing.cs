@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					int vcCount;
 					int fcCount;
-					DoBooleanOpperation(va, va.Length, fa, fa.Length,
+					DoBooleanOperation(va, va.Length, fa, fa.Length,
 						vb, vb.Length, fb, fb.Length,
 						operation,
 						out pVc, out vcCount, out pFc, out fcCount);
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		}
 
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public extern static void DoBooleanOpperation(
+		public extern static void DoBooleanOperation(
 			double[] va, int vaCount, int[] fa, int faCount,
 			double[] vb, int vbCount, int[] fb, int fbCount,
 			int opperation,
