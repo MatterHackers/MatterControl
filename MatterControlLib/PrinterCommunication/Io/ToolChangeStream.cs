@@ -45,16 +45,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private string postSwitchLine;
 		private double preSwitchFeedRate;
 		private Vector3 preSwitchPosition;
+		private IGCodeLineReader gcodeLineReader;
+		private GCodeMemoryFile gCodeMemoryFile;
 		private QueuedCommandsStream queuedCommandsStream;
 		private int requestedTool;
-		enum SendStates { Normal, WaitingForMove, SendingBefore }
-		private SendStates SendState = SendStates.Normal;
+
+		private enum SendStates
+		{
+			Normal,
+			WaitingForMove,
+			SendingBefore
+		}
+
+		private SendStates sendState = SendStates.Normal;
 		private double[] targetTemps = new double[4];
 		private Queue<string> queuedCommands = new Queue<string>();
 
-		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream)
+		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
 			: base(printer, internalStream)
 		{
+			this.gcodeLineReader = gcodeLineReader;
+			if (gcodeLineReader != null)
+			{
+				this.gCodeMemoryFile = gcodeLineReader.GCodeFile as GCodeMemoryFile;
+			}
 			this.queuedCommandsStream = queuedCommandsStream;
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			activeTool = printer.Connection.ActiveExtruderIndex;
@@ -64,14 +78,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			if(queuedCommands.Count > 0)
+			if (queuedCommands.Count > 0)
 			{
 				return queuedCommands.Dequeue();
 			}
 
 			string lineToSend = base.ReadLine();
 
-			if(lineToSend == null)
+			if (lineToSend == null)
 			{
 				return null;
 			}
@@ -95,7 +109,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				if (!lineToSend.Contains("; INACTIVE_COOL_DOWN"))
 				{
-					targetTemps[requestedToolForTempChange] = toolTemp;
+					if (targetTemps[requestedToolForTempChange] != toolTemp)
+					{
+						targetTemps[requestedToolForTempChange] = toolTemp;
+					}
 				}
 			}
 
@@ -105,7 +122,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend == completedBeforeGCodeString)
 			{
 				activeTool = requestedTool;
-				SendState = SendStates.Normal;
+				sendState = SendStates.Normal;
 				QueueAfterGCode();
 			}
 
@@ -120,6 +137,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Enqueue($"T{activeTool}");
 					return $"{lineToSend.Substring(0, 4)} T{requestedToolForTempChange} S{targetTemps[requestedToolForTempChange]}";
 				}
+
 				// if we are waiting to switch to the next tool
 				else if (activeTool != requestedTool)
 				{
@@ -128,12 +146,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						queuedCommands.Enqueue($"T{requestedTool}");
 					}
+
 					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
 					queuedCommands.Enqueue($"T{activeTool}");
 					// then send the heat command
 					return lineToSend;
 				}
 			}
+
 			// if this is a tool change request
 			else if (lineToSend.StartsWith("T"))
 			{
@@ -142,11 +162,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					if (changeCommandTool == activeTool)
 					{
-						if(SendState == SendStates.WaitingForMove)
+						if (sendState == SendStates.WaitingForMove)
 						{
 							// we have switch back to our starting tool without a move
 							// change back to normal processing and don't change tools
-							SendState = SendStates.Normal;
+							sendState = SendStates.Normal;
 							var lastRequestedTool = requestedTool;
 							// set the requested tool
 							requestedTool = changeCommandTool;
@@ -156,9 +176,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 					else // we are switching tools
 					{
-						if (SendState == SendStates.Normal)
+						if (sendState == SendStates.Normal)
 						{
-							SendState = SendStates.WaitingForMove;
+							sendState = SendStates.WaitingForMove;
 							// set the requested tool
 							requestedTool = changeCommandTool;
 							// don't queue the tool change until after the before gcode has been sent
@@ -167,12 +187,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					}
 				}
 			}
+
 			// if it is only an extrusion move
-			if (SendState == SendStates.WaitingForMove
+			if (sendState == SendStates.WaitingForMove
 				&& activeTool != requestedTool // is different than the last extruder set
 				&& (lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& lineNoComment.Contains("E") // it is an extrusion move
-				// and have no other position information
+											   // and have no other position information
 				&& !lineNoComment.Contains("X")
 				&& !lineNoComment.Contains("Y")
 				&& !lineNoComment.Contains("Z"))
@@ -185,13 +206,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Enqueue($"T{requestedTool}");
 
 					// if we know the current E position before the switch
-					// set the E value to the previous E value. 
+					// set the E value to the previous E value.
 					if (lastDestination.extrusion != double.PositiveInfinity)
 					{
 						// On Marlin E position is share between extruders and this code has no utility
 						// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
 						queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
 					}
+
 					// send the extrusion
 					queuedCommands.Enqueue(lineNoComment + " ; NO_PROCESSING");
 					// switch back
@@ -221,10 +243,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
+		/// <summary>
+		/// Seconds until the next tool change while printing.
+		/// </summary>
+		/// <returns>The time tool index we are switching to and the time until it will switch.</returns>
+		private (int toolIndex, double time) NextToolChange(int toolToLookFor = -1)
+		{
+			if (gCodeMemoryFile != null)
+			{
+				var timeToTool = gCodeMemoryFile.NextToolChange(gcodeLineReader.LineIndex, -1, toolToLookFor);
+				return timeToTool;
+			}
+
+			return (-1, 0);
+		}
+
 		private void ManageCoolDownAndOffTemps(StringBuilder gcode)
 		{
 			// get the time to the next tool switch
-			var timeToNextToolChange = printer.Connection.NextToolChange().time;
+			var timeToNextToolChange = NextToolChange().time;
 			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
 			// if we do not switch again
@@ -243,7 +280,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			else // there are more tool changes in the future
 			{
 				// get the next time we will use the current tool
-				var nextTimeThisTool = printer.Connection.NextToolChange(activeTool).time;
+				var nextTimeThisTool = NextToolChange(activeTool).time;
 
 				// if we do not use this tool again
 				if (nextTimeThisTool == double.PositiveInfinity)
@@ -251,6 +288,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// turn off its heat
 					gcode.AppendLine($"M104 T{activeTool} S0");
 				}
+
 				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
 				else if (nextTimeThisTool > timeToReheat)
 				{
@@ -272,7 +310,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// check if any extruders need to start heating back up
 			for (int i = 0; i < extruderCount; i++)
 			{
-				var nextToolChange = printer.Connection.NextToolChange(i);
+				var nextToolChange = NextToolChange(i);
 				var targetTemp = targetTemps[i];
 				var setTempLine = $"M104 T{i} S{targetTemp}";
 				if (nextToolChange.toolIndex >= 0
@@ -280,7 +318,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp
 					&& line != setTempLine)
 				{
-					printer.Connection.QueueLine(setTempLine);
+					printer.Connection.SetTargetHotendTemperature(i, targetTemp);
+					//queuedCommands.Enqueue(setTempLine);
 				}
 			}
 		}
@@ -360,7 +399,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool QueueBeforeIfNeedToSwitchExtruders(string lineIn, string lineNoComment)
 		{
 			// check if there is a travel
-			if (SendState == SendStates.WaitingForMove
+			if (sendState == SendStates.WaitingForMove
 				&& activeTool != requestedTool // is different than the last extruder set
 				&& (lineNoComment.StartsWith("G0 ") || lineNoComment.StartsWith("G1 ")) // is a G1 or G0
 				&& (lineNoComment.Contains("X") || lineNoComment.Contains("Y") || lineNoComment.Contains("Z"))) // has a move axis in it
@@ -401,7 +440,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				queuedCommandsStream.Add(gcode.ToString());
 
-				SendState = SendStates.SendingBefore;
+				sendState = SendStates.SendingBefore;
 
 				return true;
 			}

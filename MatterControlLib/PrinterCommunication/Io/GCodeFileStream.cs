@@ -31,7 +31,7 @@ using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class GCodeFileStream : GCodeStream
+	public class GCodeFileStream : GCodeStream, IGCodeLineReader
 	{
 		private int printerCommandQueueLineIndex = -1;
 		private string lastLine = "";

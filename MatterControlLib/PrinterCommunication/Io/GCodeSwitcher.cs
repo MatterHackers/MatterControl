@@ -37,7 +37,13 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class GCodeSwitcher : GCodeStream
+	public interface IGCodeLineReader
+	{
+		GCodeFile GCodeFile { get; }
+		int LineIndex { get; }
+	}
+
+	public class GCodeSwitcher : GCodeStream, IGCodeLineReader
 	{
 		private GCodeMemoryFile switchToGCode = null;
 		private object locker = new object();

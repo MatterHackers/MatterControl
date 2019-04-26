@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public abstract void Dispose();
 
-		bool useG0ForMovement = false;
+		private readonly bool useG0ForMovement = false;
 
 		protected PrinterConfig printer { get; }
 
