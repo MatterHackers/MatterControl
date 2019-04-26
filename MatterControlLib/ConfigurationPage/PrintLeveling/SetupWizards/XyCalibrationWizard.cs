@@ -100,9 +100,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.Dispose();
 		}
 
-		public bool allowChildClose = true;
+		private bool allowChildClose = true;
 
-		public bool childRequestedClose = false;
+		private bool childRequestedClose = false;
 
 		public override bool ClosePage()
 		{
