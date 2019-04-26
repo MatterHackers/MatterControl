@@ -41,6 +41,15 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[HideFromTreeViewAttribute, Immutable]
+	public class GeneratedSupportObject3D : Object3D
+	{
+		public GeneratedSupportObject3D()
+		{
+			OutputType = PrintOutputTypes.Support;
+		}
+	}
+
 	public class SupportGenerator
 	{
 		private readonly InteractiveScene scene;
@@ -509,15 +518,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			public override string ToString()
 			{
 				return $"Z={Z:0.###} {(Bottom(45) ? "Bottom" : "Top")}";
-			}
-		}
-
-		[HideFromTreeViewAttribute, Immutable]
-		public class GeneratedSupportObject3D : Object3D
-		{
-			public GeneratedSupportObject3D()
-			{
-				OutputType = PrintOutputTypes.Support;
 			}
 		}
 

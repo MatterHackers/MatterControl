@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Use existing AssetsPath property
 					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 					var itemWorldMatrix = item.WorldMatrix();
-					if (item is SupportGenerator.GeneratedSupportObject3D generatedSupportObject3D)
+					if (item is GeneratedSupportObject3D generatedSupportObject3D)
 					{
 						// grow the support columns by the amount they are reduced by
 						var aabb = item.GetAxisAlignedBoundingBox();
