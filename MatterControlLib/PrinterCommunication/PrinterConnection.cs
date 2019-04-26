@@ -53,16 +53,20 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
-	public enum TurnOff { Now, AfterDelay }
+	public enum TurnOff
+	{
+		Now,
+		AfterDelay
+	}
 
 	[Flags]
 	public enum PositionReadType
 	{
 		None = 0,
-		HomeX = 1<<1,
-		HomeY = 1<<2,
-		HomeZ = 1<<3,
-		Other = 1<<4,
+		HomeX = 1 << 1,
+		HomeY = 1 << 2,
+		HomeZ = 1 << 3,
+		Other = 1 << 4,
 		HomeAll = HomeX | HomeY | HomeZ,
 	}
 
@@ -79,11 +83,24 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		FinishedPrint,
 		Disconnecting,
 		ConnectionLost
-	};
+	}
 
-	public enum DetailedPrintingState { HomingAxis, HeatingBed, HeatingT0, HeatingT1, Printing };
+	public enum DetailedPrintingState
+	{
+		HomingAxis,
+		HeatingBed,
+		HeatingT0,
+		HeatingT1,
+		Printing
+	}
 
-	public enum FirmwareTypes { Unknown, Repetier, Marlin, Sprinter };
+	public enum FirmwareTypes
+	{
+		Unknown,
+		Repetier,
+		Marlin,
+		Sprinter
+	}
 
 	/// <summary>
 	/// This is the class that communicates with a RepRap printer over the serial port.
@@ -137,6 +154,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		public event EventHandler<string> PrintFinished;
+
 		public event EventHandler PrintCanceled;
 
 		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
@@ -172,21 +190,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private bool atxPowerIsOn = false;
 
-		internal const int MAX_EXTRUDERS = 16;
+		internal const int MaxExtruders = 16;
 
-		private const int MAX_INVALID_CONNECTION_CHARS = 3;
+		private const int MaxInvalidConnectionChars = 3;
 
-		private object locker = new object();
-
-		public PrintTask activePrintTask;
+		private readonly object locker = new object();
 
 		private double actualBedTemperature;
 
 		public int ActiveExtruderIndex { get; private set; }
 
-		private double[] actualHotendTemperature = new double[MAX_EXTRUDERS];
+		private readonly double[] actualHotendTemperature = new double[MaxExtruders];
 
-		private CheckSumLines allCheckSumLinesSent = new CheckSumLines();
+		private readonly CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
 		private CommunicationStates communicationState = CommunicationStates.Disconnected;
 
@@ -219,37 +235,38 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private DetailedPrintingState _detailedPrintingState;
 
-		private ContainsStringLineActions ReadLineContainsCallBacks = new ContainsStringLineActions();
+		private readonly ContainsStringLineActions readLineContainsCallBacks = new ContainsStringLineActions();
 
-		private StartsWithLineActions ReadLineStartCallBacks = new StartsWithLineActions();
+		private readonly StartsWithLineActions readLineStartCallBacks = new StartsWithLineActions();
 
 		// we start out by setting it to a nothing file
 		private IFrostedSerialPort serialPort;
 
 		private double _targetBedTemperature;
 
-		private double[] targetHotendTemperature = new double[MAX_EXTRUDERS];
+		private readonly double[] targetHotendTemperature = new double[MaxExtruders];
 
-		private Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
+		private readonly Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
 
-		private Stopwatch timeSinceLastReadAnything = new Stopwatch();
+		private readonly Stopwatch timeSinceLastReadAnything = new Stopwatch();
 
-		private Stopwatch timeSinceLastWrite = new Stopwatch();
+		private readonly Stopwatch timeSinceLastWrite = new Stopwatch();
 
-		private Stopwatch timeSinceRecievedOk = new Stopwatch();
+		private readonly Stopwatch timeSinceRecievedOk = new Stopwatch();
 
-		private Stopwatch timePrinting = new Stopwatch();
+		private readonly Stopwatch timePrinting = new Stopwatch();
 
-		private Stopwatch timeWaitingForSdProgress = new Stopwatch();
+		private readonly Stopwatch timeWaitingForSdProgress = new Stopwatch();
 
 		private double totalSdBytes = 0;
 
 		private PositionReadType PositionReadType { get; set; } = PositionReadType.None;
-		private Stopwatch waitingForPosition = new Stopwatch();
 
-		private ContainsStringLineActions WriteLineContainsCallBacks = new ContainsStringLineActions();
+		private readonly Stopwatch waitingForPosition = new Stopwatch();
 
-		private StartsWithLineActions WriteLineStartCallBacks = new StartsWithLineActions();
+		private readonly ContainsStringLineActions writeLineContainsCallBacks = new ContainsStringLineActions();
+
+		private readonly StartsWithLineActions writeLineStartCallBacks = new StartsWithLineActions();
 
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;
@@ -262,70 +279,65 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			MonitorPrinterTemperature = true;
 
-			ReadLineStartCallBacks.Register("start", FoundStart);
-			ReadLineStartCallBacks.Register("start", PrintingCanContinue);
+			readLineStartCallBacks.Register("start", FoundStart);
+			readLineStartCallBacks.Register("start", PrintingCanContinue);
 
-			ReadLineStartCallBacks.Register("ok", SuppressEcho);
-			ReadLineStartCallBacks.Register("wait", SuppressEcho);
-			ReadLineStartCallBacks.Register("T:", SuppressEcho); // repetier
+			readLineStartCallBacks.Register("ok", SuppressEcho);
+			readLineStartCallBacks.Register("wait", SuppressEcho);
+			readLineStartCallBacks.Register("T:", SuppressEcho); // repetier
 
-			ReadLineStartCallBacks.Register("ok", PrintingCanContinue);
-			ReadLineStartCallBacks.Register("Done saving file", PrintingCanContinue);
+			readLineStartCallBacks.Register("ok", PrintingCanContinue);
+			readLineStartCallBacks.Register("Done saving file", PrintingCanContinue);
 
-			ReadLineStartCallBacks.Register("B:", ReadTemperatures); // smoothie
-			ReadLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
-			ReadLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
+			readLineStartCallBacks.Register("B:", ReadTemperatures); // smoothie
+			readLineContainsCallBacks.Register("T0:", ReadTemperatures); // marlin
+			readLineContainsCallBacks.Register("T:", ReadTemperatures); // repetier
 
-			ReadLineStartCallBacks.Register("SD printing byte", ReadSdProgress); // repetier
+			readLineStartCallBacks.Register("SD printing byte", ReadSdProgress); // repetier
 
-			ReadLineStartCallBacks.Register("C:", ReadTargetPositions);
-			ReadLineStartCallBacks.Register("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
-			ReadLineStartCallBacks.Register("X:", ReadTargetPositions);
-			ReadLineStartCallBacks.Register("ok X:", ReadTargetPositions); //
+			readLineStartCallBacks.Register("C:", ReadTargetPositions);
+			readLineStartCallBacks.Register("ok C:", ReadTargetPositions); // smoothie is reporting the C: with an ok first.
+			readLineStartCallBacks.Register("X:", ReadTargetPositions);
+			readLineStartCallBacks.Register("ok X:", ReadTargetPositions);
 
-			ReadLineStartCallBacks.Register("rs ", PrinterRequestsResend); // smoothie is lower case and no :
-			ReadLineStartCallBacks.Register("RS:", PrinterRequestsResend);
-			ReadLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
+			readLineStartCallBacks.Register("rs ", PrinterRequestsResend); // smoothie is lower case and no :
+			readLineStartCallBacks.Register("RS:", PrinterRequestsResend);
+			readLineContainsCallBacks.Register("Resend:", PrinterRequestsResend);
 
-			ReadLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
-
-			#region hardware failure callbacks
+			readLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
 
 			// smoothie temperature failures
-			ReadLineContainsCallBacks.Register("T:inf", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("B:inf", PrinterReportsError);
+			readLineContainsCallBacks.Register("T:inf", PrinterReportsError);
+			readLineContainsCallBacks.Register("B:inf", PrinterReportsError);
 
 			// marlin temperature failures
-			ReadLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("M999", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
-			ReadLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
-			ReadLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
-			ReadLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
+			readLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
+			readLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
+			readLineContainsCallBacks.Register("M999", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error: Extruder switched off", PrinterReportsError);
+			readLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
+			readLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
+			readLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
+			readLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
 
 			// repetier temperature failures
-			ReadLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
-			ReadLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
-			ReadLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
+			readLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
+			readLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
+			readLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
 
 			// s3g temperature failures
-			ReadLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
-
-			#endregion hardware failure callbacks
-
-			WriteLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M106", FanSpeedWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M107", FanOffWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M109", HotendTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
-			WriteLineStartCallBacks.Register("T", ExtruderIndexSet);
+			readLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
+			writeLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M106", FanSpeedWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M107", FanOffWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M109", HotendTemperatureWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
+			writeLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
+			writeLineStartCallBacks.Register("T", ExtruderIndexSet);
 
 			Task.Run(() =>
 			{
@@ -399,7 +411,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		[Flags]
-		public enum Axis { X = 1, Y = 2, Z = 4, E = 8, XYZ = (X | Y | Z) }
+		public enum Axis
+		{
+			X = 1,
+			Y = 2,
+			Z = 4,
+			E = 8,
+			XYZ = X | Y | Z
+		}
 
 		public double ActualBedTemperature
 		{
@@ -444,7 +463,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public string PrintingItemName { get; set; } = "";
 
-		private List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
+		private readonly List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		public void InitializeReadLineReplacements()
 		{
@@ -484,12 +503,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						PrintingItemName = "";
 
 						// TODO: Investigate the validity of this claim/warning
-//#if DEBUG
-//						if (serialPort == null)
-//						{
-//							throw new Exception("The serial port should be constructed prior to setting this or we can fail our connection on a write before it has a chance to be created.");
-//						}
-//#endif
+						// #if DEBUG
+						// if (serialPort == null)
+						// {
+						// throw new Exception("The serial port should be constructed prior to setting this or we can fail our connection on a write before it has a chance to be created.");
+						// }
+						// #endif
 						break;
 
 					case CommunicationStates.Connected:
@@ -505,7 +524,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						if (communicationPossible)
 						{
 							TurnOffBedAndExtruders(TurnOff.Now);
-							for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
+							for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
 							{
 								actualHotendTemperature[hotendIndex] = 0;
 								OnHotendTemperatureRead(new TemperatureEventArgs(hotendIndex, GetActualHotendTemperature(hotendIndex)));
@@ -541,16 +560,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									{
 										PrePauseCommunicationState = CommunicationStates.PrintingFromSd;
 									}
+
 									timePrinting.Stop();
 								}
 								else if (value == CommunicationStates.FinishedPrint)
 								{
-									if (activePrintTask != null)
+									if (ActivePrintTask != null)
 									{
-										activePrintTask.PrintEnd = DateTime.Now;
-										activePrintTask.PercentDone = 100;
-										activePrintTask.PrintComplete = true;
-										activePrintTask.Commit();
+										ActivePrintTask.PrintEnd = DateTime.Now;
+										ActivePrintTask.PercentDone = 100;
+										ActivePrintTask.PrintComplete = true;
+										ActivePrintTask.Commit();
 									}
 
 									LastPrintedItemName = PrintingItemName;
@@ -570,6 +590,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Reset();
 								}
 							}
+
 							break;
 
 						// was paused
@@ -581,6 +602,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									timePrinting.Start();
 								}
 							}
+
 							break;
 
 						default:
@@ -590,6 +612,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								// If we are just starting to print (we know we were not paused or it would have stopped above)
 								timePrinting.Restart();
 							}
+
 							break;
 					}
 
@@ -615,6 +638,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			{
 				return atxPowerIsOn;
 			}
+
 			set
 			{
 				if (value)
@@ -843,6 +867,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					{
 						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
 					}
+
 					BedTargetTemperatureChanged?.Invoke(this, null);
 				}
 			}
@@ -863,7 +888,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						return (int)(gCodeFileSwitcher.GCodeFile.TotalSecondsInPrint / this.FeedRateRatio);
 					}
 
-					return (int)(gCodeFileSwitcher.GCodeFile.TotalSecondsInPrint);
+					return (int)gCodeFileSwitcher.GCodeFile.TotalSecondsInPrint;
 				}
 
 				return 0;
@@ -872,7 +897,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public PrinterConfig Printer { get; }
 
-		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string details = null)
+		public void ReleaseAndReportFailedConnection(ConnectionFailure reason)
 		{
 			// Shutdown the serial port
 			if (serialPort != null)
@@ -884,7 +909,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 
 			// Notify
-			OnConnectionFailed(reason, details);
+			OnConnectionFailed(reason);
 		}
 
 		public void BedTemperatureWasWritenToPrinter(string line)
@@ -939,7 +964,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			if (SerialPortIsAvailable(this.ComPort))
 			{
-				//Create and start connection thread
+				// Create and start connection thread
 				Task.Run(() =>
 				{
 					Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -947,7 +972,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					// Allow the user to set the appropriate properties.
 					var portNames = FrostedSerialPort.GetPortNames();
 
-					//Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
+					// Debug.WriteLine("Open ports: {0}".FormatWith(portNames.Length));
 					if (portNames.Length > 0 || IsNetworkPrinting())
 					{
 						// AttemptToConnect {{
@@ -956,7 +981,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							int baudRate = this.BaudRate;
 
 							// make sure we don't have a left over print task
-							activePrintTask = null;
+							ActivePrintTask = null;
 
 							if (this.IsConnected)
 							{
@@ -986,7 +1011,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 #endif
 										// TODO: Review and reconsider the cases where this was required
 										// wait a bit of time to let the firmware start up
-										//Thread.Sleep(500);
+										// Thread.Sleep(500);
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
 										foreach (var line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", this.Printer))
@@ -1011,12 +1036,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											{
 												int invalidCharactersOnFirstLine = sb.ToString().Split('?').Length - 1;
 												if (hasNewline
-													&& invalidCharactersOnFirstLine <= MAX_INVALID_CONNECTION_CHARS)
+													&& invalidCharactersOnFirstLine <= MaxInvalidConnectionChars)
 												{
 													// Exit loop, continue with connect
 													break;
 												}
-												else if (invalidCharactersOnFirstLine > MAX_INVALID_CONNECTION_CHARS)
+												else if (invalidCharactersOnFirstLine > MaxInvalidConnectionChars)
 												{
 													// Abort if we've exceeded the invalid char count
 
@@ -1128,9 +1153,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 			else
 			{
-				OnConnectionFailed(
-					ConnectionFailure.PortUnavailable,
-					$"{this.ComPort} is not available");
+				OnConnectionFailed(ConnectionFailure.PortUnavailable);
 			}
 		}
 
@@ -1138,7 +1161,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		{
 			// Register to detect the file deleted confirmation.
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-			ReadLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
+			readLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
 			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
 		}
@@ -1169,17 +1192,18 @@ You will then need to logout and log back in to the computer for the changes to 
 				forceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
-				currentReadThreadIndex++;
+				CurrentReadThreadIndex++;
 				if (serialPort != null)
 				{
 					serialPort.Close();
 					serialPort.Dispose();
 				}
+
 				serialPort = null;
 			}
 			else
 			{
-				//Need to reset UI - even if manual disconnect
+				// Need to reset UI - even if manual disconnect
 				TurnOffBedAndExtruders(TurnOff.Now);
 				FanSpeed0To255 = 0;
 			}
@@ -1196,7 +1220,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
 				{
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					int hotendIndex0Based = Math.Min(extruderIndex, MAX_EXTRUDERS - 1);
+					int hotendIndex0Based = Math.Min(extruderIndex, MaxExtruders - 1);
 					targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
 				}
 				else
@@ -1204,6 +1228,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
 					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
 				}
+
 				HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
 			}
 		}
@@ -1247,20 +1272,20 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public double GetActualHotendTemperature(int hotendIndex0Based)
 		{
-			hotendIndex0Based = Math.Min(hotendIndex0Based, MAX_EXTRUDERS - 1);
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
 			return actualHotendTemperature[hotendIndex0Based];
 		}
 
 		public double GetTargetHotendTemperature(int hotendIndex0Based)
 		{
-			hotendIndex0Based = Math.Min(hotendIndex0Based, MAX_EXTRUDERS - 1);
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
 			return targetHotendTemperature[hotendIndex0Based];
 		}
 
 		public void HaltConnectionThread()
 		{
 			// TODO: stopTryingToConnect is not longer used by anyone. Likely we need to wire up setting CancellationToken from this context
-			//this.stopTryingToConnect = true;
+			// this.stopTryingToConnect = true;
 		}
 
 		public void HomeAxis(Axis axis)
@@ -1274,10 +1299,12 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 					command += " X0";
 				}
+
 				if ((axis & Axis.Y) == Axis.Y)
 				{
 					command += " Y0";
 				}
+
 				if ((axis & Axis.Z) == Axis.Z)
 				{
 					command += " Z0";
@@ -1336,7 +1363,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		public void OnConnectionFailed(ConnectionFailure reason, string failureDetails = null)
+		public void OnConnectionFailed(ConnectionFailure reason)
 		{
 			communicationPossible = false;
 
@@ -1366,6 +1393,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						// asking for the next line don't do anything, continue with sending next instruction
 						return;
 					}
+
 					// smoothie sends an N before the number and no ok
 					if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
 					{
@@ -1428,6 +1456,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					this.FirmwareType = FirmwareTypes.Sprinter;
 				}
 			}
+
 			string firmwareVersionReported = "";
 			if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", line, " EXTRUDER_COUNT", ref firmwareVersionReported))
 			{
@@ -1442,7 +1471,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					}
 				}
 
-				//Firmware version was detected and is different
+				// Firmware version was detected and is different
 				if (firmwareVersionReported != "" && FirmwareVersion != firmwareVersionReported)
 				{
 					FirmwareVersion = firmwareVersionReported;
@@ -1452,10 +1481,10 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		// this is to make it misbehave
-		//int okCount = 1;
+		// int okCount = 1;
 		public void PrintingCanContinue(string line)
 		{
-			//if ((okCount++ % 67) != 0)
+			// if ((okCount++ % 67) != 0)
 			{
 				timeHaveBeenWaitingForOK.Stop();
 			}
@@ -1523,22 +1552,25 @@ You will then need to logout and log back in to the computer for the changes to 
 									{
 										timeSinceRecievedOk.Restart();
 									}
+
 									lastLineRead = dataLastRead.Substring(0, returnPosition);
-									var processingData = ProcessReadRegEx(lastLineRead);
-									lastLineRead = processingData.firstLine;
-									dataLastRead += processingData.extraLines;
+									var (firstLine, extraLines) = ProcessReadRegEx(lastLineRead);
+									lastLineRead = firstLine;
+									dataLastRead += extraLines;
 									dataLastRead = dataLastRead.Substring(returnPosition + 1);
 
 									// process this command
 									{
-										ReadLineStartCallBacks.ProcessLine(lastLineRead);
-										ReadLineContainsCallBacks.ProcessLine(lastLineRead);
+										readLineStartCallBacks.ProcessLine(lastLineRead);
+										readLineContainsCallBacks.ProcessLine(lastLineRead);
 
 										LineReceived?.Invoke(this, lastLineRead);
 									}
 								}
-							} while (true);
+							}
+							while (true);
 						}
+
 						timeSinceLastReadAnything.Restart();
 					}
 
@@ -1622,10 +1654,12 @@ You will then need to logout and log back in to the computer for the changes to 
 			{
 				HomingPosition = new Vector3(lastReportedPosition.position.X, HomingPosition.Y, HomingPosition.Z);
 			}
+
 			if (PositionReadType.HasFlag(PositionReadType.HomeY))
 			{
 				HomingPosition = new Vector3(HomingPosition.X, lastReportedPosition.position.Y, HomingPosition.Z);
 			}
+
 			if (PositionReadType.HasFlag(PositionReadType.HomeZ))
 			{
 				HomingPosition = new Vector3(HomingPosition.X, HomingPosition.Y, lastReportedPosition.position.Z);
@@ -1637,8 +1671,10 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		public static void ParseTemperatureString(string temperatureString,
-			double[] actualHotendTemperature, Action<TemperatureEventArgs> hotendTemperatureChange,
-			ref double actualBedTemperature, Action<TemperatureEventArgs> bedTemperatureChanged)
+			double[] actualHotendTemperature,
+			Action<TemperatureEventArgs> hotendTemperatureChange,
+			ref double actualBedTemperature,
+			Action<TemperatureEventArgs> bedTemperatureChanged)
 		{
 			{
 				double readHotendTemp = 0;
@@ -1651,7 +1687,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					}
 				}
 
-				for (int hotendIndex = 0; hotendIndex < MAX_EXTRUDERS; hotendIndex++)
+				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
 				{
 					string multiExtruderCheck = "T{0}:".FormatWith(hotendIndex);
 					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readHotendTemp))
@@ -1668,6 +1704,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					}
 				}
 			}
+
 			{
 				double readBedTemp = 0;
 				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
@@ -1704,13 +1741,14 @@ You will then need to logout and log back in to the computer for the changes to 
 						ClearQueuedGCode();
 
 						CommunicationState = CommunicationStates.Disconnecting;
-						currentReadThreadIndex++;
+						CurrentReadThreadIndex++;
 						ToggleHighLowHigh(serialPort);
 						if (serialPort != null)
 						{
 							serialPort.Close();
 							serialPort.Dispose();
 						}
+
 						serialPort = null;
 						// make sure we clear out the stream processors
 						CreateStreamProcessors();
@@ -1817,7 +1855,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					lineToWrite = lineToWrite.Replace("\\n", "\n");
 				}
 
-				//Check line for line breaks, split and process separate if necessary
+				// Check line for line breaks, split and process separate if necessary
 				if (lineToWrite.Contains("\n"))
 				{
 					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -1829,6 +1867,7 @@ You will then need to logout and log back in to the computer for the changes to 
 							QueueLine(line);
 						}
 					}
+
 					return;
 				}
 
@@ -1853,7 +1892,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		#region ProcessRead
 		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
 		{
 			var addedLines = new List<string>();
@@ -1872,6 +1910,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						{
 							addedLines.Add(splitReplacement[j]);
 						}
+
 						break;
 					}
 				}
@@ -1884,9 +1923,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 
 			return (lineBeingRead, extraLines);
-
 		}
-		#endregion // ProcessRead
 
 		// Check is serial port is in the list of available serial ports
 		public bool SerialPortIsAvailable(string portName)
@@ -1919,7 +1956,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void SetTargetHotendTemperature(int hotendIndex0Based, double temperature, bool forceSend = false)
 		{
-			hotendIndex0Based = Math.Min(hotendIndex0Based, MAX_EXTRUDERS - 1);
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
 
 			if (targetHotendTemperature[hotendIndex0Based] != temperature
 				|| forceSend)
@@ -1930,11 +1967,13 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
 				}
+
 				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
 			}
 		}
 
 		public bool CalibrationPrint { get; private set; }
+
 		private CancellationTokenSource printingCancellation;
 
 		public async Task StartPrint(string gcodeFilename, PrintTask printTaskToUse = null, bool calibrationPrint = false)
@@ -1961,12 +2000,12 @@ You will then need to logout and log back in to the computer for the changes to 
 			PositionReadType = PositionReadType.None;
 
 			ClearQueuedGCode();
-			activePrintTask = printTaskToUse;
+			ActivePrintTask = printTaskToUse;
 
 			await Task.Run(() =>
 			{
 				// LoadGCodeToPrint
-				CreateStreamProcessors(gcodeStream, this.RecoveryIsEnabled);
+				CreateStreamProcessors(gcodeStream);
 			});
 
 			// DoneLoadingGCodeToPrint
@@ -1991,11 +2030,11 @@ You will then need to logout and log back in to the computer for the changes to 
 							}
 
 							if (gcodeFileNameForTask != null
-								&& activePrintTask == null
+								&& ActivePrintTask == null
 								&& CalibrationPrint)
 							{
 								// TODO: Fix printerItemID int requirement
-								activePrintTask = new PrintTask
+								ActivePrintTask = new PrintTask
 								{
 									PrintStart = DateTime.Now,
 									PrinterId = this.Printer.Settings.ID.GetHashCode(),
@@ -2005,9 +2044,9 @@ You will then need to logout and log back in to the computer for the changes to 
 									PrintComplete = false
 								};
 
-								activePrintTask.Commit();
+								ActivePrintTask.Commit();
 
-								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+								await Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
 							}
 						}
 					}
@@ -2018,8 +2057,9 @@ You will then need to logout and log back in to the computer for the changes to 
 				default:
 #if DEBUG
 					throw new Exception("We are not preparing to print so we should not be starting to print");
-#endif
+#else
 					break;
+#endif
 			}
 		}
 
@@ -2040,7 +2080,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			QueueLine($"M23 {m23FileName.ToLower()}"); // Select SD File
 			QueueLine("M24"); // Start/resume SD print
 
-			ReadLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
+			readLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
 
 			return true;
 		}
@@ -2069,20 +2109,22 @@ You will then need to logout and log back in to the computer for the changes to 
 						// We have to continue printing the end gcode, so we set this to Printing.
 						CommunicationState = CommunicationStates.Printing;
 					}
+
 					break;
 
 				case CommunicationStates.AttemptingToConnect:
 					CommunicationState = CommunicationStates.FailedToConnect;
-					//connectThread.Join(JoinThreadTimeoutMs);
+					// connectThread.Join(JoinThreadTimeoutMs);
 
 					CommunicationState = CommunicationStates.Disconnecting;
-					currentReadThreadIndex++;
+					CurrentReadThreadIndex++;
 					if (serialPort != null)
 					{
 						serialPort.Close();
 						serialPort.Dispose();
 						serialPort = null;
 					}
+
 					CommunicationState = CommunicationStates.Disconnected;
 					break;
 
@@ -2108,21 +2150,22 @@ You will then need to logout and log back in to the computer for the changes to 
 					// add any gcode we want to print while canceling
 					QueueLine(this.CancelGCode);
 				}
+
 				// let the process know we canceled not ended normally.
 				this.PrintWasCanceled = true;
 				if (markPrintCanceled
-					&& activePrintTask != null)
+					&& ActivePrintTask != null)
 				{
-					TimeSpan printTimeSpan = DateTime.Now.Subtract(activePrintTask.PrintStart);
+					TimeSpan printTimeSpan = DateTime.Now.Subtract(ActivePrintTask.PrintStart);
 
-					activePrintTask.PrintEnd = DateTime.Now;
-					activePrintTask.PrintComplete = false;
-					activePrintTask.PrintingGCodeFileName = "";
-					activePrintTask.Commit();
+					ActivePrintTask.PrintEnd = DateTime.Now;
+					ActivePrintTask.PrintComplete = false;
+					ActivePrintTask.PrintingGCodeFileName = "";
+					ActivePrintTask.Commit();
 				}
 
 				// no matter what we no longer have a print task
-				activePrintTask = null;
+				ActivePrintTask = null;
 			}
 		}
 
@@ -2143,7 +2186,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		public void SuppressEcho(string line)
 		{
-			//AllowListenerNotification = false;
+			// AllowListenerNotification = false;
 		}
 
 		private void ClearQueuedGCode()
@@ -2153,7 +2196,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private void DonePrintingSdFile(string line)
 		{
-			ReadLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
+			readLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
 			CommunicationState = CommunicationStates.FinishedPrint;
 
 			this.PrintJobName = null;
@@ -2166,7 +2209,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private void FileDeleteConfirmed(string line)
 		{
-			ReadLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
+			readLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
 			PrintingCanContinue(line);
 		}
 
@@ -2195,27 +2238,25 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
-		private void CreateStreamProcessors(Stream gcodeStream = null, bool recoveryEnabled = false)
+		private void CreateStreamProcessors(Stream gcodeStream = null)
 		{
 			secondsSinceUpdateHistory = 0;
 			lineSinceUpdateHistory = 0;
 
 			totalGCodeStream?.Dispose();
 			totalGCodeStream = null;
-
-			GCodeStream accumulatedStream = null;
-
+			GCodeStream accumulatedStream;
 			if (gcodeStream != null)
 			{
 				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
 				if (this.RecoveryIsEnabled
-					&& activePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+					&& ActivePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, activePrintTask.PercentDone), Printer);
+					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, ActivePrintTask.PercentDone), Printer);
 					// And increment the recovery count
-					activePrintTask.RecoveryCount++;
-					activePrintTask.Commit();
+					ActivePrintTask.RecoveryCount++;
+					ActivePrintTask.Commit();
 				}
 				else
 				{
@@ -2289,7 +2330,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 		private void SyncProgressToDB(CancellationToken cancellationToken)
 		{
-			//var timer = Stopwatch.StartNew();
+			// var timer = Stopwatch.StartNew();
 
 			while (!cancellationToken.IsCancellationRequested
 				&& this.CommunicationState != CommunicationStates.FinishedPrint
@@ -2306,16 +2347,17 @@ You will then need to logout and log back in to the computer for the changes to 
 					double currentDone = gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
-					if (activePrintTask != null
-						&& activePrintTask.PercentDone < currentDone)
+					if (ActivePrintTask != null
+						&& ActivePrintTask.PercentDone < currentDone)
 					{
-						activePrintTask.PercentDone = currentDone;
-						activePrintTask?.Commit();
+						ActivePrintTask.PercentDone = currentDone;
+						ActivePrintTask?.Commit();
 
 						// Interval looks to be ~10ms
-						//Console.WriteLine("DB write: {0}ms", timer.ElapsedMilliseconds);
-						//timer.Restart();
+						// Console.WriteLine("DB write: {0}ms", timer.ElapsedMilliseconds);
+						// timer.Restart();
 					}
+
 					secondsSinceUpdateHistory = secondsSinceStartedPrint;
 					lineSinceUpdateHistory = gCodeFileSwitcher.LineIndex;
 				}
@@ -2400,12 +2442,12 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 					timePrinting.Start();
 				}
+
 				DetailedPrintingState = DetailedPrintingState.Printing;
 			}
 		}
 
 		private string currentSentLine;
-		private string previousSentLine;
 
 		private int ExpectedWaitSeconds(string lastInstruction)
 		{
@@ -2416,13 +2458,13 @@ You will then need to logout and log back in to the computer for the changes to 
 				// for moves we wait only as much as 2 seconds
 				return 2 * timeMultiple;
 			}
-			else if(lastInstruction.StartsWith("M109 ")
+			else if (lastInstruction.StartsWith("M109 ")
 				|| lastInstruction.StartsWith("M190 "))
 			{
 				// heat and wait will allow a long wait time for ok
 				return 60;
 			}
-			else if(lastInstruction.StartsWith("G28"))
+			else if (lastInstruction.StartsWith("G28"))
 			{
 				return 30;
 			}
@@ -2489,7 +2531,6 @@ You will then need to logout and log back in to the computer for the changes to 
 						return;
 					}
 
-					previousSentLine = this.currentSentLine;
 					currentSentLine = totalGCodeStream.ReadLine();
 
 					if (currentSentLine != null)
@@ -2529,7 +2570,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						// and finally notify anyone that wants to know
 						PrintCanceled?.Invoke(this, null);
 					}
-					else if (communicationState == CommunicationStates.Printing)// we finished printing normally
+					else if (communicationState == CommunicationStates.Printing) // we finished printing normally
 					{
 						CommunicationState = CommunicationStates.FinishedPrint;
 
@@ -2571,6 +2612,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						break;
 					}
 				}
+
 				anyHeatIsOn |= TargetBedTemperature > 0;
 				return anyHeatIsOn;
 			}
@@ -2606,7 +2648,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		/// <summary>
-		/// This gets set by the Pause Handling Stream when a change in the position sensor is seen.
+		/// Gets a value indicating whether the Pause Handling Stream has seen a change in the position sensor.
 		/// It is important that this is not persisted, it is meant to function correctly if the user
 		/// plugs in or removes a filament position sensor.
 		/// </summary>
@@ -2626,6 +2668,9 @@ You will then need to logout and log back in to the computer for the changes to 
 			}
 		}
 
+		public PrintTask ActivePrintTask { get; set; }
+		internal int CurrentReadThreadIndex { get => currentReadThreadIndex; set => currentReadThreadIndex = value; }
+
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
 			if (turnOffTime == TurnOff.Now)
@@ -2634,6 +2679,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				{
 					SetTargetHotendTemperature(i, 0, true);
 				}
+
 				TargetBedTemperature = 0;
 			}
 			else
@@ -2677,6 +2723,7 @@ You will then need to logout and log back in to the computer for the changes to 
 								{
 									SetTargetHotendTemperature(i, 0, true);
 								}
+
 								TargetBedTemperature = 0;
 							});
 						}
@@ -2686,12 +2733,11 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		// this is to make it misbehave, chaos monkey, bad checksum
-		//int checkSumCount = 1;
+		// int checkSumCount = 1;
 
 		private void WriteChecksumLine(string lineToWrite)
 		{
-			bool sendLineWithChecksum = true;
-			sendLineWithChecksum = !lineToWrite.Contains("WRITE_RAW");
+			bool sendLineWithChecksum = !lineToWrite.Contains("WRITE_RAW");
 
 			// remove the comment if any
 			lineToWrite = RemoveCommentIfAny(lineToWrite);
@@ -2722,8 +2768,8 @@ You will then need to logout and log back in to the computer for the changes to 
 
 				allCheckSumLinesSent.Add(lineWithChecksum);
 
-				//if ((checkSumCount++ % 11) == 0)
-				//lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
+				// if ((checkSumCount++ % 11) == 0)
+				// lineWithChecksum = lineWithCount + "*" + (GCodeFile.CalculateChecksum(lineWithCount) + checkSumCount).ToString();
 
 				WriteRaw(lineWithChecksum + "\n", lineToWrite);
 			}
@@ -2774,19 +2820,23 @@ You will then need to logout and log back in to the computer for the changes to 
 							{
 								readType |= PositionReadType.HomeX;
 							}
+
 							if (lineWithoutChecksum.Contains("Y"))
 							{
 								readType |= PositionReadType.HomeY;
 							}
+
 							if (lineWithoutChecksum.Contains("Z"))
 							{
 								readType |= PositionReadType.HomeZ;
 							}
+
 							if (lineWithoutChecksum == "G28")
 							{
 								readType = PositionReadType.HomeAll;
 							}
 						}
+
 						ReadPosition(readType, true);
 					}
 
@@ -2794,8 +2844,8 @@ You will then need to logout and log back in to the computer for the changes to 
 					{
 						if (lineWithoutChecksum != null)
 						{
-							WriteLineStartCallBacks.ProcessLine(lineWithoutChecksum);
-							WriteLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
+							writeLineStartCallBacks.ProcessLine(lineWithoutChecksum);
+							writeLineContainsCallBacks.ProcessLine(lineWithoutChecksum);
 
 							LineSent?.Invoke(this, lineToWrite);
 						}
@@ -2813,7 +2863,8 @@ You will then need to logout and log back in to the computer for the changes to 
 								timeHaveBeenWaitingForOK.Restart();
 							}
 						}
-						//Debug.Write("w: " + lineToWrite);
+
+						// Debug.Write("w: " + lineToWrite);
 					}
 					catch (IOException ex)
 					{
@@ -2822,7 +2873,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost, ex.Message);
+							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost);
 						}
 					}
 					catch (TimeoutException e2) // known ok
@@ -2833,7 +2884,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					catch (UnauthorizedAccessException e3)
 					{
 						TerminalLog.WriteLine("Exception:" + e3.Message);
-						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException, e3.Message);
+						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException);
 					}
 					catch (Exception)
 					{
@@ -2864,17 +2915,17 @@ You will then need to logout and log back in to the computer for the changes to 
 			Disposed?.Invoke(this, null);
 		}
 
-		internal int currentReadThreadIndex = 0;
+		private int currentReadThreadIndex = 0;
 		private Vector3 _homingPosition = Vector3.NegativeInfinity;
 		private int noOkResendCount;
 		private ProcessWriteRegexStream processWriteRegexStream;
 
 		public class ReadThread
 		{
-			private int creationIndex;
+			private readonly int creationIndex;
 
 			private static int numRunning = 0;
-			private PrinterConnection printerConnection;
+			private readonly PrinterConnection printerConnection;
 
 			public static int NumRunning => numRunning;
 
@@ -2882,8 +2933,8 @@ You will then need to logout and log back in to the computer for the changes to 
 			{
 				this.printerConnection = printerConnection;
 				numRunning++;
-				printerConnection.currentReadThreadIndex++;
-				creationIndex = printerConnection.currentReadThreadIndex;
+				printerConnection.CurrentReadThreadIndex++;
+				creationIndex = printerConnection.CurrentReadThreadIndex;
 
 				Task.Run(() =>
 				{
@@ -2907,7 +2958,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			internal bool IsCurrentThread()
 			{
-				return printerConnection.currentReadThreadIndex == creationIndex;
+				return printerConnection.CurrentReadThreadIndex == creationIndex;
 			}
 		}
 
@@ -2916,7 +2967,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			private static readonly int RingBufferCount = 64;
 
 			private int addedCount = 0;
-			private string[] ringBuffer = new string[RingBufferCount];
+			private readonly string[] ringBuffer = new string[RingBufferCount];
 
 			public int Count { get { return addedCount; } }
 
@@ -2973,34 +3024,5 @@ You will then need to logout and log back in to the computer for the changes to 
 		ConnectionLost,
 		UsbDisconnected,
 		ConnectionTimeout
-	}
-
-	public class PrintPauseEventArgs : EventArgs
-	{
-		public PrintPauseEventArgs(string name, bool filamentRunout, int layerNumber)
-		{
-			this.ItemName = name;
-			this.filamentRunout = filamentRunout;
-			this.layerNumber = layerNumber;
-		}
-
-		public string ItemName { get; }
-		public bool filamentRunout { get; }
-		public int layerNumber { get; }
-	}
-
-	/// <summary>
-	/// This is a class to pass temperatures to callbacks that expect them.
-	/// </summary>
-	public class TemperatureEventArgs : EventArgs
-	{
-		public TemperatureEventArgs(int index0Based, double temperature)
-		{
-			this.Index0Based = index0Based;
-			this.Temperature = temperature;
-		}
-
-		public int Index0Based { get; }
-		public double Temperature { get; }
 	}
 }

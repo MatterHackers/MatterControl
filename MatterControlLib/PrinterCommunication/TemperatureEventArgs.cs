@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,42 +27,46 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterControl.Printing;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.SerialPortCommunication;
+using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterHackers.MatterControl.PrinterCommunication
 {
-	public class SendProgressStream : GCodeStreamProxy
+
+	/// <summary>
+	/// This is a class to pass temperatures to callbacks that expect them.
+	/// </summary>
+	public class TemperatureEventArgs : EventArgs
 	{
-		private double nextPercent = -1;
-
-		public SendProgressStream(GCodeStream internalStream, PrinterConfig printer)
-			: base(printer, internalStream)
+		public TemperatureEventArgs(int index0Based, double temperature)
 		{
+			this.Index0Based = index0Based;
+			this.Temperature = temperature;
 		}
 
-		public override string DebugInfo => "";
+		public int Index0Based { get; }
 
-		public override string ReadLine()
-		{
-			if (printer.Settings.GetValue(SettingsKey.progress_reporting) != "None"
-				&& printer.Connection.CommunicationState == CommunicationStates.Printing
-				&& printer.Connection.ActivePrintTask != null
-				&& printer.Connection.ActivePrintTask.PercentDone > nextPercent)
-			{
-				nextPercent = Math.Round(printer.Connection.ActivePrintTask.PercentDone) + 0.5;
-				if (printer.Settings.GetValue(SettingsKey.progress_reporting) == "M73")
-				{
-					return String.Format("M73 P{0:0}", printer.Connection.ActivePrintTask.PercentDone);
-				}
-				else
-				{
-					return String.Format("M117 Printing - {0:0}%", printer.Connection.ActivePrintTask.PercentDone);
-				}
-			}
-
-			return base.ReadLine();
-		}
+		public double Temperature { get; }
 	}
 }
