@@ -39,6 +39,7 @@ using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace MatterControl.Tests.MatterControl
@@ -216,6 +217,18 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
+
+			var levelingData = new PrintLevelingData()
+			{
+				SampledPositions = new List<Vector3>()
+				{
+					new Vector3(0, 0, 0),
+					new Vector3(10, 0, 0),
+					new Vector3(5, 10, 0)
+				}
+			};
+
+			printer.Settings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(levelingData));
 			printer.Settings.SetValue(SettingsKey.probe_offset, "0,0,-.1");
 			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
 

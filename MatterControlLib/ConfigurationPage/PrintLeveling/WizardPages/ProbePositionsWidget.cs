@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -42,32 +43,39 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class ProbePositionsWidget : GuiWidget
 	{
 		private List<Vector2> probePoints;
-		private List<ProbePosition> probePositions;
 		private PrinterConfig printer;
 		private ThemeConfig theme;
 		private Color opaqueMinimumAccent;
 		private Color opaqueAccent;
+		private Color circleText;
+		private Color lightText;
+		private Color bedTextColor;
+		private Color bedCircleColor;
+		private Color simpleBedCircleColor;
 		private RectangleDouble bedBounds;
 
-		//private Vector2 bedSize;
 		private bool circularBed;
-		private Color extraLightColor;
 		private Color lightColor;
 		private double scalingFactor;
 		private LevelingFunctions currentLevelingFunctions = null;
 
-		public ProbePositionsWidget(PrinterConfig printer, List<Vector2> probePoints, List<ProbePosition> probePositions, ThemeConfig theme)
+		public ProbePositionsWidget(PrinterConfig printer, List<Vector2> probePoints, ThemeConfig theme)
 		{
 			this.probePoints = probePoints;
-			this.probePositions = probePositions;
 			this.printer = printer;
 			this.VAnchor = VAnchor.Absolute;
 			this.theme = theme;
+			this.BackgroundColor = theme.BedBackgroundColor;
 
-			extraLightColor = theme.BackgroundColor.Blend(theme.TextColor, 0.1);
-			lightColor = theme.BackgroundColor.Blend(theme.TextColor, 0.2);
 			opaqueMinimumAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay);
 			opaqueAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(140));
+
+			circleText = theme.TextColor;
+			lightText = circleText.WithAlpha(100);
+
+			bedTextColor = theme.PrinterBedTextColor;
+			bedCircleColor = theme.ResolveColor(theme.BedColor, bedTextColor.WithAlpha(50));
+			simpleBedCircleColor = theme.ResolveColor(theme.BedColor, bedTextColor.WithAlpha(180));
 
 			bedBounds = printer.Settings.BedBounds;
 			circularBed = printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular;
@@ -98,10 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			var inverseScale = 1 / scalingFactor;
-
 			var offset = Vector2.Zero;
-
-			//graphics2D.PushTransform();
 
 			// Reset to zero
 			var existing = graphics2D.GetTransform();
@@ -165,41 +170,60 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				var center = new Vector2(position.X, position.Y);
 
-				var circleColor = lightColor;
+				var textColor = lightText;
+				var circleColor = bedCircleColor;
 
 				if (this.SimplePoints)
 				{
 					graphics2D.Render(
 						new Ellipse(center, 4 * inverseScale),
-						opaqueMinimumAccent);
+						simpleBedCircleColor);
 				}
 				else
 				{
 					if (i < this.ActiveProbeIndex)
 					{
 						circleColor = opaqueMinimumAccent;
+						textColor = circleText;
 					}
 					else if (i == this.ActiveProbeIndex)
 					{
 						circleColor = opaqueAccent;
+						textColor = circleText;
 					}
 
-					graphics2D.Render(
-						new Ellipse(center, 8 * inverseScale),
-						circleColor);
+					if (i >= this.ActiveProbeIndex)
+					{
+						graphics2D.Circle(
+							center,
+							9 * inverseScale,
+							i == this.ActiveProbeIndex ? circleText : lightText);
+
+						graphics2D.Circle(
+							center,
+							8 * inverseScale,
+							circleColor);
+					}
+					else
+					{
+						graphics2D.Circle(
+							center,
+							9 * inverseScale,
+							circleColor);
+					}
 
 					graphics2D.DrawString(
-						$"{1 + i++}",
+						$"{1 + i}",
 						center.X,
 						center.Y,
-						justification: Agg.Font.Justification.Center,
-						baseline: Agg.Font.Baseline.BoundsCenter,
+						justification: Justification.Center,
+						baseline: Baseline.BoundsCenter,
 						pointSize: theme.FontSize7 * inverseScale,
-						color: theme.TextColor);
+						color: textColor);
+
+					i++;
 				}
 			}
-
-			//graphics2D.PopTransform();
 
 			base.OnDraw(graphics2D);
 		}
@@ -213,18 +237,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			foreach (var position in probePoints)
 			{
-				var center = new Vector2(position.X, position.Y);
-				path.LineTo(center);
+				path.LineTo(position.X, position.Y);
 			}
 
 			// Render total path before probe points
 			graphics2D.Render(
 				new Stroke(path),
-				theme.AccentMimimalOverlay);
+				opaqueMinimumAccent);
 		}
 
 		private void RenderBed(Graphics2D graphics2D)
 		{
+			var lineColor = theme.BedGridColors.Line;
+
 			if (circularBed)
 			{
 				var radius = bedBounds.Width / 2;
@@ -233,23 +258,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var steps = radius / lineCount;
 
 				var bedShape = new Ellipse(Vector2.Zero, radius);
-				graphics2D.Render(bedShape, theme.SlightShade);
+				graphics2D.Render(bedShape, theme.BedColor);
 				graphics2D.Render(new Stroke(bedShape), lightColor);
-
-				var moreAlpha = extraLightColor.WithAlpha(150);
 
 				for (var i = 0; i < lineCount; i++)
 				{
 					graphics2D.Render(
 						new Stroke(
 							new Ellipse(Vector2.Zero, radius - (i * steps))),
-						moreAlpha);
+						lineColor);
 				}
 			}
 			else
 			{
-				graphics2D.FillRectangle(bedBounds, theme.SlightShade);
-				graphics2D.Rectangle(bedBounds, lightColor);
+				graphics2D.FillRectangle(bedBounds, theme.BedColor);
+				graphics2D.Rectangle(bedBounds, lineColor);
 
 				var x = bedBounds.Left;
 				var y = bedBounds.Bottom;
@@ -258,14 +281,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				for (var j = 1; j < steps; j++)
 				{
 					var step = j * 20;
-					graphics2D.Line(x + step, y, x + step, y + bedBounds.Height, extraLightColor); // X
+					graphics2D.Line(x + step, y, x + step, y + bedBounds.Height, lineColor); // X
 				}
 
 				steps = bedBounds.Height / 20;
 				for (var j = 1; j < steps; j++)
 				{
 					var step = j * 20;
-					graphics2D.Line(x, y + step, x + bedBounds.Width, y + step, extraLightColor); // Y
+					graphics2D.Line(x, y + step, x + bedBounds.Width, y + step, lineColor); // Y
 				}
 			}
 		}

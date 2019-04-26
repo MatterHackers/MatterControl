@@ -29,10 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterControls;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -55,13 +60,157 @@ namespace MatterHackers.MatterControl
 					HeaderText = "Printer Setup & Calibration".Localize()
 				};
 
-				homePage.ContentRow.AddChild(
+				var contentRow = homePage.ContentRow;
+
+				contentRow.AddChild(
 					new WrappedTextWidget(
 						@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
 						pointSize: theme.DefaultFontSize,
 						textColor: theme.TextColor));
+				contentRow.BackgroundColor = Color.Transparent;
+
+				foreach (var stage in this.Stages.Where(s => s.Enabled && s.Visible))
+				{
+					var widget = new GuiWidget();
+
+					if (stage is ProbeCalibrationWizard probeWizard)
+					{
+						var column = CreateColumn(theme);
+						column.FlowDirection = FlowDirection.LeftToRight;
+
+						var offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+
+						column.AddChild(
+							new ValueTag(
+								"Z Offset".Localize(),
+								offset.Z.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11)
+							{
+								Margin = new BorderDouble(bottom: 4),
+								MinimumSize = new Vector2(125, 0)
+							});
+
+						widget = column;
+					}
+
+					if (stage is PrintLevelingWizard levelingWizard)
+					{
+						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
+
+						if (levelingData != null
+							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
+						{
+							//levelingWizard.LevelingPlan
+							//
+							//if (currentLevelingFunctions == null
+							//	|| currentProbeZOffset != printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset)
+							//	|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+							//{
+							//	currentProbeZOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+							//	currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
+							//}
+
+							var positions = levelingData.SampledPositions;
+
+							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
+
+							var column = CreateColumn(theme);
+							column.AddChild(new TextWidget(levelingSolution, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+							{
+								Margin = new BorderDouble(bottom: 4)
+							});
+
+							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
+							{
+								HAnchor = HAnchor.Absolute,
+								VAnchor = VAnchor.Absolute,
+								Height = 200,
+								Width = 200,
+								RenderLevelingData = true,
+								RenderProbePath = false,
+								SimplePoints = true,
+							};
+							column.AddChild(probeWidget);
+
+							widget = column;
+						}
+					}
+
+					if (stage is XyCalibrationWizard xyWizard)
+					{
+						var column = CreateColumn(theme);
+						column.FlowDirection = FlowDirection.LeftToRight;
+
+						var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
+
+						var tool2Column = new FlowLayoutWidget(FlowDirection.TopToBottom);
+						column.AddChild(tool2Column);
+
+						tool2Column.AddChild(
+							new TextWidget("Tool".Localize() + " 2", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+							{
+								Margin = new BorderDouble(bottom: 4)
+							});
+
+						tool2Column.AddChild(
+							new ValueTag(
+								"X Offset".Localize(),
+								hotendOffset.X.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11)
+							{
+								Margin = new BorderDouble(bottom: 4),
+								MinimumSize = new Vector2(125, 0)
+							});
+
+						tool2Column.AddChild(
+							new ValueTag(
+								"Y Offset".Localize(),
+								hotendOffset.Y.ToString("0.###"),
+								new BorderDouble(12, 5, 2, 5),
+								5,
+								11)
+							{
+								MinimumSize = new Vector2(125, 0)
+							});
+
+						widget = column;
+					}
+
+					if (stage.SetupRequired)
+					{
+						var column = CreateColumn(theme);
+						column.AddChild(new TextWidget("Setup Required".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
+						widget = column;
+					}
+
+					var section = new SectionWidget(stage.Title, widget, theme, expandingContent: false);
+					theme.ApplyBoxStyle(section);
+
+					section.Margin = section.Margin.Clone(left: 0);
+					section.ShowExpansionIcon = false;
+
+					if (stage.SetupRequired)
+					{
+						section.BackgroundColor = Color.Red.WithAlpha(30);
+					}
+
+					contentRow.AddChild(section);
+				}
 
 				return homePage;
+			};
+		}
+
+		private static FlowLayoutWidget CreateColumn(ThemeConfig theme)
+		{
+			return new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(theme.DefaultContainerPadding, theme.DefaultContainerPadding, theme.DefaultContainerPadding, 4)
 			};
 		}
 

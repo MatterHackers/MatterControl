@@ -48,6 +48,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private TextWidget textWidget;
 
+		private bool _expandable = true;
+
+		private bool _checked;
+
 		public ExpandCheckboxButton(string text, ThemeConfig theme, int pointSize = 11, bool expandable = true)
 		{
 			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
@@ -83,7 +87,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool AlwaysShowArrow { get; set; }
 
-		private bool _expandable = true;
 		public bool Expandable
 		{
 			get => _expandable;
@@ -98,6 +101,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					this.MinimumSize = new Vector2((_expandable) ? this.MinimumSize.X : 10, this.MinimumSize.Y);
 				}
+			}
+		}
+
+		public bool ShowIcon
+		{
+			get => imageButton.Visible;
+			set
+			{
+				if (!value)
+				{
+					imageButton.Parent.MinimumSize = new Vector2(0, imageButton.Height);
+				}
+
+				imageButton.Visible = value;
 			}
 		}
 
@@ -122,7 +139,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnClick(mouseEvent);
 		}
 
-		private bool _checked;
 		public bool Checked
 		{
 			get => _checked;

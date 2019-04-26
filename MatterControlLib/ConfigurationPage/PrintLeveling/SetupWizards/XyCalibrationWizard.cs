@@ -41,6 +41,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private EditContext originalEditContext;
 
+		private bool allowChildClose = true;
+
+		private bool childRequestedClose = false;
+
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
@@ -49,8 +53,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.Title = "Nozzle Calibration".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 		}
-
-		public enum QualityType { Coarse, Normal, Fine }
 
 		public int ExtruderToCalibrateIndex { get; }
 
@@ -99,10 +101,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			base.Dispose();
 		}
-
-		public bool allowChildClose = true;
-
-		public bool childRequestedClose = false;
 
 		public override bool ClosePage()
 		{
@@ -172,6 +170,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				yield return new XyCalibrationCollectDataPage(this);
 				yield return new XyCalibrationDataRecieved(this);
 			}
+		}
+
+		public enum QualityType
+		{
+			Coarse,
+			Normal,
+			Fine
 		}
 	}
 }

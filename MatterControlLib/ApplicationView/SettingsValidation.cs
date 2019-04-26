@@ -84,6 +84,16 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
+			if (!printer.PrintableItems(printer.Bed.Scene).Any())
+			{
+				errors.Add(new ValidationError("NoPrintableParts")
+				{
+					Error = "Empty Bed".Localize(),
+					Details = "No printable parts exists within the bounds of the printer bed. Add content to continue".Localize(),
+					ErrorLevel = ValidationErrorLevel.Error,
+				});
+			}
+
 			if (FilamentSetupWizard.SetupRequired(printer))
 			{
 				errors.Add(new ValidationError("FilamentSetup")

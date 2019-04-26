@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.probePositions = probePositions;
 
 			contentRow.BackgroundColor = Color.Transparent;
-			contentRow.AddChild(probePositionsWidget = new ProbePositionsWidget(printer, probePoints, probePositions, AppContext.Theme)
+			contentRow.AddChild(probePositionsWidget = new ProbePositionsWidget(printer, probePoints, AppContext.Theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
