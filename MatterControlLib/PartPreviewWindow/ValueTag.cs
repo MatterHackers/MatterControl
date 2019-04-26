@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			set
 			{
 				base.TagColor = value;
-				rightBackground = value.WithLightness(.85).ToColor();
+				rightBackground = value.WithLightnessAdjustment(.85).ToColor();
 			}
 		}
 
