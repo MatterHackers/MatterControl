@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -47,9 +48,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private ThemeConfig theme;
 		private Color opaqueMinimumAccent;
 		private Color opaqueAccent;
+		private Color bedText;
+		private Color lightText;
 		private RectangleDouble bedBounds;
 
-		//private Vector2 bedSize;
 		private bool circularBed;
 		private Color extraLightColor;
 		private Color lightColor;
@@ -68,6 +70,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			lightColor = theme.BackgroundColor.Blend(theme.TextColor, 0.2);
 			opaqueMinimumAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay);
 			opaqueAccent = theme.ResolveColor(theme.BackgroundColor, theme.AccentMimimalOverlay.WithAlpha(140));
+			bedText = theme.TextColor;
+			lightText = bedText.WithAlpha(100);
 
 			bedBounds = printer.Settings.BedBounds;
 			circularBed = printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular;
@@ -100,8 +104,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var inverseScale = 1 / scalingFactor;
 
 			var offset = Vector2.Zero;
-
-			//graphics2D.PushTransform();
 
 			// Reset to zero
 			var existing = graphics2D.GetTransform();
@@ -166,6 +168,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var center = new Vector2(position.X, position.Y);
 
 				var circleColor = lightColor;
+				var textColor = lightText;
 
 				if (this.SimplePoints)
 				{
@@ -178,28 +181,46 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					if (i < this.ActiveProbeIndex)
 					{
 						circleColor = opaqueMinimumAccent;
+						textColor = bedText;
 					}
 					else if (i == this.ActiveProbeIndex)
 					{
 						circleColor = opaqueAccent;
+						textColor = bedText;
 					}
 
-					graphics2D.Render(
-						new Ellipse(center, 8 * inverseScale),
-						circleColor);
+					if (i >= this.ActiveProbeIndex)
+					{
+						graphics2D.Circle(
+							center,
+							9 * inverseScale,
+							i == this.ActiveProbeIndex ? bedText : lightText);
+
+						graphics2D.Circle(
+							center,
+							8 * inverseScale,
+							circleColor);
+					}
+					else
+					{
+						graphics2D.Circle(
+							center,
+							9 * inverseScale,
+							circleColor);
+					}
 
 					graphics2D.DrawString(
-						$"{1 + i++}",
+						$"{1 + i}",
 						center.X,
 						center.Y,
-						justification: Agg.Font.Justification.Center,
-						baseline: Agg.Font.Baseline.BoundsCenter,
+						justification: Justification.Center,
+						baseline: Baseline.BoundsCenter,
 						pointSize: theme.FontSize7 * inverseScale,
-						color: theme.TextColor);
+						color: textColor);
+
+					i++;
 				}
 			}
-
-			//graphics2D.PopTransform();
 
 			base.OnDraw(graphics2D);
 		}
