@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					lineIn = lineIn.Replace("\\n", "\n");
 				}
 
-				//Check line for line breaks, split and process separate if necessary
+				// Check line for line breaks, split and process separate if necessary
 				if (lineIn.Contains("\n"))
 				{
 					string[] linesToWrite = lineIn.Split(new string[] { "\n" }, StringSplitOptions.None);
@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							this.Add(line);
 						}
 					}
+
 					return;
 				}
 

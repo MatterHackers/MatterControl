@@ -237,8 +237,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				G1 X10 Y10 Z10 E0
 				T0
 				G1 X10 Y10 Z10 E0");
-				// now do the same thing with a long enough print to cause
-				// cooling and heating);
 
 			// Validate
 			var expectedLines = new string[]
@@ -270,6 +268,87 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X10 Y10 F3000",
 				"G1 Z10 F315",
 				"G1 F2500",
+			};
+			Assert.AreEqual(expectedLines, sentLines);
+		}
+
+		[Test]
+		public async Task ToolChangeWithCoolDown()
+		{
+			var printer = ToolChangeTests.CreatePrinter();
+
+			// set cool down temp and time so the extruder will do a cool down on switch
+			printer.Settings.SetValue(SettingsKey.inactive_cool_down, $"{30}");
+			printer.Settings.SetValue(SettingsKey.seconds_to_reheat, $"{1}");
+
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; tell the printer to heat up
+				M104 T1 S240 ; start with T0 to test smoothie temp change code
+				M104 T0 S230
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				T1
+				G1 X20 Y10 Z10 E10 F10 ; a long move with extrusion, will need to cool T0
+				T0
+				G1 X30 Y10 Z10 E10 F10 ; a long move with extrusion, will need to cool T1
+				T1
+				G1 X10 Y10 Z10 E0");
+
+			// Validate
+			var expectedLines = new string[]
+			{
+				"M114",
+				"T0",
+				"M114",
+				"M104 T1 S240", // T1 to 240
+				"T0",
+				"M114",
+				"M104 T1 S240",
+				"T0",
+				"M114",
+				"M104 T0 S230", // T0 to 230
+				"G1 X10 Y10 Z10 F2500",
+				"G1 Y111",
+				"M114",
+				"M104 T0 S200", // T0 to cool down temp
+				"T0",
+				"M114",
+				"T1",
+				"M114",
+				"M104 T1 S240",
+				"G1 Y222",
+				"M114",
+				"G1 X19 Y8 F3000",
+				"G1 Z7 F315",
+				"G1 F2500",
+				"G1 E10 F10",
+				"G1 X111",
+				"M114",
+				"M104 T1 S210", // T1 to cool down temp 210
+				"T1",
+				"M114",
+				"T0",
+				"M114",
+				"M104 T0 S230", // T0 back up to 230
+				"G1 X222",
+				"M114",
+				"G1 X30 Y10 F3000",
+				"G1 Z10 F315",
+				"G1 F10",
+				"G1 Y111",
+				"M114",
+				"T1",
+				"M114",
+				"M104 T1 S240", // T1 back up to 240
+				"G1 Y222",
+				"M114",
+				"G1 X9 Y8 F3000",
+				"G1 Z7 F315",
+				"G1 F10",
+				"G1 E0",
 			};
 			Assert.AreEqual(expectedLines, sentLines);
 		}

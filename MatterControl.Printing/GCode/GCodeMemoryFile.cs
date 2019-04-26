@@ -463,7 +463,7 @@ namespace MatterControl.Printing
 				var length = endIndex - startIndex;
 				if (length > 0)
 				{
-					return deltaFromStart / (double)(length);
+					return deltaFromStart / (double)length;
 				}
 			}
 
