@@ -279,7 +279,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
-				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream);
+				var gCodeFileStream = gCodeBaseStream as GCodeFileStream;
+				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream, gCodeFileStream);
 				accumulatedStream = new ToolSpeedMultiplierStream(printer, accumulatedStream);
 			}
 

@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private string postSwitchLine;
 		private double preSwitchFeedRate;
 		private Vector3 preSwitchPosition;
+		private IGCodeLineReader gcodeLineReader;
+		private GCodeMemoryFile gCodeMemoryFile;
 		private QueuedCommandsStream queuedCommandsStream;
 		private int requestedTool;
 
@@ -59,9 +61,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double[] targetTemps = new double[4];
 		private Queue<string> queuedCommands = new Queue<string>();
 
-		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream)
+		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
 			: base(printer, internalStream)
 		{
+			this.gcodeLineReader = gcodeLineReader;
+			if (gcodeLineReader != null)
+			{
+				this.gCodeMemoryFile = gcodeLineReader.GCodeFile as GCodeMemoryFile;
+			}
 			this.queuedCommandsStream = queuedCommandsStream;
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			activeTool = printer.Connection.ActiveExtruderIndex;
@@ -102,7 +109,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				if (!lineToSend.Contains("; INACTIVE_COOL_DOWN"))
 				{
-					targetTemps[requestedToolForTempChange] = toolTemp;
+					if (targetTemps[requestedToolForTempChange] != toolTemp)
+					{
+						targetTemps[requestedToolForTempChange] = toolTemp;
+					}
 				}
 			}
 
@@ -233,10 +243,25 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
+		/// <summary>
+		/// Seconds until the next tool change while printing.
+		/// </summary>
+		/// <returns>The time tool index we are switching to and the time until it will switch.</returns>
+		private (int toolIndex, double time) NextToolChange(int toolToLookFor = -1)
+		{
+			if (gCodeMemoryFile != null)
+			{
+				var timeToTool = gCodeMemoryFile.NextToolChange(gcodeLineReader.LineIndex, -1, toolToLookFor);
+				return timeToTool;
+			}
+
+			return (-1, 0);
+		}
+
 		private void ManageCoolDownAndOffTemps(StringBuilder gcode)
 		{
 			// get the time to the next tool switch
-			var timeToNextToolChange = printer.Connection.NextToolChange().time;
+			var timeToNextToolChange = NextToolChange().time;
 			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
 			// if we do not switch again
@@ -255,7 +280,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			else // there are more tool changes in the future
 			{
 				// get the next time we will use the current tool
-				var nextTimeThisTool = printer.Connection.NextToolChange(activeTool).time;
+				var nextTimeThisTool = NextToolChange(activeTool).time;
 
 				// if we do not use this tool again
 				if (nextTimeThisTool == double.PositiveInfinity)
@@ -263,6 +288,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// turn off its heat
 					gcode.AppendLine($"M104 T{activeTool} S0");
 				}
+
 				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
 				else if (nextTimeThisTool > timeToReheat)
 				{
@@ -284,7 +310,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// check if any extruders need to start heating back up
 			for (int i = 0; i < extruderCount; i++)
 			{
-				var nextToolChange = printer.Connection.NextToolChange(i);
+				var nextToolChange = NextToolChange(i);
 				var targetTemp = targetTemps[i];
 				var setTempLine = $"M104 T{i} S{targetTemp}";
 				if (nextToolChange.toolIndex >= 0
@@ -292,7 +318,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp
 					&& line != setTempLine)
 				{
-					printer.Connection.QueueLine(setTempLine);
+					printer.Connection.SetTargetHotendTemperature(i, targetTemp);
+					//queuedCommands.Enqueue(setTempLine);
 				}
 			}
 		}
