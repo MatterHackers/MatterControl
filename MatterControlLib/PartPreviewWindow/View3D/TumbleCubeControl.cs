@@ -581,18 +581,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TextureFace(int face, string name, Matrix4X4? initialRotation = null)
 		{
-			ImageBuffer sourceTexture = new ImageBuffer(256, 256);
+			var sourceTexture = new ImageBuffer(256, 256);
+
 			var frontGraphics = sourceTexture.NewGraphics2D();
-			frontGraphics.Clear(Color.White);
+			frontGraphics.Clear(theme.BedColor);
+
 			frontGraphics.DrawString(name,
 				sourceTexture.Width / 2,
 				sourceTexture.Height / 2,
 				60,
 				justification: Agg.Font.Justification.Center,
-				baseline: Agg.Font.Baseline.BoundsCenter);
-			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), Color.DarkGray);
+				baseline: Agg.Font.Baseline.BoundsCenter,
+				color: theme.PrinterBedTextColor);
+
+			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), theme.BedGridColors.Line);
+
 			var activeTexture = new ImageBuffer(sourceTexture);
 			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
+
 			var faces = cube.GetCoplanerFaces(face);
 			cube.PlaceTextureOnFaces(faces, activeTexture, cube.GetMaxPlaneProjection(faces, activeTexture, initialRotation));
 
