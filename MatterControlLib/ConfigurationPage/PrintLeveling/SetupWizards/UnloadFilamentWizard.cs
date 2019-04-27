@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -159,19 +160,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						}
 
 						var loadingSpeedMmPerS = printer.Settings.GetValue<double>(SettingsKey.load_filament_speed);
-						var loadLengthMm = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.unload_filament_length));
-						var remainingLengthMm = loadLengthMm;
+						var unloadLengthMm = Math.Max(1, printer.Settings.GetValue<double>(SettingsKey.unload_filament_length));
+						var remainingLengthMm = unloadLengthMm;
 						var maxSingleExtrudeLength = 20;
 
 						Stopwatch runningTime = null;
-						var expectedTimeS = loadLengthMm / loadingSpeedMmPerS;
+						var expectedTimeS = unloadLengthMm / loadingSpeedMmPerS;
 
-						// push some out first
-						var currentE = printer.Connection.CurrentExtruderDestination;
-						printer.Connection.QueueLine("G1 E{0:0.###} F600".FormatWith(currentE + 15));
+						double currentE = 0;
 
 						runningGCodeCommands = UiThread.SetInterval(() =>
 						{
+							// wait until the printer has processed all our commands (including G92)
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
 								if (runningTime == null)
