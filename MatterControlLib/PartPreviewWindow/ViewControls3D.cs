@@ -45,6 +45,7 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -189,11 +190,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							});
 						};
 
+						void UpdateImageBuffer(ImageBuffer thumbnail)
+						{
+							// Dump OpenGL texture
+							ImageGlPlugin.Remove(imageBuffer);
+
+							// Copy updated thumbnail into original image
+							imageBuffer.CopyFrom(thumbnail);
+							bedHistory.Invalidate();
+						}
+
 						ApplicationController.Instance.Library.LoadItemThumbnail(
-							(icon) =>
-							{
-								imageBuffer.CopyFrom(icon);
-							},
+							UpdateImageBuffer,
 							(contentProvider) =>
 							{
 								if (contentProvider is MeshContentProvider meshContentProvider)
@@ -204,18 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										var thumbnail = await meshContentProvider.GetThumbnail(item, thumbWidth, thumbWidth);
 										if (thumbnail != null)
 										{
-											//if (thumbnail.Width != thumbWidth
-											//|| thumbnail.Height != thumbHeight)
-											//{
-											//	this.SetUnsizedThumbnail(thumbnail);
-											//}
-											//else
-											//{
-											//	this.SetSizedThumbnail(thumbnail);
-											//}
-											imageBuffer.CopyFrom(thumbnail);
-
-											popupMenu.Invalidate();
+											UpdateImageBuffer(thumbnail);
 										}
 									});
 								}
