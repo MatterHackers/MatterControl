@@ -46,15 +46,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 	public class ExplorePanel : FlowLayoutWidget
 	{
 		string relativeUrl;
-		string staticFile;
 		private ThemeConfig theme;
 		FlowLeftRightWithWrapping currentContentContainer;
+		private object locker = new object();
 
-		public ExplorePanel(ThemeConfig theme, string relativeUrl, string staticFile)
+		public ExplorePanel(ThemeConfig theme, string relativeUrl)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.relativeUrl = relativeUrl;
-			this.staticFile = staticFile;
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.MinimumSize = new Vector2(0, 1);
@@ -67,88 +66,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 		{
 			base.OnLoad(args);
 
-			try
+			FeedData explorerFeed = null;
+
+			// Force layout to change to get it working
+			var oldMargin = this.Margin;
+			this.Margin = new BorderDouble(20);
+			this.Margin = oldMargin;
+
+			Task.Run(() =>
 			{
-				FeedData explorerFeed = null;
-
-				var json = ApplicationController.LoadCachedFile("MatterHackers", staticFile);
-				if (json != null)
-				{
 					// Construct directly from cache
-					explorerFeed = JsonConvert.DeserializeObject<FeedData>(json);
-					// Add controls for content
-					AddControlsForContent(explorerFeed);
-
-				}
-				// Force layout to change to get it working
-				var oldMargin = this.Margin;
-				this.Margin = new BorderDouble(20);
-				this.Margin = oldMargin;
-
-				Task.Run(async () =>
+				WebCache.RetrieveText($"http://www.matterhackers.com/feeds/{relativeUrl}", (newData) =>
 				{
-					string cachePath = ApplicationController.CacheablePath("MatterHackers", staticFile);
-
-					// Construct directly from cache
-					explorerFeed = await LoadExploreFeed(json?.GetHashCode() ?? 0, cachePath);
-
-					if (explorerFeed != null)
+					lock (locker)
 					{
-						UiThread.RunOnIdle(() =>
+						explorerFeed = JsonConvert.DeserializeObject<FeedData>(newData);
+
+						if (explorerFeed != null)
 						{
-							this.CloseAllChildren();
+							UiThread.RunOnIdle(() =>
+							{
+								this.CloseAllChildren();
 
-							// Add controls for content
-							AddControlsForContent(explorerFeed);
+									// Add controls for content
+								foreach (var content in explorerFeed.Content)
+								{
+									AddContentItem(content);
+								}
 
-							// Force layout to change to get it working
-							this.Margin = new BorderDouble(20);
-							this.Margin = oldMargin;
-						});
+								// Force layout to change to get it working
+								this.Margin = new BorderDouble(20);
+								this.Margin = oldMargin;
+							});
+						}
 					}
 				});
-			}
-			catch
-			{
-			}
+			});
 		}
 
-		public async Task<FeedData> LoadExploreFeed(int loadedID, string cachePath)
-		{
-			try
-			{
-				var client = new HttpClient();
-				string json = await client.GetStringAsync($"http://www.matterhackers.com/feeds/{relativeUrl}");
-
-				var explorerFeed = JsonConvert.DeserializeObject<FeedData>(json);
-
-				var sanitizedJsonID = JsonConvert.SerializeObject(explorerFeed, Formatting.Indented).GetHashCode();
-				if (loadedID == sanitizedJsonID)
-				{
-					return null;
-				}
-
-				// update cache on success
-				File.WriteAllText(cachePath, JsonConvert.SerializeObject(explorerFeed, Formatting.Indented));
-
-				return explorerFeed;
-
-			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error collecting or loading feed: " + ex.Message);
-			}
-
-			return null;
-		}
-
-		private void AddControlsForContent(FeedData contentList)
-		{
-			foreach (var content in contentList.Content)
-			{
-				AddContentItem(content);
-			}
-		}
 
 		private void AddContentItem(FeedSectionData content)
 		{
