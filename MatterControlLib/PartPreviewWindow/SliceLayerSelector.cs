@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			currentLayerInfo = new InlineEditControl("1000")
 			{
 				Name = "currentLayerInfo",
-				TextColor = theme.TextColor,
 				GetDisplayString = (value) => $"{value}",
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Absolute | VAnchor.Fit,

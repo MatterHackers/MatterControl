@@ -35,6 +35,7 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
@@ -93,9 +94,9 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, Color color, LineArrows arrows)
+		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, LineArrows arrows, ThemeConfig theme)
 		{
-			graphics2D.Line(lineStart, lineEnd, Color.Black);
+			graphics2D.Line(lineStart, lineEnd, theme.TextColor);
 
 			Vector2 direction = lineEnd - lineStart;
 			if (direction.LengthSquared > 0
@@ -110,14 +111,14 @@ namespace MatterHackers.MeshVisualizer
 					double rotation = Math.Atan2(direction.Y, direction.X);
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineEnd));
-					graphics2D.Render(inPosition, Color.Black);
+					graphics2D.Render(inPosition, theme.TextColor);
 				}
 				if (arrows.HasFlag(LineArrows.Start))
 				{
 					double rotation = Math.Atan2(direction.Y, direction.X) + MathHelper.Tau / 2;
 					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineStart));
-					graphics2D.Render(inPosition, Color.Black);
+					graphics2D.Render(inPosition, theme.TextColor);
 				}
 			}
 		}

@@ -58,12 +58,15 @@ namespace MatterHackers.Plugins.EditorTools
 		private List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
 		private double selectCubeSize = 7 * GuiWidget.DeviceScale;
+		private ThemeConfig theme;
 		private InlineEditControl zValueDisplayInfo;
 		private bool HadClickOnControl;
 
 		public ScaleTopControl(IInteractionVolumeContext context)
 			: base(context)
 		{
+			theme = MatterControl.AppContext.Theme;
+
 			zValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () => 
@@ -159,11 +162,11 @@ namespace MatterHackers.Plugins.EditorTools
 					// don't draw if any other control is dragging
 					if (MouseOver)
 					{
-						GLHelper.Render(topScaleMesh, Color.Red, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(topScaleMesh, Color.Black, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(topScaleMesh, theme.TextColor, TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
@@ -188,12 +191,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 					if (e.ZBuffered)
 					{
-						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, Color.Black);
+						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor);
 					}
 					else
 					{
 						// render on top of everything very lightly
-						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(Color.Black, 20), false);
+						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false);
 					}
 				}
 			}
@@ -350,12 +353,12 @@ namespace MatterHackers.Plugins.EditorTools
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the measure line
-						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], Color.Black);
+						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], theme.TextColor);
 					}
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
+						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
 					}
 
 					int j = 0;

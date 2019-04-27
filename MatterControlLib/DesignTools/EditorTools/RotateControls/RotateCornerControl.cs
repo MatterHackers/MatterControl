@@ -54,7 +54,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private readonly double arrowsOffset = 15;
 		private readonly double ringWidth = 20;
-
+		private ThemeConfig theme;
 		private InlineEditControl angleTextControl;
 
 		private double lastSnappedRotation = 0;
@@ -68,6 +68,8 @@ namespace MatterHackers.Plugins.EditorTools
 		public RotateCornerControl(IInteractionVolumeContext context, int axisIndex)
 			: base(context)
 		{
+			theme = MatterControl.AppContext.Theme;
+
 			angleTextControl = new InlineEditControl()
 			{
 				ForceHide = ForceHideAngle,
@@ -124,6 +126,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				rotationImageWhite = new ImageBuffer(64, 64, 32, new BlenderBGRA());
 			}
+
 			VertexSourceApplyTransform arrows2 = new VertexSourceApplyTransform(arrows, Affine.NewTranslation(-bounds.Center)
 				* Affine.NewScaling(rotationImageWhite.Width / bounds.Width, rotationImageWhite.Height / bounds.Height)
 				* Affine.NewTranslation(rotationImageWhite.Width / 2, rotationImageWhite.Height / 2));
@@ -179,7 +182,7 @@ namespace MatterHackers.Plugins.EditorTools
 				// We only draw the rotation arrows when the user has not selected any interaction volumes (they are not actively scaling or rotating anything).
 				if (InteractionContext.SelectedInteractionVolume == null)
 				{
-					var color = MouseOver ? Color.Red : Color.Black;
+					var color = MouseOver ? theme.PrimaryAccentColor : theme.TextColor;
 					GLHelper.Render(rotationHandle, new Color(color, 254), TotalTransform, RenderTypes.Shaded);
 				}
 
@@ -565,7 +568,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					IVertexSource blueRing = new JoinPaths(new Arc(0, 0, outerRadius, outerRadius, startBlue, endBlue, Arc.Direction.CounterClockWise),
 						new Arc(0, 0, innerRadius, innerRadius, startBlue, endBlue, Arc.Direction.ClockWise));
-					graphics2DOpenGL.RenderTransformedPath(rotationCenterTransform, blueRing, new Color(Color.Blue, (int)(50 * alphaValue)), drawEventArgs.ZBuffered);
+					graphics2DOpenGL.RenderTransformedPath(rotationCenterTransform, blueRing, new Color(theme.PrimaryAccentColor, (int)(50 * alphaValue)), drawEventArgs.ZBuffered);
 					// tick 60 marks
 					DrawTickMarks(drawEventArgs, alphaValue, rotationCenterTransform, innerRadius, outerRadius, 60);
 				}
@@ -584,7 +587,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					IVertexSource redAngle = new JoinPaths(new Arc(0, 0, 0, 0, startRed, endRed, Arc.Direction.CounterClockWise),
 					new Arc(0, 0, innerRadius, innerRadius, startRed, endRed, Arc.Direction.ClockWise));
-					graphics2DOpenGL.RenderTransformedPath(rotationCenterTransform, redAngle, new Color(Color.Red, (int)(70 * alphaValue)), drawEventArgs.ZBuffered);
+					graphics2DOpenGL.RenderTransformedPath(rotationCenterTransform, redAngle, new Color(theme.PrimaryAccentColor, (int)(70 * alphaValue)), drawEventArgs.ZBuffered);
 
 					// draw a line to the mouse on the rotation circle
 					if (mouseMoveInfo != null && MouseDownOnControl)
@@ -594,7 +597,7 @@ namespace MatterHackers.Plugins.EditorTools
 						var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 						if ((mouseMoveInfo.HitPosition - center).Length > rotationTransformScale * innerRadius)
 						{
-							InteractionContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, Color.Red, drawEventArgs.ZBuffered);
+							InteractionContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, theme.PrimaryAccentColor, drawEventArgs.ZBuffered);
 						}
 
 						DrawSnappingMarks(drawEventArgs, mouseAngle, alphaValue, rotationCenterTransform, snappingMarkRadius, 5, numSnapPoints, GetSnapIndex(selectedItem, numSnapPoints));
@@ -622,10 +625,10 @@ namespace MatterHackers.Plugins.EditorTools
 				var transformed = new VertexSourceApplyTransform(snapShape, Affine.NewTranslation(distanceFromCenter, 0) * Affine.NewRotation(startAngle));
 				// new Ellipse(startPosition.x, startPosition.y, dotRadius, dotRadius);
 
-				var color = Color.Black;
+				var color = theme.TextColor;
 				if (i == markToSnapTo)
 				{
-					color = Color.Red;
+					color = theme.PrimaryAccentColor;
 				}
 
 				graphics2DOpenGL.RenderTransformedPath(rotationCenterTransform, transformed, new Color(color, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
@@ -644,7 +647,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
 				Vector3 endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
 
-				InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(Color.Black, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
+				InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
 			}
 		}
 

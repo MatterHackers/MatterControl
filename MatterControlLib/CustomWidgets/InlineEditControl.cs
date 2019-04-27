@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,15 +37,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class InlineEditControl : GuiWidget
 	{
 		private TextWidget numberDisplay;
-		private NumberEdit numberEdit;
+		private MHNumberEdit numberEdit;
+		private Func<double, string> _getDisplayString = (value) => "{0:0.0}".FormatWith(value);
+		private RunningInterval runningInterval;
+		private ThemeConfig theme;
 
 		public InlineEditControl(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
 		{
+			theme = AppContext.Theme;
 			base.Visible = false;
 
 			double pointSize = 12;
 
-			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification)
+			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification, textColor: theme.TextColor)
 			{
 				Visible = false,
 				VAnchor = VAnchor.Bottom,
@@ -54,21 +58,21 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			AddChild(numberDisplay);
 
-			numberEdit = new NumberEdit(0, 50, 50, pointSize, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
+			numberEdit = new MHNumberEdit(0, theme, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
 			{
 				Visible = false,
 				VAnchor = VAnchor.Bottom,
 				HAnchor = HAnchor.Left,
 				SelectAllOnFocus = true,
 			};
-			numberEdit.InternalNumberEdit.TextChanged += (s, e) =>
+			numberEdit.ActuallNumberEdit.InternalNumberEdit.TextChanged += (s, e) =>
 			{
 				numberDisplay.Text = GetDisplayString == null ? "None" : GetDisplayString.Invoke(Value);
 				base.OnTextChanged(e);
 			};
-			numberEdit.InternalNumberEdit.MaxDecimalsPlaces = 2;
+			numberEdit.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 2;
 
-			numberEdit.EditComplete += (s, e) =>
+			numberEdit.ActuallNumberEdit.EditComplete += (s, e) =>
 			{
 				EditComplete?.Invoke(this, e);
 				timeSinceMouseUp.Restart();
@@ -84,8 +88,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			runningInterval = UiThread.SetInterval(HideIfApplicable, .1);
 		}
 
-		public Color TextColor { get; set; } = Color.Black;
-
 		public event EventHandler EditComplete;
 
 		public bool Editing
@@ -97,9 +99,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public Func<bool> ForceHide { get; set; }
-
-		private Func<double, string> _getDisplayString = (value) => "{0:0.0}".FormatWith(value);
-		private RunningInterval runningInterval;
 
 		public Func<double, string> GetDisplayString
 		{
@@ -154,25 +153,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			numberEdit.Visible = false;
 			numberDisplay.Visible = true;
+			Invalidate();
 		}
 
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 
 		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			if (UnderMouseState == UnderMouseState.UnderMouseNotFirst
-				|| UnderMouseState == UnderMouseState.FirstUnderMouse)
-			{
-				numberDisplay.TextColor = Color.Red;
-			}
-			else
-			{
-				numberDisplay.TextColor = this.TextColor;
-			}
-			base.OnDraw(graphics2D);
-		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -186,6 +172,27 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			base.OnMouseDown(mouseEvent);
+		}
+
+		public override void OnMouseMove(MouseEventArgs mouseEvent)
+		{
+			if (UnderMouseState == UnderMouseState.UnderMouseNotFirst
+				|| UnderMouseState == UnderMouseState.FirstUnderMouse)
+			{
+				if (numberDisplay.TextColor != theme.PrimaryAccentColor)
+				{
+					numberDisplay.TextColor = theme.PrimaryAccentColor;
+				}
+			}
+			else
+			{
+				if (numberDisplay.TextColor != theme.TextColor)
+				{
+					numberDisplay.TextColor = theme.TextColor;
+				}
+			}
+
+			base.OnMouseMove(mouseEvent);
 		}
 
 		public override void OnClosed(EventArgs e)

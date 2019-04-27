@@ -59,10 +59,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private double upArrowSize = 7 * GuiWidget.DeviceScale;
 		private InlineEditControl zHeightDisplayInfo;
 		private bool HadClickOnControl;
+		private ThemeConfig theme;
 
 		public MoveInZControl(IInteractionVolumeContext context)
 			: base(context)
 		{
+			theme = AppContext.Theme;
 			Name = "MoveInZControl";
 			zHeightDisplayInfo = new InlineEditControl()
 			{
@@ -162,11 +164,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// don't draw if any other control is dragging
 					if (MouseOver)
 					{
-						GLHelper.Render(upArrowMesh, Color.Red, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(upArrowMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(upArrowMesh, Color.Black, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(upArrowMesh, theme.TextColor, TotalTransform, RenderTypes.Shaded);
 					}
 				}
 			}
@@ -316,12 +318,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the measure line
-						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], Color.Black);
+						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], theme.TextColor);
 					}
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
+						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
 					}
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
