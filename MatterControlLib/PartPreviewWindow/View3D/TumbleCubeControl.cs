@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -37,11 +42,6 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using MatterHackers.VectorMath.TrackBall;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -434,6 +434,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					case -1:
 						count--;
 						break;
+
 					case 0:
 						// top
 						normal += -Vector3.UnitZ;
@@ -441,32 +442,57 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							up = (hitData.TileIndex[0] == 4) ? Vector3.UnitY : Vector3.UnitZ;
 						}
+
 						break;
+
 					case 1:
 						// Left
 						normal += Vector3.UnitX;
-						if (count == 1) up = Vector3.UnitZ;
+						if (count == 1)
+						{
+							up = Vector3.UnitZ;
+						}
+
 						break;
+
 					case 2:
 						// Right
 						normal += -Vector3.UnitX;
-						if (count == 1) up = Vector3.UnitZ;
+						if (count == 1)
+						{
+							up = Vector3.UnitZ;
+						}
+
 						break;
 
 					case 3:
 						// Bottom
 						normal += Vector3.UnitZ;
-						if (count == 1) up = -Vector3.UnitY;
+						if (count == 1)
+						{
+							up = -Vector3.UnitY;
+						}
+
 						break;
+
 					case 4:
 						// Back
 						normal += -Vector3.UnitY;
-						if (count == 1) up = Vector3.UnitZ;
+						if (count == 1)
+						{
+							up = Vector3.UnitZ;
+						}
+
 						break;
+
 					case 5:
 						// Front
 						normal += Vector3.UnitY;
-						if (count == 1) up = Vector3.UnitZ;
+						if (count == 1)
+						{
+							up = Vector3.UnitZ;
+						}
+
 						break;
 				}
 			}
@@ -583,10 +609,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var sourceTexture = new ImageBuffer(256, 256);
 
-			var frontGraphics = sourceTexture.NewGraphics2D();
-			frontGraphics.Clear(theme.BedColor);
+			var graphics = sourceTexture.NewGraphics2D();
+			graphics.Clear(theme.BedColor);
 
-			frontGraphics.DrawString(name,
+			graphics.DrawString(name,
 				sourceTexture.Width / 2,
 				sourceTexture.Height / 2,
 				60,
@@ -594,7 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				baseline: Agg.Font.Baseline.BoundsCenter,
 				color: theme.PrinterBedTextColor);
 
-			frontGraphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), theme.BedGridColors.Line);
+			graphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), theme.BedGridColors.Line);
 
 			var activeTexture = new ImageBuffer(sourceTexture);
 			ImageGlPlugin.GetImageGlPlugin(activeTexture, true);
