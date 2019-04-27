@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -60,6 +59,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 originalPointToMove;
 		private int quadrantIndex;
 		private double selectCubeSize = 7 * GuiWidget.DeviceScale;
+		private ThemeConfig theme;
 		private InlineEditControl xValueDisplayInfo;
 		private InlineEditControl yValueDisplayInfo;
 		private bool HadClickOnControl;
@@ -67,6 +67,8 @@ namespace MatterHackers.Plugins.EditorTools
 		public ScaleCornerControl(IInteractionVolumeContext context, int cornerIndex)
 			: base(context)
 		{
+			theme = MatterControl.AppContext.Theme;
+
 			xValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
@@ -176,11 +178,11 @@ namespace MatterHackers.Plugins.EditorTools
 					// don't draw if any other control is dragging
 					if (MouseOver)
 					{
-						GLHelper.Render(minXminYMesh, Color.Red, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, Color.Black, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.TextColor, TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
@@ -196,20 +198,20 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						if (e.ZBuffered)
 						{
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, Color.Black);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor);
 						}
 						else
 						{
 							// render on top of everything very lightly
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(Color.Black, 20), false);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false);
 						}
 					}
 
 					//Vector3 startScreenSpace = InteractionContext.World.GetScreenSpace(startPosition);
-					//e.graphics2D.Circle(startScreenSpace.x, startScreenSpace.y, 5, Color.Red);
+					//e.graphics2D.Circle(startScreenSpace.x, startScreenSpace.y, 5, theme.PrimaryAccentColor);
 
 					//Vector2 startScreenPosition = InteractionContext.World.GetScreenPosition(startPosition);
-					//e.graphics2D.Circle(startScreenPosition.x, startScreenPosition.y, 5, Color.Red);
+					//e.graphics2D.Circle(startScreenPosition.x, startScreenPosition.y, 5, theme.PrimaryAccentColor);
 				}
 			}
 
@@ -508,12 +510,12 @@ namespace MatterHackers.Plugins.EditorTools
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the line that is on the ground
-						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], Color.Black);
+						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], theme.TextColor);
 					}
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, Color.Black, LineArrows.Both);
+						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
 					}
 
 					int j = 4;

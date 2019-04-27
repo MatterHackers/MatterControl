@@ -28,32 +28,27 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SelectionShadow : InteractionVolume
 	{
 		static Mesh normalShadowMesh;
-		static Color shadowColor = new Color(22, 80, 220);
-		readonly int shadowAlpha = 40;
 
+		private Color shadowColor;
+
+		private ThemeConfig theme;
 
 		public SelectionShadow(IInteractionVolumeContext context)
 			: base(context)
 		{
+			theme = AppContext.Theme;
+			shadowColor = theme.ResolveColor(theme.BackgroundColor, Color.Black.WithAlpha(80)).WithAlpha(110);
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -84,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
-				GLHelper.Render(GetNormalShadowMesh(), new Color(shadowColor, shadowAlpha), withScale, RenderTypes.Shaded);
+				GLHelper.Render(GetNormalShadowMesh(), shadowColor, withScale, RenderTypes.Shaded);
 			}
 
 			base.DrawGlContent(e);
