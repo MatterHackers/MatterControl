@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.VAnchor = VAnchor.Fit;
 				this.MinimumSize = new Vector2(150 * GuiWidget.DeviceScale, theme.ButtonHeight);
 				this.content = content;
-
+				this.GutterWidth = theme.MenuGutterWidth;
 				this.HoverColor = theme.AccentMimimalOverlay;
 
 				content.VAnchor = VAnchor.Center;
@@ -449,6 +449,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.AddChild(content);
 			}
+
+			public double GutterWidth { get; set; }
 
 			public ImageBuffer Image { get; set; }
 
@@ -486,7 +488,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (this.Image != null)
 				{
-					var x = this.LocalBounds.Left + (theme.MenuGutterWidth / 2 - this.Image.Width / 2);
+					var x = this.LocalBounds.Left + (this.GutterWidth / 2 - this.Image.Width / 2);
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
 					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, (int)x, (int)y);
