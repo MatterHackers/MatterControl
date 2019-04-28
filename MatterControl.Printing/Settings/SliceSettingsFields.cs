@@ -428,7 +428,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Used to specify if more than one extruder share a common heater cartridge.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>1",
 					ReloadUiWhenChanged = true
 				},
 				new SliceSettingData()
