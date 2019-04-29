@@ -562,6 +562,63 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(rootAabb.Equals(new AxisAlignedBoundingBox(new Vector3(-10, -10, -10), new Vector3(10, 10, 11)), .01));
 		}
 
+		[Test, Category("InteractiveScene")]
+		public async Task AlignObjectHasCorrectPositionsOnAxis()
+		{
+			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
+
+			// Automation runner must do as much as program.cs to spin up platform
+			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
+			AppContext.Platform.ProcessCommandline();
+
+			var scene = new InteractiveScene();
+
+			var cube = await CubeObject3D.Create(20, 20, 20);
+			cube.Matrix = Matrix4X4.CreateTranslation(50, 60, 10);
+			Assert.IsTrue(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
+			scene.Children.Add(cube);
+
+			var bigCube = await CubeObject3D.Create(40, 40, 40);
+			bigCube.Matrix = Matrix4X4.CreateTranslation(20, 20, 20);
+			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
+			scene.Children.Add(bigCube);
+
+			// select them
+			scene.SelectedItem = cube;
+			scene.AddToSelection(bigCube);
+
+			// create an align of them
+			var align = new AlignObject3D();
+			align.AddSelectionAsChildren(scene, scene.SelectedItem);
+
+			// assert the align in built correctly
+			Assert.AreEqual(1, scene.Children.Count);
+			Assert.AreEqual(2, align.Children.Count);
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
+
+			align.SelectedChild = new SelectedChildren() { cube.ID.ToString() };
+			// turn align on
+			align.XAlign = Align.Min;
+			await align.Rebuild();
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
+
+			// turn it off
+			align.XAlign = Align.None;
+			await align.Rebuild();
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
+
+			// turn it back on
+			align.XAlign = Align.Min;
+			await align.Rebuild();
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 0, 0), new Vector3(80, 70, 40)), 1.0));
+
+			// remove the align and assert stuff moved back to where it started
+			align.Remove(null);
+			Assert.IsTrue(cube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(40, 50, 0), new Vector3(60, 70, 20)), .01));
+			Assert.IsTrue(bigCube.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(40, 40, 40)), .01));
+		}
 
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
