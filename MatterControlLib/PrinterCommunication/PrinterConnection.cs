@@ -27,6 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -40,16 +50,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -126,8 +126,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public event EventHandler ConnectionFailed;
 
 		public event EventHandler ConnectionSucceeded;
-
-		public event EventHandler PositionRead;
 
 		public void OnPauseOnLayer(PrintPauseEventArgs printPauseEventArgs)
 		{
@@ -1669,7 +1667,6 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			waitingForPosition.Reset();
 			PositionReadType = PositionReadType.None;
-			PositionRead?.Invoke(this, null);
 		}
 
 		public static void ParseTemperatureString(string temperatureString,
@@ -2806,8 +2803,14 @@ You will then need to logout and log back in to the computer for the changes to 
 						GCodeFile.GetFirstNumberAfter("Y", lineWithoutChecksum, ref currentDestination.position.Y);
 						GCodeFile.GetFirstNumberAfter("Z", lineWithoutChecksum, ref currentDestination.position.X);
 						GCodeFile.GetFirstNumberAfter("E", lineWithoutChecksum, ref currentDestination.extrusion);
+
+						// The printer position has changed, make sure all the streams know
+						if (totalGCodeStream != null)
+						{
+							totalGCodeStream.SetPrinterPosition(currentDestination);
+						}
 					}
-					
+
 					// If we get a home command, ask the printer where it is after sending it.
 					if (lineWithoutChecksum.StartsWith("G28") // is a home
 						|| lineWithoutChecksum.StartsWith("G29") // is a bed level
