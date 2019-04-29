@@ -164,17 +164,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 				var popupMenu = new PopupMenu(menuTheme);
 
-				int thumbWidth = 24;
+				int thumbWidth = 45;
+				var gutterWidth = thumbWidth + 7;
 
 				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
 				{
 					// Select the 25 most recent files and project onto FileSystemItems
 					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-					foreach (var item in recentFiles.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(10).ToList<ILibraryItem>())
+					foreach (var item in recentFiles.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(12))
 					{
 						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
 
-						var bedHistory = subMenu.CreateMenuItem(item.Name, imageBuffer);
+						var title = new FileInfo(item.Path).LastWriteTime.ToString("MMMM d h:mm tt");
+
+						var bedHistory = subMenu.CreateMenuItem(title, imageBuffer);
+						bedHistory.GutterWidth = gutterWidth;
+						bedHistory.HAnchor = HAnchor.Absolute;
+						bedHistory.VAnchor = VAnchor.Absolute;
+						bedHistory.Padding = new BorderDouble(gutterWidth + 3, 2, 2, 2);
+						bedHistory.Height = thumbWidth + 3;
+						bedHistory.Width = 180;
 						bedHistory.Click += (s, e) =>
 						{
 							UiThread.RunOnIdle(async () =>
@@ -197,6 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// Copy updated thumbnail into original image
 							imageBuffer.CopyFrom(thumbnail);
+
 							bedHistory.Invalidate();
 						}
 

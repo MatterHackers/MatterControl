@@ -47,7 +47,8 @@ namespace MatterHackers.MatterControl.Library
 		/// </summary>
 		public long FileSize { get; private set; }
 
-		public FileSystemFileItem(string path) : base(path)
+		public FileSystemFileItem(string path) 
+			: base(path)
 		{
 			var fileInfo = new FileInfo(path);
 			if (fileInfo.Exists)
