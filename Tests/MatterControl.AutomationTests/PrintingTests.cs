@@ -6,6 +6,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
+using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
 using MatterHackers.VectorMath;
@@ -350,11 +351,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.AddItemToBedplate();
 					testRunner.StartPrint();
 
-					// Dismiss pause dialog
-					testRunner.WaitForName("Yes Button", 90); // the yes button is 'Resume'
+					// Wait for pause dialog
+					testRunner.WaitForName("Yes Button", 15); // the yes button is 'Resume'
 
 					// validate the current layer
 					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
+
+					// Resume
 					testRunner.ClickByName("Yes Button");
 
 					// the printer is now paused
@@ -371,6 +374,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
 					// Assert that recovery happens
+					Assert.IsTrue(PrintRecovery.RecoveryAvailable(printer), "Recovery should be enabled after Disconnect while printing");
 
 					// Recover the print
 					ClickDialogButton(testRunner, printer, "Yes Button", -1);
