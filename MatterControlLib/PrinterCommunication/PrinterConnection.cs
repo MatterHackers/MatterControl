@@ -27,16 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -50,6 +40,16 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.PrinterCommunication
 {
@@ -353,12 +353,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					case SettingsKey.temperature:
 						extruder = 0;
 						break;
+
 					case SettingsKey.temperature1:
 						extruder = 1;
 						break;
+
 					case SettingsKey.temperature2:
 						extruder = 2;
 						break;
+
 					case SettingsKey.temperature3:
 						extruder = 3;
 						break;
@@ -429,7 +432,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		}
 
 		// PrinterSettings/Options {{
-
 		public int BaudRate
 		{
 			get
@@ -1093,7 +1095,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 											UiThread.RunOnIdle(() =>
 											{
 												string message = @"In order for MatterControl to access the serial ports on Linux, you will need to give your user account the appropriate permissions. Run these commands in a terminal to add yourself to the correct group.
-													
+
 Ubuntu/Debian
 --------------
 
@@ -1192,7 +1194,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				forceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
-				CurrentReadThreadIndex++;
+				currentReadThreadIndex++;
 				if (serialPort != null)
 				{
 					serialPort.Close();
@@ -1741,7 +1743,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						ClearQueuedGCode();
 
 						CommunicationState = CommunicationStates.Disconnecting;
-						CurrentReadThreadIndex++;
+						currentReadThreadIndex++;
 						ToggleHighLowHigh(serialPort);
 						if (serialPort != null)
 						{
@@ -2117,7 +2119,7 @@ You will then need to logout and log back in to the computer for the changes to 
 					// connectThread.Join(JoinThreadTimeoutMs);
 
 					CommunicationState = CommunicationStates.Disconnecting;
-					CurrentReadThreadIndex++;
+					currentReadThreadIndex++;
 					if (serialPort != null)
 					{
 						serialPort.Close();
@@ -2669,7 +2671,6 @@ You will then need to logout and log back in to the computer for the changes to 
 		}
 
 		public PrintTask ActivePrintTask { get; set; }
-		internal int CurrentReadThreadIndex { get => currentReadThreadIndex; set => currentReadThreadIndex = value; }
 
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
@@ -2933,8 +2934,8 @@ You will then need to logout and log back in to the computer for the changes to 
 			{
 				this.printerConnection = printerConnection;
 				numRunning++;
-				printerConnection.CurrentReadThreadIndex++;
-				creationIndex = printerConnection.CurrentReadThreadIndex;
+				printerConnection.currentReadThreadIndex++;
+				creationIndex = printerConnection.currentReadThreadIndex;
 
 				Task.Run(() =>
 				{
@@ -2958,7 +2959,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			internal bool IsCurrentThread()
 			{
-				return printerConnection.CurrentReadThreadIndex == creationIndex;
+				return printerConnection.currentReadThreadIndex == creationIndex;
 			}
 		}
 
@@ -2993,16 +2994,6 @@ You will then need to logout and log back in to the computer for the changes to 
 			{
 				addedCount = startingIndex;
 			}
-		}
-	}
-
-	public class ConnectFailedEventArgs : EventArgs
-	{
-		public ConnectionFailure Reason { get; }
-
-		public ConnectFailedEventArgs(ConnectionFailure reason)
-		{
-			this.Reason = reason;
 		}
 	}
 
