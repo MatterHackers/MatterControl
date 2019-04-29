@@ -57,11 +57,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public static void CheckIfNeedToRecoverPrint(PrinterConfig printer)
 		{
-			string recoverPrint = "Recover Print".Localize();
-			string cancelRecovery = "Cancel".Localize();
 			string printRecoveryWarningMessage = "WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.".Localize();
-			string printRecoveryMessage = "It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize();
-			string recoverPrintTitle = "Recover Last Print".Localize();
 
 			PrintTask lastPrint = PrintHistoryData.Instance.GetHistoryForPrinter(printer.Settings.ID.GetHashCode()).FirstOrDefault();
 			if (lastPrint != null)
@@ -91,11 +87,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 								lastPrint.Commit();
 							}
 						},
-						(safeHomingDirection) ? printRecoveryMessage : printRecoveryMessage + "\n\n" + printRecoveryWarningMessage,
-						recoverPrintTitle,
+						"It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize() 
+						+ (safeHomingDirection ? "" : "\n\n" + printRecoveryWarningMessage),
+						"Recover Last Print".Localize(),
 						StyledMessageBox.MessageType.YES_NO,
-						recoverPrint,
-						cancelRecovery);
+						"Recover Print".Localize(),
+						"Cancel".Localize());
 				}
 			}
 		}
