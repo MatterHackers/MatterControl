@@ -47,12 +47,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public static bool RecoveryAvailable(PrinterConfig printer, PrintTask lastPrint)
 		{
-			return !lastPrint.PrintComplete // Top Print History Item is not complete
-					&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
-					&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
-					&& lastPrint.PercentDone > 0 // we are actually part way into the print
-					&& printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
-					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+			return lastPrint != null
+				&& !lastPrint.PrintComplete // Top Print History Item is not complete
+				&& !string.IsNullOrEmpty(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is set
+				&& File.Exists(lastPrint.PrintingGCodeFileName) // PrintingGCodeFileName is still on disk
+				&& lastPrint.PercentDone > 0 // we are actually part way into the print
+				&& printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled)
+				&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 		}
 
 		public static void CheckIfNeedToRecoverPrint(PrinterConfig printer)
