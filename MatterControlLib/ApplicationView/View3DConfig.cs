@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl
 
 		public bool SyncToPrint
 		{
-			get => UserSettings.Instance.get(UserSettingsKey.LayerViewSyncToPrint) == "True";
+			get => UserSettings.Instance.get(UserSettingsKey.LayerViewSyncToPrint) != "False";
 			set
 			{
 				if (this.SyncToPrint != value)

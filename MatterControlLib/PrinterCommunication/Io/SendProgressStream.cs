@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2019, Tyler Anderson, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using System;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -54,11 +53,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				nextPercent = Math.Round(printer.Connection.ActivePrintTask.PercentDone) + 0.5;
 				if (printer.Settings.GetValue(SettingsKey.progress_reporting) == "M73")
 				{
-					return String.Format("M73 P{0:0}", printer.Connection.ActivePrintTask.PercentDone);
+					return string.Format("M73 P{0:0}", printer.Connection.ActivePrintTask.PercentDone);
 				}
 				else
 				{
-					return String.Format("M117 Printing - {0:0}%", printer.Connection.ActivePrintTask.PercentDone);
+					return string.Format("M117 Printing - {0:0}%", printer.Connection.ActivePrintTask.PercentDone);
 				}
 			}
 

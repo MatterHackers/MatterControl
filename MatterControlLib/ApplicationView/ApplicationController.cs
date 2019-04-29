@@ -1646,8 +1646,7 @@ namespace MatterHackers.MatterControl
 
 		public static bool PrinterNeedsToRunSetup(PrinterConfig printer)
 		{
-			return LevelingValidation.NeedsToBeRun(printer)
-				|| ProbeCalibrationWizard.NeedsToBeRun(printer);
+			return PrinterCalibrationWizard.SetupRequired(printer);
 		}
 
 		public void Shutdown()
