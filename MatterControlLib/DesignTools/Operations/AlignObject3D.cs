@@ -37,16 +37,30 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Aabb = MatterHackers.VectorMath.AxisAlignedBoundingBox;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using Aabb = AxisAlignedBoundingBox;
+	[JsonConverter(typeof(StringEnumConverter))]
+	public enum Align
+	{
+		None,
+		Min,
+		Center,
+		Max,
+		Origin
+	}
 
 	[JsonConverter(typeof(StringEnumConverter))]
-	public enum Align { None, Min, Center, Max, Origin }
-
-	[JsonConverter(typeof(StringEnumConverter))]
-	public enum Alignment { X, Y, Z, negX, negY, negZ };
+	public enum Alignment
+	{
+		X,
+		Y,
+		Z,
+		negX,
+		negY,
+		negZ
+	}
 
 	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
@@ -76,7 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Back = 0x08,
 		Bottom = 0x10,
 		Top = 0x20,
-	};
+	}
 
 	[JsonConverter(typeof(StringEnumConverter))]
 	[Flags]
@@ -86,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Right = 0x02,
 		Bottom = 0x10,
 		Top = 0x20,
-	};
+	}
 
 	public abstract class SelectedChildContainer : Object3D
 	{
@@ -104,8 +118,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Align";
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)), name)
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, double offsetX = 0, double offsetY = 0, double offsetZ = 0)
+			: this(objectToAlign, boundingFacesToAlign, GetPositionToAlignTo(objectToAlignTo, boundingFacesToAlignTo, new Vector3(offsetX, offsetY, offsetZ)))
 		{
 			if (objectToAlign == objectToAlignTo)
 			{
@@ -113,40 +127,45 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ), name)
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, double positionToAlignToX = 0, double positionToAlignToY = 0, double positionToAlignToZ = 0)
+			: this(objectToAlign, boundingFacesToAlign, new Vector3(positionToAlignToX, positionToAlignToY, positionToAlignToZ))
 		{
 		}
 
-		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ, string name = "")
-			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ), name)
+		public AlignObject3D(IObject3D objectToAlign, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, double offsetX, double offsetY, double offsetZ)
+			: this(objectToAlign, boundingFacesToAlign, positionToAlignTo + new Vector3(offsetX, offsetY, offsetZ))
 		{
 		}
 
-		public AlignObject3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo, string name = "")
+		public AlignObject3D(IObject3D item, FaceAlign boundingFacesToAlign, Vector3 positionToAlignTo)
 		{
 			AxisAlignedBoundingBox bounds = item.GetAxisAlignedBoundingBox();
 
 			if (IsSet(boundingFacesToAlign, FaceAlign.Left, FaceAlign.Right))
 			{
-				positionToAlignTo.X = positionToAlignTo.X - bounds.MinXYZ.X;
+				positionToAlignTo.X -= bounds.MinXYZ.X;
 			}
+
 			if (IsSet(boundingFacesToAlign, FaceAlign.Right, FaceAlign.Left))
 			{
 				positionToAlignTo.X = positionToAlignTo.X - bounds.MinXYZ.X - (bounds.MaxXYZ.X - bounds.MinXYZ.X);
 			}
+
 			if (IsSet(boundingFacesToAlign, FaceAlign.Front, FaceAlign.Back))
 			{
-				positionToAlignTo.Y = positionToAlignTo.Y - bounds.MinXYZ.Y;
+				positionToAlignTo.Y -= bounds.MinXYZ.Y;
 			}
+
 			if (IsSet(boundingFacesToAlign, FaceAlign.Back, FaceAlign.Front))
 			{
 				positionToAlignTo.Y = positionToAlignTo.Y - bounds.MinXYZ.Y - (bounds.MaxXYZ.Y - bounds.MinXYZ.Y);
 			}
+
 			if (IsSet(boundingFacesToAlign, FaceAlign.Bottom, FaceAlign.Top))
 			{
-				positionToAlignTo.Z = positionToAlignTo.Z - bounds.MinXYZ.Z;
+				positionToAlignTo.Z -= bounds.MinXYZ.Z;
 			}
+
 			if (IsSet(boundingFacesToAlign, FaceAlign.Top, FaceAlign.Bottom))
 			{
 				positionToAlignTo.Z = positionToAlignTo.Z - bounds.MinXYZ.Z - (bounds.MaxXYZ.Z - bounds.MinXYZ.Z);
@@ -157,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[ShowAsList]
-		[DisplayName("Primary")]
+		[DisplayName("Anchor")]
 		public override SelectedChildren SelectedChild
 		{
 			get
@@ -190,7 +209,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public bool Advanced { get; set; } = false;
 
 		[SectionStart("X Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" })]
+		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png"}, InvertIcons = true)]
 		public Align XAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
@@ -201,7 +220,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double XOffset { get; set; } = 0;
 
 		[SectionStart("Y Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png"}, InvertIcons = true)]
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
@@ -212,7 +231,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double YOffset { get; set; } = 0;
 
 		[SectionStart("Z Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" })]
+		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png"}, InvertIcons = true)]
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
@@ -262,6 +281,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					{
 						return index;
 					}
+
 					index++;
 				}
 
@@ -271,31 +291,37 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, Vector3 extraOffset)
 		{
-			Vector3 positionToAlignTo = new Vector3();
+			var positionToAlignTo = default(Vector3);
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Left, FaceAlign.Right))
 			{
 				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.X;
 			}
+
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Right, FaceAlign.Left))
 			{
 				positionToAlignTo.X = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.X;
 			}
+
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Front, FaceAlign.Back))
 			{
 				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.Y;
 			}
+
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Back, FaceAlign.Front))
 			{
 				positionToAlignTo.Y = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.Y;
 			}
+
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Bottom, FaceAlign.Top))
 			{
 				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().MinXYZ.Z;
 			}
+
 			if (IsSet(boundingFacesToAlignTo, FaceAlign.Top, FaceAlign.Bottom))
 			{
 				positionToAlignTo.Z = objectToAlignTo.GetAxisAlignedBoundingBox().MaxXYZ.Z;
 			}
+
 			return positionToAlignTo + extraOffset;
 		}
 
@@ -355,6 +381,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					{
 						return;
 					}
+
 					int anchorIndex = AnchorObjectIndex;
 					var anchorBounds = CurrentChildrenBounds[anchorIndex];
 
@@ -472,6 +499,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					throw new Exception("You cannot have both " + faceToCheckFor.ToString() + " and " + faceToAssertNot.ToString() + " set when calling Align.  The are mutually exclusive.");
 				}
+
 				return true;
 			}
 
