@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 	[TestFixture, Category("MatterControl.UI.Automation"), RunInApplicationDomain, Apartment(ApartmentState.STA)]
 	public class ReSliceTests
 	{
-		//[Test, Category("Emulator"), Ignore("WIP")]
+		// [Test, Category("Emulator"), Ignore("WIP")]
 		[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				//testRunner.ClickByName("Connection Wizard Skip Sign In Button");
+				// testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -69,28 +69,22 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Layer(s) To Pause Field");
 					testRunner.Type("50;60");
 
-					// Add a callback to check that every line has an extruder 
-					// distance greater than the largest distance minus the max retraction 
+					// Add a callback to check that every line has an extruder
+					// distance greater than the largest distance minus the max retraction
 					// amount and less than some amount that is reasonable
 					double lastAbsoluteEPosition = 0;
 					double largestAbsoluteEPosition = 0;
 					double largestRetraction = 0;
-					emulator.RecievedInstruction += (e, s) =>
-					{
-						if(s.Contains("G92"))
-						{
-							int a = 0;
-						}
-					};
 
 					emulator.EPositionChanged += (e, s) =>
 					{
 						largestAbsoluteEPosition = Math.Max(largestAbsoluteEPosition, emulator.CurrentExtruder.AbsoluteEPosition);
 						var delta = emulator.CurrentExtruder.AbsoluteEPosition - lastAbsoluteEPosition;
-						if(delta < largestRetraction)
+						if (delta < largestRetraction)
 						{
 							largestRetraction = delta;
 						}
+
 						double printerRetraction = 7 + .1; // the airwolf has a retraction of 7 mm
 						Assert.GreaterOrEqual(delta, -printerRetraction, "We should never move back more than the retraction amount");
 						Assert.GreaterOrEqual(emulator.CurrentExtruder.AbsoluteEPosition, largestAbsoluteEPosition - printerRetraction, "Never go back more than the retraction amount");
@@ -110,7 +104,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.StartPrint();
 
 					// Wait for pause
-					testRunner.WaitForName("No Button", 80);// the yes button is 'Resume'
+					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'
 					testRunner.ClickByName("No Button");
 
 					// Delete the cube
@@ -131,14 +125,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Yes Button", 10); // The change to new g-code
-					testRunner.ClickByName("Yes Button");
+					testRunner.WaitForName("Switch Button", 10); // The change to new g-code
+					testRunner.ClickByName("Switch Button");
 
 					// and resume the print
 					testRunner.ClickByName("Resume Task Button");
 
 					// Wait for next pause
-					testRunner.WaitForName("No Button", 80);// the yes button is 'Resume'
+					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'
 					testRunner.ClickByName("No Button");
 
 					// Switch back to the cube
@@ -158,8 +152,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// re-slice the part
 					testRunner.ClickByName("Re-Slice Button");
-					testRunner.WaitForName("Yes Button", 10); // The change to new g-code
-					testRunner.ClickByName("Yes Button");
+					testRunner.WaitForName("Switch Button", 10); // The change to new g-code
+					testRunner.ClickByName("Switch Button");
 
 					// and resume the print
 					testRunner.ClickByName("Resume Task Button");
@@ -172,7 +166,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 290, queueItemFolderToAdd: QueueTemplate.ReSliceParts);
+			},
+			maxTimeToRun: 290,
+			queueItemFolderToAdd: QueueTemplate.ReSliceParts);
 		}
 	}
 }

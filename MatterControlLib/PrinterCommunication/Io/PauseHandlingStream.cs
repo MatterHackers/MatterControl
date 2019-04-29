@@ -45,7 +45,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		internal class PositionSensorData
 		{
 			public double LastSensorDistance { get; internal set; }
+
 			public double LastStepperDistance { get; internal set; }
+
 			public int ExtrusionDiscrepency { get; internal set; }
 		}
 

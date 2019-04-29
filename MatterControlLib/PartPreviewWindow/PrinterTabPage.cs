@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e is PrintPauseEventArgs printePauseEventArgs)
 			{
-				if (printePauseEventArgs.filamentRunout)
+				if (printePauseEventArgs.FilamentRunout)
 				{
 					UiThread.RunOnIdle(() =>
 					{
@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						string filamentPauseMessage = "Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.".Localize();
 
 						var messageBox = new MessageBoxPage(ResumePrint,
-							filamentPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
+							filamentPauseMessage.FormatWith(printePauseEventArgs.LayerNumber),
 							pauseCaption,
 							StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT,
 							null,
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer{0} reached.".Localize();
 
 				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint,
-					layerPauseMessage.FormatWith(printePauseEventArgs.layerNumber),
+					layerPauseMessage.FormatWith(printePauseEventArgs.LayerNumber),
 					pauseCaption,
 					StyledMessageBox.MessageType.YES_NO,
 					"Resume".Localize(),

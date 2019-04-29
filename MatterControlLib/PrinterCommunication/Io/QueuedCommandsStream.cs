@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		public object Peek()
+		public string Peek()
 		{
 			// lock queue
 			lock (locker)
