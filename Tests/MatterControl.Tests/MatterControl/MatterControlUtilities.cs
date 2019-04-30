@@ -881,8 +881,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
-			// open it
+			// Open PopupMenu
 			testRunner.ClickByName("PrintPopupMenu");
+
+			// Wait for child control
+			testRunner.WaitForName("Start Print Button");
 		}
 
 		/// <summary>
