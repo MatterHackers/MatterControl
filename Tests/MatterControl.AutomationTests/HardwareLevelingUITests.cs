@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.OpenPrintPopupMenu();
 
 					// make sure it is showing the correct button
-					Assert.IsTrue(testRunner.WaitForName("SetupPrinter"), "Finish Setup should be visible after reset to Defaults");
+					Assert.IsTrue(testRunner.WaitForName("SetupPrinter"), "Setup... should be visible after reset to Defaults");
 				}
 
 				return Task.CompletedTask;
