@@ -55,6 +55,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Complete9StepLeveling();
 
+					// Satisfy non-empty bed requirement
+					testRunner.AddItemToBedplate();
+
 					testRunner.OpenPrintPopupMenu();
 
 					// make sure the button has changed to start print
