@@ -2041,7 +2041,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 								ActivePrintTask.Commit();
 
-								await Task.Run(() => this.SyncProgressToDB(printingCancellation.Token)).ConfigureAwait(false);
+								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
 							}
 						}
 					}
