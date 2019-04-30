@@ -362,27 +362,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName("Select Make");
-			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
 			testRunner.ClickByName("Select Model");
-			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
-			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
-			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			testRunner.ClickByName("Next Button");
 
-			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
+			testRunner.WaitFor(() => testRunner.ChildExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
 
-			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
-
-			testRunner.EnsureWelcomePageClosed();
+			testRunner.WaitFor(() => !testRunner.ChildExists<SetupStepComPortOne>());
 		}
 
 		public static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
