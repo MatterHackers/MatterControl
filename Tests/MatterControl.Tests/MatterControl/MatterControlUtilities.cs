@@ -919,7 +919,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="testRunner"></param>
 		public static void StartPrint(this AutomationRunner testRunner)
 		{
-			testRunner.OpenPrintPopupMenu();
+			testRunner.OpenPrintPopupMenu(false, false);
 			testRunner.ClickByName("Start Print Button");
 		}
 
