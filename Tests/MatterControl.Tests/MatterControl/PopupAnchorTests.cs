@@ -561,6 +561,7 @@ namespace MatterControl.Tests.MatterControl
 					}
 
 					testRunner.ClickByName("buttonA");
+					testRunner.Delay();
 
 					validator.Invoke(button, popup.Widget);
 
