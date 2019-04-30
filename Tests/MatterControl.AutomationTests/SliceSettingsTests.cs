@@ -57,11 +57,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.Type("4;2;a;not;6");
 
 					testRunner.AddItemToBedplate();
-
-					// Toggle Sync-to-print
-					testRunner.SwitchToGCodeTab();
-					testRunner.ClickByName("Sync To Print Toggle");
-
 					testRunner.StartPrint();
 
 					var printer = testRunner.FirstPrinter();
@@ -122,14 +117,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		// TODO: Promote to extension method
 		private static void WaitForLayerAndResume(AutomationRunner testRunner, PrinterConfig printer, int indexToWaitFor)
 		{
-			testRunner.WaitForName("Yes Button", 30);
+			testRunner.WaitForName("Yes Button", 15);
 
 			// Wait for layer
-			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 30, 500);
-			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1);
+			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 10, 500);
+			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1, "Active layer index does not match expected");
 
 			testRunner.ClickByName("Yes Button");
-			testRunner.WaitForWidgetDisappear("Yes Button", 10);
+			testRunner.Delay();
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
