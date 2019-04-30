@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
-		public async Task SoftwareLevelingRequiredCorrectWorkflow()
+		public async Task SoftwareLevelingTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
