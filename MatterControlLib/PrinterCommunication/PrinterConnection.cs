@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private readonly CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
-		private CommunicationStates communicationState = CommunicationStates.Disconnected;
+		private CommunicationStates _communicationState = CommunicationStates.Disconnected;
 
 		private PrinterMove currentDestination;
 
@@ -490,11 +490,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public CommunicationStates CommunicationState
 		{
-			get
-			{
-				return communicationState;
-			}
-
+			get => _communicationState;
 			set
 			{
 				switch (value)
@@ -539,11 +535,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 						break;
 				}
 
-				if (communicationState != value)
+				if (_communicationState != value)
 				{
 					this.TerminalLog.WriteLine(string.Format("Communication State: {0}", value));
 
-					switch (communicationState)
+					switch (_communicationState)
 					{
 						// if it was printing
 						case CommunicationStates.PrintingFromSd:
@@ -552,7 +548,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 								// and is changing to paused
 								if (value == CommunicationStates.Paused)
 								{
-									if (communicationState == CommunicationStates.Printing)
+									if (_communicationState == CommunicationStates.Printing)
 									{
 										PrePauseCommunicationState = CommunicationStates.Printing;
 									}
@@ -577,7 +573,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 									PrintingItemName = "";
 
 									// Set this early as we always want our functions to know the state we are in.
-									communicationState = value;
+									_communicationState = value;
 									timePrinting.Stop();
 									if (Printer.Bed?.EditContext?.SourceItem.Name != null)
 									{
@@ -616,7 +612,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 							break;
 					}
 
-					communicationState = value;
+					_communicationState = value;
 					CommunicationStateChanged?.Invoke(this, null);
 					AnyCommunicationStateChanged?.Invoke(this, null);
 				}
@@ -700,7 +696,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			get
 			{
 				if (CommunicationState == CommunicationStates.PrintingFromSd
-					|| (communicationState == CommunicationStates.Paused && PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
+					|| (CommunicationState == CommunicationStates.Paused && PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 				{
 					if (totalSdBytes > 0)
 					{
@@ -1518,7 +1514,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				|| (this.IsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
 				if ((this.IsConnected
-					|| this.communicationState == CommunicationStates.AttemptingToConnect)
+					|| this.CommunicationState == CommunicationStates.AttemptingToConnect)
 					&& CommunicationState != CommunicationStates.PrintingFromSd)
 				{
 					TryWriteNextLineFromGCodeFile();
@@ -1607,7 +1603,7 @@ You will then need to logout and log back in to the computer for the changes to 
 				}
 			}
 
-			Console.WriteLine("Exiting ReadFromPrinter method: " + communicationState.ToString());
+			Console.WriteLine("Exiting ReadFromPrinter method: " + CommunicationState.ToString());
 		}
 
 		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
@@ -2008,7 +2004,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			});
 
 			// DoneLoadingGCodeToPrint
-			switch (communicationState)
+			switch (this.CommunicationState)
 			{
 				case CommunicationStates.Connected:
 					// This can happen if the printer is reset during the slicing of the part.
@@ -2333,7 +2329,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			while (!cancellationToken.IsCancellationRequested
 				&& this.CommunicationState != CommunicationStates.FinishedPrint
-				&& this.communicationState != CommunicationStates.Connected)
+				&& this.CommunicationState != CommunicationStates.Connected)
 			{
 				double secondsSinceStartedPrint = timePrinting.Elapsed.TotalSeconds;
 
@@ -2569,7 +2565,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						// and finally notify anyone that wants to know
 						PrintCanceled?.Invoke(this, null);
 					}
-					else if (communicationState == CommunicationStates.Printing) // we finished printing normally
+					else if (CommunicationState == CommunicationStates.Printing) // we finished printing normally
 					{
 						CommunicationState = CommunicationStates.FinishedPrint;
 
