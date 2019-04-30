@@ -870,10 +870,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Generate Gcode Button");
 		}
 
-		/// <summary>
-		/// Switch to the primary SliceSettings tab
-		/// </summary>
-		/// <param name="testRunner"></param>
 		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true)
 		{
 			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
