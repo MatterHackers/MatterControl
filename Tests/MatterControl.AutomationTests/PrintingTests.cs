@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.OpenPrintPopupMenu(false, false);
+					testRunner.OpenPrintPopupMenu(false);
 
 					testRunner.ClickByName("SetupPrinter");
 

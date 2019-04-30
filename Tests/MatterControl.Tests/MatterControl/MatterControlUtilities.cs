@@ -874,7 +874,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Switch to the primary SliceSettings tab
 		/// </summary>
 		/// <param name="testRunner"></param>
-		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true, bool doFinishSetup = true)
+		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true)
 		{
 			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
 
@@ -895,17 +895,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// wait for it to be all the way open
 			testRunner.WaitForName("Advanced Section");
 
-			// make sure we are in a state that can print
-			if (doFinishSetup
-				&& testRunner.NameExists("SetupPrinter"))
-			{
-				testRunner.ClickByName("SetupPrinter");
-				testRunner.ClickByName("Already Loaded Button");
-				// open it again
-				testRunner.ClickByName("PrintPopupMenu");
-				testRunner.WaitForName("Advanced Section");
-			}
-
 			if (openAdvanced
 				&& !testRunner.NameExists("Layer(s) To Pause Field", .2))
 			{
@@ -919,7 +908,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="testRunner"></param>
 		public static void StartPrint(this AutomationRunner testRunner)
 		{
-			testRunner.OpenPrintPopupMenu(false, false);
+			testRunner.OpenPrintPopupMenu(false);
 			testRunner.ClickByName("Start Print Button");
 		}
 
