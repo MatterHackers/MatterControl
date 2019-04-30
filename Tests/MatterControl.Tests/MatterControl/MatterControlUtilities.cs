@@ -274,6 +274,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// TODO: Improve this to more accurately find the print task row and click its Stop button
 			testRunner.ClickByName("Stop Task Button");
+
+			// Wait for and dismiss the new PrintCompleted dialog
+			testRunner.WaitForName("Ok Button");
+			testRunner.ClickByName("Ok Button");
 		}
 
 		public static void WaitForLayer(this Emulator emulator, PrinterSettings printerSettings, int layerNumber, double secondsToWait = 30)
