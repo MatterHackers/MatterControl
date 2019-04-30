@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// TODO: Improve this to more accurately find the print task row and click its Stop button
 			if (testRunner.WaitForName("Stop Task Button", .2))
 			{
-			testRunner.ClickByName("Stop Task Button");
+				testRunner.ClickByName("Stop Task Button");
 			}
 
 			// Wait for and dismiss the new PrintCompleted dialog
@@ -870,7 +870,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Generate Gcode Button");
 		}
 
-		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true)
+		public static void OpenPrintPopupMenu(this AutomationRunner testRunner)
 		{
 			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
 
@@ -881,31 +881,40 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
-			// if the menu is not already open
-			if (!testRunner.NameExists("Advanced Section", .2))
-			{
-				// open it
-				testRunner.ClickByName("PrintPopupMenu");
-			}
-
-			// wait for it to be all the way open
-			testRunner.WaitForName("Advanced Section");
-
-			if (openAdvanced
-				&& !testRunner.NameExists("Layer(s) To Pause Field", .2))
-			{
-				testRunner.ClickByName("Advanced Section");
-			}
+			// open it
+			testRunner.ClickByName("PrintPopupMenu");
 		}
 
 		/// <summary>
 		/// Open the Print popup menu and click the Start Print button
 		/// </summary>
 		/// <param name="testRunner"></param>
-		public static void StartPrint(this AutomationRunner testRunner)
+		public static void StartPrint(this AutomationRunner testRunner, string pauseAtLayers = null)
 		{
-			testRunner.OpenPrintPopupMenu(false);
+			// Open popup
+			testRunner.OpenPrintPopupMenu();
+
+			if (pauseAtLayers != null)
+			{
+				testRunner.OpenPrintPopupAdvanced();
+
+				testRunner.ClickByName("Layer(s) To Pause Field");
+				testRunner.Type(pauseAtLayers);
+			}
+
 			testRunner.ClickByName("Start Print Button");
+		}
+
+		public static void OpenPrintPopupAdvanced(this AutomationRunner testRunner)
+		{
+			// Expand advanced panel if needed
+			if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
+			{
+				testRunner.ClickByName("Advanced Section");
+			}
+
+			// wait for child
+			testRunner.WaitForName("Layer(s) To Pause Field");
 		}
 
 		public static void OpenGCode3DOverflowMenu(this AutomationRunner testRunner)

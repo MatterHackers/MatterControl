@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.OpenPrintPopupMenu(false);
+					testRunner.OpenPrintPopupMenu();
 
 					testRunner.ClickByName("SetupPrinter");
 
@@ -109,11 +109,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					currentSettings.SetValue(SettingsKey.pause_gcode, "");
 					currentSettings.SetValue(SettingsKey.resume_gcode, "");
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2");
-
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -133,11 +129,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Complete9StepLeveling(2);
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2");
-
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -161,11 +153,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Save Leveling Button");
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2");
-
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -294,14 +282,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2;6");
-
 					// print a part
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2;6");
 
 					// turn on line error simulation
 					emulator.SimulateLineErrors = true;
@@ -342,15 +326,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
 					testRunner.Delay(1);
 
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2;4;6");
-
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2;4;6");
 
 					// Wait for pause dialog
 					testRunner.WaitForName("Yes Button", 15); // the yes button is 'Resume'

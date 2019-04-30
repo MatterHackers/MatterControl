@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("JumpStart", "V1", runSlow: false))
 				{
 					// make sure it is showing the correct button
-					testRunner.OpenPrintPopupMenu(false);
+					testRunner.OpenPrintPopupMenu();
 
 					var startPrintButton = testRunner.GetWidgetByName("Start Print Button", out _);
 
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Complete9StepLeveling();
 
-					testRunner.OpenPrintPopupMenu(false);
+					testRunner.OpenPrintPopupMenu();
 
 					// make sure the button has changed to start print
 					startPrintButton = testRunner.GetWidgetByName("Start Print Button", out _);
@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Reset to Defaults Menu Item");
 					testRunner.ClickByName("Yes Button");
 
-					testRunner.OpenPrintPopupMenu(false);
+					testRunner.OpenPrintPopupMenu();
 
 					// make sure it is showing the correct button
 					Assert.IsTrue(testRunner.WaitForName("SetupPrinter"), "Finish Setup should be visible after reset to Defaults");
