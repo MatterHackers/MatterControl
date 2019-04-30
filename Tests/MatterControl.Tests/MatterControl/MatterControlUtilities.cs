@@ -940,7 +940,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			EnsurePrinterSidebarOpen(testRunner);
 
 			testRunner.ClickByName("Slice Settings Tab");
-			testRunner.ClickByName("General Tab");
 		}
 
 		public static void Complete9StepLeveling(this AutomationRunner testRunner, int numUpClicks = 1)
