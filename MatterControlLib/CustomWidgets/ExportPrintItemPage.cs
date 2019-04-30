@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl
 
 						if (gcodeExportButton.Checked)
 						{
-							var errors = printer.ValidateSettings();
+							var errors = printer.ValidateSettings(validatePrintBed: false);
 
 							exportButton.Enabled = !errors.Any(item => item.ErrorLevel == ValidationErrorLevel.Error);
 
