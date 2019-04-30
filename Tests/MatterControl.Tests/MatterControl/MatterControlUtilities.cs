@@ -273,7 +273,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			// TODO: Improve this to more accurately find the print task row and click its Stop button
+			if (testRunner.WaitForName("Stop Task Button", .2))
+			{
 			testRunner.ClickByName("Stop Task Button");
+			}
 
 			// Wait for and dismiss the new PrintCompleted dialog
 			testRunner.WaitForName("Ok Button");
