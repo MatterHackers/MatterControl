@@ -82,8 +82,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
-		public async Task PulseRequiresLevelingAndLevelingWorks()
+		public async Task PulseLevelingTest()
 		{
+			// Validates the Pulse profile requires leveling and it works as expected
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				AutomationRunner.TimeToMoveMouse = .2;
@@ -150,7 +151,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// now modify the leveling data manually and assert that it is applied when printing
 					testRunner.SwitchToControlsTab();
 					testRunner.ClickByName("Edit Leveling Data Button");
-					for(int i=0; i<3; i++)
+					for (int i = 0; i < 3; i++)
 					{
 						var name = $"z Position {i}";
 						testRunner.ClickByName(name);
@@ -252,7 +253,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				"ok",
 				"N2 M114*37",
 				"X:0.00 Y: 0.00 Z: 0.00 E: 0.00 Count X: 0.00 Y: 0.00 Z: 0.00",
-				 "ok",
+				"ok",
 			};
 
 			SimulatePrint(test1);
@@ -437,7 +438,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
-					//scrollable.ScrollPosition = new Vector2();
+					// scrollable.ScrollPosition = new Vector2();
 					scrollable.ScrollPosition = new Vector2(0, 30);
 
 					// Workaround to force layout to fix problems with size of Tuning Widgets after setting ScrollPosition manually
@@ -488,7 +489,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, overrideHeight:900, maxTimeToRun: 120);
+			}, overrideHeight: 900, maxTimeToRun: 120);
 		}
 
 		[Test, Category("Emulator")]
@@ -531,7 +532,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var width = scrollable.Width;
 
 					// Workaround needed to scroll to the bottom of the Controls panel
-					//scrollable.ScrollPosition = new Vector2();
+					// scrollable.ScrollPosition = new Vector2();
 					scrollable.ScrollPosition = new Vector2(0, 30);
 
 					// Workaround to force layout to fix problems with size of Tuning Widgets after setting ScrollPosition manually

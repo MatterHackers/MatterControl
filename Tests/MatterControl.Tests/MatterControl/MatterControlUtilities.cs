@@ -266,13 +266,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void CancelPrint(this AutomationRunner testRunner)
 		{
-			// TODO: Improve this to more accurately find the print task row and click its Stop button
-			testRunner.ClickByName("Stop Task Button");
-
+			// If the pause/resume dialog is open, dismiss it before canceling the print
 			if (testRunner.WaitForName("Yes Button", 1))
 			{
 				testRunner.ClickByName("Yes Button");
 			}
+
+			// TODO: Improve this to more accurately find the print task row and click its Stop button
+			if (testRunner.WaitForName("Stop Task Button", .2))
+			{
+			testRunner.ClickByName("Stop Task Button");
+			}
+
+			// Wait for and dismiss the new PrintCompleted dialog
+			testRunner.WaitForName("Ok Button");
+			testRunner.ClickByName("Ok Button");
 		}
 
 		public static void WaitForLayer(this Emulator emulator, PrinterSettings printerSettings, int layerNumber, double secondsToWait = 30)
