@@ -1005,7 +1005,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Done Button");
 
 			testRunner.Delay();
-			if (testRunner.NameExists("Already Loaded Button"))
+			if (testRunner.NameExists("Already Loaded Button", 0.2))
 			{
 				testRunner.ClickByName("Already Loaded Button");
 			}
