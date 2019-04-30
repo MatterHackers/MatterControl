@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="printer">The printer to validate</param>
 		/// <returns>A list of all warnings and errors</returns>
-		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null)
+		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null, bool validatePrintBed = true)
 		{
 			if (settings == null)
 			{
@@ -84,7 +84,8 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			if (!printer.PrintableItems(printer.Bed.Scene).Any())
+			if (validatePrintBed
+				&& !printer.PrintableItems(printer.Bed.Scene).Any())
 			{
 				errors.Add(new ValidationError("NoPrintableParts")
 				{
