@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
-		public async Task PauseOnLayerDoesPauseOnPrint()
+		public async Task PauseOnLayerTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
