@@ -679,6 +679,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void WaitForPrintFinished(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
 		{
 			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
+			// click the ok button on the print complete dialog
+			testRunner.ClickByName("Ok Button");
 		}
 
 		/// <summary>
