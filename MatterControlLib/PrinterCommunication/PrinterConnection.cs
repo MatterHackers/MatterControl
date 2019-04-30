@@ -2026,7 +2026,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 							if (gcodeFileNameForTask != null
 								&& ActivePrintTask == null
-								&& CalibrationPrint)
+								&& !CalibrationPrint)
 							{
 								// TODO: Fix printerItemID int requirement
 								ActivePrintTask = new PrintTask
