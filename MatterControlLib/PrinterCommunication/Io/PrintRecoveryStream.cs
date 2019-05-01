@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				recoverFeedRate = 10;
 			}
+
 			recoverFeedRate *= 60;
 
 			queuedCommands = new QueuedCommandsStream(printer, null);
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			internalStream.SetPrinterPosition(lastDestination);
 		}
 
-		public override string ReadLine() 
+		public override string ReadLine()
 		{
 			// Send any commands that are queue before moving on to the internal stream.
 			string nextCommand = queuedCommands.ReadLine();
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				lastLine = nextCommand;
 				return nextCommand;
 			}
-			
+
 			switch (RecoveryState)
 			{
 				// heat the extrude to remove it from the part
@@ -95,7 +96,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					queuedCommands.Add("G90; use absolute coordinates");
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
-					
+
 					bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
 					double bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 					if (hasHeatedBed && bedTemp > 0)
@@ -147,12 +148,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
+
 					// We now know where the printer is re-enable print leveling
 					printer.Connection.AllowLeveling = true;
 					RecoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
-					
-				// This is to recover printing if an out a filament occurs. 
+
+				// This is to recover printing if an out a filament occurs.
 				// Help the user move the extruder down to just touching the part
 				case RecoveryState.FindingRecoveryLayer:
 					if (false) // help the user get the head to the right position
@@ -176,17 +178,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					while (internalStream.GCodeFile.PercentComplete(internalStream.LineIndex) < percentDone)
 					{
 						string line = internalStream.ReadLine();
-						if(line == null)
+						if (line == null)
 						{
 							break;
 						}
+
 						commandCount++;
 
 						// make sure we don't parse comments
-						if(line.Contains(";"))
+						if (line.Contains(";"))
 						{
 							line = line.Split(';')[0];
 						}
+
 						lastDestination = GetPosition(line, lastDestination);
 
 						if (commandCount > 100)
@@ -209,7 +213,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							return line;
 						}
 					}
-					
+
 					RecoveryState = RecoveryState.PrimingAndMovingToStart;
 
 					// make sure we always- pick up the last movement
@@ -218,7 +222,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				case RecoveryState.PrimingAndMovingToStart:
 					{
-
 						if (printer.Settings.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can recover printing from
@@ -229,9 +232,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						double extruderWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 						// move to a position outside the printed bounds
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(
-							new Vector3(boundsOfSkippedLayers.Left - extruderWidth*2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.Z),
-							0, printer.Settings.XSpeed())));
-						
+							new Vector3(boundsOfSkippedLayers.Left - extruderWidth * 2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.Z),
+							0,
+							printer.Settings.XSpeed())));
+
 						// let's prime the extruder
 						queuedCommands.Add("G1 E10 F{0}".FormatWith(printer.Settings.EFeedRate(0))); // extrude 10
 						queuedCommands.Add("G1 E9"); // and retract a bit
@@ -239,10 +243,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						// move to the actual print position
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, printer.Settings.XSpeed())));
 
-						/// reset the printer to know where the filament should be
+						// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));
 						RecoveryState = RecoveryState.PrintingSlow;
 					}
+
 					return "";
 
 				case RecoveryState.PrintingSlow:
