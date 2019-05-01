@@ -1663,7 +1663,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static Dictionary<NamedTypeFace, TypeFace> TypeFaceCache { get; set; } = new Dictionary<NamedTypeFace, TypeFace>()
+		private static readonly Dictionary<NamedTypeFace, TypeFace> TypeFaceCache = new Dictionary<NamedTypeFace, TypeFace>()
 		{
 			[NamedTypeFace.Liberation_Sans] = LiberationSansFont.Instance,
 			[NamedTypeFace.Liberation_Sans_Bold] = LiberationSansBoldFont.Instance,
