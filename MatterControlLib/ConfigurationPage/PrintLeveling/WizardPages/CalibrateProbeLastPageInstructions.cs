@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				+ "    1. Select the 'Controls' tab on the right".Localize() + "\n"
 				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
 			contentRow.AddChild(this.CreateTextField(calibrated));
+			contentRow.BackgroundColor = theme.MinimalShade;
 
 			// Create and display a widget for reference
 			var exampleWidget = CalibrationControls.CreateSection(printer, theme);
