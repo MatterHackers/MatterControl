@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl
 
 					case DetailedPrintingState.HeatingT0:
 						ApplicationController.Instance.Tasks.Execute(
-							"Heating Nozzle 1".Localize(),
+							"Heating Nozzle".Localize() + " 1",
 							this,
 							(reporter, cancellationToken) =>
 							{
@@ -338,7 +338,7 @@ namespace MatterHackers.MatterControl
 
 					case DetailedPrintingState.HeatingT1:
 						ApplicationController.Instance.Tasks.Execute(
-							"Heating Nozzle 2".Localize(),
+							"Heating Nozzle".Localize() + " 2",
 							this,
 							(reporter, cancellationToken) =>
 							{

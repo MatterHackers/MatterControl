@@ -169,6 +169,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
 				{
+					int maxItemWidth = 0;
+
 					// Select the 25 most recent files and project onto FileSystemItems
 					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
 					foreach (var item in recentFiles.Where(f => f.Length > 500).Select(f => new SceneReplacementFileItem(f.FullName)).Take(12))
@@ -179,11 +181,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						var bedHistory = subMenu.CreateMenuItem(title, imageBuffer);
 						bedHistory.GutterWidth = gutterWidth;
-						bedHistory.HAnchor = HAnchor.Absolute;
+						bedHistory.HAnchor = HAnchor.Fit;
 						bedHistory.VAnchor = VAnchor.Absolute;
-						bedHistory.Padding = new BorderDouble(gutterWidth + 3, 2, 2, 2);
+						bedHistory.Padding = new BorderDouble(gutterWidth + 3, 2, 12, 2);
 						bedHistory.Height = thumbWidth + 3;
-						bedHistory.Width = 180;
 						bedHistory.Click += (s, e) =>
 						{
 							UiThread.RunOnIdle(async () =>
@@ -198,6 +199,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								}
 							});
 						};
+
+						maxItemWidth = (int) Math.Max(maxItemWidth, bedHistory.Width);
 
 						void UpdateImageBuffer(ImageBuffer thumbnail)
 						{
@@ -232,6 +235,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							thumbWidth,
 							thumbWidth,
 							menuTheme).ConfigureAwait(false);
+					}
+
+					// Resize menu items to max item width
+					foreach(var menuItem in subMenu.Children)
+					{
+						menuItem.HAnchor = HAnchor.Left | HAnchor.Absolute;
+						menuItem.Width = maxItemWidth;
 					}
 				});
 

@@ -67,13 +67,13 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(xButtonsGroup);
 			xButtons = new List<RadioButton>();
-			xButtons.Add(new RadioButton("-3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("-2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("-1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton(" 0".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			foreach (var button in xButtons)
 			{
 				xButtonsGroup.AddChild(button);
@@ -87,13 +87,13 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(yButtonsGroup);
 			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
 			yButtons = new List<RadioButton>();
-			yButtons.Add(new RadioButton("-3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("-2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("-1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton(" 0".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+1".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+2".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+3".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			foreach (var button in yButtons)
 			{
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
