@@ -302,7 +302,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			if (levelingEnabled
 				&& !LevelingValidation.NeedsToBeRun(printer))
 			{
-				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream, false);
+				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream);
 			}
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))

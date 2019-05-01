@@ -2286,7 +2286,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			if (!LevelingValidation.NeedsToBeRun(Printer))
 			{
-				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream, true);
+				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
 			}
 
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);

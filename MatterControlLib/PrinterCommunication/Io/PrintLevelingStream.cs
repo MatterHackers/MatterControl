@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -36,18 +37,22 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
 		private PrinterMove _lastDestination = PrinterMove.Unknown;
-		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
-		private Vector3 currentProbeZOffset;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
+		private PrintLevelingData levelingData;
+		private bool printLevelingEnabled;
+		private bool hasHardwareLeveling;
 
-		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream, bool activePrinting)
+		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			printer.Settings.SettingChanged += Printer_SettingChanged;
+
 			// always reset this when we construct
 			AllowLeveling = true;
-			this.activePrinting = activePrinting;
+
+			SetLevelingFunctions();
 		}
 
 		public override string DebugInfo
@@ -62,19 +67,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public PrinterMove LastDestination => _lastDestination;
 
-		bool LevelingActive
+		private bool LevelingActive
 		{
 			get
 			{
 				return AllowLeveling
-					&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+					&& printLevelingEnabled
+					&& !hasHardwareLeveling
+					&& currentLevelingFunctions != null;
 			}
 		}
 
 		public override string ReadLine()
 		{
-			if(!wroteLevelingStatus && LevelingActive)
+			if (!wroteLevelingStatus && LevelingActive)
 			{
 				wroteLevelingStatus = true;
 				return "; Software Leveling Applied";
@@ -144,22 +150,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
+		private void Printer_SettingChanged(object s, StringEventArgs e)
+		{
+			if (e.Data == SettingsKey.print_leveling_enabled
+				|| e.Data == SettingsKey.has_hardware_leveling
+				|| e.Data == SettingsKey.print_leveling_data)
+			{
+				SetLevelingFunctions();
+			}
+		}
+
+		private void SetLevelingFunctions()
+		{
+			levelingData = printer.Settings.Helpers.PrintLevelingData;
+			printLevelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			hasHardwareLeveling = printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+
+			currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
+
+			if (levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
+			{
+				// if we have bad data null it so we don't use it
+				currentLevelingFunctions = null;
+			}
+		}
+
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-
-			if (levelingData != null
-				&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
-				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
+			if (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 "))
 			{
-				if (currentLevelingFunctions == null
-					|| currentProbeZOffset != printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset)
-					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
-				{
-					currentProbeZOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
-					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
-				}
-
 				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);
 			}
 
