@@ -1,6 +1,3 @@
-English:
-Translated:
-
 English:    • Remove the paper
 Translated:    • Remove the paper
 
@@ -16,12 +13,6 @@ Translated:- none -
 English: Once it is finished homing we will heat the bed.
 Translated: Once it is finished homing we will heat the bed.
 
-English:$/kg
-Translated:$/kg
-
-English:%
-Translated:%
-
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -36,12 +27,6 @@ Translated:{0} must be less than or equal to the {1}.
 
 English:<< Back
 Translated:<< Back
-
-English:°
-Translated:°
-
-English:°C
-Translated:°C
 
 English:2D Layer View
 Translated:2D Layer View
@@ -64,11 +49,11 @@ Translated:A modifier of the width of the extrusion when printing outside perime
 English:A password reset code will be sent to your email.
 Translated:A password reset code will be sent to your email.
 
+English:A sheet of paper
+Translated:A sheet of paper
+
 English:A six-digit code - sent to your email account
 Translated:A six-digit code - sent to your email account
-
-English:A standard sheet of paper
-Translated:A standard sheet of paper
 
 English:A U.S. or Canadian mobile phone number
 Translated:A U.S. or Canadian mobile phone number
@@ -301,8 +286,11 @@ Translated:Baud Rate
 English:Bed
 Translated:Bed
 
-English:Bed Leveling
-Translated:Bed Leveling
+English:Bed Leveling data created at {0}°C versus current {1}°C
+Translated:Bed Leveling data created at {0}°C versus current {1}°C
+
+English:Bed Leveling Temperature
+Translated:Bed Leveling Temperature
 
 English:Bed PID Settings
 Translated:Bed PID Settings
@@ -379,17 +367,20 @@ Translated:Calculate and transmit a standard rep-rap checksum for all commands.
 English:Calculate Path
 Translated:Calculate Path
 
-English:Calibrate Probe Offset
-Translated:Calibrate Probe Offset
-
 English:Calibration
 Translated:Calibration
+
+English:Calibration Faces
+Translated:Calibration Faces
 
 English:Calibration Files
 Translated:Calibration Files
 
 English:Calibration Parts
 Translated:Calibration Parts
+
+English:Calibration Tab
+Translated:Calibration Tab
 
 English:Cancel
 Translated:Cancel
@@ -409,11 +400,8 @@ Translated:Cancel Print?
 English:Cancel the current print?
 Translated:Cancel the current print?
 
-English:Can't access '{0}'.
-Translated:Can't access '{0}'.
-
-English:Can't add printers while printing
-Translated:Can't add printers while printing
+English:Can't access
+Translated:Can't access
 
 English:Can't log out while printing
 Translated:Can't log out while printing
@@ -454,6 +442,9 @@ Translated:Checking with webservice
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 
+English:Choose the calibration you would like to perform.
+Translated:Choose the calibration you would like to perform.
+
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 
@@ -493,11 +484,20 @@ Translated:Close Polygons
 English:Cloud Library
 Translated:Cloud Library
 
+English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
+Translated:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
+
+English:Coarse Calibration: If your printer is way off
+Translated:Coarse Calibration: If your printer is way off
+
 English:Coast At End
 Translated:Coast At End
 
 English:Collapse All
 Translated:Collapse All
+
+English:Collect data
+Translated:Collect data
 
 English:Color
 Translated:Color
@@ -529,6 +529,9 @@ Translated:Configure EEProm
 English:Configure Notifications
 Translated:Configure Notifications
 
+English:Configure Plugins
+Translated:Configure Plugins
+
 English:Configure Printer
 Translated:Configure Printer
 
@@ -540,6 +543,9 @@ Translated:Confirm your Password
 
 English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
 Translated:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
+
+English:Congratulations Print Complete
+Translated:Congratulations Print Complete
 
 English:Congratulations! Print Leveling is now configured and enabled.
 Translated:Congratulations! Print Leveling is now configured and enabled.
@@ -577,6 +583,9 @@ Translated:Connection Lost
 English:Connection succeeded
 Translated:Connection succeeded
 
+English:Connection timed out
+Translated:Connection timed out
+
 English:Continue
 Translated:Continue
 
@@ -601,6 +610,15 @@ Translated:Cooling Thresholds
 English:Copy
 Translated:Copy
 
+English:Copy all settings including hardware calibration
+Translated:Copy all settings including hardware calibration
+
+English:Copy and recalibrate
+Translated:Copy and recalibrate
+
+English:Copy everything but hardware specific calibration settings
+Translated:Copy everything but hardware specific calibration settings
+
 English:Copy Printers
 Translated:Copy Printers
 
@@ -618,9 +636,6 @@ Translated:Couldn't load file
 
 English:Couldn't save file
 Translated:Couldn't save file
-
-English:count or mm
-Translated:count or mm
 
 English:Create
 Translated:Create
@@ -663,6 +678,9 @@ Translated:Create Skirt
 
 English:Create Support
 Translated:Create Support
+
+English:Create Wipe Tower
+Translated:Create Wipe Tower
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
@@ -730,6 +748,9 @@ Translated:Demo Mode
 English:Density
 Translated:Density
 
+English:DEPRECATED: replaced with extruder_offset
+Translated:DEPRECATED: replaced with extruder_offset
+
 English:Depth
 Translated:Depth
 
@@ -796,6 +817,9 @@ Translated:Disconnecting
 English:Disconnecting from printer...
 Translated:Disconnecting from printer...
 
+English:Dismiss
+Translated:Dismiss
+
 English:Distance
 Translated:Distance
 
@@ -810,6 +834,9 @@ Translated:Done
 
 English:Don't remind me again
 Translated:Don't remind me again
+
+English:Don't show this again
+Translated:Don't show this again
 
 English:Down Arrow
 Translated:Down Arrow
@@ -876,6 +903,12 @@ Translated:Email
 
 English:Email Address
 Translated:Email Address
+
+English:Empty Bed
+Translated:Empty Bed
+
+English:Emulate Endstops
+Translated:Emulate Endstops
 
 English:Enable Auto Cooling
 Translated:Enable Auto Cooling
@@ -961,6 +994,9 @@ Translated:Estimated Cost
 English:Estimated Mass
 Translated:Estimated Mass
 
+English:Exact clone
+Translated:Exact clone
+
 English:Exit while printing
 Translated:Exit while printing
 
@@ -997,6 +1033,9 @@ Translated:Export Error
 English:Export File
 Translated:Export File
 
+English:Export Part Sheet
+Translated:Export Part Sheet
+
 English:Export selection to
 Translated:Export selection to
 
@@ -1023,6 +1062,12 @@ Translated:Extrude First Layer
 
 English:Extruder
 Translated:Extruder
+
+English:Extruder 2 Clean Page
+Translated:Extruder 2 Clean Page
+
+English:Extruder 2 Speed
+Translated:Extruder 2 Speed
 
 English:Extruder 2 Temperature
 Translated:Extruder 2 Temperature
@@ -1060,6 +1105,9 @@ Translated:Extrusion Ratio
 English:Extrusion Width
 Translated:Extrusion Width
 
+English:Failed to connect server
+Translated:Failed to connect server
+
 English:Fan
 Translated:Fan
 
@@ -1074,6 +1122,9 @@ Translated:Feedrate Ratio
 
 English:Filament
 Translated:Filament
+
+English:Filament 2 Has Been Loaded
+Translated:Filament 2 Has Been Loaded
 
 English:Filament Has Been Loaded
 Translated:Filament Has Been Loaded
@@ -1090,6 +1141,9 @@ Translated:Filament Volume
 English:File May Cause Problems
 Translated:File May Cause Problems
 
+English:File Path
+Translated:File Path
+
 English:Fill Density
 Translated:Fill Density
 
@@ -1099,9 +1153,6 @@ Translated:Fill Pattern
 English:Fill Thin Gaps
 Translated:Fill Thin Gaps
 
-English:Filter Output
-Translated:Filter Output
-
 English:Filters
 Translated:Filters
 
@@ -1110,6 +1161,9 @@ Translated:Finally click 'Next' to continue.
 
 English:Find and create supports where needed
 Translated:Find and create supports where needed
+
+English:Fine Calibration: When you want that extra precision
+Translated:Fine Calibration: When you want that extra precision
 
 English:Finish
 Translated:Finish
@@ -1153,11 +1207,20 @@ Translated:First Layer Thickness
 English:Fit to Bounds
 Translated:Fit to Bounds
 
+English:Fit to Cylinder
+Translated:Fit to Cylinder
+
+English:Flag for the state of our filament loaded on extruder 2.
+Translated:Flag for the state of our filament loaded on extruder 2.
+
 English:Flag for the state of our filament loaded.
 Translated:Flag for the state of our filament loaded.
 
 English:Flag keeping track if probe calibration wizard has been run.
 Translated:Flag keeping track if probe calibration wizard has been run.
+
+English:Flag keeping track if xy calibration wizard has been run.
+Translated:Flag keeping track if xy calibration wizard has been run.
 
 English:Flat
 Translated:Flat
@@ -1198,9 +1261,6 @@ Translated:Forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Found a line that is {0} characters long.\n{1}...
 
-English:g/cm³
-Translated:g/cm³
-
 English:g0
 Translated:g0
 
@@ -1210,20 +1270,17 @@ Translated:G-Code
 English:G-Code Flavor
 Translated:G-Code Flavor
 
+English:G-Code Line
+Translated:G-Code Line
+
 English:G-Code Output
 Translated:G-Code Output
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+English:G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-Code to be run after the change in Z height for the next layer.
@@ -1231,14 +1288,8 @@ Translated:G-Code to be run after the change in Z height for the next layer.
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 Translated:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
 
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-
-English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
+English:G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
 Translated:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
@@ -1275,6 +1326,9 @@ Translated:Generates an outline around the support material to improve strength 
 
 English:Generating Lithophane
 Translated:Generating Lithophane
+
+English:Generating Text Meshes
+Translated:Generating Text Meshes
 
 English:Give the macro a name
 Translated:Give the macro a name
@@ -1342,14 +1396,17 @@ Translated:Heated Bed
 English:Heating Bed
 Translated:Heating Bed
 
-English:Heating Extruder
-Translated:Heating Extruder
+English:Heating Nozzle
+Translated:Heating Nozzle
 
 English:Height
 Translated:Height
 
 English:Help
 Translated:Help
+
+English:Here is what we are going to do:
+Translated:Here is what we are going to do:
 
 English:High Precision
 Translated:High Precision
@@ -1399,6 +1456,9 @@ Translated:Hotend {0}
 English:Hotend {0} Temperature
 Translated:Hotend {0} Temperature
 
+English:Hotend {0} Temperature:
+Translated:Hotend {0} Temperature:
+
 English:Hotend Temperature
 Translated:Hotend Temperature
 
@@ -1411,8 +1471,8 @@ Translated:How can we improve?
 English:How to succeed with MatterControl
 Translated:How to succeed with MatterControl
 
-English:Hz
-Translated:Hz
+English:Ideal for cloning settings across different physical printers
+Translated:Ideal for cloning settings across different physical printers
 
 English:if currently connected
 Translated:if currently connected
@@ -1465,6 +1525,12 @@ Translated:Import Successful
 English:Import Wizard
 Translated:Import Wizard
 
+English:In / Out Indicators
+Translated:In / Out Indicators
+
+English:Inactive Cool Down
+Translated:Inactive Cool Down
+
 English:Include a picture of my print
 Translated:Include a picture of my print
 
@@ -1510,6 +1576,9 @@ Translated:Inner Size
 English:Insert Filament
 Translated:Insert Filament
 
+English:Insert Filament 2 Page
+Translated:Insert Filament 2 Page
+
 English:Insert Filament Page
 Translated:Insert Filament Page
 
@@ -1521,6 +1590,9 @@ Translated:Install Update
 
 English:Interface
 Translated:Interface
+
+English:Interface Layer
+Translated:Interface Layer
 
 English:Interface Layers
 Translated:Interface Layers
@@ -1603,14 +1675,8 @@ Translated:Layer Top
 English:Layer(s) To Pause
 Translated:Layer(s) To Pause
 
-English:layers
-Translated:layers
-
 English:Layers / Surface
 Translated:Layers / Surface
-
-English:layers or mm
-Translated:layers or mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Leave this as 0 to allow automatic calculation of extrusion width.
@@ -1620,6 +1686,9 @@ Translated:left click
 
 English:left drag
 Translated:left drag
+
+English:Length
+Translated:Length
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
 Translated:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
@@ -1636,8 +1705,17 @@ Translated:Let's show you around before you get started.
 English:Letter
 Translated:Letter
 
+English:Level X Carriage
+Translated:Level X Carriage
+
+English:Level X Carriage Page
+Translated:Level X Carriage Page
+
 English:Leveling
 Translated:Leveling
+
+English:Leveling Data Visualizer
+Translated:Leveling Data Visualizer
 
 English:Leveling Probe
 Translated:Leveling Probe
@@ -1656,6 +1734,12 @@ Translated:Library - Enter Share Code
 
 English:Limited Connectivity
 Translated:Limited Connectivity
+
+English:Line Checksums
+Translated:Line Checksums
+
+English:Line Inspector
+Translated:Line Inspector
 
 English:Linear Array
 Translated:Linear Array
@@ -1678,11 +1762,11 @@ Translated:Load filament
 English:Load Filament
 Translated:Load Filament
 
+English:Load Filament 2
+Translated:Load Filament 2
+
 English:Load Filament Length
 Translated:Load Filament Length
-
-English:Load Filament Wizard
-Translated:Load Filament Wizard
 
 English:Load Material
 Translated:Load Material
@@ -1750,6 +1834,9 @@ Translated:Make
 English:Make Component
 Translated:Make Component
 
+English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
+Translated:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
+
 English:Make Selection
 Translated:Make Selection
 
@@ -1791,6 +1878,9 @@ Translated:MatterControl
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl is made possible by the team at MatterHackers and other open source software
+
+English:MatterControl Plugins
+Translated:MatterControl Plugins
 
 English:MatterControl will now attempt to auto-detect printer.
 Translated:MatterControl will now attempt to auto-detect printer.
@@ -1870,23 +1960,8 @@ Translated:Mirror
 English:Missing
 Translated:Missing
 
-English:mm
-Translated:mm
-
-English:mm or %
-Translated:mm or %
-
-English:mm zero to disable
-Translated:mm zero to disable
-
 English:mm/s
 Translated:mm/s
-
-English:mm/s or %
-Translated:mm/s or %
-
-English:mm/s²
-Translated:mm/s²
 
 English:model
 Translated:model
@@ -1902,6 +1977,9 @@ Translated:Model View Style
 
 English:Modify
 Translated:Modify
+
+English:Modify T1 speeds during extrusion moves by the ratio or percent.
+Translated:Modify T1 speeds during extrusion moves by the ratio or percent.
 
 English:More
 Translated:More
@@ -1944,6 +2022,9 @@ Translated:Move Z positive
 
 English:Movement
 Translated:Movement
+
+English:Movement Requests
+Translated:Movement Requests
 
 English:Movement Speeds
 Translated:Movement Speeds
@@ -2005,14 +2086,23 @@ Translated:No Items to Export
 English:No macros are currently set up for this printer.
 Translated:No macros are currently set up for this printer.
 
+English:No printable parts exists within the bounds of the printer bed. Add content to continue
+Translated:No printable parts exists within the bounds of the printer bed. Add content to continue
+
 English:No Printer Selected
 Translated:No Printer Selected
 
 English:None
 Translated:None
 
+English:Normal Calibration: Start here
+Translated:Normal Calibration: Start here
+
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
+
+English:Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.
+Translated:Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
 Translated:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
@@ -2032,8 +2122,23 @@ Translated:Notifications
 English:Nozzle
 Translated:Nozzle
 
+English:Nozzle 1 Inset
+Translated:Nozzle 1 Inset
+
+English:Nozzle 2 Inset
+Translated:Nozzle 2 Inset
+
+English:Nozzle Calibration
+Translated:Nozzle Calibration
+
 English:Nozzle Diameter
 Translated:Nozzle Diameter
+
+English:Nozzle Offset Calibration
+Translated:Nozzle Offset Calibration
+
+English:Nozzle Offset Calibration Wizard
+Translated:Nozzle Offset Calibration Wizard
 
 English:Nozzle Offsets
 Translated:Nozzle Offsets
@@ -2059,11 +2164,17 @@ Translated:Off
 English:Offset
 Translated:Offset
 
+English:Offset Calibration complete.
+Translated:Offset Calibration complete.
+
 English:Ok
 Translated:Ok
 
 English:OK
 Translated:OK
+
+English:'Ok' Responses
+Translated:'Ok' Responses
 
 English:On Connect G-Code
 Translated:On Connect G-Code
@@ -2245,6 +2356,9 @@ Translated:Perimeters
 English:Permission Denied
 Translated:Permission Denied
 
+English:Pick the most balanced result for each axis.
+Translated:Pick the most balanced result for each axis.
+
 English:PID Settings
 Translated:PID Settings
 
@@ -2275,14 +2389,17 @@ Translated:Play a sound for notifications
 English:Please Confirm
 Translated:Please Confirm
 
+English:Please select the material you want to load into extruder {0}.
+Translated:Please select the material you want to load into extruder {0}.
+
 English:Please select the material you want to load.
 Translated:Please select the material you want to load.
 
+English:Please select the material you want to unload from extruder {0}.
+Translated:Please select the material you want to unload from extruder {0}.
+
 English:Please select the material you want to unload.
 Translated:Please select the material you want to unload.
-
-English:Please select the material you will be printing with.
-Translated:Please select the material you will be printing with.
 
 English:Please sign in to continue.
 Translated:Please sign in to continue.
@@ -2311,11 +2428,17 @@ Translated:Please wait. Sending invite...
 English:Please wait. Signing in...
 Translated:Please wait. Signing in...
 
+English:Plugins
+Translated:Plugins
+
 English:Polygons
 Translated:Polygons
 
 English:Port
 Translated:Port
+
+English:Port not available
+Translated:Port not available
 
 English:Port not found
 Translated:Port not found
@@ -2328,6 +2451,9 @@ Translated:Port Wizard
 
 English:Position
 Translated:Position
+
+English:Possible Unsupported Parts Detected
+Translated:Possible Unsupported Parts Detected
 
 English:Power Control
 Translated:Power Control
@@ -2353,9 +2479,6 @@ Translated:Prev
 English:Preview
 Translated:Preview
 
-English:Primary
-Translated:Primary
-
 English:Primitive Shapes
 Translated:Primitive Shapes
 
@@ -2364,6 +2487,9 @@ Translated:Primitives
 
 English:Print
 Translated:Print
+
+English:Print Canceled
+Translated:Print Canceled
 
 English:Print Center
 Translated:Print Center
@@ -2389,11 +2515,20 @@ Translated:Print Queue
 English:Print Recovery
 Translated:Print Recovery
 
+English:Print the calibration object
+Translated:Print the calibration object
+
 English:Print Time
 Translated:Print Time
 
+English:Print Ultra Fine Calibration
+Translated:Print Ultra Fine Calibration
+
 English:Printer
 Translated:Printer
+
+English:Printer Calibration
+Translated:Printer Calibration
 
 English:Printer Disconnected
 Translated:Printer Disconnected
@@ -2415,6 +2550,9 @@ Translated:Printer Paused
 
 English:Printer Setup
 Translated:Printer Setup
+
+English:Printer Setup & Calibration
+Translated:Printer Setup & Calibration
 
 English:Printer Setup must be run before printing
 Translated:Printer Setup must be run before printing
@@ -2440,26 +2578,23 @@ Translated:Printing Speed
 English:Printing: {0}
 Translated:Printing: {0}
 
+English:Probe Calibration
+Translated:Probe Calibration
+
 English:Probe Calibration Overview
 Translated:Probe Calibration Overview
 
-English:Probe Calibration Wizard
-Translated:Probe Calibration Wizard
-
 English:Probe Has Been Calibrated
 Translated:Probe Has Been Calibrated
+
+English:Probe Offset
+Translated:Probe Offset
 
 English:Probe Offset Sample Point
 Translated:Probe Offset Sample Point
 
 English:Probe the bed at the center
 Translated:Probe the bed at the center
-
-English:Probe XY Offset
-Translated:Probe XY Offset
-
-English:Probe Z Offset
-Translated:Probe Z Offset
 
 English:Progress Reporting
 Translated:Progress Reporting
@@ -2578,6 +2713,9 @@ Translated:Rename
 English:Rename Item
 Translated:Rename Item
 
+English:Render Leveling Data on the bed
+Translated:Render Leveling Data on the bed
+
 English:Replacing
 Translated:Replacing
 
@@ -2622,6 +2760,9 @@ Translated:Restore Default
 
 English:Restore Settings
 Translated:Restore Settings
+
+English:Restore your current bed, after all calibration is complete
+Translated:Restore your current bed, after all calibration is complete
 
 English:Resume
 Translated:Resume
@@ -2722,9 +2863,6 @@ Translated:Run Calibration
 English:Run Max if Below
 Translated:Run Max if Below
 
-English:s
-Translated:s
-
 English:Sailfish Communication
 Translated:Sailfish Communication
 
@@ -2770,9 +2908,6 @@ Translated:Saving changes
 English:Saving Changes
 Translated:Saving Changes
 
-English:Saving to Parts Sheet
-Translated:Saving to Parts Sheet
-
 English:Scale
 Translated:Scale
 
@@ -2788,9 +2923,6 @@ Translated:Search Google
 English:Search Results
 Translated:Search Results
 
-English:seconds
-Translated:seconds
-
 English:Select
 Translated:Select
 
@@ -2803,14 +2935,8 @@ Translated:Select a new Destination
 English:Select a printer to continue
 Translated:Select a printer to continue
 
-English:Select Filament Wizard
-Translated:Select Filament Wizard
-
 English:Select Make
 Translated:Select Make
-
-English:Select Material
-Translated:Select Material
 
 English:Select Model
 Translated:Select Model
@@ -2866,6 +2992,9 @@ Translated:Session Cleared
 English:Session Expired
 Translated:Session Expired
 
+English:Set active material to continue
+Translated:Set active material to continue
+
 English:Set as Default
 Translated:Set as Default
 
@@ -2899,6 +3028,9 @@ Translated:Setup
 English:Setup Needs to be Run
 Translated:Setup Needs to be Run
 
+English:Setup Required
+Translated:Setup Required
+
 English:Setup Wizard
 Translated:Setup Wizard
 
@@ -2925,6 +3057,12 @@ Translated:Share with someone
 
 English:Shared with Me
 Translated:Shared with Me
+
+English:Shop
+Translated:Shop
+
+English:Shop Filament at MatterHackers
+Translated:Shop Filament at MatterHackers
 
 English:Show Controls
 Translated:Show Controls
@@ -3049,11 +3187,8 @@ Translated:Solid Infill
 English:Some features may require an internet connection.
 Translated:Some features may require an internet connection.
 
-English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
-Translated:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
-
-English:Some parts are unsupported and require support structures to print correctly
-Translated:Some parts are unsupported and require support structures to print correctly
+English:Some parts may require support structures to print correctly
+Translated:Some parts may require support structures to print correctly
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
 Translated:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
@@ -3175,6 +3310,9 @@ Translated:Starting Sync
 English:Startup Failure
 Translated:Startup Failure
 
+English:Stash your current bed
+Translated:Stash your current bed
+
 English:Stay Connected
 Translated:Stay Connected
 
@@ -3247,23 +3385,17 @@ Translated:Support Material Extruder
 English:Support Options
 Translated:Support Options
 
-English:Support Percent
-Translated:Support Percent
-
 English:Support Type
 Translated:Support Type
 
 English:Surfaced Editor
 Translated:Surfaced Editor
 
-English:Switch
-Translated:Switch
-
 English:Switch the settings interface to one intended for SLA printers.
 Translated:Switch the settings interface to one intended for SLA printers.
 
-English:Switch to new G-Code?
-Translated:Switch to new G-Code?
+English:Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.
+Translated:Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.
 
 English:Sync Complete
 Translated:Sync Complete
@@ -3292,6 +3424,21 @@ Translated:temperature
 English:Temperature
 Translated:Temperature
 
+English:Temperature Requests
+Translated:Temperature Requests
+
+English:Temperature Responses
+Translated:Temperature Responses
+
+English:temperature1
+Translated:temperature1
+
+English:temperature2
+Translated:temperature2
+
+English:temperature3
+Translated:temperature3
+
 English:Temperatures
 Translated:Temperatures
 
@@ -3303,6 +3450,9 @@ Translated:Text
 
 English:Text Size
 Translated:Text Size
+
+English:Text2
+Translated:Text2
 
 English:Thank you!  Your information has been submitted.
 Translated:Thank you!  Your information has been submitted.
@@ -3333,6 +3483,9 @@ Translated:The amount of infill material to generate, expressed as a ratio or a 
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
 Translated:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
+
+English:The amount to lower the temperature when the hotend is inactive.
+Translated:The amount to lower the temperature when the hotend is inactive.
 
 English:The angle at which the support material lines will be drawn.
 Translated:The angle at which the support material lines will be drawn.
@@ -3376,15 +3529,6 @@ Translated:The distance the nozzle will lift after each retraction.
 English:The distance the support material will be from the object in the X and Y directions.
 Translated:The distance the support material will be from the object in the X and Y directions.
 
-English:The distance the z probe is from the extruder in x and y.
-Translated:The distance the z probe is from the extruder in x and y.
-
-English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-Translated:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-
-English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
-Translated:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
-
 English:The distance to travel after completing a perimeter to improve seams.
 Translated:The distance to travel after completing a perimeter to improve seams.
 
@@ -3412,17 +3556,32 @@ Translated:The index of the extruder to use for support material interface layer
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 Translated:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
 
+English:The inset amount for nozzle 1 from the bed
+Translated:The inset amount for nozzle 1 from the bed
+
+English:The inset amount for nozzle 2 from the bed
+Translated:The inset amount for nozzle 2 from the bed
+
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 Translated:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 
+English:The Markdown that will be shown during print leveling to help get the X carriage level.
+Translated:The Markdown that will be shown during print leveling to help get the X carriage level.
+
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:The Markdown that will be shown on the Clean Filament page.
 
 English:The Markdown that will be shown on the Insert Filament page.
 Translated:The Markdown that will be shown on the Insert Filament page.
+
+English:The Markdown that will be shown on the second extruders Clean Filament page.
+Translated:The Markdown that will be shown on the second extruders Clean Filament page.
+
+English:The Markdown that will be shown on the second extruders Insert Filament page.
+Translated:The Markdown that will be shown on the second extruders Insert Filament page.
 
 English:The Markdown that will be shown on the Trim Filament page.
 Translated:The Markdown that will be shown on the Trim Filament page.
@@ -3502,6 +3661,9 @@ Translated:The number of times to sample each probe position (results will be av
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
 Translated:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
 
+English:The offset from T0 to the probe.
+Translated:The offset from T0 to the probe.
+
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 Translated:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
 
@@ -3510,9 +3672,6 @@ Translated:The pattern to draw for the generation of support material.
 
 English:The pattern used on the bottom and top layers of the print.
 Translated:The pattern used on the bottom and top layers of the print.
-
-English:The percent of the extrusion width that can be overlapped and still generate.
-Translated:The percent of the extrusion width that can be overlapped and still generate.
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
 Translated:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
@@ -3583,6 +3742,9 @@ Translated:The speed at which infill will print.
 English:The speed at which inside perimeters will print.
 Translated:The speed at which inside perimeters will print.
 
+English:The speed at which interface layers will print.
+Translated:The speed at which interface layers will print.
+
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
 Translated:The speed at which outside, external, or the otherwise visible perimeters will print.
 
@@ -3651,6 +3813,9 @@ Translated:The thickness of each layer of the print, except the first layer. A s
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
 Translated:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
+
+English:The time it takes to heat back up from a cool down.
+Translated:The time it takes to heat back up from a cool down.
 
 English:The time it will take to unload the filament
 Translated:The time it will take to unload the filament
@@ -3766,6 +3931,9 @@ Translated:Time Multiplier
 English:Time to End
 Translated:Time to End
 
+English:Time to Tool Change
+Translated:Time to Tool Change
+
 English:TM
 Translated:TM
 
@@ -3783,6 +3951,15 @@ Translated:Toggle Selection
 
 English:Toggle Support
 Translated:Toggle Support
+
+English:Tool
+Translated:Tool
+
+English:Tool 
+Translated:Tool 
+
+English:Tools 
+Translated:Tools 
 
 English:Top Solid Infill
 Translated:Top Solid Infill
@@ -3871,6 +4048,9 @@ Translated:Ungroup
 English:Unknown
 Translated:Unknown
 
+English:Unknown filament loaded
+Translated:Unknown filament loaded
+
 English:Unknown Reason
 Translated:Unknown Reason
 
@@ -3889,9 +4069,6 @@ Translated:Unload Filament Length
 English:Unload Filament Time
 Translated:Unload Filament Time
 
-English:Unload Filament Wizard
-Translated:Unload Filament Wizard
-
 English:Unload Material
 Translated:Unload Material
 
@@ -3903,9 +4080,6 @@ Translated:Unlock
 
 English:Unsupported Baud Rate
 Translated:Unsupported Baud Rate
-
-English:Unsupported Parts Detected
-Translated:Unsupported Parts Detected
 
 English:Up
 Translated:Up
@@ -4015,17 +4189,23 @@ Translated:View XSmall Icons
 English:Wait For Running Clean
 Translated:Wait For Running Clean
 
+English:'Wait' Responses
+Translated:'Wait' Responses
+
 English:Waiting For Bed To Heat
 Translated:Waiting For Bed To Heat
 
 English:Waiting for Bed to Heat to
 Translated:Waiting for Bed to Heat to
 
-English:Waiting For Extruder To Heat
-Translated:Waiting For Extruder To Heat
+English:Waiting for Extruder 1 to Heat to
+Translated:Waiting for Extruder 1 to Heat to
 
-English:Waiting for Extruder to Heat to
-Translated:Waiting for Extruder to Heat to
+English:Waiting for Extruder 2 to Heat to
+Translated:Waiting for Extruder 2 to Heat to
+
+English:Waiting for hotend {0} to heat to 
+Translated:Waiting for hotend {0} to heat to 
 
 English:Waiting For Printer To Heat
 Translated:Waiting For Printer To Heat
@@ -4035,6 +4215,12 @@ Translated:Waiting for the bed to heat to
 
 English:Waiting for the hotend to heat to 
 Translated:Waiting for the hotend to heat to 
+
+English:Waiting for the hotends to heat up.
+Translated:Waiting for the hotends to heat up.
+
+English:Warm up Time
+Translated:Warm up Time
 
 English:Warning
 Translated:Warning
@@ -4056,9 +4242,6 @@ Translated:WARNING: Disconnecting will stop the current print.\n\nAre you sure y
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
 Translated:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-
-English:Warning: Support Required
-Translated:Warning: Support Required
 
 English:WARNING: Write Failed!
 Translated:WARNING: Write Failed!
@@ -4132,9 +4315,6 @@ Translated:Wipe Tower Size
 English:Would you like to setup Wifi?
 Translated:Would you like to setup Wifi?
 
-English:Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.
-Translated:Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.
-
 English:Write Filter
 Translated:Write Filter
 
@@ -4144,11 +4324,20 @@ Translated:X
 English:X and Y Distance
 Translated:X and Y Distance
 
+English:X Offset
+Translated:X Offset
+
+English:X Y Nozzle Offsets Have Been Calibrated
+Translated:X Y Nozzle Offsets Have Been Calibrated
+
 English:XY Homing Position
 Translated:XY Homing Position
 
 English:Y
 Translated:Y
+
+English:Y Offset
+Translated:Y Offset
 
 English:Yes
 Translated:Yes
@@ -4159,8 +4348,11 @@ Translated:You are switching to a different thumbnail rendering mode. If you wan
 English:You can also
 Translated:You can also
 
-English:You can only connect when not currently connected.
-Translated:You can only connect when not currently connected.
+English:You can continue to ultra fine calibration, but for most uses this is not necessary.
+Translated:You can continue to ultra fine calibration, but for most uses this is not necessary.
+
+English:You can only connect when not currently connected
+Translated:You can only connect when not currently connected
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
 Translated:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
@@ -4171,8 +4363,8 @@ Translated:You have successfully imported a new printer profile. You can find '{
 English:You may need to wait a minute for your printer to finish initializing.
 Translated:You may need to wait a minute for your printer to finish initializing.
 
-English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
-Translated:Your 3D print has been auto-paused.\n\nLayer{0} reached.
+English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
+Translated:Your 3D print has been auto-paused.\n\nLayer {0} reached.
 
 English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
 Translated:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
@@ -4189,8 +4381,14 @@ Translated:Your Email Address
 English:Your invite has been sent!
 Translated:Your invite has been sent!
 
+English:Your nozzles should now be calibrated.
+Translated:Your nozzles should now be calibrated.
+
 English:Your Phone Number
 Translated:Your Phone Number
+
+English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
+Translated:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
