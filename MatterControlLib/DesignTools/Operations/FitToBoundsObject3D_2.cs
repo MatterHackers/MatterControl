@@ -256,7 +256,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						break;
 				}
 
-				ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+				if (aabb.XSize > 0 && aabb.YSize > 0 && aabb.ZSize > 0)
+				{
+					ItemWithTransform.Matrix = Object3DExtensions.ApplyAtPosition(ItemWithTransform.Matrix, aabb.Center, Matrix4X4.CreateScale(scale));
+				}
 			}
 		}
 
