@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SettingsHelpers
 	{
-		private PrinterSettings printerSettings;
+		private readonly PrinterSettings printerSettings;
 		private PrintLevelingData _printLevelingData = null;
 
 		public SettingsHelpers(PrinterSettings printerSettings)
@@ -70,10 +70,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string[] userValues = printerSettings.GetValue("layer_to_pause").Split(';');
 
-			int temp;
-			return userValues.Where(v => int.TryParse(v, out temp)).Select(v =>
+			return userValues.Where(v => int.TryParse(v, out int temp)).Select(v =>
 			{
-				//Convert from 0 based index to 1 based index
+				// Convert from 0 based index to 1 based index
 				int val = int.Parse(v);
 
 				// Special case for user entered zero that pushes 0 to 1, otherwise val = val - 1 for 1 based index
@@ -132,7 +131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						_printLevelingData = JsonConvert.DeserializeObject<PrintLevelingData>(jsonData);
 					}
 
-					// TODO: When this case is hit, it's certain to produce impossible to troubleshoot behavior where leveled printers suddenly act erratically. 
+					// TODO: When this case is hit, it's certain to produce impossible to troubleshoot behavior where leveled printers suddenly act erratically.
 					// Investigate a better solution - ideally we'd mark that leveling is invalid and have a validation error preventing printing/export/general use
 					if (_printLevelingData == null)
 					{
@@ -142,6 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return _printLevelingData;
 			}
+
 			set
 			{
 				// Store new reference
@@ -152,12 +152,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		private List<(Regex Regex, string Replacement)> _writeLineReplacements = new List<(Regex Regex, string Replacement)>();
+		private readonly List<(Regex Regex, string Replacement)> _writeLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		private string writeRegexString = "";
 
-		private static Regex getQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
-
+		private static readonly Regex GetQuotedParts = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
 		public List<(Regex Regex, string Replacement)> WriteLineReplacements
 		{
@@ -172,7 +171,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						foreach (string regExLine in writeRegexString.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
 						{
-							var matches = getQuotedParts.Matches(regExLine);
+							var matches = GetQuotedParts.Matches(regExLine);
 							if (matches.Count == 2)
 							{
 								var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
@@ -187,7 +186,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-	
 		public void DoPrintLeveling(bool doLeveling)
 		{
 			// Early exit if already set
@@ -245,6 +243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					newValue += ",";
 				}
+
 				newValue += $"{offset.X:0.###}x{offset.Y:0.###}x{offset.Z:0.###}";
 				first = false;
 			}
@@ -275,6 +274,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return new Vector3(double.Parse(xyz[0]), double.Parse(xyz[1]), double.Parse(xyz[2]));
 					}
 				}
+
 				count++;
 			}
 
