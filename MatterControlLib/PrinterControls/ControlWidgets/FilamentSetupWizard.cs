@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 
 				homePage.ContentRow.AddChild(
 					new WrappedTextWidget(
-						@"Select the hotend on the left to continue".Replace("\r\n", "\n"),
+						"Select the hotend on the left to continue".Localize(),
 						pointSize: theme.DefaultFontSize,
 						textColor: theme.TextColor));
 
