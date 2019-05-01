@@ -52,13 +52,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		protected PrinterMove lastDestination = PrinterMove.Unknown;
-		private List<string> commandQueue = new List<string>();
-		private object locker = new object();
+		private readonly List<string> commandQueue = new List<string>();
+		private readonly object locker = new object();
 		private PrinterMove moveLocationAtEndOfPauseCode;
-		private Stopwatch timeSinceLastEndstopRead = new Stopwatch();
-		bool readOutOfFilament = false;
-
-		PositionSensorData positionSensorData = new PositionSensorData();
+		private readonly Stopwatch timeSinceLastEndstopRead = new Stopwatch();
+		private bool readOutOfFilament = false;
+		private readonly PositionSensorData positionSensorData = new PositionSensorData();
 
 		public override string DebugInfo => "";
 
@@ -131,7 +130,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		public enum PauseReason { UserRequested, PauseLayerReached, GCodeRequest, FilamentRunout }
+		public enum PauseReason
+		{
+			UserRequested,
+			PauseLayerReached,
+			GCodeRequest,
+			FilamentRunout
+		}
 
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
@@ -170,9 +175,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// put in the gcode for pausing (if any)
 			InjectPauseGCode(pauseGCode);
 
-			// inject a marker to tell when we are done with the inserted pause code
+			// get the position after any pause gcode executes
 			InjectPauseGCode("M114");
 
+			// inject a marker to tell when we are done with the inserted pause code
 			InjectPauseGCode("MH_PAUSE");
 		}
 
@@ -198,6 +204,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						return lineToSend;
 					}
+
 					if (lineToSend.EndsWith("; NO_PROCESSING"))
 					{
 						return lineToSend;
@@ -213,13 +220,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							timeSinceLastEndstopRead.Restart();
 						}
 					}
+
 					lastSendTimeMs = UiThread.CurrentTimerMs;
 				}
 				else
 				{
 					lineToSend = "";
 					// If more than 10 seconds have passed send a movement command so the motors will stay locked
-					if(UiThread.CurrentTimerMs - lastSendTimeMs > 10000)
+					if (UiThread.CurrentTimerMs - lastSendTimeMs > 10000)
 					{
 						printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
 						printer.Connection.MoveRelative(PrinterConnection.Axis.X, -.1, printer.Settings.Helpers.ManualMovementSpeeds().X);
