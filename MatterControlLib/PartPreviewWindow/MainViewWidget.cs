@@ -174,23 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = new BorderDouble(15, 0),
 				});
 
-			string tabKey = ApplicationController.Instance.MainTabKey;
-
-			if (string.IsNullOrEmpty(tabKey))
-			{
-				tabKey = "Hardware";
-			}
-
-			// HACK: Restore to the first printer tab if PrinterTabSelected and tabKey not found. This allows sign in/out to remain on the printer tab across different users
-			if (!tabControl.AllTabs.Any(t => t.Key == tabKey)
-				&& ApplicationController.Instance.PrinterTabSelected)
-			{
-				var key = tabControl.AllTabs.Where(t => t.TabContent is PrinterTabPage).FirstOrDefault()?.Key;
-				if (key != null)
-				{
-					tabKey = key;
-				}
-			}
+			SetInitialTab();
 
 			var brandMenu = new BrandMenuButton(theme)
 			{
@@ -205,20 +189,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Restore active workspace tabs
 			foreach (var workspace in ApplicationController.Instance.Workspaces)
 			{
+				ChromeTab newTab;
+
 				// Create and switch to new printer tab
 				if (workspace.Printer?.Settings.PrinterSelected == true)
 				{
-					tabControl.ActiveTab = this.CreatePrinterTab(workspace, theme);
+					newTab = this.CreatePrinterTab(workspace, theme);
 				}
 				else
 				{
-					tabControl.ActiveTab = this.CreatePartTab(workspace);
+					newTab = this.CreatePartTab(workspace);
+				}
+
+				if (newTab.Key == ApplicationController.Instance.MainTabKey)
+				{
+					tabControl.ActiveTab = newTab;
 				}
 
 				tabControl.RefreshTabPointers();
 			}
-
-			tabControl.SelectedTabKey = tabKey;
 
 			statusBar = new Toolbar(theme)
 			{
@@ -277,6 +266,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.MainView = this;
 		}
 
+		private void SetInitialTab()
+		{
+			// Initial tab selection - workspace load will reset if applicable
+			string tabKey = ApplicationController.Instance.MainTabKey;
+
+			if (string.IsNullOrEmpty(tabKey)
+				|| !tabControl.AllTabs.Any(t => t.Key == tabKey))
+			{
+				tabKey = "Hardware";
+			}
+
+			tabControl.SelectedTabKey = tabKey;
+		}
+
 		private async void Instance_OpenNewFile(object sender, string filePath)
 		{
 			var history = ApplicationController.Instance.Library.PlatingHistory;
@@ -318,12 +321,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Set reference on tab change
 				dragDropData.View3DWidget = tabPage.view3DWidget;
 				dragDropData.SceneContext = tabPage.sceneContext;
-
-				ApplicationController.Instance.PrinterTabSelected = true;
-			}
-			else
-			{
-				ApplicationController.Instance.PrinterTabSelected = false;
 			}
 
 			ApplicationController.Instance.MainTabKey = tabControl.SelectedTabKey;

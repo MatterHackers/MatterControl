@@ -82,12 +82,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.OpenPrintPopupMenu();
-
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("2");
-
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "2");
 
 					// Wait for the Ok button
 					testRunner.WaitForName("Yes Button", 30);

@@ -2235,8 +2235,6 @@ namespace MatterHackers.MatterControl
 
 		public static Type ServicesStatusType { get; set; }
 
-		public bool PrinterTabSelected { get; set; } = false;
-
 		/// <summary>
 		/// Gets a value indicating whether any ActivePrinter is running a print task, either in paused or printing states
 		/// </summary>

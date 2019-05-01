@@ -375,6 +375,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Next Button");
 
+			testRunner.Delay();
+
 			testRunner.WaitFor(() => testRunner.ChildExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
 
