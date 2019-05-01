@@ -340,7 +340,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (e is PrintPauseEventArgs printePauseEventArgs)
 			{
-				string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer{0} reached.".Localize();
+				string layerPauseMessage = "Your 3D print has been auto-paused.\n\nLayer {0} reached.".Localize();
 
 				UiThread.RunOnIdle(() => StyledMessageBox.ShowMessageBox(ResumePrint,
 					layerPauseMessage.FormatWith(printePauseEventArgs.LayerNumber),

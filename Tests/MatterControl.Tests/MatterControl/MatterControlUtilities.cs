@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// TODO: Improve this to more accurately find the print task row and click its Stop button
 			if (testRunner.WaitForName("Stop Task Button", .2))
 			{
-			testRunner.ClickByName("Stop Task Button");
+				testRunner.ClickByName("Stop Task Button");
 			}
 
 			// Wait for and dismiss the new PrintCompleted dialog
@@ -362,27 +362,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName("Select Make");
-			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
 			testRunner.Type(make);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
 			testRunner.ClickByName("Select Model");
-			testRunner.WaitFor(() => testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.WidgetExists<PopupWidget>());
+			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
-			// An unpredictable period of time will pass between Clicking Save, everything reloading and us returning to the caller.
-			// Block until ReloadAll has completed then close and return to the caller, at which point hopefully everything is reloaded.
 			testRunner.ClickByName("Next Button");
 
-			testRunner.WaitFor(() => testRunner.WidgetExists<SetupStepComPortOne>());
+			testRunner.WaitFor(() => testRunner.ChildExists<SetupStepComPortOne>());
 			testRunner.ClickByName("Cancel Wizard Button");
 
-			testRunner.WaitFor(() => !testRunner.WidgetExists<SetupStepComPortOne>());
-
-			testRunner.EnsureWelcomePageClosed();
+			testRunner.WaitFor(() => !testRunner.ChildExists<SetupStepComPortOne>());
 		}
 
 		public static void EnsureWelcomePageClosed(this AutomationRunner testRunner)
@@ -874,11 +870,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Generate Gcode Button");
 		}
 
-		/// <summary>
-		/// Switch to the primary SliceSettings tab
-		/// </summary>
-		/// <param name="testRunner"></param>
-		public static void OpenPrintPopupMenu(this AutomationRunner testRunner, bool openAdvanced = true, bool doFinishSetup = true)
+		public static void OpenPrintPopupMenu(this AutomationRunner testRunner)
 		{
 			var printerConnection = ApplicationController.Instance.DragDropData.View3DWidget.Printer.Connection;
 
@@ -889,42 +881,43 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitFor(() => printerConnection.CommunicationState == CommunicationStates.Connected);
 			}
 
-			// if the menu is not already open
-			if (!testRunner.NameExists("Advanced Section", .2))
-			{
-				// open it
-				testRunner.ClickByName("PrintPopupMenu");
-			}
+			// Open PopupMenu
+			testRunner.ClickByName("PrintPopupMenu");
 
-			// wait for it to be all the way open
-			testRunner.WaitForName("Advanced Section");
-
-			// make sure we are in a state that can print
-			if (doFinishSetup
-				&& testRunner.NameExists("SetupPrinter"))
-			{
-				testRunner.ClickByName("SetupPrinter");
-				testRunner.ClickByName("Already Loaded Button");
-				// open it again
-				testRunner.ClickByName("PrintPopupMenu");
-				testRunner.WaitForName("Advanced Section");
-			}
-
-			if (openAdvanced
-				&& !testRunner.NameExists("Layer(s) To Pause Field", .2))
-			{
-				testRunner.ClickByName("Advanced Section");
-			}
+			// Wait for child control
+			testRunner.WaitForName("Start Print Button");
 		}
 
 		/// <summary>
 		/// Open the Print popup menu and click the Start Print button
 		/// </summary>
 		/// <param name="testRunner"></param>
-		public static void StartPrint(this AutomationRunner testRunner)
+		public static void StartPrint(this AutomationRunner testRunner, string pauseAtLayers = null)
 		{
+			// Open popup
 			testRunner.OpenPrintPopupMenu();
+
+			if (pauseAtLayers != null)
+			{
+				testRunner.OpenPrintPopupAdvanced();
+
+				testRunner.ClickByName("Layer(s) To Pause Field");
+				testRunner.Type(pauseAtLayers);
+			}
+
 			testRunner.ClickByName("Start Print Button");
+		}
+
+		public static void OpenPrintPopupAdvanced(this AutomationRunner testRunner)
+		{
+			// Expand advanced panel if needed
+			if (!testRunner.NameExists("Layer(s) To Pause Field", .2))
+			{
+				testRunner.ClickByName("Advanced Section");
+			}
+
+			// wait for child
+			testRunner.WaitForName("Layer(s) To Pause Field");
 		}
 
 		public static void OpenGCode3DOverflowMenu(this AutomationRunner testRunner)
@@ -947,7 +940,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			EnsurePrinterSidebarOpen(testRunner);
 
 			testRunner.ClickByName("Slice Settings Tab");
-			testRunner.ClickByName("General Tab");
 		}
 
 		public static void Complete9StepLeveling(this AutomationRunner testRunner, int numUpClicks = 1)
@@ -1012,7 +1004,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Done Button");
 
 			testRunner.Delay();
-			if (testRunner.NameExists("Already Loaded Button"))
+			if (testRunner.NameExists("Already Loaded Button", 0.2))
 			{
 				testRunner.ClickByName("Already Loaded Button");
 			}

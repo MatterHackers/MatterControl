@@ -63,12 +63,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
 					var scene = view3D.InteractionLayer.Scene;
 
-					testRunner.OpenPrintPopupMenu();
-
-					// Add a pause on layer(in the center)
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("50;60");
-
 					// Add a callback to check that every line has an extruder
 					// distance greater than the largest distance minus the max retraction
 					// amount and less than some amount that is reasonable
@@ -101,7 +95,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Add to Bed Menu Item");
 
 					// start the print
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "50;60");
 
 					// Wait for pause
 					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'

@@ -52,12 +52,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					testRunner.OpenPrintPopupMenu();
-					testRunner.ClickByName("Layer(s) To Pause Field");
-					testRunner.Type("4;2;a;not;6");
-
 					testRunner.AddItemToBedplate();
-					testRunner.StartPrint();
+					testRunner.StartPrint(pauseAtLayers: "4;2;a;not;6");
 
 					var printer = testRunner.FirstPrinter();
 
