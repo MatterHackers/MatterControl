@@ -58,22 +58,6 @@ namespace RoslynLocalizeDetector
 				var diags = compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync().Result;
 			}
 
-			// Push properies.json results into newResults
-			string json = File.ReadAllText(Path.Combine(matterControlRoot, "StaticData", "SliceSettings", "Properties.json"));
-			foreach (var setting in JsonConvert.DeserializeObject<List<SettingItem>>(json))
-			{
-				// Guard for null reference errors when properties.json definitions lack HelpText
-				if (setting.HelpText != null)
-				{
-					translationStrings.AddLocalization(setting.HelpText);
-				}
-				translationStrings.AddLocalization(setting.PresentationName);
-				if (!string.IsNullOrWhiteSpace(setting.Units))
-				{
-					translationStrings.AddLocalization(setting.Units);
-				}
-			}
-
 			// Push layouts.txt results into newResults
 			foreach (var line in File.ReadAllLines(Path.Combine(matterControlRoot, "StaticData", "SliceSettings", "Layouts.txt")).Select(s => s.Trim()))
 			{
