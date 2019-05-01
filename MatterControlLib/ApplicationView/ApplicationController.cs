@@ -1670,38 +1670,38 @@ namespace MatterHackers.MatterControl
 			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
 		};
 
-		public static TypeFace GetTypeFace(NamedTypeFace Name)
+		public static TypeFace GetTypeFace(NamedTypeFace namedTypeFace)
 		{
-			if (!TypeFaceCache.ContainsKey(Name))
+			if (!TypeFaceCache.ContainsKey(namedTypeFace))
 			{
 				TypeFace typeFace = new TypeFace();
-				var file = Path.Combine("Fonts", $"{Name}.ttf");
-				var exists = AggContext.StaticData.FileExists(file);
-				var stream = exists ? AggContext.StaticData.OpenStream(file) : null;
+				var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
+				var exists = AggContext.StaticData.FileExists(path);
+				var stream = exists ? AggContext.StaticData.OpenStream(path) : null;
 				if (stream != null
 					&& typeFace.LoadTTF(stream))
 				{
-					TypeFaceCache.Add(Name, typeFace);
+					TypeFaceCache.Add(namedTypeFace, typeFace);
 				}
 				else
 				{
 					// try the svg
-					file = Path.Combine("Fonts", $"{Name}.svg");
-					exists = AggContext.StaticData.FileExists(file);
-					typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(file)) : null;
+					path = Path.Combine("Fonts", $"{namedTypeFace}.svg");
+					exists = AggContext.StaticData.FileExists(path);
+					typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(path)) : null;
 					if (typeFace != null)
 					{
-						TypeFaceCache.Add(Name, typeFace);
+						TypeFaceCache.Add(namedTypeFace, typeFace);
 					}
 					else
 					{
 						// assign it to the default
-						TypeFaceCache.Add(Name, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
+						TypeFaceCache.Add(namedTypeFace, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
 					}
 				}
 			}
 
-			return TypeFaceCache[Name];
+			return TypeFaceCache[namedTypeFace];
 		}
 
 		private static TypeFace titilliumTypeFace = null;
@@ -1860,7 +1860,7 @@ namespace MatterHackers.MatterControl
 			Debug.WriteLine($"LayoutCount: {GuiWidget.LayoutCount:0.0}");
 		}
 
-		static int reloadCount = 0;
+		private static int reloadCount = 0;
 
 		public void OnApplicationClosed()
 		{
