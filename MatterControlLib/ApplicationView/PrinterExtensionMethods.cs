@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl
 
 		private static bool InsideHotendBounds(this PrinterConfig printer, IObject3D item)
 		{
-			if (printer.Settings.Helpers.NumberOfTools() == 1)
+			if (printer.Settings.Helpers.HotendCount() == 1)
 			{
 				return true;
 			}

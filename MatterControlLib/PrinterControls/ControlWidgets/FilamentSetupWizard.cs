@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 	{
 		public FilamentSetupWizard(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.Stages = Enumerable.Range(0, printer.Settings.Helpers.NumberOfTools()).Select(i =>
+			this.Stages = Enumerable.Range(0, printer.Settings.Helpers.HotendCount()).Select(i =>
 			{
 				return new LoadFilamentWizard(printer, extruderIndex: i, showAlreadyLoadedButton: true);
 			}).ToList();

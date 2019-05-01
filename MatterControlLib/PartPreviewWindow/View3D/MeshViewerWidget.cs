@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer.InsideBuildVolume(item))
 				{
-					if (printer.Settings.Helpers.NumberOfTools() > 1)
+					if (printer.Settings.Helpers.HotendCount() > 1)
 					{
 						var materialIndex = item.WorldMaterialIndex();
 						if (materialIndex == -1)

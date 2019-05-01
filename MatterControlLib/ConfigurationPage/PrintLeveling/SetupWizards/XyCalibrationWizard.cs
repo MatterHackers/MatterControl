@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// we have a probe that we are using and we have not done leveling yet
 			return UsingZProbe(printer)
-				&& printer.Settings.Helpers.NumberOfTools() > 1
+				&& printer.Settings.Helpers.HotendCount() > 1
 				&& !printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated);
 		}
 

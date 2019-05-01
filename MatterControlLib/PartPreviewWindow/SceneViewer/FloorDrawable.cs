@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						var bedImage = BedMeshGenerator.CreatePrintBedImage(sceneContext.Printer);
 
-						if (printer.Settings.Helpers.NumberOfTools() > 1)
+						if (printer.Settings.Helpers.HotendCount() > 1)
 						{
 							bedTextures = new[]
 							{
@@ -232,7 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					loadingTextures = false;
 				});
 			}
-			else if (printer.Settings.Helpers.NumberOfTools() > 1
+			else if (printer.Settings.Helpers.HotendCount() > 1
 				&& printer.Bed.BedShape == BedShape.Rectangular)
 			{
 				int toolIndex = GetActiveToolIndex(selectedItem);

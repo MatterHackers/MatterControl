@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			GuiWidget hotendRow;
 
 			container.AddChild(hotendRow = new SettingsItem(
-				printer.Settings.Helpers.NumberOfTools() == 1 ? "Hotend".Localize() : "Hotend {0}".Localize().FormatWith(hotendIndex + 1),
+				printer.Settings.Helpers.HotendCount() == 1 ? "Hotend".Localize() : "Hotend {0}".Localize().FormatWith(hotendIndex + 1),
 				menuTheme,
 				new SettingsItem.ToggleSwitchConfig()
 				{
