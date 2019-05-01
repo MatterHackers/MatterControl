@@ -183,7 +183,8 @@ namespace MatterHackers.MatterControl
 
 		public override void ClosePage()
 		{
-			if (this.ActiveStage?.ClosePage() == true)
+			if (this.ActiveStage == null
+				|| this.ActiveStage?.ClosePage() == true)
 			{
 				// Construct and move to the summary/home page
 				this.ChangeToPage(setupWizard.HomePageGenerator());
@@ -192,17 +193,9 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				if (this.ActiveStage != null)
-				{
-					this.ActiveStage.MoveNext();
-					this.ChangeToPage(this.ActiveStage.Current);
-				}
+				this.ActiveStage.MoveNext();
+				this.ChangeToPage(this.ActiveStage.Current);
 			}
-		}
-
-		public override DialogPage ChangeToPage<PanelType>()
-		{
-			return base.ChangeToPage<PanelType>();
 		}
 	}
 }
