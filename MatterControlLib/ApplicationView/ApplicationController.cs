@@ -1699,6 +1699,8 @@ namespace MatterHackers.MatterControl
 						TypeFaceCache.Add(namedTypeFace, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
 					}
 				}
+
+				stream?.Dispose();
 			}
 
 			return TypeFaceCache[namedTypeFace];
