@@ -110,11 +110,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					newChildren.Add(group);
 				}
 
+				if (newChildren.Count == 0)
+				{
+					newChildren = this.Children.Select(i => i.Clone()).ToList();
+				}
+
 				// add flatten to the name to show what happened
 				newChildren[0].Name = this.Name + " - " + "Flattened".Localize();
 
 				// and replace us with the children
 				var replaceCommand = new ReplaceCommand(new[] { this }, newChildren);
+
 				if (undoBuffer != null)
 				{
 					undoBuffer.AddAndDo(replaceCommand);
@@ -245,6 +251,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 	public class OperationSourceObject3D : Object3D
 	{
+		public override bool CanFlatten => true;
 		public OperationSourceObject3D()
 		{
 			Name = "Source".Localize();
