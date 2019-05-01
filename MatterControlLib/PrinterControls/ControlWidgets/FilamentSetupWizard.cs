@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 	{
 		public FilamentSetupWizard(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.Stages = Enumerable.Range(0, printer.Settings.Helpers.NumberOfTools()).Select(i =>
+			this.Stages = Enumerable.Range(0, printer.Settings.Helpers.HotendCount()).Select(i =>
 			{
 				return new LoadFilamentWizard(printer, extruderIndex: i, showAlreadyLoadedButton: true);
 			}).ToList();
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 
 				homePage.ContentRow.AddChild(
 					new WrappedTextWidget(
-						@"Select the hotend on the left to continue".Replace("\r\n", "\n"),
+						"Select the hotend on the left to continue".Localize(),
 						pointSize: theme.DefaultFontSize,
 						textColor: theme.TextColor));
 
@@ -81,8 +81,6 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer, int extruderIndex)
 		{
-			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-
 			string filamentKey;
 
 			switch (extruderIndex)
@@ -100,7 +98,7 @@ namespace MatterHackers.MatterControl
 					return false;
 			}
 
-			return extruderCount > 1 
+			return printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
 				&& !printer.Settings.GetValue<bool>(filamentKey);
 		}
 	}

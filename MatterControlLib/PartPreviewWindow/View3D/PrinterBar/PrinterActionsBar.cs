@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new HorizontalSpacer());
 
-			int hotendCount = printer.Settings.Helpers.NumberOfTools();
+			int hotendCount = printer.Settings.Helpers.HotendCount();
 			if (!printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
 			{
 				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)

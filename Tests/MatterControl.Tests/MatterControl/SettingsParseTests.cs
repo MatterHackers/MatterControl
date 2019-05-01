@@ -195,7 +195,7 @@ namespace MatterControl.Tests.MatterControl
 				// shared temp
 				{
 					string[] settings = new string[] { SettingsKey.extruder_count, "2", SettingsKey.extruders_share_temperature, "1" };
-					Assert.AreEqual(GetProfile(settings).Helpers.NumberOfTools(), 1);
+					Assert.AreEqual(GetProfile(settings).Helpers.HotendCount(), 1);
 				}
 			}
 		}

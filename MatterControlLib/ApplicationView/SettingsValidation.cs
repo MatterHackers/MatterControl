@@ -455,13 +455,11 @@ namespace MatterHackers.MatterControl
 						Title = "Setup".Localize() + "...",
 						Action = () =>
 						{
-							UiThread.RunOnIdle(async () =>
+							UiThread.RunOnIdle(() =>
 							{
-								await ApplicationController.Instance.PrintPart(
-									printer.Bed.EditContext,
-									printer,
-									null,
-									CancellationToken.None);
+								DialogWindow.Show(
+									new PrinterCalibrationWizard(printer, AppContext.Theme),
+									advanceToIncompleteStage: true);
 							});
 						}
 					}

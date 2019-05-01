@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			this.HAnchor = HAnchor.Stretch;
 
-			int numberOfHeatedExtruders = printer.Settings.Helpers.NumberOfTools();
+			int numberOfHeatedExtruders = printer.Settings.Helpers.HotendCount();
 
 			this.AddChild(new PresetSelectorWidget(printer, "Quality".Localize(), theme.PresetColors.QualityPreset, NamedSettingsLayers.Quality, 0, theme)
 			{
