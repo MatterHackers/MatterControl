@@ -13,6 +13,12 @@ Translated:- none -
 English: Once it is finished homing we will heat the bed.
 Translated: Once it is finished homing we will heat the bed.
 
+English:$/kg
+Translated:$/kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Update Available)
 
@@ -27,6 +33,12 @@ Translated:{0} must be less than or equal to the {1}.
 
 English:<< Back
 Translated:<< Back
+
+English:°
+Translated:°
+
+English:°C
+Translated:°C
 
 English:2D Layer View
 Translated:2D Layer View
@@ -636,6 +648,9 @@ Translated:Couldn't load file
 
 English:Couldn't save file
 Translated:Couldn't save file
+
+English:count or mm
+Translated:count or mm
 
 English:Create
 Translated:Create
@@ -1261,6 +1276,9 @@ Translated:Forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Found a line that is {0} characters long.\n{1}...
 
+English:g/cm³
+Translated:g/cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:How can we improve?
 English:How to succeed with MatterControl
 Translated:How to succeed with MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal for cloning settings across different physical printers
 
@@ -1675,8 +1696,14 @@ Translated:Layer Top
 English:Layer(s) To Pause
 Translated:Layer(s) To Pause
 
+English:layers
+Translated:layers
+
 English:Layers / Surface
 Translated:Layers / Surface
+
+English:layers or mm
+Translated:layers or mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Leave this as 0 to allow automatic calculation of extrusion width.
@@ -1960,8 +1987,23 @@ Translated:Mirror
 English:Missing
 Translated:Missing
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm or %
+
+English:mm zero to disable
+Translated:mm zero to disable
+
 English:mm/s
 Translated:mm/s
+
+English:mm/s or %
+Translated:mm/s or %
+
+English:mm/s²
+Translated:mm/s²
 
 English:model
 Translated:model
@@ -2632,6 +2674,9 @@ Translated:Raise / Stow
 English:Randomize Starting Points
 Translated:Randomize Starting Points
 
+English:Ratio or %
+Translated:Ratio or %
+
 English:Reach
 Translated:Reach
 
@@ -2863,6 +2908,9 @@ Translated:Run Calibration
 English:Run Max if Below
 Translated:Run Max if Below
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Sailfish Communication
 
@@ -2923,6 +2971,9 @@ Translated:Search Google
 English:Search Results
 Translated:Search Results
 
+English:seconds
+Translated:seconds
+
 English:Select
 Translated:Select
 
@@ -2949,6 +3000,9 @@ Translated:Select Printer
 
 English:Select the baud rate.
 Translated:Select the baud rate.
+
+English:Select the hotend on the left to continue
+Translated:Select the hotend on the left to continue
 
 English:Select the material you are printing
 Translated:Select the material you are printing
