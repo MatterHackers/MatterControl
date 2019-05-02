@@ -27,14 +27,16 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.PrinterEmulator
 {
-	public partial class Emulator : IDisposable
+	public partial class Emulator : IFrostedSerialPort, IDisposable
 	{
 		/// <summary>
-		/// The number of seconds the emulator should take to heat up to a given target
+		/// The number of seconds the emulator should take to heat up to a given target.
 		/// </summary>
 		public static double DefaultHeatUpTime = 3;
 
@@ -51,7 +53,7 @@ namespace MatterHackers.PrinterEmulator
 		private int recievedCount = 0;
 
 		// Dictionary of command and response callback
-		private Dictionary<string, Func<string, string>> responses;
+		private readonly Dictionary<string, Func<string, string>> responses;
 
 		private bool shuttingDown = false;
 
@@ -62,12 +64,12 @@ namespace MatterHackers.PrinterEmulator
 			responses = new Dictionary<string, Func<string, string>>()
 			{
 				{ "A",    Echo },
-				{ "G0",   SetPosition },
-				{ "G1",   SetPosition },
+				{ "G0",   ParseMovmentCommand },
+				{ "G1",   ParseMovmentCommand },
 				{ "G28",  HomePosition },
 				{ "G30",  SimulateProbe },
 				{ "G4",   Wait },
-				{ "G92",  ResetPosition },
+				{ "G92",  G92ResetPosition },
 				{ "M104", SetExtruderTemperature },
 				{ "M105", ReturnTemp },
 				{ "M106", SetFan },
@@ -90,14 +92,17 @@ namespace MatterHackers.PrinterEmulator
 
 		public event EventHandler FanSpeedChanged;
 
-		public event EventHandler ZPositionChanged;
+		public event EventHandler DestinationChanged;
+
 		public event EventHandler EPositionChanged;
+
 		public event EventHandler<string> RecievedInstruction;
 
 		// Instance reference allows test to access the most recently initialized emulator
 		public static Emulator Instance { get; private set; }
 
 		public Heater CurrentExtruder { get { return Extruders[ExtruderIndex]; } }
+
 		public int ExtruderIndex { get; private set; }
 
 		public List<Heater> Extruders { get; private set; } = new List<Heater>()
@@ -106,16 +111,39 @@ namespace MatterHackers.PrinterEmulator
 		};
 
 		public double FanSpeed { get; private set; }
+
 		public bool HasHeatedBed { get; set; } = true;
+
 		public Heater HeatedBed { get; } = new Heater("HeatedBed") { CurrentTemperature = 26 };
+
 		public string PortName { get; set; }
 
 		public bool RunSlow { get; set; } = false;
 
 		public bool SimulateLineErrors { get; set; } = false;
-		public double XPosition { get; private set; }
-		public double YPosition { get; private set; }
-		public double ZPosition { get; private set; }
+
+		private Vector3 _position;
+
+		public Vector3 Destination
+		{
+			get => _position;
+
+			private set
+			{
+				if (value != _position)
+				{
+					_position = value;
+					DestinationChanged?.Invoke(null, null);
+				}
+			}
+		}
+
+		public Vector3 CurrentPosition { get; private set; }
+
+		/// <summary>
+		/// Gets the feedrate in mm / m.
+		/// </summary>
+		public double FeedRate { get; private set; }
 
 		public static int CalculateChecksum(string commandToGetChecksumFor)
 		{
@@ -128,6 +156,7 @@ namespace MatterHackers.PrinterEmulator
 					checksum ^= commandToGetChecksumFor[i];
 				}
 			}
+
 			return checksum;
 		}
 
@@ -145,13 +174,12 @@ namespace MatterHackers.PrinterEmulator
 			return false;
 		}
 
-		public static double ParseDouble(String source, ref int startIndex)
+		public static double ParseDouble(string source, ref int startIndex)
 		{
 			Match numberMatch = numberRegex.Match(source, startIndex);
-			String returnString = numberMatch.Value;
+			string returnString = numberMatch.Value;
 			startIndex = numberMatch.Index + numberMatch.Length;
-			double returnVal;
-			double.TryParse(returnString, NumberStyles.Number, CultureInfo.InvariantCulture, out returnVal);
+			double.TryParse(returnString, NumberStyles.Number, CultureInfo.InvariantCulture, out double returnVal);
 			return returnVal;
 		}
 
@@ -172,6 +200,7 @@ namespace MatterHackers.PrinterEmulator
 			{
 				return command.Substring(0, command.IndexOf(' '));
 			}
+
 			return command;
 		}
 
@@ -203,15 +232,34 @@ namespace MatterHackers.PrinterEmulator
 					if (RunSlow)
 					{
 						// do the right amount of time for the given command
-						Thread.Sleep(20);
+						if (command.StartsWith("G0") || command.StartsWith("G1"))
+						{
+							var startPostion = CurrentPosition;
+							var timeToMove_ms = (long)((CurrentPosition - Destination).Length * FeedRate) * 1000;
+							var startTime_ms = UiThread.CurrentTimerMs;
+							var doneTime_ms = startTime_ms + timeToMove_ms;
+							// wait for the amount of time it takes to move the extruder
+							while (UiThread.CurrentTimerMs < doneTime_ms)
+							{
+								var ratio = (UiThread.CurrentTimerMs - startTime_ms) / (double)timeToMove_ms;
+								CurrentPosition = startPostion + (Destination - startPostion) * ratio;
+							}
+						}
+						else
+						{
+							// sleep for an amount of time that is about the usb serial latency time
+							Thread.Sleep(20);
+						}
 					}
+
+					CurrentPosition = Destination;
 
 					return responses[commandKey](command);
 				}
 				else
 				{
 					// Too noisy... restore if needed when debugging emulator
-					//Console.WriteLine($"Command {command} not found");
+					// Console.WriteLine($"Command {command} not found");
 				}
 			}
 			catch (Exception e)
@@ -225,7 +273,7 @@ namespace MatterHackers.PrinterEmulator
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
-			return $"X:{XPosition:0.00} Y: {YPosition:0.00} Z: {ZPosition:0.00} E: {CurrentExtruder.EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
+			return $"X:{Destination.X:0.00} Y: {Destination.Y:0.00} Z: {Destination.Z:0.00} E: {CurrentExtruder.EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
 		}
 
 		public string ReportMarlinFirmware(string command)
@@ -238,13 +286,14 @@ namespace MatterHackers.PrinterEmulator
 		{
 			// temp commands look like this: ok T:19.4 /0.0 B:0.0 /0.0 @:0 B@:0
 			string response = "ok";
-			for(int i=0; i<Extruders.Count; i++)
+			for (int i = 0; i < Extruders.Count; i++)
 			{
-				string TString = (Extruders.Count == 1) ? "T" : $"T{i}";
-				response += $" {TString}:{Extruders[i].CurrentTemperature:0.0} / {Extruders[i].TargetTemperature:0.0}";
+				string tString = (Extruders.Count == 1) ? "T" : $"T{i}";
+				response += $" {tString}:{Extruders[i].CurrentTemperature:0.0} / {Extruders[i].TargetTemperature:0.0}";
 			}
+
 			// Newline if HeatedBed is disabled otherwise HeatedBed stats
-			response += ((!this.HasHeatedBed) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n");
+			response += (!this.HasHeatedBed) ? "\n" : $" B: {HeatedBed.CurrentTemperature:0.0} / {HeatedBed.TargetTemperature:0.0}\n";
 			return response;
 		}
 
@@ -295,13 +344,13 @@ namespace MatterHackers.PrinterEmulator
 
 		private string HomePosition(string command)
 		{
-			XPosition = 0;
-			YPosition = 0;
-			ZPosition = 0;
+			_position.X = 0;
+			_position.Y = 0;
+			_position.Z = 0;
 			return "ok\n";
 		}
 
-		private Random rand = new Random();
+		private readonly Random rand = new Random();
 
 		private string SimulateProbe(string command)
 		{
@@ -351,6 +400,7 @@ namespace MatterHackers.PrinterEmulator
 				{
 					commandToChecksum = commandToChecksum.Substring(0, commandToChecksum.Length - 1);
 				}
+
 				double expectedChecksum = 0;
 				GetFirstNumberAfter("*", command, ref expectedChecksum, checksumStart);
 				int actualChecksum = CalculateChecksum(commandToChecksum);
@@ -374,22 +424,17 @@ namespace MatterHackers.PrinterEmulator
 			}
 		}
 
-		private string ResetPosition(string command)
+		private string G92ResetPosition(string command)
 		{
+			var newDestination = default(Vector3);
+			GetFirstNumberAfter("X", command, ref newDestination.X);
+			GetFirstNumberAfter("Y", command, ref newDestination.Y);
+			GetFirstNumberAfter("Z", command, ref newDestination.Z);
+			Destination = newDestination;
+			// we are asserting that the printer is here
+			CurrentPosition = Destination;
+
 			double value = 0;
-			if (GetFirstNumberAfter("X", command, ref value))
-			{
-				XPosition = value;
-			}
-			if (GetFirstNumberAfter("Y", command, ref value))
-			{
-				YPosition = value;
-			}
-			if (GetFirstNumberAfter("Z", command, ref value))
-			{
-				ZPosition = value;
-				ZPositionChanged?.Invoke(null, null);
-			}
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
 				CurrentExtruder.LastEPosition = value;
@@ -460,15 +505,16 @@ namespace MatterHackers.PrinterEmulator
 				{
 					// increase the number of extruders
 					var newList = new List<Heater>(Extruders.Count + 1);
-					foreach(var extruder in Extruders)
+					foreach (var extruder in Extruders)
 					{
 						newList.Add(extruder);
 					}
 
-					for(int i=Extruders.Count+1; i<index+2; i++)
+					for (int i = Extruders.Count + 1; i < index + 2; i++)
 					{
 						newList.Add(new Heater($"Hotend{i}") { CurrentTemperature = 27 });
 					}
+
 					Extruders = newList;
 				}
 
@@ -494,22 +540,21 @@ namespace MatterHackers.PrinterEmulator
 			return "ok\n";
 		}
 
-		private string SetPosition(string command)
+		private string ParseMovmentCommand(string command)
 		{
+			var newPosition = default(Vector3);
+			GetFirstNumberAfter("X", command, ref newPosition.X);
+			GetFirstNumberAfter("Y", command, ref newPosition.Y);
+			GetFirstNumberAfter("Z", command, ref newPosition.Z);
+
+			Destination = newPosition;
+
 			double value = 0;
-			if (GetFirstNumberAfter("X", command, ref value))
+			if (GetFirstNumberAfter("F", command, ref value))
 			{
-				XPosition = value;
+				FeedRate = value;
 			}
-			if (GetFirstNumberAfter("Y", command, ref value))
-			{
-				YPosition = value;
-			}
-			if (GetFirstNumberAfter("Z", command, ref value))
-			{
-				ZPosition = value;
-				ZPositionChanged?.Invoke(null, null);
-			}
+
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
 				CurrentExtruder.LastEPosition = CurrentExtruder.EPosition;
@@ -544,16 +589,13 @@ namespace MatterHackers.PrinterEmulator
 
 			return "ok\n";
 		}
-	}
 
-	// EmulatorPort
-	public partial class Emulator : IFrostedSerialPort
-	{
-		private object receiveLock = new object();
-		private Queue<string> receiveQueue = new Queue<string>();
+		private readonly object receiveLock = new object();
+		private readonly Queue<string> receiveQueue = new Queue<string>();
 		private AutoResetEvent receiveResetEvent = new AutoResetEvent(false);
-		private object sendLock = new object();
-		private Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
+		private readonly object sendLock = new object();
+		private readonly Queue<string> sendQueue = new Queue<string>(new string[] { "Emulator v0.1\n" });
+
 		public int BaudRate { get; set; }
 
 		public int BytesToRead
@@ -570,9 +612,13 @@ namespace MatterHackers.PrinterEmulator
 		}
 
 		public bool DtrEnable { get; set; }
+
 		public bool IsOpen { get; private set; }
+
 		public int ReadTimeout { get; set; }
+
 		public bool RtsEnable { get; set; }
+
 		public int WriteTimeout { get; set; }
 
 		public void Close()
@@ -589,7 +635,7 @@ namespace MatterHackers.PrinterEmulator
 			this.ReadTimeout = 500;
 			this.WriteTimeout = 500;
 
-			Console.WriteLine("\n Initializing emulator (Speed: {0})", (this.RunSlow) ? "slow" : "fast");
+			Console.WriteLine("\n Initializing emulator (Speed: {0})", this.RunSlow ? "slow" : "fast");
 
 			Task.Run(() =>
 			{
@@ -642,7 +688,7 @@ namespace MatterHackers.PrinterEmulator
 
 						if (receivedLine?.Length > 0)
 						{
-							//Thread.Sleep(250);
+							// Thread.Sleep(250);
 							string emulatedResponse = GetCorrectResponse(receivedLine);
 
 							lock (sendLock)

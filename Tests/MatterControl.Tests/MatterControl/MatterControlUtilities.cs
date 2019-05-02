@@ -290,11 +290,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var heightAtTargetLayer = printerSettings.GetValue<double>(SettingsKey.layer_height) * layerNumber;
 
 			// Wait for emulator to hit target layer
-			emulator.ZPositionChanged += (s, e) =>
+			emulator.DestinationChanged += (s, e) =>
 			{
 				// Wait for print to start, then slow down the emulator and continue. Failing to slow down frequently causes a timing issue where the print
 				// finishes before we make it down to 'CloseMatterControlViaUi' and thus no prompt to close appears and the test fails when clicking 'Yes Button'
-				if (emulator.ZPosition >= heightAtTargetLayer)
+				if (emulator.Destination.Z >= heightAtTargetLayer)
 				{
 					resetEvent.Set();
 				}

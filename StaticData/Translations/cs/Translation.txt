@@ -1,11 +1,8 @@
-English:
-Translated:
-
 English:    • Remove the paper
-Translated:    • Odstraňte papír
+Translated:    • Vyjměte papír
 
 English:    1. Select the 'Controls' tab on the right
-Translated:    1. Vyberte kartu "Ovládací prvky" vpravo
+Translated:    1. Vyberte kartu 'Ovládací prvky' vpravo
 
 English:    2. Look for the calibration section (pictured below)
 Translated:    2. Vyhledejte sekci kalibrace (na obrázku níže)
@@ -14,13 +11,7 @@ English:- none -
 Translated:- žádný -
 
 English: Once it is finished homing we will heat the bed.
-Translated: Jakmile je dokončena homing, ohříváme postel.
-
-English:$/kg
-Translated:$ / kg
-
-English:%
-Translated:%
+Translated: Jakmile bude hotový, zahřejeme lůžko.
 
 English:{0} (Update Available)
 Translated:{0} (Dostupná aktualizace)
@@ -29,46 +20,40 @@ English:{0} must be greater than 0.
 Translated:{0} musí být větší než 0.
 
 English:{0} must be less than or equal to the {1} * 4.
-Translated:{0} musí být menší nebo rovno {1} * 4.
+Translated:Hodnota {0} musí být menší nebo rovna {1} * 4.
 
 English:{0} must be less than or equal to the {1}.
-Translated:{0} musí být menší nebo rovno {1}.
+Translated:{0} musí být menší nebo rovna {1}.
 
 English:<< Back
 Translated:<< Zpět
 
-English:°
-Translated:°
-
-English:°C
-Translated:C
-
 English:2D Layer View
-Translated:Zobrazení 2D vrstev
+Translated:Zobrazení 2D vrstvy
 
 English:3D
 Translated:3D
 
 English:3D Layer View
-Translated:Zobrazení 3D vrstev
+Translated:Zobrazení 3D vrstvy
 
 English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
-Translated:Seznam bodů odběru oddělených čárkami, aby se sonda posunula na. Musíte zadat polohu x a y pro každý bod. Například: '20, 20,100,180,180,20 'bude vzorek špatného na 3 body.
+Translated:Čárkami oddělený seznam vzorkovacích bodů pro snímání lůžka. Pro každý bod musíte zadat polohu x a y. Například: '20, 20,100,180,180,20' bude vzorek špatné na 3 body.
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
-Translated:Modifikátor šířky vytlačování pro první vrstvu tisku. Hodnota větší než 100% může pomoci při přilnutí k tiskovým lůžkům.
+Translated:Modifikátor šířky vytlačování pro první vrstvu tisku. Hodnota větší než 100% může pomoci s přilnavostí k tiskovému lůžku.
 
 English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
-Translated:Modifikátor šířky extruze při tisku mimo obvod. Může být užitečné jemně upravit velikost skutečného tisku, když objekty vytisknou větší nebo menší velikost, než je uvedeno v digitálním modelu.
+Translated:Modifikátor šířky vytlačování při tisku mimo obvod. Může být užitečné pro jemné nastavení skutečné velikosti tisku, když se objekty tisknou větší nebo menší, než je uvedeno v digitálním modelu.
 
 English:A password reset code will be sent to your email.
-Translated:Na váš e-mail bude zaslán kód pro obnovení hesla.
+Translated:Kód pro reset hesla bude zaslán na váš e-mail.
+
+English:A sheet of paper
+Translated:List papíru
 
 English:A six-digit code - sent to your email account
 Translated:Šestimístný kód - odeslán na váš e-mailový účet
-
-English:A standard sheet of paper
-Translated:Standardní list papíru
 
 English:A U.S. or Canadian mobile phone number
 Translated:Číslo mobilního telefonu v USA nebo Kanadě
@@ -77,7 +62,7 @@ English:A valid email address
 Translated:Platná e-mailová adresa
 
 English:Abort Print
-Translated:Zrušit tisk
+Translated:Přerušit tisk
 
 English:About
 Translated:O
@@ -98,7 +83,7 @@ English:Action
 Translated:Akce
 
 English:Action Recommended
-Translated:Doporučená akce
+Translated:Akce Doporučeno
 
 English:Action Required
 Translated:Je vyžadována akce
@@ -110,7 +95,7 @@ English:Add a new Macro
 Translated:Přidat nové makro
 
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
-Translated:Přidejte soubory an.stl, .obj, .amf, .gcode nebo.zip do knihovny
+Translated:Do knihovny přidejte soubor an.stl, .obj, .amf, .gcode nebo .zip
 
 English:Add Base
 Translated:Přidat základnu
@@ -134,25 +119,25 @@ English:Adhesion
 Translated:Přilnavost
 
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
-Translated:Upravte nastavení tak, abyste opravili rozdíly mezi očekávanými rychlostmi tisku a aktuálními rychlostmi tisku.
+Translated:Toto nastavení upravte tak, aby se odstranily rozdíly mezi očekávanými rychlostmi tisku a skutečnými rychlostmi tisku.
 
 English:Advanced
 Translated:Pokročilý
 
 English:Advanced Array
-Translated:Pokročilé pole
+Translated:Rozšířené pole
 
 English:After Move
-Translated:Po přesunutí
+Translated:Po přesunu
 
 English:After Tool Change G-Code
 Translated:Po změně nástroje G-Code
 
 English:After Tool Change G-Code 2
-Translated:Po změně nástroje G-Code 2
+Translated:Po výměně nástroje G-Code 2
 
 English:Air Gap
-Translated:Air Gap
+Translated:Vzduchová mezera
 
 English:Alert
 Translated:Upozornění
@@ -161,25 +146,25 @@ English:Align
 Translated:Zarovnat
 
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Všechny výtlačky se vynásobí touto hodnotou. Zvýšením nad 1 se zvýší množství vytlačovaného vlákna (1,1 je dobrá max. Hodnota); čímž se snižuje množství vytlačované (.9 je dobrá minimální hodnota).
+Translated:Všechny výtlačky jsou touto hodnotou násobeny. Zvýšení nad 1 zvýší množství vytlačovaného vlákna (1,1 je dobrá maximální hodnota); Snížením se sníží extrudovaná částka (.9 je dobrá minimální hodnota).
 
 English:All G-Code lines mush be shorter than 100 characters (excluding comments).
-Translated:Všechny řádky G-kódu musí být kratší než 100 znaků (bez komentářů).
+Translated:Všechny řádky G-kódu jsou kratší než 100 znaků (kromě komentářů).
 
 English:All Heaters
-Translated:Všechny ohřívače
+Translated:Všechny Ohřívače
 
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
-Translated:Umožněte společnosti MatterControl rozdělit dlouhé čáry, aby se zlepšilo vyrovnání a zrušení tisku. Kritická pro tiskárny, které jsou výrazně mimo úroveň.
+Translated:Umožní MatterControl rozdělit dlouhé řádky, aby se zlepšilo vyrovnání a zrušení tisku. Kritické pro tiskárny, které jsou výrazně mimo úroveň.
 
 English:Allows you turn on and off applying the fit to the x axis.
-Translated:Umožňuje zapnutí a vypnutí použití osy x.
+Translated:Umožňuje zapnout a vypnout použití přizpůsobení osy x.
 
 English:Allows you turn on and off applying the fit to the y axis.
-Translated:Umožňuje zapnutí a vypnutí použití osy y.
+Translated:Umožňuje zapnout a vypnout použití přizpůsobení osy y.
 
 English:Allows you turn on and off applying the fit to the z axis.
-Translated:Umožňuje zapnutí a vypnutí použití osy z.
+Translated:Umožňuje zapnout a vypnout použití přizpůsobení osy z.
 
 English:Alpha
 Translated:Alpha
@@ -188,25 +173,25 @@ English:Alpha: The in development version of MatterControl
 Translated:Alpha: Ve vývojové verzi MatterControl
 
 English:Already Loaded
-Translated:Je již načtena
+Translated:Již načteno
 
 English:Anchor
 Translated:Kotva
 
 English:and ensure that no filament is stuck to your nozzle.
-Translated:a ujistěte se, že žádné vlákno není přilepené na vaši trysku.
+Translated:a ujistěte se, že na trysku není přilepeno žádné vlákno.
 
 English:and the hotend to heat to 
-Translated:a hotel, který se má ohřát
+Translated:a hotend zahřát
 
 English:Angle
 Translated:Úhel
 
 English:Anyone with this code will have access
-Translated:Kdokoliv s tímto kódem bude mít přístup
+Translated:Kdokoli s tímto kódem bude mít přístup
 
 English:Application Cache
-Translated:Cache aplikace
+Translated:Vyrovnávací paměť aplikací
 
 English:Application Storage
 Translated:Skladování aplikací
@@ -215,31 +200,31 @@ English:Apply
 Translated:Aplikovat
 
 English:Apply leveling to G-Code during export
-Translated:Při exportu použijte vyrovnání G-kódu
+Translated:Při exportu aplikujte vyrovnávání na G-kód
 
 English:Are you sure you want to abort the current print and close MatterControl?
-Translated:Opravdu chcete zrušit aktuální tisk a zavřít MatterControl?
+Translated:Opravdu chcete přerušit aktuální tisk a zavřít MatterControl?
 
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:Opravdu chcete přidat tuto část ({0}) do fronty?\n3D část, kterou se pokoušíte načíst, může být příliš komplikovaná a způsobuje problémy s výkonem nebo stabilitou.\n\nZvažte zmenšení geometrie před pokračováním.
+Translated:Opravdu chcete tuto část ({0}) přidat do fronty? n 3D část, kterou se pokoušíte načíst, může být příliš složitá a způsobit problémy s výkonem nebo stabilitou. NN Zvažte snížení geometrie před pokračováním.
 
 English:Are you sure you want to delete printer '{0}'?
-Translated:Opravdu chcete smazat tiskárnu '{0}'?
+Translated:Opravdu chcete odstranit tiskárnu '{0}'?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Opravdu chcete ukončit tisk, který běží na kartě SD?\n\nPoznámka: Pokud opustíte, doporučujeme počkat až do dokončení tisku, než začnete znovu spustit program MatterControl.
+Translated:Opravdu chcete ukončit tisk, když je spuštěn tisk z karty SD? NN Poznámka: Pokud ukončíte práci, doporučujeme před dalším spuštěním programu MatterControl počkat na dokončení tisku.
 
 English:Are you sure you want to remove the currently selected items?
 Translated:Opravdu chcete odebrat aktuálně vybrané položky?
 
 English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
-Translated:Opravdu se chcete odhlásit? Nebudete mít přístup k profilům tiskárny ani k knihovnám cloud.
+Translated:Opravdu se chcete odhlásit? Nebudete mít přístup k profilům tiskárny ani ke knihovně mraků.
 
 English:Arrange All Parts
-Translated:Uspořádejte všechny součásti
+Translated:Uspořádat všechny díly
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:Vzhledem k tomu, že doba vytištění vrstvy klesne, rychlost ventilátoru se zvýší až na maximální rychlost.
+Translated:Vzhledem k tomu, že doba potřebná k tisku vrstvy se snižuje, rychlost ventilátoru se zvýší na maximální rychlost.
 
 English:Ascending
 Translated:Vzestupně
@@ -248,7 +233,7 @@ English:Attempting to connect
 Translated:Pokus o připojení
 
 English:ATX Power Control
-Translated:ATX Power Control
+Translated:Řízení výkonu ATX
 
 English:Auto Calibrate
 Translated:Automatická kalibrace
@@ -257,19 +242,19 @@ English:Auto Connect
 Translated:Automatické připojení
 
 English:Auto Release Motors
-Translated:Automatické uvolňovací motory
+Translated:Motory s automatickým uvolňováním
 
 English:Auto Uppercase
-Translated:Auto Velké
+Translated:Auto velká písmena
 
 English:Automatic Heater Shutdown in
-Translated:Automatické vypnutí ohřívače v
+Translated:Automatické vypnutí topení
 
 English:Avoid contact with your skin.
 Translated:Zabraňte kontaktu s pokožkou.
 
 English:Avoid Crossing Perimeters
-Translated:Vyhněte se překročení obvodu
+Translated:Vyhněte se překročení obvodů
 
 English:Axis
 Translated:Osa
@@ -287,10 +272,10 @@ English:Back Ratio
 Translated:Zpětný poměr
 
 English:Backing Depth
-Translated:Hloubka zálohování
+Translated:Hloubka podkladu
 
 English:Backup Firmware Before Update
-Translated:Zálohovací firmware před aktualizací
+Translated:Zálohování firmwaru před aktualizací
 
 English:Base
 Translated:Báze
@@ -301,14 +286,17 @@ Translated:Přenosová rychlost
 English:Bed
 Translated:Lůžko
 
-English:Bed Leveling
-Translated:Vyrovnávání lůžek
+English:Bed Leveling data created at {0}°C versus current {1}°C
+Translated:Data o vyrovnání lůžka vytvořená při {0} ° C proti proudu {1} ° C
+
+English:Bed Leveling Temperature
+Translated:Teplota vyrovnávání lůžka
 
 English:Bed PID Settings
 Translated:Nastavení PID postele
 
 English:Bed Remove Part Temperature
-Translated:Ložisko Odstranit teplotu dílce
+Translated:Ložnice Vyjměte teplotu součásti
 
 English:Bed Shape
 Translated:Tvar postele
@@ -317,34 +305,34 @@ English:Bed Size
 Translated:Velikost postele
 
 English:Bed Temperature
-Translated:Teplota postele
+Translated:Teplota lůžka
 
 English:Bed Temperature:
-Translated:Teplota postele:
+Translated:Teplota lůžka:
 
 English:Before Tool Change
-Translated:Před změnou nástroje
+Translated:Před výměnou nástroje
 
 English:Before Tool Change G-Code
-Translated:Před G-kódem Změna nástroje
+Translated:Před změnou nástroje G-Code
 
 English:Before Tool Change G-Code 2
-Translated:Před G-kódem Změna nástroje 2
+Translated:Před výměnou nástroje G-Code 2
 
 English:Behavior
 Translated:Chování
 
 English:Bend Up
-Translated:Ohnout
+Translated:Ohněte se
 
 English:Beta
 Translated:Beta
 
 English:Beta: The release candidate version of MatterControl
-Translated:Beta: verze verze kandidáta MatterControl
+Translated:Beta: Vydaná verze MatterControl
 
 English:Bottom Solid Infill
-Translated:Spodní masivní výplň
+Translated:Spodní tuhá výplň
 
 English:Bottom Solid Layers
 Translated:Spodní pevné vrstvy
@@ -353,43 +341,46 @@ English:Braille
 Translated:Braillovo písmo
 
 English:Braille Card
-Translated:Braillova karta
+Translated:Karta Braillova písma
 
 English:Bridge Over Infill
-Translated:Bridge Over Infill
+Translated:Most Přes Infill
 
 English:Bridges
 Translated:Mosty
 
 English:Bridging Fan Speed
-Translated:Přemostění rychlosti ventilátoru
+Translated:Překlenutí rychlosti ventilátoru
 
 English:Brim
 Translated:Okraj
 
 English:brims
-Translated:brims
+Translated:brim
 
 English:Build Height
-Translated:Výstavba výšky
+Translated:Výška sestav
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
-Translated:Vypočítat a odeslat standardní kontrolní součet pro všechny příkazy.
+Translated:Spočítejte a předejte standardní kontrolní součet rep-rap pro všechny příkazy.
 
 English:Calculate Path
 Translated:Vypočítat cestu
 
-English:Calibrate Probe Offset
-Translated:Kalibrace posunu sondy
-
 English:Calibration
 Translated:Kalibrace
+
+English:Calibration Faces
+Translated:Kalibrační plochy
 
 English:Calibration Files
 Translated:Kalibrační soubory
 
 English:Calibration Parts
-Translated:Kalibrační části
+Translated:Kalibrační díly
+
+English:Calibration Tab
+Translated:Kalibrace Tab
 
 English:Cancel
 Translated:zrušení
@@ -398,7 +389,7 @@ English:Cancel command
 Translated:Zrušit příkaz
 
 English:Cancel G-Code
-Translated:Zrušte G-kód
+Translated:Zrušit kód G
 
 English:Cancel Print
 Translated:Zrušit tisk
@@ -409,14 +400,11 @@ Translated:Zrušit tisk?
 English:Cancel the current print?
 Translated:Zrušit aktuální tisk?
 
-English:Can't access '{0}'.
-Translated:Nemůžete přistupovat k '{0}'.
-
-English:Can't add printers while printing
-Translated:Při tisku nelze tiskárny přidat
+English:Can't access
+Translated:Nelze získat přístup
 
 English:Can't log out while printing
-Translated:Při tisku se nelze odhlásit
+Translated:Během tisku se nelze odhlásit
 
 English:Can't sign in while printing
 Translated:Při tisku se nelze přihlásit
@@ -428,13 +416,13 @@ English:Change Password
 Translated:Změnit heslo
 
 English:Change the scale of the image within the coin.
-Translated:Změňte měřítko obrazu v minci.
+Translated:Změňte měřítko obrazu uvnitř mince.
 
 English:Change the width of the image lines.
-Translated:Změňte šířku čáry obrazu.
+Translated:Změňte šířku obrazových čar.
 
 English:Changing your update channel will change the version of MatterControl that you receive when updating
-Translated:Změnou kanálu aktualizace se změní verze aplikace MatterControl, kterou obdržíte při aktualizaci
+Translated:Změna kanálu aktualizace změní verzi aplikace MatterControl, kterou obdržíte při aktualizaci
 
 English:Check for Update
 Translated:Zkontrolovat aktualizace
@@ -449,19 +437,22 @@ English:Checking for updates...
 Translated:Kontrola aktualizací ...
 
 English:Checking with webservice
-Translated:Kontrola s webovou službou
+Translated:Kontrola pomocí webservice
 
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
-Translated:Před každým tiskem zkontrolujte, zda je výška vrstvy menší než průměr trysky (důležité pro přilnavost vlákna)
+Translated:Před každým tiskem zkontroluje, že výška vrstvy je menší než průměr trysky (důležité pro přilnavost vláken)
+
+English:Choose the calibration you would like to perform.
+Translated:Zvolte kalibraci, kterou chcete provést.
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
-Translated:Zvolte příkaz pro zobrazování postupu tisku na obrazovce LCD tiskárny, pokud ji máte.
+Translated:Vyberte příkaz pro zobrazení průběhu tisku na LCD obrazovce tiskárny, pokud má.
 
 English:Choose to render as Braille or standard text. This can help show how grade 2 works.
-Translated:Vyberte, zda chcete vykreslit jako Braillovo písmo nebo standardní text. To může pomoci ukázat, jak funguje stupeň 2.
+Translated:Vyberte, zda chcete vykreslit jako Braillovo písmo nebo standardní text. To vám může pomoci ukázat, jak funguje třída 2.
 
 English:Clean Filament Page
-Translated:Čisté vlákno
+Translated:Čisté vlákno Strana
 
 English:Clear
 Translated:Průhledná
@@ -476,13 +467,13 @@ English:Clear selection
 Translated:Vymazat výběr
 
 English:Clear ZOffset
-Translated:Clear ZOffset
+Translated:Vymazat ZOffset
 
 English:Click 'Done' to close this window.
-Translated:Klepnutím na tlačítko Hotovo zavřete toto okno.
+Translated:Kliknutím na tlačítko Hotovo zavřete toto okno.
 
 English:Click 'Next' to continue.
-Translated:Chcete-li pokračovat, klikněte na tlačítko Další.
+Translated:Pokračujte klepnutím na tlačítko Další.
 
 English:Close
 Translated:Zavřít
@@ -491,19 +482,28 @@ English:Close Polygons
 Translated:Zavřete polygony
 
 English:Cloud Library
-Translated:Knihovna cloud
+Translated:Cloud Library
+
+English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
+Translated:Hrubá kalibrace je dokončena, nyní se provede normální kalibrace, aby se zvýšila přesnost.
+
+English:Coarse Calibration: If your printer is way off
+Translated:Hrubá kalibrace: Pokud je tiskárna vypnutá
 
 English:Coast At End
-Translated:Pobřeží na konci
+Translated:Pobřeží Na Konci
 
 English:Collapse All
 Translated:Sbalit vše
+
+English:Collect data
+Translated:Sbírat data
 
 English:Color
 Translated:Barva
 
 English:Color View
-Translated:Barevný pohled
+Translated:Zobrazení barev
 
 English:Combine
 Translated:Kombajn
@@ -512,10 +512,10 @@ English:Community
 Translated:Společenství
 
 English:Compile model
-Translated:Zkompilujte model
+Translated:Kompilovaný model
 
 English:Complete Individual Objects
-Translated:Kompletní individuální objekty
+Translated:Kompletní jednotlivé objekty
 
 English:Cone
 Translated:Kužel
@@ -529,6 +529,9 @@ Translated:Nakonfigurujte EEProm
 English:Configure Notifications
 Translated:Konfigurace oznámení
 
+English:Configure Plugins
+Translated:Konfigurace zásuvných modulů
+
 English:Configure Printer
 Translated:Konfigurace tiskárny
 
@@ -539,22 +542,25 @@ English:Confirm your Password
 Translated:Potvrzení hesla
 
 English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:Gratulujeme k připojení k tiskárně. Před zahájením prvního tisku je třeba provést jednoduchý kalibrační postup.
+Translated:Blahopřejeme k připojení k tiskárně. Před zahájením prvního tisku musíme provést jednoduchý kalibrační postup.
+
+English:Congratulations Print Complete
+Translated:Gratulujeme Print Complete
 
 English:Congratulations! Print Leveling is now configured and enabled.
-Translated:Gratulujeme! Vyrovnání tisku je nyní nakonfigurováno a povoleno.
+Translated:Gratulujeme! Print Leveling je nyní nakonfigurováno a povoleno.
 
 English:Connect
 Translated:Připojit
 
 English:Connect Bad Edges
-Translated:Připojte špatné hrany
+Translated:Připojte Bad Edges
 
 English:Connect printer (make sure it is on)
-Translated:Připojte tiskárnu (ujistěte se, že je zapnutá)
+Translated:Připojte tiskárnu (zkontrolujte, zda je zapnutá)
 
 English:Connect to the currently selected printer
-Translated:Připojte k aktuálně vybrané tiskárně
+Translated:Připojení k aktuálně vybrané tiskárně
 
 English:Connect to your printer to continue
 Translated:Chcete-li pokračovat, připojte se k tiskárně
@@ -575,7 +581,10 @@ English:Connection Lost
 Translated:Spojení ztraceno
 
 English:Connection succeeded
-Translated:Připojení bylo úspěšné
+Translated:Připojení proběhlo úspěšně
+
+English:Connection timed out
+Translated:Připojení vypršelo
 
 English:Continue
 Translated:Pokračovat
@@ -587,10 +596,10 @@ English:Controls
 Translated:Řízení
 
 English:Controls the amount of extrusion
-Translated:Řídí množství vytlačování
+Translated:Řídí množství extruze
 
 English:Controls the speed of printer moves
-Translated:Řídí rychlost pohybu tiskáren
+Translated:Řídí rychlost pohybu tiskárny
 
 English:Cooling
 Translated:Chlazení
@@ -601,35 +610,41 @@ Translated:Prahové hodnoty chlazení
 English:Copy
 Translated:kopírovat
 
+English:Copy all settings including hardware calibration
+Translated:Zkopírujte všechna nastavení včetně kalibrace hardwaru
+
+English:Copy and recalibrate
+Translated:Kopírování a rekalibrace
+
+English:Copy everything but hardware specific calibration settings
+Translated:Zkopírujte vše kromě nastavení specifického pro hardware
+
 English:Copy Printers
 Translated:Kopírování tiskáren
 
 English:Copy Printers to Account
-Translated:Kopírovat tiskárny na účet
+Translated:Kopírování tiskáren na účet
 
 English:Cost
 Translated:Náklady
 
 English:Could not find a selected button.
-Translated:Nelze nalézt vybrané tlačítko.
+Translated:Nelze najít vybrané tlačítko.
 
 English:Couldn't load file
 Translated:Nelze načíst soubor
 
 English:Couldn't save file
-Translated:Nelze uložit soubor
-
-English:count or mm
-Translated:počet nebo mm
+Translated:Soubor nelze uložit
 
 English:Create
 Translated:Vytvořit
 
 English:Create a hook so that the coin can be hung from a chain.
-Translated:Vytvořte hák tak, aby mohla být mince zavěšena z řetězce.
+Translated:Vytvořte hák tak, aby mince mohla být zavěšena z řetězu.
 
 English:Create a hook so the Braille can be hung from a necklace or keychain.
-Translated:Vytvořte hák tak, aby Braillovo písmo mohlo být zavěšeno na náhrdelník nebo na klíčenku.
+Translated:Vytvořte háček, aby Braillovo písmo mohlo být zavěšeno na náhrdelníku nebo klíčence.
 
 English:Create a printer to export G-Code
 Translated:Vytvořte tiskárnu pro export G-kódu
@@ -641,22 +656,22 @@ English:Create An Account
 Translated:Vytvořit účet
 
 English:Create Brim
-Translated:Vytvoření okraje
+Translated:Vytvořte Brim
 
 English:Create Folder
 Translated:Vytvořit složku
 
 English:Create Part Sheet
-Translated:Vytvoření části listu
+Translated:Vytvořit dílčí list
 
 English:Create Perimeter
-Translated:Vytvořte obvod
+Translated:Vytvořit obvod
 
 English:Create Printer
 Translated:Vytvořit tiskárnu
 
 English:Create Raft
-Translated:Vytvořte raft
+Translated:Vytvořit vor
 
 English:Create Skirt
 Translated:Vytvořte sukni
@@ -664,32 +679,35 @@ Translated:Vytvořte sukni
 English:Create Support
 Translated:Vytvořit podporu
 
+English:Create Wipe Tower
+Translated:Vytvořit stírací věž
+
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Vytvoří okraj připevněný k podkladu tisku. Je užitečné, aby se zabránilo deformaci při tisku ABS (a dalších deformačních náchylných plastů), protože pomáhá částům ležet na lůžku.
+Translated:Vytvoří okraj připojený k základně tisku. Užitečné pro zabránění deformace při tisku ABS (a dalších plastů náchylných k deformaci), protože pomáhá k přilepení dílů k lůžku.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Vytvoří obvod kolem části, na které se otvírá druhá tryska při tisku pomocí dvou vytlačování. Nastavte 0 na zakázání.
+Translated:Vytvoří obvod kolem součásti, na které chcete otřít druhou trysku při tisku pomocí dvojitého protlačování. Chcete-li tuto funkci vypnout, nastavte hodnotu 0.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Vytvoří raft pod tištěnou částí. Je užitečné, aby se zabránilo deformaci při tisku ABS (a dalších deformačních náchylných plastů), protože pomáhá částům ležet na lůžku.
+Translated:Pod vytištěnou částí vytvoří vor. Užitečné pro zabránění deformace při tisku ABS (a dalších plastů náchylných k deformaci), protože pomáhá k přilepení dílů k lůžku.
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
-Translated:Vytvoří obrys kolem tisku, ale není k ní připojen. To je užitečné pro nástřik trysky, aby bylo zajištěno tok plastu při spuštění tisku.
+Translated:Vytvoří obrys kolem tisku, ale není k němu připojen. To je užitečné pro naplnění trysky, aby bylo zajištěno, že plast začne proudit při zahájení tisku.
 
 English:Creating firmware backup...
 Translated:Vytvoření zálohy firmwaru ...
 
 English:Creation Data
-Translated:Údaje o vytvoření
+Translated:Data vytvoření
 
 English:Cube
 Translated:Krychle
 
 English:Current Build
-Translated:Aktuální sestavení
+Translated:Aktuální stavba
 
 English:Currently available serial ports.
-Translated:V současné době jsou k dispozici sériové porty.
+Translated:Aktuálně dostupné sériové porty.
 
 English:Curve
 Translated:Křivka
@@ -707,28 +725,31 @@ English:Date Created
 Translated:Datum vytvoření
 
 English:Date Modified
-Translated:Datum změněno
+Translated:Datum změny
 
 English:Default
-Translated:Výchozí nastavení
+Translated:Výchozí
 
 English:Delete
-Translated:Odstranit
+Translated:Smazat
 
 English:Delete Printer
-Translated:Odstranit tiskárnu
+Translated:Smazat tiskárnu
 
 English:Delete Printer?
-Translated:Odstranit tiskárnu?
+Translated:Smazat tiskárnu?
 
 English:Delete selection
-Translated:Odstranit výběr
+Translated:Smazat výběr
 
 English:Demo Mode
 Translated:Demo režim
 
 English:Density
 Translated:Hustota
+
+English:DEPRECATED: replaced with extruder_offset
+Translated:DEPRECATED: nahrazen extruder_offset
 
 English:Depth
 Translated:Hloubka
@@ -743,34 +764,34 @@ English:Design Apps
 Translated:Design Apps
 
 English:Design Name
-Translated:Název projektu
+Translated:Název návrhu
 
 English:Details
 Translated:Podrobnosti
 
 English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
-Translated:Zjistěte mezery mezi perimetry, které jsou příliš tenké na to, aby byly naplněny normální výplní a pokuste se je naplnit.
+Translated:Detekujte mezery mezi obvody, které jsou příliš tenké, aby se vyplnily normální výplní, a pokuste se je vyplnit.
 
 English:Detect perimeters that cross over themselves and combine them.
-Translated:Zjistěte obvody, které překračují a kombinují je.
+Translated:Rozpoznávejte obvody, které se kříží a kombinují.
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:Zjistěte, když jsou stěny příliš blízko sebe a je třeba je vytlačovat jako jen jednu stěnu.
+Translated:Zjistit, kdy jsou stěny příliš blízko u sebe a musí být vytlačovány jako jedna stěna.
 
 English:Detecting device firmware...
 Translated:Detekce firmwaru zařízení ...
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:Detekuje části modelu, které by byly příliš tenké pro tisk a rozšiřují je, aby byly tisknutelné.
+Translated:Detekuje části modelu, které by byly příliš tenké pro tisk a rozšiřuje je tak, aby byly tisknutelné.
 
 English:Developed By
-Translated:Vyvinuto od
+Translated:Vyvinut
 
 English:Diameter
 Translated:Průměr
 
 English:Disable Fan For The First
-Translated:Vypnout ventilátor pro první
+Translated:Zakázat ventilátor pro první
 
 English:Disabled: {0}
 Translated:Zakázáno: {0}
@@ -779,7 +800,7 @@ English:Disconnect
 Translated:Odpojit
 
 English:Disconnect and stop the current print?
-Translated:Odpojit a zastavit aktuální tisk?
+Translated:Odpojte a zastavte aktuální tisk?
 
 English:Disconnect from current printer
 Translated:Odpojte od aktuální tiskárny
@@ -796,6 +817,9 @@ Translated:Odpojení
 English:Disconnecting from printer...
 Translated:Odpojení od tiskárny ...
 
+English:Dismiss
+Translated:Propustit
+
 English:Distance
 Translated:Vzdálenost
 
@@ -809,7 +833,10 @@ English:Done
 Translated:Hotovo
 
 English:Don't remind me again
-Translated:Nepřipomínej mi znovu
+Translated:Nezapomeň mi to znovu
+
+English:Don't show this again
+Translated:Neuvádějte to znovu
 
 English:Down Arrow
 Translated:Šipka dolů
@@ -824,7 +851,7 @@ English:Downloading firmware update...
 Translated:Stažení aktualizace firmwaru ...
 
 English:Downloading updates...
-Translated:Stažení aktualizací ...
+Translated:Stahují se aktualizace ...
 
 English:Downloading...
 Translated:Stahování ...
@@ -836,7 +863,7 @@ English:Duplicate
 Translated:Duplikát
 
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:Každá jednotlivá část je vytištěna až po dokončení, poté je tryska spuštěna zpátky na lože a další část je vytištěna.
+Translated:Každá jednotlivá část se vytiskne až do dokončení, poté se tryska spouští zpět do postele a vytiskne se další část.
 
 English:edit
 Translated:Upravit
@@ -845,16 +872,16 @@ English:Edit
 Translated:Upravit
 
 English:Edit Component
-Translated:Upravit součást
+Translated:Upravit komponentu
 
 English:Edit Leveling Data
-Translated:Upravit data vyrovnávání
+Translated:Upravit údaje o vyrovnání
 
 English:Edit Macro
-Translated:Upravte makro
+Translated:Upravit makro
 
 English:Edit OpenSCAD script
-Translated:Upravte skript OpenSCAD
+Translated:Upravit skript OpenSCAD
 
 English:Edit Page
 Translated:Upravit stránku
@@ -863,7 +890,7 @@ English:Edit Selected Setting
 Translated:Upravit vybrané nastavení
 
 English:Editor Selector
-Translated:Editor výběru
+Translated:Volič editoru
 
 English:EEProm Settings
 Translated:Nastavení EEProm
@@ -877,26 +904,32 @@ Translated:E-mailem
 English:Email Address
 Translated:Emailová adresa
 
+English:Empty Bed
+Translated:Prázdná postel
+
+English:Emulate Endstops
+Translated:Emulovat Endstops
+
 English:Enable Auto Cooling
 Translated:Povolit automatické chlazení
 
 English:Enable Extruder Lift
-Translated:Povolit výtahu výtahu
+Translated:Povolit Extruder Lift
 
 English:Enable Fan
 Translated:Povolit ventilátor
 
 English:Enable Line Splitting
-Translated:Povolit rozdělení řádků
+Translated:Povolit dělení řádků
 
 English:Enable Recovery
 Translated:Povolit obnovení
 
 English:Enable Retractions
-Translated:Povolit odvolání
+Translated:Povolit navíjení
 
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
-Translated:Povolte to, pokud má tiskárna hardwarovou podporu pro G30 (automatické snímání lůžek) a chcete jej použít spíše než ručně měřit pozice sondy.
+Translated:Aktivujte tuto možnost, pokud má vaše tiskárna hardwarovou podporu pro G30 (automatické sondování lůžka) a chcete ji používat spíše než ruční měření pozice sondy.
 
 English:End
 Translated:Konec
@@ -905,25 +938,25 @@ English:End G-Code
 Translated:Konec G-kódu
 
 English:Ensure that the part maintains its proportions.
-Translated:Ujistěte se, že část udržuje své proporce.
+Translated:Zajistěte, aby si díl zachoval své proporce.
 
 English:Ensures the rotated part has a minimum number of sides per complete rotation
-Translated:Zajišťuje, aby otočná část měla minimální počet stran při úplném otočení
+Translated:Zajišťuje, že otočná část má minimální počet stran na kompletní rotaci
 
 English:Enter a Design Name Here
-Translated:Zadejte název návrhu zde
+Translated:Zadejte zde název návrhu
 
 English:Enter a username
 Translated:Zadejte jméno
 
 English:Enter New Name Here
-Translated:Zadejte nové jméno zde
+Translated:Zde zadejte nový název
 
 English:Enter reset code
 Translated:Zadejte resetovací kód
 
 English:Enter Share Code
-Translated:Zadejte kód sdílení
+Translated:Zadejte Kód sdílení
 
 English:Enter your email address
 Translated:vložte svou e-mailovou adresu
@@ -953,7 +986,7 @@ English:Error Loading Image
 Translated:Chyba při načítání obrázku
 
 English:Error Reported
-Translated:Chyba hlášena
+Translated:Byla hlášena chyba
 
 English:Estimated Cost
 Translated:Odhadované náklady
@@ -961,17 +994,20 @@ Translated:Odhadované náklady
 English:Estimated Mass
 Translated:Odhadovaná hmotnost
 
+English:Exact clone
+Translated:Přesný klon
+
 English:Exit while printing
-Translated:Ukončení při tisku
+Translated:Ukončete tisk
 
 English:Expand All
 Translated:Rozšířit vše
 
 English:Expand Distance
-Translated:Rozbalte vzdálenost
+Translated:Rozbalit Vzdálenost
 
 English:Expand Thin Walls
-Translated:Rozbalte tenké stěny
+Translated:Rozbalte Tenké stěny
 
 English:Experimental
 Translated:Experimentální
@@ -983,49 +1019,58 @@ English:Export All Settings
 Translated:Exportovat všechna nastavení
 
 English:Export Bed Leveling Data
-Translated:Exportovat data vyrovnávání postelí
+Translated:Export dat vyrovnávání lůžek
 
 English:Export EEPROM
-Translated:Export EEPROM
+Translated:Exportovat EEPROM
 
 English:Export EEPROM Settings
-Translated:Export nastavení EEPROM
+Translated:Exportujte nastavení EEPROM
 
 English:Export Error
-Translated:Exportovat chybu
+Translated:Chyba exportu
 
 English:Export File
 Translated:Exportovat soubor
+
+English:Export Part Sheet
+Translated:Exportovat dílčí list
 
 English:Export selection to
 Translated:Exportovat výběr do
 
 English:Exporting
-Translated:Exportovat
+Translated:Export
 
 English:External Perimeters First
-Translated:Externí obvody jsou první
+Translated:Externí obvody Nejprve
 
 English:Extra Length After Tool Change
-Translated:Dlouhá délka po změně nástroje
+Translated:Extra délka po výměně nástroje
 
 English:Extra Length On Restart
-Translated:Dodatečná délka při restartu
+Translated:Extra délka při restartu
 
 English:Extrude
-Translated:Vytlačte
+Translated:Vytáhnout
 
 English:Extrude filament
 Translated:Vytlačte vlákno
 
 English:Extrude First Layer
-Translated:Vytlačte první vrstvu
+Translated:Vytáhnout první vrstvu
 
 English:Extruder
 Translated:Extruder
 
+English:Extruder 2 Clean Page
+Translated:Čistá strana extruderu 2
+
+English:Extruder 2 Speed
+Translated:Rychlost extruderu 2
+
 English:Extruder 2 Temperature
-Translated:Extruder 2 Teplota
+Translated:Teplota extrudéru 2
 
 English:Extruder 3 Temperature
 Translated:Extruder 3 Teplota
@@ -1043,7 +1088,7 @@ English:Extruder Temperature
 Translated:Teplota extrudéru
 
 English:Extruder Wipe Temperature
-Translated:Teplota vytlačování extrudéru
+Translated:Teplota vysoušeče extrudéru
 
 English:Extruders
 Translated:Extrudéry
@@ -1052,13 +1097,16 @@ English:Extrusion
 Translated:Vytlačování
 
 English:Extrusion Multiplier
-Translated:Multiplikátor extruze
+Translated:Násobitel násobení
 
 English:Extrusion Ratio
 Translated:Poměr vytlačování
 
 English:Extrusion Width
-Translated:Šířka vytlačování
+Translated:Šířka protlačování
+
+English:Failed to connect server
+Translated:Nepodařilo se připojit server
 
 English:Fan
 Translated:Fanoušek
@@ -1070,13 +1118,16 @@ English:Features
 Translated:Funkce
 
 English:Feedrate Ratio
-Translated:Napájecí poměr
+Translated:Poměr posuvu
 
 English:Filament
 Translated:Vlákno
 
+English:Filament 2 Has Been Loaded
+Translated:Vlákno 2 bylo naloženo
+
 English:Filament Has Been Loaded
-Translated:Vlákno bylo načteno
+Translated:Vlákno bylo naložené
 
 English:Filament Length
 Translated:Délka vlákna
@@ -1085,49 +1136,52 @@ English:Filament Speed
 Translated:Rychlost vlákna
 
 English:Filament Volume
-Translated:Hmotnost vlákna
+Translated:Objem vlákna
 
 English:File May Cause Problems
-Translated:Soubor může způsobit potíže
+Translated:Soubor může způsobit problémy
+
+English:File Path
+Translated:Cesta k souboru
 
 English:Fill Density
-Translated:Naplnit hustotu
+Translated:Hustota plnění
 
 English:Fill Pattern
-Translated:Vyplňte vzorek
+Translated:Vzor výplně
 
 English:Fill Thin Gaps
 Translated:Vyplňte tenké mezery
-
-English:Filter Output
-Translated:Výstup filtru
 
 English:Filters
 Translated:Filtry
 
 English:Finally click 'Next' to continue.
-Translated:Klepnutím na tlačítko "Další" pokračujte.
+Translated:Pokračujte kliknutím na tlačítko Další.
 
 English:Find and create supports where needed
 Translated:V případě potřeby vyhledejte a vytvořte podporu
+
+English:Fine Calibration: When you want that extra precision
+Translated:Jemná kalibrace: Když chcete, aby byla tato přesnost ještě přesnější
 
 English:Finish
 Translated:Dokončit
 
 English:Finished Print
-Translated:Ukončený tisk
+Translated:Hotový tisk
 
 English:Finished Print: {0}
-Translated:Ukončený tisk: {0}
+Translated:Hotový tisk: {0}
 
 English:Finishing Startup
-Translated:Dokončení spuštění
+Translated:Dokončovací spuštění
 
 English:Firmware download failed
 Translated:Stažení firmwaru selhalo
 
 English:Firmware EEPROM Settings
-Translated:Nastavení EEPROM firmwaru
+Translated:Nastavení firmwaru EEPROM
 
 English:Firmware restored successfully. Please reconnect.
 Translated:Firmware byl úspěšně obnoven. Znovu se připojte.
@@ -1148,22 +1202,31 @@ English:First Layer Only
 Translated:Pouze první vrstva
 
 English:First Layer Thickness
-Translated:První tloušťka vrstvy
+Translated:Tloušťka první vrstvy
 
 English:Fit to Bounds
 Translated:Fit to Bounds
 
+English:Fit to Cylinder
+Translated:Přizpůsobit válce
+
+English:Flag for the state of our filament loaded on extruder 2.
+Translated:Vlajka pro stav našeho vlákna naloženého na extrudéru 2.
+
 English:Flag for the state of our filament loaded.
-Translated:Vlajka pro stav vloženého vlákna.
+Translated:Vlajka pro stav našeho vlákna.
 
 English:Flag keeping track if probe calibration wizard has been run.
-Translated:Pokud je spuštěn průvodce pro kalibraci sondy, bude se měnit vlajka.
+Translated:Pokud je spuštěn průvodce kalibrací sondy, označte možnost Sledování stopy.
+
+English:Flag keeping track if xy calibration wizard has been run.
+Translated:Pokud je spuštěn průvodce kalibrací xy, označte vlajku, která sleduje.
 
 English:Flat
 Translated:Ploché
 
 English:Flatten
-Translated:Vyrovnejte
+Translated:Vyrovnat
 
 English:Flattened
 Translated:Zploštělý
@@ -1175,19 +1238,19 @@ English:Folders
 Translated:Složky
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
-Translated:Při přesunu mezi ostrovy vynucte odtržení (zřetelné části na vrstvě).
+Translated:Při pohybu mezi ostrovy vynutit navinutí (odlišné části vrstvy).
 
 English:Forces external perimeters to be printed first. By default, they will print last.
-Translated:Vynutit vnější obvod, který má být vytištěn jako první. Ve výchozím nastavení vytisknou poslední.
+Translated:Vynutí první vnější obvody. Ve výchozím nastavení budou tisknout poslední.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:Vynutí tisk má pouze jedno vytlačování a postupně zvyšuje výšku Z během tisku. Při této funkci bude tisknout pouze jedna část.
+Translated:Vynutí tisku pouze jeden výtisk a postupně zvětší výšku Z během tisku. S touto funkcí se současně tiskne pouze jedna část.
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:Vynutit tiskárnu, aby předehřela trysku.
+Translated:Nutí tiskárnu k zahřátí trysky před naváděním.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:Vynucuje kráječ, aby se pokusil vyhnout se překročení obvodové čáry nad existující obvodové čáry. To může pomoci s vyprázdněním nebo struny.
+Translated:Vynucuje, aby se kráječ pokoušel vyhnout tomu, aby obvodová čára prošla přes existující obvodové čáry. To může pomoci s bahnem nebo řetězci.
 
 English:Forgot Password
 Translated:Zapomenuté heslo
@@ -1196,10 +1259,7 @@ English:Forums
 Translated:Fóra
 
 English:Found a line that is {0} characters long.\n{1}...
-Translated:Našel řádek dlouhý {0} znaků.\n{1} ...
-
-English:g/cm³
-Translated:g / cm3
+Translated:Byl nalezen řádek, který má délku {0} znaků. n {1} ...
 
 English:g0
 Translated:g0
@@ -1208,55 +1268,46 @@ English:G-Code
 Translated:G-kód
 
 English:G-Code Flavor
-Translated:G-kódová vůně
+Translated:Příchuť G-Code
+
+English:G-Code Line
+Translated:Linka G-Code
 
 English:G-Code Output
 Translated:Výstup G-kódu
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-kód, který má být spuštěn po každé změně nástroje. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení offset polohy.
+English:G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-kód se má spustit po každé výměně nástroje. Můžeš použít '; WRITE_RAW 'přeskočit kontrolní součty nebo'; NO_PROCESSING 'pro přeskočení posunutí pozice.
 
-English:G-Code to be run after every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kód, který má být spuštěn po každé změně nástroje. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení polohy.
-
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-kód, který má být spuštěn po přepnutí na extruder 2. Používá standardní G-kód, pokud není nastaven. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení offset polohy.
-
-English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kód, který má být spuštěn po přepnutí na extruder 2. Používá standardní G-kód, pokud není nastaven. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení polohy.
+English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-kód, který má být spuštěn po přepnutí do extrudéru 2. Pokud není nastaven, použije se standard po G-Code. Můžeš použít '; WRITE_RAW 'přeskočit kontrolní součty nebo'; NO_PROCESSING 'pro přeskočení posunutí pozice.
 
 English:G-Code to be run after the change in Z height for the next layer.
 Translated:G-kód, který má být spuštěn po změně výšky Z pro další vrstvu.
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:G-kód, který má být spuštěn na konci všech automatických výstupů (na konci příkazů G-kódu).
+Translated:G-Code se spouští na konci všech automatických výstupů (samotný konec příkazů G-Code).
 
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-kód musí být spuštěn před každou změnou nástroje. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení offset polohy.
-
-English:G-Code to be run before every tool change. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z] to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kód musí být spuštěn před každou změnou nástroje. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení polohy.
-
-English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offseting.
-Translated:G-kód, který má být spuštěn před přepnutím na extruder 2. Použije standard před G-Code, pokud není nastaven. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení offset polohy.
+English:G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-kód se má spustit před každou výměnou nástroje. Můžeš použít '; WRITE_RAW 'přeskočit kontrolní součty nebo'; NO_PROCESSING 'pro přeskočení posunutí pozice.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kód, který má být spuštěn před přepnutím na extruder 2. Použije standard před G-Code, pokud není nastaven. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení polohy vytlačovacího stroje v případě potřeby. Můžete také použít '; WRITE_RAW 'pro přeskočení kontrolních součtů nebo'; NO_PROCESSING 'pro přeskočení polohy.
+Translated:G-kód, který má být spuštěn před přepnutím do extrudéru 2. Pokud není nastaven, použije se standard před G-Code. Můžete použít [wipe_tower_x] [wipe_tower_y] a [wipe_tower_z] pro nastavení pozice extruderu v případě potřeby. Můžete také použít '; WRITE_RAW 'přeskočit kontrolní součty nebo'; NO_PROCESSING 'pro přeskočení posunutí pozice.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G-kód, který má být spuštěn okamžitě po příkazu pro nastavení teploty. Včetně příkazů pro nastavení teploty v této části způsobí, že nebudou generovány mimo tuto část. Přijme proměnné vlastní G-kód.
+Translated:G-kód musí být spuštěn bezprostředně za povely pro nastavení teploty. Zahrnutí příkazů k nastavení teploty v této sekci způsobí, že nebudou generovány mimo tuto sekci. Přijme vlastní proměnné G-Code.
 
 English:G-Code to be run when the print resumes after a pause.
-Translated:G-kód, který se má spustit po obnovení tisku po pauze.
+Translated:G-kód bude spuštěn po obnovení tisku po pauze.
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:G-Code spustit po úspěšném připojení k tiskárně. To může být užitečné pro nastavení nastavení specifických pro danou tiskárnu.
+Translated:G-Code spustit po úspěšném připojení k tiskárně. To může být užitečné pro nastavení specifická pro danou tiskárnu.
 
 English:G-Code to run when a print is canceled.
-Translated:G-Code spustit při zrušení tisku.
+Translated:G-kód se spustí při zrušení tisku.
 
 English:G-Code to run when the printer is paused.
-Translated:G-Code se spustí, když je tiskárna pozastavena.
+Translated:G-kód se spustí, když je tiskárna pozastavena.
 
 English:General
 Translated:Všeobecné
@@ -1265,19 +1316,22 @@ English:Generate
 Translated:generovat
 
 English:Generate Support
-Translated:Generujte podporu
+Translated:Generovat podporu
 
 English:Generate Supports
-Translated:Generujte podporu
+Translated:Generovat podpory
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
-Translated:Vytvoří obrys kolem materiálu podkladu pro zlepšení pevnosti a udržení vrstev rozhraní.
+Translated:Vytváří obrys kolem podpůrného materiálu pro zlepšení pevnosti a držení vrstev rozhraní.
 
 English:Generating Lithophane
-Translated:Generování lithofanu
+Translated:Generování Lithophane
+
+English:Generating Text Meshes
+Translated:Generování textových sítí
 
 English:Give the macro a name
-Translated:Dejte makro jméno
+Translated:Dejte makru jméno
 
 English:Group
 Translated:Skupina
@@ -1286,70 +1340,73 @@ English:Guides
 Translated:Průvodci
 
 English:Guides and Articles
-Translated:Průvodci a články
+Translated:Návody a články
 
 English:Half Cylinder
 Translated:Poloviční válec
 
 English:Half Sphere
-Translated:Poloviční koule
+Translated:Polovina koule
 
 English:Half Wedge
-Translated:Poloviční klín
+Translated:Half Wedge
 
 English:Hardware
 Translated:Hardware
 
 English:Has Fan
-Translated:Má ventilátor
+Translated:Má fanouška
 
 English:Has Filament Runout Sensor
-Translated:Má snímač spouštění vlákna
+Translated:Má Vláknový senzor
 
 English:Has Hardware Leveling
-Translated:Má vyrovnávání hardwaru
+Translated:Má hardwarové vyrovnání
 
 English:Has Heated Bed
-Translated:Má vyhřívanou postel
+Translated:Má Vyhřívaná Postel
 
 English:Has Power Control
 Translated:Má řízení výkonu
 
 English:Has SD Card Reader
-Translated:Má čtečku karet SD
+Translated:Má čtečku SD karet
 
 English:Has Z Probe
-Translated:Má Z sondu
+Translated:Má sondu Z
 
 English:Has Z Servo
 Translated:Má Z Servo
 
 English:Have MatterControl send you email messages about your print
-Translated:Nechte MatterControl posílat e-mailové zprávy o vašem tisku
+Translated:MatterControl vám pošle e-mailové zprávy o vašem tisku
 
 English:Have MatterControl send you text messages about your print
-Translated:Nechte MatterControl posílat textové zprávy o vašem tisku
+Translated:Nechte MatterControl poslat textové zprávy o vašem tisku
 
 English:Heat Before Homing
-Translated:Teplo před domem
+Translated:Teplo před homing
 
 English:Heat the bed
-Translated:Ohřejte postel
+Translated:Zahřejte postel
 
 English:Heated Bed
 Translated:Vyhřívaná postel
 
 English:Heating Bed
-Translated:Topení lůžko
+Translated:Topení Postel
 
-English:Heating Extruder
-Translated:Vytápění Extruder
+English:Heating Nozzle
+Translated:Topení Tryska
 
 English:Height
 Translated:Výška
 
 English:Help
 Translated:Pomoc
+
+English:Here is what we are going to do:
+Translated:Zde je to, co budeme dělat:
 
 English:High Precision
 Translated:Vysoká přesnost
@@ -1358,19 +1415,19 @@ English:History
 Translated:Dějiny
 
 English:Holding Temperature
-Translated:Teplota přidržení
+Translated:Teplota přidržování
 
 English:Home
 Translated:Domov
 
 English:Home the printer
-Translated:Domov tiskárny
+Translated:Domácí tiskárna
 
 English:Home X
 Translated:Domů X
 
 English:Home X, Y and Z
-Translated:Domů X, Y a Z
+Translated:Domácí X, Y a Z
 
 English:Home Y
 Translated:Domů Y
@@ -1385,10 +1442,10 @@ English:Homing
 Translated:Naváděcí
 
 English:Homing Offset
-Translated:Homing Offset
+Translated:Odsazení
 
 English:Homing The Printer
-Translated:Přizpůsobení tiskárně
+Translated:Uvádění tiskárny do provozu
 
 English:Hotend
 Translated:Hotend
@@ -1399,11 +1456,14 @@ Translated:Hotend {0}
 English:Hotend {0} Temperature
 Translated:Hotend {0} Teplota
 
+English:Hotend {0} Temperature:
+Translated:Teplota {0}:
+
 English:Hotend Temperature
-Translated:Hotend Teplota
+Translated:Teplota ohřevu
 
 English:Hotend Temperature:
-Translated:Hotend Teplota:
+Translated:Teplota ohřevu:
 
 English:How can we improve?
 Translated:Jak se můžeme zlepšit?
@@ -1411,26 +1471,26 @@ Translated:Jak se můžeme zlepšit?
 English:How to succeed with MatterControl
 Translated:Jak uspět s MatterControl
 
-English:Hz
-Translated:Hz
+English:Ideal for cloning settings across different physical printers
+Translated:Ideální pro nastavení klonování napříč různými fyzickými tiskárnami
 
 English:if currently connected
-Translated:pokud je momentálně připojen
+Translated:pokud je aktuálně připojen
 
 English:If set, the printer will automatically attempt to connect when selected.
-Translated:Je-li tato možnost nastavena, tiskárna se po výběru automaticky pokusí připojit.
+Translated:Pokud je nastaveno, tiskárna se automaticky pokusí připojit, když je vybrána.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:Pokud extruder běží dlouhou dobu, může to být hlášení hodnot, které jsou příliš velké, bude to periodicky resetovat.
+Translated:Pokud je extruder spuštěn po dlouhou dobu, může se jednat o příliš velké hodnoty, které bude periodicky resetovat.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:Pokud je doba tisku vrstvy menší, ventilátor se zapne při minimální rychlosti. Poté se čas vrstev zvýší na maximální rychlost.
+Translated:Pokud je doba tisku vrstvy menší než tato hodnota, ventilátor se zapne při minimální rychlosti. Poté, co se doba vrstvy sníží, se pak rozběhne na maximální rychlost.
 
 English:If you wish to re-calibrate leveling in the future:
-Translated:Chcete-li v budoucnu znovu kalibrovat vyrovnávání:
+Translated:Chcete-li v budoucnu kalibraci znovu kalibrovat:
 
 English:If you wish to re-calibrate your probe in the future:
-Translated:Pokud si přejete znovu kalibrovat sondu v budoucnu:
+Translated:Pokud si přejete kalibraci sondy v budoucnu:
 
 English:Image
 Translated:obraz
@@ -1439,7 +1499,7 @@ English:Image Converter
 Translated:Image Converter
 
 English:Image to Path
-Translated:Obrázek k cestě
+Translated:Obrázek na cestu
 
 English:Immediately turn off heaters
 Translated:Okamžitě vypněte ohřívače
@@ -1448,43 +1508,49 @@ English:Import
 Translated:Import
 
 English:Import EEPROM
-Translated:Import EEPROM
+Translated:Importujte EEPROM
 
 English:Import EEPROM Settings
-Translated:Import nastavení EEPROM
+Translated:Importujte nastavení EEPROM
 
 English:Import Presets
 Translated:Importovat předvolby
 
 English:Import Printer
-Translated:Import tiskárny
+Translated:Importovat tiskárnu
 
 English:Import Successful
-Translated:Import úspěšný
+Translated:Import byl úspěšný
 
 English:Import Wizard
 Translated:Průvodce importem
 
+English:In / Out Indicators
+Translated:Indikátory In / Out
+
+English:Inactive Cool Down
+Translated:Neaktivní chlazení
+
 English:Include a picture of my print
-Translated:Zahrnout obrázek mého tisku
+Translated:Vložte obrázek mého tisku
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
-Translated:Označuje, že osa Z přenáší horký konec z postele (z-max homing)
+Translated:Označuje, že domovská osa Z vede z horkého konce od lůžka (z-max homing)
 
 English:Infill
-Translated:Naplnit
+Translated:Infill
 
 English:Infill Angle
-Translated:Úhel naplnění
+Translated:Úhel výplně
 
 English:Infill Overlap
-Translated:Překrývání výplně
+Translated:Překrytí výplně
 
 English:Infill Type
 Translated:Typ výplně
 
 English:Inflate Path
-Translated:Nafouknout cestu
+Translated:Nafoukněte cestu
 
 English:Initial Layer Speed
 Translated:Počáteční rychlost vrstvy
@@ -1502,7 +1568,7 @@ English:Initializing Library
 Translated:Inicializace knihovny
 
 English:Inner Radius
-Translated:Vnitřní rádius
+Translated:Vnitřní poloměr
 
 English:Inner Size
 Translated:Vnitřní velikost
@@ -1510,17 +1576,23 @@ Translated:Vnitřní velikost
 English:Insert Filament
 Translated:Vložte vlákno
 
+English:Insert Filament 2 Page
+Translated:Vložit vlákno 2 Strana
+
 English:Insert Filament Page
-Translated:Vložte stránku vlákna
+Translated:Vložte vlákno Strana
 
 English:Inside Perimeters
-Translated:Uvnitř obvodů
+Translated:Uvnitř obvodu
 
 English:Install Update
 Translated:Instalovat aktualizace
 
 English:Interface
 Translated:Rozhraní
+
+English:Interface Layer
+Translated:Vrstva rozhraní
 
 English:Interface Layers
 Translated:Vrstvy rozhraní
@@ -1529,52 +1601,52 @@ English:Interface Tour
 Translated:Prohlídka rozhraní
 
 English:Intersect
-Translated:Protínají
+Translated:Průnik
 
 English:Intersection
 Translated:Průsečík
 
 English:Invalid Client Token
-Translated:Neplatný klientský token
+Translated:Neplatný token klienta
 
 English:Inventory
 Translated:Inventář
 
 English:Invert
-Translated:Obrátit se
+Translated:Invertovat
 
 English:IP Address
 Translated:IP adresa
 
 English:IP Address of printer/printer controller
-Translated:Adresa IP tiskárny / tiskárny
+Translated:Adresa IP řadiče tiskárny / tiskárny
 
 English:IP Finder
 Translated:IP Finder
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:Zdá se, že poslední tisk selhal.\n\nChtěli byste se pokoušet o obnovení z poslední pozici?
+Translated:Zdá se, že poslední tisk se nezdařil. NN Chtěli byste se pokusit zotavit se z poslední známé pozice?
 
 English:It is currently set to {0}.
-Translated:V současné době je nastavena na hodnotu {0}.
+Translated:V současné době je nastaven na {0}.
 
 English:Item cannot be exported
-Translated:Položku nelze exportovat
+Translated:Položka nemůže být exportována
 
 English:Item cannot be exported as STL
-Translated:Položku nelze exportovat jako STL
+Translated:Položka nemůže být exportována jako STL
 
 English:Item not Found
 Translated:Položka nebyla nalezena
 
 English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:Je čas zkopírovat stávající nastavení tiskárny na váš účet MatterHackers. Po kopírování budou tyto tiskárny k dispozici vždy, když se přihlásíte do MatterControl. Tiskárny, které nejsou kopírovány, budou k dispozici pouze v případě, že se nepřihlásíte.
+Translated:Je čas zkopírovat stávající nastavení tiskárny na účet MatterHackers. Po zkopírování budou tyto tiskárny k dispozici vždy, když se přihlásíte do aplikace MatterControl. Tiskárny, které nejsou kopírovány, budou k dispozici pouze v případě, že nejsou přihlášeny.
 
 English:Jerk Velocity
-Translated:Rychlost Jerk
+Translated:Jerk Velocity
 
 English:Keep the entire extents of the part within the angle described.
-Translated:Uchovávejte celý rozsah dílu v popsaném úhlu.
+Translated:Udržujte celý rozsah dílu v popsaném úhlu.
 
 English:Keep Within Angle
 Translated:Udržujte v úhlu
@@ -1586,31 +1658,25 @@ English:Language
 Translated:Jazyk
 
 English:Lay Flat
-Translated:Lay Flat
+Translated:Položte byt
 
 English:Layer
 Translated:Vrstva
 
 English:Layer Change G-Code
-Translated:G-kód pro změnu vrstvy
+Translated:Změna G-kódu vrstvy
 
 English:Layer Thickness
 Translated:Tloušťka vrstvy
 
 English:Layer Top
-Translated:Nejvyšší vrstva
+Translated:Horní vrstva
 
 English:Layer(s) To Pause
-Translated:Vrstvy pro pozastavení
-
-English:layers
-Translated:vrstvy
+Translated:Vrstva (y) k pozastavení
 
 English:Layers / Surface
-Translated:Vrstvy / Povrch
-
-English:layers or mm
-Translated:vrstvy nebo mm
+Translated:Vrstvy / povrch
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Nechte to jako 0, abyste umožnili automatický výpočet šířky vytlačování.
@@ -1619,52 +1685,70 @@ English:left click
 Translated:levé kliknutí
 
 English:left drag
-Translated:levým přetažením
+Translated:vlevo
+
+English:Length
+Translated:Délka
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:Délka extra vlákna k vytlačování po úplné výměně nástroje (kromě opětovného vytlačování zatahovací vzdálenosti výměny nástroje).
+Translated:Délka dodatečného vlákna, které se má po kompletní výměně nástroje vytlačit (kromě opětovného vytlačování vzdálenosti odtahování nástroje).
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
-Translated:Délka vlákna pro vytlačování po úplném vytažení (kromě opětovného vytlačování vzdálenosti na délce pohybu).
+Translated:Délka vlákna pro vytlačení po úplném navinutí (kromě opětovného vytlačování vzdálenosti na vzdálenost).
 
 English:Length on Tool Change
 Translated:Délka změny nástroje
 
 English:Let's show you around before you get started.
-Translated:Ukážeme vám to předtím, než začnete.
+Translated:Ukážeme vám, než začnete.
 
 English:Letter
 Translated:Dopis
 
+English:Level X Carriage
+Translated:Úroveň X Přeprava
+
+English:Level X Carriage Page
+Translated:Stránka přepravní úrovně X
+
 English:Leveling
 Translated:Vyrovnání
+
+English:Leveling Data Visualizer
+Translated:Vyrovnávání dat Visualizer
 
 English:Leveling Probe
 Translated:Vyrovnávací sonda
 
 English:Leveling Settings
-Translated:Nastavení vyrovnávání
+Translated:Nastavení vyrovnání
 
 English:Leveling Solution
-Translated:Vyrovnávací řešení
+Translated:Řešení pro vyrovnávání
 
 English:Library
 Translated:Knihovna
 
 English:Library - Enter Share Code
-Translated:Knihovna - zadejte kód sdílení
+Translated:Knihovna - Zadejte kód sdílení
 
 English:Limited Connectivity
 Translated:Omezené připojení
+
+English:Line Checksums
+Translated:Line Kontrolní součty
+
+English:Line Inspector
+Translated:Linkový inspektor
 
 English:Linear Array
 Translated:Lineární pole
 
 English:Linear Extrude
-Translated:Lineární vytlačování
+Translated:Lineární extruze
 
 English:List of IP's discovered on the network
-Translated:Seznam IP sítí objevených v síti
+Translated:Seznam IP objevených v síti
 
 English:Lithophane
 Translated:Lithophane
@@ -1673,31 +1757,31 @@ English:Load
 Translated:Zatížení
 
 English:Load filament
-Translated:Vložte vlákno
+Translated:Zatěžte vlákno
 
 English:Load Filament
-Translated:Vložte vlákno
+Translated:Zatěžovací vlákno
+
+English:Load Filament 2
+Translated:Zatěžovací vlákno 2
 
 English:Load Filament Length
-Translated:Zatížte délku vlákna
-
-English:Load Filament Wizard
-Translated:Průvodce načtení vlákna
+Translated:Délka filamentu
 
 English:Load Material
-Translated:Vložte materiál
+Translated:Zatížení materiálu
 
 English:Loading
 Translated:načítání
 
 English:Loading Bed
-Translated:Nakládací lůžko
+Translated:Načítání postel
 
 English:Loading Filament
-Translated:Nakládání vlákna
+Translated:Nakládací vlákno
 
 English:Loading GCode
-Translated:Načítání kódu GC
+Translated:Načítání GCode
 
 English:Loading G-Code
 Translated:Načítání G-kódu
@@ -1718,13 +1802,13 @@ English:Low Precision
 Translated:Nízká přesnost
 
 English:Lower / Deploy
-Translated:Spouštění / Nasazení
+Translated:Nižší / Nasazení
 
 English:Machine File (G-Code)
 Translated:Strojový soubor (G-kód)
 
 English:Macro Commands
-Translated:Příkazy maker
+Translated:Makro příkazy
 
 English:Macro Editor
 Translated:Editor maker
@@ -1733,13 +1817,13 @@ English:Macro Name
 Translated:Název makra
 
 English:Macro Presets
-Translated:Makro předvolby
+Translated:Předvolby makra
 
 English:Macros
 Translated:Makra
 
 English:Maintain Proportions
-Translated:Udržujte poměr
+Translated:Udržovat proporce
 
 English:make
 Translated:udělat
@@ -1748,7 +1832,10 @@ English:Make
 Translated:Udělat
 
 English:Make Component
-Translated:Vytvořit komponentu
+Translated:Vytvořte komponentu
+
+English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
+Translated:Udělejte MatterControl emulovat limity lůžek a koncových bodů v softwaru a zabránit tiskárně v přechodu na neplatná místa.
 
 English:Make Selection
 Translated:Provést výběr
@@ -1760,19 +1847,19 @@ English:Make sure the first point on a perimeter is not an overhang.
 Translated:Ujistěte se, že první bod na obvodu není převis.
 
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
-Translated:Vytvořte první vrstvu nad částečnou výplní a použijte rychlost a ventilátor pro přemostění.
+Translated:Proveďte první vrstvu na horní části částečné výplně použijte rychlost a ventilátor pro přemostění.
 
 English:Manual Movement Speeds
-Translated:Manuální pohybové rychlosti
+Translated:Rychlosti ručního pohybu
 
 English:Manually Configure Connection
-Translated:Ruční konfigurace připojení
+Translated:Ručně nakonfigurujte připojení
 
 English:Manually measure the extruder at the center
-Translated:Manuálně měřte extrudér uprostřed
+Translated:Manuálně změřte extrudér ve středu
 
 English:Markdown Edit
-Translated:Značka Upravit
+Translated:Editace Markdown
 
 English:Marlin Firmware EEPROM Settings
 Translated:Marlin Firmware EEPROM Nastavení
@@ -1790,37 +1877,40 @@ English:MatterControl
 Translated:MatterControl
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
-Translated:MatterControl je umožněn týmem společnosti MatterHackers a jiným open source softwarem
+Translated:MatterControl umožňuje tým MatterHackers a další open source software
+
+English:MatterControl Plugins
+Translated:MatterControl Pluginy
 
 English:MatterControl will now attempt to auto-detect printer.
-Translated:MatterControl se nyní pokusí automaticky detekovat tiskárnu.
+Translated:MatterControl se nyní pokusí automaticky rozpoznat tiskárnu.
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: Vyberte soubor firmwaru
 
 English:Max Acceleration
-Translated:Maximální zrychlení
+Translated:Max akcelerace
 
 English:Max Velocity
-Translated:Max Velocity
+Translated:Max Rychlost
 
 English:Maximum Acceleration [mm/s²]
 Translated:Maximální zrychlení [mm / s²]
 
 English:Maximum E jerk [mm/s]
-Translated:Maximální trhlina E [mm / s]
+Translated:Maximální hodnota [mm / s]
 
 English:Maximum feedrates [mm/s]
-Translated:Maximální podávání [mm / s]
+Translated:Maximální posuv [mm / s]
 
 English:Maximum Speed
 Translated:Maximální rychlost
 
 English:Maximum X-Y jerk [mm/s]
-Translated:Maximální trhliny X-Y [mm / s]
+Translated:Maximální shoda X-Y [mm / s]
 
 English:Maximum Z jerk [mm/s]
-Translated:Maximální trhlina Z [mm / s]
+Translated:Maximální Z jerk [mm / s]
 
 English:Measure the nozzle offset
 Translated:Změřte posunutí trysky
@@ -1832,7 +1922,7 @@ English:Merge Overlapping Lines
 Translated:Sloučit překrývající se čáry
 
 English:Mesh
-Translated:Oka
+Translated:Mesh
 
 English:Message
 Translated:Zpráva
@@ -1841,28 +1931,28 @@ English:middle drag
 Translated:střední tažení
 
 English:Min feedrate [mm/s]
-Translated:Minimální posuv [mm / s]
+Translated:Min. Posuv [mm / s]
 
 English:Min travel feedrate [mm/s]
-Translated:Min. Podávací výkon [mm / s]
+Translated:Min. Posuv posuvu [mm / s]
 
 English:Minimum Extrusion Length
 Translated:Minimální délka vytlačování
 
 English:Minimum Extrusion Requiring Retraction
-Translated:Minimální vytlačování vyžadující odtržení
+Translated:Minimální zatlačení vyžadující protlačování
 
 English:Minimum Print Speed
 Translated:Minimální rychlost tisku
 
 English:Minimum segment time [ms]
-Translated:Minimální doba segmentu [ms]
+Translated:Minimální čas segmentu [ms]
 
 English:Minimum Speed
 Translated:Minimální rychlost
 
 English:Minimum Travel Requiring Retraction
-Translated:Minimální jízda vyžadující odvolání
+Translated:Minimální požadovaná dráha
 
 English:Mirror
 Translated:Zrcadlo
@@ -1870,23 +1960,8 @@ Translated:Zrcadlo
 English:Missing
 Translated:Chybějící
 
-English:mm
-Translated:mm
-
-English:mm or %
-Translated:mm nebo%
-
-English:mm zero to disable
-Translated:mm nula pro vypnutí
-
 English:mm/s
 Translated:mm / s
-
-English:mm/s or %
-Translated:mm / s nebo%
-
-English:mm/s²
-Translated:mm / s²
 
 English:model
 Translated:Modelka
@@ -1898,10 +1973,13 @@ English:Model View
 Translated:Zobrazení modelu
 
 English:Model View Style
-Translated:Styl modelu zobrazení
+Translated:Styl zobrazení modelu
 
 English:Modify
 Translated:Upravit
+
+English:Modify T1 speeds during extrusion moves by the ratio or percent.
+Translated:Změňte rychlost T1 během vytlačování o poměr nebo procento.
 
 English:More
 Translated:Více
@@ -1913,7 +1991,7 @@ English:Move
 Translated:Přestěhovat se
 
 English:Move (Shift + Left Mouse)
-Translated:Přesunout (Shift + Levá myš)
+Translated:Přesunout (Shift + levá myš)
 
 English:Move Item
 Translated:Přesunout položku
@@ -1922,52 +2000,55 @@ English:Move Part
 Translated:Přesunout část
 
 English:Move Part Constrained
-Translated:Přesuňte část omezené
+Translated:Přesunout omezený díl
 
 English:Move X negative
-Translated:Přesuňte X negativní
+Translated:Negativní posun X
 
 English:Move X positive
-Translated:Přesunout X pozitivní
+Translated:Posun X pozitivní
 
 English:Move Y negative
-Translated:Přesuňte Y negativní
+Translated:Posuňte Y negativní
 
 English:Move Y positive
-Translated:Posun Y pozitivní
+Translated:Posuňte Y kladně
 
 English:Move Z negative
-Translated:Přesuňte Z negativní
+Translated:Posuňte Z negativní
 
 English:Move Z positive
-Translated:Posunujte pozici Z
+Translated:Posuňte Z kladně
 
 English:Movement
 Translated:Hnutí
 
+English:Movement Requests
+Translated:Požadavky na pohyb
+
 English:Movement Speeds
-Translated:Rychlost pohybu
+Translated:Rychlosti pohybu
 
 English:Movement Speeds Presets
 Translated:Předvolby rychlosti pohybu
 
 English:Moves
-Translated:Pohyby
+Translated:Přesune se
 
 English:Moves the nozzle up and off the part to allow cooling.
-Translated:Přesune trysku nahoru a ven z části, aby bylo možné chlazení.
+Translated:Posune trysku nahoru a dolů z dílu, aby bylo umožněno chlazení.
 
 English:My Modified Settings
 Translated:Moje upravená nastavení
 
 English:My Modified Settings (Printer)
-Translated:Moje upravené nastavení (tiskárna)
+Translated:Moje upravená nastavení (tiskárna)
 
 English:Name
 Translated:název
 
 English:Networked Printing
-Translated:Síťový tisk
+Translated:Tisk v síti
 
 English:New Design
 Translated:Nový design
@@ -1979,7 +2060,7 @@ English:New updates are ready to install
 Translated:Nové aktualizace jsou připraveny k instalaci
 
 English:New updates may be available
-Translated:Nové aktualizace mohou být k dispozici
+Translated:K dispozici mohou být nové aktualizace
 
 English:New User? 
 Translated:Nový uživatel?
@@ -1991,40 +2072,49 @@ English:No
 Translated:Ne
 
 English:No Color
-Translated:Bez barvy
+Translated:Žádná barva
 
 English:No COM ports available
-Translated:K dispozici nejsou žádné COM porty
+Translated:K dispozici nejsou žádné porty COM
 
 English:No items to Export
-Translated:Žádné položky pro export
+Translated:Exportovat žádné položky
 
 English:No Items to Export
-Translated:Žádné položky k exportu
+Translated:Žádné položky pro export
 
 English:No macros are currently set up for this printer.
-Translated:V současné době nejsou pro tuto tiskárnu nastavena žádná makra.
+Translated:Pro tuto tiskárnu nejsou aktuálně nastavena žádná makra.
+
+English:No printable parts exists within the bounds of the printer bed. Add content to continue
+Translated:V mezích lůžka tiskárny neexistují žádné tisknutelné části. Chcete-li pokračovat, přidejte obsah
 
 English:No Printer Selected
-Translated:Není vybrána žádná tiskárna
+Translated:Nebyla vybrána žádná tiskárna
 
 English:None
 Translated:Žádný
 
+English:Normal Calibration: Start here
+Translated:Normální kalibrace: Začněte zde
+
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
-Translated:Obvykle se obraz rozšiřuje na okraj. Tímto se pokusíte vizuálně vycentrovat váhu obrazu.
+Translated:Normálně je obraz rozšířen na okraj. Toto se pokusí vizuálně vycentrovat hmotnost obrazu.
+
+English:Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.
+Translated:Normálně je díl roztažen na válce. Tím se pokusíte vycentrovat hmotnost dílu ve válci.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:Normálně budete chtít používat absolutní vzdálenosti. Zkontrolujte to pouze, pokud víte, že tiskárna potřebuje relativní vzdálenosti.
+Translated:Normálně budete chtít použít absolutní vzdálenosti. Zkontrolujte pouze tehdy, pokud víte, že tiskárna potřebuje relativní vzdálenosti.
 
 English:Not Connected
 Translated:Nepřipojený
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
-Translated:Poznámka: Nastavení plátků se použijí ještě před zahájením tisku. Změny při tisku neovlivní aktivní tisk.
+Translated:Poznámka: Nastavení řezu se aplikuje před zahájením tisku. Změny během tisku neovlivní aktivní tisk.
 
 English:NOTE: Standard messaging rates may apply.
-Translated:POZNÁMKA: Standardní sazby zasílání zpráv mohou platit.
+Translated:POZNÁMKA: Mohou platit standardní sazby zasílání zpráv.
 
 English:Notifications
 Translated:Oznámení
@@ -2032,17 +2122,32 @@ Translated:Oznámení
 English:Nozzle
 Translated:Tryska
 
+English:Nozzle 1 Inset
+Translated:Tryska 1 Vsazení
+
+English:Nozzle 2 Inset
+Translated:Tryska 2 Vsazení
+
+English:Nozzle Calibration
+Translated:Kalibrace trysky
+
 English:Nozzle Diameter
 Translated:Průměr trysky
 
+English:Nozzle Offset Calibration
+Translated:Kalibrace ofsetu trysek
+
+English:Nozzle Offset Calibration Wizard
+Translated:Průvodce kalibrací ofsetu trysek
+
 English:Nozzle Offsets
-Translated:Odsazení trysek
+Translated:Ofsety trysek
 
 English:Number
 Translated:Číslo
 
 English:Number of layers to print before printing any parts.
-Translated:Počet vrstev, které chcete vytisknout, před tiskem všech částí.
+Translated:Počet vrstev pro tisk před tiskem jakýchkoliv částí.
 
 English:Number of Samples
 Translated:Počet vzorků
@@ -2057,7 +2162,10 @@ English:Off
 Translated:Vypnuto
 
 English:Offset
-Translated:Ofset
+Translated:Odsazení
+
+English:Offset Calibration complete.
+Translated:Offset Kalibrace dokončena.
 
 English:Ok
 Translated:OK
@@ -2065,20 +2173,23 @@ Translated:OK
 English:OK
 Translated:OK
 
+English:'Ok' Responses
+Translated:'Ok' Odpovědi
+
 English:On Connect G-Code
-Translated:Zapojte G-kód
+Translated:On Connect G-Code
 
 English:Oops! Baud Rate must be an integer.
 Translated:Jejda! Přenosová rychlost musí být celé číslo.
 
 English:Oops! Could not complete update.
-Translated:Jejda! Aktualizaci nelze dokončit.
+Translated:Jejda! Nelze dokončit aktualizaci.
 
 English:Oops! Could not find this file
 Translated:Jejda! Nelze najít tento soubor
 
 English:Oops! Field cannot be left blank
-Translated:Jejda! Pole nemůže být prázdné
+Translated:Jejda! Pole nelze ponechat prázdné
 
 English:Oops! Field cannot have special characters
 Translated:Jejda! Pole nemůže mít speciální znaky
@@ -2090,34 +2201,34 @@ English:Oops! Invalid username, email or password.
 Translated:Jejda! Neplatné uživatelské jméno, e-mail nebo heslo.
 
 English:Oops! Please select a baud rate.
-Translated:Jejda! Vyberte prosím přenosovou rychlost.
+Translated:Jejda! Vyberte přenosovou rychlost.
 
 English:Oops! Please select a device to continue.
 Translated:Jejda! Vyberte zařízení, které chcete pokračovat.
 
 English:Oops! Please select a serial port.
-Translated:Jejda! Vyberte prosím sériový port.
+Translated:Jejda! Vyberte sériový port.
 
 English:Oops! Please sign in to enable this feature.
-Translated:Jejda! Chcete-li tuto funkci aktivovat, přihlaste se.
+Translated:Jejda! Chcete-li tuto funkci povolit, přihlaste se prosím.
 
 English:Oops! Printer could not be detected 
-Translated:Jejda! Tiskárnu nelze zjistit
+Translated:Jejda! Nelze rozpoznat tiskárnu
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:Jejda! Soubor nastavení '{0}' neobsahoval žádná nastavení, která bychom mohli importovat.
+Translated:Jejda! Soubor nastavení „{0}“ neobsahoval žádná nastavení, která bychom mohli importovat.
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
-Translated:Jejda! Neexistuje mapování eeprom pro firmware tiskárny.
+Translated:Jejda! Neexistuje žádné mapování eeprom pro firmware vaší tiskárny.
 
 English:Oops! There was a problem creating your account.
 Translated:Jejda! Při vytváření účtu došlo k potížím.
 
 English:Oops! There was a problem processing your request.
-Translated:Jejda! Při zpracování vašeho požadavku došlo k potížím.
+Translated:Jejda! Při zpracování vašeho požadavku došlo k problému.
 
 English:Oops! There was a problem resetting your password.
-Translated:Jejda! Při obnovení hesla došlo k potížím.
+Translated:Jejda! Při resetování hesla došlo k potížím.
 
 English:Oops! Unable to connect to server
 Translated:Jejda! Nelze se připojit k serveru
@@ -2135,7 +2246,7 @@ English:Oops! You cannot share this item.
 Translated:Jejda! Tuto položku nelze sdílet.
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:Jejda! Platnost vaší relace vypršela. Chcete-li pokračovat, přihlaste se znovu.
+Translated:Jejda! Vaše relace vypršela. Chcete-li pokračovat, přihlaste se znovu.
 
 English:Open
 Translated:otevřeno
@@ -2171,25 +2282,25 @@ English:Outer Size
 Translated:Vnější velikost
 
 English:Outer Surface - Perimeters
-Translated:Vnější povrch - obvod
+Translated:Vnější povrch - Perimetry
 
 English:Outlines
 Translated:Obrysy
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Výstup pouze první vrstvy tisku. Zvláště užitečné pro výstup dat gcode pro aplikace, jako je gravírování nebo řezání.
+Translated:Výstup pouze první vrstvy tisku. Zvláště užitečné pro výstup dat z kódů pro aplikace, jako je gravírování nebo řezání.
 
 English:Outside Perimeter
-Translated:Vnější obvod
+Translated:Mimo obvod
 
 English:Outside Perimeters
-Translated:Venkovní obvod
+Translated:Mimo obvod
 
 English:Overhang
 Translated:Převis
 
 English:Overhang Angle
-Translated:Přesahující úhel
+Translated:Přesah úhlu
 
 English:Pan
 Translated:Pánev
@@ -2198,16 +2309,16 @@ English:Pan View
 Translated:Pan Pan
 
 English:Part Cooling Fan
-Translated:Ventilátor chlazení dílů
+Translated:Díl chladicího ventilátoru
 
 English:Part History
-Translated:Část Historie
+Translated:Historie dílů
 
 English:Password
 Translated:Heslo
 
 English:Password Reset Code
-Translated:Kód pro obnovení hesla
+Translated:Kód pro reset hesla
 
 English:Password update complete
 Translated:Aktualizace hesla je dokončena
@@ -2216,7 +2327,7 @@ English:Paste
 Translated:Vložit
 
 English:Pattern Spacing
-Translated:Rozložení vzorků
+Translated:Rozteč vzorů
 
 English:Pause
 Translated:Pauza
@@ -2228,7 +2339,7 @@ English:Pause G-Code
 Translated:Pozastavení G-kódu
 
 English:Pause Print
-Translated:Pozastavit tisk
+Translated:Pozastavit Tisk
 
 English:Paused
 Translated:Pozastaveno
@@ -2240,76 +2351,85 @@ English:perimeters
 Translated:obvodů
 
 English:Perimeters
-Translated:Perimetry
+Translated:Obvody
 
 English:Permission Denied
 Translated:Přístup odepřen
+
+English:Pick the most balanced result for each axis.
+Translated:Vyberte nejvyváženější výsledek pro každou osu.
 
 English:PID Settings
 Translated:Nastavení PID
 
 English:Pillar Size
-Translated:Velikost pilíře
+Translated:Velikost sloupku
 
 English:Pinch
-Translated:Pinch
+Translated:Štípnutí
 
 English:Pipe Works
-Translated:Pipe Works
+Translated:Potrubní práce
 
 English:Pixels Per mm
 Translated:Pixely na mm
 
 English:Place the paper under the extruder
-Translated:Umístěte papír pod extruder
+Translated:Vložte papír pod extrudér
 
 English:Plating History
-Translated:Plátování historie
+Translated:Pokovování historie
 
 English:Play a Sound
-Translated:Přehrávejte zvuk
+Translated:Přehrajte zvuk
 
 English:Play a sound for notifications
-Translated:Přehrávejte zvuk pro oznámení
+Translated:Přehrajte zvuk pro oznámení
 
 English:Please Confirm
 Translated:Prosím potvrďte
 
+English:Please select the material you want to load into extruder {0}.
+Translated:Vyberte materiál, který chcete načíst do extruderu {0}.
+
 English:Please select the material you want to load.
 Translated:Vyberte materiál, který chcete načíst.
 
-English:Please select the material you want to unload.
-Translated:Vyberte materiál, který chcete stáhnout.
+English:Please select the material you want to unload from extruder {0}.
+Translated:Vyberte materiál, který chcete uvolnit z extruderu {0}.
 
-English:Please select the material you will be printing with.
-Translated:Vyberte prosím materiál, s nímž budete tisknout.
+English:Please select the material you want to unload.
+Translated:Vyberte materiál, který chcete uvolnit.
 
 English:Please sign in to continue.
 Translated:Chcete-li pokračovat, přihlaste se.
 
 English:Please wait until the print has finished and try again.
-Translated:Počkejte, až se dokončí tisk a zkuste to znovu.
+Translated:Počkejte na dokončení tisku a zkuste to znovu.
 
 English:Please wait while we create your account...
-Translated:Počkejte prosím, než vytvoříme váš účet ...
+Translated:Počkejte prosím, dokud nevytvoříme váš účet ...
 
 English:Please wait while we update your password...
-Translated:Počkejte prosím, než aktualizujeme své heslo ...
+Translated:Počkejte prosím na aktualizaci hesla ...
 
 English:Please wait. Emailing reset code...
-Translated:Prosím, čekejte. E-mailování resetovacího kódu ...
+Translated:Prosím, čekejte. E-mail s resetovacím kódem ...
 
 English:Please wait. Redeeming code...
-Translated:Prosím, čekejte. Vyčerpávající kód ...
+Translated:Prosím, čekejte. Uplatnění kódu ...
 
 English:Please wait. Retrieving share code...
-Translated:Prosím, čekejte. Načítání kódu ...
+Translated:Prosím, čekejte. Načítá se kód sdílení ...
 
 English:Please wait. Sending invite...
-Translated:Prosím, čekejte. Odesílání pozvánky ...
+Translated:Prosím, čekejte. Odesílá se pozvání ...
 
 English:Please wait. Signing in...
 Translated:Prosím, čekejte. Přihlášení ...
+
+English:Plugins
+Translated:Pluginy
 
 English:Polygons
 Translated:Polygony
@@ -2317,17 +2437,23 @@ Translated:Polygony
 English:Port
 Translated:Přístav
 
+English:Port not available
+Translated:Port není k dispozici
+
 English:Port not found
 Translated:Port nebyl nalezen
 
 English:Port number to be used with IP Address to connect to printer over the network
-Translated:Číslo portu, které se má použít s adresou IP pro připojení k tiskárně po síti
+Translated:Číslo portu, které má být použito s adresou IP pro připojení k tiskárně po síti
 
 English:Port Wizard
-Translated:Průvodce porty
+Translated:Průvodce portem
 
 English:Position
 Translated:Pozice
+
+English:Possible Unsupported Parts Detected
+Translated:Bylo zjištěno možné nepodporované části
 
 English:Power Control
 Translated:Řízení výkonu
@@ -2336,67 +2462,76 @@ English:Preheat
 Translated:Předehřejte
 
 English:Preparing To Print
-Translated:Příprava na tisk
+Translated:Příprava k tisku
 
 English:Press
 Translated:lis
 
 English:Press [Z-] until there is resistance to moving the paper
-Translated:Stiskněte [Z-], dokud nedojde k pohybu papíru
+Translated:Stiskněte tlačítko [Z-], dokud nebude papír odolný vůči pohybu
 
 English:Press [Z+] once to release the paper
-Translated:Jedním stisknutím [Z +] uvolněte papír
+Translated:Jedním stisknutím tlačítka [Z +] uvolněte papír
 
 English:Prev
-Translated:Předch
+Translated:Předchozí
 
 English:Preview
 Translated:Náhled
-
-English:Primary
-Translated:Hlavní
 
 English:Primitive Shapes
 Translated:Primitivní tvary
 
 English:Primitives
-Translated:Primitivní
+Translated:Primitiva
 
 English:Print
 Translated:Vytisknout
 
+English:Print Canceled
+Translated:Tisk Zrušen
+
 English:Print Center
-Translated:Tiskové centrum
+Translated:Centrum tisku
 
 English:Print History
 Translated:Historie tisku
 
 English:Print Leveling
-Translated:Vyrovnávání tisku
+Translated:Vyrovnání tisku
 
 English:Print Leveling Overview
-Translated:Přehled vyrovnávání tisku
+Translated:Přehled vyrovnání tisku
 
 English:Print Leveling Wizard
-Translated:Průvodce vyrovnáváním tisku
+Translated:Průvodce vyrovnáním tisku
 
 English:Print Notification Settings
-Translated:Nastavení tisku oznámení
+Translated:Nastavení oznámení o tisku
 
 English:Print Queue
 Translated:Tisková fronta
 
 English:Print Recovery
-Translated:Tisk zotavení
+Translated:Obnovení tisku
+
+English:Print the calibration object
+Translated:Vytiskněte kalibrační objekt
 
 English:Print Time
 Translated:Čas tisku
 
+English:Print Ultra Fine Calibration
+Translated:Tiskněte velmi jemnou kalibraci
+
 English:Printer
-Translated:Tiskárny
+Translated:Tiskárna
+
+English:Printer Calibration
+Translated:Kalibrace tiskárny
 
 English:Printer Disconnected
-Translated:Tiskárna byla odpojena
+Translated:Tiskárna odpojena
 
 English:Printer Hardware Error
 Translated:Chyba hardwaru tiskárny
@@ -2408,7 +2543,7 @@ English:Printer Name
 Translated:Název tiskárny
 
 English:Printer name cannot be blank
-Translated:Název tiskárny nesmí být prázdný
+Translated:Název tiskárny nemůže být prázdný
 
 English:Printer Paused
 Translated:Tiskárna byla pozastavena
@@ -2416,17 +2551,20 @@ Translated:Tiskárna byla pozastavena
 English:Printer Setup
 Translated:Nastavení tiskárny
 
+English:Printer Setup & Calibration
+Translated:Nastavení tiskárny a kalibrace
+
 English:Printer Setup must be run before printing
 Translated:Nastavení tiskárny musí být spuštěno před tiskem
 
 English:Printer Setup Required
-Translated:Vyžaduje se nastavení tiskárny
+Translated:Požadováno nastavení tiskárny
 
 English:Printers
 Translated:Tiskárny
 
 English:Printers to Copy
-Translated:Tiskárny k kopírování
+Translated:Tiskárny pro kopírování
 
 English:Printing
 Translated:Tisk
@@ -2440,35 +2578,32 @@ Translated:Rychlost tisku
 English:Printing: {0}
 Translated:Tisk: {0}
 
+English:Probe Calibration
+Translated:Kalibrace sondy
+
 English:Probe Calibration Overview
 Translated:Přehled kalibrace sondy
-
-English:Probe Calibration Wizard
-Translated:Průvodce kalibrací sondy
 
 English:Probe Has Been Calibrated
 Translated:Sonda byla kalibrována
 
+English:Probe Offset
+Translated:Odsazení sondy
+
 English:Probe Offset Sample Point
-Translated:Bod odběru sondy
+Translated:Ukázkový bod snímání sond
 
 English:Probe the bed at the center
-Translated:Proveďte postel ve středu
-
-English:Probe XY Offset
-Translated:Odsazení sondy XY
-
-English:Probe Z Offset
-Translated:Probes Z Offset
+Translated:Prohlédněte si postel ve středu
 
 English:Progress Reporting
-Translated:Nahlášení průběhu
+Translated:Zprávy o pokroku
 
 English:Properties
 Translated:Vlastnosti
 
 English:Provide this code to grant someone read-only access.
-Translated:Uveďte tento kód, aby měl uživatel přístup pouze pro čtení.
+Translated:Poskytnout tento kód udělit někomu přístup jen pro čtení.
 
 English:Purchased
 Translated:Zakoupeno
@@ -2486,13 +2621,13 @@ English:Raft
 Translated:Vor
 
 English:Raft Extruder
-Translated:Extruder raftů
+Translated:Raft Extruder
 
 English:Raft Layers
-Translated:Vrstvy vrstev
+Translated:Vrstvy vorů
 
 English:Raise / Stow
-Translated:Zvednout / uložit
+Translated:Zvýšit / Stow
 
 English:Randomize Starting Points
 Translated:Náhodné startovní body
@@ -2501,10 +2636,10 @@ English:Reach
 Translated:Dosáhnout
 
 English:Read Filter
-Translated:Přečtěte filtr
+Translated:Číst filtr
 
 English:Reboots the firmware on the controller
-Translated:Restartuje firmware na ovladači
+Translated:Restartuje firmware v řadiči
 
 English:Rebuild
 Translated:Obnovit
@@ -2513,13 +2648,13 @@ English:Rebuild Thumbnails Now
 Translated:Znovu vytvořit miniatury
 
 English:Recommended Update Available
-Translated:K dispozici je doporučená aktualizace
+Translated:Doporučená aktualizace k dispozici
 
 English:Recover Last Print
 Translated:Obnovit poslední tisk
 
 English:Recover Layer Speed
-Translated:Obnovit rychlost vrstvy
+Translated:Obnovení rychlosti vrstvy
 
 English:Recover Print
 Translated:Obnovit tisk
@@ -2564,19 +2699,22 @@ English:Remove
 Translated:Odstranit
 
 English:Remove all auto generated supports
-Translated:Odstranit všechny podporované automatické generování
+Translated:Odebrat všechny automaticky generované podpory
 
 English:Remove Items?
-Translated:Odstranit položky?
+Translated:Odebrat položky?
 
 English:Remove the paper
-Translated:Odstraňte papír
+Translated:Vyjměte papír
 
 English:Rename
 Translated:Přejmenovat
 
 English:Rename Item
 Translated:Přejmenovat položku
+
+English:Render Leveling Data on the bed
+Translated:Vykreslování dat na posteli
 
 English:Replacing
 Translated:Výměna
@@ -2585,31 +2723,31 @@ English:Report a Bug
 Translated:Nahlásit chybu
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Požádejte firmware, aby provedl zpětné stahování spíše než zadal pohyby extruderu přímo.
+Translated:Vyžádejte si firmware, aby provedl retrakce, spíše než přímo specifikovat pohyby extrudéru.
 
 English:Require Leveling To Print
 Translated:Vyžadovat vyrovnání pro tisk
 
 English:Reset
-Translated:Resetovat
+Translated:Reset
 
 English:Reset Long Extrusion
-Translated:Resetujte dlouhé vytlačování
+Translated:Reset Long Extusion
 
 English:Reset Password
 Translated:Obnovit heslo
 
 English:Reset to Defaults
-Translated:Obnovit výchozí nastavení
+Translated:Obnovit výchozí hodnoty
 
 English:Reset to Factory Defaults
-Translated:Obnovit výchozí nastavení
+Translated:Obnovit tovární nastavení
 
 English:Reset View
 Translated:Resetovat zobrazení
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Obnovením výchozích hodnot odstraníte stávající přepsání a obnovíte původní nastavení tiskárny.\nOpravdu chcete pokračovat?
+Translated:Obnovení výchozích hodnot odstraní aktuální přepsání a obnoví původní nastavení tiskárny. n Opravdu chcete pokračovat?
 
 English:Resolution
 Translated:Rozlišení
@@ -2623,68 +2761,71 @@ Translated:Obnovit výchozí
 English:Restore Settings
 Translated:Obnovit nastavení
 
+English:Restore your current bed, after all calibration is complete
+Translated:Po dokončení kalibrace obnovte aktuální postel
+
 English:Resume
 Translated:Životopis
 
 English:Resume automatic heater shutdown
-Translated:Obnovte automatické vypnutí topení
+Translated:Obnovení automatického vypnutí topení
 
 English:Resume G-Code
-Translated:Obnovit G-kód
+Translated:Pokračovat v G-kódu
 
 English:Resume Print
 Translated:Pokračovat v tisku
 
 English:Resume Printing
-Translated:Pokračujte v tisku
+Translated:Pokračovat v tisku
 
 English:Retract
-Translated:Ztratit
+Translated:Zatáhnout
 
 English:Retract Acceleration
-Translated:Zrušit zrychlení
+Translated:Zrychlení zrychlení
 
 English:Retract filament
-Translated:Vytahujte vlákno
+Translated:Navlékněte vlákno
 
 English:Retract Length
-Translated:Držte Délku
+Translated:Délka zasunutí
 
 English:Retract When Changing Islands
-Translated:Odstoupit při změně ostrovů
+Translated:Retract Když se mění ostrovy
 
 English:Retraction
 Translated:Odvolání
 
 English:Retractions
-Translated:Vratky
+Translated:Navíjení
 
 English:Retrieving download info...
-Translated:Načítání info o stahování ...
+Translated:Načítání informací o stahování ...
 
 English:Retrieving sync information...
-Translated:Načtení informací o synchronizaci ...
+Translated:Načítání informací o synchronizaci ...
 
 English:Retry Login
 Translated:Opakovat přihlášení
 
 English:Revert
-Translated:Vrátit se
+Translated:Vrátit
 
 English:Revert Settings
-Translated:Obnovit nastavení
+Translated:Vrátit nastavení
 
 English:Reverting firmware to previous version...
-Translated:Vrátit firmware na předchozí verzi ...
+Translated:Obnovení firmwaru na předchozí verzi ...
 
 English:Right
 Translated:Že jo
 
 English:Right Arrow
-Translated:Šipka doprava
+Translated:Šipka vpravo
 
 English:right drag
-Translated:doprava
+Translated:pravé tažení
 
 English:Ring
 Translated:Prsten
@@ -2693,46 +2834,43 @@ English:Rotate
 Translated:Točit se
 
 English:Rotate (Alt + Left Mouse)
-Translated:Otočit (Alt + Levá myš)
+Translated:Otočit (Alt + levá myš)
 
 English:Rotate About
-Translated:Otočit O
+Translated:Otočit o
 
 English:Rotate about the X axis
-Translated:Otočte kolem osy X
+Translated:Otočte kolem osy X.
 
 English:Rotate about the Y axis
-Translated:Otočte kolem osy Y
+Translated:Otočte kolem osy Y.
 
 English:Rotate about the Z axis
 Translated:Otočte kolem osy Z
 
 English:Rotate the part to the same angle as the array.
-Translated:Otočte část do stejného úhlu jako pole.
+Translated:Otočte součást do stejného úhlu jako pole.
 
 English:Rotate View
-Translated:Otočit pohled
+Translated:Otočit zobrazení
 
 English:Rubber Band Selection
-Translated:Výběr gumové pásky
+Translated:Výběr gumového pásku
 
 English:Run Calibration
-Translated:Spusťte kalibraci
+Translated:Spustit kalibraci
 
 English:Run Max if Below
-Translated:Spusťte Max, pokud je níže
-
-English:s
-Translated:s
+Translated:Spusťte Max, pokud níže
 
 English:Sailfish Communication
-Translated:Komunikace plachetnic
+Translated:Sailfish komunikace
 
 English:Sample Points
 Translated:Vzorové body
 
 English:Sample the bed at {0} points
-Translated:Ukažte postel v bodech {0}
+Translated:Vzorek lůžka na {0} bodů
 
 English:Sampled Positions
 Translated:Vzorkované pozice
@@ -2744,10 +2882,10 @@ English:Save As
 Translated:Uložit jako
 
 English:Save New Design
-Translated:Uložit nový návrh
+Translated:Uložit nový design
 
 English:Save Parts Sheet
-Translated:Uložte listy dílů
+Translated:Uložit list dílů
 
 English:Save to EEProm
 Translated:Uložit do EEProm
@@ -2756,22 +2894,19 @@ English:Save To EEPROM
 Translated:Uložit do paměti EEPROM
 
 English:Saving
-Translated:Uložení
+Translated:Úspora
 
 English:Saving 
-Translated:Uložení
+Translated:Úspora
 
 English:Saving Asset
-Translated:Ukládání majetku
+Translated:Ukládání aktiv
 
 English:Saving changes
 Translated:Uložení změn
 
 English:Saving Changes
 Translated:Uložení změn
-
-English:Saving to Parts Sheet
-Translated:Uložení do listu dílů
 
 English:Scale
 Translated:Stupnice
@@ -2788,35 +2923,26 @@ Translated:Vyhledávání ve službě Google
 English:Search Results
 Translated:Výsledky vyhledávání
 
-English:seconds
-Translated:sekundy
-
 English:Select
 Translated:Vybrat
 
 English:Select A Folder
-Translated:Vyberte složku
+Translated:Vyberte složku A
 
 English:Select a new Destination
 Translated:Vyberte nový cíl
 
 English:Select a printer to continue
-Translated:Chcete-li pokračovat, vyberte tiskárnu
-
-English:Select Filament Wizard
-Translated:Vyberte Průvodce vlákna
+Translated:Vyberte tiskárnu, na které chcete pokračovat
 
 English:Select Make
-Translated:Zvolte Make
-
-English:Select Material
-Translated:Vyberte položku Materiál
+Translated:Vyberte možnost Vytvořit
 
 English:Select Model
-Translated:Vyberte model
+Translated:Vyberte možnost Model
 
 English:Select Part
-Translated:Zvolte Část
+Translated:Vyberte část
 
 English:Select Printer
 Translated:Vyberte možnost Tiskárna
@@ -2834,7 +2960,7 @@ English:Select the printer model
 Translated:Vyberte model tiskárny
 
 English:Select What to Import
-Translated:Vyberte Importovat
+Translated:Vyberte Co chcete importovat
 
 English:Selection
 Translated:Výběr
@@ -2843,13 +2969,13 @@ English:Send
 Translated:Poslat
 
 English:Send email notifications
-Translated:Odeslání e-mailových oznámení
+Translated:Odeslat e-mailová upozornění
 
 English:Send SMS notifications
-Translated:Odeslání oznámení SMS
+Translated:Odeslat SMS upozornění
 
 English:Send With Checksum
-Translated:Odeslat s kontrolním součtem
+Translated:Poslat s kontrolním součtem
 
 English:Serial Port
 Translated:Sériový port
@@ -2866,29 +2992,32 @@ Translated:Session Cleared
 English:Session Expired
 Translated:Relace vypršela
 
+English:Set active material to continue
+Translated:Chcete-li pokračovat, nastavte aktivní materiál
+
 English:Set as Default
 Translated:Nastavit jako výchozí
 
 English:Set the rules for how to maintain the part while scaling.
-Translated:Nastavte pravidla pro udržování části při škálování.
+Translated:Nastavte pravidla pro udržování části při změně měřítka.
 
 English:Set the shape the part will be fit into.
-Translated:Nastavte tvar, do kterého bude vložena součást.
+Translated:Nastavte tvar, do kterého bude díl zapadat.
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Nastaví MatterControl a pokusí se připojit k tiskárně v síti. (Musíte se odpojit a znovu připojit k tomu, aby se projevily)
+Translated:Nastaví MatterControl, aby se pokusil připojit k tiskárně po síti. (Aby se to projevilo, musíte se odpojit a znovu připojit)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
-Translated:Nastaví MatterControl tak, aby používal komunikační metodu s3g. (Musíte se odpojit a znovu připojit k tomu, aby se projevily)
+Translated:Nastaví MatterControl pro použití metody komunikace s3g. (Aby se to projevilo, musíte se odpojit a znovu připojit)
 
 English:Sets the depth of the tile the Braille is printed on
-Translated:Nastavuje hloubku dlaždice, na které je tisknut Braillovo písmo
+Translated:Nastaví hloubku dlaždice, na které je Braillovo písmo vytištěno
 
 English:Sets the models that will be added to the queue when a new printer is created.
-Translated:Nastaví modely, které budou přidány do fronty po vytvoření nové tiskárny.
+Translated:Nastaví modely, které budou přidány do fronty při vytvoření nové tiskárny.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
-Translated:Nastavuje velikost vnějšího pevného povrchu (obvod) pro celý tisk.
+Translated:Nastaví velikost vnějšího pevného povrchu (obvodu) pro celý tisk.
 
 English:Settings
 Translated:Nastavení
@@ -2897,13 +3026,16 @@ English:Setup
 Translated:Založit
 
 English:Setup Needs to be Run
-Translated:Nastavení musí být spuštěno
+Translated:Nastavení je třeba spustit
+
+English:Setup Required
+Translated:Požadováno nastavení
 
 English:Setup Wizard
 Translated:Průvodce nastavením
 
 English:Shaded
-Translated:Stínovaný
+Translated:Stínované
 
 English:Share
 Translated:Podíl
@@ -2912,13 +3044,13 @@ English:Share Code
 Translated:Kód akcií
 
 English:Share Library Item
-Translated:Sdílet položku knihovny
+Translated:Položka položky Knihovna
 
 English:Share Options
 Translated:Možnosti sdílení
 
 English:Share Temperature
-Translated:Podíl teploty
+Translated:Teplota sdílení
 
 English:Share with someone
 Translated:Sdílet s někým
@@ -2926,14 +3058,20 @@ Translated:Sdílet s někým
 English:Shared with Me
 Translated:Sdíleno se mnou
 
+English:Shop
+Translated:Prodejna
+
+English:Shop Filament at MatterHackers
+Translated:Obchod Filament v MatterHackers
+
 English:Show Controls
 Translated:Zobrazit ovládací prvky
 
 English:Show file in folder after save
-Translated:Zobrazit soubor ve složce po uložení
+Translated:Po uložení zobrazit soubor ve složce
 
 English:Show Firmware Updater
-Translated:Zobrazit aktualizaci firmwaru
+Translated:Zobrazit aktualizace firmwaru
 
 English:Show Help
 Translated:Zobrazit nápovědu
@@ -2951,7 +3089,7 @@ English:Show Print Bed
 Translated:Zobrazit tiskové lůžko
 
 English:Show Reset Connection
-Translated:Zobrazit obnovení připojení
+Translated:Zobrazit Reset připojení
 
 English:Show Speeds
 Translated:Zobrazit rychlosti
@@ -2960,7 +3098,7 @@ English:Show Terminal
 Translated:Zobrazit terminál
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:Zobrazí tlačítko na pravé straně panelu připojení tiskárny, který slouží k resetování připojení USB k tiskárně. To lze použít na tiskárnách, které ji podporují jako nouzové zastavení.
+Translated:Zobrazí tlačítko na pravé straně lišty pro připojení tiskárny, které slouží k obnovení připojení USB k tiskárně. To lze použít na tiskárnách, které ji podporují jako nouzové zastavení.
 
 English:sign in
 Translated:přihlásit se
@@ -2969,16 +3107,16 @@ English:Sign in
 Translated:Přihlásit se
 
 English:Sign in Required
-Translated:Přihlásit se vyžaduje
+Translated:Přihlásit se Vyžadováno
 
 English:Sign in to access your existing printers
-Translated:Přihlaste se k přístupu k existujícím tiskárnám
+Translated:Chcete-li získat přístup k existujícím tiskárnám, přihlaste se
 
 English:Sign in to my account
-Translated:Přihlaste se k mému účtu
+Translated:Přihlaste se do mého účtu
 
 English:Sign in to your MatterControl account
-Translated:Přihlaste se k účtu MatterControl
+Translated:Přihlaste se ke svému účtu MatterControl
 
 English:Sign Out
 Translated:Odhlásit se
@@ -2987,7 +3125,7 @@ English:Sign Out?
 Translated:Odhlásit se?
 
 English:Sign Up for an Account
-Translated:Přihlaste se k účtu
+Translated:Zaregistrujte se k účtu
 
 English:Size and Coordinates
 Translated:Velikost a souřadnice
@@ -3020,16 +3158,16 @@ English:Slicing
 Translated:Krájení
 
 English:Slicing Error
-Translated:Chyba při krájení
+Translated:Chyba krájení
 
 English:Slicing Item
-Translated:Slicing Item
+Translated:Krájení položky
 
 English:Slicing Options
 Translated:Možnosti krájení
 
 English:Slow Down If Layer Print Time Is Below
-Translated:Zpomalit, pokud je čas tisku vrstvy níže
+Translated:Zpomalte, pokud je doba tisku vrstvy nižší
 
 English:Small Perimeters
 Translated:Malé obvody
@@ -3038,10 +3176,10 @@ English:Smooth Path
 Translated:Hladká cesta
 
 English:Snap Grid
-Translated:Snap Grid
+Translated:Přichytit mřížku
 
 English:Software License Agreement
-Translated:Licenční smlouva o softwaru
+Translated:Softwarová licenční smlouva
 
 English:Solid Infill
 Translated:Pevná výplň
@@ -3049,35 +3187,32 @@ Translated:Pevná výplň
 English:Some features may require an internet connection.
 Translated:Některé funkce mohou vyžadovat připojení k internetu.
 
-English:Some of the parts appear to require support. Consider adding support and re-exporting to get the best results possible.
-Translated:Zdá se, že některé části vyžadují podporu. Zvažte přidání podpory a reexportu, abyste získali co nejlepší výsledky.
-
-English:Some parts are unsupported and require support structures to print correctly
-Translated:Některé součásti nejsou podporovány a vyžadují správné tiskové struktury
+English:Some parts may require support structures to print correctly
+Translated:Některé části mohou vyžadovat podpůrné struktury pro správnou tisk
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:Někdy síť nebude uzavřít obvod. Pokud je tato kontrola uzavřena, tyto neuzavřené obvody.
+Translated:Někdy síť nebude mít uzavřený obvod. Když je toto zkontrolováno, tyto uzavřené obvody jsou uzavřeny.
 
 English:Sorry!  Must be a valid email address.
 Translated:Promiňte! Musí být platná e-mail adresa.
 
 English:Sorry!  Must be a valid U.S. or Canadian phone number.
-Translated:Promiňte! Musí být platné americké nebo kanadské telefonní číslo.
+Translated:Promiňte! Musí to být platné telefonní číslo v USA nebo Kanadě.
 
 English:Sorry!  We weren't able to submit your request.
-Translated:Promiňte! Váš požadavek nebyl možný.
+Translated:Promiňte! Žádost jsme nemohli odeslat.
 
 English:Sorry! Looks like an account already exists for that email address.
-Translated:Promiňte! Zdá se, že pro danou e-mailovou adresu již existuje účet.
+Translated:Promiňte! Zdá se, že účet již pro tuto e-mailovou adresu existuje.
 
 English:Sorry! Looks like an account already exists for that username.
-Translated:Promiňte! Zdá se, že pro toto uživatelské jméno již existuje účet.
+Translated:Promiňte! Zdá se, že účet již pro toto uživatelské jméno existuje.
 
 English:Sorry! Looks like that reset code has expired.
-Translated:Promiňte! Zdá se, že resetovací kód vypršel.
+Translated:Promiňte! Vypadá to, že vypršela platnost kódu resetování.
 
 English:Sorry! Looks like that reset code is invalid.
-Translated:Promiňte! Zdá se, že resetovací kód je neplatný.
+Translated:Promiňte! Vypadá to, že resetovací kód je neplatný.
 
 English:Sorry! Too many sign in attempts. Please try again later.
 Translated:Promiňte! Příliš mnoho pokusů o přihlášení. Prosím zkuste to znovu později.
@@ -3086,40 +3221,40 @@ English:Sorry! Unable to connect to server. Please try again later.
 Translated:Promiňte! Nelze se připojit k serveru. Prosím zkuste to znovu později.
 
 English:Sorry! We couldn't find that account.
-Translated:Promiňte! Tento účet jsme nenašli.
+Translated:Promiňte! Tento účet jsme nemohli najít.
 
 English:Source
 Translated:Zdroj
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:Určuje, že firmware podporuje ros_0 endstop reporting na M119. Stav TRIGGERED definuje, že vlákno má výtok. Je-li detekován výskyt výpadků, spustí se G-Code pauza tiskárny.
+Translated:Určuje, že firmware má podporu pro ros_0 endstop reporting na M119. Stav TRIGGERED definuje vlákno má házivost. Je-li zjištěn házivost, tiskárna pozastaví spuštění kódu G-Code.
 
 English:Speed
 Translated:Rychlost
 
 English:Speed at 0.025 Height
-Translated:Rychlost při 0.025 Výška
+Translated:Rychlost na 0,025 výšky
 
 English:Speed at 0.1 Height
-Translated:Rychlost při výšce 0,1
+Translated:Rychlost na 0.1 Výška
 
 English:Speed for Infill
-Translated:Rychlost doplňování
+Translated:Rychlost pro infill
 
 English:Speed for Perimeters
 Translated:Rychlost pro obvody
 
 English:Speed Multiplier
-Translated:Multiplikátor rychlosti
+Translated:Rychlostní násobitel
 
 English:Speeds
-Translated:Rychlost
+Translated:Rychlosti
 
 English:Sphere
 Translated:Koule
 
 English:Spiral Vase
-Translated:Spirální váza
+Translated:Spirálová váza
 
 English:Split
 Translated:Rozdělit
@@ -3128,43 +3263,43 @@ English:Stable
 Translated:Stabilní
 
 English:Stable: The current release version of MatterControl (recommended)
-Translated:Stabilní: Aktuální verzi verze MatterControl (doporučeno)
+Translated:Stabilní: Aktuální verze aplikace MatterControl (doporučeno)
 
 English:Start
 Translated:Start
 
 English:Start At Concave Points
-Translated:Začněte na konkávních bodech
+Translated:Začněte v konkávních bodech
 
 English:Start At Non Overhang
-Translated:Začněte bez převisu
+Translated:Začínáme na Non Overhang
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:Začněte každou novou vrstvu z jiného vrcholu, abyste snížili švy.
+Translated:Spusťte každou novou vrstvu z jiného vrcholu, aby se zmenšily švy.
 
 English:Start End Overlap
-Translated:Začátek překrývání
+Translated:Začátek konce překrytí
 
 English:Start G-Code
-Translated:Spusťte G-kód
+Translated:Spusťte G-Code
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
-Translated:Start G-Code nemůže obsahovat G29, pokud je povoleno vyrovnání tisku.
+Translated:Start G-Code nemůže obsahovat G29, pokud je povoleno Print Leveling.
 
 English:Start G-Code cannot contain G29 if Print Recovery is enabled.
-Translated:Spustit G-kód nemůže obsahovat G29, pokud je zapnutá funkce Obnova tisku.
+Translated:Start G-Code nemůže obsahovat G29, pokud je povolena funkce Obnovení tisku.
 
 English:Start G-Code cannot contain G30 if Print Leveling is enabled.
-Translated:Spustit G-kód nemůže obsahovat G30, pokud je povoleno vyrovnání tisku.
+Translated:Start G-Code nemůže obsahovat G30, pokud je povoleno Print Leveling.
 
 English:Start Height
-Translated:Startovní výška
+Translated:Počáteční výška
 
 English:Start Print
-Translated:Začněte tisknout
+Translated:Spusťte tisk
 
 English:Starting Angle
-Translated:Počáteční úhel
+Translated:Výchozí úhel
 
 English:Starting firmware update...
 Translated:Spuštění aktualizace firmwaru ...
@@ -3174,6 +3309,9 @@ Translated:Spuštění synchronizace
 
 English:Startup Failure
 Translated:Selhání při spuštění
+
+English:Stash your current bed
+Translated:Stash vaše současné posteli
 
 English:Stay Connected
 Translated:Zůstaň připojen
@@ -3188,7 +3326,7 @@ English:STL File
 Translated:Soubor STL
 
 English:Stop trying to connect to the printer.
-Translated:Zastavte připojení k tiskárně.
+Translated:Přestaňte se snažit připojit k tiskárně.
 
 English:Store
 Translated:Obchod
@@ -3200,7 +3338,7 @@ English:Submit
 Translated:Předložit
 
 English:Submit Feedback
-Translated:Odeslat komentář
+Translated:Odeslat zpětnou vazbu
 
 English:Submitting your information...
 Translated:Odeslání informací ...
@@ -3209,16 +3347,16 @@ English:Subtract
 Translated:Odčítat
 
 English:Subtract & Replace
-Translated:Odečtěte a nahraďte
+Translated:Odečíst a nahradit
 
 English:Subtract the image from a disk so that the negative space will be printed.
-Translated:Odečtěte snímek z disku tak, aby byl vytištěn negativní prostor.
+Translated:Odeberte obrázek z disku, aby se vytisklo záporné místo.
 
 English:Success
 Translated:Úspěch
 
 English:Success! Please check your email for the reset code.
-Translated:Úspěch! Zkontrolujte prosím e-mail pro resetovací kód.
+Translated:Úspěch! Zkontrolujte prosím svůj e-mail pro resetovací kód.
 
 English:Success! Your account has been created.
 Translated:Úspěch! Váš účet byl vytvořen.
@@ -3227,55 +3365,49 @@ English:Success! Your password has been updated.
 Translated:Úspěch! Vaše heslo bylo aktualizováno.
 
 English:Success!\n\nYour filament should now be loaded
-Translated:Úspěch!\n\nVaše vlákno by mělo být nyní načteno
+Translated:Úspěch! NN Vaše vlákno by teď mělo být naloženo
 
 English:Success!\n\nYour filament should now be unloaded
-Translated:Úspěch!\n\nVaše vlákno by mělo být nyní vyloženo
+Translated:Úspěch! NN Vaše vlákno by teď mělo být vyloženo
 
 English:Support
 Translated:Podpěra, podpora
 
 English:Support Interface Extruder
-Translated:Podpora extruderu rozhraní
+Translated:Podpora Extruder rozhraní
 
 English:Support Material
 Translated:Podpůrný materiál
 
 English:Support Material Extruder
-Translated:Extruder opěrného materiálu
+Translated:Extruder podpůrného materiálu
 
 English:Support Options
 Translated:Možnosti podpory
-
-English:Support Percent
-Translated:Podíl podpory
 
 English:Support Type
 Translated:Typ podpory
 
 English:Surfaced Editor
-Translated:Editor povrchů
-
-English:Switch
-Translated:Přepínač
+Translated:Surfeded Editor
 
 English:Switch the settings interface to one intended for SLA printers.
-Translated:Přepněte rozhraní pro nastavení na tiskárnu určenou pro tiskárny SLA.
+Translated:Přepněte rozhraní nastavení na rozhraní určené pro tiskárny SLA.
 
-English:Switch to new G-Code?
-Translated:Přepnout na nový G-kód?
+English:Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.
+Translated:Přepnout na nový kód G? NN Před přepnutím zkontrolujte, zda se zobrazují změny, které očekáváte.
 
 English:Sync Complete
 Translated:Synchronizace dokončena
 
 English:Sync Dashboard
-Translated:Synchronizovat panel
+Translated:Synchronizační panel
 
 English:Sync Printers
-Translated:Synchronizační tiskárny
+Translated:Synchronizace tiskáren
 
 English:Sync To Print
-Translated:Synchronizovat k tisku
+Translated:Sync To Print
 
 English:Syncing Printer Profiles...
 Translated:Synchronizace profilů tiskárny ...
@@ -3284,13 +3416,28 @@ English:Tee
 Translated:Tee
 
 English:Temp Lower Amount
-Translated:Dolní částka Temp
+Translated:Temp Nižší množství
 
 English:temperature
 Translated:teplota
 
 English:Temperature
 Translated:Teplota
+
+English:Temperature Requests
+Translated:Požadavky na teplotu
+
+English:Temperature Responses
+Translated:Teplotní odezvy
+
+English:temperature1
+Translated:teplota1
+
+English:temperature2
+Translated:teplota2
+
+English:temperature3
+Translated:teplota3
 
 English:Temperatures
 Translated:Teploty
@@ -3304,380 +3451,398 @@ Translated:Text
 English:Text Size
 Translated:Velikost textu
 
+English:Text2
+Translated:Text2
+
 English:Thank you!  Your information has been submitted.
 Translated:Děkuji! Vaše informace byly odeslány.
 
 English:The {0} can only go as high as 100%.
-Translated:{0} může být až 100%.
+Translated:{0} může jít až 100%.
 
 English:The {0} must be at least 1.
-Translated:{0} musí být alespoň 1.
+Translated:Hodnota {0} musí být alespoň 1.
 
 English:The {0} must be between 0 and 1.
-Translated:{0} musí být mezi 0 a 1.
+Translated:Hodnota {0} musí být mezi 0 a 1.
 
 English:The {0} must be greater than 0.
-Translated:{0} musí být větší než 0.
+Translated:Hodnota {0} musí být větší než 0.
 
 English:The actual diameter of the filament used for printing.
 Translated:Skutečný průměr vlákna použitého pro tisk.
 
 English:The amount of filament to insert into the printer when loading.
-Translated:Množství vlákna, které se má vložit do tiskárny při načítání.
+Translated:Množství vlákna, které se má při vkládání do tiskárny vložit.
 
 English:The amount of filament to remove from the printer while unloading.
-Translated:Množství vlákna, které chcete z tiskárny vyjmout při vykládání.
+Translated:Množství vlákna, které se má vyjmout z tiskárny při vykládání.
 
 English:The amount of infill material to generate, expressed as a ratio or a percentage.
-Translated:Množství výplňového materiálu, které se má vygenerovat, vyjádřeno jako poměr nebo procento.
+Translated:Množství výplňového materiálu, který má být vytvořen, vyjádřený jako poměr nebo procento.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
-Translated:Množství okraje výplně bude tlačit do obvodu. Pomáhá zajistit, aby výplň byla spojena s okrajem. To může být vyjádřeno jako procento průměru trysky.
+Translated:Množství výplně se zasune do obvodu. Pomáhá zajistit, že výplň je připojena k okraji. To lze vyjádřit jako procento průměru trysky.
+
+English:The amount to lower the temperature when the hotend is inactive.
+Translated:Částka pro snížení teploty, když je hotend neaktivní.
 
 English:The angle at which the support material lines will be drawn.
-Translated:Úhel, se kterým budou čerpány linie nosného materiálu.
+Translated:Úhel, ve kterém budou nakresleny linie nosného materiálu.
 
 English:The angle of the infill, measured from the X axis. Not used when bridging.
-Translated:Úhel výplně měřený od osy X. Nepoužívá se při přemostění.
+Translated:Úhel výplně, měřeno od osy X. Nepoužívá se při přemostění.
 
 English:The angle to generate support for
-Translated:Úhel pro vytvoření podpory pro
+Translated:Úhel pro generování podpory pro
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:Lůžko je momentálně vytápěno a jeho cílová teplota nemůže být měněna, dokud nedosáhne {0} ° C.\n\nTeplotu spouštěcího lůžka můžete nastavit v SETTINGS -> Filament -> Temperatures.\n\n{1}
+Translated:Lůžko se právě zahřívá a jeho cílovou teplotu nelze měnit, dokud nedosáhne hodnoty {0} ° C. NN Můžete nastavit počáteční teplotu lůžka v NASTAVENÍ -> Vlákno -> Teploty. NN {1}
 
 English:The date this file was originally created.
-Translated:Datum původního vytvoření tohoto souboru.
+Translated:Datum, kdy byl tento soubor původně vytvořen.
 
 English:The diameter of the extruder's nozzle.
-Translated:Průměr trysky extruderu.
+Translated:Průměr trysky extrudéru.
 
 English:The distance between support material lines.
 Translated:Vzdálenost mezi liniemi nosného materiálu.
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
-Translated:Vzdálenost mezi vrchní částí a spodní částí modelu. 0,6 mm je dobrý výchozí bod pro PLA a 0,4 mm je dobrý výchozí bod pro ABS. Nižší hodnoty poskytují hladší povrch, vyšší hodnoty usnadňují tisk.
+Translated:Vzdálenost mezi horní částí voru a spodní částí modelu. 0,6 mm je dobrým výchozím bodem pro PLA a 0,4 mm je dobrým výchozím bodem pro ABS. Nižší hodnoty poskytují hladší povrch, vyšší hodnoty usnadňují odstraňování tisku.
 
 English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
-Translated:Vzdálenost mezi horní částí podpěry a spodní částí modelu. Dobrá hodnota závisí na druhu materiálu. U ABS a PLA hodnota mezi 0,4 a 0,6 funguje dobře.
+Translated:Vzdálenost mezi horní částí podpěry a spodní částí modelu. Dobrá hodnota závisí na typu materiálu. Pro ABS a PLA je hodnota v rozmezí 0,4 až 0,6.
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:Distanční vlákno se před každým kvalifikovaným pohybem bez tisku vrátí zpět
+Translated:Před každým kvalifikačním tahem bez potisku se vlákno vzdá
 
 English:The distance from the model at which the first skirt loop is drawn.
-Translated:Vzdálenost od modelu, ve kterém je nakreslena první smyčka.
+Translated:Vzdálenost od modelu, ve kterém je nakreslena první smyčka sukně.
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
-Translated:Vzdálenost, kterou se obvod sám překrývá po dokončení smyčky, vyjádřený jako procento průměru trysky.
+Translated:Vzdálenost, kterou se obvod bude překrývat při dokončení smyčky, vyjádřená jako procento průměru trysky.
 
 English:The distance the nozzle will lift after each retraction.
-Translated:Vzdálenost se po každém odtažení zvedne.
+Translated:Vzdálenost, kterou bude tryska po každém zatažení zvedat.
 
 English:The distance the support material will be from the object in the X and Y directions.
 Translated:Vzdálenost nosného materiálu bude od objektu ve směru X a Y.
 
-English:The distance the z probe is from the extruder in x and y.
-Translated:Vzdálenost sondy z je z extruderu v x a y.
-
-English:The distance the z probe is from the extruder in z. For manual probing, this is thickness of the paper (or other calibration device).
-Translated:Vzdálenost sondy z je z extruderu v z. Pro ruční snímání je to tloušťka papíru (nebo jiného kalibračního zařízení).
-
-English:The distance to move the nozzle along the Z axis to ensure that it is the correct distance from the print bed. A positive number will raise the nozzle, and a negative number will lower it.
-Translated:Vzdálenost k pohybu trysky podél osy Z, aby se zajistila správná vzdálenost od tisku. Pozitivní číslo zvýší trysku a záporné číslo ji sníží.
-
 English:The distance to travel after completing a perimeter to improve seams.
-Translated:Vzdálenost cesty po dokončení obvodu ke zlepšení švů.
+Translated:Vzdálenost pro cestování po dokončení obvodu pro zlepšení švů.
 
 English:The extra distance the raft will extend around the edge of the part.
-Translated:Dálková vzdálenost raftu se rozloží kolem okraje části.
+Translated:Dodatečná vzdálenost, kterou bude vor rozšiřovat kolem okraje dílu.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:Extruder je momentálně ohříván a jeho cílová teplota nemůže být měněna, dokud nedosáhne {0} ° C.\n\nPočáteční teplota extruderu můžete nastavit v 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:Extrudér se aktuálně zahřívá a jeho cílová teplota nemůže být změněna, dokud nedosáhne hodnoty {0} ° C. NN Výchozí teplotu extruderu můžete nastavit v 'Slice Settings' -> 'Filament'. NN {1}
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:Soubor, který se pokoušíte vytisknout, je soubor GCode.\n\nDoporučuje se, abyste tiskli pouze soubory Gcode, které jsou známé tak, aby odpovídaly konfiguraci tiskárny.\n\nOpravdu chcete vytisknout tento soubor GCode?
+Translated:Soubor, který se pokoušíte vytisknout, je soubor GCode. NN Doporučuje se tisknout pouze soubory Gcode, o nichž je známo, že odpovídají konfiguraci vaší tiskárny. Opravdu chcete tento soubor GCode vytisknout?
 
 English:The geometric shape of the support structure for the inside of parts.
-Translated:Geometrický tvar nosné konstrukce pro vnitřní části dílů.
+Translated:Geometrický tvar nosné konstrukce pro vnitřní část dílů.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-Translated:Výška tiskového objemu tiskárny v milimetrech. Řídí výšku oblasti vizuálního tisku zobrazené v 3D zobrazení.
+Translated:Výška tisknutelného objemu tiskárny v milimetrech. Řídí výšku oblasti vizuálního tisku zobrazené ve 3D zobrazení.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:Index extruderu, který se používá k tisku nosného materiálu. Platí pouze tehdy, je-li hodnota Extruder Count nastavena na hodnotu větší než 1.
+Translated:Index extruderu pro tisk nosného materiálu. Použitelné pouze v případě, že je počet extruderů nastaven na hodnotu vyšší než 1.
 
 English:The index of the extruder to use for support material interface layer(s).
-Translated:Index extruderu, který se použije pro vrstvu (vrstvy) rozhraní nosného materiálu.
+Translated:Index extrudéru, který se má použít pro vrstvu (vrstvy) nosného materiálu.
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:Index extruderu, který se používá k vytisknutí raftu. Nastavte hodnotu 0 pro použití indexu extruderu podpory.
+Translated:Index extruderu pro tisk voru. Nastavte hodnotu 0 pro použití indexu extruderu podpory.
+
+English:The inset amount for nozzle 1 from the bed
+Translated:Množství vložky pro trysku 1 z lože
+
+English:The inset amount for nozzle 2 from the bed
+Translated:Množství vložky pro trysku 2 z lože
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:Vrstva (vrstvy), u kterých se tisk zastaví, umožňuje změnu vlákna. Před spuštěním dané vrstvy je tiskárna pozastavena. Chcete-li zakázat, nechte prázdné. Chcete-li pozastavit více vrstev, oddělte čísla vrstev středníkem. Například: "16; 37".
+Translated:Vrstva (vrstvy), ve kterých bude tisk pozastaven, což umožní změnu vlákna. Tiskárna je před spuštěním dané vrstvy pozastavena. Chcete-li tuto funkci vypnout, ponechte prázdné. Chcete-li pozastavit více vrstev, oddělte čísla vrstev středníky. Například: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:Délka a šířka věže vytvořené na zadní straně levé strany tisku používané pro otření další trysky při výměně mezi více extrudery. Nastavte 0 na zakázání.
+Translated:Délka a šířka věže vytvořené v zadní levé části tisku použitého pro stírání další trysky při výměně mezi více extrudéry. Chcete-li tuto funkci vypnout, nastavte hodnotu 0.
+
+English:The Markdown that will be shown during print leveling to help get the X carriage level.
+Translated:Markdown, který bude zobrazen při vyrovnání tisku, aby se dosáhlo úrovně vozíku X.
 
 English:The Markdown that will be shown on the Clean Filament page.
-Translated:Označení, které se zobrazí na stránce Čisté filamenty.
+Translated:Markdown, který bude zobrazen na stránce Clean Filament.
 
 English:The Markdown that will be shown on the Insert Filament page.
-Translated:Označení, které se zobrazí na stránce Vložit vlákna.
+Translated:Markdown, který se zobrazí na stránce Vložit vlákno.
+
+English:The Markdown that will be shown on the second extruders Clean Filament page.
+Translated:Markdown, který bude zobrazen na druhé stránce Extruder Clean Filament.
+
+English:The Markdown that will be shown on the second extruders Insert Filament page.
+Translated:Markdown, který bude zobrazen na druhé stránce Extruder Insert Filament.
 
 English:The Markdown that will be shown on the Trim Filament page.
-Translated:Markdown, který se zobrazí na stránce Trim Filament.
+Translated:Markdown, který bude zobrazen na stránce Trim Filament.
 
 English:The maximum amount the printer can accelerate on a G-Code move.
-Translated:Maximální množství, které může tiskárna urychlit při přesunu kódu G.
+Translated:Maximální množství, které může tiskárna zrychlit při pohybu G-kódu.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:Maximální rychlost, kterou bude hladinový ventilátor běhat, vyjádřený jako procento plného výkonu.
+Translated:Maximální rychlost, při které bude běžet chladicí ventilátor vrstvy, vyjádřená jako procento plného výkonu.
 
 English:The maximum speed that the printer treats as 0 and changes direction instantly.
-Translated:Maximální rychlost, kterou tiskárna zachází jako 0 a okamžitě mění směr.
+Translated:Maximální rychlost, s níž tiskárna zachází jako s 0, a změní směr okamžitě.
 
 English:The maximum speed the printer can move.
-Translated:Maximální rychlost tiskárny může přesunout.
+Translated:Maximální rychlost, se kterou se tiskárna může pohybovat.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:Minimální doba, kterou musí vrstva vytisknout. Pokud bude vrstva trvat déle než toto časové období, rychlost pohybu se sníží, takže čas tisku vrstvy bude odpovídat této hodnotě, a to minimální rychlosti tisku v nejpomalejší době.
+Translated:Minimální doba, po kterou musí vrstva tisknout. Pokud bude vrstva trvat déle, než je tato doba, rychlost pohybu se sníží tak, aby doba tisku vrstvy odpovídala této hodnotě, a to až na nejmenší rychlost tisku.
 
 English:The minimum distance of a non-print move which will trigger a retraction.
-Translated:Minimální vzdálenost tisku bez tisku, který vyvolá odtržení.
+Translated:Minimální vzdálenost netisknutého pohybu, která spustí odtah.
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:Minimální velikost funkce, kterou je třeba vzít z modelu. Nechte na 0, abyste použili všechny detaily modelu.
+Translated:Minimální velikost prvku, která má být zohledněna v modelu. Nechte na 0, abyste použili všechny detaily modelu.
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
-Translated:Minimální délka vlákna, která musí být vytlačována před odtažením.
+Translated:Může dojít k minimální délce vlákna, která musí být vytlačena před zasunutím.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:Minimální délka vlákna pro tisk obrysů sukně. Dostane se dostatek smyček, aby se toto množství vlákna používalo, čímž se překračuje hodnota nastavená v smyčkách, pokud hodnota v smyčkách vytvoří sukně kratší než tato hodnota.
+Translated:Minimální délka vlákna pro použití potisku smyčky. Dostatek smyček sukně bude nakreslen pro použití tohoto množství vlákna, které nahradí hodnotu nastavenou v smyčkách, pokud hodnota v smyčkách vytvoří kratší sukni než tato hodnota.
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:Minimální rychlost, kterou bude hladinový ventilátor běhat, vyjádřený jako procento plného výkonu.
+Translated:Minimální otáčky, při kterých bude běžet chladicí ventilátor vrstvy, vyjádřené jako procento plného výkonu.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:Minimální rychlost, kterou tiskárna sníží, aby se pokoušela vytvořit dostatečnou dobu tisku vrstev, aby byla splněna minimální doba vrstvy.
+Translated:Minimální rychlost, na kterou se tiskárna sníží, aby se pokusila o to, aby doba tisku vrstvy byla dostatečně dlouhá, aby vyhovovala minimálnímu času vrstvy.
 
 English:The next few screens will walk your through calibrating your printer.
-Translated:Dalších pár obrazovek prochází kalibrací tiskárny.
+Translated:Dalších několik obrazovek vás provede kalibrací tiskárny.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:Počet procesorových jader, které je třeba použít při dělení plátků. Zvýšením toho může stroj zpomalit.
+Translated:Počet procesorových jader, které se mají používat při provádění řezání. Zvýšení může zpomalit váš stroj.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
-Translated:Počet stupňů Celsia pro snížení teploty trysky, pokud není aktivní.
+Translated:Počet stupňů Celsia pro snížení teploty trysky, když není aktivní.
 
 English:The number of extruders the printer has.
-Translated:Počet extruderů, které má tiskárna.
+Translated:Počet extrudérů, které má tiskárna.
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
-Translated:Počet vrstev, pro které bude vrstva chladicího ventilátoru na začátku tisku vytažena.
+Translated:Počet vrstev, pro které bude na začátku tisku vypnut chladicí ventilátor vrstvy.
 
 English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:Počet vrstev nebo vzdálenost v milimetrech na plné vyplnění na spodní ploše předmětu. Přidejte mm na konec čísla pro určení vzdálenosti v milimetrech.
+Translated:Počet vrstev nebo vzdálenost v milimetrech k plnému vyplnění na povrchu dna objektu. Do konce čísla přidejte mm pro určení vzdálenosti v milimetrech.
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:Počet vrstev nebo vzdálenost k tisku pevného materiálu mezi nosiči a dílem. Přidejte mm na konec čísla pro zadání vzdálenosti.
+Translated:Počet vrstev nebo vzdálenost pro tisk pevného materiálu mezi podpěrami a dílem. Do konce čísla přidejte mm a určete vzdálenost.
 
 English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
-Translated:Počet vrstev, které je třeba považovat za začátek tisku. Ty budou tisknout při počáteční rychlosti vrstvy.
+Translated:Počet vrstev, které je třeba zvážit jako začátek tisku. Ty se budou tisknout při počáteční rychlosti vrstvy.
 
 English:The number of layers to draw the skirt.
-Translated:Počet vrstev pro kreslení pláště.
+Translated:Počet vrstev pro kreslení sukně.
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:Počet vrstev nebo vzdálenost v milimetrech, aby se plnily na horní ploše objektu. Přidejte mm na konec čísla pro určení vzdálenosti v milimetrech.
+Translated:Počet vrstev nebo vzdálenost v milimetrech na plnou výplň na horním povrchu (plochách) předmětu. Do konce čísla přidejte mm pro určení vzdálenosti v milimetrech.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:Počet smyček, které mají být nakresleny na všech částech na lůžku před spuštěním dílů. Používá se hlavně k napájení trysky tak, aby tok byl dokonce i při začátku skutečného tisku.
+Translated:Počet smyček, které se budou pohybovat kolem všech dílů na lůžku před tím, než začnete na dílech. Používá se převážně k naplnění trysky, takže průtok je i při samotném tisku.
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
-Translated:Počet smyček pro kreslení kolem částí. Používá se k dodatečné adhezi lůžka
+Translated:Počet smyček pro kreslení částí. Používá se pro dodatečnou adhezi lože
 
 English:The number of times to sample each probe position (results will be averaged).
-Translated:Počet zobrazení vzorku každé sondy (výsledky budou zprůměrovány).
+Translated:Počet opakování každé polohy sondy (výsledky budou zprůměrovány).
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:Počet nebo celková šířka externích objektů, které chcete vytvořit. Přidejte mm na konec čísla pro určení šířky v milimetrech.
+Translated:Počet nebo celková šířka vnějších skořepin k vytvoření. Do konce čísla přidejte mm a určete šířku v milimetrech.
+
+English:The offset from T0 to the probe.
+Translated:Posun od T0 ke sondě.
 
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
-Translated:Posun každé trysky vzhledem k první trysce. Použitelné pouze pro vícenásobné extruderové stroje.
+Translated:Posunutí každé trysky vzhledem k první trysce. Užitečné pouze pro více extrudérů.
 
 English:The pattern to draw for the generation of support material.
-Translated:Vzor, který se má kreslit pro vytváření nosného materiálu.
+Translated:Vzor pro kreslení podpůrného materiálu.
 
 English:The pattern used on the bottom and top layers of the print.
 Translated:Vzor použitý na spodní a horní vrstvě tisku.
 
-English:The percent of the extrusion width that can be overlapped and still generate.
-Translated:Procento šířky vytlačování, které lze překrývat a stále vytvářet.
-
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-Translated:Poloha (souřadnice X a Y) středu tisku v milimetrech. Normálně to je 1/2 velikosti lůžka pro kartézské tiskárny a 0, 0 pro tiskárny Delta.
+Translated:Poloha (souřadnice X a Y) středu tiskového lůžka v milimetrech. Normálně je to 1/2 velikosti postele pro kartézské tiskárny a 0, 0 pro tiskárny Delta.
 
 English:The position to measure the probe offset.
 Translated:Poloha pro měření posunutí sondy.
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
-Translated:Cena jednoho kilogramu vlákna. Používá se pro odhad nákladů na tisk v zobrazení vrstvy.
+Translated:Cena jednoho kilogramu vlákna. Používá se pro odhad nákladů na tisk v zobrazení Vrstva.
 
 English:The print leveling algorithm to use.
-Translated:Algoritmus pro vyrovnávání tisku pro použití.
+Translated:Algoritmus pro vyrovnávání tisku, který se má použít.
 
 English:The printer has a heated bed.
-Translated:Tiskárna má vyhřívanou postel.
+Translated:Tiskárna má vyhřívané lůžko.
 
 English:The printer has a layer-cooling fan.
-Translated:Tiskárna má ventilátor chlazení vrstvy.
+Translated:Tiskárna má ventilátor pro chlazení vrstev.
 
 English:The printer has a SD card reader.
-Translated:Na tiskárně je čtečka karet SD.
+Translated:Tiskárna má čtečku karet SD.
 
 English:The printer has a servo for lowering and raising the z probe.
-Translated:Tiskárna má servo pro snížení a zvedání sondy z.
+Translated:Tiskárna má servo pro spouštění a zvedání sondy z.
 
 English:The printer has a z probe for measuring bed level.
-Translated:Tiskárna má sondu z pro měření úrovně postele.
+Translated:Tiskárna má sondu z pro měření výšky lůžka.
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
-Translated:Tiskárna má vlastní sondu pro automatické vyrovnávání lůžek a postup, který lze volat pomocí příkazu G29 během spuštění G-kódu.
+Translated:Tiskárna má vlastní automatickou vyrovnávací sondu a postup, který lze vyvolat příkazem G29 během startu G-Code.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
-Translated:Tiskárna má schopnost řídit napájení. Aktivujte tuto funkci a zobrazte sekci Kontrola napájení ATX na panelu Ovládací prvky.
+Translated:Tiskárna je schopna řídit napájení. Tuto funkci povolte, chcete-li v podokně Ovládací prvky zobrazit oddíl Řízení výkonu ATX.
 
 English:The printer requires print leveling to run correctly.
-Translated:Tiskárna vyžaduje, aby hladkost tisku probíhala správně.
+Translated:Tiskárna vyžaduje, aby tiskárna pracovala správně.
 
 English:The printer should now be 'homing'.
-Translated:Tiskárna by nyní měla být "homing".
+Translated:Tiskárna by nyní měla být „navádějící“.
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:Profil, který se pokoušíte načíst, byl poškozen. Váš poslední použitý profil {0} {1} jsme nahraili z nedávné historie profilu.
+Translated:Profil, který se pokoušíte načíst, byl poškozen. Namísto toho jsme načtili váš poslední použitelný profil {0} {1} z vaší nedávné historie profilu.
 
 English:The serial driver to use
-Translated:Sériový ovladač, který chcete používat
+Translated:Použití sériového ovladače
 
 English:The serial port communication speed of the printers firmware.
-Translated:Rychlost komunikace sériového portu firmwaru tiskárny.
+Translated:Komunikační rychlost sériového portu firmwaru tiskárny.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:Sekce Sériový port uvádí seznam všech dostupných sériových portů na vašem zařízení. Změna portu USB, ke kterému je tiskárna připojena, může změnit přidružený sériový port.\n\nTip: Pokud si nejste jisti, odpojte / připojte tiskárnu\na stiskněte tlačítko Refresh. Nový port, který se zobrazí, by měl být v tiskárně.
+Translated:Sekce 'Serial Port' obsahuje seznam všech dostupných sériových portů na vašem zařízení. Změna portu USB, ke kterému je tiskárna připojena, může změnit přiřazený sériový port. NN: Pokud si nejste jisti, odpojte / zapojte tiskárnu a stiskněte Obnovit. Nový port, který se objeví, by měl být v tiskárně.
 
 English:The serial port to use while connecting to this printer.
-Translated:Sériový port, který se používá při připojení k této tiskárně.
+Translated:Sériový port pro připojení k této tiskárně.
 
 English:The shape of the physical print bed.
-Translated:Tvar fyzického tisku.
+Translated:Tvar fyzického tiskového lůžka.
 
 English:The speed at which bridging between walls will print.
 Translated:Rychlost, s jakou se bude tisknout mezi stěnami.
 
 English:The speed at which filament will retract and re-extrude.
-Translated:Rychlost, se kterou se vlákno zahučí a opět protlačuje.
+Translated:Rychlost, při které se vlákno zatáhne a znovu vytáhne.
 
 English:The speed at which infill will print.
-Translated:Rychlost, kterou bude výplň tisknout.
+Translated:Rychlost, s jakou se výplň vytiskne.
 
 English:The speed at which inside perimeters will print.
-Translated:Rychlost, kterou budou tisknout vnitřní obvody.
+Translated:Rychlost, s jakou se budou tisknout vnitřní obvody.
+
+English:The speed at which interface layers will print.
+Translated:Rychlost, s jakou budou vrstvy rozhraní tisknuty.
 
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
-Translated:Rychlost, kterou budou tisknout vnější, vnější nebo jinak viditelné obvody.
+Translated:Rychlost, při které se tisknou vnější, vnější nebo jinak viditelné obvody.
 
 English:The speed at which support material structures will print.
-Translated:Rychlost, kterou budou tisknout podpůrné struktury materiálu.
+Translated:Rychlost, jakou budou nosné struktury materiálu tisknout.
 
 English:The speed at which the air gap layer will print.
-Translated:Rychlost, kterou bude tisknout vrstva vzduchové mezery.
+Translated:Rychlost, s jakou se bude vrstva vzduchové mezery tisknout.
 
 English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
-Translated:Rychlost, s jakou budou tisknout spodní vrstvy pevných látek. Lze nastavit explicitně nebo jako procento rychlosti naplnění. Použijte 0 pro porovnání rychlosti naplnění.
+Translated:Rychlost, s jakou se budou tisknout spodní pevné vrstvy. Lze nastavit explicitně nebo jako procento rychlosti infill. Použijte 0 pro přizpůsobení rychlosti výplně.
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
-Translated:Rychlost, s jakou bude vrstva chladicího ventilátoru fungovat při přemostění, vyjádřená jako procento plného výkonu.
+Translated:Rychlost, s jakou bude chladicí ventilátor vrstvy pracovat při přemostění, vyjádřená jako procento plného výkonu.
 
 English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Rychlost, s jakou budou tisknout vrstvy raftu (jiné než první vrstva). To lze nastavit explicitně nebo jako procento rychlosti naplnění.
+Translated:Rychlost, při které se budou tisknout vrstvy voru (kromě první vrstvy). To lze nastavit explicitně nebo jako procento rychlosti infill.
 
 English:The speed at which the nozzle will move when not extruding material.
-Translated:Rychlost, s jakou se tryska bude pohybovat, pokud nebude vytlačovat materiál.
+Translated:Rychlost, při které se tryska bude pohybovat, když nebude vytlačovat materiál.
 
 English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
-Translated:Rychlost, s jakou se tryska bude pohybovat při tisku počátečních vrstev. Pokud je vyjádřeno jako procento, změní se rychlost naplnění.
+Translated:Rychlost, se kterou se bude tryska pohybovat při tisku počátečních vrstev. Je-li vyjádřeno v procentech, je rychlost výplně upravena.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
-Translated:Rychlost, s jakou se tryska bude pohybovat při obnovení chybějícího tisku, pro 1 vrstvu.
+Translated:Rychlost, se kterou se bude tryska pohybovat při obnově neúspěšného tisku, pro 1 vrstvu.
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
-Translated:Rychlost, s jakou budou tisknout horní vrstvy pevné látky. Lze nastavit explicitně nebo jako procento rychlosti naplnění.
+Translated:Rychlost, s jakou se budou tisknout vrchní pevné vrstvy. Lze nastavit explicitně nebo jako procento rychlosti infill.
 
 English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:Rychlost pohybu laseru, když je výška vrstvy 0,025 mm. Rychlost bude nastavena lineárně v jiných výškách.
+Translated:Rychlost pohybu laseru při výšce vrstvy 0,025 mm. Rychlost bude upravována lineárně v jiných výškách.
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
-Translated:Rychlost pohybu laseru při výšce vrstvy 0,1 mm. Rychlost bude nastavena lineárně v jiných výškách.
+Translated:Rychlost pohybu laseru při výšce vrstvy 0,1 mm. Rychlost bude upravována lineárně v jiných výškách.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Rychlost tisku výplně, když je zcela pevná. To lze nastavit explicitně nebo jako procento rychlosti naplnění.
+Translated:Rychlost tisku výplně, když je zcela pevná. To lze nastavit explicitně nebo jako procento rychlosti infill.
 
 English:The speed to run filament into and out of the printer.
-Translated:Rychlost spouštění vlákna do a ven z tiskárny.
+Translated:Rychlost běhu vlákna do a z tiskárny.
 
 English:The starting height (z) of the print head before probing each print level position.
-Translated:Počáteční výšku (z) tiskové hlavy před snímáním každé úrovně tiskové úrovně.
+Translated:Počáteční výška (z) tiskové hlavy před snímáním každé polohy tiskové úrovně.
 
 English:The target temperature the extruder will attempt to reach during the print.
-Translated:Cílová teplota, kterou se extruder pokusí dosáhnout během tisku.
+Translated:Cílová teplota, kterou se extrudér pokusí dosáhnout během tisku.
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
-Translated:Teplota, při které vytlačovací stroj vyčistí trysku, jak je specifikováno v uživatelském G-kódu.
+Translated:Teplota, při které extrudér otře trysku, jak je specifikováno v G-Code.
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:Teplota, na kterou bude lůžko nastaveno po dobu trvání tisku. Nastavte 0 na zakázání.
+Translated:Teplota, na kterou bude postel nastavena po dobu tisku. Chcete-li tuto funkci vypnout, nastavte hodnotu 0.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:Teplota, na kterou se lůžko zahřeje (nebo ochladí), aby odstranilo část, jak je uvedeno v Custom G-Code.
+Translated:Teplota, na kterou se bude lože zahřívat (nebo chladit) za účelem odstranění dílu, jak je specifikováno v uživatelském G-kódu.
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:Teplota, na kterou se tryska zahřeje před tiskem první vrstvy dílu. Tiskárna počká, dokud nebude dosažena tato teplota před tiskem.
+Translated:Teplota, na kterou bude tryska zahřívána před tiskem první vrstvy dílu. Před tiskem bude tiskárna čekat na dosažení této teploty.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:Termín "přenosová rychlost" zhruba znamená rychlost, s jakou jsou data přenášena. Rychlost přenosu se může lišit od tiskárny na tiskárně. Další informace naleznete v návodu k tiskárně.\n\nTip: Pokud si nejste jisti, zkuste 250000.
+Translated:Termín „Baud Rate“ (přenosová rychlost) zhruba označuje rychlost přenosu dat. Přenosové rychlosti se mohou lišit od tiskárny k tiskárně. Další informace naleznete v příručce k tiskárně. NN Tip: Pokud si nejste jisti - zkuste 250000.
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:Tloušťka každé vrstvy tisku, s výjimkou první vrstvy. Menší číslo vytvoří více vrstev a více vertikální přesnosti, ale i pomalejší tisk.
+Translated:Tloušťka každé vrstvy tisku s výjimkou první vrstvy. Menší počet vytvoří více vrstev a více vertikální přesnost, ale také pomalejší tisk.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:Tloušťka první vrstvy. První vrstva vyšší než výchozí tloušťka vrstvy může zajistit dobrou přilnavost k sestavené desce.
+Translated:Tloušťka první vrstvy. První vrstva vyšší, než je výchozí tloušťka vrstvy, může zajistit dobrou přilnavost ke konstrukční desce.
+
+English:The time it takes to heat back up from a cool down.
+Translated:Doba potřebná k opětovnému zahřátí od vychladnutí.
 
 English:The time it will take to unload the filament
-Translated:Čas potřebný k vyložení vlákna
+Translated:Doba potřebná k vyložení vlákna
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
-Translated:Doba prodloužení maximální délky při restartu na maximální hodnotu. Pod tímto časem bude použita pouze část extra délky. Nechte 0, abyste celou dobu použili celou částku.
+Translated:Čas, po který se má prodloužit hodnota Extra Length On Restart na maximální hodnotu. Pod touto dobou bude použita pouze část dodatečné délky. Nechte 0, abyste celou částku aplikovali po celou dobu.
 
 English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
-Translated:Čas tisku tohoto G-kódu je odhadován na {0} sekund.\n\nProsím, zkontrolujte část, zda chyby jsou neočekávané.
+Translated:Doba tisku tohoto kódu G se odhaduje na {0} sekund. NN Pokud se jedná o neočekávané, zkontrolujte prosím, zda se jedná o chyby.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:Verze G-kódu, s nímž komunikuje firmware tiskárny. Některé firmware používají různé kódy G a M. Toto nastavení zajišťuje, že výstupní G-kód použije správné příkazy.
+Translated:S verzí firmwaru G-Code komunikuje firmware tiskárny. Některé firmware používají různé G a M kódy. Toto nastavení zajišťuje, že výstup G-Code bude používat správné příkazy.
 
 English:The width and depth of the support pillars
-Translated:Šířka a hloubka podpěrných pilířů
+Translated:Šířka a hloubka podpěrných sloupků
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
-Translated:Poloha X a Y horkého konce, která minimalizuje možnost srážky s díly na lůžku.
+Translated:Poloha X a Y horkého konce, která minimalizuje možnost kolize s částmi na lůžku.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
-Translated:Hodnoty X a Y velikosti tisku v milimetrech. U tiskáren s kruhovým lůžkem jsou tyto hodnoty průměry os X a Y.
+Translated:Hodnoty X a Y velikosti tiskového lůžka v milimetrech. Pro tiskárny s kruhovým ložem jsou tyto hodnoty průměry na osách X a Y.
 
 English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
-Translated:Odsazení Z pro tiskárnu, někdy nazývané Baby Stepping, je větší než 2 mm a je neplatné. Vyčistěte hodnotu a znovu nastavte lůžko.
+Translated:Ofset Z pro vaši tiskárnu, někdy nazývaný Baby Stepping, je větší než 2 mm a neplatný. Vymažte hodnotu a vyrovnejte lůžko.
 
 English:The z offset to apply to improve the first layer adhesion.
-Translated:Posunutí z použijte pro zlepšení přilnavosti první vrstvy.
+Translated:Odsazení z pro zlepšení přilnavosti první vrstvy.
 
 English:Theme
 Translated:Téma
@@ -3689,7 +3854,7 @@ English:There is a recommended update available
 Translated:K dispozici je doporučená aktualizace
 
 English:There is a recommended update available for MatterControl. Would you like to download it now?
-Translated:Pro MatterControl je k dispozici doporučená aktualizace. Chcete jej stáhnout nyní?
+Translated:Pro aplikaci MatterControl je k dispozici doporučená aktualizace. Chcete jej nyní stáhnout?
 
 English:There is a required update available
 Translated:K dispozici je požadovaná aktualizace
@@ -3698,52 +3863,52 @@ English:Thin Walls
 Translated:Tenké stěny
 
 English:This code to will provide read-only access.
-Translated:Tento kód bude poskytovat přístup pouze ke čtení.
+Translated:Tento kód bude poskytovat přístup jen pro čtení.
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
-Translated:Jedná se o skupinu regulárních výrazů, které se vztahují na linky po jejich přijetí z tiskárny. Použijí se pro každou přijatou linii.
+Translated:Jedná se o sadu regulárních výrazů, které se použijí na řádky po přijetí z tiskárny. Budou aplikovány tak, aby každý řádek obdržel.
 
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
-Translated:Toto je sada regulárních výrazů, které se vztahují na řádky před odesláním do tiskárny. Budou aplikovány v pořadí uvedeném před odesláním. Chcete-li vrátit více než jednu instrukci, oddělte je čárkou.
+Translated:Toto je sada regulárních výrazů, které se použijí na řádky před odesláním do tiskárny. Budou použity v pořadí uvedeném před odesláním. Pro návrat více než jedné instrukce je oddělte čárkou.
 
 English:This is the angle that lowers or deploys the z probe.
 Translated:To je úhel, který snižuje nebo rozkládá sondu z.
 
 English:This is the angle that raises or stows the z probe.
-Translated:To je úhel, který zvedá nebo podkládá sondu z.
+Translated:To je úhel, který zvyšuje nebo ukládá sondu z.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
-Translated:Toto je značka (často výrobce) tiskárny, na kterou je tento profil cílen.
+Translated:Toto je značka (často výrobce) tiskárny, na kterou tento profil cílí.
 
 English:This is the model of printer this profile is targeting.
-Translated:Jedná se o model tiskárny, na který je tento profil zaměřen.
+Translated:Toto je model tiskárny, na kterou tento profil cílí.
 
 English:This is the name of your printer that will be displayed in the choose printer menu.
-Translated:Toto je název vaší tiskárny, která se zobrazí v nabídce zvolte tiskárnu.
+Translated:Toto je název vaší tiskárny, který se zobrazí v nabídce Vybrat tiskárnu.
 
 English:This is the position to perform the scale about.
-Translated:Toto je pozice pro provedení stupnice kolem.
+Translated:To je pozice, na které se má měřítko provádět.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:To pomáhá snižovat vibrace během tisku. Pokud má tiskárna rezonanční frekvenci, která způsobuje potíže, můžete ji nastavit tak, aby zkusila snížit tisk na této frekvenci.
+Translated:To pomáhá snížit vibrace během tisku. Pokud má tiskárna rezonanční frekvenci, která způsobuje potíže, můžete ji nastavit tak, aby se pokusila redukovat tisk na této frekvenci.
 
 English:This should be in 'G-Code'
-Translated:To by mělo být v "G-Code"
+Translated:To by mělo být v „G-Code“
 
 English:This will ensure that filament is able to flow through the nozzle.
-Translated:To zajistí, že vlákno bude schopno proudit tryskou.
+Translated:Tím se zajistí, že vlákno je schopno protékat tryskou.
 
 English:This will ensure that no filament is stuck to your nozzle.
-Translated:Tím se zajistí, že na vaši trysku nebude přilepeno žádné vlákno.
+Translated:To zajistí, že na trysku nebude přilepeno žádné vlákno.
 
 English:This will improve the accuracy of print leveling 
-Translated:Tím se zlepší přesnost vytištění tisku
+Translated:Tím se zlepší přesnost vyrovnávání tisku
 
 English:This will improve the accuracy of print leveling.
-Translated:Tím se zlepší přesnost vytištění tisku.
+Translated:Tím se zlepší přesnost vyrovnávání tisku.
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
-Translated:To bude fungovat pouze na určitém hardwaru. Nepoužívejte, pokud si nejste jisti, že váš ovladač tiskárny tuto funkci podporuje
+Translated:To bude fungovat pouze na konkrétním hardwaru. Nepoužívejte, pokud si nejste jisti, že tento ovladač podporuje tiskárna
 
 English:Threads
 Translated:Vlákna
@@ -3755,7 +3920,7 @@ English:Time
 Translated:Čas
 
 English:Time For Extra Length
-Translated:Čas pro další délku
+Translated:Čas pro extra délku
 
 English:Time From Start
 Translated:Čas od začátku
@@ -3766,17 +3931,20 @@ Translated:Časový násobitel
 English:Time to End
 Translated:Čas do konce
 
+English:Time to Tool Change
+Translated:Čas na změnu nástroje
+
 English:TM
 Translated:TM
 
 English:To complete the next few steps you will need
-Translated:Chcete-li dokončit další kroky, které budete potřebovat
+Translated:Pro dokončení dalších několika kroků budete potřebovat
 
 English:To Folder
 Translated:Do složky
 
 English:Toggle between specifying the size or the percentage to scale.
-Translated:Přepíná mezi určením velikosti nebo procentuální stupnice.
+Translated:Přepíná mezi zadáním velikosti nebo procenta měřítka.
 
 English:Toggle Selection
 Translated:Přepnout výběr
@@ -3784,14 +3952,23 @@ Translated:Přepnout výběr
 English:Toggle Support
 Translated:Přepnout podporu
 
+English:Tool
+Translated:Nástroj
+
+English:Tool 
+Translated:Nástroj
+
+English:Tools 
+Translated:Nástroje
+
 English:Top Solid Infill
-Translated:Špičková plná výplň
+Translated:Top Solid Infill
 
 English:Top Solid Layers
-Translated:Nejvyšší pevné vrstvy
+Translated:Horní pevné vrstvy
 
 English:Top/Bottom Fill Pattern
-Translated:Horní / dolní výplň vzoru
+Translated:Vzor výplně nahoře / dole
 
 English:Torus
 Translated:Torus
@@ -3800,7 +3977,7 @@ English:Touch Screen Mode
 Translated:Režim dotykové obrazovky
 
 English:Transform Wrapper
-Translated:Transformovat obal
+Translated:Transformace obálky
 
 English:Translate
 Translated:přeložit
@@ -3812,37 +3989,37 @@ English:Travel
 Translated:Cestovat
 
 English:Trim Filament
-Translated:Trim Filament
+Translated:Oříznout vlákno
 
 English:Trim Filament Page
-Translated:Trim Filament Page
+Translated:Oříznutí vlákna
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:Zkuste propojit hrany oka, pokud skutečná data sítě nejsou celá připojená.
+Translated:Pokuste se propojit okraje sítě, pokud nejsou aktuální data sítě připojena.
 
 English:Tuning Adjustment
-Translated:Nastavení tuningu
+Translated:Úprava ladění
 
 English:Turn auto leveling on
 Translated:Zapněte automatické vyrovnání
 
 English:Turn off motor current at end of print or after cancel print.
-Translated:Vypněte proud motoru na konci tisku nebo po zrušení tisku.
+Translated:Vypněte motor na konci tisku nebo po zrušení tisku.
 
 English:Turn on if Below
-Translated:Zapnout, pokud je níže
+Translated:Zapněte, pokud níže
 
 English:Turn retractions on and off.
-Translated:Zapínání a vypínání zatahování.
+Translated:Zapnutí a vypnutí zatahování.
 
 English:Turn the fan on and off regardless of settings.
 Translated:Zapněte a vypněte ventilátor bez ohledu na nastavení.
 
 English:Turns on and off all cooling settings (all settings below this one).
-Translated:Zapíná a vypíná všechna nastavení chlazení (všechna nastavení pod tímto).
+Translated:Zapíná a vypíná všechna nastavení chlazení (všechna nastavení pod tímto nastavením).
 
 English:Uh oh! Passwords do not match.
-Translated:Oh, oh! Hesla se neshodují.
+Translated:Uh oh! Hesla se neshodují.
 
 English:Uh-oh! Could not connect to printer.
 Translated:Uh-oh! Nelze se připojit k tiskárně.
@@ -3860,16 +4037,19 @@ English:Undo
 Translated:vrátit
 
 English:Unexpected error validating settings
-Translated:Neočekávaná chyba ověření nastavení
+Translated:Neočekávaná nastavení ověřování chyb
 
 English:Unexpected response
 Translated:Neočekávaná odpověď
 
 English:Ungroup
-Translated:Ungroup
+Translated:Oddělit
 
 English:Unknown
 Translated:Neznámý
+
+English:Unknown filament loaded
+Translated:Neznámé vlákno naložené
 
 English:Unknown Reason
 Translated:Neznámý důvod
@@ -3878,22 +4058,19 @@ English:Unload
 Translated:Vyložit
 
 English:Unload filament
-Translated:Vyjměte vlákno
+Translated:Vyložte vlákno
 
 English:Unload Filament
-Translated:Vyjměte vlákno
+Translated:Vyložit vlákno
 
 English:Unload Filament Length
 Translated:Vyjměte délku vlákna
 
 English:Unload Filament Time
-Translated:Vyjměte čas vlákna
-
-English:Unload Filament Wizard
-Translated:Průvodce uvolněním vlákna
+Translated:Vyložit čas vlákna
 
 English:Unload Material
-Translated:Uvolněte materiál
+Translated:Vyjměte materiál
 
 English:Unloading Filament
 Translated:Vykládání vlákna
@@ -3904,9 +4081,6 @@ Translated:Odemknout
 English:Unsupported Baud Rate
 Translated:Nepodporovaná přenosová rychlost
 
-English:Unsupported Parts Detected
-Translated:Byly detekovány nepodporované součásti
-
 English:Up
 Translated:Nahoru
 
@@ -3914,22 +4088,22 @@ English:Up Arrow
 Translated:Šipka nahoru
 
 English:Up one folder
-Translated:Up jednu složku
+Translated:Nahoru jedna složka
 
 English:Update
 Translated:Aktualizace
 
 English:Update Available
-Translated:Aktualizace k dispozici
+Translated:Dostupná aktualizace
 
 English:Update Channel
 Translated:Aktualizovat kanál
 
 English:Update In Progress: {0}
-Translated:Aktualizace probíhá: {0}
+Translated:Probíhá aktualizace: {0}
 
 English:Update my password
-Translated:Aktualizujte své heslo
+Translated:Aktualizujte heslo
 
 English:Updating firmware...
 Translated:Aktualizace firmwaru ...
@@ -3944,28 +4118,28 @@ English:Use Automatic Z Probe
 Translated:Použijte automatickou sondu Z
 
 English:Use Braille grade 2 (contractions)
-Translated:Použijte braillský řádek stupeň 2 (kontrakce)
+Translated:Použijte třídu Braillova písma (kontrakce)
 
 English:Use cursor keys for axis movements
-Translated:Použijte kurzorová tlačítka pro pohyby os
+Translated:Pro pohyb os použijte kurzorové klávesy
 
 English:Use Firmware Retraction
-Translated:Použijte odvolání firmwaru
+Translated:Použijte Odpojení firmwaru
 
 English:Use G0
 Translated:Použijte G0
 
 English:Use G0 for moves rather than G1.
-Translated:Použijte G0 pro pohyby spíše než G1.
+Translated:Použijte G0 pro tahy spíše než G1.
 
 English:Use Relative E Distances
-Translated:Použití relativních vzdáleností E
+Translated:Použijte relativní E vzdálenosti
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:Používá se pro malé obvodové plochy (obvykle otvory). To lze nastavit explicitně nebo jako procento rychlosti obvodu.
+Translated:Používá se pro malé obvody (obvykle otvory). To lze nastavit explicitně nebo jako procento rychlosti perimetru.
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:Používá se k určení, zda více než jeden extruder sdílí společnou kazetu s ohřívačem.
+Translated:Používá se k určení, zda více než jeden extrudér sdílí společnou topnou patronu.
 
 English:Username
 Translated:Uživatelské jméno
@@ -3974,7 +4148,7 @@ English:Username or Email
 Translated:Uživatelské jméno nebo email
 
 English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
-Translated:Pomocí ovládacích prvků [Z] na této obrazovce nyní provedeme hrubé měření výšky extruderu v této poloze.
+Translated:Pomocí ovládacích prvků [Z] na této obrazovce nyní provedeme hrubé měření výšky vytlačovacího stroje v této poloze.
 
 English:Using the above controls
 Translated:Pomocí výše uvedených ovládacích prvků
@@ -3992,49 +4166,61 @@ English:Version
 Translated:Verze
 
 English:Vibration Limit
-Translated:Vibrační limit
+Translated:Limit vibrací
 
 English:View Icons
 Translated:Zobrazit ikony
 
 English:View Just My Settings
-Translated:Zobrazit pouze Moje nastavení
+Translated:Zobrazit pouze moje nastavení
 
 English:View Large Icons
-Translated:Zobrazení velkých ikon
+Translated:Zobrazit velké ikony
 
 English:View List
-Translated:Seznam zobrazení
+Translated:Zobrazit seznam
 
 English:View Small Icons
 Translated:Zobrazit malé ikony
 
 English:View XSmall Icons
-Translated:Zobrazení ikon XSmall
+Translated:Zobrazit ikony XSmall
 
 English:Wait For Running Clean
-Translated:Počkejte, zda je spuštěn
+Translated:Počkejte na spuštění čištění
+
+English:'Wait' Responses
+Translated:'Počkejte' Reakce
 
 English:Waiting For Bed To Heat
-Translated:Čekání na postel k ohřevu
+Translated:Čekání na postel na teplo
 
 English:Waiting for Bed to Heat to
-Translated:Čekání na lůžko k zahřátí
+Translated:Čekání na lůžko na zahřívání
 
-English:Waiting For Extruder To Heat
-Translated:Čekání na vytápění extrudéru
+English:Waiting for Extruder 1 to Heat to
+Translated:Čekání na extruder 1 na zahřívání
 
-English:Waiting for Extruder to Heat to
-Translated:Čekání na vytlačování extruderu
+English:Waiting for Extruder 2 to Heat to
+Translated:Čekání na extruder 2 na zahřívání
+
+English:Waiting for hotend {0} to heat to 
+Translated:Čekání na zahřívání {0}
 
 English:Waiting For Printer To Heat
-Translated:Čekání na ohřívání tiskárny
+Translated:Čekání na tiskárnu k ohřevu
 
 English:Waiting for the bed to heat to 
-Translated:Čeká se, až se lůžko zahřeje
+Translated:Čekám, až se postel ohřeje
 
 English:Waiting for the hotend to heat to 
-Translated:Čeká na to, aby se hotel zahřál
+Translated:Čekání na zahřátí
+
+English:Waiting for the hotends to heat up.
+Translated:Čekání na zahřátí.
+
+English:Warm up Time
+Translated:Čas zahřátí
 
 English:Warning
 Translated:Varování
@@ -4046,25 +4232,22 @@ English:Warning - No EEProm Mapping
 Translated:Varování - Žádné mapování EEProm
 
 English:Warning! The tip of the nozzle will be HOT!
-Translated:Varování! Hrot trysky bude horký!
+Translated:Varování! Špička trysky bude HORKÁ!
 
 English:Warning, very short print
 Translated:Varování, velmi krátký tisk
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:VAROVÁNÍ: Odpojením se zastaví aktuální tisk.\n\nOpravdu chcete odpojit?
+Translated:VAROVÁNÍ: Odpojení zastaví aktuální tisk. NN Opravdu chcete odpojit?
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:UPOZORNĚNÍ: Chcete-li provádět obnovu tisku, musí se tiskárna pohybovat dolů, aby se dostala do původní polohy.\nPokud je tisk příliš velký, může se část tiskárny při sjíždění s ním srazit.\nPřed pokračováním se ujistěte, že je bezpečné provést tuto operaci.
-
-English:Warning: Support Required
-Translated:Upozornění: Požadovaná podpora
+Translated:VAROVÁNÍ: Aby bylo možné provést obnovu tisku, musí se tiskárna posunout dolů, aby dosáhla své výchozí polohy. n Pokud je tisk příliš velký, může se část tiskárny při pohybu dolů srazit. n Před pokračováním se ujistěte, že je bezpečné provést tuto operaci.
 
 English:WARNING: Write Failed!
-Translated:UPOZORNĚNÍ: Zápis selhal!
+Translated:VAROVÁNÍ: Chyba zápisu!
 
 English:We should be done in approximately {0} minutes.
-Translated:Měli bychom to udělat za přibližně {0} minut.
+Translated:Měli bychom to udělat přibližně {0} minut.
 
 English:We should be done in less than five minutes.
 Translated:Měli bychom to udělat za méně než pět minut.
@@ -4073,10 +4256,10 @@ English:We will now finalize our measurement of the extruder height at this posi
 Translated:Nyní dokončíme měření výšky extrudéru v této poloze.
 
 English:We will now refine our measurement of the extruder height at this position.
-Translated:Nyní budeme upřesňovat naše měření výšky extrudéru v této poloze.
+Translated:Nyní změříme měření výšky extrudéru v této poloze.
 
 English:We will use this paper to measure the distance between the nozzle and the bed.
-Translated:Tento papír použijeme k měření vzdálenosti mezi tryskou a lůžkem.
+Translated:Tento papír použijeme k měření vzdálenosti mezi tryskou a ložem.
 
 English:Website
 Translated:webová stránka
@@ -4085,34 +4268,34 @@ English:Wedge
 Translated:Klín
 
 English:Welcome to MatterControl
-Translated:Vítejte na stránkách MatterControl
+Translated:Vítejte v MatterControl
 
 English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Vítejte v Průvodci vyrovnávání tisku. Zde je stručný přehled toho, co budeme dělat.
+Translated:Vítejte v Průvodci vyrovnáváním tisku. Zde je rychlý přehled o tom, co budeme dělat.
 
 English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:Vítejte v průvodci kalibrace sondy. Zde je stručný přehled toho, co budeme dělat.
+Translated:Vítejte v průvodci kalibrací sondy. Zde je rychlý přehled o tom, co budeme dělat.
 
 English:What was my password again?
-Translated:Jaké bylo znovu heslo?
+Translated:Jaké bylo mé heslo znovu?
 
 English:What's this?
-Translated:Co to je?
+Translated:Co je to?
 
 English:wheel
 Translated:kolo
 
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
-Translated:Po kontrole tohoto problému se společnost MatterControl pokusí obnovit tisk v případě selhání, například ztracené připojení nebo ztracené napájení.
+Translated:Pokud je tato možnost zaškrtnuta, aplikace MatterControl se pokusí obnovit tisk v případě selhání, například ztráty spojení nebo ztráty napájení.
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
-Translated:Při upgradu na nový firmware nejprve uložte zálohu aktuálního firmwaru.
+Translated:Při přechodu na nový firmware nejprve uložte zálohu aktuálního firmwaru.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:Při použití více extruderů se vzdálenost vlákna vrátí před změnou na jiný extrudér.
+Translated:Při použití vícenásobných extrudérů se bude před výměnou na jiný extrudér reverzní vlákno otáčet.
 
 English:Where to start the bend as a percent of the width of the part
-Translated:Kde začít ohýbat jako procento šířky části
+Translated:Kde začít ohyb jako procento šířky dílu
 
 English:Width
 Translated:Šířka
@@ -4124,19 +4307,16 @@ English:wipe
 Translated:otřete
 
 English:Wipe Shield Distance
-Translated:Otírejte vzdálenost štítu
+Translated:Vzdálenost stínění stínění
 
 English:Wipe Tower Size
-Translated:Vymažte velikost věže
+Translated:Otřete velikost věže
 
 English:Would you like to setup Wifi?
 Translated:Chcete nastavit Wifi?
 
-English:Would you like to switch to the new G-Code? Before you switch, check that your are seeing the changes you expect.
-Translated:Přejete si přepnout na nový G-kód? Než začnete přepínat, zkontrolujte, zda vidíte změny, které očekáváte.
-
 English:Write Filter
-Translated:Napište filtr
+Translated:Zapsat filtr
 
 English:X
 Translated:X
@@ -4144,44 +4324,56 @@ Translated:X
 English:X and Y Distance
 Translated:Vzdálenost X a Y
 
+English:X Offset
+Translated:X Offset
+
+English:X Y Nozzle Offsets Have Been Calibrated
+Translated:X Y Ofsety trysek byly kalibrovány
+
 English:XY Homing Position
 Translated:XY Homing Position
 
 English:Y
 Translated:Y
 
+English:Y Offset
+Translated:Y Offset
+
 English:Yes
 Translated:Ano
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:Přecházíte na jiný režim vykreslování miniatur. Chcete-li, můžete své současné miniatury odstranit a znovu vytvořit v novém stylu. Můžete se kdykoli přepínat tam a zpět. Během vytváření nových náhledů bude docházet k nějakému režijnímu zpracování.\n\nChcete nyní znovu vytvořit stávající miniatury?
+Translated:Přepnete se do jiného režimu vykreslování miniatur. Pokud chcete, vaše aktuální miniatury lze odstranit a znovu vytvořit v novém stylu. Můžete kdykoliv přepínat dopředu a dozadu. Při vytváření nových miniatur bude existovat určitá režie zpracování. NN Chcete nyní znovu vytvořit stávající miniatury?
 
 English:You can also
 Translated:Můžete také
 
-English:You can only connect when not currently connected.
-Translated:Můžete se připojit, pouze pokud nejsou připojeni.
+English:You can continue to ultra fine calibration, but for most uses this is not necessary.
+Translated:Můžete pokračovat v ultra jemné kalibraci, ale pro většinu použití to není nutné.
+
+English:You can only connect when not currently connected
+Translated:Připojit lze pouze tehdy, když není aktuálně připojen
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
-Translated:Úspěšně jste importovali nové nastavení {0}. V seznamu nastavení {0} najdete '{1}'.
+Translated:Úspěšně jste importovali nové nastavení {0}. V seznamu nastavení {0} naleznete „{1}“.
 
 English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
-Translated:Úspěšně jste importovali nový profil tiskárny. V seznamu dostupných tiskáren naleznete {0}.
+Translated:Úspěšně jste importovali nový profil tiskárny. V seznamu dostupných tiskáren můžete najít číslo „{0}“.
 
 English:You may need to wait a minute for your printer to finish initializing.
-Translated:Možná budete muset počkat na chvíli, než tiskárna dokončí inicializaci.
+Translated:Možná bude nutné počkat minutu, než tiskárna dokončí inicializaci.
 
-English:Your 3D print has been auto-paused.\n\nLayer{0} reached.
-Translated:3D tisk byl automaticky pozastaven.\n\nLayer {0} dosaženo.
+English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
+Translated:Váš 3D tisk byl automaticky pozastaven. NN Vrstva {0} dosáhla.
 
 English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
-Translated:3D tisk byl pozastaven.\n\nBylo zjištěno vlákno nebo jam. Vložte více vlákna nebo odstraňte zaseknutý papír.
+Translated:Váš 3D tisk byl pozastaven. NN Bylo zjištěno, že je vlákno nebo uvíznuto. Vložte další vlákno nebo odstraňte uvíznutý papír.
 
 English:Your application is up-to-date
 Translated:Vaše aplikace je aktuální
 
 English:Your code has been redeemed.  Please check the Library.
-Translated:Váš kód byl vykoupen. Zkontrolujte knihovnu.
+Translated:Váš kód byl uplatněn. Zkontrolujte prosím Knihovnu.
 
 English:Your Email Address
 Translated:Vaše emailová adresa
@@ -4189,50 +4381,56 @@ Translated:Vaše emailová adresa
 English:Your invite has been sent!
 Translated:Vaše pozvánka byla odeslána!
 
+English:Your nozzles should now be calibrated.
+Translated:Vaše trysky by nyní měly být kalibrovány.
+
 English:Your Phone Number
 Translated:Vaše telefonní číslo
 
+English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
+Translated:Vaše tiskárna byla upravena, ale pro zvýšení přesnosti je třeba znovu spustit kalibraci.
+
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
-Translated:Tiskárna hlásí chybu HARDWARE a byla pozastavena. Zkontrolujte chybu a v případě potřeby zrušte tisk.
+Translated:Tiskárna hlásí chybu HARDWARE ERROR a byla pozastavena. Zkontrolujte chybu a v případě potřeby zrušte tisk.
 
 English:Your Probe is now calibrated.
 Translated:Vaše sonda je nyní kalibrována.
 
 English:Your Share Code
-Translated:Váš kód sdílení
+Translated:Váš kodex akcií
 
 English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:Váš počáteční G-kód by neměl obsahovat G29, pokud plánujete používat vyrovnávání tisku. Změňte počáteční G-kód nebo vypněte vyrovnání tisku.
+Translated:Váš Start-G-Code by neměl obsahovat G29, pokud plánujete používat vyrovnávání tisku. Změňte začátek G-Code nebo vypněte vyrovnávání tisku.
 
 English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Váš počáteční G-kód by neměl obsahovat G29, pokud plánujete používat Print Recovery. Změňte svůj počáteční G-kód nebo vypněte funkci Obnovení tisku.
+Translated:Váš Start-G-Code by neměl obsahovat G29, pokud plánujete používat Print Recovery. Změňte počáteční kód G-Code nebo vypněte funkci Obnovení tisku.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:Váš počáteční G-kód by neměl obsahovat G30, pokud plánujete používat vyrovnávání tisku. Změňte počáteční G-kód nebo vypněte vyrovnání tisku.
+Translated:Váš Start G-Code by neměl obsahovat G30, pokud plánujete používat vyrovnávání tisku. Změňte začátek G-Code nebo vypněte vyrovnávání tisku.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Váš G-Start Start by neměl obsahovat G30, pokud plánujete používat Print Recovery. Změňte svůj počáteční G-kód nebo vypněte funkci Obnovení tisku.
+Translated:Váš Start G-Code by neměl obsahovat G30, pokud plánujete použití funkce Obnovení tisku. Změňte počáteční kód G-Code nebo vypněte funkci Obnovení tisku.
 
 English:Z
 Translated:Z
 
 English:Z Lift
-Translated:Z Zvedněte
+Translated:Z Lift
 
 English:Z Offset
-Translated:Z Offset
+Translated:Z Ofset
 
 English:Z Offset is too large.
-Translated:Z Offset je příliš velký.
+Translated:Z Ofset je příliš velký.
 
 English:ZIP File
-Translated:ZIP soubor
+Translated:Soubor ZIP
 
 English:Zoom
 Translated:Zvětšení
 
 English:Zoom (Ctrl + Left Mouse)
-Translated:Zoom (Ctrl + Levá myš)
+Translated:Zoom (Ctrl + levá myš)
 
 English:Zoom in
 Translated:Přiblížit
@@ -4241,5 +4439,5 @@ English:Zoom out
 Translated:Oddálit
 
 English:Zoom to window
-Translated:Přibližte k oknu
+Translated:Přiblížit okno
 

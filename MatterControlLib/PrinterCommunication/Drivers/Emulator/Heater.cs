@@ -27,134 +27,131 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.PrinterEmulator
 {
-	public partial class Emulator
+	public class Heater
 	{
-		public class Heater
+		public static int BounceAmount = (int)IncrementAmount / 2;
+		public static double IncrementAmount = 5.3;
+		private static int loopTimeInMs = 100;
+		private double _currentTemperature;
+		private bool _enabled;
+		private double _heatupTimeInSeconds = Emulator.DefaultHeatUpTime;
+		private bool isDirty = true;
+		private bool shutdown = false;
+		private double targetTemp;
+
+		public Heater(string identifier)
 		{
-			public static int BounceAmount = (int)IncrementAmount / 2;
-			public static double IncrementAmount = 5.3;
-			private static int loopTimeInMs = 100;
-			private double _currentTemperature;
-			private bool _enabled;
-			private double _heatupTimeInSeconds = DefaultHeatUpTime;
-			private bool isDirty = true;
-			private bool shutdown = false;
-			private double targetTemp;
+			this.ID = identifier;
 
-			public Heater(string identifier)
+			// Maintain temperatures
+			Task.Run(() =>
 			{
-				this.ID = identifier;
+				Thread.CurrentThread.Name = $"EmulatorHeator{identifier}";
 
-				// Maintain temperatures
-				Task.Run(() =>
+				var random = new Random();
+
+				double requiredLoops = 0;
+				double incrementPerLoop = 0;
+
+				while (!shutdown)
 				{
-					Thread.CurrentThread.Name = $"EmulatorHeator{identifier}";
-
-					var random = new Random();
-
-					double requiredLoops = 0;
-					double incrementPerLoop = 0;
-
-					while (!shutdown)
+					if (this.Enabled
+						&& targetTemp > 0)
 					{
-						if (this.Enabled
-							&& targetTemp > 0)
+						if (this.isDirty)
 						{
-							if (this.isDirty)
-							{
-								requiredLoops = this.HeatUpTimeInSeconds * 1000 / loopTimeInMs;
-								incrementPerLoop = TargetTemperature / requiredLoops;
-							}
-
-							if (CurrentTemperature < targetTemp)
-							{
-								CurrentTemperature += incrementPerLoop;
-							}
-							else if (CurrentTemperature != targetTemp)
-							{
-								CurrentTemperature = targetTemp;
-							}
+							requiredLoops = this.HeatUpTimeInSeconds * 1000 / loopTimeInMs;
+							incrementPerLoop = TargetTemperature / requiredLoops;
 						}
+
+						if (CurrentTemperature < targetTemp)
+						{
+							CurrentTemperature += incrementPerLoop;
+						}
+						else if (CurrentTemperature != targetTemp)
+						{
+							CurrentTemperature = targetTemp;
+						}
+					}
 
 						// Try catch this so that if the program exits while this thread is active we don't throw
 						// This fixes the DualExtrusionShowsCorrectHotendData test
 						try
-						{
-							Thread.Sleep(loopTimeInMs);
-						}
-						catch
-						{
-
-						}
-					}
-				});
-			}
-
-			public double CurrentTemperature
-			{
-				get => _currentTemperature;
-				set
-				{
-					_currentTemperature = value;
-					isDirty = true;
-				}
-			}
-
-			public bool Enabled
-			{
-				get => _enabled;
-				set
-				{
-					if (_enabled != value)
 					{
-						_enabled = value;
-						CurrentTemperature = 0;
+						Thread.Sleep(loopTimeInMs);
 					}
-				}
-			}
-
-			#region EPositions data
-			/// <summary>
-			/// The absolute e-position from the time the emulator was started.
-			/// never resets with G92
-			/// </summary>
-			public double AbsoluteEPosition { get; set; } = 0;
-			public double LastEPosition = 0;
-			/// <summary>
-			/// The current e-position the hardware believes it is at
-			/// </summary>
-			public double EPosition { get; set; }
-			#endregion
-
-			public double HeatUpTimeInSeconds
-			{
-				get => _heatupTimeInSeconds;
-				set
-				{
-					_heatupTimeInSeconds = value;
-					isDirty = true;
-				}
-			}
-
-			public string ID { get; }
-
-			public double TargetTemperature
-			{
-				get => targetTemp;
-				set
-				{
-					if (targetTemp != value)
+					catch
 					{
-						targetTemp = value;
-						this.Enabled = this.targetTemp > 0;
+
 					}
 				}
-			}
+			});
+		}
 
-			public void Stop()
+		public double CurrentTemperature
+		{
+			get => _currentTemperature;
+			set
 			{
-				shutdown = true;
+				_currentTemperature = value;
+				isDirty = true;
 			}
+		}
+
+		public bool Enabled
+		{
+			get => _enabled;
+			set
+			{
+				if (_enabled != value)
+				{
+					_enabled = value;
+					CurrentTemperature = 0;
+				}
+			}
+		}
+
+		#region EPositions data
+		/// <summary>
+		/// The absolute e-position from the time the emulator was started.
+		/// never resets with G92
+		/// </summary>
+		public double AbsoluteEPosition { get; set; } = 0;
+		public double LastEPosition = 0;
+		/// <summary>
+		/// The current e-position the hardware believes it is at
+		/// </summary>
+		public double EPosition { get; set; }
+		#endregion
+
+		public double HeatUpTimeInSeconds
+		{
+			get => _heatupTimeInSeconds;
+			set
+			{
+				_heatupTimeInSeconds = value;
+				isDirty = true;
+			}
+		}
+
+		public string ID { get; }
+
+		public double TargetTemperature
+		{
+			get => targetTemp;
+			set
+			{
+				if (targetTemp != value)
+				{
+					targetTemp = value;
+					this.Enabled = this.targetTemp > 0;
+				}
+			}
+		}
+
+		public void Stop()
+		{
+			shutdown = true;
 		}
 	}
 }
