@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public IEnumerator<WizardPage> GetWizardPages()
 		{
+			_ = this.Current;
 			return this.GetPages();
 		}
 
