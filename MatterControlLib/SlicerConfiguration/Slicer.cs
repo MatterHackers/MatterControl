@@ -407,9 +407,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								gcodeWriter.WriteLine("; {0} Version {1} Build {2} : GCode settings used", oemName, VersionInfo.Instance.ReleaseVersion, VersionInfo.Instance.BuildVersion);
 								gcodeWriter.WriteLine("; Date {0} Time {1}:{2:00}", DateTime.Now.Date, DateTime.Now.Hour, DateTime.Now.Minute);
 
+								var settingsToSkip = new string[] { "booleanOperations", "additionalArgsToProcess" };
 								foreach (string line in File.ReadLines(configFilePath))
 								{
-									gcodeWriter.WriteLine("; {0}", line);
+									if (!settingsToSkip.Any(setting => line.StartsWith(setting)))
+									{
+										gcodeWriter.WriteLine("; {0}", line);
+									}
 								}
 							}
 						}
@@ -427,14 +431,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			using (var reader = new StreamReader(gcodeFilePath))
 			{
-				if (reader.BaseStream.Length > 10000)
+				int pageSize = 10000;
+				var fileStream = reader.BaseStream;
+
+				long position = reader.BaseStream.Length - pageSize;
+
+				// Process through the stream until we find the slicing success token or we pass the start
+				while (position > 0)
 				{
-					reader.BaseStream.Seek(-10000, SeekOrigin.End);
+					fileStream.Position = position;
+
+					string tail = reader.ReadToEnd();
+
+					// Read from current position to the end
+					if (tail.Contains("; MatterSlice Completed Successfully"))
+					{
+						return true;
+					}
+
+					// Page further back in the stream and retry
+					position -= pageSize;
 				}
 
-				string endText = reader.ReadToEnd();
-
-				return endText.Contains("; MatterSlice Completed Successfully");
+				return false;
 			}
 		}
 	}
