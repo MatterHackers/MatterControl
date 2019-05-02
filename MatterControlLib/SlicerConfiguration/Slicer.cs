@@ -53,19 +53,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		private static Dictionary<Mesh, MeshPrintOutputSettings> meshPrintOutputSettings = new Dictionary<Mesh, MeshPrintOutputSettings>();
 
-		public static List<bool> extrudersUsed = new List<bool>();
+		public static List<bool> ExtrudersUsed = new List<bool>();
+
 		public static bool RunInProcess { get; set; } = false;
 
 		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 
-			extrudersUsed.Clear();
+			ExtrudersUsed.Clear();
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				extrudersUsed.Add(false);
+				ExtrudersUsed.Add(false);
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
 					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
-					extrudersUsed[supportExtruder] = true;
+					ExtrudersUsed[supportExtruder] = true;
 				}
 			}
 
@@ -84,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printer.Settings.GetValue<int>(SettingsKey.raft_extruder) != 0)
 				{
 					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.raft_extruder) - 1));
-					extrudersUsed[raftExtruder] = true;
+					ExtrudersUsed[raftExtruder] = true;
 				}
 			}
 
@@ -111,8 +112,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
 
 						itemsByExtruder.Add(itemsThisExtruder);
-						extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
-						if (extrudersUsed[extruderIndex])
+						ExtrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
+						if (ExtrudersUsed[extruderIndex])
 						{
 							maxExtruderIndex = extruderIndex;
 						}
@@ -183,12 +184,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						var xyScale = (aabb.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabb.XSize;
 						itemWorldMatrix = itemWorldMatrix.ApplyAtCenter(aabb, Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
+
 					outputItems.Add((itemWorldMatrix, Path.Combine(assetsDirectory, item.MeshPath)));
 					mergeString += $"({savedStlCount++}";
 					first = false;
 				}
 
-				mergeString += new String(')', items.Count());
+				mergeString += new string(')', items.Count());
 			}
 			else
 			{
@@ -232,7 +234,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			bool slicingSucceeded = true;
 
-			if(stlFileLocations.Count > 0)
+			if (stlFileLocations.Count > 0)
 			{
 				var progressStatus = new ProgressStatus()
 				{
@@ -253,7 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					string commandArgs;
 
 					var matrixAndMeshArgs = new StringBuilder();
-					foreach (var matrixAndFile in stlFileLocations)
+					foreach (var (matrix, fileName) in stlFileLocations)
 					{
 						var matrixString = "";
 						bool first = true;
@@ -265,13 +267,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									matrixString += ",";
 								}
-								matrixString += matrixAndFile.matrix[i, j].ToString("0.######");
+
+								matrixString += matrix[i, j].ToString("0.######");
 								first = false;
 							}
 						}
 
 						matrixAndMeshArgs.Append($" -m \"{matrixString}\"");
-						matrixAndMeshArgs.Append($" \"{matrixAndFile.fileName}\" ");
+						matrixAndMeshArgs.Append($" \"{fileName}\" ");
 					}
 
 					printer.EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath, rawLines: new[]
@@ -288,7 +291,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						|| AggContext.OperatingSystem == OSType.Mac
 						|| RunInProcess)
 					{
-						EventHandler WriteOutput = (s, e) =>
+						void WriteOutput(object s, EventArgs e)
 						{
 							if (cancellationToken.IsCancellationRequested)
 							{
@@ -303,7 +306,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 									Status = stringValue
 								});
 							}
-						};
+						}
 
 						MatterSlice.LogOutput.GetLogWrites += WriteOutput;
 
@@ -345,6 +348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								{
 									message = "Saving intermediate file";
 								}
+
 								message += "...";
 
 								sliceProgressReporter?.Report(new ProgressStatus()

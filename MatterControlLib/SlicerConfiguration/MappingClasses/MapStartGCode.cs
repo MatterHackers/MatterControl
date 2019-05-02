@@ -49,14 +49,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			get
 			{
 				StringBuilder newStartGCode = new StringBuilder();
-				foreach (string line in PreStartGCode(Slicer.extrudersUsed))
+				foreach (string line in PreStartGCode(Slicer.ExtrudersUsed))
 				{
 					newStartGCode.Append(line + "\n");
 				}
 
 				newStartGCode.Append(printer.ReplaceMacroValues(base.Value));
 
-				foreach (string line in PostStartGCode(Slicer.extrudersUsed))
+				foreach (string line in PostStartGCode(Slicer.ExtrudersUsed))
 				{
 					newStartGCode.Append("\n");
 					newStartGCode.Append(line);
