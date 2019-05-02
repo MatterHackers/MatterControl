@@ -45,7 +45,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					Name = "targetA",
 					VAnchor = VAnchor.Bottom,
-					HAnchor= HAnchor.Left,
+					HAnchor = HAnchor.Left,
 				};
 				systemWindow.AddChild(button);
 
@@ -210,7 +210,7 @@ namespace MatterControl.Tests.MatterControl
 				new TextButton("Popup", systemWindow.Theme)
 				{
 					Name = "buttonA",
-					VAnchor	= VAnchor.Bottom,
+					VAnchor = VAnchor.Bottom,
 				},
 				(buttonWidget, popupWidget) =>
 				{
@@ -362,8 +362,6 @@ namespace MatterControl.Tests.MatterControl
 				}
 			};
 
-			int i = 0;
-
 			await AnchorTests(
 				systemWindow,
 				new MatePoint()
@@ -408,8 +406,6 @@ namespace MatterControl.Tests.MatterControl
 			};
 
 			systemWindow.Padding = systemWindow.Padding.Clone(left: 0);
-
-			int i = 0;
 
 			await AnchorTests(
 				systemWindow,
@@ -460,8 +456,6 @@ namespace MatterControl.Tests.MatterControl
 					["Expected"] = "Popup bottoms should align with button bottom"
 				}
 			};
-
-			int i = 0;
 
 			await AnchorTests(
 				systemWindow,
@@ -571,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 				testRunner.Delay();
 
 				return Task.CompletedTask;
-			}, 120);
+			}, 25);
 		}
 
 		[Test, Ignore("Lame")]
@@ -594,7 +588,6 @@ namespace MatterControl.Tests.MatterControl
 			{
 				var row = new FlowLayoutWidget()
 				{
-					//Mate = Mate.Center | Mate.Fit,
 					VAnchor = VAnchor.Top | VAnchor.Fit,
 					HAnchor = HAnchor.Left | HAnchor.Fit,
 					Margin = new BorderDouble(left: 120)
@@ -675,9 +668,9 @@ namespace MatterControl.Tests.MatterControl
 
 				//testRunner.Delay(90);
 
-				for(var i = 0; i < 16; i++)
+				for (var i = 0; i < 16; i++)
 				{
-					switch(i)
+					switch (i)
 					{
 						// Bottom-Top positions
 						case 0:
@@ -878,7 +871,7 @@ namespace MatterControl.Tests.MatterControl
 				testRunner.Delay();
 
 				return Task.CompletedTask;
-			}, 120);
+			}, 25);
 		}
 
 		public class PopupsTestWindow : SystemWindow
@@ -913,7 +906,7 @@ namespace MatterControl.Tests.MatterControl
 				{
 					_details = value;
 
-					foreach(var kvp in value)
+					foreach (var kvp in value)
 					{
 						this.ShowDetails(kvp.Key, kvp.Value);
 					}
@@ -925,7 +918,7 @@ namespace MatterControl.Tests.MatterControl
 				// Store
 				var row = new FlowLayoutWidget
 				{
-					VAnchor  = VAnchor.Fit,
+					VAnchor = VAnchor.Fit,
 					HAnchor = HAnchor.Left | HAnchor.Fit
 				};
 				column.AddChild(row);
