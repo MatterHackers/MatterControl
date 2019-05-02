@@ -407,6 +407,8 @@ namespace MatterControl.Tests.MatterControl
 
 			systemWindow.Padding = systemWindow.Padding.Clone(left: 0);
 
+			int i = 0;
+
 			await AnchorTests(
 				systemWindow,
 				new MatePoint()
@@ -456,6 +458,8 @@ namespace MatterControl.Tests.MatterControl
 					["Expected"] = "Popup bottoms should align with button bottom"
 				}
 			};
+
+			int i = 0;
 
 			await AnchorTests(
 				systemWindow,
