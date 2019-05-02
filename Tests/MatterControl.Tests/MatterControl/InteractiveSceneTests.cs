@@ -563,7 +563,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Category("InteractiveScene")]
-		public async Task AlignObjectHasCorrectPositionsOnAxis()
+		public async Task AlignObjectHasCorrectPositionsOnXAxis()
 		{
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
