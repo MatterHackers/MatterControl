@@ -103,7 +103,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			autoProbePositions.Add(new ProbePosition());
 			manualProbePositions.Add(new ProbePosition());
 
-			int totalSteps = 3;
+			int hotendCount = Math.Min(2, printer.Settings.Helpers.HotendCount());
+			int totalSteps = 3 * hotendCount;
 
 			// make a welcome page if this is the first time calibrating the probe
 			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
@@ -174,7 +175,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			var temps = new double[4];
-			for(int i=0; i< extruderCount; i++)
+			for (int i = 0; i < extruderCount; i++)
 			{
 				temps[i] = printer.Settings.Helpers.ExtruderTargetTemperature(i);
 			}
@@ -203,6 +204,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
+
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
 				this,
@@ -222,7 +224,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Click 'Next' to continue.".Localize()));
 
 			// we currently only support calibrating 2 extruders
-			for (int extruderIndex = 0; extruderIndex < Math.Min(extruderCount, 2); extruderIndex++)
+			for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 			{
 				if (extruderCount > 1)
 				{
