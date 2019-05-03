@@ -53,20 +53,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Color darkWireframe = new Color("#3334");
 		private Color gCodeMeshColor;
 
-		private InteractiveScene scene;
+		private readonly InteractiveScene scene;
 
-		private ISceneContext sceneContext;
+		private readonly ISceneContext sceneContext;
 
-		private ThemeConfig theme;
-		private FloorDrawable floorDrawable;
+		private readonly ThemeConfig theme;
+		private readonly FloorDrawable floorDrawable;
 
 		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
 
-		private List<IDrawable> drawables = new List<IDrawable>();
-		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
-		private Vector3 lastEmulatorPosition;
+		private readonly List<IDrawable> drawables = new List<IDrawable>();
+		private readonly List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
 		private bool emulatorHooked;
 		private long lastEmulatorDrawMs;
+		private readonly Mesh emulatorNozzleMesh = PlatonicSolids.CreateCube(1, 1, 10);
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -467,7 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (sceneContext.Printer.Connection.serialPort is PrinterEmulator.Emulator emulator)
+			if (sceneContext.Printer?.Connection?.serialPort is PrinterEmulator.Emulator emulator)
 			{
 				void NozzlePositionChanged(object s, EventArgs e2)
 				{
@@ -481,7 +481,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
-				GLHelper.Render(PlatonicSolids.CreateCube(1, 1, 10),
+				GLHelper.Render(emulatorNozzleMesh,
 					MaterialRendering.Color(emulator.ExtruderIndex),
 					matrix,
 					RenderTypes.Shaded,
@@ -494,8 +494,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				Closed += (s, e3) => emulator.DestinationChanged -= NozzlePositionChanged;
-
-				lastEmulatorPosition = emulator.CurrentPosition;
 			}
 
 			transparentMeshes.Sort(BackToFrontXY);
