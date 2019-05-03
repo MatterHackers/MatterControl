@@ -53,11 +53,11 @@ namespace MatterControl.Printing
 #endif
 		}
 
-		#region Abstract Functions
 		// the number of lines in the file
 		public abstract int LineCount { get; }
 
 		public abstract int LayerCount { get; }
+
 		public abstract double TotalSecondsInPrint { get; }
 
 		public abstract void Clear();
@@ -85,12 +85,10 @@ namespace MatterControl.Printing
 		public abstract PrinterMachineInstruction Instruction(int i);
 
 		public abstract bool IsExtruding(int instructionIndexToCheck);
+
 		public abstract double PercentComplete(int instructionIndex);
 
 		public abstract double Ratio0to1IntoContainedLayer(int instructionIndex);
-		#endregion Abstract Functions
-
-		#region Static Functions
 
 		public static int CalculateChecksum(string commandToGetChecksumFor)
 		{
@@ -103,12 +101,13 @@ namespace MatterControl.Printing
 					checksum ^= commandToGetChecksumFor[i];
 				}
 			}
+
 			return checksum;
 		}
 
-		private static Regex firstDigitsAfterToken = new Regex("\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+		private static readonly Regex FirstDigitsAfterToken = new Regex("\\d+", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-		private static string[] layerLineStartTokens = new[]
+		private static readonly string[] LayerLineStartTokens = new[]
 		{
 			"; LAYER:",
 			";LAYER:",
@@ -117,19 +116,19 @@ namespace MatterControl.Printing
 
 		public static bool IsLayerChange(string line)
 		{
-			return layerLineStartTokens.Any(l => line.StartsWith(l));
+			return LayerLineStartTokens.Any(l => line.StartsWith(l));
 		}
 
 		public static int GetLayerNumber(string line)
 		{
-			var layerToken = layerLineStartTokens.FirstOrDefault(t => line.StartsWith(t));
+			var layerToken = LayerLineStartTokens.FirstOrDefault(t => line.StartsWith(t));
 
 			if (layerToken != null)
 			{
 				line = line.Substring(layerToken.Length);
 
 				// Find the first digits after the layer start token
-				var match = firstDigitsAfterToken.Match(line);
+				var match = FirstDigitsAfterToken.Match(line);
 
 				if (match.Success
 					&& int.TryParse(match.Value, out int layerNumber))
@@ -183,7 +182,7 @@ namespace MatterControl.Printing
 		public static bool GetFirstNumberAfter(string stringToCheckAfter, string stringWithNumber, ref int readValue, out int numberEnd, int startIndex = 0, string stopCheckingString = ";")
 		{
 			double doubleValue = readValue;
-			if(GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, out numberEnd, startIndex, stopCheckingString))
+			if (GetFirstNumberAfter(stringToCheckAfter, stringWithNumber, ref doubleValue, out numberEnd, startIndex, stopCheckingString))
 			{
 				readValue = (int)doubleValue;
 				return true;
@@ -231,7 +230,7 @@ namespace MatterControl.Printing
 			return false;
 		}
 
-		public static GCodeFile Load(Stream fileStream, 
+		public static GCodeFile Load(Stream fileStream,
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
@@ -276,6 +275,5 @@ namespace MatterControl.Printing
 		}
 
 		private static readonly bool Is32Bit = IntPtr.Size == 4;
-		#endregion Static Functions
-    }
+	}
 }
