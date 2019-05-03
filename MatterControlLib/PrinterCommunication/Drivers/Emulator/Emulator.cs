@@ -61,6 +61,18 @@ namespace MatterHackers.PrinterEmulator
 		{
 			Emulator.Instance = this;
 
+			string ChangeToSlow(string a)
+			{
+				this.RunSlow = true;
+				return "ok\n";
+			}
+
+			string ChangeToFast(string a)
+			{
+				this.RunSlow = false;
+				return "ok\n";
+			}
+
 			responses = new Dictionary<string, Func<string, string>>()
 			{
 				{ "A",    Echo },
@@ -83,6 +95,8 @@ namespace MatterHackers.PrinterEmulator
 				{ "M21",  InitSdCard },
 				{ "N",    ParseChecksumLine },
 				{ "T",    SetExtruderIndex },
+				{ "SLOW", ChangeToSlow },
+				{ "FAST", ChangeToFast },
 			};
 		}
 
