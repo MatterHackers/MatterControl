@@ -44,12 +44,12 @@ namespace MatterControl.Printing
 		private double filamentDiameterCache = 0;
 		private double filamentUsedMmCache = 0;
 		private bool foundFirstLayerMarker;
-		private List<PrinterMachineInstruction> GCodeCommandQueue = new List<PrinterMachineInstruction>();
-		private bool gcodeHasExplicitLayerChangeInfo = false;
+		private readonly List<PrinterMachineInstruction> gCodeCommandQueue = new List<PrinterMachineInstruction>();
+		private readonly bool gcodeHasExplicitLayerChangeInfo = false;
 		private int lastPrintLine;
-		private List<double> layerHeights = new List<double>();
+		private readonly List<double> layerHeights = new List<double>();
 		private double parsingLastZ;
-		private List<int> toolChanges = new List<int>();
+		private readonly List<int> toolChanges = new List<int>();
 
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
@@ -63,7 +63,7 @@ namespace MatterControl.Printing
 			get { return IndexOfLayerStart.Count; }
 		}
 
-		public override int LineCount => GCodeCommandQueue.Count;
+		public override int LineCount => gCodeCommandQueue.Count;
 
 		public HashSet<float> Speeds { get; private set; }
 
@@ -82,8 +82,12 @@ namespace MatterControl.Printing
 				using (var reader = new StreamReader(fileStream))
 				{
 					var gcodeMemoryFile = ParseFileContents(reader.ReadToEnd(),
-						maxAccelerationMmPerS2, maxVelocityMmPerS, velocitySameAsStopMmPerS, speedMultiplier,
-						cancellationToken, progressReporter);
+						maxAccelerationMmPerS2,
+						maxVelocityMmPerS,
+						velocitySameAsStopMmPerS,
+						speedMultiplier,
+						cancellationToken,
+						progressReporter);
 
 					return gcodeMemoryFile;
 				}
@@ -101,7 +105,8 @@ namespace MatterControl.Printing
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplier,
-			CancellationToken cancellationToken, Action<double, string> progressReporter)
+			CancellationToken cancellationToken,
+			Action<double, string> progressReporter)
 		{
 			if (Path.GetExtension(filePath).ToUpper() == ".GCODE")
 			{
@@ -114,7 +119,8 @@ namespace MatterControl.Printing
 							maxVelocityMmPerS,
 							velocitySameAsStopMmPerS,
 							speedMultiplier,
-							cancellationToken, progressReporter);
+							cancellationToken,
+							progressReporter);
 					}
 				}
 				catch (Exception e)
@@ -134,13 +140,13 @@ namespace MatterControl.Printing
 		public override void Clear()
 		{
 			IndexOfLayerStart.Clear();
-			GCodeCommandQueue.Clear();
+			gCodeCommandQueue.Clear();
 		}
 
 		public override RectangleDouble GetBounds()
 		{
-			RectangleDouble bounds = new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
-			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
+			var bounds = new RectangleDouble(double.MaxValue, double.MaxValue, double.MinValue, double.MinValue);
+			foreach (PrinterMachineInstruction state in gCodeCommandQueue)
 			{
 				bounds.Left = Math.Min(state.Position.X, bounds.Left);
 				bounds.Right = Math.Max(state.Position.X, bounds.Right);
@@ -165,7 +171,7 @@ namespace MatterControl.Printing
 			if (filamentDiameterCache == 0)
 			{
 				// check the beginning of the file for the filament diameter
-				for (int i = 0; i < Math.Min(100, GCodeCommandQueue.Count); i++)
+				for (int i = 0; i < Math.Min(100, gCodeCommandQueue.Count); i++)
 				{
 					if (FindDiameter(i, ref filamentDiameterCache))
 					{
@@ -177,7 +183,7 @@ namespace MatterControl.Printing
 				if (filamentDiameterCache == 0)
 				{
 					// didn't find it, so look at the end of the file for filament_diameter =
-					for (int i = GCodeCommandQueue.Count - 1; i > Math.Max(0, GCodeCommandQueue.Count - 100); i--)
+					for (int i = gCodeCommandQueue.Count - 1; i > Math.Max(0, gCodeCommandQueue.Count - 100); i--)
 					{
 						if (FindDiameter(i, ref filamentDiameterCache))
 						{
@@ -202,10 +208,10 @@ namespace MatterControl.Printing
 			{
 				double lastEPosition = 0;
 				double filamentMm = 0;
-				for (int i = 0; i < GCodeCommandQueue.Count; i++)
+				for (int i = 0; i < gCodeCommandQueue.Count; i++)
 				{
-					PrinterMachineInstruction instruction = GCodeCommandQueue[i];
-					//filamentMm += instruction.EPosition;
+					PrinterMachineInstruction instruction = gCodeCommandQueue[i];
+					// filamentMm += instruction.EPosition;
 
 					string lineToParse = instruction.Line;
 					if (lineToParse.StartsWith("G0") || lineToParse.StartsWith("G1"))
@@ -259,14 +265,14 @@ namespace MatterControl.Printing
 			}
 
 			// else return the last instruction
-			return GCodeCommandQueue.Count - 1;
+			return gCodeCommandQueue.Count - 1;
 		}
 
 		/// <summary>
-		/// Get the height of the bottom of this layer as measure from the bed
+		/// Get the height of the bottom of this layer as measure from the bed.
 		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
+		/// <param name="layerIndex">The layer index to get the distance to the bottom of.</param>
+		/// <returns>The bottom of the layer requested.</returns>
 		public double GetLayerBottom(int layerIndex)
 		{
 			double total = 0;
@@ -274,14 +280,15 @@ namespace MatterControl.Printing
 			{
 				total += GetLayerHeight(i);
 			}
+
 			return total;
 		}
 
 		/// <summary>
 		/// Get the height of this layer (from the top of the previous layer to the top of this layer).
 		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
+		/// <param name="layerIndex">The layer index to get the height of.</param>
+		/// <returns>The height of the layer index requested.</returns>
 		public override double GetLayerHeight(int layerIndex)
 		{
 			if (layerHeights.Count > 0)
@@ -294,12 +301,34 @@ namespace MatterControl.Printing
 				return 0;
 			}
 
-			if (IndexOfLayerStart.Count > 2)
+			// set it to a number that might be reasonable
+			var layerHeight = .2;
+			if (IndexOfLayerStart.Count > layerIndex + 1)
 			{
-				return GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
+				layerHeight = gCodeCommandQueue[IndexOfLayerStart[layerIndex + 1]].Z - gCodeCommandQueue[IndexOfLayerStart[layerIndex]].Z;
+			}
+			else if (IndexOfLayerStart.Count > 2)
+			{
+				layerHeight = gCodeCommandQueue[IndexOfLayerStart[2]].Z - gCodeCommandQueue[IndexOfLayerStart[1]].Z;
 			}
 
-			return .5;
+			if (layerHeight < .01)
+			{
+				layerIndex--;
+				while (layerIndex >= 0
+					&& layerHeight < .01)
+				{
+					// walk back to find a layer height that seems like it might be right
+					if (layerHeight < IndexOfLayerStart.Count - 2)
+					{
+						layerHeight = gCodeCommandQueue[IndexOfLayerStart[layerIndex + 1]].Z - gCodeCommandQueue[IndexOfLayerStart[layerIndex]].Z;
+					}
+
+					layerIndex--;
+				}
+			}
+
+			return layerHeight;
 		}
 
 		public override int GetLayerIndex(int instructionIndex)
@@ -322,10 +351,10 @@ namespace MatterControl.Printing
 		}
 
 		/// <summary>
-		/// Get the height of the top of this layer as measure from the bed
+		/// Get the height of the top of this layer as measured from the bed.
 		/// </summary>
-		/// <param name="layerIndex"></param>
-		/// <returns></returns>
+		/// <param name="layerIndex">The layer index to get the top of.</param>
+		/// <returns>The height of the given layer index in mm.</returns>
 		public override double GetLayerTop(int layerIndex)
 		{
 			double total = 0;
@@ -333,18 +362,19 @@ namespace MatterControl.Printing
 			{
 				total += GetLayerHeight(i);
 			}
+
 			return total;
 		}
 
 		public override Vector2 GetWeightedCenter()
 		{
-			MatterHackers.VectorMath.Vector2 total = new MatterHackers.VectorMath.Vector2();
-			foreach (PrinterMachineInstruction state in GCodeCommandQueue)
+			var total = default(Vector2);
+			foreach (PrinterMachineInstruction state in gCodeCommandQueue)
 			{
-				total += new MatterHackers.VectorMath.Vector2(state.Position.X, state.Position.Y);
+				total += new Vector2(state.Position.X, state.Position.Y);
 			}
 
-			return total / GCodeCommandQueue.Count;
+			return total / gCodeCommandQueue.Count;
 		}
 
 		public void Insert(int insertIndex, PrinterMachineInstruction printerMachineInstruction)
@@ -357,19 +387,19 @@ namespace MatterControl.Printing
 				}
 			}
 
-			GCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
+			gCodeCommandQueue.Insert(insertIndex, printerMachineInstruction);
 		}
 
 		public override PrinterMachineInstruction Instruction(int index)
 		{
-			return GCodeCommandQueue[index];
+			return gCodeCommandQueue[index];
 		}
 
 		public override bool IsExtruding(int instructionIndexToCheck)
 		{
-			if (instructionIndexToCheck > 1 && instructionIndexToCheck < GCodeCommandQueue.Count)
+			if (instructionIndexToCheck > 1 && instructionIndexToCheck < gCodeCommandQueue.Count)
 			{
-				double extrusionLength = GCodeCommandQueue[instructionIndexToCheck].EPosition - GCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
+				double extrusionLength = gCodeCommandQueue[instructionIndexToCheck].EPosition - gCodeCommandQueue[instructionIndexToCheck - 1].EPosition;
 				if (extrusionLength > 0)
 				{
 					return true;
@@ -381,15 +411,15 @@ namespace MatterControl.Printing
 
 		public (int toolIndex, double time) NextToolChange(int instructionIndex, int currentToolIndex = -1, int toolToLookFor = -1)
 		{
-			if (GCodeCommandQueue.Count > 0)
+			if (gCodeCommandQueue.Count > 0)
 			{
 				int nextToolChange = -1;
 				// find the first tool change that we are less than
 				for (int i = 0; i < toolChanges.Count; i++)
 				{
 					if (instructionIndex < toolChanges[i]
-						&& GCodeCommandQueue[toolChanges[i]].ToolIndex != currentToolIndex
-						&& (toolToLookFor == -1 || GCodeCommandQueue[toolChanges[i]].ToolIndex == toolToLookFor))
+						&& gCodeCommandQueue[toolChanges[i]].ToolIndex != currentToolIndex
+						&& (toolToLookFor == -1 || gCodeCommandQueue[toolChanges[i]].ToolIndex == toolToLookFor))
 					{
 						nextToolChange = i;
 						break;
@@ -398,15 +428,15 @@ namespace MatterControl.Printing
 
 				if (nextToolChange >= 0)
 				{
-					var toolIndex = GCodeCommandQueue[toolChanges[nextToolChange]].ToolIndex;
-					var time = GCodeCommandQueue[instructionIndex].SecondsToEndFromHere - GCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
+					var toolIndex = gCodeCommandQueue[toolChanges[nextToolChange]].ToolIndex;
+					var time = gCodeCommandQueue[instructionIndex].SecondsToEndFromHere - gCodeCommandQueue[toolChanges[nextToolChange]].SecondsToEndFromHere;
 					return (toolIndex, time);
 				}
 				else
 				{
 					// don't turn of extruders if we will end the print within 10 minutes
-					if (instructionIndex < GCodeCommandQueue.Count
-						&& GCodeCommandQueue[instructionIndex].SecondsToEndFromHere < 60 * 10)
+					if (instructionIndex < gCodeCommandQueue.Count
+						&& gCodeCommandQueue[instructionIndex].SecondsToEndFromHere < 60 * 10)
 					{
 						return (toolToLookFor, 60 * 10);
 					}
@@ -419,9 +449,9 @@ namespace MatterControl.Printing
 
 		public override double PercentComplete(int instructionIndex)
 		{
-			if (GCodeCommandQueue.Count > 0)
+			if (gCodeCommandQueue.Count > 0)
 			{
-				return Math.Min(99.9, (double)instructionIndex / (double)GCodeCommandQueue.Count * 100);
+				return Math.Min(99.9, (double)instructionIndex / (double)gCodeCommandQueue.Count * 100);
 			}
 
 			return 100;
@@ -446,13 +476,14 @@ namespace MatterControl.Printing
 					// Improved last layer percent complete - seek endIndex to 'MatterSlice Completed' line, otherwise leave at LineCount - 1
 					if (lastPrintLine == -1)
 					{
-						string line = "";
 						lastPrintLine = instructionIndex;
+						string line;
 						do
 						{
-							line = GCodeCommandQueue[Math.Min(GCodeCommandQueue.Count - 1, lastPrintLine)].Line;
+							line = gCodeCommandQueue[Math.Min(gCodeCommandQueue.Count - 1, lastPrintLine)].Line;
 							lastPrintLine++;
-						} while (line != "; MatterSlice Completed Successfully"
+						}
+						while (line != "; MatterSlice Completed Successfully"
 							&& lastPrintLine < endIndex);
 					}
 
@@ -472,9 +503,9 @@ namespace MatterControl.Printing
 
 		public void Save(string dest)
 		{
-			using (StreamWriter file = new StreamWriter(dest))
+			using (var file = new StreamWriter(dest))
 			{
-				foreach (PrinterMachineInstruction instruction in GCodeCommandQueue)
+				foreach (PrinterMachineInstruction instruction in gCodeCommandQueue)
 				{
 					file.WriteLine(instruction.Line);
 				}
@@ -516,18 +547,19 @@ namespace MatterControl.Printing
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplier,
-			CancellationToken cancellationToken, Action<double, string> progressReporter)
+			CancellationToken cancellationToken,
+			Action<double, string> progressReporter)
 		{
 			if (gCodeString == null)
 			{
 				return null;
 			}
 
-			Stopwatch loadTime = Stopwatch.StartNew();
+			var loadTime = Stopwatch.StartNew();
 
-			Stopwatch maxProgressReport = new Stopwatch();
+			var maxProgressReport = new Stopwatch();
 			maxProgressReport.Start();
-			PrinterMachineInstruction machineInstructionForLine = new PrinterMachineInstruction("None");
+			var machineInstructionForLine = new PrinterMachineInstruction("None");
 
 			bool gcodeHasExplicitLayerChangeInfo = false;
 			if (gCodeString.Contains("LAYER:")
@@ -539,7 +571,7 @@ namespace MatterControl.Printing
 			PrinterMachineInstruction previousInstruction = null;
 			var speeds = new HashSet<float>();
 
-			GCodeMemoryFile loadedGCodeFile = new GCodeMemoryFile(gcodeHasExplicitLayerChangeInfo);
+			var loadedGCodeFile = new GCodeMemoryFile(gcodeHasExplicitLayerChangeInfo);
 
 			// Add the first start index (of 0)
 			loadedGCodeFile.IndexOfLayerStart.Add(0);
@@ -560,7 +592,7 @@ namespace MatterControl.Printing
 							break;
 
 						case 'M':
-							loadedGCodeFile.ParseMLine(lineString, machineInstructionForLine);
+							loadedGCodeFile.ParseMLine(lineString);
 							break;
 
 						case 'T':
@@ -569,6 +601,7 @@ namespace MatterControl.Printing
 							{
 								machineInstructionForLine.ToolIndex = (int)extruderIndex;
 							}
+
 							break;
 
 						case ';':
@@ -582,7 +615,7 @@ namespace MatterControl.Printing
 								}
 								else
 								{
-									loadedGCodeFile.IndexOfLayerStart.Add(loadedGCodeFile.GCodeCommandQueue.Count);
+									loadedGCodeFile.IndexOfLayerStart.Add(loadedGCodeFile.gCodeCommandQueue.Count);
 								}
 							}
 							else if (lineString.StartsWith("; LAYER_HEIGHT:"))
@@ -593,6 +626,7 @@ namespace MatterControl.Printing
 									loadedGCodeFile.layerHeights.Add(layerWidth);
 								}
 							}
+
 							break;
 
 						case '@':
@@ -603,7 +637,7 @@ namespace MatterControl.Printing
 					}
 				}
 
-				loadedGCodeFile.GCodeCommandQueue.Add(machineInstructionForLine);
+				loadedGCodeFile.gCodeCommandQueue.Add(machineInstructionForLine);
 
 				// Accumulate speeds for extruded moves
 				if (previousInstruction != null
@@ -630,7 +664,8 @@ namespace MatterControl.Printing
 				lineIndex++;
 			}
 
-			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken, progressReporter,
+			loadedGCodeFile.AnalyzeGCodeLines(cancellationToken,
+				progressReporter,
 				maxAccelerationMmPerS2,
 				maxVelocityMmPerS,
 				velocitySameAsStopMmPerS,
@@ -644,26 +679,27 @@ namespace MatterControl.Printing
 			return loadedGCodeFile;
 		}
 
-		private void AnalyzeGCodeLines(CancellationToken cancellationToken, Action<double, string> progressReporter,
+		private void AnalyzeGCodeLines(CancellationToken cancellationToken,
+			Action<double, string> progressReporter,
 			Vector4 maxAccelerationMmPerS2,
 			Vector4 maxVelocityMmPerS,
 			Vector4 velocitySameAsStopMmPerS,
 			Vector4 speedMultiplier)
 		{
 			double feedRateMmPerMin = 0;
-			Vector3 lastPrinterPosition = new Vector3();
+			var lastPrinterPosition = default(Vector3);
 			double lastEPosition = 0;
 
-			Stopwatch maxProgressReport = new Stopwatch();
+			var maxProgressReport = new Stopwatch();
 			maxProgressReport.Start();
 
 			int currentTool = 0;
 
-			for (int lineIndex = 0; lineIndex < GCodeCommandQueue.Count; lineIndex++)
+			for (int lineIndex = 0; lineIndex < gCodeCommandQueue.Count; lineIndex++)
 			{
-				PrinterMachineInstruction instruction = GCodeCommandQueue[lineIndex];
+				PrinterMachineInstruction instruction = gCodeCommandQueue[lineIndex];
 				string line = instruction.Line;
-				Vector3 deltaPositionThisLine = new Vector3();
+				var deltaPositionThisLine = default(Vector3);
 				double deltaEPositionThisLine = 0;
 				string lineToParse = line.ToUpper().Trim();
 				if (lineToParse.StartsWith("G0") || lineToParse.StartsWith("G1"))
@@ -724,7 +760,7 @@ namespace MatterControl.Printing
 
 				if (progressReporter != null && maxProgressReport.ElapsedMilliseconds > 200)
 				{
-					progressReporter(((double)lineIndex / GCodeCommandQueue.Count / 2) + .5, "");
+					progressReporter(((double)lineIndex / gCodeCommandQueue.Count / 2) + .5, "");
 					if (cancellationToken.IsCancellationRequested)
 					{
 						return;
@@ -735,9 +771,9 @@ namespace MatterControl.Printing
 			}
 
 			double accumulatedTime = 0;
-			for (int i = GCodeCommandQueue.Count - 1; i >= 0; i--)
+			for (int i = gCodeCommandQueue.Count - 1; i >= 0; i--)
 			{
-				PrinterMachineInstruction line = GCodeCommandQueue[i];
+				PrinterMachineInstruction line = gCodeCommandQueue[i];
 				accumulatedTime += line.SecondsThisLine;
 				line.SecondsToEndFromHere = (float)accumulatedTime;
 			}
@@ -745,12 +781,12 @@ namespace MatterControl.Printing
 
 		private bool FindDiameter(int lineIndex, ref double filamentDiameterCache)
 		{
-			if (GetFirstNumberAfter("filamentDiameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
+			if (GetFirstNumberAfter("filamentDiameter = ", gCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
 			{
 				return true;
 			}
 
-			if (GetFirstNumberAfter("; filament_diameter = ", GCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
+			if (GetFirstNumberAfter("; filament_diameter = ", gCodeCommandQueue[lineIndex].Line, ref filamentDiameterCache, 0, ""))
 			{
 				return true;
 			}
@@ -818,9 +854,10 @@ namespace MatterControl.Printing
 						if (processingMachineState.Z != parsingLastZ || IndexOfLayerStart.Count == 0)
 						{
 							// if we changed z or there is a movement and we have never started a layer index
-							IndexOfLayerStart.Add(GCodeCommandQueue.Count);
+							IndexOfLayerStart.Add(gCodeCommandQueue.Count);
 						}
 					}
+
 					parsingLastZ = processingMachineState.Position.Z;
 					break;
 
@@ -863,26 +900,30 @@ namespace MatterControl.Printing
 							processingMachineState.PositionSet |= PositionSet.X;
 							processingMachineState.X = value;
 						}
+
 						if (GCodeFile.GetFirstNumberAfter("Y", lineString, ref value))
 						{
 							processingMachineState.PositionSet |= PositionSet.Y;
 							processingMachineState.Y = value;
 						}
+
 						if (GCodeFile.GetFirstNumberAfter("Z", lineString, ref value))
 						{
 							processingMachineState.PositionSet |= PositionSet.Z;
 							processingMachineState.Z = value;
 						}
+
 						if (GCodeFile.GetFirstNumberAfter("E", lineString, ref value))
 						{
 							processingMachineState.PositionSet |= PositionSet.E;
 							processingMachineState.EPosition = (float)value;
 						}
 					}
+
 					break;
 
 				case "130":
-					//Set Digital Potentiometer value
+					// Set Digital Potentiometer value
 					break;
 
 				case "161":
@@ -898,7 +939,7 @@ namespace MatterControl.Printing
 			}
 		}
 
-		private void ParseMLine(string lineString, PrinterMachineInstruction processingMachineState)
+		private void ParseMLine(string lineString)
 		{
 			// take off any comments before we check its length
 			int commentIndex = lineString.IndexOf(';');
@@ -943,7 +984,7 @@ namespace MatterControl.Printing
 					break;
 
 				case "83":
-					//Set extruder to relative mode
+					// Set extruder to relative mode
 					break;
 
 				case "84":
@@ -1063,13 +1104,13 @@ namespace MatterControl.Printing
 				case "565": // M565: Set Z probe offset
 					break;
 
-				case "1200"://M1200 Makerbot Fake gCode command for start build notification
+				case "1200": // M1200 Makerbot Fake gCode command for start build notification
 					break;
 
-				case "1201"://M1201 Makerbot Fake gCode command for end build notification
+				case "1201": // M1201 Makerbot Fake gCode command for end build notification
 					break;
 
-				case "1202"://M1202 Makerbot Fake gCode command for reset board
+				case "1202": // M1202 Makerbot Fake gCode command for reset board
 					break;
 
 				default:
