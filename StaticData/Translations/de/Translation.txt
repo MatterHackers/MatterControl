@@ -13,6 +13,12 @@ Translated:- keiner -
 English: Once it is finished homing we will heat the bed.
 Translated: Sobald das Homing beendet ist, heizen wir das Bett auf.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Update verfügbar)
 
@@ -27,6 +33,12 @@ Translated:{0} muss kleiner oder gleich {1} sein.
 
 English:<< Back
 Translated:<< Zurück
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:2D-Schichtansicht
@@ -636,6 +648,9 @@ Translated:Datei konnte nicht geladen werden
 
 English:Couldn't save file
 Translated:Datei konnte nicht gespeichert werden
+
+English:count or mm
+Translated:Anzahl oder mm
 
 English:Create
 Translated:Erstellen
@@ -1261,6 +1276,9 @@ Translated:Foren
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Es wurde eine Zeile mit {0} Zeichen gefunden.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Wie können wir uns verbessern?
 English:How to succeed with MatterControl
 Translated:Wie man mit MatterControl Erfolg hat
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal für das Klonen von Einstellungen für verschiedene physische Drucker
 
@@ -1675,8 +1696,14 @@ Translated:Schicht oben
 English:Layer(s) To Pause
 Translated:Ebene (n) zum Anhalten
 
+English:layers
+Translated:Schichten
+
 English:Layers / Surface
 Translated:Schichten / Oberfläche
+
+English:layers or mm
+Translated:Schichten oder mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Belassen Sie diesen Wert auf 0, um eine automatische Berechnung der Extrusionsbreite zu ermöglichen.
@@ -1960,8 +1987,23 @@ Translated:Spiegel
 English:Missing
 Translated:Fehlt
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm oder%
+
+English:mm zero to disable
+Translated:mm null zum deaktivieren
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s oder%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:Modell-
@@ -2632,6 +2674,9 @@ Translated:Raise / Stow
 English:Randomize Starting Points
 Translated:Startpunkte zufällig bestimmen
 
+English:Ratio or %
+Translated:Verhältnis oder%
+
 English:Reach
 Translated:Erreichen
 
@@ -2863,6 +2908,9 @@ Translated:Führen Sie die Kalibrierung aus
 English:Run Max if Below
 Translated:Max ausführen, wenn unten
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Segelfisch-Kommunikation
 
@@ -2923,6 +2971,9 @@ Translated:Google suchen
 English:Search Results
 Translated:Suchergebnisse
 
+English:seconds
+Translated:Sekunden
+
 English:Select
 Translated:Wählen
 
@@ -2949,6 +3000,9 @@ Translated:Wählen Sie Drucker aus
 
 English:Select the baud rate.
 Translated:Wählen Sie die Baudrate.
+
+English:Select the hotend on the left to continue
+Translated:Wählen Sie das Hotend links aus, um fortzufahren
 
 English:Select the material you are printing
 Translated:Wählen Sie das Material aus, das Sie drucken möchten
@@ -3566,7 +3620,7 @@ English:The layer(s) at which the print will pause, allowing for a change in fil
 Translated:Die Ebene (n), bei der der Druck angehalten wird, ermöglichen eine Änderung des Filaments. Der Drucker wurde angehalten, bevor die angegebene Ebene gestartet wird. Lassen Sie das Feld leer, um es zu deaktivieren. Um auf mehreren Ebenen anzuhalten, trennen Sie die Ebenennummern durch Semikolons. Zum Beispiel: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:Die Länge und Breite eines Turms, der links hinten im Druck erstellt wurde, dient zum Abwischen der nächsten Düse, wenn zwischen mehreren Extrudern gewechselt wird. Zum Deaktivieren auf 0 setzen.
+Translated:Die Länge und Breite eines Turms, der links hinten im Druck erstellt wurde, dient zum Abwischen der nächsten Düse beim Wechseln zwischen mehreren Extrudern. Zum Deaktivieren auf 0 setzen.
 
 English:The Markdown that will be shown during print leveling to help get the X carriage level.
 Translated:Der Markdown, der während des Druckniveaus angezeigt wird, um die X-Wagenebene zu erhalten.

@@ -13,6 +13,12 @@ Translated:- 無し -
 English: Once it is finished homing we will heat the bed.
 Translated: 帰宅が完了したら、ベッドを温めます。
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:％
+
 English:{0} (Update Available)
 Translated:{0}（アップデート利用可能）
 
@@ -27,6 +33,12 @@ Translated:{0}は{1}以下でなければなりません。
 
 English:<< Back
 Translated:<<戻る
+
+English:°
+Translated:°
+
+English:°C
+Translated:℃
 
 English:2D Layer View
 Translated:2Dレイヤービュー
@@ -636,6 +648,9 @@ Translated:ファイルを読み込めませんでした
 
 English:Couldn't save file
 Translated:ファイルを保存できませんでした
+
+English:count or mm
+Translated:カウントまたはmm
 
 English:Create
 Translated:作成する
@@ -1261,6 +1276,9 @@ Translated:フォーラム
 English:Found a line that is {0} characters long.\n{1}...
 Translated:長さ{0}文字の行が見つかりました。\n{1} ...
 
+English:g/cm³
+Translated:g /cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:どうすれば改善できますか？
 English:How to succeed with MatterControl
 Translated:MatterControlで成功する方法
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:異なる物理プリンタ間で設定を複製するのに理想的
 
@@ -1675,8 +1696,14 @@ Translated:レイヤートップ
 English:Layer(s) To Pause
 Translated:一時停止するレイヤー
 
+English:layers
+Translated:層
+
 English:Layers / Surface
 Translated:レイヤー/サーフェス
+
+English:layers or mm
+Translated:層またはmm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:押し出し幅の自動計算を可能にするには、これを0のままにします。
@@ -1960,8 +1987,23 @@ Translated:鏡
 English:Missing
 Translated:行方不明
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mmまたは％
+
+English:mm zero to disable
+Translated:無効にするmmゼロ
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / sまたは％
+
+English:mm/s²
+Translated:mm /s²
 
 English:model
 Translated:モデル
@@ -2632,6 +2674,9 @@ Translated:レイズ/ストウ
 English:Randomize Starting Points
 Translated:開始点をランダム化する
 
+English:Ratio or %
+Translated:比率または％
+
 English:Reach
 Translated:リーチ
 
@@ -2863,6 +2908,9 @@ Translated:キャリブレーションを実行
 English:Run Max if Below
 Translated:以下の場合はMaxを実行
 
+English:s
+Translated:の
+
 English:Sailfish Communication
 Translated:セイルフィッシュコミュニケーション
 
@@ -2923,6 +2971,9 @@ Translated:Googleを検索
 English:Search Results
 Translated:の検索結果
 
+English:seconds
+Translated:秒
+
 English:Select
 Translated:選択する
 
@@ -2949,6 +3000,9 @@ Translated:プリンターを選択
 
 English:Select the baud rate.
 Translated:ボーレートを選択してください。
+
+English:Select the hotend on the left to continue
+Translated:続行するには左側のノートエンドを選択してください
 
 English:Select the material you are printing
 Translated:印刷している素材を選択してください
@@ -4403,7 +4457,7 @@ English:Your Start G-Code should not contain a G29 if you are planning on using 
 Translated:印刷の平準化を使用する予定の場合は、開始GコードにG29を含めないでください。開始Gコードを変更するか、印刷の平準化をオフにします。
 
 English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:印刷の回復を使用する予定の場合は、開始GコードにG29を含めないでください。開始Gコードを変更するか、印刷回復をオフにします。
+Translated:印刷回復を使用する予定の場合は、開始GコードにG29を含めないでください。開始Gコードを変更するか、印刷回復をオフにします。
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
 Translated:印刷の平準化を使用する予定の場合は、開始GコードにG30を含めないでください。開始Gコードを変更するか、印刷の平準化をオフにします。

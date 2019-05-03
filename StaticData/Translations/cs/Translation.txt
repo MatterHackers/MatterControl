@@ -13,6 +13,12 @@ Translated:- žádný -
 English: Once it is finished homing we will heat the bed.
 Translated: Jakmile bude hotový, zahřejeme lůžko.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Dostupná aktualizace)
 
@@ -27,6 +33,12 @@ Translated:{0} musí být menší nebo rovna {1}.
 
 English:<< Back
 Translated:<< Zpět
+
+English:°
+Translated:°
+
+English:°C
+Translated:C
 
 English:2D Layer View
 Translated:Zobrazení 2D vrstvy
@@ -636,6 +648,9 @@ Translated:Nelze načíst soubor
 
 English:Couldn't save file
 Translated:Soubor nelze uložit
+
+English:count or mm
+Translated:nebo mm
 
 English:Create
 Translated:Vytvořit
@@ -1261,6 +1276,9 @@ Translated:Fóra
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Byl nalezen řádek, který má délku {0} znaků. n {1} ...
 
+English:g/cm³
+Translated:g / cm3
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Jak se můžeme zlepšit?
 English:How to succeed with MatterControl
 Translated:Jak uspět s MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideální pro nastavení klonování napříč různými fyzickými tiskárnami
 
@@ -1675,8 +1696,14 @@ Translated:Horní vrstva
 English:Layer(s) To Pause
 Translated:Vrstva (y) k pozastavení
 
+English:layers
+Translated:vrstev
+
 English:Layers / Surface
 Translated:Vrstvy / povrch
+
+English:layers or mm
+Translated:vrstev nebo mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Nechte to jako 0, abyste umožnili automatický výpočet šířky vytlačování.
@@ -1960,8 +1987,23 @@ Translated:Zrcadlo
 English:Missing
 Translated:Chybějící
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm nebo%
+
+English:mm zero to disable
+Translated:vypnout
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s nebo%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:Modelka
@@ -2632,6 +2674,9 @@ Translated:Zvýšit / Stow
 English:Randomize Starting Points
 Translated:Náhodné startovní body
 
+English:Ratio or %
+Translated:Poměr nebo%
+
 English:Reach
 Translated:Dosáhnout
 
@@ -2863,6 +2908,9 @@ Translated:Spustit kalibraci
 English:Run Max if Below
 Translated:Spusťte Max, pokud níže
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Sailfish komunikace
 
@@ -2923,6 +2971,9 @@ Translated:Vyhledávání ve službě Google
 English:Search Results
 Translated:Výsledky vyhledávání
 
+English:seconds
+Translated:sekundy
+
 English:Select
 Translated:Vybrat
 
@@ -2949,6 +3000,9 @@ Translated:Vyberte možnost Tiskárna
 
 English:Select the baud rate.
 Translated:Vyberte přenosovou rychlost.
+
+English:Select the hotend on the left to continue
+Translated:Pokračujte výběrem hotendu vlevo
 
 English:Select the material you are printing
 Translated:Vyberte materiál, který tisknete

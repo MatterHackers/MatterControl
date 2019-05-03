@@ -13,6 +13,12 @@ Translated:- nici unul -
 English: Once it is finished homing we will heat the bed.
 Translated: Odată terminată, vom încălzi patul.
 
+English:$/kg
+Translated:$ / Kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Actualizare disponibilă)
 
@@ -27,6 +33,12 @@ Translated:{0} trebuie să fie mai mică sau egală cu {1}.
 
 English:<< Back
 Translated:<< Înapoi
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:Vizualizare strat 2D
@@ -636,6 +648,9 @@ Translated:Fișierul nu a putut fi încărcat
 
 English:Couldn't save file
 Translated:Fișierul nu a putut fi salvat
+
+English:count or mm
+Translated:număr sau mm
 
 English:Create
 Translated:Crea
@@ -1261,6 +1276,9 @@ Translated:Forum
 English:Found a line that is {0} characters long.\n{1}...
 Translated:S-a găsit o linie de {0} caractere lungi.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:Cum putem să ne îmbunătățim?
 English:How to succeed with MatterControl
 Translated:Cum să reușești cu MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal pentru clonarea setărilor pe diferite imprimante fizice
 
@@ -1675,8 +1696,14 @@ Translated:Layer Top
 English:Layer(s) To Pause
 Translated:Layer (e) pentru a întrerupe
 
+English:layers
+Translated:straturi
+
 English:Layers / Surface
 Translated:Straturi / Suprafață
+
+English:layers or mm
+Translated:straturi sau mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Lăsați acest lucru ca 0 pentru a permite calcularea automată a lățimii extrudării.
@@ -1960,8 +1987,23 @@ Translated:Oglindă
 English:Missing
 Translated:Dispărut
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm sau%
+
+English:mm zero to disable
+Translated:mm zero pentru a dezactiva
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s sau%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:model
@@ -2632,6 +2674,9 @@ Translated:Ridicați / Stocați
 English:Randomize Starting Points
 Translated:Randomizați punctele de plecare
 
+English:Ratio or %
+Translated:Raport sau%
+
 English:Reach
 Translated:A ajunge
 
@@ -2863,6 +2908,9 @@ Translated:Executați calibrarea
 English:Run Max if Below
 Translated:Rulați Max dacă este mai jos
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Comunicarea navigației
 
@@ -2923,6 +2971,9 @@ Translated:Căutați Google
 English:Search Results
 Translated:rezultatele cautarii
 
+English:seconds
+Translated:secunde
+
 English:Select
 Translated:Selectați
 
@@ -2949,6 +3000,9 @@ Translated:Selectați Imprimanta
 
 English:Select the baud rate.
 Translated:Selectați rata baud.
+
+English:Select the hotend on the left to continue
+Translated:Selectați hotelul din stânga pentru a continua
 
 English:Select the material you are printing
 Translated:Selectați materialul pe care îl imprimați

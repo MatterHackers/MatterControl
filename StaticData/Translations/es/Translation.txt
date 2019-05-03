@@ -13,6 +13,12 @@ Translated:- ninguna -
 English: Once it is finished homing we will heat the bed.
 Translated: Una vez que se termine de calentar vamos a calentar la cama.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Actualización disponible)
 
@@ -27,6 +33,12 @@ Translated:{0} debe ser menor o igual que el {1}.
 
 English:<< Back
 Translated:<< Volver
+
+English:°
+Translated:°
+
+English:°C
+Translated:DO
 
 English:2D Layer View
 Translated:Vista de capa 2D
@@ -431,7 +443,7 @@ English:Check For Update
 Translated:Buscar actualizaciones
 
 English:Checking Cloud Services
-Translated:Comprobación de servicios en la nube
+Translated:Comprobando servicios en la nube
 
 English:Checking for updates...
 Translated:Comprobando actualizaciones...
@@ -636,6 +648,9 @@ Translated:No se pudo cargar el archivo
 
 English:Couldn't save file
 Translated:No se pudo guardar el archivo
+
+English:count or mm
+Translated:contar o mm
 
 English:Create
 Translated:Crear
@@ -1261,6 +1276,9 @@ Translated:Los foros
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Encontró una línea que tiene {0} caracteres de longitud.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:¿Como podemos mejorar?
 English:How to succeed with MatterControl
 Translated:Cómo tener éxito con MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideal para clonar configuraciones en diferentes impresoras físicas
 
@@ -1675,8 +1696,14 @@ Translated:Capa superior
 English:Layer(s) To Pause
 Translated:Capa (s) para pausar
 
+English:layers
+Translated:capas
+
 English:Layers / Surface
 Translated:Capas / Superficie
+
+English:layers or mm
+Translated:capas o mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Deje esto como 0 para permitir el cálculo automático del ancho de extrusión.
@@ -1960,8 +1987,23 @@ Translated:Espejo
 English:Missing
 Translated:Desaparecido
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm o%
+
+English:mm zero to disable
+Translated:mm cero para deshabilitar
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s o%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:modelo
@@ -2632,6 +2674,9 @@ Translated:Levantar / Stow
 English:Randomize Starting Points
 Translated:Aleatorizar los puntos de partida
 
+English:Ratio or %
+Translated:Proporción o%
+
 English:Reach
 Translated:Alcanzar
 
@@ -2863,6 +2908,9 @@ Translated:Ejecutar calibración
 English:Run Max if Below
 Translated:Corre max si esta abajo
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Comunicación del pez vela
 
@@ -2923,6 +2971,9 @@ Translated:Busca en Google
 English:Search Results
 Translated:Resultados de la búsqueda
 
+English:seconds
+Translated:segundos
+
 English:Select
 Translated:Seleccionar
 
@@ -2949,6 +3000,9 @@ Translated:Seleccione impresora
 
 English:Select the baud rate.
 Translated:Seleccione la velocidad en baudios.
+
+English:Select the hotend on the left to continue
+Translated:Seleccione el hotend a la izquierda para continuar
 
 English:Select the material you are printing
 Translated:Seleccione el material que está imprimiendo

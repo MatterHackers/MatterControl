@@ -13,6 +13,12 @@ Translated:- 没有 -
 English: Once it is finished homing we will heat the bed.
 Translated: 一旦完成归位，我们将加热床。
 
+English:$/kg
+Translated:$ /公斤
+
+English:%
+Translated:％
+
 English:{0} (Update Available)
 Translated:{0}（可用更新）
 
@@ -27,6 +33,12 @@ Translated:{0}必须小于或等于{1}。
 
 English:<< Back
 Translated:<<返回
+
+English:°
+Translated:°
+
+English:°C
+Translated:C
 
 English:2D Layer View
 Translated:2D图层视图
@@ -636,6 +648,9 @@ Translated:无法加载文件
 
 English:Couldn't save file
 Translated:无法保存文件
+
+English:count or mm
+Translated:数或毫米
 
 English:Create
 Translated:创建
@@ -1261,6 +1276,9 @@ Translated:论坛
 English:Found a line that is {0} characters long.\n{1}...
 Translated:找到一个长度为{0}个字符的行。\n{1} ...
 
+English:g/cm³
+Translated:克/立方厘米
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:我们怎样才能改善？
 English:How to succeed with MatterControl
 Translated:如何使用MatterControl取得成功
 
+English:Hz
+Translated:赫兹
+
 English:Ideal for cloning settings across different physical printers
 Translated:非常适合在不同物理打印机上克隆设置
 
@@ -1675,8 +1696,14 @@ Translated:层顶
 English:Layer(s) To Pause
 Translated:图层要暂停
 
+English:layers
+Translated:层
+
 English:Layers / Surface
 Translated:图层/表面
+
+English:layers or mm
+Translated:层数或毫米
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:将其保留为0以允许自动计算挤出宽度。
@@ -1960,8 +1987,23 @@ Translated:镜子
 English:Missing
 Translated:失踪
 
+English:mm
+Translated:毫米
+
+English:mm or %
+Translated:毫米或％
+
+English:mm zero to disable
+Translated:mm为零以禁用
+
 English:mm/s
 Translated:毫米/秒
+
+English:mm/s or %
+Translated:mm / s或％
+
+English:mm/s²
+Translated:毫米/秒²
 
 English:model
 Translated:模型
@@ -2632,6 +2674,9 @@ Translated:提升/存放
 English:Randomize Starting Points
 Translated:随机化起点
 
+English:Ratio or %
+Translated:比率或％
+
 English:Reach
 Translated:达到
 
@@ -2863,6 +2908,9 @@ Translated:运行校准
 English:Run Max if Below
 Translated:如果在下面运行Max
 
+English:s
+Translated:小号
+
 English:Sailfish Communication
 Translated:旗鱼通讯
 
@@ -2923,6 +2971,9 @@ Translated:搜索Google
 English:Search Results
 Translated:搜索结果
 
+English:seconds
+Translated:秒
+
 English:Select
 Translated:选择
 
@@ -2949,6 +3000,9 @@ Translated:选择打印机
 
 English:Select the baud rate.
 Translated:选择波特率。
+
+English:Select the hotend on the left to continue
+Translated:选择左侧的hotend继续
 
 English:Select the material you are printing
 Translated:选择要打印的材料

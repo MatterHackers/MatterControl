@@ -13,6 +13,12 @@ Translated:- कोई नहीं -
 English: Once it is finished homing we will heat the bed.
 Translated: एक बार जब यह खत्म हो जाता है तो हम बिस्तर को गर्म कर देंगे।
 
+English:$/kg
+Translated:$ / किग्रा
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (उपलब्ध अपडेट)
 
@@ -27,6 +33,12 @@ Translated:{0} {1} से कम या बराबर होना चाह�
 
 English:<< Back
 Translated:<< वापस
+
+English:°
+Translated:°
+
+English:°C
+Translated:सी
 
 English:2D Layer View
 Translated:2 डी परत देखें
@@ -224,7 +236,7 @@ English:Arrange All Parts
 Translated:सभी भागों को व्यवस्थित करें
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:जैसे-जैसे किसी परत को प्रिंट करने का समय घटता जाता है, पंखे की गति को उसकी अधिकतम गति तक बढ़ाया जाएगा।
+Translated:जैसे ही एक परत को प्रिंट करने का समय घटता है, पंखे की गति को उसकी अधिकतम गति तक बढ़ाया जाएगा।
 
 English:Ascending
 Translated:आरोही
@@ -296,7 +308,7 @@ English:Bed PID Settings
 Translated:बेड पीआईडी सेटिंग्स
 
 English:Bed Remove Part Temperature
-Translated:बैड निकालें पार्ट तापमान
+Translated:बैड रिमूवल पार्ट टेम्परेचर
 
 English:Bed Shape
 Translated:बिस्तर का आकार
@@ -636,6 +648,9 @@ Translated:फ़ाइल लोड नहीं की जा सकी
 
 English:Couldn't save file
 Translated:फ़ाइल को सहेज नहीं सका
+
+English:count or mm
+Translated:गिनती या मिमी
 
 English:Create
 Translated:सर्जन करना
@@ -1261,6 +1276,9 @@ Translated:मंच
 English:Found a line that is {0} characters long.\n{1}...
 Translated:एक लाइन मिली जो {0} वर्णों की है।\n{1} ...
 
+English:g/cm³
+Translated:ग्राम / सेमी ³
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:हम कैसे सुधार सकते हैं?
 English:How to succeed with MatterControl
 Translated:MatterControl के साथ कैसे सफल हो
 
+English:Hz
+Translated:हर्ट्ज
+
 English:Ideal for cloning settings across different physical printers
 Translated:विभिन्न भौतिक प्रिंटर में क्लोनिंग सेटिंग्स के लिए आदर्श
 
@@ -1675,8 +1696,14 @@ Translated:लेयर टॉप
 English:Layer(s) To Pause
 Translated:परत (ओं) को थामने के लिए
 
+English:layers
+Translated:परतों
+
 English:Layers / Surface
 Translated:परत / सतह
+
+English:layers or mm
+Translated:परतों या मिमी
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:एक्सट्रूज़न चौड़ाई की स्वचालित गणना की अनुमति देने के लिए इसे 0 पर छोड़ दें
@@ -1960,8 +1987,23 @@ Translated:आईना
 English:Missing
 Translated:लापता
 
+English:mm
+Translated:मिमी
+
+English:mm or %
+Translated:मिमी या%
+
+English:mm zero to disable
+Translated:अक्षम करने के लिए शून्य शून्य
+
 English:mm/s
 Translated:मिमी /
+
+English:mm/s or %
+Translated:मिमी / एस या%
+
+English:mm/s²
+Translated:मिमी / s²
 
 English:model
 Translated:आदर्श
@@ -2111,247 +2153,247 @@ English:Not Connected
 Translated:जुड़े नहीं हैं
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
-Translated:!!Encoding Error!!
+Translated:नोट: वास्तव में शुरू होने से पहले स्लाइस सेटिंग्स लागू होती हैं। प्रिंट करते समय परिवर्तन सक्रिय प्रिंट को प्रभावित नहीं करेगा।
 
 English:NOTE: Standard messaging rates may apply.
-Translated:!!Encoding Error!!
+Translated:नोट: मानक संदेश सेवा दरें लागू हो सकती हैं।
 
 English:Notifications
-Translated:!!Encoding Error!!
+Translated:सूचनाएं
 
 English:Nozzle
-Translated:!!Encoding Error!!
+Translated:नोक
 
 English:Nozzle 1 Inset
-Translated:!!Encoding Error!!
+Translated:नोजल 1 इनसेट
 
 English:Nozzle 2 Inset
-Translated:!!Encoding Error!!
+Translated:नोजल 2 इनसेट
 
 English:Nozzle Calibration
-Translated:!!Encoding Error!!
+Translated:नोजल कैलिब्रेशन
 
 English:Nozzle Diameter
-Translated:!!Encoding Error!!
+Translated:नोजल व्यास
 
 English:Nozzle Offset Calibration
-Translated:!!Encoding Error!!
+Translated:नोजल ऑफसेट कैलिब्रेशन
 
 English:Nozzle Offset Calibration Wizard
-Translated:!!Encoding Error!!
+Translated:नोजल ऑफसेट कैलिब्रेशन विज़ार्ड
 
 English:Nozzle Offsets
-Translated:!!Encoding Error!!
+Translated:नोजल ऑफ़सेट्स
 
 English:Number
-Translated:!!Encoding Error!!
+Translated:संख्या
 
 English:Number of layers to print before printing any parts.
-Translated:!!Encoding Error!!
+Translated:किसी भी हिस्से को प्रिंट करने से पहले प्रिंट करने के लिए परतों की संख्या।
 
 English:Number of Samples
-Translated:!!Encoding Error!!
+Translated:नमूनों की संख्या
 
 English:Oem
-Translated:!!Encoding Error!!
+Translated:oem
 
 English:of
-Translated:!!Encoding Error!!
+Translated:का
 
 English:Off
-Translated:!!Encoding Error!!
+Translated:बंद
 
 English:Offset
-Translated:!!Encoding Error!!
+Translated:ओफ़्सेट
 
 English:Offset Calibration complete.
-Translated:!!Encoding Error!!
+Translated:ऑफसेट अंशांकन पूर्ण।
 
 English:Ok
-Translated:!!Encoding Error!!
+Translated:ठीक
 
 English:OK
-Translated:!!Encoding Error!!
+Translated:ठीक
 
 English:'Ok' Responses
-Translated:!!Encoding Error!!
+Translated:'ठीक है' प्रतिक्रियाएँ
 
 English:On Connect G-Code
-Translated:!!Encoding Error!!
+Translated:कनेक्ट जी-कोड पर
 
 English:Oops! Baud Rate must be an integer.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! बॉड रेट एक पूर्णांक होना चाहिए।
 
 English:Oops! Could not complete update.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! अपडेट पूरा नहीं हो सका।
 
 English:Oops! Could not find this file
-Translated:!!Encoding Error!!
+Translated:ऊप्स! यह फ़ाइल नहीं मिल सकी
 
 English:Oops! Field cannot be left blank
-Translated:!!Encoding Error!!
+Translated:ऊप्स! फ़ील्ड को खाली नहीं छोड़ा जा सकता है
 
 English:Oops! Field cannot have special characters
-Translated:!!Encoding Error!!
+Translated:ऊप्स! फ़ील्ड में विशेष वर्ण नहीं हो सकते
 
 English:Oops! Invalid code.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! अमान्य कोड।
 
 English:Oops! Invalid username, email or password.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! अमान्य उपयोगकर्ता नाम, ईमेल या पासवर्ड।
 
 English:Oops! Please select a baud rate.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! कृपया बॉड दर का चयन करें।
 
 English:Oops! Please select a device to continue.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! कृपया जारी रखने के लिए एक उपकरण चुनें।
 
 English:Oops! Please select a serial port.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! कृपया एक सीरियल पोर्ट चुनें।
 
 English:Oops! Please sign in to enable this feature.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! कृपया इस सुविधा को सक्षम करने के लिए साइन इन करें।
 
 English:Oops! Printer could not be detected 
-Translated:!!Encoding Error!!
+Translated:ऊप्स! प्रिंटर का पता नहीं चल सका
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! सेटिंग फ़ाइल '{0}' में ऐसी कोई सेटिंग नहीं थी जिसे हम आयात कर सकते थे।
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आपके प्रिंटर के फर्मवेयर के लिए कोई इप्रोम मैपिंग नहीं है।
 
 English:Oops! There was a problem creating your account.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आपका खाता बनाने में कोई समस्या थी।
 
 English:Oops! There was a problem processing your request.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आपके निवेदन को आगे बढ़ाने में समस्या थी।
 
 English:Oops! There was a problem resetting your password.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आपका पासवर्ड रीसेट करने में समस्या थी।
 
 English:Oops! Unable to connect to server
-Translated:!!Encoding Error!!
+Translated:ऊप्स! सर्वर से संपर्क करने में असमर्थ
 
 English:Oops! Unable to initialize device.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! डिवाइस को इनिशियलाइज़ करने में असमर्थ।
 
 English:Oops! Unable to install update.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! अद्यतन स्थापित करने में असमर्थ।
 
 English:Oops! Unable to recognize settings file '{0}'.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! सेटिंग फ़ाइल '{0}' को पहचानने में असमर्थ।
 
 English:Oops! You cannot share this item.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आप इस आइटम को साझा नहीं कर सकते।
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:!!Encoding Error!!
+Translated:ऊप्स! आपका सत्र समाप्त हो गया है। जारी रखने के लिए कृपया फिर से साइन-इन करें।
 
 English:Open
-Translated:!!Encoding Error!!
+Translated:खुला
 
 English:Open File
-Translated:!!Encoding Error!!
+Translated:खुली फाइल
 
 English:Open Folder
-Translated:!!Encoding Error!!
+Translated:फोल्डर खोलो
 
 English:Open Package
-Translated:!!Encoding Error!!
+Translated:पैकेज खोलें
 
 English:Open Recent
-Translated:!!Encoding Error!!
+Translated:हाल ही में खुला
 
 English:OpenSCAD not installed
-Translated:!!Encoding Error!!
+Translated:OpenSCAD स्थापित नहीं है
 
 English:Options
-Translated:!!Encoding Error!!
+Translated:विकल्प
 
 English:or
-Translated:!!Encoding Error!!
+Translated:या
 
 English:Other
-Translated:!!Encoding Error!!
+Translated:अन्य
 
 English:Outer Radius
-Translated:!!Encoding Error!!
+Translated:बाहरी त्रिज्या
 
 English:Outer Size
-Translated:!!Encoding Error!!
+Translated:बाहरी आकार
 
 English:Outer Surface - Perimeters
-Translated:!!Encoding Error!!
+Translated:बाहरी सतह - परिधि
 
 English:Outlines
-Translated:!!Encoding Error!!
+Translated:रूपरेखा
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:!!Encoding Error!!
+Translated:प्रिंट की केवल पहली परत का आउटपुट। उत्कीर्णन या काटने जैसे अनुप्रयोगों के लिए विशेष रूप से उपयोगी gcode डेटा।
 
 English:Outside Perimeter
-Translated:!!Encoding Error!!
+Translated:परिधि के बाहर
 
 English:Outside Perimeters
-Translated:!!Encoding Error!!
+Translated:बाहर परिधि
 
 English:Overhang
-Translated:!!Encoding Error!!
+Translated:आगे निकलना
 
 English:Overhang Angle
-Translated:!!Encoding Error!!
+Translated:ओवरहांग कोण
 
 English:Pan
-Translated:!!Encoding Error!!
+Translated:कड़ाही
 
 English:Pan View
-Translated:!!Encoding Error!!
+Translated:पैन व्यू
 
 English:Part Cooling Fan
-Translated:!!Encoding Error!!
+Translated:पार्ट कूलिंग फैन
 
 English:Part History
-Translated:!!Encoding Error!!
+Translated:भाग इतिहास
 
 English:Password
-Translated:!!Encoding Error!!
+Translated:पारण शब्द
 
 English:Password Reset Code
-Translated:!!Encoding Error!!
+Translated:पासवर्ड रीसेट कोड
 
 English:Password update complete
-Translated:!!Encoding Error!!
+Translated:पासवर्ड अपडेट पूर्ण
 
 English:Paste
-Translated:!!Encoding Error!!
+Translated:चिपकाएं
 
 English:Pattern Spacing
-Translated:!!Encoding Error!!
+Translated:पैटर्न रिक्ति
 
 English:Pause
-Translated:!!Encoding Error!!
+Translated:ठहराव
 
 English:Pause automatic heater shutdown
-Translated:!!Encoding Error!!
+Translated:स्वचालित हीटर बंद करें
 
 English:Pause G-Code
-Translated:!!Encoding Error!!
+Translated:जी-कोड को रोकें
 
 English:Pause Print
-Translated:!!Encoding Error!!
+Translated:प्रिंट रोकें
 
 English:Paused
-Translated:!!Encoding Error!!
+Translated:रोके गए
 
 English:Percentage of
-Translated:!!Encoding Error!!
+Translated:का प्रतिशत
 
 English:perimeters
-Translated:!!Encoding Error!!
+Translated:परिधि
 
 English:Perimeters
-Translated:!!Encoding Error!!
+Translated:परिधि
 
 English:Permission Denied
 Translated:अनुमति नहीं मिली
@@ -2632,6 +2674,9 @@ Translated:उठाएँ / स्टोव
 English:Randomize Starting Points
 Translated:प्रारंभिक बिंदुओं को रेंडमाइज करें
 
+English:Ratio or %
+Translated:अनुपात या%
+
 English:Reach
 Translated:पहुंच
 
@@ -2863,6 +2908,9 @@ Translated:कैलिब्रेशन चलाएं
 English:Run Max if Below
 Translated:नीचे अगर मैक्स चलाते हैं
 
+English:s
+Translated:रों
+
 English:Sailfish Communication
 Translated:सेलफिश कम्युनिकेशन
 
@@ -2923,6 +2971,9 @@ Translated:Google पर खोजें
 English:Search Results
 Translated:खोज परिणाम
 
+English:seconds
+Translated:सेकंड
+
 English:Select
 Translated:चुनते हैं
 
@@ -2949,6 +3000,9 @@ Translated:प्रिंटर का चयन करें
 
 English:Select the baud rate.
 Translated:बॉड दर का चयन करें।
+
+English:Select the hotend on the left to continue
+Translated:जारी रखने के लिए बाईं ओर हॉटेंड का चयन करें
 
 English:Select the material you are printing
 Translated:उस सामग्री का चयन करें जिसे आप प्रिंट कर रहे हैं
@@ -3698,7 +3752,7 @@ English:The printer has a servo for lowering and raising the z probe.
 Translated:प्रिंटर में z जांच को कम करने और बढ़ाने के लिए एक सर्वो है।
 
 English:The printer has a z probe for measuring bed level.
-Translated:बिस्तर के स्तर को मापने के लिए प्रिंटर की z जांच होती है।
+Translated:बिस्तर के स्तर को मापने के लिए प्रिंटर की z जांच होती है
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
 Translated:प्रिंटर की अपनी ऑटो बेड लेवलिंग जांच और प्रक्रिया है जिसे स्टार्ट जी-कोड के दौरान G29 कमांड का उपयोग करके बुलाया जा सकता है।

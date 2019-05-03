@@ -13,6 +13,12 @@ Translated:- Yok -
 English: Once it is finished homing we will heat the bed.
 Translated: Hedef arama bittiğinde yatağı ısıtacağız.
 
+English:$/kg
+Translated:$ / Kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Güncelleme Mevcut)
 
@@ -27,6 +33,12 @@ Translated:{0}, {1} 'e eşit veya daha az olmalıdır.
 
 English:<< Back
 Translated:<< Geri
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:2D Katman Görünümü
@@ -636,6 +648,9 @@ Translated:Dosya yüklenemedi
 
 English:Couldn't save file
 Translated:Dosya kaydedilemedi
+
+English:count or mm
+Translated:saymak veya mm
 
 English:Create
 Translated:yaratmak
@@ -1261,6 +1276,9 @@ Translated:Forum
 English:Found a line that is {0} characters long.\n{1}...
 Translated:{0} karakter uzunluğunda bir çizgi bulundu.\n{1} ...
 
+English:g/cm³
+Translated:g / cm
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:nasıl geliştirebiliriz?
 English:How to succeed with MatterControl
 Translated:MatterControl ile nasıl başarılı olunur?
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ayarları farklı fiziksel yazıcılarda klonlamak için ideal
 
@@ -1675,8 +1696,14 @@ Translated:Katmanlı Üst
 English:Layer(s) To Pause
 Translated:Duraklatılacak Katmanlar
 
+English:layers
+Translated:katmanlar
+
 English:Layers / Surface
 Translated:Katmanlar / Yüzey
+
+English:layers or mm
+Translated:katmanlar veya mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Ekstrüzyon genişliğinin otomatik hesaplanmasını sağlamak için bunu 0 olarak bırakın.
@@ -1960,8 +1987,23 @@ Translated:Ayna
 English:Missing
 Translated:Eksik
 
+English:mm
+Translated:aa
+
+English:mm or %
+Translated:mm veya%
+
+English:mm zero to disable
+Translated:devre dışı bırakmak için mm sıfır
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s veya%
+
+English:mm/s²
+Translated:aa / s²
 
 English:model
 Translated:model
@@ -2216,7 +2258,7 @@ English:Oops! Printer could not be detected
 Translated:Hata! Yazıcı algılanamadı
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
-Translated:Hata! '{0}' ayar dosyası, içe aktarabileceğimiz hiçbir ayar içermiyordu.
+Translated:Hata! '{0}' ayar dosyası, içe aktarabileceğimiz herhangi bir ayar içermiyordu.
 
 English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Hata! Yazıcınızın ürün yazılımı için eeprom eşlemesi yok.
@@ -2632,6 +2674,9 @@ Translated:Kaldırma / İstifleme
 English:Randomize Starting Points
 Translated:Başlangıç Noktalarını Rastgele
 
+English:Ratio or %
+Translated:Oran veya%
+
 English:Reach
 Translated:ulaşmak
 
@@ -2863,6 +2908,9 @@ Translated:Kalibrasyonu Çalıştır
 English:Run Max if Below
 Translated:Altında Max çalıştırın
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Yelkenli Balıklar İletişim
 
@@ -2923,6 +2971,9 @@ Translated:Google'da ara
 English:Search Results
 Translated:arama sonuçları
 
+English:seconds
+Translated:saniye
+
 English:Select
 Translated:seçmek
 
@@ -2949,6 +3000,9 @@ Translated:Yazıcı Seç
 
 English:Select the baud rate.
 Translated:Baud hızını seçin.
+
+English:Select the hotend on the left to continue
+Translated:Devam etmek için soldaki hotend'i seçin
 
 English:Select the material you are printing
 Translated:Yazdırdığınız malzemeyi seçin
@@ -3866,7 +3920,7 @@ English:This code to will provide read-only access.
 Translated:Bu kod salt okunur erişim sağlayacak.
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
-Translated:Bu, yazıcıdan alındıktan sonra satırlara uygulanacak normal ifadeler kümesidir. Alınan her çizgiye uygulanacaktır.
+Translated:Bu, yazıcıdan alındıktan sonra satırlara uygulanacak düzenli ifadelerdir. Alınan her çizgiye uygulanacaktır.
 
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
 Translated:Bu, bir yazıcıya göndermeden önce satırlara uygulanacak normal ifadeler kümesidir. Gönderilmeden önce listelenen sıraya göre uygulanır. Birden fazla komut döndürmek için bunları virgülle ayırın.
@@ -4241,7 +4295,7 @@ English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you 
 Translated:UYARI: Bağlantıyı kesmek geçerli baskıyı durduracaktır.\n\nBağlantıyı kesmek istediğinden emin misin?
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:UYARI: Baskı kurtarma işlemi gerçekleştirmek için, yazıcınızın ana konumuna ulaşmak için aşağı doğru hareket etmesi gerekir.\nBaskınız çok büyükse, yazıcınızın bir kısmı, taşırken aşağıya çarpışabilir.\nDevam etmeden önce bu işlemi gerçekleştirmenin güvenli olduğundan emin olun.
+Translated:UYARI: Baskı kurtarma işlemi gerçekleştirmek için, yazıcınızın ana konumuna ulaşmak için aşağı doğru hareket etmesi gerekir.\nBaskınız çok büyükse, yazıcınızın bir kısmı, taşırken aşağıya çarpabilir.\nDevam etmeden önce bu işlemi gerçekleştirmenin güvenli olduğundan emin olun.
 
 English:WARNING: Write Failed!
 Translated:UYARI: Yazma Başarısız!

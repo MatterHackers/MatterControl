@@ -13,6 +13,12 @@ Translated:- 없음 -
 English: Once it is finished homing we will heat the bed.
 Translated: 일단 원위치가 끝나면 침대를 데울 것입니다.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (사용 가능한 업데이트)
 
@@ -27,6 +33,12 @@ Translated:{0}은 (는) {1}보다 작거나 같아야합니다.
 
 English:<< Back
 Translated:<< 뒤로
+
+English:°
+Translated:°
+
+English:°C
+Translated:기음
 
 English:2D Layer View
 Translated:2D 레이어보기
@@ -636,6 +648,9 @@ Translated:파일을로드 할 수 없습니다.
 
 English:Couldn't save file
 Translated:파일을 저장할 수 없습니다.
+
+English:count or mm
+Translated:카운트 또는 mm
 
 English:Create
 Translated:몹시 떠들어 대다
@@ -1261,6 +1276,9 @@ Translated:포럼
 English:Found a line that is {0} characters long.\n{1}...
 Translated:길이가 {0}자인 행을 찾았습니다.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:어떻게 개선 할 수 있습니까?
 English:How to succeed with MatterControl
 Translated:MatterControl을 사용하여 성공하는 법
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:서로 다른 물리적 프린터간에 설정을 복제하는 데 이상적입니다.
 
@@ -1675,8 +1696,14 @@ Translated:레이어 상단
 English:Layer(s) To Pause
 Translated:멈추려는 레이어
 
+English:layers
+Translated:층
+
 English:Layers / Surface
 Translated:레이어 / 서페이스
+
+English:layers or mm
+Translated:층 또는 mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:압출 폭을 자동으로 계산하려면이 값을 0으로 두십시오.
@@ -1960,8 +1987,23 @@ Translated:거울
 English:Missing
 Translated:있어야 할 곳에 없는
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm 또는 %
+
+English:mm zero to disable
+Translated:mm 0을 사용 중지합니다.
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s 또는 %
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:모델
@@ -2632,6 +2674,9 @@ Translated:레이즈 / 스토우
 English:Randomize Starting Points
 Translated:시작점 무작위 화
 
+English:Ratio or %
+Translated:비율 또는 %
+
 English:Reach
 Translated:범위
 
@@ -2863,6 +2908,9 @@ Translated:교정 실행
 English:Run Max if Below
 Translated:아래의 경우 최대 실행
 
+English:s
+Translated:에스
+
 English:Sailfish Communication
 Translated:Sailfish Communication
 
@@ -2923,6 +2971,9 @@ Translated:Google 검색
 English:Search Results
 Translated:검색 결과
 
+English:seconds
+Translated:초
+
 English:Select
 Translated:고르다
 
@@ -2949,6 +3000,9 @@ Translated:프린터 선택
 
 English:Select the baud rate.
 Translated:전송 속도를 선택하십시오.
+
+English:Select the hotend on the left to continue
+Translated:계속하려면 왼쪽의 핫 엔드를 선택하십시오.
 
 English:Select the material you are printing
 Translated:인쇄 할 자료를 선택하십시오.
@@ -4139,7 +4193,7 @@ English:Used for small perimeters (usually holes). This can be set explicitly or
 Translated:작은 둘레 (보통 구멍)에 사용됩니다. 이것은 명시 적으로 또는 주변 속도의 백분율로 설정할 수 있습니다.
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:둘 이상의 압출기가 공통 히터 카트리지를 공유하는지 여부를 지정하는 데 사용됩니다.
+Translated:둘 이상의 압출기가 공통의 히터 카트리지를 공유하는지 여부를 지정하는 데 사용됩니다.
 
 English:Username
 Translated:사용자 이름

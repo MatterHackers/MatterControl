@@ -13,6 +13,12 @@ Translated:- אף אחד -
 English: Once it is finished homing we will heat the bed.
 Translated: ברגע שזה גמר בבית נוכל לחמם את המיטה.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (עדכון זמין)
 
@@ -27,6 +33,12 @@ Translated:{0} חייב להיות קטן או שווה ל {1}.
 
 English:<< Back
 Translated:<< חזרה
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:תצוגת שכבה דו-ממדית
@@ -636,6 +648,9 @@ Translated:לא ניתן לטעון את הקובץ
 
 English:Couldn't save file
 Translated:לא ניתן לשמור את הקובץ
+
+English:count or mm
+Translated:לספור או מ"מ
 
 English:Create
 Translated:צור
@@ -1261,6 +1276,9 @@ Translated:פורומים
 English:Found a line that is {0} characters long.\n{1}...
 Translated:נמצא שורה שאורכה {0} תווים.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:איך אנחנו יכולים להשתפר?
 English:How to succeed with MatterControl
 Translated:איך להצליח עם MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:אידיאלי לשיבוט הגדרות במדפסות פיזיות שונות
 
@@ -1675,8 +1696,14 @@ Translated:שכבה למעלה
 English:Layer(s) To Pause
 Translated:שכבות (ים) כדי להשהות
 
+English:layers
+Translated:שכבות
+
 English:Layers / Surface
 Translated:שכבות / משטח
+
+English:layers or mm
+Translated:שכבות או מ"מ
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:השאר את זה כמו 0 כדי לאפשר חישוב אוטומטי של רוחב שחול.
@@ -1960,8 +1987,23 @@ Translated:מראה
 English:Missing
 Translated:חסר
 
+English:mm
+Translated:מ"מ
+
+English:mm or %
+Translated:מ"מ or%
+
+English:mm zero to disable
+Translated:מ"מ אפס להשבית
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s או%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:מודל
@@ -2632,6 +2674,9 @@ Translated:להרים / לזרוע
 English:Randomize Starting Points
 Translated:אקראי נקודות ההתחלה
 
+English:Ratio or %
+Translated:יחס או%
+
 English:Reach
 Translated:להגיע
 
@@ -2863,6 +2908,9 @@ Translated:הפעל כיול
 English:Run Max if Below
 Translated:הפעלה מקסימלית אם מתחת
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:תקשורת מפרש
 
@@ -2923,6 +2971,9 @@ Translated:חפש בגוגל
 English:Search Results
 Translated:תוצאות חיפוש
 
+English:seconds
+Translated:שניות
+
 English:Select
 Translated:בחר
 
@@ -2949,6 +3000,9 @@ Translated:בחר באפשרות מדפסת
 
 English:Select the baud rate.
 Translated:בחר את קצב השידור.
+
+English:Select the hotend on the left to continue
+Translated:בחר את hotend בצד שמאל כדי להמשיך
 
 English:Select the material you are printing
 Translated:בחר את החומר שאתה מדפיס

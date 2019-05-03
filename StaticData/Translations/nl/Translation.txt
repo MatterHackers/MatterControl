@@ -13,6 +13,12 @@ Translated:- geen -
 English: Once it is finished homing we will heat the bed.
 Translated: Als het eenmaal klaar is, zullen we het bed verwarmen.
 
+English:$/kg
+Translated:$ / Kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Update beschikbaar)
 
@@ -27,6 +33,12 @@ Translated:{0} moet kleiner zijn dan of gelijk aan {1}.
 
 English:<< Back
 Translated:<< Terug
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:2D-laagweergave
@@ -636,6 +648,9 @@ Translated:Kan bestand niet laden
 
 English:Couldn't save file
 Translated:Kon bestand niet opslaan
+
+English:count or mm
+Translated:tellen of mm
 
 English:Create
 Translated:creëren
@@ -1261,6 +1276,9 @@ Translated:Forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Een regel gevonden die {0} tekens lang is.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Hoe kunnen we verbeteren?
 English:How to succeed with MatterControl
 Translated:Hoe te slagen met MatterControl
 
+English:Hz
+Translated:hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideaal voor het klonen van instellingen op verschillende fysieke printers
 
@@ -1675,8 +1696,14 @@ Translated:Laag bovenaan
 English:Layer(s) To Pause
 Translated:Laag (s) om te pauzeren
 
+English:layers
+Translated:lagen
+
 English:Layers / Surface
 Translated:Lagen / oppervlak
+
+English:layers or mm
+Translated:lagen of mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Laat dit als 0 staan om automatische berekening van de extrusieafstand mogelijk te maken.
@@ -1960,8 +1987,23 @@ Translated:Spiegel
 English:Missing
 Translated:Missend
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm of%
+
+English:mm zero to disable
+Translated:mm nul om uit te schakelen
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s of%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:model-
@@ -2632,6 +2674,9 @@ Translated:Heffen / Opbergen
 English:Randomize Starting Points
 Translated:Startpunten randomiseren
 
+English:Ratio or %
+Translated:Ratio of%
+
 English:Reach
 Translated:Bereiken
 
@@ -2863,6 +2908,9 @@ Translated:Voer kalibratie uit
 English:Run Max if Below
 Translated:Voer Max uit als hieronder
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Sailfish-communicatie
 
@@ -2923,6 +2971,9 @@ Translated:Zoek Google
 English:Search Results
 Translated:Zoekresultaten
 
+English:seconds
+Translated:seconden
+
 English:Select
 Translated:kiezen
 
@@ -2949,6 +3000,9 @@ Translated:Selecteer Printer
 
 English:Select the baud rate.
 Translated:Selecteer de baudrate.
+
+English:Select the hotend on the left to continue
+Translated:Selecteer de hotend aan de linkerkant om verder te gaan
 
 English:Select the material you are printing
 Translated:Selecteer het materiaal dat u afdrukt

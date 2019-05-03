@@ -13,6 +13,12 @@ Translated:- Żaden -
 English: Once it is finished homing we will heat the bed.
 Translated: Po zakończeniu bazowania podgrzamy łóżko.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (Aktualizacja dostępna)
 
@@ -27,6 +33,12 @@ Translated:{0} musi być mniejsze lub równe {1}.
 
 English:<< Back
 Translated:<< Powrót
+
+English:°
+Translated:°
+
+English:°C
+Translated:DO
 
 English:2D Layer View
 Translated:Widok warstwy 2D
@@ -636,6 +648,9 @@ Translated:Nie można załadować pliku
 
 English:Couldn't save file
 Translated:Nie można zapisać pliku
+
+English:count or mm
+Translated:liczba lub mm
 
 English:Create
 Translated:Stwórz
@@ -1261,6 +1276,9 @@ Translated:Fora
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Znaleziono linię o długości {0} znaków. n {1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Jak możemy się poprawić?
 English:How to succeed with MatterControl
 Translated:Jak odnieść sukces dzięki MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Idealny do klonowania ustawień na różnych drukarkach fizycznych
 
@@ -1675,8 +1696,14 @@ Translated:Warstwa górna
 English:Layer(s) To Pause
 Translated:Warstwa (y) do wstrzymania
 
+English:layers
+Translated:warstwy
+
 English:Layers / Surface
 Translated:Warstwy / powierzchnia
+
+English:layers or mm
+Translated:warstwy lub mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Pozostaw to jako 0, aby umożliwić automatyczne obliczanie szerokości wytłoczenia.
@@ -1960,8 +1987,23 @@ Translated:Lustro
 English:Missing
 Translated:Brakujący
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm lub%
+
+English:mm zero to disable
+Translated:mm zero, aby wyłączyć
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s lub%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:Model
@@ -2632,6 +2674,9 @@ Translated:Podnieś / Stow
 English:Randomize Starting Points
 Translated:Losuj punkty początkowe
 
+English:Ratio or %
+Translated:Stosunek lub%
+
 English:Reach
 Translated:Dosięgnąć
 
@@ -2863,6 +2908,9 @@ Translated:Uruchom kalibrację
 English:Run Max if Below
 Translated:Biegnij Max jeśli Poniżej
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Komunikacja Sailfish
 
@@ -2923,6 +2971,9 @@ Translated:Wyszukaj w Google
 English:Search Results
 Translated:Wyniki wyszukiwania
 
+English:seconds
+Translated:sekundy
+
 English:Select
 Translated:Wybierz
 
@@ -2949,6 +3000,9 @@ Translated:Wybierz opcję Drukarka
 
 English:Select the baud rate.
 Translated:Wybierz szybkość transmisji.
+
+English:Select the hotend on the left to continue
+Translated:Wybierz hotend po lewej stronie, aby kontynuować
 
 English:Select the material you are printing
 Translated:Wybierz materiał, który drukujesz
