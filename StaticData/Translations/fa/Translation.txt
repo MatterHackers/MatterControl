@@ -13,6 +13,12 @@ Translated:- هیچ یک -
 English: Once it is finished homing we will heat the bed.
 Translated: پس از پایان دادن به خانه، تخت را گرم خواهیم کرد.
 
+English:$/kg
+Translated:$ / کیلوگرم
+
+English:%
+Translated:٪
+
 English:{0} (Update Available)
 Translated:{0} (به روز رسانی در دسترس است)
 
@@ -27,6 +33,12 @@ Translated:{0} باید کمتر یا برابر {1} باشد.
 
 English:<< Back
 Translated:<< بازگشت
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:نمای لایه 2D
@@ -636,6 +648,9 @@ Translated:فایل بارگیری نشد
 
 English:Couldn't save file
 Translated:فایل ذخیره نشد
+
+English:count or mm
+Translated:شمارش یا میلی متر
 
 English:Create
 Translated:ايجاد كردن
@@ -1261,6 +1276,9 @@ Translated:انجمن ها
 English:Found a line that is {0} characters long.\n{1}...
 Translated:یک خط که {0} کاراکتر طولانی است.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:چگونه می توانیم بهبود یابیم؟
 English:How to succeed with MatterControl
 Translated:چگونه می توان با MatterControl موفق شد
 
+English:Hz
+Translated:هرتز
+
 English:Ideal for cloning settings across different physical printers
 Translated:ایده آل برای تنظیمات کلونینگ در سراسر چاپگرهای فیزیکی مختلف
 
@@ -1675,8 +1696,14 @@ Translated:لایه بالا
 English:Layer(s) To Pause
 Translated:لایه (ها) برای توقف
 
+English:layers
+Translated:لایه های
+
 English:Layers / Surface
 Translated:لایه ها / سطح
+
+English:layers or mm
+Translated:لایه ها یا mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:این را به عنوان 0 برای خروج از محدوده عرض اکستروژن اجازه دهید.
@@ -1960,8 +1987,23 @@ Translated:آینه
 English:Missing
 Translated:گمشده
 
+English:mm
+Translated:میلیمتر
+
+English:mm or %
+Translated:میلی متر یا٪
+
+English:mm zero to disable
+Translated:میلی ثانیه صفر برای غیر فعال کردن
+
 English:mm/s
 Translated:میلی متر بر ثانیه
+
+English:mm/s or %
+Translated:میلی متر / ثانیه یا٪
+
+English:mm/s²
+Translated:میلی متر / ثانیه
 
 English:model
 Translated:مدل
@@ -2632,6 +2674,9 @@ Translated:بالا بردن / ایستادن
 English:Randomize Starting Points
 Translated:تصادفی شروع امتیازات
 
+English:Ratio or %
+Translated:نسبت یا٪
+
 English:Reach
 Translated:رسیدن
 
@@ -2863,6 +2908,9 @@ Translated:کالیبراسیون را اجرا کنید
 English:Run Max if Below
 Translated:حداکثر را اجرا کنید در زیر
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:ارتباطات دریایی
 
@@ -2923,6 +2971,9 @@ Translated:جستجو در گوگل
 English:Search Results
 Translated:نتایج جستجو
 
+English:seconds
+Translated:ثانیه
+
 English:Select
 Translated:انتخاب کنید
 
@@ -2949,6 +3000,9 @@ Translated:انتخاب چاپگر
 
 English:Select the baud rate.
 Translated:نرخ بورد را انتخاب کنید.
+
+English:Select the hotend on the left to continue
+Translated:hotend را در سمت چپ برای ادامه انتخاب کنید
 
 English:Select the material you are printing
 Translated:موادی را که چاپ می کنید انتخاب کنید

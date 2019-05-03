@@ -13,6 +13,12 @@ Translated:- لا شيء -
 English: Once it is finished homing we will heat the bed.
 Translated: بمجرد الانتهاء من صاروخ موجه سنقوم بتسخين السرير.
 
+English:$/kg
+Translated:$ / كغ
+
+English:%
+Translated:٪
+
 English:{0} (Update Available)
 Translated:{0} (التحديث متوفر)
 
@@ -27,6 +33,12 @@ Translated:{0} يجب أن يكون أقل من أو يساوي {1}.
 
 English:<< Back
 Translated:<< رجوع
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:عرض طبقة ثنائية الأبعاد
@@ -636,6 +648,9 @@ Translated:لا يمكن تحميل الملف
 
 English:Couldn't save file
 Translated:لا يمكن حفظ الملف
+
+English:count or mm
+Translated:العد أو مم
 
 English:Create
 Translated:خلق
@@ -1261,6 +1276,9 @@ Translated:المنتديات
 English:Found a line that is {0} characters long.\n{1}...
 Translated:العثور على سطر يبلغ طوله {0} حرفًا.\n{1} ...
 
+English:g/cm³
+Translated:ز / سم مكعب
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:كيف يمكن أن نتحسن؟
 English:How to succeed with MatterControl
 Translated:كيف تنجح مع MatterControl
 
+English:Hz
+Translated:هرتز
+
 English:Ideal for cloning settings across different physical printers
 Translated:مثالي لاستنساخ الإعدادات عبر طابعات فعلية مختلفة
 
@@ -1675,8 +1696,14 @@ Translated:طبقة الأعلى
 English:Layer(s) To Pause
 Translated:طبقة (طبقات) للتوقف
 
+English:layers
+Translated:طبقات
+
 English:Layers / Surface
 Translated:طبقات / السطح
+
+English:layers or mm
+Translated:طبقات أو مم
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:اترك هذا كـ 0 للسماح بالحساب التلقائي لعرض البثق.
@@ -1960,8 +1987,23 @@ Translated:مرآة
 English:Missing
 Translated:مفقود
 
+English:mm
+Translated:مم
+
+English:mm or %
+Translated:مم أو ٪
+
+English:mm zero to disable
+Translated:مم الصفر لتعطيل
+
 English:mm/s
 Translated:ملم / ثانية
+
+English:mm/s or %
+Translated:مم / ثانية أو٪
+
+English:mm/s²
+Translated:مم / ق ²
 
 English:model
 Translated:نموذج
@@ -2632,6 +2674,9 @@ Translated:رفع / التخزين
 English:Randomize Starting Points
 Translated:العشوائية نقاط البداية
 
+English:Ratio or %
+Translated:نسبة أو ٪
+
 English:Reach
 Translated:تصل
 
@@ -2863,6 +2908,9 @@ Translated:تشغيل المعايرة
 English:Run Max if Below
 Translated:تشغيل ماكس إذا أدناه
 
+English:s
+Translated:الصورة
+
 English:Sailfish Communication
 Translated:سمكة الزعنفة الشراعية الاتصالات
 
@@ -2923,6 +2971,9 @@ Translated:ابحث في جوجل
 English:Search Results
 Translated:نتائج البحث
 
+English:seconds
+Translated:ثواني
+
 English:Select
 Translated:تحديد
 
@@ -2949,6 +3000,9 @@ Translated:حدد طابعة
 
 English:Select the baud rate.
 Translated:حدد معدل باود.
+
+English:Select the hotend on the left to continue
+Translated:حدد hotend على اليسار للمتابعة
 
 English:Select the material you are printing
 Translated:حدد المواد التي تطبعها

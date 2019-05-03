@@ -13,6 +13,12 @@ Translated:- никто -
 English: Once it is finished homing we will heat the bed.
 Translated: Как только он закончит возвращаться, мы нагреем кровать.
 
+English:$/kg
+Translated:$ / Кг
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (доступно обновление)
 
@@ -27,6 +33,12 @@ Translated:{0} должно быть меньше или равно {1}.
 
 English:<< Back
 Translated:<< Назад
+
+English:°
+Translated:°
+
+English:°C
+Translated:° С
 
 English:2D Layer View
 Translated:2D Layer View
@@ -485,7 +497,7 @@ English:Cloud Library
 Translated:Облачная библиотека
 
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
-Translated:Грубая калибровка завершена, теперь мы сделаем нормальную калибровку для повышения точности.
+Translated:Грубая калибровка завершена, теперь мы сделаем нормальную калибровку для повышения точности
 
 English:Coarse Calibration: If your printer is way off
 Translated:Грубая калибровка: если ваш принтер выключен
@@ -636,6 +648,9 @@ Translated:Не удалось загрузить файл
 
 English:Couldn't save file
 Translated:Не удалось сохранить файл
+
+English:count or mm
+Translated:количество или мм
 
 English:Create
 Translated:Создайте
@@ -1261,6 +1276,9 @@ Translated:Форумы
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Найдена строка длиной {0} символов.\n{1} ...
 
+English:g/cm³
+Translated:г / см
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Как мы можем улучшить?
 English:How to succeed with MatterControl
 Translated:Как добиться успеха с MatterControl
 
+English:Hz
+Translated:Гц
+
 English:Ideal for cloning settings across different physical printers
 Translated:Идеально подходит для клонирования настроек на разных физических принтерах
 
@@ -1675,8 +1696,14 @@ Translated:Верхний слой
 English:Layer(s) To Pause
 Translated:Слой (ы), чтобы приостановить
 
+English:layers
+Translated:слои
+
 English:Layers / Surface
 Translated:Слои / Поверхность
+
+English:layers or mm
+Translated:слои или мм
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Оставьте это как 0, чтобы позволить автоматический расчет ширины экструзии.
@@ -1960,8 +1987,23 @@ Translated:Зеркало
 English:Missing
 Translated:Отсутствует
 
+English:mm
+Translated:мм
+
+English:mm or %
+Translated:мм или%
+
+English:mm zero to disable
+Translated:мм ноль для отключения
+
 English:mm/s
 Translated:мм / с
+
+English:mm/s or %
+Translated:мм / с или%
+
+English:mm/s²
+Translated:мм / с²
 
 English:model
 Translated:модель
@@ -2632,6 +2674,9 @@ Translated:Поднять / Стоу
 English:Randomize Starting Points
 Translated:Рандомизировать начальные точки
 
+English:Ratio or %
+Translated:Соотношение или%
+
 English:Reach
 Translated:достичь
 
@@ -2863,6 +2908,9 @@ Translated:Выполнить калибровку
 English:Run Max if Below
 Translated:Запустите Макс, если ниже
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Парусник Связь
 
@@ -2923,6 +2971,9 @@ Translated:Поиск в Google
 English:Search Results
 Translated:результаты поиска
 
+English:seconds
+Translated:секунд
+
 English:Select
 Translated:Выбрать
 
@@ -2949,6 +3000,9 @@ Translated:Выберите принтер
 
 English:Select the baud rate.
 Translated:Выберите скорость передачи.
+
+English:Select the hotend on the left to continue
+Translated:Выберите отель слева, чтобы продолжить
 
 English:Select the material you are printing
 Translated:Выберите материал, который вы печатаете

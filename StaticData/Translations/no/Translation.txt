@@ -13,6 +13,12 @@ Translated:- ingen -
 English: Once it is finished homing we will heat the bed.
 Translated: Når det er ferdig med homing, vil vi varme opp sengen.
 
+English:$/kg
+Translated:$ / Kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (oppdatering tilgjengelig)
 
@@ -27,6 +33,12 @@ Translated:{0} må være mindre enn eller lik {1}.
 
 English:<< Back
 Translated:<< Tilbake
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:2D Layer View
@@ -636,6 +648,9 @@ Translated:Kunne ikke laste inn fil
 
 English:Couldn't save file
 Translated:Kunne ikke lagre filen
+
+English:count or mm
+Translated:telle eller mm
 
 English:Create
 Translated:Skape
@@ -1261,6 +1276,9 @@ Translated:Forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Funnet en linje som er {0} tegn lang.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:G0
 
@@ -1471,6 +1489,9 @@ Translated:Hvordan kan vi forbedre?
 English:How to succeed with MatterControl
 Translated:Hvordan lykkes med MatterControl
 
+English:Hz
+Translated:hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Ideell for kloning av innstillinger på tvers av forskjellige fysiske skrivere
 
@@ -1675,8 +1696,14 @@ Translated:Layer Top
 English:Layer(s) To Pause
 Translated:Lag (er) for å sette på pause
 
+English:layers
+Translated:lagene
+
 English:Layers / Surface
 Translated:Lag / overflate
+
+English:layers or mm
+Translated:lag eller mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:La dette være 0 for å tillate automatisk beregning av ekstruderingsbredde.
@@ -1960,8 +1987,23 @@ Translated:Speil
 English:Missing
 Translated:Savnet
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm eller%
+
+English:mm zero to disable
+Translated:mm null for å deaktivere
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s eller%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:modell
@@ -2632,6 +2674,9 @@ Translated:Hev / Stow
 English:Randomize Starting Points
 Translated:Randomize Startpunkter
 
+English:Ratio or %
+Translated:Forhold eller%
+
 English:Reach
 Translated:Å nå
 
@@ -2863,6 +2908,9 @@ Translated:Kjør kalibrering
 English:Run Max if Below
 Translated:Kjør Max hvis nedenfor
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Sailfish Communication
 
@@ -2923,6 +2971,9 @@ Translated:Søk på Google
 English:Search Results
 Translated:Søkeresultater
 
+English:seconds
+Translated:sekunder
+
 English:Select
 Translated:Å velge
 
@@ -2949,6 +3000,9 @@ Translated:Velg skriver
 
 English:Select the baud rate.
 Translated:Velg baud rate.
+
+English:Select the hotend on the left to continue
+Translated:Velg hotend til venstre for å fortsette
 
 English:Select the material you are printing
 Translated:Velg materialet du skriver ut

@@ -13,6 +13,12 @@ Translated:- aucun -
 English: Once it is finished homing we will heat the bed.
 Translated: Une fois que vous aurez fini de vous diriger, nous chaufferons le lit.
 
+English:$/kg
+Translated:$ / kg
+
+English:%
+Translated:%
+
 English:{0} (Update Available)
 Translated:{0} (mise à jour disponible)
 
@@ -27,6 +33,12 @@ Translated:{0} doit être inférieur ou égal à {1}.
 
 English:<< Back
 Translated:<< retour
+
+English:°
+Translated:°
+
+English:°C
+Translated:° C
 
 English:2D Layer View
 Translated:Vue de couche 2D
@@ -636,6 +648,9 @@ Translated:Impossible de charger le fichier
 
 English:Couldn't save file
 Translated:Impossible de sauvegarder le fichier
+
+English:count or mm
+Translated:compter ou mm
 
 English:Create
 Translated:Créer
@@ -1261,6 +1276,9 @@ Translated:Les forums
 English:Found a line that is {0} characters long.\n{1}...
 Translated:Vous avez trouvé une ligne de {0} caractères.\n{1} ...
 
+English:g/cm³
+Translated:g / cm³
+
 English:g0
 Translated:g0
 
@@ -1471,6 +1489,9 @@ Translated:Comment pouvons nous nous améliorer?
 English:How to succeed with MatterControl
 Translated:Comment réussir avec MatterControl
 
+English:Hz
+Translated:Hz
+
 English:Ideal for cloning settings across different physical printers
 Translated:Idéal pour les paramètres de clonage sur différentes imprimantes physiques
 
@@ -1675,8 +1696,14 @@ Translated:Couche supérieure
 English:Layer(s) To Pause
 Translated:Couche (s) à mettre en pause
 
+English:layers
+Translated:couches
+
 English:Layers / Surface
 Translated:Couches / surface
+
+English:layers or mm
+Translated:couches ou mm
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
 Translated:Laissez-le à 0 pour permettre le calcul automatique de la largeur d'extrusion.
@@ -1835,7 +1862,7 @@ English:Make Component
 Translated:Faire composant
 
 English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
-Translated:Assurez-vous que MatterControl émule dans le logiciel les limites du lit et les arrêts terminaux et empêche l’imprimante de se déplacer vers des emplacements invalides.
+Translated:Assurez-vous que MatterControl émule dans le logiciel les limites de lit et les arrêts terminaux et empêche l’imprimante de se déplacer vers des emplacements non valides.
 
 English:Make Selection
 Translated:Faire une sélection
@@ -1960,8 +1987,23 @@ Translated:Miroir
 English:Missing
 Translated:Manquant
 
+English:mm
+Translated:mm
+
+English:mm or %
+Translated:mm ou%
+
+English:mm zero to disable
+Translated:mm zéro pour désactiver
+
 English:mm/s
 Translated:mm / s
+
+English:mm/s or %
+Translated:mm / s ou%
+
+English:mm/s²
+Translated:mm / s²
 
 English:model
 Translated:modèle
@@ -2632,6 +2674,9 @@ Translated:Raise / Stow
 English:Randomize Starting Points
 Translated:Randomiser les points de départ
 
+English:Ratio or %
+Translated:Ratio ou%
+
 English:Reach
 Translated:Atteindre
 
@@ -2863,6 +2908,9 @@ Translated:Effectuer l'étalonnage
 English:Run Max if Below
 Translated:Run Max si en dessous
 
+English:s
+Translated:s
+
 English:Sailfish Communication
 Translated:Communication Sailfish
 
@@ -2923,6 +2971,9 @@ Translated:Recherche google
 English:Search Results
 Translated:Résultats de la recherche
 
+English:seconds
+Translated:secondes
+
 English:Select
 Translated:Sélectionner
 
@@ -2949,6 +3000,9 @@ Translated:Sélectionner une imprimante
 
 English:Select the baud rate.
 Translated:Sélectionnez le débit en bauds.
+
+English:Select the hotend on the left to continue
+Translated:Sélectionnez le hotend à gauche pour continuer
 
 English:Select the material you are printing
 Translated:Sélectionnez le matériau que vous imprimez
