@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<IDrawable> drawables = new List<IDrawable>();
 		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
 		private Vector3 lastEmulatorPosition;
+		private bool emulatorHooked;
+		private long lastEmulatorDrawMs;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -467,6 +469,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (sceneContext.Printer.Connection.serialPort is PrinterEmulator.Emulator emulator)
 			{
+				void NozzlePositionChanged(object s, EventArgs e2)
+				{
+					// limit max number of updates per second to 10
+					if (UiThread.CurrentTimerMs > lastEmulatorDrawMs + 100)
+					{
+						UiThread.RunOnIdle(Invalidate);
+						// set it to now
+						lastEmulatorDrawMs = UiThread.CurrentTimerMs;
+					}
+				}
+
 				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
 				GLHelper.Render(PlatonicSolids.CreateCube(1, 1, 10),
 					MaterialRendering.Color(emulator.ExtruderIndex),
@@ -474,10 +487,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					RenderTypes.Shaded,
 					matrix * World.ModelviewMatrix);
 
-				if (emulator.CurrentPosition != lastEmulatorPosition)
+				if (!emulatorHooked)
 				{
-					Invalidate();
+					emulator.DestinationChanged += NozzlePositionChanged;
+					emulatorHooked = true;
 				}
+
+				Closed += (s, e3) => emulator.DestinationChanged -= NozzlePositionChanged;
 
 				lastEmulatorPosition = emulator.CurrentPosition;
 			}
