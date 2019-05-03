@@ -294,12 +294,34 @@ namespace MatterControl.Printing
 				return 0;
 			}
 
-			if (IndexOfLayerStart.Count > 2)
+			// set it to a number that might be reasonable
+			var layerHeight = .2;
+			if (IndexOfLayerStart.Count > layerIndex + 1)
 			{
-				return GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
+				layerHeight = GCodeCommandQueue[IndexOfLayerStart[layerIndex + 1]].Z - GCodeCommandQueue[IndexOfLayerStart[layerIndex]].Z;
+			}
+			else if (IndexOfLayerStart.Count > 2)
+			{
+				layerHeight = GCodeCommandQueue[IndexOfLayerStart[2]].Z - GCodeCommandQueue[IndexOfLayerStart[1]].Z;
 			}
 
-			return .5;
+			if (layerHeight < .01)
+			{
+				layerIndex--;
+				while (layerIndex >= 0
+					&& layerHeight < .01)
+				{
+					// walk back to find a layer height that seems like it might be right
+					if (layerHeight < IndexOfLayerStart.Count - 2)
+					{
+						layerHeight = GCodeCommandQueue[IndexOfLayerStart[layerIndex + 1]].Z - GCodeCommandQueue[IndexOfLayerStart[layerIndex]].Z;
+					}
+
+					layerIndex--;
+				}
+			}
+
+			return layerHeight;
 		}
 
 		public override int GetLayerIndex(int instructionIndex)
