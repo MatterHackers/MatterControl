@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 
 		public bool RenderMoves
 		{
-			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderMoves) != "False";
+			get => UserSettings.Instance.get(UserSettingsKey.GcodeViewerRenderMoves) == "True";
 			set
 			{
 				if (this.RenderMoves != value)
