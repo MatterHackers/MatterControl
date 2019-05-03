@@ -33,7 +33,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.PrinterEmulator
 {
-	public partial class Emulator : IFrostedSerialPort, IDisposable
+	public class Emulator : IFrostedSerialPort, IDisposable
 	{
 		/// <summary>
 		/// The number of seconds the emulator should take to heat up to a given target.
@@ -122,17 +122,17 @@ namespace MatterHackers.PrinterEmulator
 
 		public bool SimulateLineErrors { get; set; } = false;
 
-		private Vector3 _position;
+		private Vector3 _destination;
 
 		public Vector3 Destination
 		{
-			get => _position;
+			get => _destination;
 
 			private set
 			{
-				if (value != _position)
+				if (value != _destination)
 				{
-					_position = value;
+					_destination = value;
 					DestinationChanged?.Invoke(null, null);
 				}
 			}
@@ -235,7 +235,7 @@ namespace MatterHackers.PrinterEmulator
 						if (command.StartsWith("G0") || command.StartsWith("G1"))
 						{
 							var startPostion = CurrentPosition;
-							var timeToMove_ms = (long)((CurrentPosition - Destination).Length * FeedRate) * 1000;
+							var timeToMove_ms = (long)((CurrentPosition - Destination).Length / FeedRate * 1000.0 * 60.5);
 							var startTime_ms = UiThread.CurrentTimerMs;
 							var doneTime_ms = startTime_ms + timeToMove_ms;
 							// wait for the amount of time it takes to move the extruder
@@ -344,9 +344,9 @@ namespace MatterHackers.PrinterEmulator
 
 		private string HomePosition(string command)
 		{
-			_position.X = 0;
-			_position.Y = 0;
-			_position.Z = 0;
+			_destination.X = 0;
+			_destination.Y = 0;
+			_destination.Z = 0;
 			return "ok\n";
 		}
 
@@ -542,7 +542,7 @@ namespace MatterHackers.PrinterEmulator
 
 		private string ParseMovmentCommand(string command)
 		{
-			var newPosition = default(Vector3);
+			var newPosition = Destination;
 			GetFirstNumberAfter("X", command, ref newPosition.X);
 			GetFirstNumberAfter("Y", command, ref newPosition.Y);
 			GetFirstNumberAfter("Z", command, ref newPosition.Z);

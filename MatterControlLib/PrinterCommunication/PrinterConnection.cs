@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private readonly StartsWithLineActions readLineStartCallBacks = new StartsWithLineActions();
 
 		// we start out by setting it to a nothing file
-		private IFrostedSerialPort serialPort;
+		public IFrostedSerialPort SerialPort { get; private set; }
 
 		private double _targetBedTemperature;
 
@@ -896,12 +896,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason)
 		{
 			// Shutdown the serial port
-			if (serialPort != null)
+			if (SerialPort != null)
 			{
 				// Close and dispose the serial port
-				serialPort.Close();
-				serialPort.Dispose();
-				serialPort = null;
+				SerialPort.Close();
+				SerialPort.Dispose();
+				SerialPort = null;
 			}
 
 			// Notify
@@ -1001,7 +1001,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										// we're actually doing the bulk of the connection time in CreateAndOpen
 										CommunicationState = CommunicationStates.AttemptingToConnect;
 
-										serialPort = portFactory.CreateAndOpen(serialPortName, Printer.Settings, baudRate, true);
+										SerialPort = portFactory.CreateAndOpen(serialPortName, Printer.Settings, baudRate, true);
 #if __ANDROID__
 										ToggleHighLowHigh(serialPort);
 #endif
@@ -1021,10 +1021,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										while (true)
 										{
 											// Plugins required probing to fill read buffer
-											var na = serialPort.BytesToRead;
+											var na = SerialPort.BytesToRead;
 
 											// Read, sanitize, store
-											string response = serialPort.ReadExisting().Replace("\r\n", "\n").Replace('\r', '\n');
+											string response = SerialPort.ReadExisting().Replace("\r\n", "\n").Replace('\r', '\n');
 											sb.Append(response);
 
 											bool hasNewline = response.Contains('\n');
@@ -1189,13 +1189,13 @@ You will then need to logout and log back in to the computer for the changes to 
 
 				CommunicationState = CommunicationStates.Disconnecting;
 				currentReadThreadIndex++;
-				if (serialPort != null)
+				if (SerialPort != null)
 				{
-					serialPort.Close();
-					serialPort.Dispose();
+					SerialPort.Close();
+					SerialPort.Dispose();
 				}
 
-				serialPort = null;
+				SerialPort = null;
 			}
 			else
 			{
@@ -1490,7 +1490,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		{
 			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
 			// current approach results in unpredictable behavior if the caller fails to close the connection
-			if (serialPort == null && this.Printer.Settings != null)
+			if (SerialPort == null && this.Printer.Settings != null)
 			{
 				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
 				resetSerialPort.Open();
@@ -1511,7 +1511,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			timeSinceLastReadAnything.Restart();
 			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
 			while (CommunicationState == CommunicationStates.AttemptingToConnect
-				|| (this.IsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
+				|| (this.IsConnected && SerialPort != null && SerialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
 			{
 				if ((this.IsConnected
 					|| this.CommunicationState == CommunicationStates.AttemptingToConnect)
@@ -1522,13 +1522,13 @@ You will then need to logout and log back in to the computer for the changes to 
 
 				try
 				{
-					while (serialPort != null
-						&& serialPort.BytesToRead > 0
+					while (SerialPort != null
+						&& SerialPort.BytesToRead > 0
 						&& readThreadHolder.IsCurrentThread())
 					{
 						lock (locker)
 						{
-							string allDataRead = serialPort.ReadExisting();
+							string allDataRead = SerialPort.ReadExisting();
 							allDataRead = allDataRead.Replace("\r\n", "\n");
 							allDataRead = allDataRead.Replace('\r', '\n');
 							dataLastRead += allDataRead;
@@ -1730,21 +1730,21 @@ You will then need to logout and log back in to the computer for the changes to 
 				if (Printer.Settings.PrinterSelected)
 				{
 					// first make sure we are not printing if possible (cancel slicing)
-					if (serialPort != null) // we still have a serial port
+					if (SerialPort != null) // we still have a serial port
 					{
 						Stop(false);
 						ClearQueuedGCode();
 
 						CommunicationState = CommunicationStates.Disconnecting;
 						currentReadThreadIndex++;
-						ToggleHighLowHigh(serialPort);
-						if (serialPort != null)
+						ToggleHighLowHigh(SerialPort);
+						if (SerialPort != null)
 						{
-							serialPort.Close();
-							serialPort.Dispose();
+							SerialPort.Close();
+							SerialPort.Dispose();
 						}
 
-						serialPort = null;
+						SerialPort = null;
 						// make sure we clear out the stream processors
 						CreateStreamProcessors();
 						CommunicationState = CommunicationStates.Disconnected;
@@ -2113,11 +2113,11 @@ You will then need to logout and log back in to the computer for the changes to 
 
 					CommunicationState = CommunicationStates.Disconnecting;
 					currentReadThreadIndex++;
-					if (serialPort != null)
+					if (SerialPort != null)
 					{
-						serialPort.Close();
-						serialPort.Dispose();
-						serialPort = null;
+						SerialPort.Close();
+						SerialPort.Dispose();
+						SerialPort = null;
 					}
 
 					CommunicationState = CommunicationStates.Disconnected;
@@ -2790,7 +2790,7 @@ You will then need to logout and log back in to the computer for the changes to 
 		{
 			if (this.IsConnected || CommunicationState == CommunicationStates.AttemptingToConnect)
 			{
-				if (serialPort != null && serialPort.IsOpen)
+				if (SerialPort != null && SerialPort.IsOpen)
 				{
 					if (lineWithoutChecksum.StartsWith("G92"))
 					{
@@ -2858,7 +2858,7 @@ You will then need to logout and log back in to the computer for the changes to 
 						{
 							lock (locker)
 							{
-								serialPort.Write(lineToWrite);
+								SerialPort.Write(lineToWrite);
 								timeSinceLastWrite.Restart();
 								timeHaveBeenWaitingForOK.Restart();
 							}

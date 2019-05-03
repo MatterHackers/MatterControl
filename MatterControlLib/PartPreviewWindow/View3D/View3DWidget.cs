@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public TrackballTumbleWidget TrackballTumbleWidget { get; private set;}
+		public TrackballTumbleWidget TrackballTumbleWidget { get; private set; }
 
 		public InteractionLayer InteractionLayer { get; }
 
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.Name = "View3DWidget";
 			this.BackgroundColor = theme.BedBackgroundColor;
-			this.HAnchor = HAnchor.Stretch; //	HAnchor.MaxFitOrStretch,
+			this.HAnchor = HAnchor.Stretch; // HAnchor.MaxFitOrStretch,
 			this.VAnchor = VAnchor.Stretch; //  VAnchor.MaxFitOrStretch
 
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Right | HAnchor.Fit,
 				VAnchor = VAnchor.Top | VAnchor.Fit,
-				//Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
+				// Margin = new BorderDouble(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 2),
 				BackgroundColor = theme.MinimalShade,
 				Name = "View Options Bar"
 			};
@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var bounds = Scene.GetAxisAlignedBoundingBox();
 
-			if(bounds.XSize > 0)
+			if (bounds.XSize > 0)
 			{
 				zNear = double.PositiveInfinity;
 				zFar = double.NegativeInfinity;
@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
 
 			// Build workspace actions, each having a unique ID
-			var actions = new []
+			var actions = new[]
 			{
 				new NamedAction()
 				{
@@ -483,7 +483,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Action = this.PushToPrinterAndPrint,
 					IsEnabled = () => sceneContext.EditableScene
 						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
 				},
 				new NamedAction()
 				{
@@ -524,7 +524,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 					Title = "Remove".Localize(),
 					Action = sceneContext.Scene.DeleteSelection,
-					IsEnabled = () =>  sceneContext.Scene.SelectedItem != null
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
 				},
 				new NamedAction()
 				{
@@ -534,13 +534,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
-							new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+							new[] { new InMemoryLibraryItem(sceneContext.Scene) },
 							centerOnBed: false,
 							printer: printer);
 					},
 					IsEnabled = () => sceneContext.EditableScene
 						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
 				},
 				new NamedAction()
 				{
@@ -618,7 +618,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
-			if (this.Printer !=null)
+			if (this.Printer != null)
 			{
 				this.Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 			}
@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void UpdateRenderView(object sender, EventArgs e)
 		{
-			TrackballTumbleWidget.CenterOffsetX  = -modelViewSidePanel.Width;
+			TrackballTumbleWidget.CenterOffsetX = -modelViewSidePanel.Width;
 		}
 
 		private void SceneContext_SceneLoaded(object sender, EventArgs e)
@@ -1056,7 +1056,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (selectedItem != null)
 			{
-				//DrawTestToGl(graphics2D, selectedItem);
+				// DrawTestToGl(graphics2D, selectedItem);
 			}
 		}
 
@@ -1318,7 +1318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IObject3D selectedItem = Scene.SelectedItem;
 
 			lastMouseMove = mouseEvent.Position;
-			if(lastMouseMove != mouseDownPositon)
+			if (lastMouseMove != mouseDownPositon)
 			{
 				mouseDownPositon = Vector2.Zero;
 			}
@@ -1545,7 +1545,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				parents.Add(parent);
 				parent = parent.Parent;
 			}
-			Vector2 offset = new Vector2();
+			Vector2 offset = default(Vector2);
 			for (int i = parents.Count - 1; i >= 0; i--)
 			{
 				offset += parents[i].OriginRelativeParent;
@@ -1630,7 +1630,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										if (object3D.TraceData().Contains(info.HitPosition))
 										{
 											CurrentSelectInfo.PlaneDownHitPos = info.HitPosition;
-											CurrentSelectInfo.LastMoveDelta = new Vector3();
+											CurrentSelectInfo.LastMoveDelta = default(Vector3);
 											selectedHitItem = object3D;
 											break;
 										}
@@ -1640,7 +1640,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (selectedHitItem != null)
 								{
 									selectedItem.Children.Remove(selectedHitItem);
-									if(selectedItem.Children.Count == 0)
+									if (selectedItem.Children.Count == 0)
 									{
 										Scene.SelectedItem = null;
 									}
@@ -1714,7 +1714,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 					altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 
-				var actions = new[] {
+				var actions = new[]
+				{
 							new ActionSeparator(),
 							WorkspaceActions["Cut"],
 							WorkspaceActions["Copy"],
@@ -1723,7 +1724,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							new NamedAction()
 							{
 			 					Title = "Save As".Localize(),
-								Action = () => UiThread.RunOnIdle(() =>
+			 					Action = () => UiThread.RunOnIdle(() =>
 								{
 									DialogWindow.Show(
 										new SaveAsPage(
@@ -1745,7 +1746,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 												}
 											}));
 								}),
-								IsEnabled = () => sceneContext.EditableScene
+			 					IsEnabled = () => sceneContext.EditableScene
 							},
 							new NamedAction()
 							{
@@ -1755,7 +1756,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								Action = () =>
 								{
 									ApplicationController.Instance.ExportLibraryItems(
-										new[]{ new InMemoryLibraryItem(selectedItem)},
+										new[] { new InMemoryLibraryItem(selectedItem) },
 										centerOnBed: false,
 										printer: printer);
 								}
@@ -1786,7 +1787,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				var actions = new[] {
+				var actions = new[]
+                {
 					new ActionSeparator(),
 					new NamedAction()
 					{
@@ -1940,7 +1942,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (object3D.TraceData().Contains(intersectionInfo.HitPosition))
 					{
 						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
-						CurrentSelectInfo.LastMoveDelta = new Vector3();
+						CurrentSelectInfo.LastMoveDelta = default(Vector3);
 						return object3D;
 					}
 				}
@@ -1971,11 +1973,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					sceneContext.World.Render3DLine(
 						drawCenter - new Vector3(-50, 0, 0),
-						drawCenter - new Vector3(50, 0, 0), drawColor, zBuffer, 2);
+						drawCenter - new Vector3(50, 0, 0),
+						drawColor,
+						zBuffer,
+						2);
 
 					sceneContext.World.Render3DLine(
 						drawCenter - new Vector3(0, -50, 0),
-						drawCenter - new Vector3(0, 50, 0), drawColor, zBuffer, 2);
+						drawCenter - new Vector3(0, 50, 0),
+						drawColor,
+						zBuffer,
+						2);
 
 					drawColor = Color.Black;
 					drawCenter.Z = 0;

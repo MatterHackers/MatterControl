@@ -43,6 +43,7 @@ using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PrinterEmulator;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -68,6 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private List<IDrawable> drawables = new List<IDrawable>();
 		private List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
+		private Vector3 lastEmulatorPosition;
 
 		public bool AllowBedRenderingWhenEmpty { get; set; }
 
@@ -143,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Vector3 renderPosition = bounds.Center;
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
-						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
+						var screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
 
 						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
@@ -186,7 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					AxisAlignedBoundingBox bounds = child.TraceData().GetAxisAlignedBoundingBox();
 
 					RectangleDouble screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
-					for(int i=0; i<4; i++)
+					for (int i = 0; i < 4; i++)
 					{
 						screenBoundsOfObject3D.ExpandToInclude(this.World.GetScreenPosition(bounds.GetTopCorner(i)));
 						screenBoundsOfObject3D.ExpandToInclude(this.World.GetScreenPosition(bounds.GetBottomCorner(i)));
@@ -196,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						Vector3 renderPosition = bounds.Center;
 						Vector2 objectCenterScreenSpace = this.World.GetScreenPosition(renderPosition);
-						Point2D screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
+						var screenPositionOfObject3D = new Point2D((int)objectCenterScreenSpace.X, (int)objectCenterScreenSpace.Y);
 
 						foundChildren.Add(new WidgetAndPosition(this, screenPositionOfObject3D, object3DName, child));
 					}
@@ -213,12 +215,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in object3D.VisibleMeshes())
 			{
 				// check for correct persistable rendering
-				if(InteractionLayer.ViewOnlyTexture != null
+				if (InteractionLayer.ViewOnlyTexture != null
 					&& item.Mesh.Faces.Count > 0)
 				{
 					ImageBuffer faceTexture = null;
 
-					//item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
+					// item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
 					bool hasPersistableTexture = faceTexture == InteractionLayer.ViewOnlyTexture;
 
 					if (item.WorldPersistable())
@@ -256,7 +258,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						item.WorldMatrix(),
 						sceneContext.ViewState.RenderType,
 						item.WorldMatrix() * World.ModelviewMatrix,
-						darkWireframe, () => Invalidate());
+						darkWireframe,
+						() => Invalidate());
 				}
 				else if (drawColor != Color.Transparent)
 				{
@@ -269,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
 
 				// Invoke all item Drawables
-				foreach(var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))
+				foreach (var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))
 				{
 					drawable.Draw(this, item, isSelected, e, Matrix4X4.Identity, this.World);
 				}
@@ -326,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 
 							// Validate against active hotends
-							foreach(var hotendIndex in activeHotends)
+							foreach (var hotendIndex in activeHotends)
 							{
 								var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
 								if (!hotendBounds.Contains(itemBounds))
@@ -345,7 +348,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if(drawColor.alpha != 255
+			if (drawColor.alpha != 255
 				&& item is Object3D item3D)
 			{
 				item3D.EnsureTransparentSorting();
@@ -378,7 +381,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return drawColor;
 		}
 
-		public enum EditorType { Printer, Part }
+		public enum EditorType
+		{
+			Printer,
+			Part
+		}
 
 		public EditorType EditorMode { get; set; } = EditorType.Part;
 
@@ -463,6 +470,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
+			if (sceneContext.Printer.Connection.SerialPort is Emulator emulator)
+			{
+				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
+				GLHelper.Render(PlatonicSolids.CreateCube(1, 1, 10),
+					MaterialRendering.Color(emulator.ExtruderIndex),
+					matrix,
+					RenderTypes.Shaded,
+					matrix * World.ModelviewMatrix);
+
+				if (emulator.CurrentPosition != lastEmulatorPosition)
+				{
+					Invalidate();
+				}
+
+				lastEmulatorPosition = emulator.CurrentPosition;
+			}
+
 			transparentMeshes.Sort(BackToFrontXY);
 
 			var bedNormalInViewSpace = Vector3Ex.TransformNormal(Vector3.UnitZ, World.ModelviewMatrix).GetNormal();
@@ -477,7 +501,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			var wireColor = Color.Transparent;
-			switch(modelRenderStyle)
+			switch (modelRenderStyle)
 			{
 				case ModelRenderStyle.Wireframe:
 					wireColor = darkWireframe;
@@ -544,7 +568,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawInteractionVolumes(DrawEventArgs e)
 		{
-			if(SuppressUiVolumes)
+			if (SuppressUiVolumes)
 			{
 				return;
 			}

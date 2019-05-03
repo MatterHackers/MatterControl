@@ -47,8 +47,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
 			// we don't change the setting while printing
-			if (stringEvent.Data == SettingsKey.t1_extrusion_move_speed_multiplier
-				&& !printer.Connection.Printing)
+			if (stringEvent.Data == SettingsKey.t1_extrusion_move_speed_multiplier)
 			{
 				t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
 			}
