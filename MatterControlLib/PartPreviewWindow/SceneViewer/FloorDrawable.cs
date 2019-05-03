@@ -122,8 +122,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GL.Disable(EnableCap.Lighting);
 				GL.Disable(EnableCap.CullFace);
 
+				var bedColor = LookingDownOnBed ? theme.BedColor : theme.UnderBedColor;
+
+				if (bedColor.Alpha0To1 < 1)
+				{
+					GL.Enable(EnableCap.Blend);
+				}
+				else
+				{
+					GL.Disable(EnableCap.Blend);
+				}
+
 				// Draw grid background with active BedColor
-				GL.Color4(theme.BedColor);
+				GL.Color4(bedColor);
 				GL.Begin(BeginMode.TriangleStrip);
 				GL.Vertex3(-width, -width, 0);
 				GL.Vertex3(-width, width, 0);
