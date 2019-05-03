@@ -465,8 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-#if !__ANDROID__
-			if (sceneContext.Printer.Connection.SerialPort is PrinterEmulator.Emulator emulator)
+			if (sceneContext.Printer.Connection.serialPort is PrinterEmulator.Emulator emulator)
 			{
 				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
 				GLHelper.Render(PlatonicSolids.CreateCube(1, 1, 10),
@@ -482,7 +481,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				lastEmulatorPosition = emulator.CurrentPosition;
 			}
-#endif
 
 			transparentMeshes.Sort(BackToFrontXY);
 
