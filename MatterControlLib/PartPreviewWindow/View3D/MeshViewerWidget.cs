@@ -32,18 +32,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.PrinterEmulator;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
@@ -470,7 +465,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (sceneContext.Printer.Connection.SerialPort is Emulator emulator)
+#if !__ANDROID__
+			if (sceneContext.Printer.Connection.SerialPort is PrinterEmulator.Emulator emulator)
 			{
 				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
 				GLHelper.Render(PlatonicSolids.CreateCube(1, 1, 10),
@@ -486,6 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				lastEmulatorPosition = emulator.CurrentPosition;
 			}
+#endif
 
 			transparentMeshes.Sort(BackToFrontXY);
 
