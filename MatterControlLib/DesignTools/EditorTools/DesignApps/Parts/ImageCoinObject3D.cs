@@ -54,7 +54,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		private readonly double innerDiameter = 35;
 		private readonly double outerDiameter = 40;
-		private object locker = new object();
 
 		public ImageCoinObject3D()
 		{
@@ -84,6 +83,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			await imageCoin.Rebuild();
 			return imageCoin;
 		}
+
+		public override bool Persistable { get => ApplicationController.Instance.UserHasPermissions(this.GetType()); }
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

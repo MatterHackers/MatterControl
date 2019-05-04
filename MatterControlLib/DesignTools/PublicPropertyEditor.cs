@@ -808,11 +808,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			if (context.item.GetType().GetCustomAttributes(typeof(UnlockLinkAttribute), true).FirstOrDefault() is UnlockLinkAttribute unlockLink
-				&& !string.IsNullOrEmpty(unlockLink.UnlockPageLink)
-				&& !context.item.Persistable)
+			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(context.item.GetType());
+			if (!context.item.Persistable
+				&& !string.IsNullOrEmpty(unlockUrl))
 			{
-				FlowLayoutWidget row = GetUnlockRow(theme, unlockLink.UnlockPageLink);
+				FlowLayoutWidget row = GetUnlockRow(theme, unlockUrl);
 
 				editControlsContainer.AddChild(row);
 			}
@@ -824,11 +824,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
 			{
-				Margin = 5
+				Margin = 5,
+				ToolTipText = "Visit MatterHackers.com to Purchase".Localize()
 			};
 			detailsLink.Click += (s, e) =>
 			{
-				ApplicationController.Instance.LaunchBrowser(UnlockLinkAttribute.UnlockPageBaseUrl + unlockLinkUrl);
+				ApplicationController.Instance.LaunchBrowser(unlockLinkUrl);
 			};
 			row.AddChild(detailsLink);
 			theme.ApplyPrimaryActionStyle(detailsLink);

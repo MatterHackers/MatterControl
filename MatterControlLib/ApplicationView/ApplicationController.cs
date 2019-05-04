@@ -439,6 +439,7 @@ namespace MatterHackers.MatterControl
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
 		public Func<Type, bool> UserHasPermissions;
+		public Func<Type, string> GetUnlockPage;
 
 		private static ApplicationController globalInstance;
 
