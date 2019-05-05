@@ -35,6 +35,7 @@ using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
@@ -95,6 +96,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					this.Children.Add(newMesh);
 					SourceContainer.Visible = false;
 				}
+
 				return;
 			}
 
@@ -106,16 +108,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			double amountPerOperation = 1.0 / totalOperations;
 			double percentCompleted = 0;
 
-			ProgressStatus progressStatus = new ProgressStatus();
+			var progressStatus = new ProgressStatus();
 			foreach (var item in participants)
 			{
 				if (item != first)
 				{
 					var itemWorldMatrix = item.WorldMatrix(SourceContainer);
-					resultsMesh = BooleanProcessing.Do(item.Mesh, itemWorldMatrix,
-						resultsMesh, firstWorldMatrix,
+					resultsMesh = BooleanProcessing.Do(item.Mesh,
+						itemWorldMatrix,
+						// other mesh
+						resultsMesh,
+						firstWorldMatrix,
+						// operation
 						0,
-						reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						// reporting
+						reporter,
+						amountPerOperation,
+						percentCompleted,
+						progressStatus,
+						cancellationToken);
+
 					// after the first union we are working with the transformed mesh and don't need the first transform
 					firstWorldMatrix = Matrix4X4.Identity;
 
