@@ -34,23 +34,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using MatterHackers.DataConverters2D;
 using MatterHackers.PolygonMesh.Rendering;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.Agg.Transform;
+using MatterHackers.VectorMath;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
 		public FitToCylinderObject3D()
@@ -109,9 +107,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			var aabb = this.GetAxisAlignedBoundingBox();
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, aabb.ZSize, 30, Color.Red, 1, 1);
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Green, 1, 1);
+			var aabb = this.WorldAxisAlignedBoundingBox();
+			layer.World.RenderCylinderOutline(Matrix4X4.Identity, aabb.Center, Diameter, aabb.ZSize, 90, Color.Red);
+			// layer.World.RenderCylinderOutline(Matrix4X4.Identity, Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Green);
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
@@ -205,7 +203,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private Matrix4X4 GetCenteringTransformVisualCenter(IEnumerable<IObject3D> items, double goalRadius)
 		{
-			IEnumerable<(Vector2, Vector2 , Vector2)> GetPolygons()
+			IEnumerable<(Vector2, Vector2, Vector2)> GetPolygons()
 			{
 				foreach (var item in items)
 				{
@@ -221,8 +219,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 								yield return (
 									new Vector2(vertices[face.v0].Transform(worldMatrix)),
 									new Vector2(vertices[face.v1].Transform(worldMatrix)),
-									new Vector2(vertices[face.v2].Transform(worldMatrix))
-									);
+									new Vector2(vertices[face.v2].Transform(worldMatrix)));
 							}
 						}
 					}
@@ -230,8 +227,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			var outsidePolygons = new List<List<IntPoint>>();
-
-			var projection = new Polygons();
 
 			// remove all holes from the polygons so we only center the major outlines
 			var polygons = OrthographicZProjection.GetClipperPolygons(GetPolygons());
@@ -327,9 +322,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var transformAabb = ItemWithTransform.GetAxisAlignedBoundingBox();
 				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
-				if (Diameter != 0 
-					&& SizeZ != 0
-					&& (fitAabb.XSize != Diameter || fitAabb.ZSize != SizeZ))
+				if (Diameter != 0
+					&& SizeZ != 0)
 				{
 					FitBounds.Matrix *= Matrix4X4.CreateScale(
 						Diameter / fitAabb.XSize,
