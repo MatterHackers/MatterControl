@@ -187,12 +187,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 
 			// Build welcome text for Print Leveling Overview page
-			string buildWelcomeText()
+			string BuildWelcomeText()
 			{
 				var secondsPerManualSpot = 10 * 3;
 				var secondsPerAutomaticSpot = 3 * zProbeSamples;
 				var secondsToCompleteWizard = LevelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
-				secondsToCompleteWizard += (hasHeatedBed ? 60 * 3 : 0);
+				secondsToCompleteWizard += hasHeatedBed ? 60 * 3 : 0;
 
 				int numberOfSteps = LevelingPlan.ProbeCount;
 				int numberOfMinutes = (int)Math.Round(secondsToCompleteWizard / 60.0);
@@ -224,10 +224,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new WizardPage(
 				this,
 				"Print Leveling Overview".Localize(),
-				buildWelcomeText())
+				BuildWelcomeText())
 			{
 				WindowTitle = Title
 			};
+
+			// start heating up the now so it has more time to heat
+			var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				: 0;
+			if (bedTemperature > 0)
+			{
+				printer.Connection.TargetBedTemperature = bedTemperature;
+			}
 
 			yield return new HomePrinterPage(
 				this,
@@ -289,22 +298,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this,
 					"Waiting For Printer To Heat".Localize(),
 					heatingInstructions,
-					targetBedTemp, 
+					targetBedTemp,
 					new double[] { targetHotendTemp });
 			}
 
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 
 			int i = 0;
 
 			var probePoints = LevelingPlan.GetPrintLevelPositionToSample().ToList();
-
-			AutoProbePage autoProbePage = null;
-
 			if (printer.Settings.Helpers.UseZProbe())
 			{
-				autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);
+				var autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);
 				yield return autoProbePage;
 			}
 			else
@@ -325,7 +330,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					}
 
 					var validProbePosition = EnsureInPrintBounds(printer, goalProbePoint);
-
 					{
 						yield return new GetCoarseBedHeight(
 							this,
@@ -364,6 +368,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							i,
 							levelingStrings);
 					}
+
 					i++;
 				}
 			}
@@ -392,8 +397,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Connection.ReleaseMotors();
 
 					var markdownText = printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown);
-					var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme);
-					markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+					var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme)
+					{
+						Markdown = markdownText = markdownText.Replace("\\n", "\n")
+					};
 					page.ContentRow.AddChild(markdownWidget);
 				},
 				PageClose = () =>
@@ -407,8 +414,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					}
 				}
-
 			};
+
 			return levelXCarriagePage;
 		}
 
