@@ -45,7 +45,6 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Rendering;
 using MatterHackers.VectorMath;
-using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -173,6 +172,68 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Task.CompletedTask;
 		}
 
+		private static double MaxXyDistFromCenter(IVertexSource vertexSource)
+		{
+			double maxDistSqrd = 0.000001;
+			var center = vertexSource.GetBounds().Center;
+			foreach (var vertex in vertexSource.Vertices())
+			{
+				var position = vertex.position;
+				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
+				if (distSqrd > maxDistSqrd)
+				{
+					maxDistSqrd = distSqrd;
+				}
+			}
+
+			return Math.Sqrt(maxDistSqrd);
+		}
+
+		private static double MaxXyDistFromCenter(Mesh mesh)
+		{
+			double maxDistSqrd = 0.000001;
+			var center = mesh.GetAxisAlignedBoundingBox().Center;
+			foreach (var vertex in mesh.Vertices)
+			{
+				var position = vertex;
+				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
+				if (distSqrd > maxDistSqrd)
+				{
+					maxDistSqrd = distSqrd;
+				}
+			}
+
+			return Math.Sqrt(maxDistSqrd);
+		}
+
+		private void AdjustChildSize(object sender, EventArgs e)
+		{
+			if (Children.Count > 0)
+			{
+				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+				ItemWithTransform.Matrix = Matrix4X4.Identity;
+				var scale = Vector3.One;
+				if (StretchZ)
+				{
+					scale.Z = SizeZ / aabb.ZSize;
+				}
+
+				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, Matrix4X4.CreateScale(scale));
+
+				Matrix4X4 centering;
+				if (AlternateCentering)
+				{
+					centering = GetCenteringTransformVisualCenter(UntransformedChildren, Diameter / 2);
+				}
+				else
+				{
+					centering = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
+				}
+
+				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, centering);
+			}
+		}
+
 		private Matrix4X4 GetCenteringTransformExpandedToRadius(IEnumerable<IObject3D> items, double radius)
 		{
 			IEnumerable<Vector2> GetTranslatedXY()
@@ -252,68 +313,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var centering = Matrix4X4.CreateTranslation(-center.X, -center.Y, 0);
 
 			return centering * scalling;
-		}
-
-		private static double MaxXyDistFromCenter(IVertexSource vertexSource)
-		{
-			double maxDistSqrd = 0.000001;
-			var center = vertexSource.GetBounds().Center;
-			foreach (var vertex in vertexSource.Vertices())
-			{
-				var position = vertex.position;
-				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
-				if (distSqrd > maxDistSqrd)
-				{
-					maxDistSqrd = distSqrd;
-				}
-			}
-
-			return Math.Sqrt(maxDistSqrd);
-		}
-
-		private static double MaxXyDistFromCenter(Mesh mesh)
-		{
-			double maxDistSqrd = 0.000001;
-			var center = mesh.GetAxisAlignedBoundingBox().Center;
-			foreach (var vertex in mesh.Vertices)
-			{
-				var position = vertex;
-				var distSqrd = (new Vector2(position.X, position.Y) - new Vector2(center.X, center.Y)).LengthSquared;
-				if (distSqrd > maxDistSqrd)
-				{
-					maxDistSqrd = distSqrd;
-				}
-			}
-
-			return Math.Sqrt(maxDistSqrd);
-		}
-
-		private void AdjustChildSize(object sender, EventArgs e)
-		{
-			if (Children.Count > 0)
-			{
-				var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
-				ItemWithTransform.Matrix = Matrix4X4.Identity;
-				var scale = Vector3.One;
-				if (StretchZ)
-				{
-					scale.Z = SizeZ / aabb.ZSize;
-				}
-
-				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, Matrix4X4.CreateScale(scale));
-
-				Matrix4X4 centering;
-				if (AlternateCentering)
-				{
-					centering = GetCenteringTransformVisualCenter(UntransformedChildren, Diameter / 2);
-				}
-				else
-				{
-					centering = GetCenteringTransformExpandedToRadius(UntransformedChildren, Diameter / 2);
-				}
-
-				ItemWithTransform.Matrix = ItemWithTransform.Matrix.ApplyAtPosition(aabb.Center, centering);
-			}
 		}
 
 		private void UpdateBoundsItem()
