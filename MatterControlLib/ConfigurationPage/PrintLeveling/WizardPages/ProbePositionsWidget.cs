@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			if (this.Height > this.Width)
+			if (bedBounds.Height < bedBounds.Width)
 			{
 				scalingFactor = this.Width / bedBounds.Width;
 			}
@@ -129,6 +129,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			offset.Y -= bedBounds.Bottom * scalingFactor;
 
 			// Apply transform
+			graphics2D.PushTransform();
 			graphics2D.SetTransform(Affine.NewScaling(scalingFactor) * Affine.NewTranslation(offset));
 
 			// Draw the bed
@@ -224,6 +225,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					i++;
 				}
 			}
+
+			graphics2D.PopTransform();
 
 			base.OnDraw(graphics2D);
 		}
