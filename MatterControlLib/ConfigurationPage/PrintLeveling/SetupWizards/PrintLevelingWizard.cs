@@ -144,6 +144,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
+		public override bool ClosePage()
+		{
+			printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
+			return base.ClosePage();
+		}
+
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var levelingStrings = new LevelingStrings();
