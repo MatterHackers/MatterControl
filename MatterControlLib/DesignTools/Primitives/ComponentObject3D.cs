@@ -38,7 +38,8 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ComponentObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public class ComponentObject3D : Object3D
 	{
 		private const string imageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
 

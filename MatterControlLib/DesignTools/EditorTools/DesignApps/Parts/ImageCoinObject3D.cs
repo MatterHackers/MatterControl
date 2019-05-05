@@ -50,7 +50,8 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageCoinObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public class ImageCoinObject3D : Object3D
 	{
 		private readonly double innerDiameter = 35;
 		private readonly double outerDiameter = 40;

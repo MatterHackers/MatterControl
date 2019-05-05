@@ -45,7 +45,8 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public class TextObject3D : Object3D
 	{
 		public TextObject3D()
 		{
