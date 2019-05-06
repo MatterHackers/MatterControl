@@ -315,6 +315,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			homeButton.Click += (s, e) => viewControls3D.NotifyResetView();
 			viewOptionsBar.AddChild(homeButton);
 
+#if DEBUG
 			var renderOptionsButton = new RenderOptionsButton(theme, this.InteractionLayer)
 			{
 				ToolTipText = "Model View Style".Localize(),
@@ -328,6 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			viewOptionsBar.AddChild(renderOptionsButton);
+#endif
 
 			modelViewStyleButton = new ViewStyleButton(sceneContext, theme)
 			{

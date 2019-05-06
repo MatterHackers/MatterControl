@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
-			
+
 			this.AddChild(new IconButton(AggContext.StaticData.LoadIcon("web.png", theme.InvertIcons), theme)
 			{
 				Selectable = false
