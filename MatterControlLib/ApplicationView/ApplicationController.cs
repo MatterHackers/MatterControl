@@ -2606,6 +2606,8 @@ namespace MatterHackers.MatterControl
 			// Slice
 			bool slicingSucceeded = false;
 
+			printer.ViewState.SlicingItem = true;
+
 			await this.Tasks.Execute("Slicing".Localize(), printer, async (reporter, cancellationToken) =>
 			{
 				slicingSucceeded = await Slicer.SliceItem(
@@ -2615,6 +2617,8 @@ namespace MatterHackers.MatterControl
 					reporter,
 					cancellationToken);
 			});
+
+			printer.ViewState.SlicingItem = false;
 
 			// Skip loading GCode output if slicing failed
 			if (!slicingSucceeded)

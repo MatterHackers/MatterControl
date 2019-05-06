@@ -185,5 +185,7 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
 			}
 		}
+
+		public bool SlicingItem { get; set; }
 	}
 }

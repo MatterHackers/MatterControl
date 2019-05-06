@@ -369,6 +369,7 @@ namespace MatterHackers.MatterControl
 		internal void EnsureGCodeLoaded()
 		{
 			if (this.LoadedGCode == null
+				&& !this.Printer.ViewState.SlicingItem
 				&& File.Exists(this.EditContext?.GCodeFilePath(this.Printer)))
 			{
 				UiThread.RunOnIdle(async () =>
