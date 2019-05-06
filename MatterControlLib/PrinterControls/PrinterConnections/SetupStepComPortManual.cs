@@ -76,6 +76,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printerComPortError.Text = "Attempting to connect".Localize() + "...";
 					printerComPortError.TextColor = theme.TextColor;
 
+					printer.Connection.ConnectionFailed += Connection_CommunicationStateChanged;
+					printer.Connection.ConnectionSucceeded += Connection_CommunicationStateChanged;
+
 					printer.Settings.Helpers.SetComPort(GetSelectedSerialPort());
 					printer.Connection.Connect();
 
@@ -114,6 +117,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			// Unregister listeners
 			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			printer.Connection.ConnectionFailed -= Connection_CommunicationStateChanged;
+			printer.Connection.ConnectionSucceeded -= Connection_CommunicationStateChanged;
 
 			base.OnClosed(e);
 		}
