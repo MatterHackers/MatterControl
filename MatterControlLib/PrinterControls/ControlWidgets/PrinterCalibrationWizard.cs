@@ -226,8 +226,7 @@ namespace MatterHackers.MatterControl
 		{
 			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
-				|| XyCalibrationWizard.NeedsToBeRun(printer)
-				|| FilamentSetupWizard.SetupRequired(printer);
+				|| XyCalibrationWizard.NeedsToBeRun(printer);
 		}
 	}
 }
