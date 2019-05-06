@@ -45,10 +45,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int DeleteInt(ref IntPtr handle);
 
-		public static Mesh Do(Mesh inMeshA, Matrix4X4 matrixA, 
-			Mesh inMeshB, Matrix4X4 matrixB, 
-			int operation, 
-			IProgress<ProgressStatus> reporter, double amountPerOperation, double percentCompleted, ProgressStatus progressStatus, CancellationToken cancellationToken)
+		public static Mesh Do(Mesh inMeshA,
+			Matrix4X4 matrixA,
+			// mesh B
+			Mesh inMeshB,
+			Matrix4X4 matrixB,
+			// operation
+			int operation,
+			// reporting
+			IProgress<ProgressStatus> reporter,
+			double amountPerOperation,
+			double percentCompleted,
+			ProgressStatus progressStatus,
+			CancellationToken cancellationToken)
 		{
 			var libiglExe = "libigl_boolean.exe";
 			if (File.Exists(libiglExe)
@@ -67,12 +76,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					vb = inMeshB.Vertices.ToDoubleArray(matrixB);
 					fb = inMeshB.Faces.ToIntArray();
 
-					int vcCount;
-					int fcCount;
-					DoBooleanOperation(va, va.Length, fa, fa.Length,
-						vb, vb.Length, fb, fb.Length,
+					DoBooleanOperation(va,
+						va.Length,
+						fa,
+						fa.Length,
+						// object B
+						vb,
+						vb.Length,
+						fb,
+						fb.Length,
+						// operation
 						operation,
-						out pVc, out vcCount, out pFc, out fcCount);
+						// results
+						out pVc,
+						out int vcCount,
+						out pFc,
+						out int fcCount);
 
 					var vcArray = new double[vcCount];
 					Marshal.Copy(pVc, vcArray, 0, vcCount);
@@ -88,6 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 						DeleteDouble(ref pVc);
 					}
+
 					if (pFc != IntPtr.Zero)
 					{
 						DeleteInt(ref pFc);
@@ -107,44 +127,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			switch (operation)
 			{
 				case 0:
-					return PolygonMesh.Csg.CsgOperations.Union(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
+					return PolygonMesh.Csg.CsgOperations.Union(meshA,
+						meshB,
+						(status, progress0To1) =>
+						{
+							// Abort if flagged
+							cancellationToken.ThrowIfCancellationRequested();
 
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter?.Report(progressStatus);
-					}, cancellationToken);
+							progressStatus.Status = status;
+							progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+							reporter?.Report(progressStatus);
+						},
+						cancellationToken);
 
 				case 1:
-					return PolygonMesh.Csg.CsgOperations.Subtract(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
+					return PolygonMesh.Csg.CsgOperations.Subtract(meshA,
+						meshB,
+						(status, progress0To1) =>
+						{
+							// Abort if flagged
+							cancellationToken.ThrowIfCancellationRequested();
 
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter?.Report(progressStatus);
-					}, cancellationToken);
+							progressStatus.Status = status;
+							progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+							reporter?.Report(progressStatus);
+						},
+						cancellationToken);
 
 				case 2:
-					return PolygonMesh.Csg.CsgOperations.Intersect(meshA, meshB, (status, progress0To1) =>
-					{
-						// Abort if flagged
-						cancellationToken.ThrowIfCancellationRequested();
+					return PolygonMesh.Csg.CsgOperations.Intersect(meshA,
+						meshB,
+						(status, progress0To1) =>
+						{
+							// Abort if flagged
+							cancellationToken.ThrowIfCancellationRequested();
 
-						progressStatus.Status = status;
-						progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
-						reporter.Report(progressStatus);
-					}, cancellationToken);
+							progressStatus.Status = status;
+							progressStatus.Progress0To1 = percentCompleted + (amountPerOperation * progress0To1);
+							reporter.Report(progressStatus);
+						},
+						cancellationToken);
 			}
 
 			return null;
 		}
 
 		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public extern static void DoBooleanOperation(
+		public static extern void DoBooleanOperation(
 			double[] va, int vaCount, int[] fa, int faCount,
 			double[] vb, int vbCount, int[] fb, int fbCount,
 			int opperation,
