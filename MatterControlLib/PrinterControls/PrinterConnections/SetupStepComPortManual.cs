@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,22 +33,10 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	public class SerialPortIndexRadioButton : RadioButton
-	{
-		public string PortValue;
-
-		public SerialPortIndexRadioButton(string label, string value)
-			: base(label)
-		{
-			PortValue = value;
-		}
-	}
-
 	public class SetupStepComPortManual : DialogPage
 	{
 		private GuiWidget nextButton;
@@ -61,17 +49,18 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private TextWidget printerComPortHelpMessage;
 		private TextWidget printerComPortError;
 
-		protected List<SerialPortIndexRadioButton> SerialPortButtonsList = new List<SerialPortIndexRadioButton>();
+		private List<SerialPortIndexRadioButton> serialPortButtonsList = new List<SerialPortIndexRadioButton>();
+
 		private PrinterConfig printer;
 
 		public SetupStepComPortManual(PrinterConfig printer)
 		{
 			this.printer = printer;
 
-			FlowLayoutWidget printerComPortContainer = createComPortContainer();
+			FlowLayoutWidget printerComPortContainer = CreateComPortContainer();
 			contentRow.AddChild(printerComPortContainer);
 
-			//Construct buttons
+			// Construct buttons
 			nextButton = theme.CreateDialogButton("Done".Localize());
 			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
 			nextButton.Visible = false;
@@ -129,7 +118,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			base.OnClosed(e);
 		}
 
-		private FlowLayoutWidget createComPortContainer()
+		private FlowLayoutWidget CreateComPortContainer()
 		{
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -216,13 +205,13 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			// Add a radio button for each filtered port
 			foreach (string portName in FrostedSerialPort.GetPortNames())
 			{
-				SerialPortIndexRadioButton comPortOption = createComPortOption(portName, activePrinterSerialPort == portName);
+				SerialPortIndexRadioButton comPortOption = CreateComPortOption(portName, activePrinterSerialPort == portName);
 				if (comPortOption.Checked)
 				{
 					printerComPortIsAvailable = true;
 				}
 
-				SerialPortButtonsList.Add(comPortOption);
+				serialPortButtonsList.Add(comPortOption);
 				comPortContainer.AddChild(comPortOption);
 
 				portIndex++;
@@ -231,15 +220,15 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			// Add a virtual entry for serial ports that were previously configured but are not currently connected
 			if (!printerComPortIsAvailable && activePrinterSerialPort != null)
 			{
-				SerialPortIndexRadioButton comPortOption = createComPortOption(activePrinterSerialPort, true);
+				SerialPortIndexRadioButton comPortOption = CreateComPortOption(activePrinterSerialPort, true);
 				comPortOption.Enabled = false;
 
 				comPortContainer.AddChild(comPortOption);
-				SerialPortButtonsList.Add(comPortOption);
+				serialPortButtonsList.Add(comPortOption);
 				portIndex++;
 			}
 
-			//If there are still no com ports show a message to that effect
+			// If there are still no com ports show a message to that effect
 			if (portIndex == 0)
 			{
 				var comPortOption = new TextWidget("No COM ports available".Localize())
@@ -251,7 +240,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			}
 		}
 
-		private SerialPortIndexRadioButton createComPortOption(string portName, bool isActivePrinterPort)
+		private SerialPortIndexRadioButton CreateComPortOption(string portName, bool isActivePrinterPort)
 		{
 			return new SerialPortIndexRadioButton(portName, portName)
 			{
@@ -264,7 +253,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 		private string GetSelectedSerialPort()
 		{
-			foreach (SerialPortIndexRadioButton button in SerialPortButtonsList)
+			foreach (SerialPortIndexRadioButton button in serialPortButtonsList)
 			{
 				if (button.Checked)
 				{
@@ -274,6 +263,5 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			throw new Exception("Could not find a selected button.".Localize());
 		}
-
 	}
 }
