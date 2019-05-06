@@ -154,6 +154,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		public OemProfileDictionary OemProfiles { get; set; }
 
 		public Dictionary<string, string> OemUrls { get; }
+
 		public Dictionary<string, StorePrinterID> OemPrinters { get; }
 
 		[OnDeserialized]
@@ -176,7 +177,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}
 
-		public async Task ReloadOemProfiles(IProgress<ProgressStatus> syncReport = null)
+		public async Task ReloadOemProfiles()
 		{
 			// In public builds this won't be assigned to and we should exit
 			if (ApplicationController.GetPublicProfileList == null)
@@ -201,10 +202,10 @@ namespace MatterHackers.MatterControl.SettingsManagement
 					return result;
 				});
 
-			await DownloadMissingProfiles(syncReport);
+			await DownloadMissingProfiles();
 		}
 
-		private async Task DownloadMissingProfiles(IProgress<ProgressStatus> syncReport)
+		private async Task DownloadMissingProfiles()
 		{
 			ProgressStatus reportValue = new ProgressStatus();
 			int index = 0;
@@ -225,13 +226,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 						if (ApplicationController.Instance.ApplicationExiting)
 						{
 							return;
-						}
-
-						if (syncReport != null)
-						{
-							reportValue.Status = string.Format("Downloading public profiles for {0}...", oem);
-							reportValue.Progress0To1 = (double)index / OemProfiles.Count;
-							syncReport.Report(reportValue);
 						}
 					}
 				}
