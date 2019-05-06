@@ -27,34 +27,29 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using ClipperLib;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters2D;
-using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using ClipperLib;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageCoinObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public class ImageCoinObject3D : Object3D
 	{
 		private readonly double innerDiameter = 35;
 		private readonly double outerDiameter = 40;
-		private object locker = new object();
 
 		public ImageCoinObject3D()
 		{
@@ -84,6 +79,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			await imageCoin.Rebuild();
 			return imageCoin;
 		}
+
+		public override bool Persistable { get => ApplicationController.Instance.UserHasPermissions(this.GetType()); }
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -218,9 +215,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var outsidePolygons = new List<List<IntPoint>>();
 			// remove all holes from the polygons so we only center the major outlines
 			var polygons = vertexSource.CreatePolygons();
-			foreach(var polygon in polygons)
+
+			foreach (var polygon in polygons)
 			{
-				if(polygon.GetWindingDirection() == 1)
+				if (polygon.GetWindingDirection() == 1)
 				{
 					outsidePolygons.Add(polygon);
 				}

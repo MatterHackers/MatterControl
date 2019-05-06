@@ -45,7 +45,8 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public class TextObject3D : Object3D
 	{
 		public TextObject3D()
 		{
@@ -103,24 +104,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			return newName;
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public override async void OnInvalidate(InvalidateArgs invalidateArgs)
 		{
-			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
-				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh))
-				&& invalidateType.Source != this
+			if ((invalidateArgs.InvalidateType.HasFlag(InvalidateType.Children)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Matrix)
+				|| invalidateArgs.InvalidateType.HasFlag(InvalidateType.Mesh))
+				&& invalidateArgs.Source != this
 				&& !RebuildLocked)
 			{
 				await Rebuild();
 			}
-			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
+			else if (invalidateArgs.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateArgs.Source == this)
 			{
 				await Rebuild();
 			}
 			else
 			{
-				base.OnInvalidate(invalidateType);
+				base.OnInvalidate(invalidateArgs);
 			}
 		}
 

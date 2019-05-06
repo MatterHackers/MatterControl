@@ -37,7 +37,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public abstract class PipeWorksBaseObject3D : Object3D, IVisualLeafNode
+	[HideChildrenFromTreeView]
+	public abstract class PipeWorksBaseObject3D : Object3D
 	{
 		protected int Sides => 50;
 

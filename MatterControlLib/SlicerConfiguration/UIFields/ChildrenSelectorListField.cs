@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var selectedName = "";
 			if (property.Source is AlignObject3D item)
 			{
-				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
+				names = item.Children.Select(child => (child.Name, child.Name)).ToList();
 				if (item.SelectedChild.Count == 1)
 				{
 					var selectedKey = item.SelectedChild[0];

@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -211,35 +213,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var item in object3D.VisibleMeshes())
 			{
-				// check for correct persistable rendering
-				if (InteractionLayer.ViewOnlyTexture != null
-					&& item.Mesh.Faces.Count > 0)
-				{
-					ImageBuffer faceTexture = null;
-
-					// item.Mesh.FaceTexture.TryGetValue((item.Mesh.Faces[0], 0), out faceTexture);
-					bool hasPersistableTexture = faceTexture == InteractionLayer.ViewOnlyTexture;
-
-					if (item.WorldPersistable())
-					{
-						if (hasPersistableTexture)
-						{
-							// make sure it does not have the view only texture
-							item.Mesh.RemoveTexture(ViewOnlyTexture, 0);
-						}
-					}
-					else
-					{
-						if (!hasPersistableTexture)
-						{
-							// make sure it does have the view only texture
-							var aabb = item.Mesh.GetAxisAlignedBoundingBox();
-							var matrix = Matrix4X4.CreateScale(.5, .5, 1);
-							matrix *= Matrix4X4.CreateRotationZ(MathHelper.Tau / 8);
-							item.Mesh.PlaceTexture(ViewOnlyTexture, matrix);
-						}
-					}
-				}
+				// check for correct protection rendering
+				ValidateViewOnlyTexturing(item);
 
 				Color drawColor = this.GetItemColor(item, selectedItem);
 
@@ -276,6 +251,53 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// turn lighting back on after rendering selection outlines
 				GL.Enable(EnableCap.Lighting);
+			}
+		}
+
+		private static void ValidateViewOnlyTexturing(IObject3D item)
+		{
+			// if there is no view only texture or the item is locked
+			if (InteractionLayer.ViewOnlyTexture == null
+				|| item.Mesh.Faces.Count == 0)
+			{
+				return;
+			}
+
+			// if the item is not currently be processed
+			if (!item.RebuildLocked)
+			{
+				item.Mesh.FaceTextures.TryGetValue(0, out FaceTextureData faceTexture);
+				bool viewOnlyTexture = faceTexture?.image == InteractionLayer.ViewOnlyTexture;
+
+				// if not persistable and has view only texture, remove the view only texture if it has it
+				if (item.WorldPersistable()
+					&& viewOnlyTexture)
+				{
+					// make sure it does not have the view only texture
+					using (item.RebuildLock())
+					{
+						item.Mesh.RemoveTexture(ViewOnlyTexture, 0);
+					}
+				}
+				else if (!item.WorldPersistable()
+					&& !viewOnlyTexture)
+				{
+					// add a view only texture if it does not have one
+					// make a copy of the mesh and texture it
+					Task.Run(() =>
+					{
+						// make sure it does have the view only texture
+						var aabb = item.Mesh.GetAxisAlignedBoundingBox();
+						var matrix = Matrix4X4.CreateScale(.5, .5, 1);
+						matrix *= Matrix4X4.CreateRotationZ(MathHelper.Tau / 8);
+						// make sure it has it's own copy of the mesh
+						using (item.RebuildLock())
+						{
+							item.Mesh = item.Mesh.Copy(CancellationToken.None);
+							item.Mesh.PlaceTexture(ViewOnlyTexture, matrix);
+						}
+					});
+				}
 			}
 		}
 

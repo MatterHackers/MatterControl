@@ -447,7 +447,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var child in sceneContext.Scene.Children)
 			{
-				if (child is GeneratedSupportObject3D)
+				if (child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())
 				{
 					continue;
 				}

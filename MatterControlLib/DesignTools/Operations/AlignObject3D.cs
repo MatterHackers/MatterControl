@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
-		private SelectedChildren _anchorObjectSelector = new SelectedChildren();
+		private SelectedChildren _selectedChild = new SelectedChildren();
 
 		public AlignObject3D()
 		{
@@ -178,27 +178,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				if (Children.Count > 0)
 				{
-					if (_anchorObjectSelector.Count != 1)
+					if (_selectedChild.Count != 1)
 					{
-						_anchorObjectSelector.Clear();
-						_anchorObjectSelector.Add(Children.First().ID);
+						_selectedChild.Clear();
+						_selectedChild.Add(Children.First().Name);
 					}
 
-					if (!this.Children.Any(c => c.ID == _anchorObjectSelector[0]))
+					if (!this.Children.Any(c => c.Name == _selectedChild[0]))
 					{
-						// we don't have an id of any of our current children
-						_anchorObjectSelector.Clear();
-						_anchorObjectSelector.Add(Children.First().ID);
+						// we don't have an name of any of our current children
+						_selectedChild.Clear();
+						_selectedChild.Add(Children.First().Name);
 					}
 				}
 				else
 				{
-					_anchorObjectSelector.Clear();
+					_selectedChild.Clear();
 				}
 
-				return _anchorObjectSelector;
+				return _selectedChild;
 			}
-			set => _anchorObjectSelector = value;
+			set => _selectedChild = value;
 		}
 
 		public bool Advanced { get; set; } = false;
@@ -256,11 +256,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[JsonIgnore]
-		private IObject3D AnchorObject
+		private IObject3D SelectedObject
 		{
 			get
 			{
-				return this.Children.Where(c => c.ID == SelectedChild[0]).FirstOrDefault();
+				return this.Children.Where(c => c.Name == SelectedChild[0]).FirstOrDefault();
 			}
 		}
 
@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				int index = 0;
 				foreach (var child in this.Children)
 				{
-					if (child == AnchorObject)
+					if (child == SelectedObject)
 					{
 						return index;
 					}
@@ -359,8 +359,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-
-			var childrenIds = Children.Select(c => c.ID).ToArray();
 
 			using (RebuildLock())
 			{
@@ -554,7 +552,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					return currentChildrenBounds[AnchorObjectIndex].MaxXYZ[axis];
 
 				case Align.Origin:
-					return Vector3Ex.Transform(Vector3.Zero, AnchorObject.WorldMatrix())[axis];
+					return Vector3Ex.Transform(Vector3.Zero, SelectedObject.WorldMatrix())[axis];
 
 				default:
 					throw new NotImplementedException();

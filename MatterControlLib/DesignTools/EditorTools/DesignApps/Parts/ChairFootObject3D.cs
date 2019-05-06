@@ -39,7 +39,6 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[UnlockLinkAttribute("mattercontrol-image-converter-add-on")]
 	public class ChairFootObject3D : Object3D
 	{
 		public enum OutputMode { Final_Part, Fit_Test };

@@ -32,14 +32,7 @@ using System;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class UnlockLinkAttribute : Attribute
+	public class HideChildrenFromTreeViewAttribute : Attribute
 	{
-		public static string UnlockPageBaseUrl => "https://www.matterhackers.com/store/l/";
-
-		public string UnlockPageLink { get; private set; }
-		public UnlockLinkAttribute(string unlockPageLink)
-		{
-			UnlockPageLink = unlockPageLink;
-		}
 	}
 }

@@ -41,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideFromTreeViewAttribute, Immutable]
+	[HideFromTreeView, Immutable]
 	public class GeneratedSupportObject3D : Object3D
 	{
 		public GeneratedSupportObject3D()

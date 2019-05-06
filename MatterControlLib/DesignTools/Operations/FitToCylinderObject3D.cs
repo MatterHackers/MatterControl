@@ -34,23 +34,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
-using MatterHackers.DataConverters2D;
 using MatterHackers.PolygonMesh.Rendering;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.Agg.Transform;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
 	{
 		public FitToCylinderObject3D()
@@ -109,9 +106,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			var aabb = this.GetAxisAlignedBoundingBox();
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, aabb.ZSize, 30, Color.Red, 1, 1);
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Green, 1, 1);
+			var aabb = this.WorldAxisAlignedBoundingBox();
+			layer.World.RenderCylinderOutline(Matrix4X4.Identity, aabb.Center, Diameter, aabb.ZSize, 90, Color.Red);
+			// layer.World.RenderCylinderOutline(Matrix4X4.Identity, Vector3.Zero, Diameter, aabb.ZSize, 30, Color.Green);
 		}
 
 		public override AxisAlignedBoundingBox GetAxisAlignedBoundingBox(Matrix4X4 matrix)
@@ -173,90 +170,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
 			return Task.CompletedTask;
-		}
-
-		private Matrix4X4 GetCenteringTransformExpandedToRadius(IEnumerable<IObject3D> items, double radius)
-		{
-			IEnumerable<Vector2> GetTranslatedXY()
-			{
-				foreach (var item in items)
-				{
-					foreach (var mesh in item.VisibleMeshes())
-					{
-						var worldMatrix = mesh.WorldMatrix(this);
-						foreach (var vertex in mesh.Mesh.Vertices)
-						{
-							yield return new Vector2(vertex.Transform(worldMatrix));
-						}
-					}
-				}
-			}
-
-			var circle = SmallestEnclosingCircle.MakeCircle(GetTranslatedXY());
-
-			// move the circle center to the origin
-			var centering = Matrix4X4.CreateTranslation(-circle.Center.X, -circle.Center.Y, 0);
-			// scale to the fit size in x y
-			double scale = radius / circle.Radius;
-			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
-
-			return centering * scalling;
-		}
-
-		private Matrix4X4 GetCenteringTransformVisualCenter(IEnumerable<IObject3D> items, double goalRadius)
-		{
-			IEnumerable<(Vector2, Vector2 , Vector2)> GetPolygons()
-			{
-				foreach (var item in items)
-				{
-					foreach (var meshItem in item.VisibleMeshes())
-					{
-						var worldMatrix = meshItem.WorldMatrix(this);
-						var faces = meshItem.Mesh.Faces;
-						var vertices = meshItem.Mesh.Vertices;
-						foreach (var face in faces)
-						{
-							if (face.normal.TransformNormal(worldMatrix).Z > 0)
-							{
-								yield return (
-									new Vector2(vertices[face.v0].Transform(worldMatrix)),
-									new Vector2(vertices[face.v1].Transform(worldMatrix)),
-									new Vector2(vertices[face.v2].Transform(worldMatrix))
-									);
-							}
-						}
-					}
-				}
-			}
-
-			var outsidePolygons = new List<List<IntPoint>>();
-
-			var projection = new Polygons();
-
-			// remove all holes from the polygons so we only center the major outlines
-			var polygons = OrthographicZProjection.GetClipperPolygons(GetPolygons());
-			foreach (var polygon in polygons)
-			{
-				if (polygon.GetWindingDirection() == 1)
-				{
-					outsidePolygons.Add(polygon);
-				}
-			}
-
-			IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
-
-			Vector2 center = outsideSource.GetWeightedCenter();
-
-			outsideSource = new VertexSourceApplyTransform(outsideSource, Affine.NewTranslation(-center));
-
-			double radius = MaxXyDistFromCenter(outsideSource);
-
-			double scale = goalRadius / radius;
-			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
-
-			var centering = Matrix4X4.CreateTranslation(-center.X, -center.Y, 0);
-
-			return centering * scalling;
 		}
 
 		private static double MaxXyDistFromCenter(IVertexSource vertexSource)
@@ -321,15 +234,95 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		private Matrix4X4 GetCenteringTransformExpandedToRadius(IEnumerable<IObject3D> items, double radius)
+		{
+			IEnumerable<Vector2> GetTranslatedXY()
+			{
+				foreach (var item in items)
+				{
+					foreach (var mesh in item.VisibleMeshes())
+					{
+						var worldMatrix = mesh.WorldMatrix(this);
+						foreach (var vertex in mesh.Mesh.Vertices)
+						{
+							yield return new Vector2(vertex.Transform(worldMatrix));
+						}
+					}
+				}
+			}
+
+			var circle = SmallestEnclosingCircle.MakeCircle(GetTranslatedXY());
+
+			// move the circle center to the origin
+			var centering = Matrix4X4.CreateTranslation(-circle.Center.X, -circle.Center.Y, 0);
+			// scale to the fit size in x y
+			double scale = radius / circle.Radius;
+			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
+
+			return centering * scalling;
+		}
+
+		private Matrix4X4 GetCenteringTransformVisualCenter(IEnumerable<IObject3D> items, double goalRadius)
+		{
+			IEnumerable<(Vector2, Vector2, Vector2)> GetPolygons()
+			{
+				foreach (var item in items)
+				{
+					foreach (var meshItem in item.VisibleMeshes())
+					{
+						var worldMatrix = meshItem.WorldMatrix(this);
+						var faces = meshItem.Mesh.Faces;
+						var vertices = meshItem.Mesh.Vertices;
+						foreach (var face in faces)
+						{
+							if (face.normal.TransformNormal(worldMatrix).Z > 0)
+							{
+								yield return (
+									new Vector2(vertices[face.v0].Transform(worldMatrix)),
+									new Vector2(vertices[face.v1].Transform(worldMatrix)),
+									new Vector2(vertices[face.v2].Transform(worldMatrix)));
+							}
+						}
+					}
+				}
+			}
+
+			var outsidePolygons = new List<List<IntPoint>>();
+
+			// remove all holes from the polygons so we only center the major outlines
+			var polygons = OrthographicZProjection.GetClipperPolygons(GetPolygons());
+			foreach (var polygon in polygons)
+			{
+				if (polygon.GetWindingDirection() == 1)
+				{
+					outsidePolygons.Add(polygon);
+				}
+			}
+
+			IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
+
+			Vector2 center = outsideSource.GetWeightedCenter();
+
+			outsideSource = new VertexSourceApplyTransform(outsideSource, Affine.NewTranslation(-center));
+
+			double radius = MaxXyDistFromCenter(outsideSource);
+
+			double scale = goalRadius / radius;
+			var scalling = Matrix4X4.CreateScale(scale, scale, 1);
+
+			var centering = Matrix4X4.CreateTranslation(-center.X, -center.Y, 0);
+
+			return centering * scalling;
+		}
+
 		private void UpdateBoundsItem()
 		{
 			if (Children.Count == 2)
 			{
 				var transformAabb = ItemWithTransform.GetAxisAlignedBoundingBox();
 				var fitAabb = FitBounds.GetAxisAlignedBoundingBox();
-				if (Diameter != 0 
-					&& SizeZ != 0
-					&& (fitAabb.XSize != Diameter || fitAabb.ZSize != SizeZ))
+				if (Diameter != 0
+					&& SizeZ != 0)
 				{
 					FitBounds.Matrix *= Matrix4X4.CreateScale(
 						Diameter / fitAabb.XSize,
