@@ -182,49 +182,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				probePositions.Add(new ProbePosition());
 			}
 
-			bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
-			bool useZProbe = printer.Settings.Helpers.UseZProbe();
-			int zProbeSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
-
-			// Build welcome text for Print Leveling Overview page
-			string BuildWelcomeText()
-			{
-				var secondsPerManualSpot = 10 * 3;
-				var secondsPerAutomaticSpot = 3 * zProbeSamples;
-				var secondsToCompleteWizard = LevelingPlan.ProbeCount * (useZProbe ? secondsPerAutomaticSpot : secondsPerManualSpot);
-				secondsToCompleteWizard += hasHeatedBed ? 60 * 3 : 0;
-
-				int numberOfSteps = LevelingPlan.ProbeCount;
-				int numberOfMinutes = (int)Math.Round(secondsToCompleteWizard / 60.0);
-
-				if (hasHeatedBed)
-				{
-					return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\t• {4}\n\t• {5}\n\n{6}\n\n{7}".FormatWith(
-						"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
-						"Select the material you are printing".Localize(),
-						"Home the printer".Localize(),
-						"Heat the bed".Localize(),
-						"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
-						"Turn auto leveling on".Localize(),
-						"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
-						"Click 'Next' to continue.".Localize());
-				}
-				else
-				{
-					return "{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}".FormatWith(
-						"Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.".Localize(),
-						"Home the printer".Localize(),
-						"Sample the bed at {0} points".Localize().FormatWith(numberOfSteps),
-						"Turn auto leveling on".Localize(),
-						"We should be done in approximately {0} minutes.".Localize().FormatWith(numberOfMinutes),
-						"Click 'Next' to continue.".Localize());
-				}
-			}
 
 			yield return new WizardPage(
 				this,
-				"Print Leveling Overview".Localize(),
-				BuildWelcomeText())
+				"Print Leveling".Localize(),
+				string.Format(
+					"{0}\n\n{1}\n\n{2}\n\n",
+					"Print Leveling measures the plane of the bed.".Localize(),
+					"This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.".Localize(),
+					"Click 'Next' to continue.".Localize()))
 			{
 				WindowTitle = Title
 			};
@@ -240,9 +206,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new HomePrinterPage(
 				this,
-				"Homing The Printer".Localize(),
-				levelingStrings.HomingPageInstructions(useZProbe, hasHeatedBed),
-				useZProbe);
+				"Homing the printer".Localize(),
+				levelingStrings.HomingPageInstructions(printer.Settings.Helpers.UseZProbe(), printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)),
+				printer.Settings.Helpers.UseZProbe());
 
 			// if there is a level_x_carriage_markdown oem markdown page
 			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))
@@ -253,12 +219,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// figure out the heating requirements
 			double targetBedTemp = 0;
 			double targetHotendTemp = 0;
-			if (hasHeatedBed)
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
 			{
 				targetBedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			}
 
-			if (!useZProbe)
+			if (!printer.Settings.Helpers.UseZProbe())
 			{
 				targetHotendTemp = printer.Settings.Helpers.ExtruderTargetTemperature(0);
 			}
@@ -296,7 +262,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				yield return new WaitForTempPage(
 					this,
-					"Waiting For Printer To Heat".Localize(),
+					"Heating the printer".Localize(),
 					heatingInstructions,
 					targetBedTemp,
 					new double[] { targetHotendTemp });
@@ -383,7 +349,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new LastPageInstructions(
 				this,
 				"Print Leveling Wizard".Localize(),
-				useZProbe,
+				printer.Settings.Helpers.UseZProbe(),
 				probePositions);
 		}
 

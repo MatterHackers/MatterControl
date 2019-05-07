@@ -70,10 +70,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						Margin = new BorderDouble(0, 5)
 					};
 
-					var lableText = "Hotend Temperature:".Localize();
+					var labelText = "Hotend Temperature:".Localize();
 					if (extruderCount > 1)
 					{
-						lableText = "Hotend {0} Temperature:".Localize().FormatWith(i + 1);
+						labelText = "Hotend {0} Temperature:".Localize().FormatWith(i + 1);
 					}
 
 					// put in bar name
