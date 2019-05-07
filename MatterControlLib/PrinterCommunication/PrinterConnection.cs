@@ -196,7 +196,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double actualBedTemperature;
 
-		public int ActiveExtruderIndex { get; private set; }
+		public int ActiveExtruderIndex
+		{
+			get
+			{
+				if (toolChangeStream != null)
+				{
+					return toolChangeStream.RequestedTool;
+				}
+
+				return 0;
+			}
+		}
 
 		private readonly double[] actualHotendTemperature = new double[MaxExtruders];
 
@@ -224,6 +235,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private PauseHandlingStream pauseHandlingStream = null;
 		private QueuedCommandsStream queuedCommandStream = null;
 		private MaxLengthStream maxLengthStream;
+		private ToolChangeStream toolChangeStream;
 		private PrintLevelingStream printLevelingStream = null;
 		private WaitForTempStream waitForTempStream = null;
 
@@ -335,7 +347,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			writeLineStartCallBacks.Register("M109", HotendTemperatureWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M140", BedTemperatureWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M190", BedTemperatureWasWritenToPrinter);
-			writeLineStartCallBacks.Register("T", ExtruderIndexSet);
 
 			Task.Run(() =>
 			{
@@ -400,15 +411,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					}
 				}
 			};
-		}
-
-		private void ExtruderIndexSet(string line)
-		{
-			double extruderBeingSet = 0;
-			if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderBeingSet))
-			{
-				ActiveExtruderIndex = (int)extruderBeingSet;
-			}
 		}
 
 		[Flags]
@@ -1327,8 +1329,7 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (moveAmountMm != 0)
 			{
 				// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
-				bool requiresToolChange = extruderNumber != ActiveExtruderIndex
-					|| TotalGCodeStream.InternalStreams().OfType<ToolChangeStream>().FirstOrDefault().RequestedTool != ActiveExtruderIndex;
+				bool requiresToolChange = extruderNumber != ActiveExtruderIndex;
 
 				SetMovementToRelative();
 
@@ -2276,7 +2277,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 			if (ExtruderCount > 1)
 			{
-				accumulatedStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream, gCodeFileSwitcher);
+				accumulatedStream = toolChangeStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream, gCodeFileSwitcher);
 				accumulatedStream = new ToolSpeedMultiplierStream(Printer, accumulatedStream);
 			}
 
