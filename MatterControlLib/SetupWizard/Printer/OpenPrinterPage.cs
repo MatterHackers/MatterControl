@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -45,8 +46,23 @@ namespace MatterHackers.MatterControl
 			: base(continueButtonText)
 		{
 			this.printerLoaded = printerLoaded;
-
 			HardwareTreeView.CreatePrinterProfilesTree(rootPrintersNode, theme);
+		}
+
+		public override async void OnLoad(EventArgs args)
+		{
+			base.OnLoad(args);
+
+			if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
+			{
+				// select the printer
+				var printerInfo = ProfileManager.Instance.ActiveProfiles.FirstOrDefault();
+				var printer = await ApplicationController.Instance.OpenEmptyPrinter(printerInfo.ID);
+
+				printerLoaded?.Invoke(printer);
+
+				this.DialogWindow.CloseOnIdle();
+			}
 		}
 
 		protected override void OnTreeNodeDoubleClicked(TreeNode treeNode)
