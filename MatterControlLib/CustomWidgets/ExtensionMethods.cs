@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using MatterHackers.Agg.Image;
@@ -83,6 +84,15 @@ namespace MatterHackers.MatterControl
 			}
 
 			return sb.ToString();
+		}
+
+		public static IEnumerable<GCodeStream> InternalStreams(this GCodeStream context)
+		{
+			while (context is GCodeStream gCodeStream)
+			{
+				context = gCodeStream.InternalStream;
+				yield return context;
+			}
 		}
 	}
 }

@@ -173,6 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					this.Children.Add(SourceContainer.Clone());
 					SourceContainer.Visible = false;
 				}
+
 				return;
 			}
 
@@ -197,8 +198,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
-				ProgressStatus progressStatus = new ProgressStatus();
-				progressStatus.Status = "Do CSG";
+				var progressStatus = new ProgressStatus
+				{
+					Status = "Do CSG"
+				};
 				foreach (var keep in keepVisibleItems)
 				{
 					var resultsMesh = keep.Mesh;
@@ -206,9 +209,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					foreach (var remove in removeVisibleItems)
 					{
-						resultsMesh = BooleanProcessing.Do(resultsMesh, keepWorldMatrix,
-							remove.Mesh, remove.WorldMatrix(SourceContainer),
-							1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						resultsMesh = BooleanProcessing.Do(resultsMesh,
+							keepWorldMatrix,
+							// other mesh
+							remove.Mesh,
+							remove.WorldMatrix(SourceContainer),
+							// operation type
+							1,
+							// reporting
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
 
 						// after the first time we get a result the results mesh is in the right coordinate space
 						keepWorldMatrix = Matrix4X4.Identity;
