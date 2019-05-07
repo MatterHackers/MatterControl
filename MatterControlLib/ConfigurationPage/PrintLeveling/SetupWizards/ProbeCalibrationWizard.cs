@@ -206,7 +206,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new AutoProbeFeedback(
 				this,
 				probeStartPosition,
-				$"{"Step".Localize()} 1 {"of".Localize()} {numberOfSamples}: {"Position".Localize()} 1 - {"Auto Calibrate".Localize()}",
+				"Probe at bed center".Localize(),
+				"Sample the bed center position to determine to the probe distance to the bed".Localize(),
 				autoProbePositions,
 				0);
 
