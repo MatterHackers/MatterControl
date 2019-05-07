@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new WizardPage(
 				this,
-				"Print Leveling".Localize(),
+				"Overview".Localize(),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
 					"Print Leveling measures the plane of the bed.".Localize(),

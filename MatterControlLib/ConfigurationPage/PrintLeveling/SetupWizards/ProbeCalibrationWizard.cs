@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,
-				"Probe Calibration".Localize(),
+				"Overview".Localize(),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
 					"Probe Calibration measures the distance between the probe and the tip of the nozzle.".Localize(),
@@ -199,8 +199,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// reset the extruder that was active
 				printer.Connection.QueueLine($"T0");
 			}
-
-			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
