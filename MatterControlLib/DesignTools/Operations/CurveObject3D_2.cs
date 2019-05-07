@@ -181,8 +181,9 @@ namespace MatterHackers.MatterControl.DesignTools
 						// transform back into item local space
 						transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
 
-						transformedMesh.MarkAsChanged();
+						transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
+						transformedMesh.MarkAsChanged();
 
 						var curvedChild = new Object3D()
 						{
