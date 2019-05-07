@@ -387,24 +387,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				theme.ApplyPrimaryActionStyle(resumePrintingButton);
 				this.AddPageAction(resumePrintingButton);
 			}
-			else if(extruderIndex == 0 && printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
-			{
-				var loadFilament2Button = new TextButton("Load Filament 2".Localize(), theme)
-				{
-					Name = "Load Filament 2",
-					BackgroundColor = theme.MinimalShade,
-				};
-				loadFilament2Button.Click += (s, e) =>
-				{
-					loadFilament2Button.Parents<SystemWindow>().First().Close();
-
-					DialogWindow.Show(
-						new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
-				};
-				theme.ApplyPrimaryActionStyle(loadFilament2Button);
-
-				this.AddPageAction(loadFilament2Button);
-			}
 		}
 
 		public override void OnLoad(EventArgs args)
