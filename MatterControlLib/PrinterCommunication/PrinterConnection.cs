@@ -1327,7 +1327,8 @@ You will then need to logout and log back in to the computer for the changes to 
 			if (moveAmountMm != 0)
 			{
 				// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
-				bool requiresToolChange = extruderNumber != ActiveExtruderIndex;
+				bool requiresToolChange = extruderNumber != ActiveExtruderIndex
+					|| TotalGCodeStream.InternalStreams().OfType<ToolChangeStream>().FirstOrDefault().RequestedTool != ActiveExtruderIndex;
 
 				SetMovementToRelative();
 
