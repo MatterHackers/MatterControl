@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg;
@@ -38,13 +39,11 @@ namespace MatterHackers.MatterControl
 {
 	public class CopyGuestProfilesToUser : DialogPage
 	{
-		private string importMessage = "It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.".Localize();
-
 		private CheckBox rememberChoice;
 
 		private List<CheckBox> checkBoxes = new List<CheckBox>();
 
-		public CopyGuestProfilesToUser()
+		public CopyGuestProfilesToUser(Action copyCompleted)
 		: base("Close".Localize())
 		{
 			this.WindowTitle = "Copy Printers".Localize();
@@ -64,8 +63,6 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 			};
 			scrollWindow.AddChild(container);
-
-			container.AddChild(new WrappedTextWidget(importMessage, textColor: theme.TextColor));
 
 			var byCheckbox = new Dictionary<CheckBox, PrinterInfo>();
 
@@ -94,9 +91,17 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			var syncButton = theme.CreateDialogButton("Copy".Localize());
-			syncButton.Name = "CopyProfilesButton";
-			syncButton.Click += (s, e) =>
+			var skipButton = theme.CreateDialogButton("Skip".Localize());
+			skipButton.Click += (s, e) =>
+			{
+				copyCompleted.Invoke();
+			};
+			this.AddPageAction(skipButton, highlightFirstAction: false);
+
+			var copyButton = theme.CreateDialogButton("Copy".Localize());
+			copyButton.Name = "CopyProfilesButton";
+
+			copyButton.Click += (s, e) =>
 			{
 				// do the import
 				foreach (var checkBox in checkBoxes)
@@ -124,19 +129,19 @@ namespace MatterHackers.MatterControl
 				// Close the window and update the PrintersImported flag
 				UiThread.RunOnIdle(() =>
 				{
-					DialogWindow.Close();
-
 					ProfileManager.Instance.PrintersImported = true;
 					ProfileManager.Instance.Save();
+
+					copyCompleted.Invoke();
 				});
 			};
+			theme.ApplyPrimaryActionStyle(copyButton);
+			this.AddPageAction(copyButton);
 
 			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor);
 			contentRow.AddChild(rememberChoice);
 
-			syncButton.Visible = true;
-
-			this.AddPageAction(syncButton);
+			copyButton.Visible = true;
 		}
 
 		protected override void OnCancel(out bool abortCancel)
