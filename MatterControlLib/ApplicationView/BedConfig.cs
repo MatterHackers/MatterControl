@@ -42,7 +42,6 @@ namespace MatterHackers.MatterControl
 	using System.Linq;
 	using System.Threading;
 	using MatterHackers.Agg;
-	using MatterHackers.Agg.Image;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.GCodeVisualizer;
 	using MatterHackers.Localizations;
@@ -73,7 +72,7 @@ namespace MatterHackers.MatterControl
 
 		public SceneContextViewState ViewState { get; }
 
-		private HistoryContainerBase historyContainer;
+		private readonly HistoryContainerBase historyContainer;
 
 		public BedConfig(HistoryContainerBase historyContainer, PrinterConfig printer = null)
 		{
@@ -267,11 +266,10 @@ namespace MatterHackers.MatterControl
 					foreach (string loadedFileName in filesToLoadIncludingZips)
 					{
 						string extension = Path.GetExtension(loadedFileName).ToUpper();
-						if ((extension != ""
+						if (extension != ""
 							&& extension != ".ZIP"
 							&& extension != ".GCODE"
 							&& ApplicationController.Instance.Library.IsContentFileType(loadedFileName))
-							)
 						{
 							filesToLoad.Add(loadedFileName);
 						}
@@ -300,12 +298,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-
 		/// <summary>
 		/// Loads content to the bed and prepares edit/persistence context for use
 		/// </summary>
-		/// <param name="editContext"></param>
-		/// <returns></returns>
 		public async Task LoadPlateFromHistory()
 		{
 			await this.LoadContent(new EditContext()
@@ -374,6 +369,7 @@ namespace MatterHackers.MatterControl
 		internal void EnsureGCodeLoaded()
 		{
 			if (this.LoadedGCode == null
+				&& !this.Printer.ViewState.SlicingItem
 				&& File.Exists(this.EditContext?.GCodeFilePath(this.Printer)))
 			{
 				UiThread.RunOnIdle(async () =>
@@ -389,14 +385,18 @@ namespace MatterHackers.MatterControl
 		public WorldView World { get; } = new WorldView(0, 0);
 
 		public double BuildHeight { get; internal set; }
+
 		public Vector3 ViewerVolume { get; internal set; }
+
 		public Vector2 BedCenter { get; internal set; } = Vector2.Zero;
+
 		public BedShape BedShape { get; internal set; }
 
 		// TODO: Make assignment private, wire up post slicing initialization here
 		public GCodeRenderer GCodeRenderer { get; set; }
 
 		private int _activeLayerIndex;
+
 		public int ActiveLayerIndex
 		{
 			get => _activeLayerIndex;
@@ -505,7 +505,6 @@ namespace MatterHackers.MatterControl
 
 		public string ContentType { get; private set; }
 
-
 		/// <summary>
 		/// Return the axis aligned bounding box of the bed
 		/// </summary>
@@ -567,6 +566,7 @@ namespace MatterHackers.MatterControl
 			{
 				renderType |= RenderType.Moves;
 			}
+
 			if (options.RenderRetractions)
 			{
 				renderType |= RenderType.Retractions;
@@ -585,6 +585,7 @@ namespace MatterHackers.MatterControl
 			{
 				renderType |= RenderType.SimulateExtrusion;
 			}
+
 			if (options.TransparentExtrusion)
 			{
 				renderType |= RenderType.TransparentExtrusion;

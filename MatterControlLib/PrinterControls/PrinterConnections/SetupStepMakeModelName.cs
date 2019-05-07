@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,16 +31,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 {
-	//Normally step one of the setup process
+	// Normally step one of the setup process
 	public class SetupStepMakeModelName : DialogPage
 	{
 		private FlowLayoutWidget printerModelContainer;
@@ -59,9 +57,9 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		private BoundDropList printerManufacturerSelector;
 		private BoundDropList printerModelSelector;
 
-		string activeMake;
-		string activeModel;
-		string activeName;
+		private string activeMake;
+		private string activeModel;
+		private string activeName;
 
 		private RadioButton createPrinterRadioButton = null;
 
@@ -107,10 +105,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				"Select the printer model".Localize(),
 				printerModelSelector);
 
-			//Add inputs to main container
+			// Add inputs to main container
 			addPrinterColumn.AddChild(printerMakeContainer);
 			addPrinterColumn.AddChild(printerModelContainer);
-			addPrinterColumn.AddChild(createPrinterNameContainer());
+			addPrinterColumn.AddChild(CreatePrinterNameContainer());
 
 			RadioButton signInRadioButton = null;
 
@@ -208,7 +206,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					|| (createPrinterRadioButton.Checked && (activeModel != null && this.activeMake != null));
 		}
 
-		private FlowLayoutWidget createPrinterNameContainer()
+		private FlowLayoutWidget CreatePrinterNameContainer()
 		{
 			TextWidget printerNameLabel = new TextWidget("Name".Localize() + ":", 0, 0, 12)
 			{
@@ -305,7 +303,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				DropDownList dropList = (DropDownList) sender;
+				DropDownList dropList = (DropDownList)sender;
 				activeModel = dropList.SelectedLabel;
 
 				SetElementVisibility();

@@ -28,13 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl
 {
-	using MatterHackers.MatterControl.PartPreviewWindow;
-
 	public class PrinterViewState
 	{
+		private const double DefaultSliceSettingsWidth = 450;
+
+		// visibility defaults
+		private bool _configurePrinterVisible = UserSettings.Instance.get(UserSettingsKey.ConfigurePrinterTabVisible) == "true";
+
+		private bool _controlsVisible = UserSettings.Instance.get(UserSettingsKey.ControlsTabVisible) != "false";
+
+		private bool _terminalVisible = UserSettings.Instance.get(UserSettingsKey.TerminalTabVisible) == "true";
+
+		private PartViewMode _viewMode = PartViewMode.Model;
+
 		public event EventHandler<ViewModeChangedEventArgs> ViewModeChanged;
 
 		public event EventHandler VisibilityChanged;
@@ -53,50 +63,46 @@ namespace MatterHackers.MatterControl
 
 		public bool DockWindowFloating { get; internal set; }
 
-		double DefaultSliceSettingsWidth => 450;
 		public double SliceSettingsWidth
 		{
 			get
 			{
 				double.TryParse(UserSettings.Instance.get(UserSettingsKey.SliceSettingsWidth), out double controlWidth);
-				if(controlWidth == 0)
+
+				if (controlWidth == 0)
 				{
 					controlWidth = DefaultSliceSettingsWidth;
 				}
+
 				return controlWidth;
 			}
+
 			set
 			{
 				UserSettings.Instance.set(UserSettingsKey.SliceSettingsWidth, value.ToString());
 			}
 		}
 
-		private PartViewMode viewMode = PartViewMode.Model;
 		public PartViewMode ViewMode
 		{
-			get => viewMode;
+			get => _viewMode;
 			set
 			{
-				if (viewMode != value)
+				if (_viewMode != value)
 				{
 					// Capture before/after state
 					var eventArgs = new ViewModeChangedEventArgs()
 					{
 						ViewMode = value,
-						PreviousMode = viewMode
+						PreviousMode = _viewMode
 					};
 
-					viewMode = value;
+					_viewMode = value;
 
 					this.ViewModeChanged?.Invoke(this, eventArgs);
 				}
 			}
 		}
-
-		public bool _configurePrinterVisible = UserSettings.Instance.get(UserSettingsKey.ConfigurePrinterTabVisible) == "true";
-		// set the controls to default to visible
-		public bool _controlsVisible = UserSettings.Instance.get(UserSettingsKey.ControlsTabVisible) != "false";
-		public bool _terminalVisible = UserSettings.Instance.get(UserSettingsKey.TerminalTabVisible) == "true";
 
 		public bool ConfigurePrinterVisible
 		{
@@ -172,11 +178,14 @@ namespace MatterHackers.MatterControl
 
 				return 200;
 			}
+
 			set
 			{
 				var minimumValue = Math.Max(value, 150);
 				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
 			}
 		}
+
+		public bool SlicingItem { get; set; }
 	}
 }
