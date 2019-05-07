@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize();
-			this.Name = "Nozzle Offset Calibration Wizard";
 
 			var content = "Here is what we are going to do:".Localize();
 			content += "\n\n    • " + "Stash your current bed".Localize();

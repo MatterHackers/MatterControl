@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl
 			this.calibrationWizard = calibrationWizard;
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
-			this.Name = "Nozzle Offset Calibration Wizard";
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
