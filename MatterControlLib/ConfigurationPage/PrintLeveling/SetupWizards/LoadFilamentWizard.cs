@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LoadFilamentWizard : PrinterSetupWizard
 	{
-		private bool showAlreadyLoadedButton;
+		private readonly bool showAlreadyLoadedButton;
 
 		private int extruderIndex;
 
@@ -96,7 +96,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			var levelingStrings = new LevelingStrings();
 
 			var instructions = "Please select the material you want to load.".Localize();
-			if(extruderCount > 1)
+
+			if (extruderCount > 1)
 			{
 				instructions = "Please select the material you want to load into extruder {0}.".Localize().FormatWith(extruderIndex + 1);
 			}
@@ -144,10 +145,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					PageLoad = (page) =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
-						if(extruderIndex == 1)
+
+						if (extruderIndex == 1)
 						{
 							markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_1_markdown);
 						}
+
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						page.ContentRow.AddChild(markdownWidget);
@@ -246,7 +249,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								if(runningTime == null)
+								if (runningTime == null)
 								{
 									runningTime = Stopwatch.StartNew();
 								}
@@ -313,10 +316,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					PageLoad = (page) =>
 					{
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
-						if(extruderIndex == 1)
+
+						if (extruderIndex == 1)
 						{
 							markdownText = printer.Settings.GetValue(SettingsKey.running_clean_1_markdown);
 						}
+
 						var markdownWidget = new MarkdownWidget(theme);
 						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
 						page.ContentRow.AddChild(markdownWidget);
@@ -355,6 +360,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
 							break;
 					}
+
 					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 				};
 
@@ -380,8 +386,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 				resumePrintingButton.Click += (s, e) =>
 				{
-					resumePrintingButton.Parents<SystemWindow>().First().Close();
 					printer.Connection.Resume();
+					this.DialogWindow.ClosePage();
 				};
 
 				theme.ApplyPrimaryActionStyle(resumePrintingButton);

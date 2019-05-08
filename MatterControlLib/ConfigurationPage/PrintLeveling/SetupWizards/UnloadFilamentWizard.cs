@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			};
 			loadFilamentButton.Click += (s, e) =>
 			{
-				loadFilamentButton.Parents<SystemWindow>().First().Close();
+				this.DialogWindow.ClosePage();
 
 				DialogWindow.Show(
 					new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
