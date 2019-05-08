@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -39,15 +38,14 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
 	public class RootSystemWindow : SystemWindow
 	{
 		public static bool UseGl { get; set; } = true;
+
 		private static Vector2 minSize { get; set; } = new Vector2(600, 480);
 
 		private Stopwatch totalDrawTime = new Stopwatch();
@@ -64,7 +62,7 @@ namespace MatterHackers.MatterControl
 			: base(width, height)
 		{
 			this.Name = "MatterControl";
-			this.Padding = new BorderDouble(0); //To be re-enabled once native borders are turned off
+			this.Padding = new BorderDouble(0); // To be re-enabled once native borders are turned off
 			this.AnchorAll();
 
 			GuiWidget.DefaultEnforceIntegerBounds = true;
@@ -80,8 +78,7 @@ namespace MatterHackers.MatterControl
 			string textSizeMode = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
 			if (!string.IsNullOrEmpty(textSizeMode))
 			{
-				double textSize = 1.0;
-				if (double.TryParse(textSizeMode, out textSize))
+				if (double.TryParse(textSizeMode, out double textSize))
 				{
 					GuiWidget.DeviceScale = textSize;
 				}
@@ -111,7 +108,7 @@ namespace MatterHackers.MatterControl
 			{
 				string[] sizes = desktopPosition.Split(',');
 
-				//If the desktop position is less than -10,-10, override
+				// If the desktop position is less than -10,-10, override
 				int xpos = Math.Max(int.Parse(sizes[0]), -10);
 				int ypos = Math.Max(int.Parse(sizes[1]), -10);
 
@@ -185,6 +182,7 @@ namespace MatterHackers.MatterControl
 			{
 				base.OnDraw(graphics2D);
 			}
+
 			totalDrawTime.Stop();
 
 			millisecondTimer.Update((int)totalDrawTime.ElapsedMilliseconds);
@@ -195,8 +193,8 @@ namespace MatterHackers.MatterControl
 				this.Title = $"Allocated = {memory:n0} : {millisecondTimer.GetAverage()}ms, d{drawCount++} Size = {this.Width}x{this.Height}, onIdle = {UiThread.CountExpired}:{UiThread.Count}, widgetsDrawn = {GuiWidget.DrawCount}";
 			}
 
-			//msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
-			//msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
+			// msGraph.AddData("ms", totalDrawTime.ElapsedMilliseconds);
+			// msGraph.Draw(MatterHackers.Agg.Transform.Affine.NewIdentity(), graphics2D);
 		}
 
 		public override void OnClosing(ClosingEventArgs eventArgs)
@@ -215,7 +213,7 @@ namespace MatterHackers.MatterControl
 				ApplicationSettings.Instance.set(ApplicationSettingsKey.DesktopPosition, string.Format("{0},{1}", DesktopPosition.x, DesktopPosition.y));
 			}
 
-			//Save a snapshot of the prints in queue
+			// Save a snapshot of the prints in queue
 			QueueData.Instance.SaveDefaultQueue();
 
 			// If we are waiting for a response and get another request, just cancel the close until we get a response.
@@ -240,6 +238,7 @@ namespace MatterHackers.MatterControl
 						{
 							sdPrinting++;
 						}
+
 						printingCount++;
 					}
 				}
@@ -320,7 +319,8 @@ namespace MatterHackers.MatterControl
 			foreach (var printer in ApplicationController.Instance.ActivePrinters)
 			{
 				printer.Connection.Disable();
-				//Close connection to the local datastore
+
+				// Close connection to the local datastore
 				printer.Connection.HaltConnectionThread();
 			}
 
@@ -346,7 +346,7 @@ namespace MatterHackers.MatterControl
 						|| extension == ".GCODE"
 						|| extension == ".ZIP")
 					{
-						//mouseEvent.AcceptDrop = true;
+						// mouseEvent.AcceptDrop = true;
 					}
 				}
 			}
