@@ -70,14 +70,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						Margin = new BorderDouble(0, 5)
 					};
 
-					var lableText = "Hotend Temperature:".Localize();
+					var labelText = "Hotend Temperature:".Localize();
 					if (extruderCount > 1)
 					{
-						lableText = "Hotend {0} Temperature:".Localize().FormatWith(i + 1);
+						labelText = "Hotend {0} Temperature:".Localize().FormatWith(i + 1);
 					}
 
 					// put in bar name
-					contentRow.AddChild(new TextWidget(lableText, pointSize: 10, textColor: theme.TextColor)
+					contentRow.AddChild(new TextWidget(labelText, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 					{
 						AutoExpandBoundsToText = true,
 						Margin = new BorderDouble(5, 0, 5, 5),
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					hotEndProgressBars.Add(hotEndProgressBar);
 
 					// put in the status
-					var hotEndProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
+					var hotEndProgressBarText = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 					{
 						AutoExpandBoundsToText = true,
 						Margin = new BorderDouble(5, 0, 5, 5),
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					hotEndProgressBarTexts.Add(hotEndProgressBarText);
 
 					// message to show when done
-					var hotEndDoneText = new TextWidget("Done!", textColor: theme.TextColor)
+					var hotEndDoneText = new TextWidget("Done!", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 					{
 						AutoExpandBoundsToText = true,
 						Visible = false,
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 
 				// put in bar name
-				contentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: 10, textColor: theme.TextColor)
+				contentRow.AddChild(new TextWidget("Bed Temperature:".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 5, 5),
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				bedProgressHolder.AddChild(bedProgressBar);
 
 				// put in status
-				bedProgressBarText = new TextWidget("", pointSize: 10, textColor: theme.TextColor)
+				bedProgressBarText = new TextWidget("", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					AutoExpandBoundsToText = true,
 					Margin = new BorderDouble(5, 0, 0, 0),

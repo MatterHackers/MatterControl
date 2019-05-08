@@ -95,29 +95,6 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			if (FilamentSetupWizard.SetupRequired(printer))
-			{
-				errors.Add(new ValidationError("FilamentSetup")
-				{
-					Error = "Unknown filament loaded".Localize(),
-					Details = "Set active material to continue".Localize(),
-					ErrorLevel = ValidationErrorLevel.Warning,
-					FixAction = new NamedAction()
-					{
-						Title = "Load Filament".Localize(),
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								DialogWindow.Show(
-									new FilamentSetupWizard(printer, AppContext.Theme),
-									advanceToIncompleteStage: true);
-							});
-						}
-					}
-				});
-			}
-
 			try
 			{
 				if (settings.GetValue<bool>(SettingsKey.validate_layer_height))

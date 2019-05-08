@@ -112,6 +112,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		protected override IEnumerator<WizardPage> GetPages()
 		{
+			yield return new WizardPage(
+				this,
+				"Overview".Localize(),
+				string.Format(
+					"{0}\n\n{1}\n\n{2}\n\n",
+					"Nozzle Calibration measures the distance between hotends.".Localize(),
+					"This data improves the alignment of dual extrusion prints.".Localize(),
+					"Click 'Next' to continue.".Localize()))
+						{
+							WindowTitle = Title
+						};
+
 			yield return new XyCalibrationSelectPage(this);
 
 			// run load filament if we need to

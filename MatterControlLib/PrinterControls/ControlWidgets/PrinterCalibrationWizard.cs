@@ -102,16 +102,6 @@ namespace MatterHackers.MatterControl
 						if (levelingData != null
 							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
 						{
-							//levelingWizard.LevelingPlan
-							//
-							//if (currentLevelingFunctions == null
-							//	|| currentProbeZOffset != printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset)
-							//	|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
-							//{
-							//	currentProbeZOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
-							//	currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
-							//}
-
 							var positions = levelingData.SampledPositions;
 
 							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
@@ -226,8 +216,7 @@ namespace MatterHackers.MatterControl
 		{
 			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
-				|| XyCalibrationWizard.NeedsToBeRun(printer)
-				|| FilamentSetupWizard.SetupRequired(printer);
+				|| XyCalibrationWizard.NeedsToBeRun(printer);
 		}
 	}
 }

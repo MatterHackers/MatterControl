@@ -88,10 +88,9 @@ namespace MatterHackers.MatterControl
 
 		protected GuiWidget CreateTextField(string text)
 		{
-			return new WrappedTextWidget(text)
+			return new WrappedTextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Margin = new BorderDouble(left: 10, top: 10),
-				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch
 			};
 		}

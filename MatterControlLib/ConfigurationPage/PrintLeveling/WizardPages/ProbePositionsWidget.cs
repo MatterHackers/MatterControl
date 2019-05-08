@@ -91,13 +91,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			if (bedBounds.Height < bedBounds.Width)
+			if (this.Height < this.Width)
 			{
-				scalingFactor = this.Width / bedBounds.Width;
+				scalingFactor = this.Height / bedBounds.Height;
 			}
 			else
 			{
-				scalingFactor = this.Height / bedBounds.Height;
+				scalingFactor = this.Width / bedBounds.Width;
 			}
 
 			base.OnBoundsChanged(e);

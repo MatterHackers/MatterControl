@@ -133,14 +133,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,
-				"Probe Calibration Overview".Localize(),
+				"Overview".Localize(),
 				string.Format(
-					"{0}\n\n\t• {1}\n\t• {2}\n\t• {3}\n\n{4}\n\n{5}",
-					"Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.".Localize(),
-					"Home the printer".Localize(),
-					"Probe the bed at the center".Localize(),
-					"Manually measure the extruder at the center".Localize(),
-					"We should be done in less than five minutes.".Localize(),
+					"{0}\n\n{1}\n\n{2}\n\n",
+					"Probe Calibration measures the distance between the probe and the tip of the nozzle.".Localize(),
+					"This data is required for software print leveling and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
 			{
 				WindowTitle = Title
@@ -149,7 +146,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
-				"Homing The Printer".Localize(),
+				"Homing the printer".Localize(),
 				levelingStrings.HomingPageInstructions(true, false),
 				false);
 
@@ -182,7 +179,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new WaitForTempPage(
 				this,
-				"Waiting For Printer To Heat".Localize(),
+				"Heating the printer".Localize(),
 				((extruderCount == 1) ? "Waiting for the hotend to heat to ".Localize() + temps[0] + "°C.\n" : "Waiting for the hotends to heat up.".Localize())
 					+ "This will ensure that no filament is stuck to your nozzle.".Localize() + "\n"
 					+ "\n"
@@ -203,13 +200,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.QueueLine($"T0");
 			}
 
-			int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
-
 			// do the automatic probing of the center position
 			yield return new AutoProbeFeedback(
 				this,
 				probeStartPosition,
-				$"{"Step".Localize()} 1 {"of".Localize()} {numberOfSamples}: {"Position".Localize()} 1 - {"Auto Calibrate".Localize()}",
+				"Probe at bed center".Localize(),
+				"Sample the bed center position to determine to the probe distance to the bed".Localize(),
 				autoProbePositions,
 				0);
 
