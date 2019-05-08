@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class XyCalibrationTabObject3D : Object3D
 	{
-		public double NozzleWidth = .4;
+		public double NozzleWidth { get; set; } = .4;
 
 		public XyCalibrationTabObject3D()
 		{
@@ -51,16 +51,23 @@ namespace MatterHackers.MatterControl.DesignTools
 		public int CalibrationMaterialIndex { get; set; } = 1;
 
 		public override bool CanFlatten => true;
+
 		public double ChangeHeight { get; set; } = .4;
+
 		public double Offset { get; set; } = .5;
+
 		public double WipeTowerSize { get; set; } = 10;
 
-		private double TabDepth => NozzleWidth * TabScale * 5;
-		private double TabScale => 3;
-		private double TabWidth => NozzleWidth * TabScale * 3;
+		private double TabDepth => NozzleWidth * tabScale * 5;
+
+		private double tabScale = 3;
+
+		private double TabWidth => NozzleWidth * tabScale * 3;
 
 		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1,
-			double changeHeight = .4, double offset = .5, double nozzleWidth = .4)
+			double changeHeight = .4,
+			double offset = .5,
+			double nozzleWidth = .4)
 		{
 			var item = new XyCalibrationTabObject3D()
 			{
@@ -90,6 +97,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+
+			tabScale = 3;
+
+			// by default we don't want tab with to be greater than 10 mm
+			if (TabWidth > 10)
+			{
+				tabScale = 1;
+			}
+			else if (TabWidth > 5)
+			{
+				tabScale = 2;
+			}
 
 			using (RebuildLock())
 			{
@@ -135,7 +154,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var content = new Object3D();
 
-			var spaceBetween = NozzleWidth * TabScale;
+			var spaceBetween = NozzleWidth * tabScale;
 
 			var shape = new VertexStorage();
 			shape.MoveTo(0, 0);
