@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl
 		private Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
 
 		private IStagedSetupWizard setupWizard;
+		private bool closeConfirmed;
 
 		public ISetupWizard ActiveStage
 		{
@@ -145,6 +147,24 @@ namespace MatterHackers.MatterControl
 			this.UseChildWindowSize = false;
 
 			this.AddChild(row);
+		}
+
+		public override void OnClosing(ClosingEventArgs eventArgs)
+		{
+			if (this.ActiveStage != null
+				&& !closeConfirmed)
+			{
+				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
+				eventArgs.Cancel = true;
+
+				ConditionalAbort("Are you sure you want to abort calibration?".Localize(), () =>
+				{
+					closeConfirmed = true;
+					this.CloseOnIdle();
+				});
+			}
+
+			base.OnClosing(eventArgs);
 		}
 
 		private void ConditionalAbort(string message, Action exitConfirmedAction)
