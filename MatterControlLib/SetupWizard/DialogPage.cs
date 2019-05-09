@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl
 
 		protected ThemeConfig theme;
 		private int actionCount = 0;
+		private SystemWindow systemWindow;
 
 		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
 			: base (FlowDirection.TopToBottom)
@@ -193,27 +194,9 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-			if(systemWindow != null)
-			{
-				EventHandler<KeyEventArgs> checkEscape = null;
-				checkEscape = (s, e) =>
-				{
-					if(e.KeyCode == Keys.Escape)
-					{
-						systemWindow.KeyDown -= checkEscape;
-
-						this.OnCancel(out bool abortCancel);
-
-						if (!abortCancel)
-						{
-							this.DialogWindow?.ClosePage();
-						}
-					}
-				};
-
-				systemWindow.KeyDown += checkEscape;
-			}
+			// Register listeners
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			systemWindow.KeyDown += SystemWindow_KeyDown;
 
 			footerRow.AddChild(cancelButton);
 
@@ -223,6 +206,32 @@ namespace MatterHackers.MatterControl
 		protected virtual void OnCancel(out bool abortCancel)
 		{
 			abortCancel = false;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			if (systemWindow != null)
+			{
+				systemWindow.KeyDown -= SystemWindow_KeyDown;
+			}
+
+			base.OnClosed(e);
+		}
+
+		private void SystemWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				systemWindow.KeyDown -= SystemWindow_KeyDown;
+
+				this.OnCancel(out bool abortCancel);
+
+				if (!abortCancel)
+				{
+					this.DialogWindow?.ClosePage();
+				}
+			}
 		}
 	}
 }
