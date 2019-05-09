@@ -44,14 +44,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Connection.DetailedPrintingStateChanged -= CheckHomeFinished;
+			printer.Connection.DetailedPrintingStateChanged -= Connection_DetailedPrintingStateChanged;
 
 			base.OnClosed(e);
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			printer.Connection.DetailedPrintingStateChanged += CheckHomeFinished;
+			printer.Connection.DetailedPrintingStateChanged += Connection_DetailedPrintingStateChanged;
 
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 
@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.OnLoad(args);
 		}
 
-		private void CheckHomeFinished(object sender, EventArgs e)
+		private void Connection_DetailedPrintingStateChanged(object sender, EventArgs e)
 		{
 			if (printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
 			{
