@@ -196,6 +196,10 @@ namespace MatterHackers.MatterControl
 				footerHeightAcquired = true;
 			}
 
+			// Close the previously displayed page
+			activePage?.Close();
+
+			// Activate the new page
 			activePage = pageToChangeTo;
 
 			pageToChangeTo.DialogWindow = this;
