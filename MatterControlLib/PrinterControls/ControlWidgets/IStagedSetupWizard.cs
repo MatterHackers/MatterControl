@@ -36,8 +36,11 @@ namespace MatterHackers.MatterControl
 	public interface IStagedSetupWizard
 	{
 		IEnumerable<ISetupWizard> Stages { get; }
+
 		string Title { get; }
+
 		Vector2 WindowSize { get; }
+
 		Func<DialogPage> HomePageGenerator { get; }
 	}
 }
