@@ -77,8 +77,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
-		// Not implemented - callers should use FilamentSetupWizard.SetupRequired
-		public override bool SetupRequired => false;
+		public override bool SetupRequired
+		{
+			// Defer to NeedsToBeRun methods for status
+			get => (extruderIndex == 0) ? NeedsToBeRun0(printer) : NeedsToBeRun1(printer);
+		}
 
 		public IEnumerator<WizardPage> GetWizardPages()
 		{
