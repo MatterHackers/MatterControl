@@ -147,6 +147,25 @@ namespace MatterHackers.MatterControl
 			this.AddChild(row);
 		}
 
+		private void ConditionalAbort(string message, Action exitConfirmedAction)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				StyledMessageBox.ShowMessageBox(
+					(exitConfirmed) =>
+					{
+						// Continue with the original shutdown request if exit confirmed by user
+						if (exitConfirmed)
+						{
+							exitConfirmedAction?.Invoke();
+						}
+					},
+					message,
+					"Abort Calibration".Localize(),
+					StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
+			});
+		}
+
 		public override void ChangeToPage(DialogPage pageToChangeTo)
 		{
 			if (!footerHeightAcquired)
@@ -165,6 +184,21 @@ namespace MatterHackers.MatterControl
 			rightPanel.AddChild(pageToChangeTo);
 
 			this.Invalidate();
+		}
+
+		public override void OnCancel(out bool abortCancel)
+		{
+			// Cancel actions in this wizard should check to see if the ActiveStage requires confirmation,
+			// then proceed to the HomePage, conditionally if confirmation required
+			abortCancel = this.ActiveStage?.RequireCancelConfirmation == true;
+
+			if (abortCancel)
+			{
+				ConditionalAbort("Are you sure you want to abort calibration?".Localize(), () =>
+				{
+					this.NavigateHome();
+				});
+			}
 		}
 
 		public void NextIncompleteStage()
