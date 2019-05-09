@@ -223,8 +223,6 @@ namespace MatterHackers.MatterControl
 		{
 			if (e.KeyCode == Keys.Escape)
 			{
-				systemWindow.KeyDown -= SystemWindow_KeyDown;
-
 				this.OnCancel(out bool abortCancel);
 
 				if (!abortCancel)
