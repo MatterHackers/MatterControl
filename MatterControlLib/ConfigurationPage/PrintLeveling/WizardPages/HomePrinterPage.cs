@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public HomePrinterPage(ISetupWizard setupWizard, string instructionsText)
 			: base(setupWizard, "Homing the printer".Localize(), instructionsText)
 		{
+			// Register listeners
+			printer.Connection.DetailedPrintingStateChanged += Connection_DetailedPrintingStateChanged;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -52,8 +54,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
-			printer.Connection.DetailedPrintingStateChanged += Connection_DetailedPrintingStateChanged;
-
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 
 			if(!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
