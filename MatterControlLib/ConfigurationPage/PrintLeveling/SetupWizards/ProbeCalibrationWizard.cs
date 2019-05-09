@@ -106,21 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int hotendCount = Math.Min(2, printer.Settings.Helpers.HotendCount());
 			int totalSteps = 3 * hotendCount;
 
-			// make a welcome page if this is the first time calibrating the probe
-			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
-			{
-				yield return new WizardPage(
-					this,
-					"Initial Printer Setup".Localize(),
-					string.Format(
-						"{0}\n\n{1}",
-						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()))
-				{
-					WindowTitle = Title
-				};
-			}
-
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,

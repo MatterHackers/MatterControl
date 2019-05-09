@@ -154,24 +154,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var levelingStrings = new LevelingStrings();
 
-			// If no leveling data has been calculated
-			bool showWelcomeScreen = printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count == 0
-				&& !ProbeCalibrationWizard.UsingZProbe(printer);
-
-			if (showWelcomeScreen)
-			{
-				yield return new WizardPage(
-					this,
-					"Initial Printer Setup".Localize(),
-					string.Format(
-						"{0}\n\n{1}",
-						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()))
-				{
-					WindowTitle = Title
-				};
-			}
-
 			yield return new WizardPage(
 				this,
 				"Overview".Localize(),
