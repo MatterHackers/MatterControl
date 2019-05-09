@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl
 
 		protected ThemeConfig theme;
 		private int actionCount = 0;
+		private SystemWindow systemWindow;
 
 		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
 			: base (FlowDirection.TopToBottom)
@@ -185,44 +186,64 @@ namespace MatterHackers.MatterControl
 			// Add 'Close' event listener after derived types have had a chance to register event listeners
 			cancelButton.Click += (s, e) =>
 			{
-				this.OnCancel(out bool abortCancel);
-
-				if (!abortCancel)
+				if (this.AllowCancel())
 				{
 					this.DialogWindow?.ClosePage();
 				}
 			};
 
-			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-			if(systemWindow != null)
-			{
-				EventHandler<KeyEventArgs> checkEscape = null;
-				checkEscape = (s, e) =>
-				{
-					if(e.KeyCode == Keys.Escape)
-					{
-						systemWindow.KeyDown -= checkEscape;
-
-						this.OnCancel(out bool abortCancel);
-
-						if (!abortCancel)
-						{
-							this.DialogWindow?.ClosePage();
-						}
-					}
-				};
-
-				systemWindow.KeyDown += checkEscape;
-			}
+			// Register listeners
+			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			systemWindow.KeyDown += SystemWindow_KeyDown;
 
 			footerRow.AddChild(cancelButton);
 
 			base.OnLoad(args);
 		}
 
+		public bool AllowCancel()
+		{
+			bool windowAbortCancel = false;
+
+			this.OnCancel(out bool pageAbortCancel);
+
+			if (!pageAbortCancel)
+			{
+				this.DialogWindow.OnCancel(out windowAbortCancel);
+			}
+
+			// Allow cancel if page and DialogWindow do not abort
+			return !pageAbortCancel
+				&& !windowAbortCancel;
+		}
+
 		protected virtual void OnCancel(out bool abortCancel)
 		{
 			abortCancel = false;
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			if (systemWindow != null)
+			{
+				systemWindow.KeyDown -= SystemWindow_KeyDown;
+			}
+
+			base.OnClosed(e);
+		}
+
+		private void SystemWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.Escape)
+			{
+				this.OnCancel(out bool abortCancel);
+
+				if (!abortCancel)
+				{
+					this.DialogWindow?.ClosePage();
+				}
+			}
 		}
 	}
 }

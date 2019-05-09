@@ -47,6 +47,8 @@ namespace MatterHackers.MatterControl
 
 		bool Enabled { get; }
 
+		bool RequireCancelConfirmation { get; }
+
 		/// <summary>
 		/// Allow the wizard to participate in the ClosePage process, optionally aborting the close if needed.
 		/// </summary>

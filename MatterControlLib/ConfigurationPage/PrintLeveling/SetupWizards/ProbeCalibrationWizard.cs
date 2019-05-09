@@ -121,15 +121,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 			}
 
-			// Initialize - turn off print leveling
-			printer.Connection.AllowLeveling = false;
-
-			// remember the current baby stepping values
-			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-
-			// clear them while we measure the offsets
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,
@@ -142,6 +133,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				WindowTitle = Title
 			};
+
+			// Initialize - turn off print leveling
+			printer.Connection.AllowLeveling = false;
+
+			// remember the current baby stepping values
+			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+
+			// clear them while we measure the offsets
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+
+			// Require user confirmation after this point
+			this.RequireCancelConfirmation = true;
 
 			// add in the homing printer page
 			yield return new HomePrinterPage(

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl
 {
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl
 		private Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
 
 		private IStagedSetupWizard setupWizard;
+		private bool closeConfirmed;
 
 		public ISetupWizard ActiveStage
 		{
@@ -147,6 +149,43 @@ namespace MatterHackers.MatterControl
 			this.AddChild(row);
 		}
 
+		public override void OnClosing(ClosingEventArgs eventArgs)
+		{
+			if (this.ActiveStage != null
+				&& !closeConfirmed)
+			{
+				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
+				eventArgs.Cancel = true;
+
+				ConditionalAbort("Are you sure you want to abort calibration?".Localize(), () =>
+				{
+					closeConfirmed = true;
+					this.CloseOnIdle();
+				});
+			}
+
+			base.OnClosing(eventArgs);
+		}
+
+		private void ConditionalAbort(string message, Action exitConfirmedAction)
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				StyledMessageBox.ShowMessageBox(
+					(exitConfirmed) =>
+					{
+						// Continue with the original shutdown request if exit confirmed by user
+						if (exitConfirmed)
+						{
+							exitConfirmedAction?.Invoke();
+						}
+					},
+					message,
+					"Abort Calibration".Localize(),
+					StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
+			});
+		}
+
 		public override void ChangeToPage(DialogPage pageToChangeTo)
 		{
 			if (!footerHeightAcquired)
@@ -157,6 +196,10 @@ namespace MatterHackers.MatterControl
 				footerHeightAcquired = true;
 			}
 
+			// Close the previously displayed page
+			activePage?.Close();
+
+			// Activate the new page
 			activePage = pageToChangeTo;
 
 			pageToChangeTo.DialogWindow = this;
@@ -165,6 +208,21 @@ namespace MatterHackers.MatterControl
 			rightPanel.AddChild(pageToChangeTo);
 
 			this.Invalidate();
+		}
+
+		public override void OnCancel(out bool abortCancel)
+		{
+			// Cancel actions in this wizard should check to see if the ActiveStage requires confirmation,
+			// then proceed to the HomePage, conditionally if confirmation required
+			abortCancel = this.ActiveStage?.RequireCancelConfirmation == true;
+
+			if (abortCancel)
+			{
+				ConditionalAbort("Are you sure you want to abort calibration?".Localize(), () =>
+				{
+					this.NavigateHome();
+				});
+			}
 		}
 
 		public void NextIncompleteStage()
@@ -183,19 +241,34 @@ namespace MatterHackers.MatterControl
 
 		public override void ClosePage()
 		{
+			this.OnCancel(out bool abortClose);
+
+			if (abortClose)
+			{
+				return;
+			}
+
 			if (this.ActiveStage == null
 				|| this.ActiveStage?.ClosePage() == true)
 			{
-				// Construct and move to the summary/home page
-				this.ChangeToPage(setupWizard.HomePageGenerator());
-
-				this.ActiveStage = null;
+				NavigateHome();
 			}
 			else
 			{
 				this.ActiveStage.MoveNext();
 				this.ChangeToPage(this.ActiveStage.Current);
 			}
+		}
+
+		/// <summary>
+		/// Unconditionally change back to the home page and exit any active stage
+		/// </summary>
+		private void NavigateHome()
+		{
+			// Construct and move to the summary/home page
+			this.ChangeToPage(setupWizard.HomePageGenerator());
+
+			this.ActiveStage = null;
 		}
 	}
 }

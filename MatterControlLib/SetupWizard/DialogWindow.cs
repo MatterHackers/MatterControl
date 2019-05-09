@@ -221,6 +221,11 @@ namespace MatterHackers.MatterControl
 			this.Invalidate();
 		}
 
+		public virtual void OnCancel(out bool abortCancel)
+		{
+			abortCancel = false;
+		}
+
 		public virtual DialogPage ChangeToPage<PanelType>() where PanelType : DialogPage, new()
 		{
 			var panel = new PanelType
