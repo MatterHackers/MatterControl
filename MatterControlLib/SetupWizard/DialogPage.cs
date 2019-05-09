@@ -186,11 +186,7 @@ namespace MatterHackers.MatterControl
 			// Add 'Close' event listener after derived types have had a chance to register event listeners
 			cancelButton.Click += (s, e) =>
 			{
-				this.OnCancel(out bool pageAbortCancel);
-				this.DialogWindow.OnCancel(out bool windowAbortCancel);
-
-				if (!pageAbortCancel
-					&& !windowAbortCancel)
+				if (this.AllowCancel())
 				{
 					this.DialogWindow?.ClosePage();
 				}
@@ -203,6 +199,22 @@ namespace MatterHackers.MatterControl
 			footerRow.AddChild(cancelButton);
 
 			base.OnLoad(args);
+		}
+
+		public bool AllowCancel()
+		{
+			bool windowAbortCancel = false;
+
+			this.OnCancel(out bool pageAbortCancel);
+
+			if (!pageAbortCancel)
+			{
+				this.DialogWindow.OnCancel(out windowAbortCancel);
+			}
+
+			// Allow cancel if page and DialogWindow do not abort
+			return !pageAbortCancel
+				&& !windowAbortCancel;
 		}
 
 		protected virtual void OnCancel(out bool abortCancel)
