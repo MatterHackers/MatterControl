@@ -74,6 +74,8 @@ namespace MatterHackers.MatterControl
 
 		public Vector2 WindowSize { get; protected set; }
 
+		public bool RequireCancelConfirmation { get; protected set; }
+
 		public virtual bool ClosePage()
 		{
 			return true;

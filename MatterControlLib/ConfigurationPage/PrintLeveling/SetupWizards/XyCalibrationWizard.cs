@@ -126,6 +126,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new XyCalibrationSelectPage(this);
 
+			// Require user confirmation after this point
+			this.RequireCancelConfirmation = true;
+
 			// run load filament if we need to
 			if (LoadFilamentWizard.NeedsToBeRun0(printer))
 			{

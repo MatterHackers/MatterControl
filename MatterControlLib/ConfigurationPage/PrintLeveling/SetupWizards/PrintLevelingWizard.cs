@@ -172,17 +172,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				};
 			}
 
-			// Switch to raw mode and construct leveling structures
-			this.Initialize();
-
-			// var probePositions = new List<ProbePosition>(Enumerable.Range(0, levelingPlan.ProbeCount).Select(p => new ProbePosition()));
-			var probePositions = new List<ProbePosition>(LevelingPlan.ProbeCount);
-			for (int j = 0; j < LevelingPlan.ProbeCount; j++)
-			{
-				probePositions.Add(new ProbePosition());
-			}
-
-
 			yield return new WizardPage(
 				this,
 				"Overview".Localize(),
@@ -194,6 +183,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				WindowTitle = Title
 			};
+
+			// Switch to raw mode and construct leveling structures
+			this.Initialize();
+
+			// var probePositions = new List<ProbePosition>(Enumerable.Range(0, levelingPlan.ProbeCount).Select(p => new ProbePosition()));
+			var probePositions = new List<ProbePosition>(LevelingPlan.ProbeCount);
+			for (int j = 0; j < LevelingPlan.ProbeCount; j++)
+			{
+				probePositions.Add(new ProbePosition());
+			}
+
+			// Require user confirmation after this point
+			this.RequireCancelConfirmation = true;
 
 			// start heating up the now so it has more time to heat
 			var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
