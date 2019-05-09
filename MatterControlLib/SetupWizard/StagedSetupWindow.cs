@@ -186,16 +186,24 @@ namespace MatterHackers.MatterControl
 			if (this.ActiveStage == null
 				|| this.ActiveStage?.ClosePage() == true)
 			{
-				// Construct and move to the summary/home page
-				this.ChangeToPage(setupWizard.HomePageGenerator());
-
-				this.ActiveStage = null;
+				NavigateHome();
 			}
 			else
 			{
 				this.ActiveStage.MoveNext();
 				this.ChangeToPage(this.ActiveStage.Current);
 			}
+		}
+
+		/// <summary>
+		/// Unconditionally change back to the home page and exit any active stage
+		/// </summary>
+		private void NavigateHome()
+		{
+			// Construct and move to the summary/home page
+			this.ChangeToPage(setupWizard.HomePageGenerator());
+
+			this.ActiveStage = null;
 		}
 	}
 }
