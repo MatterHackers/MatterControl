@@ -68,6 +68,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			NextButton.Enabled = false;
 
+			// Always enable the advance button after 15 seconds
+			UiThread.RunOnIdle(() =>
+			{
+				// TODO: consider if needed. Ensures that if we miss a HomingAxis event, the user can still continue
+				if (!this.HasBeenClosed)
+				{
+					NextButton.Enabled = true;
+				}
+			}, 15);
+
 			base.OnLoad(args);
 		}
 
