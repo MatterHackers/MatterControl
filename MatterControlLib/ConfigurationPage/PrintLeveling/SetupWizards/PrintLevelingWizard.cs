@@ -162,9 +162,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Print Leveling measures the plane of the bed.".Localize(),
 					"This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-			{
-				WindowTitle = Title
-			};
+				{
+					WindowTitle = Title,
+				};
 
 			// Switch to raw mode and construct leveling structures
 			this.Initialize();

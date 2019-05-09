@@ -225,6 +225,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		/// <summary>
+		/// Navigate to the next incomplete stage or return to the home page
+		/// </summary>
 		public void NextIncompleteStage()
 		{
 			ISetupWizard nextStage = setupWizard.Stages.FirstOrDefault(s => s.SetupRequired && s.Enabled);
@@ -235,7 +238,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.ClosePage();
+				this.NavigateHome();
 			}
 		}
 

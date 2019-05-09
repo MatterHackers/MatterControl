@@ -115,9 +115,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Probe Calibration measures the distance between the probe and the tip of the nozzle.".Localize(),
 					"This data is required for software print leveling and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-			{
-				WindowTitle = Title
-			};
+				{
+					WindowTitle = Title,
+				};
 
 			// Initialize - turn off print leveling
 			printer.Connection.AllowLeveling = false;

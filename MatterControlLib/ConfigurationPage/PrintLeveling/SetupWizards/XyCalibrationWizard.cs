@@ -120,9 +120,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Nozzle Calibration measures the distance between hotends.".Localize(),
 					"This data improves the alignment of dual extrusion prints.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-						{
-							WindowTitle = Title
-						};
+				{
+					WindowTitle = Title,
+				};
 
 			yield return new XyCalibrationSelectPage(this);
 

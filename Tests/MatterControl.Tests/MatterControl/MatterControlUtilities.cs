@@ -969,7 +969,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.Delay();
 
-			waitForPageAndAdvance("Print Leveling Overview");
+			waitForPageAndAdvance("Overview");
 
 			waitForPageAndAdvance("Homing the printer");
 
