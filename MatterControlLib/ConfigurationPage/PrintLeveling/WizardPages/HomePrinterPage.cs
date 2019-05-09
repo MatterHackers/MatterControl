@@ -36,12 +36,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class HomePrinterPage : WizardPage
 	{
-		private bool autoAdvance;
-
-		public HomePrinterPage(ISetupWizard setupWizard, string headerText, string instructionsText, bool autoAdvance)
+		public HomePrinterPage(ISetupWizard setupWizard, string headerText, string instructionsText)
 			: base(setupWizard, headerText, instructionsText)
 		{
-			this.autoAdvance = autoAdvance;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -64,10 +61,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
-			if (autoAdvance)
-			{
-				NextButton.Enabled = false;
-			}
+			NextButton.Enabled = false;
 
 			base.OnLoad(args);
 		}
@@ -78,10 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			{
 				NextButton.Enabled = true;
 
-				if (printer.Settings.Helpers.UseZProbe())
-				{
-					UiThread.RunOnIdle(() => NextButton.InvokeClick());
-				}
+				UiThread.RunOnIdle(() => NextButton.InvokeClick());
 			}
 		}
 	}

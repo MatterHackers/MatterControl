@@ -191,8 +191,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new HomePrinterPage(
 				this,
 				"Homing the printer".Localize(),
-				levelingStrings.HomingPageInstructions(printer.Settings.Helpers.UseZProbe(), printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)),
-				printer.Settings.Helpers.UseZProbe());
+				levelingStrings.HomingPageInstructions(printer.Settings.Helpers.UseZProbe(), printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)));
 
 			// if there is a level_x_carriage_markdown oem markdown page
 			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))
