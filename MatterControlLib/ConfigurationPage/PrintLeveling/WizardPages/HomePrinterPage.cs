@@ -37,6 +37,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class HomePrinterPage : WizardPage
 	{
+		private bool homingAxisObserved;
+
 		public HomePrinterPage(ISetupWizard setupWizard, string instructionsText)
 			: base(setupWizard, "Homing the printer".Localize(), instructionsText)
 		{
@@ -46,6 +48,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnClosed(EventArgs e)
 		{
+			homingAxisObserved = false;
+
 			// Unregister listeners
 			printer.Connection.DetailedPrintingStateChanged -= Connection_DetailedPrintingStateChanged;
 
@@ -69,10 +73,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void Connection_DetailedPrintingStateChanged(object sender, EventArgs e)
 		{
-			if (printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
+			if (printer.Connection.DetailedPrintingState == DetailedPrintingState.HomingAxis
+				&& !homingAxisObserved)
+			{
+				homingAxisObserved = true;
+			}
+
+			if (homingAxisObserved
+				&& printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
 			{
 				NextButton.Enabled = true;
-
 				UiThread.RunOnIdle(() => NextButton.InvokeClick());
 			}
 		}
