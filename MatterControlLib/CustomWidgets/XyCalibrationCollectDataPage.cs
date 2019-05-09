@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -38,7 +39,8 @@ namespace MatterHackers.MatterControl
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
 		private List<RadioButton> xButtons;
-		private List<RadioButton> yButtons;
+		private List<GuiWidget> yButtons;
+
 		private bool HaveWrittenData = false;
 		private bool pageCanceled;
 		private XyCalibrationWizard calibrationWizard;
@@ -73,6 +75,7 @@ namespace MatterHackers.MatterControl
 			xButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			xButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+
 			foreach (var button in xButtons)
 			{
 				xButtonsGroup.AddChild(button);
@@ -85,7 +88,8 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(yButtonsGroup);
 			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
-			yButtons = new List<RadioButton>();
+
+			yButtons = new List<GuiWidget>();
 			yButtons.Add(new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
@@ -93,10 +97,13 @@ namespace MatterHackers.MatterControl
 			yButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
 			yButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			foreach (var button in yButtons)
+
+			foreach (var button in yButtons.OfType<RadioButton>())
 			{
 				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
 				yButtonsGroup.AddChild(column);
+
+				button.SiblingRadioButtonList = yButtons;
 
 				button.HAnchor = HAnchor.Center;
 				column.AddChild(button);

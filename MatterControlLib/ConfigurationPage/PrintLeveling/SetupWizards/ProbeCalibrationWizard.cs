@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this,
 				probeStartPosition,
 				"Probe at bed center".Localize(),
-				"Sample the bed center position to determine to the probe distance to the bed".Localize(),
+				"Sample the bed center position to determine the probe distance to the bed".Localize(),
 				autoProbePositions,
 				0);
 
