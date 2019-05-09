@@ -134,7 +134,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
-				"Homing the printer".Localize(),
 				levelingStrings.HomingPageInstructions(true, false));
 
 			// if we have not run leveling yet and there is a level_x_carriage_markdown oem markdown page

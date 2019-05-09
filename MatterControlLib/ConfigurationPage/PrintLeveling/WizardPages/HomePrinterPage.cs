@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -36,8 +37,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class HomePrinterPage : WizardPage
 	{
-		public HomePrinterPage(ISetupWizard setupWizard, string headerText, string instructionsText)
-			: base(setupWizard, headerText, instructionsText)
+		public HomePrinterPage(ISetupWizard setupWizard, string instructionsText)
+			: base(setupWizard, "Homing the printer".Localize(), instructionsText)
 		{
 		}
 
