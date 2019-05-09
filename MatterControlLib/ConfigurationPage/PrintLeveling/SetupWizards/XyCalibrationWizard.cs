@@ -41,10 +41,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private EditContext originalEditContext;
 
-		private bool allowChildClose = true;
-
-		private bool childRequestedClose = false;
-
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
@@ -104,12 +100,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.Dispose();
 		}
 
-		public override bool ClosePage()
-		{
-			childRequestedClose = true;
-			return allowChildClose;
-		}
-
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new WizardPage(
@@ -128,45 +118,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Require user confirmation after this point
 			this.RequireCancelConfirmation = true;
-
-			// run load filament if we need to
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				using (var tool0FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true))
-				{
-					allowChildClose = false;
-					childRequestedClose = false;
-
-					var pages = tool0FilamentWizard.GetWizardPages();
-
-					while (!childRequestedClose
-						&& pages.MoveNext())
-					{
-						yield return pages.Current;
-					}
-
-					allowChildClose = true;
-				}
-			}
-
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				using (var tool1FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true))
-				{
-					allowChildClose = false;
-					childRequestedClose = false;
-
-					var pages = tool1FilamentWizard.GetWizardPages();
-
-					while (!childRequestedClose
-						&& pages.MoveNext())
-					{
-						yield return pages.Current;
-					}
-
-					allowChildClose = true;
-				}
-			}
 
 			yield return new XyCalibrationStartPrintPage(this);
 

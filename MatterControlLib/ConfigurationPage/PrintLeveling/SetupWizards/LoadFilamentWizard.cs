@@ -83,12 +83,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			get => (extruderIndex == 0) ? NeedsToBeRun0(printer) : NeedsToBeRun1(printer);
 		}
 
-		public IEnumerator<WizardPage> GetWizardPages()
-		{
-			_ = this.Current;
-			return this.GetPages();
-		}
-
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			// Initialize - store startup temp and extruder index
