@@ -69,7 +69,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 
-		public override bool Enabled => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+		public override bool Enabled
+		{
+			// Wizard should be disabled until requirements are met
+			get => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
+					&& !LoadFilamentWizard.NeedsToBeRun0(printer)
+					&& !LoadFilamentWizard.NeedsToBeRun1(printer);
+		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
