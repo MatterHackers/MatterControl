@@ -815,6 +815,18 @@ namespace MatterHackers.MatterControl
 				},
 				new SceneSelectionOperation()
 				{
+					OperationType = typeof(TwistObject3D),
+					TitleResolver = () => "Twist".Localize(),
+					Action = (sceneContext) =>
+					{
+						var curve = new TwistObject3D();
+						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+					},
+					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
+					IsEnabled = (scene) => scene.SelectedItem != null,
+				},
+				new SceneSelectionOperation()
+				{
 					OperationType = typeof(FitToBoundsObject3D_2),
 					TitleResolver = () => "Fit to Bounds".Localize(),
 					Action = async (sceneContext) =>

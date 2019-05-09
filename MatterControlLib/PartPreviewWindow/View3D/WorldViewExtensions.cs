@@ -191,9 +191,11 @@ namespace MatterHackers.MeshVisualizer
 				{
 					firstEnd = end;
 				}
+
 				lastEnd = end;
 				first = false;
 			}
+
 			world.Render3DLineNoPrep(frustum, firstEnd, lastEnd, color, 1);
 
 			GL.Enable(EnableCap.Lighting);

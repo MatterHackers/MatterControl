@@ -135,11 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())
-			{
-				layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
-			}
+			layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
 		}
 	}
 }
