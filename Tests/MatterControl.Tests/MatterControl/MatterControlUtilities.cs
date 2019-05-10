@@ -969,14 +969,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.Delay();
 
-			testRunner.WaitFor(() => headerExists("Initial Printer Setup"));
-			if (headerExists("Initial Printer Setup"))
-			{
-				// do print leveling steps
-				waitForPageAndAdvance("Initial Printer Setup");
-			}
-
-			waitForPageAndAdvance("Print Leveling Overview");
+			waitForPageAndAdvance("Overview");
 
 			waitForPageAndAdvance("Homing the printer");
 

@@ -154,24 +154,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			var levelingStrings = new LevelingStrings();
 
-			// If no leveling data has been calculated
-			bool showWelcomeScreen = printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count == 0
-				&& !ProbeCalibrationWizard.UsingZProbe(printer);
-
-			if (showWelcomeScreen)
-			{
-				yield return new WizardPage(
-					this,
-					"Initial Printer Setup".Localize(),
-					string.Format(
-						"{0}\n\n{1}",
-						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()))
-				{
-					WindowTitle = Title
-				};
-			}
-
 			yield return new WizardPage(
 				this,
 				"Overview".Localize(),
@@ -180,9 +162,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Print Leveling measures the plane of the bed.".Localize(),
 					"This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-			{
-				WindowTitle = Title
-			};
+				{
+					WindowTitle = Title,
+				};
 
 			// Switch to raw mode and construct leveling structures
 			this.Initialize();
@@ -208,9 +190,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			yield return new HomePrinterPage(
 				this,
-				"Homing the printer".Localize(),
-				levelingStrings.HomingPageInstructions(printer.Settings.Helpers.UseZProbe(), printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)),
-				printer.Settings.Helpers.UseZProbe());
+				levelingStrings.HomingPageInstructions(
+					printer.Settings.Helpers.UseZProbe(), 
+					printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)));
 
 			// if there is a level_x_carriage_markdown oem markdown page
 			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))

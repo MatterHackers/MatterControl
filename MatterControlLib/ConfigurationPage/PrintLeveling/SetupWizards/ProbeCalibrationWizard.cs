@@ -106,21 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			int hotendCount = Math.Min(2, printer.Settings.Helpers.HotendCount());
 			int totalSteps = 3 * hotendCount;
 
-			// make a welcome page if this is the first time calibrating the probe
-			if (!printer.Settings.GetValue<bool>(SettingsKey.probe_has_been_calibrated))
-			{
-				yield return new WizardPage(
-					this,
-					"Initial Printer Setup".Localize(),
-					string.Format(
-						"{0}\n\n{1}",
-						"Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.".Localize(),
-						"The next few screens will walk your through calibrating your printer.".Localize()))
-				{
-					WindowTitle = Title
-				};
-			}
-
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,
@@ -130,9 +115,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Probe Calibration measures the distance between the probe and the tip of the nozzle.".Localize(),
 					"This data is required for software print leveling and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-			{
-				WindowTitle = Title
-			};
+				{
+					WindowTitle = Title,
+				};
 
 			// Initialize - turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -149,9 +134,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// add in the homing printer page
 			yield return new HomePrinterPage(
 				this,
-				"Homing the printer".Localize(),
-				levelingStrings.HomingPageInstructions(true, false),
-				false);
+				levelingStrings.HomingPageInstructions(true, false));
 
 			// if we have not run leveling yet and there is a level_x_carriage_markdown oem markdown page
 			if (LevelingValidation.NeedsToBeRun(printer)

@@ -329,11 +329,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
-					Title = "Export All Settings".Localize(),
+					Title = "Export Printer".Localize(),
 					Action = () => UiThread.RunOnIdle(() =>
 					{
 						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
-					})
+					}),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				},
 				new ActionSeparator(),
 				new NamedAction()
@@ -398,7 +399,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							"Delete Printer?".Localize(),
 							StyledMessageBox.MessageType.YES_NO,
 							"Delete Printer".Localize());
-					}
+					},
 				}
 			};
 

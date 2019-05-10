@@ -41,10 +41,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private EditContext originalEditContext;
 
-		private bool allowChildClose = true;
-
-		private bool childRequestedClose = false;
-
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
@@ -73,7 +69,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 
-		public override bool Enabled => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+		public override bool Enabled
+		{
+			// Wizard should be disabled until requirements are met
+			get => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
+					&& !LoadFilamentWizard.NeedsToBeRun0(printer)
+					&& !LoadFilamentWizard.NeedsToBeRun1(printer);
+		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
@@ -104,12 +106,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			base.Dispose();
 		}
 
-		public override bool ClosePage()
-		{
-			childRequestedClose = true;
-			return allowChildClose;
-		}
-
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			yield return new WizardPage(
@@ -120,53 +116,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					"Nozzle Calibration measures the distance between hotends.".Localize(),
 					"This data improves the alignment of dual extrusion prints.".Localize(),
 					"Click 'Next' to continue.".Localize()))
-						{
-							WindowTitle = Title
-						};
+				{
+					WindowTitle = Title,
+				};
 
 			yield return new XyCalibrationSelectPage(this);
 
 			// Require user confirmation after this point
 			this.RequireCancelConfirmation = true;
-
-			// run load filament if we need to
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				using (var tool0FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true))
-				{
-					allowChildClose = false;
-					childRequestedClose = false;
-
-					var pages = tool0FilamentWizard.GetWizardPages();
-
-					while (!childRequestedClose
-						&& pages.MoveNext())
-					{
-						yield return pages.Current;
-					}
-
-					allowChildClose = true;
-				}
-			}
-
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				using (var tool1FilamentWizard = new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true))
-				{
-					allowChildClose = false;
-					childRequestedClose = false;
-
-					var pages = tool1FilamentWizard.GetWizardPages();
-
-					while (!childRequestedClose
-						&& pages.MoveNext())
-					{
-						yield return pages.Current;
-					}
-
-					allowChildClose = true;
-				}
-			}
 
 			yield return new XyCalibrationStartPrintPage(this);
 

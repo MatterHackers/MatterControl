@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		private bool footerHeightAcquired = false;
 		private ISetupWizard _activeStage;
 
-		private Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
+		private readonly Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
 
 		private IStagedSetupWizard setupWizard;
 		private bool closeConfirmed;
@@ -62,9 +62,13 @@ namespace MatterHackers.MatterControl
 				}
 
 				// Ensure all or only the active stage is enabled
-				foreach (var kvp in rowsByStage)
+				foreach (var (stage, widget) in rowsByStage.Select(x => (x.Key, x.Value))) // project to tuple - deconstruct to named items
 				{
-					kvp.Value.Enabled = value == null || kvp.Key == value;
+					bool isActiveStage = stage == value;
+					bool noActiveStage = value == null;
+
+					// Enable GuiWidget when no stage is active or when the current stage is active and enabled
+					widget.Enabled = stage.Enabled && (noActiveStage || isActiveStage);
 				}
 
 				// Shutdown the active Wizard
@@ -225,6 +229,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		/// <summary>
+		/// Navigate to the next incomplete stage or return to the home page
+		/// </summary>
 		public void NextIncompleteStage()
 		{
 			ISetupWizard nextStage = setupWizard.Stages.FirstOrDefault(s => s.SetupRequired && s.Enabled);
@@ -235,7 +242,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.ClosePage();
+				this.NavigateHome();
 			}
 		}
 

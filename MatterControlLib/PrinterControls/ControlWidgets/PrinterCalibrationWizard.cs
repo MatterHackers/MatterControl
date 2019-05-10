@@ -46,12 +46,26 @@ namespace MatterHackers.MatterControl
 	{
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
-			this.Stages = new ISetupWizard[]
+
+			var stages = new List<ISetupWizard>()
 			{
 				new ProbeCalibrationWizard(printer),
 				new PrintLevelingWizard(printer),
-				new XyCalibrationWizard(printer, 1)
 			};
+
+			if (LoadFilamentWizard.NeedsToBeRun0(printer))
+			{
+				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
+			}
+
+			if (LoadFilamentWizard.NeedsToBeRun1(printer))
+			{
+				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
+			}
+
+			stages.Add(new XyCalibrationWizard(printer, 1));
+
+			this.Stages = stages;
 
 			this.HomePageGenerator = () =>
 			{

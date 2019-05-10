@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -36,26 +37,27 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class HomePrinterPage : WizardPage
 	{
-		private bool autoAdvance;
+		private bool homingAxisObserved;
 
-		public HomePrinterPage(ISetupWizard setupWizard, string headerText, string instructionsText, bool autoAdvance)
-			: base(setupWizard, headerText, instructionsText)
+		public HomePrinterPage(ISetupWizard setupWizard, string instructionsText)
+			: base(setupWizard, "Homing the printer".Localize(), instructionsText)
 		{
-			this.autoAdvance = autoAdvance;
+			// Register listeners
+			printer.Connection.DetailedPrintingStateChanged += Connection_DetailedPrintingStateChanged;
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
+			homingAxisObserved = false;
+
 			// Unregister listeners
-			printer.Connection.DetailedPrintingStateChanged -= CheckHomeFinished;
+			printer.Connection.DetailedPrintingStateChanged -= Connection_DetailedPrintingStateChanged;
 
 			base.OnClosed(e);
 		}
 
 		public override void OnLoad(EventArgs args)
 		{
-			printer.Connection.DetailedPrintingStateChanged += CheckHomeFinished;
-
 			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
 
 			if(!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
@@ -64,24 +66,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
-			if (autoAdvance)
+			NextButton.Enabled = false;
+
+			// Always enable the advance button after 15 seconds
+			UiThread.RunOnIdle(() =>
 			{
-				NextButton.Enabled = false;
-			}
+				// TODO: consider if needed. Ensures that if we miss a HomingAxis event, the user can still continue
+				if (!this.HasBeenClosed)
+				{
+					NextButton.Enabled = true;
+				}
+			}, 15);
 
 			base.OnLoad(args);
 		}
 
-		private void CheckHomeFinished(object sender, EventArgs e)
+		private void Connection_DetailedPrintingStateChanged(object sender, EventArgs e)
 		{
-			if (printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
+			if (printer.Connection.DetailedPrintingState == DetailedPrintingState.HomingAxis
+				&& !homingAxisObserved)
+			{
+				homingAxisObserved = true;
+			}
+
+			if (homingAxisObserved
+				&& printer.Connection.DetailedPrintingState != DetailedPrintingState.HomingAxis)
 			{
 				NextButton.Enabled = true;
-
-				if (printer.Settings.Helpers.UseZProbe())
-				{
-					UiThread.RunOnIdle(() => NextButton.InvokeClick());
-				}
+				UiThread.RunOnIdle(() => NextButton.InvokeClick());
 			}
 		}
 	}
