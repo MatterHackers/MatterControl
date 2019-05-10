@@ -68,7 +68,9 @@ namespace MatterHackers.MatterControl
 					bool isActiveStage = stage == value;
 					bool noActiveStage = value == null;
 
-					kvp.Value.Enabled = noActiveStage || isActiveStage;
+					// Enable GuiWidget when no stage is active or when the current stage is active and enabled
+					var widget = kvp.Value;
+					widget.Enabled = noActiveStage || isActiveStage;
 				}
 
 				// Shutdown the active Wizard
