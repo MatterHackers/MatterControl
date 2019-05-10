@@ -62,15 +62,13 @@ namespace MatterHackers.MatterControl
 				}
 
 				// Ensure all or only the active stage is enabled
-				foreach (var kvp in rowsByStage)
+				foreach (var (stage, widget) in rowsByStage.Select(x => (x.Key, x.Value))) // project to tuple - deconstruct to named items
 				{
-					ISetupWizard stage = kvp.Key;
 					bool isActiveStage = stage == value;
 					bool noActiveStage = value == null;
 
 					// Enable GuiWidget when no stage is active or when the current stage is active and enabled
-					var widget = kvp.Value;
-					widget.Enabled = noActiveStage || isActiveStage;
+					widget.Enabled = stage.Enabled && (noActiveStage || isActiveStage);
 				}
 
 				// Shutdown the active Wizard
