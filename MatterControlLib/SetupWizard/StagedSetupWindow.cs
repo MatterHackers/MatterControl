@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 		private bool footerHeightAcquired = false;
 		private ISetupWizard _activeStage;
 
-		private Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
+		private readonly Dictionary<ISetupWizard, WizardStageRow> rowsByStage = new Dictionary<ISetupWizard, WizardStageRow>();
 
 		private IStagedSetupWizard setupWizard;
 		private bool closeConfirmed;
@@ -64,7 +64,11 @@ namespace MatterHackers.MatterControl
 				// Ensure all or only the active stage is enabled
 				foreach (var kvp in rowsByStage)
 				{
-					kvp.Value.Enabled = value == null || kvp.Key == value;
+					ISetupWizard stage = kvp.Key;
+					bool isActiveStage = stage == value;
+					bool noActiveStage = value == null;
+
+					kvp.Value.Enabled = noActiveStage || isActiveStage;
 				}
 
 				// Shutdown the active Wizard
