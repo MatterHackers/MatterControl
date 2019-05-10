@@ -115,22 +115,24 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.MinimalShade
 			};
 
-			doneButton.Click += (s, e) =>
-			{
-				if (this.DialogWindow is StagedSetupWindow setupWindow)
-				{
-					setupWindow.NextIncompleteStage();
-				}
-				else
-				{
-					this.DialogWindow.ClosePage();
-				}
-			};
+			doneButton.Click += (s, e) => this.FinishWizard();
 
 			this.AddPageAction(doneButton);
 
 			NextButton.Visible = false;
 			this.HideCancelButton();
+		}
+
+		protected void FinishWizard()
+		{
+			if (this.DialogWindow is StagedSetupWindow setupWindow)
+			{
+				setupWindow.NextIncompleteStage();
+			}
+			else
+			{
+				this.DialogWindow.ClosePage();
+			}
 		}
 	}
 }

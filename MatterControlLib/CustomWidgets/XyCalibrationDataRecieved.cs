@@ -126,8 +126,7 @@ namespace MatterHackers.MatterControl
 				{
 					printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
 
-					// close this wizard
-					this.DialogWindow.ClosePage();
+					this.FinishWizard();
 				};
 			}
 		}
