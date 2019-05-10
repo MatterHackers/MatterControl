@@ -55,17 +55,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Twist".Localize();
 		}
 
-		[DisplayName("Twist Right")]
-		public bool TwistCw { get; set; } = true;
-
+		[Description("The angle to rotate the top of the part")]
 		public double Angle { get; set; } = double.MaxValue;
-
-		public Vector2 RotationOffset { get; set; }
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
 		public double MinCutsPerRotation { get; set; } = 30;
 
+		[DisplayName("Twist Right")]
+		public bool TwistCw { get; set; } = true;
+
+		public bool Advanced { get; set; }
+
+		public Easing.EaseType EasingType { get; set; } = Easing.EaseType.Linear;
+
+		public Easing.EaseOption EasingOption { get; set; } = Easing.EaseOption.In;
+
+		public double EndHeightPercent { get; set; } = 100;
+
+		public double StartHeightPercent { get; set; } = 0;
+
+		[Description("Allows for the repositioning of the rotation origin")]
+		public Vector2 RotationOffset { get; set; }
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
@@ -104,6 +115,18 @@ namespace MatterHackers.MatterControl.DesignTools
 				valuesChanged = true;
 			}
 
+			if (EndHeightPercent < 1 || EndHeightPercent > 100)
+			{
+				EndHeightPercent = Math.Min(100, Math.Max(1, EndHeightPercent));
+				valuesChanged = true;
+			}
+
+			if (StartHeightPercent < 0 || StartHeightPercent > EndHeightPercent - 1)
+			{
+				StartHeightPercent = Math.Min(EndHeightPercent - 1, Math.Max(0, StartHeightPercent));
+				valuesChanged = true;
+			}
+
 			var rebuildLocks = this.RebuilLockAll();
 
 			return ApplicationController.Instance.Tasks.Execute(
@@ -113,14 +136,21 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 
-					double numberOfCuts = MinCutsPerRotation * (Angle / 360.0);
-					double cutSize = sourceAabb.XSize / numberOfCuts;
-					double cutPosition = sourceAabb.MinXYZ.Z + cutSize;
-					var cuts = new List<double>();
-					for (int i = 0; i < numberOfCuts; i++)
+					var bottom = sourceAabb.MinXYZ.Z;
+					var top = sourceAabb.ZSize * EndHeightPercent / 100.0;
+					var size = sourceAabb.ZSize;
+					if (Advanced)
 					{
-						cuts.Add(cutPosition);
-						cutPosition += cutSize;
+						bottom += sourceAabb.ZSize * StartHeightPercent / 100.0;
+						size = top - bottom;
+					}
+
+					double numberOfCuts = MinCutsPerRotation * (Angle / 360.0);
+					double cutSize = size / numberOfCuts;
+					var cuts = new List<double>();
+					for (int i = 0; i < numberOfCuts + 1; i++)
+					{
+						cuts.Add(bottom - cutSize + i * size / numberOfCuts);
 					}
 
 					var rotationCenter = new Vector2(sourceAabb.Center) + RotationOffset;
@@ -143,7 +173,27 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							var position = transformedMesh.Vertices[i];
 
-							var angleToRotate = ((position.Z - sourceAabb.MinXYZ.Z) / sourceAabb.ZSize) * Angle / 360.0 * MathHelper.Tau;
+							var ratio = (position.Z - bottom) / size;
+
+							if (Advanced)
+							{
+								if (position.Z < bottom)
+								{
+									ratio = 0;
+								}
+								else if (position.Z > top)
+								{
+									ratio = 1;
+								}
+								else
+								{
+									ratio = (position.Z - bottom) / size;
+									ratio = Easing.Specify(EasingType, EasingOption, ratio);
+								}
+							}
+
+
+							var angleToRotate = ratio * Angle / 360.0 * MathHelper.Tau;
 
 							if (!TwistCw)
 							{

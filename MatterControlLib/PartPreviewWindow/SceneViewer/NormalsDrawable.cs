@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Drawing;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.RenderOpenGl;
@@ -57,8 +56,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			throw new NotImplementedException();
-#if false
 			if (item.Mesh?.Faces.Count <= 0)
 			{
 				return;
@@ -71,24 +68,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var face in mesh.Faces)
 			{
 				int vertexCount = 0;
-				Vector3 faceCenter = Vector3.Zero;
-				foreach (var v in  new[] { face.v0, face.v1, face.v2 })
+				Vector3Float faceCenter = Vector3Float.Zero;
+				foreach (var v in new[] { face.v0, face.v1, face.v2 })
 				{
 					var vertex = mesh.Vertices[v];
 
-					faceCenter += vertex.Position;
+					faceCenter += vertex;
 					vertexCount++;
 				}
+
 				faceCenter /= vertexCount;
 
 				var matrix = item.WorldMatrix();
 
-				var transformed1 = Vector3Ex.Transform(faceCenter, matrix);
-				var normal = Vector3Ex.TransformNormal(face.Normal, matrix).GetNormal();
+				var transformed1 = faceCenter.Transform(matrix);
+				var normal = face.normal.TransformNormal(matrix).GetNormal();
 
 				world.Render3DLineNoPrep(frustum, transformed1, transformed1 + normal, Color.Red, 2);
 			}
-#endif
 		}
 	}
 }

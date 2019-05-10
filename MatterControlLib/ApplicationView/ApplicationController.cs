@@ -822,7 +822,7 @@ namespace MatterHackers.MatterControl
 						var curve = new TwistObject3D();
 						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
+					Icon = AggContext.StaticData.LoadIcon("twist.png", 16, 16, theme.InvertIcons),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
