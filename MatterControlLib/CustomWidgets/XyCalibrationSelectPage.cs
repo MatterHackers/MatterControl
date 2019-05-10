@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(column);
 
-			column.AddChild(coarseCalibration = new RadioButton("Coarse".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
+			var coarseText = calibrationWizard.Quality == QualityType.Coarse ? "Coarse (recommended)".Localize() : "Coarse".Localize();
+			column.AddChild(coarseCalibration = new RadioButton(coarseText, textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = calibrationWizard.Quality == QualityType.Coarse
 			});
@@ -70,7 +71,8 @@ namespace MatterHackers.MatterControl
 				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 			};
 
-			column.AddChild(normalCalibration = new RadioButton("Normal (Recommended)".Localize(), textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
+			var normalText = calibrationWizard.Quality == QualityType.Normal ? "Normal (recommended)".Localize() : "Normal".Localize();
+			column.AddChild(normalCalibration = new RadioButton(normalText, textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = calibrationWizard.Quality == QualityType.Normal
 			});
