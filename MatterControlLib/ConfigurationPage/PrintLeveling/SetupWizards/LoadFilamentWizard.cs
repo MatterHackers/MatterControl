@@ -50,7 +50,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			: base(printer)
 		{
 			this.showAlreadyLoadedButton = showAlreadyLoadedButton;
-			this.Title = "Load Filament".Localize() + $"({extruderIndex + 1})";
+			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) == 1)
+			{
+				this.Title = "Load Filament".Localize();
+			}
+			else
+			{
+				this.Title = "Load Filament".Localize() + $" ({extruderIndex + 1})";
+			}
 
 			this.extruderIndex = extruderIndex;
 		}
