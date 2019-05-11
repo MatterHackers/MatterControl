@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
@@ -34,8 +36,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
-using System;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					item.Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 2);
 					break;
 			}
+
 			return item;
 		}
 
@@ -112,12 +113,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
+
 		public double Height { get; set; } = 20;
+
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
+
 		public double StartingAngle { get; set; } = 0;
+
 		public double EndingAngle { get; set; } = 360;
+
 		public double DiameterTop { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -184,10 +190,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				diameterWidget.Visible = Advanced;
 			}
+
 			if (change.Context.GetEditRow(nameof(StartingAngle)) is GuiWidget startingAngleWidget)
 			{
 				startingAngleWidget.Visible = Advanced;
 			}
+
 			if (change.Context.GetEditRow(nameof(EndingAngle)) is GuiWidget endingAngleWidget)
 			{
 				endingAngleWidget.Visible = Advanced;
