@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					// TODO: Why is this listener conditional? If the leveling changes somehow, shouldn't we be updated the UI to reflect that?
 					// Register listeners
 					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
-					
+
 					settingsRow.AddChild(printLevelingSwitch);
 				}
 			}

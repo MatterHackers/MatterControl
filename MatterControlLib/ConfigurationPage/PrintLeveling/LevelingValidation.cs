@@ -94,6 +94,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe7PointRadial:
@@ -101,6 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe13PointRadial:
@@ -108,6 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe100PointRadial:
@@ -115,6 +118,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
@@ -122,6 +126,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
@@ -129,6 +134,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.Probe10x10Mesh:
@@ -136,6 +142,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				case LevelingSystem.ProbeCustom:
@@ -143,6 +150,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						return true;
 					}
+
 					break;
 
 				default:
