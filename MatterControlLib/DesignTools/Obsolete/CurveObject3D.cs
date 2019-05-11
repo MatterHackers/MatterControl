@@ -177,7 +177,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							curvedMesh.Vertices[i] = worldWithBend.Transform(matrixInv);
 						}
 
-						curvedMesh.MarkAsChanged();
 						curvedMesh.CalculateNormals();
 					}
 

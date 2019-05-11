@@ -84,12 +84,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var center = sourceAabb.Center + new Vector3(RotationOffset);
 
 			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, 5, sourceAabb.ZSize, 100, Color.Red, Color.Red, 5);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, 1, sourceAabb.ZSize, 15, Color.Red, Color.Red, 5);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
-
-			// Children.Last().Mesh.CalculateNormals();
 		}
 
 		public override Task Rebuild()
@@ -230,7 +228,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
-						transformedMesh.MarkAsChanged();
 
 						var twistedChild = new Object3D()
 						{
