@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, IObject3D item, bool isSelected, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			if (item.Mesh?.Faces.Count <= 0)
+			if (!isSelected
+				|| item.Mesh?.Faces.Count <= 0)
 			{
 				return;
 			}
