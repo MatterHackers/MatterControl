@@ -82,10 +82,17 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		{
 			var imageBuffer = new ImageBuffer(16, 16);
 
-			WebCache.RetrieveImageAsync(
-				imageBuffer,
-				ApplicationController.Instance.GetFavIconUrl(oemName),
-				scaleToImageX: false);
+			string oemUrl = ApplicationController.Instance.GetFavIconUrl(oemName);
+
+			if (!string.IsNullOrWhiteSpace(oemUrl))
+			{
+				WebCache.RetrieveImageAsync(imageBuffer, oemUrl, scaleToImageX: false);
+			}
+			else
+			{
+				var graphics = imageBuffer.NewGraphics2D();
+				graphics.Clear(AppContext.Theme.SlightShade);
+			}
 
 			return imageBuffer;
 		}

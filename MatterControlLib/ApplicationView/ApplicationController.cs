@@ -479,8 +479,13 @@ namespace MatterHackers.MatterControl
 
 		public string GetFavIconUrl(string oemName)
 		{
-			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
-			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
+			if (OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl)
+				&& !string.IsNullOrWhiteSpace(oemUrl))
+			{
+				return "https://www.google.com/s2/favicons?domain=" + oemUrl;
+			}
+
+			return null;
 		}
 
 		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
