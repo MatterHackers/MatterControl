@@ -44,6 +44,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public XyCalibrationWizard(PrinterConfig printer, int extruderToCalibrateIndex)
 			: base(printer)
 		{
+			if (printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated))
+			{
+				this.Quality = QualityType.Normal;
+			}
+			else
+			{
+				this.Quality = QualityType.Coarse;
+			}
+
 			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
 
 			this.Title = "Nozzle Calibration".Localize();
@@ -52,7 +61,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public int ExtruderToCalibrateIndex { get; }
 
-		public QualityType Quality { get; set; } = QualityType.Normal;
+		public QualityType Quality { get; set; }
 
 		/// <summary>
 		/// Gets or sets the index of the X calibration item that was selected by the user.
