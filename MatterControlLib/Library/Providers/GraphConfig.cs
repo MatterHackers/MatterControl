@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,17 @@ namespace MatterHackers.MatterControl.Library
 		public string OperationID { get; set; }
 
 		public string Title { get; set; }
+
 		public IEnumerable<Type> MappedTypes { get; set; }
+
 		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
+
 		public Func<IObject3D, bool> IsEnabled { get; set; }
+
 		public Func<IObject3D, bool> IsVisible { get; set; }
+
 		public Func<ThemeConfig, ImageBuffer> IconCollector { get; set; }
+
 		public Type ResultType { get; set; }
 	}
 
