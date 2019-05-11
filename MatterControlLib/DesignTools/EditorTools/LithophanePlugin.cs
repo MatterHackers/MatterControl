@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					},
 					IsEnabled = (sceneItem) => true,
 					IsVisible = (sceneItem) => true,
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
 				});
 		}
 

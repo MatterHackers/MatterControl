@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 
 		public string Title => this.TitleResolver?.Invoke();
 
-		public ImageBuffer Icon { get; set; }
+		public Func<bool, ImageBuffer> Icon { get; set; }
 	}
 
 	public static class NamedActionExtensions

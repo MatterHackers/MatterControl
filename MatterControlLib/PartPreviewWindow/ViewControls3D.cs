@@ -465,7 +465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						this.AddChild(CreateSupportButton(theme));
 					}
 
-					button = new IconButton(namedAction.Icon, theme)
+					button = new IconButton(namedAction.Icon(theme.InvertIcons), theme)
 					{
 						Name = namedAction.Title + " Button",
 						ToolTipText = namedAction.Title,

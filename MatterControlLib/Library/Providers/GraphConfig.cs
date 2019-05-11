@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public Func<IObject3D, bool> IsVisible { get; set; }
 
-		public Func<ThemeConfig, ImageBuffer> IconCollector { get; set; }
+		public Func<bool, ImageBuffer> IconCollector { get; set; }
 
 		public Type ResultType { get; set; }
 	}
@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.Library
 
 			if (!thumbnails.OperationIcons.ContainsKey(resultType))
 			{
-				thumbnails.OperationIcons.Add(resultType, () => nodeOperation.IconCollector(applicationController.Theme));
+				thumbnails.OperationIcons.Add(resultType, nodeOperation.IconCollector);
 			}
 
 			this.Operations.Add(nodeOperation.OperationID, nodeOperation);
