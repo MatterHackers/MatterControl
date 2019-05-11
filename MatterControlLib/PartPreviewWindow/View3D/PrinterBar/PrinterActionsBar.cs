@@ -364,13 +364,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									bool onlyReloadSliceSettings = true;
 									if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-									&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+										&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 									{
 										onlyReloadSliceSettings = false;
 									}
 
 									printer.Settings.ClearUserOverrides();
 									printer.Settings.Save(clearBlackListSettings: true);
+
+									printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();
 
 									if (onlyReloadSliceSettings)
 									{
