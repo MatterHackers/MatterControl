@@ -229,7 +229,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// Register listeners
-			printer.Connection.ConnectionSucceeded += ConnectionSucceeded;
+			printer.Connection.ConnectionSucceeded += CheckForPrintRecovery;
+
+			// if we are already connected than check if there is a print recovery right now
+			if (printer.Connection.CommunicationState == CommunicationStates.Connected)
+			{
+				CheckForPrintRecovery(null, null);
+			}
 		}
 
 		bool buttonIsBeingClicked;
@@ -265,12 +271,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Connection.ConnectionSucceeded -= ConnectionSucceeded;
+			printer.Connection.ConnectionSucceeded -= CheckForPrintRecovery;
 
 			base.OnClosed(e);
 		}
 
-		private void ConnectionSucceeded(object s, EventArgs e)
+		private void CheckForPrintRecovery(object s, EventArgs e)
 		{
 			UiThread.RunOnIdle(() =>
 			{
