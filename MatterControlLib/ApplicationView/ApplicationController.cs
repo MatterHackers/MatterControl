@@ -2208,6 +2208,20 @@ namespace MatterHackers.MatterControl
 		}
 
 		/// <summary>
+		/// Register the given SceneSelectionOperation
+		/// </summary>
+		/// <param name="operation">The action to register</param>
+		public void RegisterSceneOperation(SceneSelectionOperation operation)
+		{
+			if (operation.OperationType != null)
+			{
+				this.Thumbnails.OperationIcons.Add(operation.OperationType, operation.Icon);
+			}
+
+			registeredSceneOperations.Add(operation);
+		}
+
+		/// <summary>
 		/// Enumerate the given section, returning all registered actions
 		/// </summary>
 		/// <param name="section">The section to enumerate</param>
