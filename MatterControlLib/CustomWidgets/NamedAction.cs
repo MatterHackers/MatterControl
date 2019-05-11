@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, John Lewin
 
 All rights reserved.
 
@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 
@@ -39,7 +38,9 @@ namespace MatterHackers.Agg.UI
 	public class SceneSelectionOperation : LocalizedAction
 	{
 		public Action<ISceneContext> Action { get; set; }
+
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
+
 		public Type OperationType { get; set; }
 	}
 

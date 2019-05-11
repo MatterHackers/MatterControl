@@ -90,7 +90,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			return imageBuffer;
 		}
 
-
 		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
 		{
 			// Sort manufacturers by name
