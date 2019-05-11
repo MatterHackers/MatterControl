@@ -43,10 +43,10 @@ namespace MatterHackers.MatterControl
 	public static class SettingsValidation
 	{
 		/// <summary>
-		/// Validates the printer settings satisfy all requirements
+		/// Validates the printer settings satisfy all requirements.
 		/// </summary>
-		/// <param name="printer">The printer to validate</param>
-		/// <returns>A list of all warnings and errors</returns>
+		/// <param name="printer">The printer to validate.</param>
+		/// <returns>A list of all warnings and errors.</returns>
 		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null, bool validatePrintBed = true)
 		{
 			if (settings == null)
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 											DialogWindow.Show(new PrintLevelingWizard(printer));
 										});
 									},
-									IsEnabled =() => printer.Connection.IsConnected
+									IsEnabled = () => printer.Connection.IsConnected
 								}
 							});
 					}
@@ -396,10 +396,10 @@ namespace MatterHackers.MatterControl
 		}
 
 		/// <summary>
-		/// Validates printer satisfies all requirements
+		/// Validates printer satisfies all requirements.
 		/// </summary>
-		/// <param name="printer">The printer to validate</param>
-		/// <returns>A list of all warnings and errors</returns>
+		/// <param name="printer">The printer to validate.</param>
+		/// <returns>A list of all warnings and errors.</returns>
 		public static List<ValidationError> Validate(this PrinterConfig printer)
 		{
 			var errors = new List<ValidationError>();

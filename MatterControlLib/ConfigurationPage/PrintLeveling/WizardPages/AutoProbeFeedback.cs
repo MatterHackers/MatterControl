@@ -40,25 +40,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class AutoProbeFeedback : WizardPage
 	{
-		private Vector3 lastReportedPosition;
-		private List<ProbePosition> probePositions;
-		private int probePositionsBeingEditedIndex;
+		private readonly List<PrintLevelingWizard.ProbePosition> probePositions;
+		private readonly int probePositionsBeingEditedIndex;
 
-		protected Vector3 probeStartPosition;
+		private Vector3 probeStartPosition;
 
-		public AutoProbeFeedback(ISetupWizard setupWizard, Vector3 probeStartPosition, string headerText, string details, List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+		public AutoProbeFeedback(ISetupWizard setupWizard, Vector3 probeStartPosition, string headerText, string details, List<PrintLevelingWizard.ProbePosition> probePositions, int probePositionsBeingEditedIndex)
 			: base(setupWizard, headerText, details)
 		{
 			this.probeStartPosition = probeStartPosition;
 			this.probePositions = probePositions;
 
-			this.lastReportedPosition = printer.Connection.LastReportedPosition;
 			this.probePositionsBeingEditedIndex = probePositionsBeingEditedIndex;
 
 			var spacer = new GuiWidget(15, 15);
 			contentRow.AddChild(spacer);
-
-			FlowLayoutWidget textFields = new FlowLayoutWidget(FlowDirection.TopToBottom);
 		}
 
 		private void GetZProbeHeight(object sender, string line)
@@ -68,14 +64,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				double sampleRead = double.MinValue;
 				if (line.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
-					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
+					probePositions[probePositionsBeingEditedIndex].Position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].Position.Y = probeStartPosition.Y;
 					GCodeFile.GetFirstNumberAfter("Z:", line, ref sampleRead);
 				}
 				else if (line.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
-					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
+					probePositions[probePositionsBeingEditedIndex].Position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].Position.Y = probeStartPosition.Y;
 					// smoothie returns the position relative to the start position
 					double reportedProbeZ = 0;
 					GCodeFile.GetFirstNumberAfter("Z:", line, ref reportedProbeZ);
@@ -97,7 +93,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							samples.RemoveAt(samples.Count - 1);
 						}
 
-						probePositions[probePositionsBeingEditedIndex].position.Z = Math.Round(samples.Average(), 2);
+						probePositions[probePositionsBeingEditedIndex].Position.Z = Math.Round(samples.Average(), 2);
 
 						UiThread.RunOnIdle(() => NextButton.InvokeClick());
 					}
@@ -112,8 +108,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		List<double> samples = new List<double>();
-		private int numberOfSamples;
+		private readonly List<double> samples = new List<double>();
 		private Vector3 feedRates;
 		private Vector3 adjustedProbePosition;
 
@@ -142,8 +137,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
-
-			numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples)-1;
 
 			// probe the current position
 			printer.Connection.QueueLine("G30");

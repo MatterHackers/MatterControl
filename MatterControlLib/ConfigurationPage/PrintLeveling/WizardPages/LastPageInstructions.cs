@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LastPageInstructions : WizardPage
 	{
-		private List<ProbePosition> probePositions;
+		private readonly List<PrintLevelingWizard.ProbePosition> probePositions;
 
-		public LastPageInstructions(ISetupWizard setupWizard, string pageDescription, bool useZProbe, List<ProbePosition> probePositions)
+		public LastPageInstructions(ISetupWizard setupWizard, string pageDescription, bool useZProbe, List<PrintLevelingWizard.ProbePosition> probePositions)
 			: base(setupWizard, pageDescription, "")
 		{
 			this.probePositions = probePositions;
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			for (int i = 0; i < probePositions.Count; i++)
 			{
-				levelingData.SampledPositions.Add(probePositions[i].position);
+				levelingData.SampledPositions.Add(probePositions[i].Position);
 			}
 
 			levelingData.LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution);

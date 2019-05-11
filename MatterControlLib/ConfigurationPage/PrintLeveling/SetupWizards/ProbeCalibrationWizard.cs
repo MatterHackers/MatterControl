@@ -97,11 +97,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected override IEnumerator<WizardPage> GetPages()
 		{
 			var levelingStrings = new LevelingStrings();
-			var autoProbePositions = new List<ProbePosition>(3);
-			var manualProbePositions = new List<ProbePosition>(3);
+			var autoProbePositions = new List<PrintLevelingWizard.ProbePosition>(3);
+			var manualProbePositions = new List<PrintLevelingWizard.ProbePosition>(3);
 
-			autoProbePositions.Add(new ProbePosition());
-			manualProbePositions.Add(new ProbePosition());
+			autoProbePositions.Add(new PrintLevelingWizard.ProbePosition());
+			manualProbePositions.Add(new PrintLevelingWizard.ProbePosition());
 
 			int hotendCount = Math.Min(2, printer.Settings.Helpers.HotendCount());
 			int totalSteps = 3 * hotendCount;
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
 			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer);
-			Vector3 probeStartPosition = new Vector3(probePosition, startProbeHeight);
+			var probeStartPosition = new Vector3(probePosition, startProbeHeight);
 
 			int extruderPriorToMeasure = printer.Connection.ActiveExtruderIndex;
 
@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (extruderIndex == 0)
 				{
 					// set the probe z offset
-					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+					double newProbeOffset = autoProbePositions[0].Position.Z - manualProbePositions[0].Position.Z;
 					var probe_offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 					probe_offset.Z = -newProbeOffset;
 					printer.Settings.SetValue(SettingsKey.probe_offset, $"{probe_offset.X},{probe_offset.Y},{probe_offset.Z}");
@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				else if (extruderIndex == 1)
 				{
 					// store the offset into the extruder offset z position
-					double newProbeOffset = autoProbePositions[0].position.Z - manualProbePositions[0].position.Z;
+					double newProbeOffset = autoProbePositions[0].Position.Z - manualProbePositions[0].Position.Z;
 					var hotend0Offset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 					var newZOffset = newProbeOffset + hotend0Offset.Z;
 					printer.Settings.Helpers.SetExtruderZOffset(1, newZOffset);

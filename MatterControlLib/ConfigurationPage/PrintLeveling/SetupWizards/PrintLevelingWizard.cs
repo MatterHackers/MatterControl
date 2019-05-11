@@ -41,6 +41,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class PrintLevelingWizard : PrinterSetupWizard
 	{
+		// this class is so that it is not passed by value
+		public class ProbePosition
+		{
+			public Vector3 Position;
+		}
+
 		private double babySteppingValue;
 		private bool wizardExited;
 
@@ -191,7 +197,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			yield return new HomePrinterPage(
 				this,
 				levelingStrings.HomingPageInstructions(
-					printer.Settings.Helpers.UseZProbe(), 
+					printer.Settings.Helpers.UseZProbe(),
 					printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)));
 
 			// if there is a level_x_carriage_markdown oem markdown page
@@ -380,7 +386,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// clamp this to the bed bounds
 				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-				RectangleDouble bedBounds = new RectangleDouble(printCenter - bedSize / 2, printCenter + bedSize / 2);
+				var bedBounds = new RectangleDouble(printCenter - bedSize / 2, printCenter + bedSize / 2);
 				Vector2 adjustedPosition = bedBounds.Clamp(actualNozzlePosition);
 
 				// and push it back into the probePosition
@@ -389,11 +395,5 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			return probePosition;
 		}
-	}
-
-	// this class is so that it is not passed by value
-	public class ProbePosition
-	{
-		public Vector3 position;
 	}
 }

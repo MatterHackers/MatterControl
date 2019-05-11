@@ -52,11 +52,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private Vector3 feedRates;
 		private Vector3 adjustedProbePosition;
 		private Vector3 probeStartPosition;
-		private List<ProbePosition> probePositions;
+		private List<PrintLevelingWizard.ProbePosition> probePositions;
 		private double servoDeployCommand;
 		private ProbePositionsWidget probePositionsWidget;
 
-		public AutoProbePage(ISetupWizard setupWizard, PrinterConfig printer, string headerText, List<Vector2> probePoints, List<ProbePosition> probePositions)
+		public AutoProbePage(ISetupWizard setupWizard, PrinterConfig printer, string headerText, List<Vector2> probePoints, List<PrintLevelingWizard.ProbePosition> probePositions)
 			: base(setupWizard)
 		{
 			this.HeaderText = headerText;
@@ -189,14 +189,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				double sampleRead = double.MinValue;
 				if (line.StartsWith("Bed")) // marlin G30 return code (looks like: 'Bed Position X:20 Y:32 Z:.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
-					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
+					probePositions[probePositionsBeingEditedIndex].Position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].Position.Y = probeStartPosition.Y;
 					GCodeFile.GetFirstNumberAfter("Z:", line, ref sampleRead);
 				}
 				else if (line.StartsWith("Z:")) // smoothie G30 return code (looks like: 'Z:10.01')
 				{
-					probePositions[probePositionsBeingEditedIndex].position.X = probeStartPosition.X;
-					probePositions[probePositionsBeingEditedIndex].position.Y = probeStartPosition.Y;
+					probePositions[probePositionsBeingEditedIndex].Position.X = probeStartPosition.X;
+					probePositions[probePositionsBeingEditedIndex].Position.Y = probeStartPosition.Y;
 					// smoothie returns the position relative to the start position
 					double reportedProbeZ = 0;
 
@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							samples.RemoveAt(samples.Count - 1);
 						}
 
-						probePositions[probePositionsBeingEditedIndex].position.Z = Math.Round(samples.Average(), 2);
+						probePositions[probePositionsBeingEditedIndex].Position.Z = Math.Round(samples.Average(), 2);
 
 						// When probe data has been collected, resume our thread to continue collecting
 						autoResetEvent.Set();
