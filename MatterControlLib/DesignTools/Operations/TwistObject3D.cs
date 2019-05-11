@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TwistObject3D : OperationSourceContainerObject3D, IEditorDraw
+	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public TwistObject3D()
 		{
@@ -56,27 +56,27 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[Description("The angle to rotate the top of the part")]
-		public double Angle { get; set; } = double.MaxValue;
+		public double Angle { get; set; } = 135;
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinCutsPerRotation { get; set; } = 30;
+		public double MinCutsPerRotation { get; set; } = 60;
 
 		[DisplayName("Twist Right")]
 		public bool TwistCw { get; set; } = true;
+
+		[Description("Allows for the repositioning of the rotation origin")]
+		public Vector2 RotationOffset { get; set; }
 
 		public bool Advanced { get; set; }
 
 		public Easing.EaseType EasingType { get; set; } = Easing.EaseType.Linear;
 
-		public Easing.EaseOption EasingOption { get; set; } = Easing.EaseOption.In;
+		public Easing.EaseOption EasingOption { get; set; } = Easing.EaseOption.InOut;
 
 		public double EndHeightPercent { get; set; } = 100;
 
 		public double StartHeightPercent { get; set; } = 0;
-
-		[Description("Allows for the repositioning of the rotation origin")]
-		public Vector2 RotationOffset { get; set; }
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var center = sourceAabb.Center + new Vector3(RotationOffset);
 
 			// render the top and bottom rings
-			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, 5, sourceAabb.ZSize, 100, Color.Red, Color.Red, 5);
+			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, 1, sourceAabb.ZSize, 15, Color.Red, Color.Red, 5);
 
 			// turn the lighting back on
 			GL.Enable(EnableCap.Lighting);
@@ -98,13 +98,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (Angle < 1 || Angle > 100000)
 			{
-				if (Angle == double.MaxValue)
-				{
-					var aabb = this.GetAxisAlignedBoundingBox();
-					// uninitialized set to a reasonable value
-					Angle = (int)aabb.XSize;
-				}
-
 				Angle = Math.Min(100000, Math.Max(1, Angle));
 				valuesChanged = true;
 			}
@@ -150,7 +143,32 @@ namespace MatterHackers.MatterControl.DesignTools
 					var cuts = new List<double>();
 					for (int i = 0; i < numberOfCuts + 1; i++)
 					{
-						cuts.Add(bottom - cutSize + i * size / numberOfCuts);
+						var ratio = i / numberOfCuts;
+						if (Advanced)
+						{
+							var goal = ratio;
+							var current = .5;
+							var next = .25;
+							// look for an x value that equals the goal
+							for (int j = 0; j < 64; j++)
+							{
+								var xAtY = Easing.Specify(EasingType, EasingOption, current);
+								if (xAtY < goal)
+								{
+									current += next;
+								}
+								else if (xAtY > goal)
+								{
+									current -= next;
+								}
+
+								next *= .5;
+							}
+
+							ratio = current;
+						}
+
+						cuts.Add(bottom - cutSize + (size * ratio));
 					}
 
 					var rotationCenter = new Vector2(sourceAabb.Center) + RotationOffset;
@@ -192,7 +210,6 @@ namespace MatterHackers.MatterControl.DesignTools
 								}
 							}
 
-
 							var angleToRotate = ratio * Angle / 360.0 * MathHelper.Tau;
 
 							if (!TwistCw)
@@ -211,7 +228,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
-						transformedMesh.MarkAsChanged();
 
 						var twistedChild = new Object3D()
 						{
@@ -242,6 +258,29 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			if (change.Context.GetEditRow(nameof(EndHeightPercent)) is GuiWidget widget)
+			{
+				widget.Visible = Advanced;
+			}
+
+			if (change.Context.GetEditRow(nameof(StartHeightPercent)) is GuiWidget widget2)
+			{
+				widget2.Visible = Advanced;
+			}
+
+			if (change.Context.GetEditRow(nameof(EasingOption)) is GuiWidget widget3)
+			{
+				widget3.Visible = Advanced && EasingType != Easing.EaseType.Linear;
+			}
+
+			if (change.Context.GetEditRow(nameof(EasingType)) is GuiWidget widget4)
+			{
+				widget4.Visible = Advanced;
+			}
 		}
 	}
 }

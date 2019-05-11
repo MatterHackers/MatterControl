@@ -94,7 +94,6 @@ namespace MatterHackers.MatterControl.DesignTools
 							transformedMesh.Vertices[i] = newPos.Transform(invItemMatrix);
 						}
 
-						transformedMesh.MarkAsChanged();
 						transformedMesh.CalculateNormals();
 
 						var newMesh = new Object3D()

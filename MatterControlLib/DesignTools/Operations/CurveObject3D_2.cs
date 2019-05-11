@@ -183,7 +183,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
-						transformedMesh.MarkAsChanged();
 
 						var curvedChild = new Object3D()
 						{
