@@ -37,12 +37,15 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GettingThirdPointFor2PointCalibration : WizardPage
 	{
-		protected Vector3 probeStartPosition;
-		private ProbePosition probePosition;
-		private EventHandler unregisterEvents;
+		private Vector3 probeStartPosition;
+		private readonly PrintLevelingWizard.ProbePosition probePosition;
+		private readonly EventHandler unregisterEvents;
 
-		public GettingThirdPointFor2PointCalibration(ISetupWizard setupWizard, string pageDescription, Vector3 probeStartPosition, string instructionsText,
-			ProbePosition probePosition)
+		public GettingThirdPointFor2PointCalibration(ISetupWizard setupWizard,
+			string pageDescription,
+			Vector3 probeStartPosition,
+			string instructionsText,
+			PrintLevelingWizard.ProbePosition probePosition)
 			: base(setupWizard, pageDescription, instructionsText)
 		{
 			this.probeStartPosition = probeStartPosition;
@@ -82,7 +85,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					int zStringPos = line.LastIndexOf("Z:");
 					string zProbeHeight = line.Substring(zStringPos + 2);
-					probePosition.position = new Vector3(probeStartPosition.X, probeStartPosition.Y, double.Parse(zProbeHeight));
+					probePosition.Position = new Vector3(probeStartPosition.X, probeStartPosition.Y, double.Parse(zProbeHeight));
 					printer.Connection.MoveAbsolute(probeStartPosition, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 					printer.Connection.ReadPosition();
 

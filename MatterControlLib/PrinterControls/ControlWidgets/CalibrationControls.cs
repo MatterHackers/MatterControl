@@ -42,8 +42,8 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class CalibrationControls : FlowLayoutWidget
 	{
-		private PrinterConfig printer;
-		private RoundedToggleSwitch printLevelingSwitch;
+		private readonly PrinterConfig printer;
+		private readonly RoundedToggleSwitch printLevelingSwitch;
 
 		private CalibrationControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -108,9 +108,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
-			editButton.Name = "Edit Leveling Data Button";
-			editButton.ToolTipText = "Edit Leveling Data".Localize();
+			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Name = "Edit Leveling Data Button",
+				ToolTipText = "Edit Leveling Data".Localize()
+			};
+
 			editButton.Click += (s, e) =>
 			{
 				DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));

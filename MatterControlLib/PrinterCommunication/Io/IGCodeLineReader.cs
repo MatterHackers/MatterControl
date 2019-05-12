@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2015, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,24 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Localizations;
+using MatterControl.Printing;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class GetUltraFineBedHeight : FindBedHeight
+	public interface IGCodeLineReader
 	{
-		public GetUltraFineBedHeight(ISetupWizard setupWizard, string pageDescription, List<PrintLevelingWizard.ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(
-				setupWizard, 
-				pageDescription, 
-				"We will now finalize our measurement of the extruder height at this position.".Localize(), 
-				levelingStrings.FineInstruction2, 
-				.02, 
-				probePositions, 
-				probePositionsBeingEditedIndex)
-		{
-		}
+		GCodeFile GCodeFile { get; }
+
+		int LineIndex { get; }
 	}
 }

@@ -37,17 +37,11 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public interface IGCodeLineReader
-	{
-		GCodeFile GCodeFile { get; }
-		int LineIndex { get; }
-	}
-
 	public class GCodeSwitcher : GCodeStream, IGCodeLineReader
 	{
 		private GCodeMemoryFile switchToGCode = null;
-		private object locker = new object();
-		private List<string> commandQueue = new List<string>();
+		private readonly object locker = new object();
+		private readonly List<string> commandQueue = new List<string>();
 
 		private string lastLine = "";
 
@@ -72,6 +66,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		public GCodeFile GCodeFile { get; private set; }
+
 		public int LineIndex { get; private set; } = -1;
 
 		public override void Dispose()
@@ -126,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									}
 								}
 
-								if(change)
+								if (change)
 								{
 									GCodeFile = switchToGCode;
 									LineIndex = switchToGCode.GetFirstLayerInstruction(i);
@@ -135,6 +130,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									{
 										commandQueue.Add(line);
 									}
+
 									switchToGCode = null;
 									// return a dwell to exhaust the command queue on the firmware
 									return "G4 P1";
@@ -176,7 +172,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 						new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 						new Vector4(multiplier, multiplier, multiplier, multiplier),
-							CancellationToken.None);
+						CancellationToken.None);
 
 					if (switchToGCode is GCodeMemoryFile memoryFile)
 					{
@@ -188,6 +184,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override GCodeStream InternalStream => null;
 
-		public override string DebugInfo => lastLine; 
+		public override string DebugInfo => lastLine;
 	}
 }

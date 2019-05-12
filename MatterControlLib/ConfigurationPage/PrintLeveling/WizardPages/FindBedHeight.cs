@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class FindBedHeight : WizardPage
 	{
 		private Vector3 lastReportedPosition;
-		private List<ProbePosition> probePositions;
+		private List<PrintLevelingWizard.ProbePosition> probePositions;
 		private int probePositionsBeingEditedIndex;
 		private double moveAmount;
 
@@ -49,8 +49,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		protected JogControls.MoveButton zMinusControl;
 		private RunningInterval runningInterval;
 
-		public FindBedHeight(ISetupWizard setupWizard, string pageDescription, string setZHeightCoarseInstruction1, string setZHeightCoarseInstruction2, double moveDistance,
-			List<ProbePosition> probePositions, int probePositionsBeingEditedIndex)
+		public FindBedHeight(ISetupWizard setupWizard,
+			string pageDescription,
+			string setZHeightCoarseInstruction1,
+			string setZHeightCoarseInstruction2,
+			double moveDistance,
+			List<PrintLevelingWizard.ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex)
 			: base(setupWizard, pageDescription, setZHeightCoarseInstruction1)
 		{
 			this.probePositions = probePositions;
@@ -68,7 +73,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			zButtonsAndInfo.AddChild(new GuiWidget(15, 10));
 
-			//textFields
+			// textFields
 			TextWidget zPosition = new TextWidget("Z: 0.0      ", pointSize: 12, textColor: theme.TextColor)
 			{
 				VAnchor = VAnchor.Center,
@@ -92,7 +97,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnLoad(EventArgs args)
 		{
 			this.Parents<SystemWindow>().First().KeyDown -= TopWindowKeyDown;
-			probePositions[probePositionsBeingEditedIndex].position = printer.Connection.LastReportedPosition;
+			probePositions[probePositionsBeingEditedIndex].Position = printer.Connection.LastReportedPosition;
 
 			// always make sure we don't have print leveling turned on
 			printer.Connection.AllowLeveling = false;
@@ -118,25 +123,25 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// set these to 0 so the button does not do any movements by default (we will handle the movement on our click callback)
 			zPlusControl.MoveAmount = 0;
 			zPlusControl.ToolTipText += string.Format(" [{0}]", "Up Arrow".Localize());
-			zPlusControl.Click += zPlusControl_Click;
+			zPlusControl.Click += ZPlusControl_Click;
 
 			zMinusControl.MoveAmount = 0;
 			zMinusControl.ToolTipText += string.Format(" [{0}]", "Down Arrow".Localize());
-			zMinusControl.Click += zMinusControl_Click;
+			zMinusControl.Click += ZMinusControl_Click;
 			return zButtons;
 		}
 
 		public void TopWindowKeyDown(object s, KeyEventArgs keyEvent)
 		{
-			switch(keyEvent.KeyCode)
+			switch (keyEvent.KeyCode)
 			{
 				case Keys.Up:
-					zPlusControl_Click(null, null);
+					ZPlusControl_Click(null, null);
 					NextButton.Enabled = true;
 					break;
 
 				case Keys.Down:
-					zMinusControl_Click(null, null);
+					ZMinusControl_Click(null, null);
 					NextButton.Enabled = true;
 					break;
 
@@ -145,19 +150,20 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					{
 						UiThread.RunOnIdle(() => NextButton.InvokeClick());
 					}
+
 					break;
 			}
 
-			base.OnKeyDown(keyEvent);
+			OnKeyDown(keyEvent);
 		}
 
-		private void zMinusControl_Click(object sender, EventArgs mouseEvent)
+		private void ZMinusControl_Click(object sender, EventArgs mouseEvent)
 		{
 			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();
 		}
 
-		private void zPlusControl_Click(object sender, EventArgs mouseEvent)
+		private void ZPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
 			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();

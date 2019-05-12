@@ -38,12 +38,21 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class GetCoarseBedHeight : FindBedHeight
 	{
-		protected Vector3 probeStartPosition;
+		private Vector3 probeStartPosition;
 
-		public GetCoarseBedHeight(PrinterSetupWizard context, Vector3 probeStartPosition, string pageDescription, List<ProbePosition> probePositions,
-			int probePositionsBeingEditedIndex, LevelingStrings levelingStrings)
-			: base(context, pageDescription, "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
-				  levelingStrings.CoarseInstruction2, 1, probePositions, probePositionsBeingEditedIndex)
+		public GetCoarseBedHeight(PrinterSetupWizard context,
+			Vector3 probeStartPosition,
+			string pageDescription,
+			List<PrintLevelingWizard.ProbePosition> probePositions,
+			int probePositionsBeingEditedIndex,
+			LevelingStrings levelingStrings)
+			: base(context,
+				  pageDescription,
+				  "Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.".Localize(),
+				  levelingStrings.CoarseInstruction2,
+				  1,
+				  probePositions,
+				  probePositionsBeingEditedIndex)
 		{
 			this.probeStartPosition = probeStartPosition;
 		}
@@ -68,13 +77,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			NextButton.Enabled = false;
 
-			zPlusControl.Click += zControl_Click;
-			zMinusControl.Click += zControl_Click;
+			zPlusControl.Click += ZControl_Click;
+			zMinusControl.Click += ZControl_Click;
 
 			base.OnLoad(args);
 		}
 
-		protected void zControl_Click(object sender, EventArgs mouseEvent)
+		protected void ZControl_Click(object sender, EventArgs mouseEvent)
 		{
 			NextButton.Enabled = true;
 		}

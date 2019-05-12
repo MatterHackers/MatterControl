@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();
 
-					setupRow.AddChild(new TextWidget(label, textColor: (hasErrors ? Color.Red : theme.PrimaryAccentColor), pointSize: theme.DefaultFontSize)
+					setupRow.AddChild(new TextWidget(label, textColor: hasErrors ? Color.Red : theme.PrimaryAccentColor, pointSize: theme.DefaultFontSize)
 					{
 						VAnchor = VAnchor.Bottom,
 						AutoExpandBoundsToText = true,
@@ -230,7 +230,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					// Conditional layout for right or bottom errors panel alignment
 					var layoutStyle = FlowDirection.TopToBottom;
-					//var layoutStyle = FlowDirection.LeftToRight;
 
 					if (layoutStyle == FlowDirection.LeftToRight)
 					{

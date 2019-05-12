@@ -149,14 +149,21 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var curvedChildren = new List<IObject3D>();
 
+					var status = new ProgressStatus();
+
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
+						status.Status = "Copy Mesh".Localize();
+						reporter.Report(status);
 						var transformedMesh = originalMesh.Copy(CancellationToken.None);
 						var itemMatrix = sourceItem.WorldMatrix(SourceContainer);
 
 						// transform into this space
 						transformedMesh.Transform(itemMatrix);
+
+						status.Status = "Split Mesh".Localize();
+						reporter.Report(status);
 
 						// split the mesh along the x axis
 						transformedMesh.SplitOnPlanes(Vector3.UnitX, cuts, cutSize / 8);
@@ -180,6 +187,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// transform back into item local space
 						transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
+
+						status.Status = "Merge Vertices".Localize();
+						reporter.Report(status);
 
 						transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
