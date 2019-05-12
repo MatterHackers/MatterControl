@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl
 			this.ActualTextEditWidget.MinimumSize = new Vector2(Math.Max(ActualTextEditWidget.MinimumSize.X, pixelWidth), Math.Max(ActualTextEditWidget.MinimumSize.Y, pixelHeight));
 			this.AddChild(this.ActualTextEditWidget);
 
-			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, textColor: theme.EditFieldColors.Focused.LightTextColor)
+			this.AddChild(noContentFieldDescription = new TextWidget(messageWhenEmptyAndNotSelected, pointSize: theme.DefaultFontSize, textColor: theme.EditFieldColors.Focused.LightTextColor)
 			{
 				VAnchor = VAnchor.Top,
 				AutoExpandBoundsToText = true
