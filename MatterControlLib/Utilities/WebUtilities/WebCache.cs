@@ -77,6 +77,7 @@ namespace MatterHackers.MatterControl
 					Stream stream = new MemoryStream(e.Result);
 
 					LoadImageInto(imageToLoadInto, scaleToImageX, scalingBlender, stream);
+
 					if (imageToLoadInto.Width > 0
 						&& imageToLoadInto.Height > 0
 						&& !savedImages.Contains(imageFileName))

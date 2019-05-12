@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl
 									&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
 									&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 								{
-									var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+									var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
 									subMenuItem.Click += (s2, e2) =>
 									{
 										nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
@@ -347,7 +347,7 @@ namespace MatterHackers.MatterControl
 								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
 								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
 							{
-								menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme));
+								menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
 								menuItem.Click += (s2, e2) =>
 								{
 									nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
@@ -479,8 +479,13 @@ namespace MatterHackers.MatterControl
 
 		public string GetFavIconUrl(string oemName)
 		{
-			OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl);
-			return "https://www.google.com/s2/favicons?domain=" + (string.IsNullOrWhiteSpace(oemUrl) ? "www.matterhackers.com" : oemUrl);
+			if (OemSettings.Instance.OemUrls.TryGetValue(oemName, out string oemUrl)
+				&& !string.IsNullOrWhiteSpace(oemUrl))
+			{
+				return "https://www.google.com/s2/favicons?domain=" + oemUrl;
+			}
+
+			return null;
 		}
 
 		public void ClosePrinter(PrinterConfig printer, bool allowChangedEvent = true)
@@ -589,13 +594,13 @@ namespace MatterHackers.MatterControl
 
 		public MainViewWidget MainView;
 
-		private Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
+		private readonly Dictionary<string, List<LibraryAction>> registeredLibraryActions = new Dictionary<string, List<LibraryAction>>();
 
 		private List<SceneSelectionOperation> registeredSceneOperations;
 
 		public ThumbnailsConfig Thumbnails { get; }
 
-		private void RebuildSceneOperations(ThemeConfig theme)
+		private void BuildSceneOperations()
 		{
 			registeredSceneOperations = new List<SceneSelectionOperation>()
 			{
@@ -637,7 +642,7 @@ namespace MatterHackers.MatterControl
 					IsEnabled = (scene) => scene.SelectedItem != null
 						&& scene.SelectedItem is SelectionGroupObject3D
 						&& scene.SelectedItem.Children.Count > 1,
-					Icon = AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
@@ -646,7 +651,7 @@ namespace MatterHackers.MatterControl
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
-						if(selectedItem != null)
+						if (selectedItem != null)
 						{
 							return selectedItem is GroupObject3D
 								|| selectedItem.GetType() == typeof(Object3D)
@@ -655,7 +660,7 @@ namespace MatterHackers.MatterControl
 
 						return false;
 					},
-					Icon = AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -663,14 +668,14 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Duplicate".Localize(),
 					Action = (sceneContext) => sceneContext.DuplicateItem(5),
 					IsEnabled = (scene) => scene.SelectedItem != null,
-					Icon = AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
 					Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 					IsEnabled = (scene) => scene.SelectedItem != null,
-					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -684,7 +689,7 @@ namespace MatterHackers.MatterControl
 						var align = new AlignObject3D();
 						align.AddSelectionAsChildren(scene, selectedItem);
 					},
-					Icon = AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, theme.InvertIcons).SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 				},
 				new SceneSelectionOperation()
@@ -700,7 +705,7 @@ namespace MatterHackers.MatterControl
 						}
 					},
 					IsEnabled = (scene) => scene.SelectedItem != null,
-					Icon = AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -708,7 +713,7 @@ namespace MatterHackers.MatterControl
 					OperationType = typeof(CombineObject3D_2),
 					TitleResolver = () => "Combine".Localize(),
 					Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -720,7 +725,7 @@ namespace MatterHackers.MatterControl
 					OperationType = typeof(SubtractObject3D_2),
 					TitleResolver = () => "Subtract".Localize(),
 					Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -732,7 +737,7 @@ namespace MatterHackers.MatterControl
 					OperationType = typeof(IntersectionObject3D_2),
 					TitleResolver = () => "Intersect".Localize(),
 					Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = AggContext.StaticData.LoadIcon("intersect.png"),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -744,7 +749,7 @@ namespace MatterHackers.MatterControl
 					OperationType = typeof(SubtractAndReplaceObject3D_2),
 					TitleResolver = () => "Subtract & Replace".Localize(),
 					Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
 					IsEnabled = (scene) =>
 					{
 						var selectedItem = scene.SelectedItem;
@@ -761,7 +766,7 @@ namespace MatterHackers.MatterControl
 						var array = new ArrayLinearObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 					},
-					Icon = AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
@@ -773,7 +778,7 @@ namespace MatterHackers.MatterControl
 						var array = new ArrayRadialObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 					},
-					Icon = AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionOperation()
@@ -785,7 +790,7 @@ namespace MatterHackers.MatterControl
 						var array = new ArrayAdvancedObject3D();
 						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 					},
-					Icon = AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 				new SceneSelectionSeparator(),
@@ -798,7 +803,7 @@ namespace MatterHackers.MatterControl
 						var pinch = new PinchObject3D_2();
 						pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("pinch.png", 16, 16, theme.InvertIcons),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
@@ -810,7 +815,7 @@ namespace MatterHackers.MatterControl
 						var curve = new CurveObject3D_2();
 						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("curve.png", 16, 16, theme.InvertIcons),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
@@ -822,7 +827,7 @@ namespace MatterHackers.MatterControl
 						var curve = new TwistObject3D();
 						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 					},
-					Icon = AggContext.StaticData.LoadIcon("twist.png", 16, 16, theme.InvertIcons),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
 					IsEnabled = (scene) => scene.SelectedItem != null,
 				},
 				new SceneSelectionOperation()
@@ -841,7 +846,7 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 						}
 					},
-					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 #if DEBUG
@@ -861,33 +866,33 @@ namespace MatterHackers.MatterControl
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
 						}
 					},
-					Icon = AggContext.StaticData.LoadIcon("fit.png", 16, 16, theme.InvertIcons),
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
 					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
 				},
 #endif
 			};
 
-			var operationIconsByType = new Dictionary<Type, Func<ImageBuffer>>();
+			var operationIconsByType = new Dictionary<Type, Func<bool, ImageBuffer>>();
 
 			foreach (var operation in registeredSceneOperations)
 			{
 				if (operation.OperationType != null)
 				{
-					operationIconsByType.Add(operation.OperationType, () => operation.Icon);
+					operationIconsByType.Add(operation.OperationType, operation.Icon);
 				}
 			}
 
 			// TODO: Use custom selection group icon if reusing group icon seems incorrect
 			//
 			// Explicitly register SelectionGroup icon
-			if (operationIconsByType.TryGetValue(typeof(GroupObject3D), out Func<ImageBuffer> groupIconSource))
+			if (operationIconsByType.TryGetValue(typeof(GroupObject3D), out Func<bool, ImageBuffer> groupIconSource))
 			{
 				operationIconsByType.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
 			this.Thumbnails.OperationIcons = operationIconsByType;
 
-			operationIconsByType.Add(typeof(ImageObject3D), () => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons));
+			operationIconsByType.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon));
 		}
 
 		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
@@ -1139,7 +1144,7 @@ namespace MatterHackers.MatterControl
 				//_activePrinters = new List<PrinterConfig>();
 			};
 
-			this.RebuildSceneOperations(this.Theme);
+			this.BuildSceneOperations();
 
 			this.Extensions = new ExtensionsConfig(this.Library);
 			this.Extensions.Register(new ImageEditor());
@@ -1210,7 +1215,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_479927.png", theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_479927.png", invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1231,7 +1236,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1252,7 +1257,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1272,7 +1277,7 @@ namespace MatterHackers.MatterControl
 						}
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1326,7 +1331,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("140.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1343,7 +1348,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1391,7 +1396,7 @@ namespace MatterHackers.MatterControl
 							&& sceneItem.Parent.Parent == null
 							&& sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1422,7 +1427,7 @@ namespace MatterHackers.MatterControl
 							&& sceneItem is ComponentObject3D componentObject
 							&& componentObject.Finalized;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1452,7 +1457,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_84751.png", theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_84751.png", invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1481,7 +1486,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_simplify_340976_000000.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_simplify_340976_000000.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1510,7 +1515,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1546,7 +1551,7 @@ namespace MatterHackers.MatterControl
 						return Task.CompletedTask;
 					},
 					IsVisible = (sceneItem) => sceneItem.Children.Any((i) => i is IPathObject),
-					IconCollector = (theme) => AggContext.StaticData.LoadIcon("noun_55060.png", theme.InvertIcons)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_55060.png", invertIcon)
 				});
 
 			this.InitializeLibrary();
@@ -2198,8 +2203,7 @@ namespace MatterHackers.MatterControl
 		/// <param name="printItemAction">The action to register</param>
 		public void RegisterLibraryAction(string section, LibraryAction printItemAction)
 		{
-			List<LibraryAction> items;
-			if (!registeredLibraryActions.TryGetValue(section, out items))
+			if (!registeredLibraryActions.TryGetValue(section, out List<LibraryAction> items))
 			{
 				items = new List<LibraryAction>();
 				registeredLibraryActions.Add(section, items);
@@ -2209,14 +2213,27 @@ namespace MatterHackers.MatterControl
 		}
 
 		/// <summary>
+		/// Register the given SceneSelectionOperation
+		/// </summary>
+		/// <param name="operation">The action to register</param>
+		public void RegisterSceneOperation(SceneSelectionOperation operation)
+		{
+			if (operation.OperationType != null)
+			{
+				this.Thumbnails.OperationIcons.Add(operation.OperationType, operation.Icon);
+			}
+
+			registeredSceneOperations.Add(operation);
+		}
+
+		/// <summary>
 		/// Enumerate the given section, returning all registered actions
 		/// </summary>
 		/// <param name="section">The section to enumerate</param>
 		/// <returns></returns>
 		public IEnumerable<LibraryAction> RegisteredLibraryActions(string section)
 		{
-			List<LibraryAction> items;
-			if (registeredLibraryActions.TryGetValue(section, out items))
+			if (registeredLibraryActions.TryGetValue(section, out List<LibraryAction> items))
 			{
 				return items;
 			}

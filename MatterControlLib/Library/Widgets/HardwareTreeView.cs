@@ -132,7 +132,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}, ref unregisterEvents);
 		}
 
-		
 		public static void CreatePrinterProfilesTree(TreeNode printersNode, ThemeConfig theme)
 		{
 			if (printersNode == null)

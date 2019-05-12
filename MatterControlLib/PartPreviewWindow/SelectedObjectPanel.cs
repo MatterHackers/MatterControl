@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach(var primaryAction in primaryActions)
 				{
 					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
-					var button = new IconButton(primaryAction.IconCollector(theme), theme)
+					var button = new IconButton(primaryAction.IconCollector(theme.InvertIcons), theme)
 					{
 						//Name = namedAction.Title + " Button",
 						ToolTipText = primaryAction.Title,

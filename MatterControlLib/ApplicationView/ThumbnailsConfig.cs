@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public Dictionary<Type, Func<ImageBuffer>> OperationIcons { get; internal set; }
+		public Dictionary<Type, Func<bool, ImageBuffer>> OperationIcons { get; internal set; }
 
 		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons);
 
