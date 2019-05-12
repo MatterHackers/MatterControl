@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						serializationKey: "gcode_panel_details",
 						expanded: true)
 					{
-					HAnchor = HAnchor.Stretch,
+						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					});
 
