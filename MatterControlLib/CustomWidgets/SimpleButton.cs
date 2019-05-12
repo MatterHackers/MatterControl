@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -42,6 +41,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseInBounds = false;
 
 		protected ThemeConfig theme;
+		private bool hasKeyboardFocus;
 
 		public SimpleButton(ThemeConfig theme)
 		{
@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HoverColor = theme.SlightShade;
 			this.MouseDownColor = theme.MinimalShade;
 			this.Margin = 0;
+
+			this.TabStop = true;
 		}
 
 		public Color HoverColor { get; set; } = Color.Transparent;
@@ -81,6 +83,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 		}
 
+		public override void OnKeyUp(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.Enter
+				|| keyEvent.KeyCode == Keys.Space)
+			{
+				UiThread.RunOnIdle(this.InvokeClick);
+			}
+
+			base.OnKeyUp(keyEvent);
+		}
+
 		public override Color BackgroundColor
 		{
 			get
@@ -102,6 +115,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 			set => base.BackgroundColor = value;
+		}
+
+		public override void OnFocusChanged(EventArgs e)
+		{
+			hasKeyboardFocus = this.Focused && !mouseInBounds;
+			this.Invalidate();
+
+			base.OnFocusChanged(e);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+
+			if (this.TabStop
+				&& hasKeyboardFocus)
+			{
+				graphics2D.Rectangle(this.LocalBounds, theme.EditFieldColors.Focused.BorderColor);
+			}
 		}
 
 		public override bool Enabled
@@ -411,6 +443,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Height = theme.ButtonHeight;
 			this.Padding = theme.TextButtonPadding;
 			this.TextColor = theme.TextColor;
+			this.TabStop = true;
 
 			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
 

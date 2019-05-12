@@ -204,6 +204,9 @@ namespace MatterHackers.Agg.UI
 			TopWindow = _openWindows.LastOrDefault();
 
 			platformWindow.ShowSystemWindow(TopWindow);
+
+			// Ensure focus is set to the new window
+			systemWindow.Focus();
 		}
 
 		public virtual void CloseSystemWindow(SystemWindow systemWindow)
