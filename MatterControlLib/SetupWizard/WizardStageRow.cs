@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl
 		private ImageBuffer hoverIcon;
 		private double iconXOffset;
 		private double iconYOffset;
+		private bool hasKeyboardFocus;
 
 		public WizardStageRow(string text, string helpText, ISetupWizard stage, ThemeConfig theme)
 			: base(text, helpText, theme)
@@ -58,7 +59,6 @@ namespace MatterHackers.MatterControl
 			setupIcon = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
 			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 		}
-
 
 		public bool Active { get; set; }
 
@@ -86,6 +86,14 @@ namespace MatterHackers.MatterControl
 			base.OnBoundsChanged(e);
 		}
 
+		public override void OnFocusChanged(EventArgs e)
+		{
+			hasKeyboardFocus = this.Focused && !mouseInBounds;
+			this.Invalidate();
+
+			base.OnFocusChanged(e);
+		}
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
@@ -96,7 +104,24 @@ namespace MatterHackers.MatterControl
 					this.StageIcon,
 					iconXOffset,
 					iconYOffset);
+
+				if (this.TabStop
+					&& hasKeyboardFocus)
+				{
+					graphics2D.Rectangle(this.LocalBounds, theme.EditFieldColors.Focused.BorderColor);
+				}
 			}
+		}
+
+		public override void OnKeyUp(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.Enter
+				|| keyEvent.KeyCode == Keys.Space)
+			{
+				UiThread.RunOnIdle(this.InvokeClick);
+			}
+
+			base.OnKeyUp(keyEvent);
 		}
 
 		private ImageBuffer StageIcon
