@@ -449,9 +449,10 @@ namespace MatterControl.Printing
 
 		public override double PercentComplete(int instructionIndex)
 		{
-			if (gCodeCommandQueue.Count > 0)
+			if (gCodeCommandQueue.Count > 0
+				&& instructionIndex < gCodeCommandQueue.Count)
 			{
-				return Math.Min(99.9, (double)instructionIndex / (double)gCodeCommandQueue.Count * 100);
+				return Math.Min(99.9, (gCodeCommandQueue[0].SecondsToEndFromHere - gCodeCommandQueue[instructionIndex].SecondsToEndFromHere) / gCodeCommandQueue[0].SecondsToEndFromHere * 100);
 			}
 
 			return 100;
@@ -490,11 +491,14 @@ namespace MatterControl.Printing
 					endIndex = lastPrintLine;
 				}
 
-				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);
-				var length = endIndex - startIndex;
-				if (length > 0)
+				if (instructionIndex < gCodeCommandQueue.Count)
 				{
-					return deltaFromStart / (double)length;
+					var deltaFromStart = Math.Max(0, gCodeCommandQueue[startIndex].SecondsToEndFromHere - gCodeCommandQueue[instructionIndex].SecondsToEndFromHere);
+					var length = gCodeCommandQueue[startIndex].SecondsToEndFromHere - gCodeCommandQueue[endIndex].SecondsToEndFromHere;
+					if (length > 0)
+					{
+						return deltaFromStart / length;
+					}
 				}
 			}
 

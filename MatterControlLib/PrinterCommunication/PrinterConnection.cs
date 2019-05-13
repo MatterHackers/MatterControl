@@ -830,12 +830,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		{
 			get
 			{
-				if (gCodeFileSwitcher?.GCodeFile == null)
+				if (gCodeFileSwitcher?.GCodeFile == null
+					|| !(gCodeFileSwitcher?.GCodeFile is GCodeMemoryFile))
 				{
 					return 0;
 				}
 
 				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileSwitcher.LineIndex);
+			}
+		}
+
+		public int SecondsToEnd
+		{
+			get
+			{
+				if (gCodeFileSwitcher?.GCodeFile == null)
+				{
+					return 0;
+				}
+
+				return (int)gCodeFileSwitcher.GCodeFile.Instruction(gCodeFileSwitcher.LineIndex).SecondsToEndFromHere;
 			}
 		}
 
