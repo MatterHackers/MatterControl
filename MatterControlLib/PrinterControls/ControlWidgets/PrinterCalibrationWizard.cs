@@ -46,7 +46,6 @@ namespace MatterHackers.MatterControl
 	{
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
-
 			var stages = new List<ISetupWizard>()
 			{
 				new ProbeCalibrationWizard(printer),

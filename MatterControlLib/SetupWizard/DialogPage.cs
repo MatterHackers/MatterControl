@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl
 		protected ThemeConfig theme;
 		private int actionCount = 0;
 		private SystemWindow systemWindow;
+		private GuiWidget _acceptButton;
 
 		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
 			: base (FlowDirection.TopToBottom)
@@ -139,6 +140,16 @@ namespace MatterHackers.MatterControl
 #endif
 		}
 
+		public GuiWidget AcceptButton
+		{
+			get => _acceptButton;
+			set
+			{
+				_acceptButton = value;
+				theme.ApplyPrimaryActionStyle(_acceptButton);
+			}
+		}
+
 		// Add public accessor for content panel
 		public FlowLayoutWidget ContentRow => contentRow;
 
@@ -159,7 +170,7 @@ namespace MatterHackers.MatterControl
 			if (highlightFirstAction
 				&& actionCount++ == 0)
 			{
-				theme.ApplyPrimaryActionStyle(button);
+				this.AcceptButton = button;
 			}
 
 			button.Margin = theme.ButtonSpacing;
@@ -242,6 +253,17 @@ namespace MatterHackers.MatterControl
 				if (!abortCancel)
 				{
 					this.DialogWindow?.ClosePage();
+				}
+			}
+			else if (e.KeyCode == Keys.Enter
+				&& this.AcceptButton != null)
+			{
+				var tabStops = this.ActiveTabStops();
+
+				// If no tab stop child is actively focused, fire click on the AcceptButton
+				if (!tabStops.Any(w => w.Focused))
+				{
+					this.AcceptButton.InvokeClick();
 				}
 			}
 		}

@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 				this.MoveToNextPage();
 			};
 
-			theme.ApplyPrimaryActionStyle(nextButton);
+			this.AcceptButton = nextButton;
 
 			this.AddPageAction(nextButton);
 

@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 
 				var doneButton = theme.CreateDialogButton("Done".Localize());
 				doneButton.Name = "Done Calibration Print";
-				theme.ApplyPrimaryActionStyle(doneButton);
+				this.AcceptButton = doneButton;
 				this.AddPageAction(doneButton);
 
 				doneButton.Click += (s, e) =>
