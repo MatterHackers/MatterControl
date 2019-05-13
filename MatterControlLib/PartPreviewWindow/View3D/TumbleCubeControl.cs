@@ -618,7 +618,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter,
-				color: theme.PrinterBedTextColor);
+				color: theme.TextColor);
 
 			graphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), theme.BedGridColors.Line);
 
