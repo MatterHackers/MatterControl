@@ -121,10 +121,18 @@ namespace MatterHackers.MatterControl
 							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
 
 							var column = CreateColumn(theme);
-							column.AddChild(new TextWidget(levelingSolution, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-							{
-								Margin = new BorderDouble(bottom: 4)
-							});
+
+							column.AddChild(
+								new ValueTag(
+									"Leveling Solution".Localize(),
+									levelingSolution,
+									new BorderDouble(12, 5, 2, 5),
+									5,
+									11)
+								{
+									Margin = new BorderDouble(bottom: 4),
+									MinimumSize = new Vector2(125, 0)
+								});
 
 							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
