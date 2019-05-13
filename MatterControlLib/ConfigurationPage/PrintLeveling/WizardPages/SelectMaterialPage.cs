@@ -81,8 +81,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				alreadyLoadedButton.Click += (s, e) =>
 				{
-					this.DialogWindow.ClosePage();
-
 					switch (extruderIndex)
 					{
 						case 0:
@@ -93,6 +91,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
 							break;
 					}
+
+					this.FinishWizard();
 				};
 
 				this.AddPageAction(alreadyLoadedButton);
