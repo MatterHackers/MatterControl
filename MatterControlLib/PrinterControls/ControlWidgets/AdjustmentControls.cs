@@ -105,7 +105,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
 					VAnchor = VAnchor.Center | VAnchor.Fit,
-					Padding = 0
 				};
 				feedRateValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
@@ -163,7 +162,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 					SelectAllOnFocus = true,
 					Margin = new BorderDouble(0, 0, 5, 0),
 					VAnchor = VAnchor.Center | VAnchor.Fit,
-					Padding = 0
 				};
 				extrusionValue.ActuallNumberEdit.EditComplete += (sender, e) =>
 				{
