@@ -638,17 +638,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			if (printerTabPage?.printerActionsBar?.sliceButton is GuiWidget sliceButton)
+			if (printerTabPage?.PrinterActionsBar?.sliceButton is GuiWidget sliceButton)
 			{
 				sliceButton.Enabled = sceneContext.EditableScene;
 			}
 
-			if (printerTabPage?.printerActionsBar?.modelViewButton is GuiWidget button)
+			if (printerTabPage?.PrinterActionsBar?.modelViewButton is GuiWidget button)
 			{
 				button.Enabled = sceneContext.EditableScene;
 
 				if (sceneContext.ContentType == "gcode"
-					&& printerTabPage?.printerActionsBar?.layers3DButton is GuiWidget gcodeButton)
+					&& printerTabPage?.PrinterActionsBar?.layers3DButton is GuiWidget gcodeButton)
 				{
 					gcodeButton.InvokeClick();
 				}

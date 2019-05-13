@@ -44,15 +44,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PrinterTabPage : PartTabPage
 	{
-		internal GCode2DWidget gcode2DWidget;
+		private GCode2DWidget gcode2DWidget;
 
 		private View3DConfig gcodeOptions;
 
-		private DoubleSolidSlider layerRenderRatioSlider;
+		private readonly DoubleSolidSlider layerRenderRatioSlider;
 
 		private GCodePanel gcodePanel;
-		internal VerticalResizeContainer gcodeContainer;
-		internal PrinterActionsBar printerActionsBar;
+		private VerticalResizeContainer gcodeContainer;
+
+		public PrinterActionsBar PrinterActionsBar { get; set; }
+
 		private DockingTabControl sideBar;
 		private SliceSettingsWidget sliceSettingsWidget;
 
@@ -72,6 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Move;
 						}
+
 						break;
 
 					case ViewControls3DButtons.Scale:
@@ -79,6 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							gcode2DWidget.TransformState = GCode2DWidget.ETransformState.Scale;
 						}
+
 						break;
 				}
 			};
@@ -103,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			LayerScrollbar.SolidSlider.View.TrackColor = opaqueTrackColor;
 			view3DWidget.InteractionLayer.AddChild(LayerScrollbar);
 
-			layerRenderRatioSlider = new DoubleSolidSlider(new Vector2(), SliceLayerSelector.SliderWidth, theme);
+			layerRenderRatioSlider = new DoubleSolidSlider(default(Vector2), SliceLayerSelector.SliderWidth, theme);
 			layerRenderRatioSlider.FirstValue = 0;
 			layerRenderRatioSlider.FirstValueChanged += (s, e) =>
 			{
@@ -135,12 +139,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetSliderSizes();
 			};
 
-			printerActionsBar = new PrinterActionsBar(printer, this, theme);
-			theme.ApplyBottomBorder(printerActionsBar);
-			printerActionsBar.modelViewButton.Enabled = sceneContext.EditableScene;
+			PrinterActionsBar = new PrinterActionsBar(printer, this, theme);
+			theme.ApplyBottomBorder(PrinterActionsBar);
+			PrinterActionsBar.modelViewButton.Enabled = sceneContext.EditableScene;
 
 			// Must come after we have an instance of View3DWidget an its undo buffer
-			topToBottom.AddChild(printerActionsBar, 0);
+			topToBottom.AddChild(PrinterActionsBar, 0);
 
 			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
@@ -194,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			view3DContainer.AddChild(new RunningTasksWidget(theme, printer)
 			{
 				MinimumSize = new Vector2(100, 0),
-				Margin = new BorderDouble(top: printerActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
+				Margin = new BorderDouble(top: PrinterActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
 				VAnchor = VAnchor.Top | VAnchor.Fit,
 				HAnchor = HAnchor.Left | HAnchor.Fit,
 			});
@@ -202,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Create and append new widget
 			gcode2DWidget = new GCode2DWidget(printer, theme)
 			{
-				Visible = (printer.ViewState.ViewMode == PartViewMode.Layers2D)
+				Visible = printer.ViewState.ViewMode == PartViewMode.Layers2D
 			};
 			view3DWidget.InteractionLayer.AddChild(gcode2DWidget, position + 1);
 
@@ -213,12 +217,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.LayerScrollbar.Margin = LayerScrollbar.Margin.Clone(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 4);
 
 			// On load, switch to gcode view if previously editing gcode file. Listeners would normally do this but workspace loads before this UI widget
-			if (this?.printerActionsBar?.modelViewButton is GuiWidget button)
+			if (this?.PrinterActionsBar?.modelViewButton is GuiWidget button)
 			{
 				button.Enabled = sceneContext.EditableScene;
 
 				if (sceneContext.ContentType == "gcode"
-					&& this?.printerActionsBar?.layers3DButton is GuiWidget gcodeButton)
+					&& this?.PrinterActionsBar?.layers3DButton is GuiWidget gcodeButton)
 				{
 					gcodeButton.InvokeClick();
 				}
@@ -269,7 +273,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		string pauseCaption = "Printer Paused".Localize();
+		private readonly string pauseCaption = "Printer Paused".Localize();
 
 		private void ResumePrint(bool clickedOk)
 		{
@@ -326,7 +330,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							400,
 							"Resume".Localize(),
 							"OK".Localize(),
-							ApplicationController.Instance.Theme, false);
+							ApplicationController.Instance.Theme,
+							false);
 
 						messageBox.AddPageAction(unloadFilamentButton);
 
@@ -687,14 +692,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (doSlicing)
 						{
 							var errors = printer.ValidateSettings();
-							if(errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error))
+							if (errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error))
 							{
 								doSlicing = false;
 								ApplicationController.Instance.ShowValidationErrors("Slicing Error".Localize(), errors);
 							}
 						}
 
-						if(doSlicing)
+						if (doSlicing)
 						{
 							activelySlicing = true;
 							if (bottomRow.Name == null)
@@ -791,26 +796,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Center
 			});
 
-			var timeWidget = new TextWidget("", pointSize: 22, textColor: theme.TextColor)
+			var timeStack = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(10, 0, 0, 0),
+				Padding = new BorderDouble(5, 0, 0, 0),
+				VAnchor = VAnchor.Center | VAnchor.Fit
+			};
+			timeContainer.AddChild(timeStack);
+
+			var timePrinted = new TextWidget("", pointSize: 16, textColor: theme.TextColor)
 			{
 				AutoExpandBoundsToText = true,
-				Margin = new BorderDouble(10, 0, 0, 0),
-				VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center,
 			};
 
-			timeContainer.AddChild(timeWidget);
+			timeStack.AddChild(timePrinted);
 
-			var runningInterval = UiThread.SetInterval(
-				() =>
+			var timeToEnd = new TextWidget("", pointSize: 9, textColor: theme.TextColor)
+			{
+				AutoExpandBoundsToText = true,
+				HAnchor = HAnchor.Center,
+			};
+
+			timeStack.AddChild(timeToEnd);
+
+			var runningInterval = UiThread.SetInterval(() =>
 				{
-					int secondsPrinted = printer.Connection.SecondsPrinted;
-					int hoursPrinted = (int)(secondsPrinted / (60 * 60));
-					int minutesPrinted = (secondsPrinted / 60 - hoursPrinted * 60);
+					int totalSecondsPrinted = printer.Connection.SecondsPrinted;
 
-					secondsPrinted = secondsPrinted % 60;
+					int hoursPrinted = totalSecondsPrinted / (60 * 60);
+					int minutesPrinted = totalSecondsPrinted / 60 - hoursPrinted * 60;
+					var secondsPrinted = totalSecondsPrinted % 60;
 
 					// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
-					timeWidget.Text = (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
+					timePrinted.Text = GetFormatedTime(hoursPrinted, minutesPrinted, secondsPrinted);
+
+					int totalSecondsToEnd = printer.Connection.SecondsToEnd;
+
+					int hoursToEnd = totalSecondsToEnd / (60 * 60);
+					int minutesToEnd = totalSecondsToEnd / 60 - hoursToEnd * 60;
+					var secondsToEnd = totalSecondsToEnd % 60;
+
+					timeToEnd.Text = GetFormatedTime(hoursToEnd, minutesToEnd, secondsToEnd);
 
 					progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
 					progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
@@ -829,11 +856,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							break;
 					}
 				}, 1);
+
 			bodyRow.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
 			bodyRow.Visible = false;
 
 			return bodyRow;
+		}
+
+		private static string GetFormatedTime(int hoursPrinted, int minutesPrinted, int secondsPrinted)
+		{
+			if (hoursPrinted == 0 && minutesPrinted == 0 && secondsPrinted == 0)
+			{
+				return "";
+			}
+
+			return (hoursPrinted <= 0) ? $"{minutesPrinted}:{secondsPrinted:00}" : $"{hoursPrinted}:{minutesPrinted:00}:{secondsPrinted:00}";
 		}
 	}
 }
