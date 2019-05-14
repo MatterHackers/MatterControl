@@ -132,6 +132,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.2);
 		}
 
+		public static void WaitForPage(this AutomationRunner testRunner, string headerText)
+		{
+			// Helper methods
+			bool HeaderExists(string text)
+			{
+				var header = testRunner.GetWidgetByName("HeaderRow", out _);
+				var textWidget = header.Children<TextWidget>().FirstOrDefault();
+
+				return textWidget?.Text.StartsWith(text) ?? false;
+			}
+
+			testRunner.WaitFor(() => HeaderExists(headerText));
+
+			Assert.IsTrue(HeaderExists(headerText), "Expected page not found: " + headerText);
+		}
+
+
 		public static string PathToExportGcodeFolder
 		{
 			get => TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "ExportedGcode", runName);
@@ -946,24 +963,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Complete9StepLeveling(this AutomationRunner testRunner, int numUpClicks = 1)
 		{
-			// Helper methods
-			bool headerExists(string headerText)
-			{
-				var header = testRunner.GetWidgetByName("HeaderRow", out _);
-				var textWidget = header.Children<TextWidget>().FirstOrDefault();
-
-				return textWidget?.Text.StartsWith(headerText) ?? false;
-			}
-
-			void waitForPage(string headerText)
-			{
-				testRunner.WaitFor(() => headerExists(headerText));
-				Assert.IsTrue(headerExists(headerText), "Expected page not found: " + headerText);
-			}
-
 			void waitForPageAndAdvance(string headerText)
 			{
-				waitForPage(headerText);
+				testRunner.WaitForPage(headerText);
 				testRunner.ClickByName("Next Button");
 			}
 
@@ -979,20 +981,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				var section = (i * 3) + 1;
 
-				waitForPage($"Step {section} of 9");
+				testRunner.WaitForPage($"Step {section} of 9");
 				for (int j = 0; j < numUpClicks; j++)
 				{
 					testRunner.Delay();
 					testRunner.ClickByName("Move Z positive");
 				}
 
-				waitForPage($"Step {section} of 9");
+				testRunner.WaitForPage($"Step {section} of 9");
 				testRunner.ClickByName("Next Button");
 
-				waitForPage($"Step {section + 1} of 9");
+				testRunner.WaitForPage($"Step {section + 1} of 9");
 				testRunner.ClickByName("Next Button");
 
-				waitForPage($"Step {section + 2} of 9");
+				testRunner.WaitForPage($"Step {section + 2} of 9");
 				testRunner.ClickByName("Next Button");
 			}
 
