@@ -177,12 +177,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// TODO: Use existing AssetsPath property
 					string assetsDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 					var itemWorldMatrix = item.WorldMatrix();
-					if (item is GeneratedSupportObject3D generatedSupportObject3D)
+					if (item is GeneratedSupportObject3D generatedSupportObject3D
+						&& item.Mesh != null)
 					{
 						// grow the support columns by the amount they are reduced by
-						var aabb = item.GetAxisAlignedBoundingBox();
-						var xyScale = (aabb.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabb.XSize;
-						itemWorldMatrix = itemWorldMatrix.ApplyAtCenter(aabb, Matrix4X4.CreateScale(xyScale, xyScale, 1));
+						var aabb = item.Mesh.GetAxisAlignedBoundingBox();
+						var xyScale = (aabb.XSize + 2 * generatedSupportObject3D.ExpandSize) / aabb.XSize;
+						itemWorldMatrix = itemWorldMatrix.ApplyAtPosition(aabb.Center.Transform(itemWorldMatrix), Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
 
 					outputItems.Add((itemWorldMatrix, Path.Combine(assetsDirectory, item.MeshPath)));

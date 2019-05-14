@@ -137,7 +137,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
 					queuedCommands.Enqueue($"T{activeTool}");
-					return $"{lineToSend.Substring(0, 4)} T{requestedToolForTempChange} S{targetTemps[requestedToolForTempChange]}";
+					var temp = GetNextToolTemp(requestedToolForTempChange);
+					return $"{lineToSend.Substring(0, 4)} T{requestedToolForTempChange} S{temp}";
 				}
 
 				// if we are waiting to switch to the next tool
@@ -281,27 +282,42 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 			else // there are more tool changes in the future
 			{
-				// get the next time we will use the current tool
-				var nextTimeThisTool = NextToolChange(activeTool).time;
+				var targetTemp = GetNextToolTemp(activeTool);
 
 				// if we do not use this tool again
-				if (nextTimeThisTool == double.PositiveInfinity)
+				if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
 				{
-					// turn off its heat
-					gcode.AppendLine($"M104 T{activeTool} S0");
-				}
-
-				// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
-				else if (nextTimeThisTool > timeToReheat)
-				{
-					var targetTemp = targetTemps[activeTool];
-					targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
-					if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
-					{
-						gcode.AppendLine($"M104 T{activeTool} S{targetTemp} ; INACTIVE_COOL_DOWN");
-					}
+					gcode.AppendLine($"M104 T{activeTool} S{targetTemp} ; INACTIVE_COOL_DOWN");
 				}
 			}
+		}
+
+		private double GetNextToolTemp(int toolIndex)
+		{
+			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
+
+			// get the next time we will use the current tool
+			var nextTimeThisTool = NextToolChange(toolIndex).time;
+
+			// if we do not use this tool again
+			if (nextTimeThisTool == double.PositiveInfinity)
+			{
+				// turn off its heat
+				return 0;
+			}
+
+			// If there is enough time before we will use this tool again, lower the temp by the inactive_cool_down
+			else if (nextTimeThisTool > timeToReheat)
+			{
+				var targetTemp = targetTemps[toolIndex];
+				targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
+				if (targetTemp != targetTemps[toolIndex])
+				{
+					return targetTemp;
+				}
+			}
+
+			return targetTemps[toolIndex];
 		}
 
 		private void ManageReHeating(string line)

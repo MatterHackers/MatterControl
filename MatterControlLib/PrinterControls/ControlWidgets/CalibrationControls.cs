@@ -52,9 +52,9 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// add in the controls for configuring auto leveling
 			{
-				SettingsRow settingsRow;
+				SettingsRow calibrationRow;
 
-				this.AddChild(settingsRow = new SettingsRow(
+				this.AddChild(calibrationRow = new SettingsRow(
 					"Printer Calibration".Localize(),
 					null,
 					theme));
@@ -75,17 +75,25 @@ namespace MatterHackers.MatterControl.PrinterControls
 						DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 					});
 				};
-				settingsRow.AddChild(runWizardButton);
+				calibrationRow.AddChild(runWizardButton);
 
 				// only show the switch if leveling can be turned off (it can't if it is required).
 				if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 				{
+					SettingsRow levelingRow;
+
+					this.AddChild(levelingRow = new SettingsRow(
+						"Print Leveling".Localize(),
+						null,
+						theme));
+
 					// put in the switch
 					printLevelingSwitch = new RoundedToggleSwitch(theme)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(left: 16),
-						Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+						Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled),
+						ToolTipText = "Enable Software Leveling".Localize()
 					};
 					printLevelingSwitch.CheckedStateChanged += (sender, e) =>
 					{
@@ -96,7 +104,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					// Register listeners
 					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
 
-					settingsRow.AddChild(printLevelingSwitch);
+					levelingRow.AddChild(printLevelingSwitch);
 				}
 			}
 
