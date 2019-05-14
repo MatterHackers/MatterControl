@@ -244,8 +244,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				DialogWindow.Show(
 					new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
 			};
-			theme.ApplyPrimaryActionStyle(loadFilamentButton);
 
+			this.AcceptButton = loadFilamentButton;
 			this.AddPageAction(loadFilamentButton);
 		}
 

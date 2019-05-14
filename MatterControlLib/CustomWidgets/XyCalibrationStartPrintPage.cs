@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl
 				}
 			};
 
-			theme.ApplyPrimaryActionStyle(startCalibrationPrint);
+			this.AcceptButton = startCalibrationPrint;
 
 			this.AddPageAction(startCalibrationPrint);
 		}

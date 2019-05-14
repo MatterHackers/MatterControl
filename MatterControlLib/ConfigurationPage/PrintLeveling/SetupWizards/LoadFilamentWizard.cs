@@ -394,7 +394,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					this.DialogWindow.ClosePage();
 				};
 
-				theme.ApplyPrimaryActionStyle(resumePrintingButton);
+				this.AcceptButton = resumePrintingButton;
 				this.AddPageAction(resumePrintingButton);
 			}
 		}

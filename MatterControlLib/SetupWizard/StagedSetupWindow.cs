@@ -122,7 +122,10 @@ namespace MatterHackers.MatterControl
 					$"{i++}. {stage.Title}",
 					"",
 					stage,
-					theme);
+					theme)
+				{
+					TabStop = true
+				};
 				stageWidget.Name = stage.Title + " Row";
 				stageWidget.Enabled = stage.Enabled;
 				stageWidget.Click += (s, e) =>

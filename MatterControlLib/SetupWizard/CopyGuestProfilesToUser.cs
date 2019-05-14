@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl
 					copyCompleted.Invoke();
 				});
 			};
-			theme.ApplyPrimaryActionStyle(copyButton);
+			this.AcceptButton = copyButton;
 			this.AddPageAction(copyButton);
 
 			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor);

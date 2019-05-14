@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class FanControls : FlowLayoutWidget
 	{
-		private EditableNumberDisplay fanSpeedDisplay;
+		private MHNumberEdit fanSpeedDisplay;
 
 		private RoundedToggleSwitch toggleSwitch;
 		private PrinterConfig printer;
@@ -67,12 +67,13 @@ namespace MatterHackers.MatterControl.PrinterControls
 			settingsRow.AddChild(container);
 			settingsRow.BorderColor = Color.Transparent;
 
-			fanSpeedDisplay = new EditableNumberDisplay(0, "100", theme)
+			fanSpeedDisplay = new MHNumberEdit(0, theme, minValue: 0, maxValue: 100, pixelWidth: 30)
 			{
-				DisplayFormat = "{0:0}",
-				Value = printer.Connection.FanSpeed0To255 * 100 / 255
+				Value = printer.Connection.FanSpeed0To255 * 100 / 255,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+				Margin = new BorderDouble(right: 2),
 			};
-			fanSpeedDisplay.ValueChanged += (sender, e) =>
+			fanSpeedDisplay.ActuallNumberEdit.EditComplete += (sender, e) =>
 			{
 				// limit the rate we can send this message to 2 per second so we don't get in a crazy toggle state.
 				if (!timeSinceLastManualSend.IsRunning

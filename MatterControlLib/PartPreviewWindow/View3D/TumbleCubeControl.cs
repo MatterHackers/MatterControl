@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <returns></returns>
 		internal int Tile(int faceSharingEdge)
 		{
-			if(faceSharingEdge == left)
+			if (faceSharingEdge == left)
 			{
 				return 3;
 			}
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (faceCornerA == left)
 			{
-				if(faceCornerB == top)
+				if (faceCornerB == top)
 				{
 					return 6;
 				}
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else if (faceCornerA == bottom)
 			{
-				if(faceCornerB == left)
+				if (faceCornerB == left)
 				{
 					return 0;
 				}
@@ -162,6 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private WorldView world;
 		private ThemeConfig theme;
 		private List<ConnectedFaces> connections = new List<ConnectedFaces>();
+		private HitData lastHitData = new HitData();
 
 		public TumbleCubeControl(InteractionLayer interactionLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
@@ -268,7 +269,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		HitData lastHitData = new HitData();
 		private void DrawMouseHover(HitData hitData)
 		{
 			if (!lastHitData.Equals(hitData))
@@ -372,7 +372,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseUp(mouseEvent);
 
-			if(mouseEvent.Button != MouseButtons.Left)
+			if (mouseEvent.Button != MouseButtons.Left)
 			{
 				return;
 			}
@@ -400,6 +400,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						double duration = .25;
 						var timer = Stopwatch.StartNew();
 						var time = timer.Elapsed.TotalSeconds;
+
 						while (time < duration)
 						{
 							var current = Quaternion.Slerp(start, end, time / duration);
@@ -411,6 +412,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							time = timer.Elapsed.TotalSeconds;
 							Thread.Sleep(10);
 						}
+
 						interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
 						Invalidate();
 					});
@@ -425,6 +427,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var up = Vector3.Zero;
 			var normal = Vector3.Zero;
 			var count = 0;
+
 			for (int i = 0; i < 3; i++)
 			{
 				count++;
@@ -502,13 +505,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private HitData GetHitData(Vector3 hitPosition)
 		{
-			for(int i=0; i<6; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				var faceData = connections[i];
 				if (Math.Abs(hitPosition[faceData.axis] - faceData.direction * 2) < .0001)
 				{
 					// hit to the left
-					if (hitPosition[connections[faceData.left].axis] 
+					if (hitPosition[connections[faceData.left].axis]
 						* connections[faceData.left].direction
 						> 1)
 					{
@@ -578,7 +581,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return new HitData(i, 4);
 				}
 			}
-			
+
 			return new HitData(0, 4);
 		}
 
@@ -618,7 +621,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				60,
 				justification: Agg.Font.Justification.Center,
 				baseline: Agg.Font.Baseline.BoundsCenter,
-				color: theme.PrinterBedTextColor);
+				color: theme.TextColor);
 
 			graphics.Render(new Stroke(new RoundedRect(.5, .5, 254.5, 254.4, 0), 6), theme.BedGridColors.Line);
 
@@ -645,7 +648,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 		}
 
-		public HitData(int faceIndex0, int tileIndex0, 
+		public HitData(int faceIndex0, int tileIndex0,
 			int faceIndex1 = -1, int tileIndex1 = -1,
 			int faceIndex2 = -1, int tileIndex2 = -1)
 		{
@@ -661,9 +664,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (obj is HitData hitData)
 			{
-				for(int i=0; i < 3; i++)
+				for (int i = 0; i < 3; i++)
 				{
-					if(FaceIndex[i] != hitData.FaceIndex[i]
+					if (FaceIndex[i] != hitData.FaceIndex[i]
 						|| TileIndex != hitData.TileIndex)
 					{
 						return false;

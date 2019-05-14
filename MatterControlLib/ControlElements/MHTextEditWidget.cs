@@ -39,8 +39,8 @@ namespace MatterHackers.MatterControl
 	{
 		protected TextWidget noContentFieldDescription = null;
 		private ThemeConfig theme;
+		private bool mouseInBounds = false;
 
-		public TextEditWidget ActualTextEditWidget { get; }
 
 		public MHTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{
@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl
 			internalWidget.TextColor = theme.EditFieldColors.Inactive.TextColor;
 			internalWidget.FocusChanged += (s, e) =>
 			{
-				internalWidget.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
-				noContentFieldDescription.TextColor = (internalWidget.Focused) ? theme.EditFieldColors.Focused.LightTextColor : theme.EditFieldColors.Inactive.LightTextColor;
+				internalWidget.TextColor = internalWidget.Focused ? theme.EditFieldColors.Focused.TextColor : theme.EditFieldColors.Inactive.TextColor;
+				noContentFieldDescription.TextColor = internalWidget.Focused ? theme.EditFieldColors.Focused.LightTextColor : theme.EditFieldColors.Inactive.LightTextColor;
 			};
 
 			this.ActualTextEditWidget.InternalTextEditWidget.BackgroundColor = Color.Transparent;
@@ -77,6 +77,8 @@ namespace MatterHackers.MatterControl
 
 			SetNoContentFieldDescriptionVisibility();
 		}
+
+		public TextEditWidget ActualTextEditWidget { get; }
 
 		public override Color BackgroundColor
 		{
@@ -126,8 +128,6 @@ namespace MatterHackers.MatterControl
 			set => base.BorderColor = value;
 		}
 
-		private bool mouseInBounds = false;
-
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (noContentFieldDescription != null)
 			{
-				noContentFieldDescription.Visible = (Text == "");
+				noContentFieldDescription.Visible = Text == "";
 			}
 		}
 
@@ -182,7 +182,12 @@ namespace MatterHackers.MatterControl
 			get => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus;
 			set => ActualTextEditWidget.InternalTextEditWidget.SelectAllOnFocus = value;
 		}
-		public bool ReadOnly { get => ActualTextEditWidget.ReadOnly; set => ActualTextEditWidget.ReadOnly = value; }
+
+		public bool ReadOnly
+		{
+			get => ActualTextEditWidget.ReadOnly;
+			set => ActualTextEditWidget.ReadOnly = value;
+		}
 
 		public void DrawFromHintedCache()
 		{
