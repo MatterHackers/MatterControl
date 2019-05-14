@@ -185,7 +185,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 					rootColumn.AddChild(rootNode);
 				}
-			}, 1);
+
+				this.Enabled = true;
+			});
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
