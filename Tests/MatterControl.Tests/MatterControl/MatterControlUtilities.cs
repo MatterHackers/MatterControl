@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
@@ -131,6 +132,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// Wait for any post DoneReloadingAll code to finish up and return
 			testRunner.Delay(.2);
 		}
+
+		public static void WaitForPage(this AutomationRunner testRunner, string headerText)
+		{
+			// Helper methods
+			bool HeaderExists(string text)
+			{
+				var header = testRunner.GetWidgetByName("HeaderRow", out _);
+				var textWidget = header.Children<TextWidget>().FirstOrDefault();
+
+				return textWidget?.Text.StartsWith(text) ?? false;
+			}
+
+			testRunner.WaitFor(() => HeaderExists(headerText));
+
+			Assert.IsTrue(HeaderExists(headerText), "Expected page not found: " + headerText);
+		}
+
 
 		public static string PathToExportGcodeFolder
 		{
@@ -340,7 +358,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.EnsureWelcomePageClosed();
 
 			// Click 'Add Printer' if not on screen
-			if (!testRunner.NameExists("Select Make", 0.2))
+			if (!testRunner.NameExists("AddPrinterWidget", 0.2))
 			{
 				if (!testRunner.NameExists("Create Printer", 0.2))
 				{
@@ -361,18 +379,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			}
 
-			testRunner.ClickByName("Select Make");
-			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
-			testRunner.Type(make);
-			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
+			// Wait for the tree to load before filtering
+			testRunner.WaitFor(() =>
+			{
+				var widget = testRunner.GetWidgetByName("AddPrinterWidget", out _) as AddPrinterWidget;
+				return widget.TreeLoaded;
+			});
 
-			testRunner.ClickByName("Select Model");
-			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
+			// Apply filter
+			testRunner.ClickByName("Search");
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
+			// Click printer node
+			testRunner.Delay();
+			testRunner.ClickByName($"Node{make}{model}");
+
+			// Continue to next page
 			testRunner.ClickByName("Next Button");
 
 			testRunner.Delay();
@@ -946,24 +969,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void Complete9StepLeveling(this AutomationRunner testRunner, int numUpClicks = 1)
 		{
-			// Helper methods
-			bool headerExists(string headerText)
-			{
-				var header = testRunner.GetWidgetByName("HeaderRow", out _);
-				var textWidget = header.Children<TextWidget>().FirstOrDefault();
-
-				return textWidget?.Text.StartsWith(headerText) ?? false;
-			}
-
-			void waitForPage(string headerText)
-			{
-				testRunner.WaitFor(() => headerExists(headerText));
-				Assert.IsTrue(headerExists(headerText), "Expected page not found: " + headerText);
-			}
-
 			void waitForPageAndAdvance(string headerText)
 			{
-				waitForPage(headerText);
+				testRunner.WaitForPage(headerText);
 				testRunner.ClickByName("Next Button");
 			}
 
@@ -979,20 +987,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				var section = (i * 3) + 1;
 
-				waitForPage($"Step {section} of 9");
+				testRunner.WaitForPage($"Step {section} of 9");
 				for (int j = 0; j < numUpClicks; j++)
 				{
 					testRunner.Delay();
 					testRunner.ClickByName("Move Z positive");
 				}
 
-				waitForPage($"Step {section} of 9");
+				testRunner.WaitForPage($"Step {section} of 9");
 				testRunner.ClickByName("Next Button");
 
-				waitForPage($"Step {section + 1} of 9");
+				testRunner.WaitForPage($"Step {section + 1} of 9");
 				testRunner.ClickByName("Next Button");
 
-				waitForPage($"Step {section + 2} of 9");
+				testRunner.WaitForPage($"Step {section + 2} of 9");
 				testRunner.ClickByName("Next Button");
 			}
 

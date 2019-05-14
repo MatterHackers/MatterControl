@@ -49,11 +49,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ImageWidget imageWidget;
 		private bool isDirty;
 
-		public TreeNode(ThemeConfig theme, bool useIcon = true)
+		public TreeNode(ThemeConfig theme, bool useIcon = true, TreeNode nodeParent = null)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Fit | HAnchor.Left;
 			this.VAnchor = VAnchor.Fit;
+
+			this.NodeParent = nodeParent;
 
 			this.TitleBar = new FlowLayoutWidget();
 			this.TitleBar.Click += (s, e) =>
