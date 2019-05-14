@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					SetIsActive = (value) => printer.ViewState.ControlsVisible = value
 				},
 				new NamedBoolAction()
-				{
+				{	
 					Title = "Show Terminal".Localize(),
 					Action = () => { },
 					GetIsActive = () => printer.ViewState.TerminalVisible,
@@ -341,6 +341,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
 					}),
 					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				},
+				new ActionSeparator(),
+
+				new NamedAction()
+				{
+					Title = "Calibrate Printer".Localize(),
+					Action = () => UiThread.RunOnIdle(() =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
+						});
+					}),
+					Icon = AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons)
 				},
 				new ActionSeparator(),
 				new NamedAction()
