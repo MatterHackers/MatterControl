@@ -106,7 +106,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
 		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
-		private SelectedChildren _selectedChild = new SelectedChildren();
 
 		public AlignObject3D()
 		{
@@ -172,34 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[ShowAsList]
 		[DisplayName("Anchor")]
-		public SelectedChildren SelectedChild
-		{
-			get
-			{
-				if (Children.Count > 0)
-				{
-					if (_selectedChild.Count != 1)
-					{
-						_selectedChild.Clear();
-						_selectedChild.Add(Children.First().Name);
-					}
-
-					if (!this.Children.Any(c => c.Name == _selectedChild[0]))
-					{
-						// we don't have an name of any of our current children
-						_selectedChild.Clear();
-						_selectedChild.Add(Children.First().Name);
-					}
-				}
-				else
-				{
-					_selectedChild.Clear();
-				}
-
-				return _selectedChild;
-			}
-			set => _selectedChild = value;
-		}
+		public SelectedChildren SelectedChild { get; set; } = new SelectedChildren();
 
 		public bool Advanced { get; set; } = false;
 
@@ -260,7 +232,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				return this.Children.Where(c => c.Name == SelectedChild[0]).FirstOrDefault();
+				if (SelectedChild.Count > 0)
+				{
+					return this.Children.Where(c => c.ID == SelectedChild[0]).FirstOrDefault();
+				}
+
+				return this.Children.FirstOrDefault();
 			}
 		}
 
@@ -366,7 +343,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				var aabb = this.GetAxisAlignedBoundingBox();
 
-				this.Children.Modify((Action<List<IObject3D>>)((List<IObject3D> list) =>
+				this.Children.Modify(list =>
 				{
 					if (list.Count == 0)
 					{
@@ -455,7 +432,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 						i++;
 					}
-				}));
+				});
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));

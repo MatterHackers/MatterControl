@@ -54,20 +54,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			// Enum keyed on name to friendly name
 			List<(string key, string value)> names = null;
-			var selectedName = "";
+			string selectedID = "";
 			if (property.Source is AlignObject3D item)
 			{
-				names = item.Children.Select(child => (child.Name, child.Name)).ToList();
+				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
 				if (item.SelectedChild.Count == 1)
 				{
-					var selectedKey = item.SelectedChild[0];
-					foreach (var (key, value) in names)
-					{
-						if (key == selectedKey)
-						{
-							selectedName = value;
-						}
-					}
+					selectedID = item.SelectedChild[0];
 				}
 			}
 
@@ -86,7 +79,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 			}
 
-			dropDownList.SelectedLabel = selectedName;
+			if (!string.IsNullOrWhiteSpace(selectedID))
+			{
+				dropDownList.SelectedValue = selectedID;
+			}
+			else if (dropDownList.MenuItems.Count > 0)
+			{
+				dropDownList.SelectedIndex = 0;
+			}
 
 			this.Content = dropDownList;
 		}
