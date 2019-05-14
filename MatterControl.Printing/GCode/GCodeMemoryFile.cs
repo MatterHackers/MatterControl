@@ -392,7 +392,12 @@ namespace MatterControl.Printing
 
 		public override PrinterMachineInstruction Instruction(int index)
 		{
-			return gCodeCommandQueue[index];
+			if (index < gCodeCommandQueue.Count)
+			{
+				return gCodeCommandQueue[index];
+			}
+
+			return new PrinterMachineInstruction("");
 		}
 
 		public override bool IsExtruding(int instructionIndexToCheck)
