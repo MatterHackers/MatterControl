@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						// grow the support columns by the amount they are reduced by
 						var aabb = item.GetAxisAlignedBoundingBox();
-						var xyScale = (aabb.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabb.XSize;
+						var xyScale = (aabb.XSize + 2 * generatedSupportObject3D.ExpandSize) / aabb.XSize;
 						itemWorldMatrix = itemWorldMatrix.ApplyAtCenter(aabb, Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
 
