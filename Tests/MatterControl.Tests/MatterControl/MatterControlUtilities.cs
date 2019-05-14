@@ -47,6 +47,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PrinterEmulator;
@@ -357,7 +358,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.EnsureWelcomePageClosed();
 
 			// Click 'Add Printer' if not on screen
-			if (!testRunner.NameExists("Select Make", 0.2))
+			if (!testRunner.NameExists("AddPrinterWidget", 0.2))
 			{
 				if (!testRunner.NameExists("Create Printer", 0.2))
 				{
@@ -378,18 +379,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			}
 
-			testRunner.ClickByName("Select Make");
-			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
-			testRunner.Type(make);
-			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
+			// Wait for the tree to load before filtering
+			testRunner.WaitFor(() =>
+			{
+				var widget = testRunner.GetWidgetByName("AddPrinterWidget", out _) as AddPrinterWidget;
+				return widget.TreeLoaded;
+			});
 
-			testRunner.ClickByName("Select Model");
-			testRunner.WaitFor(() => testRunner.ChildExists<PopupWidget>());
+			// Apply filter
+			testRunner.ClickByName("Search");
 			testRunner.Type(model);
 			testRunner.Type("{Enter}");
-			testRunner.WaitFor(() => !testRunner.ChildExists<PopupWidget>());
 
+			// Click printer node
+			testRunner.Delay();
+			testRunner.ClickByName($"Node{make}{model}");
+
+			// Continue to next page
 			testRunner.ClickByName("Next Button");
 
 			testRunner.Delay();

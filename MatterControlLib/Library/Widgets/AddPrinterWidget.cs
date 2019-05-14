@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.theme = theme;
 			this.nextButton = nextButton;
 			this.ExistingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name).ToList();
+			this.Name = "AddPrinterWidget";
+			this.TreeLoaded = false;
 
 			var searchIcon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
 
@@ -186,7 +188,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					rootColumn.AddChild(rootNode);
 				}
 
-				this.Enabled = true;
+				this.TreeLoaded = true;
 			});
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -390,6 +392,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public MakeModelInfo SelectedPrinter { get; private set; }
 
 		public string NewPrinterName => printerNameInput.Text;
+
+		public bool TreeLoaded { get; private set; }
 
 		public class MakeModelInfo
 		{
