@@ -282,19 +282,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 			else // there are more tool changes in the future
 			{
-				var temp = GetNextToolTemp(activeTool);
+				var targetTemp = GetNextToolTemp(activeTool);
 
 				// if we do not use this tool again
-				if (temp == 0)
+				if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
 				{
-					// turn off its heat
-					gcode.AppendLine($"M104 T{activeTool} S0");
-				}
-
-				// else if we need to cool down
-				else if (temp != targetTemps[activeTool])
-				{
-					gcode.AppendLine($"M104 T{activeTool} S{temp} ; INACTIVE_COOL_DOWN");
+					gcode.AppendLine($"M104 T{activeTool} S{targetTemp} ; INACTIVE_COOL_DOWN");
 				}
 			}
 		}
