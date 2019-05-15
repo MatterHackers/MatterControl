@@ -41,6 +41,8 @@ namespace MatterHackers.MatterControl
 
 		Vector2 WindowSize { get; }
 
+		bool AutoAdvance { get; set; }
+
 		Func<DialogPage> HomePageGenerator { get; }
 	}
 }

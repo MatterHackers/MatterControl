@@ -156,6 +156,8 @@ namespace MatterHackers.MatterControl
 			this.AddChild(row);
 		}
 
+		public bool AutoAdvance => setupWizard.AutoAdvance;
+
 		public override void OnClosing(ClosingEventArgs eventArgs)
 		{
 			if (this.ActiveStage != null

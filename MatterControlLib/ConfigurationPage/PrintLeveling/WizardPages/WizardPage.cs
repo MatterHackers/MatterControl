@@ -125,7 +125,8 @@ namespace MatterHackers.MatterControl
 
 		protected void FinishWizard()
 		{
-			if (this.DialogWindow is StagedSetupWindow setupWindow)
+			if (this.DialogWindow is StagedSetupWindow setupWindow
+				&& setupWindow.AutoAdvance)
 			{
 				setupWindow.NextIncompleteStage();
 			}
