@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
@@ -89,9 +90,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{
 			// we have a probe that we are using and we have not done leveling yet
+			// and there is something on the bed that uses 2 extruders
 			return UsingZProbe(printer)
 				&& printer.Settings.Helpers.HotendCount() > 1
-				&& !printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated);
+				&& !printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated)
+				&& Slicer.T1OrGreaterUsed(printer);
 		}
 
 		public static bool UsingZProbe(PrinterConfig printer)

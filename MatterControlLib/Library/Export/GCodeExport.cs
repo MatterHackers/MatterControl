@@ -71,22 +71,22 @@ namespace MatterHackers.MatterControl.Library.Export
 			get => printer != null
 				&& printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
-				&& !ApplicationController.PrinterNeedsToRunSetup(printer);
+				&& !ApplicationController.PrinterNeedsToRunSetup(printer, false);
 		}
 
 		public virtual string DisabledReason
 		{
 			get
 			{
-				if(printer == null)
+				if (printer == null)
 				{
 					return "Create a printer to export G-Code".Localize();
 				}
-				else if(!printer.Settings.PrinterSelected)
+				else if (!printer.Settings.PrinterSelected)
 				{
 					return "No Printer Selected".Localize();
 				}
-				else if(ApplicationController.PrinterNeedsToRunSetup(printer))
+				else if (ApplicationController.PrinterNeedsToRunSetup(printer, false))
 				{
 					return "Setup Needs to be Run".Localize();
 				}

@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				// Perform validation before popup
-				var errors = printer.Validate();
+				var errors = printer.Validate(true);
 
 				// Enable print option when no validation Errors exists
 				var printEnabled = !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);

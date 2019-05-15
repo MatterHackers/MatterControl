@@ -62,7 +62,10 @@ namespace MatterHackers.MatterControl
 				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
 			}
 
-			stages.Add(new XyCalibrationWizard(printer, 1));
+			if (XyCalibrationWizard.NeedsToBeRun(printer))
+			{
+				stages.Add(new XyCalibrationWizard(printer, 1));
+			}
 
 			this.Stages = stages;
 
@@ -233,10 +236,12 @@ namespace MatterHackers.MatterControl
 
 		public Func<DialogPage> HomePageGenerator { get; }
 
-		public static bool SetupRequired(PrinterConfig printer)
+		public static bool SetupRequired(PrinterConfig printer, bool connectedPrinting)
 		{
 			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
 				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
+				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun0(printer))
+				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun1(printer))
 				|| XyCalibrationWizard.NeedsToBeRun(printer);
 		}
 	}

@@ -400,7 +400,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="printer">The printer to validate.</param>
 		/// <returns>A list of all warnings and errors.</returns>
-		public static List<ValidationError> Validate(this PrinterConfig printer)
+		public static List<ValidationError> Validate(this PrinterConfig printer, bool connectedPrinting)
 		{
 			var errors = new List<ValidationError>();
 
@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
-			if (ApplicationController.PrinterNeedsToRunSetup(printer))
+			if (ApplicationController.PrinterNeedsToRunSetup(printer, connectedPrinting))
 			{
 				errors.Add(new ValidationError("PrinterSetupRequired")
 				{
