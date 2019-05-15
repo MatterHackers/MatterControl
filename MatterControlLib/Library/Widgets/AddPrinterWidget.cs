@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
@@ -176,13 +177,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					rootNode.TreeView = treeView;
 					rootNode.Load += (s, e) =>
 					{
-						rootNode.Image = OemSettings.Instance.GetIcon(oem.Key);
+						var image = OemSettings.Instance.GetIcon(oem.Key);
 
-						// Push to children
-						foreach (var child in rootNode.Nodes)
-						{
-							child.Image = rootNode.Image;
-						}
+						SetImage(rootNode, image);
 					};
 
 					rootColumn.AddChild(rootNode);
@@ -238,6 +235,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			container.AddChild(printerNameInput);
+		}
+
+		private static void SetImage(TreeNode node, ImageBuffer image)
+		{
+			node.Image = image;
+
+			// Push to children
+			foreach (var child in node.Nodes)
+			{
+				SetImage(child, image);
+			}
 		}
 
 		public IReadOnlyList<string> ExistingPrinterNames { get; private set; }
@@ -302,9 +310,25 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Text = make.Key,
 			};
 
+
+			string currentGroup = "";
+
+			var context = treeNode;
+
 			foreach (var printer in make.Value.OrderBy(p => p.Key))
 			{
-				treeNode.Nodes.Add(new TreeNode(theme, nodeParent: treeNode)
+				if (make.Key == "Pulse"
+					&& currentGroup != printer.Key[0] + " Series")
+				{
+					currentGroup = printer.Key[0] + " Series";
+
+					treeNode.Nodes.Add(context = new TreeNode(theme, nodeParent: treeNode)
+					{
+						Text = currentGroup,
+					});
+				}
+
+				context.Nodes.Add(new TreeNode(theme, nodeParent: treeNode)
 				{
 					Text = printer.Key,
 					Name = $"Node{make.Key}{printer.Key}",
@@ -354,7 +378,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			treeView.SelectedNode = null;
 		}
 
-		private void FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
+		private bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
 		{
 			bool hasFilterText = context.Text.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
 			context.Visible = hasFilterText || parentVisible;
@@ -364,6 +388,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				context.NodeParent.Visible = true;
 				context.NodeParent.Expanded = true;
+				context.Expanded = true;
 			}
 
 			if (context.NodeParent != null
@@ -372,10 +397,21 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				matches.Add(context);
 			}
 
+			bool childMatched = false;
+
 			foreach (var child in context.Nodes)
 			{
-				FilterTree(child, filter, hasFilterText, matches);
+				childMatched = FilterTree(child, filter, hasFilterText || parentVisible, matches);
 			}
+
+			bool hasMatch = childMatched || hasFilterText;
+
+			if (hasMatch)
+			{
+				context.Visible = context.Expanded = true;
+			}
+
+			return hasMatch;
 		}
 
 		private void ResetTree(TreeNode context)
