@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 						});
 					}),
-					Icon = AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons)
+					Icon = AggContext.StaticData.LoadIcon("compass.png", theme.InvertIcons)
 				},
 				new ActionSeparator(),
 				new NamedAction()
