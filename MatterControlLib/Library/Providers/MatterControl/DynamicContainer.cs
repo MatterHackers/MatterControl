@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,73 +30,21 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public abstract class LibraryContainer : ILibraryContainer
+	public class DynamicContainer : LibraryContainer
 	{
-		public event EventHandler ContentChanged;
+		public Action<LibraryContainer> Initializer { get; set; }
 
-		public string ID { get; set; }
-
-		public string Name { get; set; }
-
-		public Type DefaultView { get; protected set; }
-
-		public List<ILibraryContainerLink> ChildContainers { get; set; } = new List<ILibraryContainerLink>();
-
-		public bool IsProtected { get; protected set; } = true;
-
-		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		public override void Load()
 		{
-			if (item is LocalZipContainerLink)
-			{
-				return Task.FromResult(AggContext.StaticData.LoadIcon(Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply());
-			}
-
-			return Task.FromResult<ImageBuffer>(null);
-		}
-
-		public List<ILibraryItem> Items { get; set; } = new List<ILibraryItem>();
-
-		public ILibraryContainer Parent { get; set; }
-
-		public string StatusMessage { get; set; } = "";
-
-		public virtual ICustomSearch CustomSearch { get; } = null;
-
-		/// <summary>
-		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners
-		/// </summary>
-		protected void ReloadContent()
-		{
-			// Call the container specific reload implementation
-			this.Load();
-
-			// Notify
-			this.OnContentChanged();
-		}
-
-		protected void OnContentChanged()
-		{
-			this.ContentChanged?.Invoke(this, null);
-		}
-
-		public abstract void Load();
-
-		public virtual void Dispose()
-		{
-		}
-
-		public virtual void Activate()
-		{
-		}
-
-		public virtual void Deactivate()
-		{
+			this.Initializer?.Invoke(this);
 		}
 	}
 }

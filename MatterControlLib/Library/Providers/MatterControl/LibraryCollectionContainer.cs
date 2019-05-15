@@ -32,6 +32,7 @@ using System.IO;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -80,6 +81,35 @@ namespace MatterHackers.MatterControl.Library
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
 					() => new PrintQueueContainer()));
+
+#if DEBUG
+
+			int index = 0;
+
+			this.ChildContainers.Add(
+				new DynamicContainerLink(
+					() => "Experimental".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					() => new DynamicContainer()
+					{
+						Items = new List<ILibraryItem>()
+						{
+							new GeneratorItem(
+								() => "Calibration Tab".Localize(),
+								async () => await XyCalibrationTabObject3D.Create())
+							{ DateCreated = new System.DateTime(index++) },
+							new GeneratorItem(
+								() => "Calibration Face".Localize(),
+								async () => await XyCalibrationFaceObject3D.Create())
+							{ DateCreated = new System.DateTime(index++) },
+							new GeneratorItem(
+								() => "Text2".Localize(),
+								async () => await TextPathObject3D.Create())
+							{ DateCreated = new System.DateTime(index++) }
+						}
+					}));
+#endif
 		}
 
 		public override void Load()
