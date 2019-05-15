@@ -251,13 +251,16 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public override void ClosePage()
+		public override void ClosePage(bool allowAbort = true)
 		{
-			this.OnCancel(out bool abortClose);
-
-			if (abortClose)
+			if (allowAbort)
 			{
-				return;
+				this.OnCancel(out bool abortClose);
+
+				if (abortClose)
+				{
+					return;
+				}
 			}
 
 			if (this.ActiveStage == null

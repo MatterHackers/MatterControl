@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.DialogWindow.ClosePage();
+				this.DialogWindow.ClosePage(allowAbort: false);
 			}
 		}
 	}
