@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library

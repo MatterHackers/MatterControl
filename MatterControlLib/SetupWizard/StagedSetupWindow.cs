@@ -49,51 +49,6 @@ namespace MatterHackers.MatterControl
 		private IStagedSetupWizard setupWizard;
 		private bool closeConfirmed;
 
-		public ISetupWizard ActiveStage
-		{
-			get => _activeStage;
-			set
-			{
-				if (_activeStage != null
-					&& rowsByStage.TryGetValue(_activeStage, out WizardStageRow activeButton))
-				{
-					// Mark the leftnav widget as inactive
-					activeButton.Active = false;
-				}
-
-				// Ensure all or only the active stage is enabled
-				foreach (var (stage, widget) in rowsByStage.Select(x => (x.Key, x.Value))) // project to tuple - deconstruct to named items
-				{
-					bool isActiveStage = stage == value;
-					bool noActiveStage = value == null;
-
-					// Enable GuiWidget when no stage is active or when the current stage is active and enabled
-					widget.Enabled = stage.Enabled && (noActiveStage || isActiveStage);
-				}
-
-				// Shutdown the active Wizard
-				_activeStage?.Dispose();
-
-				_activeStage = value;
-
-				if (_activeStage == null)
-				{
-					return;
-				}
-
-				if (rowsByStage.TryGetValue(_activeStage, out WizardStageRow stageButton))
-				{
-					stageButton.Active = true;
-				}
-
-				// Reset enumerator, move to first item
-				_activeStage.Reset();
-				_activeStage.MoveNext();
-
-				this.ChangeToPage(_activeStage.Current);
-			}
-		}
-
 		public StagedSetupWindow(IStagedSetupWizard setupWizard)
 		{
 			this.setupWizard = setupWizard;
@@ -154,6 +109,53 @@ namespace MatterHackers.MatterControl
 			this.UseChildWindowSize = false;
 
 			this.AddChild(row);
+		}
+
+		public bool AutoAdvance => setupWizard.AutoAdvance;
+
+		public ISetupWizard ActiveStage
+		{
+			get => _activeStage;
+			set
+			{
+				if (_activeStage != null
+					&& rowsByStage.TryGetValue(_activeStage, out WizardStageRow activeButton))
+				{
+					// Mark the leftnav widget as inactive
+					activeButton.Active = false;
+				}
+
+				// Ensure all or only the active stage is enabled
+				foreach (var (stage, widget) in rowsByStage.Select(x => (x.Key, x.Value))) // project to tuple - deconstruct to named items
+				{
+					bool isActiveStage = stage == value;
+					bool noActiveStage = value == null;
+
+					// Enable GuiWidget when no stage is active or when the current stage is active and enabled
+					widget.Enabled = stage.Enabled && (noActiveStage || isActiveStage);
+				}
+
+				// Shutdown the active Wizard
+				_activeStage?.Dispose();
+
+				_activeStage = value;
+
+				if (_activeStage == null)
+				{
+					return;
+				}
+
+				if (rowsByStage.TryGetValue(_activeStage, out WizardStageRow stageButton))
+				{
+					stageButton.Active = true;
+				}
+
+				// Reset enumerator, move to first item
+				_activeStage.Reset();
+				_activeStage.MoveNext();
+
+				this.ChangeToPage(_activeStage.Current);
+			}
 		}
 
 		public override void OnClosing(ClosingEventArgs eventArgs)

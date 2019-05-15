@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,20 +29,22 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.VectorMath;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.Library
 {
-	public interface IStagedSetupWizard
+	public class DynamicContainer : LibraryContainer
 	{
-		IEnumerable<ISetupWizard> Stages { get; }
+		public Action<LibraryContainer> Initializer { get; set; }
 
-		string Title { get; }
-
-		Vector2 WindowSize { get; }
-
-		bool AutoAdvance { get; set; }
-
-		Func<DialogPage> HomePageGenerator { get; }
+		public override void Load()
+		{
+			this.Initializer?.Invoke(this);
+		}
 	}
 }

@@ -93,11 +93,13 @@ namespace MatterHackers.MatterControl.Library
 		public string ID => $"MatterHackers/ItemGenerator/{Name}".GetLongHashCode().ToString();
 
 		public string Category { get; set; }
+
 		public string Name => nameResolver?.Invoke();
 
 		public string ContentType { get; set; } = "mcx";
 
 		public bool IsProtected { get; set; }
+
 		public bool IsVisible => true;
 
 		public DateTime DateCreated { get; set; } = DateTime.Now;

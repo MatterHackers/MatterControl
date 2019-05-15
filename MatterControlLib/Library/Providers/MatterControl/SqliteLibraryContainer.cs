@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.Library
 	public class SqliteFileItem : FileSystemFileItem
 	{
 		public PrintItem PrintItem { get; }
+
 		public SqliteFileItem(PrintItem printItem)
 			: base(printItem.FileLocation)
 		{

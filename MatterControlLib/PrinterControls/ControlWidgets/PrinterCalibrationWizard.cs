@@ -228,6 +228,8 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+		public bool AutoAdvance { get; set; }
+
 		public string Title { get; } = "Printer Calibration".Localize();
 
 		public Vector2 WindowSize { get; } = new Vector2(1200, 700);

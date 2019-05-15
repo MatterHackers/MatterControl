@@ -100,6 +100,8 @@ namespace MatterHackers.MatterControl
 			var homePage = setupWizard.HomePageGenerator();
 			SetSizeAndShow(wizardWindow, homePage);
 
+			setupWizard.AutoAdvance = advanceToIncompleteStage;
+
 			if (advanceToIncompleteStage)
 			{
 				wizardWindow.NextIncompleteStage();
