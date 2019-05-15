@@ -256,7 +256,9 @@ namespace MatterHackers.MatterControl
 				}
 			}
 			else if (e.KeyCode == Keys.Enter
-				&& this.AcceptButton != null)
+				&& this.AcceptButton != null
+				&& this.AcceptButton.Visible
+				&& this.AcceptButton.Enabled)
 			{
 				var tabStops = this.ActiveTabStops();
 

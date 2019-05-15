@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 			this.ReturnToCalibrationWizard();
 
 			// Exit the calibration and return to wizard home page
-			this.DialogWindow.ClosePage();
+			this.DialogWindow.ClosePage(allowAbort: false);
 		}
 
 		private void UnregisterPrinterEvents()

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,7 +35,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -100,8 +98,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		internal void SetManufacturers(IEnumerable<KeyValuePair<string, string>> unorderedManufacturers, List<string> whitelist = null)
 		{
 			// Sort manufacturers by name
-			List<KeyValuePair<string, string>> manufacturers = new List<KeyValuePair<string, string>>();
-			KeyValuePair<string, string> otherInfo = new KeyValuePair<string, string>(null, null);
+			var manufacturers = new List<KeyValuePair<string, string>>();
+			var otherInfo = new KeyValuePair<string, string>(null, null);
+
 			foreach (var printer in unorderedManufacturers.OrderBy(k => k.Value))
 			{
 				if (printer.Value == "Other")
@@ -213,7 +212,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		private async Task DownloadMissingProfiles()
 		{
-			ProgressStatus reportValue = new ProgressStatus();
+			var reportValue = new ProgressStatus();
 			int index = 0;
 			foreach (string oem in OemProfiles.Keys)
 			{
@@ -249,6 +248,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 	public class StorePrinterID
 	{
 		public string SID { get; set; }
+
 		public string AltInfoUrl { get; set; }
 	}
 
@@ -259,4 +259,3 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		public string NameToDisplay { get; set; }
 	}
 }
-

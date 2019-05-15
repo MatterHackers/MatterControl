@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl
 			return wizardWindow;
 		}
 
-		public virtual void ClosePage()
+		public virtual void ClosePage(bool allowAbort = true)
 		{
 			// Close this dialog window
 			this.CloseOnIdle();
