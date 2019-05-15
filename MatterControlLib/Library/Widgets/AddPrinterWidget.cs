@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
@@ -176,13 +177,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					rootNode.TreeView = treeView;
 					rootNode.Load += (s, e) =>
 					{
-						rootNode.Image = OemSettings.Instance.GetIcon(oem.Key);
+						var image = OemSettings.Instance.GetIcon(oem.Key);
 
-						// Push to children
-						foreach (var child in rootNode.Nodes)
-						{
-							child.Image = rootNode.Image;
-						}
+						SetImage(rootNode, image);
 					};
 
 					rootColumn.AddChild(rootNode);
@@ -238,6 +235,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			container.AddChild(printerNameInput);
+		}
+
+		private static void SetImage(TreeNode node, ImageBuffer image)
+		{
+			node.Image = image;
+
+			// Push to children
+			foreach (var child in node.Nodes)
+			{
+				SetImage(child, image);
+			}
 		}
 
 		public IReadOnlyList<string> ExistingPrinterNames { get; private set; }
