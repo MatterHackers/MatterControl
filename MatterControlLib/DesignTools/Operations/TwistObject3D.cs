@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						// transform back into item local space
 						transformedMesh.Transform(itemMatrix.Inverted);
 
-						// transformedMesh.MergeVertices(.1);
+						transformedMesh.MergeVertices(.1);
 						transformedMesh.CalculateNormals();
 
 						var twistedChild = new Object3D()
