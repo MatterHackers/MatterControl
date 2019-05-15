@@ -81,7 +81,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static bool NeedsToBeRun1(PrinterConfig printer)
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-			return extruderCount > 1 && !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
+			return extruderCount > 1 
+				&& !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded)
+				&& Slicer.T1OrGreaterUsed(printer);
 		}
 
 		public override bool SetupRequired

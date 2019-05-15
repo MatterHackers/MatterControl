@@ -1662,9 +1662,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static bool PrinterNeedsToRunSetup(PrinterConfig printer)
+		public static bool PrinterNeedsToRunSetup(PrinterConfig printer, bool connectedPrinting)
 		{
-			return PrinterCalibrationWizard.SetupRequired(printer);
+			return PrinterCalibrationWizard.SetupRequired(printer, connectedPrinting);
 		}
 
 		public void Shutdown()
@@ -2317,7 +2317,7 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				if (PrinterCalibrationWizard.SetupRequired(printer))
+				if (PrinterCalibrationWizard.SetupRequired(printer, true))
 				{
 					UiThread.RunOnIdle(() =>
 					{

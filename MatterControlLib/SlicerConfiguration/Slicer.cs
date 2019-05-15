@@ -57,16 +57,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static bool RunInProcess { get; set; } = false;
 
-		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public static void GetExtrudersUsed(List<bool> extrudersUsed, IObject3D object3D, PrinterConfig printer, bool checkForMeshFile)
 		{
-			var progressStatus = new ProgressStatus();
+			extrudersUsed.Clear();
 
-			ExtrudersUsed.Clear();
+			var meshItemsOnBuildPlate = printer.PrintableItems(object3D);
+			if (!meshItemsOnBuildPlate.Any())
+			{
+				return;
+			}
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				ExtrudersUsed.Add(false);
+				extrudersUsed.Add(false);
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
@@ -75,7 +79,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
 					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
-					ExtrudersUsed[supportExtruder] = true;
+					extrudersUsed[supportExtruder] = true;
 				}
 			}
 
@@ -85,78 +89,110 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printer.Settings.GetValue<int>(SettingsKey.raft_extruder) != 0)
 				{
 					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.raft_extruder) - 1));
-					ExtrudersUsed[raftExtruder] = true;
+					extrudersUsed[raftExtruder] = true;
 				}
 			}
 
+			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
-				// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
-				meshPrintOutputSettings.Clear();
+				IEnumerable<IObject3D> itemsThisExtruder = GetItemsForExtruder(meshItemsOnBuildPlate, extruderCount, extruderIndex, checkForMeshFile);
+				extrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
+			}
+		}
 
-				// Flatten the scene, filtering out items outside of the build volume
-				var meshItemsOnBuildPlate = printer.PrintableItems(object3D);
-				if (meshItemsOnBuildPlate.Any())
+		public static bool T1OrGreaterUsed(PrinterConfig printer)
+		{
+			var extrudersUsed = new List<bool>();
+			Slicer.GetExtrudersUsed(extrudersUsed, printer.Bed.Scene, printer, false);
+			for (int i = 1; i < extrudersUsed.Count; i++)
+			{
+				if (extrudersUsed[i])
 				{
-					int maxExtruderIndex = 0;
-
-					var itemsByExtruder = new List<IEnumerable<IObject3D>>();
-					for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
-					{
-						var extruderIndex = extruderIndexIn;
-						var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
-							(File.Exists(item.MeshPath) // Drop missing files
-								|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath)))
-							&& (item.WorldMaterialIndex() == extruderIndex
-								|| (extruderIndex == 0
-									&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
-							&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
-
-						itemsByExtruder.Add(itemsThisExtruder);
-						ExtrudersUsed[extruderIndex] |= itemsThisExtruder.Any();
-						if (ExtrudersUsed[extruderIndex])
-						{
-							maxExtruderIndex = extruderIndex;
-						}
-					}
-
-					var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
-
-					int savedStlCount = 0;
-					bool first = true;
-					for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
-					{
-						if (!first)
-						{
-							mergeRules += ",";
-							first = false;
-						}
-
-						mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], outputOptions, ref savedStlCount);
-					}
-
-					var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
-					// if we added user generated support
-					if (supportObjects.Any())
-					{
-						// add a flag to the merge rules to let us know there was support
-						mergeRules += ",S" + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount);
-					}
-
-					var wipeTowerObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.WipeTower);
-					// if we added user generated wipe tower
-					if (wipeTowerObjects.Any())
-					{
-						// add a flag to the merge rules to let us know there was a wipe tower
-						mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
-					}
-
-					mergeRules += " ";
-
-					return outputOptions;
+					return true;
 				}
+			}
+
+			return false;
+		}
+
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		{
+			var progressStatus = new ProgressStatus();
+
+			GetExtrudersUsed(ExtrudersUsed, object3D, printer, true);
+			// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
+			meshPrintOutputSettings.Clear();
+
+			// Flatten the scene, filtering out items outside of the build volume
+			var meshItemsOnBuildPlate = printer.PrintableItems(object3D);
+
+			if (meshItemsOnBuildPlate.Any())
+			{
+				int maxExtruderIndex = 0;
+
+				var itemsByExtruder = new List<IEnumerable<IObject3D>>();
+				int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+				for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
+				{
+					var extruderIndex = extruderIndexIn;
+					IEnumerable<IObject3D> itemsThisExtruder = GetItemsForExtruder(meshItemsOnBuildPlate, extruderCount, extruderIndex, true);
+
+					itemsByExtruder.Add(itemsThisExtruder);
+					if (ExtrudersUsed[extruderIndex])
+					{
+						maxExtruderIndex = extruderIndex;
+					}
+				}
+
+				var outputOptions = new List<(Matrix4X4 matrix, string fileName)>();
+
+				int savedStlCount = 0;
+				bool first = true;
+				for (int extruderIndex = 0; extruderIndex < itemsByExtruder.Count; extruderIndex++)
+				{
+					if (!first)
+					{
+						mergeRules += ",";
+						first = false;
+					}
+
+					mergeRules += AddObjectsForExtruder(itemsByExtruder[extruderIndex], outputOptions, ref savedStlCount);
+				}
+
+				var supportObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.Support);
+				// if we added user generated support
+				if (supportObjects.Any())
+				{
+					// add a flag to the merge rules to let us know there was support
+					mergeRules += ",S" + AddObjectsForExtruder(supportObjects, outputOptions, ref savedStlCount);
+				}
+
+				var wipeTowerObjects = meshItemsOnBuildPlate.Where((item) => item.WorldOutputType() == PrintOutputTypes.WipeTower);
+				// if we added user generated wipe tower
+				if (wipeTowerObjects.Any())
+				{
+					// add a flag to the merge rules to let us know there was a wipe tower
+					mergeRules += ",W" + AddObjectsForExtruder(wipeTowerObjects, outputOptions, ref savedStlCount);
+				}
+
+				mergeRules += " ";
+
+				return outputOptions;
 			}
 
 			return new List<(Matrix4X4 matrix, string fileName)>();
+		}
+
+		private static IEnumerable<IObject3D> GetItemsForExtruder(IEnumerable<IObject3D> meshItemsOnBuildPlate, int extruderCount, int extruderIndex, bool checkForMeshFile)
+		{
+			var itemsThisExtruder = meshItemsOnBuildPlate.Where((item) =>
+				(!checkForMeshFile || (File.Exists(item.MeshPath) // Drop missing files
+					|| File.Exists(Path.Combine(Object3D.AssetsPath, item.MeshPath))))
+				&& (item.WorldMaterialIndex() == extruderIndex
+					|| (extruderIndex == 0
+						&& (item.WorldMaterialIndex() >= extruderCount || item.WorldMaterialIndex() == -1)))
+				&& (item.WorldOutputType() == PrintOutputTypes.Solid || item.WorldOutputType() == PrintOutputTypes.Default));
+			return itemsThisExtruder;
 		}
 
 		private static string AddObjectsForExtruder(IEnumerable<IObject3D> items,

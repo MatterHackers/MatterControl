@@ -386,7 +386,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (sender is PrinterConfig printer)
 			{
-				if (PrinterCalibrationWizard.SetupRequired(printer))
+				if (PrinterCalibrationWizard.SetupRequired(printer, true))
 				{
 					UiThread.RunOnIdle(() =>
 					{
