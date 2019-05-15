@@ -62,10 +62,7 @@ namespace MatterHackers.MatterControl
 				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
 			}
 
-			if (XyCalibrationWizard.NeedsToBeRun(printer))
-			{
-				stages.Add(new XyCalibrationWizard(printer, 1));
-			}
+			stages.Add(new XyCalibrationWizard(printer, 1));
 
 			this.Stages = stages;
 
