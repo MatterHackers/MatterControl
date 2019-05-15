@@ -50,19 +50,10 @@ namespace MatterHackers.MatterControl
 			{
 				new ZCalibrationWizard(printer),
 				new PrintLevelingWizard(printer),
+				new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true),
+				new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true),
+				new XyCalibrationWizard(printer, 1)
 			};
-
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
-			}
-
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
-			}
-
-			stages.Add(new XyCalibrationWizard(printer, 1));
 
 			this.Stages = stages;
 
@@ -197,6 +188,10 @@ namespace MatterHackers.MatterControl
 						column.AddChild(new TextWidget("Setup Required".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 
 						widget = column;
+					}
+					else if (stage is LoadFilamentWizard filamentWizard)
+					{
+						widget.Margin = new BorderDouble(left: theme.DefaultContainerPadding);
 					}
 
 					var section = new SectionWidget(stage.Title, widget, theme, expandingContent: false);
