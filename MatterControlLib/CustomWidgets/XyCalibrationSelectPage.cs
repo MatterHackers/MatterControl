@@ -27,11 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.ConfigurationPage.PrintLeveling.XyCalibrationWizard;
 
 namespace MatterHackers.MatterControl
@@ -91,6 +98,144 @@ namespace MatterHackers.MatterControl
 				calibrationWizard.Quality = QualityType.Fine;
 				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
 			};
+
+			this.NextButton.Visible = false;
+
+			var startCalibrationPrint = theme.CreateDialogButton("Start Print".Localize());
+			startCalibrationPrint.Name = "Start Calibration Print";
+			startCalibrationPrint.Click += async (s, e) =>
+			{
+				await PrintCalibrationPart(calibrationWizard);
+			};
+
+			this.AcceptButton = startCalibrationPrint;
+
+			this.AddPageAction(startCalibrationPrint);
+		}
+
+		private async Task PrintCalibrationPart(XyCalibrationWizard calibrationWizard)
+		{
+			var scene = new Object3D();
+
+			// create the calibration objects
+			IObject3D item = await CreateCalibrationObject(printer, calibrationWizard);
+
+			// add the calibration object to the bed
+			scene.Children.Add(item);
+
+			// move the part to the center of the bed
+			var bedBounds = printer.Settings.BedBounds;
+			var aabb = item.GetAxisAlignedBoundingBox();
+			item.Matrix *= Matrix4X4.CreateTranslation(bedBounds.Center.X - aabb.MinXYZ.X - aabb.XSize / 2, bedBounds.Center.Y - aabb.MinXYZ.Y - aabb.YSize / 2, -aabb.MinXYZ.Z);
+
+			// register callbacks for print completion
+			printer.Connection.Disposed += this.Connection_Disposed;
+			printer.Connection.PrintCanceled += this.Connection_PrintCanceled;
+			printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
+
+			this.MoveToNextPage();
+
+			// hide this window
+			this.DialogWindow.Visible = false;
+
+			string gcodePath = EditContext.GCodeFilePath(printer, scene);
+
+			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
+
+			(bool slicingSucceeded, string finalGCodePath) = await ApplicationController.Instance.SliceItemLoadOutput(
+				printer,
+				scene,
+				gcodePath);
+
+			// Only start print if slicing completed
+			if (slicingSucceeded)
+			{
+				await printer.Bed.LoadContent(new EditContext()
+				{
+					SourceItem = new FileSystemFileItem(gcodePath),
+					ContentStore = null // No content store for GCode
+				});
+
+				await printer.Connection.StartPrint(finalGCodePath, calibrationPrint: true);
+				ApplicationController.Instance.MonitorPrintTask(printer);
+			}
+			else
+			{
+				printer.Connection.CommunicationState = CommunicationStates.Connected;
+			}
+		}
+
+		private void Connection_PrintCanceled(object sender, EventArgs e)
+		{
+			this.ReturnToCalibrationWizard();
+
+			// Exit the calibration and return to wizard home page
+			this.DialogWindow.ClosePage();
+		}
+
+		private void UnregisterPrinterEvents()
+		{
+			printer.Connection.Disposed -= this.Connection_Disposed;
+			printer.Connection.CommunicationStateChanged -= this.Connection_CommunicationStateChanged;
+			printer.Connection.PrintCanceled -= this.Connection_PrintCanceled;
+		}
+
+		private void Connection_CommunicationStateChanged(object sender, EventArgs e)
+		{
+			switch (printer.Connection.CommunicationState)
+			{
+				case CommunicationStates.Disconnected:
+				case CommunicationStates.AttemptingToConnect:
+				case CommunicationStates.FailedToConnect:
+				case CommunicationStates.ConnectionLost:
+				case CommunicationStates.PrintingFromSd:
+				case CommunicationStates.FinishedPrint:
+					// We are no longer printing, exit and return to where we started
+					this.ReturnToCalibrationWizard();
+
+					break;
+			}
+		}
+
+		private void ReturnToCalibrationWizard()
+		{
+			UiThread.RunOnIdle(() =>
+			{
+				// Restore the original DialogWindow
+				this.DialogWindow.Visible = true;
+			});
+
+			this.UnregisterPrinterEvents();
+		}
+
+		private void Connection_Disposed(object sender, EventArgs e)
+		{
+			this.UnregisterPrinterEvents();
+		}
+
+		private static async Task<IObject3D> CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)
+		{
+			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
+
+			switch (calibrationWizard.Quality)
+			{
+				case QualityType.Coarse:
+					return await XyCalibrationTabObject3D.Create(
+						1,
+						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
+						calibrationWizard.Offset,
+						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter));
+
+				default:
+					return await XyCalibrationFaceObject3D.Create(
+						1,
+						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
+						layerHeight,
+						calibrationWizard.Offset,
+						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
+						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
+						6);
+			}
 		}
 	}
 }

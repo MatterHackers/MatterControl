@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public double Offset { get; set; } = .1;
 
-		public bool PrintAgain { get; set; }
+		public bool PrintAgain { get; set; } = true;
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
@@ -132,27 +132,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					WindowTitle = Title,
 				};
 
-			yield return new XyCalibrationSelectPage(this);
-
-			// Require user confirmation after this point
-			this.RequireCancelConfirmation = true;
-
-			yield return new XyCalibrationStartPrintPage(this);
-
 			originalEditContext = printer.Bed.EditContext;
-
 			Task.Run(() =>
 			{
 				printer.Bed.SaveChanges(null, CancellationToken.None);
 			});
 
-			yield return new XyCalibrationCollectDataPage(this);
-			yield return new XyCalibrationDataRecieved(this);
+			// Require user confirmation after this point
+			this.RequireCancelConfirmation = true;
 
 			// loop until we are done calibrating
 			while (this.PrintAgain)
 			{
-				yield return new XyCalibrationStartPrintPage(this);
+				yield return new XyCalibrationSelectPage(this);
 				yield return new XyCalibrationCollectDataPage(this);
 				yield return new XyCalibrationDataRecieved(this);
 			}
