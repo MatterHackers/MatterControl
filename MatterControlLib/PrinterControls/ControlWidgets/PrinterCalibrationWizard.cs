@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl
 		{
 			var stages = new List<ISetupWizard>()
 			{
-				new ProbeCalibrationWizard(printer),
+				new ZCalibrationWizard(printer),
 				new PrintLevelingWizard(printer),
 			};
 
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl
 				{
 					var widget = new GuiWidget();
 
-					if (stage is ProbeCalibrationWizard probeWizard)
+					if (stage is ZCalibrationWizard probeWizard)
 					{
 						var column = CreateColumn(theme);
 						column.FlowDirection = FlowDirection.LeftToRight;
@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl
 		public static bool SetupRequired(PrinterConfig printer, bool connectedPrinting)
 		{
 			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
-				|| ProbeCalibrationWizard.NeedsToBeRun(printer)
+				|| ZCalibrationWizard.NeedsToBeRun(printer)
 				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun0(printer))
 				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun1(printer))
 				|| XyCalibrationWizard.NeedsToBeRun(printer);

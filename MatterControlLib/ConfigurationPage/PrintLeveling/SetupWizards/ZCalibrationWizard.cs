@@ -36,14 +36,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
-	public class ProbeCalibrationWizard : PrinterSetupWizard
+	public class ZCalibrationWizard : PrinterSetupWizard
 	{
 		private double babySteppingValue;
 
-		public ProbeCalibrationWizard(PrinterConfig printer)
+		public ZCalibrationWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.Title = "Probe Calibration".Localize();
+			this.Title = "Z Calibration".Localize();
 		}
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Overview".Localize(),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
-					"Probe Calibration measures the distance between the probe and the tip of the nozzle.".Localize(),
+					"Z Calibration measures the z position of the nozzles.".Localize(),
 					"This data is required for software print leveling and ensures good first layer adhesion.".Localize(),
 					"Click 'Next' to continue.".Localize()))
 				{
