@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl
 									async (reporter, cancellationToken) =>
 									{
 										string extension = Path.GetExtension(savePath);
-										if (extension != targetExtension)
+										if (!extension.Equals(targetExtension, StringComparison.OrdinalIgnoreCase))
 										{
 											savePath += targetExtension;
 										}
