@@ -217,9 +217,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						&& item.Mesh != null)
 					{
 						// grow the support columns by the amount they are reduced by
-						var aabb = item.Mesh.GetAxisAlignedBoundingBox();
-						var xyScale = (aabb.XSize + 2 * generatedSupportObject3D.ExpandSize) / aabb.XSize;
-						itemWorldMatrix = itemWorldMatrix.ApplyAtPosition(aabb.Center.Transform(itemWorldMatrix), Matrix4X4.CreateScale(xyScale, xyScale, 1));
+						var aabbForCenter = item.Mesh.GetAxisAlignedBoundingBox();
+						var aabbForSize = item.Mesh.GetAxisAlignedBoundingBox(item.Matrix);
+						var xyScale = (aabbForSize.XSize + 2 * SupportGenerator.ColumnReduceAmount) / aabbForSize.XSize;
+						itemWorldMatrix = itemWorldMatrix.ApplyAtPosition(aabbForCenter.Center.Transform(itemWorldMatrix), Matrix4X4.CreateScale(xyScale, xyScale, 1));
 					}
 
 					outputItems.Add((itemWorldMatrix, Path.Combine(assetsDirectory, item.MeshPath)));
