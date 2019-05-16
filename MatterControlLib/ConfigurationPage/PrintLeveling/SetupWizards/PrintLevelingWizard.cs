@@ -49,25 +49,24 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private double babySteppingValue;
 		private bool wizardExited;
+		private bool hasHardwareLeveling;
 
 		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
 		{
 			this.Title = "Print Leveling".Localize();
+			hasHardwareLeveling = printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 		}
 
 		public LevelingPlan LevelingPlan { get; set; }
 
-		public override bool Visible
-		{
-			get
-			{
-				return printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					|| printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
-			}
-		}
+		public override bool Visible => true;
 
-		public override bool Enabled => true;
+		public override string HelpText => hasHardwareLeveling ? "Unable due to hardware leveling".Localize() : null;
+
+		public override bool Enabled => !hasHardwareLeveling;
+
+		public override bool Completed => !hasHardwareLeveling && !LevelingValidation.NeedsToBeRun(printer);
 
 		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer);
 
