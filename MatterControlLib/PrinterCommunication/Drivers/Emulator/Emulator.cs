@@ -95,7 +95,8 @@ namespace MatterHackers.PrinterEmulator
 				{ "M21",  InitSdCard },
 				{ "M306", SetHomeOffset },
 				{ "N",    ParseChecksumLine },
-				{ "T",    SetExtruderIndex },
+				{ "T0",    SetExtruderIndex },
+				{ "T1",    SetExtruderIndex },
 				{ "SLOW", ChangeToSlow },
 				{ "FAST", ChangeToFast },
 			};
@@ -241,6 +242,11 @@ namespace MatterHackers.PrinterEmulator
 					Console.WriteLine(command);
 				}
 
+				if(command.StartsWith("T"))
+				{
+					int a = 0;
+				}
+
 				var commandKey = GetCommandKey(command);
 				if (responses.ContainsKey(commandKey))
 				{
@@ -250,7 +256,8 @@ namespace MatterHackers.PrinterEmulator
 						if (command.StartsWith("G0") || command.StartsWith("G1"))
 						{
 							var startPostion = CurrentPosition;
-							var timeToMove_ms = (long)((CurrentPosition - Destination).Length / FeedRate * 1000.0 * 60.5);
+							var length = Math.Max(CurrentExtruder.ECurrent - CurrentExtruder.EDestination, (CurrentPosition - Destination).Length); // WIP, factor in the extruder movement
+							var timeToMove_ms = (long)(length / FeedRate * 1000.0 * 60.5);
 							var startTime_ms = UiThread.CurrentTimerMs;
 							var doneTime_ms = startTime_ms + timeToMove_ms;
 							// wait for the amount of time it takes to move the extruder
@@ -258,6 +265,8 @@ namespace MatterHackers.PrinterEmulator
 							{
 								var ratio = (UiThread.CurrentTimerMs - startTime_ms) / (double)timeToMove_ms;
 								CurrentPosition = startPostion + (Destination - startPostion) * ratio;
+								CurrentExtruder.ECurrent = CurrentExtruder.EStart + (CurrentExtruder.EDestination - CurrentExtruder.EStart) * ratio;
+								Thread.Sleep(1);
 							}
 						}
 						else
@@ -268,6 +277,7 @@ namespace MatterHackers.PrinterEmulator
 					}
 
 					CurrentPosition = Destination;
+					CurrentExtruder.ECurrent = CurrentExtruder.EDestination;
 
 					return responses[commandKey](command);
 				}
@@ -288,7 +298,7 @@ namespace MatterHackers.PrinterEmulator
 		public string GetPosition(string command)
 		{
 			// position commands look like this: X:0.00 Y:0.00 Z0.00 E:0.00 Count X: 0.00 Y:0.00 Z:0.00 then an ok on the next line
-			return $"X:{Destination.X:0.00} Y: {Destination.Y:0.00} Z: {Destination.Z:0.00} E: {CurrentExtruder.EPosition:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
+			return $"X:{Destination.X:0.00} Y: {Destination.Y:0.00} Z: {Destination.Z:0.00} E: {CurrentExtruder.EDestination:0.00} Count X: 0.00 Y: 0.00 Z: 0.00\nok\n";
 		}
 
 		public string ReportMarlinFirmware(string command)
@@ -475,7 +485,7 @@ namespace MatterHackers.PrinterEmulator
 
 		private string G92ResetPosition(string command)
 		{
-			var newDestination = default(Vector3);
+			var newDestination = Destination;
 			GetFirstNumberAfter("X", command, ref newDestination.X);
 			GetFirstNumberAfter("Y", command, ref newDestination.Y);
 			GetFirstNumberAfter("Z", command, ref newDestination.Z);
@@ -486,8 +496,9 @@ namespace MatterHackers.PrinterEmulator
 			double value = 0;
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
-				CurrentExtruder.LastEPosition = value;
-				CurrentExtruder.EPosition = value;
+				CurrentExtruder.EStart = value;
+				CurrentExtruder.EDestination = value;
+				CurrentExtruder.ECurrent = value;
 				EPositionChanged?.Invoke(null, null);
 			}
 
@@ -596,6 +607,11 @@ namespace MatterHackers.PrinterEmulator
 			GetFirstNumberAfter("Y", command, ref newPosition.Y);
 			GetFirstNumberAfter("Z", command, ref newPosition.Z);
 
+			if (newPosition.Y < 30)
+			{
+				int a = 0;
+			}
+
 			Destination = newPosition;
 
 			double value = 0;
@@ -606,9 +622,9 @@ namespace MatterHackers.PrinterEmulator
 
 			if (GetFirstNumberAfter("E", command, ref value))
 			{
-				CurrentExtruder.LastEPosition = CurrentExtruder.EPosition;
-				CurrentExtruder.EPosition = value;
-				CurrentExtruder.AbsoluteEPosition += CurrentExtruder.EPosition - CurrentExtruder.LastEPosition;
+				CurrentExtruder.EStart = CurrentExtruder.EDestination;
+				CurrentExtruder.EDestination = value;
+				CurrentExtruder.AbsoluteEPosition += CurrentExtruder.EDestination - CurrentExtruder.EStart;
 				EPositionChanged?.Invoke(null, null);
 			}
 
