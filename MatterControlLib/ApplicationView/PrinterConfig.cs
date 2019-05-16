@@ -88,7 +88,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.PrintFinished += ApplicationController.Instance.Connection_PrintFinished;
 			this.Connection.PrintCanceled += ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
-			this.Connection.ConnectionSucceeded += Connection_ConnectionSucceeded;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.DetailedPrintingStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.PrintFinished += Connection_PrintFinished;
@@ -382,24 +381,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void Connection_ConnectionSucceeded(object sender, EventArgs e)
-		{
-			if (sender is PrinterConfig printer)
-			{
-				if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(
-							new PrinterCalibrationWizard(printer, AppContext.Theme),
-							advanceToIncompleteStage: true);
-					});
-
-					return;
-				}
-			}
-		}
-
 		private void Printer_SettingChanged(object sender, StringEventArgs stringEvent)
 		{
 			if (stringEvent != null)
@@ -434,7 +415,6 @@ namespace MatterHackers.MatterControl
 			this.Settings.SettingChanged -= Printer_SettingChanged;
 			this.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 			this.Connection.DetailedPrintingStateChanged -= Connection_CommunicationStateChanged;
-			this.Connection.ConnectionSucceeded -= Connection_ConnectionSucceeded;
 			this.Connection.PrintFinished -= Connection_PrintFinished;
 			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 			this.Connection.PrintFinished -= ApplicationController.Instance.Connection_PrintFinished;
