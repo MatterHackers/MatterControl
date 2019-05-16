@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 		private ISetupWizard stage;
 		private ImageBuffer completedIcon;
+		private ImageBuffer recommendedIcon;
 		private ImageBuffer disabledCompletedIcon = null;
 		private ImageBuffer setupIcon;
 		private ImageBuffer disabledSetupIcon = null;
@@ -56,6 +57,7 @@ namespace MatterHackers.MatterControl
 			this.Cursor = Cursors.Hand;
 
 			completedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
+			recommendedIcon = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
 			setupIcon = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
 			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 		}
@@ -138,6 +140,20 @@ namespace MatterHackers.MatterControl
 				else if (stage.SetupRequired)
 				{
 					icon = setupIcon;
+
+					if (!this.Enabled)
+					{
+						if (disabledSetupIcon == null)
+						{
+							disabledSetupIcon = icon.AjustAlpha(0.2);
+						}
+
+						icon = disabledSetupIcon;
+					}
+				}
+				else if (!stage.Completed)
+				{
+					icon = recommendedIcon;
 
 					if (!this.Enabled)
 					{

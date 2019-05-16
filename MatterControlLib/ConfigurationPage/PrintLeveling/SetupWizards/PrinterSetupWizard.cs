@@ -49,6 +49,10 @@ namespace MatterHackers.MatterControl
 
 		public abstract bool Visible { get; }
 
+		public virtual string HelpText { get; }
+
+		public virtual bool Completed => !this.SetupRequired;
+
 		public abstract bool Enabled { get; }
 
 		public string Title { get; protected set; }

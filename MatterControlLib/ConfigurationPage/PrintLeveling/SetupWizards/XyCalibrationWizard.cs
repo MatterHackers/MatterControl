@@ -62,6 +62,22 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public int ExtruderToCalibrateIndex { get; }
 
+		public override bool Completed => printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated);
+
+		public override string HelpText
+		{
+			get
+			{
+				if (!printer.Settings.GetValue<bool>(SettingsKey.filament_has_been_loaded)
+					&& !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded))
+				{
+					return "Load Filament to continue".Localize();
+				}
+
+				return null;
+			}
+		}
+
 		public QualityType Quality { get; set; }
 
 		/// <summary>
@@ -77,15 +93,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool SetupRequired => NeedsToBeRun(printer);
 
-		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
-			&& (Slicer.T1OrGreaterUsed(printer) || printer.Settings.GetValue<bool>(SettingsKey.xy_offsets_have_been_calibrated));
+		public override bool Visible => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 
 		public override bool Enabled
 		{
 			// Wizard should be disabled until requirements are met
 			get => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
 					&& !LoadFilamentWizard.NeedsToBeRun0(printer)
-					&& !LoadFilamentWizard.NeedsToBeRun1(printer);
+					&& printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)

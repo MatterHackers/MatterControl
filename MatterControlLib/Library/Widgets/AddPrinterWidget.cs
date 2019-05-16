@@ -380,7 +380,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
 		{
-			bool hasFilterText = context.Text.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
+			// Filter against make/model for printers or make for top level nodes
+			string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
+
+			bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
 			context.Visible = hasFilterText || parentVisible;
 
 			if (context.Visible
@@ -401,7 +404,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			foreach (var child in context.Nodes)
 			{
-				childMatched = FilterTree(child, filter, hasFilterText || parentVisible, matches);
+				childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
 			}
 
 			bool hasMatch = childMatched || hasFilterText;

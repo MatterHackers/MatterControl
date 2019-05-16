@@ -62,9 +62,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			this.extruderIndex = extruderIndex;
 		}
 
+		public override bool Completed
+		{
+			get
+			{
+				if (extruderIndex == 0)
+				{
+					return printer.Settings.GetValue<bool>(SettingsKey.filament_has_been_loaded);
+				}
+				else
+				{
+					return printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
+				}
+			}
+		}
+
 		public double TemperatureAtStart { get; private set; }
 
-		public override bool Visible => true;
+		public override bool Visible
+		{
+			get
+			{
+				if (extruderIndex == 0)
+				{
+					return !printer.Settings.GetValue<bool>(SettingsKey.filament_has_been_loaded);
+				}
+				else
+				{
+					return !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded)
+						&& printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
+				}
+			}
+		}
 
 		public override bool Enabled => true;
 
@@ -81,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public static bool NeedsToBeRun1(PrinterConfig printer)
 		{
 			var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-			return extruderCount > 1 
+			return extruderCount > 1
 				&& !printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded)
 				&& Slicer.T1OrGreaterUsed(printer);
 		}

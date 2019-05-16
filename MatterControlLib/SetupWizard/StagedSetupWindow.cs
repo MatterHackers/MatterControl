@@ -79,7 +79,8 @@ namespace MatterHackers.MatterControl
 					stage,
 					theme)
 				{
-					TabStop = true
+					TabStop = true,
+					ToolTipText = stage.HelpText
 				};
 				stageWidget.Name = stage.Title + " Row";
 				stageWidget.Enabled = stage.Enabled;

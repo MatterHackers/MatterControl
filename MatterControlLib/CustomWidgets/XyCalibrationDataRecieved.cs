@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 				|| calibrationWizard.YPick == 6)
 			{
 				// offer to re-run the calibration with the same settings as last time
-				contentRow.AddChild(new TextWidget("Your printer has been adjusted but we need to run calibrating again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				contentRow.AddChild(new TextWidget("Your printer has been adjusted but we should run calibrating again to improve accuracy.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					Margin = new Agg.BorderDouble(0, 15, 0, 0)
 				});

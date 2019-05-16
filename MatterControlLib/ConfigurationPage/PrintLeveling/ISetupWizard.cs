@@ -45,6 +45,10 @@ namespace MatterHackers.MatterControl
 
 		bool Visible { get; }
 
+		string HelpText { get; }
+
+		bool Completed { get; }
+
 		bool Enabled { get; }
 
 		bool RequireCancelConfirmation { get; }

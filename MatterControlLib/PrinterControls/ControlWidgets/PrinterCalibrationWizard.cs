@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -44,27 +45,21 @@ namespace MatterHackers.MatterControl
 {
 	public class PrinterCalibrationWizard : IStagedSetupWizard
 	{
+		private RoundedToggleSwitch printLevelingSwitch;
+
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			var stages = new List<ISetupWizard>()
 			{
 				new ZCalibrationWizard(printer),
 				new PrintLevelingWizard(printer),
+				new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true),
+				new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true),
+				new XyCalibrationWizard(printer, 1)
 			};
 
-			if (LoadFilamentWizard.NeedsToBeRun0(printer))
-			{
-				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 0, showAlreadyLoadedButton: true));
-			}
-
-			if (LoadFilamentWizard.NeedsToBeRun1(printer))
-			{
-				stages.Add(new LoadFilamentWizard(printer, extruderIndex: 1, showAlreadyLoadedButton: true));
-			}
-
-			stages.Add(new XyCalibrationWizard(printer, 1));
-
 			this.Stages = stages;
+			this.printer = printer;
 
 			this.HomePageGenerator = () =>
 			{
@@ -84,6 +79,7 @@ namespace MatterHackers.MatterControl
 
 				foreach (var stage in this.Stages.Where(s => s.Enabled && s.Visible))
 				{
+					GuiWidget rightWidget = null;
 					var widget = new GuiWidget();
 
 					if (stage is ZCalibrationWizard probeWizard)
@@ -132,6 +128,54 @@ namespace MatterHackers.MatterControl
 									Margin = new BorderDouble(bottom: 4),
 									MinimumSize = new Vector2(125, 0)
 								});
+
+							var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+							{
+								Name = "Edit Leveling Data Button",
+								ToolTipText = "Edit Leveling Data".Localize(),
+							};
+
+							editButton.Click += (s, e) =>
+							{
+								DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));
+							};
+
+							var row = new FlowLayoutWidget()
+							{
+								VAnchor = VAnchor.Fit,
+								HAnchor = HAnchor.Fit
+							};
+							row.AddChild(editButton);
+
+							// only show the switch if leveling can be turned off (it can't if it is required).
+							if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+							{
+								// put in the switch
+								printLevelingSwitch = new RoundedToggleSwitch(theme)
+								{
+									VAnchor = VAnchor.Center,
+									Margin = new BorderDouble(theme.DefaultContainerPadding, 0),
+									Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled),
+									ToolTipText = "Enable Software Leveling".Localize()
+								};
+								printLevelingSwitch.CheckedStateChanged += (sender, e) =>
+								{
+									printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
+								};
+								printLevelingSwitch.Closed += (s, e) =>
+								{
+									// Unregister listeners
+									printer.Settings.PrintLevelingEnabledChanged -= Settings_PrintLevelingEnabledChanged;
+								};
+
+								// TODO: Why is this listener conditional? If the leveling changes somehow, shouldn't we be updated the UI to reflect that?
+								// Register listeners
+								printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
+
+								row.AddChild(printLevelingSwitch);
+							}
+
+							rightWidget = row;
 
 							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
@@ -198,8 +242,12 @@ namespace MatterHackers.MatterControl
 
 						widget = column;
 					}
+					else if (stage is LoadFilamentWizard filamentWizard)
+					{
+						widget.Margin = new BorderDouble(left: theme.DefaultContainerPadding);
+					}
 
-					var section = new SectionWidget(stage.Title, widget, theme, expandingContent: false);
+					var section = new SectionWidget(stage.Title, widget, theme, rightAlignedContent: rightWidget, expandingContent: false);
 					theme.ApplyBoxStyle(section);
 
 					section.Margin = section.Margin.Clone(left: 0);
@@ -217,6 +265,14 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+		private void Settings_PrintLevelingEnabledChanged(object sender, EventArgs e)
+		{
+			if (printLevelingSwitch != null)
+			{
+				printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			}
+		}
+
 		private static FlowLayoutWidget CreateColumn(ThemeConfig theme)
 		{
 			return new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -232,6 +288,8 @@ namespace MatterHackers.MatterControl
 		public Vector2 WindowSize { get; } = new Vector2(1200, 700);
 
 		public IEnumerable<ISetupWizard> Stages { get; }
+
+		private PrinterConfig printer;
 
 		public Func<DialogPage> HomePageGenerator { get; }
 
