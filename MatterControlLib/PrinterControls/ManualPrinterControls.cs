@@ -77,10 +77,7 @@ namespace MatterHackers.MatterControl
 
 			movementControlsContainer = this.AddPluginWidget(MovementControls.CreateSection(printer, theme)) as MovementControls;
 
-			if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
-			{
-				calibrationControlsContainer = this.AddPluginWidget(CalibrationControls.CreateSection(printer, theme));
-			}
+			calibrationControlsContainer = this.AddPluginWidget(CalibrationControls.CreateSection(printer, theme));
 
 			if (!printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
 			{
