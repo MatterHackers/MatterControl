@@ -2312,7 +2312,7 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				if (PrinterCalibrationWizard.SetupRequired(printer, true))
+				if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
 				{
 					UiThread.RunOnIdle(() =>
 					{

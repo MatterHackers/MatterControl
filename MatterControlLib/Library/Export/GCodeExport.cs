@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.Library.Export
 	{
 		private bool ForceSpiralVase;
 		protected PrinterConfig printer;
+		private bool printerSetupRequired;
 
 		public virtual string ButtonText => "Machine File (G-Code)".Localize();
 
@@ -64,6 +65,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		public void Initialize(PrinterConfig printer)
 		{
 			this.printer = printer;
+			this.printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresFilamentLoaded: false);
 		}
 
 		public virtual bool Enabled
@@ -71,7 +73,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			get => printer != null
 				&& printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
-				&& !PrinterCalibrationWizard.SetupRequired(printer, false);
+				&& !printerSetupRequired;
 		}
 
 		public virtual string DisabledReason
@@ -86,7 +88,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					return "No Printer Selected".Localize();
 				}
-				else if (PrinterCalibrationWizard.SetupRequired(printer, false))
+				else if (printerSetupRequired)
 				{
 					return "Setup Needs to be Run".Localize();
 				}

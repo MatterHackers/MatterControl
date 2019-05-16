@@ -293,12 +293,12 @@ namespace MatterHackers.MatterControl
 
 		public Func<DialogPage> HomePageGenerator { get; }
 
-		public static bool SetupRequired(PrinterConfig printer, bool connectedPrinting)
+		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
 			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
 				|| ZCalibrationWizard.NeedsToBeRun(printer)
-				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun0(printer))
-				|| (connectedPrinting && LoadFilamentWizard.NeedsToBeRun1(printer))
+				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
+				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))
 				|| XyCalibrationWizard.NeedsToBeRun(printer);
 		}
 	}

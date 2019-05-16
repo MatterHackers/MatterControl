@@ -420,7 +420,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
-			if (PrinterCalibrationWizard.SetupRequired(printer, true))
+			if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
 			{
 				errors.Add(new ValidationError("PrinterSetupRequired")
 				{
