@@ -41,32 +41,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[HideFromTreeView, Immutable]
-	public class GeneratedSupportObject3D : Object3D
-	{
-		public GeneratedSupportObject3D(double expandAmount)
-		{
-			this.ExpandAmount = expandAmount;
-			OutputType = PrintOutputTypes.Support;
-		}
-
-		public double ExpandAmount { get; }
-
-		public double ExpandSize
-		{
-			get
-			{
-				// use the stored state if available (so that it always expands correctly)
-				if (ExpandAmount > 0)
-				{
-					return ExpandAmount;
-				}
-
-				return SupportGenerator.ColumnReduceAmount;
-			}
-		}
-	}
-
 	public class SupportGenerator
 	{
 		private readonly InteractiveScene scene;
@@ -327,7 +301,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				return;
 			}
 
-			var support = new GeneratedSupportObject3D(ColumnReduceAmount)
+			var support = new GeneratedSupportObject3D()
 			{
 				Mesh = PlatonicSolids.CreateCube(1, 1, 1)
 			};
