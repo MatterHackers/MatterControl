@@ -84,7 +84,10 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			if (validatePrintBed
+			if (printer.Connection.IsConnected
+				&& !PrinterSetupRequired(printer)
+				&& validatePrintBed
+				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
 				&& !printer.PrintableItems(printer.Bed.Scene).Any())
 			{
 				errors.Add(new ValidationError("NoPrintableParts")
@@ -203,9 +206,10 @@ namespace MatterHackers.MatterControl
 
 					double bedTemperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 
-					PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-
 					if (heatedBed
+						&& printer.Connection.IsConnected
+						&& !PrinterSetupRequired(printer)
+						&& printer.Settings.Helpers.PrintLevelingData is PrintLevelingData levelingData
 						&& !levelingData.IssuedLevelingTempWarning
 						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10)
 					{
@@ -404,8 +408,7 @@ namespace MatterHackers.MatterControl
 		{
 			var errors = new List<ValidationError>();
 
-			var printerIsConnected = printer.Connection.CommunicationState != PrinterCommunication.CommunicationStates.Disconnected;
-			if (!printerIsConnected)
+			if (!printer.Connection.IsConnected)
 			{
 				errors.Add(new ValidationError("PrinterDisconnected")
 				{
@@ -419,8 +422,7 @@ namespace MatterHackers.MatterControl
 				});
 			}
 
-			// TODO: Consider splitting out each individual requirement in PrinterNeedsToRunSetup and reporting validation in a more granular fashion
-			if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
+			if (PrinterSetupRequired(printer))
 			{
 				errors.Add(new ValidationError("PrinterSetupRequired")
 				{
@@ -447,6 +449,12 @@ namespace MatterHackers.MatterControl
 			errors.AddRange(printer.ValidateSettings());
 
 			return errors;
+		}
+
+		private static bool PrinterSetupRequired(PrinterConfig printer)
+		{
+			return printer.Connection.IsConnected
+				&& PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true);
 		}
 
 		private static string GetSettingsName(string settingsKey)
