@@ -67,7 +67,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		};
 
 		public bool HeatingBed { get { return state == State.WaitingForBedTemp; } }
+
 		public bool HeatingT0 { get { return state == State.WaitingForT0Temp; } }
+
 		public bool HeatingT1 { get { return state == State.WaitingForT1Temp; } }
 
 		public override string DebugInfo => "";
