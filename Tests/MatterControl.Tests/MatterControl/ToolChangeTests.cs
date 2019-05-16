@@ -338,6 +338,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 X30 Y10 F3000",
 				"G1 Z10 F315",
 				"G1 F10",
+				"G1 E10",
 				"G1 Y111",
 				"M114",
 				"T1",

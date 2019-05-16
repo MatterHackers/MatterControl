@@ -535,8 +535,11 @@ namespace MatterHackers.PrinterEmulator
 			try
 			{
 				// T0, T1, T2 are the expected format
-				var tIndex = command.IndexOf('T') + 1;
-				var extruderIndex = command.Substring(tIndex);
+				var index = command.IndexOf('T') + 1;
+
+				EnsureExtruderCount(index);
+
+				var extruderIndex = command.Substring(index);
 
 				ExtruderIndex = int.Parse(extruderIndex);
 				ExtruderIndexChanged?.Invoke(this, null);
@@ -561,22 +564,7 @@ namespace MatterHackers.PrinterEmulator
 				double temp = 0;
 				GetFirstNumberAfter("S", command, ref temp);
 
-				if (index > Extruders.Count - 1)
-				{
-					// increase the number of extruders
-					var newList = new List<Heater>(Extruders.Count + 1);
-					foreach (var extruder in Extruders)
-					{
-						newList.Add(extruder);
-					}
-
-					for (int i = Extruders.Count + 1; i < index + 2; i++)
-					{
-						newList.Add(new Heater($"Hotend{i}") { CurrentTemperature = 27 });
-					}
-
-					Extruders = newList;
-				}
+				EnsureExtruderCount(index);
 
 				Extruders[(int)index].TargetTemperature = temp;
 				ExtruderTemperatureChanged?.Invoke(this, null);
@@ -587,6 +575,26 @@ namespace MatterHackers.PrinterEmulator
 			}
 
 			return "ok\n";
+		}
+
+		private void EnsureExtruderCount(double index)
+		{
+			if (index > Extruders.Count - 1)
+			{
+				// increase the number of extruders
+				var newList = new List<Heater>(Extruders.Count + 1);
+				foreach (var extruder in Extruders)
+				{
+					newList.Add(extruder);
+				}
+
+				for (int i = Extruders.Count + 1; i < index + 2; i++)
+				{
+					newList.Add(new Heater($"Hotend{i}") { CurrentTemperature = 27 });
+				}
+
+				Extruders = newList;
+			}
 		}
 
 		private string SetLineCount(string command)
