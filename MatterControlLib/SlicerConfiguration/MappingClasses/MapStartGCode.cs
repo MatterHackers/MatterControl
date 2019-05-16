@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0)
 			{
-				string setBedTempString = string.Format("M140 S{0}", bed_temperature);
+				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(postStartGCode, setBedTempString, postStartGCodeLines, "wait for bed temperature to be reached");
 			}
 
