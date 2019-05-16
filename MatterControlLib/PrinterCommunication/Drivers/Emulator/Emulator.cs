@@ -78,8 +78,8 @@ namespace MatterHackers.PrinterEmulator
 				{ "A",    Echo },
 				{ "G0",   ParseMovmentCommand },
 				{ "G1",   ParseMovmentCommand },
-				{ "G28",  HomePosition },
-				{ "G30",  SimulateProbe },
+				{ "G28",  HomeAxis },
+				{ "G30",  ProbePosition },
 				{ "G4",   Wait },
 				{ "G92",  G92ResetPosition },
 				{ "M104", SetExtruderTemperature },
@@ -93,6 +93,7 @@ namespace MatterHackers.PrinterEmulator
 				{ "M190", SetBedTemperature },
 				{ "M20",  ListSdCard },
 				{ "M21",  InitSdCard },
+				{ "M306", SetHomeOffset },
 				{ "N",    ParseChecksumLine },
 				{ "T",    SetExtruderIndex },
 				{ "SLOW", ChangeToSlow },
@@ -356,17 +357,51 @@ namespace MatterHackers.PrinterEmulator
 			recievedCount = 0;
 		}
 
-		private string HomePosition(string command)
+		private string HomeAxis(string command)
 		{
-			_destination.X = 0;
-			_destination.Y = 0;
-			_destination.Z = 0;
+			if (command == "G28")
+			{
+				// naked G28 home all axis
+				_destination = HomePosition;
+			}
+			else
+			{
+				// home the axis specified
+				if (command.Contains("X"))
+				{
+					_destination.X = HomePosition.X;
+				}
+
+				if (command.Contains("Y"))
+				{
+					_destination.Y = HomePosition.Y;
+				}
+
+				if (command.Contains("Z"))
+				{
+					_destination.Z = HomePosition.Z;
+				}
+			}
+
+			return "ok\n";
+		}
+
+		/// <summary>
+		/// Set home offset calculated from toolhead position. This is implemented in smoothie.
+		/// https://reprap.org/wiki/G-code#M306:_Set_home_offset_calculated_from_toolhead_position
+		/// </summary>
+		/// <param name="command">The line that this command issued with.</param>
+		/// <returns>Printer status after command.</returns>
+		private string SetHomeOffset(string command)
+		{
+			HomePosition = Destination;
+
 			return "ok\n";
 		}
 
 		private readonly Random rand = new Random();
 
-		private string SimulateProbe(string command)
+		private string ProbePosition(string command)
 		{
 			Thread.Sleep(500);
 			return "Bed Position X: 0 Y: 0 Z: { rand.NextDouble() }\n"
@@ -634,6 +669,8 @@ namespace MatterHackers.PrinterEmulator
 		public bool RtsEnable { get; set; }
 
 		public int WriteTimeout { get; set; }
+
+		public Vector3 HomePosition { get; set; } = default(Vector3);
 
 		public void Close()
 		{

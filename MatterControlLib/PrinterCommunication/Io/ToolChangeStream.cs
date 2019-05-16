@@ -121,7 +121,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// check if any of the heaters we will be switching to need to start heating
 			ManageReHeating(lineToSend);
 
-			if (lineToSend == completedBeforeGCodeString)
+			if (lineToSend == completedBeforeGCodeString
+				&& sendState != SendStates.Normal)
 			{
 				activeTool = RequestedTool;
 				sendState = SendStates.Normal;
@@ -129,6 +130,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			var lineNoComment = lineToSend.Split(';')[0];
+
+			if (lineNoComment == "G28"
+				|| lineNoComment == "G28 Z0")
+			{
+				sendState = SendStates.Normal;
+				RequestedTool = activeTool = 0;
+			}
 
 			// if this command is a temperature change request
 			if (requestedToolForTempChange != -1)
@@ -167,7 +175,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						if (sendState == SendStates.WaitingForMove)
 						{
-							// we have switch back to our starting tool without a move
+							// we have to switch back to our starting tool without a move
 							// change back to normal processing and don't change tools
 							sendState = SendStates.Normal;
 							var lastRequestedTool = RequestedTool;
