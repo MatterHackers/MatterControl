@@ -50,10 +50,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Stretch;
 			this.printer = printer;
 
-			//Matt's test editing to add a on/off toggle switch
-			bool fanActive = printer.Connection.FanSpeed0To255 != 0;
-
-			Stopwatch timeSinceLastManualSend = new Stopwatch();
+			var timeSinceLastManualSend = new Stopwatch();
 
 			var settingsRow = new SettingsRow(
 				"Part Cooling Fan".Localize(),
