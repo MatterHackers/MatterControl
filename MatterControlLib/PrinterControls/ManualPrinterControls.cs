@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl
 
 		private static bool pluginsQueuedToAdd = false;
 
-		private GuiWidget fanControlsContainer;
 		private GuiWidget macroControlsContainer;
 		private GuiWidget tuningAdjustmentControlsContainer;
 		private GuiWidget temperatureControlsContainer;
@@ -85,11 +84,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			macroControlsContainer = this.AddPluginWidget(MacroControls.CreateSection(printer, theme));
-
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan))
-			{
-				fanControlsContainer = this.AddPluginWidget(FanControls.CreateSection(printer, theme));
-			}
 
 #if !__ANDROID__
 			this.AddPluginWidget(PowerControls.CreateSection(printer, theme));
@@ -169,7 +163,6 @@ namespace MatterHackers.MatterControl
 			if (!Printer.Settings.PrinterSelected)
 			{
 				movementControlsContainer?.SetEnabled(false);
-				fanControlsContainer?.SetEnabled(false);
 				macroControlsContainer?.SetEnabled(false);
 				calibrationControlsContainer?.SetEnabled(false);
 				tuningAdjustmentControlsContainer?.SetEnabled(false);
@@ -184,7 +177,6 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.AttemptingToConnect:
 					case CommunicationStates.FailedToConnect:
 						movementControlsContainer?.SetEnabled(false);
-						fanControlsContainer?.SetEnabled(false);
 						macroControlsContainer?.SetEnabled(false);
 						tuningAdjustmentControlsContainer?.SetEnabled(false);
 						calibrationControlsContainer?.SetEnabled(false);
@@ -200,7 +192,6 @@ namespace MatterHackers.MatterControl
 					case CommunicationStates.FinishedPrint:
 					case CommunicationStates.Connected:
 						movementControlsContainer?.SetEnabled(true);
-						fanControlsContainer?.SetEnabled(true);
 						macroControlsContainer?.SetEnabled(true);
 						tuningAdjustmentControlsContainer?.SetEnabled(true);
 						calibrationControlsContainer?.SetEnabled(true);
@@ -214,7 +205,6 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.PrintingFromSd:
 						movementControlsContainer?.SetEnabled(false);
-						fanControlsContainer?.SetEnabled(true);
 						macroControlsContainer?.SetEnabled(false);
 						tuningAdjustmentControlsContainer?.SetEnabled(false);
 						calibrationControlsContainer?.SetEnabled(false);
@@ -229,7 +219,6 @@ namespace MatterHackers.MatterControl
 							case DetailedPrintingState.HeatingT0:
 							case DetailedPrintingState.HeatingT1:
 							case DetailedPrintingState.Printing:
-								fanControlsContainer?.SetEnabled(true);
 								macroControlsContainer?.SetEnabled(false);
 								tuningAdjustmentControlsContainer?.SetEnabled(true);
 								calibrationControlsContainer?.SetEnabled(false);
@@ -249,7 +238,6 @@ namespace MatterHackers.MatterControl
 
 					case CommunicationStates.Paused:
 						movementControlsContainer?.SetEnabled(true);
-						fanControlsContainer?.SetEnabled(true);
 						macroControlsContainer?.SetEnabled(true);
 						tuningAdjustmentControlsContainer?.SetEnabled(true);
 						calibrationControlsContainer?.SetEnabled(true);
