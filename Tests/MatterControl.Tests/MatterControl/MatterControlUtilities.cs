@@ -979,10 +979,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			waitForPageAndAdvance("Overview");
 
-			waitForPageAndAdvance("Homing the printer");
-
-			waitForPageAndAdvance("Heating the printer");
-
 			for (int i = 0; i < 3; i++)
 			{
 				var section = (i * 3) + 1;
