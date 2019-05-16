@@ -76,36 +76,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 					});
 				};
 				calibrationRow.AddChild(runWizardButton);
-
-				// only show the switch if leveling can be turned off (it can't if it is required).
-				if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
-				{
-					SettingsRow levelingRow;
-
-					this.AddChild(levelingRow = new SettingsRow(
-						"Print Leveling".Localize(),
-						null,
-						theme));
-
-					// put in the switch
-					printLevelingSwitch = new RoundedToggleSwitch(theme)
-					{
-						VAnchor = VAnchor.Center,
-						Margin = new BorderDouble(left: 16),
-						Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled),
-						ToolTipText = "Enable Software Leveling".Localize()
-					};
-					printLevelingSwitch.CheckedStateChanged += (sender, e) =>
-					{
-						printer.Settings.Helpers.DoPrintLeveling(printLevelingSwitch.Checked);
-					};
-
-					// TODO: Why is this listener conditional? If the leveling changes somehow, shouldn't we be updated the UI to reflect that?
-					// Register listeners
-					printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
-
-					levelingRow.AddChild(printLevelingSwitch);
-				}
 			}
 
 			// Register listeners
@@ -116,36 +86,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
 		{
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
-			{
-				Name = "Edit Leveling Data Button",
-				ToolTipText = "Edit Leveling Data".Localize()
-			};
-
-			editButton.Click += (s, e) =>
-			{
-				DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));
-			};
-
 			return new SectionWidget(
 				"Calibration".Localize(),
 				new CalibrationControls(printer, theme),
-				theme,
-				editButton);
+				theme);
 		}
 
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Settings.PrintLevelingEnabledChanged -= Settings_PrintLevelingEnabledChanged;
 			printer.Connection.CommunicationStateChanged -= PrinterStatusChanged;
 
 			base.OnClosed(e);
-		}
-
-		private void Settings_PrintLevelingEnabledChanged(object sender, EventArgs e)
-		{
-			printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 		}
 
 		private void PrinterStatusChanged(object sender, EventArgs e)
