@@ -114,20 +114,10 @@ namespace MatterHackers.MatterControl
 
 			if (!calibrationWizard.PrintAgain)
 			{
-				// this is the last page of the wizard hide the next button
-				this.NextButton.Visible = false;
-
-				var doneButton = theme.CreateDialogButton("Done".Localize());
-				doneButton.Name = "Done Calibration Print";
-				this.AcceptButton = doneButton;
-				this.AddPageAction(doneButton);
-
-				doneButton.Click += (s, e) =>
+				this.ShowWizardFinished(() =>
 				{
 					printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
-
-					this.FinishWizard();
-				};
+				});
 			}
 		}
 	}
