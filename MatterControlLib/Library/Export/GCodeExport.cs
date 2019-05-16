@@ -41,7 +41,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -50,7 +49,7 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
-		private bool ForceSpiralVase;
+		private bool forceSpiralVase;
 		protected PrinterConfig printer;
 		private bool printerSetupRequired;
 
@@ -65,7 +64,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		public void Initialize(PrinterConfig printer)
 		{
 			this.printer = printer;
-			this.printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresFilamentLoaded: false);
+			this.printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: false);
 		}
 
 		public virtual bool Enabled
@@ -115,7 +114,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
 			{
-				this.ForceSpiralVase = spiralVaseCheckbox.Checked;
+				this.forceSpiralVase = spiralVaseCheckbox.Checked;
 			};
 			container.AddChild(spiralVaseCheckbox);
 
@@ -216,7 +215,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							// Slice
 							try
 							{
-								if (this.ForceSpiralVase)
+								if (this.forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
@@ -238,7 +237,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							}
 							finally
 							{
-								if (this.ForceSpiralVase)
+								if (this.forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, originalSpiralVase);
 								}
