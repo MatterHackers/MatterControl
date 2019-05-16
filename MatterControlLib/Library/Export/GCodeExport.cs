@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			get => printer != null
 				&& printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
-				&& !ApplicationController.PrinterNeedsToRunSetup(printer, false);
+				&& !PrinterCalibrationWizard.SetupRequired(printer, false);
 		}
 
 		public virtual string DisabledReason
@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					return "No Printer Selected".Localize();
 				}
-				else if (ApplicationController.PrinterNeedsToRunSetup(printer, false))
+				else if (PrinterCalibrationWizard.SetupRequired(printer, false))
 				{
 					return "Setup Needs to be Run".Localize();
 				}
