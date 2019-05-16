@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		public void Initialize(PrinterConfig printer)
 		{
 			this.printer = printer;
-			this.printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: false);
+			printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: false);
 		}
 
 		public virtual bool Enabled
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
 			{
-				this.forceSpiralVase = spiralVaseCheckbox.Checked;
+				forceSpiralVase = spiralVaseCheckbox.Checked;
 			};
 			container.AddChild(spiralVaseCheckbox);
 
@@ -207,7 +207,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 								// Move to bed center
 								var bedCenter = printer.Bed.BedCenter;
-								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
+								loadedItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.X, -aabb.Center.Y, -aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 							}
 
 							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);
@@ -215,14 +215,14 @@ namespace MatterHackers.MatterControl.Library.Export
 							// Slice
 							try
 							{
-								if (this.forceSpiralVase)
+								if (forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
 								errors = printer.ValidateSettings(validatePrintBed: false);
 
-								if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
+								if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 								{
 									return errors;
 								}
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							}
 							finally
 							{
-								if (this.forceSpiralVase)
+								if (forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, originalSpiralVase);
 								}
@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var settings = this.printer.Settings;
+				var settings = printer.Settings;
 				var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 				var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 				var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
