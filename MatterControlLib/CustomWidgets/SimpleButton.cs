@@ -459,15 +459,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			});
 		}
 
-		public Color TextColor { get; }
+		public Color TextColor
+		{
+			get => textWidget.TextColor;
+			set => textWidget.TextColor = value;
+		}
 
 		public override string Text
 		{
-			get => this.textWidget.Text;
-			set
-			{
-				this.textWidget.Text = value;
-			}
+			get => textWidget.Text;
+			set => textWidget.Text = value;
 		}
 
 		public override bool Enabled
