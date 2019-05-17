@@ -41,6 +41,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private bool mouseInBounds = false;
 
 		protected ThemeConfig theme;
+
 		private bool hasKeyboardFocus;
 
 		public SimpleButton(ThemeConfig theme)
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					return this.MouseDownColor;
 				}
-				else if (this.mouseInBounds
+				else if (mouseInBounds
 					&& this.Enabled)
 				{
 					return this.HoverColor;
@@ -205,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					return this.MouseDownColor;
 				}
-				else if (this.mouseInBounds
+				else if (mouseInBounds
 					&& this.Enabled)
 				{
 					return this.HoverColor;
@@ -222,6 +223,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class IconButton : SimpleButton
 	{
 		protected ImageWidget imageWidget;
+
 		protected ImageBuffer image;
 
 		private IconButton(ThemeConfig theme)
@@ -232,7 +234,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public IconButton(ImageBuffer icon, ThemeConfig theme)
 			: base(theme)
 		{
-			this.image = icon;
+			image = icon;
 			this.HAnchor = HAnchor.Absolute;
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonHeight;
@@ -261,6 +263,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		private ImageBuffer _disabledImage;
+
 		public ImageBuffer DisabledImage
 		{
 			get
@@ -277,7 +280,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnEnabledChanged(EventArgs e)
 		{
-			imageWidget.Image = (this.Enabled) ? image : this.DisabledImage;
+			imageWidget.Image = this.Enabled ? image : this.DisabledImage;
 			this.Invalidate();
 
 			base.OnEnabledChanged(e);
@@ -301,9 +304,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.OnClick(mouseEvent);
 
-			bool newValue = (this.ToggleButton) ? !this.Checked : true;
+			bool newValue = this.ToggleButton ? !this.Checked : true;
 
-			bool checkStateChanged = (newValue != this.Checked);
+			bool checkStateChanged = newValue != this.Checked;
 
 			this.Checked = newValue;
 
@@ -315,6 +318,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		private bool _checked;
+
 		public bool Checked
 		{
 			get => _checked;
@@ -328,7 +332,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						this.UncheckSiblings();
 					}
 
-					this.BackgroundColor = (_checked) ? theme.MinimalShade : Color.Transparent;
+					this.BackgroundColor = _checked ? theme.MinimalShade : Color.Transparent;
 
 					Invalidate();
 				}
@@ -369,7 +373,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			bool newValue = true;
 
-			bool checkStateChanged = (newValue != this.Checked);
+			bool checkStateChanged = newValue != this.Checked;
 
 			this.Checked = newValue;
 
@@ -381,9 +385,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public Color SelectedBackgroundColor { get; set; }
+
 		public Color UnselectedBackgroundColor { get; set; }
 
 		private bool _checked;
+
 		public bool Checked
 		{
 			get => _checked;
@@ -396,10 +402,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						this.UncheckSiblings();
 					}
-
 				}
 
-				this.BackgroundColor = (_checked) ? this.SelectedBackgroundColor : this.UnselectedBackgroundColor;
+				this.BackgroundColor = _checked ? this.SelectedBackgroundColor : this.UnselectedBackgroundColor;
 			}
 		}
 
@@ -433,7 +438,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class TextButton : SimpleButton
 	{
-		private TextWidget textWidget;
+		private readonly TextWidget textWidget;
 
 		public TextButton(string text, ThemeConfig theme, double pointSize = -1)
 			: base(theme)
@@ -442,7 +447,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.VAnchor = VAnchor.Absolute | VAnchor.Center;
 			this.Height = theme.ButtonHeight;
 			this.Padding = theme.TextButtonPadding;
-			this.TextColor = theme.TextColor;
 			this.TabStop = true;
 
 			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
@@ -516,6 +520,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class HoverIconButton : IconButton
 	{
 		private ImageBuffer normalImage;
+
 		private ImageBuffer hoverImage;
 
 		// Single ImageBuffer constructor creates a grayscale copy for use as the normal image

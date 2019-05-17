@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void XButton_CheckedStateChanged(object sender, System.EventArgs e)
+		private void XButton_CheckedStateChanged(object sender, EventArgs e)
 		{
 			int i = 0;
 			foreach (var button in xButtons)
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl
 			CheckIfCanAdvance();
 		}
 
-		private void YButton_CheckedStateChanged(object sender, System.EventArgs e)
+		private void YButton_CheckedStateChanged(object sender, EventArgs e)
 		{
 			int i = 0;
 			foreach (var button in yButtons)
