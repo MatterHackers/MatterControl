@@ -316,11 +316,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 			readLineContainsCallBacks.Register("FIRMWARE_NAME:", PrinterStatesFirmware);
 
-			// smoothie temperature failures
+			// smoothie failures
 			readLineContainsCallBacks.Register("T:inf", PrinterReportsError);
 			readLineContainsCallBacks.Register("B:inf", PrinterReportsError);
+			readLineContainsCallBacks.Register("ZProbe not triggered", PrinterReportsError);
 
-			// marlin temperature failures
+			// marlin failures
 			readLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
 			readLineContainsCallBacks.Register("MAXTEMP", PrinterReportsError);
 			readLineContainsCallBacks.Register("M999", PrinterReportsError);
@@ -332,13 +333,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			readLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
 			readLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);
 
-			// repetier temperature failures
+			// repetier failures
 			readLineContainsCallBacks.Register("dry run mode", PrinterReportsError);
 			readLineStartCallBacks.Register("accelerometer send i2c error", PrinterReportsError);
 			readLineStartCallBacks.Register("accelerometer i2c recv error", PrinterReportsError);
 
-			// s3g temperature failures
+			// s3g failures
 			readLineContainsCallBacks.Register("Bot is Shutdown due to Overheat", PrinterReportsError);
+
 			writeLineStartCallBacks.Register("M80", AtxPowerUpWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M81", AtxPowerDownWasWritenToPrinter);
 			writeLineStartCallBacks.Register("M104", HotendTemperatureWasWritenToPrinter);
