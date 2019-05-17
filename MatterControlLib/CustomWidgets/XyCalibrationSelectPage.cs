@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationSelectPage : WizardPage
 	{
-		private RadioButton coarseCalibration;
-		private RadioButton normalCalibration;
-		private RadioButton fineCalibration;
+		private readonly RadioButton coarseCalibration;
+		private readonly RadioButton normalCalibration;
+		private readonly RadioButton fineCalibration;
 
 		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)

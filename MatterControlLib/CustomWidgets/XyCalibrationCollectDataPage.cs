@@ -38,12 +38,12 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
-		private List<RadioButton> xButtons;
-		private List<GuiWidget> yButtons;
+		private readonly List<RadioButton> xButtons;
+		private readonly List<GuiWidget> yButtons;
 
-		private bool HaveWrittenData = false;
+		private bool haveWrittenData = false;
 		private bool pageCanceled;
-		private XyCalibrationWizard calibrationWizard;
+		private readonly XyCalibrationWizard calibrationWizard;
 
 		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
@@ -67,14 +67,16 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Fit | HAnchor.Left
 			};
 			contentRow.AddChild(xButtonsGroup);
-			xButtons = new List<RadioButton>();
-			xButtons.Add(new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			xButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			xButtons = new List<RadioButton>
+			{
+				new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
+			};
 
 			foreach (var button in xButtons)
 			{
@@ -89,14 +91,16 @@ namespace MatterHackers.MatterControl
 			contentRow.AddChild(yButtonsGroup);
 			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
 
-			yButtons = new List<GuiWidget>();
-			yButtons.Add(new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
-			yButtons.Add(new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize));
+			yButtons = new List<GuiWidget>
+			{
+				new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
+				new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
+			};
 
 			foreach (var button in yButtons.OfType<RadioButton>())
 			{
@@ -127,7 +131,7 @@ namespace MatterHackers.MatterControl
 		{
 			// save the offsets to the extruder
 			if (!pageCanceled
-				&& !HaveWrittenData
+				&& !haveWrittenData
 				&& calibrationWizard.XPick != -1
 				&& calibrationWizard.YPick != -1)
 			{
@@ -136,7 +140,7 @@ namespace MatterHackers.MatterControl
 				hotendOffset.Y -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex, hotendOffset);
-				HaveWrittenData = true;
+				haveWrittenData = true;
 			}
 
 			base.OnClosed(e);
@@ -161,8 +165,10 @@ namespace MatterHackers.MatterControl
 					calibrationWizard.XPick = i;
 					break;
 				}
+
 				i++;
 			}
+
 			CheckIfCanAdvance();
 		}
 
@@ -176,8 +182,10 @@ namespace MatterHackers.MatterControl
 					calibrationWizard.YPick = i;
 					break;
 				}
+
 				i++;
 			}
+
 			CheckIfCanAdvance();
 		}
 	}
