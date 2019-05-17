@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					theme));
 
 				// run leveling button
-				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("Compass.png", theme.InvertIcons), theme)
+				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("compass.png", theme.InvertIcons), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
