@@ -45,9 +45,9 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationSelectPage : WizardPage
 	{
-		private RadioButton coarseCalibration;
-		private RadioButton normalCalibration;
-		private RadioButton fineCalibration;
+		private readonly RadioButton coarseCalibration;
+		private readonly RadioButton normalCalibration;
+		private readonly RadioButton fineCalibration;
 
 		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
@@ -100,6 +100,17 @@ namespace MatterHackers.MatterControl
 			};
 
 			this.NextButton.Visible = false;
+
+			// add in the option to tell the system the printer is already calibrated
+			var alreadyCalibratedButton = theme.CreateDialogButton("Already Calibrated".Localize());
+			alreadyCalibratedButton.Name = "Already Calibrated Button";
+			alreadyCalibratedButton.Click += (s, e) =>
+			{
+				printer.Settings.SetValue(SettingsKey.xy_offsets_have_been_calibrated, "1");
+				this.FinishWizard();
+			};
+
+			this.AddPageAction(alreadyCalibratedButton);
 
 			var startCalibrationPrint = theme.CreateDialogButton("Start Print".Localize());
 			startCalibrationPrint.Name = "Start Calibration Print";
