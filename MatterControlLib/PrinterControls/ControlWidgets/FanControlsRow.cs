@@ -36,36 +36,23 @@ using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PrinterControls
 {
-	public class FanControls : FlowLayoutWidget
+	public class FanControlsRow : SettingsRow
 	{
 		private MHNumberEdit fanSpeedDisplay;
 
 		private RoundedToggleSwitch toggleSwitch;
 		private PrinterConfig printer;
 
-		private FanControls(PrinterConfig printer, ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
+		public FanControlsRow(PrinterConfig printer, ThemeConfig theme)
+			: base ("Part Cooling Fan".Localize(), null, theme, fullRowSelect: true)
 		{
-			this.HAnchor = HAnchor.Stretch;
-			this.HAnchor = HAnchor.Stretch;
 			this.printer = printer;
 
-			//Matt's test editing to add a on/off toggle switch
-			bool fanActive = printer.Connection.FanSpeed0To255 != 0;
-
-			Stopwatch timeSinceLastManualSend = new Stopwatch();
-
-			var settingsRow = new SettingsRow(
-				"Part Cooling Fan".Localize(),
-				null,
-				theme,
-				fullRowSelect: true);
-
-			this.AddChild(settingsRow);
+			var timeSinceLastManualSend = new Stopwatch();
 
 			var container = new FlowLayoutWidget();
-			settingsRow.AddChild(container);
-			settingsRow.BorderColor = Color.Transparent;
+			this.AddChild(container);
+			this.BorderColor = Color.Transparent;
 
 			fanSpeedDisplay = new MHNumberEdit(0, theme, minValue: 0, maxValue: 100, pixelWidth: 30)
 			{
@@ -115,15 +102,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 				}
 			};
 			container.AddChild(toggleSwitch);
-			settingsRow.ActionWidget = toggleSwitch;
+			this.ActionWidget = toggleSwitch;
 
 			// Register listeners
 			printer.Connection.FanSpeedSet += Connection_FanSpeedSet;
-		}
-
-		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)
-		{
-			return new SectionWidget("Fan".Localize(), new FanControls(printer, theme), theme);
 		}
 
 		public override void OnClosed(EventArgs e)

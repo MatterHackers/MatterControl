@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex));
 				}
-				printer.Connection.TurnOffBedAndExtruders(PrinterCommunication.TurnOff.AfterDelay);
+				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
 
 			offButton = new TextButton("Off".Localize(), theme)
@@ -113,8 +113,10 @@ namespace MatterHackers.MatterControl.PrinterControls
 			container.AddChild(offButton);
 			offButton.Click += (s, e) =>
 			{
-				printer.Connection.TurnOffBedAndExtruders(PrinterCommunication.TurnOff.Now);
+				printer.Connection.TurnOffBedAndExtruders(TurnOff.Now);
 			};
+
+			this.AddChild(new FanControlsRow(printer, theme));
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Printer_StatusChanged;

@@ -41,7 +41,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -50,8 +49,9 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
-		private bool ForceSpiralVase;
+		private bool forceSpiralVase;
 		protected PrinterConfig printer;
+		private bool printerSetupRequired;
 
 		public virtual string ButtonText => "Machine File (G-Code)".Localize();
 
@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		public void Initialize(PrinterConfig printer)
 		{
 			this.printer = printer;
+			printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: false);
 		}
 
 		public virtual bool Enabled
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			get => printer != null
 				&& printer.Settings.PrinterSelected
 				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
-				&& !ApplicationController.PrinterNeedsToRunSetup(printer, false);
+				&& !printerSetupRequired;
 		}
 
 		public virtual string DisabledReason
@@ -86,7 +87,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					return "No Printer Selected".Localize();
 				}
-				else if (ApplicationController.PrinterNeedsToRunSetup(printer, false))
+				else if (printerSetupRequired)
 				{
 					return "Setup Needs to be Run".Localize();
 				}
@@ -113,7 +114,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
 			{
-				this.ForceSpiralVase = spiralVaseCheckbox.Checked;
+				forceSpiralVase = spiralVaseCheckbox.Checked;
 			};
 			container.AddChild(spiralVaseCheckbox);
 
@@ -206,7 +207,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 								// Move to bed center
 								var bedCenter = printer.Bed.BedCenter;
-								loadedItem.Matrix *= Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
+								loadedItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.X, -aabb.Center.Y, -aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 							}
 
 							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);
@@ -214,14 +215,14 @@ namespace MatterHackers.MatterControl.Library.Export
 							// Slice
 							try
 							{
-								if (this.ForceSpiralVase)
+								if (forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
 								}
 
 								errors = printer.ValidateSettings(validatePrintBed: false);
 
-								if(errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
+								if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 								{
 									return errors;
 								}
@@ -236,7 +237,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							}
 							finally
 							{
-								if (this.ForceSpiralVase)
+								if (forceSpiralVase)
 								{
 									printer.Settings.SetValue(SettingsKey.spiral_vase, originalSpiralVase);
 								}
@@ -352,7 +353,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var settings = this.printer.Settings;
+				var settings = printer.Settings;
 				var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 				var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 				var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);

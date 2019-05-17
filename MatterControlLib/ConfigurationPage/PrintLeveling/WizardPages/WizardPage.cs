@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl
 			base.OnClosed(e);
 		}
 
-		protected void ShowWizardFinished()
+		protected void ShowWizardFinished(Action doneClicked = null)
 		{
 			var doneButton = new TextButton("Done".Localize(), theme)
 			{
@@ -115,7 +115,13 @@ namespace MatterHackers.MatterControl
 				BackgroundColor = theme.MinimalShade
 			};
 
-			doneButton.Click += (s, e) => this.FinishWizard();
+			doneButton.Click += (s, e) =>
+			{
+				doneClicked?.Invoke();
+				this.FinishWizard();
+			};
+
+			this.AcceptButton = doneButton;
 
 			this.AddPageAction(doneButton);
 

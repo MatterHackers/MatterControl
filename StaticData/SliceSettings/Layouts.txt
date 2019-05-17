@@ -47,14 +47,6 @@ Advanced
         number_of_first_layers
         bridge_over_infill
         t1_extrusion_move_speed_multiplier
-    Fan
-      Fan
-        min_fan_speed_layer_time
-        max_fan_speed_layer_time
-        min_fan_speed
-        max_fan_speed
-        bridge_fan_speed
-        disable_fan_first_layers
     Cooling
       Cooling Thresholds
         slowdown_below_layer_time
@@ -101,6 +93,14 @@ Advanced
         bed_temperature
         inactive_cool_down
         seconds_to_reheat
+    Fan
+      Fan
+        min_fan_speed_layer_time
+        max_fan_speed_layer_time
+        min_fan_speed
+        max_fan_speed
+        bridge_fan_speed
+        disable_fan_first_layers
     Advanced
       Material
       Temperatures

@@ -46,6 +46,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return true;
 			}
 
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			{
+				// If printer has hardware leveling, software leveling is disabled
+				return false;
+			}
+
 			var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 
 			// check if leveling is turned on

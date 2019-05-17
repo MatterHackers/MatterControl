@@ -1662,11 +1662,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static bool PrinterNeedsToRunSetup(PrinterConfig printer, bool connectedPrinting)
-		{
-			return PrinterCalibrationWizard.SetupRequired(printer, connectedPrinting);
-		}
-
 		public void Shutdown()
 		{
 			// Ensure all threads shutdown gracefully on close
@@ -2317,7 +2312,7 @@ namespace MatterHackers.MatterControl
 
 			try
 			{
-				if (PrinterCalibrationWizard.SetupRequired(printer, true))
+				if (PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: true))
 				{
 					UiThread.RunOnIdle(() =>
 					{
