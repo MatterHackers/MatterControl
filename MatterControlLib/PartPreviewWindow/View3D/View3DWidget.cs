@@ -1445,9 +1445,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void DragSelectedObject(IObject3D selectedItem, Vector2 localMousePosition)
 		{
-			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, localMousePosition);
-			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
-
 			if (!PositionWithinLocalBounds(localMousePosition.X, localMousePosition.Y))
 			{
 				Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
@@ -1456,6 +1453,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Invalidate();
 				return;
 			}
+
+			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, localMousePosition);
+			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
 			if (info != null)
