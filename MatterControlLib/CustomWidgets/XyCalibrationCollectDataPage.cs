@@ -28,8 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
@@ -38,9 +37,6 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
-		private readonly List<RadioButton> xButtons;
-		private readonly List<GuiWidget> yButtons;
-
 		private bool haveWrittenData = false;
 		private bool pageCanceled;
 		private readonly XyCalibrationWizard calibrationWizard;
@@ -56,69 +52,27 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
-				Margin = new Agg.BorderDouble(0, 15, 0, 0)
+				Margin = new BorderDouble(0, 15, 0, 0)
 			});
 
 			// disable the next button until we receive data about both the x and y axis alignment
 			NextButton.Enabled = false;
 
-			var xButtonsGroup = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var calibrationRow = new GuiWidget()
 			{
-				HAnchor = HAnchor.Fit | HAnchor.Left
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
 			};
-			contentRow.AddChild(xButtonsGroup);
-			xButtons = new List<RadioButton>
-			{
-				new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
-			};
+			contentRow.AddChild(calibrationRow);
 
-			foreach (var button in xButtons)
-			{
-				xButtonsGroup.AddChild(button);
-				button.CheckedStateChanged += XButton_CheckedStateChanged;
-			}
-
-			var yButtonsGroup = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Fit | HAnchor.Left
-			};
-			contentRow.AddChild(yButtonsGroup);
-			yButtonsGroup.AddChild(new GuiWidget(24 * GuiWidget.DeviceScale, 16));
-
-			yButtons = new List<GuiWidget>
-			{
-				new RadioButton("-3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("-2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("-1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton(" 0", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+1", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+2", textColor: theme.TextColor, fontSize: theme.DefaultFontSize),
-				new RadioButton("+3", textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
-			};
-
-			foreach (var button in yButtons.OfType<RadioButton>())
-			{
-				var column = new FlowLayoutWidget(FlowDirection.TopToBottom);
-				yButtonsGroup.AddChild(column);
-
-				button.SiblingRadioButtonList = yButtons;
-
-				button.HAnchor = HAnchor.Center;
-				column.AddChild(button);
-				column.AddChild(new TextWidget(button.Text, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+			calibrationRow.AddChild(
+				new CalibrationTabWidget(calibrationWizard, NextButton, theme)
 				{
-					HAnchor = HAnchor.Left
+					HAnchor = HAnchor.Center | HAnchor.Absolute,
+					VAnchor = VAnchor.Center | VAnchor.Absolute,
+					Width = 350,
+					Height = 350
 				});
-				button.Text = "";
-
-				button.CheckedStateChanged += YButton_CheckedStateChanged;
-			}
 		}
 
 		protected override void OnCancel(out bool abortCancel)
@@ -136,7 +90,7 @@ namespace MatterHackers.MatterControl
 				&& calibrationWizard.YPick != -1)
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex);
-				hotendOffset.X -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.XPick;
+				hotendOffset.X -= calibrationWizard.Offset * 3 - calibrationWizard.Offset * calibrationWizard.XPick;
 				hotendOffset.Y -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex, hotendOffset);
@@ -145,48 +99,5 @@ namespace MatterHackers.MatterControl
 
 			base.OnClosed(e);
 		}
-
-		private void CheckIfCanAdvance()
-		{
-			if (calibrationWizard.YPick != -1
-				&& calibrationWizard.XPick != -1)
-			{
-				NextButton.Enabled = true;
-			}
-		}
-
-		private void XButton_CheckedStateChanged(object sender, EventArgs e)
-		{
-			int i = 0;
-			foreach (var button in xButtons)
-			{
-				if (button == sender)
-				{
-					calibrationWizard.XPick = i;
-					break;
-				}
-
-				i++;
-			}
-
-			CheckIfCanAdvance();
-		}
-
-		private void YButton_CheckedStateChanged(object sender, EventArgs e)
-		{
-			int i = 0;
-			foreach (var button in yButtons)
-			{
-				if (button == sender)
-				{
-					calibrationWizard.YPick = i;
-					break;
-				}
-
-				i++;
-			}
-
-			CheckIfCanAdvance();
-		}
 	}
-}
+} 

@@ -29,8 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.ImageProcessing;
+using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
@@ -44,19 +48,23 @@ namespace MatterHackers.MatterControl
 		private Stroke tabStroke;
 		private IVertexSource xHighlighter;
 		private IVertexSource yHighlighter;
-
+		private XyCalibrationWizard calibrationWizard;
 		private ThemeConfig theme;
+
+		public TextButton NextButton { get; }
+
 		private Color tabBaseColor;
 		private TextWidget xLabel;
 		private TextWidget yLabel;
 
 		private PrinterConnection.Axis _collectionMode = PrinterConnection.Axis.X;
-		private bool guideVisible = true;
 
-		public CalibrationTabWidget(ThemeConfig theme)
+		public CalibrationTabWidget(XyCalibrationWizard calibrationWizard, TextButton nextButton, ThemeConfig theme)
 		{
+			this.calibrationWizard = calibrationWizard;
 			this.theme = theme;
-			tabBaseColor = theme.SlightShade.AdjustAlpha(1.2).ToColor();
+			this.NextButton = nextButton;
+			tabBaseColor = new Color(theme.SlightShade.ToColorF(), theme.SlightShade.Alpha0To1 * 1.2);
 
 			double barWidth = 30;
 			double barHeight = 300;
@@ -73,7 +81,7 @@ namespace MatterHackers.MatterControl
 			var f = new Vector2(right + (barWidth * .7), bottom + (barWidth / 2));
 			var g = new Vector2(right, bottom);
 
-			var m = new Vector2(b.X + (barWidth / 2), b.Y + (barWidth * .7));
+			var m = new Vector2(b.X + (barWidth / 2), b.Y + (barWidth * .6));
 			var n = new Vector2(m.X, b.Y);
 			var r = new Vector2(b.X, m.Y);
 
@@ -81,7 +89,7 @@ namespace MatterHackers.MatterControl
 			tabShape2.Add(a.X, a.Y, FlagsAndCommand.MoveTo); // A
 			tabShape2.LineTo(b); // A - B
 
-			tabShape2.curve3(r, m); // B -> C
+			tabShape2.curve3(r.X, r.Y, m.X, m.Y); // B -> C
 			tabShape2.curve3(c.X, c.Y);
 
 			tabShape2.LineTo(d); // C -> D
@@ -164,7 +172,7 @@ namespace MatterHackers.MatterControl
 
 			double padSize = cellSize - padding;
 
-			var titles = new[] { "+3", "+2", "+1", "0", "-1", "-2", "-3" };
+			var titles = new[] { "-3", "-2", "-1", "0", "+1", "+2", "+3" };
 
 			for (var i = 0; i < padCount; i++)
 			{
@@ -174,6 +182,7 @@ namespace MatterHackers.MatterControl
 					Height = padSize,
 					Width = barWidth,
 					Index = i,
+					IsActive = i == 3,
 					Axis = PrinterConnection.Axis.X
 				});
 
@@ -184,6 +193,7 @@ namespace MatterHackers.MatterControl
 					Width = padSize,
 					Enabled = false,
 					Index = i,
+					IsActive = i == 3,
 					Axis = PrinterConnection.Axis.Y
 				});
 			}
@@ -213,23 +223,19 @@ namespace MatterHackers.MatterControl
 							pad.Enabled = true;
 						}
 
-						guideVisible = true;
 						xLabel.Visible = false;
 						yLabel.Visible = true;
 						break;
 
 					case PrinterConnection.Axis.X:
-						guideVisible = true;
 						xLabel.Visible = true;
 						yLabel.Visible = false;
 						break;
 
 					default:
-						guideVisible = false;
 						xLabel.Visible = false;
 						yLabel.Visible = false;
 						break;
-
 				}
 			}
 		}
@@ -238,22 +244,35 @@ namespace MatterHackers.MatterControl
 		{
 			if (sender is CalibrationPad calibrationPad)
 			{
-				if (calibrationPad.Axis == PrinterConnection.Axis.X
-					&& CollectionMode == PrinterConnection.Axis.X)
+				if (calibrationPad.Axis == PrinterConnection.Axis.X)
 				{
-					CollectionMode = PrinterConnection.Axis.Y;
+					if (CollectionMode == PrinterConnection.Axis.X)
+					{
+						CollectionMode = PrinterConnection.Axis.Y;
+					}
+
+					calibrationWizard.XPick = calibrationPad.Index;
+
 				}
-				else if (calibrationPad.Axis == PrinterConnection.Axis.Y
-					&& CollectionMode == PrinterConnection.Axis.Y)
+				else if (calibrationPad.Axis == PrinterConnection.Axis.Y)
 				{
-					CollectionMode = PrinterConnection.Axis.Z;
+					if (CollectionMode == PrinterConnection.Axis.Y)
+					{
+						CollectionMode = PrinterConnection.Axis.Z;
+					}
+
+					calibrationWizard.YPick = calibrationPad.Index;
 				}
 
 				foreach (var pad in this.Children.OfType<CalibrationPad>().Where(p => p.Axis == calibrationPad.Axis))
 				{
 					pad.BackgroundColor = pad == calibrationPad ? theme.PrimaryAccentColor : theme.SlightShade;
+					pad.IsActive = pad == calibrationPad;
 				}
 			}
+
+			// CheckIfCanAdvance
+			NextButton.Enabled = calibrationWizard.YPick != -1 && calibrationWizard.XPick != -1;
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
@@ -273,21 +292,53 @@ namespace MatterHackers.MatterControl
 			base.OnDraw(graphics2D);
 		}
 
-		private class CalibrationPad : TextButton
+		private class CalibrationPad : IconButton
 		{
+			private static ImageBuffer activeIcon;
+			private static ImageBuffer inactiveIcon;
+			private bool _isActive;
+
+			static CalibrationPad()
+			{
+				activeIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", true);
+				inactiveIcon = new ImageBuffer(16, 16);
+				//inactiveIcon = activeIcon.AjustAlpha(0.2);
+			}
+
 			public CalibrationPad(string text, ThemeConfig theme, double pointSize = -1)
-				: base(text, theme, pointSize)
+				: base(inactiveIcon, theme)
 			{
 				this.BackgroundColor = theme.PrimaryAccentColor.WithAlpha(35);
 				this.HoverColor = theme.PrimaryAccentColor;
 				this.BorderColor = theme.PrimaryAccentColor.WithAlpha(80);
 				this.Border = 1;
-				this.TextColor = Color.White;
 				this.HAnchor = HAnchor.Absolute;
 				this.VAnchor = VAnchor.Absolute;
 			}
 
 			public int Index { get; internal set; }
+
+			public bool IsActive
+			{
+				get => _isActive;
+				set
+				{
+					_isActive = value;
+					this.imageWidget.Image = _isActive ? activeIcon : inactiveIcon;
+				}
+			}
+
+			public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+			{
+				this.imageWidget.Image = activeIcon;
+				base.OnMouseEnterBounds(mouseEvent);
+			}
+
+			public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+			{
+				this.imageWidget.Image = this.IsActive ? activeIcon : inactiveIcon;
+				base.OnMouseLeaveBounds(mouseEvent);
+			}
 
 			public PrinterConnection.Axis Axis { get; set; }
 		}
