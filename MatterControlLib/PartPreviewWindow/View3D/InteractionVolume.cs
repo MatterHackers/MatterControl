@@ -51,7 +51,7 @@ namespace MatterHackers.MeshVisualizer
 
 	public class InteractionVolume
 	{
-		public bool MouseDownOnControl;
+		protected bool MouseDownOnControl { get; set; }
 
 		public Matrix4X4 TotalTransform = Matrix4X4.Identity;
 
@@ -84,8 +84,6 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		protected IInteractionVolumeContext InteractionContext { get; }
-
-		protected double SecondsToShowNumberEdit { get; private set; } = 4;
 
 		public IObject3D RootSelection
 		{
