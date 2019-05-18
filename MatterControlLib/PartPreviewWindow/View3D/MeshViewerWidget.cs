@@ -611,7 +611,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// draw on top of anything that is already drawn
 			GL.Disable(EnableCap.DepthTest);
 
-			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
+			foreach (var interactionVolume in this.InteractionVolumes.OfType<IGLInteractionElement>())
 			{
 				if (interactionVolume.DrawOnTop)
 				{
@@ -623,7 +623,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Enable(EnableCap.DepthTest);
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
+			foreach (var interactionVolume in this.InteractionVolumes.OfType<IGLInteractionElement>())
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}

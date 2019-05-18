@@ -1047,19 +1047,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (selectedItem != null)
 			{
-
-				foreach (InteractionVolume volume in this.InteractionLayer.InteractionVolumes)
+				foreach (var volume in this.InteractionLayer.InteractionVolumes)
 				{
 					volume.SetPosition(selectedItem);
 				}
 			}
 
 			base.OnDraw(graphics2D);
-
-			if (selectedItem != null)
-			{
-				// DrawTestToGl(graphics2D, selectedItem);
-			}
 		}
 
 		private void AfterDraw3DContent(object sender, DrawEventArgs e)

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,25 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg.UI;
-using MatterHackers.RayTracer;
-using MatterHackers.VectorMath;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public class MouseEvent3DArgs : EventArgs
+	/// <summary>
+	/// Basic Interaction control - notified of position per OpenGL draw
+	/// </summary>
+	public interface IInteractionElement
 	{
-		public IntersectInfo info;
-		public MouseEventArgs MouseEvent2D;
+		string Name { get; }
 
-		public Ray MouseRay { get; }
+		void SetPosition(IObject3D selectedItem);
 
-		public MouseEvent3DArgs(MouseEventArgs mouseEvent2D, Ray mouseRay, IntersectInfo info)
-		{
-			this.info = info;
-			this.MouseEvent2D = mouseEvent2D;
-			this.MouseRay = mouseRay;
-		}
+		void CancelOperation();
 	}
 }

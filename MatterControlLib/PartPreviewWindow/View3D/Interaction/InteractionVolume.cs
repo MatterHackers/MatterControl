@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -39,7 +40,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public class InteractionVolume
+	public class InteractionVolume : IInteractionElement, IGLInteractionElement
 	{
 		private bool mouseOver = false;
 
