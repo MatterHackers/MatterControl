@@ -41,5 +41,6 @@ namespace MatterHackers.MeshVisualizer
 		void SetPosition(IObject3D selectedItem);
 
 		void CancelOperation();
+		void LostFocus();
 	}
 }

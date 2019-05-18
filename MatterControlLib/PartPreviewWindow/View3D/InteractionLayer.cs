@@ -183,6 +183,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
+			foreach (var item in this.InteractionVolumes)
+			{
+				item.LostFocus();
+			}
+
 			// On selection change, update state for mappings
 			selectedItemType = scene.SelectedItem?.GetType();
 			iavOverrides = null;

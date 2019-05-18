@@ -147,6 +147,10 @@ namespace MatterHackers.MeshVisualizer
 		{
 		}
 
+		public virtual void LostFocus()
+		{
+		}
+
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
