@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -40,15 +39,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	[Flags]
-	public enum LineArrows
-	{
-		None = 0,
-		Start = 1,
-		End = 2,
-		Both = 3
-	}
-
 	public class InteractionVolume
 	{
 		private bool mouseOver = false;
@@ -177,25 +167,5 @@ namespace MatterHackers.MeshVisualizer
 		public virtual void SetPosition(IObject3D selectedItem)
 		{
 		}
-	}
-
-	public interface IInteractionVolumeContext
-	{
-		InteractionVolume HoveredInteractionVolume { get; }
-
-		InteractionVolume SelectedInteractionVolume { get; }
-
-		InteractiveScene Scene { get; }
-
-		WorldView World { get; }
-
-		GuiWidget GuiSurface { get; }
-
-		double SnapGridDistance { get; }
-	}
-
-	public interface IInteractionVolumeProvider
-	{
-		IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context);
 	}
 }
