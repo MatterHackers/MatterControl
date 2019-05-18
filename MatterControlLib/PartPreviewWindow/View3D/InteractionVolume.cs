@@ -51,13 +51,9 @@ namespace MatterHackers.MeshVisualizer
 
 	public class InteractionVolume
 	{
-		protected bool MouseDownOnControl { get; set; }
+		private bool mouseOver = false;
 
 		public Matrix4X4 TotalTransform = Matrix4X4.Identity;
-
-		public string Name { get; set; }
-
-		private bool mouseOver = false;
 
 		public InteractionVolume(IInteractionVolumeContext meshViewerToDrawWith)
 		{
@@ -67,6 +63,8 @@ namespace MatterHackers.MeshVisualizer
 		public IPrimitive CollisionVolume { get; set; }
 
 		public bool DrawOnTop { get; protected set; }
+
+		protected bool MouseDownOnControl { get; set; }
 
 		public IntersectInfo MouseMoveInfo { get; set; }
 
@@ -82,6 +80,8 @@ namespace MatterHackers.MeshVisualizer
 				}
 			}
 		}
+
+		public string Name { get; set; }
 
 		protected IInteractionVolumeContext InteractionContext { get; }
 
