@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
@@ -26,15 +27,33 @@ namespace MatterControl.Tests.MatterControl
 
 			Slicer.ExtrudersUsed = new List<bool> { true };
 
-			var startGCode = gcodeMapping.Value;
 			var extruderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature);
 			Assert.IsTrue(extruderTemp > 0);
 			var bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			Assert.IsTrue(bedTemp > 0);
-			Assert.IsTrue(startGCode.Contains($"M104 T0 S{extruderTemp}"));
-			Assert.IsTrue(startGCode.Contains($"M109 T0 S{extruderTemp}"));
-			Assert.IsTrue(startGCode.Contains($"M140 S{bedTemp}"));
-			Assert.IsTrue(startGCode.Contains($"M190 S{bedTemp}"));
+
+			var beforeAndAfter = gcodeMapping.Value.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
+
+			Assert.AreEqual(2, beforeAndAfter.Length);
+			Assert.IsTrue(beforeAndAfter[0].Contains($"M104 T0 S{extruderTemp}"));
+			Assert.IsTrue(beforeAndAfter[0].Contains($"M140 S{bedTemp}"));
+			Assert.IsFalse(beforeAndAfter[0].Contains($"M109 T0 S{extruderTemp}"));
+			Assert.IsFalse(beforeAndAfter[0].Contains($"M190 S{bedTemp}"));
+			Assert.IsTrue(beforeAndAfter[1].Contains($"M109 T0 S{extruderTemp}"));
+			Assert.IsTrue(beforeAndAfter[1].Contains($"M190 S{bedTemp}"));
+
+			// set mapping when there is an M109 in the start code
+			printer.Settings.SetValue(SettingsKey.start_gcode, "G28\\nM109 S205");
+			beforeAndAfter = gcodeMapping.Value.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
+
+			// the main change is there should be an M190 before and not after the start code
+			Assert.AreEqual(2, beforeAndAfter.Length);
+			Assert.IsTrue(beforeAndAfter[0].Contains($"M104 T0 S{extruderTemp}"));
+			Assert.IsTrue(beforeAndAfter[0].Contains($"M140 S{bedTemp}"));
+			Assert.IsFalse(beforeAndAfter[0].Contains($"M109 T0 S{extruderTemp}"));
+			Assert.IsTrue(beforeAndAfter[0].Contains($"M190 S{bedTemp}"));
+			Assert.IsTrue(beforeAndAfter[1].Contains($"M109 T0 S{extruderTemp}"));
+			Assert.IsFalse(beforeAndAfter[1].Contains($"M190 S{bedTemp}"));
 		}
 
 		[Test]
