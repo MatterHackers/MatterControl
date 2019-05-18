@@ -177,9 +177,6 @@ namespace MatterHackers.MatterControl
 		private void Connection_PrintCanceled(object sender, EventArgs e)
 		{
 			this.ReturnToCalibrationWizard();
-
-			// Exit the calibration and return to wizard home page
-			this.DialogWindow.ClosePage(allowAbort: false);
 		}
 
 		private void UnregisterPrinterEvents()
