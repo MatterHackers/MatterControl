@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,13 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -47,7 +43,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Width { get; set; } = 20;
+
 		public double Depth { get; set; } = 20;
+
 		public double Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()

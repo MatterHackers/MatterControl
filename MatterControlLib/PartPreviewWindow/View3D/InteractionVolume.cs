@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,30 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
 	[Flags]
-	public enum LineArrows { None = 0, Start = 1, End = 2, Both = 3 };
+	public enum LineArrows
+	{
+		None = 0,
+		Start = 1,
+		End = 2,
+		Both = 3
+	}
 
 	public class InteractionVolume
 	{
 		public bool MouseDownOnControl;
+
 		public Matrix4X4 TotalTransform = Matrix4X4.Identity;
 
 		public string Name { get; set; }
@@ -60,16 +65,14 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		public IPrimitive CollisionVolume { get; set; }
+
 		public bool DrawOnTop { get; protected set; }
+
 		public IntersectInfo MouseMoveInfo { get; set; }
 
 		public bool MouseOver
 		{
-			get
-			{
-				return mouseOver;
-			}
-
+			get => mouseOver;
 			set
 			{
 				if (mouseOver != value)
@@ -81,8 +84,8 @@ namespace MatterHackers.MeshVisualizer
 		}
 
 		protected IInteractionVolumeContext InteractionContext { get; }
+
 		protected double SecondsToShowNumberEdit { get; private set; } = 4;
-		protected Stopwatch timeSinceMouseUp { get; private set; } = new Stopwatch();
 
 		public IObject3D RootSelection
 		{
@@ -102,10 +105,11 @@ namespace MatterHackers.MeshVisualizer
 			if (direction.LengthSquared > 0
 				&& (arrows.HasFlag(LineArrows.Start) || arrows.HasFlag(LineArrows.End)))
 			{
-				VertexStorage arrow = new VertexStorage();
+				var arrow = new VertexStorage();
 				arrow.MoveTo(-3, -5);
 				arrow.LineTo(0, 0);
 				arrow.LineTo(3, -5);
+
 				if (arrows.HasFlag(LineArrows.End))
 				{
 					double rotation = Math.Atan2(direction.Y, direction.X);
@@ -113,6 +117,7 @@ namespace MatterHackers.MeshVisualizer
 					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineEnd));
 					graphics2D.Render(inPosition, theme.TextColor);
 				}
+
 				if (arrows.HasFlag(LineArrows.Start))
 				{
 					double rotation = Math.Atan2(direction.Y, direction.X) + MathHelper.Tau / 2;
@@ -151,7 +156,6 @@ namespace MatterHackers.MeshVisualizer
 
 		public virtual void CancelOperation()
 		{
-
 		}
 
 		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
@@ -180,8 +184,11 @@ namespace MatterHackers.MeshVisualizer
 	public interface IInteractionVolumeContext
 	{
 		InteractionVolume HoveredInteractionVolume { get; }
+
 		InteractionVolume SelectedInteractionVolume { get; }
+
 		InteractiveScene Scene { get; }
+
 		WorldView World { get; }
 
 		GuiWidget GuiSurface { get; }

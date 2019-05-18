@@ -48,7 +48,7 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class RotateCornerControl : InteractionVolume
 	{
-		public IObject3D SelectedItemOnMouseDown;
+		private IObject3D selectedItemOnMouseDown;
 		private static VertexStorage arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");
 		private static ImageBuffer rotationImageWhite;
 
@@ -73,7 +73,8 @@ namespace MatterHackers.Plugins.EditorTools
 			angleTextControl = new InlineEditControl()
 			{
 				ForceHide = ForceHideAngle,
-				GetDisplayString = (value) => "{0:0.0#}°".FormatWith(value)
+				GetDisplayString = (value) => "{0:0.0#}°".FormatWith(value),
+				Visible = false
 			};
 
 			angleTextControl.VisibleChanged += (s, e) =>
@@ -83,7 +84,6 @@ namespace MatterHackers.Plugins.EditorTools
 			};
 
 			InteractionContext.GuiSurface.AddChild(angleTextControl);
-			angleTextControl.Visible = false;
 
 			angleTextControl.EditComplete += (s, e) =>
 			{
@@ -137,7 +137,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
 
-			for(int i=0; i< rotationHandle.Faces.Count; i++)
+			for (int i = 0; i < rotationHandle.Faces.Count; i++)
 			{
 				if (i == 0 || i == 1)
 				{
@@ -274,11 +274,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (mouseEvent3D.info != null && selectedItem != null)
 			{
-				SelectedItemOnMouseDown = selectedItem;
+				selectedItemOnMouseDown = selectedItem;
 
 				angleTextControl.Visible = true;
 
-				var selectedObject = SelectedItemOnMouseDown;
+				var selectedObject = selectedItemOnMouseDown;
 				AxisAlignedBoundingBox currentSelectedBounds = selectedObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 
 				var selectedObjectRotationCenter = currentSelectedBounds.Center;
@@ -319,7 +319,7 @@ namespace MatterHackers.Plugins.EditorTools
 			if (selectedItem != null)
 			{
 				var controlCenter = GetControlCenter(selectedItem);
-				if(mouseDownInfo != null)
+				if (mouseDownInfo != null)
 				{
 					controlCenter = mouseDownInfo.ControlCenter;
 				}
@@ -329,7 +329,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
 					var selectedObjectRotationCenter = currentSelectedBounds.Center;
-					if(mouseDownInfo != null)
+					if (mouseDownInfo != null)
 					{
 						selectedObjectRotationCenter = mouseDownInfo.SelectedObjectRotationCenter;
 					}
@@ -495,6 +495,7 @@ namespace MatterHackers.Plugins.EditorTools
 					centerMatrix *= Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(90) * cornerIndexOut);
 					break;
 			}
+
 			centerMatrix *= Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * Matrix4X4.CreateTranslation(boxCenter);
 			TotalTransform = centerMatrix;
 		}
@@ -525,11 +526,12 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			if(currentSelectedBounds.XSize > 100000)
+			if (currentSelectedBounds.XSize > 100000)
 			{
 				// something is wrong the part is too big (probably in invalid selection)
 				return;
 			}
+
 			Vector3 controlCenter = GetControlCenter(selectedItem);
 			Vector3 rotationCenter = GetRotationCenter(selectedItem, currentSelectedBounds);
 			if (mouseDownInfo != null)
@@ -557,6 +559,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					mouseAngle = mouseMoveInfo.AngleOfHit;
 				}
+
 				if (mouseDownInfo != null)
 				{
 					mouseAngle = mouseDownInfo.AngleOfHit;
@@ -612,11 +615,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 			double snappingRadians = MathHelper.Tau / numSnapPoints;
 			var clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
+
 			for (int i = 0; i < numSnapPoints; i++)
 			{
 				double startAngle = i * snappingRadians + mouseAngle;
 
-				VertexStorage snapShape = new VertexStorage();
+				var snapShape = new VertexStorage();
 				snapShape.MoveTo(-10, 0);
 				snapShape.LineTo(5, 7);
 				snapShape.LineTo(5, -7);
@@ -655,7 +659,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			return (InteractionContext.HoveredInteractionVolume != this
 			&& InteractionContext.HoveredInteractionVolume != null)
-			|| RootSelection != SelectedItemOnMouseDown;
+			|| RootSelection != selectedItemOnMouseDown;
 		}
 
 		/// <summary>
@@ -694,9 +698,16 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 cornerPositionCw = currentSelectedBounds.GetBottomCorner((cornerIndex + 3) % 4);
 
 			double xDirection = cornerPositionCcw.X - cornerPosition.X;
-			if (xDirection == 0) xDirection = cornerPositionCw.X - cornerPosition.X;
+			if (xDirection == 0)
+			{
+				xDirection = cornerPositionCw.X - cornerPosition.X;
+			}
+
 			double yDirection = cornerPositionCcw.Y - cornerPosition.Y;
-			if (yDirection == 0) yDirection = cornerPositionCw.Y - cornerPosition.Y;
+			if (yDirection == 0)
+			{
+				yDirection = cornerPositionCw.Y - cornerPosition.Y;
+			}
 
 			return new Vector3(xDirection, yDirection, cornerPosition.Z);
 		}
@@ -753,6 +764,7 @@ namespace MatterHackers.Plugins.EditorTools
 						var center2 = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 						rotationCenterTransform *= Matrix4X4.CreateTranslation(center - center2);
 					}
+
 					break;
 
 				case 1:
@@ -784,7 +796,7 @@ namespace MatterHackers.Plugins.EditorTools
 				double angleAroundPoint = MathHelper.DegreesToRadians(5);
 				// check if we are within the snap control area
 				double snappingRadians = MathHelper.Tau / numSnapPoints;
-				var clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
+
 				for (int i = 0; i < numSnapPoints; i++)
 				{
 					double markAngle = i * snappingRadians;
@@ -795,8 +807,7 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						if (mouseMoveInfo != null)
 						{
-							double radius;
-							Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out radius);
+							Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 							double innerRadius = radius + ringWidth / 2;
 							double outerRadius = innerRadius + ringWidth;
@@ -815,19 +826,13 @@ namespace MatterHackers.Plugins.EditorTools
 			return -1;
 		}
 
-		private bool IsTriangle(BvhIterator x)
-		{
-			return true;
-		}
-
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
 				&& mouseDownInfo != null)
 			{
-				double radius;
-				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out radius);
+				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 				Vector3 unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
 				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100), rotationCenterTransform);
@@ -847,9 +852,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void RotateAroundAxis(IObject3D selectedItem, double rotationAngle)
 		{
-			Vector3 rotationVector = Vector3.Zero;
+			var rotationVector = Vector3.Zero;
 			rotationVector[RotationAxis] = -rotationAngle;
-			Matrix4X4 rotationMatrix = Matrix4X4.CreateRotation(rotationVector);
+			var rotationMatrix = Matrix4X4.CreateRotation(rotationVector);
 
 			selectedItem.Matrix = selectedItem.Matrix.ApplyAtPosition(mouseDownInfo.SelectedObjectRotationCenter, rotationMatrix);
 		}
@@ -879,7 +884,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			internal Matrix4X4 SelectedObjectTransform { get; private set; } = Matrix4X4.Identity;
 
-			static internal double GetAngleForAxis(Vector3 deltaVector, int axisIndex)
+			internal static double GetAngleForAxis(Vector3 deltaVector, int axisIndex)
 			{
 				switch (axisIndex)
 				{
