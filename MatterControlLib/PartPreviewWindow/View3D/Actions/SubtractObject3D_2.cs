@@ -70,36 +70,28 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				foreach (var item in removeObjects)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 128)));
+					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 80)));
 				}
 
-				var keepObjects = parentOfSubtractTargets.Children
+				var keepItems = parentOfSubtractTargets.Children
 					.Where((i) => !SelectedChildren
 					.Contains(i.ID))
 					.ToList();
 
-				foreach (var keepItem in keepObjects)
+				foreach (var keepItem in keepItems)
 				{
-					var isSubtractChild = this.Children.Where(i => i.ID == keepItem.ID).FirstOrDefault() != null;
-					foreach (var keepVisibleItem in keepItem.VisibleMeshes())
+					var drawItem = keepItem;
+
+					var keepItemResult = this.Children.Where(i => i.OwnerID == keepItem.ID).FirstOrDefault();
+					drawItem = keepItemResult != null ? keepItemResult : drawItem;
+
+					foreach (var item in drawItem.VisibleMeshes())
 					{
-						if (isSubtractChild)
-						{
-							GLHelper.Render(keepVisibleItem.Mesh,
-								Color.Transparent,
-								keepVisibleItem.WorldMatrix(),
-								RenderTypes.Outlines,
-								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
-							suppressNormalDraw = false;
-						}
-						else
-						{
-							GLHelper.Render(keepVisibleItem.Mesh,
-								keepVisibleItem.WorldColor(this.SourceContainer),
-								keepVisibleItem.WorldMatrix(),
-								RenderTypes.Outlines,
-								keepVisibleItem.WorldMatrix() * layer.World.ModelviewMatrix);
-						}
+						GLHelper.Render(item.Mesh,
+							item.WorldColor(),
+							item.WorldMatrix(),
+							RenderTypes.Outlines,
+							item.WorldMatrix() * layer.World.ModelviewMatrix);
 					}
 				}
 			}
@@ -236,8 +228,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var resultsItem = new Object3D()
 					{
 						Mesh = resultsMesh,
-						Visible = false
+						Visible = false,
+						OwnerID = keep.ID
 					};
+
 					// copy all the properties but the matrix
 					resultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
 					// and add it to this
