@@ -125,6 +125,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			SwitchToFirstActiveExtruder(extrudersUsed, preStartGCodeLines, preStartGCode);
 			preStartGCode.Add("; settings from start_gcode");
 
+			// preserver the legacy behavior of finishing heating the bed before we continue with the start gcode
+			if (bed_temperature > 0)
+			{
+				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
+				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
+			}
+
 			return preStartGCode;
 		}
 
@@ -135,13 +142,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 
 			List<string> postStartGCode = new List<string>();
 			postStartGCode.Add("; automatic settings after start_gcode");
-
-			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
-			if (bed_temperature > 0)
-			{
-				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
-				AddDefaultIfNotPresent(postStartGCode, setBedTempString, postStartGCodeLines, "wait for bed temperature to be reached");
-			}
 
 			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			// wait for them to finish
