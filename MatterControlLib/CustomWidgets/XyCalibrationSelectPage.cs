@@ -144,8 +144,6 @@ namespace MatterHackers.MatterControl
 			printer.Connection.PrintCanceled += this.Connection_PrintCanceled;
 			printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
 
-			this.MoveToNextPage();
-
 			// hide this window
 			this.DialogWindow.Visible = false;
 
@@ -214,6 +212,8 @@ namespace MatterHackers.MatterControl
 			{
 				// Restore the original DialogWindow
 				this.DialogWindow.Visible = true;
+
+				this.MoveToNextPage();
 			});
 
 			this.UnregisterPrinterEvents();
