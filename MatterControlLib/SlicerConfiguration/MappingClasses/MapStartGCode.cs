@@ -27,16 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
 	public class MapStartGCode : InjectGCodeCommands
 	{
-		private bool escapeNewlineCharacters;
+		private readonly bool escapeNewlineCharacters;
 
 		public MapStartGCode(PrinterConfig printer, string canonicalSettingsName, string exportedName, bool escapeNewlineCharacters)
 			: base(printer, canonicalSettingsName, exportedName)
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 			get
 			{
-				StringBuilder newStartGCode = new StringBuilder();
+				var newStartGCode = new StringBuilder();
 				foreach (string line in PreStartGCode(Slicer.ExtrudersUsed))
 				{
 					newStartGCode.Append(line + "\n");
@@ -76,8 +76,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
 			string[] preStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-			List<string> preStartGCode = new List<string>();
-			preStartGCode.Add("; automatic settings before start_gcode");
+			var preStartGCode = new List<string>
+			{
+				"; automatic settings before start_gcode"
+			};
 			AddDefaultIfNotPresent(preStartGCode, "G21", preStartGCodeLines, "set units to millimeters");
 			AddDefaultIfNotPresent(preStartGCode, "M107", preStartGCodeLines, "fan off");
 			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
@@ -122,15 +124,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				}
 			}
 
-			SwitchToFirstActiveExtruder(extrudersUsed, preStartGCodeLines, preStartGCode);
-			preStartGCode.Add("; settings from start_gcode");
-
-			// preserver the legacy behavior of finishing heating the bed before we continue with the start gcode
-			if (bed_temperature > 0)
+			// If we have bed temp and the start gcode specifies to finish heating the extruders,
+			// make sure we also finish heating the bed. This preserves legacy expectation.
+			if (bed_temperature > 0
+				&& startGCode.Contains("M109"))
 			{
 				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, preStartGCodeLines, "wait for bed temperature to be reached");
 			}
+
+			SwitchToFirstActiveExtruder(extrudersUsed, preStartGCode);
+			preStartGCode.Add("; settings from start_gcode");
 
 			return preStartGCode;
 		}
@@ -140,8 +144,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
 			string[] postStartGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-			List<string> postStartGCode = new List<string>();
-			postStartGCode.Add("; automatic settings after start_gcode");
+			var postStartGCode = new List<string>
+			{
+				"; automatic settings after start_gcode"
+			};
+
+			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			if (bed_temperature > 0
+				&& !startGCode.Contains("M109"))
+			{
+				string setBedTempString = string.Format("M190 S{0}", bed_temperature);
+				AddDefaultIfNotPresent(postStartGCode, setBedTempString, postStartGCodeLines, "wait for bed temperature to be reached");
+			}
 
 			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			// wait for them to finish
@@ -159,7 +173,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				}
 			}
 
-			SwitchToFirstActiveExtruder(extrudersUsed, postStartGCodeLines, postStartGCode);
+			SwitchToFirstActiveExtruder(extrudersUsed, postStartGCode);
 			AddDefaultIfNotPresent(postStartGCode, "G90", postStartGCodeLines, "use absolute coordinates");
 			postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
 			AddDefaultIfNotPresent(postStartGCode, "M82", postStartGCodeLines, "use absolute distance for extrusion");
@@ -167,7 +181,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			return postStartGCode;
 		}
 
-		private void SwitchToFirstActiveExtruder(List<bool> extrudersUsed, string[] preStartGCodeLines, List<string> preStartGCode)
+		private void SwitchToFirstActiveExtruder(List<bool> extrudersUsed, List<string> preStartGCode)
 		{
 			// make sure we are on the first active extruder
 			for (int extruderIndex = 0; extruderIndex < extrudersUsed.Count; extruderIndex++)

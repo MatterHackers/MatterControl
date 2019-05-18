@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var paintObjects = parentOfPaintTargets.Children
 					.Where((i) => SelectedChildren
-					.Contains(i.Name))
+					.Contains(i.ID))
 					.SelectMany(c => c.VisibleMeshes())
 					.ToList();
 
@@ -76,12 +76,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var keepObjects = parentOfPaintTargets.Children
 					.Where((i) => !SelectedChildren
-					.Contains(i.Name))
+					.Contains(i.ID))
 					.ToList();
 
 				foreach (var keepItem in keepObjects)
 				{
-					var isPaintChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
+					var isPaintChild = this.Children.Where(i => i.ID == keepItem.ID).FirstOrDefault() != null;
 					foreach (var item in keepItem.VisibleMeshes())
 					{
 						if (isPaintChild)
@@ -175,13 +175,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var paintObjects = parentOfPaintTargets.Children
 				.Where((i) => SelectedChildren
-				.Contains(i.Name))
+				.Contains(i.ID))
 				.SelectMany(c => c.VisibleMeshes())
 				.ToList();
 
 			var keepItems = parentOfPaintTargets.Children
 				.Where((i) => !SelectedChildren
-				.Contains(i.Name));
+				.Contains(i.ID));
 
 			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
 

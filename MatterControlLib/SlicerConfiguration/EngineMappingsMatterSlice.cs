@@ -27,13 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-using MatterHackers.VectorMath;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
+using MatterHackers.Agg;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -42,9 +40,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
-		/// through into the slicer config file
+		/// through into the slicer config file.
 		/// </summary>
-		protected HashSet<string> applicationLevelSettings = new HashSet<string>()
+		private readonly HashSet<string> applicationLevelSettings = new HashSet<string>()
 		{
 			SettingsKey.enable_fan,
 			SettingsKey.extruder_wipe_temperature,
@@ -149,7 +147,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		};
 
 		public List<MappedSetting> MappedSettings { get; private set; }
-		private HashSet<string> matterSliceSettingNames;
+
+		private readonly HashSet<string> matterSliceSettingNames;
 
 		// Singleton use only - prevent external construction
 		public EngineMappingsMatterSlice(PrinterConfig printer)
@@ -262,7 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				}
 
-				foreach(var line in rawLines)
+				foreach (var line in rawLines)
 				{
 					sliceSettingsFile.WriteLine(line);
 				}
