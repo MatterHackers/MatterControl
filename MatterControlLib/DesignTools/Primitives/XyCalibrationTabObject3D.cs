@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				Color = Color.LightBlue
 			});
 
-			var position = new Vector2(TabWidth / 2 + 2 * spaceBetween, TabDepth / 2 - Offset * 2);
+			var position = new Vector2(TabWidth / 2 + 2 * spaceBetween, TabDepth / 2 - Offset * ((sampleCount - 1) / 2));
 			var step = new Vector2(spaceBetween + TabWidth, Offset);
 			for (int i = 0; i < sampleCount; i++)
 			{

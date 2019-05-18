@@ -144,8 +144,6 @@ namespace MatterHackers.MatterControl
 			printer.Connection.PrintCanceled += this.Connection_PrintCanceled;
 			printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
 
-			this.MoveToNextPage();
-
 			// hide this window
 			this.DialogWindow.Visible = false;
 
@@ -179,9 +177,6 @@ namespace MatterHackers.MatterControl
 		private void Connection_PrintCanceled(object sender, EventArgs e)
 		{
 			this.ReturnToCalibrationWizard();
-
-			// Exit the calibration and return to wizard home page
-			this.DialogWindow.ClosePage(allowAbort: false);
 		}
 
 		private void UnregisterPrinterEvents()
@@ -214,6 +209,8 @@ namespace MatterHackers.MatterControl
 			{
 				// Restore the original DialogWindow
 				this.DialogWindow.Visible = true;
+
+				this.MoveToNextPage();
 			});
 
 			this.UnregisterPrinterEvents();
