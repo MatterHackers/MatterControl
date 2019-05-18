@@ -663,7 +663,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
-						Checked = childSelector.Contains(child.Name),
+						Checked = childSelector.Contains(child.ID),
 						TextColor = theme.TextColor
 					};
 					radioSiblings.Add(radioButton);
@@ -674,7 +674,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
-						Checked = childSelector.Contains(child.Name),
+						Checked = childSelector.Contains(child.ID),
 						TextColor = theme.TextColor
 					};
 				}
@@ -690,16 +690,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (checkBox.Checked)
 						{
-							if (!childSelector.Contains(objectChecks[checkbox].Name))
+							if (!childSelector.Contains(objectChecks[checkbox].ID))
 							{
-								childSelector.Add(objectChecks[checkbox].Name);
+								childSelector.Add(objectChecks[checkbox].ID);
 							}
 						}
 						else
 						{
-							if (childSelector.Contains(objectChecks[checkbox].Name))
+							if (childSelector.Contains(objectChecks[checkbox].ID))
 							{
-								childSelector.Remove(objectChecks[checkbox].Name);
+								childSelector.Remove(objectChecks[checkbox].ID);
 							}
 						}
 					}

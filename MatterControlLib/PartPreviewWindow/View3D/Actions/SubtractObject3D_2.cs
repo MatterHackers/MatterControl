@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var removeObjects = parentOfSubtractTargets.Children
 					.Where((i) => SelectedChildren
-					.Contains(i.Name))
+					.Contains(i.ID))
 					.SelectMany(c => c.VisibleMeshes())
 					.ToList();
 
@@ -75,12 +75,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var keepObjects = parentOfSubtractTargets.Children
 					.Where((i) => !SelectedChildren
-					.Contains(i.Name))
+					.Contains(i.ID))
 					.ToList();
 
 				foreach (var keepItem in keepObjects)
 				{
-					var isSubtractChild = this.Children.Where(i => i.Name == keepItem.Name).FirstOrDefault() != null;
+					var isSubtractChild = this.Children.Where(i => i.ID == keepItem.ID).FirstOrDefault() != null;
 					foreach (var keepVisibleItem in keepItem.VisibleMeshes())
 					{
 						if (isSubtractChild)
@@ -181,13 +181,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			var removeVisibleItems = parentOfSubtractTargets.Children
 				.Where((i) => SelectedChildren
-				.Contains(i.Name))
+				.Contains(i.ID))
 				.SelectMany(c => c.VisibleMeshes())
 				.ToList();
 
 			var keepItems = parentOfSubtractTargets.Children
 				.Where((i) => !SelectedChildren
-				.Contains(i.Name));
+				.Contains(i.ID));
 
 			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
 
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			{
 				var parentOfSubtractTargets = item.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
-				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.Name);
+				var allVisibleNames = parentOfSubtractTargets.Children.Select(i => i.ID);
 				// remove any names from SelectedChildren that are not a child we can select
 				foreach (var name in selectableChildContainer.SelectedChildren.ToArray())
 				{
