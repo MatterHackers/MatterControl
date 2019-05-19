@@ -137,6 +137,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				// Create a field editor for each editable property detected via reflection
 				foreach (var property in GetEditablePropreties(context.item))
 				{
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<HideFromEditorAttribute>().Any())
+					{
+						continue;
+					}
+
 					// Create SectionWidget for SectionStartAttributes
 					if (property.PropertyInfo.GetCustomAttributes(true).OfType<SectionStartAttribute>().FirstOrDefault() is SectionStartAttribute sectionStart)
 					{

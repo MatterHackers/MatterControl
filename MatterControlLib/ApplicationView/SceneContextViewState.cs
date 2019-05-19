@@ -28,15 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.DataConverters3D;
+using MatterHackers.RenderOpenGl;
 
 namespace MatterHackers.MatterControl
 {
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.RenderOpenGl;
-
 	public class SceneContextViewState
 	{
-		private ISceneContext sceneContext;
+		private readonly ISceneContext sceneContext;
 		private RenderTypes renderType = RenderTypes.Outlines;
 
 		public SceneContextViewState(ISceneContext sceneContext)
@@ -90,6 +89,7 @@ namespace MatterHackers.MatterControl
 
 				return .75;
 			}
+
 			set
 			{
 				UserSettings.Instance.set(UserSettingsKey.SceneTreeRatio, value.ToString());
@@ -107,6 +107,7 @@ namespace MatterHackers.MatterControl
 
 				return 120;
 			}
+
 			set
 			{
 				var minimumValue = Math.Max(value, 35);

@@ -119,6 +119,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
 
+#if DEBUG
+			popupMenu.CreateBoolMenuItem(
+				"Manifold".Localize(),
+				viewIcons[RenderTypes.Polygons],
+				() => sceneContext.ViewState.RenderType == RenderTypes.Manifold,
+				(isChecked) =>
+				{
+					sceneContext.ViewState.RenderType = RenderTypes.Manifold;
+				},
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+#endif
+
 			popupMenu.CreateBoolMenuItem(
 				"Polygons".Localize(),
 				viewIcons[RenderTypes.Polygons],

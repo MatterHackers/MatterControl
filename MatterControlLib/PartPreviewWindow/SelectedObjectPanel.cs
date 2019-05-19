@@ -49,14 +49,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3D item = new Object3D();
 
-		private ThemeConfig theme;
-		private ISceneContext sceneContext;
-		private View3DWidget view3DWidget;
-		private SectionWidget editorSectionWidget;
+		private readonly ThemeConfig theme;
+		private readonly ISceneContext sceneContext;
+		private readonly SectionWidget editorSectionWidget;
 
-		private GuiWidget editorPanel;
+		private readonly GuiWidget editorPanel;
 
-		private string editorTitle = "Properties".Localize();
+		private readonly string editorTitle = "Properties".Localize();
 
 		public SelectedObjectPanel(View3DWidget view3DWidget, ISceneContext sceneContext, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -64,7 +63,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Top | VAnchor.Fit;
 			this.Padding = 0;
-			this.view3DWidget = view3DWidget;
 			this.theme = theme;
 			this.sceneContext = sceneContext;
 
@@ -173,12 +171,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget ContentPanel { get; set; }
 
-		private JsonPathContext pathResolver = new JsonPathContext();
-		private IconButton flattenButton;
-		private IconButton removeButton;
-		private OverflowBar.OverflowMenuButton overflowButton;
-		private InteractiveScene scene;
-		private FlowLayoutWidget primaryActionsPanel;
+		private readonly JsonPathContext pathResolver = new JsonPathContext();
+		private readonly IconButton flattenButton;
+		private readonly IconButton removeButton;
+		private readonly OverflowBar.OverflowMenuButton overflowButton;
+		private readonly InteractiveScene scene;
+		private readonly FlowLayoutWidget primaryActionsPanel;
 
 		private List<NodeOperation> primaryActions;
 
@@ -211,12 +209,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else
 			{
 				// Loop over primary actions creating a button for each
-				foreach(var primaryAction in primaryActions)
+				foreach (var primaryAction in primaryActions)
 				{
 					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
 					var button = new IconButton(primaryAction.IconCollector(theme.InvertIcons), theme)
 					{
-						//Name = namedAction.Title + " Button",
+						// Name = namedAction.Title + " Button",
 						ToolTipText = primaryAction.Title,
 						Margin = theme.ButtonSpacing,
 						BackgroundColor = theme.ToolbarButtonBackground,
@@ -239,8 +237,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var undoBuffer = sceneContext.Scene.UndoBuffer;
 
-			bool allowOperations = true;
-
 			// put in a color edit field
 			var colorField = new ColorField(theme, selectedItem.Color);
 			colorField.Initialize(0);
@@ -260,7 +256,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
 					&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
 				{
-					// make sure the render mode is set to material
+					// make sure the render mode is set to outline
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
 				}
 			};
@@ -293,8 +289,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
 			{
-				allowOperations = false;
-
 				foreach (var selector in componentObject.SurfacedEditors)
 				{
 					// Get the named property via reflection
@@ -311,7 +305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							if (ApplicationController.Instance.Extensions.GetEditorsForType(object3D.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 							{
-								ShowObjectEditor((editor, object3D, object3D.Name), selectedItem, allowOperations: allowOperations);
+								ShowObjectEditor((editor, object3D, object3D.Name), selectedItem);
 							}
 						}
 						else if (JsonPath.JsonPathContext.ReflectionValueSystem.LastMemberValue is ReflectionTarget reflectionTarget)
@@ -348,15 +342,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 				{
-					ShowObjectEditor((editor, item, item.Name), selectedItem, allowOperations: allowOperations);
+					ShowObjectEditor((editor, item, item.Name), selectedItem);
 				}
 			}
 		}
 
-		private class OperationButton :TextButton
+		private class OperationButton : TextButton
 		{
-			private NodeOperation graphOperation;
-			private IObject3D sceneItem;
+			private readonly NodeOperation graphOperation;
+			private readonly IObject3D sceneItem;
 
 			public OperationButton(NodeOperation graphOperation, IObject3D sceneItem, ThemeConfig theme)
 				: base(graphOperation.Title, theme)
@@ -371,10 +365,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void ShowObjectEditor((IObject3DEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection, bool allowOperations = true)
+		private void ShowObjectEditor((IObject3DEditor editor, IObject3D item, string displayName) scopeItem, IObject3D rootSelection)
 		{
 			var selectedItem = scopeItem.item;
-			var selectedItemType = selectedItem.GetType();
 
 			var editorWidget = scopeItem.editor.Create(selectedItem, sceneContext.Scene.UndoBuffer, theme);
 			editorWidget.HAnchor = HAnchor.Stretch;
@@ -435,7 +428,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				|| selectedItem.CanFlatten);
 			removeButton.Enabled = selectedItem != null;
 			overflowButton.Enabled = selectedItem != null;
-			if(selectedItem == null)
+			if (selectedItem == null)
 			{
 				primaryActionsPanel.RemoveAllChildren();
 			}

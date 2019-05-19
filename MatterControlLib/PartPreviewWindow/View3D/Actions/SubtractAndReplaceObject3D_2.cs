@@ -52,52 +52,89 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract and Replace";
 		}
 
+		[HideFromEditor]
+		public SelectedChildren ComputedChildren { get; set; } = new SelectedChildren();
+
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem == this)
+			suppressNormalDraw = true;
+
+			var parentOfSourceItems = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+
+			var sourceItems = parentOfSourceItems.Children.ToList();
+
+			foreach (var paintItem in sourceItems)
 			{
-				suppressNormalDraw = true;
+				var paintItemResults = this.Children.Where(i => i.OwnerID == paintItem.ID);
+				var wasSelected = ComputedChildren.Contains(paintItem.ID);
+				var currentlySelected = SelectedChildren.Contains(paintItem.ID);
 
-				var parentOfPaintTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
-
-				var paintObjects = parentOfPaintTargets.Children
-					.Where((i) => SelectedChildren
-					.Contains(i.ID))
-					.SelectMany(c => c.VisibleMeshes())
-					.ToList();
-
-				foreach (var item in paintObjects)
+				if (currentlySelected)
 				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 128)));
-				}
-
-				var keepObjects = parentOfPaintTargets.Children
-					.Where((i) => !SelectedChildren
-					.Contains(i.ID))
-					.ToList();
-
-				foreach (var keepItem in keepObjects)
-				{
-					var isPaintChild = this.Children.Where(i => i.ID == keepItem.ID).FirstOrDefault() != null;
-					foreach (var item in keepItem.VisibleMeshes())
+					// if this is selected always paint a transparent source
+					foreach (var item in paintItem.VisibleMeshes())
 					{
-						if (isPaintChild)
+						transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 80)));
+					}
+
+					// if it was also selected in before (the results are right)
+					if (wasSelected)
+					{
+						// paint solid results
+						if (paintItemResults != null)
+						{
+							foreach (var paintItemResult in paintItemResults)
+							{
+								foreach (var item in paintItemResult.VisibleMeshes())
+								{
+									GLHelper.Render(item.Mesh,
+										item.WorldColor(),
+										item.WorldMatrix(),
+										RenderTypes.Outlines,
+										item.WorldMatrix() * layer.World.ModelviewMatrix);
+								}
+							}
+						}
+					}
+				}
+				else if (wasSelected)
+				{
+					// it is not selected now but was selected before (changed state)
+					// pant the solid source
+					foreach (var item in paintItem.VisibleMeshes())
+					{
+						GLHelper.Render(item.Mesh,
+							item.WorldColor(),
+							item.WorldMatrix(),
+							RenderTypes.Outlines,
+							item.WorldMatrix() * layer.World.ModelviewMatrix);
+					}
+				}
+				else // it is not selected now and was not before (same state)
+				{
+					// paint the results
+					if (paintItemResults != null && paintItemResults.Count() > 0)
+					{
+						foreach (var paintItemResult in paintItemResults)
+						{
+							foreach (var item in paintItemResult.VisibleMeshes())
+							{
+								GLHelper.Render(item.Mesh,
+									item.WorldColor(),
+									item.WorldMatrix(),
+									RenderTypes.Outlines,
+									item.WorldMatrix() * layer.World.ModelviewMatrix);
+							}
+						}
+					}
+					else // we don't have any results yet
+					{
+						foreach (var item in paintItem.VisibleMeshes())
 						{
 							GLHelper.Render(item.Mesh,
 								item.WorldColor(),
-								item.WorldMatrix(),
-								RenderTypes.Outlines,
-								item.WorldMatrix() * layer.World.ModelviewMatrix);
-
-							//suppressNormalDraw = false;
-						}
-						else
-						{
-							GLHelper.Render(item.Mesh,
-								item.WorldColor(this.SourceContainer),
 								item.WorldMatrix(),
 								RenderTypes.Outlines,
 								item.WorldMatrix() * layer.World.ModelviewMatrix);
@@ -138,6 +175,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				try
 				{
 					SubtractAndReplace(cancellationToken, reporter);
+					var newComputedChildren = new SelectedChildren();
+					newComputedChildren.AddRange(SelectedChildren);
+					ComputedChildren = newComputedChildren;
 				}
 				catch
 				{
@@ -168,6 +208,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					this.Children.Add(SourceContainer.Clone());
 					SourceContainer.Visible = false;
 				}
+
 				return;
 			}
 
@@ -192,8 +233,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				double amountPerOperation = 1.0 / totalOperations;
 				double percentCompleted = 0;
 
-				ProgressStatus progressStatus = new ProgressStatus();
-				progressStatus.Status = "Do CSG";
+				var progressStatus = new ProgressStatus
+				{
+					Status = "Do CSG"
+				};
+
 				foreach (var keep in keepVisibleItems)
 				{
 					var keepResultsMesh = keep.Mesh;
@@ -201,13 +245,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					foreach (var paint in paintObjects)
 					{
-						Mesh paintMesh = BooleanProcessing.Do(keepResultsMesh, keepWorldMatrix,
-							paint.Mesh, paint.WorldMatrix(SourceContainer),
-							2, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						Mesh paintMesh = BooleanProcessing.Do(keepResultsMesh,
+							keepWorldMatrix,
+							// paint data
+							paint.Mesh,
+							paint.WorldMatrix(SourceContainer),
+							// operation type
+							2,
+							// reporting data
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
 
-						keepResultsMesh = BooleanProcessing.Do(keepResultsMesh, keepWorldMatrix,
-							paint.Mesh, paint.WorldMatrix(SourceContainer),
-							1, reporter, amountPerOperation, percentCompleted, progressStatus, cancellationToken);
+						keepResultsMesh = BooleanProcessing.Do(keepResultsMesh,
+							keepWorldMatrix,
+							// point data
+							paint.Mesh,
+							paint.WorldMatrix(SourceContainer),
+							// operation type
+							1,
+							// reporting data
+							reporter,
+							amountPerOperation,
+							percentCompleted,
+							progressStatus,
+							cancellationToken);
 
 						// after the first time we get a result the results mesh is in the right coordinate space
 						keepWorldMatrix = Matrix4X4.Identity;
@@ -216,7 +280,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						var paintResultsItem = new Object3D()
 						{
 							Mesh = paintMesh,
-							Visible = false
+							Visible = false,
+							OwnerID = paint.ID
 						};
 						// copy all the properties but the matrix
 						paintResultsItem.CopyWorldProperties(paint, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
@@ -233,7 +298,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					var keepResultsItem = new Object3D()
 					{
 						Mesh = keepResultsMesh,
-						Visible = false
+						Visible = false,
+						OwnerID = keep.ID
 					};
 					// copy all the properties but the matrix
 					keepResultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
@@ -245,6 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					child.Visible = true;
 				}
+
 				SourceContainer.Visible = false;
 			}
 		}
