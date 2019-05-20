@@ -78,7 +78,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					m_visible = value;
 
-					foreach(var widget in targets)
+					foreach (var widget in targets)
 					{
 						widget.Visible = m_visible;
 					}
@@ -94,10 +94,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			//// Draw grid background with active BedColor
-			//GL.Disable(EnableCap.Texture2D);
-			//GL.Disable(EnableCap.Blend);
-
 			GL.Begin(BeginMode.Lines);
 			{
 				GL.Color4(theme.PrimaryAccentColor);
@@ -163,8 +159,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 					activePoints = vertexStorage.Vertices();
 
-					//foreach (var v in activePoints.Where(p => p.command != ShapePath.FlagsAndCommand.FlagNone && !p.IsClose))
-
 					VertexPointWidget widget = null;
 
 					for (var i = 0; i < vertexStorage.Count; i++)
@@ -174,10 +168,7 @@ namespace MatterHackers.Plugins.EditorTools
 						if (ShapePath.is_vertex(command))
 						{
 							widget = new VertexPointWidget(interactionContext, vertexStorage, new Vector3(x, y, 0), command, i);
-							widget.Click += (s, e) =>
-							{
-								Console.WriteLine("Hello Worl2d!");
-							};
+							// widget.Click += (s, e) =>
 
 							targets.Add(widget);
 

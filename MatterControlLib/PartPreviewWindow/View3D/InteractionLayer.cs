@@ -115,8 +115,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			iavMappings.Add(typeof(ImageObject3D), new List<<IInteractionElement> { new MoveInZControl(this) });
-			iavMappings.Add(typeof(PathObject3D), new List<<IInteractionElement> { new PathControl(this) });
+			iavMappings.Add(typeof(ImageObject3D), new List<IInteractionElement> { new MoveInZControl(this) });
+			iavMappings.Add(typeof(PathObject3D), new List<IInteractionElement> { new PathControl(this) });
 
 			// Register listeners
 			sceneContext.Scene.SelectionChanged += this.Scene_SelectionChanged;
