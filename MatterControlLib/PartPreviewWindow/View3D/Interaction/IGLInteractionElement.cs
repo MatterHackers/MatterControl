@@ -34,6 +34,8 @@ namespace MatterHackers.MeshVisualizer
 	/// </summary>
 	public interface IGLInteractionElement : IInteractionElement
 	{
+		bool Visible { get; set; }
+
 		bool DrawOnTop { get; }
 
 		void DrawGlContent(DrawGlContentEventArgs e);

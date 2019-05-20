@@ -603,6 +603,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawInteractionVolumes(DrawEventArgs e)
 		{
+			foreach (var item in this.InteractionVolumes.OfType<IGLInteractionElement>())
+			{
+				item.Visible = !SuppressUiVolumes;
+			}
+
 			if (SuppressUiVolumes)
 			{
 				return;

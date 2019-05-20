@@ -55,6 +55,8 @@ namespace MatterHackers.MeshVisualizer
 
 		public bool DrawOnTop { get; protected set; }
 
+		public virtual bool Visible { get; set; }
+
 		protected bool MouseDownOnControl { get; set; }
 
 		public IntersectInfo MouseMoveInfo { get; set; }
