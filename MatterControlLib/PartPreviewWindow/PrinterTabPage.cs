@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			LayerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
 
-			double currentPosition = printer.Connection.RatioIntoCurrentLayerSeconds;
+			double currentPosition = printer.Connection.RatioIntoCurrentLayerInstructions;
 			layerRenderRatioSlider.FirstValue = 0;
 
 			if (lastPosition != currentPosition)
