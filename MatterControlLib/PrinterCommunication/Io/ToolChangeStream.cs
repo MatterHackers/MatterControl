@@ -281,8 +281,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				// we do not switch tools again, turn off any that are not currently printing
 				for (int i = 0; i < extruderCount; i++)
 				{
-					if (i != RequestedTool
-						&& i != activeTool)
+					if (i != RequestedTool)
 					{
 						gcode.AppendLine($"M104 T{i} S0");
 					}
