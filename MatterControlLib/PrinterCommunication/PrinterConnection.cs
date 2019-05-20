@@ -828,7 +828,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public bool PrintWasCanceled { get; set; } = false;
 
-		public double RatioIntoCurrentLayer
+		public double RatioIntoCurrentLayerSeconds
 		{
 			get
 			{
@@ -838,7 +838,21 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 					return 0;
 				}
 
-				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayer(gCodeFileSwitcher.LineIndex);
+				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayerSeconds(gCodeFileSwitcher.LineIndex);
+			}
+		}
+
+		public double RatioIntoCurrentLayerInstructions
+		{
+			get
+			{
+				if (gCodeFileSwitcher?.GCodeFile == null
+					|| !(gCodeFileSwitcher?.GCodeFile is GCodeMemoryFile))
+				{
+					return 0;
+				}
+
+				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayerInstruction(gCodeFileSwitcher.LineIndex);
 			}
 		}
 

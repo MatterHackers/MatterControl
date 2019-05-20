@@ -482,7 +482,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			LayerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
 
-			double currentPosition = printer.Connection.RatioIntoCurrentLayer;
+			double currentPosition = printer.Connection.RatioIntoCurrentLayerSeconds;
 			layerRenderRatioSlider.FirstValue = 0;
 
 			if (lastPosition != currentPosition)
@@ -840,7 +840,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					timeToEnd.Text = GetFormatedTime(hoursToEnd, minutesToEnd, secondsToEnd);
 
 					progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
-					progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayer;
+					progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayerSeconds;
 					progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
 
 					switch (printer.Connection.CommunicationState)

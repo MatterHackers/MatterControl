@@ -273,7 +273,17 @@ namespace MatterControl.Printing
 			return readLinesRingBuffer[index % MaxLinesToBuffer];
 		}
 
-		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
+		public override double Ratio0to1IntoContainedLayerSeconds(int instructionIndex)
+		{
+			if (ByteCount > 0)
+			{
+				return BytePosition / (double)ByteCount;
+			}
+
+			return 1;
+		}
+
+		public override double Ratio0to1IntoContainedLayerInstruction(int instructionIndex)
 		{
 			if (ByteCount > 0)
 			{
