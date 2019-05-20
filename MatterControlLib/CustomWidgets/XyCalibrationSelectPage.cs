@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -48,12 +49,15 @@ namespace MatterHackers.MatterControl
 		private readonly RadioButton coarseCalibration;
 		private readonly RadioButton normalCalibration;
 		private readonly RadioButton fineCalibration;
+		private PartViewMode preCalibrationPrintViewMode;
 
 		public XyCalibrationSelectPage(XyCalibrationWizard calibrationWizard)
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
 			this.HeaderText = "Calibration Mode".Localize();
+
+			preCalibrationPrintViewMode = printer.ViewState.ViewMode;
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
@@ -209,6 +213,9 @@ namespace MatterHackers.MatterControl
 			{
 				// Restore the original DialogWindow
 				this.DialogWindow.Visible = true;
+
+				// Restore to original view mode
+				printer.ViewState.ViewMode = preCalibrationPrintViewMode;
 
 				this.MoveToNextPage();
 			});
