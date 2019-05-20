@@ -176,7 +176,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				{
 					SubtractAndReplace(cancellationToken, reporter);
 					var newComputedChildren = new SelectedChildren();
-					newComputedChildren.AddRange(SelectedChildren);
+
+					foreach (var id in SelectedChildren)
+					{
+						newComputedChildren.Add(id);
+					}
+
 					ComputedChildren = newComputedChildren;
 				}
 				catch

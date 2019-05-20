@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				if (SelectedChild.Count > 0)
 				{
-					return this.Children.Where(c => c.ID == SelectedChild[0]).FirstOrDefault();
+					return this.Children.Where(c => c.ID == SelectedChild.First()).FirstOrDefault();
 				}
 
 				return this.Children.FirstOrDefault();

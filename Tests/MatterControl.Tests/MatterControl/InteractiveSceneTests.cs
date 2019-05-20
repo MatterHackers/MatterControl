@@ -276,7 +276,7 @@ namespace MatterControl.Tests.MatterControl
 				var subtract = new SubtractObject3D();
 				subtract.Children.Add(cubeA);
 				subtract.Children.Add(offsetCubeB);
-				subtract.ItemsToSubtract.Add(offsetCubeB.ID);
+				subtract.SelectedChildren.Add(offsetCubeB.ID);
 				root.Children.Add(subtract);
 
 				subtract.Subtract();
