@@ -88,7 +88,9 @@ namespace MatterControl.Printing
 
 		public abstract double PercentComplete(int instructionIndex);
 
-		public abstract double Ratio0to1IntoContainedLayer(int instructionIndex);
+		public abstract double Ratio0to1IntoContainedLayerSeconds(int instructionIndex);
+
+		public abstract double Ratio0to1IntoContainedLayerInstruction(int instructionIndex);
 
 		public static int CalculateChecksum(string commandToGetChecksumFor)
 		{

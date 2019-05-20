@@ -463,7 +463,7 @@ namespace MatterControl.Printing
 			return 100;
 		}
 
-		public override double Ratio0to1IntoContainedLayer(int instructionIndex)
+		public override double Ratio0to1IntoContainedLayerSeconds(int instructionIndex)
 		{
 			int currentLayer = GetLayerIndex(instructionIndex);
 
@@ -504,6 +504,50 @@ namespace MatterControl.Printing
 					{
 						return deltaFromStart / length;
 					}
+				}
+			}
+
+			return 1;
+		}
+
+		public override double Ratio0to1IntoContainedLayerInstruction(int instructionIndex)
+		{
+			int currentLayer = GetLayerIndex(instructionIndex);
+
+			if (currentLayer > -1)
+			{
+				int startIndex = IndexOfLayerStart[currentLayer];
+
+				int endIndex = LineCount - 1;
+
+				if (currentLayer < LayerCount - 1)
+				{
+					endIndex = IndexOfLayerStart[currentLayer + 1];
+				}
+				else
+				{
+					// Improved last layer percent complete - seek endIndex to 'MatterSlice Completed' line, otherwise leave at LineCount - 1
+					if (lastPrintLine == -1)
+					{
+						lastPrintLine = instructionIndex;
+						string line;
+						do
+						{
+							line = gCodeCommandQueue[Math.Min(gCodeCommandQueue.Count - 1, lastPrintLine)].Line;
+							lastPrintLine++;
+						}
+						while (line != "; MatterSlice Completed Successfully"
+							&& lastPrintLine < endIndex);
+					}
+
+					endIndex = lastPrintLine;
+				}
+
+				int deltaFromStart = Math.Max(0, instructionIndex - startIndex);
+				var length = endIndex - startIndex;
+				if (length > 0)
+				{
+					return deltaFromStart / (double)length;
 				}
 			}
 

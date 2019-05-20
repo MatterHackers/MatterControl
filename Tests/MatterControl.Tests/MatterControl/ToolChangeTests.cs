@@ -102,6 +102,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 F2500", // we then reset the F after the pre and post gcode run
 				"G1 X111", // pre T0 code
 				"M114", // always sent after a ; NO_PROCESSING command
+				"M104 T1 S0",
+				"T1",
+				"M114",
 				"T0",
 				"M114", // always send after switch
 				"G1 X222", // post switch T0 code
@@ -253,13 +256,16 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"M114",
 				"T1",
 				"M114",
-				"M104 T1 S240", // **** BUG **** this should not be here
+				"M104 T1 S240",
 				"G1 Y222",
 				"M114",
 				"G1 X9 Y8 F3000",
 				"G1 Z7 F315",
 				"G1 F2500",
 				"G1 X111",
+				"M114",
+				"M104 T1 S0",
+				"T1",
 				"M114",
 				"T0",
 				"M114",
@@ -327,12 +333,12 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 E10 F10",
 				"G1 X111",
 				"M114",
-				"M104 T1 S210", // T1 to cool down temp 210
+				"M104 T1 S210",
 				"T1",
 				"M114",
 				"T0",
 				"M114",
-				"M104 T0 S230", // T0 back up to 230
+				"M104 T0 S230",
 				"G1 X222",
 				"M114",
 				"G1 X30 Y10 F3000",
@@ -340,6 +346,9 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 F10",
 				"G1 E10",
 				"G1 Y111",
+				"M114",
+				"M104 T0 S0",
+				"T0",
 				"M114",
 				"T1",
 				"M114",
