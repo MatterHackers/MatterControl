@@ -165,13 +165,15 @@ namespace MatterHackers.Plugins.EditorTools
 
 					//foreach (var v in activePoints.Where(p => p.command != ShapePath.FlagsAndCommand.FlagNone && !p.IsClose))
 
+					VertexPointWidget widget = null;
+
 					for (var i = 0; i < vertexStorage.Count; i++)
 					{
 						var command = vertexStorage.vertex(i, out double x, out double y);
 
 						if (ShapePath.is_vertex(command))
 						{
-							var widget = new VertexPointWidget(interactionContext, vertexStorage, new Vector3(x, y, 0), command, i);
+							widget = new VertexPointWidget(interactionContext, vertexStorage, new Vector3(x, y, 0), command, i);
 							widget.Click += (s, e) =>
 							{
 								Console.WriteLine("Hello Worl2d!");
@@ -181,6 +183,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 							interactionContext.GuiSurface.AddChild(widget);
 						}
+					}
+
+					// Highlight last
+					if (widget != null)
+					{
+						widget.PointColor = Color.Red;
 					}
 				}
 			}
@@ -318,9 +326,11 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
+			public Color PointColor { get; set; } = Color.Black;
+
 			public override void OnDraw(Graphics2D graphics2D)
 			{
-				graphics2D.Circle(6, 6, 3, Color.Black);
+				graphics2D.Circle(6, 6, 3, this.PointColor);
 				base.OnDraw(graphics2D);
 			}
 
