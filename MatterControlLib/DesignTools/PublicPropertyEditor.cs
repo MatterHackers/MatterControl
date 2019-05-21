@@ -813,7 +813,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(context.item.GetType());
+			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(context.item);
 			if (!context.item.Persistable
 				&& !string.IsNullOrEmpty(unlockUrl))
 			{

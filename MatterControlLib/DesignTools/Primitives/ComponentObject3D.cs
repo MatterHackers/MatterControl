@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -41,7 +42,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	[HideChildrenFromTreeView]
 	public class ComponentObject3D : Object3D
 	{
-		private const string imageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
+		private const string ImageConverterComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A";
 
 		public ComponentObject3D()
 		{
@@ -53,34 +54,50 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override bool CanFlatten => Finalized;
+
+		public override bool Persistable => ApplicationController.Instance.UserHasPermissions(this);
+
 		public bool Finalized { get; set; } = true;
+
 		public List<string> SurfacedEditors { get; set; } = new List<string>();
-		public string ComponentID { get; set; }
+
+		[HideFromEditor]
+		public string ComponentID { get; set; } = "";
+
+		[Description("MatterHackers Internal Use")]
+		public string DetailPage { get; set; } = "";
+
+		[Description("MatterHackers Internal Use")]
+		public string PermissionKey { get; set; } = "";
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
 			// we want to end up with just a group of all the visible mesh objects
 			using (RebuildLock())
 			{
-				List<IObject3D> newChildren = new List<IObject3D>();
+				var newChildren = new List<IObject3D>();
 
 				// push our matrix into a copy of our visible children
 				foreach (var child in this.VisibleMeshes())
 				{
-					var meshOnlyItem = new Object3D();
-					meshOnlyItem.Matrix = child.WorldMatrix(this);
-					meshOnlyItem.Color = child.WorldColor(this);
-					meshOnlyItem.MaterialIndex = child.WorldMaterialIndex(this);
-					meshOnlyItem.OutputType = child.WorldOutputType(this);
-					meshOnlyItem.Mesh = child.Mesh;
-					meshOnlyItem.Name = "Mesh".Localize();
+					var meshOnlyItem = new Object3D
+					{
+						Matrix = child.WorldMatrix(this),
+						Color = child.WorldColor(this),
+						MaterialIndex = child.WorldMaterialIndex(this),
+						OutputType = child.WorldOutputType(this),
+						Mesh = child.Mesh,
+						Name = "Mesh".Localize()
+					};
 					newChildren.Add(meshOnlyItem);
 				}
 
 				if (newChildren.Count > 1)
 				{
-					var group = new GroupObject3D();
-					group.Name = this.Name;
+					var group = new GroupObject3D
+					{
+						Name = this.Name
+					};
 					group.Children.Modify(list =>
 					{
 						list.AddRange(newChildren);
@@ -103,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override void Remove(UndoBuffer undoBuffer)
 		{
 			// Custom remove for ImageConverter
-			if (this.ComponentID == imageConverterComponentID)
+			if (this.ComponentID == ImageConverterComponentID)
 			{
 				var parent = this.Parent;
 

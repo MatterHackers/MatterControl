@@ -280,7 +280,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			// get the time to the next tool switch
 			var timeToNextToolChange = NextToolChange().time;
-			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
 			// if we do not switch again
 			if (timeToNextToolChange == double.PositiveInfinity)

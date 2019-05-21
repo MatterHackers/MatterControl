@@ -438,8 +438,8 @@ namespace MatterHackers.MatterControl
 
 		public Action RedeemDesignCode;
 		public Action EnterShareCode;
-		public Func<Type, bool> UserHasPermissions;
-		public Func<Type, string> GetUnlockPage;
+		public Func<IObject3D, bool> UserHasPermissions;
+		public Func<IObject3D, string> GetUnlockPage;
 
 		private static ApplicationController globalInstance;
 
@@ -1425,7 +1425,8 @@ namespace MatterHackers.MatterControl
 						return sceneItem.Parent != null
 							&& sceneItem.Parent.Parent == null
 							&& sceneItem is ComponentObject3D componentObject
-							&& componentObject.Finalized;
+							&& componentObject.Finalized
+							&& string.IsNullOrWhiteSpace(componentObject.PermissionKey);
 					},
 					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});
