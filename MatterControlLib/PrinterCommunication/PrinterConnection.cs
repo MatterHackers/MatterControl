@@ -2608,7 +2608,7 @@ You will then need to logout and log back in to the computer for the changes to 
 
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
-						if (SecondsPrinted < GCodeMemoryFile.PrintTimeToLeaveHeatersOn)
+						if (SecondsPrinted < GCodeMemoryFile.LeaveHeatersOnTime)
 						{
 							// The user may still be sitting at the machine, leave it heated for a period of time
 							TurnOffBedAndExtruders(TurnOff.AfterDelay);
