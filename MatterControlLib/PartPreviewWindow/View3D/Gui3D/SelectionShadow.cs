@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			Vector3 boundsCenter = selectedBounds.Center;
 
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.X, boundsCenter.Y, 0.1));
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& InteractionContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
-				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 				var withScale = Matrix4X4.CreateScale(selectedBounds.XSize, selectedBounds.YSize, 1) * TotalTransform;
 				GLHelper.Render(GetNormalShadowMesh(), shadowColor, withScale, RenderTypes.Shaded);

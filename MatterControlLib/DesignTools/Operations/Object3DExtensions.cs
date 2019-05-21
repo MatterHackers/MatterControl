@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static Matrix4X4 ApplyAtBoundsCenter(this IObject3D objectWithBounds, Matrix4X4 transformToApply)
 		{
-			return ApplyAtCenter(objectWithBounds.Matrix, objectWithBounds.GetAxisAlignedBoundingBox(Matrix4X4.Identity), transformToApply);
+			return ApplyAtCenter(objectWithBounds.Matrix, objectWithBounds.GetAxisAlignedBoundingBox(), transformToApply);
 		}
 
 		public static Matrix4X4 ApplyAtCenter(this Matrix4X4 currentTransform, AxisAlignedBoundingBox boundsToApplyTo, Matrix4X4 transformToApply)
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static Vector3 GetCenter(this IObject3D item)
 		{
-			return item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+			return item.GetAxisAlignedBoundingBox().Center;
 		}
 
 		public static IObject3D SetChildren(this IObject3D parent, IEnumerable<IObject3D> newChildren)

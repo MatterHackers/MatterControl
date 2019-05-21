@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.Library
 					var loadedItem = await item.CreateContent(progressControl.ProgressReporter);
 					if (loadedItem != null)
 					{
-						var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+						var aabb = loadedItem.GetAxisAlignedBoundingBox();
 
 						// lets move the cube to the center of the loaded thing
 						placeholderItem.Matrix *= Matrix4X4.CreateTranslation(-10 + aabb.XSize/2, 0, 0);
@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.Library
 						loadedItem.MakeNameNonColliding();
 
 						// Adjust next item position
-						newItemOffset.X = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity).XSize / 2 + 10;
+						newItemOffset.X = loadedItem.GetAxisAlignedBoundingBox().XSize / 2 + 10;
 					}
 
 					// the 1.3 is so the progress bar will collapse after going past 1

@@ -976,7 +976,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void CalculateDragStartPosition(IObject3D insertionGroup, IntersectInfo intersectInfo)
 		{
 			// Set the initial transform on the inject part to the current transform mouse position
-			var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			var sourceItemBounds = insertionGroup.GetAxisAlignedBoundingBox();
 			var center = sourceItemBounds.Center;
 
 			insertionGroup.Matrix *= Matrix4X4.CreateTranslation(-center.X, -center.Y, -sourceItemBounds.MinXYZ.Z);
@@ -1279,7 +1279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Invalidate();
 							CurrentSelectInfo.DownOnPart = true;
 
-							AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+							AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 							if (info.HitPosition.X < selectedBounds.Center.X)
 							{
@@ -1477,7 +1477,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					double xSnapOffset = selectedBounds.MinXYZ.X;
 					// snap the x position
@@ -1959,7 +1959,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& Keyboard.IsKeyDown(Keys.ShiftKey))
 			{
 				// draw marks on the bed to show that the part is constrained to x and y
-				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
 				var drawColor = new Color(Color.Red, 20);

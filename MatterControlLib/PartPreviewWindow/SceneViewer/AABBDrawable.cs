@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -55,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var child in sceneContext.Scene.Children)
 			{
 				world.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
-				world.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox(Matrix4X4.Identity));
+				world.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox());
 			}
 		}
 	}

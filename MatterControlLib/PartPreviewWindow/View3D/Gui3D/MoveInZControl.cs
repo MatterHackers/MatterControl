@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
 				}
 
-				AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 				var moveAmount = newZPosition - originalSelectedBounds.MinXYZ.Z;
 
 				if (moveAmount != 0)
@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Vector3 GetTopPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			if (originalSelectedBounds.MinXYZ.X != double.PositiveInfinity)
 			{
 				return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.MaxXYZ.Z);
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				transformOnMouseDown = selectedItem.Matrix;
-				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -243,7 +243,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
 					}
 
-					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 					var moveAmount = newZPosition - originalSelectedBounds.MinXYZ.Z;
 
 					if (moveAmount != 0)
@@ -282,7 +282,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
 			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
@@ -326,7 +326,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
 					}
 
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					zHeightDisplayInfo.Value = selectedBounds.MinXYZ.Z;
 					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, - zHeightDisplayInfo.LocalBounds.Center.Y);

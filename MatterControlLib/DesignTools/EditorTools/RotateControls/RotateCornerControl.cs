@@ -206,7 +206,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public Vector3 GetCornerPosition(IObject3D objectBeingRotated, out int cornerIndexOut)
 		{
 			cornerIndexOut = 0;
-			AxisAlignedBoundingBox currentSelectedBounds = objectBeingRotated.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox currentSelectedBounds = objectBeingRotated.GetAxisAlignedBoundingBox();
 
 			Vector3 bestZCornerPosition = Vector3.Zero;
 			int xCornerIndex = 0;
@@ -279,7 +279,7 @@ namespace MatterHackers.Plugins.EditorTools
 				angleTextControl.Visible = true;
 
 				var selectedObject = selectedItemOnMouseDown;
-				AxisAlignedBoundingBox currentSelectedBounds = selectedObject.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox currentSelectedBounds = selectedObject.GetAxisAlignedBoundingBox();
 
 				var selectedObjectRotationCenter = currentSelectedBounds.Center;
 				Vector3 cornerForAxis = GetCornerPosition(selectedObject);
@@ -327,7 +327,7 @@ namespace MatterHackers.Plugins.EditorTools
 				IntersectInfo hitOnRotationPlane = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 				if (hitOnRotationPlane != null)
 				{
-					AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 					var selectedObjectRotationCenter = currentSelectedBounds.Center;
 					if (mouseDownInfo != null)
 					{
@@ -525,7 +525,7 @@ namespace MatterHackers.Plugins.EditorTools
 				alphaValue = .3;
 			}
 
-			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			if (currentSelectedBounds.XSize > 100000)
 			{
 				// something is wrong the part is too big (probably in invalid selection)
@@ -690,7 +690,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 GetDeltaToOtherSideXy(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			int cornerIndex;
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, out cornerIndex);
@@ -731,7 +731,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			Matrix4X4 rotationCenterTransform;
 
-			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 controlCenter = GetControlCenter(selectedItem);
 			Vector3 rotationCenter = GetRotationCenter(selectedItem, currentSelectedBounds);

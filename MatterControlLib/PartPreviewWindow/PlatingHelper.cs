@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl
 			for (int meshGroupIndex = 0; meshGroupIndex < object3DList.Count; meshGroupIndex++)
 			{
 				var object3D = object3DList[meshGroupIndex];
-				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity).MinXYZ;
+				Vector3 meshLowerLeft = object3D.GetAxisAlignedBoundingBox().MinXYZ;
 				object3D.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft);
 
 				PlatingHelper.MoveToOpenPositionRelativeGroup(object3D, object3DList);
@@ -101,10 +101,10 @@ namespace MatterHackers.MatterControl
 
 			// and finally center whatever we have as a group
 			{
-				AxisAlignedBoundingBox bounds = object3DList[0].GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox bounds = object3DList[0].GetAxisAlignedBoundingBox();
 				for (int i = 1; i < object3DList.Count; i++)
 				{
-					bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox(Matrix4X4.Identity));
+					bounds = AxisAlignedBoundingBox.Union(bounds, object3DList[i].GetAxisAlignedBoundingBox());
 				}
 
 				Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
@@ -117,14 +117,14 @@ namespace MatterHackers.MatterControl
 
 		private static int SortOnSize(IObject3D x, IObject3D y)
 		{
-			AxisAlignedBoundingBox xAABB = x.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
-			AxisAlignedBoundingBox yAABB = y.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox xAABB = x.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox yAABB = y.GetAxisAlignedBoundingBox();
 			return Math.Max(xAABB.XSize, xAABB.YSize).CompareTo(Math.Max(yAABB.XSize, yAABB.YSize));
 		}
 
 		public static void PlaceOnBed(IObject3D object3D)
 		{
-			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox bounds = object3D.GetAxisAlignedBoundingBox();
 			Vector3 boundsCenter = (bounds.MaxXYZ + bounds.MinXYZ) / 2;
 
 			object3D.Matrix *= Matrix4X4.CreateTranslation(new Vector3(0, 0, -boundsCenter.Z + bounds.ZSize / 2));
@@ -146,11 +146,11 @@ namespace MatterHackers.MatterControl
 			AxisAlignedBoundingBox allPlacedMeshBounds = itemsToAvoid.GetUnionedAxisAlignedBoundingBox();
 
 			// move the part to the total bounds lower left side
-			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity).MinXYZ;
+			Vector3 meshLowerLeft = objectToAdd.GetAxisAlignedBoundingBox().MinXYZ;
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(-meshLowerLeft + allPlacedMeshBounds.MinXYZ);
 
 			// make sure it is on the 0 plane
-			var aabb = objectToAdd.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			var aabb = objectToAdd.GetAxisAlignedBoundingBox();
 			objectToAdd.Matrix *= Matrix4X4.CreateTranslation(0, 0, -aabb.MinXYZ.Z);
 
 			// keep moving the item until its in an open slot
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl
 		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
 		{
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox();
 
 			// add in a few mm so that it will not be touching
 			itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (meshToTest != itemToMove)
 				{
-					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
 					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
