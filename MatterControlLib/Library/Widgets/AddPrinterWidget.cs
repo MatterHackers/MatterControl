@@ -38,6 +38,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -54,6 +55,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private bool usingDefaultName = true;
 		private ThemeConfig theme;
 		private TextButton nextButton;
+		private FlowLayoutWidget printerInfo;
 
 		public AddPrinterWidget(ThemeConfig theme, TextButton nextButton)
 			: base(FlowDirection.TopToBottom)
@@ -146,7 +148,31 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 							printerNameInput.Text = agg_basics.GetNonCollidingName(printerName, this.ExistingPrinterNames);
 
-							SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
+							this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
+
+							var SelectedPrinter = this.SelectedPrinter;
+
+							printerInfo.CloseAllChildren();
+
+							if (this.SelectedPrinter != null
+								&& OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))
+							{
+								printerInfo.AddChild(
+									new PrinterDetails(
+										new PrinterInfo()
+										{
+											Make = SelectedPrinter.Make,
+											Model = SelectedPrinter.Model,
+										},
+										theme,
+										false)
+									{
+										ShowProducts = false,
+										StoreID = storePrinterID?.SID,
+										HAnchor = HAnchor.Stretch,
+										VAnchor = VAnchor.Fit
+									});
+							}
 
 							nextButton.Enabled = treeView.SelectedNode != null
 								&& !string.IsNullOrWhiteSpace(printerNameInput.Text);
@@ -202,6 +228,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			theme.ApplyBoxStyle(nameSection);
 
+			printerInfo = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
 			nameSection.BackgroundColor = theme.MinimalShade;
 			nameSection.Margin = new BorderDouble(top: theme.DefaultContainerPadding);
 
@@ -221,6 +253,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(top: 3)
 			});
+
+			panel2Column.AddChild(printerInfo);
 
 			horizontalSplitter.Panel2.AddChild(panel2Column);
 

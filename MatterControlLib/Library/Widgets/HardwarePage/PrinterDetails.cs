@@ -54,7 +54,9 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 		private PrinterInfo printerInfo;
 		private FlowLayoutWidget productDataContainer;
 
-		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme)
+		public bool ShowProducts { get; set; } = true;
+
+		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme, bool showOpenButton)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.printerInfo = printerInfo;
@@ -67,69 +69,72 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			headingRow.AddChild(new HorizontalSpacer());
 			headingRow.HAnchor = HAnchor.Stretch;
 
-			var openButton = new TextButton("Open".Localize(), theme)
+			if (showOpenButton)
 			{
-				BackgroundColor = theme.AccentMimimalOverlay
-			};
-			openButton.Click += (s, e) =>
-			{
-				ApplicationController.Instance.OpenPrinter(printerInfo);
-			};
-			headingRow.AddChild(openButton);
+				var openButton = new TextButton("Open".Localize(), theme)
+				{
+					BackgroundColor = theme.AccentMimimalOverlay
+				};
+				openButton.Click += (s, e) =>
+				{
+					ApplicationController.Instance.OpenPrinter(printerInfo);
+				};
+				headingRow.AddChild(openButton);
+			}
 
 			this.AddChild(headingRow);
 		}
 
+		public string StoreID { get; set; }
+
 		public override async void OnLoad(EventArgs args)
 		{
-			if (File.Exists(printerInfo.ProfilePath))
+			if (string.IsNullOrEmpty(this.StoreID)
+				&& File.Exists(printerInfo.ProfilePath))
 			{
 				// load up the printer profile so we can get the MatterHackers Skew-ID out of it
 				var printerSettings = PrinterSettings.LoadFile(printerInfo.ProfilePath);
 
-				// Get the printer sid from settings
-				string storeID = null;
-
 				// Use the make-model mapping table
 				if (OemSettings.Instance.OemPrinters.TryGetValue($"{printerInfo.Make}-{ printerInfo.Model}", out StorePrinterID storePrinterID))
 				{
-					storeID = storePrinterID?.SID;
+					this.StoreID = storePrinterID?.SID;
 				}
+			}
 
-				if (!string.IsNullOrWhiteSpace(storeID))
+			if (!string.IsNullOrWhiteSpace(StoreID))
+			{
+				try
 				{
-					try
-					{
-						// put in controls from the feed that show relevant printer information
-						WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{storeID}?IncludeListingData=True",
-							(json) =>
+					// put in controls from the feed that show relevant printer information
+					WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{StoreID}?IncludeListingData=True",
+						(json) =>
+						{
+							UiThread.RunOnIdle(() =>
 							{
-								UiThread.RunOnIdle(() =>
-								{
-									var result = JsonConvert.DeserializeObject<ProductSidData>(json);
-									productDataContainer.RemoveAllChildren();
-									CreateProductDataWidgets(printerSettings, result.ProductSku);
-								});
+								var result = JsonConvert.DeserializeObject<ProductSidData>(json);
+								productDataContainer.RemoveAllChildren();
+								CreateProductDataWidgets(result.ProductSku);
 							});
-					}
-					catch (Exception ex)
-					{
-						Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
-					}
-
-					// add a section to hold the data about the printer
-					this.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
-					{
-						HAnchor = HAnchor.Stretch
-					});
-
+						});
 				}
+				catch (Exception ex)
+				{
+					Trace.WriteLine("Error collecting or loading printer details: " + ex.Message);
+				}
+
+				// add a section to hold the data about the printer
+				this.AddChild(productDataContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					HAnchor = HAnchor.Stretch
+				});
 			}
 
 			base.OnLoad(args);
 		}
 
-		private void CreateProductDataWidgets(PrinterSettings printerSettings, ProductSkuData product)
+		//private void CreateProductDataWidgets(PrinterSettings printerSettings, ProductSkuData product)
+		private void CreateProductDataWidgets(ProductSkuData product)
 		{
 			var row = new FlowLayoutWidget()
 			{
@@ -170,75 +175,80 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 			row.AddChild(descriptionBackground);
 
-			var padding = theme.DefaultContainerPadding;
-
-			var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			if (this.ShowProducts)
 			{
-				Padding = new BorderDouble(padding, padding, padding, 0),
-				HAnchor = HAnchor.Stretch
-			};
+				var padding = theme.DefaultContainerPadding;
 
-			var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
-			productDataContainer.AddChild(addonsSection);
-			theme.ApplyBoxStyle(addonsSection);
-			addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
-
-			foreach (var item in product.ProductListing.AddOns)
-			{
-				var icon = new ImageBuffer(80, 0);
-				WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
-
-				var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
+				var addonsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					HAnchor = HAnchor.Stretch,
-					Cursor = Cursors.Hand
+					Padding = new BorderDouble(padding, padding, padding, 0),
+					HAnchor = HAnchor.Stretch
 				};
 
-				foreach (var child in addOnRow.Children)
+				var addonsSection = new SectionWidget("Upgrades and Accessories", addonsColumn, theme);
+				productDataContainer.AddChild(addonsSection);
+				theme.ApplyBoxStyle(addonsSection);
+				addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
+
+
+
+				foreach (var item in product.ProductListing.AddOns)
 				{
-					child.Selectable = false;
+					var icon = new ImageBuffer(80, 0);
+					WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+					var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
+					{
+						HAnchor = HAnchor.Stretch,
+						Cursor = Cursors.Hand
+					};
+
+					foreach (var child in addOnRow.Children)
+					{
+						child.Selectable = false;
+					}
+
+					addOnRow.Click += (s, e) =>
+					{
+						ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
+					};
+
+					addonsColumn.AddChild(addOnRow);
 				}
-
-				addOnRow.Click += (s, e) =>
-				{
-					ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
-				};
-
-				addonsColumn.AddChild(addOnRow);
 			}
 
-			if (false)
-			{
-				var settingsPanel = new GuiWidget()
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch,
-					MinimumSize = new VectorMath.Vector2(20, 20),
-					DebugShowBounds = true
-				};
+			//if (false)
+			//{
+			//	var settingsPanel = new GuiWidget()
+			//	{
+			//		HAnchor = HAnchor.Stretch,
+			//		VAnchor = VAnchor.Stretch,
+			//		MinimumSize = new VectorMath.Vector2(20, 20),
+			//		DebugShowBounds = true
+			//	};
 
-				settingsPanel.Load += (s, e) =>
-				{
-					var printer = new PrinterConfig(printerSettings);
+			//	settingsPanel.Load += (s, e) =>
+			//	{
+			//		var printer = new PrinterConfig(printerSettings);
 
-					var settingsContext = new SettingsContext(
-						printer,
-						null,
-						NamedSettingsLayers.All);
+			//		var settingsContext = new SettingsContext(
+			//			printer,
+			//			null,
+			//			NamedSettingsLayers.All);
 
-					settingsPanel.AddChild(
-						new ConfigurePrinterWidget(settingsContext, printer, theme)
-						{
-							HAnchor = HAnchor.Stretch,
-							VAnchor = VAnchor.Stretch,
-						});
-				};
+			//		settingsPanel.AddChild(
+			//			new ConfigurePrinterWidget(settingsContext, printer, theme)
+			//			{
+			//				HAnchor = HAnchor.Stretch,
+			//				VAnchor = VAnchor.Stretch,
+			//			});
+			//	};
 
-				this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
-				{
-					VAnchor = VAnchor.Stretch
-				});
-			}
+			//	this.AddChild(new SectionWidget("Settings", settingsPanel, theme, expanded: false, setContentVAnchor: false)
+			//	{
+			//		VAnchor = VAnchor.Stretch
+			//	});
+			//}
 		}
 
 		private GuiWidget AddHeading(ImageBuffer icon, string text)
