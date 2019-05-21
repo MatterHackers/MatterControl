@@ -51,6 +51,11 @@ namespace MatterControl.Printing
 		private double parsingLastZ;
 		private readonly List<int> toolChanges = new List<int>();
 
+		/// <summary>
+		/// Gets total print time that will leave the heaters on at the conclusion of the print.
+		/// </summary>
+		public static int PrintTimeToLeaveHeatersOn => 60 * 10;
+
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
 			this.gcodeHasExplicitLayerChangeInfo = gcodeHasExplicitLayerChangeInfo;
@@ -441,9 +446,9 @@ namespace MatterControl.Printing
 				{
 					// don't turn of extruders if we will end the print within 10 minutes
 					if (instructionIndex < gCodeCommandQueue.Count
-						&& gCodeCommandQueue[instructionIndex].SecondsToEndFromHere < 60 * 10)
+						&& gCodeCommandQueue[0].SecondsToEndFromHere < PrintTimeToLeaveHeatersOn)
 					{
-						return (toolToLookFor, 60 * 10);
+						return (toolToLookFor, gCodeCommandQueue[instructionIndex].SecondsToEndFromHere);
 					}
 				}
 			}
