@@ -37,7 +37,9 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 
@@ -57,6 +59,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private bool controlsRegistered = false;
 		private IEnumerable<VertexData> activePoints;
+		private Stroke sourceStroke;
 		private bool m_visible;
 
 		public PathControl(IInteractionVolumeContext context)
@@ -94,37 +97,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			GL.Begin(BeginMode.Lines);
+			if (sourceStroke != null
+				&& e.Graphics2D is Graphics2DOpenGL glGraphics)
 			{
-				GL.Color4(theme.PrimaryAccentColor);
-
-				bool isStart = true;
-
-				Vector3 last = Vector3.Zero;
-				Vector3 first = Vector3.Zero;
-
-				foreach (var point in activePoints)
-				{
-					if (isStart
-						|| point.IsMoveTo)
-					{
-						last = new Vector3(point.position);
-						first = last;
-						isStart = false;
-					}
-					else if (point.IsVertex)
-					{
-						GL.Vertex3(last);
-						GL.Vertex3(last = new Vector3(point.position));
-					}
-					else if (point.IsClose)
-					{
-						GL.Vertex3(last);
-						GL.Vertex3(first);
-					}
-				}
+				glGraphics.RenderTransformedPath(Matrix4X4.Identity, sourceStroke, theme.PrimaryAccentColor, false);
 			}
-			GL.End();
 		}
 
 		public void LostFocus()
@@ -158,6 +135,8 @@ namespace MatterHackers.Plugins.EditorTools
 					var vertexStorage = pathObject.VertexSource as VertexStorage;
 
 					activePoints = vertexStorage.Vertices();
+
+					sourceStroke = new Stroke(new FlattenCurves(vertexStorage), 2);
 
 					VertexPointWidget widget = null;
 
