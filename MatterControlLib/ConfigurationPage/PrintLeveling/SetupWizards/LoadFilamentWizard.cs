@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class DoneLoadingPage : WizardPage
 	{
 		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
-			: base(setupWizard, "Success".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
+			: base(setupWizard, "Filament Loaded".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
 		{
 			if (printer.Connection.Paused)
 			{

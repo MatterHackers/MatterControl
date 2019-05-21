@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			yield return new WizardPage(
 				this,
-				"Overview".Localize(),
+				string.Format("{0} {1}", this.Title, "Overview".Localize()),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
 					"Nozzle Calibration measures the distance between hotends.".Localize(),
