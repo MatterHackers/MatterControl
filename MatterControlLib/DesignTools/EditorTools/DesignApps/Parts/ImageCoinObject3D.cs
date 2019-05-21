@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return imageCoin;
 		}
 
-		public override bool Persistable { get => ApplicationController.Instance.UserHasPermissions(this.GetType()); }
+		public override bool Persistable => ApplicationController.Instance.UserHasPermissions(this);
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
