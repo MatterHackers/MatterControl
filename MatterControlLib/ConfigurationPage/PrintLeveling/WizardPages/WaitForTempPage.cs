@@ -265,7 +265,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 
 			if ((bedTargetTemp == 0 || bedDoneText.Visible)
-				&& (targetHotendTemps.All(i => i== 0) || hotEndDoneTexts.All(i => i.Visible))
+				&& (targetHotendTemps.All(i => i == 0) || hotEndDoneTexts.All(i => i.Visible))
 				&& !HasBeenClosed)
 			{
 				// advance to the next page
