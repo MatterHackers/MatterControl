@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		Mesh GetNormalShadowMesh()
 		{
-			if(normalShadowMesh == null)
+			if (normalShadowMesh == null)
 			{
 				normalShadowMesh = PlatonicSolids.CreateCube(1, 1, .1);
 			}

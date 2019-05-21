@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2014, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,74 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.PolygonMesh;
+using System;
+using MatterHackers.Agg.UI;
+using MatterHackers.RayTracer;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MeshVisualizer
 {
-	public class CubeObject3D : Object3D
+	public class MouseEvent3DArgs : EventArgs
 	{
-		public CubeObject3D()
+		public IntersectInfo info;
+		public MouseEventArgs MouseEvent2D;
+
+		public Ray MouseRay { get; }
+
+		public MouseEvent3DArgs(MouseEventArgs mouseEvent2D, Ray mouseRay, IntersectInfo info)
 		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
-		}
-
-		public double Width { get; set; } = 20;
-
-		public double Depth { get; set; } = 20;
-
-		public double Height { get; set; } = 20;
-
-		public static async Task<CubeObject3D> Create()
-		{
-			var item = new CubeObject3D();
-			await item.Rebuild();
-			return item;
-		}
-
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
-		{
-			var item = new CubeObject3D()
-			{
-				Width = x,
-				Depth = y,
-				Height = z,
-			};
-
-			await item.Rebuild();
-			return item;
-		}
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-
-			using (RebuildLock())
-			{
-				using (new CenterAndHeightMaintainer(this))
-				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-				}
-			}
-
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
+			this.info = info;
+			this.MouseEvent2D = mouseEvent2D;
+			this.MouseRay = mouseRay;
 		}
 	}
 }

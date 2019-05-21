@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public static class SceneActions
 	{
-		private static int pastObjectXOffset = 5;
+		private static int pasteObjectXOffset = 5;
 		public static List<IObject3D> GetSelectedItems(this InteractiveScene scene)
 		{
 			var selectedItem = scene.SelectedItem;
@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Clipboard.Instance.SetText("!--IObjectSelection--!");
 				ApplicationController.ClipboardItem = selectedItem.Clone();
 				// put it back in right where we cut it from
-				pastObjectXOffset = 0;
+				pasteObjectXOffset = 0;
 
 				scene.DeleteSelection();
 			}
@@ -200,7 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Clipboard.Instance.SetText("!--IObjectSelection--!");
 				ApplicationController.ClipboardItem = selectedItem.Clone();
 				// when we copy an object put it back in with a slight offset
-				pastObjectXOffset = 5;
+				pasteObjectXOffset = 5;
 			}
 		}
 
@@ -228,9 +228,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (Clipboard.Instance.GetText() == "!--IObjectSelection--!")
 				{
-					sceneContext.DuplicateItem(pastObjectXOffset, ApplicationController.ClipboardItem);
+					sceneContext.DuplicateItem(0, ApplicationController.ClipboardItem);
 					// each time we put in the object offset it a bit more
-					pastObjectXOffset += 5;
+					pasteObjectXOffset += 5;
 				}
 			}
 		}

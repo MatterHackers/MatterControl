@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			subtract.Children.Add(a.Clone());
 			var bClone = b.Clone();
 			subtract.Children.Add(bClone);
-			subtract.ItemsToSubtract.Add(bClone.ID);
+			subtract.SelectedChildren.Add(bClone.ID);
 
 			subtract.Subtract();
 

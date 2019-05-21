@@ -29,7 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
@@ -106,7 +109,25 @@ namespace MatterHackers.MatterControl.Library
 							new GeneratorItem(
 								() => "Text2".Localize(),
 								async () => await TextPathObject3D.Create())
-							{ DateCreated = new System.DateTime(index++) }
+							{ DateCreated = new System.DateTime(index++) },
+							new GeneratorItem(
+								() => "Path".Localize(),
+								() =>
+								{
+									var storage = new VertexStorage();
+									storage.MoveTo(5, 5);
+									storage.LineTo(10, 5);
+									storage.LineTo(7.5, 10);
+									storage.ClosePolygon();
+
+									var path = new PathObject3D()
+									{
+										VertexSource = storage
+									};
+
+									return Task.FromResult<IObject3D>(path);
+								})
+								{ DateCreated = new System.DateTime(index++) },
 						}
 					}));
 #endif

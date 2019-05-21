@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// show what steps will be taken
 			yield return new WizardPage(
 				this,
-				"Overview".Localize(),
+				string.Format("{0} {1}", this.Title, "Overview".Localize()),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
 					"Z Calibration measures the z position of the nozzles.".Localize(),

@@ -63,8 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
 				var removeObjects = parentOfSubtractTargets.Children
-					.Where((i) => SelectedChildren
-					.Contains(i.ID))
+					.Where(i => SelectedChildren.Contains(i.ID))
 					.SelectMany(c => c.VisibleMeshes())
 					.ToList();
 
@@ -74,8 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 
 				var keepItems = parentOfSubtractTargets.Children
-					.Where((i) => !SelectedChildren
-					.Contains(i.ID))
+					.Where(i => !SelectedChildren.Contains(i.ID))
 					.ToList();
 
 				foreach (var keepItem in keepItems)

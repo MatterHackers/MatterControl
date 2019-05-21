@@ -27,74 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MeshVisualizer
 {
-	public class CubeObject3D : Object3D
+	public interface IInteractionVolumeContext
 	{
-		public CubeObject3D()
-		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
-		}
+		InteractionVolume HoveredInteractionVolume { get; }
 
-		public double Width { get; set; } = 20;
+		InteractionVolume SelectedInteractionVolume { get; }
 
-		public double Depth { get; set; } = 20;
+		InteractiveScene Scene { get; }
 
-		public double Height { get; set; } = 20;
+		WorldView World { get; }
 
-		public static async Task<CubeObject3D> Create()
-		{
-			var item = new CubeObject3D();
-			await item.Rebuild();
-			return item;
-		}
+		GuiWidget GuiSurface { get; }
 
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
-		{
-			var item = new CubeObject3D()
-			{
-				Width = x,
-				Depth = y,
-				Height = z,
-			};
-
-			await item.Rebuild();
-			return item;
-		}
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-
-			using (RebuildLock())
-			{
-				using (new CenterAndHeightMaintainer(this))
-				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-				}
-			}
-
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
-		}
+		double SnapGridDistance { get; }
 	}
 }

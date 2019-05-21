@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
 				if (item.SelectedChild.Count == 1)
 				{
-					selectedID = item.SelectedChild[0];
+					selectedID = item.SelectedChild.First();
 				}
 			}
 

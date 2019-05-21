@@ -53,9 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract";
 		}
 
-		public SelectedChildren ItemsToSubtract { get; set; } = new SelectedChildren();
-
-		public SelectedChildren SelectedChildren => ItemsToSubtract;
+		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -115,13 +113,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			bool ItemInSubtractList(IObject3D item)
 			{
-				if (ItemsToSubtract.Contains(item.ID))
+				if (SelectedChildren.Contains(item.ID))
 				{
 					return true;
 				}
 
 				// check if the wrapped item is in the subtract list
-				if (item.Children.Count > 0 && ItemsToSubtract.Contains(item.Children.First().ID))
+				if (item.Children.Count > 0 && SelectedChildren.Contains(item.Children.First().ID))
 				{
 					return true;
 				}

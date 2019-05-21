@@ -603,24 +603,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawInteractionVolumes(DrawEventArgs e)
 		{
+			foreach (var item in this.InteractionVolumes.OfType<IGLInteractionElement>())
+			{
+				item.Visible = !SuppressUiVolumes;
+			}
+
 			if (SuppressUiVolumes)
 			{
 				return;
 			}
 
 			// draw on top of anything that is already drawn
-			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
+			GL.Disable(EnableCap.DepthTest);
+
+			foreach (var interactionVolume in this.InteractionVolumes.OfType<IGLInteractionElement>())
 			{
 				if (interactionVolume.DrawOnTop)
 				{
-					GL.Disable(EnableCap.DepthTest);
 					interactionVolume.DrawGlContent(new DrawGlContentEventArgs(false, e));
-					GL.Enable(EnableCap.DepthTest);
 				}
 			}
 
+			// Restore DepthTest
+			GL.Enable(EnableCap.DepthTest);
+
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (InteractionVolume interactionVolume in this.InteractionVolumes)
+			foreach (var interactionVolume in this.InteractionVolumes.OfType<IGLInteractionElement>())
 			{
 				interactionVolume.DrawGlContent(new DrawGlContentEventArgs(true, e));
 			}
