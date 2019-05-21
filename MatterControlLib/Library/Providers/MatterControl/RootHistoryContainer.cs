@@ -57,19 +57,6 @@ namespace MatterHackers.MatterControl.Library
 					IsReadOnly = true
 				});
 
-			if (Directory.GetFiles(ApplicationDataStorage.Instance.PartHistoryDirectory).Any())
-			{
-				this.ChildContainers.Add(
-					new DynamicContainerLink(
-						() => "Part History".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
-						() => new PartHistoryContainer())
-					{
-						IsReadOnly = true
-					});
-			}
-
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
