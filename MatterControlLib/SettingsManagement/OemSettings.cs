@@ -181,10 +181,24 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 			if (string.IsNullOrWhiteSpace(json))
 			{
+				// If empty, purge the cache file and fall back to StaticData
+				File.Delete(cachePath);
+
 				json = AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
 			}
 
-			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
+			try
+			{
+				return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
+			}
+			catch
+			{
+				// If json parse fails, purge the cache file and fall back to StaticData
+				File.Delete(cachePath);
+
+				json = AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+				return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
+			}
 		}
 
 		public async Task ReloadOemProfiles()
