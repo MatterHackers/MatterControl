@@ -120,7 +120,7 @@ namespace MatterHackers.Plugins.EditorTools
 			var selectedItem = ActiveSelectedItem;
 			Matrix4X4 startingTransform = selectedItem.Matrix;
 
-			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
 			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
@@ -143,7 +143,7 @@ namespace MatterHackers.Plugins.EditorTools
 			// and keep the locked edge in place
 			Vector3 newLockedCorner = GetCornerPosition(selectedItem, (quadrantIndex + 2) % 4);
 
-			AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
 			newLockedCorner.Z = 0;
 			lockedCorner.Z = originalSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
 
@@ -220,7 +220,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
 		{
-			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox();
 			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
 
 			return SetBottomControlHeight(originalSelectedBounds, cornerPosition);
@@ -245,7 +245,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				transformOnMouseDown = transformAppliedByThis = selectedItem.Matrix;
-				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -275,7 +275,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (info != null
 					&& selectedItem != null)
 				{
-					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					Vector3 delta = info.HitPosition - initialHitPosition;
 
@@ -320,7 +320,7 @@ namespace MatterHackers.Plugins.EditorTools
 					// and keep the locked edge in place
 					Vector3 newLockedCorner = GetCornerPosition(selectedItem, (quadrantIndex + 2) % 4);
 
-					AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
 					newLockedCorner.Z = 0;
 					lockedCorner.Z = mouseDownSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
 
@@ -366,7 +366,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(cornerPosition);
@@ -520,7 +520,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					int j = 4;
 
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					Vector2 widthDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
 					xValueDisplayInfo.Value = selectedBounds.XSize;

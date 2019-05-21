@@ -110,7 +110,7 @@ namespace MatterHackers.Plugins.EditorTools
 				var selectedItem = ActiveSelectedItem;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
-				var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 				Vector3 topPosition = GetTopPosition(selectedItem);
 				Vector3 lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
 
@@ -123,7 +123,7 @@ namespace MatterHackers.Plugins.EditorTools
 				selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 				// and keep the locked edge in place
-				AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 				Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 				selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
@@ -176,7 +176,7 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector3 topPosition = GetTopPosition(selectedItem);
 
 					var bottomPosition = topPosition;
-					var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 					bottomPosition.Z = originalSelectedBounds.MinXYZ.Z;
 
 					// render with z-buffer full black
@@ -206,7 +206,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public Vector3 GetTopPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.MaxXYZ.Z);
 		}
 
@@ -227,7 +227,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				transformOnMouseDown = selectedItem.Matrix;
-				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -254,7 +254,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (info != null
 					&& selectedItem != null)
 				{
-					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					Vector3 delta = info.HitPosition - initialHitPosition;
 
@@ -283,7 +283,7 @@ namespace MatterHackers.Plugins.EditorTools
 					selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 					// and keep the locked edge in place
-					AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 					Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
@@ -320,7 +320,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
 			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
@@ -362,7 +362,7 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 
 					int j = 0;
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					Vector2 heightDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
 					zValueDisplayInfo.Value = selectedBounds.ZSize;

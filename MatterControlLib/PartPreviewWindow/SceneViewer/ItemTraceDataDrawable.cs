@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (isSelected)
 			{
-				var center = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+				var center = item.GetAxisAlignedBoundingBox().Center;
 
 				var traceData = item.TraceData();
 

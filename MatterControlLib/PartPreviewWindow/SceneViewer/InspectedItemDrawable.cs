@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var frustum = world.GetClippingFrustum();
 
-				var aabb = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var aabb = item.GetAxisAlignedBoundingBox();
 
 				world.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
 

@@ -202,7 +202,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							if (CenterOnBed)
 							{
 								// Get Bounds
-								var aabb = loadedItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+								var aabb = loadedItem.GetAxisAlignedBoundingBox();
 
 								// Move to bed center
 								var bedCenter = printer.Bed.BedCenter;

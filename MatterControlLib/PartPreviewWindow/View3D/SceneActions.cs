@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Reposition first item to bed center
 			if (scene.Children.Count == 0)
 			{
-				var aabb = newItem.GetAxisAlignedBoundingBox(Matrix4X4.Identity);
+				var aabb = newItem.GetAxisAlignedBoundingBox();
 				var center = aabb.Center;
 
 				newItem.Matrix *= Matrix4X4.CreateTranslation(

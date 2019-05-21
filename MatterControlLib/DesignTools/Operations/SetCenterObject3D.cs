@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public SetCenterObject3D(IObject3D item, Vector3 offset, bool onX = true, bool onY = true, bool onZ = true)
 		{
-			var center = item.GetAxisAlignedBoundingBox(Matrix4X4.Identity).Center;
+			var center = item.GetAxisAlignedBoundingBox().Center;
 
 			Vector3 consideredOffset = Vector3.Zero; // zero out anything we don't want
 			if (onX)
