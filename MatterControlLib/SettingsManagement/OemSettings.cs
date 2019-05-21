@@ -177,7 +177,12 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			string cachePath = ApplicationController.CacheablePath("public-profiles", "oemprofiles.json");
 
 			// Load data from cache or fall back to stale StaticData content
-			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+			string json = File.Exists(cachePath) ? File.ReadAllText(cachePath) : null;
+
+			if (string.IsNullOrWhiteSpace(json))
+			{
+				json = AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+			}
 
 			return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 		}
