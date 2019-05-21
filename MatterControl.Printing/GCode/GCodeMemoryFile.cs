@@ -446,7 +446,7 @@ namespace MatterControl.Printing
 				{
 					// don't turn of extruders if we will end the print within 10 minutes
 					if (instructionIndex < gCodeCommandQueue.Count
-						&& gCodeCommandQueue[0].SecondsToEndFromHere < PrintTimeToLeaveHeatersOn)
+						&& this.TotalSecondsInPrint < PrintTimeToLeaveHeatersOn)
 					{
 						return (toolToLookFor, gCodeCommandQueue[instructionIndex].SecondsToEndFromHere);
 					}
