@@ -54,7 +54,7 @@ namespace MatterControl.Printing
 		/// <summary>
 		/// Gets total print time that will leave the heaters on at the conclusion of the print.
 		/// </summary>
-		public static int PrintTimeToLeaveHeatersOn => 60 * 10;
+		public static int LeaveHeatersOnTime => 60 * 10;
 
 		public GCodeMemoryFile(bool gcodeHasExplicitLayerChangeInfo = false)
 		{
@@ -446,7 +446,7 @@ namespace MatterControl.Printing
 				{
 					// don't turn of extruders if we will end the print within 10 minutes
 					if (instructionIndex < gCodeCommandQueue.Count
-						&& gCodeCommandQueue[0].SecondsToEndFromHere < PrintTimeToLeaveHeatersOn)
+						&& this.TotalSecondsInPrint < LeaveHeatersOnTime)
 					{
 						return (toolToLookFor, gCodeCommandQueue[instructionIndex].SecondsToEndFromHere);
 					}

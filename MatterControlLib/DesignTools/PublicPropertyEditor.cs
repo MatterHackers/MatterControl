@@ -514,9 +514,7 @@ namespace MatterHackers.MatterControl.DesignTools
 #if !__ANDROID__
 			else if (propertyValue is List<string> stringList)
 			{
-				var selectedItem = ApplicationController.Instance.DragDropData.SceneContext.Scene.SelectedItem;
-
-				var field = new SurfacedEditorsField(theme, selectedItem);
+				var field = new SurfacedEditorsField(theme, property.Item);
 				field.Initialize(0);
 				field.ListValue = stringList;
 				field.ValueChanged += (s, e) =>
