@@ -150,8 +150,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 							this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
 
-							var SelectedPrinter = this.SelectedPrinter;
-
 							printerInfo.CloseAllChildren();
 
 							if (this.SelectedPrinter != null
