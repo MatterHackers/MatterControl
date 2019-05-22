@@ -1823,7 +1823,8 @@ namespace MatterHackers.MatterControl
 
 		public bool IsReloading { get; private set; } = false;
 
-		// TODO: No longer contains async child methods. Leaving async compatible pattern in place in case it's needed in the near future, revert back to void if not
+		private GuiWidget reloadingOverlay;
+
 		public async Task ReloadAll()
 		{
 			try
@@ -1834,7 +1835,7 @@ namespace MatterHackers.MatterControl
 
 				this.IsReloading = true;
 
-				var reloadingOverlay = new GuiWidget
+				reloadingOverlay = new GuiWidget
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Stretch,
@@ -1865,8 +1866,14 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
-			catch
+			catch (Exception ex)
 			{
+				reloadingOverlay?.CloseOnIdle();
+
+				UiThread.RunOnIdle(() =>
+				{
+					StyledMessageBox.ShowMessageBox("An unexpected error occurred during reload".Localize() + ": \n\n" + ex.Message, "Reload Failed".Localize());
+				});
 			}
 			finally
 			{
