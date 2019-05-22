@@ -38,9 +38,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class BabyStepsStream : GCodeStreamProxy
 	{
 		private int extruderIndex = 0;
-		private Vector3[] extruderOffsets = new Vector3[4];
+		private readonly Vector3[] extruderOffsets = new Vector3[4];
 
-		public PrinterMove lastDestination = PrinterMove.Unknown;
+		private PrinterMove lastInputDestination = PrinterMove.Unknown;
 
 		public Vector3 BabbyStepOffset { get; private set; } = Vector3.Zero;
 
@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			ReadExtruderOffsets();
 		}
 
-
 		private void ReadExtruderOffsets()
 		{
 			for (int i = 0; i < 4; i++)
@@ -69,36 +68,36 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			get
 			{
-				return $"Last Destination = {lastDestination}";
+				return $"Last Destination = {lastInputDestination}";
 			}
 		}
 
-		void Printer_SettingChanged(object s, StringEventArgs e)
+		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
 			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
 				var currentOffset = BabbyStepOffset.Z;
 				BabbyStepOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-				lastDestination.position.Z = lastDestination.position.Z - currentOffset + BabbyStepOffset.Z;
 			}
-			// if the offsets change update them (unless we are actively printing)
 			else if (e?.Data == SettingsKey.extruder_offset
 				&& !printer.Connection.Printing
 				&& !printer.Connection.Paused)
 			{
+				// if the offsets change update them (unless we are actively printing)
 				ReadExtruderOffsets();
 			}
 		}
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
-			this.lastDestination.CopyKnowSettings(position);
-			if (extruderIndex < 4)
-			{
-				lastDestination.position -= BabbyStepOffset;
-				lastDestination.position += extruderOffsets[extruderIndex];
-			}
-			internalStream.SetPrinterPosition(lastDestination);
+			lastInputDestination.CopyKnowSettings(position);
+
+			// calculate our offset to pass on to internal streams
+			var offestDestination = lastInputDestination;
+			offestDestination.position -= BabbyStepOffset;
+			offestDestination.position += extruderOffsets[Math.Min(extruderIndex, 4)];
+
+			internalStream.SetPrinterPosition(offestDestination);
 		}
 
 		public override void Dispose()
@@ -131,20 +130,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
-				PrinterMove currentMove = GetPosition(lineToSend, lastDestination);
+				PrinterMove currentMove = GetPosition(lineToSend, lastInputDestination);
 
 				PrinterMove moveToSend = currentMove;
-				if (extruderIndex < 4)
-				{
-					moveToSend.position += BabbyStepOffset;
-					moveToSend.position -= extruderOffsets[extruderIndex];
-				}
+				moveToSend.position += BabbyStepOffset;
+				moveToSend.position -= extruderOffsets[Math.Min(extruderIndex, 4)];
 
 				if (moveToSend.HaveAnyPosition)
 				{
-					lineToSend = CreateMovementLine(moveToSend, lastDestination);
+					lineToSend = CreateMovementLine(moveToSend, lastInputDestination);
 				}
-				lastDestination = currentMove;
+
+				lastInputDestination = currentMove;
 
 				return lineToSend;
 			}
