@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <summary>
 		/// Contains type to IAVolume mappings
 		/// </summary>
-		private Dictionary<Type, List<IInteractionElement>> iavMappings = new Dictionary<Type, List<IInteractionElement>>();
+		private readonly Dictionary<Type, List<IInteractionElement>> iavMappings = new Dictionary<Type, List<IInteractionElement>>();
 
 		/// <summary>
 		/// Interaction Volume Overrides for the selected scene item
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DrawOpenGLContent { get; set; } = true;
 
-		private List<IInteractionElement> registeredIAVolumes = new List<IInteractionElement>();
+		private readonly List<IInteractionElement> registeredIAVolumes = new List<IInteractionElement>();
 
 		public IEnumerable<IInteractionElement> InteractionVolumes
 		{
@@ -358,6 +358,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (renderSource != null)
 			{
 				renderSource.BeforeDraw -= RenderSource_BeforeDraw;
+				renderSource = null;
 			}
 
 			if (sceneContext.Printer != null)
@@ -383,6 +384,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.OnClosed(e);
+
+			// Clear lists and references
+			iavOverrides?.Clear();
+			iavMappings.Clear();
+			registeredIAVolumes.Clear();
+			drawables.Clear();
+			itemDrawables.Clear();
+			SelectedInteractionVolume = null;
+			HoveredInteractionVolume = null;
 		}
 
 		private bool FindInteractionVolumeHit(Ray ray, out InteractionVolume hitIAVolume, out IntersectInfo info)
