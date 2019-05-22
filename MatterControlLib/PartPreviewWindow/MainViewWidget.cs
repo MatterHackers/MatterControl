@@ -42,7 +42,6 @@ using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -341,32 +340,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Color startColor = theme.TextColor;
 
 			// Show a highlight on the button as the user did not click it
-			Animation flashBackground = null;
-
-			flashBackground = new Animation()
+			var flashBackground = new Animation()
 			{
 				DrawTarget = updateAvailableButton,
 				FramesPerSecond = 10,
-				Update = (s1, updateEvent) =>
+			};
+
+			flashBackground.Update += (s1, updateEvent) =>
+			{
+				totalSeconds += updateEvent.SecondsPassed;
+				if (totalSeconds < displayTime)
 				{
-					totalSeconds += updateEvent.SecondsPassed;
-					if (totalSeconds < displayTime)
+					double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+					var color = new Color(startColor, (int)((1 - blend) * 255));
+					foreach (var textWidget in textWidgets)
 					{
-						double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
-						var color = new Color(startColor, (int)((1 - blend) * 255));
-						foreach (var textWidget in textWidgets)
-						{
-							textWidget.TextColor = color;
-						}
+						textWidget.TextColor = color;
 					}
-					else
+				}
+				else
+				{
+					foreach (var textWidget in textWidgets)
 					{
-						foreach (var textWidget in textWidgets)
-						{
-							textWidget.TextColor = startColor;
-						}
-						flashBackground.Stop();
+						textWidget.TextColor = startColor;
 					}
+
+					flashBackground.Stop();
 				}
 			};
 
