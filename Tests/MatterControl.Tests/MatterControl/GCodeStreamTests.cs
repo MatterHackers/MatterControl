@@ -187,8 +187,9 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
+
 		[Test]
-		public void LineCuttingOnWhenLevelingOnTest()
+		public void LineCuttingOnWhenLevelingOnWithProbeTest()
 		{
 			string[] inputLines = new string[]
 			{
@@ -197,8 +198,6 @@ namespace MatterControl.Tests.MatterControl
 				"G1 X10 Y0 Z0 F1000",
 			};
 
-			// We should go back to the above code when possible. It requires making pause part and move while paused part of the stream.
-			// All communication should go through stream to minimize the difference between printing and controlling while not printing (all printing in essence).
 			string[] expected = new string[]
 			{
 				"; Software Leveling Applied",
@@ -225,6 +224,55 @@ namespace MatterControl.Tests.MatterControl
 					new Vector3(0, 0, 0),
 					new Vector3(10, 0, 0),
 					new Vector3(5, 10, 0)
+				}
+			};
+
+			printer.Settings.SetValue(SettingsKey.print_leveling_data, JsonConvert.SerializeObject(levelingData));
+			printer.Settings.SetValue(SettingsKey.has_z_probe, "1");
+			printer.Settings.SetValue(SettingsKey.use_z_probe, "1");
+			printer.Settings.SetValue(SettingsKey.probe_offset, "0,0,-.1");
+			printer.Settings.SetValue(SettingsKey.print_leveling_enabled, "1");
+
+			var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
+			ValidateStreamResponse(expected, testStream);
+		}
+
+		[Test]
+		public void LineCuttingOnWhenLevelingOnNoProbeTest()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 X0Y0Z0E0F1000",
+				"G1 X0Y0Z0E1F1000",
+				"G1 X10 Y0 Z0 F1000",
+			};
+
+			string[] expected = new string[]
+			{
+				"; Software Leveling Applied",
+				"G1 X0 Y0 Z-0.1 E0 F1000",
+				"G1 E1",
+				"G1 X1 Y0 Z-0.1",
+				"G1 X2 Y0 Z-0.1",
+				"G1 X3 Y0 Z-0.1",
+				"G1 X4 Y0 Z-0.1",
+				"G1 X5 Y0 Z-0.1",
+				"G1 X6 Y0 Z-0.1",
+				"G1 X7 Y0 Z-0.1",
+				"G1 X8 Y0 Z-0.1",
+				"G1 X9 Y0 Z-0.1",
+				"G1 X10 Y0 Z-0.1",
+			};
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			var levelingData = new PrintLevelingData()
+			{
+				SampledPositions = new List<Vector3>()
+				{
+					new Vector3(0, 0, -.1),
+					new Vector3(10, 0, -.1),
+					new Vector3(5, 10, -.1)
 				}
 			};
 
