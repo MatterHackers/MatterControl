@@ -63,53 +63,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return layerKey;
 			}
-			set
-			{
-				this["layer_id"] = value;
-			}
+
+			set => this["layer_id"] = value;
 		}
 
 		public string Name
 		{
-			get
-			{
-				return ValueOrDefault(SettingsKey.layer_name);
-			}
-			set
-			{
-				this[SettingsKey.layer_name] = value;
-			}
+			get => ValueOrDefault(SettingsKey.layer_name);
+			set => this[SettingsKey.layer_name] = value;
 		}
 
 		public string Source
 		{
-			get
-			{
-				return ValueOrDefault("layer_source");
-			}
-			set
-			{
-				this["layer_source"] = value;
-			}
+			get => ValueOrDefault("layer_source");
+			set => this["layer_source"] = value;
 		}
 
 		public string ETag
 		{
-			get
-			{
-				return ValueOrDefault("layer_etag");
-			}
-			set
-			{
-				this["layer_etag"] = value;
-			}
+			get => ValueOrDefault("layer_etag");
+			set => this["layer_etag"] = value;
 		}
 
 		public string ValueOrDefault(string key, string defaultValue = "")
 		{
-			string foundValue;
-			this.TryGetValue(key, out foundValue);
-
+			this.TryGetValue(key, out string foundValue);
 			return foundValue ?? defaultValue;
 		}
 
