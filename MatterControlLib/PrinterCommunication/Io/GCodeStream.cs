@@ -36,14 +36,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public abstract class GCodeStream : IDisposable
 	{
-		#region Abstract Functions
 		/// <summary>
-		/// returns null when there are no more lines
+		/// Get the next gcode line from this stream.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Returns the next gcode line after processing.</returns>
 		public abstract string ReadLine();
+
+		/// <summary>
+		/// Sends the printer position back up the stream pipe.
+		/// </summary>
+		/// <param name="position">The position as seen from down stream. Effectively what this stream will output after computation.</param>
 		public abstract void SetPrinterPosition(PrinterMove position);
-		#endregion
 
 		public abstract void Dispose();
 
@@ -81,11 +84,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				sb.AppendFormat("X{0:0.##} ", destination.position.X);
 			}
+
 			if (destination.position.Y != double.PositiveInfinity
 				&& destination.position.Y != start.position.Y)
 			{
 				sb.AppendFormat("Y{0:0.##} ", destination.position.Y);
 			}
+
 			if (destination.position.Z != double.PositiveInfinity
 				&& destination.position.Z != start.position.Z)
 			{
