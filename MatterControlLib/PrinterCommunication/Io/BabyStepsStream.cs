@@ -39,8 +39,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private int extruderIndex = 0;
 		private readonly Vector3[] extruderOffsets = new Vector3[4];
-
-		private PrinterMove lastInputDestination = PrinterMove.Unknown;
+		private PrinterMove outputWithBabyStepping = PrinterMove.Unknown;
+		private PrinterMove inputNoBabyStepping = PrinterMove.Unknown;
 
 		public Vector3 BabbyStepOffset { get; private set; } = Vector3.Zero;
 
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			get
 			{
-				return $"Last Destination = {lastInputDestination}";
+				return $"Last Destination = {inputNoBabyStepping}";
 			}
 		}
 
@@ -88,16 +88,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 		}
 
-		public override void SetPrinterPosition(PrinterMove position)
+		public override void SetPrinterPosition(PrinterMove outputPosition)
 		{
-			lastInputDestination.CopyKnowSettings(position);
+			outputWithBabyStepping.CopyKnowSettings(outputPosition);
 
 			// calculate our offset to pass on to internal streams
-			var offestDestination = lastInputDestination;
-			offestDestination.position -= BabbyStepOffset;
-			offestDestination.position += extruderOffsets[Math.Min(extruderIndex, 4)];
+			inputNoBabyStepping = outputWithBabyStepping;
+			inputNoBabyStepping.position -= BabbyStepOffset;
+			inputNoBabyStepping.position += extruderOffsets[Math.Min(extruderIndex, 4)];
 
-			internalStream.SetPrinterPosition(offestDestination);
+			internalStream.SetPrinterPosition(inputNoBabyStepping);
 		}
 
 		public override void Dispose()
@@ -130,18 +130,19 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend != null
 				&& LineIsMovement(lineToSend))
 			{
-				PrinterMove currentMove = GetPosition(lineToSend, lastInputDestination);
+				inputNoBabyStepping = GetPosition(lineToSend, inputNoBabyStepping);
 
-				PrinterMove moveToSend = currentMove;
+				// it is a struct so this is making a new copy we con modify
+				PrinterMove moveToSend = inputNoBabyStepping;
 				moveToSend.position += BabbyStepOffset;
 				moveToSend.position -= extruderOffsets[Math.Min(extruderIndex, 4)];
 
 				if (moveToSend.HaveAnyPosition)
 				{
-					lineToSend = CreateMovementLine(moveToSend, lastInputDestination);
+					lineToSend = CreateMovementLine(moveToSend, outputWithBabyStepping);
 				}
 
-				lastInputDestination = currentMove;
+				outputWithBabyStepping = moveToSend;
 
 				return lineToSend;
 			}
