@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return BoundingVolumeHierarchy.CreateNewHierachy(allPolys, maxRecursion);
 		}
 
-		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancelationToken)
+		public Task Create(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var selectedItem = scene.SelectedItem;
 
@@ -179,6 +179,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					Math.Floor((double)(suppoortBounds.MinXYZ.Y / PillarSize)),
 					Math.Ceiling(suppoortBounds.MaxXYZ.X / PillarSize),
 					Math.Ceiling(suppoortBounds.MaxXYZ.Y / PillarSize));
+
 				var partBounds = new RectangleDouble(gridBounds.Left * PillarSize,
 					gridBounds.Bottom * PillarSize,
 					gridBounds.Right * PillarSize,
@@ -187,6 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				int gridWidth = (int)gridBounds.Width;
 				int gridHeight = (int)gridBounds.Height;
 				var supportGrid = new List<List<List<(bool isBottom, double z)>>>();
+
 				for (int x = 0; x < gridWidth; x++)
 				{
 					supportGrid.Add(new List<List<(bool, double)>>());
@@ -320,6 +322,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				bool fromBed = SupportType == SupportGenerationType.From_Bed;
 				var halfPillar = PillarSize / 2;
+
 				foreach (var kvp in supportGrid)
 				{
 					var supportColumnData = kvp.Value;
@@ -360,12 +363,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				// add all the faces
 				var matrix = item.WorldMatrix(scene);
+
 				for (int faceIndex = 0; faceIndex < item.Mesh.Faces.Count; faceIndex++)
 				{
 					var face0Normal = item.Mesh.Faces[faceIndex].normal.TransformNormal(matrix).GetNormal();
 
 					var face = item.Mesh.Faces[faceIndex];
-					var verts = new int[] { face.v0, face.v1, face.v2 };
 					var p0 = item.Mesh.Vertices[face.v0].Transform(matrix);
 					var p1 = item.Mesh.Vertices[face.v1].Transform(matrix);
 					var p2 = item.Mesh.Vertices[face.v2].Transform(matrix);

@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				animationRatio += 1.0 / 7.0;
 			}
+
 			if (animationRatio >= 1)
 			{
 				Stop();

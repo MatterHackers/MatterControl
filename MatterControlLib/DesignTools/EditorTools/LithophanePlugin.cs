@@ -36,9 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Extensibility;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.Plugins.Lithophane
@@ -63,7 +61,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 				if (scene != null)
 				{
-					var topParent = wrapper.Parents<IObject3D>().LastOrDefault((i) => i.Parent != null);
+					var topParent = wrapper.Parents().LastOrDefault(i => i.Parent != null);
 					UiThread.RunOnIdle(() =>
 					{
 						scene.SelectedItem = topParent != null ? topParent : wrapper;
