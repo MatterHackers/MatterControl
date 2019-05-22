@@ -66,6 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private readonly List<IDrawable> drawables = new List<IDrawable>();
 		private readonly List<IDrawableItem> itemDrawables = new List<IDrawableItem>();
+
 		private bool emulatorHooked;
 		private long lastEmulatorDrawMs;
 		private readonly Mesh emulatorNozzleMesh = PlatonicSolids.CreateCube(1, 1, 10);
