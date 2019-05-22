@@ -545,15 +545,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
 				};
 
-				printerTab.CloseClicked += (s, e) =>
+				void Tab_CloseClicked(object sender, EventArgs args)
 				{
 					ApplicationController.Instance.ClosePrinter(printer);
-				};
+				}
 
+				void Widget_Closed(object sender, EventArgs args)
+				{
+					// Unregister listeners
+					printerTab.CloseClicked -= Tab_CloseClicked;
+					printerTab.Closed -= Widget_Closed;
+					printer.Settings.SettingChanged -= Printer_SettingChanged;
+				}
+
+				// Register listeners
 				printer.Settings.SettingChanged += Printer_SettingChanged;
-
-				// Unregister listener on Tab close
-				printerTab.Closed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
+				printerTab.CloseClicked += Tab_CloseClicked;
+				printerTab.Closed += Widget_Closed;
 
 				// Add printer tab
 				tabControl.AddTab(printerTab);
@@ -609,10 +617,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.AddTab(partTab);
 
-			partTab.CloseClicked += (s, e) =>
+			void Tab_CloseClicked(object sender, EventArgs args)
 			{
 				ApplicationController.Instance.Workspaces.Remove(workspace);
-			};
+			}
+
+			void Widget_Closed(object sender, EventArgs args)
+			{
+				partTab.CloseClicked -= Tab_CloseClicked;
+				partTab.Closed -= Widget_Closed;
+			}
+
+			partTab.CloseClicked += Tab_CloseClicked;
+			partTab.Closed += Widget_Closed;
 
 			return partTab;
 		}

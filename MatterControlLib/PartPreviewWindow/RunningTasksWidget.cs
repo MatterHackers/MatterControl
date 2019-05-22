@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
@@ -67,14 +68,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(pendingTasksList);
 
-			var tasks = ApplicationController.Instance.Tasks;
+			// Register listeners
+			ApplicationController.Instance.Tasks.TasksChanged += this.Tasks_TasksChanged;
 
-			tasks.TasksChanged += (s, e) =>
-			{
-				RenderRunningTasks(theme, tasks);
-			};
+			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
+		}
 
-			RenderRunningTasks(theme, tasks);
+		private void Tasks_TasksChanged(object sender, EventArgs e)
+		{
+			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
+		}
+
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			ApplicationController.Instance.Tasks.TasksChanged -= this.Tasks_TasksChanged;
+
+			base.OnClosed(e);
 		}
 
 		private void RenderRunningTasks(ThemeConfig theme, RunningTasksConfig tasks)
