@@ -37,7 +37,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MeshVisualizer;
-using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -47,7 +46,7 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class PathControl : IGLInteractionElement
 	{
-		private IInteractionVolumeContext interactionContext;
+		private IInteractionVolumeContext context;
 
 		private ThemeConfig theme;
 
@@ -59,12 +58,13 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private bool controlsRegistered = false;
 		private IEnumerable<VertexData> activePoints;
-		private Stroke sourceStroke;
+		private FlattenCurves flattened;
 		private bool m_visible;
+		private PointWidget _activeItem;
 
 		public PathControl(IInteractionVolumeContext context)
 		{
-			interactionContext = context;
+			this.context = context;
 			theme = MatterControl.AppContext.Theme;
 
 			world = context.World;
@@ -83,9 +83,24 @@ namespace MatterHackers.Plugins.EditorTools
 
 					foreach (var widget in targets)
 					{
-						widget.Visible = m_visible;
+						widget.Visible = m_visible && !(widget is CurveControlPoint);
 					}
 				}
+			}
+		}
+
+		public PointWidget ActiveItem
+		{
+			get => _activeItem;
+			set
+			{
+				if (_activeItem != null)
+				{
+					_activeItem.Selected = false;
+				}
+
+				_activeItem = value;
+				_activeItem.Selected = true;
 			}
 		}
 
@@ -97,10 +112,57 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public void DrawGlContent(DrawGlContentEventArgs e)
 		{
-			if (sourceStroke != null
+			if (flattened != null
 				&& e.Graphics2D is Graphics2DOpenGL glGraphics)
 			{
-				glGraphics.RenderTransformedPath(Matrix4X4.Identity, sourceStroke, theme.PrimaryAccentColor, false);
+				var pixelWidth = world.GetWorldUnitsPerScreenPixelAtPosition(new Vector3(activePoints.First().position));
+
+				//glGraphics.RenderTransformedPath(
+				//	Matrix4X4.Identity,
+				//	new Stroke(flattened, pixelWidth * 10),
+				//	theme.PrimaryAccentColor,
+				//	false);
+
+				glGraphics.RenderTransformedPath(
+					Matrix4X4.Identity,
+					new Stroke(flattened, pixelWidth * 1),
+					Color.Black,
+					false);
+
+				GL.Begin(BeginMode.Lines);
+				{
+					GL.Color4(Color.DarkGray);
+
+					PointWidget lastPoint = null;
+
+					for (int i = 0; i < targets.Count; i++)
+					{
+						var widget = targets[i];
+
+						if (widget == this.ActiveItem
+							&& lastPoint != null
+							&& widget is Curve4AnchorWidget curveWidget)
+						{
+							curveWidget.ControlPoint1.Visible = true;
+							curveWidget.ControlPoint2.Visible = true;
+
+							GL.Vertex3(new Vector3(widget.Point));
+							GL.Vertex3(new Vector3(curveWidget.ControlPoint2.Point));
+
+							GL.Vertex3(new Vector3(lastPoint.Point));
+							GL.Vertex3(new Vector3(curveWidget.ControlPoint1.Point));
+
+							break;
+						}
+
+						if (!(widget is CurveControlPoint))
+						{
+							lastPoint = widget;
+						}
+					}
+				}
+				GL.End();
+
 			}
 		}
 
@@ -136,7 +198,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					activePoints = vertexStorage.Vertices();
 
-					sourceStroke = new Stroke(new FlattenCurves(vertexStorage), 2);
+					flattened = new FlattenCurves(vertexStorage);
 
 					VertexPointWidget widget = null;
 
@@ -146,12 +208,45 @@ namespace MatterHackers.Plugins.EditorTools
 
 						if (ShapePath.is_vertex(command))
 						{
-							widget = new VertexPointWidget(interactionContext, vertexStorage, new Vector3(x, y, 0), command, i);
+							if (command == ShapePath.FlagsAndCommand.Curve4)
+							{
+								//vertexDataManager.AddVertex(x_ctrl1, y_ctrl1, ShapePath.FlagsAndCommand.Curve4);
+								//vertexDataManager.AddVertex(x_ctrl2, y_ctrl2, ShapePath.FlagsAndCommand.Curve4);
+								//vertexDataManager.AddVertex(x_to, y_to, ShapePath.FlagsAndCommand.Curve4);
+
+								var controlPoint1 = new CurveControlPoint(context, this, vertexStorage, new Vector3(x, y, 0), command, i);
+								context.GuiSurface.AddChild(controlPoint1);
+								targets.Add(controlPoint1);
+
+								command = vertexStorage.vertex(i + 1, out x, out y);
+								var controlPoint2 = new CurveControlPoint(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 1);
+								context.GuiSurface.AddChild(controlPoint2);
+								targets.Add(controlPoint2);
+
+								command = vertexStorage.vertex(i + 2, out x, out y);
+								var curveWidget = new Curve4AnchorWidget(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 2)
+								{
+									ControlPoint1 = controlPoint1,
+									ControlPoint2 = controlPoint2,
+								};
+
+								//controlPoint1.ParentPoint = curveWidget;
+								//controlPoint2.ParentPoint = curveWidget;
+
+								widget = curveWidget;
+
+								// Advance to account for 3 commands in Curve4
+								i += 2;
+							}
+							else
+							{
+								widget = new VertexPointWidget(context, this, vertexStorage, new Vector3(x, y, 0), command, i);
+							}
 							// widget.Click += (s, e) =>
 
 							targets.Add(widget);
 
-							interactionContext.GuiSurface.AddChild(widget);
+							context.GuiSurface.AddChild(widget);
 						}
 					}
 
@@ -169,18 +264,80 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
+		private class CurveControlPoint : VertexPointWidget
+		{
+			public CurveControlPoint(IInteractionVolumeContext context, PathControl interactionControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+				: base(context, interactionControl, vertexStorage, point, flagsandCommand, index)
+			{
+				this.ClaimSelection = false;
+				this.PointColor = Color.DarkBlue;
+				this.Visible = false;
+				this.HandleStyle = HandleStyle.Circle;
+			}
+
+			//public Curve4PointWidget ParentPoint { get; internal set; }
+		}
+
+		private class Curve4AnchorWidget : VertexPointWidget
+		{
+			private bool _focused;
+
+			public Curve4AnchorWidget(IInteractionVolumeContext context, PathControl interactionControl,  VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+				: base (context, interactionControl, vertexStorage, point, flagsandCommand, index)
+			{
+			}
+
+			public override void OnFocusChanged(EventArgs e)
+			{
+				if (this.Focused)
+				{
+					this.ControlPoint1.Visible = this.ControlPoint2.Visible = true;
+				}
+				else
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						bool eitherFocused = this.ControlPoint1.Focused || this.ControlPoint2.Focused;
+						this.ControlPoint1.Visible = this.ControlPoint2.Visible = eitherFocused;
+					}, .1);
+				}
+
+				base.OnFocusChanged(e);
+			}
+
+			public VertexPointWidget ControlPoint1 { get; set; }
+
+			public VertexPointWidget ControlPoint2 { get; set; }
+		}
+
 		private class VertexPointWidget : PointWidget
 		{
+			public PathControl PathInteractionControl { get; }
+
 			private ShapePath.FlagsAndCommand command;
 			private int index;
 			private VertexStorage vertexStorage;
 
-			public VertexPointWidget(IInteractionVolumeContext interactionContext, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
-				: base(interactionContext, point)
+			public VertexPointWidget(IInteractionVolumeContext context, PathControl interactionControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+				: base(context, point)
 			{
+				this.PathInteractionControl = interactionControl;
 				this.command = flagsandCommand;
 				this.index = index;
 				this.vertexStorage = vertexStorage;
+			}
+
+			public bool ClaimSelection { get; protected set; } = true;
+
+			public override void OnClick(MouseEventArgs mouseEvent)
+			{
+				if (this.ClaimSelection)
+				{
+					this.Selected = true;
+					this.PathInteractionControl.ActiveItem = this;
+				}
+
+				base.OnClick(mouseEvent);
 			}
 
 			protected override void OnDragTo(IntersectInfo info)
@@ -192,7 +349,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		private class PointWidget : GuiWidget
+		public class PointWidget : GuiWidget
 		{
 			private WorldView world;
 			private GuiWidget guiSurface;
@@ -201,21 +358,23 @@ namespace MatterHackers.Plugins.EditorTools
 			private bool mouseDownOnWidget;
 			private IInteractionVolumeContext interactionContext;
 			private static PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
+			private ThemeConfig theme;
 
 			public PointWidget(IInteractionVolumeContext interactionContext, Vector3 point)
 			{
+				this.theme = MatterControl.AppContext.Theme;
 				this.interactionContext = interactionContext;
 				this.HAnchor = HAnchor.Absolute;
 				this.VAnchor = VAnchor.Absolute;
-				this.Width = 12;
-				this.Height = 12;
+				this.Width = 8;
+				this.Height = 8;
 				this.Point = point;
 
 				world = interactionContext.World;
 				guiSurface = interactionContext.GuiSurface;
 			}
 
-			protected Vector3 Point { get; set; }
+			public Vector3 Point { get; protected set; }
 
 			public override void OnLoad(EventArgs args)
 			{
@@ -298,9 +457,29 @@ namespace MatterHackers.Plugins.EditorTools
 
 			public Color PointColor { get; set; } = Color.Black;
 
+			protected HandleStyle HandleStyle { get; set; } = HandleStyle.Square;
+
+			public bool Selected { get; set; }
+
 			public override void OnDraw(Graphics2D graphics2D)
 			{
-				graphics2D.Circle(6, 6, 3, this.PointColor);
+				if (this.HandleStyle == HandleStyle.Square)
+				{
+					if (this.Selected)
+					{
+						graphics2D.FillRectangle(0, 0, this.Width, this.Height, theme.PrimaryAccentColor);
+						graphics2D.Rectangle(0, 0, this.Width, this.Height, Color.White);
+					}
+					else
+					{
+						graphics2D.Rectangle(0, 0, this.Width, this.Height, this.PointColor);
+					}
+				}
+				else
+				{
+					graphics2D.Circle(this.LocalBounds.Center, 3.5, this.PointColor);
+				}
+
 				base.OnDraw(graphics2D);
 			}
 
@@ -308,6 +487,12 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				this.Position = world.GetScreenPosition(Point) - new Vector2(this.LocalBounds.Width / 2, this.LocalBounds.Height / 2);
 			}
+		}
+
+		public enum HandleStyle
+		{
+			Square,
+			Circle
 		}
 	}
 }
