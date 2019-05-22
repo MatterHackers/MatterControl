@@ -43,10 +43,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
 			: base(setupWizard, headerText, "")
 		{
-			var calibrated = "Your Probe is now calibrated.".Localize() + "\n"
+			var calibrated = "Z Calibration complete.".Localize() + "\n"
 				+ "    • " + "Remove the paper".Localize() + "\n"
 				+ "\n"
-				+ "If you wish to re-calibrate your probe in the future:".Localize() + "\n"
+				+ "If you wish to re-run Z Calibration in the future:".Localize() + "\n"
 				+ "    1. Select the 'Controls' tab on the right".Localize() + "\n"
 				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
 			contentRow.AddChild(this.CreateTextField(calibrated));
