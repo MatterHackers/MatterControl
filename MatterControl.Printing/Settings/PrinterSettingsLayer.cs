@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public PrinterSettingsLayer() { }
 
-		public PrinterSettingsLayer(Dictionary<string, string> settingsDictionary)
+		public PrinterSettingsLayer(IDictionary<string, string> settingsDictionary)
 		{
-			foreach(var keyValue in settingsDictionary)
+			foreach (var keyValue in settingsDictionary)
 			{
 				this[keyValue.Key] = keyValue.Value;
 			}
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PrinterSettingsLayer Clone()
 		{
 			string id = Guid.NewGuid().ToString();
-			return new PrinterSettingsLayer(this as Dictionary<string, string>)
+			return new PrinterSettingsLayer(this)
 			{
 				LayerID = id,
 				Name = this.Name,
