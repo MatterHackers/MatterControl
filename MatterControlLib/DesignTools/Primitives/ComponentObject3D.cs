@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool CanFlatten => Finalized;
 
-		public override bool Persistable => ApplicationController.Instance.UserHasPermissions(this);
+		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
 		public bool Finalized { get; set; } = true;
 
