@@ -31,21 +31,20 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
 	public class Datastore
 	{
-		bool wasExited = false;
 		public bool ConnectionError = false;
+		private bool wasExited = false;
 		public ISQLite dbSQLite;
 		private string datastoreLocation = ApplicationDataStorage.Instance.DatastorePath;
 		private static Datastore globalInstance;
 		private ApplicationSession activeSession;
 
-		private List<Type> dataStoreTables = new List<Type>
+		private readonly List<Type> dataStoreTables = new List<Type>
 		{
 			typeof(PrintItemCollection),
 			typeof(PrinterSetting),
@@ -76,6 +75,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				{
 					globalInstance = new Datastore();
 				}
+
 				return globalInstance;
 			}
 
@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				globalInstance = value;
 			}
 		}
+
 		public void Exit()
 		{
 			if (wasExited)
@@ -94,10 +95,10 @@ namespace MatterHackers.MatterControl.DataStorage
 
 			wasExited = true;
 
-			if (this.activeSession != null)
+			if (activeSession != null)
 			{
-				this.activeSession.SessionEnd = DateTime.Now;
-				this.activeSession.Commit();
+				activeSession.SessionEnd = DateTime.Now;
+				activeSession.Commit();
 			}
 
 			// lets wait a bit to make sure the commit has resolved.
@@ -122,7 +123,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		//Run initial checks and operations on sqlite datastore
+		// Run initial checks and operations on sqlite datastore
 		public void Initialize(ISQLite dbSQLite)
 		{
 			this.dbSQLite = dbSQLite;
@@ -148,7 +149,7 @@ namespace MatterHackers.MatterControl.DataStorage
 			return Convert.ToInt32(result);
 		}
 
-		//Begins new application session record
+		// Begins new application session record
 		private void StartSession()
 		{
 			activeSession = new ApplicationSession();
