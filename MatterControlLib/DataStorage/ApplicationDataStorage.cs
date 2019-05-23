@@ -28,19 +28,25 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
+	[SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Private getters used to enforce presence of directories")]
 	public class ApplicationDataStorage
 	{
-		public bool FirstRun = false;
+		// Required by Android
+		public bool FirstRun { get; set; } = false;
 
-		//Describes the location for storing all local application data
+		// Describes the location for storing all local application data
 		private static ApplicationDataStorage globalInstance;
 
-		private const string applicationDataFolderName = "MatterControl";
-		private const string datastoreName = "MatterControl.db";
+		private const string ApplicationDataFolderName = "MatterControl";
+
+		private const string DatastoreName = "MatterControl.db";
+
+		private string _applicationPath;
 
 		public static ApplicationDataStorage Instance
 		{
@@ -50,11 +56,11 @@ namespace MatterHackers.MatterControl.DataStorage
 				{
 					globalInstance = new ApplicationDataStorage();
 				}
+
 				return globalInstance;
 			}
 		}
 
-		private string _applicationPath;
 		public string ApplicationPath
 		{
 			get
@@ -68,14 +74,21 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 		}
 
-		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), applicationDataFolderName);
+		private static string _applicationUserDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ApplicationDataFolderName);
+
 		private static string _applicationLibraryDataPath => Path.Combine(_applicationUserDataPath, "Library");
+
 		private static string _libraryAssetPath => Path.Combine(_applicationLibraryDataPath, "Assets");
+
 		private static string _platingDirectory => Path.Combine(_applicationLibraryDataPath, "Plating");
-		private static string _partHistoryDirectory => Path.Combine(_applicationLibraryDataPath, "PartHistory");
+
 		private static string _applicationTempDataPath => Path.Combine(_applicationUserDataPath, "data", "temp");
+
 		private static string _gcodeOutputPath => Path.Combine(_applicationTempDataPath, "gcode");
+
 		private static string _cacheDirectory => Path.Combine(_applicationTempDataPath, "cache");
+
+		private static string _printHistoryPath => Path.Combine(_applicationLibraryDataPath, "PrintHistory");
 
 		private static string _webCacheDirectory => Path.Combine(_applicationTempDataPath, "WebCache");
 
@@ -89,11 +102,11 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string PlatingDirectory => EnsurePath(_platingDirectory);
 
-		public string PartHistoryDirectory => EnsurePath(_partHistoryDirectory);
-
 		public string GCodeOutputPath => EnsurePath(_gcodeOutputPath);
 
 		public string CacheDirectory => EnsurePath(_cacheDirectory);
+
+		public string PrintHistoryPath => EnsurePath(_printHistoryPath);
 
 		public string WebCacheDirectory => EnsurePath(_webCacheDirectory);
 
@@ -102,20 +115,20 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string CustomLibraryFoldersPath => Path.Combine(_applicationUserDataPath, "LibraryFolders.conf");
 
 		/// <summary>
-		/// Returns the path to the sqlite database
+		/// Gets the path to the Sqlite database
 		/// </summary>
-		/// <returns></returns>
-		public string DatastorePath => Path.Combine(EnsurePath(_applicationUserDataPath), datastoreName);
+		/// <returns>The path toe Sqlite database</returns>
+		public string DatastorePath => Path.Combine(EnsurePath(_applicationUserDataPath), DatastoreName);
 
 		/// <summary>
-		/// Returns the public storage folder (ex. download folder on Android)
+		/// Gets or sets the public storage folder (ex. download folder on Android)
 		/// </summary>
 		public string PublicDataStoragePath { get; set;  }
 
 		/// <summary>
 		/// Invokes CreateDirectory on all paths, creating if missing, before returning
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Returns the  path to the given directory</returns>
 		private static string EnsurePath(string fullPath)
 		{
 			Directory.CreateDirectory(fullPath);
@@ -126,6 +139,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		/// Overrides the AppData location. Used by tests to set a non-standard AppData location
 		/// </summary>
 		/// <param name="path">The new AppData path.</param>
+		/// <param name="sqliteBuilder">The Sqlite generator with platform specific bindings</param>
 		internal void OverrideAppDataLocation(string path, Func<ISQLite> sqliteBuilder)
 		{
 			Console.WriteLine("   Overriding ApplicationUserDataPath: " + path);

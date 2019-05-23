@@ -111,7 +111,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					graphics2D.Clear(Color.White);
 					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
 					// request the texture so we can set it to repeat
-					var plugin = ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
+					ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
 				});
 			}
 
