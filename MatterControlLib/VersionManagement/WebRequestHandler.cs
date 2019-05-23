@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			BackgroundWorker doRequestWorker = new BackgroundWorker();
 			doRequestWorker.DoWork += new DoWorkEventHandler(SendRequest);
-			doRequestWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(ProcessResponse);
+			doRequestWorker.RunWorkerCompleted += ProcessResponse;
 			doRequestWorker.RunWorkerAsync();
 		}
 
@@ -319,6 +319,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			RequestSucceeded?.Invoke(this, null);
 		}
+
 		protected virtual void ProcessResponse(object sender, RunWorkerCompletedEventArgs e)
 		{
 			JsonResponseDictionary responseValues = e.Result as JsonResponseDictionary;
