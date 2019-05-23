@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				bool isSelected = selectedItem != null
 					&& (item == selectedItem
-						|| item.Parents().Any(p => p == selectedItem));
+						|| item.Ancestors().Any(p => p == selectedItem));
 
 				// Invoke all item Drawables
 				foreach (var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))

@@ -272,7 +272,6 @@ namespace MatterHackers.MatterControl
 			Graphics2D graphics2D = bedplateImage.NewGraphics2D();
 			graphics2D.Clear(theme.BedColor);
 
-
 			{
 				double lineDist = bedplateImage.Width / (displayVolumeToBuild.X / divisor);
 
