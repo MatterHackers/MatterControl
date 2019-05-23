@@ -39,14 +39,14 @@ namespace MatterHackers.MatterControl
 		private bool mouseInBounds = false;
 
 		public HoverImageWidget(ImageBuffer normalImage, ImageBuffer hoverImage)
-			: base(normalImage)
+			: base(normalImage, listenForImageChanged: false)
 		{
 			this.hoverImage = hoverImage;
 		}
 
 		public override ImageBuffer Image
 		{
-			get => (mouseInBounds) ? hoverImage : base.Image;
+			get => mouseInBounds ? hoverImage : base.Image;
 			set => base.Image = value;
 		}
 

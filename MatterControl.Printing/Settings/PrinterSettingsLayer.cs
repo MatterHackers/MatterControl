@@ -40,9 +40,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public PrinterSettingsLayer() { }
 
-		public PrinterSettingsLayer(Dictionary<string, string> settingsDictionary)
+		public PrinterSettingsLayer(IDictionary<string, string> settingsDictionary)
 		{
-			foreach(var keyValue in settingsDictionary)
+			foreach (var keyValue in settingsDictionary)
 			{
 				this[keyValue.Key] = keyValue.Value;
 			}
@@ -63,53 +63,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return layerKey;
 			}
-			set
-			{
-				this["layer_id"] = value;
-			}
+
+			set => this["layer_id"] = value;
 		}
 
 		public string Name
 		{
-			get
-			{
-				return ValueOrDefault(SettingsKey.layer_name);
-			}
-			set
-			{
-				this[SettingsKey.layer_name] = value;
-			}
+			get => ValueOrDefault(SettingsKey.layer_name);
+			set => this[SettingsKey.layer_name] = value;
 		}
 
 		public string Source
 		{
-			get
-			{
-				return ValueOrDefault("layer_source");
-			}
-			set
-			{
-				this["layer_source"] = value;
-			}
+			get => ValueOrDefault("layer_source");
+			set => this["layer_source"] = value;
 		}
 
 		public string ETag
 		{
-			get
-			{
-				return ValueOrDefault("layer_etag");
-			}
-			set
-			{
-				this["layer_etag"] = value;
-			}
+			get => ValueOrDefault("layer_etag");
+			set => this["layer_etag"] = value;
 		}
 
 		public string ValueOrDefault(string key, string defaultValue = "")
 		{
-			string foundValue;
-			this.TryGetValue(key, out foundValue);
-
+			this.TryGetValue(key, out string foundValue);
 			return foundValue ?? defaultValue;
 		}
 
@@ -154,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PrinterSettingsLayer Clone()
 		{
 			string id = Guid.NewGuid().ToString();
-			return new PrinterSettingsLayer(this as Dictionary<string, string>)
+			return new PrinterSettingsLayer(this)
 			{
 				LayerID = id,
 				Name = this.Name,

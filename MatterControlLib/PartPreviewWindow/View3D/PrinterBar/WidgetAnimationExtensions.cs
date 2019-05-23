@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -43,27 +42,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double pulseTime = .5;
 			double totalSeconds = 0;
 			Color backgroundColor = widget.BackgroundColor;
+
 			// Show a highlight on the button as the user did not click it
-			Animation flashBackground = null;
-			flashBackground = new Animation()
+			var flashBackground = new Animation()
 			{
 				DrawTarget = widget,
 				FramesPerSecond = 10,
-				Update = (s1, updateEvent) =>
+			};
+			flashBackground.Update += (s1, updateEvent) =>
+			{
+				totalSeconds += updateEvent.SecondsPassed;
+
+				if (totalSeconds < displayTime)
 				{
-					totalSeconds += updateEvent.SecondsPassed;
-					if (totalSeconds < displayTime)
-					{
-						double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
-						widget.BackgroundColor = new Color(hightlightColor, (int)(blend * 255));
-					}
-					else
-					{
-						widget.BackgroundColor = backgroundColor;
-						flashBackground.Stop();
-					}
+					double blend = AttentionGetter.GetFadeInOutPulseRatio(totalSeconds, pulseTime);
+					widget.BackgroundColor = new Color(hightlightColor, (int)(blend * 255));
+				}
+				else
+				{
+					widget.BackgroundColor = backgroundColor;
+					flashBackground.Stop();
 				}
 			};
+
 			flashBackground.Start();
 		}
 
@@ -90,31 +91,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var direction = xdistance > 0 ? 1 : -1;
 			var startedMS = UiThread.CurrentTimerMs;
 
-			Animation animation = null;
-			animation = new Animation()
+			var animation = new Animation()
 			{
 				DrawTarget = widget,
 				FramesPerSecond = 20,
-				Update = (s1, updateEvent) =>
+			};
+			animation.Update += (s1, updateEvent) =>
+			{
+				elapsedMs = UiThread.CurrentTimerMs - startedMS;
+				if (elapsedMs < (displayTime + 300))
 				{
-					elapsedMs = UiThread.CurrentTimerMs - startedMS;
-					if (elapsedMs < (displayTime + 300))
-					{
-						var ratio = Math.Min(1, elapsedMs / displayTime);
-						double blend = Easing.Cubic.In(ratio);
-						box.Position = new VectorMath.Vector2(startX + (xdistance * blend), startY);
+					var ratio = Math.Min(1, elapsedMs / displayTime);
+					double blend = Easing.Cubic.In(ratio);
+					box.Position = new VectorMath.Vector2(startX + (xdistance * blend), startY);
 
-						//Console.WriteLine("Ms: {0}, Ratio: {1}, Easing: {2}, Position: {3}", elapsedMs, ratio, blend, box.Position);
-						box.Invalidate();
-					}
-					else
-					{
-						animation.Stop();
+					//Console.WriteLine("Ms: {0}, Ratio: {1}, Easing: {2}, Position: {3}", elapsedMs, ratio, blend, box.Position);
+					box.Invalidate();
+				}
+				else
+				{
+					animation.Stop();
 
-						animationComplete?.Invoke();
+					animationComplete?.Invoke();
 
-						UiThread.RunOnIdle(box.Close, .3);
-					}
+					UiThread.RunOnIdle(box.Close, .3);
 				}
 			};
 

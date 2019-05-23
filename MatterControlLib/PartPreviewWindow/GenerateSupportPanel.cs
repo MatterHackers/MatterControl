@@ -138,7 +138,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			return ApplicationController.Instance.Tasks.Execute(
 				"Create Support".Localize(),
-				null, supportGenerator.Create);
+				null,
+				supportGenerator.Create);
 		}
 	}
 }
