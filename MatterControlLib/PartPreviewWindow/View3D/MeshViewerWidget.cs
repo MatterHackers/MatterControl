@@ -245,8 +245,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				bool isSelected = selectedItem != null
-					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
-						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
+					&& (item == selectedItem
+						|| item.Parents().Any(p => p == selectedItem));
 
 				// Invoke all item Drawables
 				foreach (var drawable in itemDrawables.Where(d => d.DrawStage != DrawStage.Last && d.Enabled))
@@ -584,8 +584,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// HACK: Consider how shared code in DrawObject can be reused to prevent duplicate execution
 				bool isSelected = selectedItem != null
-					&& (selectedItem.DescendantsAndSelf().Any((i) => i == item)
-						|| selectedItem.Parents<ModifiedMeshObject3D>().Any((mw) => mw == item));
+					&& selectedItem.DescendantsAndSelf().Any((i) => i == item);
 
 				foreach (var itemDrawable in itemDrawables.Where(d => d.DrawStage == DrawStage.Last && d.Enabled))
 				{
