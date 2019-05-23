@@ -437,9 +437,12 @@ namespace MatterHackers.MatterControl
 		}
 
 		public Action RedeemDesignCode;
+
 		public Action EnterShareCode;
-		public Func<IObject3D, bool> UserHasPermissions;
-		public Func<IObject3D, string> GetUnlockPage;
+
+		public Func<IObject3D, bool> UserHasPermission { get; set; }
+
+		public Func<IObject3D, string> GetUnlockPage { get; set; }
 
 		private static ApplicationController globalInstance;
 
