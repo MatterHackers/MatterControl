@@ -303,14 +303,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				return;
 			}
 
-			var support = new GeneratedSupportObject3D()
-			{
-				Mesh = PlatonicSolids.CreateCube(1, 1, 1)
-			};
 			// make it just a bit small so they always overlap correctly
 			var reduceAmount = ColumnReduceAmount * .99;
-			support.Matrix = Matrix4X4.CreateScale(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ)
-				* Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2);
+
+			var support = new GeneratedSupportObject3D()
+			{
+				Mesh = PlatonicSolids.CreateCube(1, 1, 1),
+				Matrix = Matrix4X4.CreateScale(PillarSize - reduceAmount, PillarSize - reduceAmount, topZ - bottomZ)
+					* Matrix4X4.CreateTranslation(gridX, gridY, bottomZ + (topZ - bottomZ) / 2),
+			};
 
 			holder.Children.Add(support);
 		}
