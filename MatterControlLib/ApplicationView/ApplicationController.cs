@@ -2566,12 +2566,8 @@ namespace MatterHackers.MatterControl
 					// Create archive point for printing attempt
 					if (Path.GetExtension(sourcePath).ToUpper() == ".MCX")
 					{
-						// TODO: We should zip mcx and settings when starting a print
-						string platingDirectory = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "PrintHistory");
-						Directory.CreateDirectory(platingDirectory);
-
 						string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-						string archivePath = Path.Combine(platingDirectory, now + ".zip");
+						string archivePath = Path.Combine(ApplicationDataStorage.Instance.PrintHistoryPath, now + ".zip");
 
 						string settingsFilePath = ProfileManager.Instance.ProfilePath(printer.Settings.ID);
 
