@@ -558,7 +558,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					object3D.WorldMatrix(),
 					RenderTypes.Outlines,
 					object3D.WorldMatrix() * World.ModelviewMatrix,
-					wireColor);
+					wireColor,
+					allowBspRendering: transparentMeshes.Count < 1000);
 			}
 
 			if (!lookingDownOnBed)

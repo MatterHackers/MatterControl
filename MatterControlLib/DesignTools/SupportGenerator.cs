@@ -316,34 +316,37 @@ namespace MatterHackers.MatterControl.DesignTools
 		private void AddSupportColumns(RectangleDouble gridBounds, Dictionary<(int x, int y), SupportColumn> supportGrid)
 		{
 			IObject3D supportColumnsToAdd = new Object3D();
-			bool fromBed = SupportType == SupportGenerationType.From_Bed;
-			var halfPillar = PillarSize / 2;
-			foreach (var kvp in supportGrid)
+			using (supportColumnsToAdd.RebuildLock())
 			{
-				var supportColumnData = kvp.Value;
-
-				if (supportColumnData.Count == 0)
+				bool fromBed = SupportType == SupportGenerationType.From_Bed;
+				var halfPillar = PillarSize / 2;
+				foreach (var kvp in supportGrid)
 				{
-					continue;
-				}
+					var supportColumnData = kvp.Value;
 
-				var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize + halfPillar;
-				var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize + halfPillar;
-
-				if (fromBed)
-				{
-					// if the next plane is a bottom and is not far enough away, there is no space to put any support
-					if (supportColumnData[0].start < minimumSupportHeight
-						&& supportColumnData[0].end > minimumSupportHeight)
+					if (supportColumnData.Count == 0)
 					{
-						AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, supportColumnData[0].end + .01);
+						continue;
 					}
-				}
-				else
-				{
-					foreach (var (start, end) in supportColumnData)
+
+					var yPos = (gridBounds.Bottom + kvp.Key.y) * PillarSize + halfPillar;
+					var xPos = (gridBounds.Left + kvp.Key.x) * PillarSize + halfPillar;
+
+					if (fromBed)
 					{
-						AddSupportColumn(supportColumnsToAdd, xPos, yPos, start, end);
+						// if the next plane is a bottom and is not far enough away, there is no space to put any support
+						if (supportColumnData[0].start < minimumSupportHeight
+							&& supportColumnData[0].end > minimumSupportHeight)
+						{
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, 0, supportColumnData[0].end + .01);
+						}
+					}
+					else
+					{
+						foreach (var (start, end) in supportColumnData)
+						{
+							AddSupportColumn(supportColumnsToAdd, xPos, yPos, start, end);
+						}
 					}
 				}
 			}
