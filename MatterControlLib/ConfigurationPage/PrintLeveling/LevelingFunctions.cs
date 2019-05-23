@@ -98,7 +98,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
 
-			var probeZOffset = new Vector3(0, 0, printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset).Z);
+			var probeZOffset = default(Vector3);
+
+			if (printer.Settings.Helpers.UseZProbe())
+			{
+				probeZOffset = new Vector3(0, 0, printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset).Z);
+			}
+
 			// make all the triangle planes for these triangles
 			foreach (var triangle in triangles.Cells)
 			{

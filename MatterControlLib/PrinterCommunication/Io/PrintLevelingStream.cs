@@ -35,34 +35,31 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{
-		private PrinterMove _lastDestination = PrinterMove.Unknown;
-		private bool activePrinting;
 		private LevelingFunctions currentLevelingFunctions = null;
 		private Vector3 currentProbeZOffset;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
 
-		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream, bool activePrinting)
+		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			// always reset this when we construct
 			AllowLeveling = true;
-			this.activePrinting = activePrinting;
 		}
 
 		public override string DebugInfo
 		{
 			get
 			{
-				return $"Last Destination = {LastDestination}";
+				return $"Last Destination = {lastUnleveledDestination}";
 			}
 		}
 
 		public bool AllowLeveling { get; set; }
 
-		public PrinterMove LastDestination => _lastDestination;
+		private PrinterMove lastUnleveledDestination = PrinterMove.Unknown;
 
-		bool LevelingActive
+		private bool LevelingActive
 		{
 			get
 			{
@@ -74,7 +71,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string ReadLine()
 		{
-			if(!wroteLevelingStatus && LevelingActive)
+			if (!wroteLevelingStatus && LevelingActive)
 			{
 				wroteLevelingStatus = true;
 				return "; Software Leveling Applied";
@@ -99,12 +96,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (LineIsMovement(lineToSend))
 				{
-					PrinterMove currentDestination = GetPosition(lineToSend, LastDestination);
-					var leveledLine = GetLeveledPosition(lineToSend, currentDestination);
+					PrinterMove currentUnleveledDestination = GetPosition(lineToSend, lastUnleveledDestination);
+					var leveledLine = GetLeveledPosition(lineToSend, currentUnleveledDestination);
 
 					// TODO: clamp to 0 - baby stepping - extruder z-offset, so we don't go below the bed (for the active extruder)
 
-					_lastDestination = currentDestination;
+					lastUnleveledDestination = currentUnleveledDestination;
 
 					return leveledLine;
 				}
@@ -120,6 +117,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{
+			this.lastUnleveledDestination.CopyKnowSettings(position);
+
 			if (LevelingActive
 				&& position.PositionFullyKnown)
 			{
@@ -129,17 +128,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Unknown);
 				PrinterMove deltaToLeveledPosition = leveledDestination - position;
 
-				PrinterMove withoutLevelingOffset = position - deltaToLeveledPosition;
+				PrinterMove withLevelingOffset = position - deltaToLeveledPosition;
 
-				_lastDestination = withoutLevelingOffset;
-				_lastDestination.extrusion = position.extrusion;
-				_lastDestination.feedRate = position.feedRate;
+				// clean up settings that we don't want to be subtracted
+				withLevelingOffset.extrusion = position.extrusion;
+				withLevelingOffset.feedRate = position.feedRate;
 
-				internalStream.SetPrinterPosition(_lastDestination);
+				internalStream.SetPrinterPosition(withLevelingOffset);
 			}
 			else
 			{
-				this._lastDestination.CopyKnowSettings(position);
 				internalStream.SetPrinterPosition(position);
 			}
 		}
