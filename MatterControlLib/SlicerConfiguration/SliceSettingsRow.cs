@@ -365,7 +365,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 10)
 			});
 #endif
-
 		}
 
 		public void UpdateStyle()

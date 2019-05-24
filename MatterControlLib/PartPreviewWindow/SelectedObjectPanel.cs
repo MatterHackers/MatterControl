@@ -248,8 +248,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var colorRow = PublicPropertyEditor.CreateSettingsRow("Color".Localize());
-			colorRow.AddChild(colorField.Content);
 			colorField.Content.MouseDown += (s, e) =>
 			{
 				// make sure the render mode is set to shaded or outline
@@ -260,7 +258,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
 				}
 			};
-			editorPanel.AddChild(colorRow);
+
+			// color row
+			var row = PublicPropertyEditor.CreateSettingsRow("Color".Localize(), null, colorField.Content, theme);
+			editorPanel.AddChild(row);
 
 			// put in a material edit field
 			var materialField = new MaterialIndexField(theme, selectedItem.MaterialIndex);
@@ -273,8 +274,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var materialRow = PublicPropertyEditor.CreateSettingsRow("Material".Localize());
-			materialRow.AddChild(materialField.Content);
 			materialField.Content.MouseDown += (s, e) =>
 			{
 				if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Materials)
@@ -283,7 +282,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
 				}
 			};
-			editorPanel.AddChild(materialRow);
+
+			// material row
+			editorPanel.AddChild(
+				PublicPropertyEditor.CreateSettingsRow("Material".Localize(), null, materialField.Content, theme));
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
