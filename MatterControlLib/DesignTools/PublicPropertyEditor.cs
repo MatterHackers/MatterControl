@@ -206,24 +206,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget CreateSettingsRow(string labelText, string toolTipText, GuiWidget guiWidget, ThemeConfig theme)
 		{
-			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			guiWidget.VAnchor |= VAnchor.Center;
+
+			var row = new SettingsRow(labelText, toolTipText, theme)
 			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5),
-				ToolTipText = toolTipText
+				Padding = new BorderDouble(right: theme.DefaultContainerPadding)
 			};
+			row.AddChild(guiWidget);
 
-			rowContainer.AddChild(new TextWidget(labelText + ":", pointSize: 11, textColor: theme.TextColor)
-			{
-				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.Center,
-			});
-
-			rowContainer.AddChild(new HorizontalSpacer());
-
-			rowContainer.AddChild(guiWidget);
-
-			return rowContainer;
+			return row;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)

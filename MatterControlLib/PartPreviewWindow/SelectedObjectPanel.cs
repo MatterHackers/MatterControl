@@ -144,7 +144,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Name = "editorPanel",
-				Padding = new BorderDouble(right: theme.DefaultContainerPadding + 1)
 			};
 
 			// Wrap editorPanel with scrollable container
@@ -163,7 +162,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(editorSectionWidget);
 
 			this.ContentPanel = editorPanel;
-			editorPanel.Padding = new BorderDouble(theme.DefaultContainerPadding, 0);
 
 			// Register listeners
 			scene.SelectionChanged += Scene_SelectionChanged;
@@ -261,6 +259,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// color row
 			var row = PublicPropertyEditor.CreateSettingsRow("Color".Localize(), null, colorField.Content, theme);
+
+			// Special top border style for first item in editor
+			row.Border = new BorderDouble(0, 1);
+
 			editorPanel.AddChild(row);
 
 			// put in a material edit field
@@ -337,7 +339,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Enforce panel padding
 				foreach (var sectionWidget in editorPanel.Descendants<SectionWidget>())
 				{
-					sectionWidget.Margin = new BorderDouble(0, theme.DefaultContainerPadding / 2);
+					sectionWidget.Margin = 0;
 				}
 			}
 			else
