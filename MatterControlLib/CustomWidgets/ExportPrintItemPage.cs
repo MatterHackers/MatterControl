@@ -182,13 +182,10 @@ namespace MatterHackers.MatterControl
 			exportButton.Name = "Export Button";
 			exportButton.Click += (s, e) =>
 			{
-				string fileTypeFilter = "";
-				string targetExtension = "";
-
 				IExportPlugin activePlugin = null;
 
 				// Loop over all plugin buttons, break on the first checked item found
-				foreach(var button in this.exportPluginButtons.Keys)
+				foreach (var button in this.exportPluginButtons.Keys)
 				{
 					if (button.Checked)
 					{
@@ -203,112 +200,113 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				fileTypeFilter = activePlugin.ExtensionFilter;
-				targetExtension = activePlugin.FileExtension;
+				DoExport(libraryItems, printer, activePlugin, centerOnBed, showInFolderAfterSave.Checked);
 
 				this.Parent.CloseOnIdle();
+			};
 
-				if (activePlugin is FolderExport)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						AggContext.FileDialogs.SelectFolderDialog(
-							new SelectFolderDialogParams("Select Location To Export Files")
-							{
-								ActionButtonLabel = "Export".Localize(),
-								Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
-							},
-							(openParams) =>
-							{
-								ApplicationController.Instance.Tasks.Execute(
-									"Saving".Localize() + "...",
-									printer,
-									async (reporter, cancellationToken) =>
-									{
-										string path = openParams.FolderPath;
-										if (!string.IsNullOrEmpty(path))
-										{
-											await activePlugin.Generate(libraryItems, path, reporter, cancellationToken);
-										}
-									});
-							});
-					});
 
-					return;
-				}
+			this.AddPageAction(exportButton);
+		}
 
+		public static void DoExport(IEnumerable<ILibraryItem> libraryItems, PrinterConfig printer, IExportPlugin exportPlugin, bool centerOnBed = false, bool showFile = false)
+		{
+			string fileTypeFilter = "";
+			string targetExtension = "";
+
+			fileTypeFilter = exportPlugin.ExtensionFilter;
+			targetExtension = exportPlugin.FileExtension;
+
+			if (exportPlugin is FolderExport)
+			{
 				UiThread.RunOnIdle(() =>
 				{
-					string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();
-					string workspaceName = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
-					AggContext.FileDialogs.SaveFileDialog(
-						new SaveFileDialogParams(fileTypeFilter)
-						{
-							Title = title,
+					AggContext.FileDialogs.SelectFolderDialog(
+						new SelectFolderDialogParams("Select Location To Export Files") {
 							ActionButtonLabel = "Export".Localize(),
-							FileName = Path.GetFileNameWithoutExtension(libraryItems.FirstOrDefault()?.Name ?? workspaceName)
+							Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
 						},
-						(saveParams) =>
+						(openParams) => {
+							ApplicationController.Instance.Tasks.Execute(
+								"Saving".Localize() + "...",
+								printer,
+								async (reporter, cancellationToken) => {
+									string path = openParams.FolderPath;
+									if (!string.IsNullOrEmpty(path)) {
+										await exportPlugin.Generate(libraryItems, path, reporter, cancellationToken);
+									}
+								});
+						});
+				});
+
+				return;
+			}
+
+			UiThread.RunOnIdle(() =>
+			{
+				string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();
+				string workspaceName = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
+				AggContext.FileDialogs.SaveFileDialog(
+					new SaveFileDialogParams(fileTypeFilter)
+					{
+						Title = title,
+						ActionButtonLabel = "Export".Localize(),
+						FileName = Path.GetFileNameWithoutExtension(libraryItems.FirstOrDefault()?.Name ?? workspaceName)
+					},
+					(saveParams) =>
+					{
+						string savePath = saveParams.FileName;
+
+						if (!string.IsNullOrEmpty(savePath))
 						{
-							string savePath = saveParams.FileName;
-
-							if (!string.IsNullOrEmpty(savePath))
-							{
-								ApplicationController.Instance.Tasks.Execute(
-									"Exporting".Localize() + "...",
-									printer,
-									async (reporter, cancellationToken) =>
+							ApplicationController.Instance.Tasks.Execute(
+								"Exporting".Localize() + "...",
+								printer,
+								async (reporter, cancellationToken) =>
+								{
+									string extension = Path.GetExtension(savePath);
+									if (!extension.Equals(targetExtension, StringComparison.OrdinalIgnoreCase))
 									{
-										string extension = Path.GetExtension(savePath);
-										if (!extension.Equals(targetExtension, StringComparison.OrdinalIgnoreCase))
+										savePath += targetExtension;
+									}
+
+									List<ValidationError> exportErrors = null;
+
+									if (exportPlugin != null)
+									{
+										if (exportPlugin is GCodeExport gCodeExport)
 										{
-											savePath += targetExtension;
+											gCodeExport.CenterOnBed = centerOnBed;
 										}
 
-										List<ValidationError> exportErrors = null;
+										exportErrors = await exportPlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
+									}
 
-										if (activePlugin != null)
+									if (exportErrors == null || exportErrors.Count == 0)
+									{
 										{
-											if(activePlugin is GCodeExport gCodeExport)
+											if (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.X11)
 											{
-												gCodeExport.CenterOnBed = centerOnBed;
+												if (showFile) {
+													AggContext.FileDialogs.ShowFileInFolder(savePath);
+												}
 											}
-
-											exportErrors = await activePlugin.Generate(libraryItems, savePath, reporter, cancellationToken);
 										}
-
-										if (exportErrors == null || exportErrors.Count == 0)
-										{
-											ShowFileIfRequested(savePath);
-										}
-										else 
-										{
-											bool showGenerateErrors = !(activePlugin is GCodeExport);
+									}
+									else
+									{
+										bool showGenerateErrors = !(exportPlugin is GCodeExport);
 
 											// Only show errors in Generate if not GCodeExport - GCodeExport shows validation errors before Generate call
 											if (showGenerateErrors)
 											{
 												ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
 											}
-										}
-									});
-							}
-						});
-				});
-			};
-
-			this.AddPageAction(exportButton);
-		}
-
-		private void ShowFileIfRequested(string filename)
-		{
-			if (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.X11)
-			{
-				if (showInFolderAfterSave.Checked)
-				{
-					AggContext.FileDialogs.ShowFileInFolder(filename);
-				}
-			}
+									}
+								});
+						}
+					});
+			});
 		}
 	}
 }
