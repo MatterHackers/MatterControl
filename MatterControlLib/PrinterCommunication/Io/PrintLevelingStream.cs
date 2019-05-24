@@ -51,13 +51,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 			get
 			{
-				return $"Last Destination = {lastUnleveledDestination}";
+				return $"Last Destination = {inputUnleveled}";
 			}
 		}
 
 		public bool AllowLeveling { get; set; }
 
-		private PrinterMove lastUnleveledDestination = PrinterMove.Unknown;
+		private PrinterMove inputUnleveled = PrinterMove.Unknown;
 
 		private bool LevelingActive
 		{
@@ -96,12 +96,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (LineIsMovement(lineToSend))
 				{
-					PrinterMove currentUnleveledDestination = GetPosition(lineToSend, lastUnleveledDestination);
+					PrinterMove currentUnleveledDestination = GetPosition(lineToSend, inputUnleveled);
 					var leveledLine = GetLeveledPosition(lineToSend, currentUnleveledDestination);
 
 					// TODO: clamp to 0 - baby stepping - extruder z-offset, so we don't go below the bed (for the active extruder)
 
-					lastUnleveledDestination = currentUnleveledDestination;
+					inputUnleveled = currentUnleveledDestination;
 
 					return leveledLine;
 				}
@@ -115,30 +115,33 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public override void SetPrinterPosition(PrinterMove position)
+		public override void SetPrinterPosition(PrinterMove outputPosition)
 		{
-			this.lastUnleveledDestination.CopyKnowSettings(position);
+			var outputWithLeveling = PrinterMove.Unknown;
+
+			outputWithLeveling.CopyKnowSettings(outputPosition);
 
 			if (LevelingActive
-				&& position.PositionFullyKnown)
+				&& outputPosition.PositionFullyKnown)
 			{
-				string lineBeingSent = CreateMovementLine(position);
-				string leveledPosition = GetLeveledPosition(lineBeingSent, position);
+				string expectedOutput = CreateMovementLine(outputPosition);
+				string doubleLeveledOutput = GetLeveledPosition(expectedOutput, outputPosition);
 
-				PrinterMove leveledDestination = GetPosition(leveledPosition, PrinterMove.Unknown);
-				PrinterMove deltaToLeveledPosition = leveledDestination - position;
+				PrinterMove doubleLeveledDestination = GetPosition(doubleLeveledOutput, PrinterMove.Unknown);
+				PrinterMove deltaToLeveledPosition = doubleLeveledDestination - outputPosition;
 
-				PrinterMove withLevelingOffset = position - deltaToLeveledPosition;
+				this.inputUnleveled = outputPosition - deltaToLeveledPosition;
 
 				// clean up settings that we don't want to be subtracted
-				withLevelingOffset.extrusion = position.extrusion;
-				withLevelingOffset.feedRate = position.feedRate;
+				this.inputUnleveled.extrusion = outputPosition.extrusion;
+				this.inputUnleveled.feedRate = outputPosition.feedRate;
 
-				internalStream.SetPrinterPosition(withLevelingOffset);
+				internalStream.SetPrinterPosition(this.inputUnleveled);
 			}
 			else
 			{
-				internalStream.SetPrinterPosition(position);
+				this.inputUnleveled = outputPosition;
+				internalStream.SetPrinterPosition(this.inputUnleveled);
 			}
 		}
 
