@@ -87,9 +87,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var pillarRow = PublicPropertyEditor.CreateSettingsRow("Pillar Size".Localize(), "The width and depth of the support pillars".Localize(), theme);
-			pillarRow.AddChild(pillarSizeField.Content);
-			this.AddChild(pillarRow);
+			// pillar rows
+			this.AddChild(
+				PublicPropertyEditor.CreateSettingsRow(
+					"Pillar Size".Localize(),
+					"The width and depth of the support pillars".Localize(),
+					pillarSizeField.Content,
+					theme));
 
 			// put in the angle setting
 			var overHangField = new DoubleField(theme);
@@ -105,9 +109,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 
-			var overHangRow = PublicPropertyEditor.CreateSettingsRow("Overhang Angle".Localize(), "The angle to generate support for".Localize(), theme);
-			overHangRow.AddChild(overHangField.Content);
-			this.AddChild(overHangRow);
+			// overhang row
+			this.AddChild(PublicPropertyEditor.CreateSettingsRow(
+				"Overhang Angle".Localize(),
+				"The angle to generate support for".Localize(),
+				overHangField.Content,
+				theme));
 
 			// Button Row
 			var buttonRow = new FlowLayoutWidget()

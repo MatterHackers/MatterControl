@@ -152,12 +152,47 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnLoad(args);
 		}
 
+		private static int popupCount;
+		private bool popupScheduled = false;
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
 			this.Invalidate();
 
-			this.ShowPopover(this);
+			if (!popupScheduled)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					void Popover_Closed (object sender, EventArgs e)
+					{
+						popupCount--;
+
+						if (sender is GuiWidget widget)
+						{
+							widget.Closed -= Popover_Closed;
+						}
+					}
+
+					if (mouseInBounds)
+					{
+						popupCount++;
+						this.ShowPopover(this);
+
+						if (popoverBubble != null)
+						{
+							popoverBubble.Closed += Popover_Closed;
+						}
+
+						this.Invalidate();
+					}
+
+					popupScheduled = false;
+
+				}, popupCount > 0 ? ToolTipManager.ReshowDelay : ToolTipManager.InitialDelay);
+			}
+
+			popupScheduled = true;
 
 			base.OnMouseEnterBounds(mouseEvent);
 		}

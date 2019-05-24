@@ -524,9 +524,15 @@ namespace MatterHackers.MatterControl
 			return solidSlider;
 		}
 
+		// ApplySquareBoxStyle
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, BorderDouble margin)
 		{
-			return ApplyBoxStyle(sectionWidget, this.SectionBackgroundColor, margin);
+			sectionWidget.BackgroundColor = this.SectionBackgroundColor;
+			sectionWidget.Margin = 0;
+			sectionWidget.Border = new BorderDouble(bottom: 1);
+			sectionWidget.BorderColor = this.RowBorder;
+
+			return sectionWidget;
 		}
 
 		public SectionWidget ApplyBoxStyle(SectionWidget sectionWidget, Color backgroundColor, BorderDouble margin)
