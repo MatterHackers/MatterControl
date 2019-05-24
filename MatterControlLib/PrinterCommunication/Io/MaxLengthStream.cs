@@ -121,6 +121,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									{
 										movesToSend.Add(nextPoint);
 									}
+
 									nextPoint += deltaForSegment;
 								}
 

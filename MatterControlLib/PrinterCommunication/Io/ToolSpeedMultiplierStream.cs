@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
 				}
+
 				this.lastDestination = currentMove;
 				return lineToSend;
 			}
