@@ -36,6 +36,8 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.Library.Export;
+using MatterHackers.MatterControl.Plugins.X3GDriver;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -194,6 +196,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.CloseMenu();
 				};
 
+				GCodeExport exportPlugin = null;
+				string exportButtonText = "Export G-Code".Localize();
+
+				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
+				{
+					if (printer.Settings.GetValue<bool>("enable_sailfish_communication")) {
+						if (plugin is X3GExport) {
+							exportPlugin = (GCodeExport)plugin;
+							exportButtonText = "Export X3G".Localize();
+						}
+					} else {
+						if (plugin is GCodeExport & !(plugin is X3GExport)) {
+							exportPlugin = (GCodeExport)plugin;
+						}
+					}
+				}
+
+				exportPlugin.Initialize(printer);
+
+				var exportGcodeButton = new TextButton(exportButtonText, menuTheme) {
+					Name = "Export Gcode Button",
+					Enabled = exportPlugin.Enabled,
+					ToolTipText = exportPlugin.DisabledReason,
+				};
+
+				exportGcodeButton.Click += (s, e) => ExportPrintItemPage.DoExport(new[] { new InMemoryLibraryItem(printer.Bed.Scene) }, printer, exportPlugin );
+
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
 				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
 					&& UserSettings.Instance.get($"Ignore_{e.ID}") != "true");
@@ -212,6 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(startPrintButton);
+				setupRow.AddChild(exportGcodeButton);
 
 				printPanel.AddChild(setupRow);
 
