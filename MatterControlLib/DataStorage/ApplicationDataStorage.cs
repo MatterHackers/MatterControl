@@ -90,8 +90,6 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		private static string _printHistoryPath => Path.Combine(_applicationLibraryDataPath, "PrintHistory");
 
-		private static string _webCacheDirectory => Path.Combine(_applicationTempDataPath, "WebCache");
-
 		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
 		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
@@ -107,8 +105,6 @@ namespace MatterHackers.MatterControl.DataStorage
 		public string CacheDirectory => EnsurePath(_cacheDirectory);
 
 		public string PrintHistoryPath => EnsurePath(_printHistoryPath);
-
-		public string WebCacheDirectory => EnsurePath(_webCacheDirectory);
 
 		public string DownloadsDirectory { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
