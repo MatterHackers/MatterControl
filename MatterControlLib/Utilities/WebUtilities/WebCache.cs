@@ -54,8 +54,7 @@ namespace MatterHackers.MatterControl
 		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
-
-			var imageFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".png");
+			var imageFileName = ApplicationController.CacheablePath("Images", longHash.ToString() + ".png");
 
 			if (File.Exists(imageFileName))
 			{
@@ -109,9 +108,8 @@ namespace MatterHackers.MatterControl
 			var asyncImageSequence = new ImageSequence();
 
 			var longHash = uriToLoad.GetLongHashCode();
-			var pngFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".png");
-			var gifFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".gif");
-
+			var pngFileName = ApplicationController.CacheablePath("Images", longHash.ToString() + ".png");
+			var gifFileName = ApplicationController.CacheablePath("Images", longHash.ToString() + ".gif");
 
 			if (File.Exists(pngFileName))
 			{
@@ -206,7 +204,7 @@ namespace MatterHackers.MatterControl
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
-			var textFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".txt");
+			var textFileName = ApplicationController.CacheablePath("Text", longHash.ToString() + ".txt");
 
 			string fileText = null;
 			if (File.Exists(textFileName))
