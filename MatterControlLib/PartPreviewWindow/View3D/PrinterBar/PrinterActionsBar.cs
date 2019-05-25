@@ -376,26 +376,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								if (revertSettings)
 								{
-									bool onlyReloadSliceSettings = true;
-									if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print)
-										&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
-									{
-										onlyReloadSliceSettings = false;
-									}
-
 									printer.Settings.ClearUserOverrides();
 									printer.Settings.Save(clearBlackListSettings: true);
-
 									printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();
 
-									if (onlyReloadSliceSettings)
-									{
-										printer?.Bed.GCodeRenderer?.Clear3DGCode();
-									}
-									else
-									{
-										ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
-									}
+									ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
 								}
 							},
 							"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
