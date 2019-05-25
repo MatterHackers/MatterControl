@@ -342,7 +342,8 @@ namespace MatterHackers.GCodeVisualizer
 				for (int i = renderInfo.EndLayerIndex - 1; i >= renderInfo.StartLayerIndex; i--)
 				{
 					// If its the first render or we change what we are trying to render then create vertex data.
-					if (layerVertexBuffer[i] == null)
+					if (layerVertexBuffer.Count > i
+						&&  layerVertexBuffer[i] == null)
 					{
 						layerVertexBuffer[i] = Create3DDataForLayer(i, renderInfo);
 					}
