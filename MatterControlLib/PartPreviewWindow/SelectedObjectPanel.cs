@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			// color row
-			var row = PublicPropertyEditor.CreateSettingsRow("Color".Localize(), null, colorField.Content, theme);
+			var row = new SettingsRow("Color".Localize(), null, colorField.Content, theme);
 
 			// Special top border style for first item in editor
 			row.Border = new BorderDouble(0, 1);
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// material row
 			editorPanel.AddChild(
-				PublicPropertyEditor.CreateSettingsRow("Material".Localize(), null, materialField.Content, theme));
+				new SettingsRow("Material".Localize(), null, materialField.Content, theme));
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject
