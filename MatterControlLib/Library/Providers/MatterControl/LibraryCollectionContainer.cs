@@ -86,6 +86,12 @@ namespace MatterHackers.MatterControl.Library
 					() => new PrintQueueContainer()));
 
 #if DEBUG
+			this.ChildContainers.Add(
+				new DynamicContainerLink(
+					() => "Pipe Works".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					() => new PipeWorksContainer()));
 
 			int index = 0;
 
