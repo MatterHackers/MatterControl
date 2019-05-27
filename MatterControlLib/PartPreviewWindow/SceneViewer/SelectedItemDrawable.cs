@@ -35,14 +35,14 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using static MatterHackers.Agg.Easing;
+using static MatterHackers.VectorMath.Easing;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SelectedItemDrawable : IDrawableItem, IDisposable
 	{
-		private InteractiveScene scene;
-		private GuiWidget guiWidget;
+		private readonly InteractiveScene scene;
+		private readonly GuiWidget guiWidget;
 		private long lastSelectionChangedMs;
 
 		// TODO: Use theme colors
@@ -81,8 +81,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (isSelected && scene.DrawSelection)
 			{
-				var frustum = world.GetClippingFrustum();
-
 				var selectionColor = Color.White;
 				double secondsSinceSelectionChanged = (UiThread.CurrentTimerMs - lastSelectionChangedMs) / 1000.0;
 				if (secondsSinceSelectionChanged < .5)
@@ -101,11 +99,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					guiWidget.Invalidate();
 				}
 
-				this.RenderSelection(item, frustum, selectionColor, world);
+				this.RenderSelection(item, selectionColor, world);
 			}
 		}
 
-		private void RenderSelection(IObject3D item, Frustum frustum, Color selectionColor, WorldView world)
+		private void RenderSelection(IObject3D item, Color selectionColor, WorldView world)
 		{
 			if (item.Mesh == null)
 			{
@@ -134,7 +132,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			GLHelper.Render(item.Mesh,
 				selectionColor,
-				scaleMatrix, RenderTypes.Shaded,
+				scaleMatrix,
+				RenderTypes.Shaded,
 				null,
 				darkWireframe);
 

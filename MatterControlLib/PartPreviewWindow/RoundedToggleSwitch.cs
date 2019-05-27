@@ -30,11 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.VectorMath;
-using static MatterHackers.Agg.Easing;
+using static MatterHackers.VectorMath.Easing;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -82,6 +81,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private ToggleSwitchAnimation animation;
 
 		private bool _checked;
+
 		public bool Checked
 		{
 			get => _checked;
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.theme = theme;
 			// this.DoubleBuffer = true;
 			inactiveBarColor = theme.IsDarkTheme ? theme.Shade : theme.SlightShade;
-			activeBarColor = new Color(theme.PrimaryAccentColor, (theme.IsDarkTheme ? 100 : 70));
+			activeBarColor = new Color(theme.PrimaryAccentColor, theme.IsDarkTheme ? 100 : 70);
 
 			this.MinimumSize = new Vector2(minWidth, theme.ButtonHeight);
 		}
@@ -127,9 +127,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private void RoundedToggleSwitch_AfterDraw(object sender, DrawEventArgs e)
 		{
-			var position = new Vector2((this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding : toggleRadiusPlusPadding, centerY);
+			var position = new Vector2(this.Checked ? LocalBounds.Right - toggleRadiusPlusPadding : toggleRadiusPlusPadding, centerY);
 			position = this.TransformToScreenSpace(position);
-			Color toggleColor = (this.Checked) ? theme.PrimaryAccentColor : Color.Gray;
+			Color toggleColor = this.Checked ? theme.PrimaryAccentColor : Color.Gray;
 
 			e.Graphics2D.Circle(position,
 				animation.finalRadius * Quadratic.Out(animation.animationRatio),
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			bool newValue = !this.Checked;
 
-			bool checkStateChanged = (newValue != this.Checked);
+			bool checkStateChanged = newValue != this.Checked;
 
 			this.Checked = newValue;
 
@@ -193,14 +193,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.OnDraw(graphics2D);
 
-			var position = (this.Checked) ? LocalBounds.Right - toggleRadiusPlusPadding: toggleRadiusPlusPadding;
+			var position = this.Checked ? LocalBounds.Right - toggleRadiusPlusPadding : toggleRadiusPlusPadding;
 
-			Color barColor = (this.Checked) ? activeBarColor : inactiveBarColor;
-			Color toggleColor = (this.Checked) ? theme.PrimaryAccentColor : Color.Gray;
+			Color barColor = this.Checked ? activeBarColor : inactiveBarColor;
+			Color toggleColor = this.Checked ? theme.PrimaryAccentColor : Color.Gray;
 
 			if (mouseIsDown && mouseInBounds)
 			{
-				barColor = (this.Checked) ? inactiveBarColor : activeBarColor;
+				barColor = this.Checked ? inactiveBarColor : activeBarColor;
 			}
 
 			if (!Enabled)
@@ -249,6 +249,5 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			base.OnBoundsChanged(e);
 		}
-
 	}
 }
