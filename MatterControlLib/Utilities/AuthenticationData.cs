@@ -145,19 +145,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		[JsonIgnore]
-		public string FileSystemSafeUserName => MakeValidFileName(this.ActiveSessionUsername);
+		public string FileSystemSafeUserName => ApplicationController.Instance.MakeValidFileName(this.ActiveSessionUsername);
 
-		private static string MakeValidFileName(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				return name;
-			}
-
-			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-			return Regex.Replace(name, invalidRegStr, "_");
-		}
 	}
 }
