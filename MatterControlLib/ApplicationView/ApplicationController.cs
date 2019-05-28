@@ -2966,7 +2966,13 @@ Support and tutorials:
 			}
 		}
 
-		public string MakeValidFileName(string name, string replacementCharacter = "_")
+		/// <summary>
+		/// Replace invalid filename characters with the given replacement value to ensure working paths for the current filesystem
+		/// </summary>
+		/// <param name="name">The filename name to consider</param>
+		/// <param name="replacementCharacter">The replacement character to use</param>
+		/// <returns>A sanitized file name that is safe to use on the current system</returns>
+		public string SanitizeFileName(string name, string replacementCharacter = "_")
 		{
 			if (string.IsNullOrEmpty(name))
 			{

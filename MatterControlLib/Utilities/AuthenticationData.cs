@@ -145,7 +145,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		[JsonIgnore]
-		public string FileSystemSafeUserName => ApplicationController.Instance.MakeValidFileName(this.ActiveSessionUsername);
-
+		public string FileSystemSafeUserName => ApplicationController.Instance.SanitizeFileName(this.ActiveSessionUsername);
 	}
 }
