@@ -40,8 +40,11 @@ namespace MatterHackers.MatterControl
 	public interface IExportPlugin
 	{
 		string ButtonText { get; }
+
 		string FileExtension { get; }
+
 		string ExtensionFilter { get; }
+
 		ImageBuffer Icon { get; }
 
 		void Initialize(PrinterConfig printer);
@@ -49,12 +52,13 @@ namespace MatterHackers.MatterControl
 		Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken);
 
 		bool Enabled { get; }
+
 		string DisabledReason { get; }
 
 		bool ExportPossible(ILibraryAsset libraryItem);
 	}
 
-	public interface IExportWithOptions
+	public interface IExportWithOptions : IExportPlugin
 	{
 		GuiWidget GetOptionsPanel();
 	}
