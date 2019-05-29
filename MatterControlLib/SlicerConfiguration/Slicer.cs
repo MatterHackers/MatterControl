@@ -68,6 +68,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+			// Make sure we only consider 1 extruder if in spiral vase mode
+			if (printer.Settings.GetValue<bool>(SettingsKey.spiral_vase))
+			{
+				extruderCount = 1;
+			}
+
 			for (int extruderIndex = 0; extruderIndex < extruderCount; extruderIndex++)
 			{
 				extrudersUsed.Add(false);
@@ -78,7 +84,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
-					int supportExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
+					int supportExtruder = Math.Max(0, Math.Min(extruderCount - 1, printer.Settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
 					extrudersUsed[supportExtruder] = true;
 				}
 			}
@@ -88,7 +94,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (printer.Settings.GetValue<int>(SettingsKey.raft_extruder) != 0)
 				{
-					int raftExtruder = Math.Max(0, Math.Min(printer.Settings.GetValue<int>(SettingsKey.extruder_count) - 1, printer.Settings.GetValue<int>(SettingsKey.raft_extruder) - 1));
+					int raftExtruder = Math.Max(0, Math.Min(extruderCount - 1, printer.Settings.GetValue<int>(SettingsKey.raft_extruder) - 1));
 					extrudersUsed[raftExtruder] = true;
 				}
 			}
@@ -132,6 +138,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var itemsByExtruder = new List<IEnumerable<IObject3D>>();
 				int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+				// Make sure we only consider 1 extruder if in spiral vase mode
+				if (printer.Settings.GetValue<bool>(SettingsKey.spiral_vase))
+				{
+					extruderCount = 1;
+				}
+
 				for (int extruderIndexIn = 0; extruderIndexIn < extruderCount; extruderIndexIn++)
 				{
 					var extruderIndex = extruderIndexIn;

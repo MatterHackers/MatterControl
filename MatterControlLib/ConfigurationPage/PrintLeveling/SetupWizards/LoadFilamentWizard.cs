@@ -383,21 +383,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
-				runningCleanPage.Closed += (s, e) =>
-				{
-					switch (extruderIndex)
-					{
-						case 0:
-							printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-							break;
-
-						case 1:
-							printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
-							break;
-					}
-
-					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-				};
 
 				yield return runningCleanPage;
 			}
@@ -409,9 +394,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 	public class DoneLoadingPage : WizardPage
 	{
+		private int extruderIndex;
+
 		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
 			: base(setupWizard, "Filament Loaded".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
 		{
+			this.extruderIndex = extruderIndex;
+
 			if (printer.Connection.Paused)
 			{
 				var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
@@ -432,6 +421,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
+			switch (extruderIndex)
+			{
+				case 0:
+					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
+					break;
+
+				case 1:
+					printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
+					break;
+			}
+
 			this.ShowWizardFinished();
 
 			base.OnLoad(args);
