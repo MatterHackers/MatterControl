@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 					if (printerSettings != null)
 					{
 						// Persist downloaded profile
-						printerSettings.Save();
+						printerSettings.Save(userDrivenChange: false);
 
 						// Update/switch printer instance to new settings
 						printer.SwapToSettings(printerSettings);
