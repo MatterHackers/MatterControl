@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 	using System.Net.Http;
 	using System.Reflection;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using System.Threading;
 	using Agg.Font;
 	using Agg.Image;
@@ -2963,6 +2964,25 @@ Support and tutorials:
 				printer.Connection.HaltConnectionThread();
 				printer.Connection.Connect();
 			}
+		}
+
+		/// <summary>
+		/// Replace invalid filename characters with the given replacement value to ensure working paths for the current filesystem
+		/// </summary>
+		/// <param name="name">The filename name to consider</param>
+		/// <param name="replacementCharacter">The replacement character to use</param>
+		/// <returns>A sanitized file name that is safe to use on the current system</returns>
+		public string SanitizeFileName(string name, string replacementCharacter = "_")
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				return name;
+			}
+
+			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
+			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+			return Regex.Replace(name, invalidRegStr, replacementCharacter);
 		}
 
 		public class CloudSyncEventArgs : EventArgs
