@@ -37,8 +37,6 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
-		private bool haveWrittenData = false;
-		private bool pageCanceled;
 		private readonly XyCalibrationWizard calibrationWizard;
 
 		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard)
@@ -75,18 +73,10 @@ namespace MatterHackers.MatterControl
 				});
 		}
 
-		protected override void OnCancel(out bool abortCancel)
-		{
-			pageCanceled = true;
-			base.OnCancel(out abortCancel);
-		}
-
-		public override void OnClosed(EventArgs e)
+		public override void OnAdvance()
 		{
 			// save the offsets to the extruder
-			if (!pageCanceled
-				&& !haveWrittenData
-				&& calibrationWizard.XPick != -1
+			if (calibrationWizard.XPick != -1
 				&& calibrationWizard.YPick != -1)
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex);
@@ -94,10 +84,7 @@ namespace MatterHackers.MatterControl
 				hotendOffset.Y -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex, hotendOffset);
-				haveWrittenData = true;
 			}
-
-			base.OnClosed(e);
 		}
 	}
 } 
