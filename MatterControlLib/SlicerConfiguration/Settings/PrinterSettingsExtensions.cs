@@ -80,25 +80,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static bool AutoSave { get; set; } = true;
 
-		public static void Save(this PrinterSettings settings, bool clearBlackListSettings = false)
+		public static void ClearBlackList(this PrinterSettings settings)
+		{
+			foreach (var kvp in blackListSettings)
+			{
+				if (settings.UserLayer.ContainsKey(kvp.Key))
+				{
+					settings.UserLayer.Remove(kvp.Key);
+				}
+
+				settings.OemLayer[kvp.Key] = kvp.Value;
+			}
+		}
+
+		public static void Save(this PrinterSettings settings)
 		{
 			// Skip save operation if on the EmptyProfile
 			if (!settings.PrinterSelected || !AutoSave)
 			{
 				return;
-			}
-
-			if (clearBlackListSettings)
-			{
-				foreach (var kvp in blackListSettings)
-				{
-					if (settings.UserLayer.ContainsKey(kvp.Key))
-					{
-						settings.UserLayer.Remove(kvp.Key);
-					}
-
-					settings.OemLayer[kvp.Key] = kvp.Value;
-				}
 			}
 
 			settings.Save(

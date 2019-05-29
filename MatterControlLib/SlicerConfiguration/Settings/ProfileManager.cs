@@ -543,7 +543,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
 						}
 
-						printerSettings.Save(clearBlackList);
+						if (clearBlackList)
+						{
+							printerSettings.ClearBlackList();
+						}
+
+						printerSettings.Save();
 						importSuccessful = true;
 					}
 					break;
@@ -592,10 +597,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							printerSettings.Helpers.SetName(printerInfo.Name);
 
-							printerSettings.Save(clearBlackList);
+							if (clearBlackList)
+							{
+								printerSettings.ClearBlackList();
+							}
+
+							printerSettings.Save();
 							importSuccessful = true;
 						}
 					}
+
 					break;
 			}
 
@@ -633,7 +644,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 
 			// Persist changes to PrinterSettings - must come after adding to Profiles above
-			printerSettings.Save(clearBlackListSettings: true);
+			printerSettings.ClearBlackList();
+			printerSettings.Save();
 
 			// Set as active profile
 			return await ApplicationController.Instance.OpenEmptyPrinter(guid);
