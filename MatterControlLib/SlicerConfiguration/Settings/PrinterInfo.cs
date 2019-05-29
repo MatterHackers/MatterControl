@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public string ID
 		{
-			get { return id; }
+			get => id;
 			set
 			{
 				// Update in memory state if IDs match
@@ -80,12 +80,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public string Name { get; set; }
+
 		public string Make { get; set; }
+
 		public string Model { get; set; }
+
 		public string DeviceToken { get; set; }
+
 		public bool IsDirty => this.ServerSHA1 != this.ContentSHA1;
+
 		public bool MarkedForDelete { get; set; } = false;
+
 		public string ContentSHA1 { get; set; }
+
 		public string ServerSHA1 { get; set; }
 
 		[OnDeserialized]

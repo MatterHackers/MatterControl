@@ -79,11 +79,16 @@ namespace MatterHackers.MatterControl
 
 		protected void MoveToNextPage()
 		{
+			OnAdvance();
 			setupWizard.MoveNext();
 			if (setupWizard.Current is WizardPage wizardPage)
 			{
 				this.DialogWindow.ChangeToPage(wizardPage);
 			}
+		}
+
+		public virtual void OnAdvance()
+		{
 		}
 
 		protected GuiWidget CreateTextField(string text)
