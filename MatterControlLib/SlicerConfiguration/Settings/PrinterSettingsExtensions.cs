@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			settings.Save(
-				filePath: ProfileManager.Instance.ProfilePath(settings.ID),
+				ProfileManager.Instance.ProfilePath(settings.ID),
 				userDrivenChange);
 		}
 
