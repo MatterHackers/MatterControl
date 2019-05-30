@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 			: base(calibrationWizard)
 		{
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Calibration Mode".Localize();
+			this.HeaderText = "Calibration Print".Localize();
 
 			preCalibrationPrintViewMode = printer.ViewState.ViewMode;
 
@@ -64,14 +64,33 @@ namespace MatterHackers.MatterControl
 			// default to normal offset
 			calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 3.0;
 
+			contentRow.AddChild(
+				new TextWidget(
+					"This wizzard will close to print a calibration part and resume after the print completes.".Localize(),
+					textColor: theme.TextColor,
+					pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(bottom: theme.DefaultContainerPadding)
+				});
+
+			contentRow.AddChild(
+				new TextWidget(
+					"Calibration Mode".Localize(),
+					textColor: theme.TextColor,
+					pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, theme.DefaultContainerPadding)
+				});
+
+
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				Margin = new BorderDouble(left: theme.DefaultContainerPadding),
-				HAnchor = HAnchor.Stretch
+				HAnchor = HAnchor.Stretch,
 			};
 			contentRow.AddChild(column);
 
-			var coarseText = calibrationWizard.Quality == QualityType.Coarse ? "Coarse (recommended)".Localize() : "Coarse".Localize();
+			var coarseText = calibrationWizard.Quality == QualityType.Coarse ? "Initial (Recommended)".Localize() : "Coarse".Localize();
 			column.AddChild(coarseCalibration = new RadioButton(coarseText, textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = calibrationWizard.Quality == QualityType.Coarse
@@ -82,7 +101,7 @@ namespace MatterHackers.MatterControl
 				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 			};
 
-			var normalText = calibrationWizard.Quality == QualityType.Normal ? "Normal (recommended)".Localize() : "Normal".Localize();
+			var normalText = calibrationWizard.Quality == QualityType.Normal ? "Normal (Recommended)".Localize() : "Normal".Localize();
 			column.AddChild(normalCalibration = new RadioButton(normalText, textColor: theme.TextColor, fontSize: theme.DefaultFontSize)
 			{
 				Checked = calibrationWizard.Quality == QualityType.Normal

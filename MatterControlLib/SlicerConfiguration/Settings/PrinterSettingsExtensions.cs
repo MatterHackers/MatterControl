@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static void Save(this PrinterSettings settings)
+		public static void Save(this PrinterSettings settings, bool userDrivenChange = true)
 		{
 			// Skip save operation if on the EmptyProfile
 			if (!settings.PrinterSelected || !AutoSave)
@@ -102,10 +102,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			settings.Save(
-				filePath: ProfileManager.Instance.ProfilePath(settings.ID));
+				ProfileManager.Instance.ProfilePath(settings.ID),
+				userDrivenChange);
 		}
 
-		public static void Save(this PrinterSettings settings, string filePath)
+		public static void Save(this PrinterSettings settings, string filePath, bool userDrivenChange = true)
 		{
 			// TODO: Rewrite to be owned by ProfileManager and simply mark as dirty and every n period persist and clear dirty flags
 			lock (writeLock)
@@ -116,6 +117,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printerInfo != null)
 				{
 					printerInfo.ContentSHA1 = settings.ComputeSHA1(json);
+
+					if (printerInfo.ServerSHA1 == printerInfo.ContentSHA1)
+					{
+						// Any change that results in our content arriving at the last known server content fingerprint, should clear the dirty flag
+						printerInfo.IsDirty = false;
+					}
+					else
+					{
+						printerInfo.IsDirty |= userDrivenChange;
+					}
+
 					ProfileManager.Instance.Save();
 				}
 

@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var profile = PrinterSettings.LoadFile(ProfilePath);
 					profile.ID = value;
-					profile.Save();
+					profile.Save(userDrivenChange: false);
 				}
 			}
 		}
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string DeviceToken { get; set; }
 
-		public bool IsDirty => this.ServerSHA1 != this.ContentSHA1;
+		public bool IsDirty { get; set; } = false;
 
 		public bool MarkedForDelete { get; set; } = false;
 

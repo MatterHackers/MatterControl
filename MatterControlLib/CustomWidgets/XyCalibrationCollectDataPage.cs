@@ -44,14 +44,21 @@ namespace MatterHackers.MatterControl
 		{
 			this.calibrationWizard = calibrationWizard;
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
+			this.HeaderText = "Nozzle Offset Calibration".Localize();
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
-			contentRow.AddChild(new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
-			{
-				Margin = new BorderDouble(0, 15, 0, 0)
-			});
+			contentRow.AddChild(
+				new TextWidget("Remove the calibration part from the bed and compare the sides of the pads in each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, 15, 0, 0)
+				});
+
+			contentRow.AddChild(
+				new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, 15, 0, 0)
+				});
 
 			// disable the next button until we receive data about both the x and y axis alignment
 			NextButton.Enabled = false;

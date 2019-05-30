@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									printer.Settings.ClearUserOverrides();
 									printer.Settings.ClearBlackList();
-									printer.Settings.Save();
+									printer.Settings.Save(userDrivenChange: false);
 									printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();
 
 									ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
