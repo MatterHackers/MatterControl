@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
 			contentRow.AddChild(
-				new TextWidget("Copyright © 2018 MatterHackers, Inc.", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Copyright © 2019 MatterHackers, Inc.", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Center,
 				});
