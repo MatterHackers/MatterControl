@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 
 			contentRow.AddChild(
 				new TextWidget(
-					"This wizzard will close to print a calibration part and resume after the print completes.".Localize(),
+					"This wizard will close to print a calibration part and resume after the print completes.".Localize(),
 					textColor: theme.TextColor,
 					pointSize: theme.DefaultFontSize)
 				{
