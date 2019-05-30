@@ -320,6 +320,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			readLineContainsCallBacks.Register("T:inf", PrinterReportsError);
 			readLineContainsCallBacks.Register("B:inf", PrinterReportsError);
 			readLineContainsCallBacks.Register("ZProbe not triggered", PrinterReportsError);
+			readLineStartCallBacks.Register("ERROR: Homing cycle failed", PrinterReportsError);
 
 			// marlin failures
 			readLineContainsCallBacks.Register("MINTEMP", PrinterReportsError);
