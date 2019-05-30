@@ -976,8 +976,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			waitForPageAndAdvance("Print Leveling Overview");
 
-			waitForPageAndAdvance("Homing the printer");
-
 			waitForPageAndAdvance("Heating the printer");
 
 			for (int i = 0; i < 3; i++)
