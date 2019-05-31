@@ -69,7 +69,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 			// Make sure we only consider 1 extruder if in spiral vase mode
-			if (printer.Settings.GetValue<bool>(SettingsKey.spiral_vase))
+			if (printer.Settings.GetValue<bool>(SettingsKey.spiral_vase)
+				&& extrudersUsed.Count(used => used == true) > 1)
 			{
 				extruderCount = 1;
 			}
