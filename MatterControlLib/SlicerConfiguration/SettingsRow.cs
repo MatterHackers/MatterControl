@@ -139,6 +139,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.AddChild(childToAdd, indexInChildrenList);
 		}
 
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (ActionWidget != null
+				&& mouseEvent.Button == MouseButtons.Left)
+			{
+				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
+
+				return;
+			}
+
+			base.OnClick(mouseEvent);
+		}
+
 		public override Color BackgroundColor
 		{
 			get => (mouseInBounds) ? hoverColor : base.BackgroundColor;
