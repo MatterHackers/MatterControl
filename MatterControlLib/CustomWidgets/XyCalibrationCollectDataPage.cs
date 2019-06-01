@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl
 				});
 
 			contentRow.AddChild(
-				new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				new TextWidget("Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					Margin = new BorderDouble(0, 15, 0, 0)
 				});
