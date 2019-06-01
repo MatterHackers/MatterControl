@@ -199,12 +199,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					printer.Settings.Helpers.UseZProbe(),
 					printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed)));
 
-			// if there is a level_x_carriage_markdown oem markdown page
-			if (!string.IsNullOrEmpty(printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown)))
-			{
-				yield return GetLevelXCarriagePage(this, printer);
-			}
-
 			// figure out the heating requirements
 			double targetBedTemp = 0;
 			double targetHotendTemp = 0;
@@ -340,38 +334,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				"Print Leveling Wizard".Localize(),
 				printer.Settings.Helpers.UseZProbe(),
 				probePositions);
-		}
-
-		public static WizardPage GetLevelXCarriagePage(ISetupWizard setupWizard, PrinterConfig printer)
-		{
-			var levelXCarriagePage = new WizardPage(setupWizard, "Level X Carriage".Localize(), "")
-			{
-				PageLoad = (page) =>
-				{
-					// release the motors so the z-axis can be moved
-					printer.Connection.ReleaseMotors();
-
-					var markdownText = printer.Settings.GetValue(SettingsKey.level_x_carriage_markdown);
-					var markdownWidget = new MarkdownWidget(ApplicationController.Instance.Theme)
-					{
-						Markdown = markdownText = markdownText.Replace("\\n", "\n")
-					};
-					page.ContentRow.AddChild(markdownWidget);
-				},
-				PageClose = () =>
-				{
-					// home the printer again to make sure we are ready to level (same behavior as homing page)
-					printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
-
-					if (!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-					{
-						// move so we don't heat the printer while the nozzle is touching the bed
-						printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
-					}
-				}
-			};
-
-			return levelXCarriagePage;
 		}
 
 		public static Vector2 EnsureInPrintBounds(PrinterConfig printer, Vector2 probePosition)
