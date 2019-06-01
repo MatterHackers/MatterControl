@@ -101,12 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// Invoke FixAction
 						action.Action.Invoke();
-
-						// Close popup on FixAction button click
-						if (this.Parents<PopupWidget>().FirstOrDefault() is PopupWidget popupWidget)
-						{
-							UiThread.RunOnIdle(popupWidget.CloseMenu);
-						}
+						this.ClosePopup();
 					};
 
 					row.AddChild(button);
@@ -131,12 +126,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					dismissButton.Click += (sender, e) =>
 					{
 						UserSettings.Instance.set($"Ignore_{validationError.ID}", "true");
+						this.ClosePopup();
 					};
 
 					row.AddChild(dismissButton);
 				}
 
 				this.AddChild(row);
+			}
+		}
+
+		private void ClosePopup()
+		{
+			if (this.Parents<PopupWidget>().FirstOrDefault() is PopupWidget popupWidget)
+			{
+				UiThread.RunOnIdle(popupWidget.CloseMenu);
 			}
 		}
 	}
