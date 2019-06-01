@@ -203,12 +203,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void OnClick(MouseEventArgs mouseEvent)
 		{
-			if (ActionWidget != null
-				&& mouseEvent.Button == MouseButtons.Left)
-			{
-				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
-			}
-			else if (mouseEvent.Button == MouseButtons.Right)
+			if (mouseEvent.Button == MouseButtons.Right)
 			{
 				bool SettingIsOem()
 				{
@@ -225,7 +220,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if(SettingIsOem())
+				if (SettingIsOem())
 				{
 					return;
 				}
