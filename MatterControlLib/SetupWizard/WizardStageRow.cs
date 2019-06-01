@@ -33,6 +33,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.ImageProcessing;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
@@ -150,6 +151,8 @@ namespace MatterHackers.MatterControl
 
 						icon = disabledSetupIcon;
 					}
+
+					ToolTipText = "Required".Localize();
 				}
 				else if (!stage.Completed)
 				{
@@ -164,6 +167,8 @@ namespace MatterHackers.MatterControl
 
 						icon = disabledSetupIcon;
 					}
+
+					ToolTipText = "Optional".Localize();
 				}
 				else
 				{
@@ -178,6 +183,8 @@ namespace MatterHackers.MatterControl
 
 						icon = disabledCompletedIcon;
 					}
+
+					ToolTipText = "Completed".Localize();
 				}
 
 				return icon;

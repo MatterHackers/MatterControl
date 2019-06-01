@@ -281,6 +281,11 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		private void NavigateHome()
 		{
+			if (setupWizard is PrinterCalibrationWizard printerCalibrationWizard)
+			{
+				printerCalibrationWizard.ReturnedToHomePage = true;
+			}
+
 			// Construct and move to the summary/home page
 			this.ChangeToPage(setupWizard.HomePageGenerator());
 

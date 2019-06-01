@@ -70,11 +70,15 @@ namespace MatterHackers.MatterControl
 
 				var contentRow = homePage.ContentRow;
 
-				contentRow.AddChild(
-					new WrappedTextWidget(
-						@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
-						pointSize: theme.DefaultFontSize,
-						textColor: theme.TextColor));
+				if (!ReturnedToHomePage)
+				{
+					contentRow.AddChild(
+						new WrappedTextWidget(
+							@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
+							pointSize: theme.DefaultFontSize,
+							textColor: theme.TextColor));
+				}
+
 				contentRow.BackgroundColor = Color.Transparent;
 
 				foreach (var stage in this.Stages.Where(s => s.Enabled && s.Visible))
@@ -292,6 +296,8 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig printer;
 
 		public Func<DialogPage> HomePageGenerator { get; }
+
+		public bool ReturnedToHomePage { get; set; } = false;
 
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
