@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private PrinterConfig printer;
 
 		public FanControlsRow(PrinterConfig printer, ThemeConfig theme)
-			: base ("Part Cooling Fan".Localize(), null, theme, fullRowSelect: true)
+			: base ("Part Cooling Fan".Localize(), null, theme)
 		{
 			this.printer = printer;
 
