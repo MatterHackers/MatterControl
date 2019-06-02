@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl
 
 			xHighlighter = new Stroke(highlighter, highlightStroke);
 
-			xLabel = new TextWidget("Select the most balanced pad", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			xLabel = new TextWidget("Select the most centered pad", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl
 
 			yHighlighter = new Stroke(highlighter, highlightStroke);
 
-			yLabel = new TextWidget("Select the most balanced pad", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			yLabel = new TextWidget("Select the most centered pad", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Absolute,

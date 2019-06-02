@@ -348,7 +348,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (printerSettings != null)
 				{
 					// If successful, persist downloaded profile and return
-					printerSettings.Save();
+					printerSettings.Save(userDrivenChange: false);
 				}
 			}
 
@@ -407,13 +407,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Add any setting value to the OemLayer to pass the .PrinterSelected property
 					printerSettings.OemLayer = new PrinterSettingsLayer();
 					printerSettings.OemLayer.Add("empty", "setting");
-					printerSettings.Save();
+					printerSettings.Save(userDrivenChange: false);
 				}
 
 				if (printerSettings != null)
 				{
 					// Persist any profile recovered above as the current
-					printerSettings.Save();
+					printerSettings.Save(userDrivenChange: false);
 
 					WarnAboutRevert(printerInfo);
 				}
@@ -462,7 +462,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				oemProfile.DocumentVersion = PrinterSettings.LatestVersion;
 
 				oemProfile.Helpers.SetComPort(profile.ComPort);
-				oemProfile.Save();
+				oemProfile.Save(userDrivenChange: false);
 			}
 			catch
 			{
@@ -548,7 +548,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printerSettings.ClearBlackList();
 						}
 
-						printerSettings.Save();
+						printerSettings.Save(userDrivenChange: false);
 						importSuccessful = true;
 					}
 					break;
@@ -583,7 +583,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							}
 						}
 
-						if(containsValidSetting)
+						if (containsValidSetting)
 						{
 							printerSettings.UserLayer[SettingsKey.printer_name] = printerInfo.Name;
 
@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								printerSettings.ClearBlackList();
 							}
 
-							printerSettings.Save();
+							printerSettings.Save(userDrivenChange: false);
 							importSuccessful = true;
 						}
 					}
@@ -645,7 +645,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			// Persist changes to PrinterSettings - must come after adding to Profiles above
 			printerSettings.ClearBlackList();
-			printerSettings.Save();
+			printerSettings.Save(userDrivenChange: false);
 
 			// Set as active profile
 			return await ApplicationController.Instance.OpenEmptyPrinter(guid);

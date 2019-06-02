@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 			else
 			{
-				this.Title = "Load Filament".Localize() + $" ({extruderIndex + 1})";
+				this.Title = "Load Extruder".Localize() + $" {extruderIndex + 1}";
 			}
 
 			this.extruderIndex = extruderIndex;
@@ -130,15 +130,17 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var levelingStrings = new LevelingStrings();
 
+			var title = "Load Material".Localize();
 			var instructions = "Please select the material you want to load.".Localize();
 
 			if (extruderCount > 1)
 			{
+				title = "Load Extruder {0}".Localize().FormatWith(extruderIndex + 1);
 				instructions = "Please select the material you want to load into extruder {0}.".Localize().FormatWith(extruderIndex + 1);
 			}
 
 			// select the material
-			yield return new SelectMaterialPage(this, "Load Material".Localize(), instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
+			yield return new SelectMaterialPage(this, title, instructions, "Select".Localize(), extruderIndex, true, showAlreadyLoadedButton)
 			{
 				WindowTitle = Title
 			};
