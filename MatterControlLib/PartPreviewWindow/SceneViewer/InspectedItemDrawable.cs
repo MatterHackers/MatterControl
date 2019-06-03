@@ -68,9 +68,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				//		RenderTypes.Wireframe, 
 				//		debugItem.WorldMatrix() * world.ModelviewMatrix);
 				//}
-
-				var frustum = world.GetClippingFrustum();
-
 				var aabb = item.GetAxisAlignedBoundingBox();
 
 				world.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
