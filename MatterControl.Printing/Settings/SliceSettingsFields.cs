@@ -200,15 +200,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.level_x_carriage_markdown,
-					PresentationName = "Level X Carriage Page".Localize(),
-					HelpText = "The Markdown that will be shown during print leveling to help get the X carriage level.".Localize(),
-					DataEditType = DataEditTypes.MARKDOWN_TEXT,
-					ShowIfSet = "!sla_printer",
-					DefaultValue = ""
-				},
-				new SliceSettingData()
-				{
 					SlicerConfigName = SettingsKey.running_clean_1_markdown,
 					PresentationName = "Extruder 2 Clean Page".Localize(),
 					HelpText = "The Markdown that will be shown on the second extruders Clean Filament page.".Localize(),

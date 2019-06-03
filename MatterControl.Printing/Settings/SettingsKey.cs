@@ -131,7 +131,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string layer_height = nameof(layer_height);
 		public const string layer_name = nameof(layer_name);
 		public const string layer_to_pause = nameof(layer_to_pause);
-		public const string level_x_carriage_markdown = nameof(level_x_carriage_markdown);
 		public const string leveling_sample_points = nameof(leveling_sample_points);
 		public const string load_filament_length = nameof(load_filament_length);
 		public const string load_filament_speed = nameof(load_filament_speed);

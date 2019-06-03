@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// now run leveling again and make sure we get the same result
 					testRunner.SwitchToControlsTab();
-					testRunner.ClickByName("Run Leveling Button");
+					testRunner.ClickByName("Printer Calibration Button");
 
 					testRunner.ClickByName("Print Leveling Row");
 
@@ -142,6 +142,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// now modify the leveling data manually and assert that it is applied when printing
 					testRunner.SwitchToControlsTab();
+
+					testRunner.ClickByName("Printer Calibration Button");
+
 					testRunner.ClickByName("Edit Leveling Data Button");
 					for (int i = 0; i < 3; i++)
 					{
@@ -152,6 +155,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					testRunner.ClickByName("Save Leveling Button");
+
+					testRunner.ClickByName("Cancel Wizard Button");
 
 					testRunner.StartPrint(pauseAtLayers: "2");
 

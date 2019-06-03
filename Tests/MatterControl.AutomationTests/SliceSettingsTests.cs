@@ -510,7 +510,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(1, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager should have 1 profile after Airwolf close");
 				Assert.AreEqual(0, ApplicationController.Instance.ActivePrinters.Count(), "Zero printers should be active after Airwolf close");
 
-				testRunner.AddAndSelectPrinter("BCN", "Sigma");
+				testRunner.AddAndSelectPrinter("BCN3D", "Sigma");
 
 				// Assert printer counts
 				Assert.AreEqual(2, ProfileManager.Instance.ActiveProfiles.Count(), "ProfileManager has 2 profiles");
