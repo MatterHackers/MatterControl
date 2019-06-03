@@ -33,6 +33,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MeshVisualizer;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System;

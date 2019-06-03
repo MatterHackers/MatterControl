@@ -192,18 +192,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 					Vector3 endPosition = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
 
-					Frustum clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
+					Frustum clippingFrustum = InteractionContext.World.GetClippingFrustum();
 
 					if (clippingFrustum.ClipLine(ref startPosition, ref endPosition))
 					{
 						if (e.ZBuffered)
 						{
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, Color.Green);
 						}
 						else
 						{
 							// render on top of everything very lightly
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(Color.Green, 20), false);
 						}
 					}
 
