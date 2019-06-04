@@ -44,6 +44,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Rendering;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations

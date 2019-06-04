@@ -27,6 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -35,10 +39,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -58,17 +58,17 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			AngleDegrees = angleDegrees;
 		}
 
-		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0, string name = "")
+		public RotateObject3D_2(IObject3D itemToRotate, double xRadians = 0, double yRadians = 0, double zRadians = 0)
 			: this()
 		{
 			WrapItems(new IObject3D[] { itemToRotate });
 
-			// TODO: set the rotation
-			//RotateAbout.Normal = Vector3.UnitZ.TransformNormal(Matrix4X4.CreateRotation(new Vector3(xRadians, yRadians, zRadians)));
+			// set the rotation
+			RotateAbout.Normal = Vector3.UnitZ.TransformNormal(Matrix4X4.CreateRotation(new Vector3(xRadians, yRadians, zRadians)));
 		}
 
-		public RotateObject3D_2(IObject3D itemToRotate, Vector3 rotation, string name = "")
-			: this(itemToRotate, rotation.X, rotation.Y, rotation.Z, name)
+		public RotateObject3D_2(IObject3D itemToRotate, Vector3 rotation)
+			: this(itemToRotate, rotation.X, rotation.Y, rotation.Z)
 		{
 		}
 
@@ -81,11 +81,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			this.RotateAbout.Origin = aabb.Center;
 		}
 
-		#region // editable properties
 		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.Zero, Normal = Vector3.UnitZ };
+
 		[DisplayName("Angle")]
 		public double AngleDegrees { get; set; } = 0;
-		#endregion
 
 		[JsonIgnore]
 		public Matrix4X4 RotationMatrix

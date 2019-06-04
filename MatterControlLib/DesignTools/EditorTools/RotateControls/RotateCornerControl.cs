@@ -614,7 +614,6 @@ namespace MatterHackers.Plugins.EditorTools
 			var graphics2DOpenGL = new Graphics2DOpenGL();
 
 			double snappingRadians = MathHelper.Tau / numSnapPoints;
-			var clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
 
 			for (int i = 0; i < numSnapPoints; i++)
 			{
@@ -642,7 +641,6 @@ namespace MatterHackers.Plugins.EditorTools
 		private void DrawTickMarks(DrawGlContentEventArgs drawEventArgs, double alphaValue, Matrix4X4 rotationCenterTransform, double innerRadius, double outerRadius, int numTicks)
 		{
 			double snappingRadians = MathHelper.Tau / numTicks;
-			var clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
 			for (int i = 0; i < numTicks; i++)
 			{
 				double startAngle = i * snappingRadians;
@@ -651,7 +649,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
 				Vector3 endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
 
-				InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
+				InteractionContext.World.Render3DLine(startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
 			}
 		}
 

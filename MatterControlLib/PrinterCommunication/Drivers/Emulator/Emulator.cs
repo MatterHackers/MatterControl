@@ -413,7 +413,11 @@ namespace MatterHackers.PrinterEmulator
 
 		private string ProbePosition(string command)
 		{
-			Thread.Sleep(500);
+			if (RunSlow)
+			{
+				Thread.Sleep(500);
+			}
+
 			return "Bed Position X: 0 Y: 0 Z: { rand.NextDouble() }\n"
 				 + "ok\n";
 		}

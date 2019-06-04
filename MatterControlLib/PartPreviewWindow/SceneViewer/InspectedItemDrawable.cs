@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
@@ -58,19 +57,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (item == scene.DebugItem)
 			{
-				//if (item.Mesh != null)
-				//{
-				//	var debugItem = scene.DebugItem;
-				//	GLHelper.Render(
-				//		debugItem.Mesh, 
-				//		debugBorderColor, 
-				//		debugItem.WorldMatrix(),
-				//		RenderTypes.Wireframe, 
-				//		debugItem.WorldMatrix() * world.ModelviewMatrix);
-				//}
-
-				var frustum = world.GetClippingFrustum();
-
 				var aabb = item.GetAxisAlignedBoundingBox();
 
 				world.RenderAabb(aabb, Matrix4X4.Identity, debugBorderColor, 1);
@@ -78,10 +64,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (item.Mesh != null)
 				{
 					GLHelper.Render(
-						item.Mesh, 
-						debugBorderColor, 
+						item.Mesh,
+						debugBorderColor,
 						item.WorldMatrix(),
-						RenderTypes.Wireframe, 
+						RenderTypes.Wireframe,
 						item.WorldMatrix() * world.ModelviewMatrix);
 				}
 			}

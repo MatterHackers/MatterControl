@@ -107,9 +107,10 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			var theme = AppContext.Theme;
 
+			forceSpiralVase = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
 			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), theme.TextColor, 10)
 			{
-				Checked = false,
+				Checked = forceSpiralVase,
 				Cursor = Cursors.Hand,
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
@@ -209,15 +210,10 @@ namespace MatterHackers.MatterControl.Library.Export
 								loadedItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.X, -aabb.Center.Y, -aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 							}
 
-							string originalSpiralVase = printer.Settings.GetValue(SettingsKey.spiral_vase);
-
 							// Slice
 							try
 							{
-								if (forceSpiralVase)
-								{
-									printer.Settings.SetValue(SettingsKey.spiral_vase, "1");
-								}
+								printer.Settings.SetValue(SettingsKey.spiral_vase, forceSpiralVase ? "1" : "0");
 
 								errors = printer.ValidateSettings(validatePrintBed: false);
 
@@ -241,10 +237,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							}
 							finally
 							{
-								if (forceSpiralVase)
-								{
-									printer.Settings.SetValue(SettingsKey.spiral_vase, originalSpiralVase);
-								}
+								printer.Settings.SetValue(SettingsKey.spiral_vase, "0");
 							}
 						}
 

@@ -66,7 +66,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					foreach (var child in item.Children)
 					{
-						if (child != null)
+						if (child != null
+							&& !child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())
 						{
 							AddTree(BuildItemView(child), contextNode, keyValues, theme);
 						}

@@ -127,7 +127,8 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		protected void SendRequest(ulong longHash)
 		{
-			var cacheFileName = Path.Combine(ApplicationDataStorage.Instance.WebCacheDirectory, longHash.ToString() + ".txt");
+			string cacheFileName = ApplicationController.CacheablePath("Text", longHash.ToString() + ".txt");
+
 			ResponseType cacheResponse = null;
 
 			if (longHash != 0

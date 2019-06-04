@@ -37,8 +37,6 @@ namespace MatterHackers.MatterControl
 {
 	public class XyCalibrationCollectDataPage : WizardPage
 	{
-		private bool haveWrittenData = false;
-		private bool pageCanceled;
 		private readonly XyCalibrationWizard calibrationWizard;
 
 		public XyCalibrationCollectDataPage(XyCalibrationWizard calibrationWizard)
@@ -46,14 +44,21 @@ namespace MatterHackers.MatterControl
 		{
 			this.calibrationWizard = calibrationWizard;
 			this.WindowTitle = "Nozzle Offset Calibration Wizard".Localize();
-			this.HeaderText = "Nozzle Offset Calibration".Localize() + ":";
+			this.HeaderText = "Nozzle Offset Calibration".Localize();
 
 			contentRow.Padding = theme.DefaultContainerPadding;
 
-			contentRow.AddChild(new TextWidget("Pick the most balanced result for each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
-			{
-				Margin = new BorderDouble(0, 15, 0, 0)
-			});
+			contentRow.AddChild(
+				new TextWidget("Remove the calibration part from the bed and compare the sides of the pads in each axis.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, 15, 0, 0)
+				});
+
+			contentRow.AddChild(
+				new TextWidget("Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.".Localize(), textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
+				{
+					Margin = new BorderDouble(0, 15, 0, 0)
+				});
 
 			// disable the next button until we receive data about both the x and y axis alignment
 			NextButton.Enabled = false;
@@ -75,18 +80,10 @@ namespace MatterHackers.MatterControl
 				});
 		}
 
-		protected override void OnCancel(out bool abortCancel)
-		{
-			pageCanceled = true;
-			base.OnCancel(out abortCancel);
-		}
-
-		public override void OnClosed(EventArgs e)
+		public override void OnAdvance()
 		{
 			// save the offsets to the extruder
-			if (!pageCanceled
-				&& !haveWrittenData
-				&& calibrationWizard.XPick != -1
+			if (calibrationWizard.XPick != -1
 				&& calibrationWizard.YPick != -1)
 			{
 				var hotendOffset = printer.Settings.Helpers.ExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex);
@@ -94,10 +91,7 @@ namespace MatterHackers.MatterControl
 				hotendOffset.Y -= calibrationWizard.Offset * -3 + calibrationWizard.Offset * calibrationWizard.YPick;
 
 				printer.Settings.Helpers.SetExtruderOffset(calibrationWizard.ExtruderToCalibrateIndex, hotendOffset);
-				haveWrittenData = true;
 			}
-
-			base.OnClosed(e);
 		}
 	}
 } 

@@ -1,28 +1,21 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
-using MatterHackers.Localizations;
+﻿using System.IO;
 using System.Text.RegularExpressions;
+using MatterHackers.Agg;
+using MatterHackers.Localizations;
 using Newtonsoft.Json;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl
 {
 	public class AuthenticationData
 	{
 		public RootedObjectEventHandler AuthSessionChanged = new RootedObjectEventHandler();
-		static int failedRequestCount = int.MaxValue;
+		private static int failedRequestCount = int.MaxValue;
 
 		public bool IsConnected
 		{
 			get
 			{
-				if(failedRequestCount > 5)
+				if (failedRequestCount > 5)
 				{
 					return false;
 				}
@@ -61,7 +54,7 @@ namespace MatterHackers.MatterControl
 
 		public void SessionRefresh()
 		{
-			//Called after completing a purchase (for example)
+			// Called after completing a purchase (for example)
 			AuthSessionChanged.CallEvents(null, null);
 		}
 
@@ -97,12 +90,10 @@ namespace MatterHackers.MatterControl
 		}
 
 		private string activeSessionKey;
+
 		public string ActiveSessionKey
 		{
-			get
-			{
-				return activeSessionKey;
-			}
+			get => activeSessionKey;
 			private set
 			{
 				activeSessionKey = value;
@@ -111,13 +102,11 @@ namespace MatterHackers.MatterControl
 		}
 
 		private string activeSessionUsername;
+
 		public string ActiveSessionUsername
 		{
-			get
-			{
-				// Only return the ActiveSessionUserName if the ActiveSessionKey field is not empty
-				return string.IsNullOrEmpty(ActiveSessionKey) ? null : activeSessionUsername;
-			}
+			// Only return the ActiveSessionUserName if the ActiveSessionKey field is not empty
+			get => string.IsNullOrEmpty(ActiveSessionKey) ? null : activeSessionUsername;
 			private set
 			{
 				activeSessionUsername = value;
@@ -126,12 +115,10 @@ namespace MatterHackers.MatterControl
 		}
 
 		private string activeSessionEmail;
+
 		public string ActiveSessionEmail
 		{
-			get
-			{
-				return activeSessionEmail;
-			}
+			get => activeSessionEmail;
 			private set
 			{
 				activeSessionEmail = value;
@@ -141,23 +128,15 @@ namespace MatterHackers.MatterControl
 
 		public string ActiveClientToken
 		{
-			get
-			{
-				return ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveClientToken");
-			}
-			private set
-			{
-				ApplicationSettings.Instance.set($"{ApplicationController.EnvironmentName}ActiveClientToken", value);
-			}
+			get => ApplicationSettings.Instance.get($"{ApplicationController.EnvironmentName}ActiveClientToken");
+			private set => ApplicationSettings.Instance.set($"{ApplicationController.EnvironmentName}ActiveClientToken", value);
 		}
 
 		private string lastSessionUsername;
+
 		public string LastSessionUsername
 		{
-			get
-			{
-				return lastSessionUsername;
-			}
+			get => lastSessionUsername;
 			set
 			{
 				lastSessionUsername = value;
@@ -166,19 +145,6 @@ namespace MatterHackers.MatterControl
 		}
 
 		[JsonIgnore]
-		public string FileSystemSafeUserName => MakeValidFileName(this.ActiveSessionUsername);
-
-		private static string MakeValidFileName(string name)
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				return name;
-			}
-
-			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-			return Regex.Replace(name, invalidRegStr, "_");
-		}
+		public string FileSystemSafeUserName => ApplicationController.Instance.SanitizeFileName(this.ActiveSessionUsername);
 	}
 }

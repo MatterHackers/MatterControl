@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 			var description = new MarkdownWidget(theme)
 			{
-				MinimumSize = new VectorMath.Vector2(350, 0),
+				MinimumSize = new VectorMath.Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Markdown = product.ProductDescription.Trim()

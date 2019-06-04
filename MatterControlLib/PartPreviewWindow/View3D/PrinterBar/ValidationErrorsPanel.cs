@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					errorDetails = validationError.Details ?? "";
 				}
 
-				var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage)
+				var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage, fullRowSelect: true)
 				{
 					ArrowDirection = ArrowDirection.Left
 				};
@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right: 8),
-						Enabled = action.IsEnabled == null  || action.IsEnabled()
+						Enabled = action.IsEnabled == null || action.IsEnabled()
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))
@@ -101,24 +101,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// Invoke FixAction
 						action.Action.Invoke();
-
-						// Close popup on FixAction button click
-						if (this.Parents<PopupWidget>().FirstOrDefault() is PopupWidget popupWidget)
-						{
-							UiThread.RunOnIdle(popupWidget.CloseMenu);
-						}
+						this.ClosePopup();
 					};
 
 					row.AddChild(button);
+
+					row.ActionWidget = button;
+					row.FullRowSelect = true;
 				}
 				else
 				{
 					// Show info indicator hinting that hover will reveal additional details
-					var button = new IconButton(infoImage, theme)
+					row.AddChild(new IconButton(infoImage, theme)
 					{
 						Selectable = false
-					};
-					row.AddChild(button);
+					});
 				}
 
 				if (validationError.ErrorLevel == ValidationErrorLevel.Warning)
@@ -131,12 +128,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					dismissButton.Click += (sender, e) =>
 					{
 						UserSettings.Instance.set($"Ignore_{validationError.ID}", "true");
+						this.ClosePopup();
 					};
 
 					row.AddChild(dismissButton);
+
+					// Enable selection without regard to FullRowSelect
+					dismissButton.Selectable = true;
 				}
 
 				this.AddChild(row);
+			}
+		}
+
+		private void ClosePopup()
+		{
+			if (this.Parents<PopupWidget>().FirstOrDefault() is PopupWidget popupWidget)
+			{
+				UiThread.RunOnIdle(popupWidget.CloseMenu);
 			}
 		}
 	}

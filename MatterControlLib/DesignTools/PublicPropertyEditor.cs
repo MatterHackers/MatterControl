@@ -199,37 +199,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			return mainContainer;
 		}
 
-		private static FlowLayoutWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme = null)
+		private static GuiWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme)
 		{
-			var row = CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize(), theme);
-			row.AddChild(field.Content);
-
-			return row;
+			return CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize(), field.Content, theme);
 		}
 
-		public static FlowLayoutWidget CreateSettingsRow(string labelText, string toolTipText = null, ThemeConfig theme = null)
+		public static GuiWidget CreateSettingsRow(string labelText, string toolTipText, GuiWidget guiWidget, ThemeConfig theme)
 		{
-			if (theme == null)
-			{
-				theme = AppContext.Theme;
-			}
+			guiWidget.VAnchor |= VAnchor.Center;
 
-			var rowContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			var row = new SettingsRow(labelText, toolTipText, theme)
 			{
-				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5),
-				ToolTipText = toolTipText
+				Padding = new BorderDouble(right: theme.DefaultContainerPadding)
 			};
+			row.AddChild(guiWidget);
 
-			rowContainer.AddChild(new TextWidget(labelText + ":", pointSize: 11, textColor: theme.TextColor)
-			{
-				Margin = new BorderDouble(0, 0, 3, 0),
-				VAnchor = VAnchor.Center,
-			});
-
-			rowContainer.AddChild(new HorizontalSpacer());
-
-			return rowContainer;
+			return row;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)
@@ -352,7 +337,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				object3D.Invalidated += RefreshField;
 				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is Color color)
 			{
@@ -365,7 +350,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is Vector2 vector2)
 			{
@@ -410,7 +395,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
@@ -419,13 +404,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					Normal = directionAxis.Normal
 				};
-				var row1 = CreateSettingsRow("Axis".Localize());
+
 				var field1 = new DirectionVectorField(theme);
 				field1.Initialize(0);
 				field1.SetValue(newDirectionVector);
-				row1.AddChild(field1.Content);
 
-				rowContainer.AddChild(row1);
+				rowContainer.AddChild(CreateSettingsRow("Axis".Localize(), null, field1.Content, theme));
 
 				// the direction axis
 				// the distance from the center of the part
@@ -491,7 +475,7 @@ namespace MatterHackers.MatterControl.DesignTools
 							return childrenSelector;
 						});
 
-					rowContainer = CreateSettingsRow(property, field);
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 				else // show the subtract editor for boolean subtract and subtract and replace
 				{
@@ -550,7 +534,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				object3D.Invalidated += RefreshField;
 				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is bool boolValue)
 			{
@@ -562,7 +546,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				RegisterValueChanged(field,
 					(valueString) => { return valueString == "1"; },
 					(value) => { return ((bool)value) ? "1" : "0"; });
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is string stringValue)
 			{
@@ -572,7 +556,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.SetValue(stringValue, false);
 				field.Content.HAnchor = HAnchor.Stretch;
 				RegisterValueChanged(field, (valueString) => valueString);
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 
 				var label = rowContainer.Children.First();
 
@@ -596,7 +580,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field);
+				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (property.PropertyType.IsEnum)
 			{
@@ -815,16 +799,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (!context.item.Persistable
 				&& !string.IsNullOrEmpty(unlockUrl))
 			{
-				FlowLayoutWidget row = GetUnlockRow(theme, unlockUrl);
-
-				editControlsContainer.AddChild(row);
+				editControlsContainer.AddChild(GetUnlockRow(theme, unlockUrl));
 			}
 		}
 
-		public static FlowLayoutWidget GetUnlockRow(ThemeConfig theme, string unlockLinkUrl)
+		public static GuiWidget GetUnlockRow(ThemeConfig theme, string unlockLinkUrl)
 		{
-			var row = CreateSettingsRow("Demo Mode".Localize());
-
 			var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = 5,
@@ -834,17 +814,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				ApplicationController.Instance.LaunchBrowser(unlockLinkUrl);
 			};
-			row.AddChild(detailsLink);
 			theme.ApplyPrimaryActionStyle(detailsLink);
-			return row;
+
+			return CreateSettingsRow("Demo Mode".Localize(), null, detailsLink, theme);
 		}
 
 		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
 		{
 			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var row = CreateSettingsRow("Website".Localize());
-
 				var detailsLink = new TextIconButton(unlockLink.Name.Localize(), AggContext.StaticData.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
@@ -854,8 +832,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					ApplicationController.Instance.LaunchBrowser(unlockLink.Url);
 				};
-				row.AddChild(detailsLink);
-				editControlsContainer.AddChild(row);
+
+				// website row
+				editControlsContainer.AddChild(CreateSettingsRow("Website".Localize(), null, detailsLink, theme));
 			}
 		}
 	}

@@ -11,6 +11,7 @@ using Markdig.Renderers.Agg;
 using Markdig.Renderers.Agg.Inlines;
 using Markdig.Syntax;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 
@@ -25,12 +26,22 @@ namespace Markdig.Renderers
 		}
 	}
 
-	public class TextSpaceX : TextWidget, ISkipIfFirst
+	public class TextSpaceX : GuiWidget, ISkipIfFirst
 	{
+		private static double spaceWidth = -1;
+
 		public TextSpaceX(ThemeConfig theme)
-			: base("", pointSize: 10, textColor: theme.TextColor)
 		{
-			this.AutoExpandBoundsToText = true;
+			this.HAnchor = HAnchor.Absolute;
+			this.VAnchor = VAnchor.Absolute;
+
+			if (spaceWidth == -1)
+			{
+				spaceWidth = new TypeFacePrinter(" ", pointSize: 10).LocalBounds.Width;
+			}
+
+			this.Width = spaceWidth;
+			this.Height = spaceWidth;
 		}
 	}
 
@@ -54,6 +65,7 @@ namespace Markdig.Renderers
 		public GuiWidget RootWidget { get; }
 
 		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
+
 		public List<MarkdownDocumentLink> ChildLinks { get; internal set; }
 
 		public AggRenderer(ThemeConfig theme)
@@ -82,7 +94,7 @@ namespace Markdig.Renderers
 
 			// Default inline renderers
 			ObjectRenderers.Add(new AggAutolinkInlineRenderer());
-			ObjectRenderers.Add(new AggCodeInlineRenderer());
+			ObjectRenderers.Add(new AggCodeInlineRenderer(theme));
 			ObjectRenderers.Add(new AggDelimiterInlineRenderer());
 			ObjectRenderers.Add(new AggEmphasisInlineRenderer());
 			ObjectRenderers.Add(new AggLineBreakInlineRenderer());

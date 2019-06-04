@@ -59,12 +59,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 					null,
 					theme));
 
-				// run leveling button
 				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("compass.png", theme.InvertIcons), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,
-					Name = "Run Leveling Button",
+					Name = "Printer Calibration Button",
 					ToolTipText = "Run Calibration".Localize()
 				};
 

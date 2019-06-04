@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 
@@ -49,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				currentValue = databaseValue;
 			}
+
 			if (currentValue != databaseValue)
 			{
 				UserSettings.Instance.Fields.SetDouble(keyName, currentValue);
@@ -56,6 +56,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return currentValue;
 		}
+
+		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
 		public override void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -77,26 +79,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var pattern = new VertexStorage();
 			pattern.MoveTo(0, 0);
-			pattern.LineTo(finLength/2, 0);
-			pattern.LineTo(finLength/2, reach - finLength / 8);
-			pattern.LineTo(finLength/2 - finLength / 8, reach);
-			pattern.LineTo(-finLength/2 + finLength / 8, reach);
-			pattern.LineTo(-finLength/2, reach - finLength / 8);
-			pattern.LineTo(-finLength/2, 0);
+			pattern.LineTo(finLength / 2, 0);
+			pattern.LineTo(finLength / 2, reach - finLength / 8);
+			pattern.LineTo(finLength / 2 - finLength / 8, reach);
+			pattern.LineTo(-finLength / 2 + finLength / 8, reach);
+			pattern.LineTo(-finLength / 2, reach - finLength / 8);
+			pattern.LineTo(-finLength / 2, 0);
 
 			var fin1 = new Object3D()
 			{
 				Mesh = VertexSourceToMesh.Extrude(pattern, finWidth)
 			};
 			fin1 = new TranslateObject3D(fin1, 0, 0, -finWidth / 2);
-			//fin1.ChamferEdge(Face.Top | Face.Back, finLength / 8);
-			//fin1.ChamferEdge(Face.Top | Face.Front, finLength / 8);
+			// fin1.ChamferEdge(Face.Top | Face.Back, finLength / 8);
+			// fin1.ChamferEdge(Face.Top | Face.Front, finLength / 8);
 			fin1 = new RotateObject3D(fin1, -MathHelper.Tau / 4);
 			var fin2 = new SetCenterObject3D(new RotateObject3D(fin1, 0, 0, MathHelper.Tau / 4), fin1.GetCenter());
 
 			return new Object3D().SetChildren(new List<IObject3D>() { fin1, fin2 });
 		}
 
-		override abstract public Task Rebuild();
+		public override abstract Task Rebuild();
 	}
 }

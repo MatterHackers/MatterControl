@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.Library
 			if (Directory.Exists(this.FullPath))
 			{
 				var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-				Items = recentFiles.Where(f => f.Length > 500).Take(this.PageSize).Select(f => new FileSystemFileItem(f.FullName)).ToList<ILibraryItem>();
+				Items = recentFiles.Where(f => f.Length > 215).Select(f => new FileSystemFileItem(f.FullName)).ToList<ILibraryItem>();
 			}
 		}
 

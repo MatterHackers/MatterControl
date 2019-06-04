@@ -270,11 +270,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.WaitForName("Disconnect from printer button");
 
-			testRunner.Delay();
-			if (testRunner.NamedWidgetExists("Already Loaded Button"))
-			{
-				testRunner.ClickByName("Already Loaded Button");
-			}
+			// replace the old behavior of clicking the 'Already Loaded' button by setting to filament_has_been_loaded.
+			ApplicationController.Instance.ActivePrinters.First().Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
 
 			// Access through static instance must occur after Connect has occurred and the port has spun up
 			Emulator.Instance.RunSlow = runSlow;
@@ -978,8 +975,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay();
 
 			waitForPageAndAdvance("Print Leveling Overview");
-
-			waitForPageAndAdvance("Homing the printer");
 
 			waitForPageAndAdvance("Heating the printer");
 

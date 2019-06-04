@@ -56,6 +56,7 @@ namespace MatterHackers.MatterControl
 	using System.Net.Http;
 	using System.Reflection;
 	using System.Text;
+	using System.Text.RegularExpressions;
 	using System.Threading;
 	using Agg.Font;
 	using Agg.Image;
@@ -2109,58 +2110,66 @@ namespace MatterHackers.MatterControl
 
 					foreach (var persistedWorkspace in persistedWorkspaces)
 					{
-						// Load the actual workspace if content file exists
-						if (File.Exists(persistedWorkspace.ContentPath))
+						try
 						{
-							string printerID = persistedWorkspace.PrinterID;
-
-							PartWorkspace workspace = null;
-
-							if (!string.IsNullOrEmpty(printerID)
-								&& ProfileManager.Instance[printerID] != null)
+							// Load the actual workspace if content file exists
+							if (File.Exists(persistedWorkspace.ContentPath))
 							{
-								// Only create one workspace per printer
-								if (!loadedPrinters.Contains(printerID))
-								{
-									// Add workspace for printer
-									workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+								string printerID = persistedWorkspace.PrinterID;
 
-									loadedPrinters.Add(printerID);
+								PartWorkspace workspace = null;
+
+								if (!string.IsNullOrEmpty(printerID)
+									&& ProfileManager.Instance[printerID] != null)
+								{
+									// Only create one workspace per printer
+									if (!loadedPrinters.Contains(printerID))
+									{
+										// Add workspace for printer
+										workspace = new PartWorkspace(await this.LoadPrinter(persistedWorkspace.PrinterID));
+
+										loadedPrinters.Add(printerID);
+									}
+									else
+									{
+										// Ignore additional workspaces for the same printer once one is loaded
+										continue;
+									}
 								}
 								else
 								{
-									// Ignore additional workspaces for the same printer once one is loaded
-									continue;
+									// Add workspace for part
+									workspace = new PartWorkspace(new BedConfig(history));
 								}
-							}
-							else
-							{
-								// Add workspace for part
-								workspace = new PartWorkspace(new BedConfig(history));
-							}
 
-							// Load the previous content
-							await workspace.SceneContext.LoadContent(new EditContext()
-							{
-								ContentStore = history,
-								SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
-							});
+								// Load the previous content
+								await workspace.SceneContext.LoadContent(new EditContext()
+								{
+									ContentStore = history,
+									SourceItem = new FileSystemFileItem(persistedWorkspace.ContentPath)
+								});
 
-							if (workspace.Printer != null)
-							{
-								workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
-							}
-							else
-							{
-								workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
-							}
+								if (workspace.Printer != null)
+								{
+									workspace.Name = workspace.Printer.Settings.GetValue(SettingsKey.printer_name);
+								}
+								else
+								{
+									workspace.Name = workspace?.SceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
+								}
 
-							this.RestoreWorkspace(workspace);
+								this.RestoreWorkspace(workspace);
+							}
+						}
+						catch
+						{
+							// Suppress workspace load exceptions and continue to the next workspace
 						}
 					}
 				}
 				catch
 				{
+					// Suppress deserialization issues with opentabs.json and continue with an empty Workspaces lists
 				}
 			}
 
@@ -2955,6 +2964,25 @@ Support and tutorials:
 				printer.Connection.HaltConnectionThread();
 				printer.Connection.Connect();
 			}
+		}
+
+		/// <summary>
+		/// Replace invalid filename characters with the given replacement value to ensure working paths for the current filesystem
+		/// </summary>
+		/// <param name="name">The filename name to consider</param>
+		/// <param name="replacementCharacter">The replacement character to use</param>
+		/// <returns>A sanitized file name that is safe to use on the current system</returns>
+		public string SanitizeFileName(string name, string replacementCharacter = "_")
+		{
+			if (string.IsNullOrEmpty(name))
+			{
+				return name;
+			}
+
+			string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
+			string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+			return Regex.Replace(name, invalidRegStr, replacementCharacter);
 		}
 
 		public class CloudSyncEventArgs : EventArgs

@@ -27,40 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using static MatterHackers.Agg.Easing;
+using static MatterHackers.VectorMath.Easing;
 
 namespace MatterHackers.MatterControl
 {
-	public static class UiNavigation
-	{
-		private static void HighlightWidget(AutomationRunner testRunner, string widgetNameToHighlight)
-		{
-			SystemWindow containingWindow;
-			var autoLevelRowItem = testRunner.GetWidgetByName(widgetNameToHighlight, out containingWindow, .2);
-			if (autoLevelRowItem != null)
-			{
-				AttentionGetter.GetAttention(autoLevelRowItem);
-			}
-		}
-	}
-
 	public class AttentionGetter
 	{
-		private static HashSet<GuiWidget> runningAttentions = new HashSet<GuiWidget>();
-		private double animationDelay = 1 / 20.0;
-		private int cycles = 1;
-		private double lightnessChange = 1;
-		private double pulseTime = 1.38;
+		private static readonly HashSet<GuiWidget> RunningAttentions = new HashSet<GuiWidget>();
+		private readonly double animationDelay = 1 / 20.0;
+		private readonly int cycles = 1;
+		private readonly double lightnessChange = 1;
+		private readonly double pulseTime = 1.38;
 		private Color startColor;
 		private Stopwatch timeSinceStart = null;
 		private GuiWidget widgetToHighlight;
@@ -73,9 +55,9 @@ namespace MatterHackers.MatterControl
 
 		public static AttentionGetter GetAttention(GuiWidget widgetToHighlight)
 		{
-			if(!runningAttentions.Contains(widgetToHighlight))
+			if (!RunningAttentions.Contains(widgetToHighlight))
 			{
-				runningAttentions.Add(widgetToHighlight);
+				RunningAttentions.Add(widgetToHighlight);
 				return new AttentionGetter(widgetToHighlight);
 			}
 
@@ -89,6 +71,7 @@ namespace MatterHackers.MatterControl
 			{
 				ratio -= pulseTime;
 			}
+
 			ratio = ratio * 2 / pulseTime;
 			if (ratio > 1)
 			{
@@ -110,7 +93,7 @@ namespace MatterHackers.MatterControl
 				{
 					widgetToHighlight.BackgroundColor = startColor;
 					widgetToHighlight.AfterDraw -= ConnectToWidget;
-					runningAttentions.Remove(widgetToHighlight);
+					RunningAttentions.Remove(widgetToHighlight);
 					widgetToHighlight = null;
 					return;
 				}
@@ -119,11 +102,12 @@ namespace MatterHackers.MatterControl
 
 		private void ConnectToWidget(object drawingWidget, DrawEventArgs e)
 		{
-			GuiWidget parent = drawingWidget as GuiWidget;
+			var parent = drawingWidget as GuiWidget;
 			while (parent.BackgroundColor.Alpha0To255 == 0)
 			{
 				parent = parent.Parent;
 			}
+
 			startColor = parent.BackgroundColor;
 			timeSinceStart = Stopwatch.StartNew();
 			widgetToHighlight.AfterDraw -= ConnectToWidget;

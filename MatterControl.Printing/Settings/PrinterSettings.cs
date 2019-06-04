@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -43,12 +40,34 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public enum NamedSettingsLayers { MHBaseSettings, OEMSettings, Quality, Material, User, All }
+	public enum NamedSettingsLayers
+	{
+		MHBaseSettings,
+		OEMSettings,
+		Quality,
+		Material,
+		User,
+		All
+	}
 
-	public enum BedShape { Rectangular, Circular };
+	public enum BedShape
+	{
+		Rectangular,
+		Circular
+	}
 
 	[JsonConverter(typeof(StringEnumConverter))]
-	public enum LevelingSystem { Probe3Points, Probe7PointRadial, Probe13PointRadial, Probe100PointRadial, Probe3x3Mesh, Probe5x5Mesh, Probe10x10Mesh, ProbeCustom }
+	public enum LevelingSystem
+	{
+		Probe3Points,
+		Probe7PointRadial,
+		Probe13PointRadial,
+		Probe100PointRadial,
+		Probe3x3Mesh,
+		Probe5x5Mesh,
+		Probe10x10Mesh,
+		ProbeCustom
+	}
 
 	public class PrinterSettings
 	{
@@ -132,8 +151,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
 		{
-			string stagedUserOverride;
-			if (StagedUserSettings.TryGetValue(settingsKey, out stagedUserOverride))
+			if (StagedUserSettings.TryGetValue(settingsKey, out string stagedUserOverride))
 			{
 				StagedUserSettings.Remove(settingsKey);
 				UserLayer[settingsKey] = stagedUserOverride;
@@ -237,8 +255,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
 		{
-			string userOverride;
-			if (this.UserLayer.TryGetValue(settingsKey, out userOverride))
+			if (this.UserLayer.TryGetValue(settingsKey, out string userOverride))
 			{
 				this.UserLayer.Remove(settingsKey);
 				this.StagedUserSettings[settingsKey] = userOverride;
@@ -249,7 +266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
 		{
-			HashSet<string> skipKeys = new HashSet<string>
+			var skipKeys = new HashSet<string>
 			{
 				"layer_id",
 			};
@@ -463,20 +480,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			PrintLevelingEnabledChanged?.Invoke(s, e);
 		}
 
-		/// <summary>
-		/// Should contain both user created and oem specified material layers
-		/// </summary>
 		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
 
-		/// <summary>
-		/// Should contain both user created and oem specified quality layers
-		/// </summary>
 		public List<PrinterSettingsLayer> QualityLayers { get; private set; } = new List<PrinterSettingsLayer>();
 
-		///<summary>
-		///Returns the settings value at the 'top' of the stack
-		///Returns the first matching value discovered while enumerating the settings layers
-		///</summary>
+		/// <summary>
+		/// Gets the first matching value discovered while enumerating the settings layers
+		/// </summary>
 		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 			if (layerCascade == null)
@@ -486,8 +496,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (PrinterSettingsLayer layer in layerCascade)
 			{
-				string value;
-				if (layer.TryGetValue(sliceSetting, out value))
+				if (layer.TryGetValue(sliceSetting, out string value))
 				{
 					return value;
 				}
@@ -615,6 +624,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				layerCascade = defaultLayerCascade;
 			}
+
 			foreach (PrinterSettingsLayer layer in layerCascade)
 			{
 				if (layer.ContainsKey(sliceSetting))
@@ -622,10 +632,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return true;
 				}
 			}
+
 			return false;
 		}
 
-		PrinterSettingsLayer _baseLayer;
+		private PrinterSettingsLayer _baseLayer;
+
 		[JsonIgnore]
 		public PrinterSettingsLayer BaseLayer
 		{
@@ -792,9 +804,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// this way we can use the common pattern without error
 				return (T)(object)settingsValue;
 			}
-			else if(typeof(T) == typeof(LevelingSystem))
+			else if (typeof(T) == typeof(LevelingSystem))
 			{
-				switch(settingsValue)
+				switch (settingsValue)
 				{
 					case "3 Point Plane":
 						return (T)(object)(LevelingSystem.Probe3Points);
@@ -833,7 +845,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				return (T)(object)Vector2.Parse(settingsValue);
 			}
-			else if(typeof(T) == typeof(Vector3))
+			else if (typeof(T) == typeof(Vector3))
 			{
 				return (T)(object)Vector3.Parse(settingsValue);
 			}
@@ -848,7 +860,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// Remove % and parse out double value
 					double.TryParse(settingsValue.Replace("%", ""), out double doubleValue);
 
-					double ratio =  doubleValue / 100;
+					double ratio = doubleValue / 100;
 
 					if (settingsKey == SettingsKey.first_layer_height)
 					{
@@ -978,8 +990,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var persistenceLayer = layer ?? UserLayer;
 
 			// If the setting exists and is set to the requested value, exit without setting or saving
-			string existingValue;
-			if (persistenceLayer.TryGetValue(settingsKey, out existingValue) && existingValue == settingsValue)
+			if (persistenceLayer.TryGetValue(settingsKey, out string existingValue) 
+				&& existingValue == settingsValue)
 			{
 				return;
 			}

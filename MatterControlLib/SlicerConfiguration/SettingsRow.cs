@@ -32,7 +32,6 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
@@ -44,9 +43,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected const bool debugLayout = false;
 		protected ThemeConfig theme;
 
+		private bool _fullRowSelect = false;
+
+
 		protected bool mouseInBounds = false;
 		private Color hoverColor;
-		private bool fullRowSelect;
 		private GuiWidget settingsLabel;
 
 		private Popover popoverBubble = null;
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.HelpText = helpText ?? "";
 				this.theme = theme;
-				this.fullRowSelect = fullRowSelect;
+				this.FullRowSelect = fullRowSelect;
 
 				this.HAnchor = HAnchor.Stretch;
 				this.VAnchor = VAnchor.Fit;
@@ -109,10 +110,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			this.PerformLayout();
+		}
 
-			if (fullRowSelect)
+		public bool FullRowSelect
+		{
+			get => _fullRowSelect;
+			set
 			{
-				this.Cursor = Cursors.Hand;
+				if (_fullRowSelect != value)
+				{
+					_fullRowSelect = value;
+
+					foreach (var child in Children)
+					{
+						child.Selectable = !_fullRowSelect;
+					}
+
+					this.Cursor = _fullRowSelect ? Cursors.Hand : Cursors.Default;
+				}
 			}
 		}
 
@@ -131,12 +146,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
-			if (fullRowSelect)
-			{
-				childToAdd.Selectable = false;
-			}
+			childToAdd.Selectable = this.FullRowSelect == false;
 
 			base.AddChild(childToAdd, indexInChildrenList);
+		}
+
+		public override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (ActionWidget != null
+				&& mouseEvent.Button == MouseButtons.Left)
+			{
+				ActionWidget.OnClick(new MouseEventArgs(mouseEvent, 5, 5));
+
+				return;
+			}
+
+			base.OnClick(mouseEvent);
 		}
 
 		public override Color BackgroundColor
@@ -152,12 +177,47 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnLoad(args);
 		}
 
+		private static int popupCount;
+		private bool popupScheduled = false;
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
 			this.Invalidate();
 
-			this.ShowPopover(this);
+			if (!popupScheduled)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					void Popover_Closed (object sender, EventArgs e)
+					{
+						popupCount--;
+
+						if (sender is GuiWidget widget)
+						{
+							widget.Closed -= Popover_Closed;
+						}
+					}
+
+					if (mouseInBounds)
+					{
+						popupCount++;
+						this.ShowPopover(this);
+
+						if (popoverBubble != null)
+						{
+							popoverBubble.Closed += Popover_Closed;
+						}
+
+						this.Invalidate();
+					}
+
+					popupScheduled = false;
+
+				}, popupCount > 0 ? ToolTipManager.ReshowDelay : ToolTipManager.InitialDelay);
+			}
+
+			popupScheduled = true;
 
 			base.OnMouseEnterBounds(mouseEvent);
 		}
