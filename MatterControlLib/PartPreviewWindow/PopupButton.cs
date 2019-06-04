@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void CloseMenu() => popupWidget?.CloseMenu();
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (!menuVisibileAtMouseDown)
 			{

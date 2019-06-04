@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (!MenuVisible
 				&& !downWhileOpen)

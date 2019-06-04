@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			CheckedStateChanged?.Invoke(this, null);
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (this.Expandable)
 			{

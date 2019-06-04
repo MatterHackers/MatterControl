@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseMove(mouseEvent);
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
 

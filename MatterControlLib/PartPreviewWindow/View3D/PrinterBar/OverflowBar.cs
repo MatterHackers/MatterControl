@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						menuItem.Click += (s, e) =>
 						{
-							widget.OnClick(e);
+							widget.InvokeClick();
 						};
 					}
 

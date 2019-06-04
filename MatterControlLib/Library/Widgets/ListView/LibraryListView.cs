@@ -496,7 +496,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool HasMenu { get; set; } = true;
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			ShowRightClickMenu(mouseEvent);
 

@@ -704,7 +704,7 @@ namespace MatterHackers.MatterControl
 				this.MovementFeedRate = movementFeedRate;
 			}
 
-			public override void OnClick(MouseEventArgs mouseEvent)
+			protected override void OnClick(MouseEventArgs mouseEvent)
 			{
 				base.OnClick(mouseEvent);
 
@@ -742,7 +742,7 @@ namespace MatterHackers.MatterControl
 				this.MovementFeedRate = movementFeedRate;
 			}
 
-			public override void OnClick(MouseEventArgs mouseEvent)
+			protected override void OnClick(MouseEventArgs mouseEvent)
 			{
 				base.OnClick(mouseEvent);
 
