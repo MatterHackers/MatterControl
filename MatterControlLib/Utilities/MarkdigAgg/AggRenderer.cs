@@ -94,7 +94,7 @@ namespace Markdig.Renderers
 
 			// Default inline renderers
 			ObjectRenderers.Add(new AggAutolinkInlineRenderer());
-			ObjectRenderers.Add(new AggCodeInlineRenderer());
+			ObjectRenderers.Add(new AggCodeInlineRenderer(theme));
 			ObjectRenderers.Add(new AggDelimiterInlineRenderer());
 			ObjectRenderers.Add(new AggEmphasisInlineRenderer());
 			ObjectRenderers.Add(new AggLineBreakInlineRenderer());
