@@ -187,7 +187,7 @@ namespace MatterHackers.Plugins.EditorTools
 					Matrix4X4 scaleTransform = Matrix4X4.CreateScale((topPosition - bottomPosition).Length, distBetweenPixelsWorldSpace, distBetweenPixelsWorldSpace);
 					Matrix4X4 lineTransform = scaleTransform * rotateTransform * Matrix4X4.CreateTranslation(centerPosition);
 
-					Frustum clippingFrustum = GLHelper.GetClippingFrustum(InteractionContext.World);
+					Frustum clippingFrustum = InteractionContext.World.GetClippingFrustum();
 
 					if (e.ZBuffered)
 					{

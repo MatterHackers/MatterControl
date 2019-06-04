@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using System;
