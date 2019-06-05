@@ -197,16 +197,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				GCodeExport exportPlugin = null;
-				string exportButtonText = "Export G-Code".Localize();
+
+				bool isSailfish = printer.Settings.GetValue<bool>("enable_sailfish_communication");
 
 				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
 				{
-					if (printer.Settings.GetValue<bool>("enable_sailfish_communication"))
+					if (isSailfish)
 					{
 						if (plugin is X3GExport)
 						{
 							exportPlugin = (GCodeExport)plugin;
-							exportButtonText = "Export X3G".Localize();
 						}
 					}
 					else
@@ -218,12 +218,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 
+				string exportType = isSailfish ? "Export X3G".Localize() : "Export G-Code".Localize();
+
 				exportPlugin.Initialize(printer);
 
-				var exportGCodeButton = menuTheme.CreateDialogButton(exportButtonText);
+				var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
 				exportGCodeButton.Name = "Export Gcode Button";
 				exportGCodeButton.Enabled = exportPlugin.Enabled;
-				exportGCodeButton.ToolTipText = exportPlugin.DisabledReason;
+				exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
 
 				exportGCodeButton.Click += (s, e) =>
 				{
