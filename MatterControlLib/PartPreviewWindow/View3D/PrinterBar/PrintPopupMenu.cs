@@ -196,6 +196,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.CloseMenu();
 				};
 
+				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
+				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
+					&& UserSettings.Instance.get($"Ignore_{e.ID}") != "true");
+
+				var hasErrorsOrWarnings = hasErrors || hasWarnings;
+				if (hasErrorsOrWarnings)
+				{
+					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();
+
+					setupRow.AddChild(new TextWidget(label, textColor: hasErrors ? Color.Red : theme.PrimaryAccentColor, pointSize: theme.DefaultFontSize)
+					{
+						VAnchor = VAnchor.Bottom,
+						AutoExpandBoundsToText = true,
+					});
+				}
+
+				setupRow.AddChild(new HorizontalSpacer());
+
 				GCodeExport exportPlugin = null;
 
 				bool isSailfish = printer.Settings.GetValue<bool>("enable_sailfish_communication");
@@ -235,24 +253,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						exportPlugin);
 				};
 
-				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
-				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
-					&& UserSettings.Instance.get($"Ignore_{e.ID}") != "true");
-
-				var hasErrorsOrWarnings = hasErrors || hasWarnings;
-				if (hasErrorsOrWarnings)
-				{
-					string label = hasErrors ? "Action Required".Localize() : "Action Recommended".Localize();
-
-					setupRow.AddChild(new TextWidget(label, textColor: hasErrors ? Color.Red : theme.PrimaryAccentColor, pointSize: theme.DefaultFontSize)
-					{
-						VAnchor = VAnchor.Bottom,
-						AutoExpandBoundsToText = true,
-					});
-				}
-
-				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(exportGCodeButton);
+
 				setupRow.AddChild(startPrintButton);
 
 				printPanel.AddChild(setupRow);
