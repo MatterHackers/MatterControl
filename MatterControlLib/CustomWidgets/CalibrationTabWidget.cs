@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -130,8 +131,6 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(xLabel);
 
-			//////////////////////////////////
-			///
 			x1 = d.X + highlightOffset;
 			y1 = d.Y + 50;
 
@@ -191,7 +190,6 @@ namespace MatterHackers.MatterControl
 					Position = new Vector2(left + 3 + barWidth + (cellSize * i), bottom),
 					Height = barWidth,
 					Width = padSize,
-					Enabled = false,
 					Index = i,
 					IsActive = i == 3,
 					Axis = PrinterConnection.Axis.Y
@@ -201,10 +199,46 @@ namespace MatterHackers.MatterControl
 			foreach (var calibrationPad in this.Children.OfType<CalibrationPad>())
 			{
 				calibrationPad.Click += this.CalibrationPad_Click;
+				calibrationPad.Hovered += this.CalibrationPad_Hovered;
 			}
 
 			tabShape = new FlattenCurves(tabShape2);
 			tabStroke = new Stroke(tabShape);
+		}
+
+		private void CalibrationPad_Hovered(object sender, PrinterConnection.Axis axis)
+		{
+			// Only show hint on hover if this axis is not collected - prevent accidental close of other axis
+			if (!this.AxisCollected(axis))
+			{
+				this.ShowHint(axis);
+			}
+		}
+
+		private void ShowHint(PrinterConnection.Axis axis)
+		{
+			if (!AxisCollected(axis))
+			{
+				// Show UI hints for hovered and uncollected axis
+				this.CollectionMode = axis;
+			}
+			else
+			{
+				// Disable UI hints
+				this.CollectionMode = PrinterConnection.Axis.Z;
+			}
+		}
+
+		private bool AxisCollected(PrinterConnection.Axis axis)
+		{
+			if (axis == PrinterConnection.Axis.X)
+			{
+				return calibrationWizard.XPick != -1;
+			}
+			else
+			{
+				return calibrationWizard.YPick == -1;
+			}
 		}
 
 		private PrinterConnection.Axis CollectionMode
@@ -217,12 +251,6 @@ namespace MatterHackers.MatterControl
 				switch (_collectionMode)
 				{
 					case PrinterConnection.Axis.Y:
-						// Enable
-						foreach (var pad in this.Children.OfType<CalibrationPad>().Where(p => p.Axis == PrinterConnection.Axis.Y))
-						{
-							pad.Enabled = true;
-						}
-
 						xLabel.Visible = false;
 						yLabel.Visible = true;
 						break;
@@ -246,21 +274,10 @@ namespace MatterHackers.MatterControl
 			{
 				if (calibrationPad.Axis == PrinterConnection.Axis.X)
 				{
-					if (CollectionMode == PrinterConnection.Axis.X)
-					{
-						CollectionMode = PrinterConnection.Axis.Y;
-					}
-
 					calibrationWizard.XPick = calibrationPad.Index;
-
 				}
 				else if (calibrationPad.Axis == PrinterConnection.Axis.Y)
 				{
-					if (CollectionMode == PrinterConnection.Axis.Y)
-					{
-						CollectionMode = PrinterConnection.Axis.Z;
-					}
-
 					calibrationWizard.YPick = calibrationPad.Index;
 				}
 
@@ -269,6 +286,9 @@ namespace MatterHackers.MatterControl
 					pad.BackgroundColor = pad == calibrationPad ? theme.PrimaryAccentColor : theme.SlightShade;
 					pad.IsActive = pad == calibrationPad;
 				}
+
+				// Toggle hint
+				this.ShowHint(calibrationPad.Axis == PrinterConnection.Axis.X ? PrinterConnection.Axis.Y : PrinterConnection.Axis.X);
 			}
 
 			// CheckIfCanAdvance
@@ -294,6 +314,8 @@ namespace MatterHackers.MatterControl
 
 		private class CalibrationPad : IconButton
 		{
+			public event EventHandler<PrinterConnection.Axis> Hovered;
+
 			private static ImageBuffer activeIcon;
 			private static ImageBuffer inactiveIcon;
 			private bool _isActive;
@@ -302,7 +324,6 @@ namespace MatterHackers.MatterControl
 			{
 				activeIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", true);
 				inactiveIcon = new ImageBuffer(16, 16);
-				//inactiveIcon = activeIcon.AjustAlpha(0.2);
 			}
 
 			public CalibrationPad(string text, ThemeConfig theme, double pointSize = -1)
@@ -330,6 +351,8 @@ namespace MatterHackers.MatterControl
 
 			public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 			{
+				this.Hovered?.Invoke(this, this.Axis);
+
 				this.imageWidget.Image = activeIcon;
 				base.OnMouseEnterBounds(mouseEvent);
 			}
