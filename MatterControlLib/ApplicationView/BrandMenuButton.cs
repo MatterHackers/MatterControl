@@ -136,13 +136,13 @@ namespace MatterHackers.MatterControl
 				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
 
 				menuItem = modifyMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com/topic/mattercontrol");
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/topic/mattercontrol");
 
 				menuItem = modifyMenu.CreateMenuItem("Support".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://https://www.matterhackers.com/mattercontrol/support");
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support");
 
 				menuItem = modifyMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("http://wiki.mattercontrol.com/Release_Notes");
+				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support/release-notes");
 
 				modifyMenu.CreateSeparator();
 
