@@ -201,20 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static GuiWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme)
 		{
-			return CreateSettingsRow(property.DisplayName.Localize(), property.Description.Localize(), field.Content, theme);
-		}
-
-		public static GuiWidget CreateSettingsRow(string labelText, string toolTipText, GuiWidget guiWidget, ThemeConfig theme)
-		{
-			guiWidget.VAnchor |= VAnchor.Center;
-
-			var row = new SettingsRow(labelText, toolTipText, theme)
-			{
-				Padding = new BorderDouble(right: theme.DefaultContainerPadding)
-			};
-			row.AddChild(guiWidget);
-
-			return row;
+			return new SettingsRow(property.DisplayName.Localize(), property.Description.Localize(), field.Content, theme);
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)
@@ -409,7 +396,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field1.Initialize(0);
 				field1.SetValue(newDirectionVector);
 
-				rowContainer.AddChild(CreateSettingsRow("Axis".Localize(), null, field1.Content, theme));
+				rowContainer.AddChild(new SettingsRow("Axis".Localize(), null, field1.Content, theme));
 
 				// the direction axis
 				// the distance from the center of the part
@@ -816,7 +803,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 			theme.ApplyPrimaryActionStyle(detailsLink);
 
-			return CreateSettingsRow("Demo Mode".Localize(), null, detailsLink, theme);
+			return new SettingsRow("Demo Mode".Localize(), null, detailsLink, theme);
 		}
 
 		private void AddWebPageLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
@@ -834,7 +821,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// website row
-				editControlsContainer.AddChild(CreateSettingsRow("Website".Localize(), null, detailsLink, theme));
+				editControlsContainer.AddChild(new SettingsRow("Website".Localize(), null, detailsLink, theme));
 			}
 		}
 	}

@@ -131,6 +131,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public SettingsRow(string title, string helpText, GuiWidget guiWidget, ThemeConfig theme)
+			: this (title, helpText, theme)
+		{
+			this.Padding = new BorderDouble(right: theme.DefaultContainerPadding);
+
+			guiWidget.VAnchor |= VAnchor.Center;
+			this.AddChild(guiWidget);
+		}
+
 		public static GuiWidget CreateSettingsLabel(string label, string helpText, Color textColor)
 		{
 			return new TextWidget(label, textColor: textColor, pointSize: 10)
