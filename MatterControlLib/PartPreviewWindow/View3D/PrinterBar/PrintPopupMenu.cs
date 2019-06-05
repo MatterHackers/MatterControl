@@ -201,13 +201,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
 				{
-					if (printer.Settings.GetValue<bool>("enable_sailfish_communication")) {
-						if (plugin is X3GExport) {
+					if (printer.Settings.GetValue<bool>("enable_sailfish_communication"))
+					{
+						if (plugin is X3GExport)
+						{
 							exportPlugin = (GCodeExport)plugin;
 							exportButtonText = "Export X3G".Localize();
 						}
-					} else {
-						if (plugin is GCodeExport & !(plugin is X3GExport)) {
+					}
+					else
+					{
+						if (plugin is GCodeExport & !(plugin is X3GExport))
+						{
 							exportPlugin = (GCodeExport)plugin;
 						}
 					}
@@ -215,13 +220,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				exportPlugin.Initialize(printer);
 
-				var exportGcodeButton = new TextButton(exportButtonText, menuTheme) {
+				var exportGcodeButton = new TextButton(exportButtonText, menuTheme)
+				{
 					Name = "Export Gcode Button",
 					Enabled = exportPlugin.Enabled,
 					ToolTipText = exportPlugin.DisabledReason,
 				};
 
-				exportGcodeButton.Click += (s, e) => ExportPrintItemPage.DoExport(new[] { new InMemoryLibraryItem(printer.Bed.Scene) }, printer, exportPlugin );
+				exportGcodeButton.Click += (s, e) =>
+				{
+					ExportPrintItemPage.DoExport(
+						new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
+						printer,
+						exportPlugin);
+				};
 
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
 				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
