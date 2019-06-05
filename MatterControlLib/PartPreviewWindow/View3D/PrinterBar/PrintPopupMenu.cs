@@ -250,8 +250,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				setupRow.AddChild(new HorizontalSpacer());
-				setupRow.AddChild(startPrintButton);
 				setupRow.AddChild(exportGCodeButton);
+				setupRow.AddChild(startPrintButton);
 
 				printPanel.AddChild(setupRow);
 
