@@ -214,46 +214,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				setupRow.AddChild(new HorizontalSpacer());
 
-				GCodeExport exportPlugin = null;
-
+				// Export button {{
 				bool isSailfish = printer.Settings.GetValue<bool>("enable_sailfish_communication");
+				var exportPlugins = PluginFinder.CreateInstancesOf<IExportPlugin>();
+				var targetPluginType = isSailfish ? typeof(X3GExport) : typeof(GCodeExport);
 
-				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
+				// Find the first export plugin with the target type
+				if (exportPlugins.FirstOrDefault(p => p.GetType() == targetPluginType) is IExportPlugin exportPlugin)
 				{
-					if (isSailfish)
+					string exportType = isSailfish ? "Export X3G".Localize() : "Export G-Code".Localize();
+
+					exportPlugin.Initialize(printer);
+
+					var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
+					exportGCodeButton.Name = "Export Gcode Button";
+					exportGCodeButton.Enabled = exportPlugin.Enabled;
+					exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
+
+					exportGCodeButton.Click += (s, e) =>
 					{
-						if (plugin is X3GExport)
-						{
-							exportPlugin = (GCodeExport)plugin;
-						}
-					}
-					else
-					{
-						if (plugin is GCodeExport & !(plugin is X3GExport))
-						{
-							exportPlugin = (GCodeExport)plugin;
-						}
-					}
+						ExportPrintItemPage.DoExport(
+							new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
+							printer,
+							exportPlugin);
+					};
+
+					setupRow.AddChild(exportGCodeButton);
 				}
 
-				string exportType = isSailfish ? "Export X3G".Localize() : "Export G-Code".Localize();
-
-				exportPlugin.Initialize(printer);
-
-				var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
-				exportGCodeButton.Name = "Export Gcode Button";
-				exportGCodeButton.Enabled = exportPlugin.Enabled;
-				exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
-
-				exportGCodeButton.Click += (s, e) =>
-				{
-					ExportPrintItemPage.DoExport(
-						new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
-						printer,
-						exportPlugin);
-				};
-
-				setupRow.AddChild(exportGCodeButton);
+				// Export button }}
 
 				setupRow.AddChild(startPrintButton);
 
