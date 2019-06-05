@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 		private bool hasKeyboardFocus;
 
 		public WizardStageRow(string text, string helpText, ISetupWizard stage, ThemeConfig theme)
-			: base(text, helpText, theme)
+			: base(text, helpText, theme, fullRowSelect: true)
 		{
 			this.stage = stage;
 			this.Cursor = Cursors.Hand;
