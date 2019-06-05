@@ -86,27 +86,31 @@ namespace MatterHackers.MatterControl
 				AppContext.Platform.OpenCameraPreview();
 			};
 
-			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault() ?? PrinterConfig.EmptyPrinter;
+			var printer = ApplicationController.Instance.ActivePrinters.FirstOrDefault();
 
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Camera Monitoring".Localize(),
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = printer.Settings.GetValue<bool>(SettingsKey.publish_bed_image),
-						ToggleAction = (itemChecked) =>
+			// TODO: Sort out how handle this better on Android and in a multi-printer setup
+			if (printer != null)
+			{
+				this.AddSettingsRow(
+					new SettingsItem(
+						"Camera Monitoring".Localize(),
+						theme,
+						new SettingsItem.ToggleSwitchConfig()
 						{
-							printer.Settings.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
-						}
+							Checked = printer.Settings.GetValue<bool>(SettingsKey.publish_bed_image),
+							ToggleAction = (itemChecked) =>
+							{
+								printer.Settings.SetValue(SettingsKey.publish_bed_image, itemChecked ? "1" : "0");
+							}
+						},
+						previewButton,
+						AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
+					{
+						Enabled = printer.Settings.PrinterSelected
 					},
-					previewButton,
-					AggContext.StaticData.LoadIcon("camera-24x24.png", 24, 24))
-				{
-					Enabled = printer.Settings.PrinterSelected
-				},
-				generalPanel
-			);
+					generalPanel
+				);
+			}
 #endif
 			// Print Notifications
 			var configureNotificationsButton = new IconButton(configureIcon, theme)
