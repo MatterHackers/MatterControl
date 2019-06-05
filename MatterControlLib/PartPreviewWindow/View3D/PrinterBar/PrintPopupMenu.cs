@@ -196,33 +196,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.CloseMenu();
 				};
 
-				GCodeExport exportPlugin = null;
-				string exportButtonText = "Export G-Code".Localize();
-
-				foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>())
-				{
-					if (printer.Settings.GetValue<bool>("enable_sailfish_communication")) {
-						if (plugin is X3GExport) {
-							exportPlugin = (GCodeExport)plugin;
-							exportButtonText = "Export X3G".Localize();
-						}
-					} else {
-						if (plugin is GCodeExport & !(plugin is X3GExport)) {
-							exportPlugin = (GCodeExport)plugin;
-						}
-					}
-				}
-
-				exportPlugin.Initialize(printer);
-
-				var exportGcodeButton = new TextButton(exportButtonText, menuTheme) {
-					Name = "Export Gcode Button",
-					Enabled = exportPlugin.Enabled,
-					ToolTipText = exportPlugin.DisabledReason,
-				};
-
-				exportGcodeButton.Click += (s, e) => ExportPrintItemPage.DoExport(new[] { new InMemoryLibraryItem(printer.Bed.Scene) }, printer, exportPlugin );
-
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
 				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
 					&& UserSettings.Instance.get($"Ignore_{e.ID}") != "true");
@@ -240,8 +213,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				setupRow.AddChild(new HorizontalSpacer());
+
+				// Export button {{
+				bool isSailfish = printer.Settings.GetValue<bool>("enable_sailfish_communication");
+				var exportPlugins = PluginFinder.CreateInstancesOf<IExportPlugin>();
+				var targetPluginType = isSailfish ? typeof(X3GExport) : typeof(GCodeExport);
+
+				// Find the first export plugin with the target type
+				if (exportPlugins.FirstOrDefault(p => p.GetType() == targetPluginType) is IExportPlugin exportPlugin)
+				{
+					string exportType = isSailfish ? "Export X3G".Localize() : "Export G-Code".Localize();
+
+					exportPlugin.Initialize(printer);
+
+					var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
+					exportGCodeButton.Name = "Export Gcode Button";
+					exportGCodeButton.Enabled = exportPlugin.Enabled;
+					exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
+
+					exportGCodeButton.Click += (s, e) =>
+					{
+						ExportPrintItemPage.DoExport(
+							new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
+							printer,
+							exportPlugin);
+					};
+
+					setupRow.AddChild(exportGCodeButton);
+				}
+
+				// Export button }}
+
 				setupRow.AddChild(startPrintButton);
-				setupRow.AddChild(exportGcodeButton);
 
 				printPanel.AddChild(setupRow);
 

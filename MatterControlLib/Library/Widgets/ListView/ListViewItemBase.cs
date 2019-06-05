@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			Invalidate();
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			var bounds = this.LocalBounds;
 			var hitRegion = new RectangleDouble(

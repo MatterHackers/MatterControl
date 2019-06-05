@@ -33,7 +33,8 @@ namespace Markdig.Renderers.Agg.Inlines
 			this.url = url;
 			this.aggRenderer = renderer;
 		}
-		public override void OnClick(MouseEventArgs mouseEvent)
+
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (linkInline.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
 			{

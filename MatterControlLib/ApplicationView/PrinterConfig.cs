@@ -50,8 +50,6 @@ namespace MatterHackers.MatterControl
 
 		public BedConfig Bed { get; }
 
-		public static PrinterConfig EmptyPrinter { get; } = new PrinterConfig();
-
 		[JsonIgnore]
 		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
 

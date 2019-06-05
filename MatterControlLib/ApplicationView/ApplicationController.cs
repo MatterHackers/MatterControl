@@ -3632,24 +3632,6 @@ Support and tutorials:
 
 			reporter?.Invoke(0.25, (loading != null) ? loading : "Initialize printer");
 
-			var printer = PrinterConfig.EmptyPrinter;
-
-			// Restore bed
-			if (printer.Settings.PrinterSelected)
-			{
-				printer.ViewState.ViewMode = PartViewMode.Model;
-
-				ApplicationController.StartupTasks.Add(new ApplicationController.StartupTask()
-				{
-					Title = "Loading Bed".Localize(),
-					Priority = 100,
-					Action = (progress, cancellationToken) =>
-					{
-						return printer.Bed.LoadPlateFromHistory();
-					}
-				});
-			}
-
 			reporter?.Invoke(0.3, (loading != null) ? loading : "Plugins");
 			ApplicationController.Plugins.InitializePlugins(systemWindow);
 

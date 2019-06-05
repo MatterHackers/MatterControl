@@ -300,7 +300,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
 
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SelectedBackgroundColor = theme.SlightShade;
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
 

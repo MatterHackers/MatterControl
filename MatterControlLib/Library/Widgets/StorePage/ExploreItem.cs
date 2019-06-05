@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.Invalidate();
 		}
 
-		public override void OnClick(MouseEventArgs mouseEvent)
+		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (mouseEvent.Button == MouseButtons.Left)
 			{

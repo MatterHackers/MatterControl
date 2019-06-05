@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -48,18 +47,13 @@ namespace MatterHackers.MatterControl
 		private CheckBox showInFolderAfterSave;
 
 		private Dictionary<RadioButton, IExportPlugin> exportPluginButtons;
-		private IEnumerable<ILibraryItem> libraryItems;
 
-		private bool centerOnBed;
 		private FlowLayoutWidget validationPanel;
 
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed, PrinterConfig printer)
 		{
-			this.centerOnBed = centerOnBed;
 			this.WindowTitle = "Export File".Localize();
 			this.HeaderText = "Export selection to".Localize() + ":";
-
-			this.libraryItems = libraryItems;
 			this.Name = "Export Item Window";
 
 			var commonMargin = new BorderDouble(4, 2);
@@ -160,7 +154,6 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-
 				exportPluginButtons.Add(pluginButton, plugin);
 			}
 
@@ -211,11 +204,7 @@ namespace MatterHackers.MatterControl
 
 		public static void DoExport(IEnumerable<ILibraryItem> libraryItems, PrinterConfig printer, IExportPlugin exportPlugin, bool centerOnBed = false, bool showFile = false)
 		{
-			string fileTypeFilter = "";
-			string targetExtension = "";
-
-			fileTypeFilter = exportPlugin.ExtensionFilter;
-			targetExtension = exportPlugin.FileExtension;
+			string targetExtension = exportPlugin.FileExtension;
 
 			if (exportPlugin is FolderExport)
 			{
@@ -247,7 +236,7 @@ namespace MatterHackers.MatterControl
 				string title = ApplicationController.Instance.ProductName + " - " + "Export File".Localize();
 				string workspaceName = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 				AggContext.FileDialogs.SaveFileDialog(
-					new SaveFileDialogParams(fileTypeFilter)
+					new SaveFileDialogParams(exportPlugin.ExtensionFilter)
 					{
 						Title = title,
 						ActionButtonLabel = "Export".Localize(),
@@ -297,11 +286,11 @@ namespace MatterHackers.MatterControl
 									{
 										bool showGenerateErrors = !(exportPlugin is GCodeExport);
 
-											// Only show errors in Generate if not GCodeExport - GCodeExport shows validation errors before Generate call
-											if (showGenerateErrors)
-											{
-												ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
-											}
+										// Only show errors in Generate if not GCodeExport - GCodeExport shows validation errors before Generate call
+										if (showGenerateErrors)
+										{
+											ApplicationController.Instance.ShowValidationErrors("Export Error".Localize(), exportErrors);
+										}
 									}
 								});
 						}

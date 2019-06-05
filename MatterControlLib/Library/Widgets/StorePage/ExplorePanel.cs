@@ -75,8 +75,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			Task.Run(() =>
 			{
-					// Construct directly from cache
-				WebCache.RetrieveText($"http://www.matterhackers.com/feeds/{relativeUrl}", (newData) =>
+				// Construct directly from cache
+				WebCache.RetrieveText($"https://www.matterhackers.com/feeds/{relativeUrl}", (newData) =>
 				{
 					lock (locker)
 					{

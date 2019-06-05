@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetButtonStates();
 		}
 
-		public override async void OnClick(MouseEventArgs mouseEvent)
+		protected override async void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);
 			await this.SliceBedplate();

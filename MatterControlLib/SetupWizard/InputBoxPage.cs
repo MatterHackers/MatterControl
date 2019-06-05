@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 			textEditWidget.Margin = new BorderDouble(5);
 			textEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				actionButton.OnClick(null);
+				actionButton.InvokeClick();
 			};
 			contentRow.AddChild(textEditWidget);
 
