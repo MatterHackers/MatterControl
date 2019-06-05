@@ -220,14 +220,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				exportPlugin.Initialize(printer);
 
-				var exportGcodeButton = new TextButton(exportButtonText, menuTheme)
-				{
-					Name = "Export Gcode Button",
-					Enabled = exportPlugin.Enabled,
-					ToolTipText = exportPlugin.DisabledReason,
-				};
+				var exportGCodeButton = menuTheme.CreateDialogButton(exportButtonText);
+				exportGCodeButton.Name = "Export Gcode Button";
+				exportGCodeButton.Enabled = exportPlugin.Enabled;
+				exportGCodeButton.ToolTipText = exportPlugin.DisabledReason;
 
-				exportGcodeButton.Click += (s, e) =>
+				exportGCodeButton.Click += (s, e) =>
 				{
 					ExportPrintItemPage.DoExport(
 						new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
@@ -253,7 +251,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				setupRow.AddChild(new HorizontalSpacer());
 				setupRow.AddChild(startPrintButton);
-				setupRow.AddChild(exportGcodeButton);
+				setupRow.AddChild(exportGCodeButton);
 
 				printPanel.AddChild(setupRow);
 
