@@ -154,13 +154,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				printer.Bed.SaveChanges(null, CancellationToken.None);
 			});
 
-			// Require user confirmation after this point
-			this.RequireCancelConfirmation = true;
-
 			// loop until we are done calibrating
 			while (this.PrintAgain)
 			{
 				yield return new XyCalibrationSelectPage(this);
+
+				// Require user confirmation after this point
+				this.RequireCancelConfirmation = true;
+
 				yield return new XyCalibrationCollectDataPage(this);
 				yield return new XyCalibrationDataRecieved(this);
 			}

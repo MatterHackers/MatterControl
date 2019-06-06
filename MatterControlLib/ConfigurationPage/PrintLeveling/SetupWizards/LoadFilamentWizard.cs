@@ -203,9 +203,18 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 80);
-								// send a dwell to empty out the current move commands
-								printer.Connection.QueueLine("G4 P1");
+								if (false)
+								{
+									// Quite mode
+									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 80);
+									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
+								}
+								else
+								{
+									// Pulse mode
+									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 150);
+									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
+								}
 
 								if (runningTime.ElapsedMilliseconds > maxSecondsToStartLoading * 1000)
 								{
@@ -368,9 +377,19 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 140);
-								// make sure we wait for this command to finish so we can cancel the unload at any time without delay
-								printer.Connection.QueueLine("G4 P1");
+								if (false)
+								{
+									// Quite mode
+									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 140);
+									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
+								}
+								else
+								{
+									// Pulse mode
+									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 150);
+									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
+								}
+
 								int secondsToRun = 90;
 								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
 								{

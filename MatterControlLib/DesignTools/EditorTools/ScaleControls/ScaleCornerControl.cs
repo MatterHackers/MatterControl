@@ -198,12 +198,12 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						if (e.ZBuffered)
 						{
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, Color.Green);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor);
 						}
 						else
 						{
 							// render on top of everything very lightly
-							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(Color.Green, 20), false);
+							InteractionContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false);
 						}
 					}
 

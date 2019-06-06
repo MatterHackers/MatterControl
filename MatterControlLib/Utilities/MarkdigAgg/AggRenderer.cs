@@ -12,6 +12,7 @@ using Markdig.Renderers.Agg.Inlines;
 using Markdig.Syntax;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 
@@ -26,22 +27,12 @@ namespace Markdig.Renderers
 		}
 	}
 
-	public class TextSpaceX : GuiWidget, ISkipIfFirst
+	public class TextSpaceX : TextWidget, ISkipIfFirst
 	{
-		private static double spaceWidth = -1;
-
 		public TextSpaceX(ThemeConfig theme)
+			: base("", pointSize: 10, textColor: theme.TextColor)
 		{
-			this.HAnchor = HAnchor.Absolute;
-			this.VAnchor = VAnchor.Absolute;
-
-			if (spaceWidth == -1)
-			{
-				spaceWidth = new TypeFacePrinter(" ", pointSize: 10).LocalBounds.Width;
-			}
-
-			this.Width = spaceWidth;
-			this.Height = spaceWidth;
+			this.AutoExpandBoundsToText = true;
 		}
 	}
 
