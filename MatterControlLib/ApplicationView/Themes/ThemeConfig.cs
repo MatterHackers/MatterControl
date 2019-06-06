@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 
 		public Color PrinterBedTextColor { get; set; }
 
-		public GridColors BedGridColors { get; set; }
+		public GridColors BedGridColors { get; set; } = new GridColors();
 
 		public GuiWidget CreateSearchButton()
 		{
