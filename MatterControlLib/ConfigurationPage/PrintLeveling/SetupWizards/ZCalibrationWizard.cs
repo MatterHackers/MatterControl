@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// clear the baby stepping so we don't save the old values
 			babySteppingValue = 0;
 
-			yield return new CalibrateProbeLastPageInstructions(this, "Done".Localize());
+			yield return new CalibrateProbeLastPageInstructions(this, this.Title + " " + "Wizard".Localize());
 		}
 	}
 }
