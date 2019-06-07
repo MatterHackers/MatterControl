@@ -28,12 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -43,32 +39,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
 			: base(setupWizard, headerText, "")
 		{
-			var calibrated = "Z Calibration complete.".Localize() + "\n"
-				+ "    • " + "Remove the paper".Localize() + "\n"
-				+ "\n"
-				+ "If you wish to re-run Z Calibration in the future:".Localize() + "\n"
-				+ "    1. Select the 'Controls' tab on the right".Localize() + "\n"
-				+ "    2. Look for the calibration section (pictured below)".Localize() + "\n";
-			contentRow.AddChild(this.CreateTextField(calibrated));
+			contentRow.AddChild(
+				this.CreateTextField(
+					"Z Calibration complete.".Localize() +
+					"\n    • " +
+					"Remove the paper".Localize()));
+
 			contentRow.BackgroundColor = theme.MinimalShade;
-
-			// Create and display a widget for reference
-			var exampleWidget = CalibrationControls.CreateSection(printer, theme);
-			exampleWidget.Width = 500;
-			exampleWidget.Selectable = false;
-			exampleWidget.HAnchor = HAnchor.Center | HAnchor.Absolute;
-
-			// Disable borders on all SettingsRow children in control panels
-			foreach (var settingsRow in exampleWidget.ContentPanel.Descendants<SettingsRow>())
-			{
-				settingsRow.BorderColor = Color.Transparent;
-			}
-
-			theme.ApplyBoxStyle(exampleWidget);
-
-			contentRow.AddChild(exampleWidget);
-
-			contentRow.AddChild(this.CreateTextField("Click 'Done' to close this window.".Localize()));
 
 			this.ShowWizardFinished();
 		}
