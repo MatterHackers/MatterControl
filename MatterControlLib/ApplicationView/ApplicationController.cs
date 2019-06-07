@@ -3441,8 +3441,15 @@ Support and tutorials:
 							}
 							else
 							{
-								// move or rotate view left
-								Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOperation);
+								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
+								{
+									NudgeItem(view3D, object3D, ArrowDirection.Left, keyEvent);
+								}
+								else
+								{
+									// move or rotate view left
+									Offset3DView(view3D, new Vector2(-offsetDist, 0), arrowKeyOperation);
+								}
 							}
 
 							keyEvent.Handled = true;
@@ -3459,8 +3466,15 @@ Support and tutorials:
 							}
 							else
 							{
-								// move or rotate view right
-								Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOperation);
+								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
+								{
+									NudgeItem(view3D, object3D, ArrowDirection.Right, keyEvent);
+								}
+								else
+								{
+									// move or rotate view right
+									Offset3DView(view3D, new Vector2(offsetDist, 0), arrowKeyOperation);
+								}
 							}
 
 							keyEvent.Handled = true;
@@ -3476,7 +3490,14 @@ Support and tutorials:
 							}
 							else
 							{
-								Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOperation);
+								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
+								{
+									NudgeItem(view3D, object3D, ArrowDirection.Up, keyEvent);
+								}
+								else
+								{
+									Offset3DView(view3D, new Vector2(0, offsetDist), arrowKeyOperation);
+								}
 							}
 
 							keyEvent.Handled = true;
@@ -3492,7 +3513,14 @@ Support and tutorials:
 							}
 							else
 							{
-								Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOperation);
+								if (view3D.sceneContext.Scene.SelectedItem is IObject3D object3D)
+								{
+									NudgeItem(view3D, object3D, ArrowDirection.Down, keyEvent);
+								}
+								else
+								{
+									Offset3DView(view3D, new Vector2(0, -offsetDist), arrowKeyOperation);
+								}
 							}
 
 							keyEvent.Handled = true;
@@ -3595,6 +3623,45 @@ Support and tutorials:
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
 			return systemWindow;
+		}
+
+		private static void NudgeItem(View3DWidget view3D, IObject3D object3D, ArrowDirection arrowDirection, KeyEventArgs keyEvent)
+		{
+			// TODO: analyze the view and adjust movements to be relative to the current perspective
+			//
+			// Naive movements in Identity space
+			switch (arrowDirection)
+			{
+				case ArrowDirection.Left:
+					object3D.Translate(-view3D.InteractionLayer.SnapGridDistance, 0);
+					break;
+
+				case ArrowDirection.Right:
+					object3D.Translate(view3D.InteractionLayer.SnapGridDistance, 0);
+					break;
+
+				case ArrowDirection.Up:
+					if (keyEvent.Control)
+					{
+						object3D.Translate(0, 0, view3D.InteractionLayer.SnapGridDistance);
+					}
+					else
+					{
+						object3D.Translate(0, view3D.InteractionLayer.SnapGridDistance);
+					}
+					break;
+
+				case ArrowDirection.Down:
+					if (keyEvent.Control)
+					{
+						object3D.Translate(0, 0, -view3D.InteractionLayer.SnapGridDistance);
+					}
+					else
+					{
+						object3D.Translate(0, -view3D.InteractionLayer.SnapGridDistance);
+					}
+					break;
+			}
 		}
 
 		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType operation)
