@@ -3433,6 +3433,7 @@ Support and tutorials:
 
 						case Keys.Left:
 							if (keyEvent.Control
+								&& printerTabPage != null
 								&& !printerTabPage.sceneContext.ViewState.ModelView)
 							{
 								// Decrement slider
@@ -3450,6 +3451,7 @@ Support and tutorials:
 
 						case Keys.Right:
 							if (keyEvent.Control
+								&& printerTabPage != null
 								&& !printerTabPage.sceneContext.ViewState.ModelView)
 							{
 								// Increment slider
