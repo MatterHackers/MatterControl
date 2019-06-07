@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (settingsRow != null)
 						{
-							settingsRow.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Top ? ArrowDirection.Bottom: ArrowDirection.Top;
+							settingsRow.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Up ? ArrowDirection.Down: ArrowDirection.Up;
 						}
 					}
 
