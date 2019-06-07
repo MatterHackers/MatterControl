@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.Tour
 					if (targetBounds.Bottom - totalBounds.Height < 0)
 					{
 						// Down arrow
-						this.ArrowDirection = ArrowDirection.Bottom;
+						this.ArrowDirection = ArrowDirection.Down;
 
 						// Arrow centered on target in x, to the right
 						totalBounds = this.GetTotalBounds();
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.Tour
 				else
 				{
 					// Up arrow
-					this.ArrowDirection = ArrowDirection.Top;
+					this.ArrowDirection = ArrowDirection.Up;
 
 					// Arrow centered on target in x, to the right
 					totalBounds = this.GetTotalBounds();
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.Tour
 				}
 				else
 				{
-					this.ArrowDirection = ArrowDirection.Top;
+					this.ArrowDirection = ArrowDirection.Up;
 
 					// Arrow centered on target in x, to the left
 					totalBounds = this.GetTotalBounds();

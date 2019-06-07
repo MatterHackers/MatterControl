@@ -83,11 +83,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				switch (_arrow)
 				{
-					case ArrowDirection.Top:
+					case ArrowDirection.Up:
 						this.Padding = originalPadding.Clone(top: originalPadding.Top + this.NotchSize);
 						break;
 
-					case ArrowDirection.Bottom:
+					case ArrowDirection.Down:
 						this.Padding = originalPadding.Clone(bottom: originalPadding.Bottom + this.NotchSize);
 						break;
 
@@ -146,18 +146,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double x3 = x4 - radius;
 
 			double y0 = rect.Top;
-			double y1 = y0 - (arrowDirection == ArrowDirection.Top ? notchSize : 0);
+			double y1 = y0 - (arrowDirection == ArrowDirection.Up ? notchSize : 0);
 			double y2 = y1 - radius;
 
 			double y5 = rect.Bottom;
-			double y4 = y5 + (arrowDirection == ArrowDirection.Bottom ? notchSize : 0);
+			double y4 = y5 + (arrowDirection == ArrowDirection.Down ? notchSize : 0);
 			double y3 = y4 + radius;
 
 			int p1, p3;
 
 			switch (arrowDirection)
 			{
-				case ArrowDirection.Bottom:
+				case ArrowDirection.Down:
 					p2 = x1 + p2;
 					p1 = (int)(p2 + notchSize);
 					p3 = (int)(p2 - notchSize);
@@ -169,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					p3 = (int)(p2 - notchSize);
 					break;
 
-				case ArrowDirection.Top:
+				case ArrowDirection.Up:
 					p2 = x1 + p2;
 					p1 = (int)(p2 - notchSize);
 					p3 = (int)(p2 + notchSize);
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabShape.curve3(x1, y1, x2, y1); // C -> D
 
-			if (arrowDirection != ArrowDirection.Top)
+			if (arrowDirection != ArrowDirection.Up)
 			{
 				// D -> E
 				tabShape.LineTo(x3, y1);
@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabShape.curve3(x4, y4, x3, y4); // G -> H
 
-			if (arrowDirection != ArrowDirection.Bottom)
+			if (arrowDirection != ArrowDirection.Down)
 			{
 				// H -> A
 				tabShape.LineTo(x2, y4);

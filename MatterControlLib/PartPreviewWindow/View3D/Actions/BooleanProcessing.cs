@@ -101,6 +101,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					return new Mesh(vcArray, fcArray);
 				}
+				catch (Exception ex)
+				{
+					ApplicationController.Instance.LogInfo("Error performing boolean operation: ");
+					ApplicationController.Instance.LogInfo(ex.Message);
+				}
 				finally
 				{
 					if (pVc != IntPtr.Zero)
