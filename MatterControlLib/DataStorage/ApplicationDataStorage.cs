@@ -90,9 +90,13 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		private static string _printHistoryPath => Path.Combine(_applicationLibraryDataPath, "PrintHistory");
 
+		private static string _cloudLibraryPath => Path.Combine(_applicationLibraryDataPath, "CloudData");
+
 		public static string ApplicationUserDataPath => EnsurePath(_applicationUserDataPath);
 
 		public string ApplicationLibraryDataPath => EnsurePath(_applicationLibraryDataPath);
+
+		public string CloudLibraryPath => EnsurePath(_cloudLibraryPath);
 
 		public string LibraryAssetsPath => EnsurePath(_libraryAssetPath);
 
