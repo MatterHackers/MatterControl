@@ -35,22 +35,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class HelpPage : DialogPage
+	public class HelpArticle
 	{
-		public HelpPage(string guideKey = null)
-			: base("Close".Localize())
-		{
-			this.WindowSize = new Vector2(940, 700);
-			this.WindowTitle = "MatterControl " + "Help".Localize();
-			this.headerRow.Visible = false;
+		public string Name;
 
-			contentRow.Padding = 0;
+		public string Path;
 
-			contentRow.AddChild(new HelpTreePanel(theme, guideKey)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			});
-		}
+		public string ArticleKey { get; set; }
+
+		public List<HelpArticle> Children { get; set; } = new List<HelpArticle>();
 	}
 }
