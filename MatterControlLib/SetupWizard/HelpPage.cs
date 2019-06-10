@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl
 
 			this.guideKey = guideKey;
 			this.WindowTitle = "MatterControl " + "Help".Localize();
-			this.HeaderText = "How to succeed with MatterControl".Localize();
+			this.headerRow.Visible = false;
 			this.ChildBorderColor = theme.BorderColor40;
 
 			contentRow.Padding = 0;
