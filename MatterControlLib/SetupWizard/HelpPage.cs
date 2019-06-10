@@ -67,82 +67,34 @@ namespace MatterHackers.MatterControl
 			this.HeaderText = "How to succeed with MatterControl".Localize();
 			this.ChildBorderColor = theme.BorderColor40;
 
-			var tabControl = new SimpleTabs(theme, new GuiWidget())
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-			tabControl.TabBar.BackgroundColor = theme.TabBarBackground;
-
-			contentRow.AddChild(tabControl);
 			contentRow.Padding = 0;
 
-			// add the mouse commands
-			var mouseControls = new FlowLayoutWidget()
+			var guideSectionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				HAnchor = HAnchor.Fit | HAnchor.Center,
-				Padding = theme.DefaultContainerPadding
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 			};
 
-			var mouseTab = new ToolTab("Mouse", "Mouse".Localize(), tabControl, mouseControls, theme, hasClose: false)
-			{
-				// this can be used to navigate to this tab on construction
-				Name = "Mouse Tab"
-			};
-			tabControl.AddTab(mouseTab);
+			AddGuides(guideSectionContainer);
 
-			var mouseKeys = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			mouseControls.AddChild(mouseKeys);
+			contentRow.AddChild(guideSectionContainer);
 
-			var mouseActions = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Border = new BorderDouble(1, 0, 0, 0),
-				BorderColor = this.ChildBorderColor
-			};
-			mouseControls.AddChild(mouseActions);
+			CreateMousePage();
+			CreateKeyBindingsPage();
+		}
 
-			var mouseKeyActions = new List<(string key, string action)>(new(string, string)[]
-			{
-				("left click".Localize(), "Make Selection".Localize()),
-				("left click".Localize() + " + shift","Add to Selection".Localize()),
-				("left click".Localize() + " + ctrl","Toggle Selection".Localize()),
-				("left drag".Localize(), "Rubber Band Selection".Localize()),
-				("left drag".Localize(), "Move Part".Localize()),
-				("left drag".Localize() + " + shift", "Move Part Constrained".Localize()),
-				("left drag".Localize() + " + shift + ctrl", "Pan View".Localize()),
-				("left drag".Localize() + " + ctrl","Rotate View".Localize()),
-				("middle drag".Localize(), "Pan View".Localize()),
-				("right drag".Localize(), "Rotate View".Localize()),
-				("wheel".Localize(), "Zoom".Localize())
-			});
-
-			AddContent(mouseKeys, "Mouse".Localize(), true, true);
-			AddContent(mouseActions, "Action".Localize(), false, true);
-
-			foreach (var keyAction in mouseKeyActions)
-			{
-				AddContent(mouseKeys, keyAction.key, true, false);
-				AddContent(mouseActions, keyAction.action, false, false);
-			}
-
-			// center the vertical bar in the view by adding margin to the small side
-			var left = Math.Max(0, mouseActions.Width - mouseKeys.Width);
-			var right = Math.Max(0, mouseKeys.Width - mouseActions.Width);
-			mouseControls.Margin = new BorderDouble(left, 0, right, 0);
+		private void CreateKeyBindingsPage()
+		{
+			double left, right;
 
 			// now add the keyboard commands
 			var shortcutKeys = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Center,
-				Padding = theme.DefaultContainerPadding
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				Padding = theme.DefaultContainerPadding,
+				Visible = false
 			};
-
-			var keyboardTab = new ToolTab("Keys", "Keys".Localize(), tabControl, shortcutKeys, theme, hasClose: false)
-			{
-				// this can be used to navigate to this tab on construction
-				Name = "Keys Tab"
-			};
-			tabControl.AddTab(keyboardTab);
 
 			var keys = new FlowLayoutWidget(FlowDirection.TopToBottom);
 			shortcutKeys.AddChild(keys);
@@ -154,9 +106,7 @@ namespace MatterHackers.MatterControl
 			};
 			shortcutKeys.AddChild(actions);
 
-			tabControl.TabBar.Padding = theme.ToolbarPadding.Clone(left: 2, bottom: 0);
-
-			var keyActions = new List<(string key, string action)>(new(string, string)[]
+			var keyActions = new List<(string key, string action)>(new (string, string)[]
 			{
 				("F1","Show Help".Localize()),
 				("ctrl + +","Zoom in".Localize()),
@@ -189,31 +139,72 @@ namespace MatterHackers.MatterControl
 			right = Math.Max(0, keys.Width - actions.Width);
 			shortcutKeys.Margin = new BorderDouble(left, 0, right, 0);
 
-			var guideSectionContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			rootNode.Nodes.Add(new TreeNode(theme, false)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
+				Text = "Keys".Localize(),
+				Tag = shortcutKeys
+			});
+
+			splitter.Panel2.AddChild(shortcutKeys);
+		}
+
+		private void CreateMousePage()
+		{
+			// add the mouse commands
+			var mouseControls = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Center,
+				VAnchor = VAnchor.Fit | VAnchor.Top,
+				Padding = theme.DefaultContainerPadding,
+				Visible = false
 			};
 
-			var guideTab = new ToolTab("Guides", "Guides".Localize(), tabControl, guideSectionContainer, theme, hasClose: false)
+			var mouseKeys = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			mouseControls.AddChild(mouseKeys);
+
+			var mouseActions = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				// this can be used to navigate to this tab on construction
-				Name = "Guides Tab"
+				Border = new BorderDouble(1, 0, 0, 0),
+				BorderColor = this.ChildBorderColor
 			};
-			tabControl.AddTab(guideTab);
+			mouseControls.AddChild(mouseActions);
 
-			AddGuides(guideSectionContainer);
+			var mouseKeyActions = new List<(string key, string action)>(new (string, string)[]
+			{
+				("left click".Localize(), "Make Selection".Localize()),
+				("left click".Localize() + " + shift","Add to Selection".Localize()),
+				("left click".Localize() + " + ctrl","Toggle Selection".Localize()),
+				("left drag".Localize(), "Rubber Band Selection".Localize()),
+				("left drag".Localize(), "Move Part".Localize()),
+				("left drag".Localize() + " + shift", "Move Part Constrained".Localize()),
+				("left drag".Localize() + " + shift + ctrl", "Pan View".Localize()),
+				("left drag".Localize() + " + ctrl","Rotate View".Localize()),
+				("middle drag".Localize(), "Pan View".Localize()),
+				("right drag".Localize(), "Rotate View".Localize()),
+				("wheel".Localize(), "Zoom".Localize())
+			});
 
-			// If guideKey is empty, switch to first tab
-			if (string.IsNullOrEmpty(guideKey))
+			AddContent(mouseKeys, "Mouse".Localize(), true, true);
+			AddContent(mouseActions, "Action".Localize(), false, true);
+
+			foreach (var keyAction in mouseKeyActions)
 			{
-				tabControl.SelectedTabIndex = 0;
+				AddContent(mouseKeys, keyAction.key, true, false);
+				AddContent(mouseActions, keyAction.action, false, false);
 			}
-			else
+
+			// center the vertical bar in the view by adding margin to the small side
+			var left = Math.Max(0, mouseActions.Width - mouseKeys.Width);
+			var right = Math.Max(0, mouseKeys.Width - mouseActions.Width);
+			mouseControls.Margin = new BorderDouble(left, 0, right, 0);
+
+			rootNode.Nodes.Add(new TreeNode(theme, false)
 			{
-				// Otherwise switch to guides tab and select the target item
-				tabControl.SelectedTabIndex = tabControl.GetTabIndex(guideTab);
-			}
+				Text = "Mouse".Localize(),
+				Tag = mouseControls
+			});
+
+			splitter.Panel2.AddChild(mouseControls);
 		}
 
 		private void AddGuides(FlowLayoutWidget guideContainer)
@@ -239,6 +230,12 @@ namespace MatterHackers.MatterControl
 			};
 			treeView.AfterSelect += (s, e) =>
 			{
+				// Hide all sibling content controls
+				foreach (var child in splitter.Panel2.Children)
+				{
+					child.Visible = false;
+				}
+
 				if (treeView.SelectedNode.Tag is HelpArticle article)
 				{
 					if (!string.IsNullOrWhiteSpace(article.Path))
@@ -250,10 +247,16 @@ namespace MatterHackers.MatterControl
 						// Switch to empty content when path article lacks path
 						markdownWidget.Markdown = "";
 					}
+
+					// Show Markdown help page
+					markdownWidget.Visible = true;
+				}
+				else if (treeView.SelectedNode.Tag is GuiWidget widget)
+				{
+					// Show non-markdown page
+					widget.Visible = true;
 				}
 			};
-
-			TreeNode rootNode = null;
 
 			treeView.Load += (s, e) =>
 			{
@@ -298,7 +301,7 @@ namespace MatterHackers.MatterControl
 
 			maxMenuItemWidth = Math.Max(maxMenuItemWidth, rootNode.Width);
 
-			var splitter = new Splitter()
+			splitter = new Splitter()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
@@ -313,6 +316,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		private TreeNode initialSelection = null;
+		private Splitter splitter;
+		private TreeNode rootNode;
 
 		private TreeNode ProcessTree(HelpArticle container)
 		{
