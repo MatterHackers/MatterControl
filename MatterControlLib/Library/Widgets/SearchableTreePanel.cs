@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
 		}
 
-		private void PerformSearch()
+		protected virtual void PerformSearch()
 		{
 			var matches = new List<TreeNode>();
 
