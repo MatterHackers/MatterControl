@@ -83,6 +83,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				this.ClearSearch();
 			};
 
+			searchBox.KeyDown += (s, e) =>
+			{
+				if (e.KeyCode == Keys.Escape)
+				{
+					this.ClearSearch();
+					e.Handled = true;
+				}
+			};
+
 			searchBox.searchInput.ActualTextEditWidget.TextChanged += (s, e) =>
 			{
 				if (string.IsNullOrWhiteSpace(searchBox.Text))
@@ -163,6 +172,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			searchBox.Text = "";
 			searchBox.ResetButton.Visible = false;
 			treeView.SelectedNode = null;
+
+			this.OnClearSearch();
 		}
 
 		protected abstract bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches);
@@ -176,6 +187,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				ResetTree(child);
 			}
+		}
+
+		protected virtual void OnClearSearch()
+		{
 		}
 
 		public bool TreeLoaded { get; protected set; }

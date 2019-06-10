@@ -91,6 +91,12 @@ namespace MatterHackers.MatterControl
 			return hasMatch;
 		}
 
+		protected override void OnClearSearch()
+		{
+			rootNode.Expanded = true;
+			base.OnClearSearch();
+		}
+
 		private void CreateKeyBindingsPage()
 		{
 			double left, right;
