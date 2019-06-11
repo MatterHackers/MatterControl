@@ -216,34 +216,37 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null)
 		{
-			var column = CreateSettingsColumn(labelText, toolTipText);
 			var row = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
 			row.AddChild(new HorizontalSpacer());
 			row.AddChild(field.Content);
+
+			var column = CreateSettingsColumn(labelText, toolTipText);
 			column.AddChild(row);
+
 			return column;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, string toolTipText = null)
 		{
-			var columnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var theme = AppContext.Theme;
+
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(5),
 				ToolTipText = toolTipText
 			};
 
-			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: AppContext.Theme.TextColor)
+			column.AddChild(new TextWidget(labelText, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Margin = new BorderDouble(0, 3, 0, 0),
 				HAnchor = HAnchor.Left
-			};
-			columnContainer.AddChild(label);
+			});
 
-			return columnContainer;
+			return column;
 		}
 
 		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
