@@ -33,9 +33,7 @@ using System.Linq;
 
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.ImageProcessing;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library.Widgets.HardwarePage;
@@ -44,153 +42,22 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-	public class AddPrinterWidget : FlowLayoutWidget
+	public class AddPrinterWidget : SearchableTreePanel
 	{
 		private SectionWidget nameSection;
-		private SearchInputBox searchBox;
-
-		private TreeView treeView;
-		private FlowLayoutWidget rootColumn;
 		private MHTextEditWidget printerNameInput;
 		private bool usingDefaultName = true;
-		private ThemeConfig theme;
 		private TextButton nextButton;
 		private FlowLayoutWidget printerInfo;
 
 		public AddPrinterWidget(ThemeConfig theme, TextButton nextButton)
-			: base(FlowDirection.TopToBottom)
+			: base(theme)
 		{
-			this.theme = theme;
 			this.nextButton = nextButton;
 			this.ExistingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name).ToList();
 			this.Name = "AddPrinterWidget";
-			this.TreeLoaded = false;
 
-			var searchIcon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
-
-			searchBox = new SearchInputBox(theme)
-			{
-				Name = "Search",
-				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(bottom: 4),
-			};
-
-			searchBox.ResetButton.Visible = false;
-
-			var searchInput = searchBox.searchInput;
-
-			searchInput.BeforeDraw += (s, e) =>
-			{
-				if (!searchBox.ResetButton.Visible)
-				{
-					e.Graphics2D.Render(
-						searchIcon,
-						searchInput.Width - searchIcon.Width - 5,
-						searchInput.LocalBounds.Bottom + searchInput.Height / 2 - searchIcon.Height / 2);
-				}
-			};
-
-			searchBox.ResetButton.Click += (s, e) =>
-			{
-				this.ClearSearch();
-			};
-
-			searchBox.searchInput.ActualTextEditWidget.TextChanged += (s, e) =>
-			{
-				if (string.IsNullOrWhiteSpace(searchBox.Text))
-				{
-					this.ClearSearch();
-				}
-				else
-				{
-					this.PerformSearch();
-				}
-			};
-
-			this.AddChild(searchBox);
-
-			var horizontalSplitter = new Splitter()
-			{
-				SplitterDistance = Math.Max(UserSettings.Instance.LibraryViewWidth, 20),
-				SplitterSize = theme.SplitterWidth,
-				SplitterBackground = theme.SplitterBackground
-			};
-			horizontalSplitter.AnchorAll();
-
-			horizontalSplitter.DistanceChanged += (s, e) =>
-			{
-				UserSettings.Instance.LibraryViewWidth = Math.Max(horizontalSplitter.SplitterDistance, 20);
-			};
-
-			this.AddChild(horizontalSplitter);
-
-			treeView = new TreeView(theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch,
-			};
-			treeView.AfterSelect += async (s, e) =>
-			{
-				nameSection.Enabled = treeView.SelectedNode != null;
-				this.ClearError();
-
-				this.PrinterNameError.Visible = false;
-
-				if (nameSection.Enabled
-					&& treeView.SelectedNode.Tag != null)
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						if (usingDefaultName
-							&& treeView.SelectedNode != null)
-						{
-							string printerName = treeView.SelectedNode.Tag.ToString();
-
-							printerNameInput.Text = agg_basics.GetNonCollidingName(printerName, this.ExistingPrinterNames);
-
-							this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
-
-							printerInfo.CloseAllChildren();
-
-							if (this.SelectedPrinter != null
-								&& OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))
-							{
-								printerInfo.AddChild(
-									new PrinterDetails(
-										new PrinterInfo()
-										{
-											Make = SelectedPrinter.Make,
-											Model = SelectedPrinter.Model,
-										},
-										theme,
-										false)
-									{
-										ShowProducts = false,
-										StoreID = storePrinterID?.SID,
-										HAnchor = HAnchor.Stretch,
-										VAnchor = VAnchor.Fit
-									});
-							}
-
-							nextButton.Enabled = treeView.SelectedNode != null
-								&& !string.IsNullOrWhiteSpace(printerNameInput.Text);
-						}
-					});
-				}
-				else
-				{
-					nextButton.Enabled = false;
-				}
-			};
-			horizontalSplitter.Panel1.AddChild(treeView);
-
-			rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Fit,
-				Margin = new BorderDouble(left: 2)
-			};
-			treeView.AddChild(rootColumn);
+			treeView.AfterSelect += this.TreeView_AfterSelect;
 
 			UiThread.RunOnIdle(() =>
 			{
@@ -235,15 +102,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			nameSection.BackgroundColor = theme.MinimalShade;
 			nameSection.Margin = new BorderDouble(top: theme.DefaultContainerPadding);
 
-			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
-
 			var panel2Column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
 			};
 
-			panel2Column.AddChild(new TextWidget("Select a printer to continue".Localize(), pointSize: theme.DefaultFontSize,  textColor: theme.TextColor));
+			panel2Column.AddChild(new TextWidget("Select a printer to continue".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 			panel2Column.AddChild(nameSection);
 			panel2Column.AddChild(PrinterNameError = new TextWidget("", 0, 0, 10)
 			{
@@ -283,7 +148,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public IReadOnlyList<string> ExistingPrinterNames { get; private set; }
 
 		public TextWidget PrinterNameError { get; private set; }
-
 
 		public bool ValidateControls()
 		{
@@ -328,6 +192,46 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.PrinterNameError.Text = errorMessage;
 			this.PrinterNameError.Visible = true;
 		}
+
+		protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
+		{
+			// Filter against make/model for printers or make for top level nodes
+			string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
+
+			bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
+			context.Visible = hasFilterText || parentVisible;
+
+			if (context.Visible
+				&& context.NodeParent != null)
+			{
+				context.NodeParent.Visible = true;
+				context.NodeParent.Expanded = true;
+				context.Expanded = true;
+			}
+
+			if (context.NodeParent != null
+				&& hasFilterText)
+			{
+				matches.Add(context);
+			}
+
+			bool childMatched = false;
+
+			foreach (var child in context.Nodes)
+			{
+				childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
+			}
+
+			bool hasMatch = childMatched || hasFilterText;
+
+			if (hasMatch)
+			{
+				context.Visible = context.Expanded = true;
+			}
+
+			return hasMatch;
+		}
+
 
 		private void ClearError()
 		{
@@ -375,96 +279,63 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return treeNode;
 		}
 
-		private void PerformSearch()
+		private void TreeView_AfterSelect(object sender, TreeNode e)
 		{
-			var matches = new List<TreeNode>();
+			nameSection.Enabled = treeView.SelectedNode != null;
+			this.ClearError();
 
-			Console.WriteLine("Filter for: " + searchBox.Text);
+			this.PrinterNameError.Visible = false;
 
-			foreach (var rootNode in rootColumn.Children.OfType<TreeNode>())
+			if (nameSection.Enabled
+				&& treeView.SelectedNode.Tag != null)
 			{
-				FilterTree(rootNode, searchBox.Text, false, matches);
-			}
+				UiThread.RunOnIdle(() =>
+				{
+					if (usingDefaultName
+						&& treeView.SelectedNode != null)
+					{
+						string printerName = treeView.SelectedNode.Tag.ToString();
 
-			if (matches.Count == 1)
-			{
-				treeView.SelectedNode = matches.First();
+						printerNameInput.Text = agg_basics.GetNonCollidingName(printerName, this.ExistingPrinterNames);
+
+						this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
+
+						printerInfo.CloseAllChildren();
+
+						if (this.SelectedPrinter != null
+							&& OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))
+						{
+							printerInfo.AddChild(
+								new PrinterDetails(
+									new PrinterInfo()
+									{
+										Make = SelectedPrinter.Make,
+										Model = SelectedPrinter.Model,
+									},
+									theme,
+									false)
+								{
+									ShowProducts = false,
+									StoreID = storePrinterID?.SID,
+									HAnchor = HAnchor.Stretch,
+									VAnchor = VAnchor.Fit
+								});
+						}
+
+						nextButton.Enabled = treeView.SelectedNode != null
+							&& !string.IsNullOrWhiteSpace(printerNameInput.Text);
+					}
+				});
 			}
 			else
 			{
-				treeView.SelectedNode = null;
-			}
-
-			searchBox.ResetButton.Visible = true;
-		}
-
-		private void ClearSearch()
-		{
-			foreach (var rootNode in rootColumn.Children.OfType<TreeNode>())
-			{
-				ResetTree(rootNode);
-			}
-
-			searchBox.Text = "";
-			searchBox.ResetButton.Visible = false;
-			treeView.SelectedNode = null;
-		}
-
-		private bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
-		{
-			// Filter against make/model for printers or make for top level nodes
-			string itemText = (context.Tag as MakeModelInfo)?.ToString() ?? context.Text;
-
-			bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
-			context.Visible = hasFilterText || parentVisible;
-
-			if (context.Visible
-				&& context.NodeParent != null)
-			{
-				context.NodeParent.Visible = true;
-				context.NodeParent.Expanded = true;
-				context.Expanded = true;
-			}
-
-			if (context.NodeParent != null
-				&& hasFilterText)
-			{
-				matches.Add(context);
-			}
-
-			bool childMatched = false;
-
-			foreach (var child in context.Nodes)
-			{
-				childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
-			}
-
-			bool hasMatch = childMatched || hasFilterText;
-
-			if (hasMatch)
-			{
-				context.Visible = context.Expanded = true;
-			}
-
-			return hasMatch;
-		}
-
-		private void ResetTree(TreeNode context)
-		{
-			context.Visible = true;
-			context.Expanded = false;
-
-			foreach (var child in context.Nodes)
-			{
-				ResetTree(child);
+				nextButton.Enabled = false;
 			}
 		}
 
 		public MakeModelInfo SelectedPrinter { get; private set; }
 
 		public string NewPrinterName => printerNameInput.Text;
-
-		public bool TreeLoaded { get; private set; }
 
 		public class MakeModelInfo
 		{

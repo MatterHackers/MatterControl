@@ -945,6 +945,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void ShowFilteredView()
 		{
 			widgetsThatWereExpanded.Clear();
+
 			// Show any section with visible SliceSettingsRows
 			foreach (var section in this.Descendants<SectionWidget>())
 			{
@@ -962,6 +963,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				tab.TabContent.Visible = true;
 			}
+
+			// Pull focus after filter
+			this.Focus();
 		}
 
 		public override void OnClosed(EventArgs e)

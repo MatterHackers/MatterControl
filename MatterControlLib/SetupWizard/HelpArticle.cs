@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -36,23 +35,14 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class HelpPage : DialogPage
+	public class HelpArticle
 	{
-		public HelpPage(string guideKey = null)
-			: base("Close".Localize())
-		{
-			this.WindowSize = new Vector2(940, 700);
-			this.WindowTitle = "MatterControl " + "Help".Localize();
-			this.headerRow.Visible = false;
+		public string Name;
 
-			contentRow.Padding = 0;
-			contentRow.BackgroundColor = Color.Transparent;
+		public string Path;
 
-			contentRow.AddChild(new HelpTreePanel(theme, guideKey)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			});
-		}
+		public string ArticleKey { get; set; }
+
+		public List<HelpArticle> Children { get; set; } = new List<HelpArticle>();
 	}
 }
