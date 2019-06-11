@@ -250,25 +250,26 @@ namespace MatterHackers.MatterControl
 		private static async Task<IObject3D> CreateCalibrationObject(PrinterConfig printer, XyCalibrationWizard calibrationWizard)
 		{
 			var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
+			var firstLayerHeight = printer.Settings.GetValue<double>(SettingsKey.first_layer_height);
 
 			switch (calibrationWizard.Quality)
 			{
 				case QualityType.Coarse:
 					return await XyCalibrationTabObject3D.Create(
 						1,
-						Math.Max(printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * 2, layerHeight * 2),
+						Math.Max(firstLayerHeight * 2, layerHeight * 2),
 						calibrationWizard.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter));
 
 				default:
 					return await XyCalibrationFaceObject3D.Create(
 						1,
-						printer.Settings.GetValue<double>(SettingsKey.first_layer_height) + layerHeight,
+						firstLayerHeight + layerHeight,
 						layerHeight,
 						calibrationWizard.Offset,
 						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
 						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size),
-						6);
+						4);
 			}
 		}
 	}
