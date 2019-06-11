@@ -390,14 +390,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
 				rowContainer = CreateSettingsColumn(property);
-				var newDirectionVector = new DirectionVector()
-				{
-					Normal = directionAxis.Normal
-				};
 
 				var field1 = new DirectionVectorField(theme);
 				field1.Initialize(0);
-				field1.SetValue(newDirectionVector);
+				field1.SetValue(new DirectionVector()
+				{
+					Normal = directionAxis.Normal
+				});
 
 				rowContainer.AddChild(new SettingsRow("Axis".Localize(), null, field1.Content, theme));
 
