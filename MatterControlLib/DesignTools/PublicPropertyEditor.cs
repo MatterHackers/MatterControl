@@ -236,15 +236,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5),
+				Padding = new BorderDouble(9, 5, 5, 5), // Use hard-coded 9 pixel left margin to match SettingsRow
 				ToolTipText = toolTipText
 			};
 
-			column.AddChild(new TextWidget(labelText, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-			{
-				Margin = new BorderDouble(0, 3, 0, 0),
-				HAnchor = HAnchor.Left
-			});
+			var label = SettingsRow.CreateSettingsLabel(labelText, toolTipText, theme.TextColor);
+			label.VAnchor = VAnchor.Absolute;
+			label.HAnchor = HAnchor.Left;
+
+			column.AddChild(label);
 
 			return column;
 		}
@@ -406,7 +406,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field2 = new Vector3Field(theme);
 				field2.Initialize(0);
 				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
-				var row2 = CreateSettingsColumn("Offset", field2);
+
+				var row2 = CreateSettingsColumn("Offset".Localize(), field2);
 
 				// update this when changed
 				void UpdateData(object s, InvalidateArgs e)
