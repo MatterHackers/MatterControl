@@ -83,6 +83,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 		public string StoreID { get; set; }
 
+		public bool ShowHeadingRow { get; set; } = true;
+
 		public bool ShowProducts { get; set; } = true;
 
 		public override async void OnLoad(EventArgs args)
@@ -127,6 +129,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 					HAnchor = HAnchor.Stretch
 				});
 			}
+
+			headingRow.Visible = this.ShowHeadingRow;
 
 			base.OnLoad(args);
 		}

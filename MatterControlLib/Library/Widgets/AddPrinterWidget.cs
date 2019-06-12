@@ -334,6 +334,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									false)
 								{
 									ShowProducts = false,
+									ShowHeadingRow = false,
 									StoreID = storePrinterID?.SID,
 									HAnchor = HAnchor.Stretch,
 									VAnchor = VAnchor.Fit
