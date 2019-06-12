@@ -69,6 +69,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			if (userIsLoggedIn)
 			{
 				contentRow.AddChild(printerPanel);
+				contentRow.Padding = 0;
 			}
 			else
 			{

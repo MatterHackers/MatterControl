@@ -216,34 +216,37 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null)
 		{
-			var column = CreateSettingsColumn(labelText, toolTipText);
 			var row = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
 			row.AddChild(new HorizontalSpacer());
 			row.AddChild(field.Content);
+
+			var column = CreateSettingsColumn(labelText, toolTipText);
 			column.AddChild(row);
+
 			return column;
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(string labelText, string toolTipText = null)
 		{
-			var columnContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var theme = AppContext.Theme;
+
+			var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
-				Padding = new BorderDouble(5),
+				Padding = new BorderDouble(9, 5, 5, 5), // Use hard-coded 9 pixel left margin to match SettingsRow
 				ToolTipText = toolTipText
 			};
 
-			var label = new TextWidget(labelText + ":", pointSize: 11, textColor: AppContext.Theme.TextColor)
-			{
-				Margin = new BorderDouble(0, 3, 0, 0),
-				HAnchor = HAnchor.Left
-			};
-			columnContainer.AddChild(label);
+			var label = SettingsRow.CreateSettingsLabel(labelText, toolTipText, theme.TextColor);
+			label.VAnchor = VAnchor.Absolute;
+			label.HAnchor = HAnchor.Left;
 
-			return columnContainer;
+			column.AddChild(label);
+
+			return column;
 		}
 
 		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
@@ -387,14 +390,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is DirectionAxis directionAxis)
 			{
 				rowContainer = CreateSettingsColumn(property);
-				var newDirectionVector = new DirectionVector()
-				{
-					Normal = directionAxis.Normal
-				};
 
 				var field1 = new DirectionVectorField(theme);
 				field1.Initialize(0);
-				field1.SetValue(newDirectionVector);
+				field1.SetValue(new DirectionVector()
+				{
+					Normal = directionAxis.Normal
+				});
 
 				rowContainer.AddChild(new SettingsRow("Axis".Localize(), null, field1.Content, theme));
 
@@ -404,7 +406,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field2 = new Vector3Field(theme);
 				field2.Initialize(0);
 				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
-				var row2 = CreateSettingsColumn("Offset", field2);
+
+				var row2 = CreateSettingsColumn("Offset".Localize(), field2);
 
 				// update this when changed
 				void UpdateData(object s, InvalidateArgs e)

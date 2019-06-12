@@ -47,6 +47,7 @@ namespace MatterHackers.MatterControl
 		public HelpTreePanel(ThemeConfig theme, string guideKey = null)
 			: base(theme)
 		{
+			this.ChildBorderColor = theme.BorderColor40;
 			AddGuides();
 			CreateMousePage();
 			CreateKeyBindingsPage();
