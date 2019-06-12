@@ -1569,7 +1569,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				var WorkspaceActions = ApplicationController.Instance.GetWorkspaceActions(this);
+				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(this);
 
 				var actions = new[]
 				{
@@ -1583,14 +1583,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						},
 						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 					},
-					WorkspaceActions["Save"],
-					WorkspaceActions["SaveAs"],
-					WorkspaceActions["Export"],
+					workspaceActions["Save"],
+					workspaceActions["SaveAs"],
+					workspaceActions["Export"],
 					new ActionSeparator(),
-					WorkspaceActions["Print"],
+					workspaceActions["Print"],
 					new ActionSeparator(),
-					WorkspaceActions["ArrangeAll"],
-					WorkspaceActions["ClearBed"],
+					workspaceActions["ArrangeAll"],
+					workspaceActions["ClearBed"],
 				};
 
 				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
