@@ -359,6 +359,20 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			if (selectedItem is ComponentObject3D componentObject)
+			{
+				popupMenu.CreateSeparator();
+
+				string componentID = componentObject.ComponentID;
+
+				var helpItem = popupMenu.CreateMenuItem("Help".Localize());
+				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+				helpItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(new HelpPage(componentID));
+				};
+			}
+
 			return popupMenu;
 		}
 

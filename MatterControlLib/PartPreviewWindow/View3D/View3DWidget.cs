@@ -1758,17 +1758,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 
 				theme.CreateMenuItems(menu, actions, emptyMenu: false);
-
-				menu.CreateSeparator();
-
-				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
-
-				var helpItem = menu.CreateMenuItem("Help".Localize());
-				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
-				helpItem.Click += (s, e) =>
-				{
-					DialogWindow.Show(new HelpPage(componentID));
-				};
 			});
 		}
 
