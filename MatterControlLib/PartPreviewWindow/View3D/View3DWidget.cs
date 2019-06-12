@@ -1593,7 +1593,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					workspaceActions["ClearBed"],
 				};
 
-				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				theme.CreateMenuItems(popupMenu, actions);
 
 				var popupBounds = new RectangleDouble(position.X + 1, position.Y + 1, position.X + 1, position.Y + 1);
 

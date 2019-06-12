@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				menuTheme.CreateMenuItems(popupMenu, actions);
 
 				return popupMenu;
 			};

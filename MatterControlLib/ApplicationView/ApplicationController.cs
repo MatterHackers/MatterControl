@@ -414,7 +414,7 @@ namespace MatterHackers.MatterControl
 				workspaceActions["Delete"]
 			};
 
-			menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+			menuTheme.CreateMenuItems(popupMenu, actions);
 
 			if (selectedItem is ComponentObject3D componentObject)
 			{
