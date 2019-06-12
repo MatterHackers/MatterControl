@@ -93,6 +93,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			theme.ApplyBoxStyle(nameSection);
 
+			// Reset right margin
+			nameSection.Margin = nameSection.Margin.Clone(right: theme.DefaultContainerPadding);
+
 			printerInfo = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch,
@@ -100,7 +103,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 
 			nameSection.BackgroundColor = theme.MinimalShade;
-			nameSection.Margin = new BorderDouble(top: theme.DefaultContainerPadding);
+			nameSection.Margin = new BorderDouble(theme.DefaultContainerPadding).Clone(left: 0);
 
 			var panel2Column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -117,7 +120,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Margin = new BorderDouble(top: 3)
 			});
 
-			panel2Column.AddChild(printerInfo);
+			var scrollable = new ScrollableWidget(autoScroll: true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+
+			// Padding allows space for scrollbar
+			printerInfo.Padding = new BorderDouble(right: theme.DefaultContainerPadding + 2);
+
+			scrollable.AddChild(printerInfo);
+
+			panel2Column.AddChild(scrollable);
+
+			horizontalSplitter.Panel2.Padding = horizontalSplitter.Panel2.Padding.Clone(right: 0, bottom: 0);
 
 			horizontalSplitter.Panel2.AddChild(panel2Column);
 

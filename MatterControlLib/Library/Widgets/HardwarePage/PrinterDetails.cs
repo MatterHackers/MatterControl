@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,6 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 
+using System;
+using System.Diagnostics;
+using System.IO;
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -39,22 +42,15 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 {
 	public class PrinterDetails : FlowLayoutWidget
 	{
 		private ThemeConfig theme;
+		private GuiWidget headingRow;
 		private PrinterInfo printerInfo;
 		private FlowLayoutWidget productDataContainer;
-
-		public bool ShowProducts { get; set; } = true;
 
 		public PrinterDetails(PrinterInfo printerInfo, ThemeConfig theme, bool showOpenButton)
 			: base(FlowDirection.TopToBottom)
@@ -62,7 +58,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 			this.printerInfo = printerInfo;
 			this.theme = theme;
 
-			var headingRow = this.AddHeading(
+			headingRow = this.AddHeading(
 				OemSettings.Instance.GetIcon(printerInfo.Make),
 				printerInfo.Name);
 
@@ -86,6 +82,8 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 		}
 
 		public string StoreID { get; set; }
+
+		public bool ShowProducts { get; set; } = true;
 
 		public override async void OnLoad(EventArgs args)
 		{
