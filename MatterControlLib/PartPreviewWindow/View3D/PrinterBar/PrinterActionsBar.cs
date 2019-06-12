@@ -303,7 +303,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					SetIsActive = (value) => printer.ViewState.ControlsVisible = value
 				},
 				new NamedBoolAction()
-				{	
+				{
 					Title = "Show Terminal".Localize(),
 					Action = () => { },
 					GetIsActive = () => printer.ViewState.TerminalVisible,

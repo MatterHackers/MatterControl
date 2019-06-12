@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl
 
 		public ExtensionsConfig Extensions { get; }
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, IEnumerable<NodeOperation> nodeOperations = null)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, View3DWidget view3DWidget, IEnumerable<NodeOperation> nodeOperations = null)
 		{
 			// If parameter was not supplied, fall back to unfiltered list of operations
 			if (nodeOperations == null)
@@ -358,6 +358,63 @@ namespace MatterHackers.MatterControl
 					}
 				}
 			}
+
+			var workspaceActions = GetWorkspaceActions(view3DWidget);
+			var sceneContext = view3DWidget.sceneContext;
+			var printer = view3DWidget.Printer;
+
+			var actions = new[]
+			{
+				new ActionSeparator(),
+				workspaceActions["Cut"],
+				workspaceActions["Copy"],
+				workspaceActions["Paste"],
+				new ActionSeparator(),
+				new NamedAction()
+				{
+			 		Title = "Save As".Localize(),
+			 		Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									{
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
+										{
+											new InMemoryLibraryItem(selectedItem)
+											{
+												Name = newName
+											}
+										});
+
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
+			 		IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "Export",
+					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
+					Action = () =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(selectedItem) },
+							centerOnBed: false,
+							printer: printer);
+					}
+				},
+				new ActionSeparator(),
+				workspaceActions["Delete"]
+			};
+
+			menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
 
 			if (selectedItem is ComponentObject3D componentObject)
 			{
@@ -911,6 +968,150 @@ namespace MatterHackers.MatterControl
 			this.Thumbnails.OperationIcons = operationIconsByType;
 
 			operationIconsByType.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon));
+		}
+
+		public Dictionary<string, NamedAction> GetWorkspaceActions(View3DWidget view3DWidget)
+		{
+			var sceneContext = view3DWidget.sceneContext;
+			var printer = sceneContext.Printer;
+
+			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
+
+			// Build workspace actions, each having a unique ID
+			var actions = new[]
+			{
+				new NamedAction()
+				{
+					ID = "Print",
+					Title = "Print".Localize(),
+					Shortcut = "Ctrl+P",
+					Action = view3DWidget.PushToPrinterAndPrint,
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Cut",
+					Title = "Cut".Localize(),
+					Shortcut = "Ctrl+X",
+					Action = () =>
+					{
+						sceneContext.Scene.Cut();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Copy",
+					Title = "Copy".Localize(),
+					Shortcut = "Ctrl+C",
+					Action = () =>
+					{
+						sceneContext.Scene.Copy();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Paste",
+					Title = "Paste".Localize(),
+					Shortcut = "Ctrl+V",
+					Action = () =>
+					{
+						sceneContext.Paste();
+					},
+					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+				},
+				new NamedAction()
+				{
+					ID = "Delete",
+					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+					Title = "Remove".Localize(),
+					Action = sceneContext.Scene.DeleteSelection,
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Export",
+					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
+					Action = () =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(sceneContext.Scene) },
+							centerOnBed: false,
+							printer: printer);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Save",
+					Title = "Save".Localize(),
+					Shortcut = "Ctrl+S",
+					Action = () =>
+					{
+						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "SaveAs",
+					Title = "Save As".Localize(),
+					Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									{
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
+										{
+											new InMemoryLibraryItem(sceneContext.Scene)
+											{
+												Name = newName
+											}
+										});
+
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "ArrangeAll",
+					Title = "Arrange All Parts".Localize(),
+					Action = async () =>
+					{
+						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "ClearBed",
+					Title = "Clear Bed".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							view3DWidget.ClearPlate();
+						});
+					}
+				}
+			};
+
+			// Construct dictionary from workspace actions by ID
+			return actions.ToDictionary(a => a.ID);
 		}
 
 		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)

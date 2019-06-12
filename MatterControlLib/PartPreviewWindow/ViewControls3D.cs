@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 
-			var workspaceActions = view3DWidget.WorkspaceActions;
+			var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(view3DWidget);
 
 			bedMenuButton.DynamicPopupContent = () =>
 			{
