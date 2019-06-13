@@ -30,33 +30,28 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
-	public class SceneSelectionOperation : LocalizedAction
+	public class SceneSelectionOperation
 	{
 		public Action<ISceneContext> Action { get; set; }
 
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 
 		public Type OperationType { get; set; }
+
+		public Func<bool, ImageBuffer> Icon { get; set; }
+
+		public Func<string> TitleResolver { get; set; }
+
+		public string Title => this.TitleResolver?.Invoke();
 	}
 
 	public class SceneSelectionSeparator : SceneSelectionOperation
 	{
-	}
-
-	public static class NamedActionExtensions
-	{
-		public static void Add(this List<NamedAction> list, string title, Action action)
-		{
-			list.Add(new NamedAction()
-			{
-				Title = title,
-				Action = action
-			});
-		}
 	}
 }
