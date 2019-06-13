@@ -518,7 +518,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else if (namedAction.Icon != null)
 				{
 					// add the create support before the align
-					if (namedAction.OperationType == typeof(AlignObject3D))
+					if (namedAction is SceneSelectionOperation selectionOperation
+						&& selectionOperation.OperationType == typeof(AlignObject3D))
 					{
 						this.AddChild(CreateWipeTowerButton(theme));
 						this.AddChild(CreateSupportButton(theme));

@@ -753,19 +753,46 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
+				new OperationGroup()
 				{
-					OperationType = typeof(AlignObject3D),
-					TitleResolver = () => "Align".Localize(),
-					Action = (sceneContext) =>
-					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						var align = new AlignObject3D();
-						align.AddSelectionAsChildren(scene, selectedItem);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(AlignObject3D),
+							TitleResolver = () => "Align".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								var align = new AlignObject3D();
+								align.AddSelectionAsChildren(scene, selectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
+							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(AlignObject3D),
+							TitleResolver = () => "Dual Extrusion Align".Localize(),
+							HelpTextResolver = () => "Reset parts to modeled positions".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+
+								if (selectedItem is SelectionGroupObject3D selectionGroup)
+								{
+									foreach (var child in selectionGroup.Children)
+									{
+										child.Matrix = Matrix4X4.Identity;
+									}
+								}
+							},
+							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+						}
+					}
 				},
 				new SceneSelectionOperation()
 				{
