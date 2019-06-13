@@ -110,8 +110,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnBoundsChanged(EventArgs e)
 		{
-			var bounds = this.Children.First().LocalBounds;
-			dropButtonBounds = new RectangleDouble(bounds.Right, 0, this.Width, this.Height);
+			if (this.Children.FirstOrDefault() is GuiWidget firstChild)
+			{
+				var bounds = firstChild.LocalBounds;
+				dropButtonBounds = new RectangleDouble(bounds.Right, 0, this.Width, this.Height);
+			}
 
 			base.OnBoundsChanged(e);
 		}
@@ -121,7 +124,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnDraw(graphics2D);
 
-			if (this.FirstWidgetUnderMouse)
+			if (this.FirstWidgetUnderMouse
+				&& dropButtonBounds != RectangleDouble.ZeroIntersection)
 			{
 				graphics2D.FillRectangle(dropButtonBounds, theme.SlightShade);
 			}
