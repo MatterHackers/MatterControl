@@ -410,6 +410,45 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
+		public PopupMenuButton CreateSplitButton(SplitButtonParams buttonParams)
+		{
+			PopupMenuButton menuButton = null;
+
+			var innerButton = new IconButton(buttonParams.Icon, this)
+			{
+				Name = buttonParams.ButtonName + " Inner SplitButton",
+				ToolTipText = buttonParams.DefaultActionTooltip,
+			};
+
+			innerButton.Click += (s, e) =>
+			{
+				buttonParams.DefaultAction.Invoke(menuButton);
+			};
+
+			// Remove right Padding for drop style
+			innerButton.Padding = innerButton.Padding.Clone(right: 0);
+
+			menuButton = new PopupMenuButton(innerButton, this)
+			{
+				DynamicPopupContent = () =>
+				{
+					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+					buttonParams.ExtendPopupMenu?.Invoke(popupMenu);
+
+					return popupMenu;
+				},
+				Name = buttonParams.ButtonName + " Menu SplitButton",
+				BackgroundColor = this.ToolbarButtonBackground,
+				HoverColor = this.ToolbarButtonHover,
+				MouseDownColor = this.ToolbarButtonDown,
+				DrawArrow = true,
+				Margin = this.ButtonSpacing,
+			};
+
+			innerButton.Selectable = true;
+			return menuButton;
+		}
+
 		private static ImageBuffer ColorCircle(int size, Color color)
 		{
 			ImageBuffer imageBuffer = new ImageBuffer(size, size);
@@ -546,15 +585,35 @@ namespace MatterHackers.MatterControl
 	public class PresetColors
 	{
 		public Color MaterialPreset { get; set; } = Color.Orange;
+
 		public Color QualityPreset { get; set; } = Color.Yellow;
+
 		public Color UserOverride { get; set; } = new Color(68, 95, 220, 150);
 	}
 
 	public class GridColors
 	{
 		public Color Red { get; set; }
+
 		public Color Green { get; set; }
+
 		public Color Blue { get; set; }
+
 		public Color Line { get; set; }
+	}
+
+	public class SplitButtonParams
+	{
+		public ImageBuffer Icon { get; set; }
+
+		public Action<GuiWidget> DefaultAction { get; set; }
+
+		public string DefaultActionTooltip { get; set; }
+
+		public Action MenuAction { get; set; }
+
+		public Action<PopupMenu> ExtendPopupMenu { get; set; }
+
+		public string ButtonName { get; set; }
 	}
 }

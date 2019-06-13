@@ -783,53 +783,61 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
+				new OperationGroup()
 				{
-					OperationType = typeof(CombineObject3D_2),
-					TitleResolver = () => "Combine".Localize(),
-					Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
+					StickySelection = true,
+					IsEnabled = (scene) => scene.SelectedItem?.VisibleMeshes().Count() > 1,
+					Operations = new List<SceneSelectionOperation>()
 					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(SubtractObject3D_2),
-					TitleResolver = () => "Subtract".Localize(),
-					Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(IntersectionObject3D_2),
-					TitleResolver = () => "Intersect".Localize(),
-					Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(SubtractAndReplaceObject3D_2),
-					TitleResolver = () => "Subtract & Replace".Localize(),
-					Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(CombineObject3D_2),
+							TitleResolver = () => "Combine".Localize(),
+							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractObject3D_2),
+							TitleResolver = () => "Subtract".Localize(),
+							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && scene.SelectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(IntersectionObject3D_2),
+							TitleResolver = () => "Intersect".Localize(),
+							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractAndReplaceObject3D_2),
+							TitleResolver = () => "Subtract & Replace".Localize(),
+							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						}
+					}
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -1176,6 +1184,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		static int applicationInstanceCount = 0;
+
 		public static int ApplicationInstanceCount
 		{
 			get

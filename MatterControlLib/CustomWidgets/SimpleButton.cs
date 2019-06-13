@@ -252,14 +252,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ImageBuffer IconImage => this.Enabled ? image : this.DisabledImage;
 
-		/// <summary>
-		/// Switch icons without computing disabled image - use case for non-disableable toggle widgets
-		/// </summary>
-		/// <param name="icon"></param>
 		internal void SetIcon(ImageBuffer icon)
 		{
 			image = icon;
 			imageWidget.Image = icon;
+			_disabledImage = null;
 		}
 
 		private ImageBuffer _disabledImage;

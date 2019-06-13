@@ -49,9 +49,23 @@ namespace MatterHackers.Agg.UI
 		public Func<string> TitleResolver { get; set; }
 
 		public string Title => this.TitleResolver?.Invoke();
+
+		public Func<string> HelpTextResolver { get; set; }
+
+		public string HelpText => this.HelpTextResolver?.Invoke();
 	}
 
 	public class SceneSelectionSeparator : SceneSelectionOperation
 	{
 	}
+
+	public class OperationGroup : SceneSelectionOperation
+	{
+		public List<SceneSelectionOperation> Operations { get; set; } = new List<SceneSelectionOperation>();
+
+		public bool StickySelection { get; internal set; }
+
+		public string GroupName { get; set; }
+	}
+
 }
