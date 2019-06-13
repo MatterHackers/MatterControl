@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						UiThread.RunOnIdle(() =>
 						{
-							var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true);
+							var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
 
 							var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 							systemWindow.ShowPopup(
@@ -379,9 +379,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			sceneContext.SceneLoaded += SceneContext_SceneLoaded;
 
-			// Construct a dictionary of menu actions accessible at the workspace level
-			WorkspaceActions = this.InitWorkspaceActions();
-
 			if (!AppContext.IsLoading)
 			{
 				this.RebuildTree();
@@ -466,153 +463,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
-		private Dictionary<string, NamedAction> InitWorkspaceActions()
-		{
-			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
-
-			// Build workspace actions, each having a unique ID
-			var actions = new[]
-			{
-				new NamedAction()
-				{
-					ID = "Print",
-					Title = "Print".Localize(),
-					Shortcut = "Ctrl+P",
-					Action = this.PushToPrinterAndPrint,
-					IsEnabled = () => sceneContext.EditableScene
-						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
-				},
-				new NamedAction()
-				{
-					ID = "Cut",
-					Title = "Cut".Localize(),
-					Shortcut = "Ctrl+X",
-					Action = () =>
-					{
-						sceneContext.Scene.Cut();
-					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Copy",
-					Title = "Copy".Localize(),
-					Shortcut = "Ctrl+C",
-					Action = () =>
-					{
-						sceneContext.Scene.Copy();
-					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Paste",
-					Title = "Paste".Localize(),
-					Shortcut = "Ctrl+V",
-					Action = () =>
-					{
-						sceneContext.Paste();
-					},
-					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
-				},
-				new NamedAction()
-				{
-					ID = "Delete",
-					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
-					Title = "Remove".Localize(),
-					Action = sceneContext.Scene.DeleteSelection,
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Export",
-					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
-					Action = () =>
-					{
-						ApplicationController.Instance.ExportLibraryItems(
-							new[] { new InMemoryLibraryItem(sceneContext.Scene) },
-							centerOnBed: false,
-							printer: printer);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
-				},
-				new NamedAction()
-				{
-					ID = "Save",
-					Title = "Save".Localize(),
-					Shortcut = "Ctrl+S",
-					Action = () =>
-					{
-						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					ID = "SaveAs",
-					Title = "Save As".Localize(),
-					Action = () => UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(
-							new SaveAsPage(
-								async (newName, destinationContainer) =>
-								{
-									// Save to the destination provider
-									if (destinationContainer is ILibraryWritableContainer writableContainer)
-									{
-										// Wrap stream with ReadOnlyStream library item and add to container
-										writableContainer.Add(new[]
-										{
-											new InMemoryLibraryItem(sceneContext.Scene)
-											{
-												Name = newName
-											}
-										});
-
-										destinationContainer.Dispose();
-									}
-								}));
-					}),
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					ID = "ArrangeAll",
-					Title = "Arrange All Parts".Localize(),
-					Action = async () =>
-					{
-						await sceneContext.Scene.AutoArrangeChildren(this.BedCenter).ConfigureAwait(false);
-					},
-					IsEnabled = () => sceneContext.EditableScene
-				},
-				new NamedAction()
-				{
-					ID = "ClearBed",
-					Title = "Clear Bed".Localize(),
-					Action = () =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							this.ClearPlate();
-						});
-					}
-				}
-			};
-
-			// Construct dictionary from workspace actions by ID
-			return actions.ToDictionary(a => a.ID);
-		}
-
 		private void ViewState_ViewModeChanged(object sender, ViewModeChangedEventArgs e)
 		{
 			this.modelViewStyleButton.Visible = e.ViewMode == PartViewMode.Model;
 		}
-
-		public Dictionary<string, NamedAction> WorkspaceActions { get; }
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
@@ -1690,7 +1544,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true);
+				var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
 
 				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 				systemWindow.ShowPopup(
@@ -1705,70 +1559,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
 					},
 					altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
-
-				var actions = new[]
-				{
-							new ActionSeparator(),
-							WorkspaceActions["Cut"],
-							WorkspaceActions["Copy"],
-							WorkspaceActions["Paste"],
-							new ActionSeparator(),
-							new NamedAction()
-							{
-			 					Title = "Save As".Localize(),
-			 					Action = () => UiThread.RunOnIdle(() =>
-								{
-									DialogWindow.Show(
-										new SaveAsPage(
-											async (newName, destinationContainer) =>
-											{
-												// Save to the destination provider
-												if (destinationContainer is ILibraryWritableContainer writableContainer)
-												{
-													// Wrap stream with ReadOnlyStream library item and add to container
-													writableContainer.Add(new[]
-													{
-														new InMemoryLibraryItem(selectedItem)
-														{
-															Name = newName
-														}
-													});
-
-													destinationContainer.Dispose();
-												}
-											}));
-								}),
-			 					IsEnabled = () => sceneContext.EditableScene
-							},
-							new NamedAction()
-							{
-								ID = "Export",
-								Title = "Export".Localize(),
-								Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
-								Action = () =>
-								{
-									ApplicationController.Instance.ExportLibraryItems(
-										new[] { new InMemoryLibraryItem(selectedItem) },
-										centerOnBed: false,
-										printer: printer);
-								}
-							},
-							new ActionSeparator(),
-							WorkspaceActions["Delete"]
-				};
-
-				theme.CreateMenuItems(menu, actions, emptyMenu: false);
-
-				menu.CreateSeparator();
-
-				string componentID = (selectedItem as ComponentObject3D)?.ComponentID;
-
-				var helpItem = menu.CreateMenuItem("Help".Localize());
-				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
-				helpItem.Click += (s, e) =>
-				{
-					DialogWindow.Show(new HelpPage(componentID));
-				};
 			});
 		}
 
@@ -1779,8 +1569,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
+				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(this);
+
 				var actions = new[]
-                {
+				{
 					new ActionSeparator(),
 					new NamedAction()
 					{
@@ -1791,17 +1583,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						},
 						IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
 					},
-					WorkspaceActions["Save"],
-					WorkspaceActions["SaveAs"],
-					WorkspaceActions["Export"],
+					workspaceActions["Save"],
+					workspaceActions["SaveAs"],
+					workspaceActions["Export"],
 					new ActionSeparator(),
-					WorkspaceActions["Print"],
+					workspaceActions["Print"],
 					new ActionSeparator(),
-					WorkspaceActions["ArrangeAll"],
-					WorkspaceActions["ClearBed"],
+					workspaceActions["ArrangeAll"],
+					workspaceActions["ClearBed"],
 				};
 
-				theme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				theme.CreateMenuItems(popupMenu, actions);
 
 				var popupBounds = new RectangleDouble(position.X + 1, position.Y + 1, position.X + 1, position.Y + 1);
 

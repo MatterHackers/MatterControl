@@ -281,7 +281,7 @@ namespace MatterHackers.MatterControl
 
 		public ExtensionsConfig Extensions { get; }
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, IEnumerable<NodeOperation> nodeOperations = null)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, View3DWidget view3DWidget, IEnumerable<NodeOperation> nodeOperations = null)
 		{
 			// If parameter was not supplied, fall back to unfiltered list of operations
 			if (nodeOperations == null)
@@ -357,6 +357,77 @@ namespace MatterHackers.MatterControl
 						}
 					}
 				}
+			}
+
+			var workspaceActions = GetWorkspaceActions(view3DWidget);
+			var sceneContext = view3DWidget.sceneContext;
+			var printer = view3DWidget.Printer;
+
+			var actions = new[]
+			{
+				new ActionSeparator(),
+				workspaceActions["Cut"],
+				workspaceActions["Copy"],
+				workspaceActions["Paste"],
+				new ActionSeparator(),
+				new NamedAction()
+				{
+			 		Title = "Save As".Localize(),
+			 		Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									{
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
+										{
+											new InMemoryLibraryItem(selectedItem)
+											{
+												Name = newName
+											}
+										});
+
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
+			 		IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "Export",
+					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
+					Action = () =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(selectedItem) },
+							centerOnBed: false,
+							printer: printer);
+					}
+				},
+				new ActionSeparator(),
+				workspaceActions["Delete"]
+			};
+
+			menuTheme.CreateMenuItems(popupMenu, actions);
+
+			if (selectedItem is ComponentObject3D componentObject)
+			{
+				popupMenu.CreateSeparator();
+
+				string componentID = componentObject.ComponentID;
+
+				var helpItem = popupMenu.CreateMenuItem("Help".Localize());
+				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+				helpItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(new HelpPage(componentID));
+				};
 			}
 
 			return popupMenu;
@@ -682,19 +753,46 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
+				new OperationGroup("Align")
 				{
-					OperationType = typeof(AlignObject3D),
-					TitleResolver = () => "Align".Localize(),
-					Action = (sceneContext) =>
-					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						var align = new AlignObject3D();
-						align.AddSelectionAsChildren(scene, selectedItem);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(AlignObject3D),
+							TitleResolver = () => "Align".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								var align = new AlignObject3D();
+								align.AddSelectionAsChildren(scene, selectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
+							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(AlignObject3D),
+							TitleResolver = () => "Dual Extrusion Align".Localize(),
+							HelpTextResolver = () => "Reset parts to modeled positions".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+
+								if (selectedItem is SelectionGroupObject3D selectionGroup)
+								{
+									foreach (var child in selectionGroup.Children)
+									{
+										child.Matrix = Matrix4X4.Identity;
+									}
+								}
+							},
+							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+						}
+					}
 				},
 				new SceneSelectionOperation()
 				{
@@ -712,53 +810,61 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
+				new OperationGroup("Booleans")
 				{
-					OperationType = typeof(CombineObject3D_2),
-					TitleResolver = () => "Combine".Localize(),
-					Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
+					StickySelection = true,
+					IsEnabled = (scene) => scene.SelectedItem?.VisibleMeshes().Count() > 1,
+					Operations = new List<SceneSelectionOperation>()
 					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(SubtractObject3D_2),
-					TitleResolver = () => "Subtract".Localize(),
-					Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(IntersectionObject3D_2),
-					TitleResolver = () => "Intersect".Localize(),
-					Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(SubtractAndReplaceObject3D_2),
-					TitleResolver = () => "Subtract & Replace".Localize(),
-					Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-					IsEnabled = (scene) =>
-					{
-						var selectedItem = scene.SelectedItem;
-						return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-					},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(CombineObject3D_2),
+							TitleResolver = () => "Combine".Localize(),
+							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractObject3D_2),
+							TitleResolver = () => "Subtract".Localize(),
+							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && scene.SelectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(IntersectionObject3D_2),
+							TitleResolver = () => "Intersect".Localize(),
+							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractAndReplaceObject3D_2),
+							TitleResolver = () => "Subtract & Replace".Localize(),
+							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
+							IsEnabled = (scene) =>
+							{
+								var selectedItem = scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						}
+					}
 				},
 				new SceneSelectionSeparator(),
 				new SceneSelectionOperation()
@@ -899,6 +1005,150 @@ namespace MatterHackers.MatterControl
 			operationIconsByType.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon));
 		}
 
+		public Dictionary<string, NamedAction> GetWorkspaceActions(View3DWidget view3DWidget)
+		{
+			var sceneContext = view3DWidget.sceneContext;
+			var printer = sceneContext.Printer;
+
+			bool invertIcons = ApplicationController.Instance.MenuTheme.InvertIcons;
+
+			// Build workspace actions, each having a unique ID
+			var actions = new[]
+			{
+				new NamedAction()
+				{
+					ID = "Print",
+					Title = "Print".Localize(),
+					Shortcut = "Ctrl+P",
+					Action = view3DWidget.PushToPrinterAndPrint,
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Cut",
+					Title = "Cut".Localize(),
+					Shortcut = "Ctrl+X",
+					Action = () =>
+					{
+						sceneContext.Scene.Cut();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Copy",
+					Title = "Copy".Localize(),
+					Shortcut = "Ctrl+C",
+					Action = () =>
+					{
+						sceneContext.Scene.Copy();
+					},
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Paste",
+					Title = "Paste".Localize(),
+					Shortcut = "Ctrl+V",
+					Action = () =>
+					{
+						sceneContext.Paste();
+					},
+					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+				},
+				new NamedAction()
+				{
+					ID = "Delete",
+					Icon = AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
+					Title = "Remove".Localize(),
+					Action = sceneContext.Scene.DeleteSelection,
+					IsEnabled = () => sceneContext.Scene.SelectedItem != null
+				},
+				new NamedAction()
+				{
+					ID = "Export",
+					Title = "Export".Localize(),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
+					Action = () =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(sceneContext.Scene) },
+							centerOnBed: false,
+							printer: printer);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
+				},
+				new NamedAction()
+				{
+					ID = "Save",
+					Title = "Save".Localize(),
+					Shortcut = "Ctrl+S",
+					Action = () =>
+					{
+						ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, sceneContext.SaveChanges).ConfigureAwait(false);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "SaveAs",
+					Title = "Save As".Localize(),
+					Action = () => UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(
+							new SaveAsPage(
+								async (newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
+									{
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
+										{
+											new InMemoryLibraryItem(sceneContext.Scene)
+											{
+												Name = newName
+											}
+										});
+
+										destinationContainer.Dispose();
+									}
+								}));
+					}),
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "ArrangeAll",
+					Title = "Arrange All Parts".Localize(),
+					Action = async () =>
+					{
+						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
+					},
+					IsEnabled = () => sceneContext.EditableScene
+				},
+				new NamedAction()
+				{
+					ID = "ClearBed",
+					Title = "Clear Bed".Localize(),
+					Action = () =>
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							view3DWidget.ClearPlate();
+						});
+					}
+				}
+			};
+
+			// Construct dictionary from workspace actions by ID
+			return actions.ToDictionary(a => a.ID);
+		}
+
 		public void OpenIntoNewTab(IEnumerable<ILibraryItem> selectedLibraryItems)
 		{
 			this.MainView.CreatePartTab().ContinueWith(task =>
@@ -961,6 +1211,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		static int applicationInstanceCount = 0;
+
 		public static int ApplicationInstanceCount
 		{
 			get

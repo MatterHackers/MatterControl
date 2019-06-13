@@ -68,6 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ViewModeChangedEventArgs : EventArgs
 	{
 		public PartViewMode ViewMode { get; set; }
+
 		public PartViewMode PreviousMode { get; set; }
 	}
 
@@ -157,10 +158,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.view3DWidget = view3DWidget;
 
-			var workspaceActions = view3DWidget.WorkspaceActions;
-
 			bedMenuButton.DynamicPopupContent = () =>
 			{
+				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(view3DWidget);
 				var menuTheme = ApplicationController.Instance.MenuTheme;
 				var popupMenu = new PopupMenu(menuTheme);
 
@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				};
 
-				menuTheme.CreateMenuItems(popupMenu, actions, emptyMenu: false);
+				menuTheme.CreateMenuItems(popupMenu, actions);
 
 				return popupMenu;
 			};
@@ -453,17 +453,80 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
+				// add the create support before the align
+				if (namedAction is OperationGroup group
+					&& group.GroupName == "Align")
+				{
+					this.AddChild(CreateWipeTowerButton(theme));
+					this.AddChild(CreateSupportButton(theme));
+					this.AddChild(new ToolbarSeparator(theme));
+				}
+
 				GuiWidget button;
 
-				if (namedAction.Icon != null)
+				if (namedAction is OperationGroup operationGroup)
 				{
-					// add the create support before the align
-					if (namedAction.OperationType == typeof(AlignObject3D))
+					SceneSelectionOperation defaultOperation;
+
+					string groupRecordID = $"ActiveButton_{operationGroup.GroupName}_Group";
+
+					if (operationGroup.StickySelection)
 					{
-						this.AddChild(CreateWipeTowerButton(theme));
-						this.AddChild(CreateSupportButton(theme));
+						int.TryParse(UserSettings.Instance.get(groupRecordID), out int activeButtonID);
+
+						activeButtonID = agg_basics.Clamp(activeButtonID, 0, operationGroup.Operations.Count - 1);
+
+						defaultOperation = operationGroup.Operations[activeButtonID];
+					}
+					else
+					{
+						defaultOperation = operationGroup.Operations.First();
 					}
 
+					PopupMenuButton groupButton = null;
+
+					groupButton = theme.CreateSplitButton(new SplitButtonParams()
+					{
+						Icon = defaultOperation.Icon(theme.InvertIcons),
+						DefaultAction = (menuButton) =>
+						{
+							defaultOperation.Action.Invoke(sceneContext);
+						},
+						DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
+						ButtonName = defaultOperation.Title,
+						ExtendPopupMenu = (PopupMenu popupMenu) =>
+						{
+							foreach (var operation in operationGroup.Operations)
+							{
+								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+								operationMenu.ToolTipText = operation.HelpText;
+								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
+								{
+									if (operationGroup.StickySelection
+										&& defaultOperation != operation)
+									{
+										// Update button
+										var iconButton = groupButton.Children.OfType<IconButton>().First();
+										iconButton.SetIcon(operation.Icon(theme.InvertIcons));
+										iconButton.ToolTipText = operation.HelpText ?? operation.Title;
+
+										UserSettings.Instance.set(groupRecordID, operationGroup.Operations.IndexOf(operation).ToString());
+
+										defaultOperation = operation;
+
+										iconButton.Invalidate();
+									}
+
+									operation.Action?.Invoke(sceneContext);
+								});
+							}
+						}
+					});
+
+					button = groupButton;
+				}
+				else if (namedAction.Icon != null)
+				{
 					button = new IconButton(namedAction.Icon(theme.InvertIcons), theme)
 					{
 						Name = namedAction.Title + " Button",
@@ -488,16 +551,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				operationButtons.Add((button, namedAction));
 
-				button.Click += (s, e) =>
+				// Only bind Click event if not a SplitButton
+				if (!(button is PopupMenuButton))
 				{
-					UiThread.RunOnIdle(() =>
+					button.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
 						namedAction.Action.Invoke(sceneContext);
 						var partTab = button.Parents<PartTabPage>().FirstOrDefault();
 						var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
 						view3D.InteractionLayer.Focus();
 					});
-				};
+				}
+
 				this.AddChild(button);
 			}
 
@@ -777,83 +842,56 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget CreateSaveButton(ThemeConfig theme)
 		{
-			PopupMenuButton saveButton = null;
-
-			var iconButton = new IconButton(
-				AggContext.StaticData.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
-				theme)
+			return theme.CreateSplitButton(new SplitButtonParams()
 			{
-				ToolTipText = "Save".Localize(),
-			};
-
-			iconButton.Click += (s, e) =>
-			{
-				ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async(progress, cancellationToken) =>
+				ButtonName = "Save",
+				Icon = AggContext.StaticData.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
+				DefaultAction = (menuButton) =>
 				{
-					saveButton.Enabled = false;
-
-					try
+					ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async (progress, cancellationToken) =>
 					{
-						await sceneContext.SaveChanges(progress, cancellationToken);
-					}
-					catch
-					{
-					}
+						menuButton.Enabled = false;
 
-					saveButton.Enabled = true;
-				}).ConfigureAwait(false);
-			};
+						try
+						{
+							await sceneContext.SaveChanges(progress, cancellationToken);
+						}
+						catch (Exception ex)
+						{
+							ApplicationController.Instance.LogError("Error saving file".Localize() + ": " + ex.Message);
+						}
 
-			// Remove right Padding for drop style
-			iconButton.Padding = iconButton.Padding.Clone(right: 0);
-
-			saveButton = new PopupMenuButton(iconButton, theme)
-			{
-				Name = "Save SplitButton",
-				ToolTipText = "Save As".Localize(),
-				DynamicPopupContent = () =>
+						menuButton.Enabled = true;
+					}).ConfigureAwait(false);
+				},
+				DefaultActionTooltip = "Save".Localize(),
+				ExtendPopupMenu = (PopupMenu popupMenu) =>
 				{
-					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
 					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());
 					saveAs.Click += (s, e) => UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							DialogWindow.Show(
-								new SaveAsPage(
-									async (newName, destinationContainer) =>
+						DialogWindow.Show(
+							new SaveAsPage(
+								(newName, destinationContainer) =>
+								{
+									// Save to the destination provider
+									if (destinationContainer is ILibraryWritableContainer writableContainer)
 									{
-										// Save to the destination provider
-										if (destinationContainer is ILibraryWritableContainer writableContainer)
+										// Wrap stream with ReadOnlyStream library item and add to container
+										writableContainer.Add(new[]
 										{
-											// Wrap stream with ReadOnlyStream library item and add to container
-											writableContainer.Add(new[]
-												{
 											new InMemoryLibraryItem(sceneContext.Scene)
 											{
 												Name = newName
 											}
-											});
+										});
 
-											destinationContainer.Dispose();
-										}
-									}));
-						});
+										destinationContainer.Dispose();
+									}
+								}));
 					});
-
-					return popupMenu;
-				},
-				BackgroundColor = theme.ToolbarButtonBackground,
-				HoverColor = theme.ToolbarButtonHover,
-				MouseDownColor = theme.ToolbarButtonDown,
-				DrawArrow = true,
-				Margin = theme.ButtonSpacing,
-			};
-
-			iconButton.Selectable = true;
-
-			return saveButton;
+				}
+			});
 		}
 
 		public override void OnClosed(EventArgs e)

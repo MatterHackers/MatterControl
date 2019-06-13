@@ -60,15 +60,6 @@ namespace MatterHackers.MatterControl
 		public Action<bool> SetIsActive { get; set; }
 	}
 
-	public abstract class LocalizedAction
-	{
-		public Func<string> TitleResolver { get; set; }
-
-		public string Title => this.TitleResolver?.Invoke();
-
-		public Func<bool, ImageBuffer> Icon { get; set; }
-	}
-
 	public static class NamedActionExtensions
 	{
 		public static void Add(this List<NamedAction> list, string title, Action action)

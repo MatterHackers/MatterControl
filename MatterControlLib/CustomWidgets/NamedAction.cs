@@ -30,33 +30,47 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
-	public class SceneSelectionOperation : LocalizedAction
+	public class SceneSelectionOperation
 	{
 		public Action<ISceneContext> Action { get; set; }
 
 		public Func<InteractiveScene, bool> IsEnabled { get; set; }
 
 		public Type OperationType { get; set; }
+
+		public Func<bool, ImageBuffer> Icon { get; set; }
+
+		public Func<string> TitleResolver { get; set; }
+
+		public string Title => this.TitleResolver?.Invoke();
+
+		public Func<string> HelpTextResolver { get; set; }
+
+		public string HelpText => this.HelpTextResolver?.Invoke();
 	}
 
 	public class SceneSelectionSeparator : SceneSelectionOperation
 	{
 	}
 
-	public static class NamedActionExtensions
+	public class OperationGroup : SceneSelectionOperation
 	{
-		public static void Add(this List<NamedAction> list, string title, Action action)
+		public OperationGroup(string groupName)
 		{
-			list.Add(new NamedAction()
-			{
-				Title = title,
-				Action = action
-			});
+			this.GroupName = groupName;
 		}
+
+		public List<SceneSelectionOperation> Operations { get; set; } = new List<SceneSelectionOperation>();
+
+		public bool StickySelection { get; internal set; }
+
+		public string GroupName { get; }
 	}
+
 }
