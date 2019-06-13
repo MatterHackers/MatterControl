@@ -753,7 +753,7 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new OperationGroup()
+				new OperationGroup("Align")
 				{
 					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 					Operations = new List<SceneSelectionOperation>()
@@ -810,7 +810,7 @@ namespace MatterHackers.MatterControl
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
-				new OperationGroup()
+				new OperationGroup("Booleans")
 				{
 					StickySelection = true,
 					IsEnabled = (scene) => scene.SelectedItem?.VisibleMeshes().Count() > 1,

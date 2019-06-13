@@ -61,11 +61,16 @@ namespace MatterHackers.Agg.UI
 
 	public class OperationGroup : SceneSelectionOperation
 	{
+		public OperationGroup(string groupName)
+		{
+			this.GroupName = groupName;
+		}
+
 		public List<SceneSelectionOperation> Operations { get; set; } = new List<SceneSelectionOperation>();
 
 		public bool StickySelection { get; internal set; }
 
-		public string GroupName { get; set; }
+		public string GroupName { get; }
 	}
 
 }

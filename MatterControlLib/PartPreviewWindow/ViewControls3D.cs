@@ -453,6 +453,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					continue;
 				}
 
+				// add the create support before the align
+				if (namedAction is OperationGroup group
+					&& group.GroupName == "Align")
+				{
+					this.AddChild(CreateWipeTowerButton(theme));
+					this.AddChild(CreateSupportButton(theme));
+					this.AddChild(new ToolbarSeparator(theme));
+				}
+
 				GuiWidget button;
 
 				if (namedAction is OperationGroup operationGroup)
@@ -517,14 +526,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (namedAction.Icon != null)
 				{
-					// add the create support before the align
-					if (namedAction is SceneSelectionOperation selectionOperation
-						&& selectionOperation.OperationType == typeof(AlignObject3D))
-					{
-						this.AddChild(CreateWipeTowerButton(theme));
-						this.AddChild(CreateSupportButton(theme));
-					}
-
 					button = new IconButton(namedAction.Icon(theme.InvertIcons), theme)
 					{
 						Name = namedAction.Title + " Button",
