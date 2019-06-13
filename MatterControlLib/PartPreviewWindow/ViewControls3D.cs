@@ -499,6 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							foreach (var operation in operationGroup.Operations)
 							{
 								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+								operationMenu.ToolTipText = operation.HelpText;
 								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 								{
 									if (operationGroup.StickySelection
