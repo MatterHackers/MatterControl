@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -39,6 +40,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PopupMenuButton : PopupButton
 	{
 		private ThemeConfig theme;
+		private bool mouseInBounds;
+		private bool _drawArrow = false;
+		private VertexStorage dropArrow = DropArrow.DownArrow;
+		private RectangleDouble dropButtonBounds = RectangleDouble.ZeroIntersection;
 
 		public PopupMenuButton(ThemeConfig theme)
 		{
@@ -86,7 +91,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Color MouseDownColor { get; set;} = Color.Transparent;
 
-		private bool _drawArrow = false;
 		public bool DrawArrow
 		{
 			get => _drawArrow;
@@ -104,11 +108,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private VertexStorage dropArrow = DropArrow.DownArrow;
+		public override void OnBoundsChanged(EventArgs e)
+		{
+			var bounds = this.Children.First().LocalBounds;
+			dropButtonBounds = new RectangleDouble(bounds.Right, 0, this.Width, this.Height);
+
+			base.OnBoundsChanged(e);
+		}
+
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
+
+			if (this.FirstWidgetUnderMouse)
+			{
+				graphics2D.FillRectangle(dropButtonBounds, theme.SlightShade);
+			}
 
 			if (this.DrawArrow)
 			{
@@ -121,7 +137,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private bool mouseInBounds;
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			mouseInBounds = true;
