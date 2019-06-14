@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,11 +39,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	public static class BooleanProcessing
 	{
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		private const string BooleanAssembly = "609_Boolean_bin.dll";
+
+		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int DeleteDouble(ref IntPtr handle);
 
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
+		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
 		public static extern int DeleteInt(ref IntPtr handle);
+
+		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
+		public static extern void DoBooleanOperation(double[] va, int vaCount, int[] fa, int faCount, double[] vb, int vbCount, int[] fb, int fbCount, int opperation, out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
 
 		public static Mesh Do(Mesh inMeshA,
 			Matrix4X4 matrixA,
@@ -59,8 +64,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			ProgressStatus progressStatus,
 			CancellationToken cancellationToken)
 		{
-			var libiglExe = "libigl_boolean.exe";
-			if (File.Exists(libiglExe)
+			bool externalAssemblyExists = File.Exists(BooleanAssembly);
+			if (externalAssemblyExists
 				&& IntPtr.Size == 8) // only try to run the improved booleans if we are 64 bit and it is there
 			{
 				IntPtr pVc = IntPtr.Zero;
@@ -122,6 +127,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					reporter.Report(progressStatus);
 				}
 			}
+			else
+			{
+				Console.WriteLine($"libigl skipped - AssemblyExists: {externalAssemblyExists}; Is64Bit: {IntPtr.Size == 8};");
+			}
 
 			var meshA = inMeshA.Copy(CancellationToken.None);
 			meshA.Transform(matrixA);
@@ -176,12 +185,5 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 			return null;
 		}
-
-		[DllImport("609_Boolean_bin.dll", CallingConvention = CallingConvention.Cdecl)]
-		public static extern void DoBooleanOperation(
-			double[] va, int vaCount, int[] fa, int faCount,
-			double[] vb, int vbCount, int[] fb, int fbCount,
-			int opperation,
-			out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
 	}
 }
