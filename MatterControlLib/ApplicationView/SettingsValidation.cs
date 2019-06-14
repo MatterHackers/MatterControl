@@ -446,7 +446,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Concatenate printer and settings errors
-			errors.AddRange(printer.ValidateSettings());
+			errors.AddRange(printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource));
 
 			return errors;
 		}
