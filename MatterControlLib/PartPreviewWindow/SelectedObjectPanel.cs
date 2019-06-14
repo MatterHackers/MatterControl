@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
 
-		private List<NodeOperation> primaryActions;
+		private List<NodeOperation> primaryActions = new List<NodeOperation>();
 
 		public void SetActiveItem(IObject3D selectedItem)
 		{

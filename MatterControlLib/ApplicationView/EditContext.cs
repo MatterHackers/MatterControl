@@ -70,6 +70,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool IsGGCodeSource => (this.SourceItem as ILibraryAsset)?.ContentType == "gcode";
+
 		// Override or natural path
 		public string GCodeFilePath(PrinterConfig printer)
 		{
@@ -77,7 +79,7 @@ namespace MatterHackers.MatterControl
 			{
 				return this.GCodeOverridePath(printer);
 			}
-			
+
 			return GCodePath(printer);
 		}
 

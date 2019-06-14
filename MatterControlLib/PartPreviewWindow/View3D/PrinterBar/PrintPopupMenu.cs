@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				startPrintButton.Click += (s, e) =>
 				{
 					// Exit if the bed is not GCode and the bed has no printable items
-					if ((printer.Bed.EditContext.SourceItem as ILibraryAsset)?.ContentType != "gcode"
+					if (!printer.Bed.EditContext.IsGGCodeSource
 						&& !printer.PrintableItems(printer.Bed.Scene).Any())
 					{
 						return;
