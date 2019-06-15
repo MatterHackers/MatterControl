@@ -52,7 +52,7 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(beforeAndAfter[0].Contains($"M140 S{bedTemp}"));
 			Assert.IsFalse(beforeAndAfter[0].Contains($"M109 T0 S{extruderTemp}"));
 			Assert.IsTrue(beforeAndAfter[0].Contains($"M190 S{bedTemp}"));
-			Assert.IsTrue(beforeAndAfter[1].Contains($"M109 T0 S{extruderTemp}"));
+			Assert.IsFalse(beforeAndAfter[1].Contains($"M109 T0 S{extruderTemp}"), "M109 already in gcode, should not be in after.");
 			Assert.IsFalse(beforeAndAfter[1].Contains($"M190 S{bedTemp}"));
 		}
 
