@@ -620,7 +620,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
-			foreach(var item in operationButtons)
+			foreach (var item in operationButtons)
 			{
 				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext.Scene) ?? false;
 			}

@@ -2318,12 +2318,12 @@ namespace MatterHackers.MatterControl
 
 		private void OpenWorkspace(PartWorkspace workspace, WorkspacesChangedEventArgs.OperationType operationType)
 		{
-			this.Workspaces.Add(workspace);
-
 			this.OnWorkspacesChanged(
 					new WorkspacesChangedEventArgs(
 						workspace,
 						operationType));
+
+			this.Workspaces.Add(workspace);
 		}
 
 		public void RestoreWorkspace(PartWorkspace workspace)
@@ -2597,10 +2597,10 @@ namespace MatterHackers.MatterControl
 
 				printer.Connection.PrintingItemName = printItemName;
 
-				var errors = printer.ValidateSettings();
+				var errors = printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
 				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
-					this.ShowValidationErrors("Export Error".Localize(), errors);
+					this.ShowValidationErrors("Validation Error".Localize(), errors);
 				}
 				else // there are no errors continue printing
 				{

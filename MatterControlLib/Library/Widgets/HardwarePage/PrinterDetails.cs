@@ -166,6 +166,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				MinimumSize = new VectorMath.Vector2(50, 0),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
+				AutoScroll = false,
 				Markdown = product.ProductDescription.Trim()
 			};
 			descriptionBackground.AddChild(description);
