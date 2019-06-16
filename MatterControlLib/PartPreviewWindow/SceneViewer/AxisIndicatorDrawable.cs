@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -39,11 +40,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class AxisIndicatorDrawable : IDrawable
 	{
-		private double big = 10;
-		private double small = 1;
+		private readonly double big = 10;
+		private readonly double small = 1;
+		private readonly List<(Mesh mesh, Color color)> meshes = new List<(Mesh, Color)>();
 
 		public AxisIndicatorDrawable()
 		{
+			meshes.Add((GetMesh(0, 1), Color.Red.AdjustLightness(1.5).ToColor()));
+			meshes.Add((GetMesh(0, -1), Color.Red.AdjustLightness(.8).ToColor()));
+
+			meshes.Add((GetMesh(1, 1), Color.Green.AdjustLightness(1.5).ToColor()));
+			meshes.Add((GetMesh(1, -1), Color.Green.AdjustLightness(.8).ToColor()));
+
+			meshes.Add((GetMesh(2, 1), Color.Blue.AdjustLightness(1.5).ToColor()));
+			meshes.Add((GetMesh(2, -1), Color.Blue.AdjustLightness(.8).ToColor()));
+		}
+
+		private Mesh GetMesh(int axis, int direction)
+		{
+			var scale = Vector3.One;
+			scale[axis] = big;
+			scale[(axis + 1) % 3] = small;
+			scale[(axis + 2) % 3] = small;
+			Mesh mesh = PlatonicSolids.CreateCube(scale);
+			var translate = Vector3.Zero;
+			translate[axis] = big / 2 * direction;
+			mesh.Transform(Matrix4X4.CreateTranslation(translate));
+
+			return mesh;
 		}
 
 		public bool Enabled { get; set; }
@@ -56,12 +80,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			Mesh xAxis = PlatonicSolids.CreateCube(big, small, small);
-			GLHelper.Render(xAxis, Color.Red);
-			Mesh yAxis = PlatonicSolids.CreateCube(small, big, small);
-			GLHelper.Render(yAxis, Color.Green);
-			Mesh zAxis = PlatonicSolids.CreateCube(small, small, big);
-			GLHelper.Render(zAxis, Color.Blue);
+			foreach (var mesh in meshes)
+			{
+				GLHelper.Render(mesh.mesh, mesh.color);
+			}
 		}
 	}
 }

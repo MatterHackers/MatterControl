@@ -49,19 +49,19 @@ namespace MatterHackers.Plugins.EditorTools
 	public class RotateCornerControl : InteractionVolume
 	{
 		private IObject3D selectedItemOnMouseDown;
-		private static VertexStorage arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");
+		private static readonly VertexStorage Arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");
 		private static ImageBuffer rotationImageWhite;
 
 		private readonly double arrowsOffset = 15;
 		private readonly double ringWidth = 20;
-		private ThemeConfig theme;
-		private InlineEditControl angleTextControl;
+		private readonly ThemeConfig theme;
+		private readonly InlineEditControl angleTextControl;
 
 		private double lastSnappedRotation = 0;
 		private Mouse3DInfo mouseDownInfo = null;
 		private Mouse3DInfo mouseMoveInfo = null;
-		private int numSnapPoints = 8;
-		private Mesh rotationHandle;
+		private readonly int numSnapPoints = 8;
+		private readonly Mesh rotationHandle;
 		private double rotationTransformScale = 1;
 		private Vector3 selectCubeSize = new Vector3(30, 30, .1) * GuiWidget.DeviceScale;
 
@@ -98,7 +98,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 						mouseMoveInfo.AngleOfHit = mouseDownInfo.AngleOfHit + SnappedRotationAngle;
 
-						rotatingCW = DeltaAngle(0, SnappedRotationAngle) < 0;
+						RotatingCW = DeltaAngle(0, SnappedRotationAngle) < 0;
 
 						// undo the last rotation
 						RotateAroundAxis(selectedItem, -lastSnappedRotation);
@@ -121,13 +121,13 @@ namespace MatterHackers.Plugins.EditorTools
 
 			rotationHandle = PlatonicSolids.CreateCube(selectCubeSize);
 
-			RectangleDouble bounds = arrows.GetBounds();
+			RectangleDouble bounds = Arrows.GetBounds();
 			if (rotationImageWhite == null)
 			{
 				rotationImageWhite = new ImageBuffer(64, 64, 32, new BlenderBGRA());
 			}
 
-			VertexSourceApplyTransform arrows2 = new VertexSourceApplyTransform(arrows, Affine.NewTranslation(-bounds.Center)
+			var arrows2 = new VertexSourceApplyTransform(Arrows, Affine.NewTranslation(-bounds.Center)
 				* Affine.NewScaling(rotationImageWhite.Width / bounds.Width, rotationImageWhite.Height / bounds.Height)
 				* Affine.NewTranslation(rotationImageWhite.Width / 2, rotationImageWhite.Height / 2));
 
@@ -135,7 +135,7 @@ namespace MatterHackers.Plugins.EditorTools
 			imageGraphics.Clear(new Color(Color.White, 0));
 			imageGraphics.Render(new FlattenCurves(arrows2), Color.White);
 
-			ImageBuffer clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
+			var clearImage = new ImageBuffer(2, 2, 32, new BlenderBGRA());
 
 			for (int i = 0; i < rotationHandle.Faces.Count; i++)
 			{
@@ -166,7 +166,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		private bool rotatingCW { get; set; } = true;
+		private bool RotatingCW { get; set; } = true;
 
 		private double SnappedRotationAngle { get; set; }
 
@@ -199,8 +199,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public Vector3 GetCornerPosition(IObject3D objectBeingRotated)
 		{
-			int cornerIndex;
-			return GetCornerPosition(objectBeingRotated, out cornerIndex);
+			return GetCornerPosition(objectBeingRotated, out _);
 		}
 
 		public Vector3 GetCornerPosition(IObject3D objectBeingRotated, out int cornerIndexOut)
@@ -291,13 +290,12 @@ namespace MatterHackers.Plugins.EditorTools
 					selectedObject.Matrix,
 					selectedObjectRotationCenter,
 					GetControlCenter(selectedObject),
-					RotationAxis
-					);
+					RotationAxis);
 
 				// Get move data updated
 				lastSnappedRotation = 0;
 				SnappedRotationAngle = 0;
-				rotatingCW = true;
+				RotatingCW = true;
 				mouseMoveInfo = mouseDownInfo;
 				InteractionContext.Scene.ShowSelectionShadow = false;
 
@@ -306,8 +304,7 @@ namespace MatterHackers.Plugins.EditorTools
 					selectedObject.Matrix,
 					selectedObjectRotationCenter,
 					GetControlCenter(selectedObject),
-					RotationAxis
-					);
+					RotationAxis);
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -323,6 +320,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					controlCenter = mouseDownInfo.ControlCenter;
 				}
+
 				var hitPlane = new PlaneShape(RotationPlanNormal, Vector3Ex.Dot(RotationPlanNormal, controlCenter), null);
 				IntersectInfo hitOnRotationPlane = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 				if (hitOnRotationPlane != null)
@@ -343,8 +341,7 @@ namespace MatterHackers.Plugins.EditorTools
 						selectedItem.Matrix,
 						selectedObjectRotationCenter,
 						controlCenter,
-						RotationAxis
-						);
+						RotationAxis);
 
 					if (MouseDownOnControl
 						&& mouseDownInfo != null)
@@ -389,7 +386,7 @@ namespace MatterHackers.Plugins.EditorTools
 						// check if this move crosses zero degrees
 						if (lastSnappedRotation == 0 && SnappedRotationAngle != 0)
 						{
-							rotatingCW = DeltaAngle(0, SnappedRotationAngle) < 0;
+							RotatingCW = DeltaAngle(0, SnappedRotationAngle) < 0;
 						}
 						else if ((DeltaAngle(0, SnappedRotationAngle) < 0
 							&& DeltaAngle(0, lastSnappedRotation) > 0
@@ -399,7 +396,7 @@ namespace MatterHackers.Plugins.EditorTools
 							&& Math.Abs(DeltaAngle(0, lastSnappedRotation)) < 1))
 						{
 							// let's figure out which way we are going
-							rotatingCW = (DeltaAngle(0, SnappedRotationAngle) < 0 && DeltaAngle(0, lastSnappedRotation) > 0);
+							RotatingCW = DeltaAngle(0, SnappedRotationAngle) < 0 && DeltaAngle(0, lastSnappedRotation) > 0;
 						}
 
 						// undo the last rotation
@@ -461,8 +458,7 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 boxCenter = GetControlCenter(selectedItem);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
 
-			int cornerIndexOut;
-			GetCornerPosition(selectedItem, out cornerIndexOut);
+			GetCornerPosition(selectedItem, out int cornerIndexOut);
 
 			Matrix4X4 centerMatrix = Matrix4X4.Identity;
 			switch (RotationAxis)
@@ -476,6 +472,7 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						centerMatrix *= Matrix4X4.CreateRotationY(MathHelper.DegreesToRadians(-90));
 					}
+
 					centerMatrix *= Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(90) * cornerIndexOut);
 					break;
 
@@ -488,6 +485,7 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						centerMatrix *= Matrix4X4.CreateRotationX(MathHelper.DegreesToRadians(90));
 					}
+
 					centerMatrix *= Matrix4X4.CreateRotationZ(MathHelper.DegreesToRadians(90) * cornerIndexOut);
 					break;
 
@@ -503,8 +501,8 @@ namespace MatterHackers.Plugins.EditorTools
 		/// <summary>
 		/// Measure the difference between two angles.
 		/// </summary>
-		/// <param name="startAngle"></param>
-		/// <param name="endAngle"></param>
+		/// <param name="startAngle">The starting angle.</param>
+		/// <param name="endAngle">The ending angle.</param>
 		/// <returns>The angle from a to b. If A = 2 and B = 0 return 2.
 		/// If A = 0 and B = 2 return -2.</returns>
 		private static double DeltaAngle(double startAngle, double endAngle)
@@ -532,20 +530,9 @@ namespace MatterHackers.Plugins.EditorTools
 				return;
 			}
 
-			Vector3 controlCenter = GetControlCenter(selectedItem);
-			Vector3 rotationCenter = GetRotationCenter(selectedItem, currentSelectedBounds);
-			if (mouseDownInfo != null)
-			{
-				rotationCenter = mouseDownInfo.SelectedObjectRotationCenter;
-				controlCenter = mouseDownInfo.ControlCenter;
-			}
-
 			if (mouseMoveInfo != null)
 			{
-				double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(rotationCenter);
-
-				double radius;
-				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out radius);
+				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 				double innerRadius = radius + ringWidth / 2;
 				double outerRadius = innerRadius + ringWidth;
@@ -581,7 +568,7 @@ namespace MatterHackers.Plugins.EditorTools
 					double startRed = mouseDownInfo.AngleOfHit;
 					double endRed = SnappedRotationAngle + mouseDownInfo.AngleOfHit;
 
-					if (!rotatingCW)
+					if (!RotatingCW)
 					{
 						var temp = startRed;
 						startRed = endRed;
@@ -595,7 +582,7 @@ namespace MatterHackers.Plugins.EditorTools
 					// draw a line to the mouse on the rotation circle
 					if (mouseMoveInfo != null && MouseDownOnControl)
 					{
-						Vector3 unitPosition = new Vector3(Math.Cos(mouseMoveInfo.AngleOfHit), Math.Sin(mouseMoveInfo.AngleOfHit), 0);
+						var unitPosition = new Vector3(Math.Cos(mouseMoveInfo.AngleOfHit), Math.Sin(mouseMoveInfo.AngleOfHit), 0);
 						Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
 						var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 						if ((mouseMoveInfo.HitPosition - center).Length > rotationTransformScale * innerRadius)
@@ -603,13 +590,13 @@ namespace MatterHackers.Plugins.EditorTools
 							InteractionContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, theme.PrimaryAccentColor, drawEventArgs.ZBuffered);
 						}
 
-						DrawSnappingMarks(drawEventArgs, mouseAngle, alphaValue, rotationCenterTransform, snappingMarkRadius, 5, numSnapPoints, GetSnapIndex(selectedItem, numSnapPoints));
+						DrawSnappingMarks(drawEventArgs, mouseAngle, alphaValue, rotationCenterTransform, snappingMarkRadius, numSnapPoints, GetSnapIndex(selectedItem, numSnapPoints));
 					}
 				}
 			}
 		}
 
-		private void DrawSnappingMarks(DrawGlContentEventArgs drawEventArgs, double mouseAngle, double alphaValue, Matrix4X4 rotationCenterTransform, double distanceFromCenter, double dotRadius, int numSnapPoints, int markToSnapTo)
+		private void DrawSnappingMarks(DrawGlContentEventArgs drawEventArgs, double mouseAngle, double alphaValue, Matrix4X4 rotationCenterTransform, double distanceFromCenter, int numSnapPoints, int markToSnapTo)
 		{
 			var graphics2DOpenGL = new Graphics2DOpenGL();
 
@@ -645,7 +632,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				double startAngle = i * snappingRadians;
 
-				Vector3 unitPosition = new Vector3(Math.Cos(startAngle), Math.Sin(startAngle), 0);
+				var unitPosition = new Vector3(Math.Cos(startAngle), Math.Sin(startAngle), 0);
 				Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
 				Vector3 endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
 
@@ -665,8 +652,8 @@ namespace MatterHackers.Plugins.EditorTools
 		/// complicated by the fact that the control is pushed away from the corner
 		/// that it is part of by a number of pixels in screen space.
 		/// </summary>
-		/// <param name="selectedItem"></param>
-		/// <returns></returns>
+		/// <param name="selectedItem">The item to the center of</param>
+		/// <returns>The center of the control in item space.</returns>
 		private Vector3 GetControlCenter(IObject3D selectedItem)
 		{
 			Vector3 boxCenter = GetCornerPosition(selectedItem);
@@ -677,7 +664,7 @@ namespace MatterHackers.Plugins.EditorTools
 			double xSign = otherSideDelta.X > 0 ? 1 : -1;
 			double ySign = otherSideDelta.Y > 0 ? 1 : -1;
 
-			Vector3 delta = new Vector3(xSign * (selectCubeSize.X / 2 + arrowsOffset) * distBetweenPixelsWorldSpace,
+			var delta = new Vector3(xSign * (selectCubeSize.X / 2 + arrowsOffset) * distBetweenPixelsWorldSpace,
 				ySign * (selectCubeSize.Y / 2 + arrowsOffset) * distBetweenPixelsWorldSpace,
 				-selectCubeSize.Z / 2 * distBetweenPixelsWorldSpace);
 			delta[RotationAxis] = 0;
@@ -690,8 +677,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			AxisAlignedBoundingBox currentSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			int cornerIndex;
-			Vector3 cornerPosition = GetCornerPosition(selectedItem, out cornerIndex);
+			Vector3 cornerPosition = GetCornerPosition(selectedItem, out int cornerIndex);
 			Vector3 cornerPositionCcw = currentSelectedBounds.GetBottomCorner((cornerIndex + 1) % 4);
 			Vector3 cornerPositionCw = currentSelectedBounds.GetBottomCorner((cornerIndex + 3) % 4);
 
@@ -776,6 +762,7 @@ namespace MatterHackers.Plugins.EditorTools
 						var center2 = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 						rotationCenterTransform *= Matrix4X4.CreateTranslation(center - center2);
 					}
+
 					break;
 
 				case 2:
@@ -832,13 +819,13 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
-				Vector3 unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
+				var unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
 				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100), rotationCenterTransform);
 
 				Vector2 angleDisplayPosition = InteractionContext.World.GetScreenPosition(anglePosition);
 
 				var displayAngle = MathHelper.RadiansToDegrees(SnappedRotationAngle);
-				if (!rotatingCW && SnappedRotationAngle > 0)
+				if (!RotatingCW && SnappedRotationAngle > 0)
 				{
 					displayAngle -= 360;
 				}

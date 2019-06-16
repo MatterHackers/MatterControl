@@ -38,23 +38,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 		}
 
-		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] linesToCheckIfAlreadyPresent, string comment)
+		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
 		{
 			string command = commandToAdd.Split(' ')[0].Trim();
-			bool foundCommand = false;
-			foreach (string line in linesToCheckIfAlreadyPresent)
-			{
-				if (line.StartsWith(command))
-				{
-					foundCommand = true;
-					break;
-				}
-			}
 
-			if (!foundCommand)
+			if (!LineStartsWith(lines, command))
 			{
 				linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
 			}
+		}
+
+		protected static bool LineStartsWith(string[] lines, string command)
+		{
+			foreach (string line in lines)
+			{
+				if (line.StartsWith(command))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 }
