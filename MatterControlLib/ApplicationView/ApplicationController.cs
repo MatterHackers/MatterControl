@@ -756,6 +756,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Align")
 				{
+					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
 						new SceneSelectionOperation()
