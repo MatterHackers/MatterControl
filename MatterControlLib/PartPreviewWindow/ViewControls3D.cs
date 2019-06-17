@@ -268,16 +268,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
 								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
 					},
-					new NamedAction()
-					{
-						ID = "ArrangeAll",
-						Title = "Arrange All Parts".Localize(),
-						Action = async () =>
-						{
-							await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
 					new ActionSeparator(),
 					new NamedAction()
 					{

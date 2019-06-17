@@ -760,6 +760,31 @@ namespace MatterHackers.MatterControl
 					{
 						new SceneSelectionOperation()
 						{
+							TitleResolver = () => "Arrange All Parts".Localize(),
+							Action = async (sceneContext) =>
+							{
+								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
+							},
+							IsEnabled = (sceneContext) => sceneContext.EditableScene,
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
+						},
+						new SceneSelectionOperation()
+						{
+							TitleResolver = () => "Lay Flat".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								if (selectedItem != null)
+								{
+									scene.MakeLowestFaceFlat(selectedItem);
+								}
+							},
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+						},
+						new SceneSelectionOperation()
+						{
 							OperationType = typeof(AlignObject3D),
 							TitleResolver = () => "Align".Localize(),
 							Action = (sceneContext) =>
@@ -790,6 +815,7 @@ namespace MatterHackers.MatterControl
 									}
 								}
 							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("dual_align.png", 16, 16, invertIcon).SetPreMultiply(),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 						},
 						new SceneSelectionOperation()
