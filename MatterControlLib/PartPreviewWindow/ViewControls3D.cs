@@ -726,7 +726,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, theme.InvertIcons),
 				theme)
 			{
-				ToolTipText = "Create Wipe Tower".Localize(),
+				ToolTipText = "Toggle Wipe Tower".Localize(),
 			};
 
 			iconButton.Click += (s, e) =>
