@@ -41,7 +41,7 @@ namespace MatterHackers.Agg.UI
 	{
 		public Action<ISceneContext> Action { get; set; }
 
-		public Func<InteractiveScene, bool> IsEnabled { get; set; } = (scene) => true;
+		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
 
 		public Type OperationType { get; set; }
 
