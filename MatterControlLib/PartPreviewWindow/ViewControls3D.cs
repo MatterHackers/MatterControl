@@ -466,22 +466,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (namedAction is OperationGroup operationGroup)
 				{
-					SceneSelectionOperation defaultOperation;
-
-					string groupRecordID = $"ActiveButton_{operationGroup.GroupName}_Group";
-
-					if (operationGroup.StickySelection)
-					{
-						int.TryParse(UserSettings.Instance.get(groupRecordID), out int activeButtonID);
-
-						activeButtonID = agg_basics.Clamp(activeButtonID, 0, operationGroup.Operations.Count - 1);
-
-						defaultOperation = operationGroup.Operations[activeButtonID];
-					}
-					else
-					{
-						defaultOperation = operationGroup.Operations.First();
-					}
+					var defaultOperation = operationGroup.GetDefaultOperation();
 
 					PopupMenuButton groupButton = null;
 
@@ -510,7 +495,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										iconButton.SetIcon(operation.Icon(theme.InvertIcons));
 										iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
-										UserSettings.Instance.set(groupRecordID, operationGroup.Operations.IndexOf(operation).ToString());
+										UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
 
 										defaultOperation = operation;
 

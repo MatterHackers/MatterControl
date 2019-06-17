@@ -71,6 +71,21 @@ namespace MatterHackers.Agg.UI
 		public bool StickySelection { get; internal set; }
 
 		public string GroupName { get; }
-	}
 
+		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
+
+		public SceneSelectionOperation GetDefaultOperation()
+		{
+			if (this.StickySelection)
+			{
+				int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID);
+
+				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
+
+				return this.Operations[activeButtonID];
+			}
+
+			return this.Operations.FirstOrDefault();
+		}
+	}
 }
