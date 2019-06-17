@@ -485,6 +485,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
 								operationMenu.ToolTipText = operation.HelpText;
+								operationMenu.Enabled = operation.IsEnabled(sceneContext.Scene);
 								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 								{
 									if (operationGroup.StickySelection
@@ -608,6 +609,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var item in operationButtons)
 			{
 				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext.Scene) ?? false;
+
+				if (item.operation is OperationGroup operationGroup
+					&& item.button is PopupMenuButton splitButton
+					&& item.button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
+				{
+					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext.Scene);
+				}
 			}
 		}
 
