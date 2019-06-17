@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -40,7 +41,7 @@ namespace MatterHackers.Agg.UI
 	{
 		public Action<ISceneContext> Action { get; set; }
 
-		public Func<InteractiveScene, bool> IsEnabled { get; set; }
+		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
 
 		public Type OperationType { get; set; }
 
@@ -71,6 +72,21 @@ namespace MatterHackers.Agg.UI
 		public bool StickySelection { get; internal set; }
 
 		public string GroupName { get; }
-	}
 
+		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
+
+		public SceneSelectionOperation GetDefaultOperation()
+		{
+			if (this.StickySelection)
+			{
+				int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID);
+
+				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
+
+				return this.Operations[activeButtonID];
+			}
+
+			return this.Operations.FirstOrDefault();
+		}
+	}
 }

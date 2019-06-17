@@ -27,55 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.Platform;
-
 namespace MatterHackers.MatterControl.Library
 {
-	public class LocalZipContainerLink : FileSystemItem, ILibraryContainerLink
+	public class LocalLibraryZipContainerLink : LocalZipContainerLink
 	{
-		private static ImageBuffer thumbnail;
-		private string currentDirectory = "";
-
-		static LocalZipContainerLink()
+		public LocalLibraryZipContainerLink(int id, string filePath, string nameOverride = null)
+			: base (filePath, nameOverride)
 		{
-			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).SetPreMultiply();
+			this.RowID = id;
 		}
 
-		public bool IsReadOnly { get; } = true;
-
-		public override bool IsProtected { get; } = false;
-
-		public LocalZipContainerLink(string filePath, string nameOverride = null)
-			: base(filePath)
-		{
-			if (nameOverride != null)
-			{
-				this.Name = nameOverride;
-			}
-		}
-
-		public string CurrentDirectory
-		{
-			get => currentDirectory;
-			set
-			{
-				currentDirectory = value;
-				this.Name = currentDirectory.Split('/').Last();
-			}
-		}
-
-		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
-		{
-			return Task.FromResult<ILibraryContainer>(
-				new ZipMemoryContainer()
-				{
-					RelativeDirectory = this.currentDirectory,
-					Path = this.Path
-				});
-		}
+		public int RowID { get; }
 	}
 }

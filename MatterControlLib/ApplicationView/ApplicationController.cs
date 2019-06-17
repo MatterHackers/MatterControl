@@ -714,7 +714,8 @@ namespace MatterHackers.MatterControl
 
 						scene.SelectedItem = newGroup;
 					},
-					IsEnabled = (scene) => scene.SelectedItem != null
+					IsEnabled = (sceneContext) => sceneContext.Scene is InteractiveScene scene
+						&& scene.SelectedItem != null
 						&& scene.SelectedItem is SelectionGroupObject3D
 						&& scene.SelectedItem.Children.Count > 1,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("group.png", 16, 16).SetPreMultiply(),
@@ -723,9 +724,9 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Ungroup".Localize(),
 					Action = (sceneContext) => sceneContext.Scene.UngroupSelection(),
-					IsEnabled = (scene) =>
+					IsEnabled = (sceneContext) =>
 					{
-						var selectedItem = scene.SelectedItem;
+						var selectedItem = sceneContext.Scene.SelectedItem;
 						if (selectedItem != null)
 						{
 							return selectedItem is GroupObject3D
@@ -742,22 +743,47 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Duplicate".Localize(),
 					Action = (sceneContext) => sceneContext.DuplicateItem(5),
-					IsEnabled = (scene) => scene.SelectedItem != null,
+					IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
 					Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
-					IsEnabled = (scene) => scene.SelectedItem != null,
+					IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
 				new OperationGroup("Align")
 				{
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
+						new SceneSelectionOperation()
+						{
+							TitleResolver = () => "Arrange All Parts".Localize(),
+							Action = async (sceneContext) =>
+							{
+								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
+							},
+							IsEnabled = (sceneContext) => sceneContext.EditableScene,
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
+						},
+						new SceneSelectionOperation()
+						{
+							TitleResolver = () => "Lay Flat".Localize(),
+							Action = (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								if (selectedItem != null)
+								{
+									scene.MakeLowestFaceFlat(selectedItem);
+								}
+							},
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+						},
 						new SceneSelectionOperation()
 						{
 							OperationType = typeof(AlignObject3D),
@@ -770,7 +796,7 @@ namespace MatterHackers.MatterControl
 								align.AddSelectionAsChildren(scene, selectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
-							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 						},
 						new SceneSelectionOperation()
 						{
@@ -790,30 +816,142 @@ namespace MatterHackers.MatterControl
 									}
 								}
 							},
-							IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("dual_align.png", 16, 16, invertIcon).SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(FitToBoundsObject3D_2),
+							TitleResolver = () => "Fit to Bounds".Localize(),
+							Action = async (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								using (new SelectionMaintainer(scene))
+								{
+									var fit = await FitToBoundsObject3D_2.Create(selectedItem.Clone());
+									fit.MakeNameNonColliding();
+
+									scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
+								}
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+
+		#if DEBUG
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(FitToCylinderObject3D),
+							TitleResolver = () => "Fit to Cylinder".Localize(),
+							Action = async (sceneContext) =>
+							{
+								var scene = sceneContext.Scene;
+								var selectedItem = scene.SelectedItem;
+								using (new SelectionMaintainer(scene))
+								{
+									var fit = await FitToCylinderObject3D.Create(selectedItem.Clone());
+									fit.MakeNameNonColliding();
+
+									scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
+								}
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+#endif
+					},
+				},
+				new OperationGroup("Array")
+				{
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayLinearObject3D),
+							TitleResolver = () => "Linear Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayLinearObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayRadialObject3D),
+							TitleResolver = () => "Radial Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayRadialObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayAdvancedObject3D),
+							TitleResolver = () => "Advanced Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayAdvancedObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						}
 					}
 				},
-				new SceneSelectionOperation()
+				new OperationGroup("ModifyMesh")
 				{
-					TitleResolver = () => "Lay Flat".Localize(),
-					Action = (sceneContext) =>
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
 					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						if (selectedItem != null)
+						new SceneSelectionOperation()
 						{
-							scene.MakeLowestFaceFlat(selectedItem);
+							OperationType = typeof(CurveObject3D_2),
+							TitleResolver = () => "Curve".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new CurveObject3D_2();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(PinchObject3D_2),
+							TitleResolver = () => "Pinch".Localize(),
+							Action = (sceneContext) =>
+							{
+								var pinch = new PinchObject3D_2();
+								pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(TwistObject3D),
+							TitleResolver = () => "Twist".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new TwistObject3D();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						}
-					},
-					IsEnabled = (scene) => scene.SelectedItem != null,
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+					}
 				},
-				new SceneSelectionSeparator(),
+
 				new OperationGroup("Booleans")
 				{
 					StickySelection = true,
-					IsEnabled = (scene) => scene.SelectedItem?.VisibleMeshes().Count() > 1,
 					Operations = new List<SceneSelectionOperation>()
 					{
 						new SceneSelectionOperation()
@@ -822,9 +960,9 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Combine".Localize(),
 							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-							IsEnabled = (scene) =>
+							IsEnabled = (sceneContext) =>
 							{
-								var selectedItem = scene.SelectedItem;
+								var selectedItem = sceneContext.Scene.SelectedItem;
 								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
@@ -834,10 +972,10 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Subtract".Localize(),
 							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-							IsEnabled = (scene) =>
+							IsEnabled = (sceneContext) =>
 							{
-								var selectedItem = scene.SelectedItem;
-								return selectedItem != null && scene.SelectedItem.VisibleMeshes().Count() > 1;
+								var selectedItem = sceneContext.Scene.SelectedItem;
+								return selectedItem != null && sceneContext.Scene.SelectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
 						new SceneSelectionOperation()
@@ -846,9 +984,9 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Intersect".Localize(),
 							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
-							IsEnabled = (scene) =>
+							IsEnabled = (sceneContext) =>
 							{
-								var selectedItem = scene.SelectedItem;
+								var selectedItem = sceneContext.Scene.SelectedItem;
 								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
@@ -858,128 +996,14 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Subtract & Replace".Localize(),
 							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-							IsEnabled = (scene) =>
+							IsEnabled = (sceneContext) =>
 							{
-								var selectedItem = scene.SelectedItem;
+								var selectedItem = sceneContext.Scene.SelectedItem;
 								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						}
 					}
 				},
-				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(ArrayLinearObject3D),
-					TitleResolver = () => "Linear Array".Localize(),
-					Action = (sceneContext) =>
-					{
-						var array = new ArrayLinearObject3D();
-						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(ArrayRadialObject3D),
-					TitleResolver = () => "Radial Array".Localize(),
-					Action = (sceneContext) =>
-					{
-						var array = new ArrayRadialObject3D();
-						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(ArrayAdvancedObject3D),
-					TitleResolver = () => "Advanced Array".Localize(),
-					Action = (sceneContext) =>
-					{
-						var array = new ArrayAdvancedObject3D();
-						array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
-					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
-				},
-				new SceneSelectionSeparator(),
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(PinchObject3D_2),
-					TitleResolver = () => "Pinch".Localize(),
-					Action = (sceneContext) =>
-					{
-						var pinch = new PinchObject3D_2();
-						pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
-					IsEnabled = (scene) => scene.SelectedItem != null,
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(CurveObject3D_2),
-					TitleResolver = () => "Curve".Localize(),
-					Action = (sceneContext) =>
-					{
-						var curve = new CurveObject3D_2();
-						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
-					IsEnabled = (scene) => scene.SelectedItem != null,
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(TwistObject3D),
-					TitleResolver = () => "Twist".Localize(),
-					Action = (sceneContext) =>
-					{
-						var curve = new TwistObject3D();
-						curve.WrapSelectedItemAndSelect(sceneContext.Scene);
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
-					IsEnabled = (scene) => scene.SelectedItem != null,
-				},
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(FitToBoundsObject3D_2),
-					TitleResolver = () => "Fit to Bounds".Localize(),
-					Action = async (sceneContext) =>
-					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						using (new SelectionMaintainer(scene))
-						{
-							var fit = await FitToBoundsObject3D_2.Create(selectedItem.Clone());
-							fit.MakeNameNonColliding();
-
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
-						}
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
-					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
-				},
-#if DEBUG
-				new SceneSelectionOperation()
-				{
-					OperationType = typeof(FitToCylinderObject3D),
-					TitleResolver = () => "Fit to Cylinder".Localize(),
-					Action = async (sceneContext) =>
-					{
-						var scene = sceneContext.Scene;
-						var selectedItem = scene.SelectedItem;
-						using (new SelectionMaintainer(scene))
-						{
-							var fit = await FitToCylinderObject3D.Create(selectedItem.Clone());
-							fit.MakeNameNonColliding();
-
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { selectedItem }, new[] { fit }));
-						}
-					},
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
-					IsEnabled = (scene) => scene.SelectedItem != null && !(scene.SelectedItem is SelectionGroupObject3D),
-				},
-#endif
 			};
 
 			var operationIconsByType = new Dictionary<Type, Func<bool, ImageBuffer>>();

@@ -268,16 +268,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
 								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
 					},
-					new NamedAction()
-					{
-						ID = "ArrangeAll",
-						Title = "Arrange All Parts".Localize(),
-						Action = async () =>
-						{
-							await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-					},
 					new ActionSeparator(),
 					new NamedAction()
 					{
@@ -466,22 +456,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (namedAction is OperationGroup operationGroup)
 				{
-					SceneSelectionOperation defaultOperation;
-
-					string groupRecordID = $"ActiveButton_{operationGroup.GroupName}_Group";
-
-					if (operationGroup.StickySelection)
-					{
-						int.TryParse(UserSettings.Instance.get(groupRecordID), out int activeButtonID);
-
-						activeButtonID = agg_basics.Clamp(activeButtonID, 0, operationGroup.Operations.Count - 1);
-
-						defaultOperation = operationGroup.Operations[activeButtonID];
-					}
-					else
-					{
-						defaultOperation = operationGroup.Operations.First();
-					}
+					var defaultOperation = operationGroup.GetDefaultOperation();
 
 					PopupMenuButton groupButton = null;
 
@@ -500,6 +475,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
 								operationMenu.ToolTipText = operation.HelpText;
+								operationMenu.Enabled = operation.IsEnabled(sceneContext);
 								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 								{
 									if (operationGroup.StickySelection
@@ -510,7 +486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										iconButton.SetIcon(operation.Icon(theme.InvertIcons));
 										iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
-										UserSettings.Instance.set(groupRecordID, operationGroup.Operations.IndexOf(operation).ToString());
+										UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
 
 										defaultOperation = operation;
 
@@ -622,7 +598,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set enabled level based on operation rules
 			foreach (var item in operationButtons)
 			{
-				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext.Scene) ?? false;
+				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext) ?? false;
+
+				if (item.operation is OperationGroup operationGroup
+					&& item.button is PopupMenuButton splitButton
+					&& item.button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
+				{
+					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext);
+				}
 			}
 		}
 
@@ -743,7 +726,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, theme.InvertIcons),
 				theme)
 			{
-				ToolTipText = "Create Wipe Tower".Localize(),
+				ToolTipText = "Toggle Wipe Tower".Localize(),
 			};
 
 			iconButton.Click += (s, e) =>
