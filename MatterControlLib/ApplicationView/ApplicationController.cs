@@ -755,7 +755,6 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Align")
 				{
-					IsEnabled = (scene) => scene.SelectedItem is SelectionGroupObject3D,
 					Operations = new List<SceneSelectionOperation>()
 					{
 						new SceneSelectionOperation()
@@ -813,7 +812,6 @@ namespace MatterHackers.MatterControl
 				new OperationGroup("Booleans")
 				{
 					StickySelection = true,
-					IsEnabled = (scene) => scene.SelectedItem?.VisibleMeshes().Count() > 1,
 					Operations = new List<SceneSelectionOperation>()
 					{
 						new SceneSelectionOperation()
