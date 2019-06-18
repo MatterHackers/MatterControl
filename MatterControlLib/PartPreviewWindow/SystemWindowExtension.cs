@@ -227,11 +227,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			void widget_Draw(object sender, DrawEventArgs e)
 			{
-				e.Graphics2D.Render(
-					new Stroke(
-						new RoundedRect(popup.Widget.LocalBounds, 0),
-						borderWidth * 2),
-					AppContext.Theme.PopupBorderColor);
+				if (borderWidth > 0)
+				{
+					e.Graphics2D.Render(
+						new Stroke(
+							new RoundedRect(popup.Widget.LocalBounds, 0),
+							borderWidth * 2),
+						AppContext.Theme.PopupBorderColor);
+				}
 			}
 
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
