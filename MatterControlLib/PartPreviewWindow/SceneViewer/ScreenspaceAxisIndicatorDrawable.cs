@@ -27,57 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.PolygonMesh;
+using MatterHackers.DataConverters3D;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class AxisIndicatorDrawable : IDrawable
+	public class ScreenspaceAxisIndicatorDrawable : AxisIndicatorDrawable
 	{
-		private readonly double big = 10;
-		private readonly double small = 1;
-		protected readonly List<(Mesh mesh, Color color)> meshes = new List<(Mesh, Color)>();
-
-		public AxisIndicatorDrawable()
+		public ScreenspaceAxisIndicatorDrawable()
 		{
-			meshes.Add((GetMesh(0, 1), Color.Red));
-
-			meshes.Add((GetMesh(1, 1), Color.Green));
-
-			meshes.Add((GetMesh(2, 1), Color.Blue));
+			this.Title = "Screenspace Axis Indicator";
+			this.Description = "Render Screenspace Axis Indicator";
 		}
 
-		private Mesh GetMesh(int axis, int direction)
+		public override void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			var scale = Vector3.One;
-			scale[axis] = big;
-			scale[(axis + 1) % 3] = small;
-			scale[(axis + 2) % 3] = small;
-			Mesh mesh = PlatonicSolids.CreateCube(scale);
-			var translate = Vector3.Zero;
-			translate[axis] = big / 2 * direction;
-			mesh.Transform(Matrix4X4.CreateTranslation(translate));
+			Matrix4X4 xyMatrix = world.GetXYInViewRotation(new Vector3(0, 0, 30));
 
-			return mesh;
-		}
-
-		public bool Enabled { get; set; }
-
-		public string Title { get; protected set; } = "Axis Indicator";
-
-		public string Description { get; protected set; } = "Render Axis Indicator at origin";
-
-		public DrawStage DrawStage { get; } = DrawStage.OpaqueContent;
-
-		public virtual void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
-		{
 			foreach (var mesh in meshes)
 			{
-				GLHelper.Render(mesh.mesh, mesh.color);
+				GLHelper.Render(mesh.mesh, mesh.color, xyMatrix * Matrix4X4.CreateTranslation(0, 0, 30));
 			}
 		}
 	}
