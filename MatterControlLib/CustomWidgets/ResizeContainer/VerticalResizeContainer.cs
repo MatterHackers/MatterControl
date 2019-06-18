@@ -46,6 +46,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private int _splitterWidth;
 		private GrabBarSide grabSide;
 		private bool mouseOverBar;
+		protected ThemeConfig theme;
 
 		internal VerticalResizeContainer(ThemeConfig theme, GrabBarSide grabSide)
 			: base (FlowDirection.TopToBottom)
@@ -54,6 +55,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.HAnchor = HAnchor.Absolute;
 			this.SplitterWidth = theme.SplitterWidth;
 			this.SplitterBarColor = theme.SplitterBackground;
+			this.theme = theme;
 		}
 
 		public override Cursors Cursor
