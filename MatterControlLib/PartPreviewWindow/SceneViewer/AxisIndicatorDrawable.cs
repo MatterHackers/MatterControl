@@ -46,14 +46,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public AxisIndicatorDrawable()
 		{
-			meshes.Add((GetMesh(0, 1), Color.Red.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(0, -1), Color.Red.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(0, 1), Color.Red));
 
-			meshes.Add((GetMesh(1, 1), Color.Green.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(1, -1), Color.Green.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(1, 1), Color.Green));
 
-			meshes.Add((GetMesh(2, 1), Color.Blue.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(2, -1), Color.Blue.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(2, 1), Color.Blue));
 		}
 
 		private Mesh GetMesh(int axis, int direction)
