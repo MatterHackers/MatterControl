@@ -45,6 +45,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (gradientBackground != null)
 			{
 				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
+
+				var bounds = this.LocalBounds;
+
+				if (bounds.Width > gradientBackground.Width)
+				{
+					// Fill anything outside of the gradient region with the opaque background
+					graphics2D.FillRectangle(
+						new RectangleDouble(gradientBackground.Width, bounds.Bottom, bounds.Right, bounds.Top),
+						this.BackgroundColor);
+				}
 			}
 			else
 			{

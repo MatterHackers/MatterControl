@@ -32,11 +32,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterControlLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -45,6 +47,24 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	public class HelpSearchResult
+	{
+		public string Name { get; set; }
+
+		public string Path { get; set; }
+	}
+
+	public class HelpSearchResultRow : SettingsRow
+	{
+		public HelpSearchResultRow(HelpSearchResult searchResult, ThemeConfig theme)
+			: base(searchResult.Name, null, theme)
+		{
+			this.SearchResult = searchResult;
+		}
+
+		public HelpSearchResult SearchResult { get; }
+	}
+
 	public class MainViewWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
@@ -74,6 +94,83 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				Padding = new BorderDouble(left: 8)
 			};
+
+			GuiWidget searchButton = null;
+
+			var searchPanel = new SearchInputBox(theme)
+			{
+				Width = 200,
+				HAnchor = HAnchor.Absolute,
+				Visible = false,
+				Padding = new BorderDouble(10, 3)
+			};
+			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			{
+				searchPanel.BackgroundColor = theme.SectionBackgroundColor;
+
+				// TODO:
+				//System.Diagnostics.Debugger.Break();
+
+				var rightPanel = new VerticalResizeContainer(theme, GrabBarSide.Left)
+				{
+					HAnchor = HAnchor.Absolute,
+					VAnchor = VAnchor.Absolute,
+					Width = 500,
+					Height = 200,
+					BackgroundColor = theme.SectionBackgroundColor
+				};
+				rightPanel.BoundsChanged += (s2, e2) =>
+				{
+					if (rightPanel.Parent != null)
+					{
+						rightPanel.Position = new Vector2(rightPanel.Parent.Width - rightPanel.Width, rightPanel.Position.Y);
+					}
+				};
+
+				var searcher = new LuceneHelpSearch();
+
+				foreach (var searchResult in searcher.Search(searchPanel.searchInput.Text))
+				{
+					var resultsRow = new HelpSearchResultRow(searchResult, theme);
+					resultsRow.Click += this.ResultsRow_Click;
+
+					rightPanel.AddChild(resultsRow);
+				}
+
+				this.Parents<SystemWindow>().FirstOrDefault().ShowRightSplitPopup(
+					new MatePoint(searchPanel),
+					new MatePoint(rightPanel));
+			};
+			searchPanel.ResetButton.Click += (s, e) =>
+			{
+				searchPanel.BackgroundColor = Color.Transparent;
+				searchPanel.Visible = false;
+				searchButton.Visible = true;
+				searchPanel.searchInput.Text = "";
+
+				// TODO:
+				//this.ClearSearch();
+			};
+
+			extensionArea.AddChild(searchPanel);
+
+			searchButton = theme.CreateSearchButton();
+			searchButton.Name = "App Search Button";
+			searchButton.Click += (s, e) =>
+			{
+				if (searchPanel.Visible)
+				{
+					// TODO
+					var a = 2;
+				}
+				else
+				{
+					searchPanel.Visible = true;
+					searchButton.Visible = false;
+					searchPanel.searchInput.Focus();
+				}
+			};
+			extensionArea.AddChild(searchButton);
 
 			tabControl = new ChromeTabs(extensionArea, theme)
 			{
@@ -263,6 +360,37 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
 
 			ApplicationController.Instance.MainView = this;
+		}
+
+		private void ResultsRow_Click(object sender, MouseEventArgs e)
+		{
+			var helpDocsTab = this.tabControl.AllTabs.FirstOrDefault(t => t.Key == "HelpDocs") as ChromeTab;
+			if (helpDocsTab == null)
+			{
+				var helpTreePanel = new HelpTreePanel(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch
+				};
+
+				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Library Tab",
+					Padding = new BorderDouble(15, 0),
+				};
+
+				this.TabControl.AddTab(helpDocsTab);
+			}
+
+			this.TabControl.ActiveTab = helpDocsTab;
+
+			if (helpDocsTab.TabContent is HelpTreePanel treePanel)
+			{
+				treePanel.ActiveNodePath = (sender as HelpSearchResultRow).SearchResult.Path;
+			}
+
+
 		}
 
 		private void SetInitialTab()

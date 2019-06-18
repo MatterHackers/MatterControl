@@ -40,6 +40,19 @@ using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
+	public class HelpArticleTreeNode : TreeNode
+	{
+		public HelpArticleTreeNode(HelpArticle helpArticle, ThemeConfig theme)
+			: base (theme, useIcon: false)
+		{
+			this.HelpArticle = helpArticle;
+			this.Text = helpArticle.Name;
+			this.Tag = helpArticle;
+		}
+
+		public HelpArticle HelpArticle { get; }
+	}
+
 	public class HelpTreePanel : SearchableTreePanel
 	{
 		private string guideKey = null;
@@ -318,13 +331,13 @@ namespace MatterHackers.MatterControl
 		private TreeNode initialSelection = null;
 		private TreeNode rootNode;
 
+		private Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
+
 		private TreeNode ProcessTree(HelpArticle container)
 		{
-			var treeNode = new TreeNode(theme, false)
-			{
-				Text = container.Name,
-				Tag = container
-			};
+			var treeNode = new HelpArticleTreeNode(container, theme);
+
+			nodesByPath[container.Path] = treeNode;
 
 			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
 			{
@@ -334,12 +347,9 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					var newNode = new TreeNode(theme, false)
-					{
-						Text = item.Name,
-						Tag = item
+					var newNode = new HelpArticleTreeNode(item, theme);
 
-					};
+					nodesByPath[item.Path] = newNode;
 
 					if (item.Name == guideKey
 						|| (guideKey != null
@@ -354,6 +364,18 @@ namespace MatterHackers.MatterControl
 			}
 
 			return treeNode;
+		}
+
+		public string ActiveNodePath
+		{
+			get => treeView.SelectedNode?.Tag as string;
+			set
+			{
+				if (nodesByPath.TryGetValue(value, out HelpArticleTreeNode treeNode))
+				{
+					treeView.SelectedNode = treeNode;
+				}
+			}
 		}
 
 		public Color ChildBorderColor { get; private set; }

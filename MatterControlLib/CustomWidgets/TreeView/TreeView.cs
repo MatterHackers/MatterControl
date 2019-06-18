@@ -220,6 +220,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					OnBeforeSelect(null);
 
+					if (_selectedNode != null)
+					{
+						// Collapse the old tree
+						foreach (var ancestor in _selectedNode.Parents<TreeNode>())
+						{
+							ancestor.Expanded = false;
+						}
+
+						_selectedNode.Expanded = false;
+					}
+
 					// if the current selection (before change) is !null than clear its background color
 					if (_selectedNode != null)
 					{
@@ -231,8 +242,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 					if (_selectedNode != null)
 					{
+						// Expand the new tree
+						foreach (var ancestor in _selectedNode.Parents<TreeNode>())
+						{
+							ancestor.Expanded = true;
+						}
+					}
+
+					if (_selectedNode != null)
+					{
 						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					}
+
+
 
 					OnAfterSelect(null);
 				}
