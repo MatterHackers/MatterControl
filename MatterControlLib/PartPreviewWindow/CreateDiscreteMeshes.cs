@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,22 +30,17 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using ClipperLib;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Image.ThresholdFunctions;
-using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.MarchingSquares;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
 	using Polygon = List<IntPoint>;
-
 	using Polygons = List<List<IntPoint>>;
 
 	public static class CreateDiscreteMeshes
@@ -60,7 +55,7 @@ namespace MatterHackers.MatterControl
 			int faceCount = meshToSplit.Faces.Count;
 
 			var facesSharingVertex = meshToSplit.NewVertexFaceLists();
-			 
+
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
 			{
 				if (reportProgress != null)
@@ -145,7 +140,7 @@ namespace MatterHackers.MatterControl
 			return result;
 		}
 
-		static private void GetAreasRecursive(PolyNode polyTreeForPlate, Polygons discreteAreas)
+		private static void GetAreasRecursive(PolyNode polyTreeForPlate, Polygons discreteAreas)
 		{
 			if (!polyTreeForPlate.IsHole)
 			{
@@ -158,7 +153,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		static public PolyTree FindDistictObjectBounds(ImageBuffer image)
+		public static PolyTree FindDistictObjectBounds(ImageBuffer image)
 		{
 			var intensity = new MapOnMaxIntensity();
 			MarchingSquaresByte marchingSquaresData = new MarchingSquaresByte(image, intensity.ZeroColor, intensity.Threshold, 0);
