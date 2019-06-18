@@ -95,7 +95,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		#region Properties
 
-		//
 		// Summary:
 		//     Gets or sets a value indicating whether check boxes are displayed next to the
 		//     tree nodes in the tree view control.
@@ -105,7 +104,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     otherwise, false. The default is false.
 		public bool CheckBoxes { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets a value indicating whether the selection highlight spans the width
 		//     of the tree view control.
@@ -115,7 +113,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     false. The default is false.
 		public bool FullRowSelect { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets a value indicating whether the selected tree node remains highlighted
 		//     even when the tree view has lost the focus.
@@ -125,7 +122,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     the focus; otherwise, false. The default is true.
 		public bool HideSelection { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the distance to indent each child tree node level.
 		//
@@ -139,7 +135,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     than 32,000.
 		public int Indent { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the height of each tree node in the tree view control.
 		//
@@ -152,7 +147,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     System.Int16.MaxValue value.
 		public int ItemHeight { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets a value indicating whether the label text of the tree nodes can
 		//     be edited.
@@ -162,7 +156,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     default is false.
 		public bool LabelEdit { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the color of the lines connecting the nodes of the TreeView
 		//     control.
@@ -171,7 +164,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     The System.Drawing.Color of the lines connecting the tree nodes.
 		public Color LineColor { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the delimiter string that the tree node path uses.
 		//
@@ -184,7 +176,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public double PointSize { get; set; } = 12;
 
-		//
 		// Summary:
 		//     Gets or sets a value indicating whether the tree view control displays scroll
 		//     bars when they are needed.
@@ -194,7 +185,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     false. The default is true.
 		public bool Scrollable { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the tree node that is currently selected in the tree view control.
 		//
@@ -254,22 +244,23 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					}
 
-
-
 					OnAfterSelect(null);
 				}
 			}
 		}
 
 		public bool ShowLines { get; set; }
+
 		public bool ShowNodeToolTips { get; set; }
+
 		public bool ShowPlusMinus { get; set; }
+
 		public bool ShowRootLines { get; set; }
+
 		public bool Sorted { get; set; }
 
 		public IComparer TreeViewNodeSorter { get; set; }
 
-		//
 		// Summary:
 		//     Gets the number of tree nodes that can be fully visible in the tree view control.
 		//
@@ -280,7 +271,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		#endregion Properties
 
-		//
 		// Summary:
 		//     Disables any redrawing of the tree view.
 		public void BeginUpdate()
@@ -288,7 +278,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			throw new NotImplementedException();
 		}
 
-		//
 		// Summary:
 		//     Collapses all the tree nodes.
 		public void CollapseAll()
@@ -296,7 +285,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			throw new NotImplementedException();
 		}
 
-		//
 		// Summary:
 		//     Enables the redrawing of the tree view.
 		public void EndUpdate()
@@ -304,7 +292,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			throw new NotImplementedException();
 		}
 
-		//
 		// Summary:
 		//     Expands all the tree nodes.
 		public void ExpandAll()
@@ -312,7 +299,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			throw new NotImplementedException();
 		}
 
-		//
 		// Summary:
 		//     Retrieves the tree node that is at the specified point.
 		//
