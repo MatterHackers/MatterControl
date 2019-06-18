@@ -114,6 +114,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						break;
 				}
 			}
+
 			// make sure the buttons state is set correctly
 			printer.Connection.CommunicationStateChanged += SetPrintButtonStyle;
 			startPrintButton.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= SetPrintButtonStyle;

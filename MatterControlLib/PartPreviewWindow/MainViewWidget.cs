@@ -37,6 +37,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -74,6 +75,41 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 				Padding = new BorderDouble(left: 8)
 			};
+
+			SearchPanel searchPanel = null;
+
+			var searchButton = theme.CreateSearchButton();
+			searchButton.Name = "App Search Button";
+			searchButton.Click += SearchButton_Click;
+			extensionArea.AddChild(searchButton);
+
+			void SearchButton_Click(object sender, EventArgs e)
+			{
+				if (searchPanel == null)
+				{
+					searchPanel = new SearchPanel(this.TabControl, searchButton, theme);
+					searchPanel.Closed += SearchPanel_Closed;
+
+					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+					systemWindow.ShowRightSplitPopup(
+						new MatePoint(searchButton),
+						new MatePoint(searchPanel),
+						borderWidth: 0);
+				}
+				else
+				{
+					searchPanel.CloseOnIdle();
+				}
+			}
+
+			void SearchPanel_Closed(object sender, EventArgs e)
+			{
+				// Unregister
+				searchPanel.Closed -= SearchPanel_Closed;
+
+				// Release
+				searchPanel = null;
+			}
 
 			tabControl = new ChromeTabs(extensionArea, theme)
 			{
@@ -264,6 +300,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.MainView = this;
 		}
+
+	
 
 		private void SetInitialTab()
 		{

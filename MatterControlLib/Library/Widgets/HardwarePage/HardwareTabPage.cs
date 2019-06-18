@@ -150,7 +150,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						};
 
-
 						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 						systemWindow.ShowPopup(
 							new MatePoint(clickedWidget)

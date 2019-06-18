@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,55 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl
 {
-	public class LeftClipFlowLayoutWidget : FlowLayoutWidget
+	public class HelpArticleTreeNode : TreeNode
 	{
-		public int GradientDistance { get; set; } = 5;
-
-		private ImageBuffer gradientBackground;
-
-		public override void OnDrawBackground(Graphics2D graphics2D)
+		public HelpArticleTreeNode(HelpArticle helpArticle, ThemeConfig theme)
+			: base (theme, useIcon: false)
 		{
-			if (gradientBackground != null)
-			{
-				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
-
-				var bounds = this.LocalBounds;
-
-				if (bounds.Width > gradientBackground.Width)
-				{
-					// Fill anything outside of the gradient region with the opaque background
-					graphics2D.FillRectangle(
-						new RectangleDouble(gradientBackground.Width, bounds.Bottom, bounds.Right, bounds.Top),
-						this.BackgroundColor);
-				}
-			}
-			else
-			{
-				base.OnDrawBackground(graphics2D);
-			}
+			this.HelpArticle = helpArticle;
+			this.Text = helpArticle.Name;
+			this.Tag = helpArticle;
 		}
 
-		public override void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-
-			if (this.GradientDistance > 0)
-			{
-				gradientBackground = agg_basics.TrasparentToColorGradientX(
-						(int)this.LocalBounds.Width + this.GradientDistance,
-						(int)this.LocalBounds.Height,
-						this.BackgroundColor,
-						this.GradientDistance);
-
-				gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
-			}
-		}
+		public HelpArticle HelpArticle { get; }
 	}
 }

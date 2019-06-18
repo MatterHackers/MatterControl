@@ -3900,43 +3900,54 @@ Support and tutorials:
 			return systemWindow;
 		}
 
-		private static void NudgeItem(View3DWidget view3D, IObject3D object3D, ArrowDirection arrowDirection, KeyEventArgs keyEvent)
+		private static void NudgeItem(View3DWidget view3D, IObject3D item, ArrowDirection arrowDirection, KeyEventArgs keyEvent)
 		{
+
+			var world = view3D.InteractionLayer.World;
+
+			var vector3 = default(Vector3);
+
 			// TODO: analyze the view and adjust movements to be relative to the current perspective
 			//
 			// Naive movements in Identity space
 			switch (arrowDirection)
 			{
 				case ArrowDirection.Left:
-					object3D.Translate(-view3D.InteractionLayer.SnapGridDistance, 0);
+					vector3 = new Vector3(-view3D.InteractionLayer.SnapGridDistance, 0, 0);
 					break;
 
 				case ArrowDirection.Right:
-					object3D.Translate(view3D.InteractionLayer.SnapGridDistance, 0);
+					vector3 = new Vector3(view3D.InteractionLayer.SnapGridDistance, 0, 0);
 					break;
 
 				case ArrowDirection.Up:
 					if (keyEvent.Control)
 					{
-						object3D.Translate(0, 0, view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, 0, view3D.InteractionLayer.SnapGridDistance);
 					}
 					else
 					{
-						object3D.Translate(0, view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, view3D.InteractionLayer.SnapGridDistance, 0);
 					}
+
 					break;
 
 				case ArrowDirection.Down:
 					if (keyEvent.Control)
 					{
-						object3D.Translate(0, 0, -view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, 0, -view3D.InteractionLayer.SnapGridDistance);
 					}
 					else
 					{
-						object3D.Translate(0, -view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, -view3D.InteractionLayer.SnapGridDistance, 0);
 					}
+
 					break;
 			}
+
+			var matrix = world.GetXYInViewRotation(item.GetCenter());
+
+			item.Translate(vector3.Transform(matrix));
 		}
 
 		private static void Offset3DView(View3DWidget view3D, Vector2 offset, TrackBallTransformType operation)

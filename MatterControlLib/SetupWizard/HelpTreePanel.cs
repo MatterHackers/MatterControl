@@ -318,13 +318,13 @@ namespace MatterHackers.MatterControl
 		private TreeNode initialSelection = null;
 		private TreeNode rootNode;
 
+		private Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
+
 		private TreeNode ProcessTree(HelpArticle container)
 		{
-			var treeNode = new TreeNode(theme, false)
-			{
-				Text = container.Name,
-				Tag = container
-			};
+			var treeNode = new HelpArticleTreeNode(container, theme);
+
+			nodesByPath[container.Path] = treeNode;
 
 			foreach (var item in container.Children.OrderBy(i => i.Children.Count == 0).ThenBy(i => i.Name))
 			{
@@ -334,12 +334,9 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					var newNode = new TreeNode(theme, false)
-					{
-						Text = item.Name,
-						Tag = item
+					var newNode = new HelpArticleTreeNode(item, theme);
 
-					};
+					nodesByPath[item.Path] = newNode;
 
 					if (item.Name == guideKey
 						|| (guideKey != null
@@ -354,6 +351,18 @@ namespace MatterHackers.MatterControl
 			}
 
 			return treeNode;
+		}
+
+		public string ActiveNodePath
+		{
+			get => treeView.SelectedNode?.Tag as string;
+			set
+			{
+				if (nodesByPath.TryGetValue(value, out HelpArticleTreeNode treeNode))
+				{
+					treeView.SelectedNode = treeNode;
+				}
+			}
 		}
 
 		public Color ChildBorderColor { get; private set; }

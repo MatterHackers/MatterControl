@@ -81,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			drawables.AddRange(new IDrawable[]
 			{
 				new AxisIndicatorDrawable(),
+				new ScreenspaceAxisIndicatorDrawable(),
 				new SceneTraceDataDrawable(sceneContext),
 				new AABBDrawable(sceneContext),
 				new LevelingDataDrawable(sceneContext),

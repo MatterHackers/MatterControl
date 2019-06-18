@@ -197,7 +197,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		private static void RightHorizontalSplitPopup(SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds)
+		{
+			// Calculate left for right aligned split
+			Vector2 popupPosition = new Vector2(systemWindow.Width - popup.Widget.Width, 0);
+
+			Vector2 anchorLeft = anchor.Widget.Parent.TransformToScreenSpace(anchor.Widget.Position);
+
+			popup.Widget.Height = anchorLeft.Y;
+
+			popup.Widget.Position = popupPosition;
+		}
+
 		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), int borderWidth = 1)
+		{
+			ShowPopup(systemWindow, anchor, popup, altBounds, borderWidth, BestPopupPosition);
+		}
+
+		public static void ShowRightSplitPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), int borderWidth = 1)
+		{
+			ShowPopup(systemWindow, anchor, popup, altBounds, borderWidth, RightHorizontalSplitPopup);
+		}
+
+		public static void ShowPopup(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds, int borderWidth, Action<SystemWindow, MatePoint, MatePoint, RectangleDouble> layoutHelper)
 		{
 			var hookedParents = new HashSet<GuiWidget>();
 
@@ -205,55 +227,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			void widget_Draw(object sender, DrawEventArgs e)
 			{
-				e.Graphics2D.Render(
-					new Stroke(
-						new RoundedRect(popup.Widget.LocalBounds, 0),
-						borderWidth * 2),
-					AppContext.Theme.PopupBorderColor);
+				if (borderWidth > 0)
+				{
+					e.Graphics2D.Render(
+						new Stroke(
+							new RoundedRect(popup.Widget.LocalBounds, 0),
+							borderWidth * 2),
+						AppContext.Theme.PopupBorderColor);
+				}
 			}
 
 			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
 				if (anchor.Widget?.Parent != null)
 				{
-					// Calculate left aligned screen space position (using widgetRelativeTo.parent)
-					Vector2 anchorLeft = anchor.Widget.Parent.TransformToScreenSpace(anchor.Widget.Position);
-					anchorLeft += new Vector2(altBounds.Left, altBounds.Bottom);
-
-					Vector2 popupPosition = anchorLeft;
-
-					var bounds = altBounds == default(RectangleDouble) ? anchor.Widget.LocalBounds : altBounds;
-
-					Vector2 xPosition = GetXAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
-
-					Vector2 screenPosition;
-
-					screenPosition = anchorLeft + xPosition;
-
-					// Constrain
-					if (screenPosition.X + popup.Widget.Width > systemWindow.Width
-						|| screenPosition.X < 0)
-					{
-						xPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
-					}
-
-					popupPosition += xPosition;
-
-					Vector2 yPosition = GetYAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
-
-					screenPosition = anchorLeft + yPosition;
-
-					// Constrain
-					if (anchor.AltMate != null
-						&& (screenPosition.Y + popup.Widget.Height > systemWindow.Height
-							|| screenPosition.Y < 0))
-					{
-						yPosition = GetYAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
-					}
-
-					popupPosition += yPosition;
-
-					popup.Widget.Position = popupPosition;
+					layoutHelper.Invoke(systemWindow, anchor, popup, altBounds);
 				}
 			}
 
@@ -334,6 +322,48 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			popup.Widget.Focus();
 
 			popup.Widget.Invalidate();
+		}
+
+		private static void BestPopupPosition(SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds)
+		{
+			// Calculate left aligned screen space position (using widgetRelativeTo.parent)
+			Vector2 anchorLeft = anchor.Widget.Parent.TransformToScreenSpace(anchor.Widget.Position);
+			anchorLeft += new Vector2(altBounds.Left, altBounds.Bottom);
+
+			Vector2 popupPosition = anchorLeft;
+
+			var bounds = altBounds == default(RectangleDouble) ? anchor.Widget.LocalBounds : altBounds;
+
+			Vector2 xPosition = GetXAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
+
+			Vector2 screenPosition;
+
+			screenPosition = anchorLeft + xPosition;
+
+			// Constrain
+			if (screenPosition.X + popup.Widget.Width > systemWindow.Width
+				|| screenPosition.X < 0)
+			{
+				xPosition = GetXAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+			}
+
+			popupPosition += xPosition;
+
+			Vector2 yPosition = GetYAnchor(anchor.Mate, popup.Mate, popup.Widget, bounds);
+
+			screenPosition = anchorLeft + yPosition;
+
+			// Constrain
+			if (anchor.AltMate != null
+				&& (screenPosition.Y + popup.Widget.Height > systemWindow.Height
+					|| screenPosition.Y < 0))
+			{
+				yPosition = GetYAnchor(anchor.AltMate, popup.AltMate, popup.Widget, bounds);
+			}
+
+			popupPosition += yPosition;
+
+			popup.Widget.Position = popupPosition;
 		}
 
 		private static Vector2 GetYAnchor(MateOptions anchor, MateOptions popup, GuiWidget popupWidget, RectangleDouble bounds)

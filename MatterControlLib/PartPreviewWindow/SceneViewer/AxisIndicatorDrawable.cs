@@ -27,11 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
@@ -42,18 +40,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private readonly double big = 10;
 		private readonly double small = 1;
-		private readonly List<(Mesh mesh, Color color)> meshes = new List<(Mesh, Color)>();
+		protected readonly List<(Mesh mesh, Color color)> meshes = new List<(Mesh, Color)>();
 
 		public AxisIndicatorDrawable()
 		{
-			meshes.Add((GetMesh(0, 1), Color.Red.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(0, -1), Color.Red.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(0, 1), Color.Red));
 
-			meshes.Add((GetMesh(1, 1), Color.Green.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(1, -1), Color.Green.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(1, 1), Color.Green));
 
-			meshes.Add((GetMesh(2, 1), Color.Blue.AdjustLightness(1.5).ToColor()));
-			meshes.Add((GetMesh(2, -1), Color.Blue.AdjustLightness(.8).ToColor()));
+			meshes.Add((GetMesh(2, 1), Color.Blue));
 		}
 
 		private Mesh GetMesh(int axis, int direction)
@@ -72,24 +67,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool Enabled { get; set; }
 
-		public string Title { get; } = "Axis Indicator";
+		public string Title { get; protected set; } = "Axis Indicator";
 
-		public string Description { get; } = "Render Axis Indicator at origin";
+		public string Description { get; protected set; } = "Render Axis Indicator at origin";
 
 		public DrawStage DrawStage { get; } = DrawStage.OpaqueContent;
 
-		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
+		public virtual void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			foreach (var mesh in meshes)
 			{
 				GLHelper.Render(mesh.mesh, mesh.color);
-			}
-
-			Matrix4X4 xyMatrix = world.GetXYInViewRotation(new Vector3(0, 0, 30));
-
-			foreach (var mesh in meshes)
-			{
-				GLHelper.Render(mesh.mesh, mesh.color, xyMatrix * Matrix4X4.CreateTranslation(0, 0, 30));
 			}
 		}
 	}

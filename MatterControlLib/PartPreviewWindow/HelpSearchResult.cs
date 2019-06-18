@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,55 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
-using MatterHackers.Agg.UI;
-
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class LeftClipFlowLayoutWidget : FlowLayoutWidget
+	public class HelpSearchResult
 	{
-		public int GradientDistance { get; set; } = 5;
+		public string Name { get; set; }
 
-		private ImageBuffer gradientBackground;
-
-		public override void OnDrawBackground(Graphics2D graphics2D)
-		{
-			if (gradientBackground != null)
-			{
-				graphics2D.Render(gradientBackground, this.LocalBounds.Left, 0);
-
-				var bounds = this.LocalBounds;
-
-				if (bounds.Width > gradientBackground.Width)
-				{
-					// Fill anything outside of the gradient region with the opaque background
-					graphics2D.FillRectangle(
-						new RectangleDouble(gradientBackground.Width, bounds.Bottom, bounds.Right, bounds.Top),
-						this.BackgroundColor);
-				}
-			}
-			else
-			{
-				base.OnDrawBackground(graphics2D);
-			}
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			base.OnLoad(args);
-
-			if (this.GradientDistance > 0)
-			{
-				gradientBackground = agg_basics.TrasparentToColorGradientX(
-						(int)this.LocalBounds.Width + this.GradientDistance,
-						(int)this.LocalBounds.Height,
-						this.BackgroundColor,
-						this.GradientDistance);
-
-				gradientBackground.SetRecieveBlender(new BlenderPreMultBGRA());
-			}
-		}
+		public string Path { get; set; }
 	}
 }
