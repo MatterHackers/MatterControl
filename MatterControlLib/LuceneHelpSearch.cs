@@ -1,7 +1,10 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -9,7 +12,9 @@ using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -40,7 +45,21 @@ namespace MatterControlLib
 
 			writer = new IndexWriter(dir, indexConfig);
 
-			//IndexDocuments();
+			// If the index lacks a reasonable number of documents, rebuild it from the zip file
+			if (writer.MaxDoc < 10)
+			{
+				ApplicationController.Instance.Tasks.Execute(
+					"Preparing help index".Localize(),
+					null,
+					(progress, cancellationToken) =>
+					{
+						string relativePath = System.IO.Path.Combine("OemSettings", "help-docs.zip");
+
+						IndexZipFile(relativePath, progress, cancellationToken);
+
+						return Task.CompletedTask;
+					});
+			}
 		}
 
 		public LuceneHelpSearch()
@@ -58,7 +77,7 @@ namespace MatterControlLib
 			}
 		}
 
-		private static void IndexDocuments()
+		private static void IndexZipFile(string filePath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			Dictionary<string, HelpArticle> helpArticles;
 
@@ -66,10 +85,9 @@ namespace MatterControlLib
 			writer.DeleteAll();
 
 			// Build index from help-docs.zip
-			using (var file = AggContext.StaticData.OpenStream(System.IO.Path.Combine("OemSettings", "help-docs.zip")))
+			using (var file = AggContext.StaticData.OpenStream(filePath))
 			using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
 			{
-
 				var tocEntry = zip.Entries.FirstOrDefault(e => e.FullName == "toc.json");
 
 				using (var docStream = tocEntry.Open())
@@ -85,8 +103,28 @@ namespace MatterControlLib
 					ProcessHelpTree(rootHelpArticle, helpArticles);
 				}
 
+				var progressStatus = new ProgressStatus()
+				{
+					//Status = "",
+					Progress0To1 = 0
+				};
+
+				var count = zip.Entries.Count;
+				double i = 0;
+
 				foreach (var entry in zip.Entries)
 				{
+					progressStatus.Progress0To1 = i++ / count;
+					progress.Report(progressStatus);
+
+					// Observe and abort on cancellationToken signal
+					if (cancellationToken.IsCancellationRequested)
+					{
+						writer.DeleteAll();
+						writer.Commit();
+						return;
+					}
+
 					if (entry.FullName.ToLower().EndsWith(".md"))
 					{
 						using (var docStream = entry.Open())
