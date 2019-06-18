@@ -84,6 +84,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				GLHelper.Render(mesh.mesh, mesh.color);
 			}
+
+			Matrix4X4 xyMatrix = world.GetXYInViewRotation(new Vector3(0, 0, 30));
+
+			foreach (var mesh in meshes)
+			{
+				GLHelper.Render(mesh.mesh, mesh.color, xyMatrix * Matrix4X4.CreateTranslation(0, 0, 30));
+			}
 		}
 	}
 }
