@@ -40,19 +40,6 @@ using MatterHackers.MatterControl.PrintLibrary;
 
 namespace MatterHackers.MatterControl
 {
-	public class HelpArticleTreeNode : TreeNode
-	{
-		public HelpArticleTreeNode(HelpArticle helpArticle, ThemeConfig theme)
-			: base (theme, useIcon: false)
-		{
-			this.HelpArticle = helpArticle;
-			this.Text = helpArticle.Name;
-			this.Tag = helpArticle;
-		}
-
-		public HelpArticle HelpArticle { get; }
-	}
-
 	public class HelpTreePanel : SearchableTreePanel
 	{
 		private string guideKey = null;

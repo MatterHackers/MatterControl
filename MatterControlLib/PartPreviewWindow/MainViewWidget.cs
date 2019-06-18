@@ -46,25 +46,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class HelpSearchResult
-	{
-		public string Name { get; set; }
-
-		public string Path { get; set; }
-	}
-
-	public class HelpSearchResultRow : SettingsRow
-	{
-		public HelpSearchResultRow(HelpSearchResult searchResult, ThemeConfig theme)
-			: base(searchResult.Name, null, theme, AggContext.StaticData.LoadIcon("fa-text-file_16.png"), fullRowSelect: true)
-		{
-			this.SearchResult = searchResult;
-
-		}
-
-		public HelpSearchResult SearchResult { get; }
-	}
-
 	public class MainViewWidget : FlowLayoutWidget
 	{
 		private EventHandler unregisterEvents;
