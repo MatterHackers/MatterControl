@@ -92,202 +92,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 		private PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
-		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
+		private Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
 		private PopupMenuButton bedMenuButton;
 		private ThemeConfig theme;
 		private UndoBuffer undoBuffer;
 		private IconButton undoButton;
 		private IconButton redoButton;
-
-		internal void NotifyResetView()
-		{
-			this.ResetView.Invoke(this, null);
-		}
-
-		public bool IsPrinterMode { get; }
-
-		public ViewControls3DButtons ActiveButton
-		{
-			get => activeTransformState;
-			set
-			{
-				this.activeTransformState = value;
-				switch (this.activeTransformState)
-				{
-					case ViewControls3DButtons.Rotate:
-						if (rotateButton != null)
-						{
-							rotateButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.Translate:
-						if (translateButton != null)
-						{
-							translateButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.Scale:
-						if (scaleButton != null)
-						{
-							scaleButton.Checked = true;
-						}
-
-						break;
-
-					case ViewControls3DButtons.PartSelect:
-						if (partSelectButton != null)
-						{
-							partSelectButton.Checked = true;
-						}
-						break;
-				}
-
-				TransformStateChanged?.Invoke(this, new TransformStateChangedEventArgs()
-				{
-					TransformMode = activeTransformState
-				});
-			}
-		}
-
-		internal void SetView3DWidget(View3DWidget view3DWidget)
-		{
-			this.view3DWidget = view3DWidget;
-
-			bedMenuButton.DynamicPopupContent = () =>
-			{
-				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(view3DWidget);
-				var menuTheme = ApplicationController.Instance.MenuTheme;
-				var popupMenu = new PopupMenu(menuTheme);
-
-				int thumbWidth = 45;
-				var gutterWidth = thumbWidth + 7;
-
-				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
-				{
-					int maxItemWidth = 0;
-
-					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-					foreach (var item in recentFiles.Where(f => f.Length > 215).Select(f => new SceneReplacementFileItem(f.FullName)).Take(12))
-					{
-						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
-
-						var title = new FileInfo(item.Path).LastWriteTime.ToString("MMMM d h:mm tt");
-
-						var bedHistory = subMenu.CreateMenuItem(title, imageBuffer);
-						bedHistory.GutterWidth = gutterWidth;
-						bedHistory.HAnchor = HAnchor.Fit;
-						bedHistory.VAnchor = VAnchor.Absolute;
-						bedHistory.Padding = new BorderDouble(gutterWidth + 3, 2, 12, 2);
-						bedHistory.Height = thumbWidth + 3;
-						bedHistory.Click += (s, e) =>
-						{
-							UiThread.RunOnIdle(async () =>
-							{
-								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.Printer, sceneContext.SaveChanges);
-
-								await sceneContext.LoadLibraryContent(item);
-
-								if (sceneContext.Printer != null)
-								{
-									sceneContext.Printer.ViewState.ViewMode = PartViewMode.Model;
-								}
-							});
-						};
-
-						maxItemWidth = (int) Math.Max(maxItemWidth, bedHistory.Width);
-
-						void UpdateImageBuffer(ImageBuffer thumbnail)
-						{
-							// Dump OpenGL texture
-							ImageGlPlugin.Remove(imageBuffer);
-
-							// Copy updated thumbnail into original image
-							imageBuffer.CopyFrom(thumbnail);
-
-							bedHistory.Invalidate();
-						}
-
-						ApplicationController.Instance.Library.LoadItemThumbnail(
-							UpdateImageBuffer,
-							(contentProvider) =>
-							{
-								if (contentProvider is MeshContentProvider meshContentProvider)
-								{
-									ApplicationController.Instance.Thumbnails.QueueForGeneration(async () =>
-									{
-										// Ask the MeshContentProvider to RayTrace the image
-										var thumbnail = await meshContentProvider.GetThumbnail(item, thumbWidth, thumbWidth);
-										if (thumbnail != null)
-										{
-											UpdateImageBuffer(thumbnail);
-										}
-									});
-								}
-							},
-							item,
-							ApplicationController.Instance.Library.PlatingHistory,
-							thumbWidth,
-							thumbWidth,
-							menuTheme).ConfigureAwait(false);
-					}
-
-					// Resize menu items to max item width
-					foreach(var menuItem in subMenu.Children)
-					{
-						menuItem.HAnchor = HAnchor.Left | HAnchor.Absolute;
-						menuItem.Width = maxItemWidth;
-					}
-				});
-
-				var actions = new NamedAction[] {
-					new ActionSeparator(),
-					workspaceActions["Cut"],
-					workspaceActions["Copy"],
-					workspaceActions["Paste"],
-					new ActionSeparator(),
-					workspaceActions["Print"],
-					new ActionSeparator(),
-					new NamedAction()
-					{
-						ID = "Export",
-						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
-						Action = () =>
-						{
-							ApplicationController.Instance.ExportLibraryItems(
-								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
-								centerOnBed: false,
-								printer: view3DWidget.Printer);
-						},
-						IsEnabled = () => sceneContext.EditableScene
-							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
-					},
-					new ActionSeparator(),
-					new NamedAction()
-					{
-						ID = "ClearBed",
-						Title = "Clear Bed".Localize(),
-						Action = () =>
-						{
-							UiThread.RunOnIdle(() =>
-							{
-								view3DWidget.ClearPlate();
-							});
-						}
-					}
-				};
-
-				menuTheme.CreateMenuItems(popupMenu, actions);
-
-				return popupMenu;
-			};
-		}
 
 		public ViewControls3D(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
@@ -297,6 +108,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ActionArea.Click += (s, e) =>
 			{
 				view3DWidget.InteractionLayer.Focus();
+			};
+
+			this.OverflowButton.DynamicPopupContent = () =>
+			{
+				var menuTheme = AppContext.MenuTheme;
+				var popupMenu = new PopupMenu(theme);
+				int i = 0;
+
+				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+				{
+					if (operationButtons.TryGetValue(widget, out SceneSelectionOperation operation))
+					{
+						if (operation is OperationGroup operationGroup)
+						{
+							popupMenu.CreateSubMenu(
+								operationGroup.Title,
+								menuTheme,
+								(subMenu) =>
+								{
+									foreach (var childOperation in operationGroup.Operations)
+									{
+										var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(menuTheme.InvertIcons));
+										menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+										{
+											childOperation.Action?.Invoke(sceneContext);
+										});
+									}
+								});
+						}
+						else
+						{
+							popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
+						}
+					}
+				}
+
+				return popupMenu;
 			};
 
 			this.IsPrinterMode = isPrinterType;
@@ -432,7 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(partSelectButton);
 			}
 
-			operationButtons = new List<(GuiWidget, SceneSelectionOperation)>();
+			operationButtons = new Dictionary<GuiWidget, SceneSelectionOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
 			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
@@ -474,6 +322,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							foreach (var operation in operationGroup.Operations)
 							{
 								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+
 								operationMenu.ToolTipText = operation.HelpText;
 								operationMenu.Enabled = operation.IsEnabled(sceneContext);
 								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -525,7 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-				operationButtons.Add((button, namedAction));
+				operationButtons.Add(button, namedAction);
 
 				// Only bind Click event if not a SplitButton
 				if (!(button is PopupMenuButton))
@@ -548,6 +397,195 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Run on load
 			Scene_SelectionChanged(null, null);
+		}
+
+		internal void NotifyResetView()
+		{
+			this.ResetView.Invoke(this, null);
+		}
+
+		public bool IsPrinterMode { get; }
+
+		public ViewControls3DButtons ActiveButton
+		{
+			get => activeTransformState;
+			set
+			{
+				this.activeTransformState = value;
+				switch (this.activeTransformState)
+				{
+					case ViewControls3DButtons.Rotate:
+						if (rotateButton != null)
+						{
+							rotateButton.Checked = true;
+						}
+
+						break;
+
+					case ViewControls3DButtons.Translate:
+						if (translateButton != null)
+						{
+							translateButton.Checked = true;
+						}
+
+						break;
+
+					case ViewControls3DButtons.Scale:
+						if (scaleButton != null)
+						{
+							scaleButton.Checked = true;
+						}
+
+						break;
+
+					case ViewControls3DButtons.PartSelect:
+						if (partSelectButton != null)
+						{
+							partSelectButton.Checked = true;
+						}
+						break;
+				}
+
+				TransformStateChanged?.Invoke(this, new TransformStateChangedEventArgs()
+				{
+					TransformMode = activeTransformState
+				});
+			}
+		}
+
+		internal void SetView3DWidget(View3DWidget view3DWidget)
+		{
+			this.view3DWidget = view3DWidget;
+
+			bedMenuButton.DynamicPopupContent = () =>
+			{
+				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(view3DWidget);
+				var menuTheme = ApplicationController.Instance.MenuTheme;
+				var popupMenu = new PopupMenu(menuTheme);
+
+				int thumbWidth = 45;
+				var gutterWidth = thumbWidth + 7;
+
+				popupMenu.CreateSubMenu("Open Recent".Localize(), menuTheme, (subMenu) =>
+				{
+					int maxItemWidth = 0;
+
+					var recentFiles = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
+					foreach (var item in recentFiles.Where(f => f.Length > 215).Select(f => new SceneReplacementFileItem(f.FullName)).Take(12))
+					{
+						var imageBuffer = new ImageBuffer(thumbWidth, thumbWidth);
+
+						var title = new FileInfo(item.Path).LastWriteTime.ToString("MMMM d h:mm tt");
+
+						var bedHistory = subMenu.CreateMenuItem(title, imageBuffer);
+						bedHistory.GutterWidth = gutterWidth;
+						bedHistory.HAnchor = HAnchor.Fit;
+						bedHistory.VAnchor = VAnchor.Absolute;
+						bedHistory.Padding = new BorderDouble(gutterWidth + 3, 2, 12, 2);
+						bedHistory.Height = thumbWidth + 3;
+						bedHistory.Click += (s, e) =>
+						{
+							UiThread.RunOnIdle(async () =>
+							{
+								await ApplicationController.Instance.Tasks.Execute("Saving changes".Localize() + "...", sceneContext.Printer, sceneContext.SaveChanges);
+
+								await sceneContext.LoadLibraryContent(item);
+
+								if (sceneContext.Printer != null)
+								{
+									sceneContext.Printer.ViewState.ViewMode = PartViewMode.Model;
+								}
+							});
+						};
+
+						maxItemWidth = (int)Math.Max(maxItemWidth, bedHistory.Width);
+
+						void UpdateImageBuffer(ImageBuffer thumbnail)
+						{
+							// Dump OpenGL texture
+							ImageGlPlugin.Remove(imageBuffer);
+
+							// Copy updated thumbnail into original image
+							imageBuffer.CopyFrom(thumbnail);
+
+							bedHistory.Invalidate();
+						}
+
+						ApplicationController.Instance.Library.LoadItemThumbnail(
+							UpdateImageBuffer,
+							(contentProvider) =>
+							{
+								if (contentProvider is MeshContentProvider meshContentProvider)
+								{
+									ApplicationController.Instance.Thumbnails.QueueForGeneration(async () =>
+									{
+										// Ask the MeshContentProvider to RayTrace the image
+										var thumbnail = await meshContentProvider.GetThumbnail(item, thumbWidth, thumbWidth);
+										if (thumbnail != null)
+										{
+											UpdateImageBuffer(thumbnail);
+										}
+									});
+								}
+							},
+							item,
+							ApplicationController.Instance.Library.PlatingHistory,
+							thumbWidth,
+							thumbWidth,
+							menuTheme).ConfigureAwait(false);
+					}
+
+					// Resize menu items to max item width
+					foreach (var menuItem in subMenu.Children)
+					{
+						menuItem.HAnchor = HAnchor.Left | HAnchor.Absolute;
+						menuItem.Width = maxItemWidth;
+					}
+				});
+
+				var actions = new NamedAction[] {
+					new ActionSeparator(),
+					workspaceActions["Cut"],
+					workspaceActions["Copy"],
+					workspaceActions["Paste"],
+					new ActionSeparator(),
+					workspaceActions["Print"],
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						ID = "Export",
+						Title = "Export".Localize(),
+						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
+						Action = () =>
+						{
+							ApplicationController.Instance.ExportLibraryItems(
+								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+								centerOnBed: false,
+								printer: view3DWidget.Printer);
+						},
+						IsEnabled = () => sceneContext.EditableScene
+							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+					},
+					new ActionSeparator(),
+					new NamedAction()
+					{
+						ID = "ClearBed",
+						Title = "Clear Bed".Localize(),
+						Action = () =>
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								view3DWidget.ClearPlate();
+							});
+						}
+					}
+				};
+
+				menuTheme.CreateMenuItems(popupMenu, actions);
+
+				return popupMenu;
+			};
 		}
 
 		private void UndoBuffer_Changed(object sender, EventArgs e)
@@ -596,13 +634,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
-			foreach (var item in operationButtons)
+			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
 			{
-				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext) ?? false;
+				button.Enabled = operation.IsEnabled?.Invoke(sceneContext) ?? false;
 
-				if (item.operation is OperationGroup operationGroup
-					&& item.button is PopupMenuButton splitButton
-					&& item.button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
+				if (operation is OperationGroup operationGroup
+					&& button is PopupMenuButton splitButton
+					&& button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
 				{
 					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext);
 				}

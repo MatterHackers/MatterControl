@@ -137,24 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ResultsRow_Click(object sender, MouseEventArgs e)
 		{
-			var helpDocsTab = tabControl.AllTabs.FirstOrDefault(t => t.Key == "HelpDocs") as ChromeTab;
-			if (helpDocsTab == null)
-			{
-				var helpTreePanel = new HelpTreePanel(theme)
-				{
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch
-				};
-
-				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, hasClose: false)
-				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Library Tab",
-					Padding = new BorderDouble(15, 0),
-				};
-
-				tabControl.AddTab(helpDocsTab);
-			}
+			ChromeTab helpDocsTab = ApplicationController.Instance.ActivateHelpTab();
 
 			tabControl.ActiveTab = helpDocsTab;
 
