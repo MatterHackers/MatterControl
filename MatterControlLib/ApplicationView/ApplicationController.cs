@@ -423,10 +423,17 @@ namespace MatterHackers.MatterControl
 				string componentID = componentObject.ComponentID;
 
 				var helpItem = popupMenu.CreateMenuItem("Help".Localize());
-				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && ApplicationController.Instance.HelpArticlesByID.ContainsKey(componentID);
+				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && this.HelpArticlesByID.ContainsKey(componentID);
 				helpItem.Click += (s, e) =>
 				{
-					DialogWindow.Show(new HelpPage(componentID));
+					var helpTab = ApplicationController.Instance.ActivateHelpTab();
+					if (helpTab.TabContent is HelpTreePanel helpTreePanel)
+					{
+						if (this.HelpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
+						{
+							helpTreePanel.ActiveNodePath = componentID;
+						}
+					}
 				};
 			}
 
@@ -1193,10 +1200,7 @@ namespace MatterHackers.MatterControl
 
 		public void ShowApplicationHelp()
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				DialogWindow.Show(new HelpPage("AllGuides"));
-			});
+			this.ActivateHelpTab();
 		}
 
 		public void ShowInterfaceTour()
@@ -3260,6 +3264,35 @@ Support and tutorials:
 			return Regex.Replace(name, invalidRegStr, replacementCharacter);
 		}
 
+		public ChromeTab ActivateHelpTab()
+		{
+			var tabControl = this.MainView.TabControl;
+			var theme = AppContext.Theme;
+
+			var helpDocsTab = tabControl.AllTabs.FirstOrDefault(t => t.Key == "HelpDocs") as ChromeTab;
+			if (helpDocsTab == null)
+			{
+				var helpTreePanel = new HelpTreePanel(theme)
+				{
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch
+				};
+
+				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, hasClose: false)
+				{
+					MinimumSize = new Vector2(0, theme.TabButtonHeight),
+					Name = "Library Tab",
+					Padding = new BorderDouble(15, 0),
+				};
+
+				tabControl.AddTab(helpDocsTab);
+			}
+
+			tabControl.ActiveTab = helpDocsTab;
+
+			return helpDocsTab;
+		}
+
 		public class CloudSyncEventArgs : EventArgs
 		{
 			public bool IsAuthenticated { get; set; }
@@ -3539,10 +3572,7 @@ Support and tutorials:
 
 				if (keyEvent.KeyCode == Keys.F1)
 				{
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(new HelpPage("AllGuides"));
-					});
+					ApplicationController.Instance.ActivateHelpTab();
 				}
 
 				if (EnableF5Collect
