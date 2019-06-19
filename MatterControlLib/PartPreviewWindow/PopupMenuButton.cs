@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class PopupMenuButton : PopupButton
 	{
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 		private bool mouseInBounds;
 		private bool _drawArrow = false;
 		private VertexStorage dropArrow = DropArrow.DownArrow;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public PopupMenuButton(ImageBuffer imageBuffer, ThemeConfig theme)
-			: this (new IconButton(imageBuffer, theme), theme)
+			: this(new IconButton(imageBuffer, theme), theme)
 		{
 		}
 
@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public PopupMenuButton(string text, ThemeConfig theme)
-			: this (new TextButton(text, theme)
+			: this(new TextButton(text, theme)
 			{
 				Selectable = false,
 				Padding = theme.TextButtonPadding.Clone(right: 5)
@@ -120,7 +120,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			base.OnBoundsChanged(e);
 		}
-
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
@@ -170,7 +169,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return this.MouseDownColor;
 				}
 				else if (!menuVisible
-					&& this.mouseInBounds
+					&& mouseInBounds
 					&& this.Enabled)
 				{
 					return this.HoverColor;
