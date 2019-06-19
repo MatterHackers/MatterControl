@@ -89,7 +89,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Color DisabledColor { get; set; }
 
-		public Color MouseDownColor { get; set;} = Color.Transparent;
+		public Color MouseDownColor { get; set; } = Color.Transparent;
+
+		public bool DistinctPopupButton { get; set; } = false;
 
 		public bool DrawArrow
 		{
@@ -125,6 +127,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnDraw(graphics2D);
 
 			if (this.FirstWidgetUnderMouse
+				&& this.DistinctPopupButton
 				&& dropButtonBounds != RectangleDouble.ZeroIntersection)
 			{
 				graphics2D.FillRectangle(dropButtonBounds, theme.SlightShade);
