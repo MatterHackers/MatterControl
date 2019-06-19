@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using Markdig.Renderers;
+using Markdig.Renderers.Agg;
 using Markdig.Syntax.Inlines;
 using MatterHackers.Agg.UI;
 
@@ -39,7 +40,9 @@ namespace Markdig.Agg
 	public class MarkdownDocumentLink
 	{
 		public Uri Uri { get; internal set; }
+
 		public LinkInline LinkInline { get; internal set; }
+
 		public string PageID { get; internal set; }
 	}
 
@@ -57,6 +60,15 @@ namespace Markdig.Agg
 		{
 			this.BaseUri = baseUri;
 		}
+
+		private string matchingText;
+
+		public string MatchingText
+		{
+			get => matchingText;
+			set => matchingText = value;
+		}
+
 
 		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
 
@@ -108,10 +120,19 @@ namespace Markdig.Agg
 		{
 			if (!string.IsNullOrEmpty(this.Markdown))
 			{
-				var pipeline = Pipeline;
+				MarkdownPipeline pipeline;
 
-				// why do we check the pipeline here?
-				pipeline = pipeline ?? new MarkdownPipelineBuilder().Build();
+				if (!string.IsNullOrWhiteSpace(matchingText))
+				{
+					var builder = new MarkdownPipelineBuilder().UseSupportedExtensions();
+					builder.InlineParsers.Add(new MatchingTextParser(matchingText));
+
+					pipeline = builder.Build();
+				}
+				else
+				{
+					pipeline = Pipeline;
+				}
 
 				var rootWidget = guiWidget ?? new GuiWidget();
 

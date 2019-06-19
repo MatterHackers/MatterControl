@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (helpDocsTab.TabContent is HelpTreePanel treePanel)
 			{
+				treePanel.MatchingText = searchBox.searchInput.Text;
 				treePanel.ActiveNodePath = (sender as HelpSearchResultRow).SearchResult.Path;
 			}
 		}

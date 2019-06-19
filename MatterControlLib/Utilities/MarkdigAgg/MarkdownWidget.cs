@@ -157,5 +157,11 @@ namespace Markdig.Agg
 				}
 			}
 		}
+
+		public string MatchingText
+		{
+			get => markdownDocument.MatchingText;
+			set => markdownDocument.MatchingText = value;
+		}
 	}
 }
