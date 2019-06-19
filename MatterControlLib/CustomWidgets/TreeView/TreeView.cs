@@ -210,17 +210,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					OnBeforeSelect(null);
 
-					if (_selectedNode != null)
-					{
-						// Collapse the old tree
-						foreach (var ancestor in _selectedNode.Parents<TreeNode>())
-						{
-							ancestor.Expanded = false;
-						}
-
-						_selectedNode.Expanded = false;
-					}
-
 					// if the current selection (before change) is !null than clear its background color
 					if (_selectedNode != null)
 					{
