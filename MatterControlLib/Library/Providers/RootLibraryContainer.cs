@@ -63,6 +63,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public ICustomSearch CustomSearch { get; } = null;
 
+		public SortBehavior DefaultSort => null;
+
 		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			return Task.FromResult<ImageBuffer>(null);

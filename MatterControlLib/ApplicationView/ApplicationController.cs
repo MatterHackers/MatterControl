@@ -1292,7 +1292,11 @@ namespace MatterHackers.MatterControl
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_folder.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
-							UseIncrementedNameDuringTypeChange = true
+							UseIncrementedNameDuringTypeChange = true,
+							DefaultSort = new SortBehavior()
+							{
+								SortKey = SortKey.ModifiedDate,
+							}
 						}));
 			}
 
