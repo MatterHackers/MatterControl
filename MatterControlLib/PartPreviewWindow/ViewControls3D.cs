@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ISceneContext sceneContext;
 		private PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
-		private List<(GuiWidget button, SceneSelectionOperation operation)> operationButtons;
+		private Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
 		private PopupMenuButton bedMenuButton;
 		private ThemeConfig theme;
@@ -108,6 +108,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.ActionArea.Click += (s, e) =>
 			{
 				view3DWidget.InteractionLayer.Focus();
+			};
+
+			this.OverflowButton.DynamicPopupContent = () =>
+			{
+				var menuTheme = AppContext.MenuTheme;
+				var popupMenu = new PopupMenu(theme);
+				int i = 0;
+
+				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+				{
+					if (operationButtons.TryGetValue(widget, out SceneSelectionOperation operation))
+					{
+						if (operation is OperationGroup operationGroup)
+						{
+							popupMenu.CreateSubMenu(
+								operationGroup.Title,
+								menuTheme,
+								(subMenu) =>
+								{
+									foreach (var childOperation in operationGroup.Operations)
+									{
+										var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(menuTheme.InvertIcons));
+										menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+										{
+											childOperation.Action?.Invoke(sceneContext);
+										});
+									}
+								});
+						}
+						else
+						{
+							popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
+						}
+					}
+				}
+
+				return popupMenu;
 			};
 
 			this.IsPrinterMode = isPrinterType;
@@ -243,7 +280,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(partSelectButton);
 			}
 
-			operationButtons = new List<(GuiWidget, SceneSelectionOperation)>();
+			operationButtons = new Dictionary<GuiWidget, SceneSelectionOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
 			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
@@ -311,9 +348,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					});
 
-					groupButton.VisibleChanged += (s, e) => Console.WriteLine();
-
-
 					button = groupButton;
 				}
 				else if (namedAction.Icon != null)
@@ -340,7 +374,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-				operationButtons.Add((button, namedAction));
+				operationButtons.Add(button, namedAction);
 
 				// Only bind Click event if not a SplitButton
 				if (!(button is PopupMenuButton))
@@ -600,13 +634,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
-			foreach (var item in operationButtons)
+			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
 			{
-				item.button.Enabled = item.operation.IsEnabled?.Invoke(sceneContext) ?? false;
+				button.Enabled = operation.IsEnabled?.Invoke(sceneContext) ?? false;
 
-				if (item.operation is OperationGroup operationGroup
-					&& item.button is PopupMenuButton splitButton
-					&& item.button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
+				if (operation is OperationGroup operationGroup
+					&& button is PopupMenuButton splitButton
+					&& button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
 				{
 					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext);
 				}

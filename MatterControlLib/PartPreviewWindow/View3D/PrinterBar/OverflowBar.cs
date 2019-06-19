@@ -43,8 +43,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OverflowBar : Toolbar
 	{
-		private static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(HorizontalLine), typeof(SearchInputBox) };
-		private static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox), typeof(HorizontalSpacer) };
+		protected static HashSet<Type> ignoredTypes = new HashSet<Type> { typeof(HorizontalLine), typeof(SearchInputBox) };
+		protected static HashSet<Type> ignoredInMenuTypes = new HashSet<Type> { typeof(VerticalLine), typeof(HorizontalLine), typeof(SearchInputBox), typeof(HorizontalSpacer) };
 
 		public OverflowBar(ThemeConfig theme)
 			: this(null, theme)

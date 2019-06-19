@@ -763,6 +763,7 @@ namespace MatterHackers.MatterControl
 				new SceneSelectionSeparator(),
 				new OperationGroup("Align")
 				{
+					TitleResolver = () => "Align".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -871,6 +872,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Array")
 				{
+					TitleResolver = () => "Array".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -914,6 +916,7 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("ModifyMesh")
 				{
+					TitleResolver = () => "Mesh Modifiers".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -955,9 +958,9 @@ namespace MatterHackers.MatterControl
 						}
 					}
 				},
-
 				new OperationGroup("Booleans")
 				{
+					TitleResolver = () => "Booleans".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -3278,7 +3281,7 @@ Support and tutorials:
 					VAnchor = VAnchor.Stretch
 				};
 
-				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, hasClose: false)
+				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
