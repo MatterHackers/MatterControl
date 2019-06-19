@@ -410,7 +410,7 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public PopupMenuButton CreateSplitButton(SplitButtonParams buttonParams)
+		public PopupMenuButton CreateSplitButton(SplitButtonParams buttonParams, OperationGroup operationGroup = null)
 		{
 			PopupMenuButton menuButton = null;
 
@@ -428,22 +428,32 @@ namespace MatterHackers.MatterControl
 			// Remove right Padding for drop style
 			innerButton.Padding = innerButton.Padding.Clone(right: 0);
 
-			menuButton = new PopupMenuButton(innerButton, this)
-			{
-				DynamicPopupContent = () =>
-				{
-					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-					buttonParams.ExtendPopupMenu?.Invoke(popupMenu);
 
-					return popupMenu;
-				},
-				Name = buttonParams.ButtonName + " Menu SplitButton",
-				BackgroundColor = this.ToolbarButtonBackground,
-				HoverColor = this.ToolbarButtonHover,
-				MouseDownColor = this.ToolbarButtonDown,
-				DrawArrow = true,
-				Margin = this.ButtonSpacing,
+			if (operationGroup == null)
+			{
+				menuButton = new PopupMenuButton(innerButton, this);
+			}
+			else
+
+			{
+				menuButton = new OperationGroupButton(operationGroup, innerButton, this);
+			}
+
+			menuButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				buttonParams.ExtendPopupMenu?.Invoke(popupMenu);
+
+				return popupMenu;
 			};
+
+			menuButton.Name = buttonParams.ButtonName + " Menu SplitButton";
+			menuButton.BackgroundColor = this.ToolbarButtonBackground;
+			menuButton.HoverColor = this.ToolbarButtonHover;
+			menuButton.MouseDownColor = this.ToolbarButtonDown;
+			menuButton.DrawArrow = true;
+			menuButton.Margin = this.ButtonSpacing;
+			menuButton.DistinctPopupButton = true;
 
 			innerButton.Selectable = true;
 			return menuButton;

@@ -308,45 +308,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					PopupMenuButton groupButton = null;
 
-					groupButton = theme.CreateSplitButton(new SplitButtonParams()
-					{
-						Icon = defaultOperation.Icon(theme.InvertIcons),
-						DefaultAction = (menuButton) =>
+					groupButton = theme.CreateSplitButton(
+						new SplitButtonParams()
 						{
-							defaultOperation.Action.Invoke(sceneContext);
-						},
-						DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
-						ButtonName = defaultOperation.Title,
-						ExtendPopupMenu = (PopupMenu popupMenu) =>
-						{
-							foreach (var operation in operationGroup.Operations)
+							Icon = defaultOperation.Icon(theme.InvertIcons),
+							DefaultAction = (menuButton) =>
 							{
-								var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
-
-								operationMenu.ToolTipText = operation.HelpText;
-								operationMenu.Enabled = operation.IsEnabled(sceneContext);
-								operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
+								defaultOperation.Action.Invoke(sceneContext);
+							},
+							DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
+							ButtonName = defaultOperation.Title,
+							ExtendPopupMenu = (PopupMenu popupMenu) =>
+							{
+								foreach (var operation in operationGroup.Operations)
 								{
-									if (operationGroup.StickySelection
-										&& defaultOperation != operation)
+									var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+
+									operationMenu.ToolTipText = operation.HelpText;
+									operationMenu.Enabled = operation.IsEnabled(sceneContext);
+									operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 									{
-										// Update button
-										var iconButton = groupButton.Children.OfType<IconButton>().First();
-										iconButton.SetIcon(operation.Icon(theme.InvertIcons));
-										iconButton.ToolTipText = operation.HelpText ?? operation.Title;
+										if (operationGroup.StickySelection
+											&& defaultOperation != operation)
+										{
+											// Update button
+											var iconButton = groupButton.Children.OfType<IconButton>().First();
+											iconButton.SetIcon(operation.Icon(theme.InvertIcons));
+											iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
-										UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
+											UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
 
-										defaultOperation = operation;
+											defaultOperation = operation;
 
-										iconButton.Invalidate();
-									}
+											iconButton.Invalidate();
+										}
 
-									operation.Action?.Invoke(sceneContext);
-								});
+										operation.Action?.Invoke(sceneContext);
+									});
+								}
 							}
-						}
-					});
+						},
+						operationGroup);
 
 					button = groupButton;
 				}
