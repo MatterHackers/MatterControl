@@ -233,6 +233,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					}
 
+					this.ScrollIntoView(_selectedNode);
+
 					OnAfterSelect(null);
 				}
 			}
