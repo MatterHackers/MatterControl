@@ -31,6 +31,7 @@ using System;
 using System.Linq;
 using MatterControlLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -68,6 +69,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			searchBox.searchInput.ActualTextEditWidget.EnterPressed += (s2, e2) =>
 			{
+				searchResults.CloseAllChildren();
+
 				searchBox.BackgroundColor = theme.SectionBackgroundColor;
 
 				var searcher = new LuceneHelpSearch();
@@ -78,6 +81,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					resultsRow.Click += this.ResultsRow_Click;
 
 					searchResults.AddChild(resultsRow);
+				}
+
+				if (searchResults.Children.Count == 0)
+				{
+					searchResults.AddChild(new SettingsRow("No results found".Localize(), null, theme, AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png").SetPreMultiply()));
 				}
 
 				// Add top border to first child
@@ -143,6 +151,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (helpDocsTab.TabContent is HelpTreePanel treePanel)
 			{
+				treePanel.MatchingText = searchBox.searchInput.Text;
 				treePanel.ActiveNodePath = (sender as HelpSearchResultRow).SearchResult.Path;
 			}
 		}

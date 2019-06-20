@@ -148,6 +148,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				stashedContentView = null;
 			}
 
+			if (activeContainer.DefaultSort != null)
+			{
+				if (stashedSortOrder == null)
+				{
+					stashedSortOrder = new SortBehavior()
+					{
+						SortKey = this.ActiveSort,
+						Ascending = this.Ascending
+					};
+				}
+				this.ActiveSort = activeContainer.DefaultSort.SortKey;
+				this.Ascending = activeContainer.DefaultSort.Ascending;
+			}
+			else if (stashedSortOrder != null
+				&& (stashedSortOrder.SortKey != this.ActiveSort
+				|| stashedSortOrder.Ascending != this.Ascending))
+			{
+				this.ActiveSort = stashedSortOrder.SortKey;
+				this.Ascending = stashedSortOrder.Ascending;
+				stashedSortOrder = null;
+			}
+
 			await DisplayContainerContent(activeContainer);
 		}
 
@@ -165,14 +187,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public IEnumerable<ListViewItem> Items => items;
 
-		public enum SortKey
-		{
-			Name,
-			CreatedDate,
-			ModifiedDate
-		}
-
 		private SortKey _activeSort = SortKey.Name;
+		private SortBehavior stashedSortOrder;
+
 		public SortKey ActiveSort
 		{
 			get => _activeSort;
@@ -186,8 +203,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		private bool _ascending = true;
 		private string filterText;
+
+		private bool _ascending = true;
 
 		public bool Ascending
 		{
