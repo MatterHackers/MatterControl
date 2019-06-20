@@ -818,10 +818,21 @@ namespace MatterHackers.MatterControl
 
 								if (selectedItem is SelectionGroupObject3D selectionGroup)
 								{
-									foreach (var child in selectionGroup.Children)
+									var first = selectionGroup.Children.FirstOrDefault();
+									var center = first.GetCenter();
+									var startMatrix = first.Matrix;
+									first.Matrix = Matrix4X4.Identity;
+									var offset = center - first.GetCenter();
+									first.Matrix = startMatrix;
+
+									var transformData = selectionGroup.Children.Select(c => new TransformData()
 									{
-										child.Matrix = Matrix4X4.Identity;
-									}
+										TransformedObject = c,
+										UndoTransform = c.Matrix,
+										RedoTransform = Matrix4X4.CreateTranslation(offset)
+									}).ToList();
+
+									scene.UndoBuffer.AddAndDo(new TransformCommand(transformData));
 								}
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("dual_align.png", 16, 16, invertIcon).SetPreMultiply(),

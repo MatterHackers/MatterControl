@@ -489,6 +489,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				PlatingHelper.PlaceOnBed(objectToLayFlatGroup);
 			}
+
 			scene.UndoBuffer.Add(new TransformCommand(objectToLayFlatGroup, preLayFlatMatrix, objectToLayFlatGroup.Matrix));
 		}
 
