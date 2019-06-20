@@ -199,13 +199,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Remove but don't close all the current nodes
 			content.RemoveAllChildren();
 
-			// Then add them back in (after the change)
-			foreach (var node in Nodes)
+			using (content.LayoutLock())
 			{
-				node.NodeParent = this;
-				node.ClearRemovedFlag();
-				content.AddChild(node);
+				// Then add them back in (after the change)
+				foreach (var node in Nodes)
+				{
+					node.NodeParent = this;
+					node.ClearRemovedFlag();
+					content.AddChild(node);
+				}
 			}
+
+			content.PerformLayout();
 
 			// If the node count is ending at 0 we removed content and need to rebuild the title bar so it will net have a + in it
 			expandWidget.Expandable = GetNodeCount(false) != 0;
