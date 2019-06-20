@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var remainingOperations = ApplicationController.Instance.Graph.Operations.Values.Except(primaryActions);
 
-				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene, false, view3DWidget, remainingOperations);
+				return ApplicationController.Instance.GetModifyMenu(item, sceneContext.Scene, remainingOperations);
 			};
 			toolbar.AddChild(overflowButton);
 
