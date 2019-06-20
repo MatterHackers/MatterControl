@@ -3296,11 +3296,12 @@ Support and tutorials:
 					VAnchor = VAnchor.Stretch
 				};
 
-				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme)
+				var icon = AggContext.StaticData.LoadIcon("help_page.png", 16, 16, theme.InvertIcons);
+
+				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, icon)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Library Tab",
-					Padding = new BorderDouble(15, 0),
+					Name = "Help Tab",
 				};
 
 				tabControl.AddTab(helpDocsTab);
