@@ -290,73 +290,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			var popupMenu = new PopupMenu(this.MenuTheme);
-
-			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			menuItem.Click += (s, e) =>
-			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						selectedItem.Name,
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
-							// TODO: add undo data to this operation
-							selectedItem.Name = newName;
-						}));
-			};
-
-			popupMenu.CreateSeparator();
-
 			var selectedItemType = selectedItem.GetType();
-
 			var menuTheme = this.MenuTheme;
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				if (addInSubmenu)
-				{
-					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
-					{
-						foreach (var nodeOperation in nodeOperations)
-						{
-							foreach (var type in nodeOperation.MappedTypes)
-							{
-								if (type.IsAssignableFrom(selectedItemType)
-									&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-									&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-								{
-									var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
-									subMenuItem.Click += (s2, e2) =>
-									{
-										nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-									};
-								}
-							}
-						}
-					});
-				}
-				else
-				{
-					foreach (var nodeOperation in nodeOperations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedItemType)
-								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-							{
-								menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
-								menuItem.Click += (s2, e2) =>
-								{
-									nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-								};
-							}
-						}
-					}
-				}
+				AddModifyMenuItems(selectedItem, scene, addInSubmenu, nodeOperations, menuTheme, popupMenu, selectedItemType);
 			}
 
 			var workspaceActions = GetWorkspaceActions(view3DWidget);
@@ -401,7 +340,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -438,6 +377,75 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		public PopupMenu GetModifyMenu(IObject3D selectedItem, InteractiveScene scene, IEnumerable<NodeOperation> nodeOperations = null)
+		{
+			var popupMenu = new PopupMenu(this.MenuTheme);
+
+			AddModifyMenuItems(
+				selectedItem,
+				scene,
+				false,
+				nodeOperations,
+				this.MenuTheme,
+				popupMenu,
+				selectedItem.GetType());
+
+			return popupMenu;
+		}
+
+		private static void AddModifyMenuItems(IObject3D selectedItem, InteractiveScene scene, bool useSubMenu, IEnumerable<NodeOperation> nodeOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
+		{
+			void AddItems(PopupMenu menu)
+			{
+				foreach (var nodeOperation in nodeOperations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
+					{
+						if (type.IsAssignableFrom(selectedItemType)
+							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						{
+							var menuItem = menu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
+							menuItem.Click += (s, e) =>
+							{
+								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+							};
+						}
+					}
+				}
+			}
+
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						selectedItem.Name,
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							// TODO: add undo data to this operation
+							selectedItem.Name = newName;
+						}));
+			};
+
+			popupMenu.CreateSeparator();
+
+			if (useSubMenu)
+			{
+				// Create items in a 'Modify' submenu
+				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
+			}
+			else
+			{
+				// Create items directly in the referenced menu
+				AddItems(popupMenu);
+			}
 		}
 
 		public async Task PersistUserTabs()
