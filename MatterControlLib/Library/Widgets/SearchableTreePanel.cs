@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		protected TreeView treeView;
 		protected Splitter horizontalSplitter;
 		protected ThemeConfig theme;
-		protected FlowLayoutWidget rootColumn;
+		protected FlowLayoutWidget contentPanel;
 
 		public SearchableTreePanel(ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Name = "Search",
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(bottom: 4),
+				Margin = new BorderDouble(6),
 			};
 
 			searchBox.ResetButton.Visible = false;
@@ -104,8 +104,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 
-			this.AddChild(searchBox);
-
 			horizontalSplitter = new Splitter()
 			{
 				SplitterDistance = Math.Max(UserSettings.Instance.LibraryViewWidth, 20),
@@ -121,22 +119,30 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			this.AddChild(horizontalSplitter);
 
+			var leftPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			leftPanel.AddChild(searchBox);
+
 			treeView = new TreeView(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			};
-			horizontalSplitter.Panel1.AddChild(treeView);
+			leftPanel.AddChild(treeView);
 
-			rootColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			horizontalSplitter.Panel1.AddChild(leftPanel);
+
+			contentPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(left: 2)
 			};
-			treeView.AddChild(rootColumn);
-
-			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
+			treeView.AddChild(contentPanel);
 		}
 
 		protected virtual void PerformSearch()
@@ -145,7 +151,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			Console.WriteLine("Filter for: " + searchBox.Text);
 
-			foreach (var rootNode in rootColumn.Children.OfType<TreeNode>())
+			foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
 			{
 				FilterTree(rootNode, searchBox.Text, false, matches);
 			}
@@ -164,7 +170,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void ClearSearch()
 		{
-			foreach (var rootNode in rootColumn.Children.OfType<TreeNode>())
+			foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
 			{
 				ResetTree(rootNode);
 			}

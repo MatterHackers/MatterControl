@@ -36,7 +36,9 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -47,6 +49,25 @@ namespace MatterHackers.MatterControl
 		public HelpTreePanel(ThemeConfig theme, string guideKey = null)
 			: base(theme)
 		{
+			horizontalSplitter.Panel1.BackgroundColor = Color.Black.WithAlpha(12);
+
+			var toolbar = new Toolbar(theme)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Padding = theme.ToolbarPadding
+			};
+
+			theme.ApplyBottomBorder(toolbar);
+
+			toolbar.AddChild(new TextButton("MatterControl Help".Localize(), theme)
+			{
+				Padding = new BorderDouble(6, 0),
+				Selectable = false
+			});
+
+			this.AddChild(toolbar, 0);
+
 			this.ChildBorderColor = theme.BorderColor40;
 			AddGuides();
 			CreateMousePage();
@@ -234,7 +255,6 @@ namespace MatterHackers.MatterControl
 			var description = new GuiWidget();
 			var markdownWidget = new MarkdownWidget(theme)
 			{
-				BackgroundColor = theme.ResolveColor(theme.BackgroundColor, new Color(Color.White, 20)),
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 
@@ -313,7 +333,7 @@ namespace MatterHackers.MatterControl
 			rootNode.Text = "Help";
 			rootNode.TreeView = treeView;
 
-			rootColumn.AddChild(rootNode);
+			contentPanel.AddChild(rootNode);
 
 			maxMenuItemWidth = Math.Max(maxMenuItemWidth, rootNode.Width);
 

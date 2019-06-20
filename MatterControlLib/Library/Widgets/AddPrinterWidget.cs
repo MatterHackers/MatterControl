@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						SetImage(rootNode, image);
 					};
 
-					rootColumn.AddChild(rootNode);
+					contentPanel.AddChild(rootNode);
 				}
 
 				this.TreeLoaded = true;
