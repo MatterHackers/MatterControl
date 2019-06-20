@@ -136,7 +136,7 @@ namespace MatterControlLib
 							var doc = new Document();
 
 							// StringField indexes but doesn't tokenise
-							doc.Add(new StringField("name", helpArticles[entry.FullName].Name, Field.Store.YES));
+							doc.Add(new TextField("name", helpArticles[entry.FullName].Name, Field.Store.YES));
 							doc.Add(new StringField("path", entry.FullName, Field.Store.YES));
 							doc.Add(new TextField("body", text, Field.Store.NO));
 
@@ -152,7 +152,8 @@ namespace MatterControlLib
 
 		public IEnumerable<HelpSearchResult> Search(string text)
 		{
-			var parser = new QueryParser(LuceneVersion.LUCENE_48, "body", analyzer);
+			//var parser = new QueryParser(LuceneVersion.LUCENE_48, "body", analyzer);
+			var parser = new MultiFieldQueryParser(LuceneVersion.LUCENE_48, new[] { "body", "name" }, analyzer);
 			var query = parser.Parse(text);
 
 			// re-use the writer to get real-time updates

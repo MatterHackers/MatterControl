@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 20178 Lars Brubaker, John Lewin
+Copyright (c) 2019 Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using System;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public event EventHandler PopupWindowClosed;
 
 		public bool AlignToRightEdge { get; set; }
+
 		public bool AlwaysKeepOpen { get; set; }
 
 		public override Color BackgroundColor
@@ -70,15 +71,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public virtual Func<GuiWidget> DynamicPopupContent { get; set; }
+
 		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
 
 		public bool KeepMenuOpen => menuVisible || this.AlwaysKeepOpen;
+
 		public bool MakeScrollable { get; set; } = true;
+
 		public Color OpenColor { get; set; } = new Color(0, 0, 0, 40);
+
 		public Direction PopDirection { get; set; } = Direction.Down;
+
 		public Color PopupBorderColor { get; set; } = Color.Transparent;
+
 		public virtual GuiWidget PopupContent { get; set; }
+
 		private HAnchor _popupHAnchor;
+
 		public HAnchor PopupHAnchor
 		{
 			get => _popupHAnchor;
@@ -88,8 +97,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				_popupHAnchor = value;
 			}
 		}
+
 		public IPopupLayoutEngine PopupLayoutEngine { get; set; }
+
 		private VAnchor _popupVAnchor;
+
 		public VAnchor PopupVAnchor
 		{
 			get => _popupVAnchor;
@@ -131,6 +143,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, this.PopDirection, 0, this.AlignToRightEdge);
 			}
+
 			menuVisible = true;
 
 			this.PopupContent?.ClearRemovedFlag();
@@ -173,6 +186,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				popupWidget.HAnchor = PopupHAnchor;
 			}
+
 			if (overridePopupVAnchor)
 			{
 				popupWidget.VAnchor = PopupVAnchor;

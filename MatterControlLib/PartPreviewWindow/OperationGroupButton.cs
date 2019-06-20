@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,55 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.Localizations;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class RootLibraryContainer : ILibraryContainer
+	public class OperationGroupButton : PopupMenuButton
 	{
-		public event EventHandler ContentChanged;
+		private OperationGroup operationGroup;
 
-		public RootLibraryContainer(List<ILibraryContainerLink> items)
+		public OperationGroupButton(OperationGroup operationGroup, GuiWidget innerButton, ThemeConfig theme)
+			: base(innerButton, theme)
 		{
-			this.ChildContainers = items;
-			this.Items = new List<ILibraryItem>();
+			this.operationGroup = operationGroup;
 		}
-
-		public ILibraryContainer Parent { get; set; } = null;
-
-		public Type DefaultView { get; } = null;
-
-		public string ID { get; } = "rootLibraryProvider";
-
-		public string Name => "Home".Localize();
-
-		public bool IsProtected => true;
-
-		public List<ILibraryContainerLink> ChildContainers { get; }
-
-		public List<ILibraryItem> Items { get; }
-
-		public string StatusMessage { get; set; }
-
-		public ICustomSearch CustomSearch { get; } = null;
-
-		public SortBehavior DefaultSort => null;
-
-		public Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
-		{
-			return Task.FromResult<ImageBuffer>(null);
-		}
-
-		public void Load() { }
-
-		public void Dispose() { }
-
-		public void Activate() { }
-
-		public void Deactivate() { }
 	}
 }

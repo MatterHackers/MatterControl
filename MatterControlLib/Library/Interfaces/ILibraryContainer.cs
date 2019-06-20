@@ -35,20 +35,40 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
+	public enum SortKey
+	{
+		Default,
+		Name,
+		CreatedDate,
+		ModifiedDate,
+	}
+
+	public class SortBehavior
+	{
+		public SortKey SortKey { get; set; }
+		public bool Ascending { get; set; }
+	}
+
 	public interface ICustomSearch
 	{
 		void ApplyFilter(string filter, ILibraryContext libraryContext);
+
 		void ClearFilter();
 	}
 
 	public interface ILibraryContainer : IDisposable
 	{
 		string ID { get; }
+
 		string Name { get; }
+
 		string StatusMessage { get; }
+
 		bool IsProtected { get; }
 
 		Type DefaultView { get; }
+
+		SortBehavior DefaultSort { get; }
 
 		event EventHandler ContentChanged;
 

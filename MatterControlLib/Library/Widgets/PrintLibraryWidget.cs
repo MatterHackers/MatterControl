@@ -108,22 +108,22 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Created".Localize(),
-					() => libraryView.ActiveSort == LibraryListView.SortKey.CreatedDate,
-					(v) => libraryView.ActiveSort = LibraryListView.SortKey.CreatedDate,
+					() => libraryView.ActiveSort == SortKey.CreatedDate,
+					(v) => libraryView.ActiveSort = SortKey.CreatedDate,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Date Modified".Localize(),
-					() => libraryView.ActiveSort == LibraryListView.SortKey.ModifiedDate,
-					(v) => libraryView.ActiveSort = LibraryListView.SortKey.ModifiedDate,
+					() => libraryView.ActiveSort == SortKey.ModifiedDate,
+					(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 
 				popupMenu.CreateBoolMenuItem(
 					"Name".Localize(),
-					() => libraryView.ActiveSort == LibraryListView.SortKey.Name,
-					(v) => libraryView.ActiveSort = LibraryListView.SortKey.Name,
+					() => libraryView.ActiveSort == SortKey.Name,
+					(v) => libraryView.ActiveSort = SortKey.Name,
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);
 

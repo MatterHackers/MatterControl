@@ -248,6 +248,11 @@ namespace MatterHackers.MatterControl
 
 				if (treeView.SelectedNode?.Tag is HelpArticle article)
 				{
+					markdownWidget.MatchingText = this.MatchingText;
+
+					// reset matching text after applying
+					this.MatchingText = null;
+
 					if (!string.IsNullOrWhiteSpace(article.Path))
 					{
 						markdownWidget.LoadUri(new Uri(ApplicationController.Instance.HelpArticleSource, article.Path), sourceArticle: article);
@@ -366,6 +371,8 @@ namespace MatterHackers.MatterControl
 		}
 
 		public Color ChildBorderColor { get; private set; }
+
+		public string MatchingText { get; internal set; }
 
 		private void AddContent(GuiWidget column, string text, bool left, bool bold)
 		{
