@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -72,15 +73,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(5, 8, 5, 5)
 			};
-			searchBox.searchInput.ActualTextEditWidget.EnterPressed += (s2, e2) =>
+			searchBox.searchInput.ActualTextEditWidget.EnterPressed += async (s2, e2) =>
 			{
 				searchResults.CloseAllChildren();
 
-				searchBox.BackgroundColor = theme.SectionBackgroundColor;
+				searchResults.AddChild(
+					new TextWidget("Searching".Localize() + "...", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+					{
+						Margin = 10
+					});
 
-				var searcher = new LuceneHelpSearch();
+				this.Invalidate();
 
-				foreach (var searchResult in searcher.Search(searchBox.searchInput.Text))
+				var searchHits = await Task.Run(() =>
+				{
+					var searcher = new LuceneHelpSearch();
+					return searcher.Search(searchBox.searchInput.Text);
+				});
+
+				searchResults.CloseAllChildren();
+
+				foreach (var searchResult in searchHits)
 				{
 					var resultsRow = new HelpSearchResultRow(searchResult, theme);
 					resultsRow.Click += this.ResultsRow_Click;
