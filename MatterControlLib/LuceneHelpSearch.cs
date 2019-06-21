@@ -159,7 +159,7 @@ namespace MatterControlLib
 			// re-use the writer to get real-time updates
 			var searcher = new IndexSearcher(writer.GetReader(applyAllDeletes: true));
 
-			var hits = searcher.Search(query, 20 /* top 20 */).ScoreDocs;
+			var hits = searcher.Search(query, 40 /* top 20 */).ScoreDocs;
 
 			return hits.Select(hit =>
 			{

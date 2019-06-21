@@ -290,73 +290,12 @@ namespace MatterHackers.MatterControl
 			}
 
 			var popupMenu = new PopupMenu(this.MenuTheme);
-
-			var menuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			menuItem.Click += (s, e) =>
-			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						selectedItem.Name,
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
-							// TODO: add undo data to this operation
-							selectedItem.Name = newName;
-						}));
-			};
-
-			popupMenu.CreateSeparator();
-
 			var selectedItemType = selectedItem.GetType();
-
 			var menuTheme = this.MenuTheme;
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				if (addInSubmenu)
-				{
-					popupMenu.CreateSubMenu("Modify".Localize(), this.MenuTheme, (modifyMenu) =>
-					{
-						foreach (var nodeOperation in nodeOperations)
-						{
-							foreach (var type in nodeOperation.MappedTypes)
-							{
-								if (type.IsAssignableFrom(selectedItemType)
-									&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-									&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-								{
-									var subMenuItem = modifyMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
-									subMenuItem.Click += (s2, e2) =>
-									{
-										nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-									};
-								}
-							}
-						}
-					});
-				}
-				else
-				{
-					foreach (var nodeOperation in nodeOperations)
-					{
-						foreach (var type in nodeOperation.MappedTypes)
-						{
-							if (type.IsAssignableFrom(selectedItemType)
-								&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-								&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
-							{
-								menuItem = popupMenu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
-								menuItem.Click += (s2, e2) =>
-								{
-									nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-								};
-							}
-						}
-					}
-				}
+				AddModifyMenuItems(selectedItem, scene, addInSubmenu, nodeOperations, menuTheme, popupMenu, selectedItemType);
 			}
 
 			var workspaceActions = GetWorkspaceActions(view3DWidget);
@@ -401,7 +340,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, AppContext.MenuTheme.InvertIcons),
+					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -438,6 +377,75 @@ namespace MatterHackers.MatterControl
 			}
 
 			return popupMenu;
+		}
+
+		public PopupMenu GetModifyMenu(IObject3D selectedItem, InteractiveScene scene, IEnumerable<NodeOperation> nodeOperations = null)
+		{
+			var popupMenu = new PopupMenu(this.MenuTheme);
+
+			AddModifyMenuItems(
+				selectedItem,
+				scene,
+				false,
+				nodeOperations,
+				this.MenuTheme,
+				popupMenu,
+				selectedItem.GetType());
+
+			return popupMenu;
+		}
+
+		private static void AddModifyMenuItems(IObject3D selectedItem, InteractiveScene scene, bool useSubMenu, IEnumerable<NodeOperation> nodeOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
+		{
+			void AddItems(PopupMenu menu)
+			{
+				foreach (var nodeOperation in nodeOperations)
+				{
+					foreach (var type in nodeOperation.MappedTypes)
+					{
+						if (type.IsAssignableFrom(selectedItemType)
+							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
+							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						{
+							var menuItem = menu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
+							menuItem.Click += (s, e) =>
+							{
+								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
+							};
+						}
+					}
+				}
+			}
+
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						selectedItem.Name,
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							// TODO: add undo data to this operation
+							selectedItem.Name = newName;
+						}));
+			};
+
+			popupMenu.CreateSeparator();
+
+			if (useSubMenu)
+			{
+				// Create items in a 'Modify' submenu
+				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
+			}
+			else
+			{
+				// Create items directly in the referenced menu
+				AddItems(popupMenu);
+			}
 		}
 
 		public async Task PersistUserTabs()
@@ -806,6 +814,160 @@ namespace MatterHackers.MatterControl
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 						},
+					},
+				},
+				new OperationGroup("Booleans")
+				{
+					TitleResolver = () => "Booleans".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(CombineObject3D_2),
+							TitleResolver = () => "Combine".Localize(),
+							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) =>
+							{
+								var selectedItem = sceneContext.Scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractObject3D_2),
+							TitleResolver = () => "Subtract".Localize(),
+							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) =>
+							{
+								var selectedItem = sceneContext.Scene.SelectedItem;
+								return selectedItem != null && sceneContext.Scene.SelectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(IntersectionObject3D_2),
+							TitleResolver = () => "Intersect".Localize(),
+							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
+							IsEnabled = (sceneContext) =>
+							{
+								var selectedItem = sceneContext.Scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubtractAndReplaceObject3D_2),
+							TitleResolver = () => "Subtract & Replace".Localize(),
+							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) =>
+							{
+								var selectedItem = sceneContext.Scene.SelectedItem;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+							},
+						}
+					}
+				},
+				new OperationGroup("Array")
+				{
+					Collapse = true,
+					TitleResolver = () => "Array".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayLinearObject3D),
+							TitleResolver = () => "Linear Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayLinearObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayRadialObject3D),
+							TitleResolver = () => "Radial Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayRadialObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(ArrayAdvancedObject3D),
+							TitleResolver = () => "Advanced Array".Localize(),
+							Action = (sceneContext) =>
+							{
+								var array = new ArrayAdvancedObject3D();
+								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+						}
+					}
+				},
+				new OperationGroup("ModifyMesh")
+				{
+					Collapse = true,
+					TitleResolver = () => "Mesh Modifiers".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(CurveObject3D_2),
+							TitleResolver = () => "Curve".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new CurveObject3D_2();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(PinchObject3D_2),
+							TitleResolver = () => "Pinch".Localize(),
+							Action = (sceneContext) =>
+							{
+								var pinch = new PinchObject3D_2();
+								pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(TwistObject3D),
+							TitleResolver = () => "Twist".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new TwistObject3D();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						}
+					}
+				},
+				new OperationGroup("Other")
+				{
+					TitleResolver = () => "Other".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
 						new SceneSelectionOperation()
 						{
 							OperationType = typeof(AlignObject3D),
@@ -880,150 +1042,6 @@ namespace MatterHackers.MatterControl
 						},
 #endif
 					},
-				},
-				new OperationGroup("Array")
-				{
-					TitleResolver = () => "Array".Localize(),
-					StickySelection = true,
-					Operations = new List<SceneSelectionOperation>()
-					{
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(ArrayLinearObject3D),
-							TitleResolver = () => "Linear Array".Localize(),
-							Action = (sceneContext) =>
-							{
-								var array = new ArrayLinearObject3D();
-								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(ArrayRadialObject3D),
-							TitleResolver = () => "Radial Array".Localize(),
-							Action = (sceneContext) =>
-							{
-								var array = new ArrayRadialObject3D();
-								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(ArrayAdvancedObject3D),
-							TitleResolver = () => "Advanced Array".Localize(),
-							Action = (sceneContext) =>
-							{
-								var array = new ArrayAdvancedObject3D();
-								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
-						}
-					}
-				},
-				new OperationGroup("ModifyMesh")
-				{
-					TitleResolver = () => "Mesh Modifiers".Localize(),
-					StickySelection = true,
-					Operations = new List<SceneSelectionOperation>()
-					{
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(CurveObject3D_2),
-							TitleResolver = () => "Curve".Localize(),
-							Action = (sceneContext) =>
-							{
-								var curve = new CurveObject3D_2();
-								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(PinchObject3D_2),
-							TitleResolver = () => "Pinch".Localize(),
-							Action = (sceneContext) =>
-							{
-								var pinch = new PinchObject3D_2();
-								pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(TwistObject3D),
-							TitleResolver = () => "Twist".Localize(),
-							Action = (sceneContext) =>
-							{
-								var curve = new TwistObject3D();
-								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
-							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-						}
-					}
-				},
-				new OperationGroup("Booleans")
-				{
-					TitleResolver = () => "Booleans".Localize(),
-					StickySelection = true,
-					Operations = new List<SceneSelectionOperation>()
-					{
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(CombineObject3D_2),
-							TitleResolver = () => "Combine".Localize(),
-							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) =>
-							{
-								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-							},
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(SubtractObject3D_2),
-							TitleResolver = () => "Subtract".Localize(),
-							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) =>
-							{
-								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && sceneContext.Scene.SelectedItem.VisibleMeshes().Count() > 1;
-							},
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(IntersectionObject3D_2),
-							TitleResolver = () => "Intersect".Localize(),
-							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
-							IsEnabled = (sceneContext) =>
-							{
-								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-							},
-						},
-						new SceneSelectionOperation()
-						{
-							OperationType = typeof(SubtractAndReplaceObject3D_2),
-							TitleResolver = () => "Subtract & Replace".Localize(),
-							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-							IsEnabled = (sceneContext) =>
-							{
-								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-							},
-						}
-					}
 				},
 			};
 
@@ -2485,7 +2503,8 @@ namespace MatterHackers.MatterControl
 						SourceItem = history.NewPlatingItem()
 					});
 
-				this.OpenWorkspace(workspace);
+				// Open but no need to save
+				this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
 			}
 		}
 
@@ -3296,11 +3315,12 @@ Support and tutorials:
 					VAnchor = VAnchor.Stretch
 				};
 
-				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme)
+				var icon = AggContext.StaticData.LoadIcon("help_page.png", 16, 16, theme.InvertIcons);
+
+				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, icon)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Library Tab",
-					Padding = new BorderDouble(15, 0),
+					Name = "Help Tab",
 				};
 
 				tabControl.AddTab(helpDocsTab);
@@ -4049,6 +4069,9 @@ Support and tutorials:
 			{
 				try
 				{
+					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
+					await applicationController.RestoreUserTabs();
+
 					// Batch startup actions
 					await applicationController.Tasks.Execute(
 						"Finishing Startup".Localize(),
@@ -4080,8 +4103,6 @@ Support and tutorials:
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
-					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
-					await applicationController.RestoreUserTabs();
 
 					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
 					{

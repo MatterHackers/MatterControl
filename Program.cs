@@ -55,7 +55,9 @@ namespace MatterHackers.MatterControl
 
 		private static RaygunClient _raygunClient;
 
-		private static string mainServiceName = "";
+		private static string mainServiceName = "shell";
+
+		private const string ServiceBaseUri = "net.pipe://localhost/mattercontrol";
 
 		[STAThread]
 		public static void Main(string[] args)
@@ -105,17 +107,32 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				// #endif
-				var serviceHost = new ServiceHost(
-				typeof(LocalService),
-				new Uri[] { new Uri("net.pipe://localhost/mattercontrol") });
-
+				var serviceHost = new ServiceHost(typeof(LocalService), new[] { new Uri(ServiceBaseUri) });
 				serviceHost.AddServiceEndpoint(typeof(IMainService), new NetNamedPipeBinding(), mainServiceName);
 				serviceHost.Open();
 
 				Console.Write(
 					"Service started: {0};",
 					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
+			}
+
+			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
+			var shellFiles = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));
+			if (shellFiles.Any())
+			{
+				ApplicationController.StartupActions.Add(new ApplicationController.StartupAction()
+				{
+					Title = "Shell Files",
+					Priority = 0,
+					Action = () =>
+					{
+						// Open each shelled file
+						foreach (string file in shellFiles)
+						{
+							ApplicationController.Instance.ShellOpenFile(file);
+						}
+					}
+				});
 			}
 
 			// Load optional user configuration
@@ -217,7 +234,7 @@ namespace MatterHackers.MatterControl
 					new ServiceEndpoint(
 						ContractDescription.GetContract(typeof(IMainService)),
 						new NetNamedPipeBinding(),
-						new EndpointAddress($"net.pipe://localhost/{mainServiceName}")))
+						new EndpointAddress($"{ServiceBaseUri}/{mainServiceName}")))
 			{
 			}
 

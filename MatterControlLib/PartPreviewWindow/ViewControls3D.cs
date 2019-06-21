@@ -300,57 +300,78 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.AddChild(new ToolbarSeparator(theme));
 				}
 
-				GuiWidget button;
+				GuiWidget button = null;
 
 				if (namedAction is OperationGroup operationGroup)
 				{
-					var defaultOperation = operationGroup.GetDefaultOperation();
+					if (operationGroup.Collapse)
+					{
 
-					PopupMenuButton groupButton = null;
+						var defaultOperation = operationGroup.GetDefaultOperation();
 
-					groupButton = theme.CreateSplitButton(
-						new SplitButtonParams()
-						{
-							Icon = defaultOperation.Icon(theme.InvertIcons),
-							DefaultAction = (menuButton) =>
+						PopupMenuButton groupButton = null;
+
+						groupButton = theme.CreateSplitButton(
+							new SplitButtonParams()
 							{
-								defaultOperation.Action.Invoke(sceneContext);
-							},
-							DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
-							ButtonName = defaultOperation.Title,
-							ExtendPopupMenu = (PopupMenu popupMenu) =>
-							{
-								foreach (var operation in operationGroup.Operations)
+								Icon = defaultOperation.Icon(theme.InvertIcons),
+								DefaultAction = (menuButton) =>
 								{
-									var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
-
-									operationMenu.ToolTipText = operation.HelpText;
-									operationMenu.Enabled = operation.IsEnabled(sceneContext);
-									operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
+									defaultOperation.Action.Invoke(sceneContext);
+								},
+								DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
+								ButtonName = defaultOperation.Title,
+								ExtendPopupMenu = (PopupMenu popupMenu) =>
+								{
+									foreach (var operation in operationGroup.Operations)
 									{
-										if (operationGroup.StickySelection
-											&& defaultOperation != operation)
+										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
+
+										operationMenu.ToolTipText = operation.HelpText;
+										operationMenu.Enabled = operation.IsEnabled(sceneContext);
+										operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 										{
-											// Update button
-											var iconButton = groupButton.Children.OfType<IconButton>().First();
-											iconButton.SetIcon(operation.Icon(theme.InvertIcons));
-											iconButton.ToolTipText = operation.HelpText ?? operation.Title;
+											if (operationGroup.StickySelection
+												&& defaultOperation != operation)
+											{
+												// Update button
+												var iconButton = groupButton.Children.OfType<IconButton>().First();
+												iconButton.SetIcon(operation.Icon(theme.InvertIcons));
+												iconButton.ToolTipText = operation.HelpText ?? operation.Title;
 
-											UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
+												UserSettings.Instance.set(operationGroup.GroupRecordId, operationGroup.Operations.IndexOf(operation).ToString());
 
-											defaultOperation = operation;
+												defaultOperation = operation;
 
-											iconButton.Invalidate();
-										}
+												iconButton.Invalidate();
+											}
 
-										operation.Action?.Invoke(sceneContext);
-									});
+											operation.Action?.Invoke(sceneContext);
+										});
+									}
 								}
-							}
-						},
-						operationGroup);
+							},
+							operationGroup);
 
-					button = groupButton;
+						button = groupButton;
+					}
+					else
+					{
+						if (!(this.ActionArea.Children.LastOrDefault() is ToolbarSeparator))
+						{
+							this.AddChild(new ToolbarSeparator(theme));
+						}
+
+						foreach (var operation in operationGroup.Operations)
+						{
+							var operationButton = new OperationIconButton(operation, sceneContext, theme);
+							operationButtons.Add(operationButton, operation);
+
+							this.AddChild(operationButton);
+						}
+
+						this.AddChild(new ToolbarSeparator(theme));
+					}
 				}
 				else if (namedAction.Icon != null)
 				{
@@ -376,21 +397,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-				operationButtons.Add(button, namedAction);
 
-				// Only bind Click event if not a SplitButton
-				if (!(button is PopupMenuButton))
+				if (button != null)
 				{
-					button.Click += (s, e) => UiThread.RunOnIdle(() =>
-					{
-						namedAction.Action.Invoke(sceneContext);
-						var partTab = button.Parents<PartTabPage>().FirstOrDefault();
-						var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
-						view3D.InteractionLayer.Focus();
-					});
-				}
+					operationButtons.Add(button, namedAction);
 
-				this.AddChild(button);
+					// Only bind Click event if not a SplitButton
+					if (!(button is PopupMenuButton))
+					{
+						button.Click += (s, e) => UiThread.RunOnIdle(() =>
+						{
+							namedAction.Action.Invoke(sceneContext);
+							var partTab = button.Parents<PartTabPage>().FirstOrDefault();
+							var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
+							view3D.InteractionLayer.Focus();
+						});
+					}
+
+					this.AddChild(button);
+				}
 			}
 
 			// Register listeners

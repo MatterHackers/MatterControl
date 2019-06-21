@@ -42,6 +42,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.sceneOperation = sceneOperation;
 			this.sceneContext = sceneContext;
+			this.ToolTipText = sceneOperation.HelpText ?? sceneOperation.Title;
 		}
 
 		protected override void OnClick(MouseEventArgs mouseEvent)

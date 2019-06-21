@@ -75,6 +75,8 @@ namespace MatterHackers.Agg.UI
 
 		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
 
+		public bool Collapse { get; set; }
+
 		public SceneSelectionOperation GetDefaultOperation()
 		{
 			if (this.StickySelection)

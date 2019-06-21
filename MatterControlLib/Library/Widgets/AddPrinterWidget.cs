@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.ExistingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name).ToList();
 			this.Name = "AddPrinterWidget";
 
+			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
+
 			treeView.AfterSelect += this.TreeView_AfterSelect;
 
 			UiThread.RunOnIdle(() =>
@@ -73,7 +75,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						SetImage(rootNode, image);
 					};
 
-					rootColumn.AddChild(rootNode);
+					contentPanel.AddChild(rootNode);
 				}
 
 				this.TreeLoaded = true;

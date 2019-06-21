@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -60,6 +61,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			searchButton.BackgroundColor = theme.SectionBackgroundColor;
 
 			GuiWidget searchResults = null;
+			var scrollable = new ScrollableWidget(true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
 
 			searchBox = new SearchInputBox(theme)
 			{
@@ -67,15 +73,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(5, 8, 5, 5)
 			};
-			searchBox.searchInput.ActualTextEditWidget.EnterPressed += (s2, e2) =>
+			searchBox.searchInput.ActualTextEditWidget.EnterPressed += async (s2, e2) =>
 			{
 				searchResults.CloseAllChildren();
 
-				searchBox.BackgroundColor = theme.SectionBackgroundColor;
+				searchResults.AddChild(
+					new TextWidget("Searching".Localize() + "...", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+					{
+						Margin = 10
+					});
 
-				var searcher = new LuceneHelpSearch();
+				this.Invalidate();
 
-				foreach (var searchResult in searcher.Search(searchBox.searchInput.Text))
+				var searchHits = await Task.Run(() =>
+				{
+					var searcher = new LuceneHelpSearch();
+					return searcher.Search(searchBox.searchInput.Text);
+				});
+
+				searchResults.CloseAllChildren();
+
+				foreach (var searchResult in searchHits)
 				{
 					var resultsRow = new HelpSearchResultRow(searchResult, theme);
 					resultsRow.Click += this.ResultsRow_Click;
@@ -95,6 +113,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					searchResults.Border = new BorderDouble(top: 1);
 					// firstChild.Border = firstChild.Border.Clone(top: 1); - doesn't work for some reason, pushing border to parent above
 				}
+
+				scrollable.TopLeftOffset = Vector2.Zero;
 			};
 			searchBox.ResetButton.Click += (s2, e2) =>
 			{
@@ -106,12 +126,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(searchBox);
 
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			scrollable.ScrollArea.VAnchor = VAnchor.Fit;
+
+			this.AddChild(scrollable);
 			searchResults = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
-			this.AddChild(searchResults);
+			scrollable.AddChild(searchResults);
 		}
 
 		public override void OnLoad(EventArgs args)

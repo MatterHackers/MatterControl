@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var remainingOperations = ApplicationController.Instance.Graph.Operations.Values.Except(primaryActions);
 
-				return ApplicationController.Instance.GetActionMenuForSceneItem(item, sceneContext.Scene, false, view3DWidget, remainingOperations);
+				return ApplicationController.Instance.GetModifyMenu(item, sceneContext.Scene, remainingOperations);
 			};
 			toolbar.AddChild(overflowButton);
 
@@ -293,6 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (selectedItem is ComponentObject3D componentObject
 				&& componentObject.Finalized)
 			{
+				PublicPropertyEditor.AddUnlockLinkIfRequired(selectedItem, editorPanel, theme);
 				foreach (var selector in componentObject.SurfacedEditors)
 				{
 					// Get the named property via reflection
