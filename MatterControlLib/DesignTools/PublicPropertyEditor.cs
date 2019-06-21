@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 
 				// CreateEditor
-				AddUnlockLinkIfRequired(context, mainContainer, theme);
+				AddUnlockLinkIfRequired(context.item, mainContainer, theme);
 
 				GuiWidget scope = mainContainer;
 
@@ -783,10 +783,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			return tabContainer;
 		}
 
-		private void AddUnlockLinkIfRequired(PPEContext context, FlowLayoutWidget editControlsContainer, ThemeConfig theme)
+		public static void AddUnlockLinkIfRequired(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(context.item);
-			if (!context.item.Persistable
+			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(item);
+			if (!item.Persistable
 				&& !string.IsNullOrEmpty(unlockUrl))
 			{
 				editControlsContainer.AddChild(GetUnlockRow(theme, unlockUrl));
