@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using MatterHackers.Agg;
@@ -136,7 +137,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			};
 			this.AddChild(content);
 
-			this.Nodes.CollectionChanged += (s, e) => isDirty = true;
+			// Register listeners
+			this.Nodes.CollectionChanged += this.Nodes_CollectionChanged;
+		}
+
+		private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+			{
+				// Assign NodeParent when items are added
+				foreach (var item in e.NewItems)
+				{
+					if (item is TreeNode treeNode)
+					{
+						treeNode.NodeParent = this;
+					}
+				}
+			}
+
+			isDirty = true;
 		}
 
 		public FlowLayoutWidget TitleBar { get; }
@@ -189,9 +208,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnTextChanged(e);
 		}
 
+		public override void OnClosed(EventArgs e)
+		{
+			// Unregister listeners
+			this.Nodes.CollectionChanged -= this.Nodes_CollectionChanged;
+
+			base.OnClosed(e);
+		}
+
 		public void Toggle()
 		{
 			content.Visible = !content.Visible;
+		}
+
+		public IEnumerable<TreeNode> Ancestors()
+		{
+			var context = this.NodeParent;
+			while (context != null)
+			{
+				yield return context;
+
+				context = context.NodeParent;
+			}
 		}
 
 		private void RebuildContentSection()
@@ -216,7 +254,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			expandWidget.Expandable = GetNodeCount(false) != 0;
 
 			isDirty = false;
-
 		}
 
 		public override string ToString()
