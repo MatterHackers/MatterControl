@@ -73,13 +73,11 @@ namespace MatterHackers.MatterControl
 			AddGuides();
 			CreateMousePage();
 			CreateKeyBindingsPage();
-
-			searcher = new LuceneHelpSearch();
 		}
 
 		protected override void PerformSearch(string filter)
 		{
-			searchHits = new HashSet<string>(searcher.Search(filter).Select(d => d.Path));
+			searchHits = new HashSet<string>(HelpIndex.Search(filter).Select(d => d.Path));
 
 			base.PerformSearch(filter);
 		}
@@ -355,7 +353,6 @@ namespace MatterHackers.MatterControl
 		private TreeNode rootNode;
 
 		private Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
-		private LuceneHelpSearch searcher;
 		private IEnumerable<HelpSearchResult> searchResults;
 		private HashSet<string> searchHits;
 
