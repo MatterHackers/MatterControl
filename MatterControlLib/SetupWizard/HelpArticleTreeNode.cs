@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl
@@ -34,11 +35,12 @@ namespace MatterHackers.MatterControl
 	public class HelpArticleTreeNode : TreeNode
 	{
 		public HelpArticleTreeNode(HelpArticle helpArticle, ThemeConfig theme)
-			: base (theme, useIcon: false)
+			: base (theme)
 		{
 			this.HelpArticle = helpArticle;
 			this.Text = helpArticle.Name;
 			this.Tag = helpArticle;
+			this.Image = AggContext.StaticData.LoadIcon("fa-text-file_16.png");
 		}
 
 		public HelpArticle HelpArticle { get; }
