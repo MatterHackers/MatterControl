@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Markdig.Agg;
+using MatterControlLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -72,15 +73,25 @@ namespace MatterHackers.MatterControl
 			AddGuides();
 			CreateMousePage();
 			CreateKeyBindingsPage();
+
+			searcher = new LuceneHelpSearch();
+		}
+
+		protected override void PerformSearch(string filter)
+		{
+			searchHits = new HashSet<string>(searcher.Search(filter).Select(d => d.Path));
+
+			base.PerformSearch(filter);
 		}
 
 		protected override bool FilterTree(TreeNode context, string filter, bool parentVisible, List<TreeNode> matches)
 		{
 			// Filter against make/model for printers or make for top level nodes
-			string itemText = context.Text;
+			string path = (context as HelpArticleTreeNode)?.HelpArticle.Path;
 
-			bool hasFilterText = itemText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) != -1;
-			context.Visible = hasFilterText || parentVisible;
+			bool isSearchMatch = searchHits.Contains(path);
+
+			context.Visible = isSearchMatch || parentVisible;
 
 			if (context.Visible
 				&& context.NodeParent != null)
@@ -91,7 +102,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			if (context.NodeParent != null
-				&& hasFilterText)
+				&& isSearchMatch)
 			{
 				matches.Add(context);
 			}
@@ -100,10 +111,10 @@ namespace MatterHackers.MatterControl
 
 			foreach (var child in context.Nodes)
 			{
-				childMatched |= FilterTree(child, filter, hasFilterText || parentVisible, matches);
+				childMatched |= FilterTree(child, filter, isSearchMatch || parentVisible, matches);
 			}
 
-			bool hasMatch = childMatched || hasFilterText;
+			bool hasMatch = childMatched || isSearchMatch;
 
 			if (hasMatch)
 			{
@@ -344,6 +355,9 @@ namespace MatterHackers.MatterControl
 		private TreeNode rootNode;
 
 		private Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
+		private LuceneHelpSearch searcher;
+		private IEnumerable<HelpSearchResult> searchResults;
+		private HashSet<string> searchHits;
 
 		private TreeNode ProcessTree(HelpArticle container)
 		{

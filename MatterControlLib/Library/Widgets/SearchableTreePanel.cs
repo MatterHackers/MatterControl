@@ -41,8 +41,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class SearchableTreePanel : FlowLayoutWidget
 	{
-		private SearchInputBox searchBox;
-
+		protected SearchInputBox searchBox;
 		protected TreeView treeView;
 		protected Splitter horizontalSplitter;
 		protected ThemeConfig theme;
@@ -100,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 				else
 				{
-					this.PerformSearch();
+					this.PerformSearch(searchBox.Text);
 				}
 			};
 
@@ -145,15 +144,15 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			treeView.AddChild(contentPanel);
 		}
 
-		protected virtual void PerformSearch()
+		protected virtual void PerformSearch(string filter)
 		{
 			var matches = new List<TreeNode>();
 
-			Console.WriteLine("Filter for: " + searchBox.Text);
+			Console.WriteLine("Filter for: " + filter);
 
 			foreach (var rootNode in contentPanel.Children.OfType<TreeNode>())
 			{
-				FilterTree(rootNode, searchBox.Text, false, matches);
+				FilterTree(rootNode, filter, false, matches);
 			}
 
 			if (matches.Count == 1)
