@@ -972,7 +972,6 @@ namespace MatterHackers.MatterControl
 						{
 							OperationType = typeof(AlignObject3D),
 							TitleResolver = () => "Dual Extrusion Align".Localize(),
-							HelpTextResolver = () => "Reset parts to modeled positions".Localize(),
 							Action = (sceneContext) =>
 							{
 								var scene = sceneContext.Scene;
