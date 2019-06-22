@@ -2503,7 +2503,8 @@ namespace MatterHackers.MatterControl
 						SourceItem = history.NewPlatingItem()
 					});
 
-				this.OpenWorkspace(workspace);
+				// Open but no need to save
+				this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
 			}
 		}
 
@@ -4068,6 +4069,9 @@ Support and tutorials:
 			{
 				try
 				{
+					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
+					await applicationController.RestoreUserTabs();
+
 					// Batch startup actions
 					await applicationController.Tasks.Execute(
 						"Finishing Startup".Localize(),
@@ -4099,8 +4103,6 @@ Support and tutorials:
 						await applicationController.Tasks.Execute(task.Title, null, task.Action);
 					}
 
-					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
-					await applicationController.RestoreUserTabs();
 
 					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
 					{

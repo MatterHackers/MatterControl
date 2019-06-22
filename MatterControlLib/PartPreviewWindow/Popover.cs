@@ -47,15 +47,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		/// <param name="arrowDirection">The direction the popover arrow should point</param>
 		/// <param name="padding">The padding of the control, adjusted internally to account for arrow region</param>
 		/// <param name="notchSize">The size of the arrow notch</param>
-		/// <param name="p2">The arrow offset in x or y given the specified arrow</param>
-		public Popover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
+		/// <param name="arrowOffset">The arrow offset in x or y given the specified arrow</param>
+		public Popover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int arrowOffset, bool autoBorderColor = true)
 			: base (FlowDirection.TopToBottom)
 		{
 			this.originalPadding = padding;
 			this.NotchSize = notchSize;
 			this.ArrowDirection = arrowDirection;
-			this.ArrowOffset = p2;
 			this.autoBorderColor = autoBorderColor;
+
+			_arrowOffset = arrowOffset;
 		}
 
 		public virtual Color TagColor
@@ -115,10 +116,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabStroke = new Stroke(tabShape);
 		}
 
+		private int _arrowOffset;
+
 		/// <summary>
 		/// Notch offset. See https://photos.app.goo.gl/YdTiehf6ih7fSoDA9 for point diagram
 		/// </summary>
-		public int ArrowOffset { get; protected set; }
+		public int ArrowOffset
+		{
+			get => _arrowOffset;
+			set
+			{
+				if (_arrowOffset != value)
+				{
+					_arrowOffset = value;
+					this.RebuildShape();
+				}
+			}
+		}
 
 		private bool autoBorderColor;
 		private ArrowDirection _arrow;
