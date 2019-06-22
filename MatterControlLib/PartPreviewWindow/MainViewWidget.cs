@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterControlLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -83,18 +84,76 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			searchButton.Click += SearchButton_Click;
 			extensionArea.AddChild(searchButton);
 
-			void SearchButton_Click(object sender, EventArgs e)
+			async void SearchButton_Click(object sender, EventArgs e)
 			{
 				if (searchPanel == null)
 				{
-					searchPanel = new SearchPanel(this.TabControl, searchButton, theme);
-					searchPanel.Closed += SearchPanel_Closed;
+					void ShowSearchPanel()
+					{
+						searchPanel = new SearchPanel(this.TabControl, searchButton, theme);
+						searchPanel.Closed += SearchPanel_Closed;
 
-					var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-					systemWindow.ShowRightSplitPopup(
-						new MatePoint(searchButton),
-						new MatePoint(searchPanel),
-						borderWidth: 0);
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowRightSplitPopup(
+							new MatePoint(searchButton),
+							new MatePoint(searchPanel),
+							borderWidth: 0);
+					}
+
+					if (HelpIndex.IndexExists)
+					{
+						ShowSearchPanel();
+					}
+					else
+					{
+						searchButton.Enabled = false;
+
+						try
+						{
+							// Show popover
+							var popover = new Popover(ArrowDirection.Up, 7, 5, 0)
+							{
+								TagColor = theme.AccentMimimalOverlay
+							};
+
+							popover.AddChild(new TextWidget("Preparing help".Localize() + "...", pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor));
+
+							popover.ArrowOffset = (int)(popover.Width - (searchButton.Width / 2));
+
+							this.Parents<SystemWindow>().FirstOrDefault().ShowPopover(
+								new MatePoint(searchButton)
+								{
+									Mate = new MateOptions(MateEdge.Right, MateEdge.Bottom),
+									AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom),
+									Offset = new RectangleDouble(12, 0, 12, 0)
+								},
+								new MatePoint(popover)
+								{
+									Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
+									AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
+								});
+
+							await Task.Run(async () =>
+							{
+								// Start index generation
+								await HelpIndex.RebuildIndex();
+
+								UiThread.RunOnIdle(() =>
+								{
+									// Close popover
+									popover.Close();
+
+									// Continue to original task
+									ShowSearchPanel();
+								});
+							});
+						}
+						catch
+						{
+						}
+
+						searchButton.Enabled = true;
+					}
 				}
 				else
 				{
