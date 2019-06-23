@@ -328,6 +328,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						matrixAndMeshArgs.Append($" \"{fileName}\" ");
 					}
 
+					// Map from PrinterSettings to PrintSettings
+					if (PrinterSettings.ExternalSlicer != null)
+					{
+						var children = stlFileLocations.Select(s => new Object3D()
+						{
+							MeshPath = s.fileName,
+							Matrix = s.matrix
+						});
+
+						using (var outputStream = File.OpenWrite(gcodeFilePath))
+						{
+							PrinterSettings.ExternalSlicer.Slice(
+								new Object3D(children),
+								printer.Settings,
+								outputStream);
+						}
+
+						return Task.FromResult(true);
+					}
+
 					printer.EngineMappingsMatterSlice.WriteSliceSettingsFile(
 						configFilePath,
 						new[]
