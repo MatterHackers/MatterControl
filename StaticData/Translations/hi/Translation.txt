@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    • कागज निकालें
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1. दाईं ओर 'नियंत्रण' टैब चुनें
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2. अंशांकन अनुभाग के लिए देखें (नीचे चित्र)
-
 English:- none -
 Translated:- कोई नहीं -
 
@@ -38,7 +32,7 @@ English:°
 Translated:°
 
 English:°C
-Translated:सी
+Translated:डिग्री सेल्सियस
 
 English:2D Layer View
 Translated:2 डी परत देखें
@@ -72,6 +66,9 @@ Translated:एक अमेरिकी या कनाडाई मोबा�
 
 English:A valid email address
 Translated:एक मान्य ईमेल पता
+
+English:Abort Calibration
+Translated:अंशांकन को निरस्त करें
 
 English:Abort Print
 Translated:गर्भपात प्रिंट
@@ -169,6 +166,9 @@ Translated:सभी हीटर
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:MatterControl को समतल करने और प्रिंट रद्द करने में सुधार करने के लिए लंबी लाइनों को विभाजित करने की अनुमति दें। प्रिंटर के लिए महत्वपूर्ण है कि स्तर से काफी बाहर हैं।
 
+English:Allows for the repositioning of the rotation origin
+Translated:रोटेशन की उत्पत्ति के स्थान के लिए अनुमति देता है
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:आपको एक्स अक्ष पर फिट को लागू करने और बंद करने की अनुमति देता है।
 
@@ -184,8 +184,14 @@ Translated:अल्फा
 English:Alpha: The in development version of MatterControl
 Translated:अल्फा: मैटरकंट्रोल के विकास संस्करण में
 
+English:Already Calibrated
+Translated:पहले से ही कैलिब्रेटेड
+
 English:Already Loaded
 Translated:पहले से लोड है
+
+English:An unexpected error occurred during reload
+Translated:पुनः लोड के दौरान एक अप्रत्याशित त्रुटि हुई
 
 English:Anchor
 Translated:लंगर
@@ -214,6 +220,9 @@ Translated:लागू करें
 English:Apply leveling to G-Code during export
 Translated:निर्यात के दौरान जी-कोड पर लेवलिंग लागू करें
 
+English:Are you sure you want to abort calibration?
+Translated:क्या आप वाकई अंशांकन को समाप्त करना चाहते हैं?
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:क्या आप वाकई वर्तमान प्रिंट को समाप्त करना चाहते हैं और MatterControl को बंद करना चाहते हैं?
 
@@ -235,8 +244,11 @@ Translated:क्या आप द्वारा साइन आउट कि�
 English:Arrange All Parts
 Translated:सभी भागों को व्यवस्थित करें
 
+English:Array
+Translated:सरणी
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:जैसे ही एक परत को प्रिंट करने का समय घटता है, पंखे की गति को उसकी अधिकतम गति तक बढ़ाया जाएगा।
+Translated:जैसे-जैसे किसी परत को प्रिंट करने का समय घटता जाता है, पंखे की गति को उसकी अधिकतम गति तक बढ़ाया जाएगा।
 
 English:Ascending
 Translated:आरोही
@@ -246,9 +258,6 @@ Translated:कनेक्ट करने का प्रयास कर र�
 
 English:ATX Power Control
 Translated:ATX पावर कंट्रोल
-
-English:Auto Calibrate
-Translated:ऑटो अंशांकन
 
 English:Auto Connect
 Translated:स्वतः जुड़ना
@@ -308,7 +317,7 @@ English:Bed PID Settings
 Translated:बेड पीआईडी सेटिंग्स
 
 English:Bed Remove Part Temperature
-Translated:बैड रिमूवल पार्ट टेम्परेचर
+Translated:बैड निकालें पार्ट तापमान
 
 English:Bed Shape
 Translated:बिस्तर का आकार
@@ -342,6 +351,9 @@ Translated:बीटा
 
 English:Beta: The release candidate version of MatterControl
 Translated:बीटा: MatterControl का रिलीज़ उम्मीदवार संस्करण
+
+English:Booleans
+Translated:बूलियन्स
 
 English:Bottom Solid Infill
 Translated:निचला ठोस संक्रमण
@@ -379,8 +391,14 @@ Translated:सभी कमांड के लिए एक मानक रि
 English:Calculate Path
 Translated:पथ की गणना करें
 
+English:Calibrate Printer
+Translated:प्रिंटर को कैलिब्रेट करें
+
 English:Calibration
 Translated:कैलिब्रेशन
+
+English:Calibration Face
+Translated:अंशांकन चेहरा
 
 English:Calibration Faces
 Translated:अंशांकन चेहरे
@@ -388,8 +406,14 @@ Translated:अंशांकन चेहरे
 English:Calibration Files
 Translated:अंशांकन फ़ाइलें
 
+English:Calibration Mode
+Translated:अंशांकन मोड
+
 English:Calibration Parts
 Translated:अंशांकन भागों
+
+English:Calibration Print
+Translated:अंशांकन प्रिंट
 
 English:Calibration Tab
 Translated:अंशांकन टैब
@@ -454,9 +478,6 @@ Translated:Webservice के साथ जाँच हो रही है
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:प्रत्येक प्रिंट से पहले जांचता है कि परत की ऊंचाई नोजल व्यास से कम है (फिलामेंट आसंजन के लिए महत्वपूर्ण)
 
-English:Choose the calibration you would like to perform.
-Translated:वह अंशांकन चुनें, जिसे आप निष्पादित करना चाहते हैं।
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:प्रिंटर की एलसीडी स्क्रीन पर प्रिंट प्रगति दिखाने के लिए कमांड चुनें, अगर यह एक है।
 
@@ -481,9 +502,6 @@ Translated:चयन साफ़ करें
 English:Clear ZOffset
 Translated:साफ ZOffset
 
-English:Click 'Done' to close this window.
-Translated:इस विंडो को बंद करने के लिए 'संपन्न' पर क्लिक करें।
-
 English:Click 'Next' to continue.
 Translated:जारी रखने के लिए आगे दबाएँ।
 
@@ -496,20 +514,17 @@ Translated:पॉलीगोन बंद करें
 English:Cloud Library
 Translated:क्लाउड लाइब्रेरी
 
+English:Coarse
+Translated:मोटा
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:मोटे अंशांकन पूरा, हम अब सटीकता में सुधार करने के लिए एक सामान्य अंशांकन करेंगे।
-
-English:Coarse Calibration: If your printer is way off
-Translated:मोटे अंशांकन: यदि आपका प्रिंटर बंद है
 
 English:Coast At End
 Translated:अंत में तट
 
 English:Collapse All
 Translated:सभी को संकुचित करें
-
-English:Collect data
-Translated:डेटा इकट्ठा करना
 
 English:Color
 Translated:रंग
@@ -528,6 +543,9 @@ Translated:संकलित मॉडल
 
 English:Complete Individual Objects
 Translated:व्यक्तिगत वस्तुओं को पूरा करें
+
+English:Completed
+Translated:पूरा कर लिया है
 
 English:Cone
 Translated:शंकु
@@ -552,9 +570,6 @@ Translated:अपने नए पासवर्ड की पुष्टि �
 
 English:Confirm your Password
 Translated:अपने पासवर्ड की पुष्टि करें
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:अपने प्रिंटर से कनेक्ट होने पर बधाई। अपना पहला प्रिंट शुरू करने से पहले हमें एक सरल अंशांकन प्रक्रिया चलाने की आवश्यकता है।
 
 English:Congratulations Print Complete
 Translated:बधाई प्रिंट प्रिंट
@@ -598,6 +613,9 @@ Translated:कनेक्शन सफल हुआ
 English:Connection timed out
 Translated:कनेक्शन का समय समाप्त
 
+English:Connection Timeout
+Translated:कनेक्शन का समय समाप्त
+
 English:Continue
 Translated:जारी रहना
 
@@ -630,6 +648,9 @@ Translated:कॉपी और पुनर्गणना
 
 English:Copy everything but hardware specific calibration settings
 Translated:सब कुछ कॉपी करें लेकिन हार्डवेयर विशिष्ट अंशांकन सेटिंग्स
+
+English:Copy Mesh
+Translated:मेष को कॉपी करें
 
 English:Copy Printers
 Translated:प्रिंटर की प्रतिलिपि बनाएँ
@@ -693,9 +714,6 @@ Translated:स्कर्ट बनाएं
 
 English:Create Support
 Translated:समर्थन बनाएँ
-
-English:Create Wipe Tower
-Translated:वाइप टॉवर बनाएं
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:प्रिंट के आधार से जुड़ी एक ब्रिम बनाता है। एबीएस (और अन्य वार-प्रोन प्लास्टिक) को प्रिंट करते समय युद्ध को रोकने के लिए उपयोगी है क्योंकि यह बिस्तर का पालन करने में मदद करता है।
@@ -874,6 +892,9 @@ Translated:डाउनलोड कर रहा है ...
 English:Downloads
 Translated:डाउनलोड
 
+English:Dual Extrusion Align
+Translated:दोहरी एक्सट्रूज़न संरेखित करें
+
 English:Duplicate
 Translated:प्रतिलिपि
 
@@ -943,6 +964,9 @@ Translated:पुनर्प्राप्ति सक्षम करें
 English:Enable Retractions
 Translated:प्रतिकार सक्षम करें
 
+English:Enable Software Leveling
+Translated:सॉफ़्टवेयर लेवलिंग सक्षम करें
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:इसे सक्षम करें यदि आपके प्रिंटर में G30 (स्वचालित बिस्तर जांच) के लिए हार्डवेयर समर्थन है और आप जांच पदों को मैन्युअल रूप से मापने के बजाय इसका उपयोग करना चाहते हैं।
 
@@ -1003,6 +1027,9 @@ Translated:त्रुटि लोड हो रही है छवि
 English:Error Reported
 Translated:त्रुटि रिपोर्ट की गई
 
+English:Error saving file
+Translated:फ़ाइल सहेजने में त्रुटि
+
 English:Estimated Cost
 Translated:अनुमानित लागत
 
@@ -1030,9 +1057,6 @@ Translated:प्रयोगात्मक
 English:Export
 Translated:निर्यात
 
-English:Export All Settings
-Translated:सभी सेटिंग्स निर्यात करें
-
 English:Export Bed Leveling Data
 Translated:निर्यात बेड लेवलिंग डेटा
 
@@ -1048,11 +1072,20 @@ Translated:निर्यात त्रुटि
 English:Export File
 Translated:फ़ाइल निर्यात करें
 
+English:Export G-Code
+Translated:निर्यात जी-कोड
+
 English:Export Part Sheet
 Translated:निर्यात शीट
 
+English:Export Printer
+Translated:निर्यात प्रिंटर
+
 English:Export selection to
 Translated:के लिए निर्यात का चयन करें
+
+English:Export X3G
+Translated:X3G निर्यात करें
 
 English:Exporting
 Translated:निर्यात
@@ -1147,8 +1180,14 @@ Translated:फिलामेंट लोड हो गया है
 English:Filament Length
 Translated:फिलामेंट की लंबाई
 
+English:Filament Loaded
+Translated:फिलामेंट लोडेड
+
 English:Filament Speed
 Translated:फिलामेंट की गति
+
+English:Filament Unloaded
+Translated:फिलामेंट अनलोड किया गया
 
 English:Filament Volume
 Translated:फिलामेंट वॉल्यूम
@@ -1177,8 +1216,8 @@ Translated:जारी रखने के लिए अंत में 'अ�
 English:Find and create supports where needed
 Translated:जहां जरूरत हो वहां सपोर्ट ढूंढें और बनाएं
 
-English:Fine Calibration: When you want that extra precision
-Translated:ठीक अंशांकन: जब आप चाहते हैं कि अतिरिक्त परिशुद्धता
+English:Fine
+Translated:ठीक
 
 English:Finish
 Translated:समाप्त
@@ -1354,9 +1393,6 @@ Translated:मैक्रो को एक नाम दें
 English:Group
 Translated:समूह
 
-English:Guides
-Translated:गाइड
-
 English:Guides and Articles
 Translated:मार्गदर्शक और लेख
 
@@ -1371,6 +1407,9 @@ Translated:हाफ वेज
 
 English:Hardware
 Translated:हार्डवेयर
+
+English:Hardware Error
+Translated:हार्डवेयर त्रुटि
 
 English:Has Fan
 Translated:फैन है
@@ -1405,9 +1444,6 @@ Translated:क्या MatterControl आपको अपने प्रिं�
 English:Heat Before Homing
 Translated:होमिंग से पहले हीट
 
-English:Heat the bed
-Translated:बिस्तर गरम करना
-
 English:Heated Bed
 Translated:गर्म बिस्तर
 
@@ -1417,14 +1453,14 @@ Translated:हीटिंग बिस्तर
 English:Heating Nozzle
 Translated:हीटिंग नोजल
 
+English:Heating the printer
+Translated:प्रिंटर को गर्म करना
+
 English:Height
 Translated:ऊंचाई
 
 English:Help
 Translated:मदद
-
-English:Here is what we are going to do:
-Translated:यहाँ हम क्या करने जा रहे हैं:
 
 English:High Precision
 Translated:उच्च परिशुद्धता
@@ -1437,9 +1473,6 @@ Translated:तापमान पकड़े
 
 English:Home
 Translated:होम
-
-English:Home the printer
-Translated:प्रिंटर को होम करें
 
 English:Home X
 Translated:होम एक्स
@@ -1462,8 +1495,8 @@ Translated:घर वापस आना
 English:Homing Offset
 Translated:होमिंग ऑफ़सेट
 
-English:Homing The Printer
-Translated:होमिंग द प्रिंटर
+English:Homing the printer
+Translated:प्रिंटर को होम करना
 
 English:Hotend
 Translated:Hotend
@@ -1486,9 +1519,6 @@ Translated:गर्म तापमान:
 English:How can we improve?
 Translated:हम कैसे सुधार सकते हैं?
 
-English:How to succeed with MatterControl
-Translated:MatterControl के साथ कैसे सफल हो
-
 English:Hz
 Translated:हर्ट्ज
 
@@ -1506,12 +1536,6 @@ Translated:यदि एक्सट्रूसर लंबे समय स�
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:यदि किसी परत को प्रिंट करने का समय इससे कम है, तो पंखा अपनी न्यूनतम गति से चालू हो जाएगा। परत की अवधि घटने के बाद यह अपनी अधिकतम गति तक बढ़ जाएगा।
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:यदि आप भविष्य में लेवलिंग को फिर से जांचना चाहते हैं:
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:यदि आप भविष्य में अपनी जांच को फिर से जांचना चाहते हैं:
 
 English:Image
 Translated:छवि
@@ -1573,14 +1597,14 @@ Translated:Infill प्रकार
 English:Inflate Path
 Translated:सूजन पथ
 
+English:Initial (Recommended)
+Translated:प्रारंभिक (अनुशंसित)
+
 English:Initial Layer Speed
 Translated:प्रारंभिक परत की गति
 
 English:Initial Layers
 Translated:प्रारंभिक परतें
-
-English:Initial Printer Setup
-Translated:प्रारंभिक प्रिंटर सेटअप
 
 English:Initializing hardware...
 Translated:हार्डवेयर को प्रारंभ कर रहा है ...
@@ -1630,6 +1654,9 @@ Translated:चौराहा
 English:Invalid Client Token
 Translated:अमान्य क्लाइंट टोकन
 
+English:Invalid printer selection
+Translated:अमान्य प्रिंटर चयन
+
 English:Inventory
 Translated:इन्वेंटरी
 
@@ -1659,9 +1686,6 @@ Translated:आइटम को STL के रूप में निर्या
 
 English:Item not Found
 Translated:वस्तु नहीं मिली
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:यह आपके मौजूदा प्रिंटर सेटिंग्स को अपने मैटरहैकर्स खाते में कॉपी करने का समय है। एक बार कॉपी करने के बाद, जब भी आप MatterControl पर हस्ताक्षर करेंगे, तो ये प्रिंटर उपलब्ध होंगे। कॉपी किए गए प्रिंटर केवल तब ही उपलब्ध होंगे जब साइन इन नहीं किया जाएगा।
 
 English:Jerk Velocity
 Translated:झटका वेग
@@ -1706,7 +1730,7 @@ English:layers or mm
 Translated:परतों या मिमी
 
 English:Leave this as 0 to allow automatic calculation of extrusion width.
-Translated:एक्सट्रूज़न चौड़ाई की स्वचालित गणना की अनुमति देने के लिए इसे 0 पर छोड़ दें
+Translated:एक्सट्रूज़न चौड़ाई की स्वचालित गणना की अनुमति देने के लिए इसे 0 के रूप में छोड़ दें।
 
 English:left click
 Translated:बाया क्लिक
@@ -1731,12 +1755,6 @@ Translated:शुरू करने से पहले आपको दिख�
 
 English:Letter
 Translated:पत्र
-
-English:Level X Carriage
-Translated:स्तर X गाड़ी
-
-English:Level X Carriage Page
-Translated:स्तर X कैरिज पेज
 
 English:Leveling
 Translated:लेवलिंग
@@ -1783,26 +1801,29 @@ Translated:Lithophane
 English:Load
 Translated:भार
 
+English:Load Extruder
+Translated:लोड बाहर निकालना
+
+English:Load Extruder {0}
+Translated:लोड एक्सट्रूडर {0}
+
 English:Load filament
 Translated:फिलामेंट लोड करें
 
 English:Load Filament
 Translated:लोड फिलामेंट
 
-English:Load Filament 2
-Translated:लोड फिलामेंट २
-
 English:Load Filament Length
 Translated:लोड फिलामेंट लंबाई
+
+English:Load Filament to continue
+Translated:जारी रखने के लिए फिलामेंट लोड करें
 
 English:Load Material
 Translated:लोड सामग्री
 
 English:Loading
 Translated:लोड हो रहा है
-
-English:Loading Bed
-Translated:बिस्तर लोड हो रहा है
 
 English:Loading Filament
 Translated:लोड हो रहा है रेशा
@@ -1876,14 +1897,14 @@ Translated:सुनिश्चित करें कि परिधि प�
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:आंशिक infill के शीर्ष पर पहली परत बनाएं ब्रिजिंग के लिए गति और पंखे का उपयोग करें।
 
+English:Manifold
+Translated:विविध
+
 English:Manual Movement Speeds
 Translated:मैनुअल मूवमेंट की गति
 
 English:Manually Configure Connection
 Translated:मैन्युअल रूप से कॉन्फ़िगर कनेक्शन
-
-English:Manually measure the extruder at the center
-Translated:केंद्र में बाहर निकालना यंत्र को मैन्युअल रूप से मापें
 
 English:Markdown Edit
 Translated:मार्कडाउन एडिट
@@ -1903,6 +1924,9 @@ Translated:सामग्री
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:MatterControl सहायता
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl को टीम द्वारा MatterHackers और अन्य ओपन सोर्स सॉफ़्टवेयर में संभव बनाया गया है
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl अब प्रिंटर का स्वत: प�
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: फर्मवेयर फ़ाइल का चयन करें
+
+English:MatterHackers Internal Use
+Translated:मैटरहैकर आंतरिक उपयोग
 
 English:Max Acceleration
 Translated:अधिकतम त्वरण
@@ -1948,8 +1975,14 @@ Translated:मध्यम परिशुद्धता
 English:Merge Overlapping Lines
 Translated:मर्ज ओवरलैपिंग लाइन्स
 
+English:Merge Vertices
+Translated:लंबवत विलय
+
 English:Mesh
 Translated:जाल
+
+English:Mesh Modifiers
+Translated:मेष संशोधक
 
 English:Message
 Translated:संदेश
@@ -2098,6 +2131,9 @@ Translated:नई डिजाइन
 English:New Password
 Translated:नया पासवर्ड
 
+English:New Printer Name
+Translated:नया प्रिंटर नाम
+
 English:New updates are ready to install
 Translated:नए अपडेट इंस्टॉल करने के लिए तैयार हैं
 
@@ -2134,11 +2170,17 @@ Translated:प्रिंटर बेड की सीमा के भीत�
 English:No Printer Selected
 Translated:कोई प्रिंटर चयनित नहीं है
 
+English:No results found
+Translated:कोई परिणाम नहीं मिला
+
 English:None
 Translated:कोई नहीं
 
-English:Normal Calibration: Start here
-Translated:सामान्य अंशांकन: यहां से शुरू करें
+English:Normal
+Translated:साधारण
+
+English:Normal (Recommended)
+Translated:सामान्य (अनुशंसित)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:आम तौर पर छवि को किनारे तक विस्तारित किया जाता है। यह छवि के वजन को नेत्रहीन रूप से केंद्रित करने की कोशिश करेगा।
@@ -2172,6 +2214,9 @@ Translated:नोजल 2 इनसेट
 
 English:Nozzle Calibration
 Translated:नोजल कैलिब्रेशन
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:नोजल कैलिब्रेशन हॉटेंड्स के बीच की दूरी को मापता है।
 
 English:Nozzle Diameter
 Translated:नोजल व्यास
@@ -2308,6 +2353,9 @@ Translated:हाल ही में खुला
 English:OpenSCAD not installed
 Translated:OpenSCAD स्थापित नहीं है
 
+English:Optional
+Translated:ऐच्छिक
+
 English:Options
 Translated:विकल्प
 
@@ -2330,7 +2378,7 @@ English:Outlines
 Translated:रूपरेखा
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:प्रिंट की केवल पहली परत का आउटपुट। उत्कीर्णन या काटने जैसे अनुप्रयोगों के लिए विशेष रूप से उपयोगी gcode डेटा।
+Translated:प्रिंट की केवल पहली परत का आउटपुट। उत्कीर्णन या काटने जैसे अनुप्रयोगों के लिए विशेष रूप से gcode डेटा आउटपुट के लिए उपयोगी है।
 
 English:Outside Perimeter
 Translated:परिधि के बाहर
@@ -2344,6 +2392,9 @@ Translated:आगे निकलना
 English:Overhang Angle
 Translated:ओवरहांग कोण
 
+English:Overview
+Translated:अवलोकन
+
 English:Pan
 Translated:कड़ाही
 
@@ -2352,9 +2403,6 @@ Translated:पैन व्यू
 
 English:Part Cooling Fan
 Translated:पार्ट कूलिंग फैन
-
-English:Part History
-Translated:भाग इतिहास
 
 English:Password
 Translated:पारण शब्द
@@ -2367,6 +2415,9 @@ Translated:पासवर्ड अपडेट पूर्ण
 
 English:Paste
 Translated:चिपकाएं
+
+English:Path
+Translated:पथ
 
 English:Pattern Spacing
 Translated:पैटर्न रिक्ति
@@ -2398,8 +2449,8 @@ Translated:परिधि
 English:Permission Denied
 Translated:अनुमति नहीं मिली
 
-English:Pick the most balanced result for each axis.
-Translated:प्रत्येक अक्ष के लिए सबसे संतुलित परिणाम चुनें।
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:पैड को चुनें जो आधार के साथ सबसे अधिक संरेखित है, वह पैड जो सबसे अधिक संतुलन और केंद्रित है।
 
 English:PID Settings
 Translated:पीआईडी सेटिंग्स
@@ -2479,6 +2530,9 @@ Translated:बहुभुज
 English:Port
 Translated:बंदरगाह
 
+English:Port In Use
+Translated:पोर्ट इन यूज़
+
 English:Port not available
 Translated:पोर्ट उपलब्ध नहीं है
 
@@ -2502,6 +2556,12 @@ Translated:शक्ति नियंत्रण
 
 English:Preheat
 Translated:पहले से गरम करना
+
+English:Preparing help
+Translated:मदद तैयार करना
+
+English:Preparing help index
+Translated:हेल्प इंडेक्स तैयार करना
 
 English:Preparing To Print
 Translated:छापने की तैयारी
@@ -2542,8 +2602,8 @@ Translated:प्रिंट इतिहास
 English:Print Leveling
 Translated:प्रिंट लेवलिंग
 
-English:Print Leveling Overview
-Translated:प्रिंट लेवलिंग ओवरव्यू
+English:Print Leveling measures the plane of the bed.
+Translated:प्रिंट लेवलिंग बिस्तर के विमान को मापता है।
 
 English:Print Leveling Wizard
 Translated:प्रिंट लेवलिंग विजार्ड
@@ -2556,9 +2616,6 @@ Translated:प्रिंट कतार
 
 English:Print Recovery
 Translated:प्रिंट वसूली
-
-English:Print the calibration object
-Translated:अंशांकन वस्तु को प्रिंट करें
 
 English:Print Time
 Translated:प्रिंट समय
@@ -2583,6 +2640,9 @@ Translated:प्रिंटर SLA है
 
 English:Printer Name
 Translated:प्रिंटर का नाम
+
+English:Printer name already exists
+Translated:प्रिंटर नाम पहले से मौजूद है
 
 English:Printer name cannot be blank
 Translated:प्रिंटर का नाम रिक्त नहीं हो सकता
@@ -2620,11 +2680,8 @@ Translated:मुद्रण की गति
 English:Printing: {0}
 Translated:मुद्रण: {0}
 
-English:Probe Calibration
-Translated:जांच कैलिब्रेशन
-
-English:Probe Calibration Overview
-Translated:जांच अंशांकन अवलोकन
+English:Probe at bed center
+Translated:बिस्तर केंद्र पर जांच
 
 English:Probe Has Been Calibrated
 Translated:जांच की गई है
@@ -2634,9 +2691,6 @@ Translated:जांच शुरू
 
 English:Probe Offset Sample Point
 Translated:जांच ऑफसेट नमूना बिंदु
-
-English:Probe the bed at the center
-Translated:केंद्र में बिस्तर की जांच करें
 
 English:Progress Reporting
 Translated:प्रगति रिपोर्टिंग
@@ -2731,6 +2785,9 @@ Translated:रिहाई
 English:Release Notes
 Translated:रिलीज नोट्स
 
+English:Reload Failed
+Translated:पुनः लोड किया गया
+
 English:Reloading
 Translated:पुन: लोड
 
@@ -2748,6 +2805,9 @@ Translated:सभी ऑटो जेनरेट किए गए सपोर�
 
 English:Remove Items?
 Translated:आइटम हटाएँ?
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:बिस्तर से अंशांकन भाग निकालें और प्रत्येक अक्ष में पैड के किनारों की तुलना करें।
 
 English:Remove the paper
 Translated:कागज निकालो
@@ -2768,10 +2828,13 @@ English:Report a Bug
 Translated:गलती सूचित करें
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:फ़र्मवेयर से अनुरोध करें कि सीधे एक्सट्रूडर आंदोलनों को सीधे निर्दिष्ट करने के बजाय पीछे हटने का काम करें।
+Translated:फ़र्मवेयर से अनुरोध करें कि सीधे एक्सट्रूडर आंदोलनों को सीधे निर्दिष्ट करने के बजाय पीछे हटने का कार्य करें
 
 English:Require Leveling To Print
 Translated:प्रिंट करने के लिए लेवलिंग की आवश्यकता होती है
+
+English:Required
+Translated:अपेक्षित
 
 English:Reset
 Translated:रीसेट
@@ -2805,9 +2868,6 @@ Translated:पहले जैसा कर देना
 
 English:Restore Settings
 Translated:सेटिंग्स को पुनर्स्थापित
-
-English:Restore your current bed, after all calibration is complete
-Translated:सभी अंशांकन पूर्ण होने के बाद, अपने वर्तमान बिस्तर को पुनर्स्थापित करें
 
 English:Resume
 Translated:बायोडाटा
@@ -2917,8 +2977,8 @@ Translated:सेलफिश कम्युनिकेशन
 English:Sample Points
 Translated:नमूना अंक
 
-English:Sample the bed at {0} points
-Translated:{0} बिंदुओं पर बिस्तर का नमूना लें
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:बिस्तर पर जांच दूरी निर्धारित करने के लिए बिस्तर केंद्र की स्थिति का नमूना
 
 English:Sampled Positions
 Translated:सम्‍मानित पद
@@ -2971,6 +3031,9 @@ Translated:Google पर खोजें
 English:Search Results
 Translated:खोज परिणाम
 
+English:Searching
+Translated:खोज कर
+
 English:seconds
 Translated:सेकंड
 
@@ -2986,12 +3049,6 @@ Translated:एक नया गंतव्य चुनें
 English:Select a printer to continue
 Translated:जारी रखने के लिए एक प्रिंटर का चयन करें
 
-English:Select Make
-Translated:बनाओ का चयन करें
-
-English:Select Model
-Translated:मॉडल का चयन करें
-
 English:Select Part
 Translated:भाग का चयन करें
 
@@ -3000,18 +3057,6 @@ Translated:प्रिंटर का चयन करें
 
 English:Select the baud rate.
 Translated:बॉड दर का चयन करें।
-
-English:Select the hotend on the left to continue
-Translated:जारी रखने के लिए बाईं ओर हॉटेंड का चयन करें
-
-English:Select the material you are printing
-Translated:उस सामग्री का चयन करें जिसे आप प्रिंट कर रहे हैं
-
-English:Select the printer manufacturer
-Translated:प्रिंटर निर्माता का चयन करें
-
-English:Select the printer model
-Translated:प्रिंटर मॉडल का चयन करें
 
 English:Select What to Import
 Translated:आयात करने के लिए क्या चुनें
@@ -3045,9 +3090,6 @@ Translated:सत्र को मंजूरी दे दी
 
 English:Session Expired
 Translated:सत्र समाप्त हुआ
-
-English:Set active material to continue
-Translated:जारी रखने के लिए सक्रिय सामग्री सेट करें
 
 English:Set as Default
 Translated:डिफाल्ट के रूप में सेट
@@ -3313,6 +3355,9 @@ Translated:सर्पिल फूलदान
 English:Split
 Translated:विभाजित करें
 
+English:Split Mesh
+Translated:विभाजन जाल
+
 English:Stable
 Translated:स्थिर
 
@@ -3364,9 +3409,6 @@ Translated:सिंक शुरू करना
 English:Startup Failure
 Translated:स्टार्टअप विफलता
 
-English:Stash your current bed
-Translated:अपने वर्तमान बिस्तर को तोड़ो
-
 English:Stay Connected
 Translated:जुड़े रहें
 
@@ -3405,9 +3447,6 @@ Translated:घटाना और बदलना
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:एक डिस्क से छवि को घटाएं ताकि नकारात्मक स्थान मुद्रित हो जाए।
-
-English:Success
-Translated:सफलता
 
 English:Success! Please check your email for the reset code.
 Translated:सफलता! कृपया रीसेट कोड के लिए अपना ईमेल देखें।
@@ -3550,6 +3589,9 @@ Translated:एक्स अक्ष से मापा गया इन्फ�
 English:The angle to generate support for
 Translated:के लिए समर्थन उत्पन्न करने के लिए कोण
 
+English:The angle to rotate the top of the part
+Translated:भाग के शीर्ष को घुमाने के लिए कोण
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:वर्तमान में बिस्तर गर्म हो रहा है और जब तक यह {0} ° C तक नहीं पहुंच जाता तब तक इसका लक्ष्य तापमान नहीं बदला जा सकता है।\n\n_ आप सेटिंग -> फिलामेंट -> तापमान में शुरुआती बिस्तर तापमान सेट कर सकते हैं।\n\n{1}
 
@@ -3569,7 +3611,7 @@ English:The distance between the top of the support and the bottom of the model.
 Translated:समर्थन के शीर्ष और मॉडल के नीचे के बीच की दूरी। एक अच्छा मूल्य सामग्री के प्रकार पर निर्भर करता है। एबीएस और पीएलए के लिए क्रमशः 0.4 और 0.6 के बीच एक मूल्य अच्छी तरह से काम करता है।
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:प्रत्येक क्वालीफाइंग नॉन-प्रिंट मूव से पहले दूरी का फिलामेंट रिवर्स हो जाएगा
+Translated:प्रत्येक क्वालीफाइंग नॉन-प्रिंट मूव से पहले दूरी का फिलामेंट उल्टा हो जाएगा
 
 English:The distance from the model at which the first skirt loop is drawn.
 Translated:उस मॉडल से दूरी जिस पर पहले स्कर्ट लूप तैयार किया गया है।
@@ -3620,10 +3662,7 @@ English:The layer(s) at which the print will pause, allowing for a change in fil
 Translated:परत (ओं) जिस पर प्रिंट विराम देगा, फिलामेंट में बदलाव की अनुमति देगा। दिए गए लेयर को शुरू करने से पहले प्रिंटर को रोक दिया जाता है। अक्षम करने के लिए खाली छोड़ दें। कई परतों पर विराम देने के लिए, सेमी संख्याओं के साथ परत संख्याओं को अलग करें। उदाहरण के लिए: "16; 37"।
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:कई एक्सट्रूडर के बीच बदलते समय अगले नोजल को पोंछने के लिए उपयोग किए जाने वाले प्रिंट के पीछे बाईं ओर बनाए गए टॉवर की लंबाई और चौड़ाई। अक्षम करने के लिए 0 पर सेट करें।
-
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:मार्क लेडडाउन जो X लेवलिंग स्तर को प्राप्त करने में मदद करने के लिए प्रिंट लेवलिंग के दौरान दिखाया जाएगा।
+Translated:कई एक्सट्रूडर के बीच बदलते समय अगली नोजल को पोंछने के लिए इस्तेमाल किए गए प्रिंट के पीछे बाईं ओर बनाए गए टॉवर की लंबाई और चौड़ाई। अक्षम करने के लिए 0 पर सेट करें।
 
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:मार्कडाउन जो स्वच्छ फिलामेंट पेज पर दिखाया जाएगा।
@@ -3671,10 +3710,7 @@ English:The minimum speed at which the layer cooling fan will run, expressed as 
 Translated:जिस न्यूनतम गति पर परत ठंडा करने वाला पंखा चलेगा, उसे पूर्ण शक्ति के प्रतिशत के रूप में व्यक्त किया जाएगा।
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:न्यूनतम प्रिंट समय को संतुष्ट करने के लिए लेयर प्रिंट समय को पर्याप्त लंबा करने के प्रयास के लिए प्रिंटर की न्यूनतम गति जिस पर कम होगी।
-
-English:The next few screens will walk your through calibrating your printer.
-Translated:अगले कुछ स्क्रीन आपके प्रिंटर को कैलिब्रेट करते हुए चलेंगे।
+Translated:न्यूनतम प्रिंट समय को संतुष्ट करने के लिए लेयर प्रिंट समय को पर्याप्त लंबा करने के प्रयास के लिए प्रिंटर की न्यूनतम गति जिस पर कम हो जाएगी।
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:स्लाइस करते समय उपयोग करने के लिए सीपीयू कोर की संख्या। इसे बढ़ाने से आपकी मशीन धीमी हो सकती है।
@@ -3704,7 +3740,7 @@ English:The number of layers, or the distance in millimeters, to solid fill on t
 Translated:परतों की संख्या, या मिलीमीटर में दूरी, वस्तु की शीर्ष सतह पर ठोस भरने के लिए। मिलीमीटर में दूरी निर्दिष्ट करने के लिए संख्या के अंत में मिमी जोड़ें।
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:भागों पर शुरू करने से पहले बिस्तर पर सभी हिस्सों के चारों ओर खींचने के लिए छोरों की संख्या। मुख्य रूप से नोजल को प्राइम करने के लिए उपयोग किया जाता है ताकि प्रवाह तब भी हो जब वास्तविक प्रिंट शुरू हो।
+Translated:भागों पर शुरू करने से पहले बिस्तर पर सभी हिस्सों के चारों ओर खींचने के लिए छोरों की संख्या। मुख्य रूप से नोजल को प्राइम करने के लिए उपयोग किया जाता है ताकि वास्तविक प्रिंट शुरू होने पर भी प्रवाह हो।
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
 Translated:भागों के चारों ओर खींचने के लिए छोरों की संख्या। अतिरिक्त बिस्तर आसंजन प्रदान करने के लिए उपयोग किया जाता है
@@ -3752,7 +3788,7 @@ English:The printer has a servo for lowering and raising the z probe.
 Translated:प्रिंटर में z जांच को कम करने और बढ़ाने के लिए एक सर्वो है।
 
 English:The printer has a z probe for measuring bed level.
-Translated:बिस्तर के स्तर को मापने के लिए प्रिंटर की z जांच होती है
+Translated:बिस्तर के स्तर को मापने के लिए प्रिंटर की z जांच होती है।
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
 Translated:प्रिंटर की अपनी ऑटो बेड लेवलिंग जांच और प्रक्रिया है जिसे स्टार्ट जी-कोड के दौरान G29 कमांड का उपयोग करके बुलाया जा सकता है।
@@ -3794,7 +3830,7 @@ English:The speed at which infill will print.
 Translated:जिस गति से इन्फिल्ट प्रिंट होगा।
 
 English:The speed at which inside perimeters will print.
-Translated:जिस गति से परिधि के अंदर प्रिंट होगा
+Translated:जिस गति से परिधि के अंदर प्रिंट होगा।
 
 English:The speed at which interface layers will print.
 Translated:जिस गति से इंटरफ़ेस परतें प्रिंट होंगी।
@@ -3866,7 +3902,7 @@ English:The thickness of each layer of the print, except the first layer. A smal
 Translated:पहली परत को छोड़कर, प्रिंट की प्रत्येक परत की मोटाई। एक छोटी संख्या अधिक परतें और अधिक ऊर्ध्वाधर सटीकता बनाएगी लेकिन धीमी गति से प्रिंट भी।
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:पहली परत की मोटाई। डिफ़ॉल्ट परत की मोटाई की तुलना में पहली परत लम्बी होती है जो बिल्ड प्लेट में अच्छे आसंजन को सुनिश्चित कर सकती है।
+Translated:पहली परत की मोटाई। डिफ़ॉल्ट परत की मोटाई की तुलना में पहली परत लम्बी होती है जो बिल्ड प्लेट में अच्छा आसंजन सुनिश्चित कर सकती है।
 
 English:The time it takes to heat back up from a cool down.
 Translated:जिस समय इसे ठंडा होने से वापस गर्म होने में समय लगता है।
@@ -3919,6 +3955,15 @@ Translated:पतली दीवारें
 English:This code to will provide read-only access.
 Translated:यह कोड रीड-ओनली एक्सेस प्रदान करेगा।
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:यह डेटा मशीन मिसलिग्न्मेंट और बेड विरूपण के लिए क्षतिपूर्ति करता है, और अच्छी पहली परत आसंजन सुनिश्चित करता है।
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:यह डेटा दोहरी एक्सट्रूज़न प्रिंट के संरेखण में सुधार करता है।
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:यह डेटा सॉफ्टवेयर प्रिंट लेवलिंग के लिए आवश्यक है और अच्छी पहली परत आसंजन सुनिश्चित करता है।
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:यह प्रिंटर से प्राप्त होने के बाद लाइनों पर लागू करने के लिए नियमित अभिव्यक्ति का एक सेट है। उन्हें प्राप्त प्रत्येक पंक्ति के लिए लागू किया जाएगा।
 
@@ -3962,7 +4007,10 @@ English:This will improve the accuracy of print leveling.
 Translated:इससे प्रिंट लेवलिंग की सटीकता में सुधार होगा।
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
-Translated:यह केवल विशिष्ट हार्डवेयर पर काम करेगा। जब तक आप सुनिश्चित न करें कि आपका प्रिंटर नियंत्रक इस सुविधा का समर्थन करता है, तब तक उपयोग न करें
+Translated:यह केवल विशिष्ट हार्डवेयर पर काम करेगा। जब तक आप सुनिश्चित नहीं करते कि आपका प्रिंटर नियंत्रक इस सुविधा का समर्थन नहीं करता है, तब तक उपयोग न करें
+
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:यह विज़ार्ड एक अंश अंश को प्रिंट करने और प्रिंट पूरा होने के बाद फिर से शुरू करने के लिए बंद हो जाएगा।
 
 English:Threads
 Translated:धागे
@@ -4005,6 +4053,9 @@ Translated:चयन टॉगल करें
 
 English:Toggle Support
 Translated:समर्थन टॉगल करें
+
+English:Toggle Wipe Tower
+Translated:टॉगल वाइप टॉवर
 
 English:Tool
 Translated:साधन
@@ -4054,9 +4105,6 @@ Translated:जाल किनारों को जोड़ने की क�
 English:Tuning Adjustment
 Translated:ट्यूनिंग समायोजन
 
-English:Turn auto leveling on
-Translated:ऑटो लेवलिंग चालू करें
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:प्रिंट के अंत में या रद्द प्रिंट के बाद मोटर चालू बंद करें।
 
@@ -4072,11 +4120,20 @@ Translated:पंखे चालू करें और सेटिंग्�
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:सभी कूलिंग सेटिंग्स को चालू और बंद करें (इस एक के नीचे सभी सेटिंग्स)।
 
+English:Twist
+Translated:मोड़
+
+English:Twist Right
+Translated:ट्विस्ट राइट
+
 English:Uh oh! Passwords do not match.
 Translated:उह ओह! पासवर्ड मेल नहीं खाते।
 
 English:Uh-oh! Could not connect to printer.
 Translated:उह ओह! प्रिंटर से कनेक्ट नहीं किया जा सका।
+
+English:Unable due to hardware leveling
+Translated:हार्डवेयर समतलन के कारण असमर्थ
 
 English:Unable to Connect
 Translated:कनेक्ट करने में असमर्थ
@@ -4101,9 +4158,6 @@ Translated:असमूहीकृत
 
 English:Unknown
 Translated:अनजान
-
-English:Unknown filament loaded
-Translated:अज्ञात फिलामेंट लोड किया गया
 
 English:Unknown Reason
 Translated:अज्ञात कारण
@@ -4193,7 +4247,7 @@ English:Used for small perimeters (usually holes). This can be set explicitly or
 Translated:छोटे परिधि (आमतौर पर छेद) के लिए उपयोग किया जाता है। इसे स्पष्ट रूप से या पेरीमीटर की गति के प्रतिशत के रूप में सेट किया जा सकता है।
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:यह निर्दिष्ट करने के लिए उपयोग किया जाता है कि एक से अधिक एक्सट्रूडर एक साझा हीटर कारतूस साझा करते हैं
+Translated:यह निर्दिष्ट करने के लिए उपयोग किया जाता है कि एक से अधिक एक्सट्रूडर एक आम हीटर कारतूस साझा करते हैं।
 
 English:Username
 Translated:उपयोगकर्ता नाम
@@ -4209,6 +4263,9 @@ Translated:उपरोक्त नियंत्रणों का उपय
 
 English:Validate Layer Height
 Translated:वैधता ऊँचाई ऊँचाई
+
+English:Validation Error
+Translated:मान्यता त्रुटि
 
 English:Value
 Translated:मूल्य
@@ -4239,6 +4296,9 @@ Translated:छोटे प्रतीक देखें
 
 English:View XSmall Icons
 Translated:XSmall चिह्न देखें
+
+English:Visit MatterHackers.com to Purchase
+Translated:MatterHackers.com पर जाएं खरीदारी करने के लिए
 
 English:Wait For Running Clean
 Translated:रनिंग क्लीन के लिए प्रतीक्षा करें
@@ -4300,12 +4360,6 @@ Translated:चेतावनी: प्रिंट रिकवरी कर�
 English:WARNING: Write Failed!
 Translated:चेतावनी: असफल लिखें!
 
-English:We should be done in approximately {0} minutes.
-Translated:हमें लगभग {0} मिनट में किया जाना चाहिए।
-
-English:We should be done in less than five minutes.
-Translated:हमें पांच मिनट से कम समय में किया जाना चाहिए।
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:अब हम इस स्थिति पर एक्सट्रूडर की ऊँचाई के हमारे माप को अंतिम रूप देंगे।
 
@@ -4323,12 +4377,6 @@ Translated:कील
 
 English:Welcome to MatterControl
 Translated:MatterControl में आपका स्वागत है
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:प्रिंट लेवलिंग विज़ार्ड में आपका स्वागत है। यहाँ एक त्वरित अवलोकन है कि हम क्या करने जा रहे हैं।
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:जांच अंशांकन विज़ार्ड में आपका स्वागत है। यहाँ एक त्वरित अवलोकन है कि हम क्या करने जा रहे हैं।
 
 English:What was my password again?
 Translated:मेरा पासवर्ड फिर क्या था?
@@ -4365,6 +4413,9 @@ Translated:वाइप शील्ड दूरी
 
 English:Wipe Tower Size
 Translated:टॉवर साइज पोंछे
+
+English:Wizard
+Translated:जादूगर
 
 English:Would you like to setup Wifi?
 Translated:क्या आप Wifi सेटअप करना चाहेंगे?
@@ -4441,14 +4492,11 @@ Translated:अब आपके नोजल को कैलिब्रेट �
 English:Your Phone Number
 Translated:आपकी दूरभाष संख्या
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
-Translated:आपका प्रिंटर समायोजित कर दिया गया है, लेकिन सटीकता में सुधार के लिए हमें फिर से कैलिब्रेटिंग चलाने की आवश्यकता है।
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
+Translated:आपका प्रिंटर समायोजित कर दिया गया है, लेकिन हमें सटीकता में सुधार करने के लिए फिर से कैलिब्रेट करना चाहिए।
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:आपका प्रिंटर एक हार्डवेयर त्रुटि रिपोर्ट कर रहा है और रोक दिया गया है। त्रुटि की जाँच करें और यदि आवश्यक हो तो प्रिंट रद्द करें।
-
-English:Your Probe is now calibrated.
-Translated:आपका जांच अब कैलिब्रेटेड है।
 
 English:Your Share Code
 Translated:आपका शेयर कोड
@@ -4467,6 +4515,15 @@ Translated:यदि आप प्रिंट पुनर्प्राप्
 
 English:Z
 Translated:जेड
+
+English:Z Calibration
+Translated:Z अंशांकन
+
+English:Z Calibration complete.
+Translated:Z अंशांकन पूरा।
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Z अंशांकन नोजल की z स्थिति को मापता है।
 
 English:Z Lift
 Translated:Z लिफ्ट

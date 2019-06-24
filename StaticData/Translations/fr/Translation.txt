@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    • Enlevez le papier
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1. Sélectionnez l'onglet 'Controls' à droite
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2. Recherchez la section d'étalonnage (illustrée ci-dessous)
-
 English:- none -
 Translated:- aucun -
 
@@ -72,6 +66,9 @@ Translated:Un numéro de téléphone mobile américain ou canadien
 
 English:A valid email address
 Translated:Une adresse email valide
+
+English:Abort Calibration
+Translated:Abandonner l'étalonnage
 
 English:Abort Print
 Translated:Abandonner l'impression
@@ -169,6 +166,9 @@ Translated:Tous les appareils de chauffage
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Autorisez MatterControl à fractionner de longues lignes pour améliorer le nivellement et l'annulation de l'impression. Critique pour les imprimantes qui sont nettement hors niveau.
 
+English:Allows for the repositioning of the rotation origin
+Translated:Permet le repositionnement de l'origine de la rotation
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:Vous permet d'activer et de désactiver l'application de l'ajustement à l'axe des x.
 
@@ -184,8 +184,14 @@ Translated:Alpha
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: la version en développement de MatterControl
 
+English:Already Calibrated
+Translated:Déjà calibré
+
 English:Already Loaded
 Translated:Déjà chargé
+
+English:An unexpected error occurred during reload
+Translated:Une erreur inattendue s'est produite lors du rechargement
 
 English:Anchor
 Translated:Ancre
@@ -214,6 +220,9 @@ Translated:Appliquer
 English:Apply leveling to G-Code during export
 Translated:Appliquer le nivellement à G-Code lors de l'exportation
 
+English:Are you sure you want to abort calibration?
+Translated:Êtes-vous sûr de vouloir annuler l'étalonnage?
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Voulez-vous vraiment annuler l'impression en cours et fermer MatterControl?
 
@@ -235,6 +244,9 @@ Translated:Êtes-vous certain de vouloir vous déconnecter? Vous n'aurez pas acc
 English:Arrange All Parts
 Translated:Organiser toutes les pièces
 
+English:Array
+Translated:Tableau
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:Au fur et à mesure que le temps d'impression d'un calque diminue, la vitesse du ventilateur augmente jusqu'à atteindre sa vitesse maximale.
 
@@ -246,9 +258,6 @@ Translated:Tenter de se connecter
 
 English:ATX Power Control
 Translated:Contrôle de puissance ATX
-
-English:Auto Calibrate
-Translated:Calibrage automatique
 
 English:Auto Connect
 Translated:Connexion automatique
@@ -343,6 +352,9 @@ Translated:Bêta
 English:Beta: The release candidate version of MatterControl
 Translated:Bêta: la version candidate à la publication de MatterControl
 
+English:Booleans
+Translated:Booléens
+
 English:Bottom Solid Infill
 Translated:Remplissage plein inférieur
 
@@ -379,8 +391,14 @@ Translated:Calculez et transmettez une somme de contrôle rep-rap standard pour 
 English:Calculate Path
 Translated:Calculer le chemin
 
+English:Calibrate Printer
+Translated:Calibrer l'imprimante
+
 English:Calibration
 Translated:Étalonnage
+
+English:Calibration Face
+Translated:Face d'étalonnage
 
 English:Calibration Faces
 Translated:Faces d'étalonnage
@@ -388,8 +406,14 @@ Translated:Faces d'étalonnage
 English:Calibration Files
 Translated:Fichiers de calibration
 
+English:Calibration Mode
+Translated:Mode de calibration
+
 English:Calibration Parts
 Translated:Pièces d'étalonnage
+
+English:Calibration Print
+Translated:Impression d'étalonnage
 
 English:Calibration Tab
 Translated:Onglet Calibration
@@ -454,9 +478,6 @@ Translated:Vérification avec webservice
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:Vérifie avant chaque impression que la hauteur de la couche est inférieure au diamètre de la buse (important pour l'adhérence du filament)
 
-English:Choose the calibration you would like to perform.
-Translated:Choisissez l'étalonnage que vous souhaitez effectuer.
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Choisissez la commande permettant d'afficher la progression de l'impression sur l'écran LCD de l'imprimante, le cas échéant.
 
@@ -481,9 +502,6 @@ Translated:Effacer la sélection
 English:Clear ZOffset
 Translated:Effacer ZOffset
 
-English:Click 'Done' to close this window.
-Translated:Cliquez sur 'Terminé' pour fermer cette fenêtre.
-
 English:Click 'Next' to continue.
 Translated:Cliquer sur Suivant pour continuer.
 
@@ -496,20 +514,17 @@ Translated:Fermer les polygones
 English:Cloud Library
 Translated:Bibliothèque Cloud
 
+English:Coarse
+Translated:Grossier
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:L'étalonnage grossier étant terminé, nous allons maintenant effectuer un étalonnage normal pour améliorer la précision.
-
-English:Coarse Calibration: If your printer is way off
-Translated:Calibrage grossier: si votre imprimante est bien éteinte
 
 English:Coast At End
 Translated:Côte au bout
 
 English:Collapse All
 Translated:Réduire tout
-
-English:Collect data
-Translated:Collecter des données
 
 English:Color
 Translated:Couleur
@@ -528,6 +543,9 @@ Translated:Compiler le modèle
 
 English:Complete Individual Objects
 Translated:Objets individuels complets
+
+English:Completed
+Translated:Terminé
 
 English:Cone
 Translated:Cône
@@ -552,9 +570,6 @@ Translated:Confirmez votre nouveau mot de passe
 
 English:Confirm your Password
 Translated:Confirmer votre mot de passe
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:Félicitations pour la connexion à votre imprimante. Avant de commencer votre première impression, nous devons exécuter une procédure d'étalonnage simple.
 
 English:Congratulations Print Complete
 Translated:Félicitations Print Complete
@@ -598,6 +613,9 @@ Translated:Connexion réussie
 English:Connection timed out
 Translated:La connexion a expiré
 
+English:Connection Timeout
+Translated:Délai de connection dépassé
+
 English:Continue
 Translated:Continuer
 
@@ -630,6 +648,9 @@ Translated:Copier et recalibrer
 
 English:Copy everything but hardware specific calibration settings
 Translated:Copier tout sauf les paramètres d'étalonnage spécifiques au matériel
+
+English:Copy Mesh
+Translated:Copier le maillage
 
 English:Copy Printers
 Translated:Imprimantes à copier
@@ -694,9 +715,6 @@ Translated:Créer une jupe
 English:Create Support
 Translated:Créer un support
 
-English:Create Wipe Tower
-Translated:Créer une tour d'essuyage
-
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Crée un bord attaché à la base de l’impression. Utile pour éviter le gauchissement lors de l’impression d’ABS (et d’autres matières plastiques sujettes au gauchissement), car il aide les pièces à adhérer au lit.
 
@@ -707,7 +725,7 @@ English:Creates a raft under the printed part. Useful to prevent warping when pr
 Translated:Crée un radeau sous la partie imprimée. Utile pour éviter le gauchissement lors de l’impression d’ABS (et d’autres matières plastiques sujettes au gauchissement), car il aide les pièces à adhérer au lit.
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
-Translated:Crée un contour autour de l’impression, mais n’y est pas attaché. Ceci est utile pour amorcer la buse afin de s'assurer que le plastique coule au début de l'impression.
+Translated:Crée un contour autour de l’impression, mais n’y est pas attaché. Ceci est utile pour amorcer la buse afin de s'assurer que le plastique coule lorsque l'impression commence.
 
 English:Creating firmware backup...
 Translated:Création d'une sauvegarde de firmware ...
@@ -874,6 +892,9 @@ Translated:Téléchargement...
 English:Downloads
 Translated:Téléchargements
 
+English:Dual Extrusion Align
+Translated:Dual Extrusion Align
+
 English:Duplicate
 Translated:Dupliquer
 
@@ -943,6 +964,9 @@ Translated:Activer la récupération
 English:Enable Retractions
 Translated:Activer les retraits
 
+English:Enable Software Leveling
+Translated:Activer la mise à niveau du logiciel
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:Activez cette option si votre imprimante prend en charge le matériel pour G30 (vérification automatique du lit) et que vous souhaitez l'utiliser plutôt que de mesurer manuellement les positions des sondes.
 
@@ -1003,6 +1027,9 @@ Translated:Erreur de chargement de l'image
 English:Error Reported
 Translated:Erreur signalée
 
+English:Error saving file
+Translated:Erreur d'enregistrement du fichier
+
 English:Estimated Cost
 Translated:Coût estimé
 
@@ -1030,9 +1057,6 @@ Translated:Expérimental
 English:Export
 Translated:Exportation
 
-English:Export All Settings
-Translated:Exporter tous les paramètres
-
 English:Export Bed Leveling Data
 Translated:Données de nivellement de lit d'exportation
 
@@ -1048,11 +1072,20 @@ Translated:Erreur d'exportation
 English:Export File
 Translated:Fichier d'exportation
 
+English:Export G-Code
+Translated:Exporter le code G
+
 English:Export Part Sheet
 Translated:Fiche de produit d'exportation
 
+English:Export Printer
+Translated:Exporter une imprimante
+
 English:Export selection to
 Translated:Exporter la sélection vers
+
+English:Export X3G
+Translated:Exporter X3G
 
 English:Exporting
 Translated:Exportation
@@ -1147,8 +1180,14 @@ Translated:Le filament a été chargé
 English:Filament Length
 Translated:Longueur de filament
 
+English:Filament Loaded
+Translated:Filament chargé
+
 English:Filament Speed
 Translated:Vitesse du filament
+
+English:Filament Unloaded
+Translated:Filament déchargé
 
 English:Filament Volume
 Translated:Volume de filament
@@ -1177,8 +1216,8 @@ Translated:Enfin, cliquez sur «Suivant» pour continuer.
 English:Find and create supports where needed
 Translated:Trouver et créer des supports si nécessaire
 
-English:Fine Calibration: When you want that extra precision
-Translated:Fine Calibration: Quand vous voulez cette précision supplémentaire
+English:Fine
+Translated:Bien
 
 English:Finish
 Translated:terminer
@@ -1354,9 +1393,6 @@ Translated:Donnez un nom à la macro
 English:Group
 Translated:Groupe
 
-English:Guides
-Translated:Des guides
-
 English:Guides and Articles
 Translated:Guides et articles
 
@@ -1371,6 +1407,9 @@ Translated:Demi-coin
 
 English:Hardware
 Translated:Matériel
+
+English:Hardware Error
+Translated:Erreur matérielle
 
 English:Has Fan
 Translated:A fan
@@ -1405,9 +1444,6 @@ Translated:Demander à MatterControl de vous envoyer des SMS sur votre impressio
 English:Heat Before Homing
 Translated:Chaleur avant le retour
 
-English:Heat the bed
-Translated:Chauffer le lit
-
 English:Heated Bed
 Translated:Lit chauffant
 
@@ -1417,14 +1453,14 @@ Translated:Lit chauffant
 English:Heating Nozzle
 Translated:Buse de chauffage
 
+English:Heating the printer
+Translated:Chauffer l'imprimante
+
 English:Height
 Translated:la taille
 
 English:Help
 Translated:Aidez-moi
-
-English:Here is what we are going to do:
-Translated:Voici ce que nous allons faire:
 
 English:High Precision
 Translated:Haute précision
@@ -1437,9 +1473,6 @@ Translated:Température de maintien
 
 English:Home
 Translated:Accueil
-
-English:Home the printer
-Translated:Accueil l'imprimante
 
 English:Home X
 Translated:Accueil X
@@ -1462,7 +1495,7 @@ Translated:Homing
 English:Homing Offset
 Translated:Décalage d'origine
 
-English:Homing The Printer
+English:Homing the printer
 Translated:Homing l'imprimante
 
 English:Hotend
@@ -1486,9 +1519,6 @@ Translated:Hotend Temperature:
 English:How can we improve?
 Translated:Comment pouvons nous nous améliorer?
 
-English:How to succeed with MatterControl
-Translated:Comment réussir avec MatterControl
-
 English:Hz
 Translated:Hz
 
@@ -1506,12 +1536,6 @@ Translated:Si l'extrudeur a fonctionné pendant une longue période, il se peut 
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:Si le temps nécessaire pour imprimer un calque est inférieur, le ventilateur se mettra en marche à sa vitesse minimale. Il augmentera ensuite à sa vitesse maximale à mesure que le temps de couche diminue.
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:Si vous souhaitez ré-étalonner le nivellement à l'avenir:
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:Si vous souhaitez ré-étalonner votre sonde à l'avenir:
 
 English:Image
 Translated:Image
@@ -1573,14 +1597,14 @@ Translated:Type de remplissage
 English:Inflate Path
 Translated:Gonfler le chemin
 
+English:Initial (Recommended)
+Translated:Initial (recommandé)
+
 English:Initial Layer Speed
 Translated:Vitesse initiale de la couche
 
 English:Initial Layers
 Translated:Couches initiales
-
-English:Initial Printer Setup
-Translated:Configuration initiale de l'imprimante
 
 English:Initializing hardware...
 Translated:Initialisation du matériel ...
@@ -1630,6 +1654,9 @@ Translated:Intersection
 English:Invalid Client Token
 Translated:Jeton client invalide
 
+English:Invalid printer selection
+Translated:Sélection d'imprimante invalide
+
 English:Inventory
 Translated:Inventaire
 
@@ -1659,9 +1686,6 @@ Translated:L'élément ne peut pas être exporté au format STL
 
 English:Item not Found
 Translated:Objet non-trouvé
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:Il est temps de copier les paramètres de votre imprimante existante sur votre compte MatterHackers. Une fois copiées, ces imprimantes seront disponibles chaque fois que vous vous connecterez à MatterControl. Les imprimantes non copiées ne seront disponibles que si elles ne sont pas connectées.
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -1732,12 +1756,6 @@ Translated:Nous allons vous montrer avant de commencer.
 English:Letter
 Translated:Lettre
 
-English:Level X Carriage
-Translated:Voiture de niveau X
-
-English:Level X Carriage Page
-Translated:Page de transport de niveau X
-
 English:Leveling
 Translated:Nivellement
 
@@ -1783,26 +1801,29 @@ Translated:Lithophane
 English:Load
 Translated:Charge
 
+English:Load Extruder
+Translated:Extrudeuse de charge
+
+English:Load Extruder {0}
+Translated:Charger l'extrudeuse {0}
+
 English:Load filament
 Translated:Charge filament
 
 English:Load Filament
 Translated:Charge filament
 
-English:Load Filament 2
-Translated:Charge filament 2
-
 English:Load Filament Length
 Translated:Longueur du filament de charge
+
+English:Load Filament to continue
+Translated:Charger le filament pour continuer
 
 English:Load Material
 Translated:Matériau de charge
 
 English:Loading
 Translated:Chargement
-
-English:Loading Bed
-Translated:Lit de chargement
 
 English:Loading Filament
 Translated:Chargement du filament
@@ -1862,7 +1883,7 @@ English:Make Component
 Translated:Faire composant
 
 English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
-Translated:Assurez-vous que MatterControl émule dans le logiciel les limites de lit et les arrêts terminaux et empêche l’imprimante de se déplacer vers des emplacements non valides.
+Translated:Assurez-vous que MatterControl émule dans le logiciel les limites du lit et les arrêts terminaux et empêche l’imprimante de se déplacer vers des emplacements invalides.
 
 English:Make Selection
 Translated:Faire une sélection
@@ -1876,14 +1897,14 @@ Translated:Assurez-vous que le premier point d'un périmètre n'est pas un surpl
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:Faites en sorte que la première couche au-dessus du remplissage partiel utilise la vitesse et le ventilateur pour créer un pont.
 
+English:Manifold
+Translated:Collecteur
+
 English:Manual Movement Speeds
 Translated:Vitesses de mouvement manuelles
 
 English:Manually Configure Connection
 Translated:Configurer manuellement la connexion
-
-English:Manually measure the extruder at the center
-Translated:Mesurer manuellement l'extrudeuse au centre
 
 English:Markdown Edit
 Translated:Markdown Modifier
@@ -1903,6 +1924,9 @@ Translated:Matériaux
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:Aide de MatterControl
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl est rendu possible par l'équipe de MatterHackers et d'autres logiciels open source
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl va maintenant tenter de détecter automatiquement l’i
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: Sélectionner un fichier de firmware
+
+English:MatterHackers Internal Use
+Translated:Utilisation interne de MatterHackers
 
 English:Max Acceleration
 Translated:Accélération Max
@@ -1948,8 +1975,14 @@ Translated:Précision moyenne
 English:Merge Overlapping Lines
 Translated:Fusionner les lignes qui se chevauchent
 
+English:Merge Vertices
+Translated:Fusionner des sommets
+
 English:Mesh
 Translated:Engrener
+
+English:Mesh Modifiers
+Translated:Modificateurs de maillage
 
 English:Message
 Translated:Message
@@ -2098,6 +2131,9 @@ Translated:Nouveau design
 English:New Password
 Translated:nouveau mot de passe
 
+English:New Printer Name
+Translated:Nouveau nom d'imprimante
+
 English:New updates are ready to install
 Translated:Les nouvelles mises à jour sont prêtes à installer
 
@@ -2134,11 +2170,17 @@ Translated:Aucune pièce imprimable n’existe dans les limites du lit de l’im
 English:No Printer Selected
 Translated:Aucune imprimante sélectionnée
 
+English:No results found
+Translated:Aucun résultat trouvé
+
 English:None
 Translated:Aucun
 
-English:Normal Calibration: Start here
-Translated:Calibrage normal: commencez ici
+English:Normal
+Translated:Ordinaire
+
+English:Normal (Recommended)
+Translated:Normal (recommandé)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:Normalement, l'image est agrandie jusqu'au bord. Cela va essayer de centrer le poids de l'image visuellement.
@@ -2172,6 +2214,9 @@ Translated:Buse 2 insérée
 
 English:Nozzle Calibration
 Translated:Calibrage de la buse
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:Le calibrage de la buse mesure la distance entre les points chauds.
 
 English:Nozzle Diameter
 Translated:Diamètre de la buse
@@ -2308,6 +2353,9 @@ Translated:Ouverte récente
 English:OpenSCAD not installed
 Translated:OpenSCAD non installé
 
+English:Optional
+Translated:Optionnel
+
 English:Options
 Translated:Les options
 
@@ -2344,6 +2392,9 @@ Translated:Surplomb
 English:Overhang Angle
 Translated:Angle de surplomb
 
+English:Overview
+Translated:Vue d'ensemble
+
 English:Pan
 Translated:La poêle
 
@@ -2352,9 +2403,6 @@ Translated:Pan View
 
 English:Part Cooling Fan
 Translated:Pièce Ventilateur
-
-English:Part History
-Translated:Histoire de la partie
 
 English:Password
 Translated:Mot de passe
@@ -2367,6 +2415,9 @@ Translated:Mise à jour du mot de passe terminée
 
 English:Paste
 Translated:Coller
+
+English:Path
+Translated:Chemin
 
 English:Pattern Spacing
 Translated:Espacement des motifs
@@ -2398,8 +2449,8 @@ Translated:Les périmètres
 English:Permission Denied
 Translated:Permission refusée
 
-English:Pick the most balanced result for each axis.
-Translated:Choisissez le résultat le plus équilibré pour chaque axe.
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:Choisissez le pad le plus aligné avec la base, le pad le plus équilibré et le plus centré.
 
 English:PID Settings
 Translated:Paramètres PID
@@ -2479,6 +2530,9 @@ Translated:Des polygones
 English:Port
 Translated:Port
 
+English:Port In Use
+Translated:Port utilisé
+
 English:Port not available
 Translated:Port non disponible
 
@@ -2502,6 +2556,12 @@ Translated:Contrôle de la puissance
 
 English:Preheat
 Translated:Préchauffer
+
+English:Preparing help
+Translated:Préparer l'aide
+
+English:Preparing help index
+Translated:Préparation de l'index d'aide
 
 English:Preparing To Print
 Translated:Préparation à l'impression
@@ -2542,8 +2602,8 @@ Translated:Histoire d'impression
 English:Print Leveling
 Translated:Nivellement d'impression
 
-English:Print Leveling Overview
-Translated:Aperçu de la mise à niveau
+English:Print Leveling measures the plane of the bed.
+Translated:Imprimer Le nivellement mesure le plan du lit.
 
 English:Print Leveling Wizard
 Translated:Assistant de mise à niveau
@@ -2556,9 +2616,6 @@ Translated:File d'attente d'impression
 
 English:Print Recovery
 Translated:Récupération d'impression
-
-English:Print the calibration object
-Translated:Imprimer l'objet d'étalonnage
 
 English:Print Time
 Translated:Temps d'impression
@@ -2583,6 +2640,9 @@ Translated:L'imprimante est un contrat de niveau de service
 
 English:Printer Name
 Translated:Nom de l'imprimante
+
+English:Printer name already exists
+Translated:Le nom de l'imprimante existe déjà
 
 English:Printer name cannot be blank
 Translated:Le nom de l'imprimante ne peut pas être vide
@@ -2620,11 +2680,8 @@ Translated:Vitesse d'impression
 English:Printing: {0}
 Translated:Impression: {0}
 
-English:Probe Calibration
-Translated:Calibrage de la sonde
-
-English:Probe Calibration Overview
-Translated:Vue d'ensemble de l'étalonnage de la sonde
+English:Probe at bed center
+Translated:Sonde au centre du lit
 
 English:Probe Has Been Calibrated
 Translated:La sonde a été calibrée
@@ -2634,9 +2691,6 @@ Translated:Décalage de la sonde
 
 English:Probe Offset Sample Point
 Translated:Point d'échantillonnage décalé de la sonde
-
-English:Probe the bed at the center
-Translated:Sondez le lit au centre
 
 English:Progress Reporting
 Translated:Rapport d'avancement
@@ -2731,6 +2785,9 @@ Translated:Libération
 English:Release Notes
 Translated:Notes de version
 
+English:Reload Failed
+Translated:Échec du rechargement
+
 English:Reloading
 Translated:Rechargement
 
@@ -2748,6 +2805,9 @@ Translated:Supprimer tous les supports générés automatiquement
 
 English:Remove Items?
 Translated:Supprimer des éléments?
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:Retirez la pièce de calibration du lit et comparez les côtés des pads dans chaque axe.
 
 English:Remove the paper
 Translated:Enlevez le papier
@@ -2772,6 +2832,9 @@ Translated:Demandez au firmware de faire des rétractions plutôt que de spécif
 
 English:Require Leveling To Print
 Translated:Exiger un nivellement pour imprimer
+
+English:Required
+Translated:Champs obligatoires
 
 English:Reset
 Translated:Réinitialiser
@@ -2805,9 +2868,6 @@ Translated:Restaurer par défaut
 
 English:Restore Settings
 Translated:Restaurer les paramètres
-
-English:Restore your current bed, after all calibration is complete
-Translated:Restaurez votre lit actuel, une fois tous les étalonnages terminés
 
 English:Resume
 Translated:CV
@@ -2917,8 +2977,8 @@ Translated:Communication Sailfish
 English:Sample Points
 Translated:Points d'échantillonnage
 
-English:Sample the bed at {0} points
-Translated:Échantillonnez le lit à {0} points
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:Échantillonnage de la position du centre du lit pour déterminer la distance de la sonde au lit
 
 English:Sampled Positions
 Translated:Positions échantillonnées
@@ -2971,6 +3031,9 @@ Translated:Recherche google
 English:Search Results
 Translated:Résultats de la recherche
 
+English:Searching
+Translated:Recherche
+
 English:seconds
 Translated:secondes
 
@@ -2986,12 +3049,6 @@ Translated:Sélectionnez une nouvelle destination
 English:Select a printer to continue
 Translated:Sélectionnez une imprimante pour continuer
 
-English:Select Make
-Translated:Sélectionnez Marque
-
-English:Select Model
-Translated:Choisir un modèle
-
 English:Select Part
 Translated:Sélectionner une partie
 
@@ -3000,18 +3057,6 @@ Translated:Sélectionner une imprimante
 
 English:Select the baud rate.
 Translated:Sélectionnez le débit en bauds.
-
-English:Select the hotend on the left to continue
-Translated:Sélectionnez le hotend à gauche pour continuer
-
-English:Select the material you are printing
-Translated:Sélectionnez le matériau que vous imprimez
-
-English:Select the printer manufacturer
-Translated:Sélectionnez le fabricant de l'imprimante
-
-English:Select the printer model
-Translated:Sélectionnez le modèle d'imprimante
 
 English:Select What to Import
 Translated:Sélectionnez Quoi importer
@@ -3045,9 +3090,6 @@ Translated:Session effacée
 
 English:Session Expired
 Translated:La session a expiré
-
-English:Set active material to continue
-Translated:Définir le matériau actif pour continuer
 
 English:Set as Default
 Translated:Définir par défaut
@@ -3313,6 +3355,9 @@ Translated:Vase en spirale
 English:Split
 Translated:Divisé
 
+English:Split Mesh
+Translated:Split Mesh
+
 English:Stable
 Translated:Stable
 
@@ -3364,9 +3409,6 @@ Translated:Démarrer la synchronisation
 English:Startup Failure
 Translated:Échec de démarrage
 
-English:Stash your current bed
-Translated:Cachez votre lit actuel
-
 English:Stay Connected
 Translated:Rester connecté
 
@@ -3405,9 +3447,6 @@ Translated:Soustrayez et remplacez
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:Soustrayez l'image d'un disque pour que l'espace négatif soit imprimé.
-
-English:Success
-Translated:Succès
 
 English:Success! Please check your email for the reset code.
 Translated:Succès! S'il vous plaît vérifier votre email pour le code de réinitialisation.
@@ -3550,6 +3589,9 @@ Translated:L'angle de remplissage, mesuré à partir de l'axe X. Non utilisé lo
 English:The angle to generate support for
 Translated:L'angle pour générer un soutien pour
 
+English:The angle to rotate the top of the part
+Translated:L'angle pour faire pivoter le haut de la pièce
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:Le lit est actuellement en train de chauffer et sa température cible ne peut pas être changée avant {0} ° C.\n\nVous pouvez définir la température de départ du lit dans RÉGLAGES -> Filament -> Températures.\n\n{1}
 
@@ -3622,9 +3664,6 @@ Translated:Couche (s) sur laquelle / lesquelles l’impression sera suspendue, c
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:La longueur et la largeur d’une tour créée à l’arrière gauche de l’impression sont utilisées pour essuyer la buse suivante lors du changement entre plusieurs extrudeuses. Définissez sur 0 pour désactiver.
 
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:Le Markdown qui sera affiché lors de la mise à niveau de l’impression pour vous aider à obtenir le niveau du chariot X.
-
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Le démarquage qui sera affiché sur la page Nettoyer le filament.
 
@@ -3635,7 +3674,7 @@ English:The Markdown that will be shown on the second extruders Clean Filament p
 Translated:Le démarquage qui sera affiché sur la deuxième page de nettoyage du filament des extrudeuses.
 
 English:The Markdown that will be shown on the second extruders Insert Filament page.
-Translated:La démarque qui sera affichée sur la deuxième page Insérer un filament des extrudeuses.
+Translated:La démarque qui sera affichée sur la deuxième page Insérer filament des extrudeuses.
 
 English:The Markdown that will be shown on the Trim Filament page.
 Translated:Le Markdown qui sera affiché sur la page Trim Filament.
@@ -3673,9 +3712,6 @@ Translated:Vitesse minimale à laquelle le ventilateur de refroidissement par co
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:La vitesse minimale à laquelle l'imprimante sera réduite afin de tenter de rendre le temps d'impression des calques suffisamment long pour respecter le temps de calque minimal.
 
-English:The next few screens will walk your through calibrating your printer.
-Translated:Les prochains écrans vous guideront dans l’étalonnage de votre imprimante.
-
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:Le nombre de cœurs de processeur à utiliser lors du découpage. Augmenter cela peut ralentir votre machine.
 
@@ -3701,7 +3737,7 @@ English:The number of layers to draw the skirt.
 Translated:Le nombre de couches pour dessiner la jupe.
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:Le nombre de couches, ou la distance, en millimètres, au remplissage solide sur la (les) surface (s) supérieure (s) de l'objet. Ajoutez mm à la fin du nombre pour spécifier la distance en millimètres.
+Translated:Le nombre de couches, ou la distance, en millimètres, au remplissage solide sur la ou les surfaces supérieures de l'objet. Ajoutez mm à la fin du nombre pour spécifier la distance en millimètres.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
 Translated:Le nombre de boucles à dessiner autour de toutes les parties du lit avant de commencer sur les parties. Utilisé principalement pour amorcer la buse afin que le flux soit identique au début de l'impression.
@@ -3821,7 +3857,7 @@ English:The speed at which the nozzle will move when not extruding material.
 Translated:La vitesse à laquelle la buse va bouger sans extruder de matière.
 
 English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
-Translated:La vitesse à laquelle la buse bougera lors de l’impression des couches initiales. Si exprimé en pourcentage, la vitesse de remplissage est modifiée.
+Translated:La vitesse à laquelle la buse se déplacera lors de l'impression des couches initiales. Si exprimé en pourcentage, la vitesse de remplissage est modifiée.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
 Translated:La vitesse à laquelle la buse se déplacera lors de la récupération d'une impression ayant échoué, pour une couche.
@@ -3919,6 +3955,15 @@ Translated:Murs minces
 English:This code to will provide read-only access.
 Translated:Ce code fournira un accès en lecture seule.
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:Ces données compensent le désalignement de la machine et la distorsion du lit et garantissent une bonne adhésion à la première couche.
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:Ces données améliorent l'alignement des impressions à double extrusion.
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:Ces données sont nécessaires au nivellement de l’impression logicielle et garantissent une bonne adhésion à la première couche.
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:Il s'agit d'un ensemble d'expressions régulières à appliquer aux lignes après leur réception par l'imprimante. Ils seront appliqués pour chaque ligne reçue.
 
@@ -3944,7 +3989,7 @@ English:This is the position to perform the scale about.
 Translated:Ceci est la position pour effectuer l'échelle environ.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Ceci permet de réduire les vibrations lors de l’impression. Si votre imprimante a une fréquence de résonance qui pose problème, vous pouvez l’ajuster de manière à réduire l’impression à cette fréquence.
+Translated:Ceci permet de réduire les vibrations lors de l’impression. Si votre imprimante a une fréquence de résonance qui pose problème, vous pouvez l’ajuster de manière à réduire les impressions à cette fréquence.
 
 English:This should be in 'G-Code'
 Translated:Cela devrait être dans 'G-Code'
@@ -3963,6 +4008,9 @@ Translated:Cela améliorera la précision du nivellement de l’impression.
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:Cela ne fonctionnera que sur du matériel spécifique. Ne l'utilisez pas si vous n'êtes pas sûr que votre contrôleur d'imprimante prend en charge cette fonctionnalité.
+
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:Cet assistant se fermera pour imprimer une pièce à étalonner et reprendra une fois l'impression terminée.
 
 English:Threads
 Translated:Les fils
@@ -4005,6 +4053,9 @@ Translated:Basculer la sélection
 
 English:Toggle Support
 Translated:Basculer le support
+
+English:Toggle Wipe Tower
+Translated:Basculer la tour d'essuyage
 
 English:Tool
 Translated:Outil
@@ -4054,9 +4105,6 @@ Translated:Essayez de connecter les bords du maillage lorsque les données de ma
 English:Tuning Adjustment
 Translated:Réglage de réglage
 
-English:Turn auto leveling on
-Translated:Activer la mise à niveau automatique
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:Coupez le courant du moteur à la fin de l'impression ou après l'annulation de l'impression.
 
@@ -4072,11 +4120,20 @@ Translated:Allumez et éteignez le ventilateur quels que soient les réglages.
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Active et désactive tous les paramètres de refroidissement (tous les paramètres inférieurs à celui-ci).
 
+English:Twist
+Translated:Torsion
+
+English:Twist Right
+Translated:Twist Right
+
 English:Uh oh! Passwords do not match.
 Translated:Uh oh! Les mots de passe ne correspondent pas.
 
 English:Uh-oh! Could not connect to printer.
 Translated:Uh-oh! Impossible de se connecter à l'imprimante.
+
+English:Unable due to hardware leveling
+Translated:Impossible en raison de la mise à niveau du matériel
 
 English:Unable to Connect
 Translated:Impossible de se connecter
@@ -4101,9 +4158,6 @@ Translated:Dissocier
 
 English:Unknown
 Translated:Inconnu
-
-English:Unknown filament loaded
-Translated:Filament inconnu chargé
 
 English:Unknown Reason
 Translated:Raison inconnue
@@ -4210,6 +4264,9 @@ Translated:Utiliser les contrôles ci-dessus
 English:Validate Layer Height
 Translated:Valider la hauteur de la couche
 
+English:Validation Error
+Translated:erreur de validation
+
 English:Value
 Translated:Valeur
 
@@ -4239,6 +4296,9 @@ Translated:Voir les petites icônes
 
 English:View XSmall Icons
 Translated:Afficher les icônes XSmall
+
+English:Visit MatterHackers.com to Purchase
+Translated:Visitez MatterHackers.com pour acheter
 
 English:Wait For Running Clean
 Translated:Attendre pour courir propre
@@ -4300,12 +4360,6 @@ Translated:AVERTISSEMENT: pour pouvoir récupérer l'impression, votre imprimant
 English:WARNING: Write Failed!
 Translated:AVERTISSEMENT: Échec de l'écriture!
 
-English:We should be done in approximately {0} minutes.
-Translated:Nous devrions avoir terminé dans environ {0} minutes.
-
-English:We should be done in less than five minutes.
-Translated:Nous devrions avoir terminé en moins de cinq minutes.
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:Nous allons maintenant finaliser notre mesure de la hauteur de l'extrudeuse à cette position.
 
@@ -4323,12 +4377,6 @@ Translated:Coin
 
 English:Welcome to MatterControl
 Translated:Bienvenue sur MatterControl
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Bienvenue dans l'assistant de mise à niveau d'impression. Voici un aperçu rapide de ce que nous allons faire.
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:Bienvenue dans l'assistant de calibration de sonde. Voici un aperçu rapide de ce que nous allons faire.
 
 English:What was my password again?
 Translated:Quel était mon mot de passe à nouveau?
@@ -4365,6 +4413,9 @@ Translated:Essuyez la distance de bouclier
 
 English:Wipe Tower Size
 Translated:Essuyer la taille de la tour
+
+English:Wizard
+Translated:sorcier
 
 English:Would you like to setup Wifi?
 Translated:Souhaitez-vous configurer le Wifi?
@@ -4441,14 +4492,11 @@ Translated:Vos buses doivent maintenant être calibrées.
 English:Your Phone Number
 Translated:Votre numéro de téléphone
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
-Translated:Votre imprimante a été ajustée, mais nous devons relancer l’étalonnage pour améliorer la précision.
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
+Translated:Votre imprimante a été ajustée, mais nous devons recommencer l’étalonnage pour améliorer la précision.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Votre imprimante a signalé une erreur matérielle et a été suspendue. Vérifiez l'erreur et annulez l'impression si nécessaire.
-
-English:Your Probe is now calibrated.
-Translated:Votre sonde est maintenant calibrée.
 
 English:Your Share Code
 Translated:Votre code de partage
@@ -4467,6 +4515,15 @@ Translated:Votre code G de départ ne doit pas contenir de G30 si vous prévoyez
 
 English:Z
 Translated:Z
+
+English:Z Calibration
+Translated:Calibrage Z
+
+English:Z Calibration complete.
+Translated:Z Calibrage terminé.
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Le calibrage Z mesure la position z des buses.
 
 English:Z Lift
 Translated:Z Lift

@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    •取出纸张
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1.选择右侧的“控件”选项卡
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2.寻找校准部分（如下图所示）
-
 English:- none -
 Translated:- 没有 -
 
@@ -38,7 +32,7 @@ English:°
 Translated:°
 
 English:°C
-Translated:C
+Translated:℃下
 
 English:2D Layer View
 Translated:2D图层视图
@@ -72,6 +66,9 @@ Translated:美国或加拿大的手机号码
 
 English:A valid email address
 Translated:有效的电子邮件地址
+
+English:Abort Calibration
+Translated:中止校准
 
 English:Abort Print
 Translated:中止打印
@@ -169,6 +166,9 @@ Translated:所有加热器
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:允许MatterControl拆分长行以改善调平和打印取消。对于显着超出水平的打印机而言至关重要。
 
+English:Allows for the repositioning of the rotation origin
+Translated:允许重新定位旋转原点
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:允许您打开和关闭将拟合应用于x轴。
 
@@ -184,8 +184,14 @@ Translated:Α
 English:Alpha: The in development version of MatterControl
 Translated:Alpha：MatterControl的开发版本
 
+English:Already Calibrated
+Translated:已经校准过
+
 English:Already Loaded
 Translated:已加载
+
+English:An unexpected error occurred during reload
+Translated:重新加载期间发生意外错误
 
 English:Anchor
 Translated:锚
@@ -214,6 +220,9 @@ Translated:应用
 English:Apply leveling to G-Code during export
 Translated:在导出期间对G代码应用调平
 
+English:Are you sure you want to abort calibration?
+Translated:您确定要中止校准吗？
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:您确定要中止当前打印并关闭MatterControl吗？
 
@@ -235,6 +244,9 @@ Translated:您确定要退出吗？您将无法访问打印机配置文件或云
 English:Arrange All Parts
 Translated:安排所有零件
 
+English:Array
+Translated:排列
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:随着打印层的时间减少到此，风扇速度将增加到其最大速度。
 
@@ -246,9 +258,6 @@ Translated:试图连接
 
 English:ATX Power Control
 Translated:ATX电源控制
-
-English:Auto Calibrate
-Translated:自动校准
 
 English:Auto Connect
 Translated:自动连接
@@ -343,6 +352,9 @@ Translated:Beta版
 English:Beta: The release candidate version of MatterControl
 Translated:Beta：MatterControl的候选版本
 
+English:Booleans
+Translated:布尔
+
 English:Bottom Solid Infill
 Translated:底部固体填充物
 
@@ -379,8 +391,14 @@ Translated:计算并传输所有命令的标准rep-rap校验和。
 English:Calculate Path
 Translated:计算路径
 
+English:Calibrate Printer
+Translated:校准打印机
+
 English:Calibration
 Translated:校准
+
+English:Calibration Face
+Translated:校准面
 
 English:Calibration Faces
 Translated:校准面
@@ -388,8 +406,14 @@ Translated:校准面
 English:Calibration Files
 Translated:校准文件
 
+English:Calibration Mode
+Translated:校准模式
+
 English:Calibration Parts
 Translated:校准零件
+
+English:Calibration Print
+Translated:校准打印
 
 English:Calibration Tab
 Translated:校准选项卡
@@ -454,9 +478,6 @@ Translated:检查webservice
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:每次打印前检查层高度是否小于喷嘴直径（对于长丝粘合很重要）
 
-English:Choose the calibration you would like to perform.
-Translated:选择您要执行的校准。
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:选择用于在打印机的LCD屏幕上显示打印进度的命令（如果有）。
 
@@ -481,9 +502,6 @@ Translated:清空选项
 English:Clear ZOffset
 Translated:清除ZOffset
 
-English:Click 'Done' to close this window.
-Translated:单击“完成”关闭此窗口。
-
 English:Click 'Next' to continue.
 Translated:单击“下一步”继续。
 
@@ -496,20 +514,17 @@ Translated:关闭多边形
 English:Cloud Library
 Translated:云库
 
+English:Coarse
+Translated:粗
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:粗校准完成后，我们现在将进行正常校准以提高精度。
-
-English:Coarse Calibration: If your printer is way off
-Translated:粗校准：如果您的打印机已关闭
 
 English:Coast At End
 Translated:海岸尽头
 
 English:Collapse All
 Translated:全部收缩
-
-English:Collect data
-Translated:收集数据
 
 English:Color
 Translated:颜色
@@ -528,6 +543,9 @@ Translated:编译模型
 
 English:Complete Individual Objects
 Translated:完成单个对象
+
+English:Completed
+Translated:已完成
 
 English:Cone
 Translated:锥体
@@ -552,9 +570,6 @@ Translated:确认您的新密码
 
 English:Confirm your Password
 Translated:确认你的密码
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:恭喜您连接到您的打印机。在开始第一次打印之前，我们需要运行一个简单的校准程序。
 
 English:Congratulations Print Complete
 Translated:祝贺打印完成
@@ -598,6 +613,9 @@ Translated:连接成功
 English:Connection timed out
 Translated:连接超时
 
+English:Connection Timeout
+Translated:连接超时
+
 English:Continue
 Translated:继续
 
@@ -630,6 +648,9 @@ Translated:复制并重新校准
 
 English:Copy everything but hardware specific calibration settings
 Translated:复制除硬件特定校准设置以外的所
+
+English:Copy Mesh
+Translated:复制网格
 
 English:Copy Printers
 Translated:复印打印机
@@ -693,9 +714,6 @@ Translated:创造裙子
 
 English:Create Support
 Translated:创建支持
-
-English:Create Wipe Tower
-Translated:创建擦拭塔
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:创建附在打印底部的边缘。在打印ABS（以及其他易翘曲的塑料）时有助于防止翘曲，因为它有助于部件粘附在床身上。
@@ -874,6 +892,9 @@ Translated:下载...
 English:Downloads
 Translated:下载
 
+English:Dual Extrusion Align
+Translated:双挤压对齐
+
 English:Duplicate
 Translated:重复
 
@@ -943,6 +964,9 @@ Translated:启用恢复
 English:Enable Retractions
 Translated:启用撤消
 
+English:Enable Software Leveling
+Translated:启用软件级别
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:如果您的打印机具有G30（自动床探测）的硬件支持并且您想要使用它而不是手动测量探头位置，请启用此功能。
 
@@ -1003,6 +1027,9 @@ Translated:加载图片时出错
 English:Error Reported
 Translated:错误报告
 
+English:Error saving file
+Translated:保存文件时出错
+
 English:Estimated Cost
 Translated:估计费用
 
@@ -1030,9 +1057,6 @@ Translated:试验
 English:Export
 Translated:出口
 
-English:Export All Settings
-Translated:导出所有设置
-
 English:Export Bed Leveling Data
 Translated:出口床水平数据
 
@@ -1048,11 +1072,20 @@ Translated:导出错误
 English:Export File
 Translated:导出文件
 
+English:Export G-Code
+Translated:出口G代码
+
 English:Export Part Sheet
 Translated:出口零件表
 
+English:Export Printer
+Translated:导出打印机
+
 English:Export selection to
 Translated:将选择导出到
+
+English:Export X3G
+Translated:导出X3G
 
 English:Exporting
 Translated:出口
@@ -1147,8 +1180,14 @@ Translated:长丝已被装载
 English:Filament Length
 Translated:细丝长度
 
+English:Filament Loaded
+Translated:细丝加载
+
 English:Filament Speed
 Translated:灯丝速度
+
+English:Filament Unloaded
+Translated:细丝卸载
 
 English:Filament Volume
 Translated:细丝量
@@ -1177,8 +1216,8 @@ Translated:最后点击“下一步”继续。
 English:Find and create supports where needed
 Translated:在需要的地方查找并创建支持
 
-English:Fine Calibration: When you want that extra precision
-Translated:精细校准：当您需要额外的精度时
+English:Fine
+Translated:精细
 
 English:Finish
 Translated:完
@@ -1354,9 +1393,6 @@ Translated:给宏命名
 English:Group
 Translated:组
 
-English:Guides
-Translated:指南
-
 English:Guides and Articles
 Translated:指南和文章
 
@@ -1371,6 +1407,9 @@ Translated:半楔形
 
 English:Hardware
 Translated:硬件
+
+English:Hardware Error
+Translated:硬件错误
 
 English:Has Fan
 Translated:有粉丝
@@ -1405,9 +1444,6 @@ Translated:让MatterControl向您发送有关您的打印的短信
 English:Heat Before Homing
 Translated:归巢前的热量
 
-English:Heat the bed
-Translated:加热床
-
 English:Heated Bed
 Translated:加热床
 
@@ -1417,14 +1453,14 @@ Translated:加热床
 English:Heating Nozzle
 Translated:加热喷嘴
 
+English:Heating the printer
+Translated:加热打印机
+
 English:Height
 Translated:高度
 
 English:Help
 Translated:救命
-
-English:Here is what we are going to do:
-Translated:以下是我们要做的事情：
 
 English:High Precision
 Translated:高精准度
@@ -1437,9 +1473,6 @@ Translated:保持温度
 
 English:Home
 Translated:家
-
-English:Home the printer
-Translated:打印机
 
 English:Home X
 Translated:家X.
@@ -1462,7 +1495,7 @@ Translated:归巢
 English:Homing Offset
 Translated:归航偏移
 
-English:Homing The Printer
+English:Homing the printer
 Translated:归位打印机
 
 English:Hotend
@@ -1486,9 +1519,6 @@ Translated:Hotend温度：
 English:How can we improve?
 Translated:我们怎样才能改善？
 
-English:How to succeed with MatterControl
-Translated:如何使用MatterControl取得成功
-
 English:Hz
 Translated:赫兹
 
@@ -1506,12 +1536,6 @@ Translated:如果挤出机已经运行了很长时间，它可能会报告太大
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:如果打印图层的时间小于此值，则风扇将以最低速度打开。随着层时间的减少，它将逐渐上升到最大速度。
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:如果您希望将来重新校准水准测量：
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:如果您希望将来重新校准探头：
 
 English:Image
 Translated:图片
@@ -1573,14 +1597,14 @@ Translated:填充类型
 English:Inflate Path
 Translated:膨胀路径
 
+English:Initial (Recommended)
+Translated:初始（推荐）
+
 English:Initial Layer Speed
 Translated:初始层速度
 
 English:Initial Layers
 Translated:初始图层
-
-English:Initial Printer Setup
-Translated:初始打印机设置
 
 English:Initializing hardware...
 Translated:初始化硬件......
@@ -1630,6 +1654,9 @@ Translated:路口
 English:Invalid Client Token
 Translated:无效的客户端令牌
 
+English:Invalid printer selection
+Translated:打印机选择无效
+
 English:Inventory
 Translated:库存
 
@@ -1659,9 +1686,6 @@ Translated:项目无法导出为STL
 
 English:Item not Found
 Translated:物品未找到
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:是时候将现有的打印机设置复制到MatterHackers帐户了。复制后，只要您登录MatterControl，这些打印机就可用。未复制的打印机仅在未登录时可用。
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -1732,12 +1756,6 @@ Translated:在你开始之前让我们带你去看看。
 English:Letter
 Translated:信件
 
-English:Level X Carriage
-Translated:X级马车
-
-English:Level X Carriage Page
-Translated:X级运输页面
-
 English:Leveling
 Translated:代练
 
@@ -1783,26 +1801,29 @@ Translated:隐雕
 English:Load
 Translated:加载
 
+English:Load Extruder
+Translated:加载挤出机
+
+English:Load Extruder {0}
+Translated:加载挤出机{0}
+
 English:Load filament
 Translated:装载灯丝
 
 English:Load Filament
 Translated:装载灯丝
 
-English:Load Filament 2
-Translated:装载细丝2
-
 English:Load Filament Length
 Translated:加载灯丝长度
+
+English:Load Filament to continue
+Translated:加载灯丝继续
 
 English:Load Material
 Translated:装载材料
 
 English:Loading
 Translated:载入中
-
-English:Loading Bed
-Translated:装载床
 
 English:Loading Filament
 Translated:装载灯丝
@@ -1876,14 +1897,14 @@ Translated:确保周边的第一个点不是悬垂。
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:使部分填充顶部的第一层使用速度和风扇进行桥接。
 
+English:Manifold
+Translated:多种
+
 English:Manual Movement Speeds
 Translated:手动移动速度
 
 English:Manually Configure Connection
 Translated:手动配置连接
-
-English:Manually measure the extruder at the center
-Translated:手动测量中心的挤出机
 
 English:Markdown Edit
 Translated:Markdown编辑
@@ -1903,6 +1924,9 @@ Translated:物料
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:MatterControl帮助
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl由MatterHackers和其他开源软件团队完成
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl现在将尝试自动检测打印机。
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl：选择固件文件
+
+English:MatterHackers Internal Use
+Translated:MatterHackers内部使用
 
 English:Max Acceleration
 Translated:最大加速度
@@ -1948,8 +1975,14 @@ Translated:中等精度
 English:Merge Overlapping Lines
 Translated:合并重叠线
 
+English:Merge Vertices
+Translated:合并顶点
+
 English:Mesh
 Translated:啮合
+
+English:Mesh Modifiers
+Translated:网格修改器
 
 English:Message
 Translated:信息
@@ -2098,6 +2131,9 @@ Translated:新设计
 English:New Password
 Translated:新密码
 
+English:New Printer Name
+Translated:新的打印机名称
+
 English:New updates are ready to install
 Translated:新的更新已准备好安装
 
@@ -2134,11 +2170,17 @@ Translated:打印机床的边界内不存在可打印部件。添加内容以继
 English:No Printer Selected
 Translated:没有选择打印机
 
+English:No results found
+Translated:未找到结果
+
 English:None
 Translated:没有
 
-English:Normal Calibration: Start here
-Translated:正常校准：从这里开始
+English:Normal
+Translated:正常
+
+English:Normal (Recommended)
+Translated:正常（推荐）
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:通常，图像会扩展到边缘。这将尝试在视觉上集中图像的重量。
@@ -2172,6 +2214,9 @@ Translated:喷嘴2插入
 
 English:Nozzle Calibration
 Translated:喷嘴校准
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:喷嘴校准测量热端之间的距离。
 
 English:Nozzle Diameter
 Translated:喷嘴直径
@@ -2308,6 +2353,9 @@ Translated:打开最近
 English:OpenSCAD not installed
 Translated:未安装OpenSCAD
 
+English:Optional
+Translated:可选的
+
 English:Options
 Translated:选项
 
@@ -2344,6 +2392,9 @@ Translated:悬垂
 English:Overhang Angle
 Translated:悬垂角度
 
+English:Overview
+Translated:概观
+
 English:Pan
 Translated:泛
 
@@ -2352,9 +2403,6 @@ Translated:潘视图
 
 English:Part Cooling Fan
 Translated:部分冷却风扇
-
-English:Part History
-Translated:部分历史
 
 English:Password
 Translated:密码
@@ -2367,6 +2415,9 @@ Translated:密码更新完成
 
 English:Paste
 Translated:糊
+
+English:Path
+Translated:路径
 
 English:Pattern Spacing
 Translated:模式间距
@@ -2398,8 +2449,8 @@ Translated:周边
 English:Permission Denied
 Translated:没有权限
 
-English:Pick the most balanced result for each axis.
-Translated:为每个轴选择最平衡的结果。
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:选择与底座最齐全的衬垫，最平衡且居中的衬垫。
 
 English:PID Settings
 Translated:PID设置
@@ -2479,6 +2530,9 @@ Translated:多边形
 English:Port
 Translated:港口
 
+English:Port In Use
+Translated:使用港口
+
 English:Port not available
 Translated:端口不可用
 
@@ -2502,6 +2556,12 @@ Translated:功率控制
 
 English:Preheat
 Translated:预热
+
+English:Preparing help
+Translated:准备帮助
+
+English:Preparing help index
+Translated:准备帮助索引
 
 English:Preparing To Print
 Translated:准备打印
@@ -2542,8 +2602,8 @@ Translated:打印历史
 English:Print Leveling
 Translated:打印调平
 
-English:Print Leveling Overview
-Translated:打印调平概述
+English:Print Leveling measures the plane of the bed.
+Translated:打印水平测量床的平面。
 
 English:Print Leveling Wizard
 Translated:打印调平向导
@@ -2556,9 +2616,6 @@ Translated:打印队列
 
 English:Print Recovery
 Translated:打印恢复
-
-English:Print the calibration object
-Translated:打印校准对象
 
 English:Print Time
 Translated:打印时间
@@ -2583,6 +2640,9 @@ Translated:打印机是SLA
 
 English:Printer Name
 Translated:打印机名称
+
+English:Printer name already exists
+Translated:打印机名称已存在
 
 English:Printer name cannot be blank
 Translated:打印机名称不能为空
@@ -2620,11 +2680,8 @@ Translated:印刷速度
 English:Printing: {0}
 Translated:打印：{0}
 
-English:Probe Calibration
-Translated:探头校准
-
-English:Probe Calibration Overview
-Translated:探头校准概述
+English:Probe at bed center
+Translated:在床中心探测
 
 English:Probe Has Been Calibrated
 Translated:探针已经过校准
@@ -2634,9 +2691,6 @@ Translated:探针偏移
 
 English:Probe Offset Sample Point
 Translated:探针偏移采样点
-
-English:Probe the bed at the center
-Translated:探查中心的床
 
 English:Progress Reporting
 Translated:进度报告
@@ -2731,6 +2785,9 @@ Translated:发布
 English:Release Notes
 Translated:发行说明
 
+English:Reload Failed
+Translated:重新加载失败
+
 English:Reloading
 Translated:重装
 
@@ -2748,6 +2805,9 @@ Translated:删除所有自动生成的支持
 
 English:Remove Items?
 Translated:删除项目？
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:从床上取下校准部件，比较每个轴上垫片的两侧。
 
 English:Remove the paper
 Translated:取出纸张
@@ -2772,6 +2832,9 @@ Translated:请求固件进行撤消，而不是直接指定挤出机移动。
 
 English:Require Leveling To Print
 Translated:需要调平才能打印
+
+English:Required
+Translated:需要
 
 English:Reset
 Translated:重启
@@ -2805,9 +2868,6 @@ Translated:恢复默认
 
 English:Restore Settings
 Translated:恢复设置
-
-English:Restore your current bed, after all calibration is complete
-Translated:所有校准完成后，恢复当前的床位
 
 English:Resume
 Translated:恢复
@@ -2917,8 +2977,8 @@ Translated:旗鱼通讯
 English:Sample Points
 Translated:抽样点
 
-English:Sample the bed at {0} points
-Translated:在{0}点采样床
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:对床中心位置进行取样以确定探头与床的距离
 
 English:Sampled Positions
 Translated:抽样职位
@@ -2971,6 +3031,9 @@ Translated:搜索Google
 English:Search Results
 Translated:搜索结果
 
+English:Searching
+Translated:搜索
+
 English:seconds
 Translated:秒
 
@@ -2986,12 +3049,6 @@ Translated:选择一个新目的地
 English:Select a printer to continue
 Translated:选择要继续的打印机
 
-English:Select Make
-Translated:选择Make
-
-English:Select Model
-Translated:选择型号
-
 English:Select Part
 Translated:选择零件
 
@@ -3000,18 +3057,6 @@ Translated:选择打印机
 
 English:Select the baud rate.
 Translated:选择波特率。
-
-English:Select the hotend on the left to continue
-Translated:选择左侧的hotend继续
-
-English:Select the material you are printing
-Translated:选择要打印的材料
-
-English:Select the printer manufacturer
-Translated:选择打印机制造商
-
-English:Select the printer model
-Translated:选择打印机型号
 
 English:Select What to Import
 Translated:选择要导入的内容
@@ -3045,9 +3090,6 @@ Translated:会议已清除
 
 English:Session Expired
 Translated:会话已过期
-
-English:Set active material to continue
-Translated:设置活动材料以继续
 
 English:Set as Default
 Translated:设为默认
@@ -3313,6 +3355,9 @@ Translated:螺旋花瓶
 English:Split
 Translated:分裂
 
+English:Split Mesh
+Translated:分裂网格
+
 English:Stable
 Translated:稳定
 
@@ -3364,9 +3409,6 @@ Translated:开始同步
 English:Startup Failure
 Translated:启动失败
 
-English:Stash your current bed
-Translated:存放你当前的床
-
 English:Stay Connected
 Translated:保持联系
 
@@ -3405,9 +3447,6 @@ Translated:减去并替换
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:从磁盘中减去图像，以便打印负空间。
-
-English:Success
-Translated:成功
 
 English:Success! Please check your email for the reset code.
 Translated:成功！请查看您的电子邮件以获取重置代码。
@@ -3550,6 +3589,9 @@ Translated:从X轴测量的填充角度。桥接时不使用。
 English:The angle to generate support for
 Translated:产生支持的角度
 
+English:The angle to rotate the top of the part
+Translated:旋转零件顶部的角度
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:床正在加热，其目标温度在达到{0}°C之前不能改变。 \ NN \您可以在SETTINGS  - >灯丝 - >温度中设置起始床温度。\n\n{1}
 
@@ -3622,9 +3664,6 @@ Translated:打印将暂停的层，允许更换灯丝。在启动给定图层之
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:在印刷品的左后方产生的塔的长度和宽度，用于在多个挤出机之间切换时擦拭下一个喷嘴。设置为0以禁用。
 
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:将在打印水准测量期间显示Markdown以帮助获得X托架级别。
-
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Markdown将显示在Clean Filament页面上。
 
@@ -3672,9 +3711,6 @@ Translated:层冷却风扇运行的最小速度，表示为全功率的百分比
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:打印机将减少的最小速度，以便尝试使图层打印时间足够长以满足最小层时间。
-
-English:The next few screens will walk your through calibrating your printer.
-Translated:接下来的几个屏幕将指导您校准打印机。
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:切片时使用的CPU核心数。增加此功能会降低机器速度。
@@ -3919,6 +3955,15 @@ Translated:薄壁
 English:This code to will provide read-only access.
 Translated:此代码将提供只读访问权限。
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:该数据可补偿机器未对准和床变形，并确保良好的第一层粘合。
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:该数据改善了双挤出印刷品的对齐。
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:该数据是软件打印校平所必需的，并确保良好的第一层粘合。
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:这是从打印机接收到行后应用于行的一组正则表达式。它们将应用于收到的每一行。
 
@@ -3964,6 +4009,9 @@ Translated:这将提高打印校平的准确性。
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:这仅适用于特定硬件。除非您确定您的打印机控制器支持此功能，否则请勿使用
 
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:该向导将关闭以打印校准部件并在打印完成后继续。
+
 English:Threads
 Translated:主题
 
@@ -4005,6 +4053,9 @@ Translated:切换选择
 
 English:Toggle Support
 Translated:切换支持
+
+English:Toggle Wipe Tower
+Translated:切换擦拭塔
 
 English:Tool
 Translated:工具
@@ -4054,9 +4105,6 @@ Translated:当实际网格数据未完全连接时，尝试连接网格边。
 English:Tuning Adjustment
 Translated:调整调整
 
-English:Turn auto leveling on
-Translated:打开自动调平功能
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:在打印结束时或取消打印后关闭电机电流。
 
@@ -4072,11 +4120,20 @@ Translated:无论设置如何，都要打开和关闭风扇。
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:打开和关闭所有冷却设置（此下面的所有设置）。
 
+English:Twist
+Translated:捻
+
+English:Twist Right
+Translated:扭曲吧
+
 English:Uh oh! Passwords do not match.
 Translated:哦哦！密码不匹配。
 
 English:Uh-oh! Could not connect to printer.
 Translated:嗯，哦！无法连接到打印机。
+
+English:Unable due to hardware leveling
+Translated:由于硬件调平而无法使用
 
 English:Unable to Connect
 Translated:无法连接
@@ -4101,9 +4158,6 @@ Translated:取消组合
 
 English:Unknown
 Translated:未知
-
-English:Unknown filament loaded
-Translated:装载未知的灯丝
 
 English:Unknown Reason
 Translated:不明原因
@@ -4210,6 +4264,9 @@ Translated:使用上面的控件
 English:Validate Layer Height
 Translated:验证图层高度
 
+English:Validation Error
+Translated:验证错误
+
 English:Value
 Translated:值
 
@@ -4239,6 +4296,9 @@ Translated:查看小图标
 
 English:View XSmall Icons
 Translated:查看XSmall图标
+
+English:Visit MatterHackers.com to Purchase
+Translated:访问MatterHackers.com购买
 
 English:Wait For Running Clean
 Translated:等待清洁
@@ -4300,12 +4360,6 @@ Translated:警告：为了执行打印恢复，您的打印机必须向下移动
 English:WARNING: Write Failed!
 Translated:警告：写入失败！
 
-English:We should be done in approximately {0} minutes.
-Translated:我们应该在大约{0}分钟内完成。
-
-English:We should be done in less than five minutes.
-Translated:我们应该在不到五分钟的时间内完成。
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:我们现在将完成对该位置挤出机高度的测量。
 
@@ -4323,12 +4377,6 @@ Translated:楔
 
 English:Welcome to MatterControl
 Translated:欢迎来到MatterControl
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:欢迎使用打印水准向导。以下是我们将要做的快速概述。
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:欢迎使用探头校准向导。以下是我们将要做的快速概述。
 
 English:What was my password again?
 Translated:我的密码又是什么？
@@ -4365,6 +4413,9 @@ Translated:擦拭屏蔽距离
 
 English:Wipe Tower Size
 Translated:擦拭塔尺寸
+
+English:Wizard
+Translated:巫师
 
 English:Would you like to setup Wifi?
 Translated:你想设置Wifi吗？
@@ -4441,14 +4492,11 @@ Translated:现在应该校准您的喷嘴。
 English:Your Phone Number
 Translated:你的电话号码
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
-Translated:您的打印机已经过调整，但我们需要再次进行校准以提高准确性。
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
+Translated:您的打印机已经过调整，但我们应该再次进行校准以提高准确性。
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:您的打印机正在报告硬件错误并已暂停。检查错误并根据需要取消打印。
-
-English:Your Probe is now calibrated.
-Translated:您的探头现已校准。
 
 English:Your Share Code
 Translated:您的股票代码
@@ -4467,6 +4515,15 @@ Translated:如果您计划使用Print Recovery，则您的开始G代码不应包
 
 English:Z
 Translated:ž
+
+English:Z Calibration
+Translated:Z校准
+
+English:Z Calibration complete.
+Translated:Z校准完成。
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Z Calibration测量喷嘴的z位置。
 
 English:Z Lift
 Translated:Z Lift
