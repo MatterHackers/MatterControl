@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    • کاغذ را بردارید
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1. زبانه "کنترل" در سمت راست را انتخاب کنید
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2. به بخش کالیبراسیون نگاه کنید (تصویر زیر)
-
 English:- none -
 Translated:- هیچ یک -
 
@@ -72,6 +66,9 @@ Translated:شماره تلفن همراه ایالات متحده یا کانا�
 
 English:A valid email address
 Translated:یک آدرس ایمیل معتبر
+
+English:Abort Calibration
+Translated:لغو کالیبراسیون
 
 English:Abort Print
 Translated:لغو چاپ
@@ -169,6 +166,9 @@ Translated:همه بخاری ها
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:به MatterControl اجازه دهید تا خطوط طولانی را برای تقسیم کردن سطوح و چاپ لغو کند. انتقادی برای پرینترها که به طور قابل توجهی خارج از سطح هستند.
 
+English:Allows for the repositioning of the rotation origin
+Translated:اجازه می دهد تا تغییر موقعیت چرخش را تغییر دهید
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:به شما اجازه می دهد تا روی محور x استفاده کنید.
 
@@ -184,8 +184,14 @@ Translated:آلفا
 English:Alpha: The in development version of MatterControl
 Translated:آلفا: در نسخه توسعه MatterControl
 
+English:Already Calibrated
+Translated:قبلا کالیبراسیون شده است
+
 English:Already Loaded
 Translated:قبلا بارگیری شده است
+
+English:An unexpected error occurred during reload
+Translated:یک خطای غیرمنتظره هنگام بارگیری دوباره رخ داد
 
 English:Anchor
 Translated:لنگر
@@ -214,6 +220,9 @@ Translated:درخواست دادن
 English:Apply leveling to G-Code during export
 Translated:در طول صادرات، مقیاس G-Code را برآورد کنید
 
+English:Are you sure you want to abort calibration?
+Translated:آیا مطمئن هستید که می خواهید کالیبراسیون را لغو کنید؟
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:آیا مطمئن هستید که می خواهید چاپ فعلی را قطع کنید و MatterControl را ببندید؟
 
@@ -235,6 +244,9 @@ Translated:آیا مطمئن هستید که می خواهید از سیستم �
 English:Arrange All Parts
 Translated:ترتیب همه قطعات
 
+English:Array
+Translated:آرایه
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:همانطور که زمان چاپ یک لایه به این کاهش می یابد، سرعت فن افزایش می یابد تا حداکثر سرعت آن.
 
@@ -246,9 +258,6 @@ Translated:تلاش برای اتصال
 
 English:ATX Power Control
 Translated:کنترل قدرت ATX
-
-English:Auto Calibrate
-Translated:کالیبراسیون خودکار
 
 English:Auto Connect
 Translated:اتصال خودکار
@@ -343,6 +352,9 @@ Translated:بتا
 English:Beta: The release candidate version of MatterControl
 Translated:نسخه بتا: نسخه آزمایشی انتشار MatterControl
 
+English:Booleans
+Translated:booleans
+
 English:Bottom Solid Infill
 Translated:پایین تخت جامد
 
@@ -379,8 +391,14 @@ Translated:محاسبه و ارسال یک چکمه استاندارد rep-rap �
 English:Calculate Path
 Translated:مسیر را محاسبه کنید
 
+English:Calibrate Printer
+Translated:کالیبراسیون چاپگر
+
 English:Calibration
 Translated:کالیبراسیون
+
+English:Calibration Face
+Translated:صورت کالیبراسیون
 
 English:Calibration Faces
 Translated:چهره کالیبراسیون
@@ -388,8 +406,14 @@ Translated:چهره کالیبراسیون
 English:Calibration Files
 Translated:فایل های کالیبراسیون
 
+English:Calibration Mode
+Translated:حالت کالیبراسیون
+
 English:Calibration Parts
 Translated:قطعات کالیبراسیون
+
+English:Calibration Print
+Translated:کالیبراسیون چاپ
 
 English:Calibration Tab
 Translated:برگه کالیبراسیون
@@ -454,9 +478,6 @@ Translated:بررسی با وب سرویس
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:چک کردن قبل از هر چاپ که ارتفاع لایه کمتر از قطر نازل (مهم برای چسبندگی رشته)
 
-English:Choose the calibration you would like to perform.
-Translated:کالیبراسیون را که می خواهید انجام دهید را انتخاب کنید.
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:فرمان برای نشان دادن پیشرفت چاپ روی صفحه LCD چاپگر، اگر آن را داشته باشد، را انتخاب کنید.
 
@@ -481,9 +502,6 @@ Translated:پاک کردن انتخاب
 English:Clear ZOffset
 Translated:پاک کردن ZOffset
 
-English:Click 'Done' to close this window.
-Translated:برای بستن این پنجره روی 'انجام شد' کلیک کنید.
-
 English:Click 'Next' to continue.
 Translated:برای ادامه بر روی بعدی کلیک کنید.
 
@@ -496,20 +514,17 @@ Translated:بستن چند ضلعی
 English:Cloud Library
 Translated:کتابخانه ابر
 
+English:Coarse
+Translated:درشت
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:کالیبراسیون درشت کامل می شود، اکنون کالیبراسیون طبیعی را برای بهبود دقت انجام خواهیم داد.
-
-English:Coarse Calibration: If your printer is way off
-Translated:کالیبراسیون درشت: اگر چاپگر شما راه بیفتد
 
 English:Coast At End
 Translated:ساحل در پایان
 
 English:Collapse All
 Translated:سقوط همه
-
-English:Collect data
-Translated:جمع آوری داده ها
 
 English:Color
 Translated:رنگ
@@ -528,6 +543,9 @@ Translated:مدل کامپایل
 
 English:Complete Individual Objects
 Translated:تک تک اشیاء فرد
+
+English:Completed
+Translated:تکمیل شده
 
 English:Cone
 Translated:مخروطی
@@ -552,9 +570,6 @@ Translated:رمز عبور جدید خود را تأیید کنید
 
 English:Confirm your Password
 Translated:رمز عبور خود را تأیید کنید
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:تبریک به اتصال به چاپگر شما قبل از شروع اولین چاپ ما باید یک روش کالیبراسیون ساده را اجرا کنیم.
 
 English:Congratulations Print Complete
 Translated:تبریک چاپ کامل
@@ -598,6 +613,9 @@ Translated:اتصال موفق شد
 English:Connection timed out
 Translated:زمان اتصال به پایان رسید
 
+English:Connection Timeout
+Translated:زمان اتصال
+
 English:Continue
 Translated:ادامه هید
 
@@ -630,6 +648,9 @@ Translated:کپی و کالیبراسیون
 
 English:Copy everything but hardware specific calibration settings
 Translated:کپی کردن همه چیز اما تنظیمات کالیبراسیون خاص سخت افزار
+
+English:Copy Mesh
+Translated:کپی مش
 
 English:Copy Printers
 Translated:چاپگرهای کپی
@@ -693,9 +714,6 @@ Translated:ایجاد دامن
 
 English:Create Support
 Translated:ایجاد پشتیبانی
-
-English:Create Wipe Tower
-Translated:ایجاد برج پاک کن
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:یک لبه را به پایه چاپ متصل می کند. برای جلوگیری از انحراف در هنگام چاپ ABS (و دیگر پلاستیک های پیچیده پلاستیکی) مفید است، به عنوان کمک می کند قطعات بخار به تخت.
@@ -874,6 +892,9 @@ Translated:بارگیری ...
 English:Downloads
 Translated:دانلودها
 
+English:Dual Extrusion Align
+Translated:دوگانه اکستروژن هم ترازی
+
 English:Duplicate
 Translated:کپی کنید
 
@@ -943,6 +964,9 @@ Translated:فعالسازی بازیابی
 English:Enable Retractions
 Translated:فعال کردن بازپس گرفتن
 
+English:Enable Software Leveling
+Translated:سطح نرم افزار را فعال کنید
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:این را فعال کنید اگر چاپگر شما دارای پشتیبانی سخت افزاری برای G30 (لایه برداری اتوماتیک) است و شما می خواهید از آن استفاده کنید تا به صورت دستی اندازه گیری موقعیت های پروب.
 
@@ -1003,6 +1027,9 @@ Translated:خطا در بارگذاری تصویر
 English:Error Reported
 Translated:خطا گزارش شده است
 
+English:Error saving file
+Translated:خطا در ذخیره فایل
+
 English:Estimated Cost
 Translated:هزینه تخمین زده شده
 
@@ -1030,9 +1057,6 @@ Translated:آزمایشی
 English:Export
 Translated:صادرات
 
-English:Export All Settings
-Translated:صادرات تمام تنظیمات
-
 English:Export Bed Leveling Data
 Translated:صادرات داده های سطح مقیاس
 
@@ -1048,11 +1072,20 @@ Translated:خطای صادرات
 English:Export File
 Translated:فایل صادرات
 
+English:Export G-Code
+Translated:صادرات G-Code
+
 English:Export Part Sheet
 Translated:ورق صادرات
 
+English:Export Printer
+Translated:صادرات چاپگر
+
 English:Export selection to
 Translated:انتخاب صادرات به
+
+English:Export X3G
+Translated:صادرات X3G
 
 English:Exporting
 Translated:صادرات
@@ -1147,8 +1180,14 @@ Translated:شعاع بارگذاری شده است
 English:Filament Length
 Translated:طول رشته
 
+English:Filament Loaded
+Translated:شعاع بارگذاری شده
+
 English:Filament Speed
 Translated:سرعت رشته
+
+English:Filament Unloaded
+Translated:رشته تخلیه شده
 
 English:Filament Volume
 Translated:حجم رشته
@@ -1177,8 +1216,8 @@ Translated:در آخر روی Next کلیک کنید تا ادامه یابد.
 English:Find and create supports where needed
 Translated:پیدا کردن و ایجاد پشتیبانی در صورت نیاز
 
-English:Fine Calibration: When you want that extra precision
-Translated:کالیبراسیون دقیق: هنگامی که شما می خواهید دقت فوق العاده
+English:Fine
+Translated:خوب
 
 English:Finish
 Translated:پایان دادن
@@ -1354,9 +1393,6 @@ Translated:نام ماکرو را بدهید
 English:Group
 Translated:گروه
 
-English:Guides
-Translated:راهنماها
-
 English:Guides and Articles
 Translated:راهنماها و مقالات
 
@@ -1371,6 +1407,9 @@ Translated:نیم گوه
 
 English:Hardware
 Translated:سخت افزار
+
+English:Hardware Error
+Translated:خطای سخت افزاری
 
 English:Has Fan
 Translated:دارای فن است
@@ -1405,9 +1444,6 @@ Translated:آیا MatterControl به شما پیام های متنی در مور
 English:Heat Before Homing
 Translated:حرارت قبل از تعطیلات
 
-English:Heat the bed
-Translated:رختخواب را گرم کن
-
 English:Heated Bed
 Translated:تختخواب
 
@@ -1417,14 +1453,14 @@ Translated:گرمایش تخت
 English:Heating Nozzle
 Translated:نازل گرم
 
+English:Heating the printer
+Translated:چاپگر را گرم کن
+
 English:Height
 Translated:ارتفاع
 
 English:Help
 Translated:کمک
-
-English:Here is what we are going to do:
-Translated:در اینجا چیزی است که ما میخواهیم انجام دهیم:
 
 English:High Precision
 Translated:دقت بالا
@@ -1437,9 +1473,6 @@ Translated:برگزاری دما
 
 English:Home
 Translated:خانه
-
-English:Home the printer
-Translated:چاپگر خانگی
 
 English:Home X
 Translated:صفحه اصلی X
@@ -1462,8 +1495,8 @@ Translated:هومینگ
 English:Homing Offset
 Translated:تعویض خانه
 
-English:Homing The Printer
-Translated:خانه چاپگر
+English:Homing the printer
+Translated:پرینت را در اختیار دارید
 
 English:Hotend
 Translated:هت اند
@@ -1486,9 +1519,6 @@ Translated:دمای هوا
 English:How can we improve?
 Translated:چگونه می توانیم بهبود یابیم؟
 
-English:How to succeed with MatterControl
-Translated:چگونه می توان با MatterControl موفق شد
-
 English:Hz
 Translated:هرتز
 
@@ -1506,12 +1536,6 @@ Translated:اگر اکسترودر به مدت طولانی در حال اجرا
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:اگر زمان چاپ یک لایه کمتر از این باشد، فن با حداکثر سرعت آن روشن می شود. پس از آن زمان لایه کاهش می یابد و سپس حداکثر سرعت آن را بارگذاری می کند.
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:اگر می خواهید سطح در آینده را دوباره کالیبراسیون کنید:
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:اگر میخواهید پروب خود را در آینده کالیبره کنید:
 
 English:Image
 Translated:تصویر
@@ -1573,14 +1597,14 @@ Translated:نوع Infill
 English:Inflate Path
 Translated:مسیر تورم
 
+English:Initial (Recommended)
+Translated:اولیه (توصیه شده)
+
 English:Initial Layer Speed
 Translated:سرعت لایه اولیه
 
 English:Initial Layers
 Translated:لایه های اولیه
-
-English:Initial Printer Setup
-Translated:راه اندازی اولیه چاپگر
 
 English:Initializing hardware...
 Translated:راه اندازی سخت افزار ...
@@ -1630,6 +1654,9 @@ Translated:تقاطع
 English:Invalid Client Token
 Translated:رمز عبور نامعتبر
 
+English:Invalid printer selection
+Translated:انتخاب چاپگر نامعتبر است
+
 English:Inventory
 Translated:فهرست
 
@@ -1659,9 +1686,6 @@ Translated:مورد را نمی توان به عنوان STL صادر کرد
 
 English:Item not Found
 Translated:مورد یافت نشد
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:وقت آن است که تنظیمات چاپگر موجود خود را به حساب MatterHackers خود کپی کنید. پس از کپی، این چاپگرها هر زمان که به MatterControl وارد میشوند در دسترس خواهند بود. چاپگرهایی که کپی نمی شوند فقط هنگام ورود به سیستم در دسترس خواهند بود.
 
 English:Jerk Velocity
 Translated:سرعت حرکت تند و سریع
@@ -1732,12 +1756,6 @@ Translated:بیایید قبل از اینکه شروع به کار کنیم، �
 English:Letter
 Translated:نامه
 
-English:Level X Carriage
-Translated:سطح حمل بار X
-
-English:Level X Carriage Page
-Translated:سطح X حمل صفحه
-
 English:Leveling
 Translated:سطح بندی
 
@@ -1783,26 +1801,29 @@ Translated:لیتوفان
 English:Load
 Translated:بار
 
+English:Load Extruder
+Translated:اکسترودر بار
+
+English:Load Extruder {0}
+Translated:اکسترودر بار {0}
+
 English:Load filament
 Translated:رشته رول
 
 English:Load Filament
 Translated:رشته بار
 
-English:Load Filament 2
-Translated:بار رشته 2
-
 English:Load Filament Length
 Translated:طول رشته طول
+
+English:Load Filament to continue
+Translated:بار رشته برای ادامه
 
 English:Load Material
 Translated:بارگذاری مواد
 
 English:Loading
 Translated:بارگذاری
-
-English:Loading Bed
-Translated:بار بستن
 
 English:Loading Filament
 Translated:در حال بارگذاری رشته
@@ -1876,14 +1897,14 @@ Translated:اطمینان حاصل کنید که اولین نقطه در یک �
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:لایه اول را در بالای قسمت انفصال قرار دهید تا از سرعت و فن برای پل زدن استفاده کنید.
 
+English:Manifold
+Translated:منیفولد
+
 English:Manual Movement Speeds
 Translated:سرعت حرکت دستی
 
 English:Manually Configure Connection
 Translated:اتصال به صورت دستی پیکربندی کنید
-
-English:Manually measure the extruder at the center
-Translated:اکسترودر را در مرکز اندازه گیری می کند
 
 English:Markdown Edit
 Translated:Markdown ویرایش
@@ -1903,6 +1924,9 @@ Translated:مواد
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:راهنما MatterControl
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl توسط تیم MatterHackers و دیگر نرم افزارهای منبع باز امکان پذیر است
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl در حال حاضر برای تشخیص خودکار �
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: فایل نرم افزار را انتخاب کنید
+
+English:MatterHackers Internal Use
+Translated:استفاده داخلی MatterHackers
 
 English:Max Acceleration
 Translated:شتاب حداکثر
@@ -1948,8 +1975,14 @@ Translated:دقت متوسط
 English:Merge Overlapping Lines
 Translated:ادغام خطوط همپوشانی
 
+English:Merge Vertices
+Translated:ادغام ارقام
+
 English:Mesh
 Translated:مش
+
+English:Mesh Modifiers
+Translated:اصلاح کننده مش
 
 English:Message
 Translated:پیام
@@ -2098,6 +2131,9 @@ Translated:طراحی جدید
 English:New Password
 Translated:رمز عبور جدید
 
+English:New Printer Name
+Translated:نام چاپگر جدید
+
 English:New updates are ready to install
 Translated:به روز رسانی های جدید آماده نصب هستند
 
@@ -2134,11 +2170,17 @@ Translated:قطعات قابل چاپ در محدوده تخت چاپگر وجو
 English:No Printer Selected
 Translated:هیچ پرینتر انتخاب نشده است
 
+English:No results found
+Translated:نتیجه ای پیدا نشد
+
 English:None
 Translated:هیچ یک
 
-English:Normal Calibration: Start here
-Translated:کالیبراسیون عادی: از اینجا شروع کنید
+English:Normal
+Translated:طبیعی
+
+English:Normal (Recommended)
+Translated:عادی (توصیه شده)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:به طور معمول تصویر به لبه گسترش می یابد. این سعی خواهد کرد تا تصویر بصری را به صورت مرکزی قرار دهد.
@@ -2172,6 +2214,9 @@ Translated:نازل 2 درج
 
 English:Nozzle Calibration
 Translated:کالیبراسیون نازل
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:کالیبراسیون نازل اندازه فاصله بین hotends.
 
 English:Nozzle Diameter
 Translated:قطر نازل
@@ -2308,6 +2353,9 @@ Translated:باز کردن اخیر
 English:OpenSCAD not installed
 Translated:OpenSCAD نصب نشده است
 
+English:Optional
+Translated:اختیاری
+
 English:Options
 Translated:گزینه ها
 
@@ -2344,6 +2392,9 @@ Translated:بالا بردن
 English:Overhang Angle
 Translated:زاویه بالایی
 
+English:Overview
+Translated:بررسی اجمالی
+
 English:Pan
 Translated:ماهی تابه
 
@@ -2352,9 +2403,6 @@ Translated:نمایش پان
 
 English:Part Cooling Fan
 Translated:بخش خنک کننده فن
-
-English:Part History
-Translated:تاریخچه بخش
 
 English:Password
 Translated:کلمه عبور
@@ -2367,6 +2415,9 @@ Translated:رمز عبور به روز رسانی کامل است
 
 English:Paste
 Translated:چسباندن
+
+English:Path
+Translated:مسیر
 
 English:Pattern Spacing
 Translated:فاصله الگو
@@ -2398,8 +2449,8 @@ Translated:محدوده
 English:Permission Denied
 Translated:مجوز انکار شده است
 
-English:Pick the most balanced result for each axis.
-Translated:نتایج متعادل را برای هر محور انتخاب کنید.
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:پد را انتخاب کنید که بیشترین تراز با پایه است، پد که بیشترین تعادل و مرکز را دارد.
 
 English:PID Settings
 Translated:تنظیمات PID
@@ -2479,6 +2530,9 @@ Translated:چند ضلعی
 English:Port
 Translated:بندر
 
+English:Port In Use
+Translated:بندر در استفاده
+
 English:Port not available
 Translated:بندر موجود نیست
 
@@ -2502,6 +2556,12 @@ Translated:کنترل قدرت
 
 English:Preheat
 Translated:پیش گرم شدن
+
+English:Preparing help
+Translated:آماده سازی کمک
+
+English:Preparing help index
+Translated:آماده سازی شاخص کمک
 
 English:Preparing To Print
 Translated:آماده سازی برای چاپ
@@ -2542,8 +2602,8 @@ Translated:تاریخچه چاپ
 English:Print Leveling
 Translated:سطح چاپ
 
-English:Print Leveling Overview
-Translated:بررسی اجمالی چاپ
+English:Print Leveling measures the plane of the bed.
+Translated:چاپ مقادیر سطح هواپیما را اندازه گیری می کند.
 
 English:Print Leveling Wizard
 Translated:جادوگر سطح چاپ
@@ -2556,9 +2616,6 @@ Translated:صف چاپ
 
 English:Print Recovery
 Translated:بازیابی چاپ
-
-English:Print the calibration object
-Translated:شیوه کالیبراسیون را چاپ کنید
 
 English:Print Time
 Translated:زمان چاپ
@@ -2583,6 +2640,9 @@ Translated:چاپگر SLA است
 
 English:Printer Name
 Translated:نام چاپگر
+
+English:Printer name already exists
+Translated:نام چاپی در حال حاضر موجود است
 
 English:Printer name cannot be blank
 Translated:نام چاپی نباید خالی باشد
@@ -2620,11 +2680,8 @@ Translated:سرعت چاپ
 English:Printing: {0}
 Translated:چاپ: {0}
 
-English:Probe Calibration
-Translated:کالیبراسیون Probe
-
-English:Probe Calibration Overview
-Translated:بازنگری کالیبراسیون پروب
+English:Probe at bed center
+Translated:پروب در مرکز تخت
 
 English:Probe Has Been Calibrated
 Translated:Probe Calibrated شده است
@@ -2634,9 +2691,6 @@ Translated:Probe Offset
 
 English:Probe Offset Sample Point
 Translated:Probe Offset Sample Point
-
-English:Probe the bed at the center
-Translated:تخت در مرکز را بررسی کنید
 
 English:Progress Reporting
 Translated:گزارش پیشرفت
@@ -2731,6 +2785,9 @@ Translated:رهایی
 English:Release Notes
 Translated:یادداشتهای انتشار
 
+English:Reload Failed
+Translated:بارگیری مجدد انجام نشد
+
 English:Reloading
 Translated:بارگذاری مجدد
 
@@ -2748,6 +2805,9 @@ Translated:تمام پشتیبانی های خودکار تولید را حذف 
 
 English:Remove Items?
 Translated:موارد را حذف کنید؟
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:بخش کالیبراسیون را از تخت خارج کنید و دو طرف پد در هر محور را مقایسه کنید.
 
 English:Remove the paper
 Translated:کاغذ را بردارید
@@ -2772,6 +2832,9 @@ Translated:به جای تعیین حرکات اکسترودر به طور مست
 
 English:Require Leveling To Print
 Translated:نیاز به مقیاس برای چاپ
+
+English:Required
+Translated:ضروری
 
 English:Reset
 Translated:تنظیم مجدد
@@ -2805,9 +2868,6 @@ Translated:بازیابی پیش فرض
 
 English:Restore Settings
 Translated:تنظیمات را بازیابی کنید
-
-English:Restore your current bed, after all calibration is complete
-Translated:پس از اتمام کامل کالیبراسیون، تخت فعلی خود را بازسازی کنید
 
 English:Resume
 Translated:خلاصه
@@ -2917,8 +2977,8 @@ Translated:ارتباطات دریایی
 English:Sample Points
 Translated:امتیازات نمونه
 
-English:Sample the bed at {0} points
-Translated:نمونه تخت در نقاط {0} را انتخاب کنید
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:محل مرکز مرکز را انتخاب کنید تا فاصله پروب را به تخت تعیین کنید
 
 English:Sampled Positions
 Translated:موقعیت های نمونه
@@ -2971,6 +3031,9 @@ Translated:جستجو در گوگل
 English:Search Results
 Translated:نتایج جستجو
 
+English:Searching
+Translated:جستجوکردن
+
 English:seconds
 Translated:ثانیه
 
@@ -2986,12 +3049,6 @@ Translated:یک مقصد جدید را انتخاب کنید
 English:Select a printer to continue
 Translated:یک printer برای ادامه انتخاب کنید
 
-English:Select Make
-Translated:انتخاب را انتخاب کنید
-
-English:Select Model
-Translated:مدل را انتخاب کنید
-
 English:Select Part
 Translated:قسمت را انتخاب کنید
 
@@ -3000,18 +3057,6 @@ Translated:انتخاب چاپگر
 
 English:Select the baud rate.
 Translated:نرخ بورد را انتخاب کنید.
-
-English:Select the hotend on the left to continue
-Translated:hotend را در سمت چپ برای ادامه انتخاب کنید
-
-English:Select the material you are printing
-Translated:موادی را که چاپ می کنید انتخاب کنید
-
-English:Select the printer manufacturer
-Translated:سازنده چاپگر را انتخاب کنید
-
-English:Select the printer model
-Translated:مدل چاپگر را انتخاب کنید
 
 English:Select What to Import
 Translated:چه چیزی را وارد کنید انتخاب کنید
@@ -3045,9 +3090,6 @@ Translated:جلسه پاک شده
 
 English:Session Expired
 Translated:جلسه تمام شده
-
-English:Set active material to continue
-Translated:مواد فعال را برای ادامه نگهدارید
 
 English:Set as Default
 Translated:تنظیم به عنوان پیشفرض
@@ -3313,6 +3355,9 @@ Translated:گلدان اسپیرال
 English:Split
 Translated:شکاف
 
+English:Split Mesh
+Translated:تقسیم مش
+
 English:Stable
 Translated:پایدار
 
@@ -3364,9 +3409,6 @@ Translated:شروع همگامسازی
 English:Startup Failure
 Translated:عدم شروع کار
 
-English:Stash your current bed
-Translated:رختکن فعلی خود را تضعیف کنید
-
 English:Stay Connected
 Translated:در ارتباط باش
 
@@ -3405,9 +3447,6 @@ Translated:تفریق و جایگزین کردن
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:تصویر را از یک دیسک جدا کنید تا فضای منفی چاپ شود.
-
-English:Success
-Translated:موفقیت
 
 English:Success! Please check your email for the reset code.
 Translated:موفقیت! لطفا ایمیل خود را برای کد بازنشانی بررسی کنید.
@@ -3550,6 +3589,9 @@ Translated:زاویه پرچم، از محور X محاسبه می شود. هن�
 English:The angle to generate support for
 Translated:زاویه برای تولید پشتیبانی برای
 
+English:The angle to rotate the top of the part
+Translated:زاویه جهت چرخاندن بالای قسمت
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:تخت در حال حاضر گرما می شود و دمای هدف آن نمی تواند تغییر کند تا زمانی که {0} درجه سانتی گراد می رسد.\n\nشما می توانید درجه حرارت پایه را در تنظیمات -> رشته -> درجه حرارت تنظیم کنید.\n\n{1}
 
@@ -3622,9 +3664,6 @@ Translated:لایه (های) که در آن چاپ متوقف می شود، اج
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:طول و عرض یک برج ایجاد شده در پشت چپ چاپ مورد استفاده برای پاک کردن نازل بعدی در هنگام تغییر بین اکسترودرهای چندگانه. برای غیرفعال کردن روی 0 تنظیم کنید
 
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:Markdown که در طول سطح چاپ برای نشان دادن سطح حمل X نشان داده خواهد شد.
-
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Markdown که در صفحه Clean Filament نشان داده می شود.
 
@@ -3672,9 +3711,6 @@ Translated:حداقل سرعت که در آن فن خنک کننده لایه ا
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:حداقل سرعت که چاپگر آن را کاهش می دهد به منظور تلاش برای ایجاد زمان چاپ لایه به اندازه کافی طولانی برای برآورده حداقل زمان لایه.
-
-English:The next few screens will walk your through calibrating your printer.
-Translated:چندین صفحه بعد از چاپگر خود را از طریق کالیبراسیون راه می اندازند.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:تعداد هسته های CPU برای استفاده در زمان برش استفاده می شود. افزایش این می تواند ماشین شما را کند کند.
@@ -3919,6 +3955,15 @@ Translated:دیوارهای نازک
 English:This code to will provide read-only access.
 Translated:این کد به دسترسی فقط خواندن دسترسی خواهد داشت.
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:این داده ها برای ناهماهنگی دستگاه و تحریف تخت جبران می کند و تضمین کننده چسبندگی لایه اول می شود.
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:این داده ها تراز کردن چاپ دوگانه اکستروژن را بهبود می بخشد.
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:این داده ها برای سطح نرم افزار چاپ نرم افزار مورد نیاز است و کیفیت چسبندگی لایه اول را خوب می کند.
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:این مجموعه ای از عبارات منظم برای اعمال خطوط بعد از دریافت از چاپگر است. آنها برای هر خط دریافتی اعمال خواهند شد.
 
@@ -3964,6 +4009,9 @@ Translated:این باعث می شود که دقت درست چاپ بالا با
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:این تنها در مورد سخت افزار خاص کار می کند. استفاده نکنید، مگر اینکه مطمئن شوید کنترل کننده چاپگر این ویژگی را پشتیبانی می کند
 
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:این جادوگر برای چاپ یک قسمت کالیبراسیون نزدیک می شود و پس از اتمام چاپ، رزومه می گیرد.
+
 English:Threads
 Translated:موضوعات
 
@@ -4005,6 +4053,9 @@ Translated:انتخاب را تغییر دهید
 
 English:Toggle Support
 Translated:پشتیبانی را تغییر دهید
+
+English:Toggle Wipe Tower
+Translated:تعویض برج پاک کن
 
 English:Tool
 Translated:ابزار
@@ -4054,9 +4105,6 @@ Translated:سعی کنید به لبه های مش اتصال کنید وقتی 
 English:Tuning Adjustment
 Translated:تنظیم تنظیم
 
-English:Turn auto leveling on
-Translated:روشن کردن خودکار روی
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:خاموش کردن جریان موتور در پایان چاپ یا بعد از لغو چاپ.
 
@@ -4072,11 +4120,20 @@ Translated:بدون نیاز به تنظیمات، فن را روشن و خام�
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:تمام تنظیمات خنک کننده را روشن و خاموش می کند (همه تنظیمات زیر این یکی).
 
+English:Twist
+Translated:پیچ
+
+English:Twist Right
+Translated:راست کج
+
 English:Uh oh! Passwords do not match.
 Translated:اوه آه! رمزهای ورود مطابقت ندارند.
 
 English:Uh-oh! Could not connect to printer.
 Translated:اوه آه! اتصال به چاپگر برقرار نشد
+
+English:Unable due to hardware leveling
+Translated:با توجه به سطح سخت افزاری امکان پذیر نیست
 
 English:Unable to Connect
 Translated:امکان اتصال وجود ندارد
@@ -4101,9 +4158,6 @@ Translated:Ungroup
 
 English:Unknown
 Translated:ناشناس
-
-English:Unknown filament loaded
-Translated:رشته های نامرئی بارگیری شده است
 
 English:Unknown Reason
 Translated:دلیل نامعلوم
@@ -4210,6 +4264,9 @@ Translated:با استفاده از کنترل های بالا
 English:Validate Layer Height
 Translated:تایید ارتفاع لایه
 
+English:Validation Error
+Translated:خطای اعتبار سنجی
+
 English:Value
 Translated:ارزش
 
@@ -4239,6 +4296,9 @@ Translated:مشاهده آیکون های کوچک
 
 English:View XSmall Icons
 Translated:نمایش آیکن های XSmall
+
+English:Visit MatterHackers.com to Purchase
+Translated:به MatterHackers.com مراجعه کنید تا خرید کنید
 
 English:Wait For Running Clean
 Translated:صبر کن تا اتفاقی بیفتد
@@ -4300,12 +4360,6 @@ Translated:هشدار: برای انجام بازیابی چاپ، چاپگر ش
 English:WARNING: Write Failed!
 Translated:هشدار: نوشتن ناقص است!
 
-English:We should be done in approximately {0} minutes.
-Translated:ما باید در حدود {0} دقیقه انجام شود.
-
-English:We should be done in less than five minutes.
-Translated:ما باید در کمتر از پنج دقیقه انجام شود.
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:ما اکنون اندازه گیری ارتفاع اکسترودر را در این موقعیت انجام می دهیم.
 
@@ -4323,12 +4377,6 @@ Translated:گوه
 
 English:Welcome to MatterControl
 Translated:به MatterControl خوش آمدید
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:به سطح جادوگر چاپ خوش آمدید در اینجا یک مرور سریع در مورد آنچه که ما انجام می دهیم.
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:خوش آمدید به جادوگر کالیبراسیون پروب. در اینجا یک مرور سریع در مورد آنچه که ما انجام می دهیم.
 
 English:What was my password again?
 Translated:رمز عبور من دوباره چیست؟
@@ -4365,6 +4413,9 @@ Translated:فاصله سپر را پاک کنید
 
 English:Wipe Tower Size
 Translated:اندازه برج را پاک کنید
+
+English:Wizard
+Translated:جادوگر
 
 English:Would you like to setup Wifi?
 Translated:آیا می خواهید فای را راه اندازی کنید؟
@@ -4441,14 +4492,11 @@ Translated:نازلهای شما اکنون باید کالیبراسیون شو
 English:Your Phone Number
 Translated:شماره تلفن شما
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
-Translated:چاپگر شما تنظیم شده است، اما ما نیاز داریم دوباره کالیبراسیون را برای بهبود دقت انجام دهیم.
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
+Translated:چاپگر شما تنظیم شده است، اما ما باید دوباره کالیبراسیون را برای بهبود دقت انجام دهیم.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:چاپگر شما یک مشکل سخت افزاری را گزارش می کند و متوقف شده است. در صورت لزوم، خطا را بررسی کنید و چاپ را لغو کنید.
-
-English:Your Probe is now calibrated.
-Translated:پروب شما اکنون کالیبراسیون شده است.
 
 English:Your Share Code
 Translated:کد اشتراک شما
@@ -4467,6 +4515,15 @@ Translated:اگر شما در حال برنامه ریزی در مورد است�
 
 English:Z
 Translated:Z
+
+English:Z Calibration
+Translated:Z کالیبراسیون
+
+English:Z Calibration complete.
+Translated:Z کالیبراسیون کامل است.
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Z کالیبراسیون موقعیت z نازل را اندازه گیری می کند.
 
 English:Z Lift
 Translated:Z آسانسور
