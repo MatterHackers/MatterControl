@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.MSBuild;
@@ -14,25 +15,15 @@ namespace RoslynLocalizeDetector
 	{
 		static void Main(string[] args)
 		{
-			// ** Only works if run from VSDev Command prompt **
-			//
-			//var instances = MSBuildLocator.QueryVisualStudioInstances().ToList();
-			//var instanceToUse = instances.First(a => a.Version.Major == 15);
-			//Environment.SetEnvironmentVariable("VSINSTALLDIR", instanceToUse.VisualStudioRootPath);
-
-			Environment.SetEnvironmentVariable("VSINSTALLDIR", @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community");
-			Environment.SetEnvironmentVariable("VisualStudioVersion", "15.0");
+			MSBuildLocator.RegisterDefaults();
 
 			string matterControlRoot = GetMatterControlDirectory();
 
-			var properties = new Dictionary<string, string>
+			var workspace = MSBuildWorkspace.Create(new Dictionary<string, string>
 			{
-			   { "Configuration", "Debug" },
-				{"Platform", "AnyCPU" }
-			};
-			//var workspace = MSBuildWorkspace.Create(properties);
-			var workspace = MSBuildWorkspace.Create();
-
+				["Configuration"] = "Debug",
+				["Platform"] = "AnyCPU"
+			});
 			workspace.WorkspaceFailed += (s, e) => Console.WriteLine(e.Diagnostic.Message);
 			workspace.LoadMetadataForReferencedProjects = true;
 

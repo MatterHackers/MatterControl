@@ -79,14 +79,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			SearchPanel searchPanel = null;
 
+			bool searchPanelOpenOnMouseDown = false;
+
 			var searchButton = theme.CreateSearchButton();
 			searchButton.Name = "App Search Button";
+			searchButton.MouseDown += (s, e) =>
+			{
+				searchPanelOpenOnMouseDown = searchPanel != null;
+			};
+
 			searchButton.Click += SearchButton_Click;
 			extensionArea.AddChild(searchButton);
 
 			async void SearchButton_Click(object sender, EventArgs e)
 			{
-				if (searchPanel == null)
+				if (searchPanel == null && !searchPanelOpenOnMouseDown)
 				{
 					void ShowSearchPanel()
 					{
@@ -157,7 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					searchPanel.CloseOnIdle();
+					searchPanel?.CloseOnIdle();
+					searchPanelOpenOnMouseDown = false;
 				}
 			}
 
@@ -359,8 +367,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.MainView = this;
 		}
-
-	
 
 		private void SetInitialTab()
 		{
