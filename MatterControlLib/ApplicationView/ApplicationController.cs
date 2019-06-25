@@ -2502,6 +2502,8 @@ namespace MatterHackers.MatterControl
 						SourceItem = history.NewPlatingItem()
 					});
 
+				ApplicationController.Instance.MainTabKey = workspace.Name;
+
 				// Open but no need to save
 				this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);
 			}
