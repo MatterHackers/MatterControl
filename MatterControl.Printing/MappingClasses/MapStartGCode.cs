@@ -38,42 +38,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 	{
 		private readonly bool escapeNewlineCharacters;
 
-		public MapStartGCode(PrinterConfig printer, string canonicalSettingsName, string exportedName, bool escapeNewlineCharacters)
-			: base(printer, canonicalSettingsName, exportedName)
+		public MapStartGCode(bool escapeNewlineCharacters)
 		{
 			this.escapeNewlineCharacters = escapeNewlineCharacters;
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
+			System.Diagnostics.Debugger.Break();
+
+			var newStartGCode = new StringBuilder();
+
+			//foreach (string line in PreStartGCode(Slicer.ExtrudersUsed))
+			//{
+			//	newStartGCode.Append(line + "\n");
+			//}
+
+			value = base.Resolve(value, settings);
+
+			newStartGCode.Append(settings.ReplaceMacroValues(value));
+
+			//foreach (string line in PostStartGCode(Slicer.ExtrudersUsed))
+			//{
+			//	newStartGCode.Append("\n");
+			//	newStartGCode.Append(line);
+			//}
+
+			if (escapeNewlineCharacters)
 			{
-				var newStartGCode = new StringBuilder();
-				foreach (string line in PreStartGCode(Slicer.ExtrudersUsed))
-				{
-					newStartGCode.Append(line + "\n");
-				}
-
-				newStartGCode.Append(printer.ReplaceMacroValues(base.Value));
-
-				foreach (string line in PostStartGCode(Slicer.ExtrudersUsed))
-				{
-					newStartGCode.Append("\n");
-					newStartGCode.Append(line);
-				}
-
-				if (escapeNewlineCharacters)
-				{
-					return newStartGCode.ToString().Replace("\n", "\\n");
-				}
-
-				return newStartGCode.ToString();
+				return newStartGCode.ToString().Replace("\n", "\\n");
 			}
+
+			return newStartGCode.ToString();
 		}
 
-		public List<string> PreStartGCode(List<bool> extrudersUsed)
+		public List<string> PreStartGCode(PrinterSettings settings, List<bool> extrudersUsed)
 		{
-			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
+			string startGCode = settings.GetValue(SettingsKey.start_gcode);
 			string[] startGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			var preStartGCode = new List<string>
@@ -82,14 +83,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			};
 			AddDefaultIfNotPresent(preStartGCode, "G21", startGCodeLines, "set units to millimeters");
 			AddDefaultIfNotPresent(preStartGCode, "M107", startGCodeLines, "fan off");
-			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0)
 			{
 				string setBedTempString = string.Format("M140 S{0}", bed_temperature);
 				AddDefaultIfNotPresent(preStartGCode, setBedTempString, startGCodeLines, "start heating the bed");
 			}
 
-			int numberOfHeatedExtruders = printer.Settings.Helpers.HotendCount();
+			int numberOfHeatedExtruders = settings.Helpers.HotendCount();
 
 			// Start heating all the extruder that we are going to use.
 			for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
@@ -97,7 +98,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				if (extrudersUsed.Count > hotendIndex
 					&& extrudersUsed[hotendIndex])
 				{
-					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+					double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
 					if (materialTemperature != 0)
 					{
 						string setTempString = "M104 T{0} S{1}".FormatWith(hotendIndex, materialTemperature);
@@ -107,14 +108,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			}
 
 			// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
-			if (printer.Settings.GetValue<bool>(SettingsKey.heat_extruder_before_homing))
+			if (settings.GetValue<bool>(SettingsKey.heat_extruder_before_homing))
 			{
 				for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
 				{
 					if (extrudersUsed.Count > hotendIndex
 						&& extrudersUsed[hotendIndex])
 					{
-						double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+						double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
 						if (materialTemperature != 0)
 						{
 							string setTempString = "M109 T{0} S{1}".FormatWith(hotendIndex, materialTemperature);
@@ -139,9 +140,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			return preStartGCode;
 		}
 
-		public List<string> PostStartGCode(List<bool> extrudersUsed)
+		public List<string> PostStartGCode(PrinterSettings settings, List<bool> extrudersUsed)
 		{
-			string startGCode = printer.Settings.GetValue(SettingsKey.start_gcode);
+			string startGCode = settings.GetValue(SettingsKey.start_gcode);
 			string[] startGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
 
 			var postStartGCode = new List<string>
@@ -149,7 +150,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				"; automatic settings after start_gcode"
 			};
 
-			double bed_temperature = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+			double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
 			if (bed_temperature > 0
 				&& !startGCode.Contains("M109"))
 			{
@@ -157,14 +158,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 				AddDefaultIfNotPresent(postStartGCode, setBedTempString, startGCodeLines, "wait for bed temperature to be reached");
 			}
 
-			int numberOfHeatedExtruders = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+			int numberOfHeatedExtruders = settings.GetValue<int>(SettingsKey.extruder_count);
 			// wait for them to finish
 			for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
 			{
 				if (hotendIndex < extrudersUsed.Count
 					&& extrudersUsed[hotendIndex])
 				{
-					double materialTemperature = printer.Settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+					double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
 					if (materialTemperature != 0)
 					{
 						if (!(hotendIndex == 0 && LineStartsWith(startGCodeLines, "M109 S"))

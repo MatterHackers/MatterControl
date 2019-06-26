@@ -29,35 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	public class InfillTranslator : MappedSetting
 	{
-		public OverrideSpeedOnSlaPrinters(PrinterConfig printer, string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
-			: base(printer, canonicalSettingsName, exportedName, originalReference, scale)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			double infillRatio0To1 = ParseDouble(value);
+			// 400 = solid (extruder width)
 
-		public override string Value
-		{
-			get
+			double nozzle_diameter = settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			double linespacing = 1000;
+			if (infillRatio0To1 > .01)
 			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
-				{
-					// return the speed based on the layer height
-					var speedAt025 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_025);
-					var speedAt100 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_100);
-					var deltaSpeed = speedAt100 - speedAt025;
-
-					var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
-					var deltaHeight = .1 - .025;
-					var heightRatio = (layerHeight - .025) / deltaHeight;
-					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
-					return ajustedSpeed.ToString();
-				}
-				else
-				{
-					return base.Value;
-				}
+				linespacing = nozzle_diameter / infillRatio0To1;
 			}
+
+			return ((int)(linespacing * 1000)).ToString();
 		}
 	}
 }

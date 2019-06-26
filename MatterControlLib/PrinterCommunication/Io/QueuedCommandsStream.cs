@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (commandQueue.Count > 0)
 				{
 					lineToSend = commandQueue[0];
-					lineToSend = printer.ReplaceMacroValues(lineToSend);
+					lineToSend = printer.Settings.ReplaceMacroValues(lineToSend);
 					commandQueue.RemoveAt(0);
 				}
 			}

@@ -328,11 +328,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						matrixAndMeshArgs.Append($" \"{fileName}\" ");
 					}
 
-					printer.EngineMappingsMatterSlice.WriteSliceSettingsFile(configFilePath, rawLines: new[]
-					{
-						$"booleanOperations = {mergeRules}",
-						$"additionalArgsToProcess ={matrixAndMeshArgs}"
-					});
+					printer.EngineMappingsMatterSlice.WriteSliceSettingsFile(
+						configFilePath,
+						new[]
+						{
+							$"booleanOperations = {mergeRules}",
+							$"additionalArgsToProcess ={matrixAndMeshArgs}"
+						},
+						printer.Settings);
 
 					commandArgs = $"-v -o \"{gcodeFilePath}\" -c \"{configFilePath}\"";
 

@@ -31,28 +31,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
 	public class AsPercentOrDirect : MappedSetting
 	{
-		public AsPercentOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			double finalValue = 0;
 
-		public override string Value
-		{
-			get
+			if (value.Contains("%"))
 			{
-				double finalValue = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					finalValue = ParseDouble(withoutPercent) / 100.0;
-				}
-				else
-				{
-					finalValue = ParseDouble(base.Value);
-				}
-
-				return finalValue.ToString();
+				string withoutPercent = value.Replace("%", "");
+				finalValue = ParseDouble(withoutPercent) / 100.0;
 			}
+			else
+			{
+				finalValue = ParseDouble(value);
+			}
+
+			return finalValue.ToString();
 		}
 	}
 }

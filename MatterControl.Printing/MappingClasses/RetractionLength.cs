@@ -29,16 +29,24 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ValuePlusConstant : MappedSetting
+	public class RetractionLength : MappedSetting
 	{
-		private double constant;
-
-		public ValuePlusConstant(PrinterConfig printer, string canonicalSettingsName, string exportedName, double constant)
-			: base(printer, canonicalSettingsName, exportedName)
+		public RetractionLength()
 		{
-			this.constant = constant;
+			// TODO: lookd like conditional field
+			System.Diagnostics.Debugger.Break();
 		}
 
-		public override string Value => (ParseDouble(base.Value) + constant).ToString();
+		public override string Resolve(string value, PrinterSettings settings)
+		{
+			if (settings.GetValue<bool>(SettingsKey.enable_retractions))
+			{
+				return value;
+			}
+			else
+			{
+				return "0";
+			}
+		}
 	}
 }

@@ -44,8 +44,6 @@ namespace MatterHackers.MatterControl
 
 	public class PrinterConfig : IDisposable
 	{
-		private MappedSetting[] macroReplacements = null;
-
 		public event EventHandler Disposed;
 
 		public BedConfig Bed { get; }
@@ -63,15 +61,11 @@ namespace MatterHackers.MatterControl
 		{
 			this.Connection = new PrinterConnection(this);
 
-			this.InitMacroReplacements();
-
 			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
 		{
-			this.InitMacroReplacements();
-
 			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
 
 			this.Settings = settings;
@@ -97,67 +91,6 @@ namespace MatterHackers.MatterControl
 			this.Settings.SettingChanged += Printer_SettingChanged;
 		}
 
-		private void InitMacroReplacements()
-		{
-			macroReplacements = new MappedSetting[]
-			{
-				// Have a mapping so that MatterSlice while always use a setting that can be set. (the user cannot set first_layer_bedTemperature in MatterSlice)
-				new AsPercentOfReferenceOrDirect(this, SettingsKey.first_layer_speed, SettingsKey.first_layer_speed, SettingsKey.infill_speed, 60),
-				new AsPercentOfReferenceOrDirect(this, SettingsKey.external_perimeter_speed,"external_perimeter_speed", SettingsKey.perimeter_speed, 60),
-				new AsPercentOfReferenceOrDirect(this, SettingsKey.raft_print_speed, "raft_print_speed", SettingsKey.infill_speed, 60),
-				new MappedSetting(this, SettingsKey.bed_remove_part_temperature,SettingsKey.bed_remove_part_temperature),
-				new MappedSetting(this, SettingsKey.bridge_fan_speed,"bridge_fan_speed"),
-				new MappedSetting(this, SettingsKey.bridge_speed,"bridge_speed"),
-				new MappedSetting(this, SettingsKey.air_gap_speed, "air_gap_speed"),
-				new MappedSetting(this, SettingsKey.extruder_wipe_temperature,"extruder_wipe_temperature"),
-				new MappedSetting(this, SettingsKey.filament_diameter,SettingsKey.filament_diameter),
-				new ReplaceWithSetting(this, SettingsKey.first_layer_bed_temperature, SettingsKey.bed_temperature, SettingsKey.bed_temperature),
-				new MappedSetting(this, SettingsKey.first_layer_temperature, SettingsKey.temperature),
-				new MappedSetting(this, SettingsKey.max_fan_speed,"max_fan_speed"),
-				new MappedSetting(this, SettingsKey.min_fan_speed,"min_fan_speed"),
-				new MappedSetting(this, SettingsKey.retract_length,"retract_length"),
-				new MappedSetting(this, SettingsKey.temperature,SettingsKey.temperature),
-				new MappedSetting(this, SettingsKey.bed_temperature,SettingsKey.bed_temperature),
-				new MappedSetting(this, SettingsKey.temperature1, SettingsKey.temperature1),
-				new MappedSetting(this, SettingsKey.temperature2, SettingsKey.temperature2),
-				new MappedSetting(this, SettingsKey.temperature3, SettingsKey.temperature3),
-				new ScaledSingleNumber(this, SettingsKey.infill_speed, SettingsKey.infill_speed, 60),
-				new ScaledSingleNumber(this, SettingsKey.min_print_speed, "min_print_speed", 60),
-				new ScaledSingleNumber(this, SettingsKey.perimeter_speed,"perimeter_speed", 60),
-				new ScaledSingleNumber(this, SettingsKey.retract_speed,"retract_speed", 60),
-				new ScaledSingleNumber(this, SettingsKey.support_material_speed,"support_material_speed", 60),
-				new ScaledSingleNumber(this, SettingsKey.travel_speed, "travel_speed", 60),
-				new ScaledSingleNumber(this, SettingsKey.load_filament_speed, SettingsKey.load_filament_speed, 60),
-				new MappedSetting(this, SettingsKey.trim_filament_markdown, SettingsKey.trim_filament_markdown),
-				new MappedSetting(this, SettingsKey.insert_filament_markdown2, SettingsKey.insert_filament_markdown2),
-				new MappedSetting(this, SettingsKey.insert_filament_1_markdown, SettingsKey.insert_filament_1_markdown),
-				new MappedSetting(this, SettingsKey.running_clean_markdown2, SettingsKey.running_clean_markdown2),
-				new MappedSetting(this, SettingsKey.running_clean_1_markdown, SettingsKey.running_clean_1_markdown),
-			};
-		}
-
-		public string ReplaceMacroValues(string gcodeWithMacros)
-		{
-			foreach (MappedSetting mappedSetting in macroReplacements)
-			{
-				// first check if this setting is anywhere in the line
-				if (gcodeWithMacros.Contains(mappedSetting.CanonicalSettingsName))
-				{
-					{
-						// do the replacement with {} (curly brackets)
-						string thingToReplace = "{" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "}";
-						gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
-					}
-					// do the replacement with [] (square brackets) Slic3r uses only square brackets
-					{
-						string thingToReplace = "[" + "{0}".FormatWith(mappedSetting.CanonicalSettingsName) + "]";
-						gcodeWithMacros = gcodeWithMacros.Replace(thingToReplace, mappedSetting.Value);
-					}
-				}
-			}
-
-			return gcodeWithMacros;
-		}
 
 		public PrinterViewState ViewState { get; }
 
@@ -418,8 +351,6 @@ namespace MatterHackers.MatterControl
 			this.Connection.PrintFinished -= ApplicationController.Instance.Connection_PrintFinished;
 			this.Connection.PrintCanceled -= ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
-
-			macroReplacements = null;
 
 			// Dispose children
 			this.Connection.Dispose();

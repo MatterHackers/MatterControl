@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using static MatterHackers.MatterControl.SlicerConfiguration.SliceSettingData;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -62,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static IEnumerable<SliceSettingData> AllSettings()
 		{
-			return new []
+			return new[]
 			{
 				new SliceSettingData()
 				{
@@ -71,7 +72,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -214,7 +216,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.".Localize(),
 					DataEditType = DataEditTypes.INT_OR_MM,
 					Units = "count or mm".Localize(),
-					DefaultValue = "1mm"
+					DefaultValue = "1mm",
+					Resolver = new AsCountOrDistance(SettingsKey.layer_height),
 				},
 				new SliceSettingData()
 				{
@@ -234,7 +237,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "20"
+					DefaultValue = "20",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -244,7 +248,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "15"
+					DefaultValue = "15",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -254,7 +259,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -320,7 +326,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "NEVER_SHOW",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					ReloadUiWhenChanged = true,
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -331,7 +338,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = "create_raft",
-					DefaultValue = "5"
+					DefaultValue = "5",
+					Resolver = new AsCountOrDistance(SettingsKey.nozzle_diameter),
 				},
 				new SliceSettingData()
 				{
@@ -342,7 +350,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = "create_raft",
-					DefaultValue = ".2"
+					DefaultValue = ".2",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -352,7 +361,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "100%"
+					DefaultValue = "100%",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -360,7 +370,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "End G-Code".Localize(),
 					HelpText = "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					DefaultValue = "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors"
+					DefaultValue = "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors",
+					Resolver = new GCodeForSlicer(),
 				},
 				new SliceSettingData()
 				{
@@ -370,7 +381,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s or %".Localize(),
-					DefaultValue = "70%"
+					DefaultValue = "70%",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.perimeter_speed),
 				},
 				new SliceSettingData()
 				{
@@ -379,7 +391,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Forces external perimeters to be printed first. By default, they will print last.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -389,7 +402,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true
+					ReloadUiWhenChanged = true,
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -438,7 +452,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Detect perimeters that cross over themselves and combine them.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -447,7 +462,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Detects sections of the model that would be too thin to print and expands them to make them printable.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -457,7 +473,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "100%"
+					DefaultValue = "100%",
+					Resolver = new AsPercentOrDirect(),
 				},
 				new SliceSettingData()
 				{
@@ -488,7 +505,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm".Localize(),
-					DefaultValue = "3"
+					DefaultValue = "3",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -497,7 +515,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The angle of the infill, measured from the X axis. Not used when bridging.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°".Localize(),
-					DefaultValue = "45"
+					DefaultValue = "45",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -506,7 +525,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Fill Density".Localize(),
 					HelpText = "The amount of infill material to generate, expressed as a ratio or a percentage.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
-					DefaultValue = "0.4"
+					DefaultValue = "0.4",
+					Resolver = new ScaledSingleNumber(100),
 				},
 				new SliceSettingData()
 				{
@@ -524,7 +544,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -534,7 +555,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "100%"
+					DefaultValue = "100%",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter),
 				},
 				new SliceSettingData()
 				{
@@ -544,6 +566,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
 					DefaultValue = "0.3",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.layer_height),
 				},
 				new SliceSettingData()
 				{
@@ -552,7 +575,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
-					DefaultValue = "30%"
+					DefaultValue = "30%",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -562,7 +586,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT_OR_MM,
 					Units = "layers or mm".Localize(),
 					ShowIfSet = "sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new AsCountOrDistance(SettingsKey.layer_height),
 				},
 				new SliceSettingData()
 				{
@@ -784,6 +809,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
 					DefaultValue = "25%",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter, change0ToReference: false),
 					QuickMenuSettings = { { "Light", "20%" }, { "Standard", "35%" }, { "Heavy", "75%" } }
 				},
 				new SliceSettingData()
@@ -814,7 +840,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s".Localize(),
-					DefaultValue = "60"
+					DefaultValue = "60",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -824,7 +851,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.LIST,
 					ShowIfSet = "!sla_printer",
 					ListValues = "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
-					DefaultValue = "TRIANGLES"
+					DefaultValue = "TRIANGLES",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1006,7 +1034,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Layer Change G-Code".Localize(),
 					HelpText = "G-Code to be run after the change in Z height for the next layer.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					DefaultValue = "; LAYER:[layer_num]"
+					DefaultValue = "; LAYER:[layer_num]",
+					Resolver = new MapLayerChangeGCode(),
 				},
 				new SliceSettingData()
 				{
@@ -1016,7 +1045,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
-					DefaultValue = "0.4"
+					DefaultValue = "0.4",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1055,7 +1085,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = ".1"
+					DefaultValue = ".1",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1086,7 +1117,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "seconds".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "60"
+					DefaultValue = "60",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1097,7 +1129,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "seconds".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "30"
+					DefaultValue = "30",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1108,7 +1141,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "35"
+					DefaultValue = "35",
+					Resolver = new ConditionalField(SettingsKey.enable_fan, new MappedSetting()),
 				},
 				new SliceSettingData()
 				{
@@ -1119,7 +1153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "100"
+					DefaultValue = "100",
+					Resolver = new ConditionalField(SettingsKey.enable_fan, new MappedSetting()),
 				},
 				new SliceSettingData()
 				{
@@ -1130,7 +1165,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "100"
+					DefaultValue = "100",
+					Resolver = new ConditionalField(SettingsKey.enable_fan, new MappedSetting()),
 				},
 				new SliceSettingData()
 				{
@@ -1141,7 +1177,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "layers".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1151,7 +1188,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "10"
+					DefaultValue = "10",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1162,7 +1200,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new SkirtLengthMapping(),
 				},
 				new SliceSettingData()
 				{
@@ -1171,7 +1210,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The diameter of the extruder's nozzle.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
-					DefaultValue = "0.5"
+					DefaultValue = "0.5",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1212,7 +1252,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -1241,7 +1282,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "100%"
+					DefaultValue = "100%",
+					Resolver = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter),
 				},
 				new SliceSettingData()
 				{
@@ -1251,7 +1293,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s".Localize(),
-					DefaultValue = "30"
+					DefaultValue = "30",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1261,6 +1304,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "%".Localize(),
 					DefaultValue = "90",
+					Resolver = new ScaledSingleNumber(.01),
 					QuickMenuSettings = { { "Light", "20" }, { "Standard", "80" }, { "Heavy", "100" } }
 				},
 				new SliceSettingData()
@@ -1270,7 +1314,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.".Localize(),
 					DataEditType = DataEditTypes.INT_OR_MM,
 					Units = "count or mm".Localize(),
-					DefaultValue = "3"
+					DefaultValue = "3",
+					Resolver = new AsCountOrDistance(SettingsKey.nozzle_diameter),
 				},
 				new SliceSettingData()
 				{
@@ -1317,7 +1362,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "20"
+					DefaultValue = "20",
+					Resolver = new MapFirstValue(),
 				},
 				new SliceSettingData()
 				{
@@ -1327,7 +1373,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "3"
+					DefaultValue = "3",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1348,7 +1395,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
-					EnableIfSet = SettingsKey.enable_retractions
+					EnableIfSet = SettingsKey.enable_retractions,
+					Resolver = new RetractionLength(),
 				},
 				new SliceSettingData()
 				{
@@ -1359,7 +1407,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "10"
+					DefaultValue = "10",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1369,7 +1418,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -1380,7 +1430,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MapFirstValue(),
 				},
 				new SliceSettingData()
 				{
@@ -1391,7 +1442,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					EnableIfSet = SettingsKey.enable_retractions,
 					Units = "mm zero to disable".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1400,7 +1452,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -1420,7 +1473,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MapFirstValue(),
 				},
 				new SliceSettingData()
 				{
@@ -1431,7 +1485,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "s".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MapFirstValue(),
 				},
 				new SliceSettingData()
 				{
@@ -1442,7 +1497,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					DefaultValue = "30"
+					DefaultValue = "30",
+					Resolver = new MapFirstValue(),
 				},
 				new SliceSettingData()
 				{
@@ -1479,7 +1535,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm".Localize(),
-					DefaultValue = "6"
+					DefaultValue = "6",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1499,7 +1556,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "count or mm".Localize(),
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new ConditionalField(SettingsKey.create_skirt, new AsCountOrDistance(SettingsKey.nozzle_diameter)),
 				},
 				new SliceSettingData()
 				{
@@ -1509,7 +1567,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT_OR_MM,
 					EnableIfSet = SettingsKey.create_brim,
 					Units = "count or mm".Localize(),
-					DefaultValue = "8mm"
+					DefaultValue = "8mm",
+					Resolver = new ConditionalField(SettingsKey.create_brim, new AsCountOrDistance(SettingsKey.nozzle_diameter))
 				},
 				new SliceSettingData()
 				{
@@ -1519,7 +1578,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "seconds".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "30"
+					DefaultValue = "30",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1565,7 +1625,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					ResetAtEndOfPrint = true,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -1582,7 +1643,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Start G-Code".Localize(),
 					HelpText = "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
-					DefaultValue = "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle"
+					DefaultValue = "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle",
+					Resolver = new MapStartGCode(true),
 				},
 				new SliceSettingData()
 				{
@@ -1632,7 +1694,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm".Localize(),
-					DefaultValue = ".3"
+					DefaultValue = ".3",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1642,7 +1705,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "°".Localize(),
-					DefaultValue = "45"
+					DefaultValue = "45",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1651,7 +1715,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Generates an outline around the support material to improve strength and hold up interface layers.".Localize(),
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -1660,7 +1725,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					HelpText = "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.".Localize(),
 					DataEditType = DataEditTypes.INT,
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new ValuePlusConstant(-1),
 				},
 				new SliceSettingData()
 				{
@@ -1670,7 +1736,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					EnableIfSet = "create_raft",
 					DataEditType = DataEditTypes.INT,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new ValuePlusConstant(-1),
 				},
 				new SliceSettingData()
 				{
@@ -1679,7 +1746,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The index of the extruder to use for support material interface layer(s).".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DataEditType = DataEditTypes.INT,
-					DefaultValue = "1"
+					DefaultValue = "1",
+					Resolver = new ValuePlusConstant(-1),
 				},
 				new SliceSettingData()
 				{
@@ -1689,7 +1757,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT_OR_MM,
 					ShowIfSet = "!sla_printer",
 					Units = "layers or mm".Localize(),
-					DefaultValue = ".9mm"
+					DefaultValue = ".9mm",
+					Resolver = new AsCountOrDistance(SettingsKey.layer_height),
 				},
 				new SliceSettingData()
 				{
@@ -1699,7 +1768,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "2.5"
+					DefaultValue = "2.5",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1709,7 +1779,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s".Localize(),
-					DefaultValue = "60"
+					DefaultValue = "60",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1719,7 +1790,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s".Localize(),
-					DefaultValue = "60"
+					DefaultValue = "60",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1729,7 +1801,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
 					Units = "mm".Localize(),
-					DefaultValue = "0.7"
+					DefaultValue = "0.7",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1739,7 +1812,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.LIST,
 					ShowIfSet = "!sla_printer",
 					ListValues = "GRID,LINES",
-					DefaultValue = "LINES"
+					DefaultValue = "LINES",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1899,7 +1973,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "50"
+					DefaultValue = "50",
+					Resolver = new OverrideSpeedOnSlaPrinters(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1908,7 +1983,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.".Localize(),
 					DataEditType = DataEditTypes.INT_OR_MM,
 					Units = "count or mm".Localize(),
-					DefaultValue = "1mm"
+					DefaultValue = "1mm",
+					Resolver = new AsCountOrDistance(SettingsKey.layer_height),
 				},
 				new SliceSettingData()
 				{
@@ -1917,7 +1993,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which the nozzle will move when not extruding material.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
-					DefaultValue = "130"
+					DefaultValue = "130",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -1933,7 +2010,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bridge Over Infill".Localize(),
 					HelpText = "Make the first layer on top of partial infill use the speed and fan for bridging.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedToBoolString(),
 				},
 				new SliceSettingData()
 				{
@@ -2004,7 +2082,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					Units = "mm".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -2014,7 +2093,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -2153,7 +2233,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The maximum amount the printer can accelerate on a G-Code move.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "1000",
-					Units = "mm/s²".Localize()
+					Units = "mm/s²".Localize(),
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -2162,7 +2243,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The maximum speed the printer can move.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "500",
-					Units = "mm/s".Localize()
+					Units = "mm/s".Localize(),
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -2171,7 +2253,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The maximum speed that the printer treats as 0 and changes direction instantly.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "8",
-					Units = "mm/s".Localize()
+					Units = "mm/s".Localize(),
+					Resolver = new MappedSetting(),
 				},
 				new SliceSettingData()
 				{
@@ -2180,7 +2263,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Adjust this to correct differences between expected printing speeds and actual printing speeds.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "%".Localize(),
-					DefaultValue = "100"
+					DefaultValue = "100",
+					Resolver = new ScaledSingleNumber(.01),
 				},
 				new SliceSettingData()
 				{

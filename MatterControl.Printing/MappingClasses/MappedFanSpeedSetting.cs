@@ -29,28 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapLayerChangeGCode : InjectGCodeCommands
+	public class MappedFanSpeedSetting : MappedSetting
 	{
-		public MapLayerChangeGCode(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
-
-		public override string Value
-		{
-			get
+			if (settings.GetValue<bool>(SettingsKey.enable_fan))
 			{
-				string macroReplaced = base.Value;
-				if (!macroReplaced.Contains("; LAYER:")
-					&& !macroReplaced.Contains(";LAYER:"))
-				{
-					macroReplaced += "; LAYER:[layer_num]\n";
-				}
-
-				macroReplaced = printer.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
-
-				return macroReplaced;
+				return value;
 			}
+
+			return "0";
 		}
 	}
 }
