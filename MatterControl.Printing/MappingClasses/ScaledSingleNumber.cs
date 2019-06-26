@@ -29,32 +29,30 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedSetting
+	public class ScaledSingleNumber : MapFirstValue
 	{
-		protected PrinterConfig printer;
+		private double scale;
 
-		public MappedSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName)
+		public ScaledSingleNumber(double scale = 1)
 		{
-			this.printer = printer;
-			this.CanonicalSettingsName = canonicalSettingsName;
-			this.ExportedName = exportedName;
+			this.scale = scale;
 		}
 
-		public string CanonicalSettingsName { get; }
-
-		public string ExportedName { get; }
-
-		public virtual string Value => printer.Settings.GetValue(CanonicalSettingsName);
-
-		public double ParseDouble(string textValue, double valueOnError = 0)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			double value;
-			if (!double.TryParse(textValue, out value))
+			double ratio = 0;
+
+			if (value.Contains("%"))
 			{
-				return valueOnError;
+				string withoutPercent = value.Replace("%", "");
+				ratio = ParseDouble(withoutPercent) / 100.0;
+			}
+			else
+			{
+				ratio = ParseDouble(value);
 			}
 
-			return value;
+			return (ratio * scale).ToString();
 		}
 	}
 }

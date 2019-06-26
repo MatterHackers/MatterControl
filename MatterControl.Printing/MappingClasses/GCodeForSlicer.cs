@@ -29,13 +29,19 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedToBoolString : MappedSetting
+	public class GCodeForSlicer : InjectGCodeCommands
 	{
-		public MappedToBoolString(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public GCodeForSlicer()
 		{
+			// TODO: GCodeForSlicer?
+			System.Diagnostics.Debugger.Break();
 		}
 
-		public override string Value => (base.Value == "1") ? "True" : "False";
+		public override string Resolve(string value, PrinterSettings settings)
+		{
+			value = base.Resolve(value, settings);
+
+			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
+		}
 	}
 }

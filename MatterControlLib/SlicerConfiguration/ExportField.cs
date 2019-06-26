@@ -27,15 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class GCodeForSlicer : InjectGCodeCommands
+	public class ExportField
 	{
-		public GCodeForSlicer(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public ExportField(string outputName, Func<string> converter = null)
 		{
+			this.OuputName = outputName;
+			this.Converter = converter;
 		}
 
-		public override string Value => printer.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
+		public string OuputName { get; }
+
+		public Func<string> Converter { get; }
 	}
 }

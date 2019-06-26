@@ -5,7 +5,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using MatterHackers.MatterControl.Tests.Automation;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
@@ -23,16 +22,17 @@ namespace MatterControl.Tests.MatterControl
 
 			var printer = new PrinterConfig(new PrinterSettings());
 
-			var gcodeMapping = new MapStartGCode(printer, SettingsKey.start_gcode, "startCode", true);
-
 			Slicer.ExtrudersUsed = new List<bool> { true };
 
 			var extruderTemp = printer.Settings.GetValue<double>(SettingsKey.temperature);
 			Assert.IsTrue(extruderTemp > 0);
+
 			var bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 			Assert.IsTrue(bedTemp > 0);
 
-			var beforeAndAfter = gcodeMapping.Value.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
+			string result = printer.Settings.ResolveValue(SettingsKey.start_gcode);
+
+			var beforeAndAfter = result.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
 
 			Assert.AreEqual(2, beforeAndAfter.Length);
 			Assert.IsTrue(beforeAndAfter[0].Contains($"M104 T0 S{extruderTemp}"));
@@ -44,7 +44,9 @@ namespace MatterControl.Tests.MatterControl
 
 			// set mapping when there is an M109 in the start code
 			printer.Settings.SetValue(SettingsKey.start_gcode, "G28\\nM109 S205");
-			beforeAndAfter = gcodeMapping.Value.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
+
+			string result2 = printer.Settings.ResolveValue(SettingsKey.start_gcode);
+			beforeAndAfter = result2.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
 
 			// the main change is there should be an M190 before and not after the start code
 			Assert.AreEqual(2, beforeAndAfter.Length);

@@ -108,7 +108,7 @@ namespace MatterControl.Tests.MatterControl
 		private void TestMacroReplacement(string inputText, string outputControl)
 		{
 			var printer = new PrinterConfig(new PrinterSettings());
-			string outputTest = printer.ReplaceMacroValues(inputText);
+			string outputTest = printer.Settings.ReplaceMacroValues(inputText);
 
 			Assert.IsTrue(outputTest == outputControl);
 		}

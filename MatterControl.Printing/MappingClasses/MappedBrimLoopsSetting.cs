@@ -29,13 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapFirstValue : MappedSetting
+	public class MappedBrimLoopsSetting : AsCountOrDistance
 	{
-		public MapFirstValue(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public MappedBrimLoopsSetting(string keyToUseAsDenominatorForCount)
+			: base(keyToUseAsDenominatorForCount)
 		{
 		}
 
-		public override string Value => base.Value.Contains(",") ? base.Value.Split(',')[0] : base.Value;
+		public override string Resolve(string value, PrinterSettings settings)
+		{
+			if (settings.GetValue<bool>(SettingsKey.create_brim))
+			{
+				return value;
+			}
+
+			return "0";
+		}
 	}
 }

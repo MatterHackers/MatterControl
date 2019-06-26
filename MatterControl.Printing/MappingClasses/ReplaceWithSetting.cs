@@ -29,21 +29,20 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class FanTranslator : MappedSetting
+	public class ReplaceWithSetting : MappedSetting
 	{
-		public FanTranslator(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		private string replaceSettingsName;
+
+		public ReplaceWithSetting(string replaceSettingsName)
 		{
+			// TODO: What role does this type have?
+			System.Diagnostics.Debugger.Break();
+			this.replaceSettingsName = replaceSettingsName;
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
-			{
-				int numLayersFanIsDisabledOn = int.Parse(base.Value);
-				int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
-				return layerToEnableFanOn.ToString();
-			}
+			return settings.GetValue(replaceSettingsName);
 		}
 	}
 }

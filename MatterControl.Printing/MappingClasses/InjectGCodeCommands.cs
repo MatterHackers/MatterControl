@@ -27,35 +27,33 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class AsCountOrDistance : MappedSetting
+	public class InjectGCodeCommands : UnescapeNewlineCharacters
 	{
-		private string keyToUseAsDenominatorForCount;
-
-		public AsCountOrDistance(PrinterConfig printer, string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
-			: base(printer, canonicalSettingsName, exportedName)
+		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
 		{
-			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
+			string command = commandToAdd.Split(' ')[0].Trim();
+
+			if (!LineStartsWith(lines, command))
+			{
+				linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
+			}
 		}
 
-		public override string Value
+		protected static bool LineStartsWith(string[] lines, string command)
 		{
-			get
+			foreach (string line in lines)
 			{
-				// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
-				if (base.Value.Contains("mm"))
+				if (line.StartsWith(command))
 				{
-					string withoutMm = base.Value.Replace("mm", "");
-					string distanceString = printer.Settings.GetValue(keyToUseAsDenominatorForCount);
-					double denominator = ParseDouble(distanceString, 1);
-
-					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
-					return layers.ToString();
+					return true;
 				}
-
-				return base.Value;
 			}
+
+			return false;
 		}
 	}
 }

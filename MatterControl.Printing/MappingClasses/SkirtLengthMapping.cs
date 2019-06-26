@@ -27,38 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class InjectGCodeCommands : UnescapeNewlineCharacters
+	public class SkirtLengthMapping : MappedSetting
 	{
-		public InjectGCodeCommands(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			double lengthToExtrudeMm = ParseDouble(value);
 
-		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
-		{
-			string command = commandToAdd.Split(' ')[0].Trim();
+			// we need to convert mm of filament to mm of extrusion path
+			double amountOfFilamentCubicMms = settings.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
+			double extrusionSquareSize = settings.GetValue<double>(SettingsKey.first_layer_height) * settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
-			if (!LineStartsWith(lines, command))
-			{
-				linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
-			}
-		}
-
-		protected static bool LineStartsWith(string[] lines, string command)
-		{
-			foreach (string line in lines)
-			{
-				if (line.StartsWith(command))
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return lineLength.ToString();
 		}
 	}
 }

@@ -27,29 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.VectorMath;
-
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class SkirtLengthMapping : MappedSetting
+	public class MapFirstValue : MappedSetting
 	{
-		public SkirtLengthMapping(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
-
-		public override string Value
-		{
-			get
-			{
-				double lengthToExtrudeMm = ParseDouble(base.Value);
-				// we need to convert mm of filament to mm of extrusion path
-				double amountOfFilamentCubicMms = printer.Settings.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
-				double extrusionSquareSize = printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-				double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
-
-				return lineLength.ToString();
-			}
+			return value.Contains(",") ? value.Split(',')[0] : value;
 		}
 	}
 }

@@ -29,33 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ScaledSingleNumber : MapFirstValue
+	// Replaces escaped newline characters with unescaped newline characters
+	public class UnescapeNewlineCharacters : MappedSetting
 	{
-		internal double scale;
-
-		internal ScaledSingleNumber(PrinterConfig printer, string matterControlName, string exportedName, double scale = 1)
-			: base(printer, matterControlName, exportedName)
+		public UnescapeNewlineCharacters()
 		{
-			this.scale = scale;
+			// TODO: This type has no role. Collapse into utility function in consumer
+			System.Diagnostics.Debugger.Break();
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
-			{
-				double ratio = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					ratio = ParseDouble(withoutPercent) / 100.0;
-				}
-				else
-				{
-					ratio = ParseDouble(base.Value);
-				}
-
-				return (ratio * scale).ToString();
-			}
+			return value.Replace("\\n", "\n");
 		}
 	}
 }

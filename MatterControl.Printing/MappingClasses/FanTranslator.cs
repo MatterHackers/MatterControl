@@ -29,49 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class AsPercentOfReferenceOrDirect : MappedSetting
+	public class FanTranslator : MappedSetting
 	{
-		private bool change0ToReference;
-		private double scale;
-
-		public AsPercentOfReferenceOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName, string referencedSetting, double scale = 1, bool change0ToReference = true)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			this.change0ToReference = change0ToReference;
-			this.scale = scale;
-			this.ReferencedSetting = referencedSetting;
-		}
+			int numLayersFanIsDisabledOn = int.Parse(value);
+			int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
 
-		public string ReferencedSetting { get; }
-
-		public override string Value
-		{
-			get
-			{
-				double finalValue = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = printer.Settings.GetValue(this.ReferencedSetting);
-					double valueToModify = ParseDouble(originalReferenceString);
-					finalValue = valueToModify * ratio;
-				}
-				else
-				{
-					finalValue = ParseDouble(base.Value);
-				}
-
-				if (change0ToReference
-					&& finalValue == 0)
-				{
-					finalValue = ParseDouble(printer.Settings.GetValue(ReferencedSetting));
-				}
-
-				finalValue *= scale;
-
-				return finalValue.ToString();
-			}
+			return layerToEnableFanOn.ToString();
 		}
 	}
 }

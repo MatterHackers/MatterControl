@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using MatterHackers.Agg;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -83,6 +84,118 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public event EventHandler<StringEventArgs> SettingChanged;
 
+		private static HashSet<string> knownSettings;
+
+		private HashSet<string> replacementTerms;
+
+		/// <summary>
+		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
+		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
+		/// through into the slicer config file.
+		/// </summary>
+		public static readonly HashSet<string> ApplicationLevelSettings = new HashSet<string>()
+		{
+			SettingsKey.enable_fan,
+			SettingsKey.extruder_wipe_temperature,
+			SettingsKey.extruders_share_temperature,
+			SettingsKey.first_layer_bed_temperature,
+			SettingsKey.g0,
+			SettingsKey.layer_to_pause,
+			SettingsKey.selector_ip_address,
+			SettingsKey.solid_shell,
+			SettingsKey.z_homes_to_max,
+			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be.
+			SettingsKey.auto_connect,
+			SettingsKey.auto_release_motors,
+			SettingsKey.backup_firmware_before_update,
+			SettingsKey.baud_rate,
+			SettingsKey.bed_remove_part_temperature,
+			SettingsKey.bed_shape,
+			SettingsKey.bed_size,
+			SettingsKey.bed_temperature,
+			SettingsKey.before_toolchange_gcode,
+			SettingsKey.before_toolchange_gcode_1,
+			SettingsKey.toolchange_gcode,
+			SettingsKey.toolchange_gcode_1,
+			SettingsKey.build_height,
+			SettingsKey.cancel_gcode,
+			SettingsKey.com_port,
+			SettingsKey.connect_gcode,
+			SettingsKey.created_date,
+			SettingsKey.emulate_endstops,
+			SettingsKey.enable_line_splitting,
+			SettingsKey.enable_network_printing,
+			SettingsKey.enable_retractions,
+			SettingsKey.enable_sailfish_communication,
+			SettingsKey.filament_cost,
+			SettingsKey.filament_density,
+			SettingsKey.filament_has_been_loaded,
+			SettingsKey.filament_1_has_been_loaded,
+			SettingsKey.filament_runout_sensor,
+			SettingsKey.has_fan,
+			SettingsKey.has_hardware_leveling,
+			SettingsKey.has_heated_bed,
+			SettingsKey.has_power_control,
+			SettingsKey.has_sd_card_reader,
+			SettingsKey.has_z_probe,
+			SettingsKey.has_z_servo,
+			SettingsKey.heat_extruder_before_homing,
+			SettingsKey.inactive_cool_down,
+			SettingsKey.include_firmware_updater,
+			SettingsKey.insert_filament_markdown2,
+			SettingsKey.insert_filament_1_markdown,
+			SettingsKey.ip_address,
+			SettingsKey.ip_port,
+			SettingsKey.laser_speed_025,
+			SettingsKey.laser_speed_100,
+			SettingsKey.leveling_sample_points,
+			SettingsKey.load_filament_length,
+			SettingsKey.load_filament_speed,
+			SettingsKey.make,
+			SettingsKey.model,
+			SettingsKey.t0_inset,
+			SettingsKey.t1_inset,
+			SettingsKey.number_of_first_layers,
+			SettingsKey.extruder_offset,
+			SettingsKey.pause_gcode,
+			SettingsKey.print_center,
+			SettingsKey.print_leveling_probe_start,
+			SettingsKey.print_leveling_required_to_print,
+			SettingsKey.print_leveling_solution,
+			SettingsKey.print_time_estimate_multiplier,
+			SettingsKey.printer_name,
+			SettingsKey.probe_has_been_calibrated,
+			SettingsKey.probe_offset,
+			SettingsKey.probe_offset_sample_point,
+			SettingsKey.progress_reporting,
+			SettingsKey.read_regex,
+			SettingsKey.recover_first_layer_speed,
+			SettingsKey.recover_is_enabled,
+			SettingsKey.recover_position_before_z_home,
+			SettingsKey.resume_gcode,
+			SettingsKey.running_clean_markdown2,
+			SettingsKey.running_clean_1_markdown,
+			SettingsKey.seconds_to_reheat,
+			SettingsKey.send_with_checksum,
+			SettingsKey.show_reset_connection,
+			SettingsKey.sla_printer,
+			SettingsKey.t1_extrusion_move_speed_multiplier,
+			SettingsKey.temperature,
+			SettingsKey.temperature1,
+			SettingsKey.temperature2,
+			SettingsKey.temperature3,
+			SettingsKey.trim_filament_markdown,
+			SettingsKey.unload_filament_length,
+			SettingsKey.use_z_probe,
+			SettingsKey.validate_layer_height,
+			SettingsKey.write_regex,
+			SettingsKey.xy_offsets_have_been_calibrated,
+			SettingsKey.z_offset,
+			SettingsKey.z_probe_samples,
+			SettingsKey.z_servo_depolyed_angle,
+			SettingsKey.z_servo_retracted_angle,
+		};
+
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			if (slicerConfigName == SettingsKey.t0_inset
@@ -129,6 +242,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public PrinterSettings()
 		{
 			this.Helpers = new SettingsHelpers(this);
+
+			replacementTerms = new HashSet<string>()
+			{
+				SettingsKey.first_layer_speed,
+				SettingsKey.external_perimeter_speed,
+				SettingsKey.raft_print_speed,
+				SettingsKey.bed_remove_part_temperature,
+				SettingsKey.bridge_fan_speed,
+				SettingsKey.bridge_speed,
+				SettingsKey.air_gap_speed,
+				SettingsKey.extruder_wipe_temperature,
+				SettingsKey.filament_diameter,
+				SettingsKey.first_layer_bed_temperature,
+				SettingsKey.first_layer_temperature,
+				SettingsKey.max_fan_speed,
+				SettingsKey.min_fan_speed,
+				SettingsKey.retract_length,
+				SettingsKey.temperature,
+				SettingsKey.bed_temperature,
+				SettingsKey.temperature1,
+				SettingsKey.temperature2,
+				SettingsKey.temperature3,
+				SettingsKey.infill_speed,
+				SettingsKey.min_print_speed,
+				SettingsKey.perimeter_speed,
+				SettingsKey.retract_speed,
+				SettingsKey.support_material_speed,
+				SettingsKey.travel_speed,
+				SettingsKey.load_filament_speed,
+				SettingsKey.trim_filament_markdown,
+				SettingsKey.insert_filament_markdown2,
+				SettingsKey.insert_filament_1_markdown,
+				SettingsKey.running_clean_markdown2,
+				SettingsKey.running_clean_1_markdown,
+			};
 		}
 
 		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
@@ -147,6 +295,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				RestoreUserOverride(settingsLayer, settingsKey);
 			}
+		}
+
+		public string ReplaceMacroValues(string gcodeWithMacros)
+		{
+			foreach (string replacementTerm in replacementTerms)
+			{
+				// first check if this setting is anywhere in the line
+				if (gcodeWithMacros.Contains(replacementTerm))
+				{
+					// Acquire the replacement value
+					string value = this.ResolveValue(replacementTerm);
+
+					// braces then brackets replacement
+					gcodeWithMacros = gcodeWithMacros.Replace("{" + replacementTerm + "}", value);
+					gcodeWithMacros = gcodeWithMacros.Replace("[" + replacementTerm + "]", value);
+				}
+			}
+
+			return gcodeWithMacros;
 		}
 
 		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
@@ -770,6 +937,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		public string ResolveValue(string settingsKey)
+		{
+			string value = this.GetValue(settingsKey);
+
+			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
+				&& settingsData.Resolver is MappedSetting resolver)
+			{
+
+				return resolver.Resolve(value, this);
+			}
+
+			// TODO: Consider if acceptable - should we throw when no resolver exists?
+			return value;
+		}
+
 		///<summary>
 		///Returns the first matching value discovered while enumerating the settings layers
 		///</summary>
@@ -949,8 +1131,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		#endregion
-
-		private static HashSet<string> knownSettings;
 
 		[JsonIgnore]
 		public static HashSet<string> KnownSettings

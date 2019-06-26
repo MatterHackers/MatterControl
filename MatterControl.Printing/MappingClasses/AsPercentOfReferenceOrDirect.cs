@@ -29,16 +29,46 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ReplaceWithSetting : MappedSetting
+	public class AsPercentOfReferenceOrDirect : MappedSetting
 	{
-		string replaceSettingsName;
+		private bool change0ToReference;
+		private double scale;
 
-		public ReplaceWithSetting(PrinterConfig printer, string canonicalSettingsName, string replaceSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public AsPercentOfReferenceOrDirect(string referencedSetting, double scale = 1, bool change0ToReference = true)
 		{
-			this.replaceSettingsName = replaceSettingsName;
+			this.change0ToReference = change0ToReference;
+			this.scale = scale;
+			this.ReferencedSetting = referencedSetting;
 		}
 
-		public override string Value => printer.Settings.GetValue(replaceSettingsName);
+		public string ReferencedSetting { get; }
+
+		public override string Resolve(string value, PrinterSettings settings)
+		{
+			double finalValue = 0;
+
+			if (value.Contains("%"))
+			{
+				string withoutPercent = value.Replace("%", "");
+				double ratio = ParseDouble(withoutPercent) / 100.0;
+				string originalReferenceString = settings.GetValue(this.ReferencedSetting);
+				double valueToModify = ParseDouble(originalReferenceString);
+				finalValue = valueToModify * ratio;
+			}
+			else
+			{
+				finalValue = ParseDouble(value);
+			}
+
+			if (change0ToReference
+				&& finalValue == 0)
+			{
+				finalValue = ParseDouble(settings.GetValue(ReferencedSetting));
+			}
+
+			finalValue *= scale;
+
+			return finalValue.ToString();
+		}
 	}
 }

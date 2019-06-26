@@ -29,29 +29,20 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class InfillTranslator : MappedSetting
+	public class MapLayerChangeGCode : InjectGCodeCommands
 	{
-		public InfillTranslator(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
-
-		public override string Value
-		{
-			get
+			string macroReplaced = base.Resolve(value, settings);
+			if (!macroReplaced.Contains("; LAYER:")
+				&& !macroReplaced.Contains(";LAYER:"))
 			{
-				double infillRatio0To1 = ParseDouble(base.Value);
-				// 400 = solid (extruder width)
-
-				double nozzle_diameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-				double linespacing = 1000;
-				if (infillRatio0To1 > .01)
-				{
-					linespacing = nozzle_diameter / infillRatio0To1;
-				}
-
-				return ((int)(linespacing * 1000)).ToString();
+				macroReplaced += "; LAYER:[layer_num]\n";
 			}
+
+			macroReplaced = settings.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
+
+			return macroReplaced;
 		}
 	}
 }
