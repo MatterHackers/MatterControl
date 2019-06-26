@@ -29,20 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapLayerChangeGCode : InjectGCodeCommands
+	public class MapLayerChangeGCode : MappedSetting
 	{
 		public override string Resolve(string value, PrinterSettings settings)
 		{
-			string macroReplaced = base.Resolve(value, settings);
-			if (!macroReplaced.Contains("; LAYER:")
-				&& !macroReplaced.Contains(";LAYER:"))
+			// Unescape newlines
+			value = value.Replace("\\n", "\n");
+
+			if (!value.Contains("; LAYER:")
+				&& !value.Contains(";LAYER:"))
 			{
-				macroReplaced += "; LAYER:[layer_num]\n";
+				if(value.Length > 0)
+				{
+					value += "\n";
+				}
+
+				value += "; LAYER:[layer_num]\n";
 			}
 
-			macroReplaced = settings.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
-
-			return macroReplaced;
+			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

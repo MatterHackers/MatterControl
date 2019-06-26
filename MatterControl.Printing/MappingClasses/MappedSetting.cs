@@ -35,6 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 			return value;
 		}
+
 		public double ParseDouble(string textValue, double valueOnError = 0)
 		{
 			if (!double.TryParse(textValue, out double value))
