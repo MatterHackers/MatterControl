@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors",
-					Resolver = new GCodeForSlicer(),
+					Resolver = new GCodeMapping(),
 				},
 				new SliceSettingData()
 				{
@@ -526,7 +526,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The amount of infill material to generate, expressed as a ratio or a percentage.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					DefaultValue = "0.4",
-					Resolver = new ScaledSingleNumber(100),
+					Resolver = new AsPercentOrDirectFirst(),
 				},
 				new SliceSettingData()
 				{
@@ -1304,7 +1304,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "%".Localize(),
 					DefaultValue = "90",
-					Resolver = new ScaledSingleNumber(.01),
+					Resolver = new AsPercentOrDirect(),
 					QuickMenuSettings = { { "Light", "20" }, { "Standard", "80" }, { "Heavy", "100" } }
 				},
 				new SliceSettingData()
@@ -1396,7 +1396,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
-					Resolver = new RetractionLength(),
+					Resolver = new ConditionalField(SettingsKey.enable_retractions, new MappedSetting())
 				},
 				new SliceSettingData()
 				{
@@ -1644,7 +1644,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle",
-					Resolver = new MapStartGCode(true),
+					Resolver = new GCodeMapping(),
 				},
 				new SliceSettingData()
 				{
@@ -2264,7 +2264,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "%".Localize(),
 					DefaultValue = "100",
-					Resolver = new ScaledSingleNumber(.01),
+					Resolver = new AsPercentOrDirect(),
 				},
 				new SliceSettingData()
 				{

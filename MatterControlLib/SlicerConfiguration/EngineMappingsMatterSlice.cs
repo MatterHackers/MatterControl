@@ -31,6 +31,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -81,7 +83,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.max_acceleration] = new ExportField("maxAcceleration"),
 				[SettingsKey.max_velocity] = new ExportField("maxVelocity"),
 				[SettingsKey.jerk_velocity] = new ExportField("jerkVelocity"),
-				[SettingsKey.print_time_estimate_multiplier] = new ExportField("printTimeEstimateMultiplier"),
+				[SettingsKey.print_time_estimate_multiplier] = new ExportField(
+					"printTimeEstimateMultiplier",
+					(value, settings) =>
+					{
+						if (double.TryParse(value, out double infillRatio))
+						{
+							return $"{infillRatio * .01}";
+						}
+
+						return "0";
+					}),
 				// fan settings
 				[SettingsKey.min_fan_speed] = new ExportField("fanSpeedMinPercent"),
 				[SettingsKey.coast_at_end_distance] = new ExportField("coastAtEndDistance"),
@@ -119,10 +131,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.merge_overlapping_lines] = new ExportField("MergeOverlappingLines"),
 				[SettingsKey.fill_thin_gaps] = new ExportField("fillThinGaps"),
 				[SettingsKey.spiral_vase] = new ExportField("continuousSpiralOuterPerimeter"),
-				[SettingsKey.start_gcode] = new ExportField("startCode"),
+				[SettingsKey.start_gcode] = new ExportField(
+					"startCode",
+					(value, settings) =>
+					{
+						return StartGCodeGenerator.BuildStartGCode(settings, value);
+					}),
 				[SettingsKey.layer_gcode] = new ExportField("layerChangeCode"),
-				[SettingsKey.fill_density] = new ExportField("infillPercent"),
-				[SettingsKey.perimeter_start_end_overlap] = new ExportField("perimeterStartEndOverlapRatio"),
+				[SettingsKey.fill_density] = new ExportField(
+					"infillPercent",
+					(value, settings) =>
+					{
+						if (double.TryParse(value, out double infillRatio))
+						{
+							return $"{infillRatio * 100}";
+						}
+
+						return "0";
+					}),
+				[SettingsKey.perimeter_start_end_overlap] = new ExportField(
+					"perimeterStartEndOverlapRatio",
+					(value, settings) =>
+					{
+						if (double.TryParse(value, out double infillRatio))
+						{
+							return $"{infillRatio * .01}";
+						}
+
+						return "0";
+					}),
 				[SettingsKey.raft_extruder] = new ExportField("raftExtruder"),
 				[SettingsKey.support_material_extruder] = new ExportField("supportExtruder"),
 				[SettingsKey.support_material_interface_extruder] = new ExportField("supportInterfaceExtruder"),
@@ -146,9 +183,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				foreach (var (key, exportField) in this.Exports.Select(kvp => (kvp.Key, kvp.Value)))
 				{
 					string result = settings.ResolveValue(key);
+
+					// Run custom converter if defined on the field
+					if (exportField.Converter != null)
+					{
+						result = exportField.Converter(result, settings);
+					}
+
 					if (result != null)
 					{
-						sliceSettingsFile.WriteLine("{0} = {1}", key, result);
+						sliceSettingsFile.WriteLine("{0} = {1}", exportField.OuputName, result);
 					}
 				}
 
@@ -164,5 +208,184 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return matterSliceSettingNames.Contains(canonicalSettingsName)
 				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
 		}
+
+		public static class StartGCodeGenerator
+		{
+			public static string BuildStartGCode(PrinterSettings settings, string userGCode)
+			{
+				var newStartGCode = new StringBuilder();
+
+				foreach (string line in PreStartGCode(settings, Slicer.ExtrudersUsed))
+				{
+					newStartGCode.Append(line + "\n");
+				}
+
+				newStartGCode.Append(userGCode);
+
+				foreach (string line in PostStartGCode(settings, Slicer.ExtrudersUsed))
+				{
+					newStartGCode.Append("\n");
+					newStartGCode.Append(line);
+				}
+
+				var result = newStartGCode.ToString();
+				return result.Replace("\n", "\\n");
+			}
+
+			private static List<string> PreStartGCode(PrinterSettings settings, List<bool> extrudersUsed)
+			{
+				string startGCode = settings.GetValue(SettingsKey.start_gcode);
+				string[] startGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+				var preStartGCode = new List<string>
+			{
+				"; automatic settings before start_gcode"
+			};
+				AddDefaultIfNotPresent(preStartGCode, "G21", startGCodeLines, "set units to millimeters");
+				AddDefaultIfNotPresent(preStartGCode, "M107", startGCodeLines, "fan off");
+				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
+				if (bed_temperature > 0)
+				{
+					string setBedTempString = string.Format("M140 S{0}", bed_temperature);
+					AddDefaultIfNotPresent(preStartGCode, setBedTempString, startGCodeLines, "start heating the bed");
+				}
+
+				int numberOfHeatedExtruders = settings.Helpers.HotendCount();
+
+				// Start heating all the extruder that we are going to use.
+				for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
+				{
+					if (extrudersUsed.Count > hotendIndex
+						&& extrudersUsed[hotendIndex])
+					{
+						double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+						if (materialTemperature != 0)
+						{
+							string setTempString = "M104 T{0} S{1}".FormatWith(hotendIndex, materialTemperature);
+							AddDefaultIfNotPresent(preStartGCode, setTempString, startGCodeLines, $"start heating T{hotendIndex}");
+						}
+					}
+				}
+
+				// If we need to wait for the heaters to heat up before homing then set them to M109 (heat and wait).
+				if (settings.GetValue<bool>(SettingsKey.heat_extruder_before_homing))
+				{
+					for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
+					{
+						if (extrudersUsed.Count > hotendIndex
+							&& extrudersUsed[hotendIndex])
+						{
+							double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+							if (materialTemperature != 0)
+							{
+								string setTempString = "M109 T{0} S{1}".FormatWith(hotendIndex, materialTemperature);
+								AddDefaultIfNotPresent(preStartGCode, setTempString, startGCodeLines, $"wait for T{hotendIndex }");
+							}
+						}
+					}
+				}
+
+				// If we have bed temp and the start gcode specifies to finish heating the extruders,
+				// make sure we also finish heating the bed. This preserves legacy expectation.
+				if (bed_temperature > 0
+					&& startGCode.Contains("M109"))
+				{
+					string setBedTempString = string.Format("M190 S{0}", bed_temperature);
+					AddDefaultIfNotPresent(preStartGCode, setBedTempString, startGCodeLines, "wait for bed temperature to be reached");
+				}
+
+				SwitchToFirstActiveExtruder(extrudersUsed, preStartGCode);
+				preStartGCode.Add("; settings from start_gcode");
+
+				return preStartGCode;
+			}
+
+			private static List<string> PostStartGCode(PrinterSettings settings, List<bool> extrudersUsed)
+			{
+				string startGCode = settings.GetValue(SettingsKey.start_gcode);
+				string[] startGCodeLines = startGCode.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+				var postStartGCode = new List<string>
+			{
+				"; automatic settings after start_gcode"
+			};
+
+				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
+				if (bed_temperature > 0
+					&& !startGCode.Contains("M109"))
+				{
+					string setBedTempString = string.Format("M190 S{0}", bed_temperature);
+					AddDefaultIfNotPresent(postStartGCode, setBedTempString, startGCodeLines, "wait for bed temperature to be reached");
+				}
+
+				int numberOfHeatedExtruders = settings.GetValue<int>(SettingsKey.extruder_count);
+				// wait for them to finish
+				for (int hotendIndex = 0; hotendIndex < numberOfHeatedExtruders; hotendIndex++)
+				{
+					if (hotendIndex < extrudersUsed.Count
+						&& extrudersUsed[hotendIndex])
+					{
+						double materialTemperature = settings.Helpers.ExtruderTargetTemperature(hotendIndex);
+						if (materialTemperature != 0)
+						{
+							if (!(hotendIndex == 0 && LineStartsWith(startGCodeLines, "M109 S"))
+								&& !LineStartsWith(startGCodeLines, $"M109 T{hotendIndex} S"))
+							{
+								// always heat the extruders that are used beyond extruder 0
+								postStartGCode.Add($"M109 T{hotendIndex} S{materialTemperature} ; Finish heating T{hotendIndex}");
+							}
+						}
+					}
+				}
+
+				SwitchToFirstActiveExtruder(extrudersUsed, postStartGCode);
+				AddDefaultIfNotPresent(postStartGCode, "G90", startGCodeLines, "use absolute coordinates");
+				postStartGCode.Add(string.Format("{0} ; {1}", "G92 E0", "reset the expected extruder position"));
+				AddDefaultIfNotPresent(postStartGCode, "M82", startGCodeLines, "use absolute distance for extrusion");
+
+				return postStartGCode;
+			}
+
+			private static void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
+			{
+				string command = commandToAdd.Split(' ')[0].Trim();
+
+				if (!LineStartsWith(lines, command))
+				{
+					linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
+				}
+			}
+
+			private static void SwitchToFirstActiveExtruder(List<bool> extrudersUsed, List<string> preStartGCode)
+			{
+				// make sure we are on the first active extruder
+				for (int extruderIndex = 0; extruderIndex < extrudersUsed.Count; extruderIndex++)
+				{
+					if (extrudersUsed[extruderIndex])
+					{
+						// set the active extruder to the first one that will be printing
+						preStartGCode.Add("T{0} ; {1}".FormatWith(extruderIndex, "set the active extruder to {0}".FormatWith(extruderIndex)));
+						// we have set the active extruder so don't set it to any other extruder
+						break;
+					}
+				}
+			}
+
+			private static bool LineStartsWith(string[] lines, string command)
+			{
+				foreach (string line in lines)
+				{
+					if (line.StartsWith(command))
+					{
+						return true;
+					}
+				}
+
+				return false;
+			}
+		}
+
+
+
 	}
 }

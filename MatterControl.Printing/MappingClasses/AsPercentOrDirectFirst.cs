@@ -29,24 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class RetractionLength : MappedSetting
+	public class AsPercentOrDirectFirst : MapFirstValue
 	{
-		public RetractionLength()
-		{
-			// TODO: lookd like conditional field
-			System.Diagnostics.Debugger.Break();
-		}
-
 		public override string Resolve(string value, PrinterSettings settings)
 		{
-			if (settings.GetValue<bool>(SettingsKey.enable_retractions))
+			double ratio = 0;
+
+			value = base.Resolve(value, settings);
+
+			if (value.Contains("%"))
 			{
-				return value;
+				string withoutPercent = value.Replace("%", "");
+				ratio = ParseDouble(withoutPercent) / 100.0;
 			}
 			else
 			{
-				return "0";
+				ratio = ParseDouble(value);
 			}
+
+			return ratio.ToString();
 		}
 	}
 }

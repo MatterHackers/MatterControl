@@ -29,30 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ScaledSingleNumber : MapFirstValue
+	public class GCodeMapping : MappedSetting
 	{
-		private double scale;
-
-		public ScaledSingleNumber(double scale = 1)
-		{
-			this.scale = scale;
-		}
-
 		public override string Resolve(string value, PrinterSettings settings)
 		{
-			double ratio = 0;
+			// Unescape newlines
+			value = value.Replace("\\n", "\n");
 
-			if (value.Contains("%"))
-			{
-				string withoutPercent = value.Replace("%", "");
-				ratio = ParseDouble(withoutPercent) / 100.0;
-			}
-			else
-			{
-				ratio = ParseDouble(value);
-			}
-
-			return (ratio * scale).ToString();
+			// Macro replace and restore escaped newlines
+			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

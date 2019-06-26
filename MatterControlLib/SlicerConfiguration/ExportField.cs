@@ -28,15 +28,12 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ExportField
 	{
-		public ExportField(string outputName, Func<string> converter = null)
+		public ExportField(string outputName, Func<string, PrinterSettings, string> converter = null)
 		{
 			this.OuputName = outputName;
 			this.Converter = converter;
@@ -44,6 +41,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string OuputName { get; }
 
-		public Func<string> Converter { get; }
+		public Func<string, PrinterSettings, string> Converter { get; }
 	}
 }
