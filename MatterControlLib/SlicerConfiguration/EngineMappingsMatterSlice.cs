@@ -33,10 +33,11 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class EngineMappingsMatterSlice
+	public class EngineMappingsMatterSlice : IObjectSlicer
 	{
 		private readonly HashSet<string> matterSliceSettingNames;
 
@@ -205,8 +206,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool MapContains(string canonicalSettingsName)
 		{
-			return matterSliceSettingNames.Contains(canonicalSettingsName)
-				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
+			return matterSliceSettingNames.Contains(canonicalSettingsName);
+		}
+
+		public bool Slice(IObject3D object3D, PrinterSettings printerSettings, Stream outputStream)
+		{
+			throw new NotImplementedException();
 		}
 
 		public static class StartGCodeGenerator
