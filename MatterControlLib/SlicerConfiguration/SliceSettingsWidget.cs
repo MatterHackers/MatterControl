@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
 							&& CheckIfShouldBeShown(settingData, settingsContext);
 
-						if (printer.EngineMappingsMatterSlice.MapContains(settingData.SlicerConfigName)
+						if (printer.Settings.IsActive(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
 						{
 							settingsRow = CreateItemRow(settingData, errors);

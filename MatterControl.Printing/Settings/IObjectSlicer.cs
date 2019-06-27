@@ -35,5 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public interface IObjectSlicer
 	{
 		bool Slice(IObject3D object3D, PrinterSettings printerSettings, Stream outputStream);
+
+		bool MapContains(string canonicalSettingsName);
 	}
 }

@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class PrinterSettings
 	{
 		// TODO: Move to more appropriate location after more consideration
-		public static IObjectSlicer ExternalSlicer { get; set; }
+		public static IObjectSlicer Slicer { get; set; }
 
 		// Latest version should be in the form of:
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
@@ -709,6 +709,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return currentValue != null
 				&& (differsFromPreset || differsFromBase);
+		}
+
+		public bool IsActive(string canonicalSettingsName)
+		{
+			return PrinterSettings.Slicer.MapContains(canonicalSettingsName)
+				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
 		}
 
 		// Helper method to debug settings layers per setting

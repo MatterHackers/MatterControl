@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 
 					// Map from PrinterSettings to PrintSettings
-					if (PrinterSettings.ExternalSlicer != null)
+					if (PrinterSettings.Slicer != null)
 					{
 						var children = stlFileLocations.Select(s => new Object3D()
 						{
@@ -339,7 +339,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						using (var outputStream = File.OpenWrite(gcodeFilePath))
 						{
-							PrinterSettings.ExternalSlicer.Slice(
+							PrinterSettings.Slicer.Slice(
 								new Object3D(children),
 								printer.Settings,
 								outputStream);
