@@ -505,7 +505,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			if (!valueWasNumber
-				|| (printer.EngineMappingsMatterSlice.MapContains(settingsKey)
+				|| (printer.Settings.IsActive(settingsKey)
 				&& speedToCheck <= 0))
 			{
 					errors.Add(
