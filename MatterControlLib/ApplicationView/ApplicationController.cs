@@ -4048,8 +4048,11 @@ Support and tutorials:
 			{
 				try
 				{
-					// TODO: replace with runtime switchable solution
-					PrinterSettings.Slicer = new EngineMappingsMatterSlice();
+					if (PrinterSettings.Slicer == null)
+					{
+						// TODO: replace with runtime switchable solution
+						PrinterSettings.Slicer = new EngineMappingsMatterSlice();
+					}
 
 					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
 					await applicationController.RestoreUserTabs();

@@ -91,6 +91,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TaskDetails_ProgressChanged(object sender, ProgressStatus e)
 		{
+			if (e.Target == "terminal"
+				&& sender is RunningTaskDetails details
+				&& details.Owner is PrinterConfig printer)
+			{
+				printer.Connection.TerminalLog.WriteLine(e.Status);
+				return;
+			}
+
 			if (textWidget.Text != e.Status
 				&& !string.IsNullOrEmpty(e.Status)
 				&& !textWidget.Text.Contains(e.Status, StringComparison.OrdinalIgnoreCase))
