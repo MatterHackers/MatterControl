@@ -934,7 +934,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (settingsKey.Contains("%"))
 			{
-				if (typeof(T) != typeof(double))
+				if (typeof(T) != typeof(double)
+					|| typeof(T) != typeof(int))
 				{
 					throw new Exception("To get processing of a % you must request the type as double.");
 				}
@@ -1024,8 +1025,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(int))
 			{
-				int.TryParse(settingsValue, out int result);
-				return (T)(object)(result);
+				int.TryParse(this.ResolveValue(settingsKey), out int result);
+				return (T)(object)result;
 			}
 			else if (typeof(T) == typeof(Vector2))
 			{
@@ -1041,40 +1042,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (typeof(T) == typeof(double))
 			{
-				if (settingsValue.Contains("%"))
-				{
-					// Remove % and parse out double value
-					double.TryParse(settingsValue.Replace("%", ""), out double doubleValue);
-
-					double ratio = doubleValue / 100;
-
-					if (settingsKey == SettingsKey.first_layer_height)
-					{
-						return (T)(object)(this.GetValue<double>(SettingsKey.layer_height) * ratio);
-					}
-					else if (settingsKey == SettingsKey.first_layer_extrusion_width
-						|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
-					{
-						return (T)(object)(this.GetValue<double>(SettingsKey.nozzle_diameter) * ratio);
-					}
-
-					return (T)(object)(ratio);
-				}
-				else if (settingsKey == SettingsKey.first_layer_extrusion_width
-					|| settingsKey == SettingsKey.external_perimeter_extrusion_width)
-				{
-					double.TryParse(settingsValue, out double extrusionResult);
-					return (T)(object)(extrusionResult == 0 ? this.GetValue<double>(SettingsKey.nozzle_diameter) : extrusionResult);
-				}
-
-				if (settingsKey == SettingsKey.bed_temperature
-					&& !this.GetValue<bool>(SettingsKey.has_heated_bed))
-				{
-					return (T)Convert.ChangeType(0, typeof(double));
-				}
-
-				double.TryParse(settingsValue, out double result);
-				return (T)(object)(result);
+				double.TryParse(this.ResolveValue(settingsKey), out double doubleValue);
+				return (T)(object)doubleValue;
 			}
 			else if (typeof(T) == typeof(BedShape))
 			{
