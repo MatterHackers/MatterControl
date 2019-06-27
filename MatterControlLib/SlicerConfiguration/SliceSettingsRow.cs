@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string mapsTo = "";
 
-			if (printer.EngineMappingsMatterSlice.Exports.TryGetValue(settingData.SlicerConfigName, out ExportField exportField))
+			if (PrinterSettings.Slicer.Exports.TryGetValue(settingData.SlicerConfigName, out ExportField exportField))
 			{
 				mapsTo = " -> " + exportField.OuputName;
 

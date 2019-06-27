@@ -48,9 +48,6 @@ namespace MatterHackers.MatterControl
 
 		public BedConfig Bed { get; }
 
-		[JsonIgnore]
-		public EngineMappingsMatterSlice EngineMappingsMatterSlice { get; }
-
 		// heating status
 		enum HeatingStatus { None, Bed, T0, T1 }
 		private HeatingStatus waitingForHeat = HeatingStatus.None;
@@ -60,14 +57,10 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig()
 		{
 			this.Connection = new PrinterConnection(this);
-
-			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
 		{
-			EngineMappingsMatterSlice = new EngineMappingsMatterSlice(this);
-
 			this.Settings = settings;
 
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
