@@ -214,6 +214,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			throw new NotImplementedException();
 		}
 
+		public bool ValidateFile(string filePath)
+		{
+			// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
+			int bufferSize = 32000;
+
+			int padding = 100;
+
+			using (Stream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+			{
+				int i = 1;
+				bool readToStart = false;
+				do
+				{
+					var buffer = new byte[bufferSize + 100];
+
+					// fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
+					fileStream.Position = Math.Max(0, fileStream.Length - (bufferSize * i++) - padding);
+					readToStart = fileStream.Position == 0;
+
+					int numBytesRead = fileStream.Read(buffer, 0, bufferSize + padding);
+
+					string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
+					if (fileEnd.Contains("filament used"))
+					{
+						return true;
+					}
+				} while (!readToStart);
+
+				return false;
+			}
+		}
+
 		public static class StartGCodeGenerator
 		{
 			public static string BuildStartGCode(PrinterSettings settings, string userGCode)
