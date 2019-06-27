@@ -36,12 +36,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class SliceProgressReporter : IProgress<ProgressStatus>
 	{
 		private IProgress<ProgressStatus> reporter;
-		private PrinterConfig printer;
 
-		public SliceProgressReporter(IProgress<ProgressStatus> reporter, PrinterConfig printer)
+		public SliceProgressReporter(IProgress<ProgressStatus> reporter)
 		{
 			this.reporter = reporter;
-			this.printer = printer;
 		}
 
 		public void Report(ProgressStatus progressStatus)
@@ -50,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double destValue = 10;
 
 			string statusText = progressStatus.Status = progressStatus.Status.Trim().TrimEnd('.');
-			
+
 			if (GCodeFile.GetFirstNumberAfter("", statusText, ref currentValue)
 				&& GCodeFile.GetFirstNumberAfter("/", statusText, ref destValue))
 			{
@@ -60,10 +58,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				progressStatus.Progress0To1 = currentValue / destValue;
+				progressStatus.Target = null;
 			}
 			else
 			{
-				printer.Connection.TerminalLog.WriteLine(statusText);
+				progressStatus.Status = statusText;
+				progressStatus.Target = "terminal";
 			}
 
 			reporter.Report(progressStatus);

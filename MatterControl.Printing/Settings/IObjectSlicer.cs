@@ -27,14 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.IO;
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public interface IObjectSlicer
 	{
-		bool Slice(IObject3D object3D, PrinterSettings printerSettings, Stream outputStream);
+		Task<bool> Slice(IObject3D object3D, IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
 
 		Dictionary<string, ExportField> Exports { get; }
 
