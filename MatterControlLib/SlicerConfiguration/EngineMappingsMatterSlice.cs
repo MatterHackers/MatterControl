@@ -204,11 +204,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public bool MapContains(string canonicalSettingsName)
 		{
-			return matterSliceSettingNames.Contains(canonicalSettingsName);
-		}
-
 		public bool Slice(IObject3D object3D, PrinterSettings printerSettings, Stream outputStream)
 		{
 			throw new NotImplementedException();

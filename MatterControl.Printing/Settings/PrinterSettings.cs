@@ -713,7 +713,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool IsActive(string canonicalSettingsName)
 		{
-			return PrinterSettings.Slicer.MapContains(canonicalSettingsName)
+			return PrinterSettings.Slicer.Exports.ContainsKey(canonicalSettingsName)
 				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
 		}
 
