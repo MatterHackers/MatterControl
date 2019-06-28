@@ -972,7 +972,6 @@ namespace MatterHackers.MatterControl
 						{
 							OperationType = typeof(AlignObject3D),
 							TitleResolver = () => "Dual Extrusion Align".Localize(),
-							HelpTextResolver = () => "Reset parts to modeled positions".Localize(),
 							Action = (sceneContext) =>
 							{
 								var scene = sceneContext.Scene;
@@ -2502,6 +2501,8 @@ namespace MatterHackers.MatterControl
 						ContentStore = history,
 						SourceItem = history.NewPlatingItem()
 					});
+
+				ApplicationController.Instance.MainTabKey = workspace.Name;
 
 				// Open but no need to save
 				this.OpenWorkspace(workspace, WorkspacesChangedEventArgs.OperationType.Restore);

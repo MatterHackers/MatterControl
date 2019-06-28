@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    • Fjern papiret
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1. Velg kategorien "Kontroller" til høyre
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2. Se etter kalibreringsseksjonen (bildet nedenfor)
-
 English:- none -
 Translated:- ingen -
 
@@ -72,6 +66,9 @@ Translated:Et amerikansk eller kanadisk mobilnummer
 
 English:A valid email address
 Translated:En gyldig e-postadresse
+
+English:Abort Calibration
+Translated:Avbryt kalibrering
 
 English:Abort Print
 Translated:Avbryt utskrift
@@ -169,6 +166,9 @@ Translated:Alle varmeapparater
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Tillat MatterControl å dele lange linjer for å forbedre utjevning og utskriftsrekvisisjon. Kritisk for skrivere som er betydelig ute av nivå.
 
+English:Allows for the repositioning of the rotation origin
+Translated:Tillater omplassering av rotasjonsopprinnelsen
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:Lar deg slå på og av ved å bruke passformen til x-aksen.
 
@@ -184,8 +184,14 @@ Translated:Alpha
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: Den i utviklingsversjonen av MatterControl
 
+English:Already Calibrated
+Translated:Allerede kalibrert
+
 English:Already Loaded
 Translated:Allerede lastet
+
+English:An unexpected error occurred during reload
+Translated:Det oppsto en uventet feil under påfylling
 
 English:Anchor
 Translated:Anker
@@ -214,6 +220,9 @@ Translated:Søke om
 English:Apply leveling to G-Code during export
 Translated:Bruk nivellering til G-kode under eksport
 
+English:Are you sure you want to abort calibration?
+Translated:Er du sikker på at du vil avbryte kalibrering?
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Er du sikker på at du vil avbryte gjeldende utskrift og lukke MatterControl?
 
@@ -235,6 +244,9 @@ Translated:Er du sikker på at du vil logge ut? Du har ikke tilgang til skriverp
 English:Arrange All Parts
 Translated:Ordne alle deler
 
+English:Array
+Translated:Array
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:Siden tiden for å skrive ut et lag reduseres til dette, økes viftehastigheten opp til maksimal hastighet.
 
@@ -246,9 +258,6 @@ Translated:Forsøker å koble til
 
 English:ATX Power Control
 Translated:ATX Power Control
-
-English:Auto Calibrate
-Translated:Automatisk kalibrering
 
 English:Auto Connect
 Translated:Automatisk tilkobling
@@ -343,6 +352,9 @@ Translated:Beta
 English:Beta: The release candidate version of MatterControl
 Translated:Beta: Utgivelseskandidatversjonen av MatterControl
 
+English:Booleans
+Translated:booleans
+
 English:Bottom Solid Infill
 Translated:Bottom Solid Infill
 
@@ -379,8 +391,14 @@ Translated:Beregn og send et standard rep-raps kontrollsum for alle kommandoer.
 English:Calculate Path
 Translated:Beregn sti
 
+English:Calibrate Printer
+Translated:Kalibrere skriveren
+
 English:Calibration
 Translated:kalibrering
+
+English:Calibration Face
+Translated:Kalibrerende ansikt
 
 English:Calibration Faces
 Translated:Kalibreringsfasene
@@ -388,8 +406,14 @@ Translated:Kalibreringsfasene
 English:Calibration Files
 Translated:Kalibreringsfiler
 
+English:Calibration Mode
+Translated:Kalibreringsmodus
+
 English:Calibration Parts
 Translated:Kalibreringsdeler
+
+English:Calibration Print
+Translated:Kalibreringsutskrift
 
 English:Calibration Tab
 Translated:Kalibreringsfanen
@@ -454,9 +478,6 @@ Translated:Sjekker med webservice
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:Kontroller før hver utskrift at lagets høyde er mindre enn dysediameteren (viktig for filamentadhesjon)
 
-English:Choose the calibration you would like to perform.
-Translated:Velg kalibreringen du vil utføre.
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Velg kommandoen for å vise utskriftsfremdriften på skriverens LCD-skjerm, hvis den har en.
 
@@ -481,9 +502,6 @@ Translated:Klart valg
 English:Clear ZOffset
 Translated:Fjern ZOffset
 
-English:Click 'Done' to close this window.
-Translated:Klikk på 'Ferdig' for å lukke dette vinduet.
-
 English:Click 'Next' to continue.
 Translated:Klikk på "Neste" for å fortsette.
 
@@ -496,20 +514,17 @@ Translated:Lukk Polygoner
 English:Cloud Library
 Translated:Cloud Library
 
+English:Coarse
+Translated:Grov
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:Grovkalibrering fullført, nå skal vi gjøre en normal kalibrering for å forbedre nøyaktigheten.
-
-English:Coarse Calibration: If your printer is way off
-Translated:Grovkalibrering: Hvis skriveren er av
 
 English:Coast At End
 Translated:Kyst i enden
 
 English:Collapse All
 Translated:Skjul alt
-
-English:Collect data
-Translated:Samle data
 
 English:Color
 Translated:Farge
@@ -528,6 +543,9 @@ Translated:Kompilere modell
 
 English:Complete Individual Objects
 Translated:Komplette individuelle objekter
+
+English:Completed
+Translated:fullført
 
 English:Cone
 Translated:Cone
@@ -552,9 +570,6 @@ Translated:Bekreft ditt nye passord
 
 English:Confirm your Password
 Translated:Bekreft passordet ditt
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:Gratulerer med å koble til skriveren din. Før du starter din første utskrift, må vi kjøre en enkel kalibreringsprosedyre.
 
 English:Congratulations Print Complete
 Translated:Gratulerer Skriv ut komplett
@@ -598,6 +613,9 @@ Translated:Forbindelse lyktes
 English:Connection timed out
 Translated:Forbindelsen ble utløpt
 
+English:Connection Timeout
+Translated:Tilkoblingstidsavbrudd
+
 English:Continue
 Translated:Fortsette
 
@@ -630,6 +648,9 @@ Translated:Kopier og omkalibrere
 
 English:Copy everything but hardware specific calibration settings
 Translated:Kopier alt annet enn maskinvare-spesifikke kalibreringsinnstillinger
+
+English:Copy Mesh
+Translated:Kopier Mesh
 
 English:Copy Printers
 Translated:Kopier skrivere
@@ -693,9 +714,6 @@ Translated:Lag skjørt
 
 English:Create Support
 Translated:Opprett støtte
-
-English:Create Wipe Tower
-Translated:Opprett Tørketårn
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Oppretter en kant festet til undersiden av utskriften. Nyttig for å forhindre forvrengning når du skriver ut ABS (og annen vridende utsatt plast) som det hjelper deler med å holde seg til sengen.
@@ -874,6 +892,9 @@ Translated:Nedlasting av ...
 English:Downloads
 Translated:Nedlastinger
 
+English:Dual Extrusion Align
+Translated:Dual Ekstrusjon Juster
+
 English:Duplicate
 Translated:Duplisere
 
@@ -943,6 +964,9 @@ Translated:Aktiver gjenoppretting
 English:Enable Retractions
 Translated:Aktiver tilbaketrekninger
 
+English:Enable Software Leveling
+Translated:Aktiver programvareutjevning
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:Aktiver dette hvis skriveren din har maskinvarestøtte for G30 (automatisk sengen), og du vil bruke den i stedet for å måle sondeposisjonene manuelt.
 
@@ -1003,6 +1027,9 @@ Translated:Feil ved innlasting av bilde
 English:Error Reported
 Translated:Feil rapportert
 
+English:Error saving file
+Translated:Feil ved lagring av fil
+
 English:Estimated Cost
 Translated:Estimert kostnad
 
@@ -1030,9 +1057,6 @@ Translated:eksperimentell
 English:Export
 Translated:Eksport
 
-English:Export All Settings
-Translated:Eksporter alle innstillinger
-
 English:Export Bed Leveling Data
 Translated:Eksporter Bed Leveling Data
 
@@ -1048,11 +1072,20 @@ Translated:Eksportfeil
 English:Export File
 Translated:Eksporter fil
 
+English:Export G-Code
+Translated:Eksporter G-kode
+
 English:Export Part Sheet
 Translated:Eksporter delark
 
+English:Export Printer
+Translated:Eksporter skriver
+
 English:Export selection to
 Translated:Eksporter utvalg til
+
+English:Export X3G
+Translated:Eksporter X3G
 
 English:Exporting
 Translated:eksportere
@@ -1147,8 +1180,14 @@ Translated:Filamentet er lastet
 English:Filament Length
 Translated:Filamentlengde
 
+English:Filament Loaded
+Translated:Filament lastet
+
 English:Filament Speed
 Translated:Filamenthastighet
+
+English:Filament Unloaded
+Translated:Filament losset
 
 English:Filament Volume
 Translated:Filamentvolum
@@ -1177,8 +1216,8 @@ Translated:Til slutt klikker du Neste for å fortsette.
 English:Find and create supports where needed
 Translated:Finn og opprett støtte når det trengs
 
-English:Fine Calibration: When you want that extra precision
-Translated:Fin kalibrering: Når du vil ha den ekstra presisjonen
+English:Fine
+Translated:Fint
 
 English:Finish
 Translated:Bli ferdig
@@ -1354,9 +1393,6 @@ Translated:Gi makroen et navn
 English:Group
 Translated:Gruppe
 
-English:Guides
-Translated:Guides
-
 English:Guides and Articles
 Translated:Guider og artikler
 
@@ -1371,6 +1407,9 @@ Translated:Half Wedge
 
 English:Hardware
 Translated:maskinvare
+
+English:Hardware Error
+Translated:Maskinvarefeil
 
 English:Has Fan
 Translated:Har Fan
@@ -1405,9 +1444,6 @@ Translated:Ha MatterControl sende deg tekstmeldinger om utskriften din
 English:Heat Before Homing
 Translated:Varm før hjemme
 
-English:Heat the bed
-Translated:Varm sengen
-
 English:Heated Bed
 Translated:Oppvarmet seng
 
@@ -1417,14 +1453,14 @@ Translated:Oppvarming Seng
 English:Heating Nozzle
 Translated:Varme dyse
 
+English:Heating the printer
+Translated:Oppvarmer skriveren
+
 English:Height
 Translated:Høyde
 
 English:Help
 Translated:Hjelp
-
-English:Here is what we are going to do:
-Translated:Her er hva vi skal gjøre:
 
 English:High Precision
 Translated:Høy presisjon
@@ -1437,9 +1473,6 @@ Translated:Holding Temperatur
 
 English:Home
 Translated:Hjem
-
-English:Home the printer
-Translated:Start skriveren
 
 English:Home X
 Translated:Hjem X
@@ -1462,8 +1495,8 @@ Translated:Homing
 English:Homing Offset
 Translated:Homing Offset
 
-English:Homing The Printer
-Translated:Homing skriveren
+English:Homing the printer
+Translated:Hylle skriveren
 
 English:Hotend
 Translated:Hotend
@@ -1486,9 +1519,6 @@ Translated:Varme temperaturen:
 English:How can we improve?
 Translated:Hvordan kan vi forbedre?
 
-English:How to succeed with MatterControl
-Translated:Hvordan lykkes med MatterControl
-
 English:Hz
 Translated:hz
 
@@ -1506,12 +1536,6 @@ Translated:Hvis ekstruderen har kjørt lenge, kan det være rapportering av verd
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:Hvis tiden for å skrive ut et lag er mindre enn dette, vil viften slås på med minimumshastighet. Det vil da rampe opp til maksimal hastighet ettersom lagetiden minker.
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:Hvis du ønsker å kalibrere nivellering i fremtiden:
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:Hvis du ønsker å kalibrere sonden din i fremtiden:
 
 English:Image
 Translated:Bilde
@@ -1573,14 +1597,14 @@ Translated:Infill Type
 English:Inflate Path
 Translated:Oppblåsingsbane
 
+English:Initial (Recommended)
+Translated:Innledende (Anbefalt)
+
 English:Initial Layer Speed
 Translated:Initial laghastighet
 
 English:Initial Layers
 Translated:Innledende lag
-
-English:Initial Printer Setup
-Translated:Innledende skriveroppsett
 
 English:Initializing hardware...
 Translated:Initialisering av maskinvare ...
@@ -1630,6 +1654,9 @@ Translated:Kryss
 English:Invalid Client Token
 Translated:Ugyldig klienttoken
 
+English:Invalid printer selection
+Translated:Ugyldig utskriftsvalg
+
 English:Inventory
 Translated:Inventar
 
@@ -1659,9 +1686,6 @@ Translated:Elementet kan ikke eksporteres som STL
 
 English:Item not Found
 Translated:Element ikke funnet
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:Det er på tide å kopiere eksisterende skriverinnstillinger til MatterHackers-kontoen din. Når de er kopiert, vil disse skriverne være tilgjengelige når du logger på MatterControl. Skrivere som ikke kopieres, vil bare være tilgjengelige når de ikke er logget på.
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -1732,12 +1756,6 @@ Translated:La oss vise deg rundt før du kommer i gang.
 English:Letter
 Translated:Brev
 
-English:Level X Carriage
-Translated:Nivå X Transport
-
-English:Level X Carriage Page
-Translated:Nivå X Transport Side
-
 English:Leveling
 Translated:Leveling
 
@@ -1783,26 +1801,29 @@ Translated:Lithophane
 English:Load
 Translated:Laste
 
+English:Load Extruder
+Translated:Load Extruder
+
+English:Load Extruder {0}
+Translated:Load Extruder {0}
+
 English:Load filament
 Translated:Last filament
 
 English:Load Filament
 Translated:Last filament
 
-English:Load Filament 2
-Translated:Last filament 2
-
 English:Load Filament Length
 Translated:Legg filamentlengde
+
+English:Load Filament to continue
+Translated:Legg filamentet for å fortsette
 
 English:Load Material
 Translated:Last Materiale
 
 English:Loading
 Translated:Laster
-
-English:Loading Bed
-Translated:Laster seng
 
 English:Loading Filament
 Translated:Laster filament
@@ -1876,14 +1897,14 @@ Translated:Pass på at det første punktet på en omkrets ikke er et overheng.
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:Lag det første laget på toppen av delvis infill, bruk hastigheten og viften for broing.
 
+English:Manifold
+Translated:manifold
+
 English:Manual Movement Speeds
 Translated:Manuell bevegelseshastighet
 
 English:Manually Configure Connection
 Translated:Konfigurer tilkobling manuelt
-
-English:Manually measure the extruder at the center
-Translated:Måle ekstruderen manuelt i midten
 
 English:Markdown Edit
 Translated:Markdown Rediger
@@ -1903,6 +1924,9 @@ Translated:materialer
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:MatterControl Hjelp
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl er gjort mulig av teamet hos MatterHackers og annen åpen kildekode programvare
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl vil nå forsøke å auto-detektere skriveren.
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: Velg Firmware File
+
+English:MatterHackers Internal Use
+Translated:MatterHackers intern bruk
 
 English:Max Acceleration
 Translated:Max akselerasjon
@@ -1948,8 +1975,14 @@ Translated:Middels presisjon
 English:Merge Overlapping Lines
 Translated:Slå sammen overlappende linjer
 
+English:Merge Vertices
+Translated:Merge Vertices
+
 English:Mesh
 Translated:mesh
+
+English:Mesh Modifiers
+Translated:Mesh Modifiers
 
 English:Message
 Translated:Budskap
@@ -2098,6 +2131,9 @@ Translated:Nytt design
 English:New Password
 Translated:Nytt passord
 
+English:New Printer Name
+Translated:Nytt skrivernavn
+
 English:New updates are ready to install
 Translated:Nye oppdateringer er klare til å installeres
 
@@ -2134,11 +2170,17 @@ Translated:Ingen utskrivbare deler finnes innenfor grensene til skriveren. Legg 
 English:No Printer Selected
 Translated:Ingen skriver valgt
 
+English:No results found
+Translated:Ingen resultater
+
 English:None
 Translated:Ingen
 
-English:Normal Calibration: Start here
-Translated:Normal kalibrering: Start her
+English:Normal
+Translated:Normal
+
+English:Normal (Recommended)
+Translated:Normal (Anbefalt)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:Vanligvis blir bildet utvidet til kanten. Dette vil forsøke å sentrere vekten av bildet visuelt.
@@ -2172,6 +2214,9 @@ Translated:Dyse 2 Inset
 
 English:Nozzle Calibration
 Translated:Dysekalibrering
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:Dysekalibrering måler avstanden mellom hotends.
 
 English:Nozzle Diameter
 Translated:Dyse Diameter
@@ -2308,6 +2353,9 @@ Translated:Åpne Nylig
 English:OpenSCAD not installed
 Translated:OpenSCAD ikke installert
 
+English:Optional
+Translated:Valgfri
+
 English:Options
 Translated:alternativer
 
@@ -2344,6 +2392,9 @@ Translated:overheng
 English:Overhang Angle
 Translated:Overhang Angle
 
+English:Overview
+Translated:Oversikt
+
 English:Pan
 Translated:Panne
 
@@ -2352,9 +2403,6 @@ Translated:Pan View
 
 English:Part Cooling Fan
 Translated:Del kjølevifte
-
-English:Part History
-Translated:Delhistorie
 
 English:Password
 Translated:Passord
@@ -2367,6 +2415,9 @@ Translated:Passordoppdateringen er fullført
 
 English:Paste
 Translated:Lim inn
+
+English:Path
+Translated:Sti
 
 English:Pattern Spacing
 Translated:Mønsteravstand
@@ -2398,8 +2449,8 @@ Translated:utkant
 English:Permission Denied
 Translated:Tillatelse avslått
 
-English:Pick the most balanced result for each axis.
-Translated:Velg det mest balansert resultatet for hver akse.
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:Plukk puten som er mest justert med basen, puten som er mest balansert og sentrert.
 
 English:PID Settings
 Translated:PID-innstillinger
@@ -2479,6 +2530,9 @@ Translated:polygoner
 English:Port
 Translated:Havn
 
+English:Port In Use
+Translated:Port i bruk
+
 English:Port not available
 Translated:Port ikke tilgjengelig
 
@@ -2502,6 +2556,12 @@ Translated:Maktkontroll
 
 English:Preheat
 Translated:Forvarm
+
+English:Preparing help
+Translated:Forbereder hjelp
+
+English:Preparing help index
+Translated:Forbereder hjelpeindeks
 
 English:Preparing To Print
 Translated:Forbereder å skrive ut
@@ -2542,8 +2602,8 @@ Translated:Utskriftshistorikk
 English:Print Leveling
 Translated:Utskriftsnivå
 
-English:Print Leveling Overview
-Translated:Utskriftsnivåovervåking Oversikt
+English:Print Leveling measures the plane of the bed.
+Translated:Utskrift Leveling måler sengets plan.
 
 English:Print Leveling Wizard
 Translated:Utskrift Leveling Wizard
@@ -2556,9 +2616,6 @@ Translated:Utskriftskø
 
 English:Print Recovery
 Translated:Skriv ut gjenoppretting
-
-English:Print the calibration object
-Translated:Skriv ut kalibreringsobjektet
 
 English:Print Time
 Translated:Utskriftstid
@@ -2583,6 +2640,9 @@ Translated:Skriveren er SLA
 
 English:Printer Name
 Translated:Skrivernavn
+
+English:Printer name already exists
+Translated:Skrivernavn finnes allerede
 
 English:Printer name cannot be blank
 Translated:Skrivernavn kan ikke være tomt
@@ -2620,11 +2680,8 @@ Translated:Utskriftshastighet
 English:Printing: {0}
 Translated:Utskrift: {0}
 
-English:Probe Calibration
-Translated:Probe kalibrering
-
-English:Probe Calibration Overview
-Translated:Probe kalibrering Oversikt
+English:Probe at bed center
+Translated:Sonde i senteret
 
 English:Probe Has Been Calibrated
 Translated:Sonden er blitt kalibrert
@@ -2634,9 +2691,6 @@ Translated:Probe Offset
 
 English:Probe Offset Sample Point
 Translated:Probe Offset Sample Point
-
-English:Probe the bed at the center
-Translated:Snu sengen i midten
 
 English:Progress Reporting
 Translated:Fremdriftsrapportering
@@ -2731,6 +2785,9 @@ Translated:Utgivelse
 English:Release Notes
 Translated:Utgivelsesnotater
 
+English:Reload Failed
+Translated:Oppdatering mislyktes
+
 English:Reloading
 Translated:omlasting
 
@@ -2748,6 +2805,9 @@ Translated:Fjern alle auto genererte støtter
 
 English:Remove Items?
 Translated:Fjern elementer?
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:Fjern kalibreringsdelen fra sengen og sammenlign sidene på padsene i hver akse.
 
 English:Remove the paper
 Translated:Fjern papiret
@@ -2772,6 +2832,9 @@ Translated:Be om at fastvaren skal gjøre tilbaketrekking i stedet for å spesif
 
 English:Require Leveling To Print
 Translated:Krever Leveling til utskrift
+
+English:Required
+Translated:Må
 
 English:Reset
 Translated:tilbakestille
@@ -2805,9 +2868,6 @@ Translated:Gjenopprette standard
 
 English:Restore Settings
 Translated:Gjenopprett innstillinger
-
-English:Restore your current bed, after all calibration is complete
-Translated:Gjenopprett din nåværende seng, etter all kalibrering er fullført
 
 English:Resume
 Translated:Gjenoppta
@@ -2917,8 +2977,8 @@ Translated:Sailfish Communication
 English:Sample Points
 Translated:Eksempelpoeng
 
-English:Sample the bed at {0} points
-Translated:Prøv sengen ved {0} poeng
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:Prøv senterets senterposisjon for å bestemme sondens avstand til sengen
 
 English:Sampled Positions
 Translated:Samplede posisjoner
@@ -2971,6 +3031,9 @@ Translated:Søk på Google
 English:Search Results
 Translated:Søkeresultater
 
+English:Searching
+Translated:Søker
+
 English:seconds
 Translated:sekunder
 
@@ -2986,12 +3049,6 @@ Translated:Velg en ny destinasjon
 English:Select a printer to continue
 Translated:Velg en skriver for å fortsette
 
-English:Select Make
-Translated:Velg Lag
-
-English:Select Model
-Translated:Velg Modell
-
 English:Select Part
 Translated:Velg Del
 
@@ -3000,18 +3057,6 @@ Translated:Velg skriver
 
 English:Select the baud rate.
 Translated:Velg baud rate.
-
-English:Select the hotend on the left to continue
-Translated:Velg hotend til venstre for å fortsette
-
-English:Select the material you are printing
-Translated:Velg materialet du skriver ut
-
-English:Select the printer manufacturer
-Translated:Velg skriverprodusenten
-
-English:Select the printer model
-Translated:Velg skrivermodell
 
 English:Select What to Import
 Translated:Velg hva du skal importere
@@ -3045,9 +3090,6 @@ Translated:Sesjonen slettet
 
 English:Session Expired
 Translated:Sesjon utløpt
-
-English:Set active material to continue
-Translated:Sett aktivt materiale for å fortsette
 
 English:Set as Default
 Translated:Satt som standard
@@ -3313,6 +3355,9 @@ Translated:Spiral Vase
 English:Split
 Translated:Dele
 
+English:Split Mesh
+Translated:Split Mesh
+
 English:Stable
 Translated:Stabil
 
@@ -3364,9 +3409,6 @@ Translated:Starte synkronisering
 English:Startup Failure
 Translated:Oppstartssvikt
 
-English:Stash your current bed
-Translated:Stash din nåværende seng
-
 English:Stay Connected
 Translated:Hold kontakten
 
@@ -3405,9 +3447,6 @@ Translated:Trekk og erstatt
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:Trekk bildet fra en disk, slik at det negative rommet blir skrevet ut.
-
-English:Success
-Translated:Suksess
 
 English:Success! Please check your email for the reset code.
 Translated:Suksess! Vennligst sjekk e-posten din for tilbakestillings-koden.
@@ -3550,6 +3589,9 @@ Translated:Vinkelen på infillet, målt fra X-aksen. Ikke brukt ved broing.
 English:The angle to generate support for
 Translated:Vinkelen for å generere støtte for
 
+English:The angle to rotate the top of the part
+Translated:Vinkelen for å rotere toppen av delen
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:Sengen er for tiden oppvarming og måletemperaturen kan ikke endres til den når {0} ° C.\n\nDu kan angi start-sengetemperaturen i INNSTILLINGER -> Filament -> Temperaturer.\n\n{1}
 
@@ -3622,9 +3664,6 @@ Translated:Laget (ene) der utskriften vil stoppe, muliggjør forandring av filam
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Lengden og bredden av et tårn opprettet på baksiden til venstre for utskriften som brukes til å tørke neste dyse når du skifter mellom flere ekstrudere. Sett til 0 for å deaktivere.
 
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:Markdown som vil bli vist under utskriftsnivåering for å få X-vognnivået.
-
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Markdown som vil bli vist på Clean Filament-siden.
 
@@ -3673,9 +3712,6 @@ Translated:Minimumshastigheten hvor lagens kjølevifte vil kjøre, uttrykt som p
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:Minimumshastigheten som skriveren vil redusere til for å forsøke å lage lagets utskriftstid lenge nok til å tilfredsstille minimumslagetiden.
 
-English:The next few screens will walk your through calibrating your printer.
-Translated:De neste bildene vil gå gjennom kalibreringen av skriveren din.
-
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:Antall CPU-kjerner som skal brukes mens du skiver. Å øke dette kan redusere maskinen din.
 
@@ -3710,7 +3746,7 @@ English:The number of loops to draw around parts. Used to provide additional bed
 Translated:Antall løkker for å tegne rundt deler. Brukes til å gi ekstra seng vedheft
 
 English:The number of times to sample each probe position (results will be averaged).
-Translated:Antall ganger for å prøve hver sondeposisjon (resultater blir i gjennomsnitt).
+Translated:Antall ganger for å prøve hver sondeposisjon (resultater blir gjennomsnittlig).
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
 Translated:Tallet eller den totale bredden av eksterne skjul som skal opprettes. Legg til mm til slutten av nummeret for å angi bredde i millimeter.
@@ -3919,6 +3955,15 @@ Translated:Tynne vegger
 English:This code to will provide read-only access.
 Translated:Denne koden vil gi tilgang til skrivebeskyttet nettleser.
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:Disse dataene kompenserer for maskinfeiljustering og sengforvrengning, og sikrer god førstelagsadhesjon.
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:Disse dataene forbedrer justeringen av dobbelte ekstruderingsutskrifter.
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:Disse dataene kreves for utskrift av programvare og sikrer god førstelagsadhesjon.
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:Dette er et sett med vanlige uttrykk for å søke på linjer etter at de er mottatt fra skriveren. De vil bli brukt for å få hver linje mottatt.
 
@@ -3964,6 +4009,9 @@ Translated:Dette vil forbedre nøyaktigheten av utskriftsnivåering.
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:Dette vil bare fungere på spesifikk maskinvare. Ikke bruk med mindre du er sikker på at skriverens kontroller støtter denne funksjonen
 
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:Denne veiviseren vil lukke for å skrive ut en kalibreringsdel og fortsette etter at utskriften er fullført.
+
 English:Threads
 Translated:tråder
 
@@ -4005,6 +4053,9 @@ Translated:Veksle valg
 
 English:Toggle Support
 Translated:Bytt støtte
+
+English:Toggle Wipe Tower
+Translated:Bytt Tørketårn
 
 English:Tool
 Translated:Verktøy
@@ -4054,9 +4105,6 @@ Translated:Prøv å koble til kantkanter når de faktiske maskerdataene ikke er 
 English:Tuning Adjustment
 Translated:Tuning Justering
 
-English:Turn auto leveling on
-Translated:Slå på automatisk utjevning
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:Slå av strømmen ved slutten av utskriften eller etter avbryt utskrift.
 
@@ -4072,11 +4120,20 @@ Translated:Slå av og på viften uavhengig av innstillinger.
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Slår på og av alle kjøleinnstillinger (alle innstillinger under denne).
 
+English:Twist
+Translated:Vri
+
+English:Twist Right
+Translated:Twist Right
+
 English:Uh oh! Passwords do not match.
 Translated:UH oh! Passordene er ikke like.
 
 English:Uh-oh! Could not connect to printer.
 Translated:UH oh! Kunne ikke koble til skriveren.
+
+English:Unable due to hardware leveling
+Translated:Ikke mulig på grunn av maskinvareutjevning
 
 English:Unable to Connect
 Translated:Kan ikke koble til
@@ -4101,9 +4158,6 @@ Translated:Del opp gruppe
 
 English:Unknown
 Translated:Ukjent
-
-English:Unknown filament loaded
-Translated:Ukjent filament lastet
 
 English:Unknown Reason
 Translated:Ukjent grunn
@@ -4210,6 +4264,9 @@ Translated:Bruk de ovennevnte kontrollene
 English:Validate Layer Height
 Translated:Validere laghøyde
 
+English:Validation Error
+Translated:Valideringsfeil
+
 English:Value
 Translated:Verdi
 
@@ -4239,6 +4296,9 @@ Translated:Se små ikoner
 
 English:View XSmall Icons
 Translated:Se XSmall-ikoner
+
+English:Visit MatterHackers.com to Purchase
+Translated:Besøk MatterHackers.com til kjøp
 
 English:Wait For Running Clean
 Translated:Vent til kjører rent
@@ -4300,12 +4360,6 @@ Translated:ADVARSEL: For å utføre utskriftsgjenoppretting må skriveren bevege
 English:WARNING: Write Failed!
 Translated:ADVARSEL: Skriv mislyktes!
 
-English:We should be done in approximately {0} minutes.
-Translated:Vi bør gjøres på ca {0} minutter.
-
-English:We should be done in less than five minutes.
-Translated:Vi bør gjøres på mindre enn fem minutter.
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:Vi vil nå fullføre måling av ekstruderhøyden på denne posisjonen.
 
@@ -4323,12 +4377,6 @@ Translated:Kile
 
 English:Welcome to MatterControl
 Translated:Velkommen til MatterControl
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Velkommen til veiviseren for utskrift nivellering. Her er en rask oversikt over hva vi skal gjøre.
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:Velkommen til sondekalibreringsveiviseren. Her er en rask oversikt over hva vi skal gjøre.
 
 English:What was my password again?
 Translated:Hva var passordet mitt på nytt?
@@ -4365,6 +4413,9 @@ Translated:Tørke skjermavstand
 
 English:Wipe Tower Size
 Translated:Tørk Tower Size
+
+English:Wizard
+Translated:Wizard
 
 English:Would you like to setup Wifi?
 Translated:Vil du sette opp Wifi?
@@ -4441,14 +4492,11 @@ Translated:Dysene dine skal nå kalibreres.
 English:Your Phone Number
 Translated:Telefonnummeret ditt
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
 Translated:Skriveren din er justert, men vi må kjøre igjen for å forbedre nøyaktigheten.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Skriveren rapporterer en HARDWARE ERROR og har blitt satt på pause. Kontroller feilen og avbryt utskriften hvis nødvendig.
-
-English:Your Probe is now calibrated.
-Translated:Din sonde er nå kalibrert.
 
 English:Your Share Code
 Translated:Din delkode
@@ -4467,6 +4515,15 @@ Translated:Din Start G-kode skal ikke inneholde en G30 hvis du planlegger å bru
 
 English:Z
 Translated:Z
+
+English:Z Calibration
+Translated:Z Kalibrering
+
+English:Z Calibration complete.
+Translated:Z Kalibrering fullført.
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Z Kalibrering måler z-posisjonen til dysene.
 
 English:Z Lift
 Translated:Z løft
