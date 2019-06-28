@@ -87,8 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var searchHits = await Task.Run(() =>
 				{
-					var searcher = new LuceneHelpSearch();
-					return searcher.Search(searchBox.searchInput.Text);
+					return HelpIndex.Search(searchBox.searchInput.Text);
 				});
 
 				searchResults.CloseAllChildren();

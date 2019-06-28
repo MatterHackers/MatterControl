@@ -1,12 +1,6 @@
 English:    • Remove the paper
 Translated:    • Vyjměte papír
 
-English:    1. Select the 'Controls' tab on the right
-Translated:    1. Vyberte kartu 'Ovládací prvky' vpravo
-
-English:    2. Look for the calibration section (pictured below)
-Translated:    2. Vyhledejte sekci kalibrace (na obrázku níže)
-
 English:- none -
 Translated:- žádný -
 
@@ -38,7 +32,7 @@ English:°
 Translated:°
 
 English:°C
-Translated:C
+Translated:° C
 
 English:2D Layer View
 Translated:Zobrazení 2D vrstvy
@@ -72,6 +66,9 @@ Translated:Číslo mobilního telefonu v USA nebo Kanadě
 
 English:A valid email address
 Translated:Platná e-mailová adresa
+
+English:Abort Calibration
+Translated:Přerušení kalibrace
 
 English:Abort Print
 Translated:Přerušit tisk
@@ -169,6 +166,9 @@ Translated:Všechny Ohřívače
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
 Translated:Umožní MatterControl rozdělit dlouhé řádky, aby se zlepšilo vyrovnání a zrušení tisku. Kritické pro tiskárny, které jsou výrazně mimo úroveň.
 
+English:Allows for the repositioning of the rotation origin
+Translated:Umožňuje přemístění počátku rotace
+
 English:Allows you turn on and off applying the fit to the x axis.
 Translated:Umožňuje zapnout a vypnout použití přizpůsobení osy x.
 
@@ -184,8 +184,14 @@ Translated:Alpha
 English:Alpha: The in development version of MatterControl
 Translated:Alpha: Ve vývojové verzi MatterControl
 
+English:Already Calibrated
+Translated:Již kalibrováno
+
 English:Already Loaded
 Translated:Již načteno
+
+English:An unexpected error occurred during reload
+Translated:Během načítání došlo k neočekávané chybě
 
 English:Anchor
 Translated:Kotva
@@ -214,6 +220,9 @@ Translated:Aplikovat
 English:Apply leveling to G-Code during export
 Translated:Při exportu aplikujte vyrovnávání na G-kód
 
+English:Are you sure you want to abort calibration?
+Translated:Opravdu chcete zrušit kalibraci?
+
 English:Are you sure you want to abort the current print and close MatterControl?
 Translated:Opravdu chcete přerušit aktuální tisk a zavřít MatterControl?
 
@@ -235,6 +244,9 @@ Translated:Opravdu se chcete odhlásit? Nebudete mít přístup k profilům tisk
 English:Arrange All Parts
 Translated:Uspořádat všechny díly
 
+English:Array
+Translated:Array
+
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
 Translated:Vzhledem k tomu, že doba potřebná k tisku vrstvy se snižuje, rychlost ventilátoru se zvýší na maximální rychlost.
 
@@ -246,9 +258,6 @@ Translated:Pokus o připojení
 
 English:ATX Power Control
 Translated:Řízení výkonu ATX
-
-English:Auto Calibrate
-Translated:Automatická kalibrace
 
 English:Auto Connect
 Translated:Automatické připojení
@@ -343,6 +352,9 @@ Translated:Beta
 English:Beta: The release candidate version of MatterControl
 Translated:Beta: Vydaná verze MatterControl
 
+English:Booleans
+Translated:Booleovci
+
 English:Bottom Solid Infill
 Translated:Spodní tuhá výplň
 
@@ -379,8 +391,14 @@ Translated:Spočítejte a předejte standardní kontrolní součet rep-rap pro v
 English:Calculate Path
 Translated:Vypočítat cestu
 
+English:Calibrate Printer
+Translated:Kalibrace tiskárny
+
 English:Calibration
 Translated:Kalibrace
+
+English:Calibration Face
+Translated:Kalibrační plocha
 
 English:Calibration Faces
 Translated:Kalibrační plochy
@@ -388,8 +406,14 @@ Translated:Kalibrační plochy
 English:Calibration Files
 Translated:Kalibrační soubory
 
+English:Calibration Mode
+Translated:Kalibrační režim
+
 English:Calibration Parts
 Translated:Kalibrační díly
+
+English:Calibration Print
+Translated:Kalibrační tisk
 
 English:Calibration Tab
 Translated:Kalibrace Tab
@@ -454,9 +478,6 @@ Translated:Kontrola pomocí webservice
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
 Translated:Před každým tiskem zkontroluje, že výška vrstvy je menší než průměr trysky (důležité pro přilnavost vláken)
 
-English:Choose the calibration you would like to perform.
-Translated:Zvolte kalibraci, kterou chcete provést.
-
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
 Translated:Vyberte příkaz pro zobrazení průběhu tisku na LCD obrazovce tiskárny, pokud má.
 
@@ -481,9 +502,6 @@ Translated:Vymazat výběr
 English:Clear ZOffset
 Translated:Vymazat ZOffset
 
-English:Click 'Done' to close this window.
-Translated:Kliknutím na tlačítko Hotovo zavřete toto okno.
-
 English:Click 'Next' to continue.
 Translated:Pokračujte klepnutím na tlačítko Další.
 
@@ -496,20 +514,17 @@ Translated:Zavřete polygony
 English:Cloud Library
 Translated:Cloud Library
 
+English:Coarse
+Translated:Hrubý
+
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
 Translated:Hrubá kalibrace je dokončena, nyní se provede normální kalibrace, aby se zvýšila přesnost.
-
-English:Coarse Calibration: If your printer is way off
-Translated:Hrubá kalibrace: Pokud je tiskárna vypnutá
 
 English:Coast At End
 Translated:Pobřeží Na Konci
 
 English:Collapse All
 Translated:Sbalit vše
-
-English:Collect data
-Translated:Sbírat data
 
 English:Color
 Translated:Barva
@@ -528,6 +543,9 @@ Translated:Kompilovaný model
 
 English:Complete Individual Objects
 Translated:Kompletní jednotlivé objekty
+
+English:Completed
+Translated:Dokončeno
 
 English:Cone
 Translated:Kužel
@@ -552,9 +570,6 @@ Translated:Potvrďte nové heslo
 
 English:Confirm your Password
 Translated:Potvrzení hesla
-
-English:Congratulations on connecting to your printer. Before starting your first print we need to run a simple calibration procedure.
-Translated:Blahopřejeme k připojení k tiskárně. Před zahájením prvního tisku musíme provést jednoduchý kalibrační postup.
 
 English:Congratulations Print Complete
 Translated:Gratulujeme Print Complete
@@ -598,6 +613,9 @@ Translated:Připojení proběhlo úspěšně
 English:Connection timed out
 Translated:Připojení vypršelo
 
+English:Connection Timeout
+Translated:Časový limit připojení
+
 English:Continue
 Translated:Pokračovat
 
@@ -630,6 +648,9 @@ Translated:Kopírování a rekalibrace
 
 English:Copy everything but hardware specific calibration settings
 Translated:Zkopírujte vše kromě nastavení specifického pro hardware
+
+English:Copy Mesh
+Translated:Kopírovat síť
 
 English:Copy Printers
 Translated:Kopírování tiskáren
@@ -693,9 +714,6 @@ Translated:Vytvořte sukni
 
 English:Create Support
 Translated:Vytvořit podporu
-
-English:Create Wipe Tower
-Translated:Vytvořit stírací věž
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
 Translated:Vytvoří okraj připojený k základně tisku. Užitečné pro zabránění deformace při tisku ABS (a dalších plastů náchylných k deformaci), protože pomáhá k přilepení dílů k lůžku.
@@ -874,6 +892,9 @@ Translated:Stahování ...
 English:Downloads
 Translated:Stahování
 
+English:Dual Extrusion Align
+Translated:Zarovnání dvojitého protlačování
+
 English:Duplicate
 Translated:Duplikát
 
@@ -943,6 +964,9 @@ Translated:Povolit obnovení
 English:Enable Retractions
 Translated:Povolit navíjení
 
+English:Enable Software Leveling
+Translated:Povolit softwarové vyrovnání
+
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
 Translated:Aktivujte tuto možnost, pokud má vaše tiskárna hardwarovou podporu pro G30 (automatické sondování lůžka) a chcete ji používat spíše než ruční měření pozice sondy.
 
@@ -1003,6 +1027,9 @@ Translated:Chyba při načítání obrázku
 English:Error Reported
 Translated:Byla hlášena chyba
 
+English:Error saving file
+Translated:Chyba při ukládání souboru
+
 English:Estimated Cost
 Translated:Odhadované náklady
 
@@ -1030,9 +1057,6 @@ Translated:Experimentální
 English:Export
 Translated:Vývozní
 
-English:Export All Settings
-Translated:Exportovat všechna nastavení
-
 English:Export Bed Leveling Data
 Translated:Export dat vyrovnávání lůžek
 
@@ -1048,11 +1072,20 @@ Translated:Chyba exportu
 English:Export File
 Translated:Exportovat soubor
 
+English:Export G-Code
+Translated:Exportovat G-kód
+
 English:Export Part Sheet
 Translated:Exportovat dílčí list
 
+English:Export Printer
+Translated:Exportovat tiskárnu
+
 English:Export selection to
 Translated:Exportovat výběr do
+
+English:Export X3G
+Translated:Exportovat X3G
 
 English:Exporting
 Translated:Export
@@ -1147,8 +1180,14 @@ Translated:Vlákno bylo naložené
 English:Filament Length
 Translated:Délka vlákna
 
+English:Filament Loaded
+Translated:Filament Loaded
+
 English:Filament Speed
 Translated:Rychlost vlákna
+
+English:Filament Unloaded
+Translated:Filament Unloaded
 
 English:Filament Volume
 Translated:Objem vlákna
@@ -1177,8 +1216,8 @@ Translated:Pokračujte kliknutím na tlačítko Další.
 English:Find and create supports where needed
 Translated:V případě potřeby vyhledejte a vytvořte podporu
 
-English:Fine Calibration: When you want that extra precision
-Translated:Jemná kalibrace: Když chcete, aby byla tato přesnost ještě přesnější
+English:Fine
+Translated:Dobře
 
 English:Finish
 Translated:Dokončit
@@ -1354,9 +1393,6 @@ Translated:Dejte makru jméno
 English:Group
 Translated:Skupina
 
-English:Guides
-Translated:Průvodci
-
 English:Guides and Articles
 Translated:Návody a články
 
@@ -1371,6 +1407,9 @@ Translated:Half Wedge
 
 English:Hardware
 Translated:Hardware
+
+English:Hardware Error
+Translated:Chyba hardwaru
 
 English:Has Fan
 Translated:Má fanouška
@@ -1405,9 +1444,6 @@ Translated:Nechte MatterControl poslat textové zprávy o vašem tisku
 English:Heat Before Homing
 Translated:Teplo před homing
 
-English:Heat the bed
-Translated:Zahřejte postel
-
 English:Heated Bed
 Translated:Vyhřívaná postel
 
@@ -1417,14 +1453,14 @@ Translated:Topení Postel
 English:Heating Nozzle
 Translated:Topení Tryska
 
+English:Heating the printer
+Translated:Vytápění tiskárny
+
 English:Height
 Translated:Výška
 
 English:Help
 Translated:Pomoc
-
-English:Here is what we are going to do:
-Translated:Zde je to, co budeme dělat:
 
 English:High Precision
 Translated:Vysoká přesnost
@@ -1437,9 +1473,6 @@ Translated:Teplota přidržování
 
 English:Home
 Translated:Domov
-
-English:Home the printer
-Translated:Domácí tiskárna
 
 English:Home X
 Translated:Domů X
@@ -1462,7 +1495,7 @@ Translated:Naváděcí
 English:Homing Offset
 Translated:Odsazení
 
-English:Homing The Printer
+English:Homing the printer
 Translated:Uvádění tiskárny do provozu
 
 English:Hotend
@@ -1486,9 +1519,6 @@ Translated:Teplota ohřevu:
 English:How can we improve?
 Translated:Jak se můžeme zlepšit?
 
-English:How to succeed with MatterControl
-Translated:Jak uspět s MatterControl
-
 English:Hz
 Translated:Hz
 
@@ -1502,16 +1532,10 @@ English:If set, the printer will automatically attempt to connect when selected.
 Translated:Pokud je nastaveno, tiskárna se automaticky pokusí připojit, když je vybrána.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:Pokud je extruder spuštěn po dlouhou dobu, může se jednat o příliš velké hodnoty, které bude periodicky resetovat.
+Translated:Pokud je extruder spuštěn po dlouhou dobu, může se jednat o příliš velké hodnoty, což jej bude periodicky resetovat.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
 Translated:Pokud je doba tisku vrstvy menší než tato hodnota, ventilátor se zapne při minimální rychlosti. Poté, co se doba vrstvy sníží, se pak rozběhne na maximální rychlost.
-
-English:If you wish to re-calibrate leveling in the future:
-Translated:Chcete-li v budoucnu kalibraci znovu kalibrovat:
-
-English:If you wish to re-calibrate your probe in the future:
-Translated:Pokud si přejete kalibraci sondy v budoucnu:
 
 English:Image
 Translated:obraz
@@ -1573,14 +1597,14 @@ Translated:Typ výplně
 English:Inflate Path
 Translated:Nafoukněte cestu
 
+English:Initial (Recommended)
+Translated:Počáteční (doporučeno)
+
 English:Initial Layer Speed
 Translated:Počáteční rychlost vrstvy
 
 English:Initial Layers
 Translated:Počáteční vrstvy
-
-English:Initial Printer Setup
-Translated:Počáteční nastavení tiskárny
 
 English:Initializing hardware...
 Translated:Inicializace hardwaru ...
@@ -1630,6 +1654,9 @@ Translated:Průsečík
 English:Invalid Client Token
 Translated:Neplatný token klienta
 
+English:Invalid printer selection
+Translated:Neplatný výběr tiskárny
+
 English:Inventory
 Translated:Inventář
 
@@ -1659,9 +1686,6 @@ Translated:Položka nemůže být exportována jako STL
 
 English:Item not Found
 Translated:Položka nebyla nalezena
-
-English:It's time to copy your existing printer settings to your MatterHackers account. Once copied, these printers will be available whenever you sign in to MatterControl. Printers that are not copied will only be available when not signed in.
-Translated:Je čas zkopírovat stávající nastavení tiskárny na účet MatterHackers. Po zkopírování budou tyto tiskárny k dispozici vždy, když se přihlásíte do aplikace MatterControl. Tiskárny, které nejsou kopírovány, budou k dispozici pouze v případě, že nejsou přihlášeny.
 
 English:Jerk Velocity
 Translated:Jerk Velocity
@@ -1732,12 +1756,6 @@ Translated:Ukážeme vám, než začnete.
 English:Letter
 Translated:Dopis
 
-English:Level X Carriage
-Translated:Úroveň X Přeprava
-
-English:Level X Carriage Page
-Translated:Stránka přepravní úrovně X
-
 English:Leveling
 Translated:Vyrovnání
 
@@ -1783,26 +1801,29 @@ Translated:Lithophane
 English:Load
 Translated:Zatížení
 
+English:Load Extruder
+Translated:Load Extruder
+
+English:Load Extruder {0}
+Translated:Načíst extruder {0}
+
 English:Load filament
 Translated:Zatěžte vlákno
 
 English:Load Filament
 Translated:Zatěžovací vlákno
 
-English:Load Filament 2
-Translated:Zatěžovací vlákno 2
-
 English:Load Filament Length
 Translated:Délka filamentu
+
+English:Load Filament to continue
+Translated:Pokračujte v zavádění vlákna
 
 English:Load Material
 Translated:Zatížení materiálu
 
 English:Loading
 Translated:načítání
-
-English:Loading Bed
-Translated:Načítání postel
 
 English:Loading Filament
 Translated:Nakládací vlákno
@@ -1876,14 +1897,14 @@ Translated:Ujistěte se, že první bod na obvodu není převis.
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
 Translated:Proveďte první vrstvu na horní části částečné výplně použijte rychlost a ventilátor pro přemostění.
 
+English:Manifold
+Translated:Manifold
+
 English:Manual Movement Speeds
 Translated:Rychlosti ručního pohybu
 
 English:Manually Configure Connection
 Translated:Ručně nakonfigurujte připojení
-
-English:Manually measure the extruder at the center
-Translated:Manuálně změřte extrudér ve středu
 
 English:Markdown Edit
 Translated:Editace Markdown
@@ -1903,6 +1924,9 @@ Translated:Materiály
 English:MatterControl
 Translated:MatterControl
 
+English:MatterControl Help
+Translated:Nápověda programu MatterControl
+
 English:MatterControl is made possible by the team at MatterHackers and other open source software
 Translated:MatterControl umožňuje tým MatterHackers a další open source software
 
@@ -1914,6 +1938,9 @@ Translated:MatterControl se nyní pokusí automaticky rozpoznat tiskárnu.
 
 English:MatterControl: Select Firmware File
 Translated:MatterControl: Vyberte soubor firmwaru
+
+English:MatterHackers Internal Use
+Translated:Vnitřní použití MatterHackers
 
 English:Max Acceleration
 Translated:Max akcelerace
@@ -1948,8 +1975,14 @@ Translated:Střední přesnost
 English:Merge Overlapping Lines
 Translated:Sloučit překrývající se čáry
 
+English:Merge Vertices
+Translated:Sloučit vertices
+
 English:Mesh
 Translated:Mesh
+
+English:Mesh Modifiers
+Translated:Modifikátory sítě
 
 English:Message
 Translated:Zpráva
@@ -2098,6 +2131,9 @@ Translated:Nový design
 English:New Password
 Translated:nové heslo
 
+English:New Printer Name
+Translated:Nový název tiskárny
+
 English:New updates are ready to install
 Translated:Nové aktualizace jsou připraveny k instalaci
 
@@ -2134,11 +2170,17 @@ Translated:V mezích lůžka tiskárny neexistují žádné tisknutelné části
 English:No Printer Selected
 Translated:Nebyla vybrána žádná tiskárna
 
+English:No results found
+Translated:Nebyly nalezeny žádné výsledky
+
 English:None
 Translated:Žádný
 
-English:Normal Calibration: Start here
-Translated:Normální kalibrace: Začněte zde
+English:Normal
+Translated:Normální
+
+English:Normal (Recommended)
+Translated:Normální (doporučeno)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
 Translated:Normálně je obraz rozšířen na okraj. Toto se pokusí vizuálně vycentrovat hmotnost obrazu.
@@ -2172,6 +2214,9 @@ Translated:Tryska 2 Vsazení
 
 English:Nozzle Calibration
 Translated:Kalibrace trysky
+
+English:Nozzle Calibration measures the distance between hotends.
+Translated:Kalibrace trysek měří vzdálenost mezi teplovody.
 
 English:Nozzle Diameter
 Translated:Průměr trysky
@@ -2308,6 +2353,9 @@ Translated:Otevřít Nedávno
 English:OpenSCAD not installed
 Translated:OpenSCAD není nainstalován
 
+English:Optional
+Translated:Volitelný
+
 English:Options
 Translated:Možnosti
 
@@ -2344,6 +2392,9 @@ Translated:Převis
 English:Overhang Angle
 Translated:Přesah úhlu
 
+English:Overview
+Translated:Přehled
+
 English:Pan
 Translated:Pánev
 
@@ -2352,9 +2403,6 @@ Translated:Pan Pan
 
 English:Part Cooling Fan
 Translated:Díl chladicího ventilátoru
-
-English:Part History
-Translated:Historie dílů
 
 English:Password
 Translated:Heslo
@@ -2367,6 +2415,9 @@ Translated:Aktualizace hesla je dokončena
 
 English:Paste
 Translated:Vložit
+
+English:Path
+Translated:Cesta
 
 English:Pattern Spacing
 Translated:Rozteč vzorů
@@ -2398,8 +2449,8 @@ Translated:Obvody
 English:Permission Denied
 Translated:Přístup odepřen
 
-English:Pick the most balanced result for each axis.
-Translated:Vyberte nejvyváženější výsledek pro každou osu.
+English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
+Translated:Vyberte podložku, která je nejvíce zarovnána se základnou, podložkou, která je nejvíce vyvážená a vycentrovaná.
 
 English:PID Settings
 Translated:Nastavení PID
@@ -2479,6 +2530,9 @@ Translated:Polygony
 English:Port
 Translated:Přístav
 
+English:Port In Use
+Translated:Používaný port
+
 English:Port not available
 Translated:Port není k dispozici
 
@@ -2502,6 +2556,12 @@ Translated:Řízení výkonu
 
 English:Preheat
 Translated:Předehřejte
+
+English:Preparing help
+Translated:Příprava pomoci
+
+English:Preparing help index
+Translated:Příprava indexu nápovědy
 
 English:Preparing To Print
 Translated:Příprava k tisku
@@ -2542,8 +2602,8 @@ Translated:Historie tisku
 English:Print Leveling
 Translated:Vyrovnání tisku
 
-English:Print Leveling Overview
-Translated:Přehled vyrovnání tisku
+English:Print Leveling measures the plane of the bed.
+Translated:Print Leveling měří rovinu lůžka.
 
 English:Print Leveling Wizard
 Translated:Průvodce vyrovnáním tisku
@@ -2556,9 +2616,6 @@ Translated:Tisková fronta
 
 English:Print Recovery
 Translated:Obnovení tisku
-
-English:Print the calibration object
-Translated:Vytiskněte kalibrační objekt
 
 English:Print Time
 Translated:Čas tisku
@@ -2583,6 +2640,9 @@ Translated:Tiskárna je SLA
 
 English:Printer Name
 Translated:Název tiskárny
+
+English:Printer name already exists
+Translated:Název tiskárny již existuje
 
 English:Printer name cannot be blank
 Translated:Název tiskárny nemůže být prázdný
@@ -2620,11 +2680,8 @@ Translated:Rychlost tisku
 English:Printing: {0}
 Translated:Tisk: {0}
 
-English:Probe Calibration
-Translated:Kalibrace sondy
-
-English:Probe Calibration Overview
-Translated:Přehled kalibrace sondy
+English:Probe at bed center
+Translated:Sonda v centru lůžka
 
 English:Probe Has Been Calibrated
 Translated:Sonda byla kalibrována
@@ -2634,9 +2691,6 @@ Translated:Odsazení sondy
 
 English:Probe Offset Sample Point
 Translated:Ukázkový bod snímání sond
-
-English:Probe the bed at the center
-Translated:Prohlédněte si postel ve středu
 
 English:Progress Reporting
 Translated:Zprávy o pokroku
@@ -2731,6 +2785,9 @@ Translated:Uvolnění
 English:Release Notes
 Translated:Poznámky k vydání
 
+English:Reload Failed
+Translated:Selhalo znovu načtení
+
 English:Reloading
 Translated:Přebíjení
 
@@ -2748,6 +2805,9 @@ Translated:Odebrat všechny automaticky generované podpory
 
 English:Remove Items?
 Translated:Odebrat položky?
+
+English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
+Translated:Vyjměte kalibrační část z lůžka a porovnejte strany podložek v každé ose.
 
 English:Remove the paper
 Translated:Vyjměte papír
@@ -2768,10 +2828,13 @@ English:Report a Bug
 Translated:Nahlásit chybu
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Vyžádejte si firmware, aby provedl retrakce, spíše než přímo specifikovat pohyby extrudéru.
+Translated:Vyžádejte si firmware, aby provedl retrakce, spíše než přímo specifikovat pohyby extruderu.
 
 English:Require Leveling To Print
 Translated:Vyžadovat vyrovnání pro tisk
+
+English:Required
+Translated:Povinný
 
 English:Reset
 Translated:Reset
@@ -2805,9 +2868,6 @@ Translated:Obnovit výchozí
 
 English:Restore Settings
 Translated:Obnovit nastavení
-
-English:Restore your current bed, after all calibration is complete
-Translated:Po dokončení kalibrace obnovte aktuální postel
 
 English:Resume
 Translated:Životopis
@@ -2917,8 +2977,8 @@ Translated:Sailfish komunikace
 English:Sample Points
 Translated:Vzorové body
 
-English:Sample the bed at {0} points
-Translated:Vzorek lůžka na {0} bodů
+English:Sample the bed center position to determine the probe distance to the bed
+Translated:Pro určení vzdálenosti sondy od lůžka si vyzkoušejte polohu středu postele
 
 English:Sampled Positions
 Translated:Vzorkované pozice
@@ -2971,6 +3031,9 @@ Translated:Vyhledávání ve službě Google
 English:Search Results
 Translated:Výsledky vyhledávání
 
+English:Searching
+Translated:Vyhledávání
+
 English:seconds
 Translated:sekundy
 
@@ -2986,12 +3049,6 @@ Translated:Vyberte nový cíl
 English:Select a printer to continue
 Translated:Vyberte tiskárnu, na které chcete pokračovat
 
-English:Select Make
-Translated:Vyberte možnost Vytvořit
-
-English:Select Model
-Translated:Vyberte možnost Model
-
 English:Select Part
 Translated:Vyberte část
 
@@ -3000,18 +3057,6 @@ Translated:Vyberte možnost Tiskárna
 
 English:Select the baud rate.
 Translated:Vyberte přenosovou rychlost.
-
-English:Select the hotend on the left to continue
-Translated:Pokračujte výběrem hotendu vlevo
-
-English:Select the material you are printing
-Translated:Vyberte materiál, který tisknete
-
-English:Select the printer manufacturer
-Translated:Vyberte výrobce tiskárny
-
-English:Select the printer model
-Translated:Vyberte model tiskárny
 
 English:Select What to Import
 Translated:Vyberte Co chcete importovat
@@ -3045,9 +3090,6 @@ Translated:Session Cleared
 
 English:Session Expired
 Translated:Relace vypršela
-
-English:Set active material to continue
-Translated:Chcete-li pokračovat, nastavte aktivní materiál
 
 English:Set as Default
 Translated:Nastavit jako výchozí
@@ -3152,7 +3194,7 @@ English:Show Terminal
 Translated:Zobrazit terminál
 
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:Zobrazí tlačítko na pravé straně lišty pro připojení tiskárny, které slouží k obnovení připojení USB k tiskárně. To lze použít na tiskárnách, které ji podporují jako nouzové zastavení.
+Translated:Zobrazí tlačítko na pravé straně lišty pro připojení tiskárny, které slouží k resetování připojení USB k tiskárně. To lze použít na tiskárnách, které ji podporují jako nouzové zastavení.
 
 English:sign in
 Translated:přihlásit se
@@ -3313,6 +3355,9 @@ Translated:Spirálová váza
 English:Split
 Translated:Rozdělit
 
+English:Split Mesh
+Translated:Rozdělit síť
+
 English:Stable
 Translated:Stabilní
 
@@ -3364,9 +3409,6 @@ Translated:Spuštění synchronizace
 English:Startup Failure
 Translated:Selhání při spuštění
 
-English:Stash your current bed
-Translated:Stash vaše současné posteli
-
 English:Stay Connected
 Translated:Zůstaň připojen
 
@@ -3405,9 +3447,6 @@ Translated:Odečíst a nahradit
 
 English:Subtract the image from a disk so that the negative space will be printed.
 Translated:Odeberte obrázek z disku, aby se vytisklo záporné místo.
-
-English:Success
-Translated:Úspěch
 
 English:Success! Please check your email for the reset code.
 Translated:Úspěch! Zkontrolujte prosím svůj e-mail pro resetovací kód.
@@ -3550,6 +3589,9 @@ Translated:Úhel výplně, měřeno od osy X. Nepoužívá se při přemostění
 English:The angle to generate support for
 Translated:Úhel pro generování podpory pro
 
+English:The angle to rotate the top of the part
+Translated:Úhel otočení horní části dílu
+
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
 Translated:Lůžko se právě zahřívá a jeho cílovou teplotu nelze měnit, dokud nedosáhne hodnoty {0} ° C. NN Můžete nastavit počáteční teplotu lůžka v NASTAVENÍ -> Vlákno -> Teploty. NN {1}
 
@@ -3622,9 +3664,6 @@ Translated:Vrstva (vrstvy), ve kterých bude tisk pozastaven, což umožní změ
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
 Translated:Délka a šířka věže vytvořené v zadní levé části tisku použitého pro stírání další trysky při výměně mezi více extrudéry. Chcete-li tuto funkci vypnout, nastavte hodnotu 0.
 
-English:The Markdown that will be shown during print leveling to help get the X carriage level.
-Translated:Markdown, který bude zobrazen při vyrovnání tisku, aby se dosáhlo úrovně vozíku X.
-
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Markdown, který bude zobrazen na stránce Clean Filament.
 
@@ -3672,9 +3711,6 @@ Translated:Minimální otáčky, při kterých bude běžet chladicí ventiláto
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
 Translated:Minimální rychlost, na kterou se tiskárna sníží, aby se pokusila o to, aby doba tisku vrstvy byla dostatečně dlouhá, aby vyhovovala minimálnímu času vrstvy.
-
-English:The next few screens will walk your through calibrating your printer.
-Translated:Dalších několik obrazovek vás provede kalibrací tiskárny.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
 Translated:Počet procesorových jader, které se mají používat při provádění řezání. Zvýšení může zpomalit váš stroj.
@@ -3919,6 +3955,15 @@ Translated:Tenké stěny
 English:This code to will provide read-only access.
 Translated:Tento kód bude poskytovat přístup jen pro čtení.
 
+English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
+Translated:Tato data kompenzují vychýlení stroje a zkreslení lůžka a zajišťují dobrou přilnavost první vrstvy.
+
+English:This data improves the alignment of dual extrusion prints.
+Translated:Tato data zlepšují vyrovnání dvou výtisků.
+
+English:This data is required for software print leveling and ensures good first layer adhesion.
+Translated:Tato data jsou nezbytná pro vyrovnání softwaru a zajišťují dobrou přilnavost první vrstvy.
+
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
 Translated:Jedná se o sadu regulárních výrazů, které se použijí na řádky po přijetí z tiskárny. Budou aplikovány tak, aby každý řádek obdržel.
 
@@ -3964,6 +4009,9 @@ Translated:Tím se zlepší přesnost vyrovnávání tisku.
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
 Translated:To bude fungovat pouze na konkrétním hardwaru. Nepoužívejte, pokud si nejste jisti, že tento ovladač podporuje tiskárna
 
+English:This wizard will close to print a calibration part and resume after the print completes.
+Translated:Tento průvodce ukončí tisk kalibrační části a obnoví se po dokončení tisku.
+
 English:Threads
 Translated:Vlákna
 
@@ -4005,6 +4053,9 @@ Translated:Přepnout výběr
 
 English:Toggle Support
 Translated:Přepnout podporu
+
+English:Toggle Wipe Tower
+Translated:Přepnout stírací věž
 
 English:Tool
 Translated:Nástroj
@@ -4054,14 +4105,11 @@ Translated:Pokuste se propojit okraje sítě, pokud nejsou aktuální data sít�
 English:Tuning Adjustment
 Translated:Úprava ladění
 
-English:Turn auto leveling on
-Translated:Zapněte automatické vyrovnání
-
 English:Turn off motor current at end of print or after cancel print.
 Translated:Vypněte motor na konci tisku nebo po zrušení tisku.
 
 English:Turn on if Below
-Translated:Zapněte, pokud níže
+Translated:Zapněte, pokud je uvedeno níže
 
 English:Turn retractions on and off.
 Translated:Zapnutí a vypnutí zatahování.
@@ -4072,11 +4120,20 @@ Translated:Zapněte a vypněte ventilátor bez ohledu na nastavení.
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Zapíná a vypíná všechna nastavení chlazení (všechna nastavení pod tímto nastavením).
 
+English:Twist
+Translated:Twist
+
+English:Twist Right
+Translated:Twist Right
+
 English:Uh oh! Passwords do not match.
 Translated:Uh oh! Hesla se neshodují.
 
 English:Uh-oh! Could not connect to printer.
 Translated:Uh-oh! Nelze se připojit k tiskárně.
+
+English:Unable due to hardware leveling
+Translated:Nelze kvůli vyrovnání hardwaru
 
 English:Unable to Connect
 Translated:Nelze se připojit
@@ -4101,9 +4158,6 @@ Translated:Oddělit
 
 English:Unknown
 Translated:Neznámý
-
-English:Unknown filament loaded
-Translated:Neznámé vlákno naložené
 
 English:Unknown Reason
 Translated:Neznámý důvod
@@ -4210,6 +4264,9 @@ Translated:Pomocí výše uvedených ovládacích prvků
 English:Validate Layer Height
 Translated:Ověřte výšku vrstvy
 
+English:Validation Error
+Translated:Chyba ověření
+
 English:Value
 Translated:Hodnota
 
@@ -4239,6 +4296,9 @@ Translated:Zobrazit malé ikony
 
 English:View XSmall Icons
 Translated:Zobrazit ikony XSmall
+
+English:Visit MatterHackers.com to Purchase
+Translated:Navštivte MatterHackers.com na nákup
 
 English:Wait For Running Clean
 Translated:Počkejte na spuštění čištění
@@ -4300,12 +4360,6 @@ Translated:VAROVÁNÍ: Aby bylo možné provést obnovu tisku, musí se tiskárn
 English:WARNING: Write Failed!
 Translated:VAROVÁNÍ: Chyba zápisu!
 
-English:We should be done in approximately {0} minutes.
-Translated:Měli bychom to udělat přibližně {0} minut.
-
-English:We should be done in less than five minutes.
-Translated:Měli bychom to udělat za méně než pět minut.
-
 English:We will now finalize our measurement of the extruder height at this position.
 Translated:Nyní dokončíme měření výšky extrudéru v této poloze.
 
@@ -4323,12 +4377,6 @@ Translated:Klín
 
 English:Welcome to MatterControl
 Translated:Vítejte v MatterControl
-
-English:Welcome to the print leveling wizard. Here is a quick overview on what we are going to do.
-Translated:Vítejte v Průvodci vyrovnáváním tisku. Zde je rychlý přehled o tom, co budeme dělat.
-
-English:Welcome to the probe calibration wizard. Here is a quick overview on what we are going to do.
-Translated:Vítejte v průvodci kalibrací sondy. Zde je rychlý přehled o tom, co budeme dělat.
 
 English:What was my password again?
 Translated:Jaké bylo mé heslo znovu?
@@ -4365,6 +4413,9 @@ Translated:Vzdálenost stínění stínění
 
 English:Wipe Tower Size
 Translated:Otřete velikost věže
+
+English:Wizard
+Translated:kouzelník
 
 English:Would you like to setup Wifi?
 Translated:Chcete nastavit Wifi?
@@ -4441,14 +4492,11 @@ Translated:Vaše trysky by nyní měly být kalibrovány.
 English:Your Phone Number
 Translated:Vaše telefonní číslo
 
-English:Your printer has been adjusted but we need to run calibrating again to improve accuracy.
-Translated:Vaše tiskárna byla upravena, ale pro zvýšení přesnosti je třeba znovu spustit kalibraci.
+English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
+Translated:Vaše tiskárna byla upravena, ale měli bychom znovu spustit kalibraci, aby se zvýšila přesnost.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
 Translated:Tiskárna hlásí chybu HARDWARE ERROR a byla pozastavena. Zkontrolujte chybu a v případě potřeby zrušte tisk.
-
-English:Your Probe is now calibrated.
-Translated:Vaše sonda je nyní kalibrována.
 
 English:Your Share Code
 Translated:Váš kodex akcií
@@ -4457,16 +4505,25 @@ English:Your Start G-Code should not contain a G29 if you are planning on using 
 Translated:Váš Start-G-Code by neměl obsahovat G29, pokud plánujete používat vyrovnávání tisku. Změňte začátek G-Code nebo vypněte vyrovnávání tisku.
 
 English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Váš Start-G-Code by neměl obsahovat G29, pokud plánujete používat Print Recovery. Změňte počáteční kód G-Code nebo vypněte funkci Obnovení tisku.
+Translated:Váš Start-G-Code by neměl obsahovat G29, pokud plánujete používat Print Recovery. Změňte začátek G-Code nebo vypněte obnovení tisku.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
 Translated:Váš Start G-Code by neměl obsahovat G30, pokud plánujete používat vyrovnávání tisku. Změňte začátek G-Code nebo vypněte vyrovnávání tisku.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Váš Start G-Code by neměl obsahovat G30, pokud plánujete použití funkce Obnovení tisku. Změňte počáteční kód G-Code nebo vypněte funkci Obnovení tisku.
+Translated:Váš Start G-Code by neměl obsahovat G30, pokud plánujete použití funkce Obnovení tisku. Změňte začátek G-Code nebo vypněte obnovení tisku.
 
 English:Z
 Translated:Z
+
+English:Z Calibration
+Translated:Z Kalibrace
+
+English:Z Calibration complete.
+Translated:Z Kalibrace dokončena.
+
+English:Z Calibration measures the z position of the nozzles.
+Translated:Z Kalibrace měří polohu z trysek.
 
 English:Z Lift
 Translated:Z Lift
