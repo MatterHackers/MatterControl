@@ -359,11 +359,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
 					{
 						var item = menu.CreateMenuItem(menuAction.Title, menuAction.Icon);
-						item.Click += (s, e) => UiThread.RunOnIdle(() =>
+						item.Click += (s, e) =>
 						{
 							menu.Close();
 							menuAction.Action.Invoke(this.listViewItem.ListView.SelectedItems.Select(o => o.Model), this.listViewItem.ListView);
-						});
+						};
 					}
 				}
 

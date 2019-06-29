@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 		public virtual void ClosePage(bool allowAbort = true)
 		{
 			// Close this dialog window
-			this.CloseOnIdle();
+			this.Close();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl
 			this.ChangeToPage(panel);
 
 			// in the event of a reload all make sure we rebuild the contents correctly
-			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((s,e) =>
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((EventHandler)((s,e) =>
 			{
 				// Normal theme references are safe to hold in widgets because they're rebuild on ReloadAll. DialogWindow
 				// survives and must refresh its reference on reload
@@ -256,11 +256,11 @@ namespace MatterHackers.MatterControl
 					DialogWindow = this
 				};
 				this.AddChild(newPanel, thisIndex);
-				panel.CloseOnIdle();
+				panel.Close();
 
 				// remember the new content
 				panel = newPanel;
-			}, ref unregisterEvents);
+			}), ref unregisterEvents);
 
 			return panel;
 		}

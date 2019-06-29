@@ -157,12 +157,12 @@ namespace MatterHackers.MatterControl.EeProm
 
 			// the bottom button bar
 			var buttonSave = theme.CreateDialogButton("Save to EEProm".Localize());
-			buttonSave.Click += (s, e) =>UiThread.RunOnIdle(() =>
+			buttonSave.Click += (s, e) =>
 			{
 				SaveSettingsToActive();
 				currentEePromSettings.SaveToEeProm();
 				this.DialogWindow.Close();
-			});
+			};
 			this.AddPageAction(buttonSave);
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());

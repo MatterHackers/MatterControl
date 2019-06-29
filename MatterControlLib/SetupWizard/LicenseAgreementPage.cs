@@ -72,7 +72,7 @@ public class LicenseAgreementPage : DialogPage
 	protected override void OnCancel(out bool abortCancel)
 	{
 		// Exit if EULA is not accepted
-		UiThread.RunOnIdle(MatterHackers.MatterControl.AppContext.RootSystemWindow.Close);
+		MatterHackers.MatterControl.AppContext.RootSystemWindow.Close();
 
 		abortCancel = false;
 	}
