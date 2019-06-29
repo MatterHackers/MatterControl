@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				[RenderTypes.Shaded] = AggContext.StaticData.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
 				[RenderTypes.Outlines] = AggContext.StaticData.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
 				[RenderTypes.Polygons] = AggContext.StaticData.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Manifold] = AggContext.StaticData.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
 				[RenderTypes.Materials] = AggContext.StaticData.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
 				[RenderTypes.Overhang] = AggContext.StaticData.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
 			};
