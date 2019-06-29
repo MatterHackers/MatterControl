@@ -140,20 +140,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 								});
 
-							await Task.Run(async () =>
+							await Task.Run((Func<Task>)(async () =>
 							{
 								// Start index generation
 								await HelpIndex.RebuildIndex();
 
-								UiThread.RunOnIdle(() =>
+								UiThread.RunOnIdle((Action)(() =>
 								{
 									// Close popover
 									popover.Close();
 
 									// Continue to original task
 									ShowSearchPanel();
-								});
-							});
+								}));
+							}));
 						}
 						catch
 						{
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					searchPanel?.CloseOnIdle();
+					searchPanel?.Close();
 					searchPanelOpenOnMouseDown = false;
 				}
 			}

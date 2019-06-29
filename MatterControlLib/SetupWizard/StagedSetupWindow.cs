@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl
 				ConditionalAbort("Are you sure you want to abort calibration?".Localize(), () =>
 				{
 					closeConfirmed = true;
-					this.CloseOnIdle();
+					this.Close();
 				});
 			}
 

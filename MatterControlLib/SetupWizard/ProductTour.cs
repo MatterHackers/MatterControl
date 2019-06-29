@@ -63,10 +63,10 @@ namespace MatterHackers.MatterControl.Tour
 			// Filter to on-screen items
 			var visibleTourItems = tourLocations.Where(t =>
 			{
-				var widget = visibleTourWidgets.FirstOrDefault(w => w.name == t.WidgetName && w.widget.ActuallyVisibleOnScreen());
+				var widget = visibleTourWidgets.FirstOrDefault(w => w.Name == t.WidgetName && w.Widget.ActuallyVisibleOnScreen());
 
 				// Update widget reference on tour object
-				t.Widget = widget?.widget;
+				t.Widget = widget?.Widget;
 
 				return widget != null;
 			});

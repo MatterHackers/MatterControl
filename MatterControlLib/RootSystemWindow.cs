@@ -263,10 +263,10 @@ namespace MatterHackers.MatterControl
 				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
 				eventArgs.Cancel = true;
 
-				UiThread.RunOnIdle(() =>
+				UiThread.RunOnIdle((Action)(() =>
 				{
 					StyledMessageBox.ShowMessageBox(
-						(exitConfirmed) =>
+(Action<bool>)((exitConfirmed) =>
 						{
 							// Record that the exitDialog has closed
 							exitDialogOpen = false;
@@ -283,20 +283,20 @@ namespace MatterHackers.MatterControl
 									printer.Connection.Disable();
 								}
 
-								this.CloseOnIdle();
+								this.Close();
 							}
-						},
+						}),
 						message,
 						caption,
 						StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
-				});
+				}));
 			}
 			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
 				// cancel the close so that we can save all our active work spaces
 				eventArgs.Cancel = true;
 
-				UiThread.RunOnIdle(async () =>
+				UiThread.RunOnIdle((Action)(async () =>
 				{
 					var application = ApplicationController.Instance;
 
@@ -307,8 +307,8 @@ namespace MatterHackers.MatterControl
 					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
 					application.Shutdown();
 
-					this.CloseOnIdle();
-				});
+					this.Close();
+				}));
 			}
 		}
 

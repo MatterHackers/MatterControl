@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			if (!printer.Connection.IsConnected)
 			{
-				this.DialogWindow.CloseOnIdle();
+				this.DialogWindow.Close();
 			}
 		}
 	}
@@ -172,13 +172,11 @@ namespace MatterHackers.MatterControl.EeProm
 			var buttonSave = theme.CreateDialogButton("Save To EEPROM".Localize());
 			buttonSave.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					currentEePromSettings.Save(printer.Connection);
-					currentEePromSettings.Clear();
-					this.DialogWindow.Close();
-				});
+				currentEePromSettings.Save(printer.Connection);
+				currentEePromSettings.Clear();
+				this.DialogWindow.Close();
 			};
+
 			this.AddPageAction(buttonSave);
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());

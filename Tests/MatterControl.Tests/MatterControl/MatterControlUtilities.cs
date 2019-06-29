@@ -824,7 +824,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testMethod,
 				maxTimeToRun,
 				defaultTestImages,
-				closeWindow: () =>
+				closeWindow: (Action)(() =>
 				{
 					foreach(var printer in ApplicationController.Instance.ActivePrinters)
 					{
@@ -835,7 +835,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 
 					rootSystemWindow.Close();
-				});
+				}));
 		}
 
 		public static void LibraryEditSelectedItem(AutomationRunner testRunner)

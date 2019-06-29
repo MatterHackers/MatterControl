@@ -100,15 +100,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void RemovePage(string key, bool allowRebuild = true)
 		{
-			foreach(var tab in allTabs)
+			foreach (var tab in allTabs)
 			{
-				if(tab.key == key)
+				if (tab.key == key)
 				{
 					allTabs.Remove(tab);
 					if (allowRebuild)
 					{
 						this.Rebuild();
 					}
+
 					return;
 				}
 			}
@@ -153,7 +154,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				this.ControlIsPinned = !this.ControlIsPinned;
 				this.printer.ViewState.DockWindowFloating = false;
-				UiThread.RunOnIdle(this.Rebuild);
+				this.Rebuild();
 			};
 
 			return pinTabButton;

@@ -548,11 +548,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 						if (item.Enabled)
 						{
-							item.Click += (s, e) => UiThread.RunOnIdle(() =>
+							item.Click += (s, e) =>
 							{
 								menu.Close();
 								menuAction.Action.Invoke(this.SelectedItems.Select(o => o.Model), this);
-							});
+							};
 						}
 					}
 				}

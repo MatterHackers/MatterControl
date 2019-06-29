@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		protected override void OnCancel(out bool abortCancel)
 		{
-			this.DialogWindow.CloseOnIdle();
+			this.DialogWindow.Close();
 			abortCancel = true;
 		}
 	}

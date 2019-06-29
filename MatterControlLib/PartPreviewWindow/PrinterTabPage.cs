@@ -150,7 +150,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tumbleCubeControl = view3DWidget.InteractionLayer.Children<TumbleCubeControl>().FirstOrDefault();
 
-			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
+			var position = 0;
+			view3DWidget.InteractionLayer.Children.ReadOnly((list) =>
+			{
+				position = list.IndexOf(trackball);
+			});
 
 			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
 			{
@@ -311,11 +315,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(10, 10, 0, 15)
 						};
 
-						unloadFilamentButton.Click += (s, e2) => UiThread.RunOnIdle(() =>
+						unloadFilamentButton.Click += (s, e2) =>
 						{
 							unloadFilamentButton.Parents<SystemWindow>().First().Close();
 							DialogWindow.Show(new UnloadFilamentWizard(printer, extruderIndex: 0));
-						});
+						};
 
 						theme.ApplyPrimaryActionStyle(unloadFilamentButton);
 
