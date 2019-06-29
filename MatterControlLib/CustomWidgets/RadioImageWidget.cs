@@ -40,10 +40,11 @@ namespace MatterHackers.MatterControl
 		{
 			var imageWidget = new ImageWidget(image);
 			var index = 0;
-			this.Children.ReadOnly((list) =>
+			using (var list = this.Children.ReadOnly())
 			{
 				index = list.IndexOf(labelTextWidget);
-			});
+			}
+
 			this.AddChild(imageWidget, index);
 			imageWidget.Margin = new BorderDouble(8, 5);
 
