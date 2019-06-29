@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				foreach (var childContainer in this.SortItems(containerItems))
 				{
 					var listViewItem = new ListViewItem(childContainer, this.ActiveContainer, this);
-					listViewItem.DoubleClick += listViewItem_DoubleClick;
+					listViewItem.DoubleClick += ListViewItem_DoubleClick;
 					items.Add(listViewItem);
 
 					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					foreach (var item in this.SortItems(filteredResults))
 					{
 						var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
-						listViewItem.DoubleClick += listViewItem_DoubleClick;
+						listViewItem.DoubleClick += ListViewItem_DoubleClick;
 						items.Add(listViewItem);
 
 						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
@@ -426,7 +426,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return destImage;
 		}
 
-		private void listViewItem_DoubleClick(object sender, MouseEventArgs e)
+		private void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
 		{
 			UiThread.RunOnIdle(async () =>
 			{

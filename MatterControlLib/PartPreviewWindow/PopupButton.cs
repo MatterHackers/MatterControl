@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!menuVisibileAtMouseDown)
 			{
-				UiThread.RunOnIdle(this.ShowPopup);
+				this.ShowPopup();
 			}
 
 			base.OnClick(mouseEvent);
