@@ -36,7 +36,8 @@ namespace MatterHackers.gsBundle
 	{
 		public void Initialize()
 		{
-			PrinterSettings.Slicer = new BasicSlicer();
+			// TODO: Enable for review
+			//PrinterSettings.Slicer = new BasicSlicer();
 		}
 
 		public PluginInfo MetaData => new PluginInfo()
