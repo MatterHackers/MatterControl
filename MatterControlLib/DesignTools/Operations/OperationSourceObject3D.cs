@@ -243,6 +243,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			// and select this
+			var rootItem = this.Ancestors().Where(i => scene.Children.Contains(i)).FirstOrDefault();
+			if (rootItem != null)
+			{
+				scene.SelectedItem = rootItem;
+			}
+
 			scene.SelectedItem = this;
 
 			this.Invalidate(InvalidateType.Children);
@@ -252,6 +258,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class OperationSourceObject3D : Object3D
 	{
 		public override bool CanFlatten => true;
+
 		public OperationSourceObject3D()
 		{
 			Name = "Source".Localize();
