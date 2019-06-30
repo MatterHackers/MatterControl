@@ -1602,6 +1602,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
+			if (Scene.Descendants().Count() != lastSceneDescendantsCount)
+			{
+				rebuildTreePending = true;
+				UiThread.RunOnIdle(this.RebuildTree);
+			}
+
 			if (e.InvalidateType.HasFlag(InvalidateType.Children)
 				&& !rebuildTreePending)
 			{
@@ -1618,9 +1624,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					rebuildTreePending = true;
 					UiThread.RunOnIdle(this.RebuildTree);
 				}
+
 				Scene.SelectedItem = null;
 				Scene.SelectedItem = lastSelectedItem;
 			}
+
+			lastSceneDescendantsCount = Scene.Descendants().Count();
 
 			// Invalidate widget on scene invalidate
 			this.Invalidate();
@@ -1687,6 +1696,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool assigningTreeNode;
 		private FlowLayoutWidget treeNodeContainer;
 		private InlineStringEdit workspaceName;
+		private int lastSceneDescendantsCount;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
