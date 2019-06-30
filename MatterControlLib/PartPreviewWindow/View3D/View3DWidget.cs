@@ -1695,8 +1695,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool assigningTreeNode;
 		private FlowLayoutWidget treeNodeContainer;
-		private int lastSceneDescendantsCount;
+		
 		private InlineStringEdit workspaceName;
+		private int lastSceneDescendantsCount;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
