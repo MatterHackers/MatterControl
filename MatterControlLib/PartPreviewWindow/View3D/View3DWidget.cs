@@ -1606,7 +1606,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& !rebuildTreePending)
 			{
 				rebuildTreePending = true;
-				this.RebuildTree();
+				UiThread.RunOnIdle(this.RebuildTree);
 			}
 
 			if (e.InvalidateType.HasFlag(InvalidateType.Name))
@@ -1616,7 +1616,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (!rebuildTreePending)
 				{
 					rebuildTreePending = true;
-					this.RebuildTree();
+					UiThread.RunOnIdle(this.RebuildTree);
 				}
 				Scene.SelectedItem = null;
 				Scene.SelectedItem = lastSelectedItem;
