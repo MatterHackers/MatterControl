@@ -73,8 +73,33 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public class PrinterSettings
 	{
-		// TODO: Move to more appropriate location after more consideration
-		public static IObjectSlicer Slicer { get; set; }
+		private IObjectSlicer _slicer = null;
+
+		[JsonIgnore]
+		public IObjectSlicer Slicer
+		{
+			get
+			{
+				if (_slicer == null)
+				{
+					string userSlicer = this.GetValue(SettingsKey.slice_engine);
+
+					if (SliceEngines.TryGetValue(userSlicer, out IObjectSlicer slicer))
+					{
+						_slicer = slicer;
+					}
+					else
+					{
+						_slicer = SliceEngines.Values.First();
+					}
+				}
+
+				return _slicer;
+			}
+			set => _slicer = value;
+		}
+
+		public static Dictionary<string, IObjectSlicer> SliceEngines { get; } = new Dictionary<string, IObjectSlicer>();
 
 		// Latest version should be in the form of:
 		// Year|month|day|versionForDay (to support multiple revisions on a given day)
@@ -116,6 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.enable_fan,
 			SettingsKey.extruder_wipe_temperature,
 			SettingsKey.extruders_share_temperature,
+			SettingsKey.slice_engine,
 			SettingsKey.first_layer_bed_temperature,
 			SettingsKey.g0,
 			SettingsKey.layer_to_pause,
@@ -334,7 +360,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
 					if (replacementTerm == SettingsKey.first_layer_bed_temperature
-						&& !PrinterSettings.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
+						&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
 					{
 						value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
 					}
@@ -741,7 +767,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool IsActive(string canonicalSettingsName)
 		{
-			return PrinterSettings.Slicer.Exports.ContainsKey(canonicalSettingsName)
+			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
 				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
 		}
 
