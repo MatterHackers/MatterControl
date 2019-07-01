@@ -92,6 +92,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private HashSet<string> replacementTerms;
 
+		private static HashSet<string> ScaledSpeedFields = new HashSet<string>()
+		{
+			SettingsKey.first_layer_speed,
+			SettingsKey.external_perimeter_speed,
+			SettingsKey.raft_print_speed,
+			SettingsKey.infill_speed,
+			SettingsKey.min_print_speed,
+			SettingsKey.perimeter_speed,
+			SettingsKey.retract_speed,
+			SettingsKey.support_material_speed,
+			SettingsKey.travel_speed,
+			SettingsKey.load_filament_speed,
+		};
+
 		/// <summary>
 		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
@@ -310,6 +324,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					// Acquire the replacement value
 					string value = this.ResolveValue(replacementTerm);
+
+					if (ScaledSpeedFields.Contains(replacementTerm)
+						&& double.TryParse(value, out double doubleValue))
+					{
+						doubleValue *= 60;
+						value = $"{doubleValue:0.###}";
+					}
+
+					// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
+					if (replacementTerm == SettingsKey.first_layer_bed_temperature
+						&& !PrinterSettings.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
+					{
+						value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
+					}
 
 					// braces then brackets replacement
 					gcodeWithMacros = gcodeWithMacros.Replace("{" + replacementTerm + "}", value);
