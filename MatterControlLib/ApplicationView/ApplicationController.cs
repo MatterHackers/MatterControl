@@ -2929,6 +2929,7 @@ namespace MatterHackers.MatterControl
 						{
 							await printer.Connection.StartPrint(gcodeFilePath);
 							MonitorPrintTask(printer);
+							return;
 						}
 					}
 				}
