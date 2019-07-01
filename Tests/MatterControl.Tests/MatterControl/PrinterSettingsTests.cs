@@ -20,6 +20,11 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+			// TODO: Make slicer registration have a default and be overridable via printer settings
+			var mappingEngine = new EngineMappingsMatterSlice();
+
+			PrinterSettings.Slicer = mappingEngine;
+
 			var printer = new PrinterConfig(new PrinterSettings());
 
 			Slicer.ExtrudersUsed = new List<bool> { true };
@@ -31,6 +36,10 @@ namespace MatterControl.Tests.MatterControl
 			Assert.IsTrue(bedTemp > 0);
 
 			string result = printer.Settings.ResolveValue(SettingsKey.start_gcode);
+
+			// Pass start_gcode through exportField converter
+			var exportField = mappingEngine.Exports[SettingsKey.start_gcode];
+			result = exportField.Converter(result, printer.Settings);
 
 			var beforeAndAfter = result.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
 
@@ -46,6 +55,10 @@ namespace MatterControl.Tests.MatterControl
 			printer.Settings.SetValue(SettingsKey.start_gcode, "G28\\nM109 S205");
 
 			string result2 = printer.Settings.ResolveValue(SettingsKey.start_gcode);
+
+			// Pass start_gcode through exportField converter
+			result2 = exportField.Converter(result2, printer.Settings);
+
 			beforeAndAfter = result2.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);
 
 			// the main change is there should be an M190 before and not after the start code

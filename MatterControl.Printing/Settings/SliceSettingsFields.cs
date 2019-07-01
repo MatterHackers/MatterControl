@@ -106,6 +106,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.first_layer_bed_temperature,
+					PresentationName = "First Layer Bed Temperature".Localize(),
+					HelpText = "The target temperature the bed will attempt to reach during the first layer of the print.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "°C".Localize(),
+					ShowIfSet = "has_heated_bed",
+					DefaultValue = "70"
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.inactive_cool_down,
 					PresentationName = "Inactive Cool Down".Localize(),
 					HelpText = "The amount to lower the temperature when the hotend is inactive.".Localize(),
