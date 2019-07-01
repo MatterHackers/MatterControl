@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -75,5 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
 		public SettingsLayout.SubGroup OrganizerSubGroup { get; set; }
+
+		public MappedSetting Resolver { get; set; }
 	}
 }

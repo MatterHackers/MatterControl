@@ -27,38 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using System;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class InjectGCodeCommands : UnescapeNewlineCharacters
+	public class ExportField
 	{
-		public InjectGCodeCommands(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public ExportField(string outputName, Func<string, PrinterSettings, string> converter = null)
 		{
+			this.OuputName = outputName;
+			this.Converter = converter;
 		}
 
-		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
-		{
-			string command = commandToAdd.Split(' ')[0].Trim();
+		public string OuputName { get; }
 
-			if (!LineStartsWith(lines, command))
-			{
-				linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
-			}
-		}
-
-		protected static bool LineStartsWith(string[] lines, string command)
-		{
-			foreach (string line in lines)
-			{
-				if (line.StartsWith(command))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
+		public Func<string, PrinterSettings, string> Converter { get; }
 	}
 }

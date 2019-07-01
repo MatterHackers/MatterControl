@@ -29,29 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class InfillTranslator : MappedSetting
+	public class ValuePlusConstant : MappedSetting
 	{
-		public InfillTranslator(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		private double constant;
+
+		public ValuePlusConstant(double constant)
 		{
+			this.constant = constant;
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
-			{
-				double infillRatio0To1 = ParseDouble(base.Value);
-				// 400 = solid (extruder width)
-
-				double nozzle_diameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-				double linespacing = 1000;
-				if (infillRatio0To1 > .01)
-				{
-					linespacing = nozzle_diameter / infillRatio0To1;
-				}
-
-				return ((int)(linespacing * 1000)).ToString();
-			}
+			return $"{ParseDouble(value) + constant}";
 		}
 	}
 }

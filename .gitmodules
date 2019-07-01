@@ -4,3 +4,12 @@
 [submodule "Submodules/agg-sharp"]
 	path = Submodules/agg-sharp
 	url = https://github.com/MatterHackers/agg-sharp.git
+[submodule "Submodules/geometry3Sharp"]
+	path = Submodules/geometry3Sharp
+	url = https://github.com/MatterHackers/geometry3Sharp
+[submodule "Submodules/gsGCode"]
+	path = Submodules/gsGCode
+	url = https://github.com/MatterHackers/gsGCode
+[submodule "Submodules/gsSlicer"]
+	path = Submodules/gsSlicer
+	url = https://github.com/MatterHackers/gsSlicer

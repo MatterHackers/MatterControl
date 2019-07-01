@@ -29,32 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedSetting
+	public class MappedFanSpeedSetting : MappedSetting
 	{
-		protected PrinterConfig printer;
-
-		public MappedSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			this.printer = printer;
-			this.CanonicalSettingsName = canonicalSettingsName;
-			this.ExportedName = exportedName;
-		}
-
-		public string CanonicalSettingsName { get; }
-
-		public string ExportedName { get; }
-
-		public virtual string Value => printer.Settings.GetValue(CanonicalSettingsName);
-
-		public double ParseDouble(string textValue, double valueOnError = 0)
-		{
-			double value;
-			if (!double.TryParse(textValue, out value))
+			if (settings.GetValue<bool>(SettingsKey.enable_fan))
 			{
-				return valueOnError;
+				return value;
 			}
 
-			return value;
+			return "0";
 		}
 	}
 }

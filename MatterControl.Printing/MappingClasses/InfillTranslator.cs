@@ -29,13 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedToBoolString : MappedSetting
+	public class InfillTranslator : MappedSetting
 	{
-		public MappedToBoolString(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			double infillRatio0To1 = ParseDouble(value);
+			// 400 = solid (extruder width)
 
-		public override string Value => (base.Value == "1") ? "True" : "False";
+			double nozzle_diameter = settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			double linespacing = 1000;
+			if (infillRatio0To1 > .01)
+			{
+				linespacing = nozzle_diameter / infillRatio0To1;
+			}
+
+			return ((int)(linespacing * 1000)).ToString();
+		}
 	}
 }

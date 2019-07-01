@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <OutputPath>..\bin\Release\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj" />
+    <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj" />
+    <ProjectReference Include="..\Submodules\geometry3Sharp\geometry3Sharp.csproj" />
+    <ProjectReference Include="..\Submodules\gsGCode\gsGCode.csproj" />
+    <ProjectReference Include="..\Submodules\gsSlicer\gsSlicer.csproj" />
+  </ItemGroup>
+
+</Project>

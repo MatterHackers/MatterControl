@@ -29,24 +29,15 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedFanSpeedSetting : MappedSetting
+	public class GCodeMapping : MappedSetting
 	{
-		public MappedFanSpeedSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			// Unescape newlines
+			value = value.Replace("\\n", "\n");
 
-		public override string Value
-		{
-			get
-			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.enable_fan))
-				{
-					return base.Value;
-				}
-
-				return "0";
-			}
+			// Macro replace and restore escaped newlines
+			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

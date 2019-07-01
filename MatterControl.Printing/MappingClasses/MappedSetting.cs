@@ -29,28 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapLayerChangeGCode : InjectGCodeCommands
+	public class MappedSetting
 	{
-		public MapLayerChangeGCode(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public virtual string Resolve(string value, PrinterSettings settings)
 		{
+			return value;
 		}
 
-		public override string Value
+		public double ParseDouble(string textValue, double valueOnError = 0)
 		{
-			get
+			if (!double.TryParse(textValue, out double value))
 			{
-				string macroReplaced = base.Value;
-				if (!macroReplaced.Contains("; LAYER:")
-					&& !macroReplaced.Contains(";LAYER:"))
-				{
-					macroReplaced += "; LAYER:[layer_num]\n";
-				}
-
-				macroReplaced = printer.ReplaceMacroValues(macroReplaced.Replace("\n", "\\n"));
-
-				return macroReplaced;
+				return valueOnError;
 			}
+
+			return value;
 		}
 	}
 }

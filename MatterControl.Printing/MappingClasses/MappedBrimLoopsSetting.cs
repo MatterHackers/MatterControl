@@ -29,26 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class RetractionLength : MappedSetting
+	public class MappedBrimLoopsSetting : AsCountOrDistance
 	{
-		public RetractionLength(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public MappedBrimLoopsSetting(string keyToUseAsDenominatorForCount)
+			: base(keyToUseAsDenominatorForCount)
 		{
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
+			if (settings.GetValue<bool>(SettingsKey.create_brim))
 			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.enable_retractions))
-				{
-					return base.Value;
-				}
-				else
-				{
-					return 0.ToString();
-				}
+				return value;
 			}
+
+			return "0";
 		}
 	}
 }

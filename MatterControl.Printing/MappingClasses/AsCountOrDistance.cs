@@ -33,29 +33,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 	{
 		private string keyToUseAsDenominatorForCount;
 
-		public AsCountOrDistance(PrinterConfig printer, string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
-			: base(printer, canonicalSettingsName, exportedName)
+		public AsCountOrDistance(string keyToUseAsDenominatorForCount)
 		{
 			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
-		public override string Value
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			get
+			// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
+			if (value.Contains("mm"))
 			{
-				// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
-				if (base.Value.Contains("mm"))
-				{
-					string withoutMm = base.Value.Replace("mm", "");
-					string distanceString = printer.Settings.GetValue(keyToUseAsDenominatorForCount);
-					double denominator = ParseDouble(distanceString, 1);
+				string withoutMm = value.Replace("mm", "");
+				string distanceString = settings.GetValue(keyToUseAsDenominatorForCount);
+				double denominator = ParseDouble(distanceString, 1);
 
-					int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
-					return layers.ToString();
-				}
-
-				return base.Value;
+				int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
+				return layers.ToString();
 			}
+
+			return value;
 		}
 	}
 }

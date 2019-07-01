@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,32 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
+
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class AsPercentOrDirect : MappedSetting
+	public interface IObjectSlicer
 	{
-		public AsPercentOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
-		{
-		}
+		Task<bool> Slice(IObject3D object3D, IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
 
-		public override string Value
-		{
-			get
-			{
-				double finalValue = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					finalValue = ParseDouble(withoutPercent) / 100.0;
-				}
-				else
-				{
-					finalValue = ParseDouble(base.Value);
-				}
+		Dictionary<string, ExportField> Exports { get; }
 
-				return finalValue.ToString();
-			}
-		}
+		bool ValidateFile(string filePath);
 	}
 }

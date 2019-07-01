@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,29 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.Extensibility;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+namespace MatterHackers.gsBundle
 {
-	public class SkirtLengthMapping : MappedSetting
+	public class gsSlicerPlugin : IApplicationPlugin
 	{
-		public SkirtLengthMapping(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public void Initialize()
 		{
+			// TODO: Enable for review
+			//PrinterSettings.Slicer = new BasicSlicer();
 		}
 
-		public override string Value
+		public PluginInfo MetaData => new PluginInfo()
 		{
-			get
-			{
-				double lengthToExtrudeMm = ParseDouble(base.Value);
-				// we need to convert mm of filament to mm of extrusion path
-				double amountOfFilamentCubicMms = printer.Settings.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
-				double extrusionSquareSize = printer.Settings.GetValue<double>(SettingsKey.first_layer_height) * printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-				double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
-
-				return lineLength.ToString();
-			}
-		}
+			About = "gsSlicer for MatterControl",
+			Developer = "MatterHackers Inc.",
+			Name = "MH-gsSlicer",
+			Url = "https://www.matterhackers.com/MatterControl",
+			UUID = "0384EBD9-072F-4295-AE48-270FC256B48B"
+		};
 	}
 }

@@ -29,13 +29,23 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class GCodeForSlicer : InjectGCodeCommands
+	public class AsPercentOrDirect : MappedSetting
 	{
-		public GCodeForSlicer(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
+			double finalValue = 0;
 
-		public override string Value => printer.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
+			if (value.Contains("%"))
+			{
+				string withoutPercent = value.Replace("%", "");
+				finalValue = ParseDouble(withoutPercent) / 100.0;
+			}
+			else
+			{
+				finalValue = ParseDouble(value);
+			}
+
+			return finalValue.ToString();
+		}
 	}
 }

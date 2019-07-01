@@ -267,49 +267,53 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string mapsTo = "";
 
-			if (printer.EngineMappingsMatterSlice.MappedSettings.FirstOrDefault(m => m.CanonicalSettingsName == settingData.SlicerConfigName) is AsPercentOfReferenceOrDirect percentReference)
+			if (PrinterSettings.Slicer.Exports.TryGetValue(settingData.SlicerConfigName, out ExportField exportField))
 			{
-				mapsTo = " -> " + percentReference.ExportedName;
+				mapsTo = " -> " + exportField.OuputName;
 
 				var settings = printer.Settings;
 
-				string settingValue = settings.GetValue(percentReference.CanonicalSettingsName);
-				string referencedSetting = settings.GetValue(percentReference.ReferencedSetting);
-
-				double.TryParse(referencedSetting, out double referencedValue);
-
-				var theme = AppContext.Theme;
-
-				var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				if (settingData.Resolver is MappedSetting mappedSetting
+					&& mappedSetting is AsPercentOfReferenceOrDirect percentReference)
 				{
-					Margin = new BorderDouble(top: 8),
-					HAnchor = HAnchor.Stretch
-				};
+					string settingValue = settings.GetValue(settingData.SlicerConfigName);
+					string referencedSetting = settings.GetValue(percentReference.ReferencedSetting);
 
-				if (settingValue.Contains("%")
-					&& PrinterSettings.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
-				{
-					column.AddChild(
-						new TextWidget(
-							string.Format("{0}: {1} ({2})", "Percentage of".Localize(), referencedSettingData.PresentationName, referencedSetting),
-							textColor: theme.TextColor,
-							pointSize: theme.DefaultFontSize - 1));
+					double.TryParse(referencedSetting, out double referencedValue);
 
-					settingValue = settingValue.Replace("%", "").Trim();
+					var theme = AppContext.Theme;
 
-					if (int.TryParse(settingValue, out int percent))
+					var column = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
-						double ratio = (double)percent / 100;
+						Margin = new BorderDouble(top: 8),
+						HAnchor = HAnchor.Stretch
+					};
 
-						string line = string.Format(
-									"{0}% of {1} is {2:0.##}",
-									percent,
-									referencedValue,
-									percentReference.Value);
+					if (settingValue.Contains("%")
+						&& PrinterSettings.SettingsData.TryGetValue(percentReference.ReferencedSetting, out SliceSettingData referencedSettingData))
+					{
+						column.AddChild(
+							new TextWidget(
+								string.Format("{0}: {1} ({2})", "Percentage of".Localize(), referencedSettingData.PresentationName, referencedSetting),
+								textColor: theme.TextColor,
+								pointSize: theme.DefaultFontSize - 1));
 
-						column.AddChild(new TextWidget(line, textColor: theme.TextColor, pointSize: theme.DefaultFontSize - 1));
+						settingValue = settingValue.Replace("%", "").Trim();
 
-						popover.AddChild(column);
+						if (int.TryParse(settingValue, out int percent))
+						{
+							double ratio = (double)percent / 100;
+
+							string line = string.Format(
+										"{0}% of {1} is {2:0.##}",
+										percent,
+										referencedValue,
+										settings.ResolveValue(settingData.SlicerConfigName));
+
+							column.AddChild(new TextWidget(line, textColor: theme.TextColor, pointSize: theme.DefaultFontSize - 1));
+
+							popover.AddChild(column);
+						}
 					}
 				}
 			}

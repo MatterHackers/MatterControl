@@ -29,35 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	public class MappedToBoolString : MappedSetting
 	{
-		public OverrideSpeedOnSlaPrinters(PrinterConfig printer, string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
-			: base(printer, canonicalSettingsName, exportedName, originalReference, scale)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-		}
-
-		public override string Value
-		{
-			get
-			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
-				{
-					// return the speed based on the layer height
-					var speedAt025 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_025);
-					var speedAt100 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_100);
-					var deltaSpeed = speedAt100 - speedAt025;
-
-					var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
-					var deltaHeight = .1 - .025;
-					var heightRatio = (layerHeight - .025) / deltaHeight;
-					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
-					return ajustedSpeed.ToString();
-				}
-				else
-				{
-					return base.Value;
-				}
-			}
+			return value == "1" ? "True" : "False";
 		}
 	}
 }

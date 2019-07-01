@@ -29,16 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ValuePlusConstant : MappedSetting
+	public class AsPercentOrDirectFirst : MapFirstValue
 	{
-		private double constant;
-
-		public ValuePlusConstant(PrinterConfig printer, string canonicalSettingsName, string exportedName, double constant)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Resolve(string value, PrinterSettings settings)
 		{
-			this.constant = constant;
-		}
+			double ratio = 0;
 
-		public override string Value => (ParseDouble(base.Value) + constant).ToString();
+			value = base.Resolve(value, settings);
+
+			if (value.Contains("%"))
+			{
+				string withoutPercent = value.Replace("%", "");
+				ratio = ParseDouble(withoutPercent) / 100.0;
+			}
+			else
+			{
+				ratio = ParseDouble(value);
+			}
+
+			return ratio.ToString();
+		}
 	}
 }
