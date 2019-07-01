@@ -179,6 +179,7 @@ Printer
         progress_reporting
     Behavior
       Behavior
+        slice_engine
         z_homes_to_max
         heat_extruder_before_homing
         auto_release_motors

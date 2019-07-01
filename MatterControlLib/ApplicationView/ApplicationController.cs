@@ -2917,7 +2917,7 @@ namespace MatterHackers.MatterControl
 					else
 					{
 						// Ask for slicer specific gcode validation
-						if (PrinterSettings.Slicer.ValidateFile(gcodeFilePath))
+						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
 							await printer.Connection.StartPrint(gcodeFilePath);
 							MonitorPrintTask(printer);
@@ -4049,11 +4049,7 @@ Support and tutorials:
 			{
 				try
 				{
-					if (PrinterSettings.Slicer == null)
-					{
-						// TODO: replace with runtime switchable solution
-						PrinterSettings.Slicer = new EngineMappingsMatterSlice();
-					}
+					PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
 
 					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
 					await applicationController.RestoreUserTabs();

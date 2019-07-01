@@ -81,10 +81,13 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			// TODO: Make slicer registration have a default and be overridable via printer settings
-			var mappingEngine = new EngineMappingsMatterSlice();
+			var settings = new PrinterSettings();
+			settings.Slicer = new EngineMappingsMatterSlice();
 
-			PrinterSettings.Slicer = mappingEngine;
+			void TestMacroReplacement(string inputText, string outputControl)
+			{
+				Assert.AreEqual(outputControl, settings.ReplaceMacroValues(inputText));
+			}
 
 			TestMacroReplacement("[temperature]", "200");
 			TestMacroReplacement("[first_layer_speed]", "1080");
@@ -108,13 +111,6 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("{infill_speed}", "3600");
 			TestMacroReplacement("{min_print_speed}", "600");
 			TestMacroReplacement("{travel_speed}", "7800");
-		}
-
-		private void TestMacroReplacement(string inputText, string outputControl)
-		{
-			var printer = new PrinterConfig(new PrinterSettings());
-
-			Assert.AreEqual(outputControl, printer.Settings.ReplaceMacroValues(inputText));
 		}
 	}
 }

@@ -257,5 +257,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
 		public const string t0_inset = nameof(t0_inset);
 		public const string t1_inset = nameof(t1_inset);
+		public const string slice_engine = nameof(slice_engine);
 	}
 }
