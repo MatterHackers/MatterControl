@@ -3930,7 +3930,7 @@ Support and tutorials:
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
 
 				//UiThread.RunOnIdle(() =>
-				Task.Run((Func<Task>)(async () =>
+				Task.Run(async () =>
 				{
 					try
 					{
@@ -3952,7 +3952,7 @@ Support and tutorials:
 					}
 					catch (Exception ex)
 					{
-						UiThread.RunOnIdle((Action)(() =>
+						UiThread.RunOnIdle(() =>
 						{
 							statusText.Visible = false;
 
@@ -3988,11 +3988,11 @@ Support and tutorials:
 							progressBar.Visible = false;
 
 							progressPanel.AddChild(closeButton);
-						}));
+						});
 					}
 
 					AppContext.IsLoading = false;
-				}));
+				});
 			}
 
 			ReportStartupProgress(0, "ShowAsSystemWindow");
