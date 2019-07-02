@@ -249,11 +249,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(IObject3D object3D, ref string mergeRules, IEnumerable<IObject3D> printableItems, PrinterSettings settings, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(ref string mergeRules, IEnumerable<IObject3D> printableItems, PrinterSettings settings, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus();
 
-			Slicer.GetExtrudersUsed(Slicer.ExtrudersUsed, printableItems, object3D, settings, true);
+			Slicer.GetExtrudersUsed(Slicer.ExtrudersUsed, printableItems, settings, true);
 
 			// TODO: Once graph parsing is added to MatterSlice we can remove and avoid this flattening
 			meshPrintOutputSettings.Clear();
@@ -324,11 +324,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return new List<(Matrix4X4 matrix, string fileName)>();
 		}
 
-		public Task<bool> Slice(IObject3D object3D, IEnumerable<IObject3D> printableItems, PrinterSettings settings, string gcodeFilePath, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		public Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings settings, string gcodeFilePath, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			string mergeRules = "";
 
-			var stlFileLocations = GetStlFileLocations(object3D, ref mergeRules, printableItems, settings, reporter, cancellationToken);
+			var stlFileLocations = GetStlFileLocations(ref mergeRules, printableItems, settings, reporter, cancellationToken);
 
 			if (stlFileLocations.Count <= 0)
 			{

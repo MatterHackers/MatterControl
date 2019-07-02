@@ -45,14 +45,14 @@ namespace MatterHackers.gsBundle
 {
 	public class BasicSlicer : IObjectSlicer
 	{
-		public async Task<bool> Slice(IObject3D object3D, IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
+		public async Task<bool> Slice(IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
 
 			using (var outputStream = File.OpenWrite(filePath))
 			{
 				var sourceMeshes = new List<DMesh3>();
 
-				foreach (var item in object3D.VisibleMeshes().Where(d => d.MeshPath != null))
+				foreach (var item in printableItems.Where(d => d.MeshPath != null))
 				{
 					string sourceFilePath = await item.ResolveFilePath(null, cancellationToken);
 

@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public interface IObjectSlicer
 	{
-		Task<bool> Slice(IObject3D object3D, IEnumerable<IObject3D> printableItems, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
+		Task<bool> Slice(IEnumerable<IObject3D> itemsOnBed, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
 
 		Dictionary<string, ExportField> Exports { get; }
 

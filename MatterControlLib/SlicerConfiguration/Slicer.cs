@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static bool RunInProcess { get; set; } = false;
 
-		public static void GetExtrudersUsed(List<bool> extrudersUsed, IEnumerable<IObject3D> printableItems, IObject3D object3D, PrinterSettings settings, bool checkForMeshFile)
+		public static void GetExtrudersUsed(List<bool> extrudersUsed, IEnumerable<IObject3D> printableItems, PrinterSettings settings, bool checkForMeshFile)
 		{
 			extrudersUsed.Clear();
 
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			// If we have support enabled and are using an extruder other than 0 for it
-			if (object3D.VisibleMeshes().Any(i => i.WorldOutputType() == PrintOutputTypes.Support))
+			if (printableItems.Any(i => i.WorldOutputType() == PrintOutputTypes.Support))
 			{
 				if (settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var scene = printer.Bed.Scene;
 
 			var extrudersUsed = new List<bool>();
-			Slicer.GetExtrudersUsed(extrudersUsed, printer.PrintableItems(scene), scene, printer.Settings, false);
+			Slicer.GetExtrudersUsed(extrudersUsed, printer.PrintableItems(scene), printer.Settings, false);
 
 			for (int i = 1; i < extrudersUsed.Count; i++)
 			{
@@ -127,8 +127,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static Task<bool> SliceItem(IObject3D object3D, string gcodeFilePath, PrinterConfig printer, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken)
 		{
-			var scene = printer.Bed.Scene;
-			return printer.Settings.Slicer.Slice(object3D, printer.PrintableItems(scene), printer.Settings, gcodeFilePath, progressReporter, cancellationToken);
+			return printer.Settings.Slicer.Slice(printer.PrintableItems(object3D), printer.Settings, gcodeFilePath, progressReporter, cancellationToken);
 		}
 	}
 }
