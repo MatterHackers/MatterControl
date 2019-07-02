@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class InfillTranslator : MappedSetting
+	public class InfillTranslator : ValueConverter
 	{
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			double infillRatio0To1 = ParseDouble(value);
 			// 400 = solid (extruder width)

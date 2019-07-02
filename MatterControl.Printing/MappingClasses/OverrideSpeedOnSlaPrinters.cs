@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 		{
 		}
 
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			if (settings.GetValue<bool>(SettingsKey.sla_printer))
 			{
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			}
 			else
 			{
-				return base.Resolve(value, settings);
+				return base.Convert(value, settings);
 			}
 		}
 	}

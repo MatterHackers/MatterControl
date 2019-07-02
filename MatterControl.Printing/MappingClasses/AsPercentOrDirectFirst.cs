@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
 	public class AsPercentOrDirectFirst : MapFirstValue
 	{
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			double ratio = 0;
 
-			value = base.Resolve(value, settings);
+			value = base.Convert(value, settings);
 
 			if (value.Contains("%"))
 			{

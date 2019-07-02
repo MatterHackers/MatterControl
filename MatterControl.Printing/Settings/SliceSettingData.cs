@@ -77,6 +77,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public SettingsLayout.SubGroup OrganizerSubGroup { get; set; }
 
-		public MappedSetting Resolver { get; set; }
+		public ValueConverter Converter { get; set; }
 	}
 }

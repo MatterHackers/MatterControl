@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedSetting
+	public class ValueConverter
 	{
-		public virtual string Resolve(string value, PrinterSettings settings)
+		public virtual string Convert(string value, PrinterSettings settings)
 		{
 			return value;
 		}
