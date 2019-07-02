@@ -29,24 +29,24 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class ConditionalField : MappedSetting
+	public class ConditionalField : ValueConverter
 	{
-		private string defaultValue;
-		private string enableOnKey;
-		private MappedSetting sourceField;
+		private readonly string defaultValue;
+		private readonly string enableOnKey;
+		private ValueConverter sourceField;
 
-		public ConditionalField(string enableOnKey, MappedSetting sourceField, string defaultValue = "0")
+		public ConditionalField(string enableOnKey, ValueConverter sourceField, string defaultValue = "0")
 		{
 			this.defaultValue = defaultValue;
 			this.enableOnKey = enableOnKey;
 			this.sourceField = sourceField;
 		}
 
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			if (settings.GetValue<bool>(enableOnKey))
 			{
-				return sourceField.Resolve(value, settings);
+				return sourceField.Convert(value, settings);
 			}
 
 			return defaultValue;

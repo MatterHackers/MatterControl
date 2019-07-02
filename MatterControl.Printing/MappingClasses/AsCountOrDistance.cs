@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,16 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class AsCountOrDistance : MappedSetting
+	public class AsCountOrDistance : ValueConverter
 	{
-		private string keyToUseAsDenominatorForCount;
+		private readonly string keyToUseAsDenominatorForCount;
 
 		public AsCountOrDistance(string keyToUseAsDenominatorForCount)
 		{
 			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
 			if (value.Contains("mm"))

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class FanTranslator : MappedSetting
+	public class ValueConverter
 	{
-		public override string Resolve(string value, PrinterSettings settings)
+		public virtual string Convert(string value, PrinterSettings settings)
 		{
-			int numLayersFanIsDisabledOn = int.Parse(value);
-			int layerToEnableFanOn = numLayersFanIsDisabledOn + 1;
+			return value;
+		}
 
-			return layerToEnableFanOn.ToString();
+		public double ParseDouble(string textValue, double valueOnError = 0)
+		{
+			if (!double.TryParse(textValue, out double value))
+			{
+				return valueOnError;
+			}
+
+			return value;
 		}
 	}
 }
