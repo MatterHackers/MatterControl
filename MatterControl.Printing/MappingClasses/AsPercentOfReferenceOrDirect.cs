@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class AsPercentOfReferenceOrDirect : MappedSetting
+	public class AsPercentOfReferenceOrDirect : ValueConverter
 	{
-		private bool change0ToReference;
-		private double scale;
+		private readonly bool change0ToReference;
+		private readonly double scale;
 
 		public AsPercentOfReferenceOrDirect(string referencedSetting, double scale = 1, bool change0ToReference = true)
 		{
@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 
 		public string ReferencedSetting { get; }
 
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			double finalValue = 0;
 

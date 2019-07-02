@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var settings = printer.Settings;
 
-				if (settingData.Resolver is MappedSetting mappedSetting
+				if (settingData.Converter is ValueConverter mappedSetting
 					&& mappedSetting is AsPercentOfReferenceOrDirect percentReference)
 				{
 					string settingValue = settings.GetValue(settingData.SlicerConfigName);

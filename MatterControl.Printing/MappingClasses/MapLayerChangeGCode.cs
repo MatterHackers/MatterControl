@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapLayerChangeGCode : MappedSetting
+	public class MapLayerChangeGCode : ValueConverter
 	{
-		public override string Resolve(string value, PrinterSettings settings)
+		public override string Convert(string value, PrinterSettings settings)
 		{
 			// Unescape newlines
 			value = value.Replace("\\n", "\n");
@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 			if (!value.Contains("; LAYER:")
 				&& !value.Contains(";LAYER:"))
 			{
-				if(value.Length > 0)
+				if (value.Length > 0)
 				{
 					value += "\n";
 				}

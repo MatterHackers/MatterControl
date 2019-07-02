@@ -148,7 +148,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.selector_ip_address,
 			SettingsKey.solid_shell,
 			SettingsKey.z_homes_to_max,
-			// TODO: merge the items below into the list above after some validation - setting that weren't previously mapped to Cura but probably should be.
 			SettingsKey.auto_connect,
 			SettingsKey.auto_release_motors,
 			SettingsKey.backup_firmware_before_update,
@@ -1007,13 +1006,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string value = this.GetValue(settingsKey);
 
 			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
-				&& settingsData.Resolver is MappedSetting resolver)
+				&& settingsData.Converter is ValueConverter resolver)
 			{
 
-				return resolver.Resolve(value, this);
+				return resolver.Convert(value, this);
 			}
 
-			// TODO: Consider if acceptable - should we throw when no resolver exists?
 			return value;
 		}
 
