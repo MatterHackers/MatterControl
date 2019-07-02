@@ -20,12 +20,8 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			// TODO: Make slicer registration have a default and be overridable via printer settings
-			var mappingEngine = new EngineMappingsMatterSlice();
-
-			PrinterSettings.Slicer = mappingEngine;
-
 			var printer = new PrinterConfig(new PrinterSettings());
+			printer.Settings.Slicer = new EngineMappingsMatterSlice();
 
 			Slicer.ExtrudersUsed = new List<bool> { true };
 
@@ -38,7 +34,7 @@ namespace MatterControl.Tests.MatterControl
 			string result = printer.Settings.ResolveValue(SettingsKey.start_gcode);
 
 			// Pass start_gcode through exportField converter
-			var exportField = mappingEngine.Exports[SettingsKey.start_gcode];
+			var exportField = printer.Settings.Slicer.Exports[SettingsKey.start_gcode];
 			result = exportField.Converter(result, printer.Settings);
 
 			var beforeAndAfter = result.Split(new string[] { "; settings from start_gcode" }, StringSplitOptions.None);

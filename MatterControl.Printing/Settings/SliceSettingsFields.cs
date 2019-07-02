@@ -126,6 +126,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.slice_engine,
+					PresentationName = "Slice Engine".Localize(),
+					HelpText = "The slicer to use.".Localize(),
+					DataEditType = DataEditTypes.SLICE_ENGINE,
+					DefaultValue = "MatterSlice",
+					ReloadUiWhenChanged = true,
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.seconds_to_reheat,
 					PresentationName = "Warm up Time".Localize(),
 					HelpText = "The time it takes to heat back up from a cool down.".Localize(),
