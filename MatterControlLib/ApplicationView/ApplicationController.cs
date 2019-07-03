@@ -2909,7 +2909,9 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
-						await printer.Connection.StartPrint(gcodeFilePath);
+						// TODO: Reimplement
+						//await printer.Connection.StartPrint(gcodeFilePath);
+						printer.Connection.StartPrint(gcodeFilePath);
 
 						MonitorPrintTask(printer);
 
@@ -2920,7 +2922,9 @@ namespace MatterHackers.MatterControl
 						// Ask for slicer specific gcode validation
 						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
-							await printer.Connection.StartPrint(gcodeFilePath);
+							// TODO: Reimplement
+							// await printer.Connection.StartPrint(gcodeFilePath);
+							printer.Connection.StartPrint(gcodeFilePath);
 							MonitorPrintTask(printer);
 							return;
 						}

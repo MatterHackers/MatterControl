@@ -150,8 +150,11 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					using (var gcodeStream = await assetStream.GetStream(progress: null))
 					{
+						// TODO: Review
+						var printerShim = ApplicationController.Instance.Shim(printer);
+
 						this.ApplyStreamPipelineAndExport(
-							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer),
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printerShim),
 							outputPath);
 
 						return null;
@@ -269,12 +272,12 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool CenterOnBed { get; set; }
 
-		public static GCodeStream GetExportStream(PrinterConfig printerShim, GCodeStream gCodeBaseStream, bool applyLeveling)
+		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
 		{
 			var shim = new MatterHackers.MatterControl.PrinterCommunication.SettingsShim.PrinterConfig()
 			{
-				Settings = printerShim.Settings,
-				Connection = printerShim.Connection
+				Settings = printer.Settings,
+				Connection = printer.Connection
 			};
 
 			var queuedCommandStream = new QueuedCommandsStream(shim, gCodeBaseStream);

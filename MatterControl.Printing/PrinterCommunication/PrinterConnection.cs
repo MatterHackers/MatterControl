@@ -2080,7 +2080,17 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 	private CancellationTokenSource printingCancellation;
 
-	public void StartPrint(Stream gcodeStream, string filePath, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+
+	public void StartPrint(string filePath, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+	{
+		using (var gcodeStream = File.OpenRead(filePath))
+		{
+			this.StartPrint(gcodeStream, gcodeFileNameForTask, calibrationPrint);
+		}
+	}
+
+	// TODO: Review - restoring for test support where we run in process with emulator. Envisioned out-of-proc use won't hit this interface
+	public void StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, bool calibrationPrint = false)
 	{
 		if (!this.IsConnected || Printing)
 		{
