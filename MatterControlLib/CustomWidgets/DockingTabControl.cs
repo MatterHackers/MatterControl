@@ -124,9 +124,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void OnClosed(EventArgs e)
 		{
 			// Iterate and close all held tab widgets
-			foreach (var item in allTabs)
+			foreach (var (key, text, widget) in allTabs)
 			{
-				item.widget.Close();
+				widget.Close();
 			}
 
 			allTabs.Clear();
@@ -162,6 +162,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		// Clamped to MinDockingWidth or value
 		private double _constrainedWidth;
+
 		private double ConstrainedWidth
 		{
 			get => Math.Max(MinDockingWidth, printer.ViewState.SliceSettingsWidth);
@@ -180,10 +181,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.Focus();
 
-			foreach (var nameWidget in allTabs)
+			foreach (var (key, text, widget) in allTabs)
 			{
-				nameWidget.widget.Parent?.RemoveChild(nameWidget.widget);
-				nameWidget.widget.ClearRemovedFlag();
+				widget.Parent?.RemoveChild(widget);
+				widget.ClearRemovedFlag();
 			}
 
 			this.CloseAllChildren();
@@ -223,22 +224,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				this.AddChild(resizePage);
 			}
 
-			foreach (var item in allTabs)
+			foreach (var (key, text, widget) in allTabs)
 			{
 				if (this.ControlIsPinned)
 				{
-					var content = new DockingWindowContent(this, item.widget, item.text, theme);
+					var content = new DockingWindowContent(this, widget, text, theme);
 
 					var tab = new ToolTab(
-							item.key,
-							item.text,
+							key,
+							text,
 							tabControl,
 							content,
 							theme,
-							hasClose: item.widget is ICloseableTab,
+							hasClose: widget is ICloseableTab,
 							pointSize: theme.DefaultFontSize)
 						{
-							Name = item.key + " Tab",
+							Name = key + " Tab",
 							InactiveTabColor = Color.Transparent,
 							ActiveTabColor = theme.BackgroundColor
 						};
@@ -249,10 +250,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						{
 							printer.ViewState.ConfigurePrinterVisible = false;
 						}
+
 						if (tab.Name == "Controls Tab")
 						{
 							printer.ViewState.ControlsVisible = false;
 						}
+
 						if (tab.Name == "Terminal Tab")
 						{
 							printer.ViewState.TerminalVisible = false;
@@ -272,17 +275,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						SplitterBarColor = theme.SplitterBackground,
 						SplitterWidth = theme.SplitterWidth,
 					};
-					resizeContainer.AddChild(new DockingWindowContent(this, item.widget, item.text, theme)
+					resizeContainer.AddChild(new DockingWindowContent(this, widget, text, theme)
 					{
 						BackgroundColor = theme.TabBodyBackground,
 						Width = this.ConstrainedWidth
 					});
 
-					string localTabKey = item.key;
+					string localTabKey = key;
 
-					var tabBarButton = new DockingTabButton(item.text, theme)
+					var tabBarButton = new DockingTabButton(text, theme)
 					{
-						Name = $"{item.key} Sidebar",
+						Name = $"{key} Sidebar",
 						PopupContent = resizeContainer,
 						PopupLayoutEngine = new UnpinnedLayoutEngine(resizeContainer, widgetTodockTo, DockSide)
 					};
@@ -325,7 +328,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private class DockingTabButton : PopupButton
 		{
 			private Color grayBorder;
-			private ThemeConfig theme;
+			private readonly ThemeConfig theme;
 
 			public DockingTabButton(string tabTitle, ThemeConfig theme)
 			{
@@ -431,7 +434,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.contentWidget = contentWidget;
 			this.widgetTodockTo = widgetTodockTo;
 			DockSide = dockSide;
-			contentWidget.BoundsChanged += widgetRelativeTo_PositionChanged;
+			contentWidget.BoundsChanged += WidgetRelativeTo_PositionChanged;
 		}
 
 		public GuiWidget Anchor { get; }
@@ -445,14 +448,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			// Unbind callbacks on parents for position_changed if we're closing
 			foreach (GuiWidget widget in hookedParents)
 			{
-				widget.PositionChanged -= widgetRelativeTo_PositionChanged;
-				widget.BoundsChanged -= widgetRelativeTo_PositionChanged;
+				widget.PositionChanged -= WidgetRelativeTo_PositionChanged;
+				widget.BoundsChanged -= WidgetRelativeTo_PositionChanged;
 			}
 
 			hookedParents.Clear();
 
 			// Long lived originating item must be unregistered
-			widgetTodockTo.Closed -= widgetRelativeTo_Closed;
+			widgetTodockTo.Closed -= WidgetRelativeTo_Closed;
 
 			// Restore focus to originating widget on close
 			if (this.widgetTodockTo != null
@@ -482,24 +485,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				if (!hookedParents.Contains(topParent))
 				{
 					hookedParents.Add(topParent);
-					topParent.PositionChanged += widgetRelativeTo_PositionChanged;
-					topParent.BoundsChanged += widgetRelativeTo_PositionChanged;
+					topParent.PositionChanged += WidgetRelativeTo_PositionChanged;
+					topParent.BoundsChanged += WidgetRelativeTo_PositionChanged;
 				}
 
 				topParent = topParent.Parent;
 			}
 
-			widgetRelativeTo_PositionChanged(widgetTodockTo, null);
-			widgetTodockTo.Closed += widgetRelativeTo_Closed;
+			WidgetRelativeTo_PositionChanged(widgetTodockTo, null);
+			widgetTodockTo.Closed += WidgetRelativeTo_Closed;
 		}
 
-		private void widgetRelativeTo_Closed(object sender, EventArgs e)
+		private void WidgetRelativeTo_Closed(object sender, EventArgs e)
 		{
 			// If the owning widget closed, so should we
 			popupWidget.CloseMenu();
 		}
 
-		private void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
+		private void WidgetRelativeTo_PositionChanged(object sender, EventArgs e)
 		{
 			if (widgetTodockTo != null)
 			{
