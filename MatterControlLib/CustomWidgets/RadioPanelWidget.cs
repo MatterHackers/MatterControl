@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl
 	{
 		public static void ReplaceChild(this GuiWidget widget, GuiWidget existingChild, GuiWidget replacement)
 		{
-			int index = widget.GetChildIndex(existingChild);
+			int index = widget.Children.IndexOf(existingChild);
 			if (index >= 0)
 			{
 				widget.RemoveChild(existingChild);

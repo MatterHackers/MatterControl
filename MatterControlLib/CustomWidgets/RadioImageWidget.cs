@@ -40,9 +40,19 @@ namespace MatterHackers.MatterControl
 		{
 			var imageWidget = new ImageWidget(image);
 			var index = 0;
-			using (var list = this.Children.ReadOnly())
+			foreach (var child in this.Children)
 			{
-				index = list.IndexOf(labelTextWidget);
+				if (child == labelTextWidget)
+				{
+					break;
+				}
+
+				index++;
+			}
+
+			if (index >= this.Children.Count)
+			{
+				index = 0;
 			}
 
 			this.AddChild(imageWidget, index);
