@@ -150,11 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tumbleCubeControl = view3DWidget.InteractionLayer.Children<TumbleCubeControl>().FirstOrDefault();
 
-			var position = 0;
-			using (var list = view3DWidget.InteractionLayer.Children.ReadOnly())
-			{
-				position = list.IndexOf(trackball);
-			}
+			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
 
 			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
 			{

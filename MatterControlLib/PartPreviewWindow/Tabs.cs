@@ -268,8 +268,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void AddTab(GuiWidget tabWidget, int tabIndex = -1)
 		{
 			// Default position if tabIndex == -1 is just before the tabTrailer
-			var widgetPosition = this.TabBar.ActionArea.GetChildIndex(tabTrailer);
-			var firstTabPosition = this.TabBar.ActionArea.GetChildIndex(leadingTabAdornment) + 1;
+			var widgetPosition = this.TabBar.ActionArea.Children.IndexOf(tabTrailer);
+			var firstTabPosition = this.TabBar.ActionArea.Children.IndexOf(leadingTabAdornment) + 1;
 
 			if (tabIndex != -1)
 			{
