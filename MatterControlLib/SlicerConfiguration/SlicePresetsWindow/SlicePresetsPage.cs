@@ -75,35 +75,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var duplicateButton = theme.CreateDialogButton("Duplicate".Localize());
 			duplicateButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
-					string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
+				string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
+				string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
 
-					var clonedLayer = presetsContext.PersistenceLayer.Clone();
-					clonedLayer.Name = newProfileName;
-					presetsContext.PresetLayers.Add(clonedLayer);
+				var clonedLayer = presetsContext.PersistenceLayer.Clone();
+				clonedLayer.Name = newProfileName;
+				presetsContext.PresetLayers.Add(clonedLayer);
 
-					presetsContext.SetAsActive(clonedLayer.LayerID);
-					presetsContext.PersistenceLayer = clonedLayer;
+				presetsContext.SetAsActive(clonedLayer.LayerID);
+				presetsContext.PersistenceLayer = clonedLayer;
 
-					sliceSettingsWidget.Close();
-					sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
-					contentRow.AddChild(sliceSettingsWidget);
+				sliceSettingsWidget.Close();
+				sliceSettingsWidget = CreateSliceSettingsWidget(printer, clonedLayer);
+				contentRow.AddChild(sliceSettingsWidget);
 
-					inlineNameEdit.Text = newProfileName;
-				});
+				inlineNameEdit.Text = newProfileName;
 			};
+
 			this.AddPageAction(duplicateButton);
 
 			var deleteButton = theme.CreateDialogButton("Delete".Localize());
 			deleteButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					presetsContext.DeleteLayer();
-					this.DialogWindow.Close();
-				});
+				presetsContext.DeleteLayer();
+				this.DialogWindow.Close();
 			};
 			this.AddPageAction(deleteButton);
 		}

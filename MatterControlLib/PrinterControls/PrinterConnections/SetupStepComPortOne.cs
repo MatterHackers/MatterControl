@@ -119,21 +119,21 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				Margin = new BorderDouble(0, 8),
 				TextColor = theme.TextColor
 			};
-			skipConnectionLink.Click += (s, e) => UiThread.RunOnIdle(() =>
+			skipConnectionLink.Click += (s, e) =>
 			{
 				printer.Connection.HaltConnectionThread();
 				Parent.Close();
-			});
+			};
 			container.AddChild(skipConnectionLink);
 
 			contentRow.AddChild(container);
 
-			//Construct buttons
+			// Construct buttons
 			var nextButton = theme.CreateDialogButton("Continue".Localize());
-			nextButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			nextButton.Click += (s, e) =>
 			{
 				DialogWindow.ChangeToPage(new SetupStepComPortTwo(printer));
-			});
+			};
 
 			this.AddPageAction(nextButton);
 		}

@@ -37,19 +37,19 @@ namespace MatterHackers.MatterControl
 {
 	public class RequestManager
 	{
-		public string LastResponse { protected set; get; }
+		public string LastResponse { get; protected set; }
 
 		/// <summary>
-		/// Gets or sets the time-out value in milliseconds
+		/// Gets the time-out value in milliseconds
 		/// </summary>
 		/// <value>The timeout.</value>
 		public int Timeout { get; internal set; } = 100000;
 
 		private CookieContainer cookies = new CookieContainer();
 
-		internal string GetCookieValue(Uri SiteUri, string name)
+		internal string GetCookieValue(Uri siteUri, string name)
 		{
-			Cookie cookie = cookies.GetCookies(SiteUri)[name];
+			Cookie cookie = cookies.GetCookies(siteUri)[name];
 			return (cookie == null) ? null : cookie.Value;
 		}
 
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 				using (Stream dataStream = response.GetResponseStream())
 				{
 					// Open the stream using a StreamReader for easy access.
-					using (StreamReader reader = new StreamReader(dataStream))
+					using (var reader = new StreamReader(dataStream))
 					{
 						// Read the content.
 						responseFromServer = reader.ReadToEnd();
@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl
 			{
 				response.Close();
 			}
+
 			LastResponse = responseFromServer;
 			return responseFromServer;
 		}
@@ -96,7 +97,7 @@ namespace MatterHackers.MatterControl
 
 		public HttpWebResponse SendGETRequest(string uri, string signIn, string password, bool allowAutoRedirect)
 		{
-			HttpWebRequest request = GenerateRequest (uri, null, "GET", null, null, allowAutoRedirect);
+			HttpWebRequest request = GenerateRequest(uri, null, "GET", null, null, allowAutoRedirect);
 			return GetResponse(request);
 		}
 
@@ -106,8 +107,9 @@ namespace MatterHackers.MatterControl
 			{
 				throw new ArgumentNullException("uri");
 			}
+
 			// Create a request using a URL that can receive a post.
-			HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(uri);
+			var request = (HttpWebRequest)HttpWebRequest.Create(uri);
 			request.Method = method;
 
 			request.Timeout = this.Timeout;
@@ -134,10 +136,9 @@ namespace MatterHackers.MatterControl
 				// Set the ContentLength property of the WebRequest.
 				request.ContentLength = byteArray.Length;
 				// Get the request stream.
-				Stream dataStream = null;
 				try
 				{
-					dataStream = request.GetRequestStream();
+					Stream dataStream = request.GetRequestStream();
 					// Write the data to the request stream.
 					dataStream.Write(byteArray, 0, byteArray.Length);
 					// Close the Stream object.
@@ -145,10 +146,11 @@ namespace MatterHackers.MatterControl
 				}
 				catch (WebException ex)
 				{
-					if(ex.Status == WebExceptionStatus.Timeout)
+					if (ex.Status == WebExceptionStatus.Timeout)
 					{
 						LastResponse = JsonConvert.SerializeObject(new { status = "error", statuscode = 408 });
 					}
+
 					Console.WriteLine("Web exception occurred. Status code: {0}", ex.Status);
 				}
 				catch (IOException ioException)
@@ -160,6 +162,7 @@ namespace MatterHackers.MatterControl
 					System.Diagnostics.Trace.WriteLine(e.Message);
 				}
 			}
+
 			return request;
 		}
 
@@ -169,6 +172,7 @@ namespace MatterHackers.MatterControl
 			{
 				return null;
 			}
+
 			HttpWebResponse response = null;
 			try
 			{
@@ -185,6 +189,7 @@ namespace MatterHackers.MatterControl
 			{
 				Console.WriteLine(ex.Message);
 			}
+
 			return response;
 		}
 	}

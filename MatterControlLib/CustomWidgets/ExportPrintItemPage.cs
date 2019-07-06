@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 
 				DoExport(libraryItems, printer, activePlugin, centerOnBed, showInFolderAfterSave.Checked);
 
-				this.Parent.CloseOnIdle();
+				this.Parent.Close();
 			};
 
 

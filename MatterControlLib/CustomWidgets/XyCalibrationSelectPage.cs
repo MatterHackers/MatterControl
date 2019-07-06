@@ -259,7 +259,8 @@ namespace MatterHackers.MatterControl
 						1,
 						Math.Max(firstLayerHeight * 2, layerHeight * 2),
 						calibrationWizard.Offset,
-						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter));
+						printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter),
+						printer.Settings.GetValue<double>(SettingsKey.wipe_tower_size));
 
 				default:
 					return await XyCalibrationFaceObject3D.Create(

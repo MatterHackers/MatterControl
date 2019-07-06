@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl
 					{
 						settingString.Append(",");
 					}
+
 					first = false;
 
 					settingString.Append(axisLabels[i]);
@@ -147,7 +148,7 @@ namespace MatterHackers.MatterControl
 					printer.Bed.GCodeRenderer?.Clear3DGCode();
 				}
 
-				this.DialogWindow.CloseOnIdle();
+				this.DialogWindow.Close();
 			};
 
 			this.AddPageAction(savePresetsButton);

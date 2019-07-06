@@ -355,7 +355,7 @@ namespace MatterHackers.MatterControl
 					allowDisabledOrHidden: false);
 
 				// If the context changed, update the UI
-				if (namedChildren.LastOrDefault()?.widget is GuiWidget firstUnderMouse
+				if (namedChildren.LastOrDefault()?.Widget is GuiWidget firstUnderMouse
 					&& firstUnderMouse != this.InspectedWidget)
 				{
 					this.InspectedWidget = firstUnderMouse;

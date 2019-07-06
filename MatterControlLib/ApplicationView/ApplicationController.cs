@@ -2186,7 +2186,7 @@ namespace MatterHackers.MatterControl
 			}
 			catch (Exception ex)
 			{
-				reloadingOverlay?.CloseOnIdle();
+				reloadingOverlay?.Close();
 
 				UiThread.RunOnIdle(() =>
 				{

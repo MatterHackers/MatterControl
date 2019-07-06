@@ -188,24 +188,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (sourceEvent.Button == MouseButtons.Right)
 					{
-						UiThread.RunOnIdle(() =>
-						{
-							var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
+						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
 
-							var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-							systemWindow.ShowPopup(
-								new MatePoint(clickedWidget)
-								{
-									Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-									AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-								},
-								new MatePoint(menu)
-								{
-									Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-									AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-								},
-								altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
-						});
+						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+						systemWindow.ShowPopup(
+							new MatePoint(clickedWidget)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							},
+							new MatePoint(menu)
+							{
+								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+							},
+							altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
 					}
 				}
 			};
@@ -527,18 +524,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (ProfileManager.Instance.ActiveProfiles.Count() <= 0)
 			{
 				// If no printer profiles exist, show the printer setup wizard
-				UiThread.RunOnIdle(() =>
+				var window = DialogWindow.Show(new SetupStepMakeModelName());
+				window.Closed += (s2, e2) =>
 				{
-					var window = DialogWindow.Show(new SetupStepMakeModelName());
-					window.Closed += (s2, e2) =>
+					if (ApplicationController.Instance.ActivePrinters.FirstOrDefault() is PrinterConfig printer
+						&& printer.Settings.PrinterSelected)
 					{
-						if (ApplicationController.Instance.ActivePrinters.FirstOrDefault() is PrinterConfig printer
-							&& printer.Settings.PrinterSelected)
-						{
-							CopyPlateToPrinter(sceneContext, printer);
-						}
-					};
-				});
+						CopyPlateToPrinter(sceneContext, printer);
+					}
+				};
 			}
 			else if (ApplicationController.Instance.ActivePrinters.Count() is int printerCount && printerCount > 0)
 			{
@@ -551,38 +545,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				else
 				{
 					// If multiple active printers exist, show select printer dialog
-					UiThread.RunOnIdle(() =>
-					{
-						DialogWindow.Show(
-							new OpenPrinterPage(
-								"Next".Localize(),
-								(selectedPrinter) =>
+					DialogWindow.Show(
+						new OpenPrinterPage(
+							"Next".Localize(),
+							(selectedPrinter) =>
+							{
+								if (selectedPrinter?.Settings.PrinterSelected == true)
 								{
-									if (selectedPrinter?.Settings.PrinterSelected == true)
-									{
-										CopyPlateToPrinter(sceneContext, selectedPrinter);
-									}
-								}));
-					});
+									CopyPlateToPrinter(sceneContext, selectedPrinter);
+								}
+							}));
 				}
 			}
 			else if (ProfileManager.Instance.ActiveProfiles.Any())
 			{
 				// If no active printer but profiles exist, show select printer
-				UiThread.RunOnIdle(() =>
-				{
-					DialogWindow.Show(
-						new OpenPrinterPage(
-							"Next".Localize(),
-							(loadedPrinter) =>
+				DialogWindow.Show(
+					new OpenPrinterPage(
+						"Next".Localize(),
+						(loadedPrinter) =>
+						{
+							if (loadedPrinter is PrinterConfig activePrinter
+								&& activePrinter.Settings.PrinterSelected)
 							{
-								if (loadedPrinter is PrinterConfig activePrinter
-									&& activePrinter.Settings.PrinterSelected)
-								{
-									CopyPlateToPrinter(sceneContext, activePrinter);
-								}
-							}));
-				});
+								CopyPlateToPrinter(sceneContext, activePrinter);
+							}
+						}));
 			}
 		}
 
@@ -874,7 +862,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Scene.Invalidate(new InvalidateArgs(null, InvalidateType.Children));
 
 				// Set focus to View3DWidget after drag-drop
-				UiThread.RunOnIdle(this.Focus);
+				this.Focus();
 
 			}
 		}
@@ -1542,37 +1530,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowPartContextMenu(MouseEventArgs mouseEvent, IObject3D selectedItem)
 		{
-			UiThread.RunOnIdle(() =>
-			{
-				var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
+			var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
 
-				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-				systemWindow.ShowPopup(
-					new MatePoint(this)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					new MatePoint(menu)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
-			});
+			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			systemWindow.ShowPopup(
+				new MatePoint(this)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				new MatePoint(menu)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 		}
 
 		public void ShowBedContextMenu(Vector2 position)
 		{
 			// Workspace/plate context menu
-			UiThread.RunOnIdle(() =>
+			var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+			var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(this);
+
+			var actions = new[]
 			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				var workspaceActions = ApplicationController.Instance.GetWorkspaceActions(this);
-
-				var actions = new[]
-				{
 					new ActionSeparator(),
 					new NamedAction()
 					{
@@ -1593,24 +1576,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					workspaceActions["ClearBed"],
 				};
 
-				theme.CreateMenuItems(popupMenu, actions);
+			theme.CreateMenuItems(popupMenu, actions);
 
-				var popupBounds = new RectangleDouble(position.X + 1, position.Y + 1, position.X + 1, position.Y + 1);
+			var popupBounds = new RectangleDouble(position.X + 1, position.Y + 1, position.X + 1, position.Y + 1);
 
-				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-				systemWindow.ShowPopup(
-					new MatePoint(this)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					new MatePoint(popupMenu)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					altBounds: popupBounds);
-			});
+			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
+			systemWindow.ShowPopup(
+				new MatePoint(this)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				new MatePoint(popupMenu)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				altBounds: popupBounds);
 		}
 
 		// TODO: Consider if we should always allow DragDrop or if we should prevent during printer or other scenarios
@@ -1620,6 +1602,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
+			if (Scene.Descendants().Count() != lastSceneDescendantsCount)
+			{
+				rebuildTreePending = true;
+				UiThread.RunOnIdle(this.RebuildTree);
+			}
+
 			if (e.InvalidateType.HasFlag(InvalidateType.Children)
 				&& !rebuildTreePending)
 			{
@@ -1636,9 +1624,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					rebuildTreePending = true;
 					UiThread.RunOnIdle(this.RebuildTree);
 				}
+
 				Scene.SelectedItem = null;
 				Scene.SelectedItem = lastSelectedItem;
 			}
+
+			lastSceneDescendantsCount = Scene.Descendants().Count();
 
 			// Invalidate widget on scene invalidate
 			this.Invalidate();
@@ -1705,6 +1696,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool assigningTreeNode;
 		private FlowLayoutWidget treeNodeContainer;
 		private InlineStringEdit workspaceName;
+		private int lastSceneDescendantsCount;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 

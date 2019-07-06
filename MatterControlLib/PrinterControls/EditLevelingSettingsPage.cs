@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl
 
 			var savePresetsButton = theme.CreateDialogButton("Save".Localize());
 			savePresetsButton.Name = "Save Leveling Button";
-			savePresetsButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			savePresetsButton.Click += (s, e) =>
 			{
 				PrintLevelingData newLevelingData = printer.Settings.Helpers.PrintLevelingData;
 
@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl
 
 				printer.Settings.Helpers.PrintLevelingData = newLevelingData;
 				this.DialogWindow.Close();
-			});
+			};
 			this.AddPageAction(savePresetsButton);
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());

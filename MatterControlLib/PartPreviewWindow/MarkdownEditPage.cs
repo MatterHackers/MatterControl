@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl
 					editWidget.Text.Replace("\n", "\\n"),
 					userInitiated: true);
 
-				this.DialogWindow.CloseOnIdle();
+				this.DialogWindow.Close();
 			};
 			this.AddPageAction(saveButton);
 

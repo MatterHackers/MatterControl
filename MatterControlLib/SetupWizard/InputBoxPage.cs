@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 				if (!string.IsNullOrEmpty(newName))
 				{
 					action.Invoke(newName);
-					this.DialogWindow.CloseOnIdle();
+					this.DialogWindow.Close();
 				}
 			};
 			this.AddPageAction(actionButton);

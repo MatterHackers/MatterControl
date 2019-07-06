@@ -159,6 +159,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private bool _renderBuildVolume;
+
 		public bool RenderBuildVolume
 		{
 			get => _renderBuildVolume;

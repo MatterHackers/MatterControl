@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.SetupWizard
 						printer.SwapToSettings(printerSettings);
 					}
 
-					UiThread.RunOnIdle(DialogWindow.Close);
+					DialogWindow.Close();
 				}
 			};
 			this.AddPageAction(revertButton);
