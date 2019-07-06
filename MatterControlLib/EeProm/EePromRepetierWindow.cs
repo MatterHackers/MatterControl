@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.EeProm
 		{
 			if (!printer.Connection.IsConnected)
 			{
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 			}
 		}
 	}

@@ -203,7 +203,7 @@ namespace MatterHackers.MatterControl
 		public virtual void ClosePage(bool allowAbort = true)
 		{
 			// Close this dialog window
-			this.Close();
+			this.CloseOnIdle();
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl
 					DialogWindow = this
 				};
 				this.AddChild(newPanel, thisIndex);
-				panel.Close();
+				panel.CloseOnIdle();
 
 				// remember the new content
 				panel = newPanel;

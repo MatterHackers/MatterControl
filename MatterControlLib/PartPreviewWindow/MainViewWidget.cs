@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					searchPanel?.Close();
+					searchPanel?.CloseOnIdle();
 					searchPanelOpenOnMouseDown = false;
 				}
 			}
