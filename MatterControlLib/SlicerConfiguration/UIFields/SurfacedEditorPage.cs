@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.ValueChanged?.Invoke(this, null);
 
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 			};
 			this.AddPageAction(saveButton);
 		}

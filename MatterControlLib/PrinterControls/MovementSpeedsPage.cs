@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl
 					printer.Bed.GCodeRenderer?.Clear3DGCode();
 				}
 
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			this.AddPageAction(savePresetsButton);

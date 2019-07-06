@@ -265,7 +265,8 @@ namespace MatterHackers.MatterControl
 
 				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox(exitConfirmed =>
+					StyledMessageBox.ShowMessageBox(
+						(exitConfirmed) =>
 						{
 							// Record that the exitDialog has closed
 							exitDialogOpen = false;
@@ -282,7 +283,7 @@ namespace MatterHackers.MatterControl
 									printer.Connection.Disable();
 								}
 
-								this.Close();
+								this.CloseOnIdle();
 							}
 						},
 						message,
@@ -306,7 +307,7 @@ namespace MatterHackers.MatterControl
 					// Make sure we tell the Application Controller to shut down. This will release the slicing thread if running.
 					application.Shutdown();
 
-					this.Close();
+					this.CloseOnIdle();
 				});
 			}
 		}

@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.Tour
 			closeButton.Margin = 0;
 			closeButton.Click += (s, e) =>
 			{
-				this.Parent.Close();
+				this.Parent.CloseOnIdle();
 			};
 
 			row.AddChild(closeButton);

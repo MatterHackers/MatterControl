@@ -411,7 +411,7 @@ namespace MatterHackers.MatterControl
 				SystemWindow topSystemWindow = AppContext.RootSystemWindow;
 				if (topSystemWindow != null)
 				{
-					topSystemWindow.Close();
+					topSystemWindow.CloseOnIdle();
 					return true;
 				}
 #endif
