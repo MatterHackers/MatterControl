@@ -140,20 +140,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 								});
 
-							await Task.Run((Func<Task>)(async () =>
+							await Task.Run(async () =>
 							{
 								// Start index generation
 								await HelpIndex.RebuildIndex();
 
-								UiThread.RunOnIdle((Action)(() =>
+								UiThread.RunOnIdle(() =>
 								{
 									// Close popover
 									popover.Close();
 
 									// Continue to original task
 									ShowSearchPanel();
-								}));
-							}));
+								});
+							});
 						}
 						catch
 						{

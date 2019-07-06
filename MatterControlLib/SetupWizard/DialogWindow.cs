@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl
 			this.ChangeToPage(panel);
 
 			// in the event of a reload all make sure we rebuild the contents correctly
-			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((EventHandler)((s,e) =>
+			ApplicationController.Instance.DoneReloadingAll.RegisterEvent((s,e) =>
 			{
 				// Normal theme references are safe to hold in widgets because they're rebuild on ReloadAll. DialogWindow
 				// survives and must refresh its reference on reload
@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl
 
 				// remember the new content
 				panel = newPanel;
-			}), ref unregisterEvents);
+			}, ref unregisterEvents);
 
 			return panel;
 		}

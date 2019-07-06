@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.Library
 			this.scene = scene;
 			this.view3DWidget = view3DWidget;
 
-			this.LoadingItemsTask = Task.Run((Func<Task>)(async () =>
+			this.LoadingItemsTask = Task.Run(async () =>
 			{
 				var offset = Matrix4X4.Identity;
 
@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.Library
 						var aabb = loadedItem.GetAxisAlignedBoundingBox();
 
 						// lets move the cube to the center of the loaded thing
-						placeholderItem.Matrix *= Matrix4X4.CreateTranslation(-10 + aabb.XSize/2, 0, 0);
+						placeholderItem.Matrix *= Matrix4X4.CreateTranslation(-10 + aabb.XSize / 2, 0, 0);
 
 						placeholderItem.Visible = false;
 
@@ -116,7 +116,7 @@ namespace MatterHackers.MatterControl.Library
 						loadedItem.Matrix = loadedItem.Matrix * Matrix4X4.CreateTranslation((double)-aabb.Center.X, (double)-aabb.Center.Y, (double)-aabb.MinXYZ.Z) * placeholderItem.Matrix;
 
 						// check if the item has 0 height (it is probably an image)
-						if(loadedItem.ZSize() == 0)
+						if (loadedItem.ZSize() == 0)
 						{
 							// raise it up a bit so it is not z fighting with the bed
 							loadedItem.Matrix *= Matrix4X4.CreateTranslation(0, 0, .1);
@@ -148,7 +148,7 @@ namespace MatterHackers.MatterControl.Library
 				this.Collapse();
 
 				this.Invalidate(InvalidateType.Children);
-			}));
+			});
 		}
 
 		/// <summary>
@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Library
 			var loadedItems = this.Children;
 
 			// If we only have one item it may be a mcx wrapper, collapse that first.
-			if(loadedItems.Count == 1)
+			if (loadedItems.Count == 1)
 			{
 				var first = loadedItems.First();
 				if (first.GetType() == typeof(Object3D)
@@ -173,18 +173,20 @@ namespace MatterHackers.MatterControl.Library
 						first.CollapseInto(list, false);
 					});
 				}
+
 				loadedItems = this.Children;
 			}
 
-			foreach(var item in loadedItems)
+			foreach (var item in loadedItems)
 			{
 				item.Matrix *= this.Matrix;
 			}
+
 			view3DWidget.Scene.Children.Remove(this);
 
 			if (layoutParts != null)
 			{
-				List<IObject3D> allBedItems = new List<IObject3D>(view3DWidget.Scene.Children);
+				var allBedItems = new List<IObject3D>(view3DWidget.Scene.Children);
 
 				foreach (var item in loadedItems)
 				{

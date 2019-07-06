@@ -263,10 +263,9 @@ namespace MatterHackers.MatterControl
 				// We need to show an interactive dialog to determine if the original Close request should be honored, thus cancel the current Close request
 				eventArgs.Cancel = true;
 
-				UiThread.RunOnIdle((Action)(() =>
+				UiThread.RunOnIdle(() =>
 				{
-					StyledMessageBox.ShowMessageBox(
-(Action<bool>)((exitConfirmed) =>
+					StyledMessageBox.ShowMessageBox(exitConfirmed =>
 						{
 							// Record that the exitDialog has closed
 							exitDialogOpen = false;
@@ -285,18 +284,18 @@ namespace MatterHackers.MatterControl
 
 								this.Close();
 							}
-						}),
+						},
 						message,
 						caption,
 						StyledMessageBox.MessageType.YES_NO_WITHOUT_HIGHLIGHT);
-				}));
+				});
 			}
 			else if (!ApplicationController.Instance.ApplicationExiting)
 			{
 				// cancel the close so that we can save all our active work spaces
 				eventArgs.Cancel = true;
 
-				UiThread.RunOnIdle((Action)(async () =>
+				UiThread.RunOnIdle(async () =>
 				{
 					var application = ApplicationController.Instance;
 
@@ -308,7 +307,7 @@ namespace MatterHackers.MatterControl
 					application.Shutdown();
 
 					this.Close();
-				}));
+				});
 			}
 		}
 
