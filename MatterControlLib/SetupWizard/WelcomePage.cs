@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Tour
 			nextButton.Name = "Next Button";
 			nextButton.Click += (s, e) =>
 			{
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 				UiThread.RunOnIdle(ProductTour.StartTour);
 			};
 

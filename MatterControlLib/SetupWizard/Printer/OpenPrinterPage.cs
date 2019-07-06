@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl
 
 				printerLoaded?.Invoke(printer);
 
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 			}
 		}
 
@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl
 					});
 				}
 
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 
 				base.OnContinue(treeNode);
 			}

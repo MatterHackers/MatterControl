@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl
 			saveButton.Click += (s,e) =>
 			{
 				ApplicationController.Plugins.Save();
-				this.DialogWindow.Close();
+				this.DialogWindow.CloseOnIdle();
 			};
 
 			this.AddPageAction(saveButton);
