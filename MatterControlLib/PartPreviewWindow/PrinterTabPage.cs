@@ -358,12 +358,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ApplicationController_ApplicationEvent(object sender, string e)
 		{
-			printer.Connection.TerminalLog.WriteLine(e);
+			printer.TerminalLog.WriteLine(e);
 		}
 
 		private void ApplicationController_ApplicationError(object sender, string e)
 		{
-			printer.Connection.TerminalLog.WriteLine(e);
+			printer.TerminalLog.WriteLine(e);
 		}
 
 		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

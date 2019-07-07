@@ -2671,7 +2671,7 @@ namespace MatterHackers.MatterControl
 				else // there are no errors continue printing
 				{
 					// clear the output cache prior to starting a print
-					printer.Connection.TerminalLog.Clear();
+					printer.TerminalLog.Clear();
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 

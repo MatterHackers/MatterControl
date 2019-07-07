@@ -68,6 +68,8 @@ namespace MatterHackers.MatterControl
 
 			this.Connection = new PrinterConnection(this);
 
+			this.TerminalLog = new TerminalLog(this.Connection);
+
 			// Register listeners
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 			this.Connection.PrintFinished += ApplicationController.Instance.Connection_PrintFinished;
@@ -88,6 +90,8 @@ namespace MatterHackers.MatterControl
 		public PrinterViewState ViewState { get; }
 
 		public PrinterSettings Settings { get; } = PrinterSettings.Empty;
+
+		public TerminalLog TerminalLog { get; }
 
 		[JsonIgnore]
 		public PrinterConnection Connection { get; }

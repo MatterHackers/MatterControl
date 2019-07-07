@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(printer.Connection.CommunicationState, PrinterCommunication.CommunicationStates.Connected);
 
 					// Assert that two G28s were output to the terminal
-					int g28Count = printer.Connection.TerminalLog.PrinterLines.Where(lineData => lineData.Line.Contains("G28")).Count();
+					int g28Count = printer.TerminalLog.PrinterLines.Where(lineData => lineData.Line.Contains("G28")).Count();
 					Assert.AreEqual(2, g28Count, "The terminal log should contain one G28 from Start-GCode and one G28 from Cancel-GCode");
 				}
 
