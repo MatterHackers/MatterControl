@@ -37,6 +37,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -46,7 +47,8 @@ namespace MatterHackers.MatterControl
 	public class PrinterCalibrationWizard : IStagedSetupWizard
 	{
 		private RoundedToggleSwitch printLevelingSwitch;
-
+		private PrinterConfig printer;
+		
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
 			var stages = new List<ISetupWizard>()
@@ -293,7 +295,6 @@ namespace MatterHackers.MatterControl
 
 		public IEnumerable<ISetupWizard> Stages { get; }
 
-		private PrinterConfig printer;
 
 		public Func<DialogPage> HomePageGenerator { get; }
 
@@ -301,7 +302,10 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
-			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
+			// TODO: Verify invoked with low frequency
+			var printerShim = ApplicationController.Instance.Shim(printer);
+
+			return LevelingValidation.NeedsToBeRun(printerShim) // PrintLevelingWizard
 				|| ZCalibrationWizard.NeedsToBeRun(printer)
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))

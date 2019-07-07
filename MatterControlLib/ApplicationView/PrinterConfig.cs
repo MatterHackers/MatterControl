@@ -54,9 +54,12 @@ namespace MatterHackers.MatterControl
 		private double heatDistance = 0;
 		private double heatStart = 0;
 
+		private PrinterCommunication.SettingsShim.PrinterConfig printerShim;
+
 		private PrinterConfig()
 		{
-			this.Connection = new PrinterConnection(this);
+			this.printerShim = new PrinterCommunication.SettingsShim.PrinterConfig();
+			this.Connection = new PrinterConnection(this.printerShim);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
@@ -66,7 +69,14 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			this.Connection = new PrinterConnection(this);
+			this.printerShim = new PrinterCommunication.SettingsShim.PrinterConfig()
+			{
+				Settings = settings
+			};
+
+			this.Connection = new PrinterConnection(printerShim);
+
+			printerShim.Connection = this.Connection;
 
 			this.TerminalLog = new TerminalLog(this.Connection);
 

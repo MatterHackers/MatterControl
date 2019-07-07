@@ -74,6 +74,7 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.Plugins;
+	using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.Tour;
 	using MatterHackers.PolygonMesh;
@@ -3309,6 +3310,15 @@ Support and tutorials:
 			tabControl.ActiveTab = helpDocsTab;
 
 			return helpDocsTab;
+		}
+
+		internal PrinterCommunication.SettingsShim.PrinterConfig Shim(PrinterConfig printer)
+		{
+			return new PrinterCommunication.SettingsShim.PrinterConfig()
+			{
+				Settings = printer.Settings,
+				Connection = printer.Connection
+			};
 		}
 
 		public class CloudSyncEventArgs : EventArgs

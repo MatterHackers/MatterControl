@@ -269,49 +269,55 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public bool CenterOnBed { get; set; }
 
-		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
+		public static GCodeStream GetExportStream(PrinterConfig printerShim, GCodeStream gCodeBaseStream, bool applyLeveling)
 		{
-			var queuedCommandStream = new QueuedCommandsStream(printer, gCodeBaseStream);
+			var shim = new MatterHackers.MatterControl.PrinterCommunication.SettingsShim.PrinterConfig()
+			{
+				Settings = printerShim.Settings,
+				Connection = printerShim.Connection
+			};
+
+			var queuedCommandStream = new QueuedCommandsStream(shim, gCodeBaseStream);
 			GCodeStream accumulatedStream = queuedCommandStream;
 
-			accumulatedStream = new RelativeToAbsoluteStream(printer, accumulatedStream);
+			accumulatedStream = new RelativeToAbsoluteStream(shim, accumulatedStream);
 
-			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			if (shim.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				var gCodeFileStream = gCodeBaseStream as GCodeFileStream;
-				accumulatedStream = new ToolChangeStream(printer, accumulatedStream, queuedCommandStream, gCodeFileStream);
-				accumulatedStream = new ToolSpeedMultiplierStream(printer, accumulatedStream);
+				accumulatedStream = new ToolChangeStream(shim, accumulatedStream, queuedCommandStream, gCodeFileStream);
+				accumulatedStream = new ToolSpeedMultiplierStream(shim, accumulatedStream);
 			}
 
-			bool levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
+			bool levelingEnabled = shim.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
 
-			accumulatedStream = new BabyStepsStream(printer, accumulatedStream);
+			accumulatedStream = new BabyStepsStream(shim, accumulatedStream);
 
 			if (levelingEnabled
-				&& printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
+				&& shim.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 			{
-				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1);
+				accumulatedStream = new MaxLengthStream(shim, accumulatedStream, 1);
 			}
 			else
 			{
-				accumulatedStream = new MaxLengthStream(printer, accumulatedStream, 1000);
+				accumulatedStream = new MaxLengthStream(shim, accumulatedStream, 1000);
 			}
 
 			if (levelingEnabled
-				&& !LevelingValidation.NeedsToBeRun(printer))
+				&& !LevelingValidation.NeedsToBeRun(shim))
 			{
-				accumulatedStream = new PrintLevelingStream(printer, accumulatedStream);
+				accumulatedStream = new PrintLevelingStream(shim, accumulatedStream);
 			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			if (shim.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
 			{
-				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(printer, accumulatedStream);
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(shim, accumulatedStream);
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
-			accumulatedStream = new RemoveNOPsStream(printer, accumulatedStream);
+			accumulatedStream = new RemoveNOPsStream(shim, accumulatedStream);
 
-			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
+			accumulatedStream = new ProcessWriteRegexStream(shim, accumulatedStream, queuedCommandStream);
 
 			return accumulatedStream;
 		}
@@ -350,6 +356,13 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
+
+				var shim = new PrinterCommunication.SettingsShim.PrinterConfig()
+				{
+					Settings = printer.Settings,
+					Connection = printer.Connection
+				};
+
 				var settings = printer.Settings;
 				var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 				var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
@@ -365,7 +378,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 							new Vector4(multiplier, multiplier, multiplier, multiplier),
 							CancellationToken.None),
-						printer),
+						shim),
 					outputPath);
 			}
 			catch (Exception e)
