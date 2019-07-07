@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
-						printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+						printer.Connection.HomeAxis(PrinterAxis.XYZ);
 					}
 
 					break;
@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			probeOffset.Z = 0;
 			adjustedProbePosition -= probeOffset;
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(PrinterAxis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 
 			// probe the current position

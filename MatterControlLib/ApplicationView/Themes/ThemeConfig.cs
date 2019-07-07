@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl
 	using System.Collections.Generic;
 	using Agg.Image;
 	using CustomWidgets;
-	using MatterHackers.Agg.Platform;
+    using MatterHackers.Agg.Platform;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.VectorMath;
@@ -299,7 +299,7 @@ namespace MatterHackers.MatterControl
 			DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
 		}
 
-		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)
+		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterAxis axis, double movementFeedRate, bool levelingButtons = false)
 		{
 			return new JogControls.MoveButton(label, printer, axis, movementFeedRate, this)
 			{

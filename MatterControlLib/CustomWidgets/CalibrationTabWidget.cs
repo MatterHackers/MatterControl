@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 		private TextWidget xLabel;
 		private TextWidget yLabel;
 
-		private PrinterConnection.Axis _collectionMode = PrinterConnection.Axis.X;
+		private PrinterAxis _collectionMode = PrinterAxis.X;
 
 		public CalibrationTabWidget(XyCalibrationWizard calibrationWizard, TextButton nextButton, ThemeConfig theme)
 		{
@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl
 					Width = barWidth,
 					Index = i,
 					IsActive = i == 3,
-					Axis = PrinterConnection.Axis.X
+					Axis = PrinterAxis.X
 				});
 
 				this.AddChild(new CalibrationPad(titles[i], theme, pointSize: theme.DefaultFontSize - 1)
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl
 					Width = padSize,
 					Index = i,
 					IsActive = i == 3,
-					Axis = PrinterConnection.Axis.Y
+					Axis = PrinterAxis.Y
 				});
 			}
 
@@ -205,7 +205,7 @@ namespace MatterHackers.MatterControl
 			tabStroke = new Stroke(tabShape);
 		}
 
-		private void CalibrationPad_Hovered(object sender, PrinterConnection.Axis axis)
+		private void CalibrationPad_Hovered(object sender, PrinterAxis axis)
 		{
 			// Only show hint on hover if this axis is not collected - prevent accidental close of other axis
 			if (!this.AxisCollected(axis))
@@ -214,7 +214,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ShowHint(PrinterConnection.Axis axis)
+		private void ShowHint(PrinterAxis axis)
 		{
 			if (!AxisCollected(axis))
 			{
@@ -224,13 +224,13 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				// Disable UI hints
-				this.CollectionMode = PrinterConnection.Axis.Z;
+				this.CollectionMode = PrinterAxis.Z;
 			}
 		}
 
-		private bool AxisCollected(PrinterConnection.Axis axis)
+		private bool AxisCollected(PrinterAxis axis)
 		{
-			if (axis == PrinterConnection.Axis.X)
+			if (axis == PrinterAxis.X)
 			{
 				return calibrationWizard.XPick != -1;
 			}
@@ -240,7 +240,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private PrinterConnection.Axis CollectionMode
+		private PrinterAxis CollectionMode
 		{
 			get => _collectionMode;
 			set
@@ -249,12 +249,12 @@ namespace MatterHackers.MatterControl
 
 				switch (_collectionMode)
 				{
-					case PrinterConnection.Axis.Y:
+					case PrinterAxis.Y:
 						xLabel.Visible = false;
 						yLabel.Visible = true;
 						break;
 
-					case PrinterConnection.Axis.X:
+					case PrinterAxis.X:
 						xLabel.Visible = true;
 						yLabel.Visible = false;
 						break;
@@ -271,11 +271,11 @@ namespace MatterHackers.MatterControl
 		{
 			if (sender is CalibrationPad calibrationPad)
 			{
-				if (calibrationPad.Axis == PrinterConnection.Axis.X)
+				if (calibrationPad.Axis == PrinterAxis.X)
 				{
 					calibrationWizard.XPick = calibrationPad.Index;
 				}
-				else if (calibrationPad.Axis == PrinterConnection.Axis.Y)
+				else if (calibrationPad.Axis == PrinterAxis.Y)
 				{
 					calibrationWizard.YPick = calibrationPad.Index;
 				}
@@ -287,7 +287,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				// Toggle hint
-				this.ShowHint(calibrationPad.Axis == PrinterConnection.Axis.X ? PrinterConnection.Axis.Y : PrinterConnection.Axis.X);
+				this.ShowHint(calibrationPad.Axis == PrinterAxis.X ? PrinterAxis.Y : PrinterAxis.X);
 			}
 
 			// CheckIfCanAdvance
@@ -299,11 +299,11 @@ namespace MatterHackers.MatterControl
 			graphics2D.Render(tabShape, tabBaseColor);
 			//graphics2D.Render(tabStroke, theme.Shade);
 
-			if (CollectionMode == PrinterConnection.Axis.X)
+			if (CollectionMode == PrinterAxis.X)
 			{
 				graphics2D.Render(xHighlighter, theme.PrimaryAccentColor);
 			}
-			else if (CollectionMode == PrinterConnection.Axis.Y)
+			else if (CollectionMode == PrinterAxis.Y)
 			{
 				graphics2D.Render(yHighlighter, theme.PrimaryAccentColor);
 			}
@@ -313,7 +313,7 @@ namespace MatterHackers.MatterControl
 
 		private class CalibrationPad : IconButton
 		{
-			public event EventHandler<PrinterConnection.Axis> Hovered;
+			public event EventHandler<PrinterAxis> Hovered;
 
 			private static ImageBuffer activeIcon;
 			private static ImageBuffer inactiveIcon;
@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl
 				base.OnMouseLeaveBounds(mouseEvent);
 			}
 
-			public PrinterConnection.Axis Axis { get; set; }
+			public PrinterAxis Axis { get; set; }
 		}
 	}
 }

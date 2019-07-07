@@ -229,8 +229,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// If more than 10 seconds have passed send a movement command so the motors will stay locked
 					if (UiThread.CurrentTimerMs - lastSendTimeMs > 10000)
 					{
-						printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
-						printer.Connection.MoveRelative(PrinterConnection.Axis.X, -.1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+						printer.Connection.MoveRelative(PrinterAxis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+						printer.Connection.MoveRelative(PrinterAxis.X, -.1, printer.Settings.Helpers.ManualMovementSpeeds().X);
 						lastSendTimeMs = UiThread.CurrentTimerMs;
 					}
 				}

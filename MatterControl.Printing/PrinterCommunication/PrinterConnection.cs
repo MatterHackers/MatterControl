@@ -39,6 +39,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -405,16 +406,6 @@ namespace MatterControl.Printing
 					}
 				}
 			};
-		}
-
-		[Flags]
-		public enum Axis
-		{
-			X = 1,
-			Y = 2,
-			Z = 4,
-			E = 8,
-			XYZ = X | Y | Z
 		}
 
 		public double ActualBedTemperature
@@ -1391,24 +1382,24 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		// this.stopTryingToConnect = true;
 	}
 
-	public void HomeAxis(Axis axis)
+	public void HomeAxis(PrinterAxis axis)
 	{
 		string command = "G28";
 
 		// If we are homing everything we don't need to add any details
-		if (!axis.HasFlag(Axis.XYZ))
+		if (!axis.HasFlag(PrinterAxis.XYZ))
 		{
-			if ((axis & Axis.X) == Axis.X)
+			if ((axis & PrinterAxis.X) == PrinterAxis.X)
 			{
 				command += " X0";
 			}
 
-			if ((axis & Axis.Y) == Axis.Y)
+			if ((axis & PrinterAxis.Y) == PrinterAxis.Y)
 			{
 				command += " Y0";
 			}
 
-			if ((axis & Axis.Z) == Axis.Z)
+			if ((axis & PrinterAxis.Z) == PrinterAxis.Z)
 			{
 				command += " Z0";
 			}
@@ -1417,7 +1408,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		QueueLine(command);
 	}
 
-	public void MoveAbsolute(Axis axis, double axisPositionMm, double feedRateMmPerMinute)
+	public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
 	{
 		SetMovementToAbsolute();
 		QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
@@ -1456,7 +1447,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		}
 	}
 
-	public void MoveRelative(Axis axis, double moveAmountMm, double feedRateMmPerMinute)
+	public void MoveRelative(PrinterAxis axis, double moveAmountMm, double feedRateMmPerMinute)
 	{
 		if (moveAmountMm != 0)
 		{

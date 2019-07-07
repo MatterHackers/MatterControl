@@ -159,13 +159,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void ZMinusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			printer.Connection.MoveRelative(PrinterAxis.Z, -moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();
 		}
 
 		private void ZPlusControl_Click(object sender, EventArgs mouseEvent)
 		{
-			printer.Connection.MoveRelative(PrinterConnection.Axis.Z, moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+			printer.Connection.MoveRelative(PrinterAxis.Z, moveAmount, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			printer.Connection.ReadPosition();
 		}
 	}

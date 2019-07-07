@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(PrinterAxis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.QueueLine("G30");
 			printer.Connection.LineReceived += FinishedProbe;

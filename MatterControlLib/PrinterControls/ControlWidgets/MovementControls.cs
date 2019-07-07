@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.XYZ);
 			toolbar.AddChild(homeIcon);
 
 			var homeXButton = new TextButton("X", theme)
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
+			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.X);
 			toolbar.AddChild(homeXButton);
 
 			var homeYButton = new TextButton("Y", theme)
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
+			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.Y);
 			toolbar.AddChild(homeYButton);
 
 			var homeZButton = new TextButton("Z", theme)
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.Z);
 			toolbar.AddChild(homeZButton);
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);

@@ -28,44 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterControl.Printing;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterHackers.MatterControl
 {
-	public class CalibrateProbeLastPageInstructions : WizardPage
+	[Flags]
+	public enum PrinterAxis
 	{
-		public CalibrateProbeLastPageInstructions(ISetupWizard setupWizard, string headerText)
-			: base(setupWizard, headerText, "")
-		{
-			contentRow.AddChild(
-				this.CreateTextField(
-					"Z Calibration complete.".Localize() +
-					"\n    • " +
-					"Remove the paper".Localize()));
-
-			contentRow.BackgroundColor = theme.MinimalShade;
-
-			this.ShowWizardFinished();
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			printer.Connection.QueueLine("T0");
-			printer.Connection.MoveRelative(PrinterAxis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
-
-			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
-			{
-				printer.Connection.HomeAxis(PrinterAxis.XYZ);
-			}
-			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
-			{
-				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
-				printer.Connection.MoveRelative(PrinterAxis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
-			}
-
-			base.OnLoad(args);
-		}
+		X = 1,
+		Y = 2,
+		Z = 4,
+		E = 8,
+		XYZ = X | Y | Z
 	}
 }

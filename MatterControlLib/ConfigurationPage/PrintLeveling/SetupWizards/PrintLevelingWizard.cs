@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 						if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 						{
-							printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+							printer.Connection.HomeAxis(PrinterAxis.XYZ);
 						}
 
 						yield break;

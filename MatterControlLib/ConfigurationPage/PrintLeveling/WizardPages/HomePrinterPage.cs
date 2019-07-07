@@ -58,12 +58,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override void OnLoad(EventArgs args)
 		{
-			printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			printer.Connection.HomeAxis(PrinterAxis.XYZ);
 
 			if(!printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
 				// move so we don't heat the printer while the nozzle is touching the bed
-				printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+				printer.Connection.MoveAbsolute(PrinterAxis.Z, 10, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
 			NextButton.Enabled = false;

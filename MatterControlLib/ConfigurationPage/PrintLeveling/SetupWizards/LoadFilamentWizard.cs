@@ -206,13 +206,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								if (false)
 								{
 									// Quiet mode
-									printer.Connection.MoveRelative(PrinterConnection.Axis.E, 1, 80);
+									printer.Connection.MoveRelative(PrinterAxis.E, 1, 80);
 									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
 								}
 								else
 								{
 									// Pulse mode
-									printer.Connection.MoveRelative(PrinterConnection.Axis.E, 1, 150);
+									printer.Connection.MoveRelative(PrinterAxis.E, 1, 150);
 									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
 								}
 
@@ -380,13 +380,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 								if (false)
 								{
 									// Quite mode
-									printer.Connection.MoveRelative(PrinterConnection.Axis.E, 2, 140);
+									printer.Connection.MoveRelative(PrinterAxis.E, 2, 140);
 									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
 								}
 								else
 								{
 									// Pulse mode
-									printer.Connection.MoveRelative(PrinterConnection.Axis.E, 2, 150);
+									printer.Connection.MoveRelative(PrinterAxis.E, 2, 150);
 									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
 								}
 
