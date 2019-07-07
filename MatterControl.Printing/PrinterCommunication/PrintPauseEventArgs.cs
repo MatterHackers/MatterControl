@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 
-namespace MatterHackers.MatterControl.PrinterCommunication
+namespace MatterControl.Printing
 {
 	public class PrintPauseEventArgs : EventArgs
 	{

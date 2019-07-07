@@ -29,9 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 
-namespace MatterHackers.MatterControl.PrinterCommunication
+namespace MatterControl.Printing
 {
-
 	/// <summary>
 	/// This is a class to pass temperatures to callbacks that expect them.
 	/// </summary>

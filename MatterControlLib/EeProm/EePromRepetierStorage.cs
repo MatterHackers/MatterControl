@@ -30,8 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.EeProm
 {

@@ -28,8 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -37,12 +36,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizardCustom : LevelingPlan
 	{
-		public LevelWizardCustom(PrinterConfig printer)
+		public LevelWizardCustom(PrintHostConfig printer)
 			: base(printer)
 		{
 		}
 
-		public static List<Vector2> ParseLevelingSamplePoints(PrinterConfig printer)
+		public static List<Vector2> ParseLevelingSamplePoints(PrintHostConfig printer)
 		{
 			var pointsToProbe = new List<Vector2>();
 			var samples = printer.Settings.GetValue(SettingsKey.leveling_sample_points).Replace("\r", "").Replace("\n", "").Trim();

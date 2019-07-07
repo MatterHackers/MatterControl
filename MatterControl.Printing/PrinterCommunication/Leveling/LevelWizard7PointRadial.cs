@@ -28,15 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard7PointRadial : LevelingPlan
 	{
-		public LevelWizard7PointRadial(PrinterConfig printer)
+		public LevelWizard7PointRadial(PrintHostConfig printer)
 			: base(printer)
 		{
 		}

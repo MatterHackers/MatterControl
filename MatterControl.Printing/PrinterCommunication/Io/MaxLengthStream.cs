@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -41,13 +40,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<PrinterMove> movesToSend = new List<PrinterMove>();
 		private int layerCount = -1;
 
-		public MaxLengthStream(PrinterConfig printer, GCodeStream internalStream, double maxSegmentLength)
+		public MaxLengthStream(PrintHostConfig printer, GCodeStream internalStream, double maxSegmentLength)
 			: base(printer, internalStream)
 		{
 			this.MaxSegmentLength = maxSegmentLength;
 		}
 
 		PrinterMove lastDestination = PrinterMove.Unknown;
+
 		public double MaxSegmentLength { get; set; }
 
 		public override string DebugInfo

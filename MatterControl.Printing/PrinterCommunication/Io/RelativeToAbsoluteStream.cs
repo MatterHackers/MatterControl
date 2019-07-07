@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		bool eAbsoluteMode = true;
 		private bool haveSentG90;
 
-		public RelativeToAbsoluteStream(PrinterConfig printer, GCodeStream internalStream)
+		public RelativeToAbsoluteStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}

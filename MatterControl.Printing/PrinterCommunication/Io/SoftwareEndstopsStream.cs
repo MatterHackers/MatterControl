@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		AxisAlignedBoundingBox[] extruderBounds = new AxisAlignedBoundingBox[4];
 
-		public SoftwareEndstopsStream(PrinterConfig printer, GCodeStream internalStream)
+		public SoftwareEndstopsStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			CalculateBounds();

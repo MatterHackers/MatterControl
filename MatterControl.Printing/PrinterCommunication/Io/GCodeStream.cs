@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Text;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
@@ -53,9 +52,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private readonly bool useG0ForMovement = false;
 
-		protected PrinterConfig printer { get; }
+		protected PrintHostConfig printer { get; }
 
-		public GCodeStream(PrinterConfig printer)
+		public GCodeStream(PrintHostConfig printer)
 		{
 			this.printer = printer;
 			if (printer != null)

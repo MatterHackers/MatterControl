@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public FeedRateMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
+		public FeedRateMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}

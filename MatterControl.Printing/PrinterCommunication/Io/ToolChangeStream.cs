@@ -31,7 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -63,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private readonly double[] targetTemps = new double[4];
 		private readonly Queue<string> queuedCommands = new Queue<string>();
 
-		public ToolChangeStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
+		public ToolChangeStream(PrintHostConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
 			: base(printer, internalStream)
 		{
 			this.gcodeLineReader = gcodeLineReader;

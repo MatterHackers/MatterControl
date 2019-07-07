@@ -29,14 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public static class LevelingValidation
 	{
-		public static bool NeedsToBeRun(PrinterConfig printer)
+		public static bool NeedsToBeRun(PrintHostConfig printer)
 		{
 			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 

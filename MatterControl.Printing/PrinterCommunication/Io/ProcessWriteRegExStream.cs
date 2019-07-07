@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -44,7 +43,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string DebugInfo => "";
 
-		public ProcessWriteRegexStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
+		public ProcessWriteRegexStream(PrintHostConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(printer, internalStream)
 		{
 			this.queueStream = queueStream;
@@ -100,7 +99,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public static List<string> ProcessWriteRegEx(string lineToWrite, PrinterConfig printer)
+		public static List<string> ProcessWriteRegEx(string lineToWrite, PrintHostConfig printer)
 		{
 			var linesToWrite = new List<string>();
 			linesToWrite.Add(lineToWrite);

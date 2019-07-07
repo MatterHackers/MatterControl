@@ -27,8 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -36,7 +35,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		public override string DebugInfo => "";
 
-		public RemoveNOPsStream(PrinterConfig printer, GCodeStream internalStream)
+		public RemoveNOPsStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}

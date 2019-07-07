@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -151,8 +152,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sectionWidget.ContentPanel.Children<SettingsRow>().First().Border = new BorderDouble(0, 1);
 				sectionWidget.ContentPanel.Children<SettingsRow>().Last().Border = 0;
 
-				var printerReadyToTakeCommands = printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.FinishedPrint
-					|| printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected;
+				var printerReadyToTakeCommands = printer.Connection.CommunicationState == CommunicationStates.FinishedPrint
+					|| printer.Connection.CommunicationState == CommunicationStates.Connected;
 
 				// add the start print button
 				var setupRow = new FlowLayoutWidget()

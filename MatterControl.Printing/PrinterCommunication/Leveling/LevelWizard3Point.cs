@@ -28,8 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -37,7 +36,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class LevelWizard3Point : LevelingPlan
 	{
-		public LevelWizard3Point(PrinterConfig printer)
+		public LevelWizard3Point(PrintHostConfig printer)
 			: base(printer)
 		{
 		}

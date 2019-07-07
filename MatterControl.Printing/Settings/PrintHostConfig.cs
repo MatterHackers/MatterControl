@@ -27,40 +27,28 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterControl.Printing;
-using MatterHackers.VectorMath;
+using System.Diagnostics;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterControl.Printing
 {
-	public class LevelWizard100PointRadial : LevelingPlan
+	public class PrintHostConfig
 	{
-		public LevelWizard100PointRadial(PrintHostConfig printer)
-			: base(printer)
+		public PrinterSettings Settings { get; set; }
+
+		public PrinterConnection Connection { get; set; }
+
+		private string _activePrintName = "Unknown";
+
+		public string ActivePrintName
 		{
-		}
-
-		public override int ProbeCount => 100;
-
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
-		{
-			// the center
-			foreach (var sample in GetSampleRing(1, 0, 0))
+			get
 			{
-				yield return sample;
+				// TODO: Caller must set - previously came from: printer.Bed.EditContext?.SourceItem?.Name
+				Debugger.Break();
+				return _activePrintName;
 			}
-
-			int[] ringCounts = { 3, 6, 12, 26, 52 };
-			double[] ringPhase = { 0, MathHelper.Tau * 2 / 3, MathHelper.Tau / 2, MathHelper.Tau / 2, MathHelper.Tau / 2 };
-			double step = .9 / 5;
-			// and several rings
-			for (int i = 0; i < 5; i++)
-			{
-				foreach (var sample in GetSampleRing(ringCounts[i], step + step * i, ringPhase[i]))
-				{
-					yield return sample;
-				}
-			}
+			set => _activePrintName = value;
 		}
 	}
 }

@@ -30,11 +30,9 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Markdig.Agg;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -51,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private double babySteppingValue;
 		private bool wizardExited;
 		private bool hasHardwareLeveling;
-		private PrinterCommunication.SettingsShim.PrinterConfig printerShim;
+		private PrintHostConfig printerShim;
 
 		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)

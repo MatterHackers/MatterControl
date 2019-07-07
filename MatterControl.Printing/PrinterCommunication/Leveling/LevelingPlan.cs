@@ -29,8 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -38,7 +37,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public abstract class LevelingPlan
 	{
-		protected PrinterConfig printer;
+		protected PrintHostConfig printer;
 
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
@@ -46,12 +45,12 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public virtual int TotalSteps => this.ProbeCount * 3;
 
-		public LevelingPlan(PrinterConfig printer)
+		public LevelingPlan(PrintHostConfig printer)
 		{
 			this.printer = printer;
 		}
 
-		public static Vector2 ProbeOffsetSamplePosition(PrinterConfig printer)
+		public static Vector2 ProbeOffsetSamplePosition(PrintHostConfig printer)
 		{
 			if (printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) == LevelingSystem.ProbeCustom)
 			{

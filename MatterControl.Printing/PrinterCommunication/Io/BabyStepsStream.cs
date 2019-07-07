@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -45,7 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public Vector3 BabbyStepOffset { get; private set; } = Vector3.Zero;
 
-		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream)
+		public BabyStepsStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			printer.Settings.SettingChanged += Printer_SettingChanged;

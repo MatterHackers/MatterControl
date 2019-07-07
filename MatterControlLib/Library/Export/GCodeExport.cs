@@ -274,7 +274,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
 		{
-			var shim = new MatterHackers.MatterControl.PrinterCommunication.SettingsShim.PrinterConfig()
+			var shim = new PrintHostConfig()
 			{
 				Settings = printer.Settings,
 				Connection = printer.Connection
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			try
 			{
 
-				var shim = new PrinterCommunication.SettingsShim.PrinterConfig()
+				var shim = new PrintHostConfig()
 				{
 					Settings = printer.Settings,
 					Connection = printer.Connection

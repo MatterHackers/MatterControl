@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 

@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
@@ -37,7 +37,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private double nextPercent = -1;
 
-		public SendProgressStream(GCodeStream internalStream, PrinterConfig printer)
+		public SendProgressStream(GCodeStream internalStream, PrintHostConfig printer)
 			: base(printer, internalStream)
 		{
 		}

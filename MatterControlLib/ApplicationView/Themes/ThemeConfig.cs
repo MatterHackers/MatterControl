@@ -39,7 +39,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Localizations;
 	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MatterControl.PrinterCommunication;
 	using MatterHackers.VectorMath;
 
 	public class ThemeConfig

@@ -35,10 +35,9 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 namespace MatterHackers.MatterControl
 {
 	using System.Threading;
+	using global::MatterControl.Printing;
 	using MatterHackers.Agg;
 	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.PrinterCommunication;
-	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 	using MatterHackers.VectorMath;
 	using Newtonsoft.Json;
 
@@ -54,11 +53,11 @@ namespace MatterHackers.MatterControl
 		private double heatDistance = 0;
 		private double heatStart = 0;
 
-		private PrinterCommunication.SettingsShim.PrinterConfig printerShim;
+		private PrintHostConfig printerShim;
 
 		private PrinterConfig()
 		{
-			this.printerShim = new PrinterCommunication.SettingsShim.PrinterConfig();
+			this.printerShim = new PrintHostConfig();
 			this.Connection = new PrinterConnection(this.printerShim);
 		}
 
@@ -69,7 +68,7 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			this.printerShim = new PrinterCommunication.SettingsShim.PrinterConfig()
+			this.printerShim = new PrintHostConfig()
 			{
 				Settings = settings
 			};

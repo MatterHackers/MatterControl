@@ -37,18 +37,16 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PrinterCommunication
+namespace MatterControl.Printing
 {
 	public enum TurnOff
 	{
@@ -276,7 +274,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;
 
-		public PrinterConnection(PrinterConfig printer)
+		public PrinterConnection(PrintHostConfig printer)
 		{
 			this.Printer = printer;
 
@@ -920,7 +918,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			}
 		}
 
-		public PrinterConfig Printer { get; }
+		public PrintHostConfig Printer { get; }
 
 		public void ReleaseAndReportFailedConnection(ConnectionFailure reason)
 		{

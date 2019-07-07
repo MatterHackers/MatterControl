@@ -28,13 +28,13 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class NotPrintingStream : GCodeStream
 	{
-		public NotPrintingStream(PrinterConfig printer)
+		public NotPrintingStream(PrintHostConfig printer)
 			: base(printer)
 		{
 		}

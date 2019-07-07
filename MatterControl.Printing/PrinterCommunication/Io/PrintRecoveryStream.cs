@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -49,7 +48,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
 
-		public PrintRecoveryStream(GCodeSwitcher internalStream, PrinterConfig printer, double percentDone)
+		public PrintRecoveryStream(GCodeSwitcher internalStream, PrintHostConfig printer, double percentDone)
 			: base(printer)
 		{
 			this.internalStream = internalStream;
@@ -227,7 +226,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						{
 							// move to the height we can recover printing from
 							Vector2 recoverPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new VectorMath.Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, printer.Settings.ZSpeed())));
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, printer.Settings.ZSpeed())));
 						}
 
 						double extruderWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);

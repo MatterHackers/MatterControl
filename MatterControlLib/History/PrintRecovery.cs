@@ -29,10 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.IO;
 using System.Linq;
+using MatterControl.Printing;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintHistory

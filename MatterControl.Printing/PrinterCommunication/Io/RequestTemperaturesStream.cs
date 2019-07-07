@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	{
 		private long nextReadTimeMs = 0;
 
-		public RequestTemperaturesStream(PrinterConfig printer, GCodeStream internalStream)
+		public RequestTemperaturesStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			nextReadTimeMs = UiThread.CurrentTimerMs + 1000;

@@ -31,8 +31,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MIConvexHull;
@@ -43,9 +41,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
-		private PrinterConfig printer;
+		private PrintHostConfig printer;
 
-		public LevelingFunctions(PrinterConfig printer, PrintLevelingData levelingData)
+		public LevelingFunctions(PrintHostConfig printer, PrintLevelingData levelingData)
 		{
 			this.printer = printer;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);

@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.Agg;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 		private double t0Multiplier;
 
-		public ToolSpeedMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
+		public ToolSpeedMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);

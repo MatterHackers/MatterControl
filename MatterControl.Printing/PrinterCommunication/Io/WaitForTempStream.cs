@@ -27,11 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Diagnostics;
 using System.Threading;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -53,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private bool waitWhenCooling = false;
 
-		public WaitForTempStream(PrinterConfig printer, GCodeStream internalStream)
+		public WaitForTempStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			state = State.Passthrough;

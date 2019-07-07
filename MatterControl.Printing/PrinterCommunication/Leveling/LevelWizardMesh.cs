@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private int gridWidth;
 		private int gridHeight;
 
-		public LevelWizardMesh(PrinterConfig printer, int width, int height)
+		public LevelWizardMesh(PrintHostConfig printer, int width, int height)
 			: base(printer)
 		{
 			this.gridWidth = width;

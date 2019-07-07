@@ -35,7 +35,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -62,7 +61,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string DebugInfo => "";
 
-		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
+		public PauseHandlingStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			// if we have a runout sensor, register to listen for lines to check it

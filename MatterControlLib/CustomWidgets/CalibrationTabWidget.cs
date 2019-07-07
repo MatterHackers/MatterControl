@@ -29,15 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
-using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 using static MatterHackers.Agg.ShapePath;
 

@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -37,7 +36,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double currentActualExtrusionPosition = 0;
 		private double previousGcodeRequestedExtrusionPosition = 0;
 
-		public ExtrusionMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
+		public ExtrusionMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}

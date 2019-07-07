@@ -32,7 +32,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -46,7 +45,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private string lastLine = "";
 
-		public GCodeSwitcher(Stream gcodeStream, PrinterConfig printer, int startLine = 0)
+		public GCodeSwitcher(Stream gcodeStream, PrintHostConfig printer, int startLine = 0)
 			: base(printer)
 		{
 			var settings = this.printer.Settings;

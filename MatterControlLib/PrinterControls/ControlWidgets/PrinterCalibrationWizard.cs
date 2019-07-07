@@ -37,7 +37,6 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;

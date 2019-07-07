@@ -27,7 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.PrinterCommunication;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {

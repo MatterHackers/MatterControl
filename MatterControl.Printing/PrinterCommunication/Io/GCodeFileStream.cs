@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterControl.Printing;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -37,7 +36,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private int printerCommandQueueLineIndex = -1;
 		private string lastLine = "";
 
-		public GCodeFileStream(GCodeFile fileStreaming, PrinterConfig printer, int startLine = 0)
+		public GCodeFileStream(GCodeFile fileStreaming, PrintHostConfig printer, int startLine = 0)
 			: base(printer)
 		{
 			this.GCodeFile = fileStreaming;

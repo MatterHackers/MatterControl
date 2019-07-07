@@ -39,7 +39,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
@@ -66,7 +65,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.DataConverters3D.UndoCommands;
-	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Extensibility;
@@ -74,7 +72,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.MatterControl.PartPreviewWindow;
 	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 	using MatterHackers.MatterControl.Plugins;
-	using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 	using MatterHackers.MatterControl.Tour;
 	using MatterHackers.PolygonMesh;
@@ -3316,9 +3313,9 @@ Support and tutorials:
 			return helpDocsTab;
 		}
 
-		internal PrinterCommunication.SettingsShim.PrinterConfig Shim(PrinterConfig printer)
+		internal PrintHostConfig Shim(PrinterConfig printer)
 		{
-			return new PrinterCommunication.SettingsShim.PrinterConfig()
+			return new PrintHostConfig()
 			{
 				Settings = printer.Settings,
 				Connection = printer.Connection

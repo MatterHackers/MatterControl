@@ -28,9 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
+using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling

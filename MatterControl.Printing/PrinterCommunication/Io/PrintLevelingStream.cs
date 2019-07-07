@@ -27,8 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
 
-		public PrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
+		public PrintLevelingStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			// always reset this when we construct

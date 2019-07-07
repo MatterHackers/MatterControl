@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -38,11 +39,9 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ActionBar;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.EeProm;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.SetupWizard;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {

@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterHackers.MatterControl.PrinterCommunication.SettingsShim;
+using MatterControl.Printing;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
 
-		public QueuedCommandsStream(PrinterConfig printer, GCodeStream internalStream)
+		public QueuedCommandsStream(PrintHostConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 		}
