@@ -34,7 +34,6 @@ using System.Linq;
 using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-using MatterHackers.DataConverters3D;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -607,6 +606,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printCenter.Y + bedSize.Y / 2);
 			}
 		}
+
+		public AxisAlignedBoundingBox BedAABB()
+		{
+			var bedSize = this.GetValue<Vector2>(SettingsKey.bed_size);
+			var printCenter = this.GetValue<Vector2>(SettingsKey.print_center);
+			var buildHeight = this.GetValue<double>(SettingsKey.build_height);
+
+			if (buildHeight == 0)
+			{
+				buildHeight = double.PositiveInfinity;
+			}
+
+			return new AxisAlignedBoundingBox(
+				printCenter.X - bedSize.X / 2, // min x
+				printCenter.Y - bedSize.Y / 2, // min y
+				0, // min z
+				printCenter.X + bedSize.X / 2, // max x
+				printCenter.Y + bedSize.Y / 2, // max y
+				buildHeight); // max z
+		}
+
 
 		private void ResetHotendBounds()
 		{
