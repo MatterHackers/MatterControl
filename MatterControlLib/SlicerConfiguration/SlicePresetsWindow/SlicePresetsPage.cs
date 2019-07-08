@@ -126,8 +126,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.DialogWindow.Padding = 0;
 			footerRow.Padding = theme.DefaultContainerPadding;
 			footerRow.Margin = 0;
-			footerRow.Border = new BorderDouble(top: 1);
-			footerRow.BorderColor = theme.TabBarBackground;
 			base.OnLoad(args);
 		}
 	}
