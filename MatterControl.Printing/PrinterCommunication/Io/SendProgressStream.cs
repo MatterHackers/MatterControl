@@ -27,11 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterControl.Printing;
-using MatterHackers.MatterControl.SlicerConfiguration;
-
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public class SendProgressStream : GCodeStreamProxy
 	{

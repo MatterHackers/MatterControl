@@ -29,9 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterControl.Printing;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public class QueuedCommandsStream : GCodeStreamProxy
 	{

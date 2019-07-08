@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public class GCodeSwitcher : GCodeStream, IGCodeLineReader
 	{

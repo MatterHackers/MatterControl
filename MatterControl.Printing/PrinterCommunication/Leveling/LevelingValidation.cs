@@ -29,10 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterControl.Printing.PrintLeveling
 {
 	public static class LevelingValidation
 	{

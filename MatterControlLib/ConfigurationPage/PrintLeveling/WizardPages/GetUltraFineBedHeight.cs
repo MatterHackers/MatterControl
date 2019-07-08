@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling

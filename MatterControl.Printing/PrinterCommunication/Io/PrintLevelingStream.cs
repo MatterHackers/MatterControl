@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,12 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterControl.Printing;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public class PrintLevelingStream : GCodeStreamProxy
 	{

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,9 +29,8 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterControl.Printing;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public class MaxLengthStream : GCodeStreamProxy
 	{

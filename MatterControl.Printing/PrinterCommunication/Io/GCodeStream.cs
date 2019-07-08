@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2015, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,10 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Text;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.PrinterCommunication.Io
+namespace MatterControl.Printing.Pipelines
 {
 	public abstract class GCodeStream : IDisposable
 	{

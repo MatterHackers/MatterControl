@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Text;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using MIConvexHull;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterControl.Printing.PrintLeveling
 {
 	public class LevelingFunctions
 	{

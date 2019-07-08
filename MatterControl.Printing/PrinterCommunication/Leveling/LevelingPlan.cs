@@ -29,11 +29,10 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterControl.Printing.PrintLeveling
 {
 	public abstract class LevelingPlan
 	{

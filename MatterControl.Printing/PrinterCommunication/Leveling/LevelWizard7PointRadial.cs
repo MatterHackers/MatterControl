@@ -28,10 +28,9 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using MatterControl.Printing;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
+namespace MatterControl.Printing.PrintLeveling
 {
 	public class LevelWizard7PointRadial : LevelingPlan
 	{
