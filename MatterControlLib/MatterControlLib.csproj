@@ -58,7 +58,6 @@
 
   <ItemGroup>
     <Compile Remove="DesignTools\Primitives\HexGridObject3D.cs" />
-    <Compile Remove="PrinterCommunication\Io\TrackPrinterPosition.cs" />
   </ItemGroup>
 
   <ItemGroup>
