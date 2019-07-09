@@ -39,7 +39,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PrinterEmulator;

@@ -27,10 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
-using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using NUnit.Framework;

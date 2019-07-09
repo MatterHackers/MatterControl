@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -24,7 +25,7 @@ namespace MatterControl.Tests.MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
-			var levelingSolution = new LevelWizard3Point(printer);
+			var levelingSolution = new LevelWizard3Point(printer.Shim());
 			var printerSettings = printer.Settings;
 
 			{

@@ -1,16 +1,7 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
-using MatterHackers.MatterControl.PrinterCommunication;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.PrinterEmulator;
-using MatterHackers.VectorMath;
+using MatterControl.Printing;
 using NUnit.Framework;
-using static MatterHackers.MatterControl.PrinterCommunication.PrinterConnection;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -34,10 +25,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.CloseFirstPrinterTab();
 
 					// Ensure disconnected
-					testRunner.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Disconnected);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Disconnected);
 					Assert.AreEqual(CommunicationStates.Disconnected, printer.Connection.CommunicationState, "Printer should be Disconnected after closing printer tab");
 
-					Assert.AreEqual(0, ReadThread.NumRunning, "No ReadThread instances should be running when only printer Disconnected");
+					Assert.AreEqual(0, PrinterConnection.ReadThread.NumRunning, "No ReadThread instances should be running when only printer Disconnected");
 				}
 
 				return Task.CompletedTask;

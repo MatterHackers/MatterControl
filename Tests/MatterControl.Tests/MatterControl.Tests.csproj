@@ -53,6 +53,7 @@
     <Compile Include="MatterControl\AssetManagerTests.cs" />
     <Compile Include="MatterControl\MeshRebuildTests.cs" />
     <Compile Include="MatterControl\MeshCsgTests.cs" />
+    <Compile Include="MatterControl\PrinterSettingsExtensions.cs" />
     <Compile Include="MatterControl\PrinterSettingsTests.cs" />
     <Compile Include="MatterControl\SliceSettingsFieldTests.cs" />
     <Compile Include="MatterControl\SettingsParseTests.cs" />

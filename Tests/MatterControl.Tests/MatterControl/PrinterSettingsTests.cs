@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
@@ -87,7 +88,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 
 			var printer = new PrinterConfig(new PrinterSettings());
-			var levelingSolution = new LevelWizard3Point(printer);
+			var levelingSolution = new LevelWizard3Point(printer.Shim());
 			var printerSettings = printer.Settings;
 
 			var json = printer.Settings.ToJson();

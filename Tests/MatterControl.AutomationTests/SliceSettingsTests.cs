@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -93,8 +94,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Stop Task Button");
 
 					// Wait for and assert that printing has been canceled
-					testRunner.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
-					Assert.AreEqual(printer.Connection.CommunicationState, PrinterCommunication.CommunicationStates.Connected);
+					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+					Assert.AreEqual(printer.Connection.CommunicationState, CommunicationStates.Connected);
 
 					// Assert that two G28s were output to the terminal
 					int g28Count = printer.TerminalLog.PrinterLines.Where(lineData => lineData.Line.Contains("G28")).Count();
