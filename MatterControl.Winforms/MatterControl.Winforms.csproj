@@ -66,6 +66,10 @@
       <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
       <Name>MatterControl.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj">
+      <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
+      <Name>MatterControl.Printing</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MatterControlLib\MatterControlLib.csproj">
       <Project>{D557B079-612F-467F-AE0D-3F77BCD627F7}</Project>
       <Name>MatterControlLib</Name>

@@ -29,12 +29,12 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Utilities;
 using MatterHackers.VectorMath;
@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+			homeIcon.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.XYZ);
 			toolbar.AddChild(homeIcon);
 
 			var homeXButton = new TextButton("X", theme)
@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.X);
+			homeXButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.X);
 			toolbar.AddChild(homeXButton);
 
 			var homeYButton = new TextButton("Y", theme)
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Y);
+			homeYButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.Y);
 			toolbar.AddChild(homeYButton);
 
 			var homeZButton = new TextButton("Z", theme)
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				BackgroundColor = theme.MinimalShade,
 				Margin = theme.ButtonSpacing
 			};
-			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
+			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterAxis.Z);
 			toolbar.AddChild(homeZButton);
 
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);

@@ -60,8 +60,8 @@ namespace MatterHackers.MatterControl
 			this.visibleLines = sourceLines.Select(ld => ld.Line).ToList();
 
 			// Register listeners
-			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
-			printer.Connection.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
+			printer.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
+			printer.TerminalLog.LogCleared += this.TerminalLog_LogCleared;
 		}
 
 		public double Position0To1
@@ -158,8 +158,8 @@ namespace MatterHackers.MatterControl
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners
-			printer.Connection.TerminalLog.LineAdded -= this.TerminalLog_LineAdded;
-			printer.Connection.TerminalLog.LogCleared -= this.TerminalLog_LogCleared;
+			printer.TerminalLog.LineAdded -= this.TerminalLog_LineAdded;
+			printer.TerminalLog.LogCleared -= this.TerminalLog_LogCleared;
 
 			base.OnClosed(e);
 		}

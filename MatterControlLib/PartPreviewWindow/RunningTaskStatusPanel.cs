@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& sender is RunningTaskDetails details
 				&& details.Owner is PrinterConfig printer)
 			{
-				printer.Connection.TerminalLog.WriteLine(e.Status);
+				printer.TerminalLog.WriteLine(e.Status);
 				return;
 			}
 

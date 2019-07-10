@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using MatterControl.Printing;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
@@ -65,7 +66,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(0, 10, 0));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer.Shim(), levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);
@@ -106,7 +107,7 @@ namespace MatterControl.Tests.MatterControl
 				levelingData.SampledPositions.Add(new Vector3(5, 10, 5));
 				levelingData.SampledPositions.Add(new Vector3(10, 10, 10));
 
-				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer, levelingData);
+				LevelingFunctions levelingFunctionsMesh2x2 = new LevelingFunctions(printer.Shim(), levelingData);
 
 				// check on points
 				AssertMeshLevelPoint(new Vector3(0, 0, 0), new Vector3(0, 0, 0), levelingFunctionsMesh2x2);

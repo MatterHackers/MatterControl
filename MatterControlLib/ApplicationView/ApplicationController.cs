@@ -39,7 +39,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
@@ -66,7 +65,6 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.VertexSource;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.DataConverters3D.UndoCommands;
-	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Extensibility;
@@ -2671,7 +2669,7 @@ namespace MatterHackers.MatterControl
 				else // there are no errors continue printing
 				{
 					// clear the output cache prior to starting a print
-					printer.Connection.TerminalLog.Clear();
+					printer.TerminalLog.Clear();
 
 					string hideGCodeWarning = ApplicationSettings.Instance.get(ApplicationSettingsKey.HideGCodeWarning);
 
@@ -2908,7 +2906,9 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
-						await printer.Connection.StartPrint(gcodeFilePath);
+						// TODO: Reimplement
+						//await printer.Connection.StartPrint(gcodeFilePath);
+						printer.Connection.StartPrint(gcodeFilePath);
 
 						MonitorPrintTask(printer);
 
@@ -2919,7 +2919,9 @@ namespace MatterHackers.MatterControl
 						// Ask for slicer specific gcode validation
 						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
-							await printer.Connection.StartPrint(gcodeFilePath);
+							// TODO: Reimplement
+							// await printer.Connection.StartPrint(gcodeFilePath);
+							printer.Connection.StartPrint(gcodeFilePath);
 							MonitorPrintTask(printer);
 							return;
 						}
@@ -3309,6 +3311,15 @@ Support and tutorials:
 			tabControl.ActiveTab = helpDocsTab;
 
 			return helpDocsTab;
+		}
+
+		internal PrintHostConfig Shim(PrinterConfig printer)
+		{
+			return new PrintHostConfig()
+			{
+				Settings = printer.Settings,
+				Connection = printer.Connection
+			};
 		}
 
 		public class CloudSyncEventArgs : EventArgs

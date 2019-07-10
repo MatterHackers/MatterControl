@@ -29,8 +29,9 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterControl.Printing;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -71,7 +72,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(PrinterAxis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(probeStartPosition, feedRates.X);
 			printer.Connection.ReadPosition();
 

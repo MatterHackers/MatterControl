@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,34 +49,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		};
 
 		private static object writeLock = new object();
-
-		public static double XSpeed(this PrinterSettings printerSettings)
-		{
-			return printerSettings.Helpers.GetMovementSpeeds()["x"];
-		}
-
-		public static double YSpeed(this PrinterSettings printerSettings)
-		{
-			return printerSettings.Helpers.GetMovementSpeeds()["y"];
-		}
-
-		public static double ZSpeed(this PrinterSettings printerSettings)
-		{
-			return printerSettings.Helpers.GetMovementSpeeds()["z"];
-		}
-
-		public static double EFeedRate(this PrinterSettings printerSettings, int extruderIndex)
-		{
-			var movementSpeeds = printerSettings.Helpers.GetMovementSpeeds();
-
-			string extruderIndexKey = "e" + extruderIndex.ToString();
-			if (movementSpeeds.ContainsKey(extruderIndexKey))
-			{
-				return movementSpeeds[extruderIndexKey];
-			}
-
-			return movementSpeeds["e0"];
-		}
 
 		public static bool AutoSave { get; set; } = true;
 

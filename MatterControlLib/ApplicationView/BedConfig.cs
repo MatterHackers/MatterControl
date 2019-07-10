@@ -510,24 +510,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public AxisAlignedBoundingBox Aabb
 		{
-			get
-			{
-				var bedSize = Printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-				var printCenter = Printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
-				var buildHeight = Printer.Settings.GetValue<double>(SettingsKey.build_height);
-				if (buildHeight == 0)
-				{
-					buildHeight = double.PositiveInfinity;
-				}
-
-				return new AxisAlignedBoundingBox(
-					printCenter.X - bedSize.X / 2, // min x
-					printCenter.Y - bedSize.Y / 2, // min y
-					0, // min z
-					printCenter.X + bedSize.X / 2, // max x
-					printCenter.Y + bedSize.Y / 2, // max y
-					buildHeight); // max z
-			}
+			get => this.Printer.Settings.BedAABB();
 		}
 
 		internal void RenderGCode3D(DrawEventArgs e)

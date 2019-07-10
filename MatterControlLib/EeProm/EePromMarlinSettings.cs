@@ -31,9 +31,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 
 namespace MatterHackers.MatterControl.EeProm
 {

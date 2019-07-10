@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -46,6 +47,7 @@ namespace MatterHackers.MatterControl
 	public class PrinterCalibrationWizard : IStagedSetupWizard
 	{
 		private RoundedToggleSwitch printLevelingSwitch;
+		private PrinterConfig printer;
 
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -70,7 +72,7 @@ namespace MatterHackers.MatterControl
 
 				var contentRow = homePage.ContentRow;
 
-				if (!ReturnedToHomePage)
+				if (!this.ReturnedToHomePage)
 				{
 					contentRow.AddChild(
 						new WrappedTextWidget(
@@ -112,19 +114,17 @@ namespace MatterHackers.MatterControl
 					{
 						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
-						if (levelingData != null
-							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
+						// Always show leveling option if printer does not have hardware leveling
+						if (!printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 						{
 							var positions = levelingData.SampledPositions;
-
-							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
 
 							var column = CreateColumn(theme);
 
 							column.AddChild(
 								new ValueTag(
 									"Leveling Solution".Localize(),
-									levelingSolution,
+									printer.Settings.GetValue(SettingsKey.print_leveling_solution),
 									new BorderDouble(12, 5, 2, 5),
 									5,
 									11)
@@ -133,23 +133,28 @@ namespace MatterHackers.MatterControl
 									MinimumSize = new Vector2(125, 0)
 								});
 
-							var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
-							{
-								Name = "Edit Leveling Data Button",
-								ToolTipText = "Edit Leveling Data".Localize(),
-							};
-
-							editButton.Click += (s, e) =>
-							{
-								DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));
-							};
-
 							var row = new FlowLayoutWidget()
 							{
 								VAnchor = VAnchor.Fit,
 								HAnchor = HAnchor.Fit
 							};
-							row.AddChild(editButton);
+
+							// Only show Edit button if data initialized
+							if (levelingData?.SampledPositions.Count() > 0)
+							{
+								var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+								{
+									Name = "Edit Leveling Data Button",
+									ToolTipText = "Edit Leveling Data".Localize(),
+								};
+
+								editButton.Click += (s, e) =>
+								{
+									DialogWindow.Show(new EditLevelingSettingsPage(printer, theme));
+								};
+
+								row.AddChild(editButton);
+							}
 
 							// only show the switch if leveling can be turned off (it can't if it is required).
 							if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
@@ -169,29 +174,33 @@ namespace MatterHackers.MatterControl
 								printLevelingSwitch.Closed += (s, e) =>
 								{
 									// Unregister listeners
-									printer.Settings.PrintLevelingEnabledChanged -= Settings_PrintLevelingEnabledChanged;
+									printer.Settings.PrintLevelingEnabledChanged -= this.Settings_PrintLevelingEnabledChanged;
 								};
 
 								// TODO: Why is this listener conditional? If the leveling changes somehow, shouldn't we be updated the UI to reflect that?
 								// Register listeners
-								printer.Settings.PrintLevelingEnabledChanged += Settings_PrintLevelingEnabledChanged;
+								printer.Settings.PrintLevelingEnabledChanged += this.Settings_PrintLevelingEnabledChanged;
 
 								row.AddChild(printLevelingSwitch);
 							}
 
 							rightWidget = row;
 
-							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
+							// Only visualize leveling data if initialized
+							if (levelingData?.SampledPositions.Count() > 0)
 							{
-								HAnchor = HAnchor.Absolute,
-								VAnchor = VAnchor.Absolute,
-								Height = 200,
-								Width = 200,
-								RenderLevelingData = true,
-								RenderProbePath = false,
-								SimplePoints = true,
-							};
-							column.AddChild(probeWidget);
+								var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
+								{
+									HAnchor = HAnchor.Absolute,
+									VAnchor = VAnchor.Absolute,
+									Height = 200,
+									Width = 200,
+									RenderLevelingData = true,
+									RenderProbePath = false,
+									SimplePoints = true,
+								};
+								column.AddChild(probeWidget);
+							}
 
 							widget = column;
 						}
@@ -293,7 +302,6 @@ namespace MatterHackers.MatterControl
 
 		public IEnumerable<ISetupWizard> Stages { get; }
 
-		private PrinterConfig printer;
 
 		public Func<DialogPage> HomePageGenerator { get; }
 
@@ -301,7 +309,10 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
-			return LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
+			// TODO: Verify invoked with low frequency
+			var printerShim = ApplicationController.Instance.Shim(printer);
+
+			return LevelingValidation.NeedsToBeRun(printerShim) // PrintLevelingWizard
 				|| ZCalibrationWizard.NeedsToBeRun(printer)
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))

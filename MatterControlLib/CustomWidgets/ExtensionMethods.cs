@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using MatterControl.Printing.Pipelines;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 
 namespace MatterHackers.MatterControl
 {

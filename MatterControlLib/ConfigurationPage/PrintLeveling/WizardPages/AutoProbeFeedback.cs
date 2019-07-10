@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -135,7 +134,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			probeOffset.Z = 0;
 			adjustedProbePosition -= probeOffset;
 
-			printer.Connection.MoveAbsolute(PrinterConnection.Axis.Z, probeStartPosition.Z, feedRates.Z);
+			printer.Connection.MoveAbsolute(PrinterAxis.Z, probeStartPosition.Z, feedRates.Z);
 			printer.Connection.MoveAbsolute(adjustedProbePosition, feedRates.X);
 
 			// probe the current position

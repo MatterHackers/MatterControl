@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2019, Kevin Pope, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -35,7 +35,6 @@ using System.Runtime.InteropServices;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MatterControl.Extensibility;
 using Microsoft.Win32.SafeHandles;
 
 namespace MatterHackers.SerialPortCommunication.FrostedSerial
@@ -45,58 +44,58 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		[DllImport("SetSerial", SetLastError = true)]
 		private static extern int set_baud(string portName, int baud_rate);
 
-		static Dictionary<string, FrostedSerialPortFactory> availableFactories = new Dictionary<string,FrostedSerialPortFactory>();
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
+
+		private static readonly Dictionary<string, FrostedSerialPortFactory> AvailableFactories = new Dictionary<string, FrostedSerialPortFactory>();
 
 		public static FrostedSerialPortFactory GetAppropriateFactory(string driverType)
 		{
-            lock(availableFactories)
-            {
-                try
-                {
-                    if (availableFactories.Count == 0)
-                    {
-                        // always add a serial port this is a raw port
-                        availableFactories.Add("Raw", new FrostedSerialPortFactory());
+			lock (AvailableFactories)
+			{
+				try
+				{
+					if (AvailableFactories.Count == 0)
+					{
+						// always add a serial port this is a raw port
+						AvailableFactories.Add("Raw", new FrostedSerialPortFactory());
 
-                        // add in any plugins that we find with other factories.
-                        var portFactories = PluginFinder.CreateInstancesOf<FrostedSerialPortFactory>();
+						// add in any plugins that we find with other factories.
+						var portFactories = PluginFinder.CreateInstancesOf<FrostedSerialPortFactory>();
 
-                        foreach (FrostedSerialPortFactory plugin in portFactories)
-                        {
-                            availableFactories.Add(plugin.GetDriverType(), plugin);
-                        }
+						foreach (FrostedSerialPortFactory plugin in portFactories)
+						{
+							AvailableFactories.Add(plugin.GetDriverType(), plugin);
+						}
 
-                        // If we did not find a RepRap driver add the default.
-                        if (!availableFactories.ContainsKey("RepRap"))
-                        {
-                            availableFactories.Add("RepRap", new FrostedSerialPortFactory());
-                        }
-                    }
+						// If we did not find a RepRap driver add the default.
+						if (!AvailableFactories.ContainsKey("RepRap"))
+						{
+							AvailableFactories.Add("RepRap", new FrostedSerialPortFactory());
+						}
+					}
 
-                    if (!string.IsNullOrEmpty(driverType)
-                        && availableFactories.ContainsKey(driverType))
-                    {
-                        return availableFactories[driverType];
-                    }
+					if (!string.IsNullOrEmpty(driverType)
+						&& AvailableFactories.ContainsKey(driverType))
+					{
+						return AvailableFactories[driverType];
+					}
 
-                    return availableFactories["RepRap"];
-                }
-                catch
-                {
-                    return new FrostedSerialPortFactory();
-                }
-            }
+					return AvailableFactories["RepRap"];
+				}
+				catch
+				{
+					return new FrostedSerialPortFactory();
+				}
+			}
 		}
 
-		virtual protected string GetDriverType()
+		protected virtual string GetDriverType()
 		{
 			return "RepRap";
 		}
 
-		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-		internal static extern SafeFileHandle CreateFile(string lpFileName, int dwDesiredAccess, int dwShareMode, IntPtr securityAttrs, int dwCreationDisposition, int dwFlagsAndAttributes, IntPtr hTemplateFile);
-
-		//Windows-only function
+		// Windows-only function
 		public virtual bool SerialPortAlreadyOpen(string portName)
 		{
 			if (AggContext.OperatingSystem == OSType.Windows)
@@ -105,7 +104,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				const int GENERIC_READ = unchecked((int)0x80000000);
 				const int GENERIC_WRITE = 0x40000000;
 
-				//Borrowed from Microsoft's Serial Port Open Method :)
+				// Borrowed from Microsoft's Serial Port Open Method :)
 				using (SafeFileHandle hFile = CreateFile(@"\\.\" + portName, GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, 3, dwFlagsAndAttributes, IntPtr.Zero))
 				{
 					hFile.Close();
@@ -132,9 +131,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		}
 
 		/// <summary>
-		/// given a serialPortName return a IFrostedSerialPort compatible with the system
+		/// Gets or sets the platform specific port provider
 		/// </summary>
-		public static Func<string, IFrostedSerialPort> GetPlatformSerialPort;
+		public static Func<string, IFrostedSerialPort> GetPlatformSerialPort { get; set; }
 
 		public virtual IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
 		{
@@ -161,7 +160,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 #endif // ANDROID
 		}
 
-		public virtual IFrostedSerialPort CreateAndOpen(string serialPortName, PrinterSettings settings, int baudRate, bool DtrEnableOnConnect)
+		public virtual IFrostedSerialPort CreateAndOpen(string serialPortName, PrinterSettings settings, int baudRate, bool dtrEnableOnConnect)
 		{
 #if __ANDROID__
 			//Create an instance of a FrostedSerialPort and open it
@@ -191,7 +190,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				newPort.BaudRate = baudRate;
 			}
 
-			if (DtrEnableOnConnect)
+			if (dtrEnableOnConnect)
 			{
 				newPort.DtrEnable = true;
 			}

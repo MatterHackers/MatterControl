@@ -35,10 +35,9 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 namespace MatterHackers.MatterControl
 {
 	using System.Threading;
+	using global::MatterControl.Printing;
 	using MatterHackers.Agg;
 	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.PrinterCommunication;
-	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 	using MatterHackers.VectorMath;
 	using Newtonsoft.Json;
 
@@ -54,9 +53,12 @@ namespace MatterHackers.MatterControl
 		private double heatDistance = 0;
 		private double heatStart = 0;
 
+		private PrintHostConfig printerShim;
+
 		private PrinterConfig()
 		{
-			this.Connection = new PrinterConnection(this);
+			this.printerShim = new PrintHostConfig();
+			this.Connection = new PrinterConnection(this.printerShim);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
@@ -66,7 +68,16 @@ namespace MatterHackers.MatterControl
 			this.Bed = new BedConfig(ApplicationController.Instance.Library.PlatingHistory, this);
 			this.ViewState = new PrinterViewState();
 
-			this.Connection = new PrinterConnection(this);
+			this.printerShim = new PrintHostConfig()
+			{
+				Settings = settings
+			};
+
+			this.Connection = new PrinterConnection(printerShim);
+
+			printerShim.Connection = this.Connection;
+
+			this.TerminalLog = new TerminalLog(this.Connection);
 
 			// Register listeners
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
@@ -88,6 +99,8 @@ namespace MatterHackers.MatterControl
 		public PrinterViewState ViewState { get; }
 
 		public PrinterSettings Settings { get; } = PrinterSettings.Empty;
+
+		public TerminalLog TerminalLog { get; }
 
 		[JsonIgnore]
 		public PrinterConnection Connection { get; }

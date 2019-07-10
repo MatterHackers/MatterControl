@@ -28,8 +28,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterControl.Printing;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
@@ -53,16 +53,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		public override void OnLoad(EventArgs args)
 		{
 			printer.Connection.QueueLine("T0");
-			printer.Connection.MoveRelative(PrinterConnection.Axis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+			printer.Connection.MoveRelative(PrinterAxis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 			{
-				printer.Connection.HomeAxis(PrinterConnection.Axis.XYZ);
+				printer.Connection.HomeAxis(PrinterAxis.XYZ);
 			}
 			else if (!printer.Settings.GetValue<bool>(SettingsKey.has_z_probe))
 			{
 				// Lift the hotend off the bed - at the conclusion of the wizard, make sure we lift the heated nozzle off the bed
-				printer.Connection.MoveRelative(PrinterConnection.Axis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
+				printer.Connection.MoveRelative(PrinterAxis.Z, 2, printer.Settings.Helpers.ManualMovementSpeeds().Z);
 			}
 
 			base.OnLoad(args);

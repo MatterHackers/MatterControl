@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
@@ -146,7 +147,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				if (currentLevelingFunctions == null)
 				{
 					PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
+
+					var printerShim = ApplicationController.Instance.Shim(printer);
+
+					currentLevelingFunctions = new LevelingFunctions(printerShim, levelingData);
 				}
 
 				var levelingTriangles = new VertexStorage();

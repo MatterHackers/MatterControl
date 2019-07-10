@@ -1,16 +1,13 @@
-﻿using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrinterCommunication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using MatterHackers.SerialPortCommunication.FrostedSerial;
-using Zeroconf;
-using MatterHackers.MatterControl.CustomWidgets;
+using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.CustomWidgets;
+using Zeroconf;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {

@@ -39,7 +39,6 @@ using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.PrinterEmulator;
@@ -488,9 +487,11 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				Thread.Sleep(100);
 			}
 
+			// TODO: Reimplement
 			// start a print
 			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-			await printer.Connection.StartPrint(inputStream);
+			// await printer.Connection.StartPrint(inputStream);
+			printer.Connection.StartPrint(inputStream);
 
 			// wait up to 40 seconds for the print to finish
 			timer = Stopwatch.StartNew();

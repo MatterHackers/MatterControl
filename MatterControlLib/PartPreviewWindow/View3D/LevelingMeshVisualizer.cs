@@ -29,7 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Linq;
-using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterControl.Printing.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
@@ -40,8 +40,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static Mesh BuildMeshFromLevelingData(PrinterConfig printer)
 		{
+			var printerShim = ApplicationController.Instance.Shim(printer);
 			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-			var currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
+			var currentLevelingFunctions = new LevelingFunctions(printerShim, levelingData);
 
 			var vertices = new List<Vector3Float>();
 

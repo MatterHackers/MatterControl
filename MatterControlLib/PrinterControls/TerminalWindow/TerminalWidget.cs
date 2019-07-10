@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(bodyRow);
 
-			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
+			textScrollWidget = new TextScrollWidget(printer, printer.TerminalLog.PrinterLines)
 			{
 				BackgroundColor = theme.MinimalShade,
 				TextColor = theme.TextColor,
@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 			clearButton.Margin = theme.ButtonSpacing;
 			clearButton.Click += (s, e) =>
 			{
-				printer.Connection.TerminalLog.Clear();
+				printer.TerminalLog.Clear();
 			};
 			footerRow.AddChild(clearButton);
 
@@ -280,10 +280,10 @@ namespace MatterHackers.MatterControl
 									{
 										Debug.Print(ex.Message);
 
-										printer.Connection.TerminalLog.WriteLine("");
-										printer.Connection.TerminalLog.WriteLine("WARNING: Write Failed!".Localize());
-										printer.Connection.TerminalLog.WriteLine("Can't access".Localize() + " " + filePathToSave);
-										printer.Connection.TerminalLog.WriteLine("");
+										ApplicationController.Instance.LogError("");
+										ApplicationController.Instance.LogError("WARNING: Write Failed!".Localize());
+										ApplicationController.Instance.LogError("Can't access".Localize() + " " + filePathToSave);
+										ApplicationController.Instance.LogError("");
 
 										UiThread.RunOnIdle(() =>
 										{

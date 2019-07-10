@@ -29,11 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using MatterControl.Printing.Pipelines;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
