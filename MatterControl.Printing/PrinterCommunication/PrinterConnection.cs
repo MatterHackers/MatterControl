@@ -49,55 +49,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterControl.Printing
 {
-	public enum TurnOff
-	{
-		Now,
-		AfterDelay
-	}
-
-	[Flags]
-	public enum PositionReadType
-	{
-		None = 0,
-		HomeX = 1 << 1,
-		HomeY = 1 << 2,
-		HomeZ = 1 << 3,
-		Other = 1 << 4,
-		HomeAll = HomeX | HomeY | HomeZ,
-	}
-
-	public enum CommunicationStates
-	{
-		Disconnected,
-		AttemptingToConnect,
-		FailedToConnect,
-		Connected,
-		PreparingToPrint,
-		Printing,
-		PrintingFromSd,
-		Paused,
-		FinishedPrint,
-		Disconnecting,
-		ConnectionLost
-	}
-
-	public enum DetailedPrintingState
-	{
-		HomingAxis,
-		HeatingBed,
-		HeatingT0,
-		HeatingT1,
-		Printing
-	}
-
-	public enum FirmwareTypes
-	{
-		Unknown,
-		Repetier,
-		Marlin,
-		Sprinter
-	}
-
 	/// <summary>
 	/// This is the class that communicates with a RepRap printer over the serial port.
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
@@ -3069,25 +3020,5 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				addedCount = startingIndex;
 			}
 		}
-	}
-
-	public enum ConnectionFailure
-	{
-		Unknown,
-		AlreadyConnected,
-		MaximumErrorsReached,
-		PortNotFound,
-		PortInUse,
-		WriteFailed,
-		UnsupportedBaudRate,
-		PortUnavailable,
-		Aborted,
-		FailedToConnect,
-		IOException,
-		InvalidOperationException,
-		UnauthorizedAccessException,
-		ConnectionLost,
-		UsbDisconnected,
-		ConnectionTimeout
 	}
 }
