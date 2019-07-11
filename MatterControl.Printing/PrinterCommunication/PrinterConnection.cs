@@ -37,6 +37,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterControl.Common.Repository;
 using MatterControl.Printing.Pipelines;
 using MatterControl.Printing.PrintLeveling;
 using MatterHackers.Agg;
@@ -225,6 +226,17 @@ namespace MatterControl.Printing
 
 		private double secondsSinceUpdateHistory = 0;
 		private long lineSinceUpdateHistory = 0;
+
+		// TODO: To be replace with DI container instance
+		private static PrintJobRepository repository;
+
+		static PrinterConnection()
+		{
+			var printTaskContext = new PrintServerContext();
+			printTaskContext.Database.EnsureCreated();
+
+			repository = new PrintJobRepository(printTaskContext);
+		}
 
 		public PrinterConnection(PrintHostConfig printer)
 		{
@@ -499,14 +511,14 @@ namespace MatterControl.Printing
 								}
 								else if (value == CommunicationStates.FinishedPrint)
 								{
-									// TODO: reimplement tracking
-									//if (ActivePrintTask != null)
-									//{
-									//	ActivePrintTask.PrintEnd = DateTime.Now;
-									//	ActivePrintTask.PercentDone = 100;
-									//	ActivePrintTask.PrintComplete = true;
-									//	ActivePrintTask.Commit();
-									//}
+									if (ActivePrintTask != null)
+									{
+										ActivePrintTask.PrintEnd = DateTime.Now;
+										ActivePrintTask.PercentDone = 100;
+										ActivePrintTask.PrintComplete = true;
+
+										repository.Update(ActivePrintTask);
+									}
 
 									LastPrintedItemName = PrintingItemName;
 									PrintingItemName = "";
@@ -515,11 +527,10 @@ namespace MatterControl.Printing
 									_communicationState = value;
 									timePrinting.Stop();
 
-									// TODO: Send print completed message
-									//if (Printer.Bed?.EditContext?.SourceItem.Name != null)
-									//{
-									//	PrintFinished?.Invoke(this, Printer.Bed.EditContext.SourceItem.Name);
-									//}
+									if (ActivePrintTask.PrintName != null)
+									{
+										PrintFinished?.Invoke(this, ActivePrintTask.PrintName);
+									}
 								}
 								else
 								{
@@ -958,11 +969,8 @@ namespace MatterControl.Printing
 							string serialPortName = this.ComPort;
 							int baudRate = this.BaudRate;
 
-							// TODO: Reimplement tracking
-							/*
 							// make sure we don't have a left over print task
 							ActivePrintTask = null;
-							*/
 
 							if (this.IsConnected)
 							{
@@ -2020,17 +2028,22 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		private CancellationTokenSource printingCancellation;
 
-		public void StartPrint(string filePath, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+		public void StartPrint(PrintJob printTask, bool calibrationPrint = false)
 		{
-			using (var gcodeStream = File.OpenRead(filePath))
+			using (var gcodeStream = File.OpenRead(printTask.GCodeFile))
 			{
-				this.StartPrint(gcodeStream, gcodeFileNameForTask, calibrationPrint);
+				this.StartPrint(gcodeStream, printTask, calibrationPrint);
 			}
 		}
 
 		// TODO: Review - restoring for test support where we run in process with emulator. Envisioned out-of-proc use won't hit this interface
-		public void StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+		public void StartPrint(Stream gcodeStream, PrintJob printTask, bool calibrationPrint = false)
 		{
+			if (printTask.Id == 0)
+			{
+				repository.Add(printTask);
+			}
+
 			if (!this.IsConnected || Printing)
 			{
 				return;
@@ -2051,29 +2064,19 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			// LoadGCodeToPrint
 			CreateStreamProcessors(gcodeStream);
 
-			// TODO: reimplement progress tracking
-			//
-			//if (gcodeFileNameForTask != null
-			//	&& ActivePrintTask == null
-			//	&& !CalibrationPrint)
-			//{
-			//	// TODO: Fix printerItemID int requirement
-			//	ActivePrintTask = new PrintTask
-			//	{
-			//		PrintStart = DateTime.Now,
-			//		PrinterId = this.Printer.Settings.ID.GetHashCode(),
-			//		PrintName = activePrintItem.PrintItem.Name,
-			//		PrintItemId = activePrintItem.PrintItem.Id,
-			//		PrintingGCodeFileName = gcodeFileNameForTask,
-			//		PrintComplete = false
-			//	};
+			if (!string.IsNullOrWhiteSpace(printTask.GCodeFile)
+				&& ActivePrintTask == null
+				&& !CalibrationPrint)
+			{
+				// TODO: Fix printerItemID int requirement
+				ActivePrintTask = printTask;
 
-			//	ActivePrintTask.Commit();
+				repository.Update(ActivePrintTask);
 
-			//	Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
-			//}
+				Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
 
-			CommunicationState = CommunicationStates.Printing;
+				CommunicationState = CommunicationStates.Printing;
+			}
 		}
 
 		public bool StartSdCardPrint(string m23FileName)
@@ -2268,16 +2271,16 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
 				// TODO: Reimplement tracking
-				/*
 				if (this.RecoveryIsEnabled
 					&& ActivePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, ActivePrintTask.PercentDone), Printer);
 					// And increment the recovery count
 					ActivePrintTask.RecoveryCount++;
-					ActivePrintTask.Commit();
+
+					repository.Update(ActivePrintTask);
 				}
-				else */
+				else
 				{
 					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, Printer);
 				}
@@ -2351,6 +2354,18 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		{
 			// var timer = Stopwatch.StartNew();
 
+			//ActivePrintTask = result.FirstOrDefault();
+
+			//if (ActivePrintTask == null)
+			//{
+			//	ActivePrintTask = new PrintTask()
+			//	{
+			//		PrintName = "Hello World"
+			//	};
+
+			//	repository.Add(ActivePrintTask);
+			//}
+
 			while (!cancellationToken.IsCancellationRequested
 				&& this.CommunicationState != CommunicationStates.FinishedPrint
 				&& this.CommunicationState != CommunicationStates.Connected)
@@ -2365,21 +2380,14 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				{
 					double currentDone = gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
 
-					// TODO: Reimplement tracking
-					/*
 					// Only update the amount done if it is greater than what is recorded.
 					// We don't want to mess up the resume before we actually resume it.
 					if (ActivePrintTask != null
 						&& ActivePrintTask.PercentDone < currentDone)
 					{
 						ActivePrintTask.PercentDone = currentDone;
-						ActivePrintTask?.Commit();
-
-						// Interval looks to be ~10ms
-						// Console.WriteLine("DB write: {0}ms", timer.ElapsedMilliseconds);
-						// timer.Restart();
+						repository.Update(ActivePrintTask);
 					}
-					*/
 
 					secondsSinceUpdateHistory = secondsSinceStartedPrint;
 					lineSinceUpdateHistory = gCodeFileSwitcher.LineIndex;
@@ -2690,6 +2698,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 			}
 		}
+
+		public PrintJob ActivePrintTask { get; set; }
 
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{

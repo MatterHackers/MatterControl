@@ -131,6 +131,9 @@
     <None Include="StaticData\SliceSettings\Layouts.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite">
+      <Version>2.2.6</Version>
+    </PackageReference>
     <PackageReference Include="Mindscape.Raygun4Net">
       <Version>5.6.0</Version>
     </PackageReference>

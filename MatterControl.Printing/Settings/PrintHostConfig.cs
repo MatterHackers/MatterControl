@@ -45,6 +45,8 @@ namespace MatterControl.Printing
 			get
 			{
 				// TODO: Caller must set - previously came from: printer.Bed.EditContext?.SourceItem?.Name
+				// TODO: Move this data to the tracking state for a print job and make it a required parameter to the
+				// print function, removing it from this context when we have a restored print task concept
 				Debugger.Break();
 				return _activePrintName;
 			}

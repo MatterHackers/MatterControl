@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
+	using global::MatterControl.Common.Repository;
 	using global::MatterControl.Printing;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
@@ -2906,9 +2907,18 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
+						var printTask = new PrintJob()
+						{
+							PrintStart = DateTime.Now,
+							PrinterId = printer.Settings.ID.GetHashCode(),
+							PrintName = "hello", // activePrintItem.PrintItem.Name,
+							GCodeFile = gcodeFilePath,
+							PrintComplete = false
+						};
+
 						// TODO: Reimplement
 						//await printer.Connection.StartPrint(gcodeFilePath);
-						printer.Connection.StartPrint(gcodeFilePath);
+						printer.Connection.StartPrint(printTask);
 
 						MonitorPrintTask(printer);
 
@@ -2919,9 +2929,18 @@ namespace MatterHackers.MatterControl
 						// Ask for slicer specific gcode validation
 						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
+							var printTask = new PrintJob()
+							{
+								PrintStart = DateTime.Now,
+								PrinterId = printer.Settings.ID.GetHashCode(),
+								PrintName = "hello", // activePrintItem.PrintItem.Name,
+								GCodeFile = gcodeFilePath,
+								PrintComplete = false
+							};
+
 							// TODO: Reimplement
 							// await printer.Connection.StartPrint(gcodeFilePath);
-							printer.Connection.StartPrint(gcodeFilePath);
+							printer.Connection.StartPrint(printTask);
 							MonitorPrintTask(printer);
 							return;
 						}
