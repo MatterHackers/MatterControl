@@ -409,10 +409,6 @@ namespace MatterControl.Printing
 
 		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
 
-		public string LastPrintedItemName { get; private set; } = "";
-
-		public string PrintingItemName { get; set; } = "";
-
 		private readonly List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
 
 		public void InitializeReadLineReplacements()
@@ -446,8 +442,6 @@ namespace MatterControl.Printing
 				switch (value)
 				{
 					case CommunicationStates.AttemptingToConnect:
-						PrintingItemName = "";
-
 						// TODO: Investigate the validity of this claim/warning
 						// #if DEBUG
 						// if (serialPort == null)
@@ -461,12 +455,10 @@ namespace MatterControl.Printing
 						communicationPossible = true;
 						QueueLine("M115");
 						ReadPosition(PositionReadType.Other);
-						PrintingItemName = "";
 						break;
 
 					case CommunicationStates.ConnectionLost:
 					case CommunicationStates.Disconnected:
-						PrintingItemName = "";
 						if (communicationPossible)
 						{
 							TurnOffBedAndExtruders(TurnOff.Now);
@@ -520,16 +512,13 @@ namespace MatterControl.Printing
 										repository.Update(ActivePrintTask);
 									}
 
-									LastPrintedItemName = PrintingItemName;
-									PrintingItemName = "";
-
 									// Set this early as we always want our functions to know the state we are in.
 									_communicationState = value;
 									timePrinting.Stop();
 
-									if (ActivePrintTask.PrintName != null)
+									if (!string.IsNullOrWhiteSpace(this.ActivePrintName))
 									{
-										PrintFinished?.Invoke(this, ActivePrintTask.PrintName);
+										PrintFinished?.Invoke(this, this.ActivePrintName);
 									}
 								}
 								else

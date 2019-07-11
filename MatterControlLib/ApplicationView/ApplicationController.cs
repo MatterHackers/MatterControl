@@ -2660,8 +2660,6 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				printer.Connection.PrintingItemName = printItemName;
-
 				var errors = printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
 				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
