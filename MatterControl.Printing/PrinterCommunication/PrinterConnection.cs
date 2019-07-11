@@ -1175,960 +1175,66 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.";
 										StyledMessageBox.ShowMessageBox(message, "Port In Use".Localize(), useMarkdown: true);
 									}); */
-							}
-							else
-							{
-								OnConnectionFailed(ConnectionFailure.PortUnavailable);
+								}
+								else
+								{
+									OnConnectionFailed(ConnectionFailure.PortUnavailable);
+								}
 							}
 						}
-					}
 
-					// AttemptToConnect }}
+						// AttemptToConnect }}
 
-					if (CommunicationState == CommunicationStates.FailedToConnect)
-					{
-						OnConnectionFailed(ConnectionFailure.FailedToConnect);
-					}
-				}
-				else
-				{
-					OnConnectionFailed(ConnectionFailure.PortUnavailable);
-				}
-			});
-		}
-		else
-		{
-			OnConnectionFailed(ConnectionFailure.PortUnavailable);
-		}
-	}
-
-	public void DeleteFileFromSdCard(string fileName)
-	{
-		// Register to detect the file deleted confirmation.
-		// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
-		readLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
-		// and send the line to delete the file
-		QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
-	}
-
-	/// <summary>
-	/// Disable the currently active printer connection and job if it is being actively controlled by MC
-	/// If we are observing an SD card print, do nothing.
-	/// </summary>
-	public void Disable()
-	{
-		if (this.CommunicationState == CommunicationStates.PrintingFromSd
-			|| (this.Paused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
-		{
-			// don't turn off anything if we are printing from sd
-			return;
-		}
-
-		if (this.IsConnected)
-		{
-			// Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
-			// It may be possible in the future to make this go into the printer queue for assured sending but it means
-			// the program has to be smart about closing an able to wait until the printer has agreed that it shut off
-			// the motors and heaters (a good idea and something for the future).
-			forceImmediateWrites = true;
-			ReleaseMotors();
-			TurnOffBedAndExtruders(TurnOff.Now);
-			FanSpeed0To255 = 0;
-			forceImmediateWrites = false;
-
-			CommunicationState = CommunicationStates.Disconnecting;
-			currentReadThreadIndex++;
-			if (serialPort != null)
-			{
-				serialPort.Close();
-				serialPort.Dispose();
-			}
-
-			serialPort = null;
-		}
-		else
-		{
-			// Need to reset UI - even if manual disconnect
-			TurnOffBedAndExtruders(TurnOff.Now);
-			FanSpeed0To255 = 0;
-		}
-
-		CommunicationState = CommunicationStates.Disconnected;
-	}
-
-	public void HotendTemperatureWasWritenToPrinter(string line)
-	{
-		double tempBeingSet = 0;
-		if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
-		{
-			int extruderIndex = 0;
-			if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
-			{
-				// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-				int hotendIndex0Based = Math.Min(extruderIndex, MaxExtruders - 1);
-				targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
-			}
-			else
-			{
-				// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-				targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
-			}
-
-			HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
-		}
-	}
-
-	public void FanOffWasWritenToPrinter(string line)
-	{
-		fanSpeed = 0;
-		OnFanSpeedSet(null);
-	}
-
-	public void FanSpeedWasWritenToPrinter(string line)
-	{
-		string[] splitOnS = line.Split('S');
-		if (splitOnS.Length != 2)
-		{
-			// when there is no explicit S value the assumption is 255
-			splitOnS = "M106 S255".Split('S');
-		}
-
-		if (splitOnS.Length == 2)
-		{
-			string fanSpeedString = splitOnS[1];
-			try
-			{
-				int fanSpeedBeingSet = int.Parse(fanSpeedString);
-				if (FanSpeed0To255 != fanSpeedBeingSet)
-				{
-					fanSpeed = fanSpeedBeingSet;
-					OnFanSpeedSet(null);
-				}
-			}
-			catch (Exception)
-			{
-			}
-		}
-	}
-
-	public void FoundStart(string line)
-	{
-	}
-
-	public double GetActualHotendTemperature(int hotendIndex0Based)
-	{
-		hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
-		return actualHotendTemperature[hotendIndex0Based];
-	}
-
-	public double GetTargetHotendTemperature(int hotendIndex0Based)
-	{
-		hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
-		return targetHotendTemperature[hotendIndex0Based];
-	}
-
-	public void HaltConnectionThread()
-	{
-		// TODO: stopTryingToConnect is not longer used by anyone. Likely we need to wire up setting CancellationToken from this context
-		// this.stopTryingToConnect = true;
-	}
-
-	public void HomeAxis(PrinterAxis axis)
-	{
-		string command = "G28";
-
-		// If we are homing everything we don't need to add any details
-		if (!axis.HasFlag(PrinterAxis.XYZ))
-		{
-			if ((axis & PrinterAxis.X) == PrinterAxis.X)
-			{
-				command += " X0";
-			}
-
-			if ((axis & PrinterAxis.Y) == PrinterAxis.Y)
-			{
-				command += " Y0";
-			}
-
-			if ((axis & PrinterAxis.Z) == PrinterAxis.Z)
-			{
-				command += " Z0";
-			}
-		}
-
-		QueueLine(command);
-	}
-
-	public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
-	{
-		SetMovementToAbsolute();
-		QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
-	}
-
-	public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
-	{
-		SetMovementToAbsolute();
-		QueueLine("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.X, position.Y, position.Z, feedRateMmPerMinute));
-	}
-
-	public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
-	{
-		if (moveAmountMm != 0)
-		{
-			// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
-			bool requiresToolChange = extruderNumber != ActiveExtruderIndex;
-
-			SetMovementToRelative();
-
-			if (requiresToolChange)
-			{
-				var currentExtruderIndex = ActiveExtruderIndex;
-				// Set to extrude to use
-				QueueLine($"T{extruderNumber}");
-				QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
-				// Reset back to previous extruder
-				QueueLine($"T{currentExtruderIndex}");
-			}
-			else
-			{
-				QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
-			}
-
-			SetMovementToAbsolute();
-		}
-	}
-
-	public void MoveRelative(PrinterAxis axis, double moveAmountMm, double feedRateMmPerMinute)
-	{
-		if (moveAmountMm != 0)
-		{
-			SetMovementToRelative();
-			QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
-			SetMovementToAbsolute();
-		}
-	}
-
-	public void OnConnectionFailed(ConnectionFailure reason)
-	{
-		communicationPossible = false;
-
-		var eventArgs = new ConnectFailedEventArgs(reason);
-		ConnectionFailed?.Invoke(this, eventArgs);
-
-		CommunicationState = CommunicationStates.Disconnected;
-	}
-
-	private void OnIdle()
-	{
-		if (this.IsConnected && ReadThread.NumRunning == 0)
-		{
-			ReadThread.Start(this);
-		}
-	}
-
-	public void PrinterRequestsResend(string line)
-	{
-		if (!string.IsNullOrEmpty(line))
-		{
-			// marlin and repetier send a : before the number and then and ok
-			if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
-			{
-				if (currentLineIndexToSend == allCheckSumLinesSent.Count)
-				{
-					// asking for the next line don't do anything, continue with sending next instruction
-					return;
-				}
-
-				// smoothie sends an N before the number and no ok
-				if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
-				{
-					// clear waiting for ok because smoothie will not send it
-					PrintingCanContinue(line);
-				}
-			}
-
-			if (currentLineIndexToSend == allCheckSumLinesSent.Count)
-			{
-				// asking for the next line don't do anything, continue with sending next instruction
-				return;
-			}
-
-			if (currentLineIndexToSend >= allCheckSumLinesSent.Count
-				|| currentLineIndexToSend == 1)
-			{
-				QueueLine("M110 N1");
-				allCheckSumLinesSent.SetStartingIndex(1);
-				waitingForPosition.Reset();
-				PositionReadType = PositionReadType.None;
-			}
-		}
-	}
-
-	private bool haveReportedError = false;
-
-	public void PrinterReportsError(string line)
-	{
-		if (!haveReportedError)
-		{
-			haveReportedError = true;
-
-			if (line != null)
-			{
-				ErrorReported?.Invoke(this, line);
-			}
-
-			// pause the printer
-			RequestPause();
-		}
-	}
-
-	public void PrinterStatesFirmware(string line)
-	{
-		string firmwareName = "";
-		if (GCodeFile.GetFirstStringAfter("FIRMWARE_NAME:", line, " ", ref firmwareName))
-		{
-			firmwareName = firmwareName.ToLower();
-			if (firmwareName.Contains("repetier"))
-			{
-				this.FirmwareType = FirmwareTypes.Repetier;
-			}
-			else if (firmwareName.Contains("marlin"))
-			{
-				this.FirmwareType = FirmwareTypes.Marlin;
-			}
-			else if (firmwareName.Contains("sprinter"))
-			{
-				this.FirmwareType = FirmwareTypes.Sprinter;
-			}
-		}
-
-		string firmwareVersionReported = "";
-		if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", line, " EXTRUDER_COUNT", ref firmwareVersionReported))
-		{
-			char splitChar = '^';
-			if (firmwareVersionReported.Contains(splitChar))
-			{
-				string[] split = firmwareVersionReported.Split(splitChar);
-				if (split.Length == 2)
-				{
-					DeviceCode = split[0];
-					firmwareVersionReported = split[1];
-				}
-			}
-
-			// Firmware version was detected and is different
-			if (firmwareVersionReported != "" && FirmwareVersion != firmwareVersionReported)
-			{
-				FirmwareVersion = firmwareVersionReported;
-				OnFirmwareVersionRead(null);
-			}
-		}
-	}
-
-	// this is to make it misbehave
-	// int okCount = 1;
-	public void PrintingCanContinue(string line)
-	{
-		// if ((okCount++ % 67) != 0)
-		{
-			timeHaveBeenWaitingForOK.Stop();
-		}
-	}
-
-	public void ArduinoDtrReset()
-	{
-		// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
-		// current approach results in unpredictable behavior if the caller fails to close the connection
-		if (serialPort == null && this.Printer.Settings != null)
-		{
-			IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
-			resetSerialPort.Open();
-
-			Thread.Sleep(500);
-
-			ToggleHighLowHigh(resetSerialPort);
-
-			resetSerialPort.Close();
-		}
-	}
-
-	private string dataLastRead = string.Empty;
-
-	public void ReadFromPrinter(ReadThread readThreadHolder)
-	{
-		Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-		timeSinceLastReadAnything.Restart();
-		// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
-		while (CommunicationState == CommunicationStates.AttemptingToConnect
-			|| (this.IsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
-		{
-			if ((this.IsConnected
-				|| this.CommunicationState == CommunicationStates.AttemptingToConnect)
-				&& CommunicationState != CommunicationStates.PrintingFromSd)
-			{
-				TryWriteNextLineFromGCodeFile();
-			}
-
-			try
-			{
-				while (serialPort != null
-					&& serialPort.BytesToRead > 0
-					&& readThreadHolder.IsCurrentThread())
-				{
-					lock (locker)
-					{
-						string allDataRead = serialPort.ReadExisting();
-						allDataRead = allDataRead.Replace("\r\n", "\n");
-						allDataRead = allDataRead.Replace('\r', '\n');
-						dataLastRead += allDataRead;
-
-						do
+						if (CommunicationState == CommunicationStates.FailedToConnect)
 						{
-							int returnPosition = dataLastRead.IndexOf('\n');
-							if (returnPosition < 0)
-							{
-								// there is no return keep getting characters
-								break;
-							}
-
-							if (dataLastRead.Length > 0)
-							{
-								if (lastLineRead.StartsWith("ok"))
-								{
-									timeSinceRecievedOk.Restart();
-								}
-
-								lastLineRead = dataLastRead.Substring(0, returnPosition);
-								var (firstLine, extraLines) = ProcessReadRegEx(lastLineRead);
-								lastLineRead = firstLine;
-								dataLastRead += extraLines;
-								dataLastRead = dataLastRead.Substring(returnPosition + 1);
-
-								// process this command
-								{
-									readLineStartCallBacks.ProcessLine(lastLineRead);
-									readLineContainsCallBacks.ProcessLine(lastLineRead);
-
-									LineReceived?.Invoke(this, lastLineRead);
-								}
-							}
+							OnConnectionFailed(ConnectionFailure.FailedToConnect);
 						}
-						while (true);
 					}
-
-					timeSinceLastReadAnything.Restart();
-				}
-
-				if (Printing)
-				{
-					Thread.Sleep(0);
-				}
-				else
-				{
-					Thread.Sleep(1);
-				}
-			}
-			catch (TimeoutException)
-			{
-			}
-			catch (IOException e2)
-			{
-				this.LogError("Exception:" + e2.Message);
-				OnConnectionFailed(ConnectionFailure.IOException);
-			}
-			catch (InvalidOperationException ex)
-			{
-				this.LogError("Exception:" + ex.Message);
-				// this happens when the serial port closes after we check and before we read it.
-				OnConnectionFailed(ConnectionFailure.InvalidOperationException);
-			}
-			catch (UnauthorizedAccessException e3)
-			{
-				this.LogError("Exception:" + e3.Message);
-				OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
-			}
-			catch (Exception)
-			{
-			}
-		}
-
-		Console.WriteLine("Exiting ReadFromPrinter method: " + CommunicationState.ToString());
-	}
-
-	public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
-	{
-		var nextIssue = queuedCommandStream.Peek();
-		if (nextIssue == null
-			|| nextIssue != "M114")
-		{
-			QueueLine("M114", forceToTopOfQueue);
-			PositionReadType = positionReadType;
-		}
-	}
-
-	public void ReadSdProgress(string line)
-	{
-		if (line != null)
-		{
-			string sdProgressString = line.Substring("Sd printing byte ".Length);
-
-			string[] values = sdProgressString.Split('/');
-			currentSdBytes = long.Parse(values[0]);
-			totalSdBytes = long.Parse(values[1]);
-		}
-
-		// We read it so we are no longer waiting
-		timeWaitingForSdProgress.Stop();
-	}
-
-	public void ReadTargetPositions(string line)
-	{
-		GCodeFile.GetFirstNumberAfter("X:", line, ref lastReportedPosition.position.X);
-		GCodeFile.GetFirstNumberAfter("Y:", line, ref lastReportedPosition.position.Y);
-		GCodeFile.GetFirstNumberAfter("Z:", line, ref lastReportedPosition.position.Z);
-		GCodeFile.GetFirstNumberAfter("E:", line, ref lastReportedPosition.extrusion);
-
-		currentDestination = lastReportedPosition;
-		DestinationChanged?.Invoke(this, null);
-		if (totalGCodeStream != null)
-		{
-			totalGCodeStream.SetPrinterPosition(currentDestination);
-		}
-
-		if (PositionReadType.HasFlag(PositionReadType.HomeX))
-		{
-			HomingPosition = new Vector3(lastReportedPosition.position.X, HomingPosition.Y, HomingPosition.Z);
-		}
-
-		if (PositionReadType.HasFlag(PositionReadType.HomeY))
-		{
-			HomingPosition = new Vector3(HomingPosition.X, lastReportedPosition.position.Y, HomingPosition.Z);
-		}
-
-		if (PositionReadType.HasFlag(PositionReadType.HomeZ))
-		{
-			HomingPosition = new Vector3(HomingPosition.X, HomingPosition.Y, lastReportedPosition.position.Z);
-		}
-
-		waitingForPosition.Reset();
-		PositionReadType = PositionReadType.None;
-	}
-
-	public static void ParseTemperatureString(string temperatureString,
-		double[] actualHotendTemperature,
-		Action<TemperatureEventArgs> hotendTemperatureChange,
-		ref double actualBedTemperature,
-		Action<TemperatureEventArgs> bedTemperatureChanged)
-	{
-		{
-			double readHotendTemp = 0;
-			if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readHotendTemp))
-			{
-				if (actualHotendTemperature[0] != readHotendTemp)
-				{
-					actualHotendTemperature[0] = readHotendTemp;
-					hotendTemperatureChange?.Invoke(new TemperatureEventArgs(0, readHotendTemp));
-				}
-			}
-
-			for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
-			{
-				string multiExtruderCheck = "T{0}:".FormatWith(hotendIndex);
-				if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readHotendTemp))
-				{
-					if (actualHotendTemperature[hotendIndex] != readHotendTemp)
+					else
 					{
-						actualHotendTemperature[hotendIndex] = readHotendTemp;
-						hotendTemperatureChange?.Invoke(new TemperatureEventArgs(hotendIndex, readHotendTemp));
+						OnConnectionFailed(ConnectionFailure.PortUnavailable);
 					}
-				}
-				else
-				{
-					continue;
-				}
-			}
-		}
-
-		{
-			double readBedTemp = 0;
-			if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
-			{
-				if (actualBedTemperature != readBedTemp)
-				{
-					actualBedTemperature = readBedTemp;
-					bedTemperatureChanged?.Invoke(new TemperatureEventArgs(0, readBedTemp));
-				}
-			}
-		}
-	}
-
-	public void ReadTemperatures(string line)
-	{
-		ParseTemperatureString(
-			line,
-			actualHotendTemperature,
-			OnHotendTemperatureRead,
-			ref actualBedTemperature,
-			OnBedTemperatureRead);
-	}
-
-	public void RebootBoard()
-	{
-		try
-		{
-			if (Printer.Settings.PrinterSelected)
-			{
-				// first make sure we are not printing if possible (cancel slicing)
-				if (serialPort != null) // we still have a serial port
-				{
-					Stop(false);
-					ClearQueuedGCode();
-
-					CommunicationState = CommunicationStates.Disconnecting;
-					currentReadThreadIndex++;
-					ToggleHighLowHigh(serialPort);
-					if (serialPort != null)
-					{
-						serialPort.Close();
-						serialPort.Dispose();
-					}
-
-					serialPort = null;
-					// make sure we clear out the stream processors
-					CreateStreamProcessors();
-					CommunicationState = CommunicationStates.Disconnected;
-
-					// We were connected to a printer so try to reconnect
-					Connect();
-				}
-				else
-				{
-					// We reset the board while attempting to connect, so now we don't have a serial port.
-					// Create one and do the DTR to reset
-					var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
-					resetSerialPort.Open();
-
-					Thread.Sleep(500);
-
-					ToggleHighLowHigh(resetSerialPort);
-
-					resetSerialPort.Close();
-
-					// let the process know we canceled not ended normally.
-					CommunicationState = CommunicationStates.Disconnected;
-				}
-			}
-		}
-		catch (Exception)
-		{
-		}
-	}
-
-	private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
-	{
-		serialPort.RtsEnable = true;
-		serialPort.DtrEnable = true;
-		Thread.Sleep(100);
-		serialPort.RtsEnable = false;
-		serialPort.DtrEnable = false;
-		Thread.Sleep(100);
-		serialPort.RtsEnable = true;
-		serialPort.DtrEnable = true;
-	}
-
-	public void ReleaseMotors(bool forceRelease = false)
-	{
-		if (forceRelease
-			|| this.AutoReleaseMotors)
-		{
-			QueueLine("M84");
-		}
-	}
-
-	public void RequestPause()
-	{
-		if (Printing)
-		{
-			if (CommunicationState == CommunicationStates.PrintingFromSd)
-			{
-				CommunicationState = CommunicationStates.Paused;
-				QueueLine("M25"); // : Pause SD print
-				return;
-			}
-
-			pauseHandlingStream.DoPause(PauseHandlingStream.PauseReason.UserRequested);
-		}
-	}
-
-	public void ResetToReadyState()
-	{
-		if (CommunicationState == CommunicationStates.FinishedPrint)
-		{
-			CommunicationState = CommunicationStates.Connected;
-		}
-		else
-		{
-			throw new Exception("You should only reset after a print has finished.");
-		}
-	}
-
-	public void Resume()
-	{
-		if (Paused)
-		{
-			if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
-			{
-				CommunicationState = CommunicationStates.PrintingFromSd;
-
-				QueueLine("M24"); // Start/resume SD print
+				});
 			}
 			else
 			{
-				pauseHandlingStream.Resume();
-				CommunicationState = CommunicationStates.Printing;
+				OnConnectionFailed(ConnectionFailure.PortUnavailable);
 			}
 		}
-	}
 
-	public void QueueLine(string lineToWrite, bool forceTopOfQueue = false)
-	{
-		lock (locker)
+		public void DeleteFileFromSdCard(string fileName)
 		{
-			if (lineToWrite.Contains("\\n"))
-			{
-				lineToWrite = lineToWrite.Replace("\\n", "\n");
-			}
+			// Register to detect the file deleted confirmation.
+			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
+			readLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
+			// and send the line to delete the file
+			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
+		}
 
-			// Check line for line breaks, split and process separate if necessary
-			if (lineToWrite.Contains("\n"))
+		/// <summary>
+		/// Disable the currently active printer connection and job if it is being actively controlled by MC
+		/// If we are observing an SD card print, do nothing.
+		/// </summary>
+		public void Disable()
+		{
+			if (this.CommunicationState == CommunicationStates.PrintingFromSd
+				|| (this.Paused && this.PrePauseCommunicationState == CommunicationStates.PrintingFromSd))
 			{
-				string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-				for (int i = 0; i < linesToWrite.Length; i++)
-				{
-					string line = linesToWrite[i].Trim();
-					if (line.Length > 0)
-					{
-						QueueLine(line);
-					}
-				}
-
+				// don't turn off anything if we are printing from sd
 				return;
 			}
 
-			if (CommunicationState == CommunicationStates.PrintingFromSd
-				|| forceImmediateWrites)
-			{
-				lineToWrite = lineToWrite.Split(';')[0].Trim();
-				if (lineToWrite.Length > 0)
-				{
-					// sometimes we need to send code without buffering (like when we are closing the program).
-					WriteRaw(lineToWrite + "\n", lineToWrite);
-				}
-			}
-			else
-			{
-				if (lineToWrite.Trim().Length > 0)
-				{
-					// insert the command into the printing queue at the head
-					queuedCommandStream?.Add(lineToWrite, forceTopOfQueue);
-				}
-			}
-		}
-	}
-
-	private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
-	{
-		var addedLines = new List<string>();
-		foreach (var item in readLineReplacements)
-		{
-			var splitReplacement = item.Replacement.Split(',');
-			if (splitReplacement.Length > 0)
-			{
-				if (item.Regex.IsMatch(lineBeingRead))
-				{
-					// replace on the first replacement group only
-					var replacedString = item.Regex.Replace(lineBeingRead, splitReplacement[0]);
-					lineBeingRead = replacedString;
-					// add in the other replacement groups
-					for (int j = 1; j < splitReplacement.Length; j++)
-					{
-						addedLines.Add(splitReplacement[j]);
-					}
-
-					break;
-				}
-			}
-		}
-
-		string extraLines = "";
-		foreach (var line in addedLines)
-		{
-			extraLines += line + "\n";
-		}
-
-		return (lineBeingRead, extraLines);
-	}
-
-	// Check is serial port is in the list of available serial ports
-	public bool SerialPortIsAvailable(string portName)
-	{
-		if (IsNetworkPrinting())
-		{
-			return true;
-		}
-
-		try
-		{
-			string[] portNames = FrostedSerialPort.GetPortNames();
-			return portNames.Any(x => string.Compare(x, portName, true) == 0);
-		}
-		catch (Exception)
-		{
-			return false;
-		}
-	}
-
-	public void SetMovementToAbsolute()
-	{
-		QueueLine("G90");
-	}
-
-	public void SetMovementToRelative()
-	{
-		QueueLine("G91");
-	}
-
-	public void SetTargetHotendTemperature(int hotendIndex0Based, double temperature, bool forceSend = false)
-	{
-		hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
-
-		if (targetHotendTemperature[hotendIndex0Based] != temperature
-			|| forceSend)
-		{
-			ContinueHoldingTemperature = false;
-			targetHotendTemperature[hotendIndex0Based] = temperature;
 			if (this.IsConnected)
 			{
-				QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
-			}
-
-			HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
-		}
-	}
-
-	public bool CalibrationPrint { get; private set; }
-
-	private CancellationTokenSource printingCancellation;
-
-
-	public void StartPrint(string filePath, string gcodeFileNameForTask = null, bool calibrationPrint = false)
-	{
-		using (var gcodeStream = File.OpenRead(filePath))
-		{
-			this.StartPrint(gcodeStream, gcodeFileNameForTask, calibrationPrint);
-		}
-	}
-
-	// TODO: Review - restoring for test support where we run in process with emulator. Envisioned out-of-proc use won't hit this interface
-	public void StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, bool calibrationPrint = false)
-	{
-		if (!this.IsConnected || Printing)
-		{
-			return;
-		}
-
-		this.CalibrationPrint = calibrationPrint;
-
-		printingCancellation = new CancellationTokenSource();
-
-		haveReportedError = false;
-		PrintWasCanceled = false;
-
-		waitingForPosition.Reset();
-		PositionReadType = PositionReadType.None;
-
-		ClearQueuedGCode();
-
-		// LoadGCodeToPrint
-		CreateStreamProcessors(gcodeStream);
-
-		// TODO: reimplement progress tracking
-		//
-		//if (gcodeFileNameForTask != null
-		//	&& ActivePrintTask == null
-		//	&& !CalibrationPrint)
-		//{
-		//	// TODO: Fix printerItemID int requirement
-		//	ActivePrintTask = new PrintTask
-		//	{
-		//		PrintStart = DateTime.Now,
-		//		PrinterId = this.Printer.Settings.ID.GetHashCode(),
-		//		PrintName = activePrintItem.PrintItem.Name,
-		//		PrintItemId = activePrintItem.PrintItem.Id,
-		//		PrintingGCodeFileName = gcodeFileNameForTask,
-		//		PrintComplete = false
-		//	};
-
-		//	ActivePrintTask.Commit();
-
-		//	Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
-		//}
-
-		CommunicationState = CommunicationStates.Printing;
-	}
-
-	public bool StartSdCardPrint(string m23FileName)
-	{
-		if (!this.IsConnected
-			|| Printing
-			|| string.IsNullOrEmpty(m23FileName))
-		{
-			return false;
-		}
-
-		currentSdBytes = 0;
-
-		ClearQueuedGCode();
-		CommunicationState = CommunicationStates.PrintingFromSd;
-
-		QueueLine($"M23 {m23FileName.ToLower()}"); // Select SD File
-		QueueLine("M24"); // Start/resume SD print
-
-		readLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
-
-		return true;
-	}
-
-	public void Stop(bool markPrintCanceled = true)
-	{
-		switch (CommunicationState)
-		{
-			case CommunicationStates.PrintingFromSd:
-				CancelSDCardPrint();
-				break;
-
-			case CommunicationStates.Printing:
-				CancelPrint(markPrintCanceled);
-				break;
-
-			case CommunicationStates.Paused:
-				if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
-				{
-					CancelSDCardPrint();
-					CommunicationState = CommunicationStates.Connected;
-				}
-				else
-				{
-					CancelPrint(markPrintCanceled);
-					// We have to continue printing the end gcode, so we set this to Printing.
-					CommunicationState = CommunicationStates.Printing;
-				}
-
-				break;
-
-			case CommunicationStates.AttemptingToConnect:
-				CommunicationState = CommunicationStates.FailedToConnect;
-				// connectThread.Join(JoinThreadTimeoutMs);
+				// Make sure we send this without waiting for the printer to respond. We want to try and turn off the heaters.
+				// It may be possible in the future to make this go into the printer queue for assured sending but it means
+				// the program has to be smart about closing an able to wait until the printer has agreed that it shut off
+				// the motors and heaters (a good idea and something for the future).
+				forceImmediateWrites = true;
+				ReleaseMotors();
+				TurnOffBedAndExtruders(TurnOff.Now);
+				FanSpeed0To255 = 0;
+				forceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
 				currentReadThreadIndex++;
@@ -2136,56 +1242,949 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				{
 					serialPort.Close();
 					serialPort.Dispose();
-					serialPort = null;
 				}
 
-				CommunicationState = CommunicationStates.Disconnected;
-				break;
+				serialPort = null;
+			}
+			else
+			{
+				// Need to reset UI - even if manual disconnect
+				TurnOffBedAndExtruders(TurnOff.Now);
+				FanSpeed0To255 = 0;
+			}
 
-			case CommunicationStates.PreparingToPrint:
-				CommunicationState = CommunicationStates.Connected;
-				break;
+			CommunicationState = CommunicationStates.Disconnected;
 		}
-	}
 
-	private void CancelPrint(bool markPrintCanceled)
-	{
-		lock (locker)
+		public void HotendTemperatureWasWritenToPrinter(string line)
 		{
-			// Flag as canceled, wait briefly for listening threads to catch up
-			printingCancellation.Cancel();
-			Thread.Sleep(15);
-
-			// get rid of all the gcode we have left to print
-			ClearQueuedGCode();
-
-			if (!string.IsNullOrEmpty(this.CancelGCode))
+			double tempBeingSet = 0;
+			if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
 			{
-				// add any gcode we want to print while canceling
-				QueueLine(this.CancelGCode);
+				int extruderIndex = 0;
+				if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
+				{
+					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
+					int hotendIndex0Based = Math.Min(extruderIndex, MaxExtruders - 1);
+					targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
+				}
+				else
+				{
+					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
+					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
+				}
+
+				HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
+			}
+		}
+
+		public void FanOffWasWritenToPrinter(string line)
+		{
+			fanSpeed = 0;
+			OnFanSpeedSet(null);
+		}
+
+		public void FanSpeedWasWritenToPrinter(string line)
+		{
+			string[] splitOnS = line.Split('S');
+			if (splitOnS.Length != 2)
+			{
+				// when there is no explicit S value the assumption is 255
+				splitOnS = "M106 S255".Split('S');
 			}
 
-			// let the process know we canceled not ended normally.
-			this.PrintWasCanceled = true;
-
-			// TODO: Reimplement tracking
-			/*
-			if (markPrintCanceled
-				&& ActivePrintTask != null)
+			if (splitOnS.Length == 2)
 			{
-				TimeSpan printTimeSpan = DateTime.Now.Subtract(ActivePrintTask.PrintStart);
+				string fanSpeedString = splitOnS[1];
+				try
+				{
+					int fanSpeedBeingSet = int.Parse(fanSpeedString);
+					if (FanSpeed0To255 != fanSpeedBeingSet)
+					{
+						fanSpeed = fanSpeedBeingSet;
+						OnFanSpeedSet(null);
+					}
+				}
+				catch (Exception)
+				{
+				}
+			}
+		}
 
-				ActivePrintTask.PrintEnd = DateTime.Now;
-				ActivePrintTask.PrintComplete = false;
-				ActivePrintTask.PrintingGCodeFileName = "";
-				ActivePrintTask.Commit();
+		public void FoundStart(string line)
+		{
+		}
+
+		public double GetActualHotendTemperature(int hotendIndex0Based)
+		{
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
+			return actualHotendTemperature[hotendIndex0Based];
+		}
+
+		public double GetTargetHotendTemperature(int hotendIndex0Based)
+		{
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
+			return targetHotendTemperature[hotendIndex0Based];
+		}
+
+		public void HaltConnectionThread()
+		{
+			// TODO: stopTryingToConnect is not longer used by anyone. Likely we need to wire up setting CancellationToken from this context
+			// this.stopTryingToConnect = true;
+		}
+
+		public void HomeAxis(PrinterAxis axis)
+		{
+			string command = "G28";
+
+			// If we are homing everything we don't need to add any details
+			if (!axis.HasFlag(PrinterAxis.XYZ))
+			{
+				if ((axis & PrinterAxis.X) == PrinterAxis.X)
+				{
+					command += " X0";
+				}
+
+				if ((axis & PrinterAxis.Y) == PrinterAxis.Y)
+				{
+					command += " Y0";
+				}
+
+				if ((axis & PrinterAxis.Z) == PrinterAxis.Z)
+				{
+					command += " Z0";
+				}
 			}
 
-			// no matter what we no longer have a print task
-			ActivePrintTask = null;
-			*/
+			QueueLine(command);
+		}
+
+		public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
+		{
+			SetMovementToAbsolute();
+			QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+		}
+
+		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
+		{
+			SetMovementToAbsolute();
+			QueueLine("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.X, position.Y, position.Z, feedRateMmPerMinute));
+		}
+
+		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
+		{
+			if (moveAmountMm != 0)
+			{
+				// TODO: Long term we need to track the active extruder and make requiresToolChange be driven by the extruder you're actually on
+				bool requiresToolChange = extruderNumber != ActiveExtruderIndex;
+
+				SetMovementToRelative();
+
+				if (requiresToolChange)
+				{
+					var currentExtruderIndex = ActiveExtruderIndex;
+					// Set to extrude to use
+					QueueLine($"T{extruderNumber}");
+					QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
+					// Reset back to previous extruder
+					QueueLine($"T{currentExtruderIndex}");
+				}
+				else
+				{
+					QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
+				}
+
+				SetMovementToAbsolute();
+			}
+		}
+
+		public void MoveRelative(PrinterAxis axis, double moveAmountMm, double feedRateMmPerMinute)
+		{
+			if (moveAmountMm != 0)
+			{
+				SetMovementToRelative();
+				QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				SetMovementToAbsolute();
+			}
+		}
+
+		public void OnConnectionFailed(ConnectionFailure reason)
+		{
+			communicationPossible = false;
+
+			var eventArgs = new ConnectFailedEventArgs(reason);
+			ConnectionFailed?.Invoke(this, eventArgs);
+
+			CommunicationState = CommunicationStates.Disconnected;
+		}
+
+		private void OnIdle()
+		{
+			if (this.IsConnected && ReadThread.NumRunning == 0)
+			{
+				ReadThread.Start(this);
+			}
+		}
+
+		public void PrinterRequestsResend(string line)
+		{
+			if (!string.IsNullOrEmpty(line))
+			{
+				// marlin and repetier send a : before the number and then and ok
+				if (!GCodeFile.GetFirstNumberAfter(":", line, ref currentLineIndexToSend))
+				{
+					if (currentLineIndexToSend == allCheckSumLinesSent.Count)
+					{
+						// asking for the next line don't do anything, continue with sending next instruction
+						return;
+					}
+
+					// smoothie sends an N before the number and no ok
+					if (GCodeFile.GetFirstNumberAfter("N", line, ref currentLineIndexToSend))
+					{
+						// clear waiting for ok because smoothie will not send it
+						PrintingCanContinue(line);
+					}
+				}
+
+				if (currentLineIndexToSend == allCheckSumLinesSent.Count)
+				{
+					// asking for the next line don't do anything, continue with sending next instruction
+					return;
+				}
+
+				if (currentLineIndexToSend >= allCheckSumLinesSent.Count
+					|| currentLineIndexToSend == 1)
+				{
+					QueueLine("M110 N1");
+					allCheckSumLinesSent.SetStartingIndex(1);
+					waitingForPosition.Reset();
+					PositionReadType = PositionReadType.None;
+				}
+			}
+		}
+
+		private bool haveReportedError = false;
+
+		public void PrinterReportsError(string line)
+		{
+			if (!haveReportedError)
+			{
+				haveReportedError = true;
+
+				if (line != null)
+				{
+					ErrorReported?.Invoke(this, line);
+				}
+
+				// pause the printer
+				RequestPause();
+			}
+		}
+
+		public void PrinterStatesFirmware(string line)
+		{
+			string firmwareName = "";
+			if (GCodeFile.GetFirstStringAfter("FIRMWARE_NAME:", line, " ", ref firmwareName))
+			{
+				firmwareName = firmwareName.ToLower();
+				if (firmwareName.Contains("repetier"))
+				{
+					this.FirmwareType = FirmwareTypes.Repetier;
+				}
+				else if (firmwareName.Contains("marlin"))
+				{
+					this.FirmwareType = FirmwareTypes.Marlin;
+				}
+				else if (firmwareName.Contains("sprinter"))
+				{
+					this.FirmwareType = FirmwareTypes.Sprinter;
+				}
+			}
+
+			string firmwareVersionReported = "";
+			if (GCodeFile.GetFirstStringAfter("MACHINE_TYPE:", line, " EXTRUDER_COUNT", ref firmwareVersionReported))
+			{
+				char splitChar = '^';
+				if (firmwareVersionReported.Contains(splitChar))
+				{
+					string[] split = firmwareVersionReported.Split(splitChar);
+					if (split.Length == 2)
+					{
+						DeviceCode = split[0];
+						firmwareVersionReported = split[1];
+					}
+				}
+
+				// Firmware version was detected and is different
+				if (firmwareVersionReported != "" && FirmwareVersion != firmwareVersionReported)
+				{
+					FirmwareVersion = firmwareVersionReported;
+					OnFirmwareVersionRead(null);
+				}
+			}
+		}
+
+		// this is to make it misbehave
+		// int okCount = 1;
+		public void PrintingCanContinue(string line)
+		{
+			// if ((okCount++ % 67) != 0)
+			{
+				timeHaveBeenWaitingForOK.Stop();
+			}
+		}
+
+		public void ArduinoDtrReset()
+		{
+			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
+			// current approach results in unpredictable behavior if the caller fails to close the connection
+			if (serialPort == null && this.Printer.Settings != null)
+			{
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
+				resetSerialPort.Open();
+
+				Thread.Sleep(500);
+
+				ToggleHighLowHigh(resetSerialPort);
+
+				resetSerialPort.Close();
+			}
+		}
+
+		private string dataLastRead = string.Empty;
+
+		public void ReadFromPrinter(ReadThread readThreadHolder)
+		{
+			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+			timeSinceLastReadAnything.Restart();
+			// we want this while loop to be as fast as possible. Don't allow any significant work to happen in here
+			while (CommunicationState == CommunicationStates.AttemptingToConnect
+				|| (this.IsConnected && serialPort != null && serialPort.IsOpen && !Disconnecting && readThreadHolder.IsCurrentThread()))
+			{
+				if ((this.IsConnected
+					|| this.CommunicationState == CommunicationStates.AttemptingToConnect)
+					&& CommunicationState != CommunicationStates.PrintingFromSd)
+				{
+					TryWriteNextLineFromGCodeFile();
+				}
+
+				try
+				{
+					while (serialPort != null
+						&& serialPort.BytesToRead > 0
+						&& readThreadHolder.IsCurrentThread())
+					{
+						lock (locker)
+						{
+							string allDataRead = serialPort.ReadExisting();
+							allDataRead = allDataRead.Replace("\r\n", "\n");
+							allDataRead = allDataRead.Replace('\r', '\n');
+							dataLastRead += allDataRead;
+
+							do
+							{
+								int returnPosition = dataLastRead.IndexOf('\n');
+								if (returnPosition < 0)
+								{
+									// there is no return keep getting characters
+									break;
+								}
+
+								if (dataLastRead.Length > 0)
+								{
+									if (lastLineRead.StartsWith("ok"))
+									{
+										timeSinceRecievedOk.Restart();
+									}
+
+									lastLineRead = dataLastRead.Substring(0, returnPosition);
+									var (firstLine, extraLines) = ProcessReadRegEx(lastLineRead);
+									lastLineRead = firstLine;
+									dataLastRead += extraLines;
+									dataLastRead = dataLastRead.Substring(returnPosition + 1);
+
+									// process this command
+									{
+										readLineStartCallBacks.ProcessLine(lastLineRead);
+										readLineContainsCallBacks.ProcessLine(lastLineRead);
+
+										LineReceived?.Invoke(this, lastLineRead);
+									}
 								}
 							}
+							while (true);
+						}
+
+						timeSinceLastReadAnything.Restart();
+					}
+
+					if (Printing)
+					{
+						Thread.Sleep(0);
+					}
+					else
+					{
+						Thread.Sleep(1);
+					}
+				}
+				catch (TimeoutException)
+				{
+				}
+				catch (IOException e2)
+				{
+					this.LogError("Exception:" + e2.Message);
+					OnConnectionFailed(ConnectionFailure.IOException);
+				}
+				catch (InvalidOperationException ex)
+				{
+					this.LogError("Exception:" + ex.Message);
+					// this happens when the serial port closes after we check and before we read it.
+					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
+				}
+				catch (UnauthorizedAccessException e3)
+				{
+					this.LogError("Exception:" + e3.Message);
+					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			Console.WriteLine("Exiting ReadFromPrinter method: " + CommunicationState.ToString());
+		}
+
+		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
+		{
+			var nextIssue = queuedCommandStream.Peek();
+			if (nextIssue == null
+				|| nextIssue != "M114")
+			{
+				QueueLine("M114", forceToTopOfQueue);
+				PositionReadType = positionReadType;
+			}
+		}
+
+		public void ReadSdProgress(string line)
+		{
+			if (line != null)
+			{
+				string sdProgressString = line.Substring("Sd printing byte ".Length);
+
+				string[] values = sdProgressString.Split('/');
+				currentSdBytes = long.Parse(values[0]);
+				totalSdBytes = long.Parse(values[1]);
+			}
+
+			// We read it so we are no longer waiting
+			timeWaitingForSdProgress.Stop();
+		}
+
+		public void ReadTargetPositions(string line)
+		{
+			GCodeFile.GetFirstNumberAfter("X:", line, ref lastReportedPosition.position.X);
+			GCodeFile.GetFirstNumberAfter("Y:", line, ref lastReportedPosition.position.Y);
+			GCodeFile.GetFirstNumberAfter("Z:", line, ref lastReportedPosition.position.Z);
+			GCodeFile.GetFirstNumberAfter("E:", line, ref lastReportedPosition.extrusion);
+
+			currentDestination = lastReportedPosition;
+			DestinationChanged?.Invoke(this, null);
+			if (totalGCodeStream != null)
+			{
+				totalGCodeStream.SetPrinterPosition(currentDestination);
+			}
+
+			if (PositionReadType.HasFlag(PositionReadType.HomeX))
+			{
+				HomingPosition = new Vector3(lastReportedPosition.position.X, HomingPosition.Y, HomingPosition.Z);
+			}
+
+			if (PositionReadType.HasFlag(PositionReadType.HomeY))
+			{
+				HomingPosition = new Vector3(HomingPosition.X, lastReportedPosition.position.Y, HomingPosition.Z);
+			}
+
+			if (PositionReadType.HasFlag(PositionReadType.HomeZ))
+			{
+				HomingPosition = new Vector3(HomingPosition.X, HomingPosition.Y, lastReportedPosition.position.Z);
+			}
+
+			waitingForPosition.Reset();
+			PositionReadType = PositionReadType.None;
+		}
+
+		public static void ParseTemperatureString(string temperatureString,
+			double[] actualHotendTemperature,
+			Action<TemperatureEventArgs> hotendTemperatureChange,
+			ref double actualBedTemperature,
+			Action<TemperatureEventArgs> bedTemperatureChanged)
+		{
+			{
+				double readHotendTemp = 0;
+				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readHotendTemp))
+				{
+					if (actualHotendTemperature[0] != readHotendTemp)
+					{
+						actualHotendTemperature[0] = readHotendTemp;
+						hotendTemperatureChange?.Invoke(new TemperatureEventArgs(0, readHotendTemp));
+					}
+				}
+
+				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
+				{
+					string multiExtruderCheck = "T{0}:".FormatWith(hotendIndex);
+					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readHotendTemp))
+					{
+						if (actualHotendTemperature[hotendIndex] != readHotendTemp)
+						{
+							actualHotendTemperature[hotendIndex] = readHotendTemp;
+							hotendTemperatureChange?.Invoke(new TemperatureEventArgs(hotendIndex, readHotendTemp));
+						}
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+
+			{
+				double readBedTemp = 0;
+				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
+				{
+					if (actualBedTemperature != readBedTemp)
+					{
+						actualBedTemperature = readBedTemp;
+						bedTemperatureChanged?.Invoke(new TemperatureEventArgs(0, readBedTemp));
+					}
+				}
+			}
+		}
+
+		public void ReadTemperatures(string line)
+		{
+			ParseTemperatureString(
+				line,
+				actualHotendTemperature,
+				OnHotendTemperatureRead,
+				ref actualBedTemperature,
+				OnBedTemperatureRead);
+		}
+
+		public void RebootBoard()
+		{
+			try
+			{
+				if (Printer.Settings.PrinterSelected)
+				{
+					// first make sure we are not printing if possible (cancel slicing)
+					if (serialPort != null) // we still have a serial port
+					{
+						Stop(false);
+						ClearQueuedGCode();
+
+						CommunicationState = CommunicationStates.Disconnecting;
+						currentReadThreadIndex++;
+						ToggleHighLowHigh(serialPort);
+						if (serialPort != null)
+						{
+							serialPort.Close();
+							serialPort.Dispose();
+						}
+
+						serialPort = null;
+						// make sure we clear out the stream processors
+						CreateStreamProcessors();
+						CommunicationState = CommunicationStates.Disconnected;
+
+						// We were connected to a printer so try to reconnect
+						Connect();
+					}
+					else
+					{
+						// We reset the board while attempting to connect, so now we don't have a serial port.
+						// Create one and do the DTR to reset
+						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
+						resetSerialPort.Open();
+
+						Thread.Sleep(500);
+
+						ToggleHighLowHigh(resetSerialPort);
+
+						resetSerialPort.Close();
+
+						// let the process know we canceled not ended normally.
+						CommunicationState = CommunicationStates.Disconnected;
+					}
+				}
+			}
+			catch (Exception)
+			{
+			}
+		}
+
+		private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
+		{
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = false;
+			serialPort.DtrEnable = false;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
+		}
+
+		public void ReleaseMotors(bool forceRelease = false)
+		{
+			if (forceRelease
+				|| this.AutoReleaseMotors)
+			{
+				QueueLine("M84");
+			}
+		}
+
+		public void RequestPause()
+		{
+			if (Printing)
+			{
+				if (CommunicationState == CommunicationStates.PrintingFromSd)
+				{
+					CommunicationState = CommunicationStates.Paused;
+					QueueLine("M25"); // : Pause SD print
+					return;
+				}
+
+				pauseHandlingStream.DoPause(PauseHandlingStream.PauseReason.UserRequested);
+			}
+		}
+
+		public void ResetToReadyState()
+		{
+			if (CommunicationState == CommunicationStates.FinishedPrint)
+			{
+				CommunicationState = CommunicationStates.Connected;
+			}
+			else
+			{
+				throw new Exception("You should only reset after a print has finished.");
+			}
+		}
+
+		public void Resume()
+		{
+			if (Paused)
+			{
+				if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
+				{
+					CommunicationState = CommunicationStates.PrintingFromSd;
+
+					QueueLine("M24"); // Start/resume SD print
+				}
+				else
+				{
+					pauseHandlingStream.Resume();
+					CommunicationState = CommunicationStates.Printing;
+				}
+			}
+		}
+
+		public void QueueLine(string lineToWrite, bool forceTopOfQueue = false)
+		{
+			lock (locker)
+			{
+				if (lineToWrite.Contains("\\n"))
+				{
+					lineToWrite = lineToWrite.Replace("\\n", "\n");
+				}
+
+				// Check line for line breaks, split and process separate if necessary
+				if (lineToWrite.Contains("\n"))
+				{
+					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
+					for (int i = 0; i < linesToWrite.Length; i++)
+					{
+						string line = linesToWrite[i].Trim();
+						if (line.Length > 0)
+						{
+							QueueLine(line);
+						}
+					}
+
+					return;
+				}
+
+				if (CommunicationState == CommunicationStates.PrintingFromSd
+					|| forceImmediateWrites)
+				{
+					lineToWrite = lineToWrite.Split(';')[0].Trim();
+					if (lineToWrite.Length > 0)
+					{
+						// sometimes we need to send code without buffering (like when we are closing the program).
+						WriteRaw(lineToWrite + "\n", lineToWrite);
+					}
+				}
+				else
+				{
+					if (lineToWrite.Trim().Length > 0)
+					{
+						// insert the command into the printing queue at the head
+						queuedCommandStream?.Add(lineToWrite, forceTopOfQueue);
+					}
+				}
+			}
+		}
+
+		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
+		{
+			var addedLines = new List<string>();
+			foreach (var item in readLineReplacements)
+			{
+				var splitReplacement = item.Replacement.Split(',');
+				if (splitReplacement.Length > 0)
+				{
+					if (item.Regex.IsMatch(lineBeingRead))
+					{
+						// replace on the first replacement group only
+						var replacedString = item.Regex.Replace(lineBeingRead, splitReplacement[0]);
+						lineBeingRead = replacedString;
+						// add in the other replacement groups
+						for (int j = 1; j < splitReplacement.Length; j++)
+						{
+							addedLines.Add(splitReplacement[j]);
+						}
+
+						break;
+					}
+				}
+			}
+
+			string extraLines = "";
+			foreach (var line in addedLines)
+			{
+				extraLines += line + "\n";
+			}
+
+			return (lineBeingRead, extraLines);
+		}
+
+		// Check is serial port is in the list of available serial ports
+		public bool SerialPortIsAvailable(string portName)
+		{
+			if (IsNetworkPrinting())
+			{
+				return true;
+			}
+
+			try
+			{
+				string[] portNames = FrostedSerialPort.GetPortNames();
+				return portNames.Any(x => string.Compare(x, portName, true) == 0);
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		public void SetMovementToAbsolute()
+		{
+			QueueLine("G90");
+		}
+
+		public void SetMovementToRelative()
+		{
+			QueueLine("G91");
+		}
+
+		public void SetTargetHotendTemperature(int hotendIndex0Based, double temperature, bool forceSend = false)
+		{
+			hotendIndex0Based = Math.Min(hotendIndex0Based, MaxExtruders - 1);
+
+			if (targetHotendTemperature[hotendIndex0Based] != temperature
+				|| forceSend)
+			{
+				ContinueHoldingTemperature = false;
+				targetHotendTemperature[hotendIndex0Based] = temperature;
+				if (this.IsConnected)
+				{
+					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
+				}
+
+				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
+			}
+		}
+
+		public bool CalibrationPrint { get; private set; }
+
+		private CancellationTokenSource printingCancellation;
+
+		public void StartPrint(string filePath, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+		{
+			using (var gcodeStream = File.OpenRead(filePath))
+			{
+				this.StartPrint(gcodeStream, gcodeFileNameForTask, calibrationPrint);
+			}
+		}
+
+		// TODO: Review - restoring for test support where we run in process with emulator. Envisioned out-of-proc use won't hit this interface
+		public void StartPrint(Stream gcodeStream, string gcodeFileNameForTask = null, bool calibrationPrint = false)
+		{
+			if (!this.IsConnected || Printing)
+			{
+				return;
+			}
+
+			this.CalibrationPrint = calibrationPrint;
+
+			printingCancellation = new CancellationTokenSource();
+
+			haveReportedError = false;
+			PrintWasCanceled = false;
+
+			waitingForPosition.Reset();
+			PositionReadType = PositionReadType.None;
+
+			ClearQueuedGCode();
+
+			// LoadGCodeToPrint
+			CreateStreamProcessors(gcodeStream);
+
+			// TODO: reimplement progress tracking
+			//
+			//if (gcodeFileNameForTask != null
+			//	&& ActivePrintTask == null
+			//	&& !CalibrationPrint)
+			//{
+			//	// TODO: Fix printerItemID int requirement
+			//	ActivePrintTask = new PrintTask
+			//	{
+			//		PrintStart = DateTime.Now,
+			//		PrinterId = this.Printer.Settings.ID.GetHashCode(),
+			//		PrintName = activePrintItem.PrintItem.Name,
+			//		PrintItemId = activePrintItem.PrintItem.Id,
+			//		PrintingGCodeFileName = gcodeFileNameForTask,
+			//		PrintComplete = false
+			//	};
+
+			//	ActivePrintTask.Commit();
+
+			//	Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
+			//}
+
+			CommunicationState = CommunicationStates.Printing;
+		}
+
+		public bool StartSdCardPrint(string m23FileName)
+		{
+			if (!this.IsConnected
+				|| Printing
+				|| string.IsNullOrEmpty(m23FileName))
+			{
+				return false;
+			}
+
+			currentSdBytes = 0;
+
+			ClearQueuedGCode();
+			CommunicationState = CommunicationStates.PrintingFromSd;
+
+			QueueLine($"M23 {m23FileName.ToLower()}"); // Select SD File
+			QueueLine("M24"); // Start/resume SD print
+
+			readLineStartCallBacks.Register("Done printing file", DonePrintingSdFile);
+
+			return true;
+		}
+
+		public void Stop(bool markPrintCanceled = true)
+		{
+			switch (CommunicationState)
+			{
+				case CommunicationStates.PrintingFromSd:
+					CancelSDCardPrint();
+					break;
+
+				case CommunicationStates.Printing:
+					CancelPrint(markPrintCanceled);
+					break;
+
+				case CommunicationStates.Paused:
+					if (PrePauseCommunicationState == CommunicationStates.PrintingFromSd)
+					{
+						CancelSDCardPrint();
+						CommunicationState = CommunicationStates.Connected;
+					}
+					else
+					{
+						CancelPrint(markPrintCanceled);
+						// We have to continue printing the end gcode, so we set this to Printing.
+						CommunicationState = CommunicationStates.Printing;
+					}
+
+					break;
+
+				case CommunicationStates.AttemptingToConnect:
+					CommunicationState = CommunicationStates.FailedToConnect;
+					// connectThread.Join(JoinThreadTimeoutMs);
+
+					CommunicationState = CommunicationStates.Disconnecting;
+					currentReadThreadIndex++;
+					if (serialPort != null)
+					{
+						serialPort.Close();
+						serialPort.Dispose();
+						serialPort = null;
+					}
+
+					CommunicationState = CommunicationStates.Disconnected;
+					break;
+
+				case CommunicationStates.PreparingToPrint:
+					CommunicationState = CommunicationStates.Connected;
+					break;
+			}
+		}
+
+		private void CancelPrint(bool markPrintCanceled)
+		{
+			lock (locker)
+			{
+				// Flag as canceled, wait briefly for listening threads to catch up
+				printingCancellation.Cancel();
+				Thread.Sleep(15);
+
+				// get rid of all the gcode we have left to print
+				ClearQueuedGCode();
+
+				if (!string.IsNullOrEmpty(this.CancelGCode))
+				{
+					// add any gcode we want to print while canceling
+					QueueLine(this.CancelGCode);
+				}
+
+				// let the process know we canceled not ended normally.
+				this.PrintWasCanceled = true;
+
+				// TODO: Reimplement tracking
+				/*
+				if (markPrintCanceled
+					&& ActivePrintTask != null)
+				{
+					TimeSpan printTimeSpan = DateTime.Now.Subtract(ActivePrintTask.PrintStart);
+
+					ActivePrintTask.PrintEnd = DateTime.Now;
+					ActivePrintTask.PrintComplete = false;
+					ActivePrintTask.PrintingGCodeFileName = "";
+					ActivePrintTask.Commit();
+				}
+
+				// no matter what we no longer have a print task
+				ActivePrintTask = null;
+				*/
+			}
+		}
 
 		private void CancelSDCardPrint()
 		{
