@@ -50,7 +50,7 @@ namespace MatterControl.Printing.Pipelines
 			public int ExtrusionDiscrepency { get; internal set; }
 		}
 
-		protected PrinterMove lastDestination = PrinterMove.Unknown;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 		private readonly List<string> commandQueue = new List<string>();
 		private readonly object locker = new object();
 		private PrinterMove moveLocationAtEndOfPauseCode;
@@ -137,7 +137,7 @@ namespace MatterControl.Printing.Pipelines
 			FilamentRunout
 		}
 
-		public PrinterMove LastDestination { get { return lastDestination; } }
+		public PrinterMove LastDestination => lastDestination;
 
 		public void Add(string line)
 		{
@@ -160,11 +160,11 @@ namespace MatterControl.Printing.Pipelines
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.ActivePrintName, false, layerNumber));
+					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.Connection.ActivePrintName, false, layerNumber));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.ActivePrintName, true, layerNumber));
+					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.Connection.ActivePrintName, true, layerNumber));
 					break;
 			}
 

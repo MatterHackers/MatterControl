@@ -2701,6 +2701,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public PrintJob ActivePrintTask { get; set; }
 
+		public string ActivePrintName => this.ActivePrintTask?.PrintName ?? "";
+
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
 			if (turnOffTime == TurnOff.Now)
