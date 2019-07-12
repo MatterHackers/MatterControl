@@ -1966,8 +1966,9 @@ namespace MatterControl.Printing
 			// LoadGCodeToPrint
 			CreateStreamProcessors(gcodeStream);
 
-			if (!string.IsNullOrWhiteSpace(printTask.GCodeFile)
-				&& ActivePrintTask == null
+			CommunicationState = CommunicationStates.Printing;
+
+			if (ActivePrintTask == null
 				&& !CalibrationPrint)
 			{
 				// TODO: Fix printerItemID int requirement
@@ -1976,8 +1977,6 @@ namespace MatterControl.Printing
 				repository.Update(ActivePrintTask);
 
 				Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
-
-				CommunicationState = CommunicationStates.Printing;
 			}
 		}
 
@@ -2254,18 +2253,6 @@ namespace MatterControl.Printing
 		private void SyncProgressToDB(CancellationToken cancellationToken)
 		{
 			// var timer = Stopwatch.StartNew();
-
-			//ActivePrintTask = result.FirstOrDefault();
-
-			//if (ActivePrintTask == null)
-			//{
-			//	ActivePrintTask = new PrintTask()
-			//	{
-			//		PrintName = "Hello World"
-			//	};
-
-			//	repository.Add(ActivePrintTask);
-			//}
 
 			while (!cancellationToken.IsCancellationRequested
 				&& this.CommunicationState != CommunicationStates.FinishedPrint

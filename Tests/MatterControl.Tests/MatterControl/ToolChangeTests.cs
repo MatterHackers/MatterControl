@@ -418,7 +418,10 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		private static PrinterConfig CreatePrinter()
 		{
 			// this is the pause and resume from the Eris
-			var printer = new PrinterConfig(new PrinterSettings());
+			var printer = new PrinterConfig(new PrinterSettings()
+			{
+				ID = "exampleID"
+			});
 
 			// setup for dual extrusion
 			printer.Settings.SetValue(SettingsKey.extruder_count, "2");

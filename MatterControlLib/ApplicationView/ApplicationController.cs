@@ -1456,11 +1456,6 @@ namespace MatterHackers.MatterControl
 		{
 			this.Thumbnails = new ThumbnailsConfig();
 
-			ProfileManager.UserChanged += (s, e) =>
-			{
-				//_activePrinters = new List<PrinterConfig>();
-			};
-
 			this.BuildSceneOperations();
 
 			this.Extensions = new ExtensionsConfig(this.Library);
