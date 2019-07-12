@@ -1911,63 +1911,66 @@ namespace MatterHackers.MatterControl
 				if (printerConnection.AnyHeatIsOn)
 				{
 					var paused = false;
-					Tasks.Execute("", printerConnection.Printer, (reporter, cancellationToken) =>
-					{
-						var progressStatus = new ProgressStatus();
-
-						while (printerConnection.SecondsToHoldTemperature > 0
-							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinueHoldingTemperature)
+					Tasks.Execute(
+						"",
+						printerConnection.Printer,
+						(reporter, cancellationToken) =>
 						{
-							if (paused)
+							var progressStatus = new ProgressStatus();
+
+							while (printerConnection.SecondsToHoldTemperature > 0
+								&& !cancellationToken.IsCancellationRequested
+								&& printerConnection.ContinueHoldingTemperature)
 							{
-								progressStatus.Status = "Holding Temperature".Localize();
-							}
-							else
-							{
-								if (printerConnection.SecondsToHoldTemperature > 60)
+								if (paused)
 								{
-									progressStatus.Status = string.Format(
-										"{0} {1:0}m {2:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										(int)(printerConnection.SecondsToHoldTemperature) / 60,
-										(int)(printerConnection.SecondsToHoldTemperature) % 60);
+									progressStatus.Status = "Holding Temperature".Localize();
 								}
 								else
 								{
-									progressStatus.Status = string.Format(
-										"{0} {1:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										printerConnection.SecondsToHoldTemperature);
+									if (printerConnection.SecondsToHoldTemperature > 60)
+									{
+										progressStatus.Status = string.Format(
+											"{0} {1:0}m {2:0}s",
+											"Automatic Heater Shutdown in".Localize(),
+											(int)printerConnection.SecondsToHoldTemperature / 60,
+											(int)printerConnection.SecondsToHoldTemperature % 60);
+									}
+									else
+									{
+										progressStatus.Status = string.Format(
+											"{0} {1:0}s",
+											"Automatic Heater Shutdown in".Localize(),
+											printerConnection.SecondsToHoldTemperature);
+									}
 								}
+								progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
+								reporter.Report(progressStatus);
+								Thread.Sleep(20);
 							}
-							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
-							reporter.Report(progressStatus);
-							Thread.Sleep(20);
-						}
 
-						return Task.CompletedTask;
-					},
-					taskActions: new RunningTaskOptions()
-					{
-						PauseAction = () => UiThread.RunOnIdle(() =>
+							return Task.CompletedTask;
+						},
+						taskActions: new RunningTaskOptions()
 						{
-							paused = true;
-							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
-						}),
-						PauseToolTip = "Pause automatic heater shutdown".Localize(),
-						ResumeAction = () => UiThread.RunOnIdle(() =>
-						{
-							paused = false;
-							printerConnection.TimeHaveBeenHoldingTemperature.Start();
-						}),
-						ResumeToolTip = "Resume automatic heater shutdown".Localize(),
-						StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
-						{
-							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
-						}),
-						StopToolTip = "Immediately turn off heaters".Localize()
-					});
+							PauseAction = () => UiThread.RunOnIdle(() =>
+							{
+								paused = true;
+								printerConnection.TimeHaveBeenHoldingTemperature.Stop();
+							}),
+							PauseToolTip = "Pause automatic heater shutdown".Localize(),
+							ResumeAction = () => UiThread.RunOnIdle(() =>
+							{
+								paused = false;
+								printerConnection.TimeHaveBeenHoldingTemperature.Start();
+							}),
+							ResumeToolTip = "Resume automatic heater shutdown".Localize(),
+							StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
+							{
+								printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
+							}),
+							StopToolTip = "Immediately turn off heaters".Localize()
+						});
 				}
 			}
 		}
