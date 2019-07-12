@@ -43,12 +43,9 @@ namespace TcpipDriver
 		private int tempWriteTimeout;
 
 		private bool reconnecting = false;
-		private readonly PrinterSettings settings;
 
 		public TcpipSerialPort(PrinterSettings settings)
 		{
-			this.settings = settings;
-
 			socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
 			if (int.TryParse(settings.GetValue("ip_port"), out port)
