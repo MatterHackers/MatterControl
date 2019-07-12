@@ -80,7 +80,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 										// TODO: Reimplement
 										//await printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName, lastPrint);
-										printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName);
+
+										// This needs to be reworked to support the PrintServer owning the PrintTask/Job 
+
+										System.Diagnostics.Debugger.Break();
+										//printer.Connection.StartPrint(lastPrint.PrintingGCodeFileName);
 
 										ApplicationController.Instance.MonitorPrintTask(printer);
 									}

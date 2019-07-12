@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 	using Agg.Font;
 	using Agg.Image;
 	using CustomWidgets;
+	using global::MatterControl.Common.Repository;
 	using global::MatterControl.Printing;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.Agg.VertexSource;
@@ -1455,11 +1456,6 @@ namespace MatterHackers.MatterControl
 		{
 			this.Thumbnails = new ThumbnailsConfig();
 
-			ProfileManager.UserChanged += (s, e) =>
-			{
-				//_activePrinters = new List<PrinterConfig>();
-			};
-
 			this.BuildSceneOperations();
 
 			this.Extensions = new ExtensionsConfig(this.Library);
@@ -2659,8 +2655,6 @@ namespace MatterHackers.MatterControl
 					return;
 				}
 
-				printer.Connection.PrintingItemName = printItemName;
-
 				var errors = printer.ValidateSettings(validatePrintBed: !printer.Bed.EditContext.IsGGCodeSource);
 				if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 				{
@@ -2906,9 +2900,18 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
+						var printTask = new PrintJob()
+						{
+							PrintStart = DateTime.Now,
+							PrinterId = printer.Settings.ID.GetHashCode(),
+							PrintName = "hello", // activePrintItem.PrintItem.Name,
+							GCodeFile = gcodeFilePath,
+							PrintComplete = false
+						};
+
 						// TODO: Reimplement
 						//await printer.Connection.StartPrint(gcodeFilePath);
-						printer.Connection.StartPrint(gcodeFilePath);
+						printer.Connection.StartPrint(printTask);
 
 						MonitorPrintTask(printer);
 
@@ -2919,9 +2922,18 @@ namespace MatterHackers.MatterControl
 						// Ask for slicer specific gcode validation
 						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
+							var printTask = new PrintJob()
+							{
+								PrintStart = DateTime.Now,
+								PrinterId = printer.Settings.ID.GetHashCode(),
+								PrintName = "hello", // activePrintItem.PrintItem.Name,
+								GCodeFile = gcodeFilePath,
+								PrintComplete = false
+							};
+
 							// TODO: Reimplement
 							// await printer.Connection.StartPrint(gcodeFilePath);
-							printer.Connection.StartPrint(gcodeFilePath);
+							printer.Connection.StartPrint(printTask);
 							MonitorPrintTask(printer);
 							return;
 						}
@@ -3222,7 +3234,7 @@ Support and tutorials:
 			bool listenForConnectFailed = true;
 			long connectStartMs = UiThread.CurrentTimerMs;
 
-			void Connection_Failed(object s, EventArgs e)
+			void Connection_Failed(object sender, ConnectFailedEventArgs e)
 			{
 #if !__ANDROID__
 				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
@@ -3236,6 +3248,102 @@ Support and tutorials:
 						// User initiated connect attempt failed, show port selection dialog
 						DialogWindow.Show(new SetupStepComPortOne(printer));
 					});
+				}
+
+				switch (e.Reason)
+				{
+					case ConnectionFailure.ConnectionTimeout:
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(
+								@"MatterControl tried to communicate with your printer, but never received a response.
+
+Make sure that your printer is turned on. Some printers will appear to be connected, even when they are turned off.".Localize(),
+								"Connection Timeout".Localize(),
+								useMarkdown: true);
+						});
+						break;
+
+					case ConnectionFailure.Unknown:
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e.Message, e.ExceptionType);
+						});
+						break;
+
+					case ConnectionFailure.IOException:
+						if (AggContext.OperatingSystem == OSType.X11 && e.Message == "Permission denied")
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								string message =
+@"In order for MatterControl to access the serial ports on Linux, you will need to give your user account the appropriate permissions. Run these commands in a terminal to add yourself to the correct group.
+
+Ubuntu/Debian
+--------------
+
+```
+# sudo gpasswd -a $USER dialout
+```
+
+Arch
+----
+
+```
+# sudo gpasswd -a $USER uucp
+# sudo gpasswd -a $USER lock
+```
+
+You will then need to logout and log back in to the computer for the changes to take effect. ";
+								StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize(), useMarkdown: true);
+							});
+						}
+						else if (e.Message == "The semaphore timeout period has expired." || e.Message == "A device attached to the system is not functioning.")
+						{
+							UiThread.RunOnIdle(() => 
+							{
+								string message =
+@"The operating system has reported that your printer is malfunctioning. MatterControl cannot communicate with it. Contact your printer's manufacturer for assistance.
+
+Details
+-------
+
+" + e.Message;
+								StyledMessageBox.ShowMessageBox(message, "Hardware Error".Localize(), useMarkdown: true);
+							});
+						}
+						else
+						{
+							UiThread.RunOnIdle(() =>
+							{
+								StyledMessageBox.ShowMessageBox(e.Message, e.ExceptionType);
+							});
+						}
+
+						break;
+
+					case ConnectionFailure.UnsupportedBaudRate:
+						UiThread.RunOnIdle(() =>
+						{
+							string message = "The chosen baud rate is not supported by your operating system. Use a different baud rate, if possible.";
+							if (AggContext.OperatingSystem == OSType.X11)
+							{
+								message += "On Linux, MatterControl requires a serial helper library in order to use certain baud rates. It is possible that this component is missing or not installed properly. ";
+							}
+
+							StyledMessageBox.ShowMessageBox(message, "Unsupported Baud Rate".Localize(), useMarkdown: true);
+						});
+						break;
+
+					case ConnectionFailure.PortInUse:
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(
+								"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.",
+								"Port In Use".Localize(), 
+								useMarkdown: true);
+						});
+						break;
 				}
 #endif
 				ClearEvents();

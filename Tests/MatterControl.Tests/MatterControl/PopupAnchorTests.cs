@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -306,7 +305,6 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-
 		// Redirect up to down
 		[Test]
 		public async Task BottomTopDownRedirectTest()
@@ -498,10 +496,9 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-
-		private static async Task AnchorTests(PopupsTestWindow systemWindow, MatePoint anchor, MatePoint popup, TextButton button, Action<GuiWidget, GuiWidget> validator, Action<GuiWidget> rowAdjuster = null)
+		private static Task AnchorTests(PopupsTestWindow systemWindow, MatePoint anchor, MatePoint popup, TextButton button, Action<GuiWidget, GuiWidget> validator, Action<GuiWidget> rowAdjuster = null)
 		{
-			await systemWindow.RunTest(testRunner =>
+			return systemWindow.RunTest(testRunner =>
 			{
 				button.BackgroundColor = Color.LightGray;
 				button.HoverColor = Color.LightBlue;
@@ -572,7 +569,7 @@ namespace MatterControl.Tests.MatterControl
 			}, 25);
 		}
 
-		[Test, Ignore("Lame")]
+		[Test, Ignore("Thorough but too long")]
 		public async Task WindowTest3()
 		{
 			string targetWidget = "targetA";
@@ -669,8 +666,6 @@ namespace MatterControl.Tests.MatterControl
 				};
 
 				bool firstPass = true;
-
-				//testRunner.Delay(90);
 
 				for (var i = 0; i < 16; i++)
 				{
@@ -855,7 +850,6 @@ namespace MatterControl.Tests.MatterControl
 							anchor.AltMate.VerticalEdge = MateEdge.Top;
 							popup.AltMate.VerticalEdge = MateEdge.Bottom;
 							break;
-
 					}
 
 					testRunner.ClickByName(targetWidget);
@@ -875,7 +869,7 @@ namespace MatterControl.Tests.MatterControl
 				testRunner.Delay();
 
 				return Task.CompletedTask;
-			}, 25);
+			}, 95);
 		}
 
 		public class PopupsTestWindow : SystemWindow

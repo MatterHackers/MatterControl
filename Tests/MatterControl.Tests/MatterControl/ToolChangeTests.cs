@@ -35,6 +35,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterControl.Common.Repository;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -417,7 +418,10 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 		private static PrinterConfig CreatePrinter()
 		{
 			// this is the pause and resume from the Eris
-			var printer = new PrinterConfig(new PrinterSettings());
+			var printer = new PrinterConfig(new PrinterSettings()
+			{
+				ID = "exampleID"
+			});
 
 			// setup for dual extrusion
 			printer.Settings.SetValue(SettingsKey.extruder_count, "2");
@@ -491,7 +495,14 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			// start a print
 			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
 			// await printer.Connection.StartPrint(inputStream);
-			printer.Connection.StartPrint(inputStream);
+
+			var printTask = new PrintJob()
+			{
+				PrintStart = DateTime.Now,
+				PrinterId = printer.Settings.ID.GetHashCode(),
+			};
+
+			printer.Connection.StartPrint(inputStream, printTask);
 
 			// wait up to 40 seconds for the print to finish
 			timer = Stopwatch.StartNew();

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Threading.Tasks;
+using MatterControl.Common.Repository;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -188,9 +189,18 @@ namespace MatterHackers.MatterControl
 					ContentStore = null // No content store for GCode
 				});
 
+				var printTask = new PrintJob()
+				{
+					PrintStart = DateTime.Now,
+					PrinterId = printer.Settings.ID.GetHashCode(),
+					PrintName = "hello", // activePrintItem.PrintItem.Name,
+					GCodeFile = gcodePath,
+					PrintComplete = false
+				};
+
 				// TODO: Reimplement
 				// await printer.Connection.StartPrint(finalGCodePath, calibrationPrint: true);
-				printer.Connection.StartPrint(finalGCodePath, calibrationPrint: true);
+				printer.Connection.StartPrint(printTask, calibrationPrint: true);
 				ApplicationController.Instance.MonitorPrintTask(printer);
 			}
 			else

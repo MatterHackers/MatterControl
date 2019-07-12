@@ -27,14 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.SlicerConfiguration;
-
 namespace MatterControl.Printing
 {
-	public class PrintHostConfig
+	public enum CommunicationStates
 	{
-		public PrinterSettings Settings { get; set; }
-
-		public PrinterConnection Connection { get; set; }
+		Disconnected,
+		AttemptingToConnect,
+		FailedToConnect,
+		Connected,
+		PreparingToPrint,
+		Printing,
+		PrintingFromSd,
+		Paused,
+		FinishedPrint,
+		Disconnecting,
+		ConnectionLost
 	}
 }

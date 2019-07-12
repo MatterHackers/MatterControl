@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -31,14 +31,17 @@ using System;
 
 namespace MatterControl.Printing
 {
-
 	public class ConnectFailedEventArgs : EventArgs
 	{
-		public ConnectionFailure Reason { get; }
-
 		public ConnectFailedEventArgs(ConnectionFailure reason)
 		{
 			this.Reason = reason;
 		}
+
+		public ConnectionFailure Reason { get; }
+
+		public string Message { get; internal set; }
+
+		public string ExceptionType { get; internal set; }
 	}
 }

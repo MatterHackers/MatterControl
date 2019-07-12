@@ -27,14 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.MatterControl.SlicerConfiguration;
+using System;
 
 namespace MatterControl.Printing
 {
-	public class PrintHostConfig
+	[Flags]
+	public enum PositionReadType
 	{
-		public PrinterSettings Settings { get; set; }
-
-		public PrinterConnection Connection { get; set; }
+		None = 0,
+		HomeX = 1 << 1,
+		HomeY = 1 << 2,
+		HomeZ = 1 << 3,
+		Other = 1 << 4,
+		HomeAll = HomeX | HomeY | HomeZ,
 	}
 }
