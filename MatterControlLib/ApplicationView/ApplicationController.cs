@@ -1878,7 +1878,8 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_ErrorReported(object sender, string line)
 		{
-			if (line != null)
+			if (line != null
+				 && sender is PrinterConnection printerConnection)
 			{
 				string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
 					+ "\n"
@@ -1886,24 +1887,20 @@ namespace MatterHackers.MatterControl
 					+ "Error Reported".Localize() + ":"
 					+ $" \"{line}\".";
 
-				if (sender is PrinterConnection printerConnection)
-				{
-					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox(
-							(clickedOk) =>
+				UiThread.RunOnIdle(() =>
+					StyledMessageBox.ShowMessageBox(
+						(clickedOk) =>
+						{
+							if (clickedOk && printerConnection.Paused)
 							{
-								if (clickedOk && printerConnection.Paused)
-								{
-									printerConnection.Resume();
-								}
-							},
-							message,
-							"Printer Hardware Error".Localize(),
-							StyledMessageBox.MessageType.YES_NO,
-							"Resume".Localize(),
-							"OK".Localize())
-					);
-				}
+								printerConnection.Resume();
+							}
+						},
+						message,
+						"Printer Hardware Error".Localize(),
+						StyledMessageBox.MessageType.YES_NO,
+						"Resume".Localize(),
+						"OK".Localize()));
 			}
 		}
 
