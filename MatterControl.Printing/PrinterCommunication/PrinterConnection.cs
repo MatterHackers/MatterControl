@@ -1705,7 +1705,8 @@ namespace MatterControl.Printing
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
+						var factory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+						var resetSerialPort = factory.Create(this.ComPort, Printer.Settings);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);
