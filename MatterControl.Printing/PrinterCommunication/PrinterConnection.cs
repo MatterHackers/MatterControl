@@ -71,7 +71,7 @@ namespace MatterControl.Printing
 
 		public event EventHandler DetailedPrintingStateChanged;
 
-		public event EventHandler ConnectionFailed;
+		public event EventHandler<ConnectFailedEventArgs> ConnectionFailed;
 
 		public event EventHandler ConnectionSucceeded;
 
@@ -1056,106 +1056,24 @@ namespace MatterControl.Printing
 										// We do not need to wait for the M105
 										PrintingCanContinue(null);
 									}
-									catch (ArgumentOutOfRangeException e)
+									catch (ArgumentOutOfRangeException ex)
 									{
-										this.LogError("Exception:" + e.Message);
-										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate);
-
-										// TODO: Reimplement exception specific error messages
-										/*
-										UiThread.RunOnIdle(() => {
-											string message = @"The chosen baud rate is not supported by your operating system. Use a different baud rate, if possible.";
-											if (AggContext.OperatingSystem == OSType.X11)
-											{
-												message +=
-@"
-
-On Linux, MatterControl requires a serial helper library in order to use certain baud rates. It is possible that this component is missing or not installed properly. ";
-											}
-											StyledMessageBox.ShowMessageBox(message, "Unsupported Baud Rate".Localize(), useMarkdown: true);
-										}); */
+										this.LogError("Exception:" + ex.Message);
+										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate, ex.Message, ex.GetType().ToString());
 									}
-									catch (IOException e)
+									catch (IOException ex)
 									{
-										this.LogError("Exception:" + e.Message);
-										OnConnectionFailed(ConnectionFailure.IOException);
-										// TODO: Reimplement exception specific error messages
-										/*
-										if (AggContext.OperatingSystem == OSType.X11 && e.Message == "Permission denied")
-										{
-											UiThread.RunOnIdle(() =>
-											{
-												string message =
-@"In order for MatterControl to access the serial ports on Linux, you will need to give your user account the appropriate permissions. Run these commands in a terminal to add yourself to the correct group.
-
-Ubuntu/Debian
---------------
-
-```
-# sudo gpasswd -a $USER dialout
-```
-
-Arch
-----
-
-```
-# sudo gpasswd -a $USER uucp
-# sudo gpasswd -a $USER lock
-```
-
-You will then need to logout and log back in to the computer for the changes to take effect. ";
-												StyledMessageBox.ShowMessageBox(message, "Permission Denied".Localize(), useMarkdown: true);
-											}); 
-										}
-										else if (e.Message == "The semaphore timeout period has expired." || e.Message == "A device attached to the system is not functioning.")
-										{
-											UiThread.RunOnIdle(() => {
-												string message =
-@"The operating system has reported that your printer is malfunctioning. MatterControl cannot communicate with it. Contact your printer's manufacturer for assistance.
-
-Details
--------
-
-" + e.Message;
-												StyledMessageBox.ShowMessageBox(message, "Hardware Error".Localize(), useMarkdown: true);
-											});
-										}
-										else
-										{
-											UiThread.RunOnIdle(() => {
-												StyledMessageBox.ShowMessageBox(e.Message, e.GetType().ToString());
-											});
-										} */
+										this.LogError("Exception:" + ex.Message);
+										OnConnectionFailed(ConnectionFailure.IOException, ex.Message, ex.GetType().ToString());
 									}
-									catch (TimeoutException)
+									catch (TimeoutException ex)
 									{
-										OnConnectionFailed(ConnectionFailure.ConnectionTimeout);
-
-										// TODO: Reimplement exception specific error messages
-										/*
-
-										UiThread.RunOnIdle(() =>
-										{
-											string message =
-@"MatterControl tried to communicate with your printer, but never received a response.
-
-Make sure that your printer is turned on. Some printers will appear to be connected, even when they are turned off.";
-											StyledMessageBox.ShowMessageBox(message, "Connection Timeout".Localize(), useMarkdown: true);
-										});
-										*/
+										OnConnectionFailed(ConnectionFailure.ConnectionTimeout, ex.Message, ex.GetType().ToString());
 									}
 									catch (Exception ex)
 									{
 										this.LogError("Exception:" + ex.Message);
-										OnConnectionFailed(ConnectionFailure.Unknown);
-
-										// TODO: Reimplement exception specific error messages
-										/*
-
-										UiThread.RunOnIdle(() => {
-											StyledMessageBox.ShowMessageBox(ex.Message, ex.GetType().ToString());
-										});
-										*/
+										OnConnectionFailed(ConnectionFailure.Unknown, ex.Message, ex.GetType().ToString());
 									}
 								}
 							}
@@ -1164,14 +1082,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 								if (serialPortIsAlreadyOpen)
 								{
 									OnConnectionFailed(ConnectionFailure.PortInUse);
-
-									// TODO: Reimplement exception specific error messages
-									/*
-									UiThread.RunOnIdle(() =>
-									{
-										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.";
-										StyledMessageBox.ShowMessageBox(message, "Port In Use".Localize(), useMarkdown: true);
-									}); */
 								}
 								else
 								{
@@ -1405,12 +1315,15 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 		}
 
-		public void OnConnectionFailed(ConnectionFailure reason)
+		public void OnConnectionFailed(ConnectionFailure reason, string message = null, string exceptionType = null)
 		{
 			communicationPossible = false;
 
-			var eventArgs = new ConnectFailedEventArgs(reason);
-			ConnectionFailed?.Invoke(this, eventArgs);
+			ConnectionFailed?.Invoke(this, new ConnectFailedEventArgs(reason)
+			{
+				Message = message,
+				ExceptionType = exceptionType
+			});
 
 			CommunicationState = CommunicationStates.Disconnected;
 		}
@@ -2259,7 +2172,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			{
 				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
-				// TODO: Reimplement tracking
 				if (this.RecoveryIsEnabled
 					&& ActivePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
