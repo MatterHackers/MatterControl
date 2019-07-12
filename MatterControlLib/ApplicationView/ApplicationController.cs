@@ -3250,6 +3250,9 @@ Support and tutorials:
 					});
 				}
 
+				// Log Error
+				printer.TerminalLog.WriteLine($"{e.Reason}: {e.Message}");
+
 				switch (e.Reason)
 				{
 					case ConnectionFailure.ConnectionTimeout:
@@ -3340,7 +3343,7 @@ Details
 						{
 							StyledMessageBox.ShowMessageBox(
 								"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.",
-								"Port In Use".Localize(), 
+								"Port In Use".Localize(),
 								useMarkdown: true);
 						});
 						break;

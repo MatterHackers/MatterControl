@@ -1058,12 +1058,10 @@ namespace MatterControl.Printing
 									}
 									catch (ArgumentOutOfRangeException ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate, ex.Message, ex.GetType().ToString());
 									}
 									catch (IOException ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.IOException, ex.Message, ex.GetType().ToString());
 									}
 									catch (TimeoutException ex)
@@ -1072,7 +1070,6 @@ namespace MatterControl.Printing
 									}
 									catch (Exception ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.Unknown, ex.Message, ex.GetType().ToString());
 									}
 								}
@@ -1543,18 +1540,15 @@ namespace MatterControl.Printing
 				}
 				catch (IOException e2)
 				{
-					this.LogError("Exception:" + e2.Message);
 					OnConnectionFailed(ConnectionFailure.IOException);
 				}
 				catch (InvalidOperationException ex)
 				{
-					this.LogError("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
 					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
 				}
 				catch (UnauthorizedAccessException e3)
 				{
-					this.LogError("Exception:" + e3.Message);
 					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
 				}
 				catch (Exception)
@@ -2794,8 +2788,6 @@ namespace MatterControl.Printing
 					}
 					catch (IOException ex)
 					{
-						this.LogError("Exception:" + ex.Message);
-
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
