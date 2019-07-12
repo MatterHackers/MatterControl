@@ -920,9 +920,6 @@ namespace MatterControl.Printing
 				return;
 			}
 
-			// TODO: Reimplement in application layer on connect
-			//TerminalLog.Clear();
-
 			// Attempt connecting to a specific printer
 			this.FirmwareType = FirmwareTypes.Unknown;
 

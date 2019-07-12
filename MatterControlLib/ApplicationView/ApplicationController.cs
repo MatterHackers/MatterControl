@@ -2325,6 +2325,9 @@ namespace MatterHackers.MatterControl
 				&& printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 			{
+				// Clear log before starting connection
+				printer.TerminalLog.Clear();
+
 				printer.Connection.Connect();
 			}
 
@@ -3241,6 +3244,9 @@ Support and tutorials:
 			{
 				return;
 			}
+
+			// Clear log before starting connection
+			printer.TerminalLog.Clear();
 
 			bool listenForConnectFailed = true;
 			long connectStartMs = UiThread.CurrentTimerMs;
