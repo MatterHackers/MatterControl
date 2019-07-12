@@ -40,8 +40,6 @@ using System.Threading.Tasks;
 using MatterControl.Common.Repository;
 using MatterControl.Printing.Pipelines;
 using MatterControl.Printing.PrintLeveling;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -621,7 +619,7 @@ namespace MatterControl.Printing
 				OnFanSpeedSet(null);
 				if (this.IsConnected)
 				{
-					QueueLine("M106 S{0}".FormatWith((int)(fanSpeed + .5)));
+					QueueLine($"M106 S{(int)(fanSpeed + .5)}");
 				}
 			}
 		}
@@ -832,7 +830,7 @@ namespace MatterControl.Printing
 					_targetBedTemperature = value;
 					if (this.IsConnected)
 					{
-						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
+						QueueLine($"M140 S{_targetBedTemperature}");
 					}
 
 					BedTargetTemperatureChanged?.Invoke(this, null);
@@ -1111,7 +1109,7 @@ namespace MatterControl.Printing
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
 			readLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
-			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
+			QueueLine($"M30 {fileName.ToLower()}");
 		}
 
 		/// <summary>
@@ -1265,13 +1263,13 @@ namespace MatterControl.Printing
 		public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			QueueLine(string.Format("G1 {0}{1:0.###} F{2}", axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			QueueLine("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.X, position.Y, position.Z, feedRateMmPerMinute));
+			QueueLine(string.Format("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}", position.X, position.Y, position.Z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1306,7 +1304,7 @@ namespace MatterControl.Printing
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				QueueLine(string.Format("G1 {0}{1:0.###} F{2}", axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
@@ -1636,8 +1634,7 @@ namespace MatterControl.Printing
 
 				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
 				{
-					string multiExtruderCheck = "T{0}:".FormatWith(hotendIndex);
-					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readHotendTemp))
+					if (GCodeFile.GetFirstNumberAfter($"T{hotendIndex}:", temperatureString, ref readHotendTemp))
 					{
 						if (actualHotendTemperature[hotendIndex] != readHotendTemp)
 						{
@@ -1912,7 +1909,7 @@ namespace MatterControl.Printing
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				if (this.IsConnected)
 				{
-					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
+					QueueLine(string.Format("M104 T{0} S{1}", hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
 				}
 
 				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
@@ -2630,15 +2627,12 @@ namespace MatterControl.Printing
 							&& !Printing
 							&& !Paused)
 						{
-							UiThread.RunOnIdle(() =>
+							for (int i = 0; i < this.ExtruderCount; i++)
 							{
-								for (int i = 0; i < this.ExtruderCount; i++)
-								{
-									SetTargetHotendTemperature(i, 0, true);
-								}
+								SetTargetHotendTemperature(i, 0, true);
+							}
 
-								TargetBedTemperature = 0;
-							});
+							TargetBedTemperature = 0;
 						}
 					});
 				}
