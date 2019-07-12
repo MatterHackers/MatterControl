@@ -1876,31 +1876,42 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 
-		public void Connection_ErrorReported(object sender, string line)
+		public void Connection_ErrorReported(object sender, DeviceErrorArgs e)
 		{
-			if (line != null
-				 && sender is PrinterConnection printerConnection)
+			if (sender is PrinterConnection printerConnection)
 			{
-				string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
-					+ "\n"
-					+ "\n"
-					+ "Error Reported".Localize() + ":"
-					+ $" \"{line}\".";
+				if (e.Source == ErrorSource.Firmware
+					&& e.Message != null)
+				{
+					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
+						+ "\n"
+						+ "\n"
+						+ "Error Reported".Localize() + ":"
+						+ $" \"{e.Message}\".";
 
-				UiThread.RunOnIdle(() =>
-					StyledMessageBox.ShowMessageBox(
-						(clickedOk) =>
-						{
-							if (clickedOk && printerConnection.Paused)
+					UiThread.RunOnIdle(() =>
+						StyledMessageBox.ShowMessageBox(
+							(clickedOk) =>
 							{
-								printerConnection.Resume();
-							}
-						},
-						message,
-						"Printer Hardware Error".Localize(),
-						StyledMessageBox.MessageType.YES_NO,
-						"Resume".Localize(),
-						"OK".Localize()));
+								if (clickedOk && printerConnection.Paused)
+								{
+									printerConnection.Resume();
+								}
+							},
+							message,
+							"Printer Hardware Error".Localize(),
+							StyledMessageBox.MessageType.YES_NO,
+							"Resume".Localize(),
+							"OK".Localize()));
+				}
+				else if (ActivePrinters.FirstOrDefault(p => p.Connection == printerConnection) is PrinterConfig printer)
+				{
+					printer.TerminalLog.WriteLine(e.Message);
+				}
+				else
+				{
+					this.LogError(e.Message);
+				}
 			}
 		}
 

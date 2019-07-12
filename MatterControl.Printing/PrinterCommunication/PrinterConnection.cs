@@ -63,7 +63,7 @@ namespace MatterControl.Printing
 
 		public event EventHandler TemporarilyHoldingTemp;
 
-		public event EventHandler<string> ErrorReported;
+		public event EventHandler<DeviceErrorArgs> ErrorReported;
 
 		public event EventHandler BedTemperatureRead;
 
@@ -479,7 +479,9 @@ namespace MatterControl.Printing
 
 				if (_communicationState != value)
 				{
-					this.LogInfo($"Communication State: {value}");
+					// TODO: Not really an error, not really worth adding LogInfo eventing when these events need to be ripped out if we move out of process. In the short
+					// term no harm is caused by reusing LogError and the message simply dumps to the printer terminal without any "Error" messaging accomanying it
+					this.LogError($"Communication State: {value}", ErrorSource.Connection);
 
 					switch (_communicationState)
 					{
@@ -862,7 +864,7 @@ namespace MatterControl.Printing
 
 		public PrintHostConfig Printer { get; }
 
-		public void ReleaseAndReportFailedConnection(ConnectionFailure reason)
+		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string message = null)
 		{
 			// Shutdown the serial port
 			if (serialPort != null)
@@ -874,19 +876,16 @@ namespace MatterControl.Printing
 			}
 
 			// Notify
-			OnConnectionFailed(reason);
+			OnConnectionFailed(reason, message);
 		}
 
-		public void LogInfo(string message)
+		public void LogError(string message, ErrorSource source)
 		{
-			// TODO: Add messaging
-			Console.WriteLine(message);
-		}
-
-		public void LogError(string message)
-		{
-			// TODO: Add messaging
-			Console.WriteLine(message);
+			this.ErrorReported(this, new DeviceErrorArgs()
+			{
+				Message = message,
+				Source = source
+			});
 		}
 
 		public void BedTemperatureWasWritenToPrinter(string line)
@@ -1381,7 +1380,7 @@ namespace MatterControl.Printing
 
 				if (line != null)
 				{
-					ErrorReported?.Invoke(this, line);
+					this.LogError(line, ErrorSource.Firmware);
 				}
 
 				// pause the printer
@@ -1538,18 +1537,18 @@ namespace MatterControl.Printing
 				catch (TimeoutException)
 				{
 				}
-				catch (IOException e2)
+				catch (IOException ex)
 				{
-					OnConnectionFailed(ConnectionFailure.IOException);
+					OnConnectionFailed(ConnectionFailure.IOException, ex.Message);
 				}
 				catch (InvalidOperationException ex)
 				{
 					// this happens when the serial port closes after we check and before we read it.
-					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
+					OnConnectionFailed(ConnectionFailure.InvalidOperationException, ex.Message);
 				}
-				catch (UnauthorizedAccessException e3)
+				catch (UnauthorizedAccessException ex)
 				{
-					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
+					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException, ex.Message);
 				}
 				catch (Exception)
 				{
@@ -2791,18 +2790,17 @@ namespace MatterControl.Printing
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost);
+							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost, ex.Message);
 						}
 					}
-					catch (TimeoutException e2) // known ok
+					catch (TimeoutException ex) // known ok
 					{
 						// This writes on the next line, and there may have been another write attempt before it is printer. Write indented to attempt to show its association.
-						this.LogError("        Error writing command:" + e2.Message);
+						this.LogError("        Error writing to printer:" + ex.Message, ErrorSource.Connection);
 					}
-					catch (UnauthorizedAccessException e3)
+					catch (UnauthorizedAccessException ex)
 					{
-						this.LogError("Exception:" + e3.Message);
-						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException);
+						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException, ex.Message);
 					}
 					catch (Exception)
 					{
@@ -2863,7 +2861,7 @@ namespace MatterControl.Printing
 					{
 					}
 
-					printerConnection.LogError("Read Thread Has Exited");
+					printerConnection.LogError("Read Thread Has Exited", ErrorSource.Connection);
 					numRunning--;
 				});
 			}
