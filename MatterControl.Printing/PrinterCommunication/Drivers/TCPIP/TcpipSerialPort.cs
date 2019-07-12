@@ -5,47 +5,47 @@ using System.Text;
 using System.Threading;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace TcpipDriver
 {
-	class TcpipSerialPort : IFrostedSerialPort
+	public class TcpipSerialPort : IFrostedSerialPort
 	{
 		// Telnet protocol characters
-		const byte IAC = 255;  // escape
-		const byte DONT = 254; // negotiation
-		const byte DO = 253;// negotiation
-		const byte WILL = 251;  // negotiation
-		const byte SB = 250;  // subnegotiation begin
-		const byte SE = 240;  // subnegotiation end
-		const byte ComPortOpt = 44;  // COM port options
-		const byte SetBaud = 1;  // Set baud rate
-		const byte SetDataSize = 2; // Set data size
-		const byte SetParity = 3;  // Set parity
-		const byte SetControl = 5;  // Set control lines
-		const byte DTR_ON = 8;  // used here to reset microcontroller
-		const byte DTR_OFF = 9;
-		const byte RTS_ON = 11;  // used here to signal ISP (in-system-programming) to uC
-		const byte RTS_OFF = 12;
+		private const byte IAC = 255;  // escape
+		private const byte DONT = 254; // negotiation
+		private const byte DO = 253;// negotiation
+		private const byte WILL = 251;  // negotiation
+		private const byte SB = 250;  // subnegotiation begin
+		private const byte SE = 240;  // subnegotiation end
+		private const byte ComPortOpt = 44;  // COM port options
+		private const byte SetBaud = 1;  // Set baud rate
+		private const byte SetDataSize = 2; // Set data size
+		private const byte SetParity = 3;  // Set parity
+		private const byte SetControl = 5;  // Set control lines
+		private const byte DTR_ON = 8;  // used here to reset microcontroller
+		private const byte DTR_OFF = 9;
+		private const byte RTS_ON = 11;  // used here to signal ISP (in-system-programming) to uC
+		private const byte RTS_OFF = 12;
+		private bool dtrEnable;
 
 		private Socket socket;
-		private NetworkStream stream;//Seems to have more in common with the socket so we will use to make this interface easier
-		private IPAddress ipAddress;
-		private int port;
+		private NetworkStream stream; // Seems to have more in common with the socket so we will use to make this interface easier
+		private readonly IPAddress ipAddress;
+		private readonly int port;
 		private IPEndPoint ipEndPoint;
-		private byte[] readBuffer;
+		private readonly byte[] readBuffer;
 		private int bufferIndex;
 
-		//These get set before open is called but the stream is not created until open is called. Preserver values to be set after stream is created.
+		// These get set before open is called but the stream is not created until open is called. Preserver values to be set after stream is created.
 		private int tempReadTimeout;
 		private int tempWriteTimeout;
 
 		private bool reconnecting = false;
-		private PrinterSettings settings;
+		private readonly PrinterSettings settings;
 
-		public TcpipSerialPort(PrinterSettings settings, string name)
+		public TcpipSerialPort(PrinterSettings settings)
 		{
 			this.settings = settings;
 
@@ -84,28 +84,24 @@ namespace TcpipDriver
 
 		public bool DtrEnable
 		{
-			get { return dtrEnable; }
+			get => dtrEnable;
 			set
 			{
 				if (stream != null)
 				{
 					SetDtrEnable(value);
 				}
+
 				dtrEnable = value;
 			}
 		}
-		private bool dtrEnable;
 
 		// Eventually I will need to find out how to check that the port is open and connectable
 		public bool IsOpen { get; } = true;
 
 		public int ReadTimeout
 		{
-			get
-			{
-				return stream.ReadTimeout;
-			}
-
+			get => stream.ReadTimeout;
 			set
 			{
 				if (stream != null)
@@ -123,11 +119,7 @@ namespace TcpipDriver
 
 		public int WriteTimeout
 		{
-			get
-			{
-				return stream.WriteTimeout;
-			}
-
+			get => stream.WriteTimeout;
 			set
 			{
 				if (stream != null)
@@ -190,10 +182,11 @@ namespace TcpipDriver
 
 			if (this.BaudRate != 0)
 			{
-				//Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
+				// Send Telnet handshake so that esp will enter the telnet mode allowing us to set baud and reset board
 				byte[] bytes = new byte[] { IAC, WILL, ComPortOpt };
 				Write(bytes, 0, bytes.Length);
-				//Set baud and reset board
+
+				// Set baud and reset board
 				SetBaudRate(this.BaudRate);
 			}
 		}
@@ -212,13 +205,12 @@ namespace TcpipDriver
 			System.Diagnostics.Debugger.Break();
 		}
 
-
 		public int Read(byte[] buffer, int offset, int count)
 		{
 			Array.Copy(readBuffer, offset, buffer, 0, count);
 			Array.Clear(buffer, 0, count);
 			bufferIndex -= count;
-			Array.Copy(readBuffer, count, readBuffer, 0, bufferIndex);//THis may throw an exception as the target and source are the same
+			Array.Copy(readBuffer, count, readBuffer, 0, bufferIndex); // This may throw an exception as the target and source are the same
 
 			return count;
 		}
@@ -317,7 +309,7 @@ namespace TcpipDriver
 		{
 			byte dtrEnabled = dtr ? DTR_ON : DTR_OFF;
 
-			//Create Sequence of bytes that will cause board to be reset
+			// Create Sequence of bytes that will cause board to be reset
 			byte[] bytes = new byte[] { IAC, SB, ComPortOpt, SetControl, dtrEnabled, IAC, SE };
 
 			Write(bytes, 0, bytes.Length);
@@ -326,11 +318,13 @@ namespace TcpipDriver
 		private void SetBaudRate(int baudRate)
 		{
 			byte[] baudBytes = BitConverter.GetBytes(baudRate);
+
 			if (BitConverter.IsLittleEndian)
 			{
 				Array.Reverse(baudBytes);
 			}
-			//Create Sequence of bytes that will set baudrate
+
+			// Create Sequence of bytes that will set baudrate
 			byte[] bytes = new byte[] { IAC, SB, ComPortOpt, SetBaud, baudBytes[0], baudBytes[1], baudBytes[2], baudBytes[3], IAC, SE };
 
 			Write(bytes, 0, bytes.Length);
