@@ -30,18 +30,51 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using MatterControl.Common.Repository;
+using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.Extensibility;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.Plugins;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tour;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
+using MatterHackers.VectorMath.TrackBall;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -49,40 +82,6 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	using System.ComponentModel;
-	using System.IO.Compression;
-	using System.Net;
-	using System.Net.Http;
-	using System.Reflection;
-	using System.Text;
-	using System.Text.RegularExpressions;
-	using System.Threading;
-	using Agg.Font;
-	using Agg.Image;
-	using CustomWidgets;
-	using global::MatterControl.Common.Repository;
-	using global::MatterControl.Printing;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.Agg.VertexSource;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.DataConverters3D.UndoCommands;
-	using MatterHackers.MatterControl.DesignTools;
-	using MatterHackers.MatterControl.DesignTools.Operations;
-	using MatterHackers.MatterControl.Extensibility;
-	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-	using MatterHackers.MatterControl.Plugins;
-	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-	using MatterHackers.MatterControl.Tour;
-	using MatterHackers.PolygonMesh;
-	using MatterHackers.PolygonMesh.Processors;
-	using MatterHackers.VectorMath;
-	using MatterHackers.VectorMath.TrackBall;
-	using Newtonsoft.Json.Converters;
-	using Newtonsoft.Json.Linq;
-	using SettingsManagement;
-
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum NamedTypeFace
 	{
@@ -1876,18 +1875,19 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 
-		public void Connection_ErrorReported(object sender, string line)
+		public void Connection_ErrorReported(object sender, DeviceErrorArgs e)
 		{
-			if (line != null)
+			if (sender is PrinterConnection printerConnection)
 			{
-				string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
-					+ "\n"
-					+ "\n"
-					+ "Error Reported".Localize() + ":"
-					+ $" \"{line}\".";
-
-				if (sender is PrinterConnection printerConnection)
+				if (e.Source == ErrorSource.Firmware
+					&& e.Message != null)
 				{
+					string message = "Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.".Localize()
+						+ "\n"
+						+ "\n"
+						+ "Error Reported".Localize() + ":"
+						+ $" \"{e.Message}\".";
+
 					UiThread.RunOnIdle(() =>
 						StyledMessageBox.ShowMessageBox(
 							(clickedOk) =>
@@ -1901,8 +1901,15 @@ namespace MatterHackers.MatterControl
 							"Printer Hardware Error".Localize(),
 							StyledMessageBox.MessageType.YES_NO,
 							"Resume".Localize(),
-							"OK".Localize())
-					);
+							"OK".Localize()));
+				}
+				else if (ActivePrinters.FirstOrDefault(p => p.Connection == printerConnection) is PrinterConfig printer)
+				{
+					printer.TerminalLog.WriteLine(e.Message);
+				}
+				else
+				{
+					this.LogError(e.Message);
 				}
 			}
 		}
@@ -1914,63 +1921,66 @@ namespace MatterHackers.MatterControl
 				if (printerConnection.AnyHeatIsOn)
 				{
 					var paused = false;
-					Tasks.Execute("", printerConnection.Printer, (reporter, cancellationToken) =>
-					{
-						var progressStatus = new ProgressStatus();
-
-						while (printerConnection.SecondsToHoldTemperature > 0
-							&& !cancellationToken.IsCancellationRequested
-							&& printerConnection.ContinueHoldingTemperature)
+					Tasks.Execute(
+						"",
+						printerConnection.Printer,
+						(reporter, cancellationToken) =>
 						{
-							if (paused)
+							var progressStatus = new ProgressStatus();
+
+							while (printerConnection.SecondsToHoldTemperature > 0
+								&& !cancellationToken.IsCancellationRequested
+								&& printerConnection.ContinueHoldingTemperature)
 							{
-								progressStatus.Status = "Holding Temperature".Localize();
-							}
-							else
-							{
-								if (printerConnection.SecondsToHoldTemperature > 60)
+								if (paused)
 								{
-									progressStatus.Status = string.Format(
-										"{0} {1:0}m {2:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										(int)(printerConnection.SecondsToHoldTemperature) / 60,
-										(int)(printerConnection.SecondsToHoldTemperature) % 60);
+									progressStatus.Status = "Holding Temperature".Localize();
 								}
 								else
 								{
-									progressStatus.Status = string.Format(
-										"{0} {1:0}s",
-										"Automatic Heater Shutdown in".Localize(),
-										printerConnection.SecondsToHoldTemperature);
+									if (printerConnection.SecondsToHoldTemperature > 60)
+									{
+										progressStatus.Status = string.Format(
+											"{0} {1:0}m {2:0}s",
+											"Automatic Heater Shutdown in".Localize(),
+											(int)printerConnection.SecondsToHoldTemperature / 60,
+											(int)printerConnection.SecondsToHoldTemperature % 60);
+									}
+									else
+									{
+										progressStatus.Status = string.Format(
+											"{0} {1:0}s",
+											"Automatic Heater Shutdown in".Localize(),
+											printerConnection.SecondsToHoldTemperature);
+									}
 								}
+								progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
+								reporter.Report(progressStatus);
+								Thread.Sleep(20);
 							}
-							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
-							reporter.Report(progressStatus);
-							Thread.Sleep(20);
-						}
 
-						return Task.CompletedTask;
-					},
-					taskActions: new RunningTaskOptions()
-					{
-						PauseAction = () => UiThread.RunOnIdle(() =>
+							return Task.CompletedTask;
+						},
+						taskActions: new RunningTaskOptions()
 						{
-							paused = true;
-							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
-						}),
-						PauseToolTip = "Pause automatic heater shutdown".Localize(),
-						ResumeAction = () => UiThread.RunOnIdle(() =>
-						{
-							paused = false;
-							printerConnection.TimeHaveBeenHoldingTemperature.Start();
-						}),
-						ResumeToolTip = "Resume automatic heater shutdown".Localize(),
-						StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
-						{
-							printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
-						}),
-						StopToolTip = "Immediately turn off heaters".Localize()
-					});
+							PauseAction = () => UiThread.RunOnIdle(() =>
+							{
+								paused = true;
+								printerConnection.TimeHaveBeenHoldingTemperature.Stop();
+							}),
+							PauseToolTip = "Pause automatic heater shutdown".Localize(),
+							ResumeAction = () => UiThread.RunOnIdle(() =>
+							{
+								paused = false;
+								printerConnection.TimeHaveBeenHoldingTemperature.Start();
+							}),
+							ResumeToolTip = "Resume automatic heater shutdown".Localize(),
+							StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
+							{
+								printerConnection.TurnOffBedAndExtruders(TurnOff.Now);
+							}),
+							StopToolTip = "Immediately turn off heaters".Localize()
+						});
 				}
 			}
 		}
@@ -2314,6 +2324,9 @@ namespace MatterHackers.MatterControl
 				&& printer.Settings.PrinterSelected
 				&& printer.Settings.GetValue<bool>(SettingsKey.auto_connect))
 			{
+				// Clear log before starting connection
+				printer.TerminalLog.Clear();
+
 				printer.Connection.Connect();
 			}
 
@@ -3231,6 +3244,9 @@ Support and tutorials:
 				return;
 			}
 
+			// Clear log before starting connection
+			printer.TerminalLog.Clear();
+
 			bool listenForConnectFailed = true;
 			long connectStartMs = UiThread.CurrentTimerMs;
 
@@ -3249,6 +3265,9 @@ Support and tutorials:
 						DialogWindow.Show(new SetupStepComPortOne(printer));
 					});
 				}
+
+				// Log Error
+				printer.TerminalLog.WriteLine($"{e.Reason}: {e.Message}");
 
 				switch (e.Reason)
 				{
@@ -3340,7 +3359,7 @@ Details
 						{
 							StyledMessageBox.ShowMessageBox(
 								"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.",
-								"Port In Use".Localize(), 
+								"Port In Use".Localize(),
 								useMarkdown: true);
 						});
 						break;

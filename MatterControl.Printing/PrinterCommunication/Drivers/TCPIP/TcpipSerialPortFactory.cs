@@ -12,7 +12,7 @@ namespace TcpipDriver
 
 		public override IFrostedSerialPort Create(string serialPortName, PrinterSettings settings)
 		{
-			return new TcpipSerialPort(settings, serialPortName);
+			return new TcpipSerialPort(settings);
 		}
 
 		public override bool SerialPortIsAvailable(string serialPortName, PrinterSettings settings)

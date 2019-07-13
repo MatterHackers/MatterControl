@@ -40,8 +40,6 @@ using System.Threading.Tasks;
 using MatterControl.Common.Repository;
 using MatterControl.Printing.Pipelines;
 using MatterControl.Printing.PrintLeveling;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication;
@@ -63,7 +61,7 @@ namespace MatterControl.Printing
 
 		public event EventHandler TemporarilyHoldingTemp;
 
-		public event EventHandler<string> ErrorReported;
+		public event EventHandler<DeviceErrorArgs> ErrorReported;
 
 		public event EventHandler BedTemperatureRead;
 
@@ -479,7 +477,9 @@ namespace MatterControl.Printing
 
 				if (_communicationState != value)
 				{
-					this.LogInfo($"Communication State: {value}");
+					// TODO: Not really an error, not really worth adding LogInfo eventing when these events need to be ripped out if we move out of process. In the short
+					// term no harm is caused by reusing LogError and the message simply dumps to the printer terminal without any "Error" messaging accomanying it
+					this.LogError($"Communication State: {value}", ErrorSource.Connection);
 
 					switch (_communicationState)
 					{
@@ -619,7 +619,7 @@ namespace MatterControl.Printing
 				OnFanSpeedSet(null);
 				if (this.IsConnected)
 				{
-					QueueLine("M106 S{0}".FormatWith((int)(fanSpeed + .5)));
+					QueueLine($"M106 S{(int)(fanSpeed + .5)}");
 				}
 			}
 		}
@@ -830,7 +830,7 @@ namespace MatterControl.Printing
 					_targetBedTemperature = value;
 					if (this.IsConnected)
 					{
-						QueueLine("M140 S{0}".FormatWith(_targetBedTemperature));
+						QueueLine($"M140 S{_targetBedTemperature}");
 					}
 
 					BedTargetTemperatureChanged?.Invoke(this, null);
@@ -862,7 +862,7 @@ namespace MatterControl.Printing
 
 		public PrintHostConfig Printer { get; }
 
-		public void ReleaseAndReportFailedConnection(ConnectionFailure reason)
+		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string message = null)
 		{
 			// Shutdown the serial port
 			if (serialPort != null)
@@ -874,19 +874,16 @@ namespace MatterControl.Printing
 			}
 
 			// Notify
-			OnConnectionFailed(reason);
+			OnConnectionFailed(reason, message);
 		}
 
-		public void LogInfo(string message)
+		public void LogError(string message, ErrorSource source)
 		{
-			// TODO: Add messaging
-			Console.WriteLine(message);
-		}
-
-		public void LogError(string message)
-		{
-			// TODO: Add messaging
-			Console.WriteLine(message);
+			this.ErrorReported(this, new DeviceErrorArgs()
+			{
+				Message = message,
+				Source = source
+			});
 		}
 
 		public void BedTemperatureWasWritenToPrinter(string line)
@@ -922,9 +919,6 @@ namespace MatterControl.Printing
 				CommunicationState = CommunicationStates.FailedToConnect;
 				return;
 			}
-
-			// TODO: Reimplement in application layer on connect
-			//TerminalLog.Clear();
 
 			// Attempt connecting to a specific printer
 			this.FirmwareType = FirmwareTypes.Unknown;
@@ -1058,12 +1052,10 @@ namespace MatterControl.Printing
 									}
 									catch (ArgumentOutOfRangeException ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.UnsupportedBaudRate, ex.Message, ex.GetType().ToString());
 									}
 									catch (IOException ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.IOException, ex.Message, ex.GetType().ToString());
 									}
 									catch (TimeoutException ex)
@@ -1072,7 +1064,6 @@ namespace MatterControl.Printing
 									}
 									catch (Exception ex)
 									{
-										this.LogError("Exception:" + ex.Message);
 										OnConnectionFailed(ConnectionFailure.Unknown, ex.Message, ex.GetType().ToString());
 									}
 								}
@@ -1115,7 +1106,7 @@ namespace MatterControl.Printing
 			// This should have worked without this by getting the normal 'ok' on the next line. But the ok is not on its own line.
 			readLineStartCallBacks.Register("File deleted:", FileDeleteConfirmed);
 			// and send the line to delete the file
-			QueueLine("M30 {0}".FormatWith(fileName.ToLower()));
+			QueueLine($"M30 {fileName.ToLower()}");
 		}
 
 		/// <summary>
@@ -1269,13 +1260,13 @@ namespace MatterControl.Printing
 		public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, axisPositionMm, feedRateMmPerMinute));
+			QueueLine(string.Format("G1 {0}{1:0.###} F{2}", axis, axisPositionMm, feedRateMmPerMinute));
 		}
 
 		public void MoveAbsolute(Vector3 position, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
-			QueueLine("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}".FormatWith(position.X, position.Y, position.Z, feedRateMmPerMinute));
+			QueueLine(string.Format("G1 X{0:0.###}Y{1:0.###}Z{2:0.###} F{3}", position.X, position.Y, position.Z, feedRateMmPerMinute));
 		}
 
 		public void MoveExtruderRelative(double moveAmountMm, double feedRateMmPerMinute, int extruderNumber = 0)
@@ -1310,7 +1301,7 @@ namespace MatterControl.Printing
 			if (moveAmountMm != 0)
 			{
 				SetMovementToRelative();
-				QueueLine("G1 {0}{1:0.###} F{2}".FormatWith(axis, moveAmountMm, feedRateMmPerMinute));
+				QueueLine(string.Format("G1 {0}{1:0.###} F{2}", axis, moveAmountMm, feedRateMmPerMinute));
 				SetMovementToAbsolute();
 			}
 		}
@@ -1384,7 +1375,7 @@ namespace MatterControl.Printing
 
 				if (line != null)
 				{
-					ErrorReported?.Invoke(this, line);
+					this.LogError(line, ErrorSource.Firmware);
 				}
 
 				// pause the printer
@@ -1541,21 +1532,18 @@ namespace MatterControl.Printing
 				catch (TimeoutException)
 				{
 				}
-				catch (IOException e2)
+				catch (IOException ex)
 				{
-					this.LogError("Exception:" + e2.Message);
-					OnConnectionFailed(ConnectionFailure.IOException);
+					OnConnectionFailed(ConnectionFailure.IOException, ex.Message);
 				}
 				catch (InvalidOperationException ex)
 				{
-					this.LogError("Exception:" + ex.Message);
 					// this happens when the serial port closes after we check and before we read it.
-					OnConnectionFailed(ConnectionFailure.InvalidOperationException);
+					OnConnectionFailed(ConnectionFailure.InvalidOperationException, ex.Message);
 				}
-				catch (UnauthorizedAccessException e3)
+				catch (UnauthorizedAccessException ex)
 				{
-					this.LogError("Exception:" + e3.Message);
-					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException);
+					OnConnectionFailed(ConnectionFailure.UnauthorizedAccessException, ex.Message);
 				}
 				catch (Exception)
 				{
@@ -1643,8 +1631,7 @@ namespace MatterControl.Printing
 
 				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
 				{
-					string multiExtruderCheck = "T{0}:".FormatWith(hotendIndex);
-					if (GCodeFile.GetFirstNumberAfter(multiExtruderCheck, temperatureString, ref readHotendTemp))
+					if (GCodeFile.GetFirstNumberAfter($"T{hotendIndex}:", temperatureString, ref readHotendTemp))
 					{
 						if (actualHotendTemperature[hotendIndex] != readHotendTemp)
 						{
@@ -1715,7 +1702,8 @@ namespace MatterControl.Printing
 					{
 						// We reset the board while attempting to connect, so now we don't have a serial port.
 						// Create one and do the DTR to reset
-						var resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
+						var factory = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType);
+						var resetSerialPort = factory.Create(this.ComPort, Printer.Settings);
 						resetSerialPort.Open();
 
 						Thread.Sleep(500);
@@ -1919,7 +1907,7 @@ namespace MatterControl.Printing
 				targetHotendTemperature[hotendIndex0Based] = temperature;
 				if (this.IsConnected)
 				{
-					QueueLine("M104 T{0} S{1}".FormatWith(hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
+					QueueLine(string.Format("M104 T{0} S{1}", hotendIndex0Based, targetHotendTemperature[hotendIndex0Based]));
 				}
 
 				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
@@ -2637,15 +2625,12 @@ namespace MatterControl.Printing
 							&& !Printing
 							&& !Paused)
 						{
-							UiThread.RunOnIdle(() =>
+							for (int i = 0; i < this.ExtruderCount; i++)
 							{
-								for (int i = 0; i < this.ExtruderCount; i++)
-								{
-									SetTargetHotendTemperature(i, 0, true);
-								}
+								SetTargetHotendTemperature(i, 0, true);
+							}
 
-								TargetBedTemperature = 0;
-							});
+							TargetBedTemperature = 0;
 						}
 					});
 				}
@@ -2794,23 +2779,20 @@ namespace MatterControl.Printing
 					}
 					catch (IOException ex)
 					{
-						this.LogError("Exception:" + ex.Message);
-
 						if (CommunicationState == CommunicationStates.AttemptingToConnect)
 						{
 							// Handle hardware disconnects by relaying the failure reason and shutting down open resources
-							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost);
+							ReleaseAndReportFailedConnection(ConnectionFailure.ConnectionLost, ex.Message);
 						}
 					}
-					catch (TimeoutException e2) // known ok
+					catch (TimeoutException ex) // known ok
 					{
 						// This writes on the next line, and there may have been another write attempt before it is printer. Write indented to attempt to show its association.
-						this.LogError("        Error writing command:" + e2.Message);
+						this.LogError("        Error writing to printer:" + ex.Message, ErrorSource.Connection);
 					}
-					catch (UnauthorizedAccessException e3)
+					catch (UnauthorizedAccessException ex)
 					{
-						this.LogError("Exception:" + e3.Message);
-						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException);
+						ReleaseAndReportFailedConnection(ConnectionFailure.UnauthorizedAccessException, ex.Message);
 					}
 					catch (Exception)
 					{
@@ -2871,7 +2853,7 @@ namespace MatterControl.Printing
 					{
 					}
 
-					printerConnection.LogError("Read Thread Has Exited");
+					printerConnection.LogError("Read Thread Has Exited", ErrorSource.Connection);
 					numRunning--;
 				});
 			}

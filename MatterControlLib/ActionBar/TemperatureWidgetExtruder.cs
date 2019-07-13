@@ -466,7 +466,10 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			if (this.hotendIndex == changedHotendIndex)
 			{
-				heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(changedHotendIndex) != 0;
+				UiThread.RunOnIdle(() =>
+				{
+					heatToggle.Checked = printer.Connection.GetTargetHotendTemperature(changedHotendIndex) != 0;
+				});
 			}
 		}
 	}
