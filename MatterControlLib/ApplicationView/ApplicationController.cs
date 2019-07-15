@@ -3252,7 +3252,8 @@ Support and tutorials:
 
 			void Connection_Failed(object sender, ConnectFailedEventArgs e)
 			{
-#if !__ANDROID__
+// TODO: Disable conditional comp on Android until 'Preprocessor directive expected' error message due to 'sudo gpasswd' statement can be resolved
+// #if !__ANDROID__
 				// TODO: Someday this functionality should be revised to an awaitable Connect() call in the Connect button that
 				// shows troubleshooting on failed attempts, rather than hooking the failed event and trying to determine if the
 				// Connect button started the task
@@ -3364,7 +3365,8 @@ Details
 						});
 						break;
 				}
-#endif
+// #endif
+
 				ClearEvents();
 			}
 
