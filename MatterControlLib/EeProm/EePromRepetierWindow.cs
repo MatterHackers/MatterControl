@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.EeProm
 			var buttonSave = theme.CreateDialogButton("Save To EEPROM".Localize());
 			buttonSave.Click += (s, e) =>
 			{
-				currentEePromSettings.Save(printer.Connection);
+				currentEePromSettings.Save(printer);
 				currentEePromSettings.Clear();
 				this.DialogWindow.Close();
 			};
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.Clear();
 			printer.Connection.LineReceived += currentEePromSettings.Add;
 			currentEePromSettings.SettingAdded += NewSettingReadFromPrinter;
-			currentEePromSettings.AskPrinterForSettings(printer.Connection);
+			currentEePromSettings.AskPrinterForSettings(printer);
 
 #if SIMULATE_CONNECTION
             UiThread.RunOnIdle(AddSimulatedItems);

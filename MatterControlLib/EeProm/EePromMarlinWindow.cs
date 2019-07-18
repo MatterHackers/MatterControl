@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.EeProm
 			AlwaysOnTopOfMain = true;
 			this.WindowTitle = "Marlin Firmware EEPROM Settings".Localize();
 
-			currentEePromSettings = new EePromMarlinSettings(printer.Connection);
+			currentEePromSettings = new EePromMarlinSettings(printer);
 			currentEePromSettings.eventAdded += SetUiToPrinterSettings;
 
 			// the center content

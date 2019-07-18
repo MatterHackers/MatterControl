@@ -33,12 +33,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class GCodeMacroExtensions
 	{
-		public static void Run(this GCodeMacro macro, PrinterConnection printerConnection)
+		public static void Run(this GCodeMacro macro, PrinterConfig printer)
 		{
-			if (printerConnection.IsConnected)
+			if (printer.Connection.IsConnected)
 			{
-				printerConnection.MacroStart();
-				printerConnection.QueueLine(macro.GCode);
+				printer.Connection.MacroStart();
+				printer.Connection.QueueLine(macro.GCode);
 			}
 		}
 	}

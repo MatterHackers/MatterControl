@@ -40,16 +40,16 @@ namespace MatterHackers.MatterControl
 
 		private int maxLinesToBuffer = int.MaxValue - 1;
 
-		private PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public TerminalLog(PrinterConnection printerConnection)
+		public TerminalLog(PrinterConfig printer)
 		{
 			// Register event listeners
-			printerConnection.ConnectionFailed += Instance_ConnectionFailed;
-			printerConnection.LineReceived += Printer_LineReceived;
-			printerConnection.LineSent += Printer_LineSent;
+			printer.Connection.ConnectionFailed += Instance_ConnectionFailed;
+			printer.Connection.LineReceived += Printer_LineReceived;
+			printer.Connection.LineSent += Printer_LineSent;
 
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 
 			if (Is32Bit)
 			{
@@ -160,11 +160,12 @@ namespace MatterHackers.MatterControl
 		public void Dispose()
 		{
 			// Unregister event listeners
-			printerConnection.ConnectionFailed -= Instance_ConnectionFailed;
-			printerConnection.LineReceived -= Printer_LineReceived;
-			printerConnection.LineSent -= Printer_LineSent;
+			printer.Connection.ConnectionFailed -= Instance_ConnectionFailed;
+			printer.Connection.LineReceived -= Printer_LineReceived;
+			printer.Connection.LineSent -= Printer_LineSent;
 
-			printerConnection = null;
+			// TODO: Review why TerminalLog nulls printer.Connection rather than the connection itself?
+			// printer.Connection = null;
 		}
 	}
 }

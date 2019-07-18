@@ -53,13 +53,13 @@ namespace MatterHackers.MatterControl.EeProm
 			}
 		}
 
-		public void Save(PrinterConnection printerConnection)
+		public void Save(PrinterConfig printer)
 		{
 			lock (eePromSettingsList)
 			{
 				foreach (EePromRepetierParameter p in eePromSettingsList.Values)
 				{
-					p.Save(printerConnection);
+					p.Save(printer);
 				}
 			}
 		}
@@ -86,9 +86,9 @@ namespace MatterHackers.MatterControl.EeProm
 			this.SettingAdded?.Invoke(this, parameter);
 		}
 
-		public void AskPrinterForSettings(PrinterConnection printerConnection)
+		public void AskPrinterForSettings(PrinterConfig printer)
 		{
-			printerConnection.QueueLine("M205");
+			printer.Connection.QueueLine("M205");
 		}
 
 		internal void Export(string fileName)

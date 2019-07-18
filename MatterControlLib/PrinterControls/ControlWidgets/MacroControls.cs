@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 						BackgroundColor = theme.MinimalShade,
 						Margin = new BorderDouble(right: 5)
 					};
-					macroButton.Click += (s, e) => macro.Run(printer.Connection);
+					macroButton.Click += (s, e) => macro.Run(printer);
 
 					addedChildren.Add(macroButton);
 				}

@@ -76,11 +76,11 @@ namespace MatterHackers.MatterControl.EeProm
 		public bool bed_HasPID = false;
 
 		private bool changed = false;
-		private PrinterConnection printerConnection;
+		private PrinterConfig printer;
 
-		public EePromMarlinSettings(PrinterConnection printerConnection)
+		public EePromMarlinSettings(PrinterConfig printer)
 		{
-			this.printerConnection = printerConnection;
+			this.printer = printer;
 		}
 
 		public bool update(string line)
@@ -289,15 +289,15 @@ namespace MatterHackers.MatterControl.EeProm
 			string cmdpid = "M301 P" + ppid + " I" + ipid + " D" + dpid;
 			string cmdbed_pid = "M304 P" + bed_ppid + " I" + bed_ipid + " D" + bed_dpid;
 
-			printerConnection.QueueLine(cmdsteps);
-			printerConnection.QueueLine(cmdfeed);
-			printerConnection.QueueLine(cmdmacc);
-			printerConnection.QueueLine(cmdacc);
-			printerConnection.QueueLine(cmdav);
-			printerConnection.QueueLine(cmdho);
+			printer.Connection.QueueLine(cmdsteps);
+			printer.Connection.QueueLine(cmdfeed);
+			printer.Connection.QueueLine(cmdmacc);
+			printer.Connection.QueueLine(cmdacc);
+			printer.Connection.QueueLine(cmdav);
+			printer.Connection.QueueLine(cmdho);
 			if (hasPID)
 			{
-				printerConnection.QueueLine(cmdpid);
+				printer.Connection.QueueLine(cmdpid);
 			}
 
 			changed = false;
@@ -320,6 +320,7 @@ namespace MatterHackers.MatterControl.EeProm
 			get { return sz; }
 			set { if (sz.Equals(value)) return; sz = value; changed = true; }
 		}
+
 		//This is it 
 		public string SE
 		{
@@ -623,14 +624,14 @@ namespace MatterHackers.MatterControl.EeProm
 
 		public void SaveToEeProm()
 		{
-			printerConnection.QueueLine("M500");
+			printer.Connection.QueueLine("M500");
 		}
 
 		// this does not save them to eeprom
 		public void SetPrinterToFactorySettings()
 		{
 			hasPID = false;
-			printerConnection.QueueLine("M502");
+			printer.Connection.QueueLine("M502");
 		}
 
 		public void Add(object sender, string line)
@@ -658,7 +659,7 @@ namespace MatterHackers.MatterControl.EeProm
 		public void Update()
 		{
 			hasPID = false;
-			printerConnection.QueueLine("M503");
+			printer.Connection.QueueLine("M503");
 		}
 	}
 }

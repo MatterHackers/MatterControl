@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl
 
 			printerShim.Connection = this.Connection;
 
-			this.TerminalLog = new TerminalLog(this.Connection);
+			this.TerminalLog = new TerminalLog(this);
 
 			// Register listeners
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
