@@ -142,15 +142,7 @@ namespace MatterControl.Printing
 
 		public int ActiveExtruderIndex
 		{
-			get
-			{
-				if (toolChangeStream != null)
-				{
-					return toolChangeStream.RequestedTool;
-				}
-
-				return 0;
-			}
+			get => (toolChangeStream != null) ? toolChangeStream.RequestedTool : 0;
 		}
 
 		private readonly double[] actualHotendTemperature = new double[MaxExtruders];
@@ -369,13 +361,7 @@ namespace MatterControl.Printing
 			};
 		}
 
-		public double ActualBedTemperature
-		{
-			get
-			{
-				return actualBedTemperature;
-			}
-		}
+		public double ActualBedTemperature => actualBedTemperature;
 
 		// PrinterSettings/Options {{
 		public int BaudRate
@@ -571,11 +557,7 @@ namespace MatterControl.Printing
 
 		public bool AtxPowerEnabled
 		{
-			get
-			{
-				return atxPowerIsOn;
-			}
-
+			get => atxPowerIsOn;
 			set
 			{
 				if (value)
@@ -589,7 +571,7 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public double CurrentExtruderDestination { get { return currentDestination.extrusion; } }
+		public double CurrentExtruderDestination => currentDestination.extrusion;
 
 		public Vector3 CurrentDestination => currentDestination.position;
 
@@ -628,7 +610,7 @@ namespace MatterControl.Printing
 
 		public string FirmwareVersion { get; private set; }
 
-		public Vector3 LastReportedPosition { get { return lastReportedPosition.position; } }
+		public Vector3 LastReportedPosition => lastReportedPosition.position;
 
 		public bool MonitorPrinterTemperature { get; set; }
 
@@ -2876,15 +2858,11 @@ namespace MatterControl.Printing
 			private int addedCount = 0;
 			private readonly string[] ringBuffer = new string[RingBufferCount];
 
-			public int Count { get { return addedCount; } }
+			public int Count => addedCount;
 
 			public string this[int index]
 			{
-				get
-				{
-					return ringBuffer[index % RingBufferCount];
-				}
-
+				get => ringBuffer[index % RingBufferCount];
 				set
 				{
 					ringBuffer[index % RingBufferCount] = value;
