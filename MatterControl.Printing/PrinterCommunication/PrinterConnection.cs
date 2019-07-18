@@ -55,144 +55,30 @@ namespace MatterControl.Printing
 	/// </summary>
 	public class PrinterConnection : IDisposable
 	{
-		public static event EventHandler AnyCommunicationStateChanged;
-
-		public event EventHandler Disposed;
-
-		public event EventHandler TemporarilyHoldingTemp;
-
-		public event EventHandler<DeviceErrorArgs> ErrorReported;
-
-		public event EventHandler BedTemperatureRead;
-
-		public event EventHandler CommunicationStateChanged;
-
-		public event EventHandler DetailedPrintingStateChanged;
-
-		public event EventHandler<ConnectFailedEventArgs> ConnectionFailed;
-
-		public event EventHandler ConnectionSucceeded;
-
-		public void OnPauseOnLayer(PrintPauseEventArgs printPauseEventArgs)
-		{
-			PauseOnLayer?.Invoke(this, printPauseEventArgs);
-		}
-
-		public event EventHandler DestinationChanged;
-
-		public event EventHandler HomingPositionChanged;
-
-		public event EventHandler HotendTemperatureRead;
-
-		public event EventHandler<int> HotendTargetTemperatureChanged;
-
-		public event EventHandler BedTargetTemperatureChanged;
-
-		public event EventHandler FanSpeedSet;
-
-		public event EventHandler FirmwareVersionRead;
-
-		public void OnFilamentRunout(PrintPauseEventArgs printPauseEventArgs)
-		{
-			FilamentRunout?.Invoke(this, printPauseEventArgs);
-		}
-
-		public event EventHandler<string> PrintFinished;
-
-		public event EventHandler PrintCanceled;
-
-		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
-
-		public event EventHandler<PrintPauseEventArgs> FilamentRunout;
-
-		public event EventHandler<string> LineReceived;
-
-		public event EventHandler<string> LineSent;
-
-		public bool WaitingForPositionRead
-		{
-			get
-			{
-				// make sure the longest we will wait under any circumstance is 60 seconds
-				if (waitingForPosition.ElapsedMilliseconds > 60000)
-				{
-					waitingForPosition.Reset();
-					PositionReadType = PositionReadType.None;
-				}
-
-				return waitingForPosition.IsRunning || (PositionReadType != PositionReadType.None);
-			}
-		}
-
-		public bool ContinueHoldingTemperature { get; set; }
-
-		public double SecondsToHoldTemperature { get; private set; }
-
-		public event EventHandler AtxPowerStateChanged;
-
-		private bool atxPowerIsOn = false;
-
 		internal const int MaxExtruders = 16;
 
 		private const int MaxInvalidConnectionChars = 3;
 
-		private readonly object locker = new object();
-
-		private double actualBedTemperature;
-
-		public int ActiveExtruderIndex
-		{
-			get => (toolChangeStream != null) ? toolChangeStream.RequestedTool : 0;
-		}
+		// TODO: To be replace with DI container instance
+		private static PrintJobRepository repository;
 
 		private readonly double[] actualHotendTemperature = new double[MaxExtruders];
 
 		private readonly CheckSumLines allCheckSumLinesSent = new CheckSumLines();
 
-		private CommunicationStates _communicationState = CommunicationStates.Disconnected;
-
-		private PrinterMove currentDestination;
-
-		private double currentSdBytes = 0;
-
-		private double fanSpeed;
-
-		private int currentLineIndexToSend = 0;
-
-		private bool forceImmediateWrites = false;
-
-		private string lastLineRead = "";
-
-		public Stopwatch TimeHaveBeenHoldingTemperature { get; set; }
-
-		private PrinterMove lastReportedPosition = PrinterMove.Unknown;
-
-		private GCodeSwitcher gCodeFileSwitcher = null;
-		private PauseHandlingStream pauseHandlingStream = null;
-		private QueuedCommandsStream queuedCommandStream = null;
-		private MaxLengthStream maxLengthStream;
-		private ToolChangeStream toolChangeStream;
-		private PrintLevelingStream printLevelingStream = null;
-		private WaitForTempStream waitForTempStream = null;
-
-		private GCodeStream totalGCodeStream = null;
-
-		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
-
-		private DetailedPrintingState _detailedPrintingState;
+		private readonly object locker = new object();
 
 		private readonly ContainsStringLineActions readLineContainsCallBacks = new ContainsStringLineActions();
 
+		private readonly List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
+
 		private readonly StartsWithLineActions readLineStartCallBacks = new StartsWithLineActions();
-
-		// we start out by setting it to a nothing file
-		public IFrostedSerialPort serialPort { get; private set; }
-
-		private double _targetBedTemperature;
 
 		private readonly double[] targetHotendTemperature = new double[MaxExtruders];
 
 		private readonly Stopwatch timeHaveBeenWaitingForOK = new Stopwatch();
+
+		private readonly Stopwatch timePrinting = new Stopwatch();
 
 		private readonly Stopwatch timeSinceLastReadAnything = new Stopwatch();
 
@@ -200,13 +86,7 @@ namespace MatterControl.Printing
 
 		private readonly Stopwatch timeSinceRecievedOk = new Stopwatch();
 
-		private readonly Stopwatch timePrinting = new Stopwatch();
-
 		private readonly Stopwatch timeWaitingForSdProgress = new Stopwatch();
-
-		private double totalSdBytes = 0;
-
-		private PositionReadType PositionReadType { get; set; } = PositionReadType.None;
 
 		private readonly Stopwatch waitingForPosition = new Stopwatch();
 
@@ -214,11 +94,69 @@ namespace MatterControl.Printing
 
 		private readonly StartsWithLineActions writeLineStartCallBacks = new StartsWithLineActions();
 
-		private double secondsSinceUpdateHistory = 0;
+		private CommunicationStates _communicationState = CommunicationStates.Disconnected;
+
+		private DetailedPrintingState _detailedPrintingState;
+
+		private Vector3 _homingPosition = Vector3.NegativeInfinity;
+
+		private double _targetBedTemperature;
+
+		private double actualBedTemperature;
+
+		private bool atxPowerIsOn = false;
+
+		private bool communicationPossible = false;
+
+		private PrinterMove currentDestination;
+
+		private int currentLineIndexToSend = 0;
+
+		private int currentReadThreadIndex = 0;
+
+		private double currentSdBytes = 0;
+
+		private string currentSentLine;
+
+		private string dataLastRead = string.Empty;
+
+		private double fanSpeed;
+
+		private bool forceImmediateWrites = false;
+
+		private GCodeSwitcher gCodeFileSwitcher = null;
+
+		private bool haveReportedError = false;
+
+		private string lastLineRead = "";
+
+		private PrinterMove lastReportedPosition = PrinterMove.Unknown;
+
 		private long lineSinceUpdateHistory = 0;
 
-		// TODO: To be replace with DI container instance
-		private static PrintJobRepository repository;
+		private MaxLengthStream maxLengthStream;
+
+		private int noOkResendCount;
+
+		private PauseHandlingStream pauseHandlingStream = null;
+
+		private CancellationTokenSource printingCancellation;
+
+		private PrintLevelingStream printLevelingStream = null;
+
+		private ProcessWriteRegexStream processWriteRegexStream;
+
+		private QueuedCommandsStream queuedCommandStream = null;
+
+		private double secondsSinceUpdateHistory = 0;
+
+		private ToolChangeStream toolChangeStream;
+
+		private GCodeStream totalGCodeStream = null;
+
+		private double totalSdBytes = 0;
+
+		private WaitForTempStream waitForTempStream = null;
 
 		static PrinterConnection()
 		{
@@ -304,7 +242,7 @@ namespace MatterControl.Printing
 
 			printer.Settings.SettingChanged += (s, stringEvent) =>
 			{
-				var extruder = -1;
+				int extruder = -1;
 				switch (stringEvent.Data)
 				{
 					case SettingsKey.temperature:
@@ -336,7 +274,7 @@ namespace MatterControl.Printing
 						double goalTemp = this.GetTargetHotendTemperature(extruder);
 						if (goalTemp > 0)
 						{
-							var newGoal = printer.Settings.GetValue<double>(stringEvent.Data);
+							double newGoal = printer.Settings.GetValue<double>(stringEvent.Data);
 							this.SetTargetHotendTemperature(extruder, newGoal);
 						}
 					}
@@ -353,7 +291,7 @@ namespace MatterControl.Printing
 						double goalTemp = this.TargetBedTemperature;
 						if (goalTemp > 0)
 						{
-							var newGoal = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+							double newGoal = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
 							this.TargetBedTemperature = newGoal;
 						}
 					}
@@ -361,7 +299,113 @@ namespace MatterControl.Printing
 			};
 		}
 
+		public static event EventHandler AnyCommunicationStateChanged;
+
+		public event EventHandler AtxPowerStateChanged;
+
+		public event EventHandler BedTargetTemperatureChanged;
+
+		public event EventHandler BedTemperatureRead;
+
+		public event EventHandler CommunicationStateChanged;
+
+		public event EventHandler<ConnectFailedEventArgs> ConnectionFailed;
+
+		public event EventHandler ConnectionSucceeded;
+
+		public event EventHandler DestinationChanged;
+
+		public event EventHandler DetailedPrintingStateChanged;
+
+		public event EventHandler Disposed;
+
+		public event EventHandler<DeviceErrorArgs> ErrorReported;
+
+		public event EventHandler FanSpeedSet;
+
+		public event EventHandler<PrintPauseEventArgs> FilamentRunout;
+
+		public event EventHandler FirmwareVersionRead;
+
+		public event EventHandler HomingPositionChanged;
+
+		public event EventHandler<int> HotendTargetTemperatureChanged;
+
+		public event EventHandler HotendTemperatureRead;
+
+		public event EventHandler<string> LineReceived;
+
+		public event EventHandler<string> LineSent;
+
+		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
+
+		public event EventHandler PrintCanceled;
+
+		public event EventHandler<string> PrintFinished;
+
+		public event EventHandler TemporarilyHoldingTemp;
+
+		public int ActiveExtruderIndex => (toolChangeStream != null) ? toolChangeStream.RequestedTool : 0;
+
+		public string ActivePrintName => this.ActivePrintTask?.PrintName ?? "";
+
+		public PrintJob ActivePrintTask { get; set; }
+
 		public double ActualBedTemperature => actualBedTemperature;
+
+		public bool AllowLeveling
+		{
+			set
+			{
+				if (printLevelingStream != null)
+				{
+					printLevelingStream.AllowLeveling = value;
+				}
+				else if (value)
+				{
+					// we are requesting it turned back on, re-build the leveling stream
+					CreateStreamProcessors();
+				}
+			}
+		}
+
+		public bool AnyHeatIsOn
+		{
+			get
+			{
+				bool anyHeatIsOn = false;
+				// check if any temps are set
+				for (int i = 0; i < this.ExtruderCount; i++)
+				{
+					if (GetTargetHotendTemperature(i) > 0)
+					{
+						anyHeatIsOn = true;
+						break;
+					}
+				}
+
+				anyHeatIsOn |= TargetBedTemperature > 0;
+				return anyHeatIsOn;
+			}
+		}
+
+		public bool AtxPowerEnabled
+		{
+			get => atxPowerIsOn;
+			set
+			{
+				if (value)
+				{
+					QueueLine("M80");
+				}
+				else
+				{
+					QueueLine("M81");
+				}
+			}
+		}
+
+		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
 
 		// PrinterSettings/Options {{
 		public int BaudRate
@@ -377,46 +421,9 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public double FeedRateRatio => Printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
-
-		public string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
+		public bool CalibrationPrint { get; private set; }
 
 		public string CancelGCode => Printer.Settings.GetValue(SettingsKey.cancel_gcode);
-
-		public int ExtruderCount => Printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-
-		public bool SendWithChecksum => Printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
-
-		public bool EnableNetworkPrinting => Printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
-
-		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
-
-		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
-
-		private readonly List<(Regex Regex, string Replacement)> readLineReplacements = new List<(Regex Regex, string Replacement)>();
-
-		public void InitializeReadLineReplacements()
-		{
-			var readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
-
-			// Clear and rebuild the replacement list
-			readLineReplacements.Clear();
-
-			foreach (string regExLine in readRegEx.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
-			{
-				var matches = ProcessWriteRegexStream.GetQuotedParts.Matches(regExLine);
-				if (matches.Count == 2)
-				{
-					var search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
-					var replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
-					readLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
-				}
-			}
-		}
-
-		// PrinterSettings/Options }}
-
-		private bool communicationPossible = false;
 
 		public CommunicationStates CommunicationState
 		{
@@ -546,34 +553,15 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void SwitchToGCode(string gCodeFilePath)
-		{
-			gCodeFileSwitcher.SwitchTo(gCodeFilePath);
-		}
-
 		public string ComPort => Printer.Settings?.Helpers.ComPort();
 
-		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : Printer.Settings?.GetValue(SettingsKey.driver_type);
+		public string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
 
-		public bool AtxPowerEnabled
-		{
-			get => atxPowerIsOn;
-			set
-			{
-				if (value)
-				{
-					QueueLine("M80");
-				}
-				else
-				{
-					QueueLine("M81");
-				}
-			}
-		}
-
-		public double CurrentExtruderDestination => currentDestination.extrusion;
+		public bool ContinueHoldingTemperature { get; set; }
 
 		public Vector3 CurrentDestination => currentDestination.position;
+
+		public double CurrentExtruderDestination => currentDestination.extrusion;
 
 		public int CurrentlyPrintingLayer
 		{
@@ -588,9 +576,28 @@ namespace MatterControl.Printing
 			}
 		}
 
+		public DetailedPrintingState DetailedPrintingState
+		{
+			get => _detailedPrintingState;
+			set
+			{
+				if (_detailedPrintingState != value)
+				{
+					_detailedPrintingState = value;
+					DetailedPrintingStateChanged?.Invoke(this, null);
+				}
+			}
+		}
+
 		public string DeviceCode { get; private set; }
 
 		public bool Disconnecting => CommunicationState == CommunicationStates.Disconnecting;
+
+		public string DriverType => (this.ComPort == "Emulator") ? "Emulator" : Printer.Settings?.GetValue(SettingsKey.driver_type);
+
+		public bool EnableNetworkPrinting => Printer.Settings.GetValue<bool>(SettingsKey.enable_network_printing);
+
+		public int ExtruderCount => Printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 		public double FanSpeed0To255
 		{
@@ -606,13 +613,77 @@ namespace MatterControl.Printing
 			}
 		}
 
+		public double FeedRateRatio => Printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
+
+		/// <summary>
+		/// Gets a value indicating whether the Pause Handling Stream has seen a change in the position sensor.
+		/// It is important that this is not persisted, it is meant to function correctly if the user
+		/// plugs in or removes a filament position sensor.
+		/// </summary>
+		public bool FilamentPositionSensorDetected { get; internal set; }
+
 		public FirmwareTypes FirmwareType { get; private set; } = FirmwareTypes.Unknown;
 
 		public string FirmwareVersion { get; private set; }
 
+		public Vector3 HomingPosition
+		{
+			get => _homingPosition;
+			private set
+			{
+				if (value != _homingPosition)
+				{
+					_homingPosition = value;
+					HomingPositionChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		public bool IsConnected
+		{
+			get
+			{
+				switch (CommunicationState)
+				{
+					case CommunicationStates.Disconnected:
+					case CommunicationStates.AttemptingToConnect:
+					case CommunicationStates.ConnectionLost:
+					case CommunicationStates.FailedToConnect:
+						return false;
+
+					case CommunicationStates.Disconnecting:
+					case CommunicationStates.Connected:
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
+					case CommunicationStates.PrintingFromSd:
+					case CommunicationStates.Paused:
+					case CommunicationStates.FinishedPrint:
+						return true;
+
+					default:
+						throw new NotImplementedException("Make sure every status returns the correct connected state.");
+				}
+			}
+		}
+
 		public Vector3 LastReportedPosition => lastReportedPosition.position;
 
 		public bool MonitorPrinterTemperature { get; set; }
+
+		public int NumQueuedCommands
+		{
+			get
+			{
+				if (queuedCommandStream != null)
+				{
+					return queuedCommandStream.Count;
+				}
+
+				return 0;
+			}
+		}
+
+		public bool Paused => CommunicationState == CommunicationStates.Paused;
 
 		public double PercentComplete
 		{
@@ -645,34 +716,9 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public bool IsConnected
-		{
-			get
-			{
-				switch (CommunicationState)
-				{
-					case CommunicationStates.Disconnected:
-					case CommunicationStates.AttemptingToConnect:
-					case CommunicationStates.ConnectionLost:
-					case CommunicationStates.FailedToConnect:
-						return false;
+		public CommunicationStates PrePauseCommunicationState { get; private set; } = CommunicationStates.Printing;
 
-					case CommunicationStates.Disconnecting:
-					case CommunicationStates.Connected:
-					case CommunicationStates.PreparingToPrint:
-					case CommunicationStates.Printing:
-					case CommunicationStates.PrintingFromSd:
-					case CommunicationStates.Paused:
-					case CommunicationStates.FinishedPrint:
-						return true;
-
-					default:
-						throw new NotImplementedException("Make sure every status returns the correct connected state.");
-				}
-			}
-		}
-
-		public bool Paused => CommunicationState == CommunicationStates.Paused;
+		public PrintHostConfig Printer { get; }
 
 		public bool Printing
 		{
@@ -697,19 +743,6 @@ namespace MatterControl.Printing
 
 					default:
 						throw new NotImplementedException("Make sure every status returns the correct connected state.");
-				}
-			}
-		}
-
-		public DetailedPrintingState DetailedPrintingState
-		{
-			get => _detailedPrintingState;
-			set
-			{
-				if (_detailedPrintingState != value)
-				{
-					_detailedPrintingState = value;
-					DetailedPrintingStateChanged?.Invoke(this, null);
 				}
 			}
 		}
@@ -747,6 +780,20 @@ namespace MatterControl.Printing
 
 		public bool PrintWasCanceled { get; set; } = false;
 
+		public double RatioIntoCurrentLayerInstructions
+		{
+			get
+			{
+				if (gCodeFileSwitcher?.GCodeFile == null
+					|| !(gCodeFileSwitcher?.GCodeFile is GCodeMemoryFile))
+				{
+					return 0;
+				}
+
+				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayerInstruction(gCodeFileSwitcher.LineIndex);
+			}
+		}
+
 		public double RatioIntoCurrentLayerSeconds
 		{
 			get
@@ -761,17 +808,18 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public double RatioIntoCurrentLayerInstructions
+		public bool RecoveryIsEnabled => Printer.Settings.GetValue<bool>(SettingsKey.recover_is_enabled);
+
+		public int SecondsPrinted
 		{
 			get
 			{
-				if (gCodeFileSwitcher?.GCodeFile == null
-					|| !(gCodeFileSwitcher?.GCodeFile is GCodeMemoryFile))
+				if (Printing || Paused || PrintIsFinished)
 				{
-					return 0;
+					return (int)(timePrinting.ElapsedMilliseconds / 1000);
 				}
 
-				return gCodeFileSwitcher.GCodeFile.Ratio0to1IntoContainedLayerInstruction(gCodeFileSwitcher.LineIndex);
+				return 0;
 			}
 		}
 
@@ -788,18 +836,12 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public int SecondsPrinted
-		{
-			get
-			{
-				if (Printing || Paused || PrintIsFinished)
-				{
-					return (int)(timePrinting.ElapsedMilliseconds / 1000);
-				}
+		public double SecondsToHoldTemperature { get; private set; }
 
-				return 0;
-			}
-		}
+		public bool SendWithChecksum => Printer.Settings.GetValue<bool>(SettingsKey.send_with_checksum);
+
+		// we start out by setting it to a nothing file
+		public IFrostedSerialPort serialPort { get; private set; }
 
 		public double TargetBedTemperature
 		{
@@ -820,9 +862,13 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public int TotalLayersInPrint => gCodeFileSwitcher?.GCodeFile?.LayerCount ?? -1;
+		public Stopwatch TimeHaveBeenHoldingTemperature { get; set; }
 
-		private int NumberOfLinesInCurrentPrint => gCodeFileSwitcher?.GCodeFile?.LineCount ?? -1;
+		public int TimeToHoldTemperature { get; set; } = 600;
+
+		public GCodeStream TotalGCodeStream => totalGCodeStream;
+
+		public int TotalLayersInPrint => gCodeFileSwitcher?.GCodeFile?.LayerCount ?? -1;
 
 		public int TotalSecondsInPrint
 		{
@@ -842,30 +888,87 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public PrintHostConfig Printer { get; }
-
-		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string message = null)
+		public bool WaitingForPositionRead
 		{
-			// Shutdown the serial port
-			if (serialPort != null)
+			get
 			{
-				// Close and dispose the serial port
-				serialPort.Close();
-				serialPort.Dispose();
-				serialPort = null;
-			}
+				// make sure the longest we will wait under any circumstance is 60 seconds
+				if (waitingForPosition.ElapsedMilliseconds > 60000)
+				{
+					waitingForPosition.Reset();
+					PositionReadType = PositionReadType.None;
+				}
 
-			// Notify
-			OnConnectionFailed(reason, message);
+				return waitingForPosition.IsRunning || (PositionReadType != PositionReadType.None);
+			}
 		}
 
-		public void LogError(string message, ErrorSource source)
+		private int NumberOfLinesInCurrentPrint => gCodeFileSwitcher?.GCodeFile?.LineCount ?? -1;
+
+		private PositionReadType PositionReadType { get; set; } = PositionReadType.None;
+
+		public static void ParseTemperatureString(string temperatureString,
+			double[] actualHotendTemperature,
+			Action<TemperatureEventArgs> hotendTemperatureChange,
+			ref double actualBedTemperature,
+			Action<TemperatureEventArgs> bedTemperatureChanged)
 		{
-			this.ErrorReported?.Invoke(this, new DeviceErrorArgs()
 			{
-				Message = message,
-				Source = source
-			});
+				double readHotendTemp = 0;
+				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readHotendTemp))
+				{
+					if (actualHotendTemperature[0] != readHotendTemp)
+					{
+						actualHotendTemperature[0] = readHotendTemp;
+						hotendTemperatureChange?.Invoke(new TemperatureEventArgs(0, readHotendTemp));
+					}
+				}
+
+				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
+				{
+					if (GCodeFile.GetFirstNumberAfter($"T{hotendIndex}:", temperatureString, ref readHotendTemp))
+					{
+						if (actualHotendTemperature[hotendIndex] != readHotendTemp)
+						{
+							actualHotendTemperature[hotendIndex] = readHotendTemp;
+							hotendTemperatureChange?.Invoke(new TemperatureEventArgs(hotendIndex, readHotendTemp));
+						}
+					}
+					else
+					{
+						continue;
+					}
+				}
+			}
+
+			{
+				double readBedTemp = 0;
+				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
+				{
+					if (actualBedTemperature != readBedTemp)
+					{
+						actualBedTemperature = readBedTemp;
+						bedTemperatureChanged?.Invoke(new TemperatureEventArgs(0, readBedTemp));
+					}
+				}
+			}
+		}
+
+		public void ArduinoDtrReset()
+		{
+			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
+			// current approach results in unpredictable behavior if the caller fails to close the connection
+			if (serialPort == null && this.Printer.Settings != null)
+			{
+				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
+				resetSerialPort.Open();
+
+				Thread.Sleep(500);
+
+				ToggleHighLowHigh(resetSerialPort);
+
+				resetSerialPort.Close();
+			}
 		}
 
 		public void BedTemperatureWasWritenToPrinter(string line)
@@ -968,7 +1071,7 @@ namespace MatterControl.Printing
 										// Thread.Sleep(500);
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-										foreach (var line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", this.Printer))
+										foreach (string line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", this.Printer))
 										{
 											WriteRaw(line, line);
 										}
@@ -979,7 +1082,7 @@ namespace MatterControl.Printing
 										while (true)
 										{
 											// Plugins required probing to fill read buffer
-											var na = serialPort.BytesToRead;
+											int na = serialPort.BytesToRead;
 
 											// Read, sanitize, store
 											string response = serialPort.ReadExisting().Replace("\r\n", "\n").Replace('\r', '\n');
@@ -1136,26 +1239,9 @@ namespace MatterControl.Printing
 			CommunicationState = CommunicationStates.Disconnected;
 		}
 
-		public void HotendTemperatureWasWritenToPrinter(string line)
+		public void Dispose()
 		{
-			double tempBeingSet = 0;
-			if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
-			{
-				int extruderIndex = 0;
-				if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
-				{
-					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					int hotendIndex0Based = Math.Min(extruderIndex, MaxExtruders - 1);
-					targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
-				}
-				else
-				{
-					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
-					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
-				}
-
-				HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
-			}
+			Disposed?.Invoke(this, null);
 		}
 
 		public void FanOffWasWritenToPrinter(string line)
@@ -1239,6 +1325,68 @@ namespace MatterControl.Printing
 			QueueLine(command);
 		}
 
+		public void HotendTemperatureWasWritenToPrinter(string line)
+		{
+			double tempBeingSet = 0;
+			if (GCodeFile.GetFirstNumberAfter("S", line, ref tempBeingSet))
+			{
+				int extruderIndex = 0;
+				if (GCodeFile.GetFirstNumberAfter("T", line, ref extruderIndex))
+				{
+					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
+					int hotendIndex0Based = Math.Min(extruderIndex, MaxExtruders - 1);
+					targetHotendTemperature[hotendIndex0Based] = tempBeingSet;
+				}
+				else
+				{
+					// we set the private variable so that we don't get the callbacks called and get in a loop of setting the temp
+					targetHotendTemperature[ActiveExtruderIndex] = tempBeingSet;
+				}
+
+				HotendTargetTemperatureChanged?.Invoke(this, extruderIndex);
+			}
+		}
+
+		public void InitializeReadLineReplacements()
+		{
+			string readRegEx = Printer.Settings.GetValue(SettingsKey.read_regex);
+
+			// Clear and rebuild the replacement list
+			readLineReplacements.Clear();
+
+			foreach (string regExLine in readRegEx.Split(new string[] { "\\n" }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var matches = ProcessWriteRegexStream.GetQuotedParts.Matches(regExLine);
+				if (matches.Count == 2)
+				{
+					string search = matches[0].Value.Substring(1, matches[0].Value.Length - 2);
+					string replace = matches[1].Value.Substring(1, matches[1].Value.Length - 2);
+					readLineReplacements.Add((new Regex(search, RegexOptions.Compiled), replace));
+				}
+			}
+		}
+
+		public void LogError(string message, ErrorSource source)
+		{
+			this.ErrorReported?.Invoke(this, new DeviceErrorArgs()
+			{
+				Message = message,
+				Source = source
+			});
+		}
+
+		public void MacroCancel()
+		{
+			maxLengthStream?.Cancel();
+			waitForTempStream?.Cancel();
+			queuedCommandStream?.Cancel();
+		}
+
+		public void MacroStart()
+		{
+			queuedCommandStream?.Reset();
+		}
+
 		public void MoveAbsolute(PrinterAxis axis, double axisPositionMm, double feedRateMmPerMinute)
 		{
 			SetMovementToAbsolute();
@@ -1262,7 +1410,7 @@ namespace MatterControl.Printing
 
 				if (requiresToolChange)
 				{
-					var currentExtruderIndex = ActiveExtruderIndex;
+					int currentExtruderIndex = ActiveExtruderIndex;
 					// Set to extrude to use
 					QueueLine($"T{extruderNumber}");
 					QueueLine($"G1 E{moveAmountMm:0.####} F{feedRateMmPerMinute}");
@@ -1301,11 +1449,29 @@ namespace MatterControl.Printing
 			CommunicationState = CommunicationStates.Disconnected;
 		}
 
-		private void OnIdle()
+		public void OnFilamentRunout(PrintPauseEventArgs printPauseEventArgs)
 		{
-			if (this.IsConnected && ReadThread.NumRunning == 0)
+			FilamentRunout?.Invoke(this, printPauseEventArgs);
+		}
+
+		public void OnPauseOnLayer(PrintPauseEventArgs printPauseEventArgs)
+		{
+			PauseOnLayer?.Invoke(this, printPauseEventArgs);
+		}
+
+		public void PrinterReportsError(string line)
+		{
+			if (!haveReportedError)
 			{
-				ReadThread.Start(this);
+				haveReportedError = true;
+
+				if (line != null)
+				{
+					this.LogError(line, ErrorSource.Firmware);
+				}
+
+				// pause the printer
+				RequestPause();
 			}
 		}
 
@@ -1344,24 +1510,6 @@ namespace MatterControl.Printing
 					waitingForPosition.Reset();
 					PositionReadType = PositionReadType.None;
 				}
-			}
-		}
-
-		private bool haveReportedError = false;
-
-		public void PrinterReportsError(string line)
-		{
-			if (!haveReportedError)
-			{
-				haveReportedError = true;
-
-				if (line != null)
-				{
-					this.LogError(line, ErrorSource.Firmware);
-				}
-
-				// pause the printer
-				RequestPause();
 			}
 		}
 
@@ -1418,24 +1566,51 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void ArduinoDtrReset()
+		public void QueueLine(string lineToWrite, bool forceTopOfQueue = false)
 		{
-			// TODO: Ideally we would shutdown the printer connection when this method is called and we're connected. The
-			// current approach results in unpredictable behavior if the caller fails to close the connection
-			if (serialPort == null && this.Printer.Settings != null)
+			lock (locker)
 			{
-				IFrostedSerialPort resetSerialPort = FrostedSerialPortFactory.GetAppropriateFactory(this.DriverType).Create(this.ComPort, Printer.Settings);
-				resetSerialPort.Open();
+				if (lineToWrite.Contains("\\n"))
+				{
+					lineToWrite = lineToWrite.Replace("\\n", "\n");
+				}
 
-				Thread.Sleep(500);
+				// Check line for line breaks, split and process separate if necessary
+				if (lineToWrite.Contains("\n"))
+				{
+					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
+					for (int i = 0; i < linesToWrite.Length; i++)
+					{
+						string line = linesToWrite[i].Trim();
+						if (line.Length > 0)
+						{
+							QueueLine(line);
+						}
+					}
 
-				ToggleHighLowHigh(resetSerialPort);
+					return;
+				}
 
-				resetSerialPort.Close();
+				if (CommunicationState == CommunicationStates.PrintingFromSd
+					|| forceImmediateWrites)
+				{
+					lineToWrite = lineToWrite.Split(';')[0].Trim();
+					if (lineToWrite.Length > 0)
+					{
+						// sometimes we need to send code without buffering (like when we are closing the program).
+						WriteRaw(lineToWrite + "\n", lineToWrite);
+					}
+				}
+				else
+				{
+					if (lineToWrite.Trim().Length > 0)
+					{
+						// insert the command into the printing queue at the head
+						queuedCommandStream?.Add(lineToWrite, forceTopOfQueue);
+					}
+				}
 			}
 		}
-
-		private string dataLastRead = string.Empty;
 
 		public void ReadFromPrinter(ReadThread readThreadHolder)
 		{
@@ -1537,7 +1712,7 @@ namespace MatterControl.Printing
 
 		public void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false)
 		{
-			var nextIssue = queuedCommandStream.Peek();
+			string nextIssue = queuedCommandStream.Peek();
 			if (nextIssue == null
 				|| nextIssue != "M114")
 			{
@@ -1592,53 +1767,6 @@ namespace MatterControl.Printing
 
 			waitingForPosition.Reset();
 			PositionReadType = PositionReadType.None;
-		}
-
-		public static void ParseTemperatureString(string temperatureString,
-			double[] actualHotendTemperature,
-			Action<TemperatureEventArgs> hotendTemperatureChange,
-			ref double actualBedTemperature,
-			Action<TemperatureEventArgs> bedTemperatureChanged)
-		{
-			{
-				double readHotendTemp = 0;
-				if (GCodeFile.GetFirstNumberAfter("T:", temperatureString, ref readHotendTemp))
-				{
-					if (actualHotendTemperature[0] != readHotendTemp)
-					{
-						actualHotendTemperature[0] = readHotendTemp;
-						hotendTemperatureChange?.Invoke(new TemperatureEventArgs(0, readHotendTemp));
-					}
-				}
-
-				for (int hotendIndex = 0; hotendIndex < MaxExtruders; hotendIndex++)
-				{
-					if (GCodeFile.GetFirstNumberAfter($"T{hotendIndex}:", temperatureString, ref readHotendTemp))
-					{
-						if (actualHotendTemperature[hotendIndex] != readHotendTemp)
-						{
-							actualHotendTemperature[hotendIndex] = readHotendTemp;
-							hotendTemperatureChange?.Invoke(new TemperatureEventArgs(hotendIndex, readHotendTemp));
-						}
-					}
-					else
-					{
-						continue;
-					}
-				}
-			}
-
-			{
-				double readBedTemp = 0;
-				if (GCodeFile.GetFirstNumberAfter("B:", temperatureString, ref readBedTemp))
-				{
-					if (actualBedTemperature != readBedTemp)
-					{
-						actualBedTemperature = readBedTemp;
-						bedTemperatureChanged?.Invoke(new TemperatureEventArgs(0, readBedTemp));
-					}
-				}
-			}
 		}
 
 		public void ReadTemperatures(string line)
@@ -1704,16 +1832,19 @@ namespace MatterControl.Printing
 			}
 		}
 
-		private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
+		public void ReleaseAndReportFailedConnection(ConnectionFailure reason, string message = null)
 		{
-			serialPort.RtsEnable = true;
-			serialPort.DtrEnable = true;
-			Thread.Sleep(100);
-			serialPort.RtsEnable = false;
-			serialPort.DtrEnable = false;
-			Thread.Sleep(100);
-			serialPort.RtsEnable = true;
-			serialPort.DtrEnable = true;
+			// Shutdown the serial port
+			if (serialPort != null)
+			{
+				// Close and dispose the serial port
+				serialPort.Close();
+				serialPort.Dispose();
+				serialPort = null;
+			}
+
+			// Notify
+			OnConnectionFailed(reason, message);
 		}
 
 		public void ReleaseMotors(bool forceRelease = false)
@@ -1770,85 +1901,6 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void QueueLine(string lineToWrite, bool forceTopOfQueue = false)
-		{
-			lock (locker)
-			{
-				if (lineToWrite.Contains("\\n"))
-				{
-					lineToWrite = lineToWrite.Replace("\\n", "\n");
-				}
-
-				// Check line for line breaks, split and process separate if necessary
-				if (lineToWrite.Contains("\n"))
-				{
-					string[] linesToWrite = lineToWrite.Split(new string[] { "\n" }, StringSplitOptions.None);
-					for (int i = 0; i < linesToWrite.Length; i++)
-					{
-						string line = linesToWrite[i].Trim();
-						if (line.Length > 0)
-						{
-							QueueLine(line);
-						}
-					}
-
-					return;
-				}
-
-				if (CommunicationState == CommunicationStates.PrintingFromSd
-					|| forceImmediateWrites)
-				{
-					lineToWrite = lineToWrite.Split(';')[0].Trim();
-					if (lineToWrite.Length > 0)
-					{
-						// sometimes we need to send code without buffering (like when we are closing the program).
-						WriteRaw(lineToWrite + "\n", lineToWrite);
-					}
-				}
-				else
-				{
-					if (lineToWrite.Trim().Length > 0)
-					{
-						// insert the command into the printing queue at the head
-						queuedCommandStream?.Add(lineToWrite, forceTopOfQueue);
-					}
-				}
-			}
-		}
-
-		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
-		{
-			var addedLines = new List<string>();
-			foreach (var item in readLineReplacements)
-			{
-				var splitReplacement = item.Replacement.Split(',');
-				if (splitReplacement.Length > 0)
-				{
-					if (item.Regex.IsMatch(lineBeingRead))
-					{
-						// replace on the first replacement group only
-						var replacedString = item.Regex.Replace(lineBeingRead, splitReplacement[0]);
-						lineBeingRead = replacedString;
-						// add in the other replacement groups
-						for (int j = 1; j < splitReplacement.Length; j++)
-						{
-							addedLines.Add(splitReplacement[j]);
-						}
-
-						break;
-					}
-				}
-			}
-
-			string extraLines = "";
-			foreach (var line in addedLines)
-			{
-				extraLines += line + "\n";
-			}
-
-			return (lineBeingRead, extraLines);
-		}
-
 		// Check is serial port is in the list of available serial ports
 		public bool SerialPortIsAvailable(string portName)
 		{
@@ -1895,10 +1947,6 @@ namespace MatterControl.Printing
 				HotendTargetTemperatureChanged?.Invoke(this, hotendIndex0Based);
 			}
 		}
-
-		public bool CalibrationPrint { get; private set; }
-
-		private CancellationTokenSource printingCancellation;
 
 		public void StartPrint(PrintJob printTask, bool calibrationPrint = false)
 		{
@@ -2021,6 +2069,95 @@ namespace MatterControl.Printing
 			}
 		}
 
+		public void SuppressEcho(string line)
+		{
+			// AllowListenerNotification = false;
+		}
+
+		public void SwitchToGCode(string gCodeFilePath)
+		{
+			gCodeFileSwitcher.SwitchTo(gCodeFilePath);
+		}
+
+		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
+		{
+			if (turnOffTime == TurnOff.Now)
+			{
+				for (int i = 0; i < this.ExtruderCount; i++)
+				{
+					SetTargetHotendTemperature(i, 0, true);
+				}
+
+				TargetBedTemperature = 0;
+			}
+			else
+			{
+				bool currentlyWaiting = ContinueHoldingTemperature && TimeHaveBeenHoldingTemperature.IsRunning && TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature;
+				SecondsToHoldTemperature = TimeToHoldTemperature;
+				ContinueHoldingTemperature = true;
+				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
+				if (!currentlyWaiting)
+				{
+					TemporarilyHoldingTemp?.Invoke(this, null);
+					// wait secondsToWait and turn off the heaters
+					Task.Run(() =>
+					{
+						while (TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature
+							&& ContinueHoldingTemperature)
+						{
+							if (CommunicationState == CommunicationStates.PreparingToPrint
+								|| Printing)
+							{
+								ContinueHoldingTemperature = false;
+							}
+
+							if (!AnyHeatIsOn)
+							{
+								ContinueHoldingTemperature = false;
+							}
+
+							SecondsToHoldTemperature = ContinueHoldingTemperature ? Math.Max(0, TimeToHoldTemperature - TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds) : 0;
+							Thread.Sleep(100);
+						}
+
+						// times up turn off heaters
+						if (ContinueHoldingTemperature
+							&& !Printing
+							&& !Paused)
+						{
+							for (int i = 0; i < this.ExtruderCount; i++)
+							{
+								SetTargetHotendTemperature(i, 0, true);
+							}
+
+							TargetBedTemperature = 0;
+						}
+					});
+				}
+			}
+		}
+
+		private static string RemoveCommentIfAny(string lineToWrite)
+		{
+			int commentIndex = lineToWrite.IndexOf(';');
+			if (commentIndex > 0) // there is content in front of the ;
+			{
+				lineToWrite = lineToWrite.Substring(0, commentIndex).Trim();
+			}
+
+			return lineToWrite;
+		}
+
+		private void AtxPowerDownWasWritenToPrinter(string line)
+		{
+			OnAtxPowerStateChanged(false);
+		}
+
+		private void AtxPowerUpWasWritenToPrinter(string line)
+		{
+			OnAtxPowerStateChanged(true);
+		}
+
 		private void CancelPrint(bool markPrintCanceled)
 		{
 			lock (locker)
@@ -2075,58 +2212,9 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void SuppressEcho(string line)
-		{
-			// AllowListenerNotification = false;
-		}
-
 		private void ClearQueuedGCode()
 		{
 			gCodeFileSwitcher?.GCodeFile?.Clear();
-		}
-
-		private void DonePrintingSdFile(string line)
-		{
-			readLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
-			CommunicationState = CommunicationStates.FinishedPrint;
-
-			this.PrintJobName = null;
-
-			// never leave the extruder and the bed hot
-			TurnOffBedAndExtruders(TurnOff.Now);
-
-			ReleaseMotors();
-		}
-
-		private void FileDeleteConfirmed(string line)
-		{
-			readLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
-			PrintingCanContinue(line);
-		}
-
-		private void KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent)
-		{
-			if (lineBeingSent.StartsWith("G0 ")
-				|| lineBeingSent.StartsWith("G1 ")
-				|| lineBeingSent.StartsWith("G2 ")
-				|| lineBeingSent.StartsWith("G3 "))
-			{
-				PrinterMove newDestination = currentDestination;
-
-				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.X);
-				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.Y);
-				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.position.Z);
-
-				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref newDestination.extrusion);
-				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref newDestination.feedRate);
-
-				if (currentDestination.position != newDestination.position
-					|| currentDestination.extrusion != newDestination.extrusion)
-				{
-					currentDestination = newDestination;
-					DestinationChanged?.Invoke(this, null);
-				}
-			}
 		}
 
 		private void CreateStreamProcessors(Stream gcodeStream = null)
@@ -2208,7 +2296,7 @@ namespace MatterControl.Printing
 			var transformedCommand = ProcessWriteRegexStream.ProcessWriteRegEx("M110 N1", this.Printer);
 			if (transformedCommand != null)
 			{
-				foreach (var line in transformedCommand)
+				foreach (string line in transformedCommand)
 				{
 					WriteChecksumLine(line);
 				}
@@ -2218,63 +2306,88 @@ namespace MatterControl.Printing
 			ReadPosition(PositionReadType.Other);
 		}
 
-		public GCodeStream TotalGCodeStream => totalGCodeStream;
-
-		private void SyncProgressToDB(CancellationToken cancellationToken)
+		private void DonePrintingSdFile(string line)
 		{
-			// var timer = Stopwatch.StartNew();
+			readLineStartCallBacks.Unregister("Done printing file", DonePrintingSdFile);
+			CommunicationState = CommunicationStates.FinishedPrint;
 
-			while (!cancellationToken.IsCancellationRequested
-				&& this.CommunicationState != CommunicationStates.FinishedPrint
-				&& this.CommunicationState != CommunicationStates.Connected)
+			this.PrintJobName = null;
+
+			// never leave the extruder and the bed hot
+			TurnOffBedAndExtruders(TurnOff.Now);
+
+			ReleaseMotors();
+		}
+
+		private int ExpectedWaitSeconds(string lastInstruction)
+		{
+			int timeMultiple = noOkResendCount + 1;
+			if (lastInstruction.StartsWith("G0 ")
+				|| lastInstruction.Contains("G1 "))
 			{
-				double secondsSinceStartedPrint = timePrinting.Elapsed.TotalSeconds;
-
-				if (timePrinting.Elapsed.TotalSeconds > 0
-					&& gCodeFileSwitcher != null
-					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
-					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
-					|| lineSinceUpdateHistory + 20 < gCodeFileSwitcher.LineIndex))
-				{
-					double currentDone = gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
-
-					// Only update the amount done if it is greater than what is recorded.
-					// We don't want to mess up the resume before we actually resume it.
-					if (ActivePrintTask != null
-						&& ActivePrintTask.PercentDone < currentDone)
-					{
-						ActivePrintTask.PercentDone = currentDone;
-						repository.Update(ActivePrintTask);
-					}
-
-					secondsSinceUpdateHistory = secondsSinceStartedPrint;
-					lineSinceUpdateHistory = gCodeFileSwitcher.LineIndex;
-				}
-
-				Thread.Sleep(5);
+				// for moves we wait only as much as 2 seconds
+				return 2 * timeMultiple;
+			}
+			else if (lastInstruction.StartsWith("M109 ")
+				|| lastInstruction.StartsWith("M190 "))
+			{
+				// heat and wait will allow a long wait time for ok
+				return 60;
+			}
+			else if (lastInstruction.StartsWith("G28"))
+			{
+				return 30;
 			}
 
-			// Console.WriteLine("Syncing print to db stopped");
+			// any other move we allow up to 10 seconds for response
+			return 10 * timeMultiple;
 		}
 
-		private void AtxPowerUpWasWritenToPrinter(string line)
+		private void FileDeleteConfirmed(string line)
 		{
-			OnAtxPowerStateChanged(true);
+			readLineStartCallBacks.Unregister("File deleted:", FileDeleteConfirmed);
+			PrintingCanContinue(line);
 		}
 
-		private void AtxPowerDownWasWritenToPrinter(string line)
+		private bool IsNetworkPrinting()
 		{
-			OnAtxPowerStateChanged(false);
+			return this.EnableNetworkPrinting;
+		}
+
+		private void KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent)
+		{
+			if (lineBeingSent.StartsWith("G0 ")
+				|| lineBeingSent.StartsWith("G1 ")
+				|| lineBeingSent.StartsWith("G2 ")
+				|| lineBeingSent.StartsWith("G3 "))
+			{
+				PrinterMove newDestination = currentDestination;
+
+				GCodeFile.GetFirstNumberAfter("X", lineBeingSent, ref newDestination.position.X);
+				GCodeFile.GetFirstNumberAfter("Y", lineBeingSent, ref newDestination.position.Y);
+				GCodeFile.GetFirstNumberAfter("Z", lineBeingSent, ref newDestination.position.Z);
+
+				GCodeFile.GetFirstNumberAfter("E", lineBeingSent, ref newDestination.extrusion);
+				GCodeFile.GetFirstNumberAfter("F", lineBeingSent, ref newDestination.feedRate);
+
+				if (currentDestination.position != newDestination.position
+					|| currentDestination.extrusion != newDestination.extrusion)
+				{
+					currentDestination = newDestination;
+					DestinationChanged?.Invoke(this, null);
+				}
+			}
+		}
+
+		private void OnAtxPowerStateChanged(bool enableAtxPower)
+		{
+			atxPowerIsOn = enableAtxPower;
+			AtxPowerStateChanged?.Invoke(this, null);
 		}
 
 		private void OnBedTemperatureRead(EventArgs e)
 		{
 			BedTemperatureRead?.Invoke(this, e);
-		}
-
-		private void OnHotendTemperatureRead(EventArgs e)
-		{
-			HotendTemperatureRead?.Invoke(this, e);
 		}
 
 		private void OnFanSpeedSet(EventArgs e)
@@ -2287,15 +2400,52 @@ namespace MatterControl.Printing
 			FirmwareVersionRead?.Invoke(this, e);
 		}
 
-		private bool IsNetworkPrinting()
+		private void OnHotendTemperatureRead(EventArgs e)
 		{
-			return this.EnableNetworkPrinting;
+			HotendTemperatureRead?.Invoke(this, e);
 		}
 
-		private void OnAtxPowerStateChanged(bool enableAtxPower)
+		private void OnIdle()
 		{
-			atxPowerIsOn = enableAtxPower;
-			AtxPowerStateChanged?.Invoke(this, null);
+			if (this.IsConnected && ReadThread.NumRunning == 0)
+			{
+				ReadThread.Start(this);
+			}
+		}
+
+		private (string firstLine, string extraLines) ProcessReadRegEx(string lineBeingRead)
+		{
+			var addedLines = new List<string>();
+			foreach (var item in readLineReplacements)
+			{
+				string[] splitReplacement = item.Replacement.Split(',');
+				if (splitReplacement.Length > 0)
+				{
+					if (item.Regex.IsMatch(lineBeingRead))
+					{
+						// replace on the first replacement group only
+						string replacedString = item.Regex.Replace(lineBeingRead, splitReplacement[0]);
+						lineBeingRead = replacedString;
+
+						// add in the other replacement groups
+						for (int j = 1; j < splitReplacement.Length; j++)
+						{
+							addedLines.Add(splitReplacement[j]);
+						}
+
+						break;
+					}
+				}
+			}
+
+			string extraLines = "";
+
+			foreach (string line in addedLines)
+			{
+				extraLines += line + "\n";
+			}
+
+			return (lineBeingRead, extraLines);
 		}
 
 		private void SetDetailedPrintingState(string lineBeingSetToPrinter)
@@ -2336,30 +2486,53 @@ namespace MatterControl.Printing
 			}
 		}
 
-		private string currentSentLine;
-
-		private int ExpectedWaitSeconds(string lastInstruction)
+		private void SyncProgressToDB(CancellationToken cancellationToken)
 		{
-			var timeMultiple = noOkResendCount + 1;
-			if (lastInstruction.StartsWith("G0 ")
-				|| lastInstruction.Contains("G1 "))
+			// var timer = Stopwatch.StartNew();
+
+			while (!cancellationToken.IsCancellationRequested
+				&& this.CommunicationState != CommunicationStates.FinishedPrint
+				&& this.CommunicationState != CommunicationStates.Connected)
 			{
-				// for moves we wait only as much as 2 seconds
-				return 2 * timeMultiple;
-			}
-			else if (lastInstruction.StartsWith("M109 ")
-				|| lastInstruction.StartsWith("M190 "))
-			{
-				// heat and wait will allow a long wait time for ok
-				return 60;
-			}
-			else if (lastInstruction.StartsWith("G28"))
-			{
-				return 30;
+				double secondsSinceStartedPrint = timePrinting.Elapsed.TotalSeconds;
+
+				if (timePrinting.Elapsed.TotalSeconds > 0
+					&& gCodeFileSwitcher != null
+					&& (secondsSinceUpdateHistory > secondsSinceStartedPrint
+					|| secondsSinceUpdateHistory + 1 < secondsSinceStartedPrint
+					|| lineSinceUpdateHistory + 20 < gCodeFileSwitcher.LineIndex))
+				{
+					double currentDone = gCodeFileSwitcher.GCodeFile.PercentComplete(gCodeFileSwitcher.LineIndex);
+
+					// Only update the amount done if it is greater than what is recorded.
+					// We don't want to mess up the resume before we actually resume it.
+					if (ActivePrintTask != null
+						&& ActivePrintTask.PercentDone < currentDone)
+					{
+						ActivePrintTask.PercentDone = currentDone;
+						repository.Update(ActivePrintTask);
+					}
+
+					secondsSinceUpdateHistory = secondsSinceStartedPrint;
+					lineSinceUpdateHistory = gCodeFileSwitcher.LineIndex;
+				}
+
+				Thread.Sleep(5);
 			}
 
-			// any other move we allow up to 10 seconds for response
-			return 10 * timeMultiple;
+			// Console.WriteLine("Syncing print to db stopped");
+		}
+
+		private void ToggleHighLowHigh(IFrostedSerialPort serialPort)
+		{
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = false;
+			serialPort.DtrEnable = false;
+			Thread.Sleep(100);
+			serialPort.RtsEnable = true;
+			serialPort.DtrEnable = true;
 		}
 
 		private void TryWriteNextLineFromGCodeFile()
@@ -2485,140 +2658,6 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public int TimeToHoldTemperature { get; set; } = 600;
-
-		public bool AnyHeatIsOn
-		{
-			get
-			{
-				bool anyHeatIsOn = false;
-				// check if any temps are set
-				for (int i = 0; i < this.ExtruderCount; i++)
-				{
-					if (GetTargetHotendTemperature(i) > 0)
-					{
-						anyHeatIsOn = true;
-						break;
-					}
-				}
-
-				anyHeatIsOn |= TargetBedTemperature > 0;
-				return anyHeatIsOn;
-			}
-		}
-
-		public int NumQueuedCommands
-		{
-			get
-			{
-				if (queuedCommandStream != null)
-				{
-					return queuedCommandStream.Count;
-				}
-
-				return 0;
-			}
-		}
-
-		public bool AllowLeveling
-		{
-			set
-			{
-				if (printLevelingStream != null)
-				{
-					printLevelingStream.AllowLeveling = value;
-				}
-				else if (value)
-				{
-					// we are requesting it turned back on, re-build the leveling stream
-					CreateStreamProcessors();
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the Pause Handling Stream has seen a change in the position sensor.
-		/// It is important that this is not persisted, it is meant to function correctly if the user
-		/// plugs in or removes a filament position sensor.
-		/// </summary>
-		public bool FilamentPositionSensorDetected { get; internal set; }
-
-		public Vector3 HomingPosition
-		{
-			get => _homingPosition;
-
-			private set
-			{
-				if (value != _homingPosition)
-				{
-					_homingPosition = value;
-					HomingPositionChanged?.Invoke(this, null);
-				}
-			}
-		}
-
-		public PrintJob ActivePrintTask { get; set; }
-
-		public string ActivePrintName => this.ActivePrintTask?.PrintName ?? "";
-
-		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
-		{
-			if (turnOffTime == TurnOff.Now)
-			{
-				for (int i = 0; i < this.ExtruderCount; i++)
-				{
-					SetTargetHotendTemperature(i, 0, true);
-				}
-
-				TargetBedTemperature = 0;
-			}
-			else
-			{
-				bool currentlyWaiting = ContinueHoldingTemperature && TimeHaveBeenHoldingTemperature.IsRunning && TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature;
-				SecondsToHoldTemperature = TimeToHoldTemperature;
-				ContinueHoldingTemperature = true;
-				TimeHaveBeenHoldingTemperature = Stopwatch.StartNew();
-				if (!currentlyWaiting)
-				{
-					TemporarilyHoldingTemp?.Invoke(this, null);
-					// wait secondsToWait and turn off the heaters
-					Task.Run(() =>
-					{
-						while (TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds < TimeToHoldTemperature
-							&& ContinueHoldingTemperature)
-						{
-							if (CommunicationState == CommunicationStates.PreparingToPrint
-								|| Printing)
-							{
-								ContinueHoldingTemperature = false;
-							}
-
-							if (!AnyHeatIsOn)
-							{
-								ContinueHoldingTemperature = false;
-							}
-
-							SecondsToHoldTemperature = ContinueHoldingTemperature ? Math.Max(0, TimeToHoldTemperature - TimeHaveBeenHoldingTemperature.Elapsed.TotalSeconds) : 0;
-							Thread.Sleep(100);
-						}
-
-						// times up turn off heaters
-						if (ContinueHoldingTemperature
-							&& !Printing
-							&& !Paused)
-						{
-							for (int i = 0; i < this.ExtruderCount; i++)
-							{
-								SetTargetHotendTemperature(i, 0, true);
-							}
-
-							TargetBedTemperature = 0;
-						}
-					});
-				}
-			}
-		}
-
 		// this is to make it misbehave, chaos monkey, bad checksum
 		// int checkSumCount = 1;
 
@@ -2666,17 +2705,6 @@ namespace MatterControl.Printing
 			}
 
 			SetDetailedPrintingState(lineToWrite);
-		}
-
-		private static string RemoveCommentIfAny(string lineToWrite)
-		{
-			int commentIndex = lineToWrite.IndexOf(';');
-			if (commentIndex > 0) // there is content in front of the ;
-			{
-				lineToWrite = lineToWrite.Substring(0, commentIndex).Trim();
-			}
-
-			return lineToWrite;
 		}
 
 		private void WriteRaw(string lineToWrite, string lineWithoutChecksum)
@@ -2787,36 +2815,11 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void MacroStart()
-		{
-			queuedCommandStream?.Reset();
-		}
-
-		public void MacroCancel()
-		{
-			maxLengthStream?.Cancel();
-			waitForTempStream?.Cancel();
-			queuedCommandStream?.Cancel();
-		}
-
-		public void Dispose()
-		{
-			Disposed?.Invoke(this, null);
-		}
-
-		private int currentReadThreadIndex = 0;
-		private Vector3 _homingPosition = Vector3.NegativeInfinity;
-		private int noOkResendCount;
-		private ProcessWriteRegexStream processWriteRegexStream;
-
 		public class ReadThread
 		{
-			private readonly int creationIndex;
-
 			private static int numRunning = 0;
+			private readonly int creationIndex;
 			private readonly PrinterConnection printerConnection;
-
-			public static int NumRunning => numRunning;
 
 			private ReadThread(PrinterConnection printerConnection)
 			{
@@ -2840,6 +2843,8 @@ namespace MatterControl.Printing
 				});
 			}
 
+			public static int NumRunning => numRunning;
+
 			internal static void Start(PrinterConnection printerConnection)
 			{
 				new ReadThread(printerConnection);
@@ -2854,9 +2859,8 @@ namespace MatterControl.Printing
 		private class CheckSumLines
 		{
 			private static readonly int RingBufferCount = 64;
-
-			private int addedCount = 0;
 			private readonly string[] ringBuffer = new string[RingBufferCount];
+			private int addedCount = 0;
 
 			public int Count => addedCount;
 
