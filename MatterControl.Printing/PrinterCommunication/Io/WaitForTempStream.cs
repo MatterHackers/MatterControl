@@ -35,7 +35,7 @@ namespace MatterControl.Printing.Pipelines
 	public class WaitForTempStream : GCodeStreamProxy
 	{
 		/// <summary>
-		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// Gets or sets the number of seconds to wait after reaching the target temp before continuing. Analogous to
 		/// firmware dwell time for temperature stabilization
 		/// </summary>
 		public static double WaitAfterReachTempTime { get; set; } = 3;
@@ -64,11 +64,11 @@ namespace MatterControl.Printing.Pipelines
 			WaitingForT1Temp
 		};
 
-		public bool HeatingBed { get { return state == State.WaitingForBedTemp; } }
+		public bool HeatingBed => state == State.WaitingForBedTemp;
 
-		public bool HeatingT0 { get { return state == State.WaitingForT0Temp; } }
+		public bool HeatingT0 => state == State.WaitingForT0Temp;
 
-		public bool HeatingT1 { get { return state == State.WaitingForT1Temp; } }
+		public bool HeatingT1 => state == State.WaitingForT1Temp;
 
 		public override string DebugInfo => "";
 
@@ -85,7 +85,7 @@ namespace MatterControl.Printing.Pipelines
 					{
 						string lineToSend = base.ReadLine();
 
-						if(lineToSend == null)
+						if (lineToSend == null)
 						{
 							return null;
 						}
@@ -100,7 +100,7 @@ namespace MatterControl.Printing.Pipelines
 							// initial test is just to see if it is an M109
 							if (lineToSend.StartsWith("M109")) // extruder set and wait temp
 							{
-								var lineNoComment = lineToSend.Split(';')[0];
+								string lineNoComment = lineToSend.Split(';')[0];
 
 								if (lineNoComment.Contains("F") // If it has a control character F (auto temp)
 									|| !lineNoComment.Contains("S")) // if it is a reset (has no S temperature)
@@ -125,6 +125,7 @@ namespace MatterControl.Printing.Pipelines
 									{
 										state = State.WaitingForT0Temp;
 									}
+
 									timeHaveBeenAtTemp.Reset();
 								}
 								else
@@ -168,7 +169,7 @@ namespace MatterControl.Printing.Pipelines
 				case State.WaitingForT1Temp:
 					{
 						double extruderTemp = printer.Connection.GetActualHotendTemperature((int)extruderIndex);
-						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend 
+						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend
 							&& extruderTemp <= targetTemp + sameTempRangeHotend;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
@@ -196,7 +197,7 @@ namespace MatterControl.Printing.Pipelines
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
-							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed 
+							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed
 								&& bedTemp <= targetTemp + sameTempRangeBed;
 						}
 						else
