@@ -861,7 +861,7 @@ namespace MatterControl.Printing
 
 		public void LogError(string message, ErrorSource source)
 		{
-			this.ErrorReported(this, new DeviceErrorArgs()
+			this.ErrorReported?.Invoke(this, new DeviceErrorArgs()
 			{
 				Message = message,
 				Source = source
