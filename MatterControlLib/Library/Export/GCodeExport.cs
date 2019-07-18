@@ -307,7 +307,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			}
 
 			if (levelingEnabled
-				&& !LevelingValidation.NeedsToBeRun(shim))
+				&& !LevelingValidation.NeedsToBeRun(shim.Settings))
 			{
 				accumulatedStream = new PrintLevelingStream(shim, accumulatedStream);
 			}

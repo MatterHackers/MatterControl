@@ -88,7 +88,7 @@ namespace MatterControl.Tests.MatterControl
 				});
 
 			var printer = new PrinterConfig(new PrinterSettings());
-			var levelingSolution = new LevelWizard3Point(printer.Shim());
+			var levelingSolution = new LevelWizard3Point(printer.Settings);
 			var printerSettings = printer.Settings;
 
 			var json = printer.Settings.ToJson();

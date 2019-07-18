@@ -39,8 +39,8 @@ namespace MatterControl.Printing.PrintLeveling
 		private int gridWidth;
 		private int gridHeight;
 
-		public LevelWizardMesh(PrintHostConfig printer, int width, int height)
-			: base(printer)
+		public LevelWizardMesh(PrinterSettings settings, int width, int height)
+			: base(settings)
 		{
 			this.gridWidth = width;
 			this.gridHeight = height;
@@ -50,10 +50,10 @@ namespace MatterControl.Printing.PrintLeveling
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedSize = settings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
+			if (settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
 				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a circular bed
 				bedSize *= 1.0 / Math.Sqrt(2);
@@ -75,9 +75,11 @@ namespace MatterControl.Printing.PrintLeveling
 						dirX = (gridWidth - 1) - x;
 					}
 
-					var samplePosition = new Vector2();
-					samplePosition.X = printCenter.X - halfXSize + (dirX * xStep);
-					samplePosition.Y = printCenter.Y - halfYSize + (y * yStep);
+					var samplePosition = new Vector2()
+					{
+						X = printCenter.X - halfXSize + (dirX * xStep),
+						Y = printCenter.Y - halfYSize + (y * yStep)
+					};
 
 					yield return samplePosition;
 				}

@@ -2269,7 +2269,7 @@ namespace MatterControl.Printing
 			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
-			if (!LevelingValidation.NeedsToBeRun(Printer))
+			if (!LevelingValidation.NeedsToBeRun(Printer.Settings))
 			{
 				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
 			}

@@ -35,8 +35,8 @@ namespace MatterControl.Printing.PrintLeveling
 {
 	public class LevelWizard3Point : LevelingPlan
 	{
-		public LevelWizard3Point(PrintHostConfig printer)
-			: base(printer)
+		public LevelWizard3Point(PrinterSettings settings)
+			: base(settings)
 		{
 		}
 
@@ -44,10 +44,10 @@ namespace MatterControl.Printing.PrintLeveling
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			Vector2 bedSize = settings.GetValue<Vector2>(SettingsKey.bed_size);
+			Vector2 printCenter = settings.GetValue<Vector2>(SettingsKey.print_center);
 
-			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
+			if (settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
 				Vector2 firstPosition = new Vector2(printCenter.X, printCenter.Y + (bedSize.Y / 2) * .5);
 				yield return firstPosition;

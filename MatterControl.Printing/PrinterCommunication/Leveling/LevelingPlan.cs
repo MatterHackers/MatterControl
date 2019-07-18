@@ -36,7 +36,7 @@ namespace MatterControl.Printing.PrintLeveling
 {
 	public abstract class LevelingPlan
 	{
-		protected PrintHostConfig printer;
+		protected PrinterSettings settings;
 
 		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
 
@@ -44,25 +44,25 @@ namespace MatterControl.Printing.PrintLeveling
 
 		public virtual int TotalSteps => this.ProbeCount * 3;
 
-		public LevelingPlan(PrintHostConfig printer)
+		public LevelingPlan(PrinterSettings settings)
 		{
-			this.printer = printer;
+			this.settings = settings;
 		}
 
-		public static Vector2 ProbeOffsetSamplePosition(PrintHostConfig printer)
+		public static Vector2 ProbeOffsetSamplePosition(PrinterSettings settings)
 		{
-			if (printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) == LevelingSystem.ProbeCustom)
+			if (settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) == LevelingSystem.ProbeCustom)
 			{
-				return printer.Settings.GetValue<Vector2>(SettingsKey.probe_offset_sample_point);
+				return settings.GetValue<Vector2>(SettingsKey.probe_offset_sample_point);
 			}
 
-			return printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			return settings.GetValue<Vector2>(SettingsKey.print_center);
 		}
 
 		public IEnumerable<Vector2> GetSampleRing(int numberOfSamples, double ratio, double phase)
 		{
-			double bedRadius = Math.Min(printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).X, printer.Settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
-			Vector2 bedCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			double bedRadius = Math.Min(settings.GetValue<Vector2>(SettingsKey.bed_size).X, settings.GetValue<Vector2>(SettingsKey.bed_size).Y) / 2;
+			Vector2 bedCenter = settings.GetValue<Vector2>(SettingsKey.print_center);
 
 			for (int i = 0; i < numberOfSamples; i++)
 			{

@@ -50,13 +50,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private double babySteppingValue;
 		private bool wizardExited;
 		private bool hasHardwareLeveling;
-		private PrintHostConfig printerShim;
 
 		public PrintLevelingWizard(PrinterConfig printer)
 			: base(printer)
 		{
-			this.printerShim = ApplicationController.Instance.Shim(printer);
-
 			this.Title = "Print Leveling".Localize();
 			hasHardwareLeveling = printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 		}
@@ -69,9 +66,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool Enabled => !hasHardwareLeveling;
 
-		public override bool Completed => !hasHardwareLeveling && !LevelingValidation.NeedsToBeRun(printerShim);
+		public override bool Completed => !hasHardwareLeveling && !LevelingValidation.NeedsToBeRun(printer.Settings);
 
-		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printerShim);
+		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer.Settings);
 
 		private void Initialize()
 		{
@@ -95,35 +92,35 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			switch (levelingData.LevelingSystem)
 			{
 				case LevelingSystem.Probe3Points:
-					LevelingPlan = new LevelWizard3Point(printerShim);
+					LevelingPlan = new LevelWizard3Point(printer.Settings);
 					break;
 
 				case LevelingSystem.Probe7PointRadial:
-					LevelingPlan = new LevelWizard7PointRadial(printerShim);
+					LevelingPlan = new LevelWizard7PointRadial(printer.Settings);
 					break;
 
 				case LevelingSystem.Probe13PointRadial:
-					LevelingPlan = new LevelWizard13PointRadial(printerShim);
+					LevelingPlan = new LevelWizard13PointRadial(printer.Settings);
 					break;
 
 				case LevelingSystem.Probe100PointRadial:
-					LevelingPlan = new LevelWizard100PointRadial(printerShim);
+					LevelingPlan = new LevelWizard100PointRadial(printer.Settings);
 					break;
 
 				case LevelingSystem.Probe3x3Mesh:
-					LevelingPlan = new LevelWizardMesh(printerShim, 3, 3);
+					LevelingPlan = new LevelWizardMesh(printer.Settings, 3, 3);
 					break;
 
 				case LevelingSystem.Probe5x5Mesh:
-					LevelingPlan = new LevelWizardMesh(printerShim, 5, 5);
+					LevelingPlan = new LevelWizardMesh(printer.Settings, 5, 5);
 					break;
 
 				case LevelingSystem.Probe10x10Mesh:
-					LevelingPlan = new LevelWizardMesh(printerShim, 10, 10);
+					LevelingPlan = new LevelWizardMesh(printer.Settings, 10, 10);
 					break;
 
 				case LevelingSystem.ProbeCustom:
-					LevelingPlan = new LevelWizardCustom(printerShim);
+					LevelingPlan = new LevelWizardCustom(printer.Settings);
 					break;
 
 				default:

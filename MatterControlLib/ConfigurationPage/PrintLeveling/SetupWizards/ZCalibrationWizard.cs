@@ -145,9 +145,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this,
 				levelingStrings.HomingPageInstructions(true, false));
 
-			var printerShim = ApplicationController.Instance.Shim(printer);
-
-			if (LevelingValidation.NeedsToBeRun(printerShim))
+			if (LevelingValidation.NeedsToBeRun(printer.Settings))
 			{
 				// start heating up the bed as that will be needed next
 				var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
@@ -179,7 +177,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				temps);
 
 			double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printerShim);
+			Vector2 probePosition = LevelingPlan.ProbeOffsetSamplePosition(printer.Settings);
 			var probeStartPosition = new Vector3(probePosition, startProbeHeight);
 
 			int extruderPriorToMeasure = printer.Connection.ActiveExtruderIndex;

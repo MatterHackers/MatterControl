@@ -35,21 +35,22 @@ namespace MatterControl.Printing.PrintLeveling
 {
 	public class LevelWizardCustom : LevelingPlan
 	{
-		public LevelWizardCustom(PrintHostConfig printer)
-			: base(printer)
+		public LevelWizardCustom(PrinterSettings settings)
+			: base(settings)
 		{
 		}
 
-		public static List<Vector2> ParseLevelingSamplePoints(PrintHostConfig printer)
+		public static List<Vector2> ParseLevelingSamplePoints(PrinterSettings settings)
 		{
 			var pointsToProbe = new List<Vector2>();
-			var samples = printer.Settings.GetValue(SettingsKey.leveling_sample_points).Replace("\r", "").Replace("\n", "").Trim();
+			string samples = settings.GetValue(SettingsKey.leveling_sample_points).Replace("\r", "").Replace("\n", "").Trim();
 			double xPos = double.NegativeInfinity;
-			foreach(var coord in samples.Split(','))
+
+			foreach (string coord in samples.Split(','))
 			{
-				if(double.TryParse(coord, out double result))
+				if (double.TryParse(coord, out double result))
 				{
-					if(xPos == double.NegativeInfinity)
+					if (xPos == double.NegativeInfinity)
 					{
 						// this is the first coord it is an x position
 						xPos = result;
@@ -65,17 +66,11 @@ namespace MatterControl.Printing.PrintLeveling
 			return pointsToProbe;
 		}
 
-		public override int ProbeCount
-		{
-			get
-			{
-				return ParseLevelingSamplePoints(printer).Count;
-			}
-		}
+		public override int ProbeCount => ParseLevelingSamplePoints(settings).Count;
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			foreach(var position in ParseLevelingSamplePoints(printer))
+			foreach (var position in ParseLevelingSamplePoints(settings))
 			{
 				yield return position;
 			}

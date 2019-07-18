@@ -309,10 +309,7 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
-			// TODO: Verify invoked with low frequency
-			var printerShim = ApplicationController.Instance.Shim(printer);
-
-			return LevelingValidation.NeedsToBeRun(printerShim) // PrintLevelingWizard
+			return LevelingValidation.NeedsToBeRun(printer.Settings)
 				|| ZCalibrationWizard.NeedsToBeRun(printer)
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))

@@ -35,24 +35,24 @@ namespace MatterControl.Printing.PrintLeveling
 {
 	public static class LevelingValidation
 	{
-		public static bool NeedsToBeRun(PrintHostConfig printer)
+		public static bool NeedsToBeRun(PrinterSettings settings)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
+			PrintLevelingData levelingData = settings.Helpers.PrintLevelingData;
 
-			var required = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
+			var required = settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 			if (required && levelingData == null)
 			{
 				// need but don't have data
 				return true;
 			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
+			if (settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 			{
 				// If printer has hardware leveling, software leveling is disabled
 				return false;
 			}
 
-			var enabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			var enabled = settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
 
 			// check if leveling is turned on
 			if (required && !enabled)
@@ -82,14 +82,14 @@ namespace MatterControl.Printing.PrintLeveling
 			}
 
 			// check that the solution last measured is the currently selected solution
-			if (printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) != levelingData.LevelingSystem)
+			if (settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution) != levelingData.LevelingSystem)
 			{
 				return true;
 			}
 
 			// check that the bed temperature at probe time was close enough to the current print bed temp
-			double requiredLevelingTemp = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
-				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+			double requiredLevelingTemp = settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				settings.GetValue<double>(SettingsKey.bed_temperature)
 				: 0;
 
 			// check that the number of points sampled is correct for the solution
@@ -152,7 +152,7 @@ namespace MatterControl.Printing.PrintLeveling
 					break;
 
 				case LevelingSystem.ProbeCustom:
-					if (levelingData.SampledPositions.Count != LevelWizardCustom.ParseLevelingSamplePoints(printer).Count)
+					if (levelingData.SampledPositions.Count != LevelWizardCustom.ParseLevelingSamplePoints(settings).Count)
 					{
 						return true;
 					}
