@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl
 		private PrinterConfig()
 		{
 			this.printerShim = new PrintHostConfig();
-			this.Connection = new PrinterConnection(this.printerShim);
+			this.Connection = new RemotePrinterConnection(this.printerShim);
 		}
 
 		public PrinterConfig(PrinterSettings settings)
@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 				Settings = settings
 			};
 
-			this.Connection = new PrinterConnection(printerShim);
+			this.Connection = new RemotePrinterConnection(printerShim);
 
 			printerShim.Connection = this.Connection;
 
@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 		public TerminalLog TerminalLog { get; }
 
 		[JsonIgnore]
-		public PrinterConnection Connection { get; }
+		public IPrinterConnection Connection { get; }
 
 		public string PrinterConnectionStatus
 		{

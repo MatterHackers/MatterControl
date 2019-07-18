@@ -53,7 +53,7 @@ namespace MatterControl.Printing
 	/// It handles opening and closing the serial port and does quite a bit of gcode parsing.
 	/// It should be refactored into better modules at some point.
 	/// </summary>
-	public class PrinterConnection : IDisposable
+	public class PrinterConnection : IDisposable, IPrinterConnection
 	{
 		internal const int MaxExtruders = 16;
 
@@ -1612,7 +1612,7 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public void ReadFromPrinter(ReadThread readThreadHolder)
+		private void ReadFromPrinter(ReadThread readThreadHolder)
 		{
 			Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 			timeSinceLastReadAnything.Restart();
@@ -2243,7 +2243,7 @@ namespace MatterControl.Printing
 					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, Printer);
 				}
 
-				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, accumulatedStream);
+				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, this, accumulatedStream);
 			}
 			else
 			{

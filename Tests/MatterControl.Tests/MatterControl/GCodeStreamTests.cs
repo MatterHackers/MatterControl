@@ -288,7 +288,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			streamList = new List<GCodeStream>();
 			streamList.Add(new TestGCodeStream(printer.Shim(), inputLines));
-			streamList.Add(new PauseHandlingStream(printer.Shim(), streamList[streamList.Count - 1]));
+			streamList.Add(new PauseHandlingStream(printer.Shim(), null, streamList[streamList.Count - 1]));
 			streamList.Add(new QueuedCommandsStream(printer.Shim(), streamList[streamList.Count - 1]));
 			streamList.Add(new RelativeToAbsoluteStream(printer.Shim(), streamList[streamList.Count - 1]));
 			streamList.Add(new WaitForTempStream(printer.Shim(), streamList[streamList.Count - 1]));

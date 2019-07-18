@@ -60,7 +60,7 @@ namespace MatterControl.Printing.Pipelines
 
 		public override string DebugInfo => "";
 
-		public PauseHandlingStream(PrintHostConfig printer, GCodeStream internalStream)
+		public PauseHandlingStream(PrintHostConfig printer, PrinterConnection connection, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			// if we have a runout sensor, register to listen for lines to check it
@@ -86,7 +86,7 @@ namespace MatterControl.Printing.Pipelines
 							{
 								if (sensorDistance < -1 || sensorDistance > 1)
 								{
-									printer.Connection.FilamentPositionSensorDetected = true;
+									connection.FilamentPositionSensorDetected = true;
 								}
 
 								if (printer.Connection.FilamentPositionSensorDetected)

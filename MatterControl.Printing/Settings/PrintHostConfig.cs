@@ -35,6 +35,6 @@ namespace MatterControl.Printing
 	{
 		public PrinterSettings Settings { get; set; }
 
-		public PrinterConnection Connection { get; set; }
+		public IPrinterConnection Connection { internal get; set; }
 	}
 }

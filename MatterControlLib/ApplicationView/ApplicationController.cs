@@ -1877,7 +1877,7 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_ErrorReported(object sender, DeviceErrorArgs e)
 		{
-			if (sender is PrinterConnection printerConnection)
+			if (sender is IPrinterConnection printerConnection)
 			{
 				if (e.Source == ErrorSource.Firmware
 					&& e.Message != null)
@@ -1916,7 +1916,7 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_TemporarilyHoldingTemp(object sender, EventArgs e)
 		{
-			if (sender is PrinterConnection printerConnection)
+			if (sender is IPrinterConnection printerConnection)
 			{
 				if (printerConnection.AnyHeatIsOn)
 				{
@@ -3155,7 +3155,7 @@ namespace MatterHackers.MatterControl
 
 		public void Connection_PrintFinished(object sender, string e)
 		{
-			if (sender is PrinterConnection printerConnection
+			if (sender is IPrinterConnection printerConnection
 				&& !printerConnection.CalibrationPrint)
 			{
 				// show a long running task asking about print feedback and up-selling more materials
@@ -3181,7 +3181,7 @@ Support and tutorials:
 
 		public void Connection_PrintCanceled(object sender, EventArgs e)
 		{
-			if (sender is PrinterConnection printerConnection
+			if (sender is IPrinterConnection printerConnection
 				&& !printerConnection.CalibrationPrint)
 			{
 				// show a long running task showing support options
@@ -3461,6 +3461,7 @@ Details
 			public string Title { get; set; }
 
 			public int Priority { get; set; }
+
 			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
 		}
 
