@@ -957,6 +957,18 @@ namespace MatterHackers.MatterControl
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(SubdivideFacesObject3D),
+							TitleResolver = () => "Subdivide".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new SubdivideFacesObject3D();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						}
 					}
 				},
