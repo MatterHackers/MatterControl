@@ -27,29 +27,26 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class RelativeToAbsoluteStream : GCodeStreamProxy
 	{
 		protected PrinterMove lastDestination = PrinterMove.Unknown;
-		public PrinterMove LastDestination { get { return lastDestination; } }
+
+		public PrinterMove LastDestination => lastDestination;
 
 		bool xyzAbsoluteMode = true;
 		bool eAbsoluteMode = true;
 		private bool haveSentG90;
 
-		public RelativeToAbsoluteStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public RelativeToAbsoluteStream(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 		}
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {lastDestination}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {lastDestination}";
 
 		public override void SetPrinterPosition(PrinterMove position)
 		{

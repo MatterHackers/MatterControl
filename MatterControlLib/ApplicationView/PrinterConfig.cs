@@ -73,7 +73,9 @@ namespace MatterHackers.MatterControl
 				Settings = settings
 			};
 
-			this.Connection = new RemotePrinterConnection(printerShim);
+			System.Diagnostics.Debugger.Break();
+			//this.Connection = new RemotePrinterConnection(printerShim);
+			this.Connection = new PrinterConnection(printerShim);
 
 			printerShim.Connection = this.Connection;
 

@@ -27,14 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class FeedRateMultiplierStream : GCodeStreamProxy
 	{
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public FeedRateMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public FeedRateMultiplierStream(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 		}
 
@@ -70,6 +72,7 @@ namespace MatterControl.Printing.Pipelines
 				{
 					lineToSend = CreateMovementLine(moveToSend, this.lastDestination);
 				}
+
 				this.lastDestination = currentMove;
 				return lineToSend;
 			}

@@ -150,11 +150,8 @@ namespace MatterHackers.MatterControl.Library.Export
 				{
 					using (var gcodeStream = await assetStream.GetStream(progress: null))
 					{
-						// TODO: Review
-						var printerShim = ApplicationController.Instance.Shim(printer);
-
 						this.ApplyStreamPipelineAndExport(
-							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printerShim),
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer.Settings),
 							outputPath);
 
 						return null;
@@ -274,53 +271,51 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public static GCodeStream GetExportStream(PrinterConfig printer, GCodeStream gCodeBaseStream, bool applyLeveling)
 		{
-			var shim = new PrintHostConfig()
-			{
-				Settings = printer.Settings,
-				Connection = printer.Connection
-			};
+			var settings = printer.Settings;
+			System.Diagnostics.Debugger.Break();
+			var connection = printer.Connection as PrinterConnection;
 
-			var queuedCommandStream = new QueuedCommandsStream(shim, gCodeBaseStream);
+			var queuedCommandStream = new QueuedCommandsStream(settings, gCodeBaseStream);
 			GCodeStream accumulatedStream = queuedCommandStream;
 
-			accumulatedStream = new RelativeToAbsoluteStream(shim, accumulatedStream);
+			accumulatedStream = new RelativeToAbsoluteStream(settings, accumulatedStream);
 
-			if (shim.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			if (settings.GetValue<int>(SettingsKey.extruder_count) > 1)
 			{
 				var gCodeFileStream = gCodeBaseStream as GCodeFileStream;
-				accumulatedStream = new ToolChangeStream(shim, accumulatedStream, queuedCommandStream, gCodeFileStream);
-				accumulatedStream = new ToolSpeedMultiplierStream(shim, accumulatedStream);
+				accumulatedStream = new ToolChangeStream(settings, connection, accumulatedStream, queuedCommandStream, gCodeFileStream);
+				accumulatedStream = new ToolSpeedMultiplierStream(settings, connection, accumulatedStream);
 			}
 
-			bool levelingEnabled = shim.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
+			bool levelingEnabled = settings.GetValue<bool>(SettingsKey.print_leveling_enabled) && applyLeveling;
 
-			accumulatedStream = new BabyStepsStream(shim, accumulatedStream);
+			accumulatedStream = new BabyStepsStream(settings, connection, accumulatedStream);
 
 			if (levelingEnabled
-				&& shim.Settings.GetValue<bool>(SettingsKey.enable_line_splitting))
+				&& settings.GetValue<bool>(SettingsKey.enable_line_splitting))
 			{
-				accumulatedStream = new MaxLengthStream(shim, accumulatedStream, 1);
+				accumulatedStream = new MaxLengthStream(settings, accumulatedStream, 1);
 			}
 			else
 			{
-				accumulatedStream = new MaxLengthStream(shim, accumulatedStream, 1000);
+				accumulatedStream = new MaxLengthStream(settings, accumulatedStream, 1000);
 			}
 
 			if (levelingEnabled
-				&& !LevelingValidation.NeedsToBeRun(shim.Settings))
+				&& !LevelingValidation.NeedsToBeRun(settings))
 			{
-				accumulatedStream = new PrintLevelingStream(shim, accumulatedStream);
+				accumulatedStream = new PrintLevelingStream(settings, connection, accumulatedStream);
 			}
 
-			if (shim.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			if (settings.GetValue<bool>(SettingsKey.emulate_endstops))
 			{
-				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(shim, accumulatedStream);
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(settings, connection, accumulatedStream);
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
-			accumulatedStream = new RemoveNOPsStream(shim, accumulatedStream);
+			accumulatedStream = new RemoveNOPsStream(settings, accumulatedStream);
 
-			accumulatedStream = new ProcessWriteRegexStream(shim, accumulatedStream, queuedCommandStream);
+			accumulatedStream = new ProcessWriteRegexStream(settings, accumulatedStream, queuedCommandStream);
 
 			return accumulatedStream;
 		}
@@ -359,11 +354,11 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-
 				var shim = new PrintHostConfig()
 				{
 					Settings = printer.Settings,
-					Connection = printer.Connection
+					// TODO: Review why an export stream would need a printer connection - break dependency if needed
+					Connection = null // printer.Connection
 				};
 
 				var settings = printer.Settings;
@@ -381,7 +376,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 							new Vector4(multiplier, multiplier, multiplier, multiplier),
 							CancellationToken.None),
-						shim),
+						settings),
 					outputPath);
 			}
 			catch (Exception e)

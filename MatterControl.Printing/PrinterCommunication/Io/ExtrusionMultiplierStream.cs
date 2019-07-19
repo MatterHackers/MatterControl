@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class ExtrusionMultiplierStream : GCodeStreamProxy
@@ -34,20 +36,14 @@ namespace MatterControl.Printing.Pipelines
 		private double currentActualExtrusionPosition = 0;
 		private double previousGcodeRequestedExtrusionPosition = 0;
 
-		public ExtrusionMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public ExtrusionMultiplierStream(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 		}
 
 		public static double ExtrusionRatio { get; set; } = 1;
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"ExtrusionRatio = {ExtrusionRatio}";
-			}
-		}
+		public override string DebugInfo => $"ExtrusionRatio = {ExtrusionRatio}";
 
 		public override string ReadLine()
 		{

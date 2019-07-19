@@ -40,17 +40,20 @@ namespace MatterControl.Printing.Pipelines
 		private readonly Vector3[] extruderOffsets = new Vector3[4];
 		private PrinterMove outputWithBabyStepping = PrinterMove.Unknown;
 		private PrinterMove inputNoBabyStepping = PrinterMove.Unknown;
+		private PrinterConnection connection;
 
 		public Vector3 BabbyStepOffset { get; private set; } = Vector3.Zero;
 
-		public BabyStepsStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public BabyStepsStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
-			printer.Settings.SettingChanged += Printer_SettingChanged;
+			this.connection = connection;
 
-			extruderIndex = printer.Connection.ActiveExtruderIndex;
+			settings.SettingChanged += Printer_SettingChanged;
 
-			BabbyStepOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			extruderIndex = connection.ActiveExtruderIndex;
+
+			BabbyStepOffset = new Vector3(0, 0, settings.GetValue<double>(SettingsKey.baby_step_z_offset));
 
 			ReadExtruderOffsets();
 		}
@@ -59,28 +62,22 @@ namespace MatterControl.Printing.Pipelines
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				extruderOffsets[i] = printer.Settings.Helpers.ExtruderOffset(i);
+				extruderOffsets[i] = settings.Helpers.ExtruderOffset(i);
 			}
 		}
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {inputNoBabyStepping}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {inputNoBabyStepping}";
 
 		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
 			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
 				var currentOffset = BabbyStepOffset.Z;
-				BabbyStepOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+				BabbyStepOffset = new Vector3(0, 0, settings.GetValue<double>(SettingsKey.baby_step_z_offset));
 			}
 			else if (e?.Data == SettingsKey.extruder_offset
-				&& !printer.Connection.Printing
-				&& !printer.Connection.Paused)
+				&& !connection.Printing
+				&& !connection.Paused)
 			{
 				// if the offsets change update them (unless we are actively printing)
 				ReadExtruderOffsets();
@@ -101,7 +98,7 @@ namespace MatterControl.Printing.Pipelines
 
 		public override void Dispose()
 		{
-			printer.Settings.SettingChanged -= Printer_SettingChanged;
+			settings.SettingChanged -= Printer_SettingChanged;
 
 			base.Dispose();
 		}

@@ -38,25 +38,20 @@ namespace MatterControl.Printing.Pipelines
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 
 		AxisAlignedBoundingBox[] extruderBounds = new AxisAlignedBoundingBox[4];
+		private PrinterConnection connection;
 
-		public SoftwareEndstopsStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public SoftwareEndstopsStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 			CalculateBounds();
-
-			printer.Settings.SettingChanged += Settings_SettingChanged;
-			printer.Connection.HomingPositionChanged += Connection_HomingPositionChanged;
+			this.connection = connection;
+			settings.SettingChanged += Settings_SettingChanged;
+			connection.HomingPositionChanged += Connection_HomingPositionChanged;
 
 			// Register to listen for position after home and update Bounds based on the axis homed and position info.
 		}
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {lastDestination}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {lastDestination}";
 
 		private void Connection_HomingPositionChanged(object sender, System.EventArgs e)
 		{
@@ -76,28 +71,28 @@ namespace MatterControl.Printing.Pipelines
 
 		public override void Dispose()
 		{
-			printer.Settings.SettingChanged -= Settings_SettingChanged;
-			printer.Connection.HomingPositionChanged -= Connection_HomingPositionChanged;
+			settings.SettingChanged -= Settings_SettingChanged;
+			connection.HomingPositionChanged -= Connection_HomingPositionChanged;
 
 			base.Dispose();
 		}
 
 		private void CalculateBounds()
 		{
-			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-			AxisAlignedBoundingBox aabb = printer.Settings.BedAABB();
+			int extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+			AxisAlignedBoundingBox aabb = settings.BedAABB();
 
 			// if the printer has no height set than allow it to go up any amount
-			if(aabb.ZSize < 10)
+			if (aabb.ZSize < 10)
 			{
 				aabb.MaxXYZ.Z = 200;
 			}
 
 			// if the printer has leveling enabled
-			if(printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			if (settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
 				// set to a big value to make sure we can get to any leveling position described (below the bed)
-				aabb.MinXYZ.Z = -100; 
+				aabb.MinXYZ.Z = -100;
 			}
 			else // leave a little bit of room for baby stepping
 			{
@@ -105,7 +100,7 @@ namespace MatterControl.Printing.Pipelines
 			}
 
 			// let the z endstop set the max z bounds
-			var homingPosition = printer.Connection.HomingPosition;
+			var homingPosition = connection.HomingPosition;
 			// If we know the homing endstop positions, add them in.
 			if (homingPosition.Z != double.NegativeInfinity)
 			{
@@ -166,7 +161,7 @@ namespace MatterControl.Printing.Pipelines
 
 		private void ClampToPrinter(ref PrinterMove moveToSend)
 		{
-			var bounds = extruderBounds[printer.Connection.ActiveExtruderIndex];
+			var bounds = extruderBounds[connection.ActiveExtruderIndex];
 			// clamp to each axis
 			for (int i = 0; i < 3; i++)
 			{

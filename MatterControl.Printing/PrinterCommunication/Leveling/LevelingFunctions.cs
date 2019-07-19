@@ -40,14 +40,16 @@ namespace MatterControl.Printing.PrintLeveling
 	{
 		private Vector2 bedSize;
 		private Dictionary<(int, int), int> positionToRegion = new Dictionary<(int, int), int>();
-		private PrintHostConfig printer;
+		private IPrinterConnection connection;
+		private PrinterSettings settings;
 
-		public LevelingFunctions(PrintHostConfig printer, PrintLevelingData levelingData)
+		public LevelingFunctions(PrinterSettings settings, IPrinterConnection connection, PrintLevelingData levelingData)
 		{
-			this.printer = printer;
+			this.connection = connection;
+			this.settings = settings;
 			this.SampledPositions = new List<Vector3>(levelingData.SampledPositions);
 
-			bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
+			bedSize = settings.GetValue<Vector2>(SettingsKey.bed_size);
 
 			// get the delaunay triangulation
 			var zDictionary = new Dictionary<(double, double), double>();
@@ -99,9 +101,9 @@ namespace MatterControl.Printing.PrintLeveling
 
 			var probeZOffset = default(Vector3);
 
-			if (printer.Settings.Helpers.UseZProbe())
+			if (settings.Helpers.UseZProbe())
 			{
-				probeZOffset = new Vector3(0, 0, printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset).Z);
+				probeZOffset = new Vector3(0, 0, settings.GetValue<Vector3>(SettingsKey.probe_offset).Z);
 			}
 
 			// make all the triangle planes for these triangles
@@ -148,7 +150,7 @@ namespace MatterControl.Printing.PrintLeveling
 			(destination.Z == double.PositiveInfinity) ? 0 : destination.Z);
 
 			// get the offset to the active extruder
-			var extruderOffset = printer.Settings.Helpers.ExtruderOffset(printer.Connection.ActiveExtruderIndex);
+			var extruderOffset = settings.Helpers.ExtruderOffset(connection.ActiveExtruderIndex);
 			correctedPosition += extruderOffset;
 
 			// level it

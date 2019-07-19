@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
@@ -37,8 +38,8 @@ namespace MatterControl.Printing.Pipelines
 		private List<string> commandQueue = new List<string>();
 		private object locker = new object();
 
-		public QueuedCommandsStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public QueuedCommandsStream(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 		}
 
@@ -132,7 +133,7 @@ namespace MatterControl.Printing.Pipelines
 				if (commandQueue.Count > 0)
 				{
 					lineToSend = commandQueue[0];
-					lineToSend = printer.Settings.ReplaceMacroValues(lineToSend);
+					lineToSend = settings.ReplaceMacroValues(lineToSend);
 					commandQueue.RemoveAt(0);
 				}
 			}

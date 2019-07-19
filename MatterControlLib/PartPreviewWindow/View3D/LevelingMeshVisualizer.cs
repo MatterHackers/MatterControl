@@ -40,9 +40,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		public static Mesh BuildMeshFromLevelingData(PrinterConfig printer)
 		{
-			var printerShim = ApplicationController.Instance.Shim(printer);
 			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-			var currentLevelingFunctions = new LevelingFunctions(printerShim, levelingData);
+			var currentLevelingFunctions = new LevelingFunctions(printer.Settings, printer.Connection, levelingData);
 
 			var vertices = new List<Vector3Float>();
 

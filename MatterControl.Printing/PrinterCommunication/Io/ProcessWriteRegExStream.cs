@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
@@ -42,8 +43,8 @@ namespace MatterControl.Printing.Pipelines
 
 		public override string DebugInfo => "";
 
-		public ProcessWriteRegexStream(PrintHostConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
-			: base(printer, internalStream)
+		public ProcessWriteRegexStream(PrinterSettings settings, GCodeStream internalStream, QueuedCommandsStream queueStream)
+			: base(settings, internalStream)
 		{
 			this.queueStream = queueStream;
 		}
@@ -69,7 +70,7 @@ namespace MatterControl.Printing.Pipelines
 				return baseLine;
 			}
 
-			var lines = ProcessWriteRegEx(baseLine, printer);
+			var lines = ProcessWriteRegEx(baseLine, settings);
 			for (int i = lines.Count - 1; i >= 1; i--)
 			{
 				queueStream.Add(lines[i], true);
@@ -98,7 +99,7 @@ namespace MatterControl.Printing.Pipelines
 			return lineToSend;
 		}
 
-		public static List<string> ProcessWriteRegEx(string lineToWrite, PrintHostConfig printer)
+		public static List<string> ProcessWriteRegEx(string lineToWrite, PrinterSettings settings)
 		{
 			var linesToWrite = new List<string>();
 			linesToWrite.Add(lineToWrite);
@@ -106,7 +107,7 @@ namespace MatterControl.Printing.Pipelines
 			var addedLines = new List<string>();
 			for (int i = 0; i < linesToWrite.Count; i++)
 			{
-				foreach (var item in printer.Settings.Helpers.WriteLineReplacements)
+				foreach (var item in settings.Helpers.WriteLineReplacements)
 				{
 					var splitReplacement = item.Replacement.Split(',');
 					if (splitReplacement.Length > 0)

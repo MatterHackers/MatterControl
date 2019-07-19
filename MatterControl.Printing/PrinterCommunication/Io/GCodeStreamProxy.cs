@@ -27,14 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public abstract class GCodeStreamProxy : GCodeStream
 	{
 		protected GCodeStream internalStream;
 
-		public GCodeStreamProxy(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer)
+		public GCodeStreamProxy(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings)
 		{
 			this.internalStream = internalStream;
 		}

@@ -28,13 +28,14 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
 	public class NotPrintingStream : GCodeStream
 	{
-		public NotPrintingStream(PrintHostConfig printer)
-			: base(printer)
+		public NotPrintingStream(PrinterSettings settings)
+			: base(settings)
 		{
 		}
 

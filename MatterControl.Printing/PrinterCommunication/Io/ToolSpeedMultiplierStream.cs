@@ -35,13 +35,15 @@ namespace MatterControl.Printing.Pipelines
 	public class ToolSpeedMultiplierStream : GCodeStreamProxy
 	{
 		private PrinterMove lastDestination = PrinterMove.Unknown;
+		private PrinterConnection connection;
 		private double t0Multiplier;
 
-		public ToolSpeedMultiplierStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public ToolSpeedMultiplierStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
-			t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
-			printer.Settings.SettingChanged += Settings_SettingChanged;
+			this.connection = connection;
+			t0Multiplier = settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
+			settings.SettingChanged += Settings_SettingChanged;
 		}
 
 		private void Settings_SettingChanged(object sender, StringEventArgs stringEvent)
@@ -49,7 +51,7 @@ namespace MatterControl.Printing.Pipelines
 			// we don't change the setting while printing
 			if (stringEvent.Data == SettingsKey.t1_extrusion_move_speed_multiplier)
 			{
-				t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
+				t0Multiplier = settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
 			}
 		}
 
@@ -83,7 +85,7 @@ namespace MatterControl.Printing.Pipelines
 
 				PrinterMove moveToSend = currentMove;
 				// If we are on T1
-				if (printer.Connection.ActiveExtruderIndex == 1)
+				if (connection.ActiveExtruderIndex == 1)
 				{
 					bool extrusionDelta = currentMove.extrusion != this.lastDestination.extrusion;
 					bool xyPositionDelta = currentMove.position.X != this.lastDestination.position.X || currentMove.position.Y != this.lastDestination.position.Y;

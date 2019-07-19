@@ -44,10 +44,9 @@ namespace MatterControl.Printing.Pipelines
 
 		private string lastLine = "";
 
-		public GCodeSwitcher(Stream gcodeStream, PrintHostConfig printer, int startLine = 0)
-			: base(printer)
+		public GCodeSwitcher(Stream gcodeStream, PrinterSettings settings, int startLine = 0)
+			: base(settings)
 		{
-			var settings = this.printer.Settings;
 			var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 			var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 			var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
@@ -160,7 +159,6 @@ namespace MatterControl.Printing.Pipelines
 			{
 				Task.Run(() =>
 				{
-					var settings = this.printer.Settings;
 					var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 					var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 					var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);

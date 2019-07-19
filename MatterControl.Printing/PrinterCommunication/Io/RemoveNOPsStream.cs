@@ -27,14 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class RemoveNOPsStream : GCodeStreamProxy
 	{
 		public override string DebugInfo => "";
 
-		public RemoveNOPsStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public RemoveNOPsStream(PrinterSettings settings, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
 		}
 

@@ -148,9 +148,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
-					var printerShim = ApplicationController.Instance.Shim(printer);
-
-					currentLevelingFunctions = new LevelingFunctions(printerShim, levelingData);
+					currentLevelingFunctions = new LevelingFunctions(printer.Settings, printer.Connection, levelingData);
 				}
 
 				var levelingTriangles = new VertexStorage();

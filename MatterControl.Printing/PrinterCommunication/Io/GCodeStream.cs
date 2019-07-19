@@ -51,14 +51,14 @@ namespace MatterControl.Printing.Pipelines
 
 		private readonly bool useG0ForMovement = false;
 
-		protected PrintHostConfig printer { get; }
+		protected PrinterSettings settings { get; }
 
-		public GCodeStream(PrintHostConfig printer)
+		public GCodeStream(PrinterSettings settings)
 		{
-			this.printer = printer;
-			if (printer != null)
+			this.settings = settings;
+			if (settings != null)
 			{
-				useG0ForMovement = printer.Settings.GetValue<bool>(SettingsKey.g0);
+				useG0ForMovement = settings.GetValue<bool>(SettingsKey.g0);
 			}
 		}
 

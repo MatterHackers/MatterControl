@@ -39,21 +39,18 @@ namespace MatterControl.Printing.Pipelines
 		private Vector3 currentProbeZOffset;
 		private bool wroteLevelingStatus = false;
 		private bool gcodeAlreadyLeveled = false;
+		private PrinterConnection connection;
 
-		public PrintLevelingStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public PrintLevelingStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
+			this.connection = connection;
+
 			// always reset this when we construct
 			AllowLeveling = true;
 		}
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {inputUnleveled}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {inputUnleveled}";
 
 		public bool AllowLeveling { get; set; }
 
@@ -64,8 +61,8 @@ namespace MatterControl.Printing.Pipelines
 			get
 			{
 				return AllowLeveling
-					&& printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
+					&& settings.GetValue<bool>(SettingsKey.print_leveling_enabled)
+					&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 			}
 		}
 
@@ -147,18 +144,18 @@ namespace MatterControl.Printing.Pipelines
 
 		private string GetLeveledPosition(string lineBeingSent, PrinterMove currentDestination)
 		{
-			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
+			PrintLevelingData levelingData = settings.Helpers.PrintLevelingData;
 
 			if (levelingData != null
-				&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
+				&& settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true
 				&& (lineBeingSent.StartsWith("G0 ") || lineBeingSent.StartsWith("G1 ")))
 			{
 				if (currentLevelingFunctions == null
-					|| currentProbeZOffset != printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset)
+					|| currentProbeZOffset != settings.GetValue<Vector3>(SettingsKey.probe_offset)
 					|| !levelingData.SamplesAreSame(currentLevelingFunctions.SampledPositions))
 				{
-					currentProbeZOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
-					currentLevelingFunctions = new LevelingFunctions(printer, levelingData);
+					currentProbeZOffset = settings.GetValue<Vector3>(SettingsKey.probe_offset);
+					currentLevelingFunctions = new LevelingFunctions(settings, connection, levelingData);
 				}
 
 				lineBeingSent = currentLevelingFunctions.ApplyLeveling(lineBeingSent, currentDestination.position);

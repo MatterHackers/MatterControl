@@ -27,38 +27,41 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class SendProgressStream : GCodeStreamProxy
 	{
 		private double nextPercent = -1;
+		private PrinterConnection connection;
 
-		public SendProgressStream(GCodeStream internalStream, PrintHostConfig printer)
-			: base(printer, internalStream)
+		public SendProgressStream(GCodeStream internalStream, PrinterConnection connection, PrinterSettings settings)
+			: base(settings, internalStream)
 		{
+			this.connection = connection;
 		}
 
 		public override string DebugInfo => "";
 
 		public override string ReadLine()
 		{
-			// TODO: Reimplement task progress
-			/*
-			if (printer.Settings.GetValue(SettingsKey.progress_reporting) != "None"
-				&& printer.Connection.CommunicationState == CommunicationStates.Printing
-				&& printer.Connection.ActivePrintTask != null
-				&& printer.Connection.ActivePrintTask.PercentDone > nextPercent)
+			if (settings.GetValue(SettingsKey.progress_reporting) != "None"
+				&& connection.CommunicationState == CommunicationStates.Printing
+				&& connection.ActivePrintTask != null
+				&& connection.ActivePrintTask.PercentDone > nextPercent)
 			{
-				nextPercent = Math.Round(printer.Connection.ActivePrintTask.PercentDone) + 0.5;
-				if (printer.Settings.GetValue(SettingsKey.progress_reporting) == "M73")
+				nextPercent = Math.Round(connection.ActivePrintTask.PercentDone) + 0.5;
+				if (settings.GetValue(SettingsKey.progress_reporting) == "M73")
 				{
-					return string.Format("M73 P{0:0}", printer.Connection.ActivePrintTask.PercentDone);
+					return string.Format("M73 P{0:0}", connection.ActivePrintTask.PercentDone);
 				}
 				else
 				{
-					return string.Format("M117 Printing - {0:0}%", printer.Connection.ActivePrintTask.PercentDone);
+					return string.Format("M117 Printing - {0:0}%", connection.ActivePrintTask.PercentDone);
 				}
-			}*/
+			}
 
 			return base.ReadLine();
 		}

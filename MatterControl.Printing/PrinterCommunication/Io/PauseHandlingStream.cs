@@ -60,13 +60,15 @@ namespace MatterControl.Printing.Pipelines
 
 		public override string DebugInfo => "";
 
-		public PauseHandlingStream(PrintHostConfig printer, PrinterConnection connection, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public PauseHandlingStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
+			this.connection = connection;
+
 			// if we have a runout sensor, register to listen for lines to check it
-			if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
+			if (settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 			{
-				printer.Connection.LineReceived += (s, line) =>
+				connection.LineReceived += (s, line) =>
 				{
 					if (line != null)
 					{
@@ -89,7 +91,7 @@ namespace MatterControl.Printing.Pipelines
 									connection.FilamentPositionSensorDetected = true;
 								}
 
-								if (printer.Connection.FilamentPositionSensorDetected)
+								if (connection.FilamentPositionSensorDetected)
 								{
 									GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
 
@@ -149,6 +151,7 @@ namespace MatterControl.Printing.Pipelines
 		}
 
 		private long lastSendTimeMs;
+		private PrinterConnection connection;
 
 		public void DoPause(PauseReason pauseReason, int layerNumber = -1)
 		{
@@ -160,16 +163,16 @@ namespace MatterControl.Printing.Pipelines
 
 				case PauseReason.PauseLayerReached:
 				case PauseReason.GCodeRequest:
-					printer.Connection.OnPauseOnLayer(new PrintPauseEventArgs(printer.Connection.ActivePrintName, false, layerNumber));
+					connection.OnPauseOnLayer(new PrintPauseEventArgs(connection.ActivePrintName, false, layerNumber));
 					break;
 
 				case PauseReason.FilamentRunout:
-					printer.Connection.OnFilamentRunout(new PrintPauseEventArgs(printer.Connection.ActivePrintName, true, layerNumber));
+					connection.OnFilamentRunout(new PrintPauseEventArgs(connection.ActivePrintName, true, layerNumber));
 					break;
 			}
 
 			// Add the pause_gcode to the loadedGCode.GCodeCommandQueue
-			string pauseGCode = printer.Settings.GetValue(SettingsKey.pause_gcode);
+			string pauseGCode = settings.GetValue(SettingsKey.pause_gcode);
 
 			// put in the gcode for pausing (if any)
 			InjectPauseGCode(pauseGCode);
@@ -196,7 +199,7 @@ namespace MatterControl.Printing.Pipelines
 
 			if (lineToSend == null)
 			{
-				if (!printer.Connection.Paused)
+				if (!connection.Paused)
 				{
 					lineToSend = base.ReadLine();
 					if (lineToSend == null)
@@ -210,12 +213,12 @@ namespace MatterControl.Printing.Pipelines
 					}
 
 					// We got a line from the gcode we are sending check if we should queue a request for filament runout
-					if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
+					if (settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 					{
 						// request to read the endstop state
 						if (!timeSinceLastEndstopRead.IsRunning || timeSinceLastEndstopRead.ElapsedMilliseconds > 5000)
 						{
-							printer.Connection.QueueLine("M119");
+							connection.QueueLine("M119");
 							timeSinceLastEndstopRead.Restart();
 						}
 					}
@@ -228,8 +231,8 @@ namespace MatterControl.Printing.Pipelines
 					// If more than 10 seconds have passed send a movement command so the motors will stay locked
 					if (UiThread.CurrentTimerMs - lastSendTimeMs > 10000)
 					{
-						printer.Connection.MoveRelative(PrinterAxis.X, .1, printer.Settings.Helpers.ManualMovementSpeeds().X);
-						printer.Connection.MoveRelative(PrinterAxis.X, -.1, printer.Settings.Helpers.ManualMovementSpeeds().X);
+						connection.MoveRelative(PrinterAxis.X, .1, settings.Helpers.ManualMovementSpeeds().X);
+						connection.MoveRelative(PrinterAxis.X, -.1, settings.Helpers.ManualMovementSpeeds().X);
 						lastSendTimeMs = UiThread.CurrentTimerMs;
 					}
 				}
@@ -257,10 +260,10 @@ namespace MatterControl.Printing.Pipelines
 			{
 				moveLocationAtEndOfPauseCode = LastDestination;
 
-				if (printer.Connection.Printing)
+				if (connection.Printing)
 				{
 					// remember where we were after we ran the pause gcode
-					printer.Connection.CommunicationState = CommunicationStates.Paused;
+					connection.CommunicationState = CommunicationStates.Paused;
 				}
 
 				lineToSend = "";
@@ -288,16 +291,16 @@ namespace MatterControl.Printing.Pipelines
 			Vector3 positionBeforeActualPause = moveLocationAtEndOfPauseCode.position;
 			InjectPauseGCode("G92 E{0:0.###}".FormatWith(moveLocationAtEndOfPauseCode.extrusion));
 			Vector3 ensureAllAxisAreSent = positionBeforeActualPause + new Vector3(.01, .01, .01);
-			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
+			var feedRates = settings.Helpers.ManualMovementSpeeds();
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(ensureAllAxisAreSent.X, ensureAllAxisAreSent.Y, ensureAllAxisAreSent.Z, feedRates.X + 1));
 			InjectPauseGCode("G1 X{0:0.###} Y{1:0.###} Z{2:0.###} F{3}".FormatWith(positionBeforeActualPause.X, positionBeforeActualPause.Y, positionBeforeActualPause.Z, feedRates));
 
-			string resumeGCode = printer.Settings.GetValue(SettingsKey.resume_gcode);
+			string resumeGCode = settings.GetValue(SettingsKey.resume_gcode);
 			InjectPauseGCode(resumeGCode);
 			InjectPauseGCode("M114"); // make sure we know where we are after this resume code
 
 			// make sure we are moving at a reasonable speed
-			var outerPerimeterSpeed = printer.Settings.GetValue<double>(SettingsKey.perimeter_speed) * 60;
+			var outerPerimeterSpeed = settings.GetValue<double>(SettingsKey.perimeter_speed) * 60;
 			InjectPauseGCode("G91"); // move relative
 			InjectPauseGCode($"G1 X.1 F{outerPerimeterSpeed}"); // ensure good extrusion speed
 			InjectPauseGCode($"G1 -X.1 F{outerPerimeterSpeed}"); // move back
@@ -312,7 +315,7 @@ namespace MatterControl.Printing.Pipelines
 
 		private void InjectPauseGCode(string codeToInject)
 		{
-			codeToInject = printer.Settings.ReplaceMacroValues(codeToInject);
+			codeToInject = settings.ReplaceMacroValues(codeToInject);
 
 			codeToInject = codeToInject.Replace("\\n", "\n");
 			string[] lines = codeToInject.Split('\n');
@@ -332,7 +335,7 @@ namespace MatterControl.Printing.Pipelines
 		{
 			var printerRecoveryStream = internalStream as PrintRecoveryStream;
 
-			if (printer.Settings.Helpers.LayerToPauseOn().Contains(layerNumber)
+			if (settings.Helpers.LayerToPauseOn().Contains(layerNumber)
 				&& (printerRecoveryStream == null
 					|| printerRecoveryStream.RecoveryState == RecoveryState.PrintingToEnd))
 			{

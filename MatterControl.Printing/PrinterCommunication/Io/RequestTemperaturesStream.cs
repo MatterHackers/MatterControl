@@ -28,16 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
 	public class RequestTemperaturesStream : GCodeStreamProxy
 	{
 		private long nextReadTimeMs = 0;
+		private PrinterConnection connection;
 
-		public RequestTemperaturesStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public RequestTemperaturesStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
+			this.connection = connection;
 			nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 		}
 
@@ -45,10 +48,10 @@ namespace MatterControl.Printing.Pipelines
 
 		public override string ReadLine()
 		{
-			if (!printer.Connection.WaitingForPositionRead
+			if (!connection.WaitingForPositionRead
 				&& nextReadTimeMs < UiThread.CurrentTimerMs
-				&& printer.Connection.IsConnected
-				&& printer.Connection.MonitorPrinterTemperature)
+				&& connection.IsConnected
+				&& connection.MonitorPrinterTemperature)
 			{
 				nextReadTimeMs = UiThread.CurrentTimerMs + 1000;
 				return "M105";

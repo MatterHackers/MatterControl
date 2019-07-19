@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Diagnostics;
 using System.Threading;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
@@ -44,15 +45,17 @@ namespace MatterControl.Printing.Pipelines
 		private double ignoreRequestIfBelowTemp = 20;
 		private double sameTempRangeBed = 3;
 		private double sameTempRangeHotend = 1;
+		private PrinterConnection connection;
 		private State state = State.Passthrough;
 		private double targetTemp = 0;
 		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
 
 		private bool waitWhenCooling = false;
 
-		public WaitForTempStream(PrintHostConfig printer, GCodeStream internalStream)
-			: base(printer, internalStream)
+		public WaitForTempStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream)
+			: base(settings, internalStream)
 		{
+			this.connection = connection;
 			state = State.Passthrough;
 		}
 
@@ -113,7 +116,7 @@ namespace MatterControl.Printing.Pipelines
 								waitWhenCooling = false;
 								lineToSend = "M104" + lineToSend.Substring(4);
 								GCodeFile.GetFirstNumberAfter("S", lineToSend, ref targetTemp);
-								extruderIndex = printer.Connection.ActiveExtruderIndex;
+								extruderIndex = connection.ActiveExtruderIndex;
 								GCodeFile.GetFirstNumberAfter("T", lineToSend, ref extruderIndex);
 								if (targetTemp > ignoreRequestIfBelowTemp)
 								{
@@ -168,7 +171,7 @@ namespace MatterControl.Printing.Pipelines
 				case State.WaitingForT0Temp:
 				case State.WaitingForT1Temp:
 					{
-						double extruderTemp = printer.Connection.GetActualHotendTemperature((int)extruderIndex);
+						double extruderTemp = connection.GetActualHotendTemperature((int)extruderIndex);
 						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend
 							&& extruderTemp <= targetTemp + sameTempRangeHotend;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
@@ -177,7 +180,7 @@ namespace MatterControl.Printing.Pipelines
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
-							|| printer.Connection.PrintWasCanceled)
+							|| connection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.Passthrough;
@@ -193,7 +196,7 @@ namespace MatterControl.Printing.Pipelines
 
 				case State.WaitingForBedTemp:
 					{
-						double bedTemp = printer.Connection.ActualBedTemperature;
+						double bedTemp = connection.ActualBedTemperature;
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
@@ -212,7 +215,7 @@ namespace MatterControl.Printing.Pipelines
 						}
 
 						if (timeHaveBeenAtTemp.Elapsed.TotalSeconds > WaitAfterReachTempTime
-							|| printer.Connection.PrintWasCanceled)
+							|| connection.PrintWasCanceled)
 						{
 							// switch to pass through and continue
 							state = State.Passthrough;

@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.MatterControl.SlicerConfiguration;
+
 namespace MatterControl.Printing.Pipelines
 {
 	public class GCodeFileStream : GCodeStream, IGCodeLineReader
@@ -34,8 +36,8 @@ namespace MatterControl.Printing.Pipelines
 		private int printerCommandQueueLineIndex = -1;
 		private string lastLine = "";
 
-		public GCodeFileStream(GCodeFile fileStreaming, PrintHostConfig printer, int startLine = 0)
-			: base(printer)
+		public GCodeFileStream(GCodeFile fileStreaming, PrinterSettings settings, int startLine = 0)
+			: base(settings)
 		{
 			this.GCodeFile = fileStreaming;
 			printerCommandQueueLineIndex = startLine;

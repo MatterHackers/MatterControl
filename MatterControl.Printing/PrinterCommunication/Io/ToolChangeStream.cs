@@ -45,6 +45,7 @@ namespace MatterControl.Printing.Pipelines
 		private double preSwitchFeedRate;
 		private Vector3 preSwitchPosition;
 		private readonly IGCodeLineReader gcodeLineReader;
+		private readonly PrinterConnection connection;
 		private readonly GCodeMemoryFile gCodeMemoryFile;
 		private readonly QueuedCommandsStream queuedCommandsStream;
 
@@ -61,18 +62,20 @@ namespace MatterControl.Printing.Pipelines
 		private readonly double[] targetTemps = new double[4];
 		private readonly Queue<string> queuedCommands = new Queue<string>();
 
-		public ToolChangeStream(PrintHostConfig printer, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
-			: base(printer, internalStream)
+		public ToolChangeStream(PrinterSettings settings, PrinterConnection connection, GCodeStream internalStream, QueuedCommandsStream queuedCommandsStream, IGCodeLineReader gcodeLineReader)
+			: base(settings, internalStream)
 		{
 			this.gcodeLineReader = gcodeLineReader;
+			this.connection = connection;
+
 			if (gcodeLineReader != null)
 			{
 				this.gCodeMemoryFile = gcodeLineReader.GCodeFile as GCodeMemoryFile;
 			}
 
 			this.queuedCommandsStream = queuedCommandsStream;
-			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
-			activeTool = printer.Connection.ActiveExtruderIndex;
+			extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+			activeTool = connection.ActiveExtruderIndex;
 		}
 
 		public override string DebugInfo => $"Last Destination = {lastDestination}";
@@ -297,7 +300,7 @@ namespace MatterControl.Printing.Pipelines
 				var targetTemp = GetNextToolTemp(activeTool);
 
 				// if we do not use this tool again
-				if (targetTemp != printer.Connection.GetTargetHotendTemperature(activeTool))
+				if (targetTemp != connection.GetTargetHotendTemperature(activeTool))
 				{
 					gcode.AppendLine($"M104 T{activeTool} S{targetTemp} ; INACTIVE_COOL_DOWN");
 				}
@@ -306,7 +309,7 @@ namespace MatterControl.Printing.Pipelines
 
 		private double GetNextToolTemp(int toolIndex)
 		{
-			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
+			var timeToReheat = settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
 			// get the next time we will use the current tool
 			var nextTimeThisTool = NextToolChange(toolIndex).time;
@@ -322,7 +325,7 @@ namespace MatterControl.Printing.Pipelines
 			else if (nextTimeThisTool > timeToReheat)
 			{
 				var targetTemp = targetTemps[toolIndex];
-				targetTemp = Math.Max(0, targetTemp - printer.Settings.GetValue<double>(SettingsKey.inactive_cool_down));
+				targetTemp = Math.Max(0, targetTemp - settings.GetValue<double>(SettingsKey.inactive_cool_down));
 				if (targetTemp != targetTemps[toolIndex])
 				{
 					return targetTemp;
@@ -334,7 +337,7 @@ namespace MatterControl.Printing.Pipelines
 
 		private void ManageReHeating(string line)
 		{
-			var timeToReheat = printer.Settings.GetValue<double>(SettingsKey.seconds_to_reheat);
+			var timeToReheat = settings.GetValue<double>(SettingsKey.seconds_to_reheat);
 
 			// check if we need to turn on extruders while printing
 			// check if any extruders need to start heating back up
@@ -345,10 +348,10 @@ namespace MatterControl.Printing.Pipelines
 				var setTempLine = $"M104 T{i} S{targetTemp}";
 				if (toolIndex >= 0
 					&& time < timeToReheat
-					&& printer.Connection.GetTargetHotendTemperature(i) != targetTemp
+					&& connection.GetTargetHotendTemperature(i) != targetTemp
 					&& line != setTempLine)
 				{
-					printer.Connection.SetTargetHotendTemperature(i, targetTemp);
+					connection.SetTargetHotendTemperature(i, targetTemp);
 					// queuedCommands.Enqueue(setTempLine);
 				}
 			}
@@ -360,11 +363,11 @@ namespace MatterControl.Printing.Pipelines
 			switch (RequestedTool)
 			{
 				case 0:
-					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode).Replace("\\n", "\n");
+					afterGcodeToQueue = settings.GetValue(SettingsKey.toolchange_gcode).Replace("\\n", "\n");
 					break;
 
 				case 1:
-					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_1).Replace("\\n", "\n");
+					afterGcodeToQueue = settings.GetValue(SettingsKey.toolchange_gcode_1).Replace("\\n", "\n");
 					break;
 			}
 
@@ -388,9 +391,9 @@ namespace MatterControl.Printing.Pipelines
 
 			// If the printer is heating, make sure we are at temp before switching extruders
 			var nextToolTargetTemp = targetTemps[RequestedTool];
-			var currentPrinterTargeTemp = printer.Connection.GetTargetHotendTemperature(RequestedTool);
+			var currentPrinterTargeTemp = connection.GetTargetHotendTemperature(RequestedTool);
 			if (currentPrinterTargeTemp > 0
-				&& printer.Connection.GetActualHotendTemperature(RequestedTool) < nextToolTargetTemp - 3)
+				&& connection.GetActualHotendTemperature(RequestedTool) < nextToolTargetTemp - 3)
 			{
 				// ensure our next tool is at temp (the one we are switching to)
 				gcode.AppendLine($"M109 T{RequestedTool} S{nextToolTargetTemp}");
@@ -398,20 +401,20 @@ namespace MatterControl.Printing.Pipelines
 
 			if (afterGcodeToQueue.Trim().Length > 0)
 			{
-				gcode.Append(printer.Settings.ReplaceMacroValues(afterGcodeToQueue));
+				gcode.Append(settings.ReplaceMacroValues(afterGcodeToQueue));
 			}
 
 			// move to selected tool to the last tool position at the travel speed
 			if (newToolPosition.X != double.PositiveInfinity
 				&& newToolPosition.Y != double.PositiveInfinity)
 			{
-				gcode.AppendLine($"\n G1 X{newToolPosition.X}Y{newToolPosition.Y}F{printer.Settings.XSpeed()}");
+				gcode.AppendLine($"\n G1 X{newToolPosition.X}Y{newToolPosition.Y}F{settings.XSpeed()}");
 			}
 
 			// move to the z position
 			if (newToolPosition.Z != double.PositiveInfinity)
 			{
-				gcode.AppendLine($"G1 Z{newToolPosition.Z}F{printer.Settings.ZSpeed()}");
+				gcode.AppendLine($"G1 Z{newToolPosition.Z}F{settings.ZSpeed()}");
 			}
 
 			// set the feedrate back to what was before we added any code
@@ -440,11 +443,11 @@ namespace MatterControl.Printing.Pipelines
 				switch (RequestedTool)
 				{
 					case 0:
-						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
+						beforeGcodeToQueue = settings.GetValue(SettingsKey.before_toolchange_gcode).Replace("\\n", "\n");
 						break;
 
 					case 1:
-						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						beforeGcodeToQueue = settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
 						break;
 				}
 
@@ -455,7 +458,7 @@ namespace MatterControl.Printing.Pipelines
 				var gcode = new StringBuilder();
 				if (beforeGcodeToQueue.Trim().Length > 0)
 				{
-					gcode.Append(printer.Settings.ReplaceMacroValues(beforeGcodeToQueue));
+					gcode.Append(settings.ReplaceMacroValues(beforeGcodeToQueue));
 				}
 
 				gcode.Append("\n");

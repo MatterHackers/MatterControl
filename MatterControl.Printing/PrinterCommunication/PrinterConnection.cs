@@ -1071,7 +1071,7 @@ namespace MatterControl.Printing
 										// Thread.Sleep(500);
 
 										// We have to send a line because some printers (like old print-r-bots) do not send anything when connecting and there is no other way to know they are there.
-										foreach (string line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", this.Printer))
+										foreach (string line in ProcessWriteRegexStream.ProcessWriteRegEx("M105\n", Printer.Settings))
 										{
 											WriteRaw(line, line);
 										}
@@ -2225,14 +2225,21 @@ namespace MatterControl.Printing
 			totalGCodeStream?.Dispose();
 			totalGCodeStream = null;
 			GCodeStream accumulatedStream;
+
+			var settings = Printer.Settings;
+			//PrinterConnection connection = Printer.Connection;
+
+			System.Diagnostics.Debugger.Break();
+			var connection = Printer.Connection as PrinterConnection;
+
 			if (gcodeStream != null)
 			{
-				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
+				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, settings);
 
 				if (this.RecoveryIsEnabled
 					&& ActivePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
 				{
-					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, ActivePrintTask.PercentDone), Printer);
+					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, settings, connection, ActivePrintTask.PercentDone), connection, settings);
 					// And increment the recovery count
 					ActivePrintTask.RecoveryCount++;
 
@@ -2240,60 +2247,60 @@ namespace MatterControl.Printing
 				}
 				else
 				{
-					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, Printer);
+					accumulatedStream = new SendProgressStream(gCodeFileSwitcher, connection, settings);
 				}
 
-				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(Printer, this, accumulatedStream);
+				accumulatedStream = pauseHandlingStream = new PauseHandlingStream(settings, this, accumulatedStream);
 			}
 			else
 			{
 				gCodeFileSwitcher = null;
-				accumulatedStream = new NotPrintingStream(Printer);
+				accumulatedStream = new NotPrintingStream(settings);
 			}
 
-			accumulatedStream = queuedCommandStream = new QueuedCommandsStream(Printer, accumulatedStream);
+			accumulatedStream = queuedCommandStream = new QueuedCommandsStream(settings, accumulatedStream);
 
 			// ensure that our read-line replacements are updated at the same time we build our write line replacements
 			InitializeReadLineReplacements();
 
-			accumulatedStream = new RelativeToAbsoluteStream(Printer, accumulatedStream);
+			accumulatedStream = new RelativeToAbsoluteStream(settings, accumulatedStream);
 
 			if (ExtruderCount > 1)
 			{
-				accumulatedStream = toolChangeStream = new ToolChangeStream(Printer, accumulatedStream, queuedCommandStream, gCodeFileSwitcher);
-				accumulatedStream = new ToolSpeedMultiplierStream(Printer, accumulatedStream);
+				accumulatedStream = toolChangeStream = new ToolChangeStream(settings, connection, accumulatedStream, queuedCommandStream, gCodeFileSwitcher);
+				accumulatedStream = new ToolSpeedMultiplierStream(settings, connection, accumulatedStream);
 			}
 
-			accumulatedStream = new BabyStepsStream(Printer, accumulatedStream);
+			accumulatedStream = new BabyStepsStream(settings, connection, accumulatedStream);
 
-			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
-			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
+			bool enableLineSplitting = gcodeStream != null && settings.GetValue<bool>(SettingsKey.enable_line_splitting);
+			accumulatedStream = maxLengthStream = new MaxLengthStream(settings, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
-			if (!LevelingValidation.NeedsToBeRun(Printer.Settings))
+			if (!LevelingValidation.NeedsToBeRun(settings))
 			{
-				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
+				accumulatedStream = printLevelingStream = new PrintLevelingStream(settings, connection, accumulatedStream);
 			}
 
-			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
-			accumulatedStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);
-			accumulatedStream = new FeedRateMultiplierStream(Printer, accumulatedStream);
-			accumulatedStream = new RequestTemperaturesStream(Printer, accumulatedStream);
+			accumulatedStream = waitForTempStream = new WaitForTempStream(settings, connection, accumulatedStream);
+			accumulatedStream = new ExtrusionMultiplierStream(settings, accumulatedStream);
+			accumulatedStream = new FeedRateMultiplierStream(settings, accumulatedStream);
+			accumulatedStream = new RequestTemperaturesStream(settings, connection, accumulatedStream);
 
-			if (Printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
+			if (settings.GetValue<bool>(SettingsKey.emulate_endstops))
 			{
-				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(Printer, accumulatedStream);
+				var softwareEndstopsExStream12 = new SoftwareEndstopsStream(settings, connection, accumulatedStream);
 				accumulatedStream = softwareEndstopsExStream12;
 			}
 
-			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+			accumulatedStream = new RemoveNOPsStream(settings, accumulatedStream);
 
-			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
+			processWriteRegexStream = new ProcessWriteRegexStream(settings, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
 
 			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)
-			var transformedCommand = ProcessWriteRegexStream.ProcessWriteRegEx("M110 N1", this.Printer);
+			var transformedCommand = ProcessWriteRegexStream.ProcessWriteRegEx("M110 N1", settings);
 			if (transformedCommand != null)
 			{
 				foreach (string line in transformedCommand)

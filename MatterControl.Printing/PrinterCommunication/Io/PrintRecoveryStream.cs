@@ -37,6 +37,7 @@ namespace MatterControl.Printing.Pipelines
 
 	public class PrintRecoveryStream : GCodeStream
 	{
+		private PrinterConnection connection;
 		private GCodeSwitcher internalStream;
 		private double percentDone;
 		double recoverFeedRate;
@@ -47,13 +48,14 @@ namespace MatterControl.Printing.Pipelines
 
 		public RecoveryState RecoveryState { get; private set; } = RecoveryState.RemoveHeating;
 
-		public PrintRecoveryStream(GCodeSwitcher internalStream, PrintHostConfig printer, double percentDone)
-			: base(printer)
+		public PrintRecoveryStream(GCodeSwitcher internalStream, PrinterSettings settings, PrinterConnection connection, double percentDone)
+			: base(settings)
 		{
+			this.connection = connection;
 			this.internalStream = internalStream;
 			this.percentDone = percentDone;
 
-			recoverFeedRate = printer.Settings.GetValue<double>(SettingsKey.recover_first_layer_speed);
+			recoverFeedRate = settings.GetValue<double>(SettingsKey.recover_first_layer_speed);
 			if (recoverFeedRate == 0)
 			{
 				recoverFeedRate = 10;
@@ -61,7 +63,7 @@ namespace MatterControl.Printing.Pipelines
 
 			recoverFeedRate *= 60;
 
-			queuedCommands = new QueuedCommandsStream(printer, null);
+			queuedCommands = new QueuedCommandsStream(settings, null);
 		}
 
 		public override void Dispose()
@@ -96,8 +98,8 @@ namespace MatterControl.Printing.Pipelines
 					queuedCommands.Add("G92 E0; reset the expected extruder position");
 					queuedCommands.Add("M82; use absolute distance for extrusion");
 
-					bool hasHeatedBed = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed);
-					double bedTemp = printer.Settings.GetValue<double>(SettingsKey.bed_temperature);
+					bool hasHeatedBed = settings.GetValue<bool>(SettingsKey.has_heated_bed);
+					double bedTemp = settings.GetValue<double>(SettingsKey.bed_temperature);
 					if (hasHeatedBed && bedTemp > 0)
 					{
 						// start heating the bed
@@ -105,7 +107,7 @@ namespace MatterControl.Printing.Pipelines
 					}
 
 					// heat up the extruder
-					queuedCommands.Add("M109 S{0}".FormatWith(printer.Settings.Helpers.ExtruderTargetTemperature(0)));
+					queuedCommands.Add("M109 S{0}".FormatWith(settings.Helpers.ExtruderTargetTemperature(0)));
 
 					if (hasHeatedBed && bedTemp > 0)
 					{
@@ -120,10 +122,10 @@ namespace MatterControl.Printing.Pipelines
 				// remove it from the part
 				case RecoveryState.Raising:
 					// We don't know where the printer is for sure (it may have been turned off). Disable leveling until we know where it is.
-					printer.Connection.AllowLeveling = false;
+					connection.AllowLeveling = false;
 					queuedCommands.Add("M114 ; get current position");
 					queuedCommands.Add("G91 ; move relative");
-					queuedCommands.Add("G1 Z10 F{0}".FormatWith(printer.Settings.ZSpeed()));
+					queuedCommands.Add("G1 Z10 F{0}".FormatWith(settings.ZSpeed()));
 					queuedCommands.Add("G90 ; move absolute");
 					RecoveryState = RecoveryState.Homing;
 					lastLine = "";
@@ -131,7 +133,7 @@ namespace MatterControl.Printing.Pipelines
 
 				// if top homing, home the extruder
 				case RecoveryState.Homing:
-					if (printer.Settings.GetValue<bool>(SettingsKey.z_homes_to_max))
+					if (settings.GetValue<bool>(SettingsKey.z_homes_to_max))
 					{
 						queuedCommands.Add("G28");
 					}
@@ -142,14 +144,14 @@ namespace MatterControl.Printing.Pipelines
 						// home y
 						queuedCommands.Add("G28 Y0");
 						// move to the place we can home z from
-						Vector2 recoveryPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.X, recoveryPositionXy.Y, printer.Settings.XSpeed()));
+						Vector2 recoveryPositionXy = settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+						queuedCommands.Add("G1 X{0:0.###}Y{1:0.###}F{2}".FormatWith(recoveryPositionXy.X, recoveryPositionXy.Y, settings.XSpeed()));
 						// home z
 						queuedCommands.Add("G28 Z0");
 					}
 
 					// We now know where the printer is re-enable print leveling
-					printer.Connection.AllowLeveling = true;
+					connection.AllowLeveling = true;
 					RecoveryState = RecoveryState.FindingRecoveryLayer;
 					return "";
 
@@ -221,26 +223,26 @@ namespace MatterControl.Printing.Pipelines
 
 				case RecoveryState.PrimingAndMovingToStart:
 					{
-						if (printer.Settings.GetValue("z_homes_to_max") == "0") // we are homed to the bed
+						if (settings.GetValue("z_homes_to_max") == "0") // we are homed to the bed
 						{
 							// move to the height we can recover printing from
-							Vector2 recoverPositionXy = printer.Settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
-							queuedCommands.Add(CreateMovementLine(new PrinterMove(new Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, printer.Settings.ZSpeed())));
+							Vector2 recoverPositionXy = settings.GetValue<Vector2>(SettingsKey.recover_position_before_z_home);
+							queuedCommands.Add(CreateMovementLine(new PrinterMove(new Vector3(recoverPositionXy.X, recoverPositionXy.Y, lastDestination.position.Z), 0, settings.ZSpeed())));
 						}
 
-						double extruderWidth = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
+						double extruderWidth = settings.GetValue<double>(SettingsKey.nozzle_diameter);
 						// move to a position outside the printed bounds
 						queuedCommands.Add(CreateMovementLine(new PrinterMove(
 							new Vector3(boundsOfSkippedLayers.Left - extruderWidth * 2, boundsOfSkippedLayers.Bottom + boundsOfSkippedLayers.Height / 2, lastDestination.position.Z),
 							0,
-							printer.Settings.XSpeed())));
+							settings.XSpeed())));
 
 						// let's prime the extruder
-						queuedCommands.Add("G1 E10 F{0}".FormatWith(printer.Settings.EFeedRate(0))); // extrude 10
+						queuedCommands.Add("G1 E10 F{0}".FormatWith(settings.EFeedRate(0))); // extrude 10
 						queuedCommands.Add("G1 E9"); // and retract a bit
 
 						// move to the actual print position
-						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, printer.Settings.XSpeed())));
+						queuedCommands.Add(CreateMovementLine(new PrinterMove(lastDestination.position, 0, settings.XSpeed())));
 
 						// reset the printer to know where the filament should be
 						queuedCommands.Add("G92 E{0}".FormatWith(lastDestination.extrusion));

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterControl.Printing.Pipelines
 {
@@ -38,24 +39,17 @@ namespace MatterControl.Printing.Pipelines
 		private double maxSecondsPerSegment = 1.0 / 20.0;
 		private List<PrinterMove> movesToSend = new List<PrinterMove>();
 		private int layerCount = -1;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 
-		public MaxLengthStream(PrintHostConfig printer, GCodeStream internalStream, double maxSegmentLength)
-			: base(printer, internalStream)
+		public MaxLengthStream(PrinterSettings settings, GCodeStream internalStream, double maxSegmentLength)
+			: base(settings, internalStream)
 		{
 			this.MaxSegmentLength = maxSegmentLength;
 		}
 
-		PrinterMove lastDestination = PrinterMove.Unknown;
-
 		public double MaxSegmentLength { get; set; }
 
-		public override string DebugInfo
-		{
-			get
-			{
-				return $"Last Destination = {lastDestination}";
-			}
-		}
+		public override string DebugInfo => $"Last Destination = {lastDestination}";
 
 		public void Cancel()
 		{
@@ -141,6 +135,7 @@ namespace MatterControl.Printing.Pipelines
 
 					lastDestination = currentDestination;
 				}
+
 				return lineToSend;
 			}
 			else
