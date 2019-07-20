@@ -78,11 +78,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				dropdownList.Enabled = !printer.Connection.Printing;
 
-				if (printer.Connection.ComPort != dropdownList.SelectedLabel)
+				string comPort = printer.Settings.Helpers.ComPort();
+				if (comPort != dropdownList.SelectedLabel)
 				{
-					dropdownList.SelectedLabel = printer.Connection.ComPort;
+					dropdownList.SelectedLabel = comPort;
 				}
 			}
+
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			dropdownList.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 

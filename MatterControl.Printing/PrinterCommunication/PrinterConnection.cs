@@ -298,6 +298,7 @@ namespace MatterControl.Printing
 				}
 			};
 		}
+		#region Events
 
 		public static event EventHandler AnyCommunicationStateChanged;
 
@@ -345,6 +346,8 @@ namespace MatterControl.Printing
 
 		public event EventHandler TemporarilyHoldingTemp;
 
+		#endregion
+
 		public int ActiveExtruderIndex => (toolChangeStream != null) ? toolChangeStream.RequestedTool : 0;
 
 		public string ActivePrintName => this.ActivePrintTask?.PrintName ?? "";
@@ -353,7 +356,7 @@ namespace MatterControl.Printing
 
 		public double ActualBedTemperature => actualBedTemperature;
 
-		public bool AllowLeveling
+		private bool AllowLeveling
 		{
 			set
 			{
@@ -405,10 +408,10 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
+		private bool AutoReleaseMotors => Printer.Settings.GetValue<bool>(SettingsKey.auto_release_motors);
 
 		// PrinterSettings/Options {{
-		public int BaudRate
+		private int BaudRate
 		{
 			get
 			{
@@ -423,7 +426,7 @@ namespace MatterControl.Printing
 
 		public bool CalibrationPrint { get; private set; }
 
-		public string CancelGCode => Printer.Settings.GetValue(SettingsKey.cancel_gcode);
+		private string CancelGCode => Printer.Settings.GetValue(SettingsKey.cancel_gcode);
 
 		public CommunicationStates CommunicationState
 		{
@@ -553,9 +556,9 @@ namespace MatterControl.Printing
 			}
 		}
 
-		public string ComPort => Printer.Settings?.Helpers.ComPort();
+		private string ComPort => Printer.Settings?.Helpers.ComPort();
 
-		public string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
+		private string ConnectGCode => Printer.Settings.GetValue(SettingsKey.connect_gcode);
 
 		public bool ContinueHoldingTemperature { get; set; }
 

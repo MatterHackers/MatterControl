@@ -157,19 +157,9 @@ namespace MatterControl.Printing
 
 		public bool AtxPowerEnabled { get => remoteConnection.AtxPowerEnabled; set => remoteConnection.AtxPowerEnabled = value; }
 
-		public bool AutoReleaseMotors => remoteConnection.AutoReleaseMotors;
-
-		public int BaudRate => remoteConnection.BaudRate;
-
 		public bool CalibrationPrint => remoteConnection.CalibrationPrint;
 
-		public string CancelGCode => remoteConnection.CancelGCode;
-
 		public CommunicationStates CommunicationState { get => remoteConnection.CommunicationState; set => remoteConnection.CommunicationState = value; }
-
-		public string ComPort => remoteConnection.ComPort;
-
-		public string ConnectGCode => remoteConnection.ConnectGCode;
 
 		public bool ContinueHoldingTemperature { get => remoteConnection.ContinueHoldingTemperature; set => remoteConnection.ContinueHoldingTemperature = value; }
 

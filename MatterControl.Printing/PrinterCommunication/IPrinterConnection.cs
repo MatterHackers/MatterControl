@@ -25,19 +25,9 @@ namespace MatterControl.Printing
 
 		bool AtxPowerEnabled { get; set; }
 
-		bool AutoReleaseMotors { get; }
-
-		int BaudRate { get; }
-
 		bool CalibrationPrint { get; }
 
-		string CancelGCode { get; }
-
 		CommunicationStates CommunicationState { get; set; }
-
-		string ComPort { get; }
-
-		string ConnectGCode { get; }
 
 		bool ContinueHoldingTemperature { get; set; }
 
