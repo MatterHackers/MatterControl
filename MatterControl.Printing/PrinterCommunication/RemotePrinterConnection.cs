@@ -30,11 +30,13 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using MatterControl.Common.Repository;
 using MatterControl.Printing.Pipelines;
 using MatterHackers.MatterControl;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using MatterHackers.VectorMath;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace MatterControl.Printing
 {
@@ -42,6 +44,7 @@ namespace MatterControl.Printing
 	{
 
 		private IPrinterConnection remoteConnection;
+		private HubConnection hubConnection;
 
 		public RemotePrinterConnection(PrintHostConfig printer)
 		{
@@ -51,7 +54,50 @@ namespace MatterControl.Printing
 			// - Add all of the events into the SignalR system so that non-MC clients can use them as well?
 			//
 			// We should think through why PrinterConnection needs to be what it is...
+
+			Task.Run(InitConnection);
 		}
+
+		public async void InitConnection()
+		{
+			hubConnection = new HubConnectionBuilder()
+				.WithUrl("https://localhost:5001/printerserver/")
+				.Build();
+
+			hubConnection.On("LineSent", (string line) =>
+			{
+				Console.WriteLine("-> " + line);
+			});
+
+			hubConnection.On("LineReceived", (string line) =>
+			{
+				Console.WriteLine("-> " + line);
+			});
+
+			// Start connection
+			try
+			{
+				await hubConnection.StartAsync();
+				Console.WriteLine("Connection started");
+
+				string profilePath = @"C:\Users\mr_bl\AppData\Local\MatterControl\Profiles\MHTest1\Ender 3-5259807823233024.printer";
+				string gcodePath = @"C:\Users\mr_bl\AppData\Local\MatterControl\data\temp\gcode\E90FE5E5F36DD3E9E0057A4B84B123F3753399C2_3167036578518332883.gcode";
+
+				// Send message
+				await hubConnection.InvokeAsync("StartPrint", gcodePath, profilePath);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine(ex.Message);
+			}
+
+			hubConnection.Closed += async (error) =>
+			{
+				await Task.Delay(new Random().Next(0, 5) * 1000);
+				await hubConnection.StartAsync();
+			};
+		}
+
 
 		public event EventHandler AtxPowerStateChanged;
 
