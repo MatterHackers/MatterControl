@@ -1966,13 +1966,15 @@ namespace MatterHackers.MatterControl
 							PauseAction = () => UiThread.RunOnIdle(() =>
 							{
 								paused = true;
-								printerConnection.TimeHaveBeenHoldingTemperature.Stop();
+								Debugger.Break();
+								//printerConnection.TimeHaveBeenHoldingTemperature.Stop();
 							}),
 							PauseToolTip = "Pause automatic heater shutdown".Localize(),
 							ResumeAction = () => UiThread.RunOnIdle(() =>
 							{
 								paused = false;
-								printerConnection.TimeHaveBeenHoldingTemperature.Start();
+								Debugger.Break();
+								//printerConnection.TimeHaveBeenHoldingTemperature.Start();
 							}),
 							ResumeToolTip = "Resume automatic heater shutdown".Localize(),
 							StopAction = (abortCancel) => UiThread.RunOnIdle(() =>

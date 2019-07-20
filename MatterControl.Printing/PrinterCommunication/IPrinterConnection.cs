@@ -115,11 +115,7 @@ namespace MatterControl.Printing
 
 		double TargetBedTemperature { get; set; }
 
-		Stopwatch TimeHaveBeenHoldingTemperature { get; set; }
-
 		int TimeToHoldTemperature { get; set; }
-
-		GCodeStream TotalGCodeStream { get; }
 
 		int TotalLayersInPrint { get; }
 
@@ -173,8 +169,6 @@ namespace MatterControl.Printing
 
 		void ArduinoDtrReset();
 
-		void BedTemperatureWasWritenToPrinter(string line);
-
 		void Connect();
 
 		void DeleteFileFromSdCard(string fileName);
@@ -183,12 +177,6 @@ namespace MatterControl.Printing
 
 		void Dispose();
 
-		void FanOffWasWritenToPrinter(string line);
-
-		void FanSpeedWasWritenToPrinter(string line);
-
-		void FoundStart(string line);
-
 		double GetActualHotendTemperature(int hotendIndex0Based);
 
 		double GetTargetHotendTemperature(int hotendIndex0Based);
@@ -196,12 +184,6 @@ namespace MatterControl.Printing
 		void HaltConnectionThread();
 
 		void HomeAxis(PrinterAxis axis);
-
-		void HotendTemperatureWasWritenToPrinter(string line);
-
-		void InitializeReadLineReplacements();
-
-		void LogError(string message, ErrorSource source);
 
 		void MacroCancel();
 
@@ -215,27 +197,11 @@ namespace MatterControl.Printing
 
 		void MoveRelative(PrinterAxis axis, double moveAmountMm, double feedRateMmPerMinute);
 
-		void OnConnectionFailed(ConnectionFailure reason, string message = null, string exceptionType = null);
-
-		void OnFilamentRunout(PrintPauseEventArgs printPauseEventArgs);
-
-		void OnPauseOnLayer(PrintPauseEventArgs printPauseEventArgs);
-
-		void PrinterReportsError(string line);
-
-		void PrinterRequestsResend(string line);
-
 		void QueueLine(string lineToWrite, bool forceTopOfQueue = false);
 
 		void ReadPosition(PositionReadType positionReadType = PositionReadType.Other, bool forceToTopOfQueue = false);
 
-		void ReadTargetPositions(string line);
-
-		void ReadTemperatures(string line);
-
 		void RebootBoard();
-
-		void ReleaseAndReportFailedConnection(ConnectionFailure reason, string message = null);
 
 		void ReleaseMotors(bool forceRelease = false);
 
@@ -244,8 +210,6 @@ namespace MatterControl.Printing
 		void ResetToReadyState();
 
 		void Resume();
-
-		bool SerialPortIsAvailable(string portName);
 
 		void SetMovementToAbsolute();
 
@@ -260,8 +224,6 @@ namespace MatterControl.Printing
 		bool StartSdCardPrint(string m23FileName);
 
 		void Stop(bool markPrintCanceled = true);
-
-		void SuppressEcho(string line);
 
 		void SwitchToGCode(string gCodeFilePath);
 

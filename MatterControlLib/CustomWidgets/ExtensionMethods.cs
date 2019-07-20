@@ -73,15 +73,17 @@ namespace MatterHackers.MatterControl
 
 		public static string GetDebugState(this GCodeStream sourceStream, PrinterConfig printer)
 		{
-			var context = printer.Connection.TotalGCodeStream;
 
 			var sb = new StringBuilder();
 
-			while (context is GCodeStream gCodeStream)
-			{
-				sb.AppendFormat("{0} {1}\r\n", gCodeStream.GetType().Name, gCodeStream.DebugInfo);
-				context = gCodeStream.InternalStream;
-			}
+			System.Diagnostics.Debugger.Break();
+			//var context = printer.Connection.TotalGCodeStream;
+
+			//while (context is GCodeStream gCodeStream)
+			//{
+			//	sb.AppendFormat("{0} {1}\r\n", gCodeStream.GetType().Name, gCodeStream.DebugInfo);
+			//	context = gCodeStream.InternalStream;
+			//}
 
 			return sb.ToString();
 		}
