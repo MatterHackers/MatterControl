@@ -38,6 +38,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -49,18 +50,14 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SubdivideFacesObject3D : OperationSourceContainerObject3D
+	public class SplitObject3D : OperationSourceContainerObject3D
 	{
-		public SubdivideFacesObject3D()
+		public SplitObject3D()
 		{
-			Name = "Subdivide".Localize();
+			Name = "Split".Localize();
 		}
 
-		[Description("The maximum allowed edge length")]
-		public double MaxEdgeLength { get; set; } = 20;
-
-		[Description("No faces will be subdivided after this is reached")]
-		public int MaxAllowedFaces { get; set; } = 100000;
+		public DirectionAxis Axis { get; set; } = new DirectionAxis() { Origin = Vector3.NegativeInfinity, Normal = Vector3.UnitZ };
 
 		public override Task Rebuild()
 		{
@@ -68,26 +65,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			bool valuesChanged = false;
 
-			if (MaxEdgeLength < .01)
+			// check if we have initialized the Axis
+			if (Axis.Origin.X == double.NegativeInfinity)
 			{
-				MaxEdgeLength = Math.Max(.01, MaxEdgeLength);
-				valuesChanged = true;
-			}
-
-			if (MaxAllowedFaces < 100)
-			{
-				MaxAllowedFaces = Math.Max(100, MaxAllowedFaces);
+				// make it something reasonable (just to the left of the aabb of the object)
+				Axis.Origin = this.GetAxisAlignedBoundingBox().Center;
 				valuesChanged = true;
 			}
 
 			var rebuildLocks = this.RebuilLockAll();
 
 			return ApplicationController.Instance.Tasks.Execute(
-				"Subdivide".Localize(),
+				"Split".Localize(),
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var subdividedChildren = new List<IObject3D>();
+					var splitChildren = new List<IObject3D>();
 
 					var status = new ProgressStatus();
 
@@ -106,38 +99,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						reporter.Report(status);
 
 						// split faces until they are small enough
-						var newVertices = new List<Vector3Float>();
-						var newFaces = new List<Face>();
-
-						for (int i = 0; i < transformedMesh.Faces.Count; i++)
-						{
-							var face = transformedMesh.Faces[i];
-
-							SplitRecursive(new Vector3Float[]
-								{
-									transformedMesh.Vertices[face.v0],
-									transformedMesh.Vertices[face.v1],
-									transformedMesh.Vertices[face.v2]
-								},
-								face.normal,
-								newVertices,
-								newFaces);
-						}
-
-						transformedMesh.Vertices = newVertices;
-						transformedMesh.Faces = new FaceList(newFaces);
+						transformedMesh.Split(Axis.GetPlane());
 
 						// transform back into item local space
 						transformedMesh.Transform(itemMatrix.Inverted);
 
-						var subdividedChild = new Object3D()
+						var splitChild = new Object3D()
 						{
 							Mesh = transformedMesh
 						};
-						subdividedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All);
-						subdividedChild.Visible = true;
 
-						subdividedChildren.Add(subdividedChild);
+						splitChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All);
+						splitChild.Visible = true;
+
+						splitChildren.Add(splitChild);
 					}
 
 					RemoveAllButSource();
@@ -145,7 +120,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					this.Children.Modify((list) =>
 					{
-						list.AddRange(subdividedChildren);
+						list.AddRange(splitChildren);
 					});
 
 					rebuildLocks.Dispose();
@@ -159,59 +134,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
-		}
-
-		private void SplitRecursive(Vector3Float[] verts,
-			Vector3Float normal,
-			List<Vector3Float> newVertices,
-			List<Face> newFaces)
-		{
-			var length = new float[3];
-
-			var v0 = -1;
-			var longestEdge = this.MaxEdgeLength;
-
-			for (int i = 0; i < 3; i++)
-			{
-				var next = (i + 1) % 3;
-				length[i] = (verts[next] - verts[i]).Length;
-
-				// check if this edge should be split
-				if (length[i] > longestEdge)
-				{
-					// record the edge to split
-					v0 = i;
-					longestEdge = length[i];
-				}
-			}
-
-			// if we did not find a face
-			if (v0 == -1)
-			{
-				var vertCount = newVertices.Count;
-				newVertices.AddRange(verts);
-				// found a polygon small enough so add it
-				newFaces.Add(new Face(vertCount, vertCount + 1, vertCount + 2, normal));
-				// no more splitting so return
-				return;
-			}
-
-			// split the longest face in two and recurse on both of them
-			var v1 = (v0 + 1) % 3;
-			var v2 = (v0 + 2) % 3;
-
-			var midPoint = (verts[v0] + verts[v1]) / 2;
-
-			SplitRecursive(new Vector3Float[] { verts[v0], midPoint, verts[v2] },
-				normal,
-				newVertices,
-				newFaces);
-
-			// recurse on second split
-			SplitRecursive(new Vector3Float[] { verts[v1], verts[v2], midPoint },
-				normal,
-				newVertices,
-				newFaces);
 		}
 	}
 }
