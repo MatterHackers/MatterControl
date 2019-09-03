@@ -586,7 +586,14 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
-					field = new EnumField(property, theme);
+					if (property.PropertyType == typeof(NamedTypeFace))
+					{
+						field = new FontSelectorField(property, theme);
+					}
+					else
+					{
+						field = new EnumField(property, theme);
+					}
 				}
 
 				field.Initialize(0);
