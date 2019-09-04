@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var orderItem in orderedItems)
 			{
-				Enum.TryParse<NamedTypeFace>(orderItem.Value, out NamedTypeFace namedTypeFace);
+				Enum.TryParse<NamedTypeFace>(orderItem.Key, out NamedTypeFace namedTypeFace);
 				var typeFace = ApplicationController.GetTypeFace(namedTypeFace);
 				MenuItem newItem = dropDownList.AddItem(orderItem.Value, orderItem.Key, typeFace);
 
