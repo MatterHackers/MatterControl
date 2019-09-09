@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class FontSelectorField : UIField
 	{
-		private EditableProperty property;
-		private ThemeConfig theme;
+		private readonly EditableProperty property;
+		private readonly ThemeConfig theme;
 		private DropDownList dropDownList;
 
 		public FontSelectorField(EditableProperty property, ThemeConfig theme)

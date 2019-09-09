@@ -37,8 +37,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class EnumField : UIField
 	{
-		private EditableProperty property;
-		private ThemeConfig theme;
+		private readonly EditableProperty property;
+		private readonly ThemeConfig theme;
 		private DropDownList dropDownList;
 
 		public EnumField(EditableProperty property, ThemeConfig theme)
@@ -57,16 +57,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				var renameAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumRenameAttribute>().FirstOrDefault();
 				if (renameAttribute != null)
 				{
-					if(renameAttribute.NameMaping.TryGetValue(renamedName, out string value))
+					if (renameAttribute.NameMaping.TryGetValue(renamedName, out string value))
 					{
 						renamedName = value;
 					}
 				}
+
 				return new
 				{
 					Key = enumName,
 					Value = renamedName.Replace('_', ' ')
-			};
+				};
 			});
 
 			dropDownList = new MHDropDownList("Name".Localize(), theme)

@@ -40,8 +40,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ChildrenSelectorListField : UIField
 	{
-		private EditableProperty property;
-		private ThemeConfig theme;
+		private readonly EditableProperty property;
+		private readonly ThemeConfig theme;
 		private DropDownList dropDownList;
 
 		public ChildrenSelectorListField(EditableProperty property, ThemeConfig theme)
@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				MenuItem newItem = dropDownList.AddItem(orderItem.value, orderItem.key);
 
-				var localOrderedItem = orderItem;
+				var (key, value) = orderItem;
 				newItem.Selected += (sender, e) =>
 				{
-					this.SetValue(localOrderedItem.key, true);
+					this.SetValue(key, true);
 				};
 			}
 
