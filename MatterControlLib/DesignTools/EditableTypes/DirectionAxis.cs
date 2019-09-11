@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.EditableTypes
@@ -34,6 +35,12 @@ namespace MatterHackers.MatterControl.DesignTools.EditableTypes
 	public class DirectionAxis
 	{
 		public Vector3 Normal { get; set; }
+
 		public Vector3 Origin { get; set; }
+
+		public Plane GetPlane()
+		{
+			return new Plane(Normal, Normal.Dot(Origin));
+		}
 	}
 }

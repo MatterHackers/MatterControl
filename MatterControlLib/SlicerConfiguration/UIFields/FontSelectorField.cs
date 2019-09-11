@@ -28,23 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ChildrenSelectorListField : UIField
+	public class FontSelectorField : UIField
 	{
 		private readonly EditableProperty property;
 		private readonly ThemeConfig theme;
 		private DropDownList dropDownList;
 
-		public ChildrenSelectorListField(EditableProperty property, ThemeConfig theme)
+		public FontSelectorField(EditableProperty property, ThemeConfig theme)
 		{
 			this.property = property;
 			this.theme = theme;
@@ -53,40 +50,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void Initialize(int tabIndex)
 		{
 			// Enum keyed on name to friendly name
-			List<(string key, string value)> names = null;
-			string selectedID = "";
-			if (property.Source is AlignObject3D item)
+			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
 			{
-				names = item.Children.Select(child => (child.ID, child.Name)).ToList();
-				if (item.SelectedChild.Count == 1)
+				var renamedName = enumName;
+
+				var renameAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumRenameAttribute>().FirstOrDefault();
+				if (renameAttribute != null)
 				{
-					selectedID = item.SelectedChild.First();
+					if (renameAttribute.NameMaping.TryGetValue(renamedName, out string value))
+					{
+						renamedName = value;
+					}
 				}
-			}
 
-			dropDownList = new MHDropDownList("Name".Localize(), theme);
+				return new
+				{
+					Key = enumName,
+					Value = renamedName.Replace('_', ' ')
+				};
+			});
 
-			var orderedItems = names.OrderBy(n => n.value);
+			dropDownList = new MHDropDownList("Name".Localize(), theme)
+			{
+				Name = property.DisplayName + " DropDownList"
+			};
+
+			var sortableAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<SortableAttribute>().FirstOrDefault();
+			var orderedItems = sortableAttribute != null ? enumItems.OrderBy(n => n.Value) : enumItems;
 
 			foreach (var orderItem in orderedItems)
 			{
-				MenuItem newItem = dropDownList.AddItem(orderItem.value, orderItem.key);
+				Enum.TryParse<NamedTypeFace>(orderItem.Key, out NamedTypeFace namedTypeFace);
+				var typeFace = ApplicationController.GetTypeFace(namedTypeFace);
+				MenuItem newItem = dropDownList.AddItem(orderItem.Value, orderItem.Key, typeFace);
 
-				var (key, value) = orderItem;
+				var localOrderedItem = orderItem;
 				newItem.Selected += (sender, e) =>
 				{
-					this.SetValue(key, true);
+					this.SetValue(localOrderedItem.Key, true);
 				};
 			}
 
-			if (!string.IsNullOrWhiteSpace(selectedID))
-			{
-				dropDownList.SelectedValue = selectedID;
-			}
-			else if (dropDownList.MenuItems.Count > 0)
-			{
-				dropDownList.SelectedIndex = 0;
-			}
+			dropDownList.SelectedLabel = property.Value.ToString().Replace('_', ' ');
 
 			this.Content = dropDownList;
 		}

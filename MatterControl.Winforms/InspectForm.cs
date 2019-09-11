@@ -508,5 +508,10 @@ namespace MatterHackers.MatterControl
 			var context = ApplicationController.Instance.ActivePrinters.First().Connection.TotalGCodeStream;
 			textBox1.Text = context.GetDebugState();
 		}
+
+		private void DebugMenus_CheckedChanged(object sender, EventArgs e)
+		{
+			PopupWidget.DebugKeepOpen = debugMenus.Checked;
+		}
 	}
 }
