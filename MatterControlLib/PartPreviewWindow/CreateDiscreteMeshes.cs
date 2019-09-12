@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using ClipperLib;
 using MatterHackers.Agg.Image;
@@ -37,24 +38,23 @@ using MatterHackers.Agg.Image.ThresholdFunctions;
 using MatterHackers.MarchingSquares;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl
 {
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public static class CreateDiscreteMeshes
 	{
 		public static List<Mesh> SplitVolumesIntoMeshes(Mesh meshToSplit, CancellationToken cancellationToken, Action<double, string> reportProgress)
 		{
-			Stopwatch maxProgressReport = Stopwatch.StartNew();
-			List<Mesh> discreetVolumes = new List<Mesh>();
+			var maxProgressReport = Stopwatch.StartNew();
+			var discreetVolumes = new List<Mesh>();
 			var facesThatHaveBeenAdded = new HashSet<int>();
 			Mesh meshFromCurrentVolume = null;
 			var attachedFaces = new Stack<int>();
 			int faceCount = meshToSplit.Faces.Count;
-
 			var facesSharingVertex = meshToSplit.NewVertexFaceLists();
+			var totalBounds = meshToSplit.GetAxisAlignedBoundingBox();
 
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
 			{
@@ -94,16 +94,29 @@ namespace MatterHackers.MatterControl
 									attachedFaces.Push(sharedFaceIndex);
 
 									// Add a new face to the new mesh we are creating.
-									meshFromCurrentVolume.CreateFace(new Vector3Float[] {
+									meshFromCurrentVolume.CreateFace(new Vector3Float[]
+                                    {
 										meshToSplit.Vertices[meshToSplit.Faces[sharedFaceIndex].v0],
 										meshToSplit.Vertices[meshToSplit.Faces[sharedFaceIndex].v1],
-										meshToSplit.Vertices[meshToSplit.Faces[sharedFaceIndex].v2]});
+										meshToSplit.Vertices[meshToSplit.Faces[sharedFaceIndex].v2]
+                                    });
 								}
 							}
 						}
 					}
 
-					discreetVolumes.Add(meshFromCurrentVolume);
+					meshFromCurrentVolume.CleanAndMerge();
+					var bounds = meshFromCurrentVolume.GetAxisAlignedBoundingBox();
+					var oneTenThousandth = totalBounds.Size.Length / 10000.0;
+					if (meshFromCurrentVolume.Vertices.Count > 2
+						&& (bounds.XSize > oneTenThousandth
+						|| bounds.YSize > oneTenThousandth
+						|| bounds.ZSize > oneTenThousandth)
+						&& meshFromCurrentVolume.Faces.Any(f => f.GetArea(meshFromCurrentVolume) > oneTenThousandth))
+					{
+						discreetVolumes.Add(meshFromCurrentVolume);
+					}
+
 					meshFromCurrentVolume = null;
 				}
 
@@ -156,7 +169,7 @@ namespace MatterHackers.MatterControl
 		public static PolyTree FindDistictObjectBounds(ImageBuffer image)
 		{
 			var intensity = new MapOnMaxIntensity();
-			MarchingSquaresByte marchingSquaresData = new MarchingSquaresByte(image, intensity.ZeroColor, intensity.Threshold, 0);
+			var marchingSquaresData = new MarchingSquaresByte(image, intensity.ZeroColor, intensity.Threshold, 0);
 			marchingSquaresData.CreateLineSegments();
 			Polygons lineLoops = marchingSquaresData.CreateLineLoops(1);
 
@@ -166,8 +179,8 @@ namespace MatterHackers.MatterControl
 			}
 
 			// create a bounding polygon to clip against
-			IntPoint min = new IntPoint(long.MaxValue, long.MaxValue);
-			IntPoint max = new IntPoint(long.MinValue, long.MinValue);
+			var min = new IntPoint(long.MaxValue, long.MaxValue);
+			var max = new IntPoint(long.MinValue, long.MinValue);
 			foreach (Polygon polygon in lineLoops)
 			{
 				foreach (IntPoint point in polygon)
@@ -179,18 +192,20 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			Polygon boundingPoly = new Polygon();
-			boundingPoly.Add(min);
-			boundingPoly.Add(new IntPoint(min.X, max.Y));
-			boundingPoly.Add(max);
-			boundingPoly.Add(new IntPoint(max.X, min.Y));
+			var boundingPoly = new Polygon
+			{
+				min,
+				new IntPoint(min.X, max.Y),
+				max,
+				new IntPoint(max.X, min.Y)
+			};
 
 			// now clip the polygons to get the inside and outside polys
-			Clipper clipper = new Clipper();
+			var clipper = new Clipper();
 			clipper.AddPaths(lineLoops, PolyType.ptSubject, true);
 			clipper.AddPath(boundingPoly, PolyType.ptClip, true);
 
-			PolyTree polyTreeForPlate = new PolyTree();
+			var polyTreeForPlate = new PolyTree();
 			clipper.Execute(ClipType.ctIntersection, polyTreeForPlate);
 
 			return polyTreeForPlate;

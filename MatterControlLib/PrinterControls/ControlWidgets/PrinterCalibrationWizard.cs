@@ -309,6 +309,11 @@ namespace MatterHackers.MatterControl
 
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
+			if (printer == null)
+			{
+				return true;
+			}
+
 			// TODO: Verify invoked with low frequency
 			var printerShim = ApplicationController.Instance.Shim(printer);
 

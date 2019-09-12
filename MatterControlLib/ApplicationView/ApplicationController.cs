@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl
 		Russo,
 		Titan,
 		Titillium,
-	};
+	}
 
 	public class WorkspacesChangedEventArgs : EventArgs
 	{
@@ -623,6 +623,7 @@ namespace MatterHackers.MatterControl
 					{
 						targetUri += $"?aff={OemSettings.Instance.AffiliateCode}";
 					}
+
 					targetUri += internalLink;
 				}
 
@@ -780,7 +781,7 @@ namespace MatterHackers.MatterControl
 							{
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
-							IsEnabled = (sceneContext) => sceneContext.EditableScene,
+							IsEnabled = (sceneContext) => sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any(),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
@@ -1281,10 +1282,13 @@ namespace MatterHackers.MatterControl
 			{
 				var frame = new ImageBuffer(size, size);
 				var graphics = frame.NewGraphics2D();
-				graphics.Render(new Stroke(new Arc(frame.Width / 2, frame.Height / 2,
-					size / 4 - strokeWidth / 2, size / 4 - strokeWidth / 2,
+				graphics.Render(new Stroke(new Arc(frame.Width / 2,
+					frame.Height / 2,
+					(size / 4) - (strokeWidth / 2),
+					(size / 4) - (strokeWidth / 2),
 					MathHelper.Tau / frameCount * i,
-					MathHelper.Tau / 4 + MathHelper.Tau / frameCount * i), strokeWidth), color);
+					(MathHelper.Tau / 4) + (MathHelper.Tau / frameCount * i)),
+					strokeWidth), color);
 				workingAnimation.AddImage(frame);
 			}
 
@@ -1424,6 +1428,7 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
 					}
+
 					// If there is only one printer constructed, use it.
 					else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 					{
@@ -1610,6 +1615,7 @@ namespace MatterHackers.MatterControl
 							var scale = new ScaleObject3D();
 							scale.WrapItems(items, scene.UndoBuffer);
 						}
+
 						return Task.CompletedTask;
 					},
 					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
@@ -1662,6 +1668,7 @@ namespace MatterHackers.MatterControl
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
 						}                       // Invalidate image to kick off rebuild of ImageConverter stack
+
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -1788,6 +1795,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
 							}
+
 							extrude.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1817,6 +1825,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
 							}
+
 							smoothPath.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1846,6 +1855,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
 							}
+
 							inflatePath.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1978,6 +1988,7 @@ namespace MatterHackers.MatterControl
 											printerConnection.SecondsToHoldTemperature);
 									}
 								}
+
 								progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
 								reporter.Report(progressStatus);
 								Thread.Sleep(20);
@@ -2067,6 +2078,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static TypeFace titilliumTypeFace = null;
+
 		public static TypeFace TitilliumTypeFace
 		{
 			get
@@ -3389,6 +3401,7 @@ Details
 						});
 						break;
 				}
+
 // #endif
 
 				ClearEvents();
@@ -3485,13 +3498,16 @@ Details
 			public string Title { get; set; }
 
 			public int Priority { get; set; }
+
 			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
 		}
 
 		public class StartupAction
 		{
 			public string Title { get; set; }
+
 			public int Priority { get; set; }
+
 			public Action Action { get; set; }
 		}
 	}
@@ -3509,6 +3525,7 @@ Details
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
+
 		public ISceneContext SceneContext { get; set; }
 	}
 
@@ -3528,6 +3545,7 @@ Details
 		}
 
 		public string Title { get; set; }
+
 		public object Owner { get; set; }
 
 		public RunningTaskOptions Options { get; internal set; }
@@ -3552,6 +3570,7 @@ Details
 
 				return _isExpanded ?? false;
 			}
+
 			set
 			{
 				_isExpanded = value;
@@ -3593,11 +3612,15 @@ Details
 		public Func<bool> IsPaused { get; set; }
 
 		public Action PauseAction { get; set; }
+
 		public Action ResumeAction { get; set; }
+
 		public Action<Action> StopAction { get; set; }
 
 		public string StopToolTip { get; set; } = "Cancel".Localize();
+
 		public string ResumeToolTip { get; set; } = "Resume".Localize();
+
 		public string PauseToolTip { get; set; } = "Pause".Localize();
 
 		/// <summary>
@@ -3664,6 +3687,7 @@ Details
 		private static Stopwatch timer;
 
 		public static bool EnableF5Collect { get; set; }
+
 		public static bool EnableNetworkTraffic { get; set; } = true;
 
 		public static SystemWindow LoadRootWindow(int width, int height)
@@ -3777,6 +3801,7 @@ Details
 								gcode2D.Zoom(1.2);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.OemMinus:
@@ -3787,6 +3812,7 @@ Details
 								gcode2D.Zoom(.8);
 								keyEvent.Handled = true;
 							}
+
 							break;
 					}
 				}
@@ -3802,6 +3828,7 @@ Details
 								view3D.Scene.Copy();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.P:
@@ -3809,6 +3836,7 @@ Details
 							{
 								view3D.PushToPrinterAndPrint();
 							}
+
 							break;
 
 						case Keys.X:
@@ -3817,6 +3845,7 @@ Details
 								view3D.Scene.Cut();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Y:
@@ -3825,6 +3854,7 @@ Details
 								view3D.Scene.UndoBuffer.Redo();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.A:
@@ -3833,6 +3863,7 @@ Details
 								view3D.SelectAll();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.S:
@@ -3841,6 +3872,7 @@ Details
 								view3D.Save();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.V:
@@ -3849,6 +3881,7 @@ Details
 								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Oemplus:
@@ -3859,6 +3892,7 @@ Details
 								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.OemMinus:
@@ -3869,6 +3903,7 @@ Details
 								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Z:
@@ -3883,8 +3918,10 @@ Details
 									// undo last operation
 									view3D.Scene.Undo();
 								}
+
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Insert:
@@ -3893,6 +3930,7 @@ Details
 								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Delete:
@@ -3912,10 +3950,12 @@ Details
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}
+
 							foreach (var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
 							{
 								interactionVolume.CancelOperation();
 							}
+
 							break;
 
 						case Keys.Left:
@@ -4052,7 +4092,7 @@ Details
 
 						var mainView = await Initialize(systemWindow, (progress0To1, status) =>
 						{
-							ReportStartupProgress(0.2 + progress0To1 * 0.7, status);
+							ReportStartupProgress(0.2 + (progress0To1 * 0.7), status);
 						});
 
 						ReportStartupProgress(0.9, "AddChild->MainView");

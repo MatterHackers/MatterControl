@@ -1457,7 +1457,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.retract_restart_extra_toolchange,
 					PresentationName = "Extra Length After Tool Change".Localize(),
 					HelpText = "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					DataEditType = DataEditTypes.DOUBLE,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					EnableIfSet = SettingsKey.enable_retractions,
 					Units = "mm zero to disable".Localize(),

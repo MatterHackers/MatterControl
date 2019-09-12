@@ -29,19 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Linq;
-	using DataConverters3D;
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public static class PlatingHelper
 	{
 		public static VertexStorage PolygonToPathStorage(this Polygons polygons)
@@ -66,6 +65,7 @@ namespace MatterHackers.MatterControl
 
 				output.ClosePolygon();
 			}
+
 			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
@@ -73,6 +73,11 @@ namespace MatterHackers.MatterControl
 
 		public static void ArrangeOnBed(List<IObject3D> object3DList, Vector3 bedCenter)
 		{
+			if (object3DList.Count == 0)
+			{
+				return;
+			}
+
 			// move them all out of the way
 			for (int i = 0; i < object3DList.Count; i++)
 			{
@@ -160,7 +165,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
 		/// </summary>
-		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="itemToMove">The item to move</param>
 		/// <param name="itemsToAvoid">The objects to hit test against</param>
 		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
 		{

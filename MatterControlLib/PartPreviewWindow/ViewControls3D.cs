@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -41,7 +40,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -306,7 +304,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (operationGroup.Collapse)
 					{
-
 						var defaultOperation = operationGroup.GetDefaultOperation();
 
 						PopupMenuButton groupButton = null;
@@ -397,7 +394,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-
 				if (button != null)
 				{
 					operationButtons.Add(button, namedAction);
@@ -420,10 +416,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			undoBuffer.Changed += UndoBuffer_Changed;
-			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
+			sceneContext.Scene.SelectionChanged += UpdateToolbarButtons;
+			sceneContext.Scene.ItemsModified += UpdateToolbarButtons;
 
 			// Run on load
-			Scene_SelectionChanged(null, null);
+			UpdateToolbarButtons(null, null);
 		}
 
 		internal void NotifyResetView()
@@ -470,6 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							partSelectButton.Checked = true;
 						}
+
 						break;
 				}
 
@@ -570,7 +568,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				});
 
-				var actions = new NamedAction[] {
+				var actions = new NamedAction[]
+				{
 					new ActionSeparator(),
 					workspaceActions["Cut"],
 					workspaceActions["Copy"],
@@ -586,13 +585,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Action = () =>
 						{
 							ApplicationController.Instance.ExportLibraryItems(
-								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+								new[] { new InMemoryLibraryItem(sceneContext.Scene) },
 								centerOnBed: false,
 								printer: view3DWidget.Printer);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
 					},
 					new ActionSeparator(),
 					new NamedAction()
@@ -658,7 +657,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return openButton;
 		}
 
-		private void Scene_SelectionChanged(object sender, EventArgs e)
+		private void UpdateToolbarButtons(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
@@ -719,6 +718,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						controlWidth = 400;
 					}
+
 					verticalResizeContainer.Width = controlWidth;
 
 					verticalResizeContainer.BoundsChanged += (s2, e2) =>
@@ -746,9 +746,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					verticalResizeContainer.AddChild(printLibraryWidget);
 
-					systemWindow.MouseDown += systemWindownMouseDown;
+					systemWindow.MouseDown += SystemWindownMouseDown;
 
-					void systemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
+					void SystemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
 					{
 						if (verticalResizeContainer.Parent != null)
 						{
@@ -760,14 +760,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							if (!mouseUpOnWidget)
 							{
 								libraryPopup.CloseMenu();
-								systemWindow.MouseDown -= systemWindownMouseDown;
+								systemWindow.MouseDown -= SystemWindownMouseDown;
 							}
 						}
 						else
 						{
-							systemWindow.MouseDown -= systemWindownMouseDown;
+							systemWindow.MouseDown -= SystemWindownMouseDown;
 						}
-					};
+					}
 
 					return verticalResizeContainer;
 				},
@@ -946,7 +946,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Unregister listeners
 			undoBuffer.Changed -= UndoBuffer_Changed;
-			sceneContext.Scene.SelectionChanged -= Scene_SelectionChanged;
+			sceneContext.Scene.SelectionChanged -= UpdateToolbarButtons;
+			sceneContext.Scene.Children.ItemsModified -= UpdateToolbarButtons;
 
 			base.OnClosed(e);
 		}
