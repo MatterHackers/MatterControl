@@ -782,7 +782,7 @@ namespace MatterHackers.MatterControl
 							{
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
-							IsEnabled = (sceneContext) => sceneContext.EditableScene,
+							IsEnabled = (sceneContext) => sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any(),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
