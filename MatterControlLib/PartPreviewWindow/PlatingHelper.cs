@@ -73,6 +73,11 @@ namespace MatterHackers.MatterControl
 
 		public static void ArrangeOnBed(List<IObject3D> object3DList, Vector3 bedCenter)
 		{
+			if (object3DList.Count == 0)
+			{
+				return;
+			}
+
 			// move them all out of the way
 			for (int i = 0; i < object3DList.Count; i++)
 			{

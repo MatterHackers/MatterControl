@@ -420,10 +420,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			undoBuffer.Changed += UndoBuffer_Changed;
-			sceneContext.Scene.SelectionChanged += Scene_SelectionChanged;
+			sceneContext.Scene.SelectionChanged += UpdateToolbarButtons;
+			sceneContext.Scene.ItemsModified += UpdateToolbarButtons;
 
 			// Run on load
-			Scene_SelectionChanged(null, null);
+			UpdateToolbarButtons(null, null);
 		}
 
 		internal void NotifyResetView()
@@ -658,7 +659,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return openButton;
 		}
 
-		private void Scene_SelectionChanged(object sender, EventArgs e)
+		private void UpdateToolbarButtons(object sender, EventArgs e)
 		{
 			// Set enabled level based on operation rules
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
@@ -946,7 +947,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Unregister listeners
 			undoBuffer.Changed -= UndoBuffer_Changed;
-			sceneContext.Scene.SelectionChanged -= Scene_SelectionChanged;
+			sceneContext.Scene.SelectionChanged -= UpdateToolbarButtons;
+			sceneContext.Scene.Children.ItemsModified -= UpdateToolbarButtons;
 
 			base.OnClosed(e);
 		}
