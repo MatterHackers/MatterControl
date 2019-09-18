@@ -55,6 +55,8 @@ namespace MatterHackers.MatterControl
 			var attachedFaces = new Stack<int>();
 			int faceCount = meshToSplit.Faces.Count;
 
+			var totalBounds = meshToSplit.GetAxisAlignedBoundingBox();
+
 			var facesSharingVertex = meshToSplit.NewVertexFaceLists();
 
 			for (int faceIndex = 0; faceIndex < faceCount; faceIndex++)
@@ -106,11 +108,12 @@ namespace MatterHackers.MatterControl
 
 					meshFromCurrentVolume.CleanAndMerge();
 					var bounds = meshFromCurrentVolume.GetAxisAlignedBoundingBox();
+					var oneTenThousandth = totalBounds.Size.Length / 10000.0;
 					if (meshFromCurrentVolume.Vertices.Count > 2
-						&& (bounds.XSize > .5
-						|| bounds.YSize > .5
-						|| bounds.ZSize > .5)
-						&& meshFromCurrentVolume.Faces.Any(f => f.GetArea(meshFromCurrentVolume) > .1))
+						&& (bounds.XSize > oneTenThousandth
+						|| bounds.YSize > oneTenThousandth
+						|| bounds.ZSize > oneTenThousandth)
+						&& meshFromCurrentVolume.Faces.Any(f => f.GetArea(meshFromCurrentVolume) > oneTenThousandth))
 					{
 						discreetVolumes.Add(meshFromCurrentVolume);
 					}
