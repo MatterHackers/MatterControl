@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using ClipperLib;
 using MatterHackers.Agg.Image;
@@ -103,7 +104,17 @@ namespace MatterHackers.MatterControl
 						}
 					}
 
-					discreetVolumes.Add(meshFromCurrentVolume);
+					meshFromCurrentVolume.CleanAndMerge();
+					var bounds = meshFromCurrentVolume.GetAxisAlignedBoundingBox();
+					if (meshFromCurrentVolume.Vertices.Count > 2
+						&& (bounds.XSize > .5
+						|| bounds.YSize > .5
+						|| bounds.ZSize > .5)
+						&& meshFromCurrentVolume.Faces.Any(f => f.GetArea(meshFromCurrentVolume) > .1))
+					{
+						discreetVolumes.Add(meshFromCurrentVolume);
+					}
+
 					meshFromCurrentVolume = null;
 				}
 
