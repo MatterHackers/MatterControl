@@ -30,19 +30,51 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
+using global::MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
+using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.Extensibility;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PartPreviewWindow.View3D;
+using MatterHackers.MatterControl.Plugins;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MatterControl.Tour;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
+using MatterHackers.VectorMath;
+using MatterHackers.VectorMath.TrackBall;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -50,40 +82,6 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	using System.ComponentModel;
-	using System.IO.Compression;
-	using System.Net;
-	using System.Net.Http;
-	using System.Reflection;
-	using System.Text;
-	using System.Text.RegularExpressions;
-	using System.Threading;
-	using Agg.Font;
-	using Agg.Image;
-	using CustomWidgets;
-	using global::MatterControl.Printing;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.Agg.VertexSource;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.DataConverters3D.UndoCommands;
-	using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
-	using MatterHackers.MatterControl.DesignTools;
-	using MatterHackers.MatterControl.DesignTools.Operations;
-	using MatterHackers.MatterControl.Extensibility;
-	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-	using MatterHackers.MatterControl.Plugins;
-	using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
-	using MatterHackers.MatterControl.Tour;
-	using MatterHackers.PolygonMesh;
-	using MatterHackers.PolygonMesh.Processors;
-	using MatterHackers.VectorMath;
-	using MatterHackers.VectorMath.TrackBall;
-	using Newtonsoft.Json.Converters;
-	using Newtonsoft.Json.Linq;
-	using SettingsManagement;
-
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum NamedTypeFace
 	{
