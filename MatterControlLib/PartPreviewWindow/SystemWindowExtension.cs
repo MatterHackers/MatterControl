@@ -283,7 +283,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// If the focused changed and we've lost focus and no special cases permit, close the menu
 					if (!popup.Widget.ContainsFocus
 						&& !specialChildHasFocus
-						&& !descendantIsHoldingOpen)
+						&& !descendantIsHoldingOpen
+						&& !PopupWidget.DebugKeepOpen)
 					{
 						CloseMenu();
 					}

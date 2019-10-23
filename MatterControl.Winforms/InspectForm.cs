@@ -298,6 +298,11 @@ namespace MatterHackers.MatterControl
 			this.InspectedWidget = e.Node.Tag as GuiWidget;
 		}
 
+		private void DebugMenus_CheckedChanged(object sender, EventArgs e)
+		{
+			PopupWidget.DebugKeepOpen = debugMenus.Checked;
+		}
+
 		private void SceneTreeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			this.InspectedObject3D = e.Node.Tag as IObject3D;
