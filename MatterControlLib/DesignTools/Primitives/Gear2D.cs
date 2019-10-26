@@ -140,6 +140,70 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rackFinal;
 		}
 
+		IVertexSource CreateRegularGearShape()
+		{
+			var tooth = this.CreateSingleTooth();
+
+			// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
+			// However, the union operations become more and more complex as the complete gear is built up.
+			// So instead we capture the outer path of the tooth and concatenate rotated versions of this path into a complete outer gear path.
+			// Concatenating paths is inexpensive resulting in significantly faster execution.
+			var outlinePaths = tooth;
+			var corners = outlinePaths as VertexStorage;
+
+			// first we need to find the corner that sits at the center
+			var centerCornerIndex = 0;
+			for (var i = 0; i < corners.Count; i++)
+			{
+				var corner = corners[i];
+				if (corner.position.LengthSquared < 0.0000001)
+				{
+					centerCornerIndex = i;
+					break;
+				}
+			}
+
+			var outerPoints = new VertexStorage();
+			var outerCorners = new VertexStorage();
+			var outterPointsCount = corners.Count - 2;
+			for (var i = 1; i < corners.Count - 1; i++)
+			{
+				var corner = corners[(i + centerCornerIndex) % corners.Count];
+				if (i == 0)
+				{
+					outerCorners.MoveTo(corner.position);
+					outerPoints.MoveTo(corner.position);
+				}
+				else
+				{
+					outerCorners.LineTo(corner.position);
+					outerPoints.LineTo(corner.position);
+				}
+			}
+
+			for (var i = 1; i < this.toothCount; i++)
+			{
+				var angle = i * this.angleToothToTooth;
+				var roatationMatrix = Affine.NewRotation(angle);
+				for (var j = 0; j < outerCorners.Count; j++)
+				{
+					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
+					outerPoints.MoveTo(rotatedCorner);
+				}
+			}
+
+			var gearShape = outerPoints;
+
+			if (this.centerHoleDiameter > 0)
+			{
+				var radius = this.centerHoleDiameter / 2;
+				var centerhole = new Ellipse(0, 0, radius, radius);
+				gearShape = gearShape.Subtract(centerhole) as VertexStorage;
+			}
+
+			return gearShape.rotateZ(-90);
+		}
+
 		private IVertexSource CreateRackTooth()
 		{
 			var toothWidth = this.CircularPitch / 2;
@@ -186,7 +250,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var angleToothToTooth = 360 / this.toothCount;
 			var angleStepSize = this.angleToothToTooth / this.stepsPerToothAngle;
 
-			IVertexSource toothCutout = null;
+			IVertexSource toothCutout = new VertexStorage();
 
 			var toothCutterShape = this.CreateToothCutter();
 			var bounds = toothCutterShape.GetBounds();
@@ -208,7 +272,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				lowerLeftCornerDistance = movedLowerLeftCorner.Length;
 				if (movedLowerLeftCorner.Length > this.outerRadius)
-                {
+				{
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;
 				}
@@ -219,7 +283,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				toothCutout = toothCutout.Union(movedToothCutterShape);
 
 				if (xTranslation[0] > 0)
-                {
+				{
 					movedToothCutterShape = toothCutterShape.Translate(new Vector2(-xTranslation[0], xTranslation[1]));
 					movedToothCutterShape = movedToothCutterShape.rotateZ(-angle);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
@@ -398,7 +462,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override IEnumerable<VertexData> Vertices()
 		{
-			var temp = CreateRackShape();
+			//var temp = CreateRackShape();
+			var temp = CreateRegularGearShape();
 			return temp.Vertices();
 		}
 	}
@@ -408,7 +473,7 @@ public static class Extensions
 {
 	public static IVertexSource Subtract(this IVertexSource a, IVertexSource b)
 	{
-		return a.Plus(b);
+		return a.Minus(b);
 	}
 
 	public static IVertexSource Union(this IVertexSource a, IVertexSource b)
@@ -547,52 +612,6 @@ public static class Extensions
 					else if (this.gearType == GearType.Rack) {
 						return this.CreateRackShape();
 					}
-				}
-				Gear.prototype._createRegularGearShape = function() {
-					var tooth = this.CreateSingleTooth();
-
-					// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
-					// However, the union operations become more and more complex as the complete gear is built up.
-					// So instead we capture the outer path of the tooth and concatenate rotated versions of this path into a complete outer gear path.
-					// Concatenating paths is inexpensive resulting in significantly faster execution.
-					var outlinePaths = tooth.getOutlinePaths();
-					var corners = outlinePaths[0].points;
-
-					// first we need to find the corner that sits at the center
-					var centerCornerIndex;
-					for(var i = 0; i < corners.length; i++) {
-						var corner = corners[i];
-						if (corner.lengthSquared() < 0.0000001) {
-							centerCornerIndex = i;
-							break;
-						}
-					}
-					var outerPoints = [];
-					var outerCorners = [];
-					var outterPointsCount = corners.length - 2;
-					for(var i = 1; i < corners.length - 1; i++) {
-						var corner = corners[(i + centerCornerIndex) % corners.length];
-						outerCorners.push(corner);
-						outerPoints.push([corner.x, corner.y]);
-					}
-
-					for(var i = 1; i < this.toothCount; i++) {
-						var angle = i * this.angleToothToTooth;
-						var roatationMatrix = CSG.Matrix4x4.rotationZ(angle)
-						for (var j = 0; j < outerCorners.length; j++) {
-							var rotatedCorner = outerCorners[j].transform(roatationMatrix);
-							outerPoints.push([rotatedCorner.x, rotatedCorner.y]);
-						}
-					}
-
-					var gearShape = CAG.fromPointsNoCheck(outerPoints);
-
-					if (this.centerHoleDiameter > 0) {
-						var centerhole = CAG.circle({center: [-0, -0], radius: this.centerHoleDiameter / 2, resolution: this.qualitySettings.resolution});
-						gearShape = gearShape.subtract(centerhole);
-					}
-
-					return gearShape.rotateZ(-90);
 				}
 				Gear.prototype._createInternalGearShape = function() {
 					var singleTooth = this._createInternalToothProfile();
