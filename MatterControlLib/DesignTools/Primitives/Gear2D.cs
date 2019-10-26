@@ -43,24 +43,43 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class Gear2D : VertexSourceLegacySupport
 	{
-		private double circularPitch;
+		private double _circularPitch = 8;
+
+		/// <summary>
+		/// Gets or sets distance from one face of a tooth to the corresponding face of an adjacent tooth on the same gear, measured along the pitch circle.
+		/// </summary>
+		public double CircularPitch
+		{
+			get => _circularPitch;
+			set
+			{
+				_circularPitch = value;
+				CalculateDependants();
+			}
+		}
+
 		private double diametralPitch;
 		private double addendum;
-		private double clearance;
-		private double pressureAngle;
-		private double backlash;
-		private double profileShift;
+		private double clearance = .05;
+
+		// Most common stock gears have a 20° pressure angle, with 14½° and 25° pressure angle gears being much less
+		// common. Increasing the pressure angle increases the width of the base of the gear tooth, leading to greater strength and load carrying capacity. Decreasing
+		// the pressure angle provides lower backlash, smoother operation and less sensitivity to manufacturing errors. (reference: http://en.wikipedia.org/wiki/Involute_gear)
+		private double pressureAngle = 20;
+
+		private double backlash = .05;
+		private double profileShift = 0;
 		private double shiftedAddendum;
 		private double outerRadius;
 		private double angleToothToTooth;
-		private int toothCount;
-		private GearType gearType;
-		private int stepsPerToothAngle;
+		private int toothCount = 30;
+		private GearType gearType = GearType.External;
+		private int stepsPerToothAngle = 3;
 		private double pitchDiameter;
 		private double pitchRadius;
-		private Vector2 center;
+		private Vector2 center = Vector2.Zero;
 		private Gear2D connectedGear;
-		private int centerHoleDiameter;
+		private int centerHoleDiameter = 4;
 
 		public enum GearType
 		{
@@ -69,41 +88,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			Rack
 		}
 
-		public Gear2D(double circularPitch = 8,
-			double pressureAngle = 20,
-			double clearance = 0.05,
-			double backlash = 0.05,
-			int toothCount = 30,
-			int centerHoleDiameter = 4,
-			double profileShift = 0,
-			int stepsPerToothAngle = 3,
-			GearType gearType = GearType.External)
+		public Gear2D()
 		{
-			this.circularPitch = circularPitch;
-			this.pressureAngle = pressureAngle;
-			this.clearance = clearance;
-			this.backlash = backlash;
-			this.toothCount = toothCount;
-			this.centerHoleDiameter = centerHoleDiameter;
-			this.profileShift = profileShift;
-			this.stepsPerToothAngle = stepsPerToothAngle;
+			CalculateDependants();
+		}
 
-			this.toothCount = toothCount;
-			this.gearType = gearType;
-
-			this.circularPitch = circularPitch;    // Distance from one face of a tooth to the corresponding face of an adjacent tooth on the same gear, measured along the pitch circle.
+		private void CalculateDependants()
+		{
 			// convert circular pitch to diametral pitch
-			this.diametralPitch = Math.PI / this.circularPitch; // Ratio of the number of teeth to the pitch diameter
+			this.diametralPitch = Math.PI / this.CircularPitch; // Ratio of the number of teeth to the pitch diameter
 			// this.circularPitch = Math.PI / this.diametralPitch;
-
-			this.pressureAngle = pressureAngle; // Most common stock gears have a 20° pressure angle, with 14½° and 25° pressure angle gears being much less
-															  // common. Increasing the pressure angle increases the width of the base of the gear tooth, leading to greater strength and load carrying capacity. Decreasing
-															  // the pressure angle provides lower backlash, smoother operation and less sensitivity to manufacturing errors. (reference: http://en.wikipedia.org/wiki/Involute_gear)
-
-			this.centerHoleDiameter = centerHoleDiameter;
-
-			this.clearance = clearance;
-			this.backlash = backlash;
 
 			this.center = Vector2.Zero; // center of the gear
 			// this.angle = 0; // angle in degrees of the complete gear (changes during rotation animation)
@@ -114,43 +108,41 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Addendum: Radial distance from pitch circle to outside circle.
 			this.addendum = 1 / this.diametralPitch;
-			this.profileShift = profileShift;
 
-			// Typically no profile shift is used meaning that this.shiftedAddendum = this.addendum 
+			// Typically no profile shift is used meaning that this.shiftedAddendum = this.addendum
 			this.shiftedAddendum = this.addendum * (1 + this.profileShift);
 
-			//Outer Circle
+			// Outer Circle
 			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
 			this.angleToothToTooth = 360 / this.toothCount;
 		}
 
-		private VertexStorage _createRackShape()
+		private VertexStorage CreateRackShape()
 		{
 			IVertexSource rack = new VertexStorage();
 
 			// we draw one tooth in the middle and then five on either side
-			var toothCount = 41.0;
 			for (var i = 0; i < toothCount; i++)
 			{
-				var tooth = this._createRackTooth();
-				tooth.translate(0, (0.5 + -toothCount / 2 + i) * this.circularPitch);
+				var tooth = this.CreateRackTooth();
+				tooth = tooth.Translate(0, (0.5 + -toothCount / 2 + i) * this.CircularPitch);
 				rack = rack.Union(tooth);
 			}
 
 			// creating the bar backing the teeth
 			var rightX = -(this.addendum + this.clearance);
 			var width = 4 * this.addendum;
-			var halfHeight = toothCount * this.circularPitch / 2;
+			var halfHeight = toothCount * this.CircularPitch / 2;
 			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
 
 			var rackFinal = rack.Union(bar) as VertexStorage;
-			rackFinal.translate(this.addendum * this.profileShift, 0);
+			rackFinal.Translate(this.addendum * this.profileShift, 0);
 			return rackFinal;
 		}
 
-		private VertexStorage _createRackTooth()
+		private IVertexSource CreateRackTooth()
 		{
-			var toothWidth = this.circularPitch / 2;
+			var toothWidth = this.CircularPitch / 2;
 			var toothDepth = this.addendum + this.clearance;
 
 			var sinPressureAngle = Math.Sin(this.pressureAngle * Math.PI / 180);
@@ -176,27 +168,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			return tooth;
 		}
 
-		private IVertexSource _createSingleTooth()
+		private IVertexSource CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
 			IVertexSource toothSectorPath = new VertexStorage(); // closed
 			var toothSectorArc = new Arc(Vector2.Zero, new Vector2(this.outerRadius, this.outerRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth));
 			toothSectorPath = new JoinPaths(toothSectorPath, toothSectorArc);
 
-			var toothCutout = this.createToothCutout();
+			var toothCutout = this.CreateToothCutout();
 			var tooth = toothSectorPath.Subtract(toothCutout);
 
 			return tooth;
 		}
 
-		private IVertexSource createToothCutout()
+		private IVertexSource CreateToothCutout()
 		{
 			var angleToothToTooth = 360 / this.toothCount;
 			var angleStepSize = this.angleToothToTooth / this.stepsPerToothAngle;
 
 			IVertexSource toothCutout = null;
 
-			var toothCutterShape = this.createToothCutter();
+			var toothCutterShape = this.CreateToothCutter();
 			var bounds = toothCutterShape.GetBounds();
 			var lowerLeftCorner = new Vector2(bounds.Left, bounds.Bottom);
 
@@ -215,18 +207,20 @@ namespace MatterHackers.MatterControl.DesignTools
 				movedLowerLeftCorner = Vector2.Rotate(movedLowerLeftCorner, angle);
 
 				lowerLeftCornerDistance = movedLowerLeftCorner.Length;
-				if (movedLowerLeftCorner.Length > this.outerRadius) {
+				if (movedLowerLeftCorner.Length > this.outerRadius)
+                {
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;
 				}
 
 				// we move in both directions
-				var movedToothCutterShape = toothCutterShape.translate(xTranslation);
+				var movedToothCutterShape = toothCutterShape.Translate(xTranslation);
 				movedToothCutterShape = movedToothCutterShape.rotateZ(angle);
 				toothCutout = toothCutout.Union(movedToothCutterShape);
 
-				if (xTranslation[0] > 0) {
-					movedToothCutterShape = toothCutterShape.translate(new Vector2(-xTranslation[0], xTranslation[1]));
+				if (xTranslation[0] > 0)
+                {
+					movedToothCutterShape = toothCutterShape.Translate(new Vector2(-xTranslation[0], xTranslation[1]));
 					movedToothCutterShape = movedToothCutterShape.rotateZ(-angle);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
 				}
@@ -239,10 +233,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			return toothCutout.rotateZ(-this.angleToothToTooth / 2);
 		}
 
-		private IVertexSource createToothCutter()
+		private IVertexSource CreateToothCutter()
 		{
 			// we create a trapezoidal cutter as described at http://lcamtuf.coredump.cx/gcnc/ch6/ under the section 'Putting it all together'
-			var toothWidth = this.circularPitch / 2;
+			var toothWidth = this.CircularPitch / 2;
 
 			var cutterDepth = this.addendum + this.clearance;
 			var cutterOutsideLength = 3 * this.addendum;
@@ -276,20 +270,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		IVertexSource _createInternalToothCutter()
 		{
-			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly cater for clearance and backlash
+			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
 			var pinion = this.connectedGear;
 
-			var enlargedPinion = new Gear2D(circularPitch: pinion.circularPitch,
-				pressureAngle: pinion.pressureAngle,
-				clearance: -pinion.clearance,
-				backlash: -pinion.backlash,
-				toothCount: pinion.toothCount,
-				centerHoleDiameter: 0,
-				profileShift: pinion.profileShift,
-				stepsPerToothAngle: pinion.stepsPerToothAngle
-				);
+			throw new NotImplementedException();
+			var enlargedPinion = new Gear2D()
+			{
+				CircularPitch = pinion.CircularPitch,
+				// pressureAngle: pinion.pressureAngle,
+				// clearance: -pinion.clearance,
+				// backlash: -pinion.backlash,
+				// toothCount: pinion.toothCount,
+				// centerHoleDiameter: 0,
+				// profileShift: pinion.profileShift,
+				// stepsPerToothAngle: pinion.stepsPerToothAngle
+			};
 
-			var tooth = enlargedPinion._createSingleTooth();
+			var tooth = enlargedPinion.CreateSingleTooth();
 			return tooth.rotateZ(90 + 180 / enlargedPinion.toothCount); // we need a tooth pointing to the left
 		}
 
@@ -325,7 +322,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var pinionRotationAngle = i * angleStepSize;
 				var pinionCenterRayAngle = -pinionRotationAngle * pinion.toothCount / this.toothCount;
 
-				//var cutter = cutterTemplate;
+				// var cutter = cutterTemplate;
 				cutter = cutterTemplate.rotateZ(pinionRotationAngle);
 				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
 				cutter = cutter.rotateZ(pinionCenterRayAngle);
@@ -401,7 +398,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override IEnumerable<VertexData> Vertices()
 		{
-			var temp = new Ellipse(0, 0, pitchRadius, pitchRadius);
+			var temp = CreateRackShape();
 			return temp.Vertices();
 		}
 	}
@@ -416,7 +413,7 @@ public static class Extensions
 
 	public static IVertexSource Union(this IVertexSource a, IVertexSource b)
 	{
-		return a.Minus(b);
+		return a.Plus(b);
 	}
 
 	public static IVertexSource rotateZ(this IVertexSource a, double angle)
@@ -424,7 +421,7 @@ public static class Extensions
 		return new VertexSourceApplyTransform(a, Affine.NewRotation(angle));
 	}
 
-	public static IVertexSource translate(this IVertexSource a, Vector2 delta)
+	public static IVertexSource Translate(this IVertexSource a, Vector2 delta)
 	{
 		return new VertexSourceApplyTransform(a, Affine.NewTranslation(delta));
 	}
@@ -449,12 +446,12 @@ public static class Extensions
 		clipper.AddPaths(aPolys, PolyType.ptSubject, true);
 		clipper.AddPaths(bPolys, PolyType.ptClip, true);
 
-		List<List<IntPoint>> intersectedPolys = new List<List<IntPoint>>();
-		clipper.Execute(clipType, intersectedPolys);
+		List<List<IntPoint>> outputPolys = new List<List<IntPoint>>();
+		clipper.Execute(clipType, outputPolys);
 
-		Clipper.CleanPolygons(intersectedPolys);
+		Clipper.CleanPolygons(outputPolys);
 
-		VertexStorage output = intersectedPolys.CreateVertexStorage();
+		VertexStorage output = outputPolys.CreateVertexStorage();
 
 		output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
@@ -467,16 +464,16 @@ public static class Extensions
 	<p>An open source, browser based utility for calculating and drawing involute spur gears. As an improvement over the majority of other freely available scripts and utilities it fully accounts for undercuts. For additional information please head over to my blog posts <a href="http://www.hessmer.org/blog/2014/01/01/online-involute-spur-gear-builder">part 1</a> and <a href="http://www.hessmer.org/blog/2015/07/13/online-involute-spur-gear-builder-part-2/">part 2</a>. If you prefer a standalone utility and you use Windows 64, see <a href="http://dougrogers.blogspot.com/2016/08/gear-bakery-10-port-of-dr-rainer.html">Doug Roger's port to C++</a>.</p>
 	<p>The implementation is inspired by the subtractive process that Michal Zalewski's describes in <a href="http://lcamtuf.coredump.cx/gcnc/ch6/#6.2">part six</a> of his excellent <a href="http://lcamtuf.coredump.cx/gcnc/">Guerrilla guide to CNC machining, mold making, and resin casting</a>.</p>
     <h2>Instructions</h2>
-    <p>Specify desired values in the parameters box and then click on the 'Update' button. The tooth count n1 of gear one defines various configurations: 
+    <p>Specify desired values in the parameters box and then click on the 'Update' button. The tooth count n1 of gear one defines various configurations:
     </p><ul>
         <li>n1 &gt; 0: A regular external gear <br><img src="./Involute Spur Gear Builder_files/RegularSpurGear_Small.png" alt="Regular Spur Gear"></li>
 		<li>n1 = 0: Rack and pinion <br><img src="./Involute Spur Gear Builder_files/RackAndPinion_Small.png" alt="Rack and Pinion"></li>
         <li>n1 &lt; 0: An internal gear as used in planetary gears <br><img src="./Involute Spur Gear Builder_files/InternalGear_Small.png" alt="Internal Gear"></li>
     </ul>
 	<p></p>
-	<p>The tool also supports profile shift to reduce the amount of undercut in gears with low tooth counts. 
+	<p>The tool also supports profile shift to reduce the amount of undercut in gears with low tooth counts.
 
-	
+
 			var g_ExpandToCAGParams = {pathradius: 0.01, resolution: 2};
 
 			function main(params)
@@ -485,7 +482,7 @@ public static class Extensions
 				var qualitySettings = {resolution: params.resolution, stepsPerToothAngle: params.stepsPerToothAngle};
 
 				var gear1 = new Gear({
-					circularPitch: params.circularPitch,
+					circularPitch: params.CircularPitch,
 					pressureAngle: params.pressureAngle,
 					clearance: params.clearance,
 					backlash: params.backlash,
@@ -495,7 +492,7 @@ public static class Extensions
 					qualitySettings: qualitySettings
 				});
 				var gear2 = new Gear({
-					circularPitch: params.circularPitch,
+					circularPitch: params.CircularPitch,
 					pressureAngle: params.pressureAngle,
 					clearance: params.clearance,
 					backlash: params.backlash,
@@ -504,7 +501,7 @@ public static class Extensions
 					profileShift: params.profileShift,
 					qualitySettings: qualitySettings
 				});
-						
+
 				var gearSet = new GearSet(
 					gear1,
 					gear2,
@@ -548,11 +545,11 @@ public static class Extensions
 						return this._createInternalGearShape();
 					}
 					else if (this.gearType == GearType.Rack) {
-						return this._createRackShape();
+						return this.CreateRackShape();
 					}
 				}
 				Gear.prototype._createRegularGearShape = function() {
-					var tooth = this._createSingleTooth();
+					var tooth = this.CreateSingleTooth();
 
 					// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
 					// However, the union operations become more and more complex as the complete gear is built up.
@@ -569,7 +566,7 @@ public static class Extensions
 							centerCornerIndex = i;
 							break;
 						}
-					}				
+					}
 					var outerPoints = [];
 					var outerCorners = [];
 					var outterPointsCount = corners.length - 2;
@@ -615,13 +612,13 @@ public static class Extensions
 							centerCornerIndex = i;
 							break;
 						}
-					}				
+					}
 					var outerCorners = [];
 					for(var i = 2; i < corners.length - 2; i++) {
 						var corner = corners[(i + centerCornerIndex) % corners.length];
 						outerCorners.push(corner);
 					}
-					
+
 					outerCorners.reverse();
 					var cornersCount = outerCorners.length;
 
@@ -633,7 +630,7 @@ public static class Extensions
 							outerCorners.push(rotatedCorner);
 						}
 					}
-					
+
 					var outerCorners = this._smoothConcaveCorners(outerCorners);
 					var outerPoints = [];
 					outerCorners.map(function(corner) { outerPoints.push([corner.x, corner.y]); });
