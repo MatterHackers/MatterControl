@@ -85,6 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				newContainer.Children.Add(child.Clone());
 			}
+
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
 		}
 
