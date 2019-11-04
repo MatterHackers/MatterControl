@@ -38,8 +38,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -381,14 +379,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			tabControl.SelectedTabKey = tabKey;
-		}
-
-		public override void OnDraw(Graphics2D graphics2D)
-		{
-			base.OnDraw(graphics2D);
-
-			var gear = new Gear2D();
-			graphics2D.Render(gear, 300, 300, Color.Green);
 		}
 
 		private async void Instance_OpenNewFile(object sender, string filePath)

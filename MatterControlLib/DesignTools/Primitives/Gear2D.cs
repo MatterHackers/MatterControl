@@ -1,6 +1,6 @@
 ﻿/*
 Involute Spur Gear Builder (c) 2014 Dr. Rainer Hessmer
-ported to C# 2018 by Lars Brubaker
+ported to C# 2019 by Lars Brubaker
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -38,9 +38,15 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	// using Polygons = List<List<IntPoint>>;
-	// using Polygon = List<IntPoint>;
-
+	// Involute Spur Gear Builder
+	// For calculating and drawing involute spur gears.
+	// As an improvement over the majority of other freely available scripts and utilities it fully accounts for undercuts.
+	// For additional information please head over to:
+	// http://www.hessmer.org/blog/2014/01/01/online-involute-spur-gear-builder part 1
+	// http://www.hessmer.org/blog/2015/07/13/online-involute-spur-gear-builder-part-2/ part 2
+	// The implementation is inspired by the subtractive process that Michal Zalewski's describes in
+	// http://lcamtuf.coredump.cx/gcnc/ch6/#6.2 part six of his excellent
+	// http://lcamtuf.coredump.cx/gcnc/ Guerrilla guide to CNC machining, mold making, and resin casting
 	public class Gear2D : VertexSourceLegacySupport
 	{
 		private double _circularPitch = 8;
@@ -72,9 +78,21 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double shiftedAddendum;
 		private double outerRadius;
 		private double angleToothToTooth;
-		private int toothCount = 30;
+
+		private int _toothCount = 30;
+		public int ToothCount
+		{
+			get => _toothCount;
+
+			set
+			{
+				_toothCount = value;
+				CalculateDependants();
+			}
+		}
+
 		private GearType gearType = GearType.External;
-		private int stepsPerToothAngle = 3;
+		private int stepsPerToothAngle = 10;
 		private double pitchDiameter;
 		private double pitchRadius;
 		private Vector2 center = Vector2.Zero;
@@ -103,7 +121,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// this.angle = 0; // angle in degrees of the complete gear (changes during rotation animation)
 
 			// Pitch diameter: Diameter of pitch circle.
-			this.pitchDiameter = this.toothCount / this.diametralPitch;
+			this.pitchDiameter = this.ToothCount / this.diametralPitch;
 			this.pitchRadius = this.pitchDiameter / 2;
 
 			// Addendum: Radial distance from pitch circle to outside circle.
@@ -114,14 +132,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Outer Circle
 			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
-			this.angleToothToTooth = 360 / this.toothCount;
+			this.angleToothToTooth = 360 / this.ToothCount;
 		}
 
 		public override IEnumerable<VertexData> Vertices()
 		{
-			// return CreateRackShape().Vertices();
-			// return CreateRegularGearShape().Vertices();
-			return CreateSingleTooth().tooth.Vertices();
+			IVertexSource shape;
+			// shape = CreateRackShape();
+			shape = CreateRegularGearShape();
+			// shape = CreateInternalGearShape();
+			// shape = CreateSingleTooth().tooth;
+
+			shape = new VertexSourceApplyTransform(shape, Affine.NewScaling(5));
+
+			return shape.Vertices();
 		}
 
 		private IVertexSource CreateRackShape()
@@ -129,17 +153,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			IVertexSource rack = new VertexStorage();
 
 			// we draw one tooth in the middle and then five on either side
-			for (var i = 0; i < toothCount; i++)
+			for (var i = 0; i < ToothCount; i++)
 			{
 				var tooth = this.CreateRackTooth();
-				tooth = tooth.Translate(0, (0.5 + -toothCount / 2 + i) * this.CircularPitch);
+				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2 + i) * this.CircularPitch);
 				rack = rack.Union(tooth);
 			}
 
 			// creating the bar backing the teeth
 			var rightX = -(this.addendum + this.clearance);
 			var width = 4 * this.addendum;
-			var halfHeight = toothCount * this.CircularPitch / 2;
+			var halfHeight = ToothCount * this.CircularPitch / 2;
 			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
 
 			var rackFinal = rack.Union(bar) as VertexStorage;
@@ -158,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var outlinePaths = tooth.tooth;
 
 			// first we need to find the corner that sits at the center
-			for (var i = 1; i < this.toothCount; i++)
+			for (var i = 1; i < this.ToothCount; i++)
 			{
 				var angle = i * this.angleToothToTooth;
 				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
@@ -171,12 +195,75 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (this.centerHoleDiameter > 0)
 			{
 				var radius = this.centerHoleDiameter / 2;
-				var centerhole = new Ellipse(0, 0, radius, radius);
+				var centerhole = new Ellipse(0, 0, radius, radius)
+				{
+					ResolutionScale = 10
+				};
 				gearShape = gearShape.Subtract(centerhole) as VertexStorage;
 			}
 
-			return gearShape;//.RotateZDegrees(-90);
+			return gearShape;// .RotateZDegrees(-90);
 		}
+
+		/*
+		private IVertexSource CreateInternalGearShape()
+		{
+			var singleTooth = this._createInternalToothProfile();
+			// return singleTooth;
+
+			var outlinePaths = singleTooth.getOutlinePaths();
+			var corners = outlinePaths[0].points;
+
+			// first we need to find the corner that sits at the center
+			var centerCornerIndex;
+			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.clearance;
+
+			var delta = 0.0000001;
+			for (var i = 0; i < corners.length; i++)
+			{
+				var corner = corners[i];
+				if (corner.y < delta && (corner.x + radius) < delta)
+				{
+					centerCornerIndex = i;
+					break;
+				}
+			}
+
+			var outerCorners = [];
+			for (var i = 2; i < corners.length - 2; i++)
+			{
+				var corner = corners[(i + centerCornerIndex) % corners.length];
+				outerCorners.push(corner);
+			}
+
+			outerCorners.reverse();
+			var cornersCount = outerCorners.length;
+
+			for (var i = 1; i < this.toothCount; i++)
+			{
+				var angle = i * this.angleToothToTooth;
+				var roatationMatrix = CSG.Matrix4x4.rotationZ(angle);
+				for (var j = 0; j < cornersCount; j++)
+				{
+					var rotatedCorner = outerCorners[j].transform(roatationMatrix);
+					outerCorners.push(rotatedCorner);
+				}
+			}
+
+			var outerCorners = this._smoothConcaveCorners(outerCorners);
+			var outerPoints = [];
+			outerCorners.map(function(corner) { outerPoints.push([corner.x, corner.y]); });
+
+			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
+			var outerRadius = innerRadius + 4 * this.addendum;
+			var outerCircle = CAG.circle({ center: this.center, radius: outerRadius, resolution: this.qualitySettings.resolution});
+			// return outerCircle;
+
+			var gearCutout = CAG.fromPointsNoCheck(outerPoints);
+			// return gearCutout;
+			return outerCircle.subtract(gearCutout);
+		}
+		*/
 
 		private IVertexSource CreateRackTooth()
 		{
@@ -209,7 +296,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		private (IVertexSource tooth, IVertexSource wheel) CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
-			var toothSectorPath = new Arc(Vector2.Zero, new Vector2(this.outerRadius, this.outerRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth));
+			var toothSectorPath = new Arc(Vector2.Zero, new Vector2(this.outerRadius, this.outerRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth))
+			{
+				ResolutionScale = 10
+			};
 
 			var toothCutOut = CreateToothCutout();
 
@@ -218,7 +308,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private IVertexSource CreateToothCutout()
 		{
-			var angleToothToTooth = 360 / this.toothCount;
+			var angleToothToTooth = 360 / this.ToothCount;
 			var angleStepSize = this.angleToothToTooth / this.stepsPerToothAngle;
 
 			IVertexSource toothCutout = new VertexStorage();
@@ -320,13 +410,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 
 			var tooth = enlargedPinion.CreateSingleTooth();
-			//return tooth.RotateZDegrees(90 + 180 / enlargedPinion.toothCount); // we need a tooth pointing to the left
+			// return tooth.RotateZDegrees(90 + 180 / enlargedPinion.toothCount); // we need a tooth pointing to the left
 		}
 
 		private IVertexSource _createInternalToothProfile()
 		{
 			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
-			var angleToothToTooth = 360 / this.toothCount;
+			var angleToothToTooth = 360 / this.ToothCount;
 			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
 			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
 
@@ -338,7 +428,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			fullSector.LineTo(-(radius * cos), -radius * sin);
 
 			var innerRadius = radius - (2 * this.addendum + this.clearance);
-			var innerCircle = new Ellipse(this.center, innerRadius);
+			var innerCircle = new Ellipse(this.center, innerRadius)
+			{
+				ResolutionScale = 10
+			};
+
 			var sector = fullSector.Subtract(innerCircle);
 
 			var cutterTemplate = this._createInternalToothCutter();
@@ -353,7 +447,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			for (var i = 1; i < stepsPerTooth; i++)
 			{
 				var pinionRotationAngle = i * angleStepSize;
-				var pinionCenterRayAngle = -pinionRotationAngle * pinion.toothCount / this.toothCount;
+				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
 
 				// var cutter = cutterTemplate;
 				cutter = cutterTemplate.RotateZDegrees(pinionRotationAngle);
@@ -485,153 +579,3 @@ public static class Extensions
 		return output;
 	}
 }
-
-/*
- 	<h1>Involute Spur Gear Builder <span style="font-size:10px">(C) 2014 Dr. Rainer Hessmer</span></h1>
-	<p>An open source, browser based utility for calculating and drawing involute spur gears. As an improvement over the majority of other freely available scripts and utilities it fully accounts for undercuts. For additional information please head over to my blog posts <a href="http://www.hessmer.org/blog/2014/01/01/online-involute-spur-gear-builder">part 1</a> and <a href="http://www.hessmer.org/blog/2015/07/13/online-involute-spur-gear-builder-part-2/">part 2</a>. If you prefer a standalone utility and you use Windows 64, see <a href="http://dougrogers.blogspot.com/2016/08/gear-bakery-10-port-of-dr-rainer.html">Doug Roger's port to C++</a>.</p>
-	<p>The implementation is inspired by the subtractive process that Michal Zalewski's describes in <a href="http://lcamtuf.coredump.cx/gcnc/ch6/#6.2">part six</a> of his excellent <a href="http://lcamtuf.coredump.cx/gcnc/">Guerrilla guide to CNC machining, mold making, and resin casting</a>.</p>
-    <h2>Instructions</h2>
-    <p>Specify desired values in the parameters box and then click on the 'Update' button. The tooth count n1 of gear one defines various configurations:
-    </p><ul>
-        <li>n1 &gt; 0: A regular external gear <br><img src="./Involute Spur Gear Builder_files/RegularSpurGear_Small.png" alt="Regular Spur Gear"></li>
-		<li>n1 = 0: Rack and pinion <br><img src="./Involute Spur Gear Builder_files/RackAndPinion_Small.png" alt="Rack and Pinion"></li>
-        <li>n1 &lt; 0: An internal gear as used in planetary gears <br><img src="./Involute Spur Gear Builder_files/InternalGear_Small.png" alt="Internal Gear"></li>
-    </ul>
-	<p></p>
-	<p>The tool also supports profile shift to reduce the amount of undercut in gears with low tooth counts.
-
-
-			var g_ExpandToCAGParams = {pathradius: 0.01, resolution: 2};
-
-			function main(params)
-			{
-				// Main entry point; here we construct our solid:
-				var qualitySettings = {resolution: params.resolution, stepsPerToothAngle: params.stepsPerToothAngle};
-
-				var gear1 = new Gear({
-					circularPitch: params.CircularPitch,
-					pressureAngle: params.pressureAngle,
-					clearance: params.clearance,
-					backlash: params.backlash,
-					toothCount: params.wheel1ToothCount,
-					centerHoleDiameter: params.wheel1CenterHoleDiamater,
-					profileShift: -params.profileShift,
-					qualitySettings: qualitySettings
-				});
-				var gear2 = new Gear({
-					circularPitch: params.CircularPitch,
-					pressureAngle: params.pressureAngle,
-					clearance: params.clearance,
-					backlash: params.backlash,
-					toothCount: params.wheel2ToothCount,
-					centerHoleDiameter: params.wheel2CenterHoleDiamater,
-					profileShift: params.profileShift,
-					qualitySettings: qualitySettings
-				});
-
-				var gearSet = new GearSet(
-					gear1,
-					gear2,
-					params.showOption);
-
-				var shape = gearSet.createShape();
-				return shape;
-			}
-
-			function getParameterDefinitions() {
-				return [
-					{ name: 'circularPitch', caption: 'Circular pitch (the circumference of the pitch circle divided by the number of teeth):', type: 'float', initial: 8 },
-					{ name: 'pressureAngle', caption: 'Pressure Angle (common values are 14.5, 20 and 25 degrees):', type: 'float', initial: 20 },
-					{ name: 'clearance', caption: 'Clearance (minimal distance between the apex of a tooth and the trough of the other gear; in length units):', type: 'float', initial: 0.05 },
-					{ name: 'backlash', caption: 'Backlash (minimal distance between meshing gears; in length units):', type: 'float', initial: 0.05 },
-					{ name: 'profileShift', caption: 'Profile Shift (indicates what portion of gear one\'s addendum height should be shifted to gear two. E.g., a value of 0.1 means the adddendum of gear two is increased by a factor of 1.1 while the height of the addendum of gear one is reduced to 0.9 of its normal height.):', type: 'float', initial: 0.0 },
-					{ name: 'wheel1ToothCount', caption: 'Wheel 1 Tooth Count (n1 > 0: external gear; n1 = 0: rack; n1 < 0: internal gear):', type: 'int', initial: 30 },
-					{ name: 'wheel1CenterHoleDiamater', caption: 'Wheel 1 Center Hole Diameter (0 for no hole):', type: 'float', initial: 4 },
-					{ name: 'wheel2ToothCount', caption: 'Wheel 2 Tooth Count:', type: 'int', initial: 8 },
-					{ name: 'wheel2CenterHoleDiamater', caption: 'Wheel 2 Center Hole Diameter (0 for no hole):', type: 'float', initial: 4 },
-					{ name: 'showOption', caption: 'Show:', type: 'choice', values: [3, 1, 2], initial: 3, captions: ["Wheel 1 and Wheel 2", "Wheel 1 Only", "Wheel 2 Only"]},
-					{ name: 'stepsPerToothAngle', caption: 'Rotation steps per tooth angle when assembling the tooth profile (3 = draft, 10 = good quality). Increasing the value will result in smoother profiles at the cost of significantly higher calcucation time. Incease in small increments and check the result by zooming in.', type: 'int', initial: 3 },
-					{ name: 'resolution', caption: 'Number of segments per 360 degree of rotation (only used for circles and arcs); 90 is plenty:', type: 'int', initial: 30 },
-				];
-			}
-
-			// Start base class Gear
-			var Gear = (function () {
-				Gear.prototype.getZeroedShape = function() {
-					// return the gear shape center on the origin and rotation angle 0.
-					if (this.zeroedShape == null) {
-						this.zeroedShape = this._createZeroedShape();
-					}
-					return this.zeroedShape;
-				}
-				Gear.prototype._createZeroedShape = function() {
-					if (this.gearType == GearType.Regular) {
-						return this._createRegularGearShape();
-					}
-					else if (this.gearType == GearType.Internal) {
-						return this._createInternalGearShape();
-					}
-					else if (this.gearType == GearType.Rack) {
-						return this.CreateRackShape();
-					}
-				}
-				Gear.prototype._createInternalGearShape = function() {
-					var singleTooth = this._createInternalToothProfile();
-					//return singleTooth;
-
-					var outlinePaths = singleTooth.getOutlinePaths();
-					var corners = outlinePaths[0].points;
-
-					// first we need to find the corner that sits at the center
-					var centerCornerIndex;
-					var radius = this.pitchRadius + ( 1 + this.profileShift) * this.addendum + this.clearance;
-
-					var delta = 0.0000001;
-					for(var i = 0; i < corners.length; i++) {
-						var corner = corners[i];
-						if (corner.y < delta && (corner.x + radius) < delta) {
-							centerCornerIndex = i;
-							break;
-						}
-					}
-					var outerCorners = [];
-					for(var i = 2; i < corners.length - 2; i++) {
-						var corner = corners[(i + centerCornerIndex) % corners.length];
-						outerCorners.push(corner);
-					}
-
-					outerCorners.reverse();
-					var cornersCount = outerCorners.length;
-
-					for(var i = 1; i < this.toothCount; i++) {
-						var angle = i * this.angleToothToTooth;
-						var roatationMatrix = CSG.Matrix4x4.rotationZ(angle)
-						for (var j = 0; j < cornersCount; j++) {
-							var rotatedCorner = outerCorners[j].transform(roatationMatrix);
-							outerCorners.push(rotatedCorner);
-						}
-					}
-
-					var outerCorners = this._smoothConcaveCorners(outerCorners);
-					var outerPoints = [];
-					outerCorners.map(function(corner) { outerPoints.push([corner.x, corner.y]); });
-
-					var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
-					var outerRadius = innerRadius + 4 * this.addendum;
-					var outerCircle = CAG.circle({center: this.center, radius: outerRadius, resolution: this.qualitySettings.resolution});
-					//return outerCircle;
-
-					var gearCutout = CAG.fromPointsNoCheck(outerPoints);
-					//return gearCutout;
-					return outerCircle.subtract(gearCutout);
-				}
-				Gear.prototype.pointsToString = function(points) {
-					var result = "[";
-					points.map(function(point) {
-						result += "[" + point.x + "," + point.y + "],";
-					});
-					return result + "]";
-				}
-				return Gear;
-			})();
-*/
