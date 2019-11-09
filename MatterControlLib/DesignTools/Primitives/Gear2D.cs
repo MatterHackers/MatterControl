@@ -115,10 +115,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			// convert circular pitch to diametral pitch
 			this.diametralPitch = Math.PI / this.CircularPitch; // Ratio of the number of teeth to the pitch diameter
-			// this.circularPitch = Math.PI / this.diametralPitch;
+																// this.circularPitch = Math.PI / this.diametralPitch;
 
 			this.center = Vector2.Zero; // center of the gear
-			// this.angle = 0; // angle in degrees of the complete gear (changes during rotation animation)
+										// this.angle = 0; // angle in degrees of the complete gear (changes during rotation animation)
 
 			// Pitch diameter: Diameter of pitch circle.
 			this.pitchDiameter = this.ToothCount / this.diametralPitch;
@@ -142,6 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			shape = CreateRegularGearShape();
 			// shape = CreateInternalGearShape();
 			// shape = CreateSingleTooth().tooth;
+			// shape = CreateInternalGearShape();
 
 			shape = new VertexSourceApplyTransform(shape, Affine.NewScaling(5));
 
@@ -205,65 +206,66 @@ namespace MatterHackers.MatterControl.DesignTools
 			return gearShape;// .RotateZDegrees(-90);
 		}
 
-		/*
 		private IVertexSource CreateInternalGearShape()
 		{
 			var singleTooth = this._createInternalToothProfile();
 			// return singleTooth;
 
-			var outlinePaths = singleTooth.getOutlinePaths();
-			var corners = outlinePaths[0].points;
+			var outlinePaths = singleTooth;
+			var corners = outlinePaths as VertexStorage;
 
 			// first we need to find the corner that sits at the center
-			var centerCornerIndex;
+			var centerCornerIndex = 0;
 			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.clearance;
 
 			var delta = 0.0000001;
-			for (var i = 0; i < corners.length; i++)
+			for (var i = 0; i < corners.Count; i++)
 			{
 				var corner = corners[i];
-				if (corner.y < delta && (corner.x + radius) < delta)
+				if (corner.Y < delta && (corner.X + radius) < delta)
 				{
 					centerCornerIndex = i;
 					break;
 				}
 			}
 
-			var outerCorners = [];
-			for (var i = 2; i < corners.length - 2; i++)
+			var outerCorners = new VertexStorage();
+			for (var i = 2; i < corners.Count - 2; i++)
 			{
-				var corner = corners[(i + centerCornerIndex) % corners.length];
-				outerCorners.push(corner);
+				var corner = corners[(i + centerCornerIndex) % corners.Count];
+				outerCorners.add(corner.position);
 			}
 
-			outerCorners.reverse();
-			var cornersCount = outerCorners.length;
+			var reversedOuterCorners = new VertexStorage();
+			foreach (var vertex in new ReversePath(outerCorners).Vertices())
+			{
+				reversedOuterCorners.add(vertex.position);
+			}
+			outerCorners = reversedOuterCorners;
 
-			for (var i = 1; i < this.toothCount; i++)
+			var cornersCount = outerCorners.Count;
+
+			for (var i = 1; i < this.ToothCount; i++)
 			{
 				var angle = i * this.angleToothToTooth;
-				var roatationMatrix = CSG.Matrix4x4.rotationZ(angle);
+				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
 				for (var j = 0; j < cornersCount; j++)
 				{
-					var rotatedCorner = outerCorners[j].transform(roatationMatrix);
-					outerCorners.push(rotatedCorner);
+					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
+					outerCorners.add(rotatedCorner);
 				}
 			}
 
-			var outerCorners = this._smoothConcaveCorners(outerCorners);
-			var outerPoints = [];
-			outerCorners.map(function(corner) { outerPoints.push([corner.x, corner.y]); });
+			outerCorners = this._smoothConcaveCorners(outerCorners) as VertexStorage;
 
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
-			var outerCircle = CAG.circle({ center: this.center, radius: outerRadius, resolution: this.qualitySettings.resolution});
+			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
 			// return outerCircle;
 
-			var gearCutout = CAG.fromPointsNoCheck(outerPoints);
 			// return gearCutout;
-			return outerCircle.subtract(gearCutout);
+			return outerCircle.Subtract(outerCorners);
 		}
-		*/
 
 		private IVertexSource CreateRackTooth()
 		{
@@ -396,7 +398,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
 			var pinion = this.connectedGear;
 
-			throw new NotImplementedException();
 			var enlargedPinion = new Gear2D()
 			{
 				CircularPitch = pinion.CircularPitch,
@@ -410,7 +411,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 
 			var tooth = enlargedPinion.CreateSingleTooth();
-			// return tooth.RotateZDegrees(90 + 180 / enlargedPinion.toothCount); // we need a tooth pointing to the left
+			return tooth.tooth.RotateZDegrees(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
 		}
 
 		private IVertexSource _createInternalToothProfile()
@@ -562,12 +563,12 @@ public static class Extensions
 		List<List<IntPoint>> aPolys = a.CreatePolygons();
 		List<List<IntPoint>> bPolys = b.CreatePolygons();
 
-		Clipper clipper = new Clipper();
+		var clipper = new Clipper();
 
 		clipper.AddPaths(aPolys, PolyType.ptSubject, true);
 		clipper.AddPaths(bPolys, PolyType.ptClip, true);
 
-		List<List<IntPoint>> outputPolys = new List<List<IntPoint>>();
+		var outputPolys = new List<List<IntPoint>>();
 		clipper.Execute(clipType, outputPolys);
 
 		Clipper.CleanPolygons(outputPolys);
