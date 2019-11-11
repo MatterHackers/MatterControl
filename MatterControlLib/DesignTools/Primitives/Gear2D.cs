@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double pitchRadius;
 		private Vector2 center = Vector2.Zero;
 		private Gear2D connectedGear;
-		private int centerHoleDiameter = 4;
+		private double centerHoleDiameter = 4;
 
 		public enum GearType
 		{
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Outer Circle
 			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
-			this.angleToothToTooth = 360 / this.ToothCount;
+			this.angleToothToTooth = 360.0 / this.ToothCount;
 		}
 
 		public override IEnumerable<VertexData> Vertices()
@@ -310,7 +310,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private IVertexSource CreateToothCutout()
 		{
-			var angleToothToTooth = 360 / this.ToothCount;
+			var angleToothToTooth = 360.0 / this.ToothCount;
 			var angleStepSize = this.angleToothToTooth / this.stepsPerToothAngle;
 
 			IVertexSource toothCutout = new VertexStorage();
