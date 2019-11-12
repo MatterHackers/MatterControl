@@ -66,14 +66,44 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private double diametralPitch;
 		private double addendum;
-		private double clearance = .05;
+		private double _clearance = .05;
+		public double Clearance
+		{
+			get => _clearance;
+
+			set
+			{
+				_clearance = value;
+				CalculateDependants();
+			}
+		}
 
 		// Most common stock gears have a 20° pressure angle, with 14½° and 25° pressure angle gears being much less
 		// common. Increasing the pressure angle increases the width of the base of the gear tooth, leading to greater strength and load carrying capacity. Decreasing
 		// the pressure angle provides lower backlash, smoother operation and less sensitivity to manufacturing errors. (reference: http://en.wikipedia.org/wiki/Involute_gear)
-		private double pressureAngle = 20;
+		private double _pressureAngle = 20;
+		public double PressureAngle
+		{
+			get => _pressureAngle;
 
-		private double backlash = .05;
+			set
+			{
+				_pressureAngle = value;
+				CalculateDependants();
+			}
+		}
+
+		private double _backlash = .05;
+		public double Backlash
+		{
+			get => _backlash;
+
+			set
+			{
+				_backlash = value;
+				CalculateDependants();
+			}
+		}
 		private double profileShift = 0;
 		private double shiftedAddendum;
 		private double outerRadius;
@@ -97,7 +127,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		private double pitchRadius;
 		private Vector2 center = Vector2.Zero;
 		private Gear2D connectedGear;
-		private double centerHoleDiameter = 4;
+		private double _centerHoleDiameter = 4;
+		public double CenterHoleDiameter
+		{
+			get => _centerHoleDiameter;
+
+			set
+			{
+				_centerHoleDiameter = value;
+				CalculateDependants();
+			}
+		}
 
 		public enum GearType
 		{
@@ -160,7 +200,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// creating the bar backing the teeth
-			var rightX = -(this.addendum + this.clearance);
+			var rightX = -(this.addendum + this.Clearance);
 			var width = 4 * this.addendum;
 			var halfHeight = ToothCount * this.CircularPitch / 2;
 			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
@@ -191,9 +231,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var gearShape = tooth.wheel.Subtract(outlinePaths);
 
-			if (this.centerHoleDiameter > 0)
+			if (this.CenterHoleDiameter > 0)
 			{
-				var radius = this.centerHoleDiameter / 2;
+				var radius = this.CenterHoleDiameter / 2;
 				var centerhole = new Ellipse(0, 0, radius, radius)
 				{
 					ResolutionScale = 10
@@ -214,7 +254,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// first we need to find the corner that sits at the center
 			var centerCornerIndex = 0;
-			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.clearance;
+			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.Clearance;
 
 			var delta = 0.0000001;
 			for (var i = 0; i < corners.Count; i++)
@@ -256,7 +296,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			outerCorners = this._smoothConcaveCorners(outerCorners) as VertexStorage;
 
-			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
+			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
 			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
 			// return outerCircle;
@@ -268,18 +308,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IVertexSource CreateRackTooth()
 		{
 			var toothWidth = this.CircularPitch / 2;
-			var toothDepth = this.addendum + this.clearance;
+			var toothDepth = this.addendum + this.Clearance;
 
-			var sinPressureAngle = Math.Sin(this.pressureAngle * Math.PI / 180);
-			var cosPressureAngle = Math.Cos(this.pressureAngle * Math.PI / 180);
+			var sinPressureAngle = Math.Sin(this.PressureAngle * Math.PI / 180);
+			var cosPressureAngle = Math.Cos(this.PressureAngle * Math.PI / 180);
 
 			// if a positive backlash is defined then we widen the trapezoid accordingly.
 			// Each side of the tooth needs to widened by a fourth of the backlash (vertical to cutter faces).
-			var dx = this.backlash / 4 / cosPressureAngle;
+			var dx = this.Backlash / 4 / cosPressureAngle;
 
-			var leftDepth = this.addendum + this.clearance;
+			var leftDepth = this.addendum + this.Clearance;
 
-			var upperLeftCorner = new Vector2(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.clearance) * sinPressureAngle);
+			var upperLeftCorner = new Vector2(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle);
 			var upperRightCorner = new Vector2(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle);
 			var lowerRightCorner = new Vector2(upperRightCorner[0], -upperRightCorner[1]);
 			var lowerLeftCorner = new Vector2(upperLeftCorner[0], -upperLeftCorner[1]);
@@ -361,15 +401,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			// we create a trapezoidal cutter as described at http://lcamtuf.coredump.cx/gcnc/ch6/ under the section 'Putting it all together'
 			var toothWidth = this.CircularPitch / 2;
 
-			var cutterDepth = this.addendum + this.clearance;
+			var cutterDepth = this.addendum + this.Clearance;
 			var cutterOutsideLength = 3 * this.addendum;
 
-			var sinPressureAngle = Math.Sin(this.pressureAngle * Math.PI / 180.0);
-			var cosPressureAngle = Math.Cos(this.pressureAngle * Math.PI / 180.0);
+			var sinPressureAngle = Math.Sin(this.PressureAngle * Math.PI / 180.0);
+			var cosPressureAngle = Math.Cos(this.PressureAngle * Math.PI / 180.0);
 
 			// if a positive backlash is defined then we widen the trapezoid accordingly.
 			// Each side of the tooth needs to widened by a fourth of the backlash (vertical to cutter faces).
-			var dx = this.backlash / 2 / cosPressureAngle;
+			var dx = this.Backlash / 2 / cosPressureAngle;
 
 			var lowerRightCorner = new Vector2(toothWidth / 2 + dx - cutterDepth * sinPressureAngle, this.pitchRadius + this.profileShift * this.addendum - cutterDepth);
 			var upperRightCorner = new Vector2(toothWidth / 2 + dx + cutterOutsideLength * sinPressureAngle, this.pitchRadius + this.profileShift * this.addendum + cutterOutsideLength);
@@ -414,7 +454,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private IVertexSource _createInternalToothProfile()
 		{
-			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.clearance;
+			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var angleToothToTooth = 360 / this.ToothCount;
 			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
 			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
@@ -426,7 +466,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			fullSector.LineTo(-radius, 0);
 			fullSector.LineTo(-(radius * cos), -radius * sin);
 
-			var innerRadius = radius - (2 * this.addendum + this.clearance);
+			var innerRadius = radius - (2 * this.addendum + this.Clearance);
 			var innerCircle = new Ellipse(this.center, innerRadius)
 			{
 				ResolutionScale = 10
