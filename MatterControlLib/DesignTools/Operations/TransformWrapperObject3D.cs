@@ -99,6 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(ItemWithTransform.Children);
 				});
 			}
+
 			Invalidate(InvalidateType.Children);
 		}
 

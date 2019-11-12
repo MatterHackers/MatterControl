@@ -132,28 +132,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return objectToTranslate;
 		}
 
-		private static VertexStorage CombinePaths(IVertexSource a, IVertexSource b, ClipType clipType)
-		{
-			List<List<IntPoint>> aPolys = a.CreatePolygons();
-			List<List<IntPoint>> bPolys = b.CreatePolygons();
-
-			Clipper clipper = new Clipper();
-
-			clipper.AddPaths(aPolys, PolyType.ptSubject, true);
-			clipper.AddPaths(bPolys, PolyType.ptClip, true);
-
-			List<List<IntPoint>> intersectedPolys = new List<List<IntPoint>>();
-			clipper.Execute(clipType, intersectedPolys);
-
-			Clipper.CleanPolygons(intersectedPolys);
-
-			VertexStorage output = intersectedPolys.CreateVertexStorage();
-
-			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
-
-			return output;
-		}
-
 		public static Affine GetCenteringTransformExpandedToRadius(this IVertexSource vertexSource, double radius)
 		{
 			var circle = SmallestEnclosingCircle.MakeCircle(vertexSource.Vertices().Select((v) => new Vector2(v.position.X, v.position.Y)));
@@ -279,16 +257,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				Mesh = finalMesh
 			};
-		}
-
-		public static IVertexSource Minus(this IVertexSource a, IVertexSource b)
-		{
-			return CombinePaths(a, b, ClipType.ctDifference);
-		}
-
-		public static IVertexSource Plus(this IVertexSource a, IVertexSource b)
-		{
-			return CombinePaths(a, b, ClipType.ctUnion);
 		}
 
 		public static double XSize(this IObject3D item)
