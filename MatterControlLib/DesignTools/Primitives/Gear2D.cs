@@ -144,8 +144,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			// shape = CreateSingleTooth().tooth;
 			// shape = CreateInternalGearShape();
 
-			shape = new VertexSourceApplyTransform(shape, Affine.NewScaling(5));
-
 			return shape.Vertices();
 		}
 
