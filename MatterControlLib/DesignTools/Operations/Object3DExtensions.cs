@@ -49,13 +49,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public static class Object3DExtensions
 	{
-
 		public static Color BlendHsl(string a, string b, int index, int count)
 		{
 			return PrimitiveColors[a].BlendHsl(PrimitiveColors[b], 1.0 / (count + 1.0) * index);
 		}
 
 		static Dictionary<string, Color> _primitiveColors;
+
 		public static Dictionary<string, Color> PrimitiveColors
 		{
 			get
