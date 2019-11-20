@@ -206,14 +206,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			var enlargedPinion = new Gear2D()
 			{
 				CircularPitch = pinion.CircularPitch,
-				// pressureAngle: pinion.pressureAngle,
-				// clearance: -pinion.clearance,
-				// backlash: -pinion.backlash,
-				// toothCount: pinion.toothCount,
-				// centerHoleDiameter: 0,
-				// profileShift: pinion.profileShift,
-				// stepsPerToothAngle: pinion.stepsPerToothAngle
+				PressureAngle = pinion.PressureAngle,
+				Clearance = -pinion.Clearance,
+				Backlash = -pinion.Backlash,
+				ToothCount = pinion.ToothCount,
+				CenterHoleDiameter = 0,
+				profileShift = pinion.profileShift,
+				stepsPerToothAngle = pinion.stepsPerToothAngle
 			};
+
+			enlargedPinion.CalculateDependants();
 
 			var tooth = enlargedPinion.CreateSingleTooth();
 			return tooth.tooth.RotateZDegrees(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
