@@ -424,18 +424,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			IVertexSource rack = new VertexStorage();
 
-			// we draw one tooth in the middle and then five on either side
 			for (var i = 0; i < ToothCount; i++)
 			{
 				var tooth = this.CreateRackTooth();
-				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2 + i) * this.CircularPitch);
+				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2.0 + i) * this.CircularPitch);
 				rack = rack.Union(tooth);
 			}
 
 			// creating the bar backing the teeth
 			var rightX = -(this.addendum + this.Clearance);
 			var width = 4 * this.addendum;
-			var halfHeight = ToothCount * this.CircularPitch / 2;
+			var halfHeight = ToothCount * this.CircularPitch / 2.0;
 			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
 
 			var rackFinal = rack.Union(bar) as VertexStorage;
