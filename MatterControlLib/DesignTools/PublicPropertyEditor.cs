@@ -151,8 +151,21 @@ namespace MatterHackers.MatterControl.DesignTools
 							Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0)
 						};
 
-						var section = new SectionWidget(sectionStart.Title, column, theme);
+						bool expanded = true;
+
+						var sectionState = item as ISectionState;
+						if (sectionState != null)
+						{
+							expanded = sectionState.GetSectionExpansion(sectionStart.Title);
+						}
+
+						var section = new SectionWidget(sectionStart.Title, column, theme, expanded: expanded);
 						theme.ApplyBoxStyle(section);
+
+						if (sectionState != null)
+						{
+							section.ExpandedChanged += (s, e) => sectionState.SectionExpansionChanged(sectionStart.Title, e);
+						}
 
 						mainContainer.AddChild(section);
 

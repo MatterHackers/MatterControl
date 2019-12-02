@@ -33,8 +33,10 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IEditorDraw
+	public interface ISectionState
 	{
-		void DrawEditor(InteractionLayer interactionLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw);
+		void SectionExpansionChanged(string sectionName, bool expanded);
+
+		bool GetSectionExpansion(string sectionName);
 	}
 }
