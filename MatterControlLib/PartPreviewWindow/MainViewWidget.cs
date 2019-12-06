@@ -69,6 +69,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Push TouchScreenMode into GuiWidget
 			GuiWidget.TouchScreenMode = UserSettings.Instance.IsTouchScreen;
 
+			var normalUi = true;
+			if (normalUi)
+			{
+				AddStandardUi(theme);
+				ApplicationController.Instance.WorkspacesChanged += Workspaces_Changed;
+				ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
+				tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
+			}
+			else
+			{
+				AddConnectUi(theme);
+			}
+
+			// Register listeners
+			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
+
+			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
+
+			ApplicationController.Instance.MainView = this;
+		}
+
+		private async void AddConnectUi(ThemeConfig theme)
+		{
+			await ProfileManager.CreatePrinterAsync("Pulse", "S-500", "Pulse S-500");
+
+			if (ApplicationController.Instance.ActivePrinters.Any())
+			{
+				var activePrinter = ApplicationController.Instance.ActivePrinters.First();
+				var printerName = new TextWidget(activePrinter.Settings.GetValue(SettingsKey.printer_name), pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+				{
+					//VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Center
+				};
+				this.AddChild(printerName);
+			}
+			
+			this.AddChild(new TextWidget("Ready to Print".Localize(), pointSize: 18, textColor: theme.TextColor)
+			{
+				//VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			});
+
+			var buttonText = new TextWidget("Select file to print".Localize() + "...", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				//VAnchor = VAnchor.Center,
+				HAnchor = HAnchor.Center
+			};
+			this.AddChild(buttonText);
+		}
+
+		private void AddStandardUi(ThemeConfig theme)
+		{
 			var extensionArea = new LeftClipFlowLayoutWidget()
 			{
 				BackgroundColor = theme.TabBarBackground,
@@ -355,16 +407,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.CreateNetworkStatusPanel(theme));
 
 			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
-
-			// Register listeners
-			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
-			ApplicationController.Instance.WorkspacesChanged += Workspaces_Changed;
-			ApplicationController.Instance.Tasks.TasksChanged += Tasks_TasksChanged;
-			tabControl.ActiveTabChanged += TabControl_ActiveTabChanged;
-
-			ApplicationController.Instance.ShellFileOpened += this.Instance_OpenNewFile;
-
-			ApplicationController.Instance.MainView = this;
 		}
 
 		private void SetInitialTab()
@@ -743,7 +785,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.WorkspacesChanged -= Workspaces_Changed;
 			ApplicationController.Instance.Tasks.TasksChanged -= Tasks_TasksChanged;
 			ApplicationController.Instance.ShellFileOpened -= Instance_OpenNewFile;
-			tabControl.ActiveTabChanged -= TabControl_ActiveTabChanged;
+			if (tabControl != null)
+			{
+				tabControl.ActiveTabChanged -= TabControl_ActiveTabChanged;
+			}
 
 			unregisterEvents?.Invoke(this, null);
 			base.OnClosed(e);
