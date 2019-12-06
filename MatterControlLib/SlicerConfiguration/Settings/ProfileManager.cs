@@ -613,7 +613,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return importSuccessful;
 		}
 
-		internal static async Task<PrinterConfig> CreatePrinterAsync(string make, string model, string printerName)
+		public static async Task<PrinterConfig> CreatePrinterAsync(string make, string model, string printerName)
 		{
 			string guid = Guid.NewGuid().ToString();
 
