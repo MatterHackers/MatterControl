@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public SettingsRow(string title, string helpText, GuiWidget guiWidget, ThemeConfig theme)
-			: this (title, helpText, theme)
+			: this(title, helpText, theme)
 		{
 			this.Padding = new BorderDouble(right: theme.DefaultContainerPadding);
 

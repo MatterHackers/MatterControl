@@ -49,7 +49,74 @@ namespace MatterHackers.MatterControl.DesignTools
 	// http://lcamtuf.coredump.cx/gcnc/ Guerrilla guide to CNC machining, mold making, and resin casting
 	public class Gear2D : VertexSourceLegacySupport
 	{
+		private double _backlash = .05;
+		private double _centerHoleDiameter = 4;
 		private double _circularPitch = 8;
+
+		private double _clearance = .05;
+
+		// Most common stock gears have a 20° pressure angle, with 14½° and 25° pressure angle gears being much less
+		// common. Increasing the pressure angle increases the width of the base of the gear tooth, leading to greater strength and load carrying capacity. Decreasing
+		// the pressure angle provides lower backlash, smoother operation and less sensitivity to manufacturing errors. (reference: http://en.wikipedia.org/wiki/Involute_gear)
+		private double _pressureAngle = 20;
+
+		private int _toothCount = 30;
+
+		private double addendum;
+
+		private double angleToothToTooth;
+
+		private Vector2 center = Vector2.Zero;
+
+		private Gear2D connectedGear;
+
+		private double diametralPitch;
+
+		private double outerRadius;
+
+		private double pitchDiameter;
+
+		private double pitchRadius;
+
+		private double profileShift = 0;
+
+		private double shiftedAddendum;
+
+		private int stepsPerToothAngle = 10;
+
+		public Gear2D()
+		{
+			CalculateDependants();
+		}
+
+		public enum GearTypes
+		{
+			External,
+			Internal,
+			Rack
+		}
+
+		public double Backlash
+		{
+			get => _backlash;
+
+			set
+			{
+				_backlash = value;
+				CalculateDependants();
+			}
+		}
+
+		public double CenterHoleDiameter
+		{
+			get => _centerHoleDiameter;
+
+			set
+			{
+				_centerHoleDiameter = value;
+				CalculateDependants();
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets distance from one face of a tooth to the corresponding face of an adjacent tooth on the same gear, measured along the pitch circle.
@@ -64,9 +131,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private double diametralPitch;
-		private double addendum;
-		private double _clearance = .05;
 		public double Clearance
 		{
 			get => _clearance;
@@ -78,10 +142,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		// Most common stock gears have a 20° pressure angle, with 14½° and 25° pressure angle gears being much less
-		// common. Increasing the pressure angle increases the width of the base of the gear tooth, leading to greater strength and load carrying capacity. Decreasing
-		// the pressure angle provides lower backlash, smoother operation and less sensitivity to manufacturing errors. (reference: http://en.wikipedia.org/wiki/Involute_gear)
-		private double _pressureAngle = 20;
+		private GearTypes _gearType = GearTypes.External;
+		public GearTypes GearType
+		{
+			get => _gearType;
+
+			set
+			{
+				_gearType = value;
+				CalculateDependants();
+			}
+		}
+
 		public double PressureAngle
 		{
 			get => _pressureAngle;
@@ -93,23 +165,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private double _backlash = .05;
-		public double Backlash
-		{
-			get => _backlash;
-
-			set
-			{
-				_backlash = value;
-				CalculateDependants();
-			}
-		}
-		private double profileShift = 0;
-		private double shiftedAddendum;
-		private double outerRadius;
-		private double angleToothToTooth;
-
-		private int _toothCount = 30;
 		public int ToothCount
 		{
 			get => _toothCount;
@@ -121,34 +176,175 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private GearType gearType = GearType.External;
-		private int stepsPerToothAngle = 10;
-		private double pitchDiameter;
-		private double pitchRadius;
-		private Vector2 center = Vector2.Zero;
-		private Gear2D connectedGear;
-		private double _centerHoleDiameter = 4;
-		public double CenterHoleDiameter
+		private int _internalToothCount;
+		public int InternalToothCount
 		{
-			get => _centerHoleDiameter;
+			get => _internalToothCount;
 
 			set
 			{
-				_centerHoleDiameter = value;
+				_internalToothCount = value;
 				CalculateDependants();
 			}
 		}
 
-		public enum GearType
+		public override IEnumerable<VertexData> Vertices()
 		{
-			External,
-			Internal,
-			Rack
+			IVertexSource shape = null;
+
+			switch (GearType)
+			{
+				case GearTypes.External:
+					shape = CreateExternalGearShape();
+					break;
+
+				case GearTypes.Internal:
+					shape = CreateInternalGearShape();
+					break;
+
+				case GearTypes.Rack:
+					shape = CreateRackShape();
+					break;
+			}
+
+			return shape.Vertices();
 		}
 
-		public Gear2D()
+		private IVertexSource CreateInternalToothCutter()
 		{
-			CalculateDependants();
+			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
+			var pinion = this.connectedGear;
+
+			var enlargedPinion = new Gear2D()
+			{
+				CircularPitch = pinion.CircularPitch,
+				PressureAngle = pinion.PressureAngle,
+				Clearance = -pinion.Clearance,
+				Backlash = -pinion.Backlash,
+				ToothCount = pinion.ToothCount,
+				CenterHoleDiameter = 0,
+				profileShift = pinion.profileShift,
+				stepsPerToothAngle = pinion.stepsPerToothAngle
+			};
+
+			enlargedPinion.CalculateDependants();
+
+			var tooth = enlargedPinion.CreateSingleTooth();
+			return tooth.tooth.RotateZDegrees(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
+		}
+
+		private IVertexSource CreateInternalToothProfile()
+		{
+			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
+			var angleToothToTooth = 360 / this.ToothCount;
+			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
+			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
+
+			var fullSector = new VertexStorage();
+
+			fullSector.MoveTo(0, 0);
+			fullSector.LineTo(-(radius * cos), radius * sin);
+			fullSector.LineTo(-radius, 0);
+			fullSector.LineTo(-(radius * cos), -radius * sin);
+
+			var innerRadius = radius - (2 * this.addendum + this.Clearance);
+			var innerCircle = new Ellipse(this.center, innerRadius)
+			{
+				ResolutionScale = 10
+			};
+
+			var sector = fullSector.Subtract(innerCircle);
+
+			var cutterTemplate = this.CreateInternalToothCutter();
+
+			var pinion = this.connectedGear;
+			var stepsPerTooth = this.stepsPerToothAngle;
+			var angleStepSize = angleToothToTooth / stepsPerTooth;
+			var toothShape = sector;
+			var cutter = cutterTemplate.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
+			toothShape = toothShape.Subtract(cutter);
+
+			for (var i = 1; i < stepsPerTooth; i++)
+			{
+				var pinionRotationAngle = i * angleStepSize;
+				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
+
+				cutter = cutterTemplate.RotateZDegrees(pinionRotationAngle);
+				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
+				cutter = cutter.RotateZDegrees(pinionCenterRayAngle);
+
+				toothShape = toothShape.Subtract(cutter);
+
+				cutter = cutterTemplate.RotateZDegrees(-pinionRotationAngle);
+				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
+				cutter = cutter.RotateZDegrees(-pinionCenterRayAngle);
+
+				toothShape = toothShape.Subtract(cutter);
+			}
+
+			return toothShape;
+		}
+
+		private IVertexSource SmoothConcaveCorners(IVertexSource corners)
+		{
+			// removes single concave corners located between convex corners
+			return this.SmoothCorners(corners, false); // removeSingleConvex
+		}
+
+		private IVertexSource SmoothConvexCorners(IVertexSource corners)
+		{
+			// removes single convex corners located between concave corners
+			return this.SmoothCorners(corners, true); // removeSingleConvex
+		}
+
+		private IVertexSource SmoothCorners(IVertexSource corners_in, bool removeSingleConvex)
+		{
+			var corners = corners_in as VertexStorage;
+			var isConvex = new List<bool>();
+			var previousCorner = corners[corners.Count - 1];
+			var currentCorner = corners[0];
+			for (var i = 0; i < corners.Count; i++)
+			{
+				var nextCorner = corners[(i + 1) % corners.Count];
+
+				var v1 = previousCorner.position - currentCorner.position;
+				var v2 = nextCorner.position - currentCorner.position;
+				var crossProduct = v1.Cross(v2);
+				isConvex.Add(crossProduct < 0);
+
+				previousCorner = currentCorner;
+				currentCorner = nextCorner;
+			}
+
+			// we want to remove any concave corners that are located between two convex corners
+			var cleanedUpCorners = new VertexStorage();
+			var previousIndex = corners.Count - 1;
+			var currentIndex = 0;
+			for (var i = 0; i < corners.Count; i++)
+			{
+				var corner = corners[currentIndex];
+				var nextIndex = (i + 1) % corners.Count;
+
+				var isSingleConcave = !isConvex[currentIndex] && isConvex[previousIndex] && isConvex[nextIndex];
+				var isSingleConvex = isConvex[currentIndex] && !isConvex[previousIndex] && !isConvex[nextIndex];
+
+				previousIndex = currentIndex;
+				currentIndex = nextIndex;
+
+				if (removeSingleConvex && isSingleConvex)
+				{
+					continue;
+				}
+
+				if (!removeSingleConvex && isSingleConcave)
+				{
+					continue;
+				}
+
+				cleanedUpCorners.Add(corner.X, corner.Y, corner.command);
+			}
+
+			return cleanedUpCorners;
 		}
 
 		private void CalculateDependants()
@@ -173,36 +369,99 @@ namespace MatterHackers.MatterControl.DesignTools
 			// Outer Circle
 			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
 			this.angleToothToTooth = 360.0 / this.ToothCount;
+
+			if (InternalToothCount > 0)
+			{
+				connectedGear = new Gear2D()
+				{
+					ToothCount = this.InternalToothCount,
+					CircularPitch = this.CircularPitch,
+					CenterHoleDiameter = this.CenterHoleDiameter,
+					PressureAngle = this.PressureAngle,
+					Backlash = this.Backlash,
+					Clearance = this.Clearance,
+					GearType = this.GearType,
+				};
+			}
 		}
 
-		public override IEnumerable<VertexData> Vertices()
+		private IVertexSource CreateInternalGearShape()
 		{
-			IVertexSource shape;
-			// shape = CreateRackShape();
-			shape = CreateRegularGearShape();
-			// shape = CreateInternalGearShape();
-			// shape = CreateSingleTooth().tooth;
-			// shape = CreateInternalGearShape();
+			var singleTooth = this.CreateInternalToothProfile();
+			// return singleTooth;
 
-			return shape.Vertices();
+			var corners = singleTooth as VertexStorage;
+
+			// first we need to find the corner that sits at the center
+			var centerCornerIndex = 0;
+			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.Clearance;
+
+			var delta = 0.0000001;
+			for (var i = 0; i < corners.Count; i++)
+			{
+				var corner = corners[i];
+				if (corner.Y < delta && (corner.X + radius) < delta)
+				{
+					centerCornerIndex = i;
+					break;
+				}
+			}
+
+			var outerCorners = new VertexStorage();
+			var command = ShapePath.FlagsAndCommand.MoveTo;
+			for (var i = 2; i < corners.Count - 2; i++)
+			{
+				var corner = corners[(i + centerCornerIndex) % corners.Count];
+				outerCorners.Add(corner.position.X, corner.position.Y, command);
+				command = ShapePath.FlagsAndCommand.LineTo;
+			}
+
+			var reversedOuterCorners = new VertexStorage();
+			foreach (var vertex in new ReversePath(outerCorners).Vertices())
+			{
+				reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, ShapePath.FlagsAndCommand.LineTo);
+			}
+
+			outerCorners = reversedOuterCorners;
+
+			var cornersCount = outerCorners.Count;
+
+			for (var i = 1; i < this.ToothCount; i++)
+			{
+				var angle = i * this.angleToothToTooth;
+				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
+				for (var j = 0; j < cornersCount; j++)
+				{
+					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
+					outerCorners.Add(rotatedCorner.X, rotatedCorner.Y, ShapePath.FlagsAndCommand.LineTo);
+				}
+			}
+
+			outerCorners = this.SmoothConcaveCorners(outerCorners) as VertexStorage;
+
+			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
+			var outerRadius = innerRadius + 4 * this.addendum;
+			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
+
+			// return outerCorners;
+			return outerCircle.Subtract(outerCorners);
 		}
 
 		private IVertexSource CreateRackShape()
 		{
 			IVertexSource rack = new VertexStorage();
 
-			// we draw one tooth in the middle and then five on either side
 			for (var i = 0; i < ToothCount; i++)
 			{
 				var tooth = this.CreateRackTooth();
-				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2 + i) * this.CircularPitch);
+				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2.0 + i) * this.CircularPitch);
 				rack = rack.Union(tooth);
 			}
 
 			// creating the bar backing the teeth
 			var rightX = -(this.addendum + this.Clearance);
 			var width = 4 * this.addendum;
-			var halfHeight = ToothCount * this.CircularPitch / 2;
+			var halfHeight = ToothCount * this.CircularPitch / 2.0;
 			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
 
 			var rackFinal = rack.Union(bar) as VertexStorage;
@@ -210,7 +469,35 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rackFinal;
 		}
 
-		private IVertexSource CreateRegularGearShape()
+		private IVertexSource CreateRackTooth()
+		{
+			var toothWidth = this.CircularPitch / 2;
+			var toothDepth = this.addendum + this.Clearance;
+
+			var sinPressureAngle = Math.Sin(this.PressureAngle * Math.PI / 180);
+			var cosPressureAngle = Math.Cos(this.PressureAngle * Math.PI / 180);
+
+			// if a positive backlash is defined then we widen the trapezoid accordingly.
+			// Each side of the tooth needs to widened by a fourth of the backlash (vertical to cutter faces).
+			var dx = this.Backlash / 4 / cosPressureAngle;
+
+			var leftDepth = this.addendum + this.Clearance;
+
+			var upperLeftCorner = new Vector2(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle);
+			var upperRightCorner = new Vector2(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle);
+			var lowerRightCorner = new Vector2(upperRightCorner[0], -upperRightCorner[1]);
+			var lowerLeftCorner = new Vector2(upperLeftCorner[0], -upperLeftCorner[1]);
+
+			var tooth = new VertexStorage();
+			tooth.MoveTo(upperLeftCorner);
+			tooth.LineTo(upperRightCorner);
+			tooth.LineTo(lowerRightCorner);
+			tooth.LineTo(lowerLeftCorner);
+
+			return tooth;
+		}
+
+		private IVertexSource CreateExternalGearShape()
 		{
 			var tooth = this.CreateSingleTooth();
 
@@ -241,96 +528,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				gearShape = gearShape.Subtract(centerhole) as VertexStorage;
 			}
 
-			return gearShape;// .RotateZDegrees(-90);
-		}
-
-		private IVertexSource CreateInternalGearShape()
-		{
-			var singleTooth = this._createInternalToothProfile();
-			// return singleTooth;
-
-			var outlinePaths = singleTooth;
-			var corners = outlinePaths as VertexStorage;
-
-			// first we need to find the corner that sits at the center
-			var centerCornerIndex = 0;
-			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.Clearance;
-
-			var delta = 0.0000001;
-			for (var i = 0; i < corners.Count; i++)
-			{
-				var corner = corners[i];
-				if (corner.Y < delta && (corner.X + radius) < delta)
-				{
-					centerCornerIndex = i;
-					break;
-				}
-			}
-
-			var outerCorners = new VertexStorage();
-			for (var i = 2; i < corners.Count - 2; i++)
-			{
-				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				outerCorners.add(corner.position);
-			}
-
-			var reversedOuterCorners = new VertexStorage();
-			foreach (var vertex in new ReversePath(outerCorners).Vertices())
-			{
-				reversedOuterCorners.add(vertex.position);
-			}
-			outerCorners = reversedOuterCorners;
-
-			var cornersCount = outerCorners.Count;
-
-			for (var i = 1; i < this.ToothCount; i++)
-			{
-				var angle = i * this.angleToothToTooth;
-				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
-				for (var j = 0; j < cornersCount; j++)
-				{
-					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
-					outerCorners.add(rotatedCorner);
-				}
-			}
-
-			outerCorners = this._smoothConcaveCorners(outerCorners) as VertexStorage;
-
-			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
-			var outerRadius = innerRadius + 4 * this.addendum;
-			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
-			// return outerCircle;
-
-			// return gearCutout;
-			return outerCircle.Subtract(outerCorners);
-		}
-
-		private IVertexSource CreateRackTooth()
-		{
-			var toothWidth = this.CircularPitch / 2;
-			var toothDepth = this.addendum + this.Clearance;
-
-			var sinPressureAngle = Math.Sin(this.PressureAngle * Math.PI / 180);
-			var cosPressureAngle = Math.Cos(this.PressureAngle * Math.PI / 180);
-
-			// if a positive backlash is defined then we widen the trapezoid accordingly.
-			// Each side of the tooth needs to widened by a fourth of the backlash (vertical to cutter faces).
-			var dx = this.Backlash / 4 / cosPressureAngle;
-
-			var leftDepth = this.addendum + this.Clearance;
-
-			var upperLeftCorner = new Vector2(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle);
-			var upperRightCorner = new Vector2(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle);
-			var lowerRightCorner = new Vector2(upperRightCorner[0], -upperRightCorner[1]);
-			var lowerLeftCorner = new Vector2(upperLeftCorner[0], -upperLeftCorner[1]);
-
-			var tooth = new VertexStorage();
-			tooth.MoveTo(upperLeftCorner);
-			tooth.LineTo(upperRightCorner);
-			tooth.LineTo(lowerRightCorner);
-			tooth.LineTo(lowerLeftCorner);
-
-			return tooth;
+			return gearShape; // .RotateZDegrees(-90);
 		}
 
 		private (IVertexSource tooth, IVertexSource wheel) CreateSingleTooth()
@@ -391,7 +589,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				stepCounter++;
 			}
 
-			toothCutout = this._smoothConcaveCorners(toothCutout);
+			toothCutout = this.SmoothConcaveCorners(toothCutout);
 
 			return toothCutout.RotateZDegrees(-this.angleToothToTooth / 2);
 		}
@@ -424,168 +622,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			return cutterPath;
 		}
-
-		private IVertexSource _smoothConvexCorners(IVertexSource corners)
-		{
-			// removes single convex corners located between concave corners
-			return this._smoothCorners(corners, true); // removeSingleConvex
-		}
-
-		private IVertexSource _createInternalToothCutter()
-		{
-			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
-			var pinion = this.connectedGear;
-
-			var enlargedPinion = new Gear2D()
-			{
-				CircularPitch = pinion.CircularPitch,
-				// pressureAngle: pinion.pressureAngle,
-				// clearance: -pinion.clearance,
-				// backlash: -pinion.backlash,
-				// toothCount: pinion.toothCount,
-				// centerHoleDiameter: 0,
-				// profileShift: pinion.profileShift,
-				// stepsPerToothAngle: pinion.stepsPerToothAngle
-			};
-
-			var tooth = enlargedPinion.CreateSingleTooth();
-			return tooth.tooth.RotateZDegrees(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
-		}
-
-		private IVertexSource _createInternalToothProfile()
-		{
-			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
-			var angleToothToTooth = 360 / this.ToothCount;
-			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
-			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
-
-			var fullSector = new VertexStorage();
-
-			fullSector.MoveTo(0, 0);
-			fullSector.LineTo(-(radius * cos), radius * sin);
-			fullSector.LineTo(-radius, 0);
-			fullSector.LineTo(-(radius * cos), -radius * sin);
-
-			var innerRadius = radius - (2 * this.addendum + this.Clearance);
-			var innerCircle = new Ellipse(this.center, innerRadius)
-			{
-				ResolutionScale = 10
-			};
-
-			var sector = fullSector.Subtract(innerCircle);
-
-			var cutterTemplate = this._createInternalToothCutter();
-
-			var pinion = this.connectedGear;
-			var stepsPerTooth = this.stepsPerToothAngle;
-			var angleStepSize = angleToothToTooth / stepsPerTooth;
-			var toothShape = sector;
-			var cutter = cutterTemplate.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-			toothShape = toothShape.Subtract(cutter);
-
-			for (var i = 1; i < stepsPerTooth; i++)
-			{
-				var pinionRotationAngle = i * angleStepSize;
-				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
-
-				// var cutter = cutterTemplate;
-				cutter = cutterTemplate.RotateZDegrees(pinionRotationAngle);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.RotateZDegrees(pinionCenterRayAngle);
-
-				toothShape = toothShape.Subtract(cutter);
-
-				cutter = cutterTemplate.RotateZDegrees(-pinionRotationAngle);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.RotateZDegrees(-pinionCenterRayAngle);
-
-				toothShape = toothShape.Subtract(cutter);
-			}
-
-			return toothShape;
-		}
-
-
-		private IVertexSource _smoothConcaveCorners(IVertexSource corners)
-		{
-			// removes single concave corners located between convex corners
-			return this._smoothCorners(corners, false); // removeSingleConvex
-		}
-
-		private IVertexSource _smoothCorners(IVertexSource corners_in, bool removeSingleConvex)
-		{
-			var corners = corners_in as VertexStorage;
-			var isConvex = new List<bool>();
-			var previousCorner = corners[corners.Count - 1];
-			var currentCorner = corners[0];
-			for (var i = 0; i < corners.Count; i++)
-			{
-				var nextCorner = corners[(i + 1) % corners.Count];
-
-				var v1 = previousCorner.position - currentCorner.position;
-				var v2 = nextCorner.position - currentCorner.position;
-				var crossProduct = v1.Cross(v2);
-				isConvex.Add(crossProduct < 0);
-
-				previousCorner = currentCorner;
-				currentCorner = nextCorner;
-			}
-
-			// we want to remove any concave corners that are located between two convex corners
-			var cleanedUpCorners = new VertexStorage();
-			var previousIndex = corners.Count - 1;
-			var currentIndex = 0;
-			for (var i = 0; i < corners.Count; i++)
-			{
-				var corner = corners[currentIndex];
-				var nextIndex = (i + 1) % corners.Count;
-
-				var isSingleConcave = !isConvex[currentIndex] && isConvex[previousIndex] && isConvex[nextIndex];
-				var isSingleConvex = isConvex[currentIndex] && !isConvex[previousIndex] && !isConvex[nextIndex];
-
-				previousIndex = currentIndex;
-				currentIndex = nextIndex;
-
-				if (removeSingleConvex && isSingleConvex)
-				{
-					continue;
-				}
-
-				if (!removeSingleConvex && isSingleConcave)
-				{
-					continue;
-				}
-
-				cleanedUpCorners.Add(corner.X, corner.Y, corner.command);
-			}
-
-			return cleanedUpCorners;
-		}
 	}
 }
 
 public static class Extensions
 {
-	public static IVertexSource Subtract(this IVertexSource a, IVertexSource b)
-	{
-		return a.Minus(b);
-	}
-
-	public static IVertexSource Union(this IVertexSource a, IVertexSource b)
-	{
-		return a.Plus(b);
-	}
-
-	public static IVertexSource RotateZDegrees(this IVertexSource a, double angle)
-	{
-		return new VertexSourceApplyTransform(a, Affine.NewRotation(MathHelper.DegreesToRadians(angle)));
-	}
-
-	public static IVertexSource Translate(this IVertexSource a, Vector2 delta)
-	{
-		return new VertexSourceApplyTransform(a, Affine.NewTranslation(delta));
-	}
-
 	public static IVertexSource Minus(this IVertexSource a, IVertexSource b)
 	{
 		return CombinePaths(a, b, ClipType.ctDifference);
@@ -594,6 +635,26 @@ public static class Extensions
 	public static IVertexSource Plus(this IVertexSource a, IVertexSource b)
 	{
 		return CombinePaths(a, b, ClipType.ctUnion);
+	}
+
+	public static IVertexSource RotateZDegrees(this IVertexSource a, double angle)
+	{
+		return new VertexSourceApplyTransform(a, Affine.NewRotation(MathHelper.DegreesToRadians(angle)));
+	}
+
+	public static IVertexSource Subtract(this IVertexSource a, IVertexSource b)
+	{
+		return a.Minus(b);
+	}
+
+	public static IVertexSource Translate(this IVertexSource a, Vector2 delta)
+	{
+		return new VertexSourceApplyTransform(a, Affine.NewTranslation(delta));
+	}
+
+	public static IVertexSource Union(this IVertexSource a, IVertexSource b)
+	{
+		return a.Plus(b);
 	}
 
 	private static VertexStorage CombinePaths(IVertexSource a, IVertexSource b, ClipType clipType)

@@ -151,8 +151,21 @@ namespace MatterHackers.MatterControl.DesignTools
 							Padding = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0)
 						};
 
-						var section = new SectionWidget(sectionStart.Title, column, theme);
+						bool expanded = true;
+
+						var sectionState = item as ISectionState;
+						if (sectionState != null)
+						{
+							expanded = sectionState.GetSectionExpansion(sectionStart.Title);
+						}
+
+						var section = new SectionWidget(sectionStart.Title, column, theme, expanded: expanded);
 						theme.ApplyBoxStyle(section);
+
+						if (sectionState != null)
+						{
+							section.ExpandedChanged += (s, e) => sectionState.SectionExpansionChanged(sectionStart.Title, e);
+						}
 
 						mainContainer.AddChild(section);
 
@@ -307,27 +320,39 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a double editor
 			if (propertyValue is double doubleValue)
 			{
-				var field = new DoubleField(theme);
-				field.Initialize(0);
-				field.DoubleValue = doubleValue;
-				RegisterValueChanged(field, (valueString) => { return double.Parse(valueString); });
-
-				void RefreshField(object s, InvalidateArgs e)
+				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
+				if (readOnly)
 				{
-					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					var valueField = new TextWidget(doubleValue.ToString("0.##"), textColor: theme.TextColor, pointSize: 10);
+					rowContainer = new SettingsRow(property.DisplayName.Localize(),
+						property.Description.Localize(),
+						valueField,
+						theme);
+				}
+				else // normal edit row
+				{
+					var field = new DoubleField(theme);
+					field.Initialize(0);
+					field.DoubleValue = doubleValue;
+					RegisterValueChanged(field, (valueString) => { return double.Parse(valueString); });
+
+					void RefreshField(object s, InvalidateArgs e)
 					{
-						double newValue = (double)property.Value;
-						if (newValue != field.DoubleValue)
+						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 						{
-							field.DoubleValue = newValue;
+							double newValue = (double)property.Value;
+							if (newValue != field.DoubleValue)
+							{
+								field.DoubleValue = newValue;
+							}
 						}
 					}
+
+					object3D.Invalidated += RefreshField;
+					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
-
-				object3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
-
-				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is Color color)
 			{

@@ -103,7 +103,8 @@ namespace MatterHackers.MatterControl
 		Russo,
 		Titan,
 		Titillium,
-	};
+	}
+;
 
 	public class WorkspacesChangedEventArgs : EventArgs
 	{
@@ -128,7 +129,7 @@ namespace MatterHackers.MatterControl
 	public static class AppContext
 	{
 		/// <summary>
-		/// Native platform features
+		/// Gets or sets native platform features
 		/// </summary>
 		public static INativePlatformFeatures Platform { get; set; }
 
@@ -137,7 +138,7 @@ namespace MatterHackers.MatterControl
 		public static bool IsLoading { get; internal set; } = true;
 
 		/// <summary>
-		/// The root SystemWindow
+		/// Gets the root SystemWindow
 		/// </summary>
 		public static SystemWindow RootSystemWindow { get; internal set; }
 
@@ -623,6 +624,7 @@ namespace MatterHackers.MatterControl
 					{
 						targetUri += $"?aff={OemSettings.Instance.AffiliateCode}";
 					}
+
 					targetUri += internalLink;
 				}
 
@@ -1400,6 +1402,7 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
 					}
+
 					// If there is only one printer constructed, use it.
 					else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
 					{
@@ -1591,6 +1594,7 @@ namespace MatterHackers.MatterControl
 							var scale = new ScaleObject3D();
 							scale.WrapItems(items, scene.UndoBuffer);
 						}
+
 						return Task.CompletedTask;
 					},
 					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
@@ -1643,6 +1647,7 @@ namespace MatterHackers.MatterControl
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
 						}                       // Invalidate image to kick off rebuild of ImageConverter stack
+
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -1769,6 +1774,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
 							}
+
 							extrude.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1798,6 +1804,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
 							}
+
 							smoothPath.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1827,6 +1834,7 @@ namespace MatterHackers.MatterControl
 							{
 								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
 							}
+
 							inflatePath.Invalidate(InvalidateType.Properties);
 						}
 
@@ -1948,6 +1956,7 @@ namespace MatterHackers.MatterControl
 										printerConnection.SecondsToHoldTemperature);
 								}
 							}
+
 							progressStatus.Progress0To1 = printerConnection.SecondsToHoldTemperature / printerConnection.TimeToHoldTemperature;
 							reporter.Report(progressStatus);
 							Thread.Sleep(20);
@@ -2037,6 +2046,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private static TypeFace titilliumTypeFace = null;
+
 		public static TypeFace TitilliumTypeFace
 		{
 			get
@@ -3340,13 +3350,16 @@ Support and tutorials:
 			public string Title { get; set; }
 
 			public int Priority { get; set; }
+
 			public Func<IProgress<ProgressStatus>, CancellationToken, Task> Action { get; set; }
 		}
 
 		public class StartupAction
 		{
 			public string Title { get; set; }
+
 			public int Priority { get; set; }
+
 			public Action Action { get; set; }
 		}
 	}
@@ -3364,6 +3377,7 @@ Support and tutorials:
 	public class DragDropData
 	{
 		public View3DWidget View3DWidget { get; set; }
+
 		public ISceneContext SceneContext { get; set; }
 	}
 
@@ -3383,6 +3397,7 @@ Support and tutorials:
 		}
 
 		public string Title { get; set; }
+
 		public object Owner { get; set; }
 
 		public RunningTaskOptions Options { get; internal set; }
@@ -3407,6 +3422,7 @@ Support and tutorials:
 
 				return _isExpanded ?? false;
 			}
+
 			set
 			{
 				_isExpanded = value;
@@ -3433,30 +3449,34 @@ Support and tutorials:
 	public class RunningTaskOptions
 	{
 		/// <summary>
-		/// The Rich progress widget to be shown when expanded
+		/// Gets or sets the Rich progress widget to be shown when expanded
 		/// </summary>
 		public Func<GuiWidget> RichProgressWidget { get; set; }
 
 		/// <summary>
-		/// The database key used to round trip expansion state
+		/// Gets or sets the database key used to round trip expansion state
 		/// </summary>
 		public string ExpansionSerializationKey { get; set; }
 
 		/// <summary>
-		/// Set this if you would like to update the stated of the pause resume button
+		/// Gets or sets the state of the pause resume button
 		/// </summary>
 		public Func<bool> IsPaused { get; set; }
 
 		public Action PauseAction { get; set; }
+
 		public Action ResumeAction { get; set; }
+
 		public Action<Action> StopAction { get; set; }
 
 		public string StopToolTip { get; set; } = "Cancel".Localize();
+
 		public string ResumeToolTip { get; set; } = "Resume".Localize();
+
 		public string PauseToolTip { get; set; } = "Pause".Localize();
 
 		/// <summary>
-		/// Indicates if the task should suppress pause/resume/stop operations
+		/// Gets or sets a value indicating whether indicates if the task should suppress pause/resume/stop operations
 		/// </summary>
 		public bool ReadOnlyReporting { get; set; } = false;
 	}
@@ -3519,6 +3539,7 @@ Support and tutorials:
 		private static Stopwatch timer;
 
 		public static bool EnableF5Collect { get; set; }
+
 		public static bool EnableNetworkTraffic { get; set; } = true;
 
 		public static SystemWindow LoadRootWindow(int width, int height)
@@ -3632,6 +3653,7 @@ Support and tutorials:
 								gcode2D.Zoom(1.2);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.OemMinus:
@@ -3642,6 +3664,7 @@ Support and tutorials:
 								gcode2D.Zoom(.8);
 								keyEvent.Handled = true;
 							}
+
 							break;
 					}
 				}
@@ -3657,6 +3680,7 @@ Support and tutorials:
 								view3D.Scene.Copy();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.P:
@@ -3664,6 +3688,7 @@ Support and tutorials:
 							{
 								view3D.PushToPrinterAndPrint();
 							}
+
 							break;
 
 						case Keys.X:
@@ -3672,6 +3697,7 @@ Support and tutorials:
 								view3D.Scene.Cut();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Y:
@@ -3680,6 +3706,7 @@ Support and tutorials:
 								view3D.Scene.UndoBuffer.Redo();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.A:
@@ -3688,6 +3715,7 @@ Support and tutorials:
 								view3D.SelectAll();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.S:
@@ -3696,6 +3724,7 @@ Support and tutorials:
 								view3D.Save();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.V:
@@ -3704,6 +3733,7 @@ Support and tutorials:
 								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Oemplus:
@@ -3714,6 +3744,7 @@ Support and tutorials:
 								Offset3DView(view3D, new Vector2(0, offsetDist), TrackBallTransformType.Scale);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.OemMinus:
@@ -3724,6 +3755,7 @@ Support and tutorials:
 								Offset3DView(view3D, new Vector2(0, -offsetDist), TrackBallTransformType.Scale);
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Z:
@@ -3738,8 +3770,10 @@ Support and tutorials:
 									// undo last operation
 									view3D.Scene.Undo();
 								}
+
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Insert:
@@ -3748,6 +3782,7 @@ Support and tutorials:
 								view3D.sceneContext.Paste();
 								keyEvent.Handled = true;
 							}
+
 							break;
 
 						case Keys.Delete:
@@ -3767,10 +3802,12 @@ Support and tutorials:
 								keyEvent.Handled = true;
 								keyEvent.SuppressKeyPress = true;
 							}
+
 							foreach (var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
 							{
 								interactionVolume.CancelOperation();
 							}
+
 							break;
 
 						case Keys.Left:

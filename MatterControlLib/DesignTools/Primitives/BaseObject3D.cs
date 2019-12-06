@@ -41,12 +41,19 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-	public enum BaseTypes { None, Rectangle, Circle, /* Oval, Frame,*/ Outline, };
+	public enum BaseTypes
+	{
+		None,
+		Rectangle,
+		Circle,
+		/* Oval, Frame,*/
+		Outline
+	}
 
 	public class BaseObject3D : Object3D, IPropertyGridModifier
 	{
@@ -60,8 +67,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override bool CanFlatten => true;
 
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
+
 		public double BaseSize { get; set; } = 3;
+
 		public double InfillAmount { get; set; } = 3;
+
 		public double ExtrusionHeight { get; set; } = 5;
 
 		public override void Remove(UndoBuffer undoBuffer)
@@ -93,6 +103,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
 				return vertexSource?.VertexSource;
 			}
+
 			set
 			{
 				var vertexSource = this.Children.OfType<IPathObject>().FirstOrDefault();
@@ -151,8 +162,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						this.Children.Modify(list =>
 						{
 							list.Clear();
-						// add back in the sourceContainer
-						list.Add(firstChild);
+							// add back in the sourceContainer
+							list.Add(firstChild);
 						});
 
 						// and create the base
@@ -162,6 +173,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Polygons polygonShape = (vertexSource == null) ? null : vertexSource.CreatePolygons();
 						GenerateBase(polygonShape, firstChild.GetAxisAlignedBoundingBox().MinXYZ.Z);
 					}
+
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
@@ -315,7 +327,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			//change.SetRowVisible(nameof(InfillAmount), () => CurrentBaseType == BaseTypes.Outline);
+			// change.SetRowVisible(nameof(InfillAmount), () => CurrentBaseType == BaseTypes.Outline);
 		}
 	}
 }
