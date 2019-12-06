@@ -176,6 +176,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		private int _internalToothCount;
+		public int InternalToothCount
+		{
+			get => _internalToothCount;
+
+			set
+			{
+				_internalToothCount = value;
+				CalculateDependants();
+			}
+		}
+
 		public override IEnumerable<VertexData> Vertices()
 		{
 			IVertexSource shape = null;
@@ -257,7 +269,6 @@ namespace MatterHackers.MatterControl.DesignTools
 				var pinionRotationAngle = i * angleStepSize;
 				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
 
-				// var cutter = cutterTemplate;
 				cutter = cutterTemplate.RotateZDegrees(pinionRotationAngle);
 				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
 				cutter = cutter.RotateZDegrees(pinionCenterRayAngle);
@@ -358,6 +369,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			// Outer Circle
 			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
 			this.angleToothToTooth = 360.0 / this.ToothCount;
+
+			if (InternalToothCount > 0)
+			{
+				connectedGear = new Gear2D()
+				{
+					ToothCount = this.InternalToothCount,
+					CircularPitch = this.CircularPitch,
+					CenterHoleDiameter = this.CenterHoleDiameter,
+					PressureAngle = this.PressureAngle,
+					Backlash = this.Backlash,
+					Clearance = this.Clearance,
+					GearType = this.GearType,
+				};
+			}
 		}
 
 		private IVertexSource CreateInternalGearShape()
@@ -365,8 +390,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var singleTooth = this.CreateInternalToothProfile();
 			// return singleTooth;
 
-			var outlinePaths = singleTooth;
-			var corners = outlinePaths as VertexStorage;
+			var corners = singleTooth as VertexStorage;
 
 			// first we need to find the corner that sits at the center
 			var centerCornerIndex = 0;
@@ -384,16 +408,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			var outerCorners = new VertexStorage();
+			var command = ShapePath.FlagsAndCommand.MoveTo;
 			for (var i = 2; i < corners.Count - 2; i++)
 			{
 				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				outerCorners.add(corner.position);
+				outerCorners.Add(corner.position.X, corner.position.Y, command);
+				command = ShapePath.FlagsAndCommand.LineTo;
 			}
 
 			var reversedOuterCorners = new VertexStorage();
 			foreach (var vertex in new ReversePath(outerCorners).Vertices())
 			{
-				reversedOuterCorners.add(vertex.position);
+				reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, ShapePath.FlagsAndCommand.LineTo);
 			}
 
 			outerCorners = reversedOuterCorners;
@@ -407,7 +433,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				for (var j = 0; j < cornersCount; j++)
 				{
 					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
-					outerCorners.add(rotatedCorner);
+					outerCorners.Add(rotatedCorner.X, rotatedCorner.Y, ShapePath.FlagsAndCommand.LineTo);
 				}
 			}
 
@@ -416,9 +442,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
 			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
-			// return outerCircle;
 
-			// return gearCutout;
+			// return outerCorners;
 			return outerCircle.Subtract(outerCorners);
 		}
 
