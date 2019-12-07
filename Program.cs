@@ -148,6 +148,8 @@ namespace MatterHackers.MatterControl
 			Slicer.RunInProcess = config.GetValue<bool>("MatterControl:Slicer:Debug");
 			Application.EnableF5Collect = config.GetValue<bool>("MatterControl:Application:EnableF5Collect");
 			Application.EnableNetworkTraffic = config.GetValue<bool>("MatterControl:Application:EnableNetworkTraffic", true);
+			Application.MiniTouchScreen.Make = config.GetValue<string>("MatterControl:MiniTouchScreen.Make", "");
+			Application.MiniTouchScreen.Model = config.GetValue<string>("MatterControl:MiniTouchScreen.Model", "");
 
 			// Make sure we have the right working directory as we assume everything relative to the executable.
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
