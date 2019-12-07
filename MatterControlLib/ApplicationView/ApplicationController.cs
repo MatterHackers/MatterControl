@@ -3530,6 +3530,21 @@ Support and tutorials:
 
 	public enum ReportSeverity2 { Warning, Error }
 
+	public class MiniTouchScreen
+	{
+		public bool Enabled
+		{
+			get
+			{
+				return !string.IsNullOrEmpty(Make);
+			}
+		}
+
+		public string Make { get; set; }
+
+		public string Model { get; set; }
+	}
+
 	public static class Application
 	{
 		private static ProgressBar progressBar;
@@ -3541,6 +3556,8 @@ Support and tutorials:
 		public static bool EnableF5Collect { get; set; }
 
 		public static bool EnableNetworkTraffic { get; set; } = true;
+
+		public static MiniTouchScreen MiniTouchScreen { get; set; } = new MiniTouchScreen();
 
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
