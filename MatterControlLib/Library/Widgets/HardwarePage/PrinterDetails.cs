@@ -198,7 +198,11 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				foreach (var item in product.ProductListing.AddOns)
 				{
 					var icon = new ImageBuffer(80, 0);
-					WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+
+					if (item.FeaturedImage != null)
+					{
+						WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
+					}
 
 					var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
 					{
