@@ -27,25 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using MatterHackers.Agg.VertexSource;
-	using MatterHackers.DataConverters2D;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using Newtonsoft.Json;
-	using System;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
@@ -56,6 +53,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public double SmoothDistance { get; set; } = .3;
+
 		public int Iterations { get; set; } = 3;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -99,15 +97,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		private void DoSmoothing(long maxDist, int interations)
 		{
-
 			bool closedPath = true;
 			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
-			if(path == null)
+			if (path == null)
 			{
 				// clear our existing data
 				VertexSource = new VertexStorage();
 				return;
 			}
+
 			var sourceVertices = path.VertexSource;
 
 			var inputPolygons = sourceVertices.CreatePolygons();
@@ -149,13 +147,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							delta = delta.GetLength(maxDist);
 							newPos = inputPolygon[i] + delta;
 						}
+
 						smoothedPositions[i] = newPos;
 					}
 				}
 
 				outputPolygons.Add(smoothedPositions);
 
-				outputPolygons = ClipperLib.Clipper.CleanPolygons(outputPolygons, Math.Max(maxDist/10, 1.415));
+				outputPolygons = ClipperLib.Clipper.CleanPolygons(outputPolygons, Math.Max(maxDist / 10, 1.415));
 			}
 
 			VertexSource = outputPolygons.CreateVertexStorage();

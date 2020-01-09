@@ -82,6 +82,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.MainView = this;
 		}
 
+		public override void OnLoad(EventArgs args)
+		{
+			if (Application.MiniTouchScreen.Enabled)
+			{
+				var miniTouchScreen = new SystemWindow(800, 480);
+
+				miniTouchScreen.ShowAsSystemWindow();
+			}
+
+			base.OnLoad(args);
+		}
 
 		private void AddStandardUi(ThemeConfig theme)
 		{
