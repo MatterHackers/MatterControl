@@ -450,7 +450,7 @@ namespace MatterHackers.MatterControl
 		public async Task PersistUserTabs()
 		{
 			// Persist all pending changes in all workspaces to disk
-			foreach (var workspace in this.Workspaces)
+			foreach (var workspace in this.Workspaces.ToArray())
 			{
 				await this.Tasks.Execute("Saving ".Localize() + $" \"{workspace.Name}\" ...", workspace, workspace.SceneContext.SaveChanges);
 			}
