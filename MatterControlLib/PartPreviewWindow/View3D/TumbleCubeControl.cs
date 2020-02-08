@@ -364,6 +364,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					hitTexture.textureChanged = true;
 				}
+
 				Invalidate();
 			}
 		}
@@ -520,22 +521,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							* connections[faceData.bottom].direction
 							> 1)
 						{
-							return new HitData(i, 0,
-								faceData.left, connections[faceData.left].Tile(i, faceData.bottom),
-								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.left));
+							return new HitData(i,
+								0,
+								faceData.left,
+								connections[faceData.left].Tile(i, faceData.bottom),
+								faceData.bottom,
+								connections[faceData.bottom].Tile(i, faceData.left));
 						}
+
 						// hit to the top
 						else if (hitPosition[connections[faceData.top].axis]
 							* connections[faceData.top].direction
 							> 1)
 						{
-							return new HitData(i, 6,
-								faceData.left, connections[faceData.left].Tile(i, faceData.top),
-								faceData.top, connections[faceData.top].Tile(i, faceData.left));
+							return new HitData(i,
+								6,
+								faceData.left,
+								connections[faceData.left].Tile(i, faceData.top),
+								faceData.top,
+								connections[faceData.top].Tile(i, faceData.left));
 						}
 
 						return new HitData(i, 3, faceData.left, connections[faceData.left].Tile(i));
 					}
+
 					// hit to the right
 					else if (hitPosition[connections[faceData.right].axis]
 						* connections[faceData.right].direction
@@ -546,22 +555,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							* connections[faceData.bottom].direction
 							> 1)
 						{
-							return new HitData(i, 2,
-								faceData.right, connections[faceData.right].Tile(i, faceData.bottom),
-								faceData.bottom, connections[faceData.bottom].Tile(i, faceData.right));
+							return new HitData(i,
+								2,
+								faceData.right,
+								connections[faceData.right].Tile(i, faceData.bottom),
+								faceData.bottom,
+								connections[faceData.bottom].Tile(i, faceData.right));
 						}
+
 						// hit to the top
 						else if (hitPosition[connections[faceData.top].axis]
 							* connections[faceData.top].direction
 							> 1)
 						{
-							return new HitData(i, 8,
-								faceData.right, connections[faceData.right].Tile(i, faceData.top),
-								faceData.top, connections[faceData.top].Tile(i, faceData.right));
+							return new HitData(i,
+								8,
+								faceData.right,
+								connections[faceData.right].Tile(i, faceData.top),
+								faceData.top,
+								connections[faceData.top].Tile(i, faceData.right));
 						}
 
 						return new HitData(i, 5, faceData.right, connections[faceData.right].Tile(i));
 					}
+
 					// hit to the bottom
 					if (hitPosition[connections[faceData.bottom].axis]
 						* connections[faceData.bottom].direction
@@ -569,6 +586,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						return new HitData(i, 1, faceData.bottom, connections[faceData.bottom].Tile(i));
 					}
+
 					// hit to the top
 					else if (hitPosition[connections[faceData.top].axis]
 						* connections[faceData.top].direction
