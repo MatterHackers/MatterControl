@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,14 +29,46 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	// Replaces escaped newline characters with unescaped newline characters
-	public class UnescapeNewlineCharacters : MappedSetting
+	public class AsPercentOfReferenceOrDirect : ValueConverter
 	{
-		public UnescapeNewlineCharacters(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		private readonly bool change0ToReference;
+		private readonly double scale;
+
+		public AsPercentOfReferenceOrDirect(string referencedSetting, double scale = 1, bool change0ToReference = true)
 		{
+			this.change0ToReference = change0ToReference;
+			this.scale = scale;
+			this.ReferencedSetting = referencedSetting;
 		}
 
-		public override string Value => base.Value.Replace("\\n", "\n");
+		public string ReferencedSetting { get; }
+
+		public override string Convert(string value, PrinterSettings settings)
+		{
+			double finalValue = 0;
+
+			if (value.Contains("%"))
+			{
+				string withoutPercent = value.Replace("%", "");
+				double ratio = ParseDouble(withoutPercent) / 100.0;
+				string originalReferenceString = settings.GetValue(this.ReferencedSetting);
+				double valueToModify = ParseDouble(originalReferenceString);
+				finalValue = valueToModify * ratio;
+			}
+			else
+			{
+				finalValue = ParseDouble(value);
+			}
+
+			if (change0ToReference
+				&& finalValue == 0)
+			{
+				finalValue = ParseDouble(settings.GetValue(ReferencedSetting));
+			}
+
+			finalValue *= scale;
+
+			return finalValue.ToString();
+		}
 	}
 }

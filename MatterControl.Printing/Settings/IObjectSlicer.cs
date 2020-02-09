@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,18 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
+
+namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class ReplaceWithSetting : MappedSetting
+	public interface IObjectSlicer
 	{
-		string replaceSettingsName;
+		Task<bool> Slice(IEnumerable<IObject3D> itemsOnBed, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
 
-		public ReplaceWithSetting(PrinterConfig printer, string canonicalSettingsName, string replaceSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
-		{
-			this.replaceSettingsName = replaceSettingsName;
-		}
+		Dictionary<string, ExportField> Exports { get; }
 
-		public override string Value => printer.Settings.GetValue(replaceSettingsName);
+		bool ValidateFile(string filePath);
 	}
 }

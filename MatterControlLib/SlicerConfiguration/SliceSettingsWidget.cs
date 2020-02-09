@@ -419,7 +419,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
 							&& CheckIfShouldBeShown(settingData, settingsContext);
 
-						if (printer.EngineMappingsMatterSlice.MapContains(settingData.SlicerConfigName)
+						if (printer.Settings.IsActive(settingData.SlicerConfigName)
 							&& settingShouldBeShown)
 						{
 							settingsRow = CreateItemRow(settingData, errors);
@@ -637,6 +637,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				case SliceSettingData.DataEditTypes.DOUBLE:
 				case SliceSettingData.DataEditTypes.OFFSET:
 					uiField = new DoubleField(theme);
+					break;
+
+				case SliceSettingData.DataEditTypes.SLICE_ENGINE:
+					uiField = new SliceEngineField(printer, theme);
 					break;
 
 				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:

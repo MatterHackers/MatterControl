@@ -243,11 +243,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				SetLinkButtonsVisibility(this, null);
 
-				updateAvailableButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+				updateAvailableButton.Click += (s, e) =>
 				{
 					UpdateControlData.Instance.CheckForUpdate();
 					DialogWindow.Show<CheckForUpdatesPage>();
-				});
+				};
 
 				tabControl.TabBar.ActionArea.AddChild(updateAvailableButton);
 
@@ -499,7 +499,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					updateAvailableButton.Visible = true;
 
-					UiThread.RunOnIdle(this.ShowUpdateAvailableAnimation);
+					this.ShowUpdateAvailableAnimation();
 				}
 			}
 			else

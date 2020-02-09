@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.VectorMath;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedBrimLoopsSetting : AsCountOrDistance
+	public class SkirtLengthMapping : ValueConverter
 	{
-		public MappedBrimLoopsSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
-			: base(printer, canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-		}
+			double lengthToExtrudeMm = ParseDouble(value);
 
-		public override string Value
-		{
-			get
-			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.create_brim))
-				{
-					return base.Value;
-				}
+			// we need to convert mm of filament to mm of extrusion path
+			double amountOfFilamentCubicMms = settings.GetValue<double>(SettingsKey.filament_diameter) * MathHelper.Tau * lengthToExtrudeMm;
+			double extrusionSquareSize = settings.GetValue<double>(SettingsKey.first_layer_height) * settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			double lineLength = amountOfFilamentCubicMms / extrusionSquareSize;
 
-				return "0";
-			}
+			return lineLength.ToString();
 		}
 	}
 }

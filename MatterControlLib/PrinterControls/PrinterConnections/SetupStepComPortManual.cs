@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			// Construct buttons
 			nextButton = theme.CreateDialogButton("Done".Localize());
-			nextButton.Click += (s, e) => UiThread.RunOnIdle(Parent.Close);
+			nextButton.Click += (s, e) => Parent.Close();
 			nextButton.Visible = false;
 
 			connectButton = theme.CreateDialogButton("Connect".Localize());
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				printerComPortError.Text = "Connection succeeded".Localize() + "!";
 				nextButton.Visible = true;
 				connectButton.Visible = false;
-				UiThread.RunOnIdle(() => this?.Parent?.Close());
+				this?.Parent?.CloseOnIdle();
 			}
 			else if (printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect)
 			{

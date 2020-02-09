@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,35 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	public class ValueConverter
 	{
-		public OverrideSpeedOnSlaPrinters(PrinterConfig printer, string canonicalSettingsName, string exportedName, string originalReference, double scale = 1)
-			: base(printer, canonicalSettingsName, exportedName, originalReference, scale)
+		public virtual string Convert(string value, PrinterSettings settings)
 		{
+			return value;
 		}
 
-		public override string Value
+		public double ParseDouble(string textValue, double valueOnError = 0)
 		{
-			get
+			if (!double.TryParse(textValue, out double value))
 			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
-				{
-					// return the speed based on the layer height
-					var speedAt025 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_025);
-					var speedAt100 = printer.Settings.GetValue<double>(SettingsKey.laser_speed_100);
-					var deltaSpeed = speedAt100 - speedAt025;
-
-					var layerHeight = printer.Settings.GetValue<double>(SettingsKey.layer_height);
-					var deltaHeight = .1 - .025;
-					var heightRatio = (layerHeight - .025) / deltaHeight;
-					var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
-					return ajustedSpeed.ToString();
-				}
-				else
-				{
-					return base.Value;
-				}
+				return valueOnError;
 			}
+
+			return value;
 		}
 	}
 }

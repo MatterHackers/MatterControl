@@ -67,14 +67,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static async Task<XyCalibrationTabObject3D> Create(int calibrationMaterialIndex = 1,
 			double changeHeight = .4,
 			double offset = .5,
-			double nozzleWidth = .4)
+			double nozzleWidth = .4,
+			double wipeTowerSize = 10)
 		{
 			var item = new XyCalibrationTabObject3D()
 			{
 				CalibrationMaterialIndex = calibrationMaterialIndex,
 				ChangeHeight = changeHeight,
 				Offset = offset,
-				NozzleWidth = nozzleWidth
+				NozzleWidth = nozzleWidth,
+				WipeTowerSize = wipeTowerSize
 			};
 
 			await item.Rebuild();

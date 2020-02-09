@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,49 +29,27 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class AsPercentOfReferenceOrDirect : MappedSetting
+	public class ConditionalField : ValueConverter
 	{
-		private bool change0ToReference;
-		private double scale;
+		private readonly string defaultValue;
+		private readonly string enableOnKey;
+		private ValueConverter sourceField;
 
-		public AsPercentOfReferenceOrDirect(PrinterConfig printer, string canonicalSettingsName, string exportedName, string referencedSetting, double scale = 1, bool change0ToReference = true)
-			: base(printer, canonicalSettingsName, exportedName)
+		public ConditionalField(string enableOnKey, ValueConverter sourceField, string defaultValue = "0")
 		{
-			this.change0ToReference = change0ToReference;
-			this.scale = scale;
-			this.ReferencedSetting = referencedSetting;
+			this.defaultValue = defaultValue;
+			this.enableOnKey = enableOnKey;
+			this.sourceField = sourceField;
 		}
 
-		public string ReferencedSetting { get; }
-
-		public override string Value
+		public override string Convert(string value, PrinterSettings settings)
 		{
-			get
+			if (settings.GetValue<bool>(enableOnKey))
 			{
-				double finalValue = 0;
-				if (base.Value.Contains("%"))
-				{
-					string withoutPercent = base.Value.Replace("%", "");
-					double ratio = ParseDouble(withoutPercent) / 100.0;
-					string originalReferenceString = printer.Settings.GetValue(this.ReferencedSetting);
-					double valueToModify = ParseDouble(originalReferenceString);
-					finalValue = valueToModify * ratio;
-				}
-				else
-				{
-					finalValue = ParseDouble(base.Value);
-				}
-
-				if (change0ToReference
-					&& finalValue == 0)
-				{
-					finalValue = ParseDouble(printer.Settings.GetValue(ReferencedSetting));
-				}
-
-				finalValue *= scale;
-
-				return finalValue.ToString();
+				return sourceField.Convert(value, settings);
 			}
+
+			return defaultValue;
 		}
 	}
 }

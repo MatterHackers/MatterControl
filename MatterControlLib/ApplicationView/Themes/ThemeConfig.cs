@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -49,28 +49,39 @@ namespace MatterHackers.MatterControl
 		private ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
+
 		public int FontSize8 { get; } = 8;
+
 		public int FontSize9 { get; } = 9;
+
 		public int FontSize10 { get; } = 10;
+
 		public int FontSize11 { get; } = 11;
+
 		public int FontSize12 { get; } = 12;
+
 		public int FontSize14 { get; } = 14;
 
 		public int DefaultFontSize { get; set; } = 11;
+
 		public int DefaultContainerPadding { get; } = 10;
+
 		public int H1PointSize { get; } = 11;
 
 		public double ButtonHeight => 32 * GuiWidget.DeviceScale;
+
 		public double TabButtonHeight => 30 * GuiWidget.DeviceScale;
+
 		public double MenuGutterWidth => 35 * GuiWidget.DeviceScale;
 
 		public double MicroButtonHeight => 20 * GuiWidget.DeviceScale;
-		private double microButtonWidth => 30 * GuiWidget.DeviceScale;
+
+		private double MicroButtonWidth => 30 * GuiWidget.DeviceScale;
 
 		private readonly int defaultScrollBarWidth = 120;
 
 		/// <summary>
-		/// Indicates if icons should be inverted due to black source images on a dark theme
+		/// Gets a value indicating whether icons should be inverted due to black source images on a dark theme
 		/// </summary>
 		public bool InvertIcons => this?.IsDarkTheme ?? false;
 
@@ -104,10 +115,10 @@ namespace MatterHackers.MatterControl
 			switch (guiWidget)
 			{
 				case SimpleFlowButton flowButton:
-					flowButton.HoverColor = (parentIsToolbar) ? this.ToolbarButtonHover : Color.Transparent;
+					flowButton.HoverColor = parentIsToolbar ? this.ToolbarButtonHover : Color.Transparent;
 					break;
 				case SimpleButton button:
-					button.HoverColor = (parentIsToolbar) ? this.ToolbarButtonHover : Color.Transparent;
+					button.HoverColor = parentIsToolbar ? this.ToolbarButtonHover : Color.Transparent;
 					break;
 			}
 		}
@@ -121,7 +132,7 @@ namespace MatterHackers.MatterControl
 		public BorderDouble TabbarPadding { get; } = new BorderDouble(3, 1);
 
 		/// <summary>
-		/// The height or width of a given vertical or horizontal splitter bar
+		/// Gets the height or width of a given vertical or horizontal splitter bar
 		/// </summary>
 		public int SplitterWidth
 		{
@@ -143,15 +154,21 @@ namespace MatterHackers.MatterControl
 		public bool IsDarkTheme { get; set; }
 
 		public Color SlightShade { get; set; }
+
 		public Color MinimalShade { get; set; }
+
 		public Color Shade { get; set; }
+
 		public Color DarkShade { get; set; }
 
 		public Color BackgroundColor { get; set; }
+
 		public Color TextColor { get; set; } = Color.Black;
 
 		public Color TabBarBackground { get; set; }
+
 		public Color InactiveTabColor { get; set; }
+
 		public Color InteractionLayerOverlayColor { get; set; }
 
 		public TextWidget CreateHeading(string text)
@@ -163,13 +180,19 @@ namespace MatterHackers.MatterControl
 		}
 
 		public Color SplitterBackground { get; set; } = new Color(0, 0, 0, 60);
+
 		public Color TabBodyBackground { get; set; }
+
 		public Color ToolbarButtonBackground { get; set; } = Color.Transparent;
+
 		public Color ToolbarButtonHover => this.SlightShade;
+
 		public Color ToolbarButtonDown => this.MinimalShade;
 
 		public Color ThumbnailBackground { get; set; }
+
 		public Color AccentMimimalOverlay { get; set; }
+
 		public BorderDouble SeparatorMargin { get; }
 
 		public ImageBuffer GeneratingThumbnailIcon { get; private set; }
@@ -177,16 +200,22 @@ namespace MatterHackers.MatterControl
 		public class StateColor
 		{
 			public Color BackgroundColor { get; set; }
+
 			public Color ForegroundColor { get; set; }
+
 			public Color BorderColor { get; set; }
+
 			public Color TextColor { get; set; }
+
 			public Color LightTextColor { get; set; }
 		}
 
 		public class ThreeStateColor
 		{
 			public StateColor Focused { get; set; } = new StateColor();
+
 			public StateColor Hovered { get; set; } = new StateColor();
+
 			public StateColor Inactive { get; set; } = new StateColor();
 		}
 
@@ -200,15 +229,17 @@ namespace MatterHackers.MatterControl
 		public Color LightTextColor { get; set; }
 
 		public Color BorderColor { get; set; }
+
 		public Color BorderColor40 { get; set; }
+
 		public Color BorderColor20 { get; set; }
 
 		internal void EnsureDefaults()
 		{
-			//if (this.BedColor == Color.Transparent)
-			//{
-			//	this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
-			//}
+			// if (this.BedColor == Color.Transparent)
+			// {
+			// 	this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
+			// }
 		}
 
 		public Color RowBorder { get; set; }
@@ -216,10 +247,15 @@ namespace MatterHackers.MatterControl
 		public DropListStyle DropList { get; set; } = new DropListStyle();
 
 		public Color DisabledColor { get; set; }
+
 		public Color SplashAccentColor { get; set; }
+
 		public Color BedBackgroundColor { get; set; }
+
 		public Color PrimaryAccentColor { get; set; }
+
 		public Color SectionBackgroundColor { get; set; }
+
 		public Color PopupBorderColor { get; set; }
 
 		public Color BedColor { get; set; }
@@ -308,7 +344,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(right: 1),
 				HAnchor = HAnchor.Absolute,
 				Height = this.MicroButtonHeight,
-				Width = this.microButtonWidth
+				Width = this.MicroButtonWidth
 			};
 
 			// Add to sibling list if supplied
@@ -428,13 +464,11 @@ namespace MatterHackers.MatterControl
 			// Remove right Padding for drop style
 			innerButton.Padding = innerButton.Padding.Clone(right: 0);
 
-
 			if (operationGroup == null)
 			{
 				menuButton = new PopupMenuButton(innerButton, this);
 			}
 			else
-
 			{
 				menuButton = new OperationGroupButton(operationGroup, innerButton, this);
 			}
@@ -461,9 +495,9 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer ColorCircle(int size, Color color)
 		{
-			ImageBuffer imageBuffer = new ImageBuffer(size, size);
+			var imageBuffer = new ImageBuffer(size, size);
 			Graphics2D normalGraphics = imageBuffer.NewGraphics2D();
-			Vector2 center = new Vector2(size / 2.0, size / 2.0);
+			var center = new Vector2(size / 2.0, size / 2.0);
 
 			Color barColor;
 			if (color != Color.Transparent)
@@ -581,7 +615,7 @@ namespace MatterHackers.MatterControl
 		{
 			// Enforce panel padding
 			// sectionWidget.ContentPanel.Padding = new BorderDouble(10, 0, 10, 2);
-			//sectionWidget.ContentPanel.Padding = 0;
+			// sectionWidget.ContentPanel.Padding = 0;
 
 			sectionWidget.BorderColor = Color.Transparent;
 			sectionWidget.BorderRadius = 5;

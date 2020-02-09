@@ -39,7 +39,23 @@ namespace MatterHackers.MatterControl
 			: base(label, textColor)
 		{
 			var imageWidget = new ImageWidget(image);
-			this.AddChild(imageWidget, this.Children.IndexOf(labelTextWidget));
+			var index = 0;
+			foreach (var child in this.Children)
+			{
+				if (child == labelTextWidget)
+				{
+					break;
+				}
+
+				index++;
+			}
+
+			if (index >= this.Children.Count)
+			{
+				index = 0;
+			}
+
+			this.AddChild(imageWidget, index);
 			imageWidget.Margin = new BorderDouble(8, 5);
 
 			labelTextWidget.Margin = new BorderDouble(8, 0);

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,38 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
+using MatterHackers.MatterControl.Extensibility;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+namespace MatterHackers.gsBundle
 {
-	public class InjectGCodeCommands : UnescapeNewlineCharacters
+	public class gsSlicerPlugin : IApplicationPlugin
 	{
-		public InjectGCodeCommands(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public void Initialize()
 		{
+			PrinterSettings.SliceEngines["gsSlicer"] = new BasicSlicer();
 		}
 
-		protected void AddDefaultIfNotPresent(List<string> linesAdded, string commandToAdd, string[] lines, string comment)
+		public PluginInfo MetaData => new PluginInfo()
 		{
-			string command = commandToAdd.Split(' ')[0].Trim();
-
-			if (!LineStartsWith(lines, command))
-			{
-				linesAdded.Add(string.Format("{0} ; {1}", commandToAdd, comment));
-			}
-		}
-
-		protected static bool LineStartsWith(string[] lines, string command)
-		{
-			foreach (string line in lines)
-			{
-				if (line.StartsWith(command))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
+			About = "gsSlicer for MatterControl",
+			Developer = "MatterHackers Inc.",
+			Name = "MH-gsSlicer",
+			Url = "https://www.matterhackers.com/MatterControl",
+			UUID = "0384EBD9-072F-4295-AE48-270FC256B48B"
+		};
 	}
 }

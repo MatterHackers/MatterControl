@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,29 +29,26 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedSetting
+	public class AsCountOrDistance : ValueConverter
 	{
-		protected PrinterConfig printer;
+		private readonly string keyToUseAsDenominatorForCount;
 
-		public MappedSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName)
+		public AsCountOrDistance(string keyToUseAsDenominatorForCount)
 		{
-			this.printer = printer;
-			this.CanonicalSettingsName = canonicalSettingsName;
-			this.ExportedName = exportedName;
+			this.keyToUseAsDenominatorForCount = keyToUseAsDenominatorForCount;
 		}
 
-		public string CanonicalSettingsName { get; }
-
-		public string ExportedName { get; }
-
-		public virtual string Value => printer.Settings.GetValue(CanonicalSettingsName);
-
-		public double ParseDouble(string textValue, double valueOnError = 0)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-			double value;
-			if (!double.TryParse(textValue, out value))
+			// When the state is store in mm, determine and use the value in (counted) units i.e. round distance up to layer count
+			if (value.Contains("mm"))
 			{
-				return valueOnError;
+				string withoutMm = value.Replace("mm", "");
+				string distanceString = settings.GetValue(keyToUseAsDenominatorForCount);
+				double denominator = ParseDouble(distanceString, 1);
+
+				int layers = (int)(ParseDouble(withoutMm) / denominator + .5);
+				return layers.ToString();
 			}
 
 			return value;

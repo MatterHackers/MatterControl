@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,21 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MapFirstValue : MappedSetting
+	public class InfillTranslator : ValueConverter
 	{
-		public MapFirstValue(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-		}
+			double infillRatio0To1 = ParseDouble(value);
+			// 400 = solid (extruder width)
 
-		public override string Value => base.Value.Contains(",") ? base.Value.Split(',')[0] : base.Value;
+			double nozzle_diameter = settings.GetValue<double>(SettingsKey.nozzle_diameter);
+			double linespacing = 1000;
+			if (infillRatio0To1 > .01)
+			{
+				linespacing = nozzle_diameter / infillRatio0To1;
+			}
+
+			return ((int)(linespacing * 1000)).ToString();
+		}
 	}
 }

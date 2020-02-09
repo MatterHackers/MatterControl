@@ -258,6 +258,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class OperationSourceObject3D : Object3D
 	{
 		public override bool CanFlatten => true;
+
 		public OperationSourceObject3D()
 		{
 			Name = "Source".Localize();

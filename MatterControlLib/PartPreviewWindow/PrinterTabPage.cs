@@ -311,11 +311,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							Margin = new BorderDouble(10, 10, 0, 15)
 						};
 
-						unloadFilamentButton.Click += (s, e2) => UiThread.RunOnIdle(() =>
+						unloadFilamentButton.Click += (s, e2) =>
 						{
 							unloadFilamentButton.Parents<SystemWindow>().First().Close();
 							DialogWindow.Show(new UnloadFilamentWizard(printer, extruderIndex: 0));
-						});
+						};
 
 						theme.ApplyPrimaryActionStyle(unloadFilamentButton);
 

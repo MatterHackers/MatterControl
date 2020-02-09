@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedFanSpeedSetting : MappedSetting
+	public class AsPercentOrDirectFirst : MapFirstValue
 	{
-		public MappedFanSpeedSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-		}
+			double ratio = 0;
 
-		public override string Value
-		{
-			get
+			value = base.Convert(value, settings);
+
+			if (value.Contains("%"))
 			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.enable_fan))
-				{
-					return base.Value;
-				}
-
-				return "0";
+				string withoutPercent = value.Replace("%", "");
+				ratio = ParseDouble(withoutPercent) / 100.0;
 			}
+			else
+			{
+				ratio = ParseDouble(value);
+			}
+
+			return ratio.ToString();
 		}
 	}
 }

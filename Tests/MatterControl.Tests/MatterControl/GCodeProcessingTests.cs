@@ -81,6 +81,14 @@ namespace MatterControl.Tests.MatterControl
 			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
+			var settings = new PrinterSettings();
+			settings.Slicer = new EngineMappingsMatterSlice();
+
+			void TestMacroReplacement(string inputText, string outputControl)
+			{
+				Assert.AreEqual(outputControl, settings.ReplaceMacroValues(inputText));
+			}
+
 			TestMacroReplacement("[temperature]", "200");
 			TestMacroReplacement("[first_layer_speed]", "1080");
 			TestMacroReplacement("[bed_remove_part_temperature]", "0");
@@ -99,18 +107,10 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("{retract_speed}", "1800");
 			TestMacroReplacement("{support_material_speed}", "3600");
 			TestMacroReplacement("{temperature}", "200");
-			TestMacroReplacement("[" + SettingsKey.bed_temperature + "]", "70");
+			TestMacroReplacement("[bed_temperature]", "70");
 			TestMacroReplacement("{infill_speed}", "3600");
 			TestMacroReplacement("{min_print_speed}", "600");
 			TestMacroReplacement("{travel_speed}", "7800");
-		}
-
-		private void TestMacroReplacement(string inputText, string outputControl)
-		{
-			var printer = new PrinterConfig(new PrinterSettings());
-			string outputTest = printer.ReplaceMacroValues(inputText);
-
-			Assert.IsTrue(outputTest == outputControl);
 		}
 	}
 }

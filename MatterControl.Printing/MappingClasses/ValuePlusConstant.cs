@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,13 +29,18 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class GCodeForSlicer : InjectGCodeCommands
+	public class ValuePlusConstant : ValueConverter
 	{
-		public GCodeForSlicer(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		private readonly double constant;
+
+		public ValuePlusConstant(double constant)
 		{
+			this.constant = constant;
 		}
 
-		public override string Value => printer.ReplaceMacroValues(base.Value.Replace("\n", "\\n"));
+		public override string Convert(string value, PrinterSettings settings)
+		{
+			return $"{ParseDouble(value) + constant}";
+		}
 	}
 }

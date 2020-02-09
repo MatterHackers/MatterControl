@@ -55,11 +55,8 @@ namespace MatterHackers.MatterControl
 			if (settingsToImport.QualityLayers.Count == 0 && settingsToImport.MaterialLayers.Count == 0)
 			{
 				// Only main setting so don't ask what to merge just do it.
-				UiThread.RunOnIdle(() =>
-				{
-					DisplayFailedToImportMessage(settingsFilePath);
-					this.Parents<SystemWindow>().First().Close();
-				});
+				DisplayFailedToImportMessage(settingsFilePath);
+				this.Parents<SystemWindow>().First().Close();
 			}
 
 			this.settingsFilePath = settingsFilePath;

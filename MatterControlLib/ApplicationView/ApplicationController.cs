@@ -2924,33 +2924,12 @@ namespace MatterHackers.MatterControl
 					}
 					else
 					{
-						// read the last few k of the file and see if it says "filament used". We use this marker to tell if the file finished writing
-						int bufferSize = 32000;
-
-						int padding = 100;
-
-						using (Stream fileStream = new FileStream(gcodeFilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+						// Ask for slicer specific gcode validation
+						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
-							int i = 1;
-							bool readToStart = false;
-							do
-							{
-								var buffer = new byte[bufferSize + 100];
-
-								// fileStream.Seek(Math.Max(0, fileStream.Length - bufferSize), SeekOrigin.Begin);
-								fileStream.Position = Math.Max(0, fileStream.Length - (bufferSize * i++) - padding);
-								readToStart = fileStream.Position == 0;
-
-								int numBytesRead = fileStream.Read(buffer, 0, bufferSize + padding);
-
-								string fileEnd = System.Text.Encoding.UTF8.GetString(buffer);
-								if (fileEnd.Contains("filament used"))
-								{
-									await printer.Connection.StartPrint(gcodeFilePath);
-									MonitorPrintTask(printer);
-									return;
-								}
-							} while (!readToStart);
+							await printer.Connection.StartPrint(gcodeFilePath);
+							MonitorPrintTask(printer);
+							return;
 						}
 					}
 				}
@@ -4122,6 +4101,8 @@ Support and tutorials:
 			{
 				try
 				{
+					PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
+
 					// Initial load builds UI elements, then constructs workspace tabs as they're encountered in RestoreUserTabs()
 					await applicationController.RestoreUserTabs();
 

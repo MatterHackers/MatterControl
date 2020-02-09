@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl
 					{
 						settingString.Append(",");
 					}
+
 					first = false;
 
 					settingString.Append(axisLabels[i]);

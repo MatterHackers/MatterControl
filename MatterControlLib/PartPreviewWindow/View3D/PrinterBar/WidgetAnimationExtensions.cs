@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					double blend = Easing.Cubic.In(ratio);
 					box.Position = new VectorMath.Vector2(startX + (xdistance * blend), startY);
 
-					//Console.WriteLine("Ms: {0}, Ratio: {1}, Easing: {2}, Position: {3}", elapsedMs, ratio, blend, box.Position);
+					// Console.WriteLine("Ms: {0}, Ratio: {1}, Easing: {2}, Position: {3}", elapsedMs, ratio, blend, box.Position);
 					box.Invalidate();
 				}
 				else

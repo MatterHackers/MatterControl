@@ -826,7 +826,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				defaultTestImages,
 				closeWindow: () =>
 				{
-					foreach(var printer in ApplicationController.Instance.ActivePrinters)
+					foreach (var printer in ApplicationController.Instance.ActivePrinters)
 					{
 						if (printer.Connection.CommunicationState == CommunicationStates.Printing)
 						{

@@ -247,7 +247,7 @@ namespace MatterHackers.MatterControl
 				this.SetBackgroundColor();
 
 				// find out where the contents we put in last time are
-				int thisIndex = GetChildIndex(panel);
+				int thisIndex = Children.IndexOf(panel);
 				this.RemoveAllChildren();
 
 				// make new content with the possibly changed theme

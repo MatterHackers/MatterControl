@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			var firstChild = this.Children[0];
+			var firstChild = this.Children.FirstOrDefault();
 			var bounds = this.LocalBounds;
 
 			// Get the first child bounds in our coords

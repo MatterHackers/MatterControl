@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,29 +29,23 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class InfillTranslator : MappedSetting
+	public class AsPercentOrDirect : ValueConverter
 	{
-		public InfillTranslator(PrinterConfig printer, string canonicalSettingsName, string exportedName)
-			: base(printer, canonicalSettingsName, exportedName)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-		}
+			double finalValue = 0;
 
-		public override string Value
-		{
-			get
+			if (value.Contains("%"))
 			{
-				double infillRatio0To1 = ParseDouble(base.Value);
-				// 400 = solid (extruder width)
-
-				double nozzle_diameter = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
-				double linespacing = 1000;
-				if (infillRatio0To1 > .01)
-				{
-					linespacing = nozzle_diameter / infillRatio0To1;
-				}
-
-				return ((int)(linespacing * 1000)).ToString();
+				string withoutPercent = value.Replace("%", "");
+				finalValue = ParseDouble(withoutPercent) / 100.0;
 			}
+			else
+			{
+				finalValue = ParseDouble(value);
+			}
+
+			return finalValue.ToString();
 		}
 	}
 }

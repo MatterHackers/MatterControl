@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingData
 	{
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum DataEditTypes { STRING, READONLY_STRING, WIDE_STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, VECTOR3, OFFSET3, CHECK_BOX, LIST, MULTI_LINE_TEXT, MARKDOWN_TEXT, HARDWARE_PRESENT, COM_PORT, IP_LIST, BOUNDS, VECTOR4 };
+		public enum DataEditTypes { STRING, READONLY_STRING, WIDE_STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, VECTOR3, OFFSET3, CHECK_BOX, LIST, MULTI_LINE_TEXT, MARKDOWN_TEXT, HARDWARE_PRESENT, COM_PORT, IP_LIST, BOUNDS, VECTOR4, SLICE_ENGINE };
 
 		public string SlicerConfigName { get; set; }
 
@@ -75,5 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool ReloadUiWhenChanged { get; set; } = false;
 
 		public SettingsLayout.SubGroup OrganizerSubGroup { get; set; }
+
+		public ValueConverter Converter { get; set; }
 	}
 }

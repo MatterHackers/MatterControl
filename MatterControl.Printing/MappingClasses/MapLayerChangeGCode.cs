@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2016, Lars Brubaker
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,24 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
 {
-	public class MappedSkirtLoopsSetting : AsCountOrDistance
+	public class MapLayerChangeGCode : ValueConverter
 	{
-		public MappedSkirtLoopsSetting(PrinterConfig printer, string canonicalSettingsName, string exportedName, string keyToUseAsDenominatorForCount)
-			: base(printer, canonicalSettingsName, exportedName, keyToUseAsDenominatorForCount)
+		public override string Convert(string value, PrinterSettings settings)
 		{
-		}
+			// Unescape newlines
+			value = value.Replace("\\n", "\n");
 
-		public override string Value
-		{
-			get
+			if (!value.Contains("; LAYER:")
+				&& !value.Contains(";LAYER:"))
 			{
-				if (printer.Settings.GetValue<bool>(SettingsKey.create_skirt))
+				if (value.Length > 0)
 				{
-					return base.Value;
+					value += "\n";
 				}
 
-				return "0";
+				value += "; LAYER:[layer_num]\n";
 			}
+
+			return settings.ReplaceMacroValues(value.Replace("\n", "\\n"));
 		}
 	}
 }

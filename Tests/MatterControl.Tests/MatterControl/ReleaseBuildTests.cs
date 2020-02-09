@@ -43,7 +43,7 @@ namespace MatterControl.Tests
 			string knownAssemblies = @"VectorMath.dll
 						Agg.dll
 						PolygonMesh.dll
-						clipper_library.dll
+						agg_clipper_library.dll
 						Gui.dll
 						Tesselate.dll
 						DataConverters2D.dll
