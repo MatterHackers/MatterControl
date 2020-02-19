@@ -950,6 +950,18 @@ namespace MatterHackers.MatterControl
 						},
 						new SceneSelectionOperation()
 						{
+							OperationType = typeof(HollowOutObject3D),
+							TitleResolver = () => "Hollow Out".Localize(),
+							Action = (sceneContext) =>
+							{
+								var inflate = new HollowOutObject3D();
+								inflate.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
 							OperationType = typeof(TwistObject3D),
 							TitleResolver = () => "Twist".Localize(),
 							Action = (sceneContext) =>
