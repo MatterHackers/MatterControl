@@ -529,27 +529,39 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{
-				var field = new IntField(theme);
-				field.Initialize(0);
-				field.IntValue = intValue;
-				RegisterValueChanged(field, (valueString) => { return int.Parse(valueString); });
-
-				void RefreshField(object s, InvalidateArgs e)
+				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
+				if (readOnly)
 				{
-					if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+					var valueField = new TextWidget(intValue.ToString(), textColor: theme.TextColor, pointSize: 10);
+					rowContainer = new SettingsRow(property.DisplayName.Localize(),
+						property.Description.Localize(),
+						valueField,
+						theme);
+				}
+				else // normal edit row
+				{
+					var field = new IntField(theme);
+					field.Initialize(0);
+					field.IntValue = intValue;
+					RegisterValueChanged(field, (valueString) => { return int.Parse(valueString); });
+
+					void RefreshField(object s, InvalidateArgs e)
 					{
-						int newValue = (int)property.Value;
-						if (newValue != field.IntValue)
+						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 						{
-							field.IntValue = newValue;
+							int newValue = (int)property.Value;
+							if (newValue != field.IntValue)
+							{
+								field.IntValue = newValue;
+							}
 						}
 					}
+
+					object3D.Invalidated += RefreshField;
+					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
+
+					rowContainer = CreateSettingsRow(property, field, theme);
 				}
-
-				object3D.Invalidated += RefreshField;
-				field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
-
-				rowContainer = CreateSettingsRow(property, field, theme);
 			}
 			else if (propertyValue is bool boolValue)
 			{

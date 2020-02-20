@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -45,11 +47,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Reduce".Localize();
 		}
 
-		public double ReduceRatio { get; set; } = .9;
+		[ReadOnly(true)]
+		[Description("The original number of polygons.")]
+		public int OriginalPolygons
+		{
+			get
+			{
+				var total = 0;
+				foreach (var sourceItem in SourceContainer.VisibleMeshes())
+				{
+					total += sourceItem.Mesh.Faces.Count;
+				}
 
-		public bool MaintainSurface { get; set; } = true;
+				return total;
+			}
 
-		public bool PreserveBoundries { get; set; } = true;
+			set { }
+		}
+
+		[Description("The target number of polygons.")]
+		public int TargetPolygons { get; set; } = -1;
+
+
+		[Description("Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.")]
+		public bool MaintainSurface { get; set; } = false;
 
 		public Mesh Reduce(Mesh inMesh)
 		{
@@ -57,27 +78,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			MeshProjectionTarget target = null;
 
+			Reducer reducer = new Reducer(mesh);
+
 			if (MaintainSurface)
 			{
 				var tree = new DMeshAABBTree3(new DMesh3(mesh));
 				tree.Build();
 				target = new MeshProjectionTarget(tree.Mesh, tree);
-			}
-
-			Reducer reducer = new Reducer(mesh);
-			if (PreserveBoundries)
-			{
-				reducer.SetExternalConstraints(new MeshConstraints());
-				MeshConstraintUtil.FixAllBoundaryEdges(reducer.Constraints, mesh);
-			}
-
-			if (target != null)
-			{
 				reducer.SetProjectionTarget(target);
 				reducer.ProjectionMode = Reducer.TargetProjectionMode.Inline;
 			}
 
-			reducer.ReduceToTriangleCount(Math.Max(4, (int)(mesh.TriangleCount * ReduceRatio)));
+			reducer.ReduceToTriangleCount(Math.Max(4, TargetPolygons));
 
 			return reducer.Mesh.ToMesh();
 		}
@@ -88,6 +100,17 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLocks = this.RebuilLockAll();
 
+			var valuesChanged = false;
+
+			// check if we have be initialized
+			if (TargetPolygons == -1)
+			{
+				TargetPolygons = OriginalPolygons / 2;
+				valuesChanged = true;
+			}
+
+			TargetPolygons = agg_basics.Clamp(TargetPolygons, 4, OriginalPolygons, ref valuesChanged);
+			
 			return ApplicationController.Instance.Tasks.Execute(
 				"Reduce".Localize(),
 				null,
@@ -105,13 +128,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = reducedMesh
 						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
 					}
 
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
-					Invalidate(InvalidateType.Children);
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+
 					return Task.CompletedTask;
 				});
 		}

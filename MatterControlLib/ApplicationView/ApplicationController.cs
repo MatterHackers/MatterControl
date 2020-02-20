@@ -957,7 +957,7 @@ namespace MatterHackers.MatterControl
 								var hollowOut = new HollowOutObject3D();
 								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("hollow.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
@@ -969,7 +969,7 @@ namespace MatterHackers.MatterControl
 								var hollowOut = new DecimateObject3D();
 								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("reduce.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
