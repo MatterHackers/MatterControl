@@ -27,35 +27,37 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.ComponentModel;
+using System;
 using System.Threading.Tasks;
 using g3;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HollowOutObject3D : OperationSourceContainerObject3D
+	public class DecimateObject3D : OperationSourceContainerObject3D
 	{
-		public HollowOutObject3D()
+		public DecimateObject3D()
 		{
-			Name = "Hollow Out".Localize();
+			Name = "Reduce".Localize();
 		}
 
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = .5;
+		public double ReduceRatio { get; set; } = .9;
 
-		public Mesh HollowOut(Mesh inMesh)
+		public bool MaintainSurface { get; set; } = true;
+
+		public bool PreserveBoundries { get; set; } = true;
+
+		public Mesh Reduce(Mesh inMesh)
 		{
 			DMesh3 mesh = inMesh.ToDMesh3();
 
-			var maintainSurface = true;
-
 			MeshProjectionTarget target = null;
 
-			if (maintainSurface)
+			if (MaintainSurface)
 			{
 				var tree = new DMeshAABBTree3(new DMesh3(mesh));
 				tree.Build();
@@ -63,8 +65,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			Reducer reducer = new Reducer(mesh);
-			var preserveBoundries = true;
-			if (preserveBoundries)
+			if (PreserveBoundries)
 			{
 				reducer.SetExternalConstraints(new MeshConstraints());
 				MeshConstraintUtil.FixAllBoundaryEdges(reducer.Constraints, mesh);
@@ -76,7 +77,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				reducer.ProjectionMode = Reducer.TargetProjectionMode.Inline;
 			}
 
-			reducer.ReduceToTriangleCount(500);
+			reducer.ReduceToTriangleCount(Math.Max(4, (int)(mesh.TriangleCount * ReduceRatio)));
 
 			return reducer.Mesh.ToMesh();
 		}
@@ -98,7 +99,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
-						var reducedMesh = HollowOut(originalMesh);
+						var reducedMesh = Reduce(originalMesh);
 
 						var newMesh = new Object3D()
 						{
