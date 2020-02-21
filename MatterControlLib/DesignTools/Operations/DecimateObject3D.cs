@@ -32,6 +32,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -40,7 +41,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class DecimateObject3D : OperationSourceContainerObject3D
+	public class DecimateObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
 		public DecimateObject3D()
 		{
@@ -49,7 +50,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[ReadOnly(true)]
 		[Description("The original number of polygons.")]
-		public int OriginalPolygons
+		public int SourcePolygonCount
 		{
 			get
 			{
@@ -62,34 +63,43 @@ namespace MatterHackers.MatterControl.DesignTools
 				return total;
 			}
 
-			set { }
+			set
+			{
+			}
 		}
 
-		[Description("The target number of polygons.")]
-		public int TargetPolygons { get; set; } = -1;
+		public enum ReductionMode
+		{
+			PolygonCount,
+			PolygonPercent
+		}
 
+		public ReductionMode Mode { get; set; } = ReductionMode.PolygonPercent;
+
+		[Description("The target number of polygons.")]
+		public int TargetCount { get; set; } = -1;
+
+		[Description("The percentage of polygons to keep.")]
+		public double TargetPercent { get; set; } = 50;
 
 		[Description("Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.")]
 		public bool MaintainSurface { get; set; } = false;
 
-		public Mesh Reduce(Mesh inMesh)
+		public Mesh Reduce(Mesh inMesh, int targetCount)
 		{
-			DMesh3 mesh = inMesh.ToDMesh3();
-
-			MeshProjectionTarget target = null;
-
-			Reducer reducer = new Reducer(mesh);
+			var mesh = inMesh.ToDMesh3();
+			var reducer = new Reducer(mesh);
 
 			if (MaintainSurface)
 			{
 				var tree = new DMeshAABBTree3(new DMesh3(mesh));
 				tree.Build();
-				target = new MeshProjectionTarget(tree.Mesh, tree);
+				var target = new MeshProjectionTarget(tree.Mesh, tree);
 				reducer.SetProjectionTarget(target);
 				reducer.ProjectionMode = Reducer.TargetProjectionMode.Inline;
 			}
 
-			reducer.ReduceToTriangleCount(Math.Max(4, TargetPolygons));
+			reducer.ReduceToTriangleCount(Math.Max(4, targetCount));
 
 			return reducer.Mesh.ToMesh();
 		}
@@ -103,14 +113,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			var valuesChanged = false;
 
 			// check if we have be initialized
-			if (TargetPolygons == -1)
+			if (TargetCount == -1)
 			{
-				TargetPolygons = OriginalPolygons / 2;
+				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100.0);
 				valuesChanged = true;
 			}
 
-			TargetPolygons = agg_basics.Clamp(TargetPolygons, 4, OriginalPolygons, ref valuesChanged);
-			
+			if (Mode == ReductionMode.PolygonCount)
+			{
+				TargetCount = agg_basics.Clamp(TargetCount, 4, SourcePolygonCount, ref valuesChanged);
+				TargetPercent = TargetCount / SourcePolygonCount * 100;
+			}
+			else
+			{
+				TargetPercent = agg_basics.Clamp(TargetPercent, 0, 100, ref valuesChanged);
+				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100);
+			}
+
 			return ApplicationController.Instance.Tasks.Execute(
 				"Reduce".Localize(),
 				null,
@@ -122,7 +141,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
-						var reducedMesh = Reduce(originalMesh);
+						var targetCount = (int)(originalMesh.Faces.Count * TargetPercent / 100);
+						var reducedMesh = Reduce(originalMesh, targetCount);
 
 						var newMesh = new Object3D()
 						{
@@ -144,6 +164,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			if (change.Context.GetEditRow(nameof(TargetPercent)) is GuiWidget percentWidget)
+			{
+				percentWidget.Visible = Mode == ReductionMode.PolygonPercent;
+			}
+
+			if (change.Context.GetEditRow(nameof(TargetCount)) is GuiWidget countWidget)
+			{
+				countWidget.Visible = Mode == ReductionMode.PolygonCount;
+			}
 		}
 	}
 }

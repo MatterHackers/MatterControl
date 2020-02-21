@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
@@ -44,41 +45,40 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Hollow Out".Localize();
 		}
 
-		[DisplayName("Back Ratio")]
-		public double PinchRatio { get; set; } = .5;
+		public double Distance { get; set; } = 2;
+
+		private readonly Func<DMesh3, int, double, BoundedImplicitFunction3d> meshToImplicitF = (meshIn, numcells, max_offset) =>
+		{
+			double meshCellsize = meshIn.CachedBounds.MaxDim / numcells;
+			var levelSet = new MeshSignedDistanceGrid(meshIn, meshCellsize);
+			levelSet.ExactBandWidth = (int)(max_offset / meshCellsize) + 1;
+			levelSet.Compute();
+			return new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
+		};
+
+		private readonly Func<BoundedImplicitFunction3d, int, DMesh3> generateMeshF = (root, numcells) => {
+			var c = new MarchingCubes();
+			c.Implicit = root;
+			c.RootMode = MarchingCubes.RootfindingModes.LerpSteps;      // cube-edge convergence method
+			c.RootModeSteps = 5;                                        // number of iterations
+			c.Bounds = root.Bounds();
+			c.CubeSize = c.Bounds.MaxDim / numcells;
+			c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
+			c.Generate();
+			MeshNormals.QuickCompute(c.Mesh);                           // generate normals
+			return c.Mesh;
+		};
 
 		public Mesh HollowOut(Mesh inMesh)
 		{
-			DMesh3 mesh = inMesh.ToDMesh3();
+			var mesh = inMesh.ToDMesh3();
 
-			var maintainSurface = true;
+			BoundedImplicitFunction3d implicitFunction = meshToImplicitF(mesh, 64, Distance);
 
-			MeshProjectionTarget target = null;
+			var implicitMesh = generateMeshF(implicitFunction, 128);
+			var insetMesh = generateMeshF(new ImplicitOffset3d() { A = implicitFunction, Offset = -Distance }, 128);
 
-			if (maintainSurface)
-			{
-				var tree = new DMeshAABBTree3(new DMesh3(mesh));
-				tree.Build();
-				target = new MeshProjectionTarget(tree.Mesh, tree);
-			}
-
-			Reducer reducer = new Reducer(mesh);
-			var preserveBoundries = true;
-			if (preserveBoundries)
-			{
-				reducer.SetExternalConstraints(new MeshConstraints());
-				MeshConstraintUtil.FixAllBoundaryEdges(reducer.Constraints, mesh);
-			}
-
-			if (target != null)
-			{
-				reducer.SetProjectionTarget(target);
-				reducer.ProjectionMode = Reducer.TargetProjectionMode.Inline;
-			}
-
-			reducer.ReduceToTriangleCount(500);
-
-			return reducer.Mesh.ToMesh();
+			return insetMesh.ToMesh();
 		}
 
 		public override Task Rebuild()
@@ -86,6 +86,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 
 			var rebuildLocks = this.RebuilLockAll();
+
+			var valuesChanged = false;
 
 			return ApplicationController.Instance.Tasks.Execute(
 				"Reduce".Localize(),
@@ -104,13 +106,20 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = reducedMesh
 						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
 					}
 
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
-					Invalidate(InvalidateType.Children);
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+
 					return Task.CompletedTask;
 				});
 		}
