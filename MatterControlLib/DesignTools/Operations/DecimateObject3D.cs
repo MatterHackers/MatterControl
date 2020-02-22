@@ -76,10 +76,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		[Description("The target number of polygons.")]
+		public int TargetCount { get; set; } = -1;
+
+		[Description("The percentage of polygons to keep.")]
+		public double TargetPercent { get; set; } = 50;
+
+		[Description("Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.")]
+		public bool MaintainSurface { get; set; } = false;
+
 		[ReadOnly(true)]
-		[Description("The original number of polygons.")]
-		[DisplayName("Target Count")]
-		public int ROTargetCount
+		[Description("The number of polygons determined by the percentage reduction.")]
+		[DisplayName("Final Count")]
+		public int CountAfterPercentReduction
 		{
 			get
 			{
@@ -90,15 +99,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 			}
 		}
-
-		[Description("The target number of polygons.")]
-		public int TargetCount { get; set; } = -1;
-
-		[Description("The percentage of polygons to keep.")]
-		public double TargetPercent { get; set; } = 50;
-
-		[Description("Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.")]
-		public bool MaintainSurface { get; set; } = false;
 
 		public Mesh Reduce(Mesh inMesh, int targetCount)
 		{
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				percentWidget.Visible = Mode == ReductionMode.Polygon_Percent;
 			}
 
-			if (change.Context.GetEditRow(nameof(ROTargetCount)) is GuiWidget roTargetCountWidget)
+			if (change.Context.GetEditRow(nameof(CountAfterPercentReduction)) is GuiWidget roTargetCountWidget)
 			{
 				roTargetCountWidget.Visible = Mode == ReductionMode.Polygon_Percent;
 			}
