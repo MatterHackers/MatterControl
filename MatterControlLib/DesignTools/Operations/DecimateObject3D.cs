@@ -48,6 +48,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Reduce".Localize();
 		}
 
+		public enum ReductionMode
+		{
+			Polygon_Count,
+			Polygon_Percent
+		}
+
+		public ReductionMode Mode { get; set; } = ReductionMode.Polygon_Percent;
+
 		[ReadOnly(true)]
 		[Description("The original number of polygons.")]
 		public int SourcePolygonCount
@@ -68,13 +76,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public enum ReductionMode
+		[ReadOnly(true)]
+		[Description("The original number of polygons.")]
+		[DisplayName("Target Count")]
+		public int ROTargetCount
 		{
-			PolygonCount,
-			PolygonPercent
-		}
+			get
+			{
+				return TargetCount;
+			}
 
-		public ReductionMode Mode { get; set; } = ReductionMode.PolygonPercent;
+			set
+			{
+			}
+		}
 
 		[Description("The target number of polygons.")]
 		public int TargetCount { get; set; } = -1;
@@ -113,16 +128,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var valuesChanged = false;
 
 			// check if we have be initialized
-			if (TargetCount == -1)
-			{
-				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100.0);
-				valuesChanged = true;
-			}
-
-			if (Mode == ReductionMode.PolygonCount)
+			if (Mode == ReductionMode.Polygon_Count)
 			{
 				TargetCount = agg_basics.Clamp(TargetCount, 4, SourcePolygonCount, ref valuesChanged);
-				TargetPercent = TargetCount / SourcePolygonCount * 100;
+				TargetPercent = TargetCount / (double)SourcePolygonCount * 100;
 			}
 			else
 			{
@@ -170,12 +179,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (change.Context.GetEditRow(nameof(TargetPercent)) is GuiWidget percentWidget)
 			{
-				percentWidget.Visible = Mode == ReductionMode.PolygonPercent;
+				percentWidget.Visible = Mode == ReductionMode.Polygon_Percent;
+			}
+
+			if (change.Context.GetEditRow(nameof(ROTargetCount)) is GuiWidget roTargetCountWidget)
+			{
+				roTargetCountWidget.Visible = Mode == ReductionMode.Polygon_Percent;
 			}
 
 			if (change.Context.GetEditRow(nameof(TargetCount)) is GuiWidget countWidget)
 			{
-				countWidget.Visible = Mode == ReductionMode.PolygonCount;
+				countWidget.Visible = Mode == ReductionMode.Polygon_Count;
 			}
 		}
 	}
