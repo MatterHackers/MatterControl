@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>MatterHackers Inc.</Company>
+	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MatterControl.Common\MatterControl.Common.csproj">
+      <Project>{2af30557-fc50-4de3-ad1c-7eb57131a9c5}</Project>
+      <Name>MatterControl.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\Localizations\Localizations.csproj" />
+    <ProjectReference Include="..\Submodules\agg-sharp\VectorMath\VectorMath.csproj">
+    </ProjectReference>
+    <ProjectReference Include="..\Submodules\geometry3Sharp\geometry3Sharp.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -37,7 +37,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -139,9 +138,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				TargetCount = (int)(SourcePolygonCount * TargetPercent / 100);
 			}
 
-			return ApplicationController.Instance.Tasks.Execute(
+			return TaskBuilder(
 				"Reduce".Localize(),
-				null,
 				(reporter, cancellationToken) =>
 				{
 					SourceContainer.Visible = true;

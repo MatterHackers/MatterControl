@@ -90,6 +90,10 @@
       <Project>{b2b001ee-a142-4e20-acf8-ae4a9cb984f8}</Project>
       <Name>MatterControl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\MatterControl.MeshOperations\MatterControl.MeshOperations.csproj">
+      <Project>{3ec506a5-3c23-4663-a5f3-600119361a35}</Project>
+      <Name>MatterControl.MeshOperations</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\MatterControl.Printing\MatterControl.Printing.csproj">
       <Project>{97d5ade3-c1b4-4b46-8a3e-718a4f7f079f}</Project>
       <Name>MatterControl.Printing</Name>

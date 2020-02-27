@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
 using MatterHackers.DataConverters3D;
@@ -89,9 +88,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var valuesChanged = false;
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Reduce".Localize(),
-				null,
+			return TaskBuilder(
+				"Hollow".Localize(),
 				(reporter, cancellationToken) =>
 				{
 					SourceContainer.Visible = true;

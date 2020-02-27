@@ -692,6 +692,8 @@ namespace MatterHackers.MatterControl
 
 		private void BuildSceneOperations()
 		{
+			OperationSourceContainerObject3D.TaskBuilder = (name, func) => ApplicationController.Instance.Tasks.Execute(name, null, func);
+
 			registeredSceneOperations = new List<SceneSelectionOperation>()
 			{
 				new SceneSelectionOperation()

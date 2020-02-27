@@ -27,19 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class OperationSourceContainerObject3D : Object3D
 	{
+		public static Func<string, Func<IProgress<ProgressStatus>, CancellationToken, Task>, Task> TaskBuilder { get; set; } =
+			(name, func) => Task.Run(() => func(null, CancellationToken.None));
+
 		public override bool CanFlatten => true;
 
 		[JsonIgnore]
