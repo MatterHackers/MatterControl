@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using g3;
 using MatterHackers.DataConverters3D;
@@ -98,11 +99,18 @@ namespace MatterHackers.MatterControl.DesignTools
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
-						var reducedMesh = HollowOut(originalMesh);
+						var combinedMesh = originalMesh.Copy(CancellationToken.None);
+
+						// get the interior mesh and reverse it
+						var interior = HollowOut(originalMesh);
+						interior.ReverseFaces();
+
+						// now add all the faces to the combinedMesh
+						combinedMesh.CopyFaces(interior);
 
 						var newMesh = new Object3D()
 						{
-							Mesh = reducedMesh
+							Mesh = combinedMesh
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
