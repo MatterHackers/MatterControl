@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Distance { get; set; } = 2;
 
-		private DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
+		private static DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
 		{
 			var bounds = root.Bounds();
 
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return c.Mesh;
 		}
 
-		public Mesh HollowOut(Mesh inMesh)
+		public static Mesh HollowOut(Mesh inMesh, double distance)
 		{
 			// Convert to DMesh3
 			var mesh = inMesh.ToDMesh3();
@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var levelSet = new MeshSignedDistanceGrid(mesh, meshCellsize)
 			{
-				ExactBandWidth = (int)(Distance / meshCellsize) + 1
+				ExactBandWidth = (int)(distance / meshCellsize) + 1
 			};
 			levelSet.Compute();
 
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				new ImplicitOffset3d()
 				{
 					A = implicitMesh,
-					Offset = -Distance
+					Offset = -distance
 				},
 				128);
 
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						var newMesh = new Object3D()
 						{
-							Mesh = HollowOut(sourceItem.Mesh)
+							Mesh = HollowOut(sourceItem.Mesh, this.Distance)
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
