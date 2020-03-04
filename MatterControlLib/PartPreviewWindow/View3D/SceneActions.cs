@@ -49,24 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public static class SceneActions
 	{
 		private static int pasteObjectXOffset = 5;
-		public static List<IObject3D> GetSelectedItems(this InteractiveScene scene)
-		{
-			var selectedItem = scene.SelectedItem;
-			var selectedItems = new List<IObject3D>();
-			if (selectedItem != null)
-			{
-				if (selectedItem is SelectionGroupObject3D)
-				{
-					selectedItems = selectedItem.Children.ToList();
-				}
-				else
-				{
-					selectedItems = new List<IObject3D> { selectedItem };
-				}
-			}
-
-			return selectedItems;
-		}
 
 		public static async void UngroupSelection(this InteractiveScene scene)
 		{

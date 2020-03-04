@@ -82,7 +82,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
-			var center = sourceAabb.Center + new Vector3(RotationOffset);
+			var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;
+
+			var center = new Vector3(rotationCenter.X, rotationCenter.Y, sourceAabb.Center.Z);
 
 			// render the top and bottom rings
 			layer.World.RenderCylinderOutline(this.WorldMatrix(), center, 1, sourceAabb.ZSize, 15, Color.Red, Color.Red, 5);
@@ -172,7 +174,8 @@ namespace MatterHackers.MatterControl.DesignTools
 						cuts.Add(bottom - cutSize + (size * ratio));
 					}
 
-					var rotationCenter = new Vector2(sourceAabb.Center) + RotationOffset;
+					// get the rotation from the center of the circumscribed circle of the convex hull
+					var rotationCenter = SourceContainer.GetSmallestEnclosingCircleAlongZ().Center + RotationOffset;
 
 					var twistedChildren = new List<IObject3D>();
 
@@ -289,6 +292,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				widget4.Visible = Advanced;
 			}
+		}
+	}
+
+	public static class ObjectCircleExtensions
+	{
+		public static Circle GetSmallestEnclosingCircleAlongZ(this IObject3D object3D)
+		{
+			var visibleMeshes = object3D.VisibleMeshes().Select(vm => (source: vm, convexHull: vm.Mesh.GetConvexHull(false))).ToList();
+
+			IEnumerable<Vector2> GetVertices()
+			{
+				foreach (var visibleMesh in visibleMeshes)
+				{
+					var matrix = visibleMesh.source.WorldMatrix(object3D);
+					foreach (var positon in visibleMesh.convexHull.Vertices)
+					{
+						var transformed = positon.Transform(matrix);
+						yield return new Vector2(transformed.X, transformed.Y);
+					}
+				}
+			}
+
+			var circle = SmallestEnclosingCircle.MakeCircle(GetVertices());
+
+			return circle;
 		}
 	}
 }

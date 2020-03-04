@@ -103,6 +103,8 @@
       <Name>MatterSlice</Name>
     </ProjectReference>
     <ProjectReference Include="MatterControl.Common\MatterControl.Common.csproj">
+      <Project>{50505F12-985B-4C5F-8DAB-D5BEA734CD51}</Project>
+      <Name>MatterControl.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

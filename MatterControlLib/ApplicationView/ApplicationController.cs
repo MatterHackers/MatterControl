@@ -692,6 +692,8 @@ namespace MatterHackers.MatterControl
 
 		private void BuildSceneOperations()
 		{
+			OperationSourceContainerObject3D.TaskBuilder = (name, func) => ApplicationController.Instance.Tasks.Execute(name, null, func);
+
 			registeredSceneOperations = new List<SceneSelectionOperation>()
 			{
 				new SceneSelectionOperation()
@@ -946,6 +948,30 @@ namespace MatterHackers.MatterControl
 								pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(HollowOutObject3D),
+							TitleResolver = () => "Hollow Out".Localize(),
+							Action = (sceneContext) =>
+							{
+								var hollowOut = new HollowOutObject3D();
+								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("hollow.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
+							OperationType = typeof(DecimateObject3D),
+							TitleResolver = () => "Reduce".Localize(),
+							Action = (sceneContext) =>
+							{
+								var hollowOut = new DecimateObject3D();
+								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("reduce.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
