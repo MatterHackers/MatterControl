@@ -47,38 +47,62 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Distance { get; set; } = 2;
 
-		private readonly Func<DMesh3, int, double, BoundedImplicitFunction3d> meshToImplicitF = (meshIn, numcells, max_offset) =>
+		private static DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
 		{
-			double meshCellsize = meshIn.CachedBounds.MaxDim / numcells;
-			var levelSet = new MeshSignedDistanceGrid(meshIn, meshCellsize);
-			levelSet.ExactBandWidth = (int)(max_offset / meshCellsize) + 1;
-			levelSet.Compute();
-			return new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
-		};
+			var bounds = root.Bounds();
 
-		private readonly Func<BoundedImplicitFunction3d, int, DMesh3> generateMeshF = (root, numcells) => {
-			var c = new MarchingCubes();
-			c.Implicit = root;
-			c.RootMode = MarchingCubes.RootfindingModes.LerpSteps;      // cube-edge convergence method
-			c.RootModeSteps = 5;                                        // number of iterations
-			c.Bounds = root.Bounds();
-			c.CubeSize = c.Bounds.MaxDim / numcells;
+			var c = new MarchingCubes()
+			{
+				Implicit = root,
+				RootMode = MarchingCubes.RootfindingModes.LerpSteps,      // cube-edge convergence method
+				RootModeSteps = 5,                                        // number of iterations
+				Bounds = bounds,
+				CubeSize = bounds.MaxDim / numcells,
+			};
+
 			c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
 			c.Generate();
+
 			MeshNormals.QuickCompute(c.Mesh);                           // generate normals
 			return c.Mesh;
-		};
+		}
 
-		public Mesh HollowOut(Mesh inMesh)
+		public static Mesh HollowOut(Mesh inMesh, double distance)
 		{
+			// Convert to DMesh3
 			var mesh = inMesh.ToDMesh3();
 
-			BoundedImplicitFunction3d implicitFunction = meshToImplicitF(mesh, 64, Distance);
+			// Create instance of BoundedImplicitFunction3d interface
+			int numcells = 64;
+			double meshCellsize = mesh.CachedBounds.MaxDim / numcells;
 
-			var implicitMesh = generateMeshF(implicitFunction, 128);
-			var insetMesh = generateMeshF(new ImplicitOffset3d() { A = implicitFunction, Offset = -Distance }, 128);
+			var levelSet = new MeshSignedDistanceGrid(mesh, meshCellsize)
+			{
+				ExactBandWidth = (int)(distance / meshCellsize) + 1
+			};
+			levelSet.Compute();
 
-			return insetMesh.ToMesh();
+			// Outer shell
+			var implicitMesh = new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
+
+			// Offset shell
+			var insetMesh = GenerateMeshF(
+				new ImplicitOffset3d()
+				{
+					A = implicitMesh,
+					Offset = -distance
+				},
+				128);
+
+			// Convert to PolygonMesh and reverse faces
+			var interior = insetMesh.ToMesh();
+			interior.ReverseFaces();
+
+			// Combine the original mesh with the reversed offset resulting in hollow
+			var combinedMesh = inMesh.Copy(CancellationToken.None);
+			combinedMesh.CopyFaces(interior);
+
+			return combinedMesh;
 		}
 
 		public override Task Rebuild()
@@ -98,19 +122,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
-						var originalMesh = sourceItem.Mesh;
-						var combinedMesh = originalMesh.Copy(CancellationToken.None);
-
-						// get the interior mesh and reverse it
-						var interior = HollowOut(originalMesh);
-						interior.ReverseFaces();
-
-						// now add all the faces to the combinedMesh
-						combinedMesh.CopyFaces(interior);
-
 						var newMesh = new Object3D()
 						{
-							Mesh = combinedMesh
+							Mesh = HollowOut(sourceItem.Mesh, this.Distance)
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
