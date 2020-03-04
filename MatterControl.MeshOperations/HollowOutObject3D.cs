@@ -47,37 +47,54 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double Distance { get; set; } = 2;
 
-		private readonly Func<DMesh3, int, double, BoundedImplicitFunction3d> meshToImplicitF = (meshIn, numcells, max_offset) =>
+		private DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
 		{
-			double meshCellsize = meshIn.CachedBounds.MaxDim / numcells;
-			var levelSet = new MeshSignedDistanceGrid(meshIn, meshCellsize);
-			levelSet.ExactBandWidth = (int)(max_offset / meshCellsize) + 1;
-			levelSet.Compute();
-			return new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
-		};
+			var bounds = root.Bounds();
 
-		private readonly Func<BoundedImplicitFunction3d, int, DMesh3> generateMeshF = (root, numcells) => {
-			var c = new MarchingCubes();
-			c.Implicit = root;
-			c.RootMode = MarchingCubes.RootfindingModes.LerpSteps;      // cube-edge convergence method
-			c.RootModeSteps = 5;                                        // number of iterations
-			c.Bounds = root.Bounds();
-			c.CubeSize = c.Bounds.MaxDim / numcells;
+			var c = new MarchingCubes()
+			{
+				Implicit = root,
+				RootMode = MarchingCubes.RootfindingModes.LerpSteps,      // cube-edge convergence method
+				RootModeSteps = 5,                                        // number of iterations
+				Bounds = bounds,
+				CubeSize = bounds.MaxDim / numcells,
+			};
+
 			c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
 			c.Generate();
+
 			MeshNormals.QuickCompute(c.Mesh);                           // generate normals
 			return c.Mesh;
-		};
+		}
 
 		public Mesh HollowOut(Mesh inMesh)
 		{
+			// Convert
 			var mesh = inMesh.ToDMesh3();
 
-			BoundedImplicitFunction3d implicitFunction = meshToImplicitF(mesh, 64, Distance);
+			// Create instance of BoundedImplicitFunction3d interface
+			int numcells = 64;
+			double meshCellsize = mesh.CachedBounds.MaxDim / numcells;
 
-			var implicitMesh = generateMeshF(implicitFunction, 128);
-			var insetMesh = generateMeshF(new ImplicitOffset3d() { A = implicitFunction, Offset = -Distance }, 128);
+			var levelSet = new MeshSignedDistanceGrid(mesh, meshCellsize)
+			{
+				ExactBandWidth = (int)(Distance / meshCellsize) + 1
+			};
+			levelSet.Compute();
 
+			// Outer shell
+			var implicitMesh = new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
+
+			// Inner shell subtracted from outer
+			var insetMesh = GenerateMeshF(
+				new ImplicitOffset3d()
+				{
+					A = implicitMesh,
+					Offset = -Distance
+				},
+				128);
+
+			// Convert
 			return insetMesh.ToMesh();
 		}
 
