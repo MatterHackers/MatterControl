@@ -108,8 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 				}
 				catch (Exception ex)
 				{
-					ApplicationController.Instance.LogInfo("Error performing boolean operation: ");
-					ApplicationController.Instance.LogInfo(ex.Message);
+					//ApplicationController.Instance.LogInfo("Error performing boolean operation: ");
+					//ApplicationController.Instance.LogInfo(ex.Message);
 				}
 				finally
 				{
@@ -123,8 +123,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						DeleteInt(ref pFc);
 					}
 
-					progressStatus.Progress0To1 = percentCompleted + amountPerOperation;
-					reporter.Report(progressStatus);
+					if (progressStatus != null)
+					{
+						progressStatus.Progress0To1 = percentCompleted + amountPerOperation;
+						reporter.Report(progressStatus);
+					}
 				}
 			}
 			else
