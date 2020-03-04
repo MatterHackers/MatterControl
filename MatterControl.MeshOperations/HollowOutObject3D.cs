@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public Mesh HollowOut(Mesh inMesh)
 		{
-			// Convert
+			// Convert to DMesh3
 			var mesh = inMesh.ToDMesh3();
 
 			// Create instance of BoundedImplicitFunction3d interface
@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// Outer shell
 			var implicitMesh = new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
 
-			// Inner shell subtracted from outer
+			// Offset shell
 			var insetMesh = GenerateMeshF(
 				new ImplicitOffset3d()
 				{
@@ -94,8 +94,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				},
 				128);
 
-			// Convert
-			return insetMesh.ToMesh();
+			// Convert to PolygonMesh and reverse faces
+			var interior = insetMesh.ToMesh();
+			interior.ReverseFaces();
+
+			// Combine the original mesh with the reversed offset resulting in hollow
+			var combinedMesh = inMesh.Copy(CancellationToken.None);
+			combinedMesh.CopyFaces(interior);
+
+			return combinedMesh;
 		}
 
 		public override Task Rebuild()
@@ -115,19 +122,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
-						var originalMesh = sourceItem.Mesh;
-						var combinedMesh = originalMesh.Copy(CancellationToken.None);
-
-						// get the interior mesh and reverse it
-						var interior = HollowOut(originalMesh);
-						interior.ReverseFaces();
-
-						// now add all the faces to the combinedMesh
-						combinedMesh.CopyFaces(interior);
-
 						var newMesh = new Object3D()
 						{
-							Mesh = combinedMesh
+							Mesh = HollowOut(sourceItem.Mesh)
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
