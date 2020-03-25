@@ -113,11 +113,11 @@ namespace MatterHackers.MatterControl
 				var affirmativeButton = theme.CreateDialogButton(yesOk);
 				affirmativeButton.Click += (s, e) =>
 				{
-					this.DialogWindow.Close();
-
 					// If applicable, invoke the callback
 					responseCallback?.Invoke(true);
 					haveResponded = true;
+
+					this.DialogWindow.Close();
 				};
 
 				this.AddPageAction(affirmativeButton, messageType != MessageType.YES_NO_WITHOUT_HIGHLIGHT);
