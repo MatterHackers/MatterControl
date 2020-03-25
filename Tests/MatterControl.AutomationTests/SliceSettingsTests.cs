@@ -31,9 +31,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.SwitchToSliceSettings();
 				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.create_raft);
-				testRunner.Delay(.5);
 
-				testRunner.StartSlicing();
+				testRunner.WaitForReloadAll(() => testRunner.StartSlicing());
+
 				testRunner.WaitFor(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				// Call compare slice settings method here
