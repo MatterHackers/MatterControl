@@ -49,8 +49,9 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
-		private bool forceSpiralVase;
-		protected PrinterConfig printer;
+		public enum SpiralVaseOptions { USE_SETTINGS, FORCE_ON, FORCE_OFF }
+		private SpiralVaseOptions spiralVaseOverride = SpiralVaseOptions.USE_SETTINGS;
+		protected PrinterConfig printer { get; set; }
 		private bool printerSetupRequired;
 
 		public virtual string ButtonText => "Machine File (G-Code)".Localize();
@@ -107,15 +108,21 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			var theme = AppContext.Theme;
 
-			forceSpiralVase = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
 			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), theme.TextColor, 10)
 			{
-				Checked = forceSpiralVase,
+				Checked = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase),
 				Cursor = Cursors.Hand,
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
 			{
-				forceSpiralVase = spiralVaseCheckbox.Checked;
+				if (spiralVaseCheckbox.Checked)
+				{
+					spiralVaseOverride = SpiralVaseOptions.FORCE_ON;
+				}
+				else
+				{
+					spiralVaseOverride = SpiralVaseOptions.FORCE_ON;
+				}
 			};
 			container.AddChild(spiralVaseCheckbox);
 
@@ -213,7 +220,11 @@ namespace MatterHackers.MatterControl.Library.Export
 							// Slice
 							try
 							{
-								printer.Settings.SetValue(SettingsKey.spiral_vase, forceSpiralVase ? "1" : "0");
+								bool oldSpiralVaseSetting = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
+								if (spiralVaseOverride != SpiralVaseOptions.USE_SETTINGS)
+								{
+									printer.Settings.SetValue(SettingsKey.spiral_vase, spiralVaseOverride == SpiralVaseOptions.FORCE_ON ? "1" : "0");
+								}
 
 								errors = printer.ValidateSettings(validatePrintBed: false);
 
@@ -234,6 +245,8 @@ namespace MatterHackers.MatterControl.Library.Export
 									{
 										return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken2);
 									});
+
+								printer.Settings.SetValue(SettingsKey.spiral_vase, oldSpiralVaseSetting ? "1" : "0");
 							}
 							finally
 							{
