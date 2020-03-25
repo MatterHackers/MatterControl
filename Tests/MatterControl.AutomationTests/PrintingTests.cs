@@ -331,6 +331,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
 					testRunner.Delay(1);
 
+					testRunner.WaitForReloadAll(() => { });
+
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
