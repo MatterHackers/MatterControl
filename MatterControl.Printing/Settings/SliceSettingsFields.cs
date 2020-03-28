@@ -1743,6 +1743,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.create_per_layer_support,
+					PresentationName = "Analyze Every Layer".Localize(),
+					HelpText = "Evaluate every layer for support requirements. Support will be algorithmically generated and not user editable. NOTE: If there is any user generated support no algorithmic support will be generated.".Localize(),
+					ShowIfSet = "!sla_printer",
+					DataEditType = DataEditTypes.CHECK_BOX,
+					DefaultValue = "0",
+					Converter = new MappedToBoolString(),
+					ReloadUiWhenChanged = true
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.create_per_layer_internal_support,
+					PresentationName = "Generate Everywhere".Localize(),
+					HelpText = "When generating per layer support, evaluate all surfaces rather than only those above the bed.".Localize(),
+					ShowIfSet = "!sla_printer&create_per_layer_support",
+					DataEditType = DataEditTypes.CHECK_BOX,
+					DefaultValue = "1",
+					Converter = new MappedToBoolString(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.support_percent,
+					PresentationName = "Line Support Overlap".Localize(),
+					HelpText = "The percentage overlap a given printed line must have over the layer below to be supported.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "%".Localize(),
+					ShowIfSet = "!sla_printer&create_per_layer_support",
+					DefaultValue = "50",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.support_grab_distance,
+					PresentationName = "Support Expand Distance".Localize(),
+					HelpText = "The amount to expand the support so it is easy to grab.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					ShowIfSet = "!sla_printer&create_per_layer_support",
+					DefaultValue = "1",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.support_material_extruder,
 					PresentationName = "Support Material Extruder".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
