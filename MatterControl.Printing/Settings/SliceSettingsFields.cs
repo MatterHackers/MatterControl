@@ -1291,7 +1291,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Leave this as 0 to allow automatic calculation of extrusion width.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter),
 				},
 				new SliceSettingData()
 				{
@@ -1607,7 +1608,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
-					DefaultValue = "30"
+					DefaultValue = "30",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)
 				},
 				new SliceSettingData()
 				{
@@ -1625,7 +1627,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Leave this as 0 to allow automatic calculation of extrusion width.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter)
 				},
 				new SliceSettingData()
 				{
@@ -1634,7 +1637,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
-					DefaultValue = "60"
+					DefaultValue = "60",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed)
 				},
 				new SliceSettingData()
 				{
@@ -1862,7 +1866,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					DefaultValue = "100%"
+					DefaultValue = "100%",
+					Converter = new AsPercentOrDirect()
 				},
 				new SliceSettingData()
 				{
@@ -1982,7 +1987,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Leave this as 0 to allow automatic calculation of extrusion width.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
-					DefaultValue = "0"
+					DefaultValue = "0",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter)
 				},
 				new SliceSettingData()
 				{
