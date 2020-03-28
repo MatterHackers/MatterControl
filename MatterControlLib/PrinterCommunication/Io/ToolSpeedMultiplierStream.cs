@@ -35,12 +35,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class ToolSpeedMultiplierStream : GCodeStreamProxy
 	{
 		private PrinterMove lastDestination = PrinterMove.Unknown;
-		private double t0Multiplier;
+		private double t1Multiplier;
 
 		public ToolSpeedMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
+			t1Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
+			if (t1Multiplier == 0)
+			{
+				t1Multiplier = 1;
+			}
+
 			printer.Settings.SettingChanged += Settings_SettingChanged;
 		}
 
@@ -49,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// we don't change the setting while printing
 			if (stringEvent.Data == SettingsKey.t1_extrusion_move_speed_multiplier)
 			{
-				t0Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
+				t1Multiplier = printer.Settings.GetValue<double>(SettingsKey.t1_extrusion_move_speed_multiplier);
 			}
 		}
 
@@ -91,7 +96,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					if (extrusionDelta && xyPositionDelta)
 					{
 						// modify the speed by the T1 multiplier
-						moveToSend.feedRate *= t0Multiplier;
+						moveToSend.feedRate *= t1Multiplier;
 					}
 				}
 
