@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private PrinterMove lastDestination = PrinterMove.Unknown;
 		private string postSwitchLine;
 		private double preSwitchFeedRate;
+		private double lastSeenFeedRate;
 		private Vector3 preSwitchPosition;
 		private readonly IGCodeLineReader gcodeLineReader;
 		private readonly GCodeMemoryFile gCodeMemoryFile;
@@ -96,6 +97,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				return lineToSend;
 			}
+
+			GCodeFile.GetFirstNumberAfter("F", lineToSend, ref lastSeenFeedRate);
 
 			var requestedToolForTempChange = -1;
 			// if we see a temp command remember what heat we are setting
@@ -449,8 +452,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						break;
 				}
 
-				preSwitchFeedRate = lastDestination.feedRate;
 				preSwitchPosition = lastDestination.position;
+				if (lastDestination.feedRate != double.PositiveInfinity)
+				{
+					preSwitchFeedRate = lastDestination.feedRate;
+				}
+				else
+				{
+					preSwitchFeedRate = lastSeenFeedRate;
+				}
 
 				// put together the output we want to send
 				var gcode = new StringBuilder();
