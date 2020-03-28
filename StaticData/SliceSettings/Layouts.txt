@@ -71,6 +71,10 @@ Advanced
   Support
     Support
       Support Options
+        create_per_layer_support
+        create_per_layer_internal_support
+        support_percent
+        support_grab_distance
         support_material_create_perimeter
         support_material_interface_layers
         support_material_xy_distance

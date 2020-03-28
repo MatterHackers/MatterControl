@@ -62,6 +62,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string cool_extruder_lift = nameof(cool_extruder_lift);
 		public const string cooling = nameof(cooling);
 		public const string create_brim = nameof(create_brim);
+		public const string create_per_layer_support = nameof(create_per_layer_support);
+		public const string create_per_layer_internal_support = nameof(create_per_layer_internal_support);
 		public const string create_raft = nameof(create_raft);
 		public const string create_skirt = nameof(create_skirt);
 		public const string created_date = nameof(created_date);
@@ -215,6 +217,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string start_perimeters_at_concave_points = nameof(start_perimeters_at_concave_points);
 		public const string start_perimeters_at_non_overhang = nameof(start_perimeters_at_non_overhang);
 		public const string support_air_gap = nameof(support_air_gap);
+		public const string support_grab_distance = nameof(support_grab_distance);
 		public const string support_material_create_perimeter = nameof(support_material_create_perimeter);
 		public const string support_material_extruder = nameof(support_material_extruder);
 		public const string support_material_infill_angle = nameof(support_material_infill_angle);
@@ -223,6 +226,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string support_material_spacing = nameof(support_material_spacing);
 		public const string support_material_speed = nameof(support_material_speed);
 		public const string support_material_xy_distance = nameof(support_material_xy_distance);
+		public const string support_percent = nameof(support_percent);
 		public const string support_type = nameof(support_type);
 		public const string t1_extrusion_move_speed_multiplier = nameof(t1_extrusion_move_speed_multiplier);
 		public const string temperature = nameof(temperature);
