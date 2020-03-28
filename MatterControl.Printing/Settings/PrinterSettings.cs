@@ -1008,7 +1008,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
 				&& settingsData.Converter is ValueConverter resolver)
 			{
-
 				return resolver.Convert(value, this);
 			}
 
