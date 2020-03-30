@@ -59,29 +59,32 @@ namespace MatterHackers.MatterControl
 			var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// Check to see if supports are required
-			var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
-			if (supportGenerator.RequiresSupport())
+			if (!settings.GetValue<bool>(SettingsKey.create_per_layer_support))
 			{
-				errors.Add(new ValidationError("UnsupportedParts")
+				var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
+				if (supportGenerator.RequiresSupport())
 				{
-					Error = "Possible Unsupported Parts Detected".Localize(),
-					Details = "Some parts may require support structures to print correctly".Localize(),
-					ErrorLevel = ValidationErrorLevel.Warning,
-					FixAction = new NamedAction()
+					errors.Add(new ValidationError("UnsupportedParts")
 					{
-						 Title = "Generate Supports".Localize(),
-						 Action = () =>
-						 {
+						Error = "Possible Unsupported Parts Detected".Localize(),
+						Details = "Some parts may require support structures to print correctly".Localize(),
+						ErrorLevel = ValidationErrorLevel.Warning,
+						FixAction = new NamedAction()
+						{
+							Title = "Generate Supports".Localize(),
+							Action = () =>
+							{
 							 // Find and InvokeClick on the Generate Supports toolbar button
 							 var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
-							 if (sharedParent != null)
-							 {
-								 var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
-								 supportsPopup.InvokeClick();
-							 }
-						 }
-					}
-				});
+								if (sharedParent != null)
+								{
+									var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+									supportsPopup.InvokeClick();
+								}
+							}
+						}
+					});
+				}
 			}
 
 			if (printer.Connection.IsConnected
