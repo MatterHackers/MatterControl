@@ -262,8 +262,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.air_gap_speed,
-					PresentationName = "Air Gap".Localize(),
-					HelpText = "The speed at which the air gap layer will print.".Localize(),
+					PresentationName = "Air Gapped Layer".Localize(),
+					HelpText = "The speed at which the layer on top of the air gap will print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
