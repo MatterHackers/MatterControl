@@ -952,6 +952,18 @@ namespace MatterHackers.MatterControl
 						},
 						new SceneSelectionOperation()
 						{
+							OperationType = typeof(TwistObject3D),
+							TitleResolver = () => "Twist".Localize(),
+							Action = (sceneContext) =>
+							{
+								var curve = new TwistObject3D();
+								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
 							OperationType = typeof(HollowOutObject3D),
 							TitleResolver = () => "Hollow Out".Localize(),
 							Action = (sceneContext) =>
@@ -976,16 +988,16 @@ namespace MatterHackers.MatterControl
 						},
 						new SceneSelectionOperation()
 						{
-							OperationType = typeof(TwistObject3D),
-							TitleResolver = () => "Twist".Localize(),
+							OperationType = typeof(RepairObject3D),
+							TitleResolver = () => "Repair".Localize(),
 							Action = (sceneContext) =>
 							{
-								var curve = new TwistObject3D();
-								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+								var hollowOut = new RepairObject3D();
+								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("repair.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-						}
+						},
 					}
 				},
 				new OperationGroup("Other")
