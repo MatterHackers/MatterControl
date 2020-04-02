@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var center = item.GetAxisAlignedBoundingBox().Center;
 
-				var traceData = item.TraceData();
+				var traceData = item.GetBVHData();
 
 				var xy = traceData.Contains(center);
 

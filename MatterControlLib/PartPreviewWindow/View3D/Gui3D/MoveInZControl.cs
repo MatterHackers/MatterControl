@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				upArrowMesh = StlProcessing.Load(arrowStream, CancellationToken.None);
 			}
 
-			CollisionVolume = upArrowMesh.CreateTraceData();
+			CollisionVolume = upArrowMesh.CreateBVHData();
 
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}

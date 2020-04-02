@@ -149,7 +149,7 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			CollisionVolume = rotationHandle.CreateTraceData();
+			CollisionVolume = rotationHandle.CreateBVHData();
 
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
