@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (nameFound)
 				{
-					AxisAlignedBoundingBox bounds = child.TraceData().GetAxisAlignedBoundingBox();
+					AxisAlignedBoundingBox bounds = child.GetBVHData().GetAxisAlignedBoundingBox();
 
 					RectangleDouble screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
 					for (int i = 0; i < 4; i++)

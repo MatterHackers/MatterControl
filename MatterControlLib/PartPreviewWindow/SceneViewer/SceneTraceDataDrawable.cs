@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
 			// RenderSceneTraceData
-			var bvhIterator = new BvhIterator(scene?.TraceData(), decentFilter: (x) =>
+			var bvhIterator = new BvhIterator(scene?.GetBVHData(), decentFilter: (x) =>
 			{
 				var center = x.Bvh.GetCenter();
 				var worldCenter = Vector3Ex.Transform(center, x.TransformToWorld);

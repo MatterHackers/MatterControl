@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var child in sceneContext.Scene.Children)
 			{
-				world.RenderDebugAABB(e.Graphics2D, child.TraceData().GetAxisAlignedBoundingBox());
+				world.RenderDebugAABB(e.Graphics2D, child.GetBVHData().GetAxisAlignedBoundingBox());
 				world.RenderDebugAABB(e.Graphics2D, child.GetAxisAlignedBoundingBox());
 			}
 		}

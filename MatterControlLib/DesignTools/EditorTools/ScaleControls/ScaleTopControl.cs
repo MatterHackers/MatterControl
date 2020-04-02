@@ -139,7 +139,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			topScaleMesh = PlatonicSolids.CreateCube(selectCubeSize, selectCubeSize, selectCubeSize);
 
-			CollisionVolume = topScaleMesh.CreateTraceData();
+			CollisionVolume = topScaleMesh.CreateBVHData();
 
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}

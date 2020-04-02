@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				connections.Add(new ConnectedFaces(1, 1, 2, 3, 1, 0));
 				connections.Add(new ConnectedFaces(1, -1, 1, 3, 2, 0));
 
-				cubeTraceData = cube.CreateTraceData();
+				cubeTraceData = cube.CreateBVHData();
 			});
 
 			MouseLeave += (s, e) =>

@@ -913,7 +913,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foundTriangleInSelectionBounds = false;
 
 				// Filter the IPrimitive trace data finding matches as defined in InSelectionBounds
-				var filteredResults = item.TraceData().Filter(InSelectionBounds);
+				var filteredResults = item.GetBVHData().Filter(InSelectionBounds);
 
 				// Accumulate all matching BvhIterator results for debug rendering
 				allResults.AddRange(filteredResults);
@@ -1461,7 +1461,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								{
 									foreach (Object3D object3D in selectedItem.Children)
 									{
-										if (object3D.TraceData().Contains(info.HitPosition))
+										if (object3D.GetBVHData().Contains(info.HitPosition))
 										{
 											CurrentSelectInfo.PlaneDownHitPos = info.HitPosition;
 											CurrentSelectInfo.LastMoveDelta = default(Vector3);
@@ -1711,12 +1711,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, screenPosition);
 			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
-			intersectionInfo = Scene.TraceData().GetClosestIntersection(ray);
+			intersectionInfo = Scene.GetBVHData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)
 			{
 				foreach (Object3D object3D in Scene.Children)
 				{
-					if (object3D.TraceData().Contains(intersectionInfo.HitPosition))
+					if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
 					{
 						CurrentSelectInfo.PlaneDownHitPos = intersectionInfo.HitPosition;
 						CurrentSelectInfo.LastMoveDelta = default(Vector3);

@@ -110,7 +110,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			minXminYMesh = PlatonicSolids.CreateCube(selectCubeSize, selectCubeSize, selectCubeSize);
 
-			CollisionVolume = minXminYMesh.CreateTraceData();
+			CollisionVolume = minXminYMesh.CreateBVHData();
 
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
