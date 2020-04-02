@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public bool FillHoles { get; set; } = true;
 
 
-		[Description("Remove interior faces and bodies.")]
+		[Description("Remove interior faces and bodies. This should only be used if the interior bodies are separate from the external faces, otherwise it may remove requried faces.")]
 		public RemoveModes RemoveMode { get; set; } = RemoveModes.None;
 
 		public override Task Rebuild()
