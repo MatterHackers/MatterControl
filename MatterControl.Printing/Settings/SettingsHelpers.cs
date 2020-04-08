@@ -227,7 +227,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			}
 
-			while (offsetsVector3.Count < extruderIndex)
+			while (offsetsVector3.Count <= extruderIndex)
 			{
 				offsetsVector3.Add(Vector3.Zero);
 			}
