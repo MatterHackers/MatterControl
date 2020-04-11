@@ -99,7 +99,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 		Unknown,
 		Repetier,
 		Marlin,
-		Sprinter
+		Sprinter,
+		Smoothie
 	}
 
 	/// <summary>

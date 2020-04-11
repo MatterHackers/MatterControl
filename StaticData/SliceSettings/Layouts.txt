@@ -197,6 +197,7 @@ Printer
         g0
     Hardware
       Hardware
+        firmware_type
         has_fan
         has_hardware_leveling
         has_heated_bed
