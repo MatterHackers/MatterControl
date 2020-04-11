@@ -175,6 +175,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.filament_has_been_loaded,
 			SettingsKey.filament_1_has_been_loaded,
 			SettingsKey.filament_runout_sensor,
+			SettingsKey.firmware_type,
 			SettingsKey.has_fan,
 			SettingsKey.has_hardware_leveling,
 			SettingsKey.has_heated_bed,

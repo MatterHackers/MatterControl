@@ -875,6 +875,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.firmware_type,
+					PresentationName = "Firmware Type".Localize(),
+					HelpText = "The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.".Localize(),
+					DataEditType = DataEditTypes.LIST,
+					ShowIfSet = "!sla_printer",
+					ListValues = "Unknown,Marlin,Smoothie",
+					DefaultValue = "Unknown",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.print_leveling_solution,
 					PresentationName = "Leveling Solution".Localize(),
 					HelpText = "The print leveling algorithm to use.".Localize(),

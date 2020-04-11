@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string fill_density = nameof(fill_density);
 		public const string fill_pattern = nameof(fill_pattern);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
+		public const string firmware_type = nameof(firmware_type);
 		public const string first_layer_bed_temperature = nameof(first_layer_bed_temperature);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);

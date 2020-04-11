@@ -60,6 +60,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		}
 
 		private SendStates sendState = SendStates.Normal;
+
+		private bool DoSmoothieCorrections
+		{
+			get
+			{
+				var firmware = printer.Settings.GetValue(SettingsKey.firmware_type);
+
+				return firmware == "Unknown" || firmware == "Smoothie";
+			}
+		}
+
 		private readonly double[] targetTemps = new double[4];
 		private readonly Queue<string> queuedCommands = new Queue<string>();
 
@@ -146,8 +157,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				if (requestedToolForTempChange != activeTool)
 				{
-					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
-					queuedCommands.Enqueue($"T{activeTool}");
+					if (DoSmoothieCorrections)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						queuedCommands.Enqueue($"T{activeTool}");
+					}
+
 					var temp = GetNextToolTemp(requestedToolForTempChange);
 					if (temp > 0)
 					{
@@ -168,8 +183,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						queuedCommands.Enqueue($"T{RequestedTool}");
 					}
 
-					// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
-					queuedCommands.Enqueue($"T{activeTool}");
+					if (DoSmoothieCorrections)
+					{
+						// For smoothie, switch back to the extrude we were using before the temp change (smoothie switches to the specified extruder, marlin repetier do not)
+						queuedCommands.Enqueue($"T{activeTool}");
+					}
+
 					// then send the heat command
 					return lineToSend;
 				}
@@ -191,7 +210,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							var lastRequestedTool = RequestedTool;
 							// set the requested tool
 							RequestedTool = changeCommandTool;
-							// don't send the change are we are on the right tool now
+							// don't send the change we are on the right tool now
 							return $"; switch back without move from T{lastRequestedTool} to T{activeTool}";
 						}
 					}
@@ -230,9 +249,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// set the E value to the previous E value.
 					if (lastDestination.extrusion != double.PositiveInfinity)
 					{
-						// On Marlin E position is share between extruders and this code has no utility
-						// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
-						queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+						if (DoSmoothieCorrections)
+						{
+							// On Marlin E position is shared between extruders and this code has no utility
+							// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
+							queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+						}
 					}
 
 					// send the extrusion
