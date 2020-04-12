@@ -177,6 +177,64 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 
+		[Test]
+		public async Task SetTempDirectSmoothie()
+		{
+			var printer = ToolChangeTests.CreatePrinter();
+
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				M104 S100 T1
+				G1 X11 Y11 Z11 E0 F2500");
+
+			// Validate
+			var expectedLines = new string[]
+			{
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"M104 T1 S100", // set the temp for T1
+				"T0", // smoothie command to ensure still on T0 after temp set
+				"M114", // always ask position after T
+				"G1 X11 Y11 Z11", // go to the position requested
+			};
+			Assert.AreEqual(expectedLines, sentLines);
+		}
+
+		[Test]
+		public async Task SetTempDirectMarlin()
+		{
+			var printer = ToolChangeTests.CreatePrinter();
+
+			printer.Settings.SetValue(SettingsKey.firmware_type, "MARLIN");
+
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"T0
+				; send some movement commands with tool switching
+				; the printer is moving normally
+				G1 X10 Y10 Z10 E0 F2500
+				M104 S100 T1
+				G1 X11 Y11 Z11 E0 F2500");
+
+			// Validate
+			var expectedLines = new string[]
+			{
+				"M114", // initial position request
+				"T0", // initial tool assignment (part of starting a default print)
+				"M114", // we always ask position after tool assignment
+				"G1 X10 Y10 Z10 F2500", // go to the position requested
+				"M104 T1 S100", // set the temp for T1
+				"G1 X11 Y11 Z11", // go to the position requested
+			};
+			Assert.AreEqual(expectedLines, sentLines);
+		}
+
 		// A test that proves that: T0, no move, T1, extrude, T0, move does not send switch extruder gcode
 		// but does switch to and back for extrude
 		[Test]
@@ -219,6 +277,55 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"G1 E30", // extrude on T0
 				"G1 X11 Y11 Z11", // go to the position requested
 			};
+			Assert.AreEqual(expectedLines, sentLines);
+		}
+
+		[Test]
+		public async Task MarlinPrintingToolChanges()
+		{
+			var printer = ToolChangeTests.CreatePrinter();
+
+			printer.Settings.SetValue(SettingsKey.firmware_type, "MARLIN");
+
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode, "");
+			printer.Settings.SetValue(SettingsKey.before_toolchange_gcode_1, "");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode, "");
+			printer.Settings.SetValue(SettingsKey.toolchange_gcode_1, "");
+
+			// Collect gcode sent through stream processors
+			var sentLines = await printer.RunSimulatedPrint(
+				@"G0 X93.444 Y147.916
+				G1 E47.2643 F1200 ; retract
+				G92 E0 ; reset extrusion
+				T1 ; switch extruder
+				G1 F1200 E10
+				G1 F2400 X93.411 Y147.936 E10.00076
+				G1 X93.382 Y147.949 E10.00138");
+
+			// Validate
+			var expectedLines = new string[]
+			{
+				"M114", // we start with a position request
+				"G1 X93.44 Y147.92", // goto the first position
+				"G1 E47.264 F1200", // do the retract
+				"G92 E0", // reset the extrusion
+				"T1", // switch to T1
+				"G1 F1200 E10",
+				"M114",
+				"T1",
+				"M114",
+				"G1 X92.41 Y145.94 F3000",
+				"G1 F315",
+				"G1 F1200",
+				"G1 E10.001 F2400",
+				"G1 X92.38 Y145.95",
+			};
+
+			foreach (var line in sentLines)
+			{
+				Debug.WriteLine($"\"{line}\",");
+			}
+
 			Assert.AreEqual(expectedLines, sentLines);
 		}
 

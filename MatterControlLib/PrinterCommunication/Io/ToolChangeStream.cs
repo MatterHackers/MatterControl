@@ -245,11 +245,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					// switch extruders
 					queuedCommands.Enqueue($"T{RequestedTool}");
 
-					// if we know the current E position before the switch
-					// set the E value to the previous E value.
-					if (lastDestination.extrusion != double.PositiveInfinity)
+					if (DoSmoothieCorrections)
 					{
-						if (DoSmoothieCorrections)
+						// if we know the current E position before the switch
+						// set the E value to the previous E value.
+						if (lastDestination.extrusion != double.PositiveInfinity)
 						{
 							// On Marlin E position is shared between extruders and this code has no utility
 							// On Smoothie E is stored per extruder and this makes it behave the same as Marlin
@@ -259,10 +259,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 					// send the extrusion
 					queuedCommands.Enqueue(lineNoComment + " ; NO_PROCESSING");
-					// switch back
-					queuedCommands.Enqueue($"T{activeTool}");
+
 					lastDestination.extrusion = ePosition;
-					queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+
+					if (DoSmoothieCorrections)
+					{
+						// switch back
+						queuedCommands.Enqueue($"T{activeTool}");
+						queuedCommands.Enqueue($"G92 E{lastDestination.extrusion}");
+					}
+
 					return "";
 				}
 			}
