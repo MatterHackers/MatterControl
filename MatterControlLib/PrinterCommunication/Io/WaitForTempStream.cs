@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Diagnostics;
 using System.Threading;
 using MatterControl.Printing;
@@ -37,18 +36,18 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 	public class WaitForTempStream : GCodeStreamProxy
 	{
 		/// <summary>
-		/// The number of seconds to wait after reaching the target temp before continuing. Analogous to 
+		/// Gets or sets the number of seconds to wait after reaching the target temp before continuing. Analogous to
 		/// firmware dwell time for temperature stabilization
 		/// </summary>
 		public static double WaitAfterReachTempTime { get; set; } = 3;
 
 		private double extruderIndex;
-		private double ignoreRequestIfBelowTemp = 20;
-		private double sameTempRangeBed = 3;
-		private double sameTempRangeHotend = 1;
+		private readonly double ignoreRequestIfBelowTemp = 20;
+		private readonly double sameTempRangeBed = 3;
+		private readonly double sameTempRangeHotend = 1;
 		private State state = State.Passthrough;
 		private double targetTemp = 0;
-		private Stopwatch timeHaveBeenAtTemp = new Stopwatch();
+		private readonly Stopwatch timeHaveBeenAtTemp = new Stopwatch();
 
 		private bool waitWhenCooling = false;
 
@@ -64,7 +63,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			WaitingForBedTemp,
 			WaitingForT0Temp,
 			WaitingForT1Temp
-		};
+		}
 
 		public bool HeatingBed { get { return state == State.WaitingForBedTemp; } }
 
@@ -87,7 +86,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						string lineToSend = base.ReadLine();
 
-						if(lineToSend == null)
+						if (lineToSend == null)
 						{
 							return null;
 						}
@@ -127,6 +126,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									{
 										state = State.WaitingForT0Temp;
 									}
+
 									timeHaveBeenAtTemp.Reset();
 								}
 								else
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case State.WaitingForT1Temp:
 					{
 						double extruderTemp = printer.Connection.GetActualHotendTemperature((int)extruderIndex);
-						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend 
+						bool tempWithinRange = extruderTemp >= targetTemp - sameTempRangeHotend
 							&& extruderTemp <= targetTemp + sameTempRangeHotend;
 						if (tempWithinRange && !timeHaveBeenAtTemp.IsRunning)
 						{
@@ -198,7 +198,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						bool tempWithinRange;
 						if (waitWhenCooling)
 						{
-							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed 
+							tempWithinRange = bedTemp >= targetTemp - sameTempRangeBed
 								&& bedTemp <= targetTemp + sameTempRangeBed;
 						}
 						else
