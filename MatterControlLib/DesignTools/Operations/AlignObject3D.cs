@@ -336,7 +336,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			// move all the children that we know of back to where they started
 			foreach (var child in Children.Where(c => StartingMin.ContainsKey(c.ID)))
 			{
-				child.Translate(child.GetAxisAlignedBoundingBox().MinXYZ - StartingMin[child.ID]);
+				child.Translate(StartingMin[child.ID] - child.GetAxisAlignedBoundingBox().MinXYZ);
 			}
 
 			// Now that all the known children are back in their original positions, remember all positions (including previously unknown)
