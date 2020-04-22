@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	public class AlignObject3D : Object3D, IPropertyGridModifier
 	{
 		// We need to serialize this so we can remove the arrange and get back to the objects before arranging
-		public List<Aabb> OriginalChildrenBounds = new List<Aabb>();
+		public Dictionary<string, Vector3> StartingMin = new Dictionary<string, Vector3>();
 
 		public AlignObject3D()
 		{
@@ -228,39 +228,42 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[JsonIgnore]
+		private Aabb AnchorBounds
+		{
+			get
+			{
+				var aabb = this.GetAxisAlignedBoundingBox();
+
+				if (SelectedChild.Count == 0)
+				{
+					SelectedChild.Add(this.Children.Where(c => c.GetType() != typeof(OperationSourceObject3D)).FirstOrDefault().ID);
+				}
+
+				var sourceChild = this.Children.Where(c => c.ID == SelectedChild.FirstOrDefault()).FirstOrDefault();
+
+				if (sourceChild != null)
+				{
+					aabb = sourceChild.GetAxisAlignedBoundingBox();
+				}
+
+				return aabb;
+			}
+		}
+
+		[JsonIgnore]
 		private IObject3D SelectedObject
 		{
 			get
 			{
 				if (SelectedChild.Count > 0)
 				{
-					return this.Children.Where(c => c.ID == SelectedChild.First()).FirstOrDefault();
+					return this.Children.Where(c => c.ID == SelectedChild.FirstOrDefault()).FirstOrDefault();
 				}
 
 				return this.Children.FirstOrDefault();
 			}
 		}
-
-		[JsonIgnore]
-		private int AnchorObjectIndex
-		{
-			get
-			{
-				int index = 0;
-				foreach (var child in this.Children)
-				{
-					if (child == SelectedObject)
-					{
-						return index;
-					}
-
-					index++;
-				}
-
-				return 0;
-			}
-		}
-
+		
 		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, Vector3 extraOffset)
 		{
 			var positionToAlignTo = default(Vector3);
@@ -319,17 +322,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
-		public void EnsureOriginalChildrenBounds()
+		public void ResetPositions()
 		{
-			// if the count of our children changed clear our cache of the bounds
-			if (Children.Count != OriginalChildrenBounds.Count)
+			// move all the children that we know of back to where they started
+			foreach (var child in Children.Where(c => StartingMin.ContainsKey(c.ID)))
 			{
-				OriginalChildrenBounds.Clear();
+				child.Translate(child.GetAxisAlignedBoundingBox().MinXYZ - StartingMin[child.ID]);
+			}
 
-				foreach (var child in this.Children)
-				{
-					OriginalChildrenBounds.Add(child.GetAxisAlignedBoundingBox());
-				}
+			// Now that all the known children are back in their original positions, remember all positions (including previously unknown)
+			StartingMin.Clear();
+			foreach (var child in Children)
+			{
+				StartingMin.Add(child.ID, child.GetAxisAlignedBoundingBox().MinXYZ);
 			}
 		}
 
@@ -339,9 +344,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				EnsureOriginalChildrenBounds();
-
-				var aabb = this.GetAxisAlignedBoundingBox();
+				ResetPositions();
 
 				this.Children.Modify(list =>
 				{
@@ -350,87 +353,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						return;
 					}
 
-					int anchorIndex = AnchorObjectIndex;
-					var anchorBounds = CurrentChildrenBounds[anchorIndex];
+					var anchorBounds = AnchorBounds;
+					var children = list.Where(c => c.GetType() != typeof(OperationSourceObject3D)
+						&& c.ID != SelectedChild.FirstOrDefault());
 
-					int i = 0;
-					// first align the anchor object back to its starting position
-					foreach (var child in list)
+					// align all the objects to the anchor
+					foreach (var child in children)
 					{
-						// only process the anchor object
-						if (i != anchorIndex)
-						{
-							i++;
-							continue;
-						}
-
-						if (XAlign == Align.None)
-						{
-							if (i < OriginalChildrenBounds.Count)
-							{
-								// make sure it is where it started
-								AlignAxis(0, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.X, 0, child);
-							}
-						}
-
-						if (YAlign == Align.None)
-						{
-							if (i < OriginalChildrenBounds.Count)
-							{
-								AlignAxis(1, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Y, 0, child);
-							}
-						}
-
-						if (ZAlign == Align.None)
-						{
-							if (i < OriginalChildrenBounds.Count)
-							{
-								AlignAxis(2, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Z, 0, child);
-							}
-						}
-
-						i++;
-					}
-
-					// then align all the objects to it
-					i = 0;
-					foreach (var child in list)
-					{
-						// skip the anchor object
-						if (i == anchorIndex)
-						{
-							i++;
-							continue;
-						}
-
-						if (XAlign == Align.None)
-						{
-							AlignAxis(0, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.X, 0, child);
-						}
-						else
-						{
-							AlignAxis(0, XAlign, GetAlignToOffset(CurrentChildrenBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
-						}
-
-						if (YAlign == Align.None)
-						{
-							AlignAxis(1, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Y, 0, child);
-						}
-						else
-						{
-							AlignAxis(1, YAlign, GetAlignToOffset(CurrentChildrenBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
-						}
-
-						if (ZAlign == Align.None)
-						{
-							AlignAxis(2, Align.Min, (double)OriginalChildrenBounds[i].MinXYZ.Z, 0, child);
-						}
-						else
-						{
-							AlignAxis(2, ZAlign, GetAlignToOffset(CurrentChildrenBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
-						}
-
-						i++;
+						AlignAxis(0, XAlign, GetAlignToOffset(anchorBounds, 0, (!Advanced || XAlignTo == Align.None) ? XAlign : XAlignTo), XOffset, child);
+						AlignAxis(1, YAlign, GetAlignToOffset(anchorBounds, 1, (!Advanced || YAlignTo == Align.None) ? YAlign : YAlignTo), YOffset, child);
+						AlignAxis(2, ZAlign, GetAlignToOffset(anchorBounds, 2, (!Advanced || ZAlignTo == Align.None) ? ZAlign : ZAlignTo), ZOffset, child);
 					}
 				});
 			}
@@ -444,16 +376,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				// put everything back to where it was before the arrange started
-				if (OriginalChildrenBounds.Count == Children.Count)
-				{
-					int i = 0;
-					foreach (var child in Children)
-					{
-						// Where you are minus where you started to get back to where you started
-						child.Translate(-(child.GetAxisAlignedBoundingBox().MinXYZ - OriginalChildrenBounds[i].MinXYZ));
-						i++;
-					}
-				}
+				ResetPositions();
 
 				base.Remove(undoBuffer);
 			}
@@ -515,18 +438,21 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			item.Translate(translate);
 		}
 
-		private double GetAlignToOffset(List<Aabb> currentChildrenBounds, int axis, Align alignTo)
+		private double GetAlignToOffset(Aabb anchorBounds, int axis, Align alignTo)
 		{
 			switch (alignTo)
 			{
+				case Align.None:
+					return 0;
+
 				case Align.Min:
-					return currentChildrenBounds[AnchorObjectIndex].MinXYZ[axis];
+					return anchorBounds.MinXYZ[axis];
 
 				case Align.Center:
-					return currentChildrenBounds[AnchorObjectIndex].Center[axis];
+					return anchorBounds.Center[axis];
 
 				case Align.Max:
-					return currentChildrenBounds[AnchorObjectIndex].MaxXYZ[axis];
+					return anchorBounds.MaxXYZ[axis];
 
 				case Align.Origin:
 					return Vector3Ex.Transform(Vector3.Zero, SelectedObject.WorldMatrix())[axis];

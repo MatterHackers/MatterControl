@@ -153,7 +153,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						var newMesh = new Object3D()
 						{
-							Mesh = reducedMesh
+							Mesh = reducedMesh,
+							OwnerID = sourceItem.ID
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
 						this.Children.Add(newMesh);
