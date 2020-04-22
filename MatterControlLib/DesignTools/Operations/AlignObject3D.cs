@@ -234,9 +234,18 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				var aabb = this.GetAxisAlignedBoundingBox();
 
+				if (SelectedChild.Count > 0)
+				{
+					if (Children.Where(c => SelectedChild.FirstOrDefault() == c.ID).FirstOrDefault() == null)
+					{
+						// none of our children have the selected id so clear the list
+						SelectedChild.Clear();
+					}
+				}
+
 				if (SelectedChild.Count == 0)
 				{
-					SelectedChild.Add(this.Children.Where(c => c.GetType() != typeof(OperationSourceObject3D)).FirstOrDefault().ID);
+					SelectedChild.Add(this.Children.FirstOrDefault().ID);
 				}
 
 				var sourceChild = this.Children.Where(c => c.ID == SelectedChild.FirstOrDefault()).FirstOrDefault();
