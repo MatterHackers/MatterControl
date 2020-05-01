@@ -109,6 +109,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string g0 = nameof(g0);
 		public const string gcode_flavor = nameof(gcode_flavor);
 		public const string gcode_output_type = nameof(gcode_output_type);
+		public const string has_c_axis = nameof(has_c_axis);
 		public const string has_fan = nameof(has_fan);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
