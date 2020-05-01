@@ -424,7 +424,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			Y = 2,
 			Z = 4,
 			E = 8,
-			XYZ = X | Y | Z
+			XYZ = X | Y | Z,
+			C = 16, // used by e3d quad extruder
 		}
 
 		public double ActualBedTemperature
@@ -1371,19 +1372,24 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			// If we are homing everything we don't need to add any details
 			if (!axis.HasFlag(Axis.XYZ))
 			{
-				if ((axis & Axis.X) == Axis.X)
+				if (axis.HasFlag(Axis.X))
 				{
 					command += " X0";
 				}
 
-				if ((axis & Axis.Y) == Axis.Y)
+				if (axis.HasFlag(Axis.Y))
 				{
 					command += " Y0";
 				}
 
-				if ((axis & Axis.Z) == Axis.Z)
+				if (axis.HasFlag(Axis.Z))
 				{
 					command += " Z0";
+				}
+
+				if (axis.HasFlag(Axis.C))
+				{
+					command += " C0";
 				}
 			}
 

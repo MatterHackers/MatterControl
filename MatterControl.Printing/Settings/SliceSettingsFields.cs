@@ -724,6 +724,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.has_c_axis,
+					PresentationName = "Has C Axis".Localize(),
+					HelpText = "The printer has a c axis used by too changer (e3d quad extruder).".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer",
+					ResetAtEndOfPrint = false,
+					DefaultValue = "0",
+					ReloadUiWhenChanged = true,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.has_z_servo,
 					PresentationName = "Has Z Servo".Localize(),
 					HelpText = "The printer has a servo for lowering and raising the z probe.".Localize(),

@@ -206,6 +206,7 @@ Printer
         filament_runout_sensor
         has_z_probe
         has_z_servo
+        has_c_axis
         enable_network_printing
         enable_sailfish_communication
         sla_printer
