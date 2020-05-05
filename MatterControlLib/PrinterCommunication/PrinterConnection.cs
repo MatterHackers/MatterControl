@@ -1336,7 +1336,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		public void FanSpeedWasWritenToPrinter(string line)
 		{
 			var fanIndex = 0.0;
-			GCodeFile.GetFirstNumberAfter("P", "line", ref fanIndex);
+			GCodeFile.GetFirstNumberAfter("P", line, ref fanIndex);
 			string[] splitOnS = line.Split('S');
 			if (splitOnS.Length != 2)
 			{
