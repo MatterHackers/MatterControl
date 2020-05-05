@@ -111,6 +111,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string gcode_output_type = nameof(gcode_output_type);
 		public const string has_c_axis = nameof(has_c_axis);
 		public const string has_fan = nameof(has_fan);
+		public const string has_fan_per_extruder = nameof(has_fan_per_extruder);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
 		public const string has_power_control = nameof(has_power_control);

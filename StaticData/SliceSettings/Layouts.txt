@@ -199,6 +199,7 @@ Printer
       Hardware
         firmware_type
         has_fan
+        has_fan_per_extruder
         has_hardware_leveling
         has_heated_bed
         has_sd_card_reader

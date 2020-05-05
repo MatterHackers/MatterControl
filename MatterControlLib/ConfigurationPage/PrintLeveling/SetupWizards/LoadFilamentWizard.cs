@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						page.ContentRow.AddChild(markdownWidget);
 
 						// turn off the fan
-						printer.Connection.FanSpeed0To255 = 0;
+						printer.Connection.SetFanSpeed0To255(extruderIndex, 0);
 						// Allow extrusion at any temperature. S0 only works on Marlin S1 works on repetier and marlin
 						printer.Connection.QueueLine("M302 S1");
 
