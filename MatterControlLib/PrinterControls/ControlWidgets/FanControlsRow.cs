@@ -42,11 +42,14 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private RoundedToggleSwitch toggleSwitch;
 		private PrinterConfig printer;
+		private int fanIndex;
 
-		public FanControlsRow(PrinterConfig printer, ThemeConfig theme)
-			: base ("Part Cooling Fan".Localize(), null, theme)
+		public FanControlsRow(int fanIndex, string fanName, PrinterConfig printer, ThemeConfig theme)
+			: base (fanName, null, theme)
 		{
 			this.printer = printer;
+
+			this.fanIndex = fanIndex;
 
 			var timeSinceLastManualSend = new Stopwatch();
 
@@ -56,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			fanSpeedDisplay = new MHNumberEdit(0, theme, minValue: 0, maxValue: 100, pixelWidth: 30)
 			{
-				Value = printer.Connection.FanSpeed0To255 * 100 / 255,
+				Value = printer.Connection.GetFanSpeed0To255(fanIndex) * 100 / 255,
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				Margin = new BorderDouble(right: 2),
 			};
@@ -67,7 +70,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					|| timeSinceLastManualSend.ElapsedMilliseconds > 500)
 				{
 					timeSinceLastManualSend.Restart();
-					printer.Connection.FanSpeed0To255 = (int)(fanSpeedDisplay.Value * 255 / 100 + .5);
+					printer.Connection.SetFanSpeed0To255(fanIndex, (int)(fanSpeedDisplay.Value * 255 / 100 + .5));
 				}
 			};
 			container.AddChild(fanSpeedDisplay);
@@ -93,11 +96,11 @@ namespace MatterHackers.MatterControl.PrinterControls
 					timeSinceLastManualSend.Restart();
 					if (toggleSwitch.Checked)
 					{
-						printer.Connection.FanSpeed0To255 = 255;
+						printer.Connection.SetFanSpeed0To255(fanIndex, 255);
 					}
 					else
 					{
-						printer.Connection.FanSpeed0To255 = 0;
+						printer.Connection.SetFanSpeed0To255(fanIndex, 0);
 					}
 				}
 			};
@@ -118,7 +121,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private void Connection_FanSpeedSet(object s, EventArgs e)
 		{
-			if ((int)printer.Connection.FanSpeed0To255 > 0)
+			if ((int)printer.Connection.GetFanSpeed0To255(fanIndex) > 0)
 			{
 				toggleSwitch.Checked = true;
 			}
@@ -127,7 +130,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				toggleSwitch.Checked = false;
 			}
 
-			fanSpeedDisplay.Value = printer.Connection.FanSpeed0To255 * 100 / 255;
+			fanSpeedDisplay.Value = printer.Connection.GetFanSpeed0To255(fanIndex) * 100 / 255;
 		}
 	}
 }

@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		private double currentSdBytes = 0;
 
-		private double fanSpeed;
+		private double[] fanSpeed = new double[MaxExtruders];
 
 		private int currentLineIndexToSend = 0;
 
@@ -676,16 +676,34 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public bool Disconnecting => CommunicationState == CommunicationStates.Disconnecting;
 
-		public double FanSpeed0To255
+		public double GetFanSpeed0To255(int fanIndex)
 		{
-			get => fanSpeed;
-			set
+			if (fanIndex >= ExtruderCount)
 			{
-				fanSpeed = Math.Max(0, Math.Min(255, value));
-				OnFanSpeedSet(null);
-				if (this.IsConnected)
+				fanIndex = 0;
+			}
+
+			return fanSpeed[fanIndex];
+		}
+
+		public void SetFanSpeed0To255(int fanIndex, double value)
+		{
+			if (fanIndex >= ExtruderCount)
+			{
+				fanIndex = 0;
+			}
+
+			fanSpeed[fanIndex] = Math.Max(0, Math.Min(255, value));
+			OnFanSpeedSet(null);
+			if (this.IsConnected)
+			{
+				if (Printer.Settings.GetValue<bool>(SettingsKey.has_fan_per_extruder))
 				{
-					QueueLine("M106 S{0}".FormatWith((int)(fanSpeed + .5)));
+					QueueLine("M106 P{0} S{1}".FormatWith(fanIndex, (int)(fanSpeed[fanIndex] + .5)));
+				}
+				else
+				{
+					QueueLine("M106 S{0}".FormatWith((int)(fanSpeed[fanIndex] + .5)));
 				}
 			}
 		}
@@ -1265,7 +1283,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				forceImmediateWrites = true;
 				ReleaseMotors();
 				TurnOffBedAndExtruders(TurnOff.Now);
-				FanSpeed0To255 = 0;
+
 				forceImmediateWrites = false;
 
 				CommunicationState = CommunicationStates.Disconnecting;
@@ -1282,7 +1300,6 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			{
 				// Need to reset UI - even if manual disconnect
 				TurnOffBedAndExtruders(TurnOff.Now);
-				FanSpeed0To255 = 0;
 			}
 
 			CommunicationState = CommunicationStates.Disconnected;
@@ -1312,12 +1329,14 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public void FanOffWasWritenToPrinter(string line)
 		{
-			fanSpeed = 0;
+			fanSpeed[0] = 0;
 			OnFanSpeedSet(null);
 		}
 
 		public void FanSpeedWasWritenToPrinter(string line)
 		{
+			var fanIndex = 0.0;
+			GCodeFile.GetFirstNumberAfter("P", line, ref fanIndex);
 			string[] splitOnS = line.Split('S');
 			if (splitOnS.Length != 2)
 			{
@@ -1331,9 +1350,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				try
 				{
 					int fanSpeedBeingSet = int.Parse(fanSpeedString);
-					if (FanSpeed0To255 != fanSpeedBeingSet)
+					if (GetFanSpeed0To255((int)fanIndex) != fanSpeedBeingSet)
 					{
-						fanSpeed = fanSpeedBeingSet;
+						SetFanSpeed0To255((int)fanIndex, fanSpeedBeingSet);
 						OnFanSpeedSet(null);
 					}
 				}
@@ -2646,6 +2665,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 						CommunicationState = CommunicationStates.Connected;
 						// never leave the extruder and the bed hot
 						ReleaseMotors();
+						TurnOffPartCoolingFan();
 						TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						this.PrintWasCanceled = false;
 						// and finally notify anyone that wants to know
@@ -2664,6 +2684,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 						ReleaseMotors();
 						if (SecondsPrinted < GCodeMemoryFile.LeaveHeatersOnTime)
 						{
+							TurnOffPartCoolingFan();
 							// The user may still be sitting at the machine, leave it heated for a period of time
 							TurnOffBedAndExtruders(TurnOff.AfterDelay);
 						}
@@ -2751,9 +2772,26 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		public PrintTask ActivePrintTask { get; set; }
 
+		public void TurnOffPartCoolingFan()
+		{
+			// turn off all the part cooling fans
+			if (Printer.Settings.GetValue<bool>(SettingsKey.has_fan_per_extruder))
+			{
+				for (int i = 0; i < this.ExtruderCount; i++)
+				{
+					SetFanSpeed0To255(i, 0);
+				}
+			}
+			else
+			{
+				SetFanSpeed0To255(0, 0);
+			}
+		}
 
 		public void TurnOffBedAndExtruders(TurnOff turnOffTime)
 		{
+			TurnOffPartCoolingFan();
+
 			if (turnOffTime == TurnOff.Now)
 			{
 				for (int i = 0; i < this.ExtruderCount; i++)

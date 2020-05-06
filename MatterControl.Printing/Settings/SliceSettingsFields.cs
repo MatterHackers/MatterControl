@@ -1143,6 +1143,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.has_fan_per_extruder,
+					PresentationName = "Each Extruder Has Fan".Localize(),
+					HelpText = "Each extruder has a separate part cooling fan that is controlled independently.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowIfSet = "!sla_printer&has_fan&extruder_count>1",
+					DefaultValue = "0",
+					ReloadUiWhenChanged = true
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.enable_fan,
 					PresentationName = "Enable Fan".Localize(),
 					HelpText = "Turn the fan on and off regardless of settings.".Localize(),

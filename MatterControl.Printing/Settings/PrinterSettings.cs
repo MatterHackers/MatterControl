@@ -178,6 +178,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.firmware_type,
 			SettingsKey.has_c_axis,
 			SettingsKey.has_fan,
+			SettingsKey.has_fan_per_extruder,
 			SettingsKey.has_hardware_leveling,
 			SettingsKey.has_heated_bed,
 			SettingsKey.has_power_control,
