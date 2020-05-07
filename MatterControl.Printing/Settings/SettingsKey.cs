@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string bed_temperature = nameof(bed_temperature);
 		public const string before_toolchange_gcode = nameof(before_toolchange_gcode);
 		public const string before_toolchange_gcode_1 = nameof(before_toolchange_gcode_1);
+		public const string before_toolchange_gcode_2 = nameof(before_toolchange_gcode_2);
+		public const string before_toolchange_gcode_3 = nameof(before_toolchange_gcode_3);
 		public const string bottom_infill_speed = nameof(bottom_infill_speed);
 		public const string bottom_solid_layers = nameof(bottom_solid_layers);
 		public const string bridge_fan_speed = nameof(bridge_fan_speed);
@@ -240,6 +242,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string threads = nameof(threads);
 		public const string toolchange_gcode = nameof(toolchange_gcode);
 		public const string toolchange_gcode_1 = nameof(toolchange_gcode_1);
+		public const string toolchange_gcode_2 = nameof(toolchange_gcode_2);
+		public const string toolchange_gcode_3 = nameof(toolchange_gcode_3);
 		public const string top_infill_extrusion_width = nameof(top_infill_extrusion_width);
 		public const string top_solid_infill_speed = nameof(top_solid_infill_speed);
 		public const string top_solid_layers = nameof(top_solid_layers);
