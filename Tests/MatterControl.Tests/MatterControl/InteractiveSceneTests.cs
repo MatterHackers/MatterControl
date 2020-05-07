@@ -593,12 +593,17 @@ namespace MatterControl.Tests.MatterControl
 			var align = new AlignObject3D();
 			align.AddSelectionAsChildren(scene, scene.SelectedItem);
 
+			var unalignedBounds = align.GetAxisAlignedBoundingBox();
+
 			// assert the align in built correctly
 			Assert.AreEqual(1, scene.Children.Count);
 			Assert.AreEqual(2, align.Children.Count);
 			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
 
 			align.SelectedChild = new SelectedChildren() { cube.ID.ToString() };
+
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
+
 			// turn align on
 			align.XAlign = Align.Min;
 			await align.Rebuild();
@@ -607,7 +612,7 @@ namespace MatterControl.Tests.MatterControl
 			// turn it off
 			align.XAlign = Align.None;
 			await align.Rebuild();
-			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(0, 0, 0), new Vector3(60, 70, 40)), 1.0));
+			Assert.IsTrue(align.GetAxisAlignedBoundingBox().Equals(unalignedBounds, 1.0));
 
 			// turn it back on
 			align.XAlign = Align.Min;

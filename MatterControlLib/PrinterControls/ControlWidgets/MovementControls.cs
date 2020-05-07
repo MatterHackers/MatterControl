@@ -156,6 +156,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 			homeZButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.Z);
 			toolbar.AddChild(homeZButton);
 
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_c_axis))
+			{
+				var homeCButton = new TextButton("C", theme)
+				{
+					ToolTipText = "Home C".Localize(),
+					BackgroundColor = theme.MinimalShade,
+					Margin = theme.ButtonSpacing
+				};
+				homeCButton.Click += (s, e) => printer.Connection.HomeAxis(PrinterConnection.Axis.C);
+				toolbar.AddChild(homeCButton);
+			}
+
 			int extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
 
 			// Display the current baby step offset stream values

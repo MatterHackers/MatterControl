@@ -197,7 +197,9 @@ Printer
         g0
     Hardware
       Hardware
+        firmware_type
         has_fan
+        has_fan_per_extruder
         has_hardware_leveling
         has_heated_bed
         has_sd_card_reader
@@ -205,6 +207,7 @@ Printer
         filament_runout_sensor
         has_z_probe
         has_z_servo
+        has_c_axis
         enable_network_printing
         enable_sailfish_communication
         sla_printer

@@ -103,6 +103,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				{
 					printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.Helpers.ExtruderTargetTemperature(extruderIndex));
 				}
+
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.AfterDelay);
 			};
 
@@ -116,7 +117,17 @@ namespace MatterHackers.MatterControl.PrinterControls
 				printer.Connection.TurnOffBedAndExtruders(TurnOff.Now);
 			};
 
-			this.AddChild(new FanControlsRow(printer, theme));
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_fan_per_extruder))
+			{
+				for (int i = 0; i < printer.Settings.GetValue<int>(SettingsKey.extruder_count); i++)
+				{
+					this.AddChild(new FanControlsRow(i, $"Part Cooling Fan {i}".Localize(), printer, theme));
+				}
+			}
+			else // just add one
+			{
+				this.AddChild(new FanControlsRow(0, "Part Cooling Fan".Localize(), printer, theme));
+			}
 
 			// Register listeners
 			printer.Connection.CommunicationStateChanged += Printer_StatusChanged;

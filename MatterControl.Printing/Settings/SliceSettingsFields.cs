@@ -724,6 +724,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.has_c_axis,
+					PresentationName = "Has C Axis".Localize(),
+					HelpText = "The printer has a c axis used by too changer (e3d quad extruder).".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer",
+					ResetAtEndOfPrint = false,
+					DefaultValue = "0",
+					ReloadUiWhenChanged = true,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.has_z_servo,
 					PresentationName = "Has Z Servo".Localize(),
 					HelpText = "The printer has a servo for lowering and raising the z probe.".Localize(),
@@ -871,6 +884,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					ListValues = "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
 					DefaultValue = "TRIANGLES",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.firmware_type,
+					PresentationName = "Firmware Type".Localize(),
+					HelpText = "The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.".Localize(),
+					DataEditType = DataEditTypes.LIST,
+					ShowIfSet = "!sla_printer",
+					ListValues = "Unknown,Marlin,Smoothie",
+					DefaultValue = "Unknown",
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
@@ -1115,6 +1139,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
+					ReloadUiWhenChanged = true
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.has_fan_per_extruder,
+					PresentationName = "Each Extruder Has Fan".Localize(),
+					HelpText = "Each extruder has a separate part cooling fan that is controlled independently.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowIfSet = "!sla_printer&has_fan&extruder_count>1",
+					DefaultValue = "0",
 					ReloadUiWhenChanged = true
 				},
 				new SliceSettingData()

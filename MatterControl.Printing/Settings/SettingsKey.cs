@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string fill_density = nameof(fill_density);
 		public const string fill_pattern = nameof(fill_pattern);
 		public const string fill_thin_gaps = nameof(fill_thin_gaps);
+		public const string firmware_type = nameof(firmware_type);
 		public const string first_layer_bed_temperature = nameof(first_layer_bed_temperature);
 		public const string first_layer_extrusion_width = nameof(first_layer_extrusion_width);
 		public const string first_layer_height = nameof(first_layer_height);
@@ -108,7 +109,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string g0 = nameof(g0);
 		public const string gcode_flavor = nameof(gcode_flavor);
 		public const string gcode_output_type = nameof(gcode_output_type);
+		public const string has_c_axis = nameof(has_c_axis);
 		public const string has_fan = nameof(has_fan);
+		public const string has_fan_per_extruder = nameof(has_fan_per_extruder);
 		public const string has_hardware_leveling = nameof(has_hardware_leveling);
 		public const string has_heated_bed = nameof(has_heated_bed);
 		public const string has_power_control = nameof(has_power_control);
