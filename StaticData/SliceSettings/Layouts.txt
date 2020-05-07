@@ -243,6 +243,10 @@ Printer
         toolchange_gcode
         before_toolchange_gcode_1
         toolchange_gcode_1
+        before_toolchange_gcode_2
+        toolchange_gcode_2
+        before_toolchange_gcode_3
+        toolchange_gcode_3
     Filters
       Filters
         write_regex

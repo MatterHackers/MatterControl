@@ -2059,6 +2059,42 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.before_toolchange_gcode_2,
+					PresentationName = "Before Tool Change G-Code 3".Localize(),
+					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ShowIfSet = "!sla_printer&extruder_count>2",
+					DefaultValue = ""
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.toolchange_gcode_2,
+					PresentationName = "After Tool Change G-Code 3".Localize(),
+					HelpText = "G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ShowIfSet = "!sla_printer&extruder_count>2",
+					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					DefaultValue = ""
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.before_toolchange_gcode_3,
+					PresentationName = "Before Tool Change G-Code 4".Localize(),
+					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ShowIfSet = "!sla_printer&extruder_count>3",
+					DefaultValue = ""
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.toolchange_gcode_3,
+					PresentationName = "After Tool Change G-Code 4".Localize(),
+					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ShowIfSet = "!sla_printer&extruder_count>3",
+					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					DefaultValue = ""
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.top_infill_extrusion_width,
 					PresentationName = "Top Solid Infill".Localize(),
 					HelpText = "Leave this as 0 to allow automatic calculation of extrusion width.".Localize(),

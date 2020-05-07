@@ -398,6 +398,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				case 1:
 					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_1).Replace("\\n", "\n");
 					break;
+
+				case 2:
+					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_2).Replace("\\n", "\n");
+					break;
+
+				case 3:
+					afterGcodeToQueue = printer.Settings.GetValue(SettingsKey.toolchange_gcode_3).Replace("\\n", "\n");
+					break;
 			}
 
 			PrinterMove newToolMove = GetPosition(postSwitchLine, PrinterMove.Unknown);
@@ -477,6 +485,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 					case 1:
 						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_1).Replace("\\n", "\n");
+						break;
+
+					case 2:
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_2).Replace("\\n", "\n");
+						break;
+
+					case 3:
+						beforeGcodeToQueue = printer.Settings.GetValue(SettingsKey.before_toolchange_gcode_3).Replace("\\n", "\n");
 						break;
 				}
 
