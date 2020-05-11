@@ -28,7 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
@@ -38,6 +38,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -57,6 +58,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class BaseObject3D : Object3D, IPropertyGridModifier
 	{
+		public enum CenteringTypes
+		{
+			Bounds,
+			Weighted
+		}
+
 		readonly double scalingForClipper = 1000;
 
 		public BaseObject3D()
@@ -66,13 +73,19 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool CanFlatten => true;
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 
+		[DisplayName("Expand")]
 		public double BaseSize { get; set; } = 3;
 
 		public double InfillAmount { get; set; } = 3;
 
+		[DisplayName("Height")]
 		public double ExtrusionHeight { get; set; } = 5;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public CenteringTypes Centering { get; set; } = CenteringTypes.Weighted;
 
 		public override void Remove(UndoBuffer undoBuffer)
 		{
@@ -327,7 +340,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			// change.SetRowVisible(nameof(InfillAmount), () => CurrentBaseType == BaseTypes.Outline);
+			change.SetRowVisible(nameof(BaseSize), () => BaseType != BaseTypes.None);
+			change.SetRowVisible(nameof(InfillAmount), () => BaseType == BaseTypes.Outline);
+			change.SetRowVisible(nameof(Centering), () => BaseType == BaseTypes.Circle);
+			change.SetRowVisible(nameof(ExtrusionHeight), () => BaseType != BaseTypes.None);
 		}
 	}
 }

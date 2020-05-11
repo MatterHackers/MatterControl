@@ -176,33 +176,33 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public bool Advanced { get; set; } = false;
 
 		[SectionStart("X Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_left.png", "align_center_x.png", "align_right.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_left.png", "align_to_center_x.png", "align_to_right.png", "align_origin.png" }, InvertIcons = true)]
 		public Align XAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
 		public double XOffset { get; set; } = 0;
 
 		[SectionStart("Y Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align YAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]
 		public double YOffset { get; set; } = 0;
 
 		[SectionStart("Z Axis"), DisplayName("Align")]
-		[Icons(new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_bottom.png", "align_center_y.png", "align_Top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlign { get; set; } = Align.None;
 
 		[DisplayName("Anchor")]
-		[Icons(new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
+		[EnumDisplay(IconPaths = new string[] { "424.png", "align_to_bottom.png", "align_to_center_y.png", "align_to_top.png", "align_origin.png" }, InvertIcons = true)]
 		public Align ZAlignTo { get; set; } = Align.None;
 
 		[DisplayName("Offset")]

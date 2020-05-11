@@ -104,7 +104,6 @@ namespace MatterHackers.MatterControl
 		Titan,
 		Titillium,
 	}
-;
 
 	public class WorkspacesChangedEventArgs : EventArgs
 	{

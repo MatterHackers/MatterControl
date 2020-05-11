@@ -32,23 +32,29 @@ using System;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[AttributeUsage(AttributeTargets.Property)]
-	public class IconsAttribute : Attribute
+	public class EnumDisplayAttribute : Attribute
 	{
-		public IconsAttribute(string[] iconPaths, int width = 16, int height = 16, bool item0IsNone = true)
+		public enum PresentationMode
 		{
-			Width = width;
-			Height = height;
-			this.IconPaths = iconPaths;
-			Item0IsNone = item0IsNone;
+			DropDownList,
+			IconRow,
+			Tabs,
+			Buttons
 		}
 
-		public bool Item0IsNone { get; private set; }
+		public PresentationMode Mode { get; set; } = PresentationMode.DropDownList;
 
-		public string[] IconPaths { get; private set; }
+		public EnumDisplayAttribute()
+		{
+		}
 
-		public int Width { get; set; }
+		public bool Item0IsNone { get; set; } = true;
 
-		public int Height { get; set; }
+		public string[] IconPaths { get; set; }
+
+		public int IconWidth { get; set; } = 16;
+
+		public int IconHeight { get; set; } = 16;
 
 		public bool InvertIcons { get; set; } = false;
 	}

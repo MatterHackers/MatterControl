@@ -613,13 +613,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				// create an enum editor
 				UIField field;
-				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
-				if (iconsAttribute != null)
+				var enumDisplayAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumDisplayAttribute>().FirstOrDefault();
+				var addToSettingsRow = true;
+				if (enumDisplayAttribute != null)
 				{
-					field = new IconEnumField(property, iconsAttribute, theme)
+					field = new EnumDisplayField(property, enumDisplayAttribute, theme)
 					{
 						InitialValue = propertyValue.ToString()
 					};
+
+					if (enumDisplayAttribute.Mode == EnumDisplayAttribute.PresentationMode.Tabs)
+					{
+						addToSettingsRow = false;
+					}
 				}
 				else
 				{
@@ -647,7 +653,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field, theme);
+				if (addToSettingsRow)
+				{
+					rowContainer = CreateSettingsRow(property, field, theme);
+				}
+				else
+				{
+					rowContainer = field.Content;
+				}
 			}
 			else if (propertyValue is IObject3D item
 				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)

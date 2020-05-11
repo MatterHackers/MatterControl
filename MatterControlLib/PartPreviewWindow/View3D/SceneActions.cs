@@ -145,10 +145,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var children = scene.Children.ToList();
 				var transformData = new List<TransformData>();
-				foreach(var child in children)
+				foreach (var child in children)
 				{
 					transformData.Add(new TransformData() { TransformedObject = child, UndoTransform = child.Matrix });
 				}
+
 				PlatingHelper.ArrangeOnBed(children, bedCenter);
 				int i = 0;
 				foreach (var child in children)
@@ -156,6 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					transformData[i].RedoTransform = child.Matrix;
 					i++;
 				}
+
 				scene.UndoBuffer.Add(new TransformCommand(transformData));
 			});
 		}

@@ -304,6 +304,7 @@ namespace MatterHackers.Plugins.EditorTools
 					{
 						newSize.X *= -1;
 					}
+
 					newSize.Y = lockedCorner.Y - newPosition.Y;
 					if (quadrantIndex == 0 || quadrantIndex == 1)
 					{
@@ -344,6 +345,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			}
+
 			base.OnMouseUp(mouseEvent3D);
 		}
 
@@ -445,11 +447,13 @@ namespace MatterHackers.Plugins.EditorTools
 					newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
 					scaleAmount.X = newSize.X / originalSelectedBounds.XSize;
 				}
+
 				if (newSize.Y > 0)
 				{
 					newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
 					scaleAmount.Y = newSize.Y / originalSelectedBounds.YSize;
 				}
+
 				if (newSize.Z > 0)
 				{
 					newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
@@ -484,6 +488,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			return false;
 		}
+
 		private Vector3 GetDeltaToOtherSideXy(IObject3D selectedItem, int quadrantIndex)
 		{
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
