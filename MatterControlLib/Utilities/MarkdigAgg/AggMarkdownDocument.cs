@@ -37,15 +37,6 @@ using MatterHackers.Agg.UI;
 
 namespace Markdig.Agg
 {
-	public class MarkdownDocumentLink
-	{
-		public Uri Uri { get; internal set; }
-
-		public LinkInline LinkInline { get; internal set; }
-
-		public string PageID { get; internal set; }
-	}
-
 	public class AggMarkdownDocument
 	{
 		private string _markDownText = null;
@@ -68,7 +59,6 @@ namespace Markdig.Agg
 			get => matchingText;
 			set => matchingText = value;
 		}
-
 
 		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
 

@@ -273,6 +273,11 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<string> ShellFileOpened;
 
+		public bool IsMatterControlPro()
+		{
+			return ApplicationController.Instance.UserHasPermissionToId("ag1zfm1oLWRmcy1wcm9kchgLEgtEaWdpdGFsSXRlbRiAgIDzyMGxCgw");
+		}
+
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
 
 		public IEnumerable<PrinterConfig> ActivePrinters => this.Workspaces.Where(w => w.Printer != null).Select(w => w.Printer);
@@ -525,7 +530,11 @@ namespace MatterHackers.MatterControl
 
 		public Action EnterShareCode;
 
+		// check permission to an IObject3D class
 		public Func<IObject3D, bool> UserHasPermission { get; set; }
+
+		// check permission to a purchase
+		public Func<string, bool> UserHasPermissionToId { get; set; }
 
 		public Func<IObject3D, string> GetUnlockPage { get; set; }
 
