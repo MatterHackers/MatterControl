@@ -317,10 +317,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
+			var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
+
 			// create a double editor
 			if (propertyValue is double doubleValue)
 			{
-				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 				if (readOnly)
 				{
 					var valueField = new TextWidget(doubleValue.ToString("0.##"), textColor: theme.TextColor, pointSize: 10);
@@ -529,10 +530,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{
-				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 				if (readOnly)
 				{
-					var valueField = new TextWidget(intValue.ToString(), textColor: theme.TextColor, pointSize: 10);
+					var valueField = new WrappedTextWidget(intValue.ToString(),
+						textColor: theme.TextColor,
+						pointSize: 10);
+
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
 						property.Description.Localize(),
 						valueField,
@@ -659,6 +662,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else
 				{
+					// field.Content.Margin = new BorderDouble(3, 0);
+					field.Content.HAnchor = HAnchor.Stretch;
 					rowContainer = field.Content;
 				}
 			}
