@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 			double sliderWidth = 100 * GuiWidget.DeviceScale;
-			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, .7, 1.4)
+			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, .7, 2.5)
 			{
 				Name = "Text Size Slider",
 				Margin = new BorderDouble(5, 0),
@@ -328,6 +328,29 @@ namespace MatterHackers.MatterControl
 							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
 							{
 								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
+								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
+							}
+						}
+					}),
+				advancedPanel);
+
+			// Touch Screen Mode
+			this.AddSettingsRow(
+				new SettingsItem(
+					"Utilize High Res Monitors".Localize(),
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness) == "PerMonitorAware",
+						ToggleAction = (itemChecked) =>
+						{
+							string dpiAwareness = itemChecked ? "PerMonitorAware" : "None";
+							if (dpiAwareness != UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness))
+							{
+								UserSettings.Instance.set(UserSettingsKey.ApplicationDpiAwareness, dpiAwareness);
+								StyledMessageBox.ShowMessageBox(
+									"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
+									"Restart Required".Localize());
 								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
 							}
 						}
