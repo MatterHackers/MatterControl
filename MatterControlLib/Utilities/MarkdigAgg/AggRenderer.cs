@@ -189,7 +189,9 @@ namespace Markdig.Renderers
 		internal void WriteText(ref StringSlice slice)
 		{
 			if (slice.Start > slice.End)
+			{
 				return;
+			}
 
 			WriteText(slice.Text, slice.Start, slice.Length);
 		}
@@ -202,7 +204,7 @@ namespace Markdig.Renderers
 
 			foreach (var word in words)
 			{
-				if(!first)
+				if (!first)
 				{
 					WriteInline(new TextSpaceX(theme)
 					{
@@ -210,10 +212,13 @@ namespace Markdig.Renderers
 					});
 				}
 
-				WriteInline(new TextWordX (theme)
+				if (word.Length > 0)
 				{
-					Text = word
-				});
+					WriteInline(new TextWordX(theme)
+					{
+						Text = word
+					});
+				}
 
 				first = false;
 			}

@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl
 
 			if (useSubMenu)
 			{
-				// Create items in a 'Modify' submenu
+				// Create items in a 'Modify' sub-menu
 				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
 			}
 			else
@@ -526,9 +526,9 @@ namespace MatterHackers.MatterControl
 			this.ApplicationEvent?.Invoke(this, message);
 		}
 
-		public Action RedeemDesignCode;
+		public Action RedeemDesignCode { get; set; }
 
-		public Action EnterShareCode;
+		public Action EnterShareCode { get; set; }
 
 		// check permission to an IObject3D class
 		public Func<IObject3D, bool> UserHasPermission { get; set; }
@@ -540,7 +540,7 @@ namespace MatterHackers.MatterControl
 
 		private static ApplicationController globalInstance;
 
-		public RootedObjectEventHandler CloudSyncStatusChanged = new RootedObjectEventHandler();
+		public RootedObjectEventHandler CloudSyncStatusChanged { get; private set; } = new RootedObjectEventHandler();
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
@@ -1315,7 +1315,7 @@ namespace MatterHackers.MatterControl
 			return workingAnimation;
 		}
 
-		static int applicationInstanceCount = 0;
+		private static int applicationInstanceCount = 0;
 
 		public static int ApplicationInstanceCount
 		{
@@ -1388,7 +1388,7 @@ namespace MatterHackers.MatterControl
 				// Add each path defined in the CustomLibraryFolders file as a new FileSystemContainerItem
 				foreach (string directory in File.ReadLines(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
 				{
-					//if (Directory.Exists(directory))
+					// if (Directory.Exists(directory))
 					{
 						this.Library.RegisterContainer(
 							new FileSystemContainer.DirectoryContainerLink(directory)
@@ -1506,7 +1506,7 @@ namespace MatterHackers.MatterControl
 
 			ProfileManager.UserChanged += (s, e) =>
 			{
-				//_activePrinters = new List<PrinterConfig>();
+				// _activePrinters = new List<PrinterConfig>();
 			};
 
 			this.BuildSceneOperations();
@@ -1563,7 +1563,7 @@ namespace MatterHackers.MatterControl
 						if (sceneItem is IObject3D imageObject)
 						{
 							// TODO: make it look like this (and get rid of all the other stuff)
-							//scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
+							// scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
 
 							var path = new ImageToPathObject3D();
 
@@ -3636,30 +3636,7 @@ Support and tutorials:
 
 			// hook up a keyboard watcher to rout keys when not handled by children
 
-			systemWindow.KeyPressed += (s, keyEvent) =>
-			{
-				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
-				var offsetDist = 50;
-
-				if (!keyEvent.Handled
-					&& view3D != null)
-				{
-					switch (keyEvent.KeyChar)
-					{
-						case 'w':
-						case 'W':
-							view3D.ResetView();
-							keyEvent.Handled = true;
-							break;
-
-						case ' ':
-							view3D.Scene.ClearSelection();
-							keyEvent.Handled = true;
-							break;
-					}
-				}
-			};
+			systemWindow.KeyPressed += SystemWindow_KeyPressed;
 
 			systemWindow.KeyDown += (s, keyEvent) =>
 			{
@@ -3975,7 +3952,7 @@ Support and tutorials:
 			{
 				ReportStartupProgress(0.02, "First draw->RunOnIdle");
 
-				//UiThread.RunOnIdle(() =>
+				// UiThread.RunOnIdle(() =>
 				Task.Run(async () =>
 				{
 					try
@@ -4044,6 +4021,34 @@ Support and tutorials:
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
 			return systemWindow;
+		}
+
+		private static void SystemWindow_KeyPressed(object sender, KeyPressEventArgs keyEvent)
+		{
+			if (sender is SystemWindow systemWindow)
+			{
+				var view3D = systemWindow.Descendants<View3DWidget>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var printerTabPage = systemWindow.Descendants<PrinterTabPage>().Where((v) => v.ActuallyVisibleOnScreen()).FirstOrDefault();
+				var offsetDist = 50;
+
+				if (!keyEvent.Handled
+					&& view3D != null)
+				{
+					switch (keyEvent.KeyChar)
+					{
+						case 'w':
+						case 'W':
+							view3D.ResetView();
+							keyEvent.Handled = true;
+							break;
+
+						case ' ':
+							view3D.Scene.ClearSelection();
+							keyEvent.Handled = true;
+							break;
+					}
+				}
+			}
 		}
 
 		private static void NudgeItem(View3DWidget view3D, IObject3D item, ArrowDirection arrowDirection, KeyEventArgs keyEvent)
