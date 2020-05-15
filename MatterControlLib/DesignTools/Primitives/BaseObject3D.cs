@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -83,6 +84,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[DisplayName("Height")]
 		public double ExtrusionHeight { get; set; } = 5;
+
+		[ReadOnly(true)]
+		public string NoBaseMessage { get; set; } = "No base is added under your part. Switch to a different base option to create a base.";
+
+		[DisplayName("")]
+		[ReadOnly(true)]
+		public string SpaceHolder1 { get; set; } = "";
+
+		[DisplayName("")]
+		[ReadOnly(true)]
+		public string SpaceHolder2 { get; set; } = "";
+	
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public CenteringTypes Centering { get; set; } = CenteringTypes.Weighted;
@@ -323,12 +336,14 @@ namespace MatterHackers.MatterControl.DesignTools
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
 
+					var mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight);
+					mesh.Translate(new Vector3(0, 0, -ExtrusionHeight + bottomWithoutBase));
+
 					var baseObject = new Object3D()
 					{
-						Mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight)
+						Mesh = mesh
 					};
 					Children.Add(baseObject);
-					baseObject.Mesh.Translate(new Vector3(0, 0, -ExtrusionHeight + bottomWithoutBase));
 				}
 				else
 				{
@@ -340,10 +355,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(BaseSize), () => BaseType != BaseTypes.None);
-			change.SetRowVisible(nameof(InfillAmount), () => BaseType == BaseTypes.Outline);
-			change.SetRowVisible(nameof(Centering), () => BaseType == BaseTypes.Circle);
-			change.SetRowVisible(nameof(ExtrusionHeight), () => BaseType != BaseTypes.None);
+			var changeSet = new Dictionary<string, bool>();
+			changeSet.Add(nameof(NoBaseMessage), BaseType == BaseTypes.None);
+			changeSet.Add(nameof(SpaceHolder1), BaseType == BaseTypes.None || BaseType == BaseTypes.Rectangle);
+			changeSet.Add(nameof(SpaceHolder2), BaseType == BaseTypes.None);
+			changeSet.Add(nameof(BaseSize), BaseType != BaseTypes.None);
+			changeSet.Add(nameof(InfillAmount), BaseType == BaseTypes.Outline);
+			changeSet.Add(nameof(Centering), BaseType == BaseTypes.Circle);
+			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
+
+			// first turn on all the settings we want to see
+			foreach (var kvp in changeSet.Where(c => c.Value))
+			{
+				change.SetRowVisible(kvp.Key, () => kvp.Value);
+			}
+
+			// then turn off all the settings we want to hide
+			foreach (var kvp in changeSet.Where(c => !c.Value))
+			{
+				change.SetRowVisible(kvp.Key, () => kvp.Value);
+			}
 		}
 	}
 }
