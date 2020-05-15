@@ -66,13 +66,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private async void CheckForUpdate()
 		{
-			var httpClient = new HttpClient();
-			var response = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md");
+			var uri = "https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md";
 
-			if (!string.IsNullOrEmpty(response))
-			{
-				markdownWidget.Markdown = response;
-			}
+			WebCache.RetrieveText(uri.ToString(),
+				(markDown) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						markdownWidget.Markdown = markDown;
+					});
+				});
 		}
 	}
 }
