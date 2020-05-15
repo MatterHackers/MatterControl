@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				VAnchor = VAnchor.Center,
 				AutoExpandBoundsToText = true,
 				EllipsisIfClipped = true,
-				Margin = new BorderDouble(left: 5)
+				Margin = new BorderDouble(left: 3)
 			};
 			this.AddChild(titleText);
 

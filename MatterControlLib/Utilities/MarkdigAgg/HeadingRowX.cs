@@ -15,7 +15,8 @@ namespace Markdig.Renderers.Agg
 		{
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
-			this.Margin = new BorderDouble(0, 4, 0, 12);
+			this.Margin = new BorderDouble(3, 4, 0, 12);
+			this.RowPadding = new BorderDouble(0, 3);
 		}
 
 		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)

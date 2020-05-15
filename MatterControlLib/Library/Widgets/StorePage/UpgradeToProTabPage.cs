@@ -32,12 +32,16 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
+using System;
+using System.Net.Http;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
 
 	public class UpgradeToProTabPage : GuiWidget
 	{
+		private MarkdownWidget markdownWidget;
+
 		public UpgradeToProTabPage(ThemeConfig theme)
 		{
 			this.Padding = new BorderDouble(3);
@@ -48,14 +52,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			this.Name = "UpgradeTab";
 
-			var markdownWidget = new MarkdownWidget(theme)
+			markdownWidget = new MarkdownWidget(theme)
 			{
 				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
 			};
 
 			markdownWidget.Markdown = "# Upgrade to [MatterControl Pro](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)";
 
+			CheckForUpdate();
+
 			this.AddChild(markdownWidget);
+		}
+
+		private async void CheckForUpdate()
+		{
+			var httpClient = new HttpClient();
+			var response = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md");
+
+			if (!string.IsNullOrEmpty(response))
+			{
+				markdownWidget.Markdown = response;
+			}
 		}
 	}
 }
