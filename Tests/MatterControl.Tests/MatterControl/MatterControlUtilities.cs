@@ -287,14 +287,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("Yes Button");
 			}
 
-			// TODO: Improve this to more accurately find the print task row and click its Stop button
-			if (testRunner.WaitForName("Stop Task Button", .2))
-			{
-				testRunner.ClickByName("Stop Task Button");
-			}
+			testRunner.WaitForWidgetEnabled("Print Progress Dial", 15);
+
+			testRunner.WaitForWidgetEnabled("Stop Task Button");
+			testRunner.ClickByName("Stop Task Button");
 
 			// Wait for and dismiss the new PrintCompleted dialog
-			testRunner.WaitForName("Ok Button");
+			testRunner.WaitForName("Ok Button", 10);
 			testRunner.ClickByName("Ok Button");
 		}
 
@@ -960,6 +959,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
 		{
 			EnsurePrinterSidebarOpen(testRunner);
+
+			testRunner.WaitForWidgetEnabled("Slice Settings Tab");
 
 			testRunner.ClickByName("Slice Settings Tab");
 		}

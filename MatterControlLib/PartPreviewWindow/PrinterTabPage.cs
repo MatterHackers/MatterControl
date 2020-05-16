@@ -646,7 +646,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Center,
 				Height = 200 * DeviceScale,
-				Width = 200 * DeviceScale
+				Width = 200 * DeviceScale,
+				Name = "Print Progress Dial"
 			};
 			progressContainer.AddChild(progressDial);
 
