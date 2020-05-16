@@ -2936,6 +2936,8 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
+		public bool Allow32BitReSlice { get; set; }
+
 		/// <summary>
 		/// Archives MCX and validates GCode results before starting a print operation
 		/// </summary>
