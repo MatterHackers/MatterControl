@@ -317,10 +317,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
+			var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
+
 			// create a double editor
 			if (propertyValue is double doubleValue)
 			{
-				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 				if (readOnly)
 				{
 					var valueField = new TextWidget(doubleValue.ToString("0.##"), textColor: theme.TextColor, pointSize: 10);
@@ -529,10 +530,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			// create a int editor
 			else if (propertyValue is int intValue)
 			{
-				var readOnly = property.PropertyInfo.GetCustomAttributes(true).OfType<ReadOnlyAttribute>().FirstOrDefault() != null;
 				if (readOnly)
 				{
-					var valueField = new TextWidget(intValue.ToString(), textColor: theme.TextColor, pointSize: 10);
+					var valueField = new WrappedTextWidget(intValue.ToString(),
+						textColor: theme.TextColor,
+						pointSize: 10);
+
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
 						property.Description.Localize(),
 						valueField,
@@ -577,21 +580,32 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is string stringValue)
 			{
-				// create a string editor
-				var field = new TextField(theme);
-				field.Initialize(0);
-				field.SetValue(stringValue, false);
-				field.Content.HAnchor = HAnchor.Stretch;
-				RegisterValueChanged(field, (valueString) => valueString);
-				rowContainer = CreateSettingsRow(property, field, theme);
-
-				var label = rowContainer.Children.First();
-
-				if (field is TextField)
+				if (readOnly)
 				{
-					var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
-					spacer.HAnchor = HAnchor.Absolute;
-					spacer.Width = Math.Max(0, 100 - label.Width);
+					var valueField = new TextWidget(stringValue, textColor: theme.TextColor, pointSize: 10);
+					rowContainer = new SettingsRow(property.DisplayName.Localize(),
+						property.Description.Localize(),
+						valueField,
+						theme);
+				}
+				else // normal edit row
+				{
+					// create a string editor
+					var field = new TextField(theme);
+					field.Initialize(0);
+					field.SetValue(stringValue, false);
+					field.Content.HAnchor = HAnchor.Stretch;
+					RegisterValueChanged(field, (valueString) => valueString);
+					rowContainer = CreateSettingsRow(property, field, theme);
+
+					var label = rowContainer.Children.First();
+
+					if (field is TextField)
+					{
+						var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
+						spacer.HAnchor = HAnchor.Absolute;
+						spacer.Width = Math.Max(0, 100 - label.Width);
+					}
 				}
 			}
 			else if (propertyValue is char charValue)
@@ -613,13 +627,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				// create an enum editor
 				UIField field;
-				var iconsAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<IconsAttribute>().FirstOrDefault();
-				if (iconsAttribute != null)
+				var enumDisplayAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<EnumDisplayAttribute>().FirstOrDefault();
+				var addToSettingsRow = true;
+				if (enumDisplayAttribute != null)
 				{
-					field = new IconEnumField(property, iconsAttribute, theme)
+					field = new EnumDisplayField(property, enumDisplayAttribute, theme)
 					{
 						InitialValue = propertyValue.ToString()
 					};
+
+					if (enumDisplayAttribute.Mode == EnumDisplayAttribute.PresentationMode.Tabs)
+					{
+						addToSettingsRow = false;
+					}
 				}
 				else
 				{
@@ -647,7 +667,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
 				};
 
-				rowContainer = CreateSettingsRow(property, field, theme);
+				if (addToSettingsRow)
+				{
+					rowContainer = CreateSettingsRow(property, field, theme);
+				}
+				else
+				{
+					// field.Content.Margin = new BorderDouble(3, 0);
+					field.Content.HAnchor = HAnchor.Stretch;
+					rowContainer = field.Content;
+				}
 			}
 			else if (propertyValue is IObject3D item
 				&& ApplicationController.Instance.Extensions.GetEditorsForType(property.PropertyType)?.FirstOrDefault() is IObject3DEditor iObject3DEditor)

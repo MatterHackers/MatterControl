@@ -553,6 +553,7 @@ namespace MatterControl.Tests.MatterControl
 			}
 
 			public string InputValue { get; }
+
 			public string ExpectedValue { get; }
 		}
 
@@ -567,7 +568,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			// *************** Enable to investigate/debug/develop new/existing tests ************************
 			bool investigateDebugTests = false;
-			var perItemDelay = (investigateDebugTests) ? 1000 : 0;
+			var perItemDelay = investigateDebugTests ? 1000 : 0;
 
 			var testsWindow = new UIFieldTestWindow(500, 200, field, theme);
 
@@ -580,7 +581,6 @@ namespace MatterControl.Tests.MatterControl
 
 				return Task.CompletedTask;
 			}, 30);
-
 		}
 	}
 }

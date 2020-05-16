@@ -28,50 +28,34 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.CustomWidgets
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HelpArticleHeader : Toolbar
+	[AttributeUsage(AttributeTargets.Property)]
+	public class EnumDisplayAttribute : Attribute
 	{
-		public event EventHandler EditClicked;
-
-		public HelpArticleHeader(HelpArticle helpArticle, ThemeConfig theme, bool boldFont = false, int pointSize = -1, string editToolTipText = null)
-			: base(theme)
+		public enum PresentationMode
 		{
-			this.Padding = theme.ToolbarPadding;
-			this.HAnchor = HAnchor.Stretch;
-			this.VAnchor = VAnchor.Fit;
-
-			var titleText = new TextWidget(helpArticle.Name, textColor: theme.TextColor, pointSize: pointSize > 0 ? pointSize : theme.DefaultFontSize, bold: boldFont)
-			{
-				VAnchor = VAnchor.Center,
-				AutoExpandBoundsToText = true,
-				EllipsisIfClipped = true,
-				Margin = new BorderDouble(left: 3)
-			};
-			this.AddChild(titleText);
-
-			this.ActionArea.VAnchor = VAnchor.Stretch;
-			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
-
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
-			{
-				ToolTipText = editToolTipText ?? "Edit".Localize(),
-				Name = helpArticle.Name + " Edit"
-			};
-			editButton.Click += (s, e) =>
-			{
-				this.EditClicked?.Invoke(this, null);
-			};
-			this.SetRightAnchorItem(editButton);
-
-			this.ActionArea.Margin = this.ActionArea.Margin.Clone(right: editButton.Width + 5);
+			DropDownList,
+			IconRow,
+			Tabs,
+			Buttons
 		}
+
+		public PresentationMode Mode { get; set; } = PresentationMode.DropDownList;
+
+		public EnumDisplayAttribute()
+		{
+		}
+
+		public bool Item0IsNone { get; set; } = true;
+
+		public string[] IconPaths { get; set; }
+
+		public int IconWidth { get; set; } = 16;
+
+		public int IconHeight { get; set; } = 16;
+
+		public bool InvertIcons { get; set; } = false;
 	}
 }

@@ -261,14 +261,34 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
-			// Store tab
-			tabControl.AddTab(
-				new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
+			// Upgrade tab
+			if (!ApplicationController.Instance.IsMatterControlPro())
+			{
+				GuiWidget tab;
+				tabControl.AddTab(
+					tab = new ChromeTab("Upgrade", "Upgrade".Localize(), tabControl, new UpgradeToProTabPage(theme), theme, hasClose: false)
+					{
+						MinimumSize = new Vector2(0, theme.TabButtonHeight),
+						Name = "Upgrade",
+						Padding = new BorderDouble(15, 0),
+					});
+
+				tab.AfterDraw += (s, e) =>
 				{
-					MinimumSize = new Vector2(0, theme.TabButtonHeight),
-					Name = "Store Tab",
-					Padding = new BorderDouble(15, 0),
-				});
+					e.Graphics2D.Circle(tab.LocalBounds.Right - 15, tab.LocalBounds.Bottom + tab.Height / 2, 5, Color.Red);
+				};
+			}
+			else
+			{
+				// Store tab
+				tabControl.AddTab(
+					new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
+					{
+						MinimumSize = new Vector2(0, theme.TabButtonHeight),
+						Name = "Store Tab",
+						Padding = new BorderDouble(15, 0),
+					});
+			}
 
 			// Library tab
 			var libraryWidget = new LibraryWidget(this, theme)

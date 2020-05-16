@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -39,16 +40,16 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class IconEnumField : UIField
+	public class EnumDisplayField : UIField
 	{
-		private EditableProperty property;
-		private IconsAttribute iconsAttribute;
-		private ThemeConfig theme;
+		private readonly EditableProperty property;
+		private readonly EnumDisplayAttribute enumDisplayAttibute;
+		private readonly ThemeConfig theme;
 
-		public IconEnumField(EditableProperty property, IconsAttribute iconsAttribute, ThemeConfig theme)
+		public EnumDisplayField(EditableProperty property, EnumDisplayAttribute iconsAttribute, ThemeConfig theme)
 		{
 			this.property = property;
-			this.iconsAttribute = iconsAttribute;
+			this.enumDisplayAttibute = iconsAttribute;
 			this.theme = theme;
 		}
 
@@ -58,32 +59,126 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public override void Initialize(int tabIndex)
 		{
 			// Enum keyed on name to friendly name
-			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName =>
-			{
-				return new
-				{
-					Key = enumName,
-					Value = enumName.Replace('_', ' ')
-				};
-			});
+			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ')));
 
+			switch (enumDisplayAttibute.Mode)
+			{
+				case EnumDisplayAttribute.PresentationMode.IconRow:
+					AddIconRow(enumItems);
+					break;
+
+				case EnumDisplayAttribute.PresentationMode.Tabs:
+					AddTabs(enumItems);
+					break;
+
+				case EnumDisplayAttribute.PresentationMode.Buttons:
+					AddButtons(enumItems);
+					break;
+
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems)
+		{
+			var menuRow = new FlowLayoutWidget();
+
+			int index = 0;
+			foreach (var enumItem in enumItems)
+			{
+				var localIndex = index;
+
+				var radioButton = new RadioTextButton(enumItem.Value, theme);
+				menuRow.AfterDraw += (s, e) =>
+				{
+					e.Graphics2D.Rectangle(menuRow.LocalBounds.Left, 0, menuRow.LocalBounds.Right, 2, theme.PrimaryAccentColor);
+				};
+
+				radioButton.CheckedStateChanged += (s, e) =>
+				{
+					var button = s as RadioTextButton;
+					button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
+				};
+
+				radioButton.SelectedBackgroundColor = theme.PrimaryAccentColor;
+
+				// set it if checked
+				if (enumItem.Value == this.InitialValue)
+				{
+					radioButton.Checked = true;
+				}
+
+				menuRow.AddChild(radioButton);
+
+				var localItem = enumItem;
+				radioButton.CheckedStateChanged += (s, e) =>
+				{
+					if (radioButton.Checked)
+					{
+						this.SetValue(localItem.Key, true);
+					}
+				};
+
+				index++;
+			}
+
+			this.Content = menuRow;
+		}
+
+		private void AddButtons(IEnumerable<(string Key, string Value)> enumItems)
+		{
+			var menuRow = new FlowLayoutWidget();
+
+			int index = 0;
+			foreach (var enumItem in enumItems)
+			{
+				var localIndex = index;
+
+				var radioButton = new RadioTextButton(enumItem.Value, theme);
+
+				// set it if checked
+				if (enumItem.Value == this.InitialValue)
+				{
+					radioButton.Checked = true;
+				}
+
+				menuRow.AddChild(radioButton);
+
+				var localItem = enumItem;
+				radioButton.CheckedStateChanged += (s, e) =>
+				{
+					if (radioButton.Checked)
+					{
+						this.SetValue(localItem.Key, true);
+					}
+				};
+
+				index++;
+			}
+
+			this.Content = menuRow;
+		}
+
+		private void AddIconRow(IEnumerable<(string Key, string Value)> enumItems)
+		{
 			var iconsRow = new FlowLayoutWidget();
 
 			int index = 0;
-			var radioButtonSize = new Vector2(iconsAttribute.Width, iconsAttribute.Height);
+			var radioButtonSize = new Vector2(enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight);
 			foreach (var enumItem in enumItems)
 			{
 				var localIndex = index;
 				ImageBuffer iconImage = null;
-				var iconPath = iconsAttribute.IconPaths[localIndex];
+				var iconPath = enumDisplayAttibute.IconPaths[localIndex];
 				if (!string.IsNullOrWhiteSpace(iconPath))
 				{
-					if (iconsAttribute.Width > 0)
+					if (enumDisplayAttibute.IconWidth > 0)
 					{
 						// If the attribute allows invert, use the theme.InvertIcons state
-						bool invertIcons = iconsAttribute.InvertIcons ? theme.InvertIcons : false;
+						bool invertIcons = enumDisplayAttibute.InvertIcons ? theme.InvertIcons : false;
 
-						iconImage = AggContext.StaticData.LoadIcon(iconPath, iconsAttribute.Width, iconsAttribute.Height, invertIcons);
+						iconImage = AggContext.StaticData.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight, invertIcons);
 					}
 					else
 					{
@@ -114,7 +209,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						}
 					};
 				}
-				else if(iconsAttribute.Width > 0)
+				else if (enumDisplayAttibute.IconWidth > 0)
 				{
 					// hold the space of the empty icon
 					iconsRow.AddChild(new GuiWidget(radioButtonSize.X, radioButtonSize.Y));

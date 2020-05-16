@@ -112,6 +112,8 @@ namespace MatterHackers.MatterControl
 					{
 						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
+						var column = CreateColumn(theme);
+					
 						if (levelingData != null
 							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
 						{
@@ -119,7 +121,6 @@ namespace MatterHackers.MatterControl
 
 							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
 
-							var column = CreateColumn(theme);
 
 							column.AddChild(
 								new ValueTag(
@@ -192,9 +193,16 @@ namespace MatterHackers.MatterControl
 								SimplePoints = true,
 							};
 							column.AddChild(probeWidget);
-
-							widget = column;
 						}
+						else if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+						{
+							column.AddChild(new WrappedTextWidget(
+								@"Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled, you can click the button to the left to setup Print Leveling.".Localize(),
+								pointSize: theme.DefaultFontSize,
+								textColor: theme.TextColor));
+						}
+
+						widget = column;
 					}
 
 					if (stage is XyCalibrationWizard xyWizard)

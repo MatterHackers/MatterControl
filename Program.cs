@@ -31,6 +31,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
@@ -58,6 +59,17 @@ namespace MatterHackers.MatterControl
 		private static string mainServiceName = "shell";
 
 		private const string ServiceBaseUri = "net.pipe://localhost/mattercontrol";
+
+		[DllImport("Shcore.dll")]
+		static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
+
+		// According to https://msdn.microsoft.com/en-us/library/windows/desktop/dn280512(v=vs.85).aspx
+		private enum DpiAwareness
+		{
+			None = 0,
+			SystemAware = 1,
+			PerMonitorAware = 2
+		}
 
 		[STAThread]
 		public static void Main(string[] args)
@@ -155,6 +167,11 @@ namespace MatterHackers.MatterControl
 			Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
 
 			Datastore.Instance.Initialize(DesktopSqlite.CreateInstance());
+
+			if (UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness) == "PerMonitorAware")
+			{
+				SetProcessDpiAwareness((int)DpiAwareness.PerMonitorAware);
+			}
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
 			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);

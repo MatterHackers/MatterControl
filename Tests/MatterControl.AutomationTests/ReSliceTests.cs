@@ -49,14 +49,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("Emulator")]
 		public async Task ReSliceHasCorrectEPositions()
 		{
-			Assert.AreEqual(8, IntPtr.Size, "Test requires 64bit environment as Reslice is disabled in 32bit");
-
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				// testRunner.ClickByName("Connection Wizard Skip Sign In Button");
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
+					ApplicationController.Instance.Allow32BitReSlice = true;
 					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 

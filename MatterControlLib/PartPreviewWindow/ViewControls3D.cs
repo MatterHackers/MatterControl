@@ -139,7 +139,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 						else
 						{
-							popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
+							var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
+							menuItem.Click += (s, e) => operation.Action(sceneContext);
 						}
 					}
 				}

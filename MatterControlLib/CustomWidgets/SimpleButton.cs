@@ -399,6 +399,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						this.UncheckSiblings();
 					}
+
+					OnCheckStateChanged();
 				}
 
 				this.BackgroundColor = _checked ? this.SelectedBackgroundColor : this.UnselectedBackgroundColor;

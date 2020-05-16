@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						// add in the wipe tower
 						this.Children.Add(new Object3D()
 						{
-							Mesh = PlatonicSolids.CreateCube(),
+							Mesh = new CylinderObject3D(1, 1, 50).Mesh,
 							Matrix = Matrix4X4.CreateTranslation(1 / 2.0, 1 / 2.0, 1 / 2.0)
 								* Matrix4X4.CreateScale(WipeTowerSize, WipeTowerSize, BaseHeight + Layers * ChangingHeight)
 								* Matrix4X4.CreateTranslation(TabDepth * 1, TabDepth * 2, 0),

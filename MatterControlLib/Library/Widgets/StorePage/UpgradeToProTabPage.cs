@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,29 +27,55 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using Markdig.Agg;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.SettingsManagement;
+using MatterHackers.VectorMath;
 using System;
+using System.Net.Http;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	[AttributeUsage(AttributeTargets.Property)]
-	public class IconsAttribute : Attribute
+
+	public class UpgradeToProTabPage : GuiWidget
 	{
-		public IconsAttribute(string[] iconPaths, int width = 16, int height = 16, bool item0IsNone = true)
+		private MarkdownWidget markdownWidget;
+
+		public UpgradeToProTabPage(ThemeConfig theme)
 		{
-			Width = width;
-			Height = height;
-			this.IconPaths = iconPaths;
-			Item0IsNone = item0IsNone;
+			this.Padding = new BorderDouble(3);
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Stretch;
+			this.MinimumSize = new Vector2(200, 200);
+			this.BackgroundColor = theme.TabBodyBackground;
+
+			this.Name = "UpgradeTab";
+
+			markdownWidget = new MarkdownWidget(theme)
+			{
+				Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2)
+			};
+
+			markdownWidget.Markdown = "# Upgrade to [MatterControl Pro](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)";
+
+			CheckForUpdate();
+
+			this.AddChild(markdownWidget);
 		}
 
-		public bool Item0IsNone { get; private set; }
+		private async void CheckForUpdate()
+		{
+			var uri = "https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md";
 
-		public string[] IconPaths { get; private set; }
-
-		public int Width { get; set; }
-
-		public int Height { get; set; }
-
-		public bool InvertIcons { get; set; } = false;
+			WebCache.RetrieveText(uri.ToString(),
+				(markDown) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						markdownWidget.Markdown = markDown;
+					});
+				});
+		}
 	}
 }

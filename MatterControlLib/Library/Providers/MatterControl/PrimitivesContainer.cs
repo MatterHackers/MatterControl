@@ -102,6 +102,12 @@ namespace MatterHackers.MatterControl.Library
 					() => "Half Sphere".Localize(),
 					async () => await HalfSphereObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+#if DEBUG
+				new GeneratorItem(
+					() => "XY Calibration".Localize(),
+					async() => await XyCalibrationFaceObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+#endif
 				new GeneratorItem(
 					() => "Image Converter".Localize(),
 					() =>

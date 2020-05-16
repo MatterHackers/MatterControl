@@ -17,6 +17,7 @@ namespace MatterHackers.MatterControl
 		public const string AfterPrintFinishedSendEmail = nameof(AfterPrintFinishedSendEmail);
 		public const string AfterPrintFinishedSendTextMessage = nameof(AfterPrintFinishedSendTextMessage);
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
+		public const string ApplicationDpiAwareness = nameof(ApplicationDpiAwareness);
 		public const string ApplicationTextSize = nameof(ApplicationTextSize);
 		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);
