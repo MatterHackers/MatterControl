@@ -275,7 +275,13 @@ namespace MatterHackers.MatterControl
 
 		public bool IsMatterControlPro()
 		{
-			return ApplicationController.Instance.UserHasPermissionToId("ag1zfm1oLWRmcy1wcm9kchgLEgtEaWdpdGFsSXRlbRiAgIDzyMGxCgw");
+			var result = ApplicationController.Instance.UserHasPermissionToId?.Invoke("ag1zfm1oLWRmcy1wcm9kchgLEgtEaWdpdGFsSXRlbRiAgIDzyMGxCgw");
+			if (result != null)
+			{
+				return result.Value;
+			}
+
+			return false;
 		}
 
 		public RunningTasksConfig Tasks { get; set; } = new RunningTasksConfig();
