@@ -3243,17 +3243,17 @@ Support and tutorials:
 				TextColor = AppContext.Theme.TextColor,
 				Margin = new BorderDouble(top: 6, left: 6),
 				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = ApplicationSettings.Instance.get(userKey) == "false"
+				Checked = UserSettings.Instance.get(userKey) == "false"
 			};
 			hideAfterPrintMessage.Click += (s, e1) =>
 			{
 				if (hideAfterPrintMessage.Checked)
 				{
-					ApplicationSettings.Instance.set(userKey, "false");
+					UserSettings.Instance.set(userKey, "false");
 				}
 				else
 				{
-					ApplicationSettings.Instance.set(userKey, "true");
+					UserSettings.Instance.set(userKey, "true");
 				}
 			};
 
@@ -4197,7 +4197,7 @@ Support and tutorials:
 					}
 
 
-					if (ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
+					if (UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) != "false")
 					{
 						UiThread.RunOnIdle(() =>
 						{

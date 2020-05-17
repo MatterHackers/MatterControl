@@ -32,14 +32,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+
 namespace MatterHackers.MatterControl
 {
 	public partial class ApplicationSettingsPage : DialogPage
@@ -54,7 +55,49 @@ namespace MatterHackers.MatterControl
 			contentRow.Padding = theme.DefaultContainerPadding;
 			contentRow.Padding = 0;
 			contentRow.BackgroundColor = Color.Transparent;
+			GuiWidget settingsColumn;
 
+			{
+				var settingsAreaScrollBox = new ScrollableWidget(true);
+				settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
+				settingsAreaScrollBox.AnchorAll();
+				settingsAreaScrollBox.BackgroundColor = theme.MinimalShade;
+				contentRow.AddChild(settingsAreaScrollBox);
+
+				settingsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					HAnchor = HAnchor.MaxFitOrStretch
+				};
+
+				settingsAreaScrollBox.AddChild(settingsColumn);
+			}
+
+			AddGeneralPannel(settingsColumn);
+
+			AddUsserOptionsPannel(settingsColumn);
+
+			AddAdvancedPannel(settingsColumn);
+
+			// Enforce consistent SectionWidget spacing and last child borders
+			foreach (var section in settingsColumn.Children<SectionWidget>())
+			{
+				section.Margin = new BorderDouble(0, 10, 0, 0);
+
+				if (section.ContentPanel.Children.LastOrDefault() is SettingsItem lastRow)
+				{
+					// If we're in a contentPanel that has SettingsItems...
+
+					// Clear the last items bottom border
+					lastRow.Border = lastRow.Border.Clone(bottom: 0);
+
+					// Set a common margin on the parent container
+					section.ContentPanel.Margin = new BorderDouble(2, 0);
+				}
+			}
+		}
+
+		private void AddGeneralPannel(GuiWidget settingsColumn)
+		{
 			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -69,7 +112,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 			};
-			contentRow.AddChild(generalSection);
+			settingsColumn.AddChild(generalSection);
 
 			theme.ApplyBoxStyle(generalSection);
 
@@ -145,7 +188,7 @@ namespace MatterHackers.MatterControl
 					},
 					configureNotificationsButton,
 					AggContext.StaticData.LoadIcon("notify-24x24.png", 16, 16, theme.InvertIcons)),
-					generalPanel);
+				generalPanel);
 
 			// LanguageControl
 			var languageSelector = new LanguageSelector(theme);
@@ -246,7 +289,7 @@ namespace MatterHackers.MatterControl
 
 			double sliderThumbWidth = 10 * GuiWidget.DeviceScale;
 			double sliderWidth = 100 * GuiWidget.DeviceScale;
-			var textSizeSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, .7, 2.5)
+			var textSizeSlider = new SolidSlider(default(Vector2), sliderThumbWidth, theme, .7, 2.5)
 			{
 				Name = "Text Size Slider",
 				Margin = new BorderDouble(5, 0),
@@ -298,9 +341,12 @@ namespace MatterHackers.MatterControl
 			this.AddSettingsRow(textSizeRow, generalPanel);
 
 			var themeSection = CreateThemePanel(theme);
-			contentRow.AddChild(themeSection);
+			settingsColumn.AddChild(themeSection);
 			theme.ApplyBoxStyle(themeSection);
+		}
 
+		private void AddAdvancedPannel(GuiWidget settingsColumn)
+		{
 			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
 
 			var advancedSection = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
@@ -310,7 +356,7 @@ namespace MatterHackers.MatterControl
 				VAnchor = VAnchor.Fit,
 				Margin = 0
 			};
-			contentRow.AddChild(advancedSection);
+			settingsColumn.AddChild(advancedSection);
 
 			theme.ApplyBoxStyle(advancedSection);
 
@@ -334,28 +380,11 @@ namespace MatterHackers.MatterControl
 					}),
 				advancedPanel);
 
-			// Touch Screen Mode
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Utilize High Res Monitors".Localize(),
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness) == "PerMonitorAware",
-						ToggleAction = (itemChecked) =>
-						{
-							string dpiAwareness = itemChecked ? "PerMonitorAware" : "None";
-							if (dpiAwareness != UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness))
-							{
-								UserSettings.Instance.set(UserSettingsKey.ApplicationDpiAwareness, dpiAwareness);
-								StyledMessageBox.ShowMessageBox(
-									"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
-									"Restart Required".Localize());
-								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
-							}
-						}
-					}),
-				advancedPanel);
+			AddUserBoolToggle(advancedPanel,
+				"Utilize High Res Monitors".Localize(),
+				UserSettingsKey.ApplicationUseHeigResDisplays,
+				true,
+				false);
 
 			var openCacheButton = new IconButton(AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons), theme)
 			{
@@ -390,6 +419,8 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 #if DEBUG
+			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+
 			var configurePluginsButton = new IconButton(configureIcon, theme)
 			{
 				ToolTipText = "Configure Plugins".Localize(),
@@ -412,23 +443,106 @@ namespace MatterHackers.MatterControl
 #endif
 
 			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
+		}
 
-			// Enforce consistent SectionWidget spacing and last child borders
-			foreach (var section in contentRow.Children<SectionWidget>())
+		private void AddUsserOptionsPannel(GuiWidget settingsColumn)
+		{
+			var optionsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+
+			var optionsSection = new SectionWidget("Options".Localize(), optionsPanel, theme, serializationKey: "ApplicationSettings-Options", expanded: false)
 			{
-				section.Margin = new BorderDouble(0, 10, 0, 0);
+				Name = "Options Section",
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				Margin = 0
+			};
+			settingsColumn.AddChild(optionsSection);
 
-				if (section.ContentPanel.Children.LastOrDefault() is SettingsItem lastRow)
-				{
-					// If we're in a contentPanel that has SettingsItems...
+			theme.ApplyBoxStyle(optionsSection);
 
-					// Clear the last items bottom border
-					lastRow.Border = lastRow.Border.Clone(bottom: 0);
+			AddUserBoolToggle(optionsPanel,
+				"Shown Welcome Message".Localize(),
+				UserSettingsKey.ShownWelcomeMessage,
+				false,
+				false);
 
-					// Set a common margin on the parent container
-					section.ContentPanel.Margin = new BorderDouble(2, 0);
-				}
-			}
+			AddUserBoolToggle(optionsPanel,
+				"Shown Print Canceled Message".Localize(),
+				UserSettingsKey.ShownPrintCanceledMessage,
+				false,
+				false);
+
+			AddUserBoolToggle(optionsPanel,
+				"Shown Print Complete Message".Localize(),
+				UserSettingsKey.ShownPrintCompleteMessage,
+				false,
+				false);
+
+			optionsPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
+		}
+
+		private void AddUserBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
+		{
+			this.AddSettingsRow(
+				new SettingsItem(
+					title,
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = UserSettings.Instance.get(boolKey) != "false",
+						ToggleAction = (itemChecked) =>
+						{
+							string boolValue = itemChecked ? "true" : "false";
+							if (boolValue != UserSettings.Instance.get(boolKey))
+							{
+								UserSettings.Instance.set(boolKey, boolValue);
+								if (requiresRestart)
+								{
+									StyledMessageBox.ShowMessageBox(
+										"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
+										"Restart Required".Localize());
+								}
+
+								if (reloadAll)
+								{
+									UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
+								}
+							}
+						}
+					}),
+				advancedPanel);
+		}
+
+		private void AddApplicationBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
+		{
+			this.AddSettingsRow(
+				new SettingsItem(
+					title,
+					theme,
+					new SettingsItem.ToggleSwitchConfig()
+					{
+						Checked = ApplicationSettings.Instance.get(boolKey) == "true",
+						ToggleAction = (itemChecked) =>
+						{
+							string boolValue = itemChecked ? "true" : "false";
+							if (boolValue != UserSettings.Instance.get(boolKey))
+							{
+								ApplicationSettings.Instance.set(boolKey, boolValue);
+								if (requiresRestart)
+								{
+									StyledMessageBox.ShowMessageBox(
+										"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
+										"Restart Required".Localize());
+								}
+
+								if (reloadAll)
+								{
+									UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
+								}
+							}
+						}
+					}),
+				advancedPanel);
 		}
 
 		public static SectionWidget CreateThemePanel(ThemeConfig theme)

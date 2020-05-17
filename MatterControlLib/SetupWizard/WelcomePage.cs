@@ -63,17 +63,17 @@ namespace MatterHackers.MatterControl.Tour
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(top: 6, left: 6),
 				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = ApplicationSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) == "false"
+				Checked = UserSettings.Instance.get(UserSettingsKey.ShownWelcomeMessage) == "false"
 			};
 			showWelcomePageCheckBox.Click += (sender, e) =>
 			{
 				if (showWelcomePageCheckBox.Checked)
 				{
-					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "false");
+					UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "false");
 				}
 				else
 				{
-					ApplicationSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
+					UserSettings.Instance.set(UserSettingsKey.ShownWelcomeMessage, "true");
 				}
 			};
 			contentRow.AddChild(showWelcomePageCheckBox);
