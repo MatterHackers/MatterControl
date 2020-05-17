@@ -3199,8 +3199,8 @@ namespace MatterHackers.MatterControl
 				string markdownText = @"**Find more at MatterHackers**
 
 Supplies and accessories:
-- [Filament](https://www.matterhackers.com/store/c/3d-printer-filament)
-- [Bed Adhesives](https://www.matterhackers.com/store/c/3d-printer-adhesive)
+- [Filament](https://www.matterhackers.com/store/c/3d-printer-filament) 
+- [Bed Adhesives](https://www.matterhackers.com/store/c/3d-printer-adhesive) 
 - [Digital Designs](https://www.matterhackers.com/store/c/digital-designs)
 
 Support and tutorials:
@@ -3243,7 +3243,7 @@ Support and tutorials:
 				TextColor = AppContext.Theme.TextColor,
 				Margin = new BorderDouble(top: 6, left: 6),
 				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = UserSettings.Instance.get(userKey) == "false"
+				Checked = UserSettings.Instance.get(userKey) == "false",
 			};
 			hideAfterPrintMessage.Click += (s, e1) =>
 			{

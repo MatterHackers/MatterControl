@@ -138,7 +138,11 @@ namespace MatterHackers.MatterControl
 			this.AcceptButton = copyButton;
 			this.AddPageAction(copyButton);
 
-			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor);
+			rememberChoice = new CheckBox("Don't remind me again".Localize(), theme.TextColor)
+			{
+				Name = "Don't remind me again"
+			};
+
 			contentRow.AddChild(rememberChoice);
 
 			copyButton.Visible = true;
