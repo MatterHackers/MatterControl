@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -114,6 +113,25 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 							{
 								var result = JsonConvert.DeserializeObject<ProductSidData>(json);
 								productDataContainer.RemoveAllChildren();
+
+								foreach (var addOn in result.ProductSku.ProductListing.AddOns)
+								{
+									WebCache.RetrieveText($"https://mh-pls-prod.appspot.com/p/1/product-sid/{addOn.AddOnSkuReference}?IncludeListingData=True",
+										(addOnJson) =>
+										{
+											var addOnResult = JsonConvert.DeserializeObject<ProductSidData>(addOnJson);
+
+											var icon = new ImageBuffer(80, 0);
+
+											if (addOnResult?.ProductSku?.FeaturedImage?.ImageUrl != null)
+											{
+												WebCache.RetrieveImageAsync(icon, addOnResult.ProductSku.FeaturedImage.ImageUrl, scaleToImageX: true);
+											}
+
+											addOn.Icon = icon;
+										});
+								}
+
 								CreateProductDataWidgets(result.ProductSku);
 							});
 						});
@@ -193,18 +211,9 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 				theme.ApplyBoxStyle(addonsSection);
 				addonsSection.Margin = addonsSection.Margin.Clone(left: 0);
 
-
-
 				foreach (var item in product.ProductListing.AddOns)
 				{
-					var icon = new ImageBuffer(80, 0);
-
-					if (item.FeaturedImage != null)
-					{
-						WebCache.RetrieveImageAsync(icon, item.FeaturedImage.ImageUrl, scaleToImageX: true);
-					}
-
-					var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, icon)
+					var addOnRow = new AddOnRow(item.AddOnTitle, theme, null, item.Icon)
 					{
 						HAnchor = HAnchor.Stretch,
 						Cursor = Cursors.Hand

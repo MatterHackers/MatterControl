@@ -202,6 +202,65 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			_selectedNode = null;
 		}
 
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (!keyEvent.Handled)
+			{
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.Up:
+						var prev = PreviousVisibleTreeNode(SelectedNode);
+						if (prev != null)
+						{
+							SelectedNode = prev;
+							keyEvent.Handled = true;
+						}
+
+						break;
+
+					case Keys.Down:
+						var next = NextVisibleTreeNode(SelectedNode);
+						if (next != null)
+						{
+							SelectedNode = next;
+							keyEvent.Handled = true;
+						}
+
+						break;
+				}
+			}
+		
+			base.OnKeyDown(keyEvent);
+		}
+
+		private TreeNode NextVisibleTreeNode(TreeNode treeNode)
+		{
+			var nodes = this.Descendants<TreeNode>((child) => child.Visible).ToList();
+
+			var selectedIndex = nodes.IndexOf(SelectedNode);
+
+			if (selectedIndex < nodes.Count - 1)
+			{
+				return nodes[selectedIndex + 1];
+			}
+
+			return null;
+		}
+
+		private TreeNode PreviousVisibleTreeNode(TreeNode treeNode)
+		{
+			var nodes = this.Descendants<TreeNode>((child) => child.Visible).ToList();
+
+			var selectedIndex = nodes.IndexOf(SelectedNode);
+
+			if (selectedIndex > 0)
+			{
+				return nodes[selectedIndex - 1];
+			}
+
+			return null;
+		}
+
 		public TreeNode SelectedNode
 		{
 			get => _selectedNode;
@@ -211,9 +270,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					OnBeforeSelect(null);
 
+					var hadFocus = false;
+
 					// if the current selection (before change) is !null than clear its background color
 					if (_selectedNode != null)
 					{
+						hadFocus = _selectedNode.ContainsFocus;
 						_selectedNode.HighlightRegion.BackgroundColor = Color.Transparent;
 					}
 
@@ -234,7 +296,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						_selectedNode.HighlightRegion.BackgroundColor = theme.AccentMimimalOverlay;
 					}
 
-					this.ScrollIntoView(_selectedNode);
+					this.ScrollIntoView(_selectedNode);//, ScrollAmount.Minimum);
+					if (hadFocus)
+					{
+						_selectedNode?.Focus();
+					}
 
 					OnAfterSelect(null);
 				}

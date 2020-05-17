@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					Margin = new BorderDouble(right: 4),
 					Selectable = false
 				});
-			};
+			}
 
 			this.HighlightRegion.AddChild(textWidget = new TextWidget(this.Text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
@@ -139,6 +139,47 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// Register listeners
 			this.Nodes.CollectionChanged += this.Nodes_CollectionChanged;
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			base.OnKeyDown(keyEvent);
+
+			var restoreFocus = Focused;
+
+			if (!keyEvent.Handled)
+			{
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.Right:
+						this.Expanded = true;
+						keyEvent.Handled = true;
+						break;
+
+					case Keys.Left:
+						if (!this.Expanded)
+						{
+							if (this.NodeParent != null)
+							{
+								// navigate back up to the parent of this node
+								TreeView.SelectedNode = this.NodeParent;
+							}
+							restoreFocus = false;
+						}
+						else
+						{
+							this.Expanded = false;
+						}
+
+						keyEvent.Handled = true;
+						break;
+				}
+			}
+
+			if (restoreFocus && !Focused)
+			{
+				Focus();
+			}
 		}
 
 		private void Nodes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
