@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.Image;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
@@ -54,19 +55,20 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 	public class ProductListing
 	{
 		public string ActiveSkuCount { get; set; }
+
 		public List<string> ActiveSkus { get; set; }
+
 		public List<AddOns> AddOns { get; set; }
 	}
 
 	public class AddOns
 	{
-		public string AddOnListingReference { get; set; }
 		public string AddOnSkuReference { get; set; }
+
 		public string AddOnTitle { get; set; }
-		public FeaturedImage FeaturedImage { get; set; }
-		public bool ListingIsActive { get; set; }
-		public int QuantityAvailable { get; set; }
-		public bool SingleSku { get; set; }
-		public bool SkuIsActive { get; set; }
+
+		public object AddOnListingReference { get; set; }
+
+		public ImageBuffer Icon { get; set; } = new ImageBuffer(80, 0);
 	}
 }
