@@ -164,6 +164,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 								// navigate back up to the parent of this node
 								TreeView.SelectedNode = this.NodeParent;
 							}
+
 							restoreFocus = false;
 						}
 						else
@@ -369,7 +370,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		/// </summary>
 		public int Level { get; }
 
-		//
 		// Summary:
 		//     Gets the next sibling tree node.
 		//
@@ -377,7 +377,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeNode that represents the next sibling tree node.
 		public TreeNode NextNode { get; }
 
-		//
 		// Summary:
 		//     Gets the next visible tree node.
 		//
@@ -385,7 +384,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeNode that represents the next visible tree node.
 		public TreeNode NextVisibleNode { get; }
 
-		//
 		// Summary:
 		//     Gets or sets the font that is used to display the text on the tree node label.
 		//
@@ -393,7 +391,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     The StyledTypeFace that is used to display the text on the tree node label.
 		public StyledTypeFace NodeFont { get; set; }
 
-		//
 		// Summary:
 		//     Gets the parent tree node of the current tree node.
 		//
@@ -406,7 +403,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public int PointSize { get; set; }
 
-		//
 		// Summary:
 		//     Gets the previous sibling tree node.
 		//
@@ -414,7 +410,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeNode that represents the previous sibling tree node.
 		public TreeNode PrevNode { get; }
 
-		//
 		// Summary:
 		//     Gets the previous visible tree node.
 		//
@@ -422,7 +417,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A TreeNode that represents the previous visible tree node.
 		public TreeNode PrevVisibleNode { get; }
 
-		//
 		// Summary:
 		//     Gets a value indicating whether the tree node is in the selected state.
 		//
@@ -441,7 +435,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		//
 		// Summary:
 		//     Gets or sets the image list index value of the image that is displayed when the
 		//     tree node is in the selected state.
@@ -450,7 +443,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     A zero-based index value that represents the image position in an ImageList.
 		public ImageBuffer SelectedImage { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the index of the image that is used to indicate the state of the
 		//     TreeNode when the parent TreeView has
@@ -464,7 +456,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		//     The specified index is less than -1 or greater than 14.
 		public ImageBuffer StateImage { get; set; }
 
-		//
 		// Summary:
 		//     Gets or sets the object that contains data about the tree node.
 		//
@@ -474,7 +465,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public Color TextColor { get; set; }
 
-		//
 		// Summary:
 		//     Gets the parent tree view that the tree node is assigned to.
 		//
