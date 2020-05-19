@@ -39,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
