@@ -192,4 +192,66 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 	}
+
+	public class PlaneCutObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
+	{
+		public PlaneCutObject3D()
+		{
+			Name = "Plane Cut".Localize();
+		}
+
+		public double CutHeight { get; set; }
+
+		public Mesh Cut(Mesh inMesh)
+		{
+			return inMesh;
+		}
+
+		public override Task Rebuild()
+		{
+			this.DebugDepth("Rebuild");
+
+			var rebuildLocks = this.RebuilLockAll();
+
+			var valuesChanged = false;
+
+			return TaskBuilder(
+				"Reduce".Localize(),
+				(reporter, cancellationToken) =>
+				{
+					SourceContainer.Visible = true;
+					RemoveAllButSource();
+
+					foreach (var sourceItem in SourceContainer.VisibleMeshes())
+					{
+						var originalMesh = sourceItem.Mesh;
+						var reducedMesh = Cut(originalMesh);
+
+						var newMesh = new Object3D()
+						{
+							Mesh = reducedMesh,
+							OwnerID = sourceItem.ID
+						};
+						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
+						this.Children.Add(newMesh);
+					}
+
+					SourceContainer.Visible = false;
+					rebuildLocks.Dispose();
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
+					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+
+					return Task.CompletedTask;
+				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+		}
+	}
 }
