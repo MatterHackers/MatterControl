@@ -27,31 +27,30 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Image.ThresholdFunctions;
 using MatterHackers.Agg.Transform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.RenderOpenGl.OpenGl;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	using MatterHackers.Agg.Image.ThresholdFunctions;
-	using MatterHackers.Agg.UI;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.RenderOpenGl.OpenGl;
-	using MatterHackers.VectorMath;
-	using System.ComponentModel.DataAnnotations;
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public class ImageToPathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
@@ -64,12 +63,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Image to Path".Localize();
 		}
 
-		public enum ThresholdFunctions { Silhouette, Intensity, Alpha, Hue }
+		public enum ThresholdFunctions
+		{
+			Silhouette,
+			Intensity,
+			Alpha,
+			Hue
+		}
 
 		[EnumRename("Alpha", "Transparency")]
 		public ThresholdFunctions FeatureDetector
 		{
-			get { return _featureDetector; }
+			get
+			{
+				return _featureDetector;
+			}
+
 			set
 			{
 				if (value != _featureDetector)
@@ -126,6 +135,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					_histogramDisplayCache = new ImageBuffer(_histogramRawCache);
 				}
+
 				UpdateHistogramDisplay();
 
 				return _histogramDisplayCache;
@@ -155,6 +165,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double RangeStart { get; set; } = .1;
+
 		[Range(0, 1, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double RangeEnd { get; set; } = 1;
 

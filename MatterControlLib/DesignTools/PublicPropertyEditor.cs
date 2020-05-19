@@ -509,7 +509,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			else if (propertyValue is ImageBuffer imageBuffer)
 			{
 				rowContainer = CreateSettingsColumn(property);
-				rowContainer.AddChild(new ImageWidget(imageBuffer));
+				rowContainer.AddChild(new ImageWidget(imageBuffer)
+				{
+					HAnchor = HAnchor.Left,
+					Margin = new BorderDouble(0, 3)
+				});
 			}
 #if !__ANDROID__
 			else if (propertyValue is List<string> stringList)
@@ -532,7 +536,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new WrappedTextWidget(intValue.ToString(),
+					var valueField = new TextWidget(intValue.ToString(),
 						textColor: theme.TextColor,
 						pointSize: 10);
 
@@ -582,11 +586,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(stringValue, textColor: theme.TextColor, pointSize: 10);
-					rowContainer = new SettingsRow(property.DisplayName.Localize(),
-						property.Description.Localize(),
-						valueField,
-						theme);
+					rowContainer = new WrappedTextWidget(stringValue,
+						textColor: theme.TextColor,
+						pointSize: 10)
+					{
+						Margin = 5
+					};
 				}
 				else // normal edit row
 				{
@@ -633,7 +638,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					field = new EnumDisplayField(property, enumDisplayAttribute, theme)
 					{
-						InitialValue = propertyValue.ToString()
+						InitialValue = propertyValue.ToString(),
 					};
 
 					if (enumDisplayAttribute.Mode == EnumDisplayAttribute.PresentationMode.Tabs)
