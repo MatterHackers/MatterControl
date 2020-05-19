@@ -37,7 +37,6 @@ using System.Net.Http;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-
 	public class UpgradeToProTabPage : GuiWidget
 	{
 		private MarkdownWidget markdownWidget;

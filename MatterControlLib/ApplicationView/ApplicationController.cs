@@ -976,6 +976,7 @@ namespace MatterHackers.MatterControl
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
+#if DEBUG // don't make this part of the distribution until it is working
 						new SceneSelectionOperation()
 						{
 							OperationType = typeof(PlaneCutObject3D),
@@ -988,6 +989,7 @@ namespace MatterHackers.MatterControl
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
+#endif
 						new SceneSelectionOperation()
 						{
 							OperationType = typeof(HollowOutObject3D),
