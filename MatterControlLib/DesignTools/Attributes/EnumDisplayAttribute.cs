@@ -36,13 +36,12 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public enum PresentationMode
 		{
-			DropDownList,
 			IconRow,
 			Tabs,
 			Buttons
 		}
 
-		public PresentationMode Mode { get; set; } = PresentationMode.DropDownList;
+		public PresentationMode Mode { get; set; } = PresentationMode.IconRow;
 
 		public EnumDisplayAttribute()
 		{
