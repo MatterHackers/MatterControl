@@ -38,9 +38,8 @@ namespace MatterHackers.MatterControl
 	public class MHTextEditWidget : GuiWidget
 	{
 		protected TextWidget noContentFieldDescription = null;
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 		private bool mouseInBounds = false;
-
 
 		public MHTextEditWidget(string text, ThemeConfig theme, double pixelWidth = 0, double pixelHeight = 0, bool multiLine = false, int tabIndex = 0, string messageWhenEmptyAndNotSelected = "", TypeFace typeFace = null)
 		{

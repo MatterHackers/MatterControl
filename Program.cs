@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl
 
 			Datastore.Instance.Initialize(DesktopSqlite.CreateInstance());
 
-			if (UserSettings.Instance.get(UserSettingsKey.ApplicationDpiAwareness) == "PerMonitorAware")
+			if (UserSettings.Instance.get(UserSettingsKey.ApplicationUseHeigResDisplays) == "true")
 			{
 				SetProcessDpiAwareness((int)DpiAwareness.PerMonitorAware);
 			}
