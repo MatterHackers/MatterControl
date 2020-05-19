@@ -978,6 +978,18 @@ namespace MatterHackers.MatterControl
 						},
 						new SceneSelectionOperation()
 						{
+							OperationType = typeof(PlaneCutObject3D),
+							TitleResolver = () => "Plane Cut".Localize(),
+							Action = (sceneContext) =>
+							{
+								var cut = new PlaneCutObject3D();
+								cut.WrapSelectedItemAndSelect(sceneContext.Scene);
+							},
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+						},
+						new SceneSelectionOperation()
+						{
 							OperationType = typeof(HollowOutObject3D),
 							TitleResolver = () => "Hollow Out".Localize(),
 							Action = (sceneContext) =>
