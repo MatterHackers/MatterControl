@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -46,7 +47,38 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public static Func<string, Func<IProgress<ProgressStatus>, CancellationToken, Task>, Task> TaskBuilder { get; set; } =
 			(name, func) => Task.Run(() => func(null, CancellationToken.None));
 
+		public override Mesh Mesh
+		{
+			get
+			{
+				if (base.Mesh == null && !RebuildLocked)
+				{
+					int a = 0;
+				}
+
+				return base.Mesh;
+			}
+
+			set => base.Mesh = value;
+		}
+
 		public override bool CanFlatten => true;
+
+		public override bool Persistable
+		{
+			get
+			{
+				if (SourceContainer != null)
+				{
+					if (SourceContainer.Children.Any(c => !c.Persistable))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
 
 		[JsonIgnore]
 		public IObject3D SourceContainer

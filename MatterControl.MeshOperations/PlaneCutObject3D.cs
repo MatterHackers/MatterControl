@@ -28,81 +28,96 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Threading;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using g3;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HollowOutObject3D : OperationSourceContainerObject3D
+
+	public class PlaneCutObject3D : OperationSourceContainerObject3D, IPropertyGridModifier
 	{
-		public HollowOutObject3D()
+		public PlaneCutObject3D()
 		{
-			Name = "Hollow Out".Localize();
+			Name = "Plane Cut".Localize();
 		}
 
-		public double Distance { get; set; } = 2;
+		public double CutHeight { get; set; } = 10;
 
-		private static DMesh3 GenerateMeshF(BoundedImplicitFunction3d root, int numcells)
+		private double cutMargin = .1;
+
+		public Mesh Cut(Mesh inMesh)
 		{
-			var bounds = root.Bounds();
+			var mesh = new Mesh(inMesh.Vertices, inMesh.Faces);
 
-			var c = new MarchingCubes()
-			{
-				Implicit = root,
-				RootMode = MarchingCubes.RootfindingModes.LerpSteps,      // cube-edge convergence method
-				RootModeSteps = 5,                                        // number of iterations
-				Bounds = bounds,
-				CubeSize = bounds.MaxDim / numcells,
-			};
+			// copy every face that is on or below the cut plane
 
-			c.Bounds.Expand(3 * c.CubeSize);                            // leave a buffer of cells
-			c.Generate();
+			// cut the faces at the cut plane
+			mesh.Split(new Plane(Vector3.UnitZ, CutHeight), cutMargin, cleanAndMerge: false);
 
-			MeshNormals.QuickCompute(c.Mesh);                           // generate normals
-			return c.Mesh;
+			// remove every face above the cut plane
+			RemoveFacesAboveCut(mesh);
+
+			// calculate and add the PWN face from the loops
+
+
+			return mesh;
 		}
 
-		public static Mesh HollowOut(Mesh inMesh, double distance)
+		private void RemoveFacesAboveCut(Mesh mesh)
 		{
-			// Convert to DMesh3
-			var mesh = inMesh.ToDMesh3();
+			var newVertices = new List<Vector3Float>();
+			var newFaces = new List<Face>();
+			var facesToRemove = new HashSet<int>();
 
-			// Create instance of BoundedImplicitFunction3d interface
-			int numcells = 64;
-			double meshCellsize = mesh.CachedBounds.MaxDim / numcells;
-
-			var levelSet = new MeshSignedDistanceGrid(mesh, meshCellsize)
+			var cutRemove = CutHeight - cutMargin;
+			for (int i = 0; i < mesh.Faces.Count; i++)
 			{
-				ExactBandWidth = (int)(distance / meshCellsize) + 1
-			};
-			levelSet.Compute();
+				var face = mesh.Faces[i];
 
-			// Outer shell
-			var implicitMesh = new DenseGridTrilinearImplicit(levelSet.Grid, levelSet.GridOrigin, levelSet.CellSize);
-
-			// Offset shell
-			var insetMesh = GenerateMeshF(
-				new ImplicitOffset3d()
+				if (mesh.Vertices[face.v0].Z >= cutRemove
+					&& mesh.Vertices[face.v1].Z >= cutRemove
+					&& mesh.Vertices[face.v2].Z >= cutRemove)
 				{
-					A = implicitMesh,
-					Offset = -distance
-				},
-				128);
+					// record the face for removal
+					facesToRemove.Add(i);
+				}
+			}
 
-			// Convert to PolygonMesh and reverse faces
-			var interior = insetMesh.ToMesh();
-			interior.ReverseFaces();
+			// make a new list of all the faces we are keeping
+			var keptFaces = new List<Face>();
+			for (int i = 0; i < mesh.Faces.Count; i++)
+			{
+				if (!facesToRemove.Contains(i))
+				{
+					keptFaces.Add(mesh.Faces[i]);
+				}
+			}
 
-			// Combine the original mesh with the reversed offset resulting in hollow
-			var combinedMesh = inMesh.Copy(CancellationToken.None);
-			combinedMesh.CopyFaces(interior);
+			var vertexCount = mesh.Vertices.Count;
 
-			return combinedMesh;
+			// add the new vertices
+			mesh.Vertices.AddRange(newVertices);
+
+			// add the new faces (have to make the vertex indices to the new vertices
+			foreach (var newFace in newFaces)
+			{
+				Face faceNewIndices = newFace;
+				faceNewIndices.v0 += vertexCount;
+				faceNewIndices.v1 += vertexCount;
+				faceNewIndices.v2 += vertexCount;
+				keptFaces.Add(faceNewIndices);
+			}
+
+			mesh.Faces = new FaceList(keptFaces);
 		}
 
 		public override Task Rebuild()
@@ -114,23 +129,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			var valuesChanged = false;
 
 			return TaskBuilder(
-				"Hollow".Localize(),
+				"Reduce".Localize(),
 				(reporter, cancellationToken) =>
 				{
-					SourceContainer.Visible = true;
-					RemoveAllButSource();
-
+					var newChildren = new List<Object3D>();
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
+						var originalMesh = sourceItem.Mesh;
+						var reducedMesh = Cut(originalMesh);
+
 						var newMesh = new Object3D()
 						{
-							Mesh = HollowOut(sourceItem.Mesh, this.Distance)
+							Mesh = reducedMesh,
+							OwnerID = sourceItem.ID
 						};
 						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
-						this.Children.Add(newMesh);
+						newChildren.Add(newMesh);
 					}
 
+					RemoveAllButSource();
 					SourceContainer.Visible = false;
+					foreach (var child in newChildren)
+					{
+						this.Children.Add(child);
+					}
+
 					rebuildLocks.Dispose();
 
 					if (valuesChanged)
@@ -142,6 +165,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
 		}
 	}
 }

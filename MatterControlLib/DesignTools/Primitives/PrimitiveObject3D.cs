@@ -34,67 +34,21 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D
+	public class PrimitiveObject3D : Object3D
 	{
-		public CubeObject3D()
+		public override Mesh Mesh
 		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
-		}
-
-		public double Width { get; set; } = 20;
-
-		public double Depth { get; set; } = 20;
-
-		public double Height { get; set; } = 20;
-
-		public static async Task<CubeObject3D> Create()
-		{
-			var item = new CubeObject3D();
-			await item.Rebuild();
-			return item;
-		}
-
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
-		{
-			var item = new CubeObject3D()
+			get
 			{
-				Width = x,
-				Depth = y,
-				Height = z,
-			};
-
-			await item.Rebuild();
-			return item;
-		}
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-
-			using (RebuildLock())
-			{
-				using (new CenterAndHeightMaintainer(this))
+				if (base.Mesh == null && !RebuildLocked)
 				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+					this.Invalidate(InvalidateType.Properties);
 				}
+
+				return base.Mesh;
 			}
 
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
+			set => base.Mesh = value;
 		}
 	}
 }

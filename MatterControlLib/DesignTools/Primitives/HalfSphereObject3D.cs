@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfSphereObject3D : Object3D
+	public class HalfSphereObject3D : PrimitiveObject3D
 	{
 		public HalfSphereObject3D()
 		{

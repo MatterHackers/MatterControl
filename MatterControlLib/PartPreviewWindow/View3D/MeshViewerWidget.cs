@@ -286,7 +286,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 				else if (!item.WorldPersistable()
-					&& !viewOnlyTexture)
+					&& !viewOnlyTexture
+					&& !item.RebuildLocked)
 				{
 					// add a view only texture if it does not have one
 					// make a copy of the mesh and texture it

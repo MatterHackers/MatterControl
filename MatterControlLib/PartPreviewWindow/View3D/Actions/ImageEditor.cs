@@ -183,6 +183,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
+				Margin = new BorderDouble(8, 5)
 			};
 			imageSection.ContentPanel.AddChild(row);
 
@@ -191,6 +192,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Checked = imageObject.Invert,
 				Margin = new BorderDouble(0),
+				VAnchor = VAnchor.Center,
 			};
 			invertCheckbox.CheckedStateChanged += (s, e) =>
 			{

@@ -218,6 +218,10 @@ namespace MatterHackers.MatterControl
 				{
 				}
 			}
+			else // check if it is in the shipping data for the application
+			{
+
+			}
 
 			Task.Run(async () =>
 			{

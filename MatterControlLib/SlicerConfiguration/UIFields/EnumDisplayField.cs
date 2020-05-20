@@ -82,7 +82,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void AddTabs(IEnumerable<(string Key, string Value)> enumItems)
 		{
-			var menuRow = new FlowLayoutWidget();
+			var menuRow = new FlowLayoutWidget()
+			{
+				Margin = 5
+			};
 
 			int index = 0;
 			foreach (var enumItem in enumItems)
