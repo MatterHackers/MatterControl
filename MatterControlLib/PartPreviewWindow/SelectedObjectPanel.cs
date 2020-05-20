@@ -345,7 +345,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				if (ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
+				if (item != null
+					&& ApplicationController.Instance.Extensions.GetEditorsForType(item.GetType())?.FirstOrDefault() is IObject3DEditor editor)
 				{
 					ShowObjectEditor((editor, item, item.Name), selectedItem);
 				}

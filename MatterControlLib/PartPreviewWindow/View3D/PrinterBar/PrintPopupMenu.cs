@@ -164,7 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var errors = printer.Validate();
 
 				// Enable print option when no validation Errors exists
-				var printEnabled = !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
+				var printingOrPause = printer.Connection.Printing || printer.Connection.Paused;
+				var printEnabled = !printingOrPause && !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
 
 				var startPrintButton = new TextButton("Start Print".Localize(), menuTheme)
 				{
