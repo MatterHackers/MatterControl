@@ -35,7 +35,7 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ConeObject3D : Object3D
+	public class ConeObject3D : PrimitiveObject3D
 	{
 		public ConeObject3D()
 		{

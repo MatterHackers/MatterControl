@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TorusObject3D : Object3D, IPropertyGridModifier
+	public class TorusObject3D : PrimitiveObject3D, IPropertyGridModifier
 	{
 		public TorusObject3D()
 		{

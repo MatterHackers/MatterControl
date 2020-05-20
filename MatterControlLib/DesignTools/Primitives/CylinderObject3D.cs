@@ -39,7 +39,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CylinderObject3D : Object3D, IPropertyGridModifier
+	public class CylinderObject3D : PrimitiveObject3D, IPropertyGridModifier
 	{
 		public CylinderObject3D()
 		{
