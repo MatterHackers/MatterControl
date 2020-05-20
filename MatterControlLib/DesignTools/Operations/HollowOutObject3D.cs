@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using g3;
@@ -95,6 +96,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					Offset = -distance
 				},
 				128);
+
+			// make sure it is a reasonable number of polygons
+			var reducer = new Reducer(insetMesh);
+			reducer.ReduceToTriangleCount(Math.Max(inMesh.Faces.Count / 2, insetMesh.TriangleCount / 10));
 
 			// Convert to PolygonMesh and reverse faces
 			var interior = insetMesh.ToMesh();
