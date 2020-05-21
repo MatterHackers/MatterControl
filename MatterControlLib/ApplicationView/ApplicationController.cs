@@ -96,6 +96,10 @@ namespace MatterHackers.MatterControl
 		Liberation_Sans,
 		Liberation_Sans_Bold,
 		Lobster,
+		Nunito_Regular,
+		Nunito_Bold,
+		Nunito_Bold_Italic,
+		Nunito_Italic,
 		Pacifico,
 		Poppins,
 		Questrial,
@@ -2030,6 +2034,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
+					
 					taskActions: new RunningTaskOptions()
 					{
 						PauseAction = () => UiThread.RunOnIdle(() =>
@@ -3609,6 +3614,12 @@ Support and tutorials:
 		public static SystemWindow LoadRootWindow(int width, int height)
 		{
 			timer = Stopwatch.StartNew();
+
+			// set the default font
+			AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Regular);
+			AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold);
+			AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Italic);
+			AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold_Italic);
 
 			var systemWindow = new RootSystemWindow(width, height);
 
