@@ -26,6 +26,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Name = "Repair".Localize();
 		}
 
+		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
+		
 		[Description("Make all the faces have a consistent orientation.")]
 		public bool FaceOrientation { get; set; } = true;
 
