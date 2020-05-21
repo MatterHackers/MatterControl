@@ -546,7 +546,7 @@ namespace MatterHackers.MatterControl
 		// check permission to a purchase
 		public Func<string, bool> UserHasPermissionToId { get; set; }
 
-		public Func<IObject3D, (string url, string markDown)> GetUnlockData { get; set; }
+		public Func<IObject3D, ThemeConfig, (string url, GuiWidget markdownWidget)> GetUnlockData { get; set; }
 
 		private static ApplicationController globalInstance;
 
@@ -3637,11 +3637,14 @@ Support and tutorials:
 		{
 			timer = Stopwatch.StartNew();
 
-			// set the default font
-			AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Regular);
-			AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold);
-			AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Italic);
-			AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold_Italic);
+			if (false)
+			{
+				// set the default font
+				AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Regular);
+				AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold);
+				AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Italic);
+				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Nunito_Bold_Italic);
+			}
 
 			var systemWindow = new RootSystemWindow(width, height);
 
