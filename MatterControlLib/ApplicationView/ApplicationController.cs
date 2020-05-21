@@ -546,7 +546,7 @@ namespace MatterHackers.MatterControl
 		// check permission to a purchase
 		public Func<string, bool> UserHasPermissionToId { get; set; }
 
-		public Func<IObject3D, string> GetUnlockPage { get; set; }
+		public Func<IObject3D, (string url, string markDown)> GetUnlockData { get; set; }
 
 		private static ApplicationController globalInstance;
 
@@ -2304,9 +2304,31 @@ namespace MatterHackers.MatterControl
 
 		public DragDropData DragDropData { get; set; } = new DragDropData();
 
-		public string ShortProductName => "MatterControl";
+		public string ShortProductName
+		{
+			get
+			{
+				if (this.IsMatterControlPro())
+				{
+					return "MatterControl Pro";
+				}
 
-		public string ProductName => "MatterHackers: MatterControl";
+				return "MatterControl";
+			}
+		}
+
+		public string ProductName
+		{
+			get
+			{
+				if (this.IsMatterControlPro())
+				{
+					return "MatterControl Pro Edition";
+				}
+
+				return "MatterHackers: MatterControl";
+			}
+		}
 
 		public void SwitchToPurchasedLibrary()
 		{

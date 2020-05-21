@@ -46,8 +46,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 	public class ImageEditor : IObject3DEditor
 	{
-		bool IObject3DEditor.Unlocked => true;
-
 		string IObject3DEditor.Name => "Image Editor";
 
 		IEnumerable<Type> IObject3DEditor.SupportedTypes() => new[] { typeof(ImageObject3D) };

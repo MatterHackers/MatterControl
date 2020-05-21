@@ -53,7 +53,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Name => "Builder";
 
-		public bool Unlocked { get; } = true;
 
 		private string compilerPath = UserSettings.Instance.get(UserSettingsKey.OpenScadPath) ?? "/usr/bin/openscad";
 

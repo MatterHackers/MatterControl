@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 
 			this.MinimumSize = minSize;
 
-			this.Title = $"MatterHackers: MatterControl {version}";
+			this.Title = $"{ApplicationController.Instance.ProductName} {version}";
 			if (OemSettings.Instance.WindowTitleExtra != null && OemSettings.Instance.WindowTitleExtra.Trim().Length > 0)
 			{
 				this.Title += $" - {OemSettings.Instance.WindowTitleExtra}";

@@ -37,7 +37,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public interface IObject3DEditor
 	{
-		bool Unlocked { get; }
 		string Name { get; }
 		IEnumerable<Type> SupportedTypes();
 		GuiWidget Create(IObject3D item, UndoBuffer undoBuffer, ThemeConfig theme);
