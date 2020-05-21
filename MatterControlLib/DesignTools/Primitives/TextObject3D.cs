@@ -42,16 +42,35 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading.Tasks;
+using System.Linq;
+using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	public class TextObject3D : PrimitiveObject3D
+	public class TextObject3D : Object3D
 	{
 		public TextObject3D()
 		{
 			Name = "Text".Localize();
 			Color = Operations.Object3DExtensions.PrimitiveColors["Text"];
+		}
+
+		public override Mesh Mesh
+		{
+			get
+			{
+				// if all of our children (the characters) don't have a mesh, rebuild
+				if (!this.Children.Where(c => c.Mesh != null).Any()
+					&& !RebuildLocked)
+				{
+					this.Invalidate(InvalidateType.Properties);
+				}
+
+				return base.Mesh;
+			}
+
+			set => base.Mesh = value;
 		}
 
 		public static async Task<TextObject3D> Create()
@@ -95,10 +114,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private string MapIfSymbol(string newName)
 		{
-			switch(newName)
+			switch (newName)
 			{
 				case " ":
 					return "space";
+				default:
+					break;
 			}
 
 			return newName;

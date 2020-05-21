@@ -469,6 +469,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 		}
 
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+
+			AggContext.DefaultFont.ShowDebugInfo(graphics2D);
+		}
+
 		private void ShowUpdateAvailableAnimation()
 		{
 			double displayTime = 2;
