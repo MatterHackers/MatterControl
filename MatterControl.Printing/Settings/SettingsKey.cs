@@ -36,6 +36,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string air_gap_speed = nameof(air_gap_speed);
 		public const string auto_connect = nameof(auto_connect);
 		public const string auto_release_motors = nameof(auto_release_motors);
+		public const string avoid_crossing_max_ratio = nameof(avoid_crossing_max_ratio);
 		public const string avoid_crossing_perimeters = nameof(avoid_crossing_perimeters);
 		public const string baby_step_z_offset = nameof(baby_step_z_offset);
 		public const string backup_firmware_before_update = nameof(backup_firmware_before_update);
