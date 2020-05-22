@@ -74,8 +74,6 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public List<ManufacturerNameMapping> ManufacturerNameMappings { get; set; }
 
-		public List<string> PreloadedLibraryFiles { get; } = new List<string>();
-
 		public ImageBuffer GetIcon(string oemName)
 		{
 			var imageBuffer = new ImageBuffer(16, 16);

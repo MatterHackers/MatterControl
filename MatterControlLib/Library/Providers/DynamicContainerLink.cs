@@ -76,7 +76,9 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<ImageBuffer> GetThumbnail(int width, int height)
 		{
-			if (width < 24 && height < 24)
+			if (microIcon != null
+				&& width < 24
+				&& height < 24)
 			{
 				return Task.FromResult(microIcon?.AlphaToPrimaryAccent());
 			}

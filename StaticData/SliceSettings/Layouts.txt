@@ -12,6 +12,7 @@ Advanced
     Layers / Surface
       Outer Surface - Perimeters
         avoid_crossing_perimeters
+        avoid_crossing_max_ratio
         external_perimeters_first
         perimeter_start_end_overlap
         merge_overlapping_lines

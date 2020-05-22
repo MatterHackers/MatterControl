@@ -497,6 +497,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.avoid_crossing_max_ratio,
+					PresentationName = "Avoid Crossing Max Ratio".Localize(),
+					HelpText = "The maximum amount that an avoid crossing travel can exceed the direct distance travel. If exceeded the direct travel will be executed.".Localize(),
+					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
+					Units = "Ratio or %".Localize(),
+					ShowIfSet = "!sla_printer",
+					DefaultValue = "2",
+					Converter = new AsPercentOrDirect(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.filament_cost,
 					PresentationName = "Cost".Localize(),
 					HelpText = "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.".Localize(),

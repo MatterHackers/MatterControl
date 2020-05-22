@@ -97,13 +97,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.max_acceleration] = new ExportField("maxAcceleration"),
 				[SettingsKey.max_velocity] = new ExportField("maxVelocity"),
 				[SettingsKey.jerk_velocity] = new ExportField("jerkVelocity"),
+				[SettingsKey.avoid_crossing_max_ratio] = new ExportField("avoidCrossingMaxRatio"),
 				[SettingsKey.print_time_estimate_multiplier] = new ExportField(
 					"printTimeEstimateMultiplier",
 					(value, settings) =>
 					{
-						if (double.TryParse(value, out double infillRatio))
+						if (double.TryParse(value, out double timeMultiplier))
 						{
-							return $"{infillRatio * .01}";
+							return $"{timeMultiplier * .01}";
 						}
 
 						return "0";
