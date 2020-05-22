@@ -29,10 +29,8 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string samplePartsPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData", "OEMSettings", "SampleParts");
 			string[] files = Directory.GetFiles(samplePartsPath);
-			bool hasTabletStand = files.Where(l => l.Contains("MatterControl - Stand.stl")).Any();
-			bool hasCoin = files.Where(l => l.Contains("MatterControl - Coin.stl")).Any();
-			Assert.IsTrue(hasCoin, "Expected coin file not found");
-			Assert.IsTrue(hasTabletStand, "Expected stand file not found");
+			bool hasPhil = files.Where(l => l.Contains("Phil A Ment.stl")).Any();
+			Assert.IsTrue(hasPhil, "Expected Phil file not found");
 		}
 	}
 }

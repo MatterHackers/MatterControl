@@ -272,11 +272,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = "Upgrade",
 						Padding = new BorderDouble(15, 0),
 					});
-
-				tab.AfterDraw += (s, e) =>
-				{
-					e.Graphics2D.Circle(tab.LocalBounds.Right - 15, tab.LocalBounds.Bottom + tab.Height / 2, 5, Color.Red);
-				};
 			}
 			else
 			{

@@ -55,22 +55,20 @@ namespace MatterHackers.MatterControl.Library
 
 		private class StaticDataItem : ILibraryAssetStream
 		{
-			private string relativePath;
-
 			public StaticDataItem()
 			{
 			}
 
 			public StaticDataItem(string relativePath)
 			{
-				this.relativePath = relativePath;
+				this.AssetPath = relativePath;
 			}
 
-			public string FileName => Path.GetFileName(relativePath);
+			public string FileName => Path.GetFileName(AssetPath);
 
-			public string ContentType => Path.GetExtension(relativePath).ToLower().Trim('.');
+			public string ContentType => Path.GetExtension(AssetPath).ToLower().Trim('.');
 
-			public string AssetPath => relativePath;
+			public string AssetPath { get; }
 
 			public long FileSize { get; } = -1;
 
@@ -78,7 +76,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public string Category { get; } = "";
 
-			public string ID => agg_basics.GetLongHashCode(relativePath).ToString();
+			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
 
 			public string Name => this.FileName;
 
@@ -94,7 +92,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				return Task.FromResult(new StreamAndLength()
 				{
-					Stream = AggContext.StaticData.OpenStream(relativePath),
+					Stream = AggContext.StaticData.OpenStream(AssetPath),
 					Length = -1
 				});
 			}

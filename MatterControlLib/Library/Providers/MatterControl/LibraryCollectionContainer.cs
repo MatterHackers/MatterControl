@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
@@ -36,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -53,8 +55,8 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_20x20.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "local_library_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "local_library_folder.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
@@ -62,7 +64,7 @@ namespace MatterHackers.MatterControl.Library
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
 					() => new CalibrationPartsContainer())
 				{
 					IsReadOnly = true
@@ -71,19 +73,28 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Primitives".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "primitives_library_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "primitives_library_folder.png")),
 					() => new PrimitivesContainer())
 				{
 					IsReadOnly = true
 				});
 
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Print Queue".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
-					() => new PrintQueueContainer()));
+			var forceAddQueue = false;
+#if DEBUG
+			forceAddQueue = true;
+#endif
+			// only add the queue if there are items in it
+			var queueItems = QueueData.Instance.PrintItems.ToList();
+			if (forceAddQueue || queueItems.Any())
+			{
+				this.ChildContainers.Add(
+					new DynamicContainerLink(
+						() => "Print Queue".Localize(),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
+						() => new PrintQueueContainer()));
+			}
 
 #if DEBUG
 			this.ChildContainers.Add(
