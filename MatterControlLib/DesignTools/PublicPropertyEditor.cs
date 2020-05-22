@@ -862,18 +862,25 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static void AddUnlockLinkIfRequired(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockdata = ApplicationController.Instance.GetUnlockData?.Invoke(item, theme);
-			if (!item.Persistable
-				&& unlockdata != null
-				&& !string.IsNullOrEmpty(unlockdata.Value.url))
+			if (!item.Persistable)
 			{
-				if (unlockdata.Value.markdownWidget != null)
-				{
-					unlockdata.Value.markdownWidget.VAnchor = VAnchor.Fit;
-					editControlsContainer.AddChild(unlockdata.Value.markdownWidget);
-				}
+				// find the first self or child that is not authorized
+				var unlockItem = item.DescendantsAndSelf()
+					.Where(i => !i.Persistable && !ApplicationController.Instance.UserHasPermission(i))
+					.First();
+				var unlockdata = ApplicationController.Instance.GetUnlockData?.Invoke(unlockItem, theme);
 
-				editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
+				if (unlockdata != null
+					&& !string.IsNullOrEmpty(unlockdata.Value.url))
+				{
+					if (unlockdata.Value.markdownWidget != null)
+					{
+						unlockdata.Value.markdownWidget.VAnchor = VAnchor.Fit;
+						editControlsContainer.AddChild(unlockdata.Value.markdownWidget);
+					}
+
+					editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
+				}
 			}
 		}
 
