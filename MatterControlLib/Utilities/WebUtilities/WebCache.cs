@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl
 			// change to a path that makes it easy to collect up all the text we want to ship with MC
 			if (checkStaticData)
 			{
-				textFileName = ApplicationController.CacheablePath("Text_OverRide", longHash.ToString() + ".txt");
+				textFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
 			}
 
 			string fileText = null;
@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl
 				{
 					try
 					{
-						textFileName = AggContext.StaticData.ReadAllText(Path.Combine("Text_OverRide", longHash.ToString() + ".txt"));
+						textFileName = AggContext.StaticData.ReadAllText(Path.Combine("TextWebCache", longHash.ToString() + ".txt"));
 						fileText = File.ReadAllText(textFileName);
 						updateResult?.Invoke(fileText);
 					}
