@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnDraw(graphics2D);
 
-			AggContext.DefaultFont.ShowDebugInfo(graphics2D);
+			// AggContext.DefaultFont.ShowDebugInfo(graphics2D);
 		}
 
 		private void ShowUpdateAvailableAnimation()

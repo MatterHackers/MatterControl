@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public virtual void Commit()
 		{
-			//Assumes that autoincremented ids start with 1
+			// Assumes that autoincremented ids start with 1
 			if (this.Id == 0)
 			{
 				TryHandleInsert();
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string DeviceToken { get; set; }
 
-		//Auto connect to printer (if available)
+		// Auto connect to printer (if available)
 		public string DeviceType { get; set; }
 
 		// all the data about print leveling

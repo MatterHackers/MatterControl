@@ -200,11 +200,17 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
+		public static void RetrieveText(string uriToLoad, Action<string> updateResult, bool checkStaticData = false)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
 			var textFileName = ApplicationController.CacheablePath("Text", longHash.ToString() + ".txt");
+
+			// change to a path that makes it easy to collect up all the text we want to ship with MC
+			if (checkStaticData)
+			{
+				textFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
+			}
 
 			string fileText = null;
 			if (File.Exists(textFileName))
@@ -218,9 +224,20 @@ namespace MatterHackers.MatterControl
 				{
 				}
 			}
-			else // check if it is in the shipping data for the application
+			else // We could not find it in the cache. Check if it is in static data.
 			{
-
+				if (File.Exists(textFileName))
+				{
+					try
+					{
+						textFileName = AggContext.StaticData.ReadAllText(Path.Combine("TextWebCache", longHash.ToString() + ".txt"));
+						fileText = File.ReadAllText(textFileName);
+						updateResult?.Invoke(fileText);
+					}
+					catch
+					{
+					}
+				}
 			}
 
 			Task.Run(async () =>

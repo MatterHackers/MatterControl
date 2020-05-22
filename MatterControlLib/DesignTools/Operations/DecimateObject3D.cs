@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Polygon_Percent
 		}
 
+		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
+
 		public ReductionMode Mode { get; set; } = ReductionMode.Polygon_Percent;
 
 		[ReadOnly(true)]

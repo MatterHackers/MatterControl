@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -97,8 +98,6 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class PublicPropertyEditor : IObject3DEditor
 	{
 		public string Name => "Property Editor";
-
-		public bool Unlocked { get; } = true;
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IObject3D) };
 
@@ -863,15 +862,22 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static void AddUnlockLinkIfRequired(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)
 		{
-			var unlockUrl = ApplicationController.Instance.GetUnlockPage?.Invoke(item);
+			var unlockdata = ApplicationController.Instance.GetUnlockData?.Invoke(item, theme);
 			if (!item.Persistable
-				&& !string.IsNullOrEmpty(unlockUrl))
+				&& unlockdata != null
+				&& !string.IsNullOrEmpty(unlockdata.Value.url))
 			{
-				editControlsContainer.AddChild(GetUnlockRow(theme, unlockUrl));
+				if (unlockdata.Value.markdownWidget != null)
+				{
+					unlockdata.Value.markdownWidget.VAnchor = VAnchor.Fit;
+					editControlsContainer.AddChild(unlockdata.Value.markdownWidget);
+				}
+
+				editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
 			}
 		}
 
-		public static GuiWidget GetUnlockRow(ThemeConfig theme, string unlockLinkUrl)
+		public static GuiWidget GetUnlockRow(ThemeConfig theme, string url)
 		{
 			var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
 			{
@@ -880,7 +886,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 			detailsLink.Click += (s, e) =>
 			{
-				ApplicationController.Instance.LaunchBrowser(unlockLinkUrl);
+				ApplicationController.Instance.LaunchBrowser(url);
 			};
 			theme.ApplyPrimaryActionStyle(detailsLink);
 

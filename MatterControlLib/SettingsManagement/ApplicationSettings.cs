@@ -1,10 +1,37 @@
-﻿using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
+﻿/*
+Copyright (c) 2020, Lars Brubaker, John Lewin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of the FreeBSD Project.
+*/
+
 using System.Collections.Generic;
-using System;
-using Newtonsoft.Json;
 using System.Linq;
-using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
@@ -21,13 +48,18 @@ namespace MatterHackers.MatterControl
 	public class ApplicationSettings
 	{
 		public static string ValidFileExtensions { get; } =  ".STL;.AMF;.OBJ";
+
 		public static string LibraryMeshFileExtensions { get; } = ".stl,.obj,.amf,.mcx";
+
 		public static string LibraryFilterFileExtensions { get; } = LibraryMeshFileExtensions + ",.gcode";
+
 		public static string OpenPrintableFileParams { get; } = "STL, AMF, OBJ, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
+
 		public static string OpenDesignFileParams { get; } = "STL, AMF, OBJ, GCODE, MCX|*.stl;*.amf;*.obj;*.gcode;*.mcx";
 
 		private static ApplicationSettings globalInstance = null;
-		public Dictionary<string, SystemSetting> settingsDictionary;
+
+		public Dictionary<string, SystemSetting> SettingsDictionary { get; set; }
 
 		public static ApplicationSettings Instance
 		{
@@ -131,14 +163,15 @@ namespace MatterHackers.MatterControl
 				}
 
 				allocatedCount++;
+			}
+			while (!string.IsNullOrEmpty(clientToken));
 
-			} while (!string.IsNullOrEmpty(clientToken));
 			return allocatedClientTokens;
 		}
 
 		private HashSet<string> GetRunningClientTokens()
 		{
-			var  runningClientTokens = new HashSet<string>();
+			var runningClientTokens = new HashSet<string>();
 
 			// Only deserialize if greater than one
 			if (ApplicationController.ApplicationInstanceCount > 1)
@@ -188,41 +221,43 @@ namespace MatterHackers.MatterControl
 
 				allocatedCount++;
 
-			} while (!firstEmptySlot);
+			}
+			while (!firstEmptySlot);
 		}
 
 		public string get(string key)
 		{
 			string result;
-			if (settingsDictionary == null)
+			if (SettingsDictionary == null)
 			{
 				globalInstance.LoadData();
 			}
 
-			if (settingsDictionary.ContainsKey(key))
+			if (SettingsDictionary.ContainsKey(key))
 			{
-				result = settingsDictionary[key].Value;
+				result = SettingsDictionary[key].Value;
 			}
 			else
 			{
 				result = null;
 			}
+
 			return result;
 		}
 
 		public void set(string key, string value)
 		{
 			SystemSetting setting;
-			if (settingsDictionary.ContainsKey(key))
+			if (SettingsDictionary.ContainsKey(key))
 			{
-				setting = settingsDictionary[key];
+				setting = SettingsDictionary[key];
 			}
 			else
 			{
 				setting = new SystemSetting();
 				setting.Name = key;
 
-				settingsDictionary[key] = setting;
+				SettingsDictionary[key] = setting;
 			}
 
 			setting.Value = value;
@@ -231,16 +266,16 @@ namespace MatterHackers.MatterControl
 
 		private void LoadData()
 		{
-			settingsDictionary = new Dictionary<string, SystemSetting>();
+			SettingsDictionary = new Dictionary<string, SystemSetting>();
 			foreach (SystemSetting s in GetApplicationSettings())
 			{
-				settingsDictionary[s.Name] = s;
+				SettingsDictionary[s.Name] = s;
 			}
 		}
 
 		private IEnumerable<SystemSetting> GetApplicationSettings()
 		{
-			//Retrieve SystemSettings from the Datastore
+			// Retrieve SystemSettings from the Datastore
 			return Datastore.Instance.dbSQLite.Query<SystemSetting>("SELECT * FROM SystemSetting;");
 		}
 	}
