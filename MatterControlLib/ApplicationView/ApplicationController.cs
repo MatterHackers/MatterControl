@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl
 		Bangers,
 		Courgette,
 		Damion,
+		Firefly_Sung,
 		Fredoka,
 		Great_Vibes,
 		Liberation_Mono,
@@ -2882,6 +2883,23 @@ namespace MatterHackers.MatterControl
 			string twoLetterIsoLanguageName = string.IsNullOrEmpty(UserSettings.Instance.Language) ?
 				Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToLower() :
 				UserSettings.Instance.Language.ToLower();
+
+			if (twoLetterIsoLanguageName == "ja"
+				|| twoLetterIsoLanguageName == "zh")
+			{
+				AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+			}
+			else
+			{
+				AggContext.DefaultFont = LiberationSansFont.Instance;
+				AggContext.DefaultFontBold = LiberationSansBoldFont.Instance;
+				AggContext.DefaultFontItalic = LiberationSansFont.Instance;
+				AggContext.DefaultFontBoldItalic = LiberationSansBoldFont.Instance;
+			}
+
 
 			string translationFilePath = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
 
