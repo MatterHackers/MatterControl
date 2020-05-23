@@ -498,8 +498,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.avoid_crossing_max_ratio,
-					PresentationName = "Avoid Crossing Max Ratio".Localize(),
-					HelpText = "The maximum amount that an avoid crossing travel can exceed the direct distance travel. If exceeded the direct travel will be executed.".Localize(),
+					PresentationName = "Max Ratio".Localize(),
+					HelpText = "The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					ShowIfSet = "!sla_printer",

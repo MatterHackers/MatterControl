@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(doubleValue.ToString("0.##"), textColor: theme.TextColor, pointSize: 10);
+					var valueField = new TextWidget(string.Format("{0:n}", doubleValue), textColor: theme.TextColor, pointSize: 10);
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
 						property.Description.Localize(),
 						valueField,
@@ -535,7 +535,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(intValue.ToString(),
+					var valueField = new TextWidget(string.Format("{0:n0}", intValue),
 						textColor: theme.TextColor,
 						pointSize: 10);
 
