@@ -40,6 +40,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
@@ -65,35 +66,62 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public RotationTypes RotationType { get; set; } = RotationTypes.Angle;
 
-		[Description("The distance along the circumference to rotate the top in mm")]
-		public double RotationDistance { get; set; } = 10;
-
-		[Description("Specifies the number of vertical cuts to make for the twist")]
-		[Range(3, 300, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		public double NumberOfVerticalCuts { get; set; } = 5;
-
 		[Description("The angle to rotate the top of the part")]
 		public double Angle { get; set; } = 135;
 
-		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		public double MinCutsPerRotation { get; set; } = 60;
+		[Description("The distance along the circumference to rotate the top in mm")]
+		public double RotationDistance { get; set; } = 10;
+
+		[Description("Specifies the number of vertical cuts required to ensure the part can be twist well.")]
+		[Range(3, 300, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		public double RotationSlices { get; set; } = 5;
+
+		[Description("The source part is specifying a preferred radius. You can turn this off to set a specific radius.")]
+		public bool EditRadius { get; set; } = false;
+
+		[Description("The radius described by the source part or implied by the geometry.")]
+		[ReadOnly(true)]
+		public double PreferedRadius { get; set; } = 0;
+
+		[Description("Specify the radius to use when calculating the circumference.")]
+		public double OverrideRadius { get; set; } = .01;
 
 		[DisplayName("Twist Right")]
 		public bool TwistCw { get; set; } = true;
 
-		public bool Advanced { get; set; }
+		[Description("Enable advanced features like specifying when the twist starts and stops on the part.")]
+		public bool Advanced { get; set; } = false;
+
+		[ReadOnly(true)]
+		public string EasyModeMessage { get; set; } = "You can switch to Advanced mode to get more twist options.";
 
 		[Description("Allows for the repositioning of the rotation origin")]
 		public Vector2 RotationOffset { get; set; }
 
 		public Easing.EaseType EasingType { get; set; } = Easing.EaseType.Linear;
 
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public Easing.EaseOption EasingOption { get; set; } = Easing.EaseOption.InOut;
 
+		[Description("The percentage up from the bottom to start the twist")]
+		public double StartHeightPercent { get; set; } = 0;
+
+		[Description("The percentage up from the bottom to end the twist")]
 		public double EndHeightPercent { get; set; } = 100;
 
-		public double StartHeightPercent { get; set; } = 0;
+		public IRadiusProvider RadiusProvider
+		{
+			get
+			{
+				if (this.SourceContainer.Children.Count == 1
+						&& this.SourceContainer.Children.First() is IRadiusProvider radiusProvider)
+				{
+					return radiusProvider;
+				}
+
+				return null;
+			}
+		}
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
@@ -121,21 +149,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				valuesChanged = true;
 			}
 
-			if (MinCutsPerRotation < 3 || MinCutsPerRotation > 360)
-			{
-				MinCutsPerRotation = Math.Min(360, Math.Max(3, MinCutsPerRotation));
-				valuesChanged = true;
-			}
-
 			if (RotationDistance < 0 || RotationDistance > 100000)
 			{
 				RotationDistance = Math.Min(100000, Math.Max(0, RotationDistance));
 				valuesChanged = true;
 			}
 
-			if (NumberOfVerticalCuts < 3 || NumberOfVerticalCuts > 300)
+			if (RotationSlices < 3 || RotationSlices > 300)
 			{
-				NumberOfVerticalCuts = Math.Min(300, Math.Max(3, NumberOfVerticalCuts));
+				RotationSlices = Math.Min(300, Math.Max(3, RotationSlices));
 				valuesChanged = true;
 			}
 
@@ -148,6 +170,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (StartHeightPercent < 0 || StartHeightPercent > EndHeightPercent - 1)
 			{
 				StartHeightPercent = Math.Min(EndHeightPercent - 1, Math.Max(0, StartHeightPercent));
+				valuesChanged = true;
+			}
+
+			if (OverrideRadius < .01)
+			{
+				OverrideRadius = Math.Max(this.GetAxisAlignedBoundingBox().XSize, this.GetAxisAlignedBoundingBox().YSize);
 				valuesChanged = true;
 			}
 
@@ -169,11 +197,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						size = top - bottom;
 					}
 
-					double numberOfCuts = NumberOfVerticalCuts;
-					if (RotationType == RotationTypes.Angle)
-					{
-						numberOfCuts = MinCutsPerRotation * (Angle / 360.0);
-					}
+					double numberOfCuts = RotationSlices;
 
 					double cutSize = size / numberOfCuts;
 					var cuts = new List<double>();
@@ -258,16 +282,29 @@ namespace MatterHackers.MatterControl.DesignTools
 							var angleToRotate = ratio * Angle / 360.0 * MathHelper.Tau;
 							if (RotationType == RotationTypes.Distance)
 							{
-								if (this.SourceContainer.Children.Count == 1
-									&& this.SourceContainer.Children.First() is IRadiusProvider radiusProvider)
+								IRadiusProvider radiusProvider = RadiusProvider;
+
+								// start off with assuming we want to set the radius
+								var radius = this.OverrideRadius;
+								if (radiusProvider != null && !this.EditRadius)
 								{
-									angleToRotate = ratio * (RotationDistance / radiusProvider.Radius);
+									// have a radius provider and not wanting to edit
+									radius = radiusProvider.Radius;
 								}
-								else
+								else if (!this.EditRadius)
 								{
-									// calculate the angle based on the distance we want to rotate
-									angleToRotate = ratio * (RotationDistance / enclosingCircle.Radius);
+									// not wanting to edit
+									radius = enclosingCircle.Radius;
 								}
+
+								if (this.PreferedRadius != radius)
+								{
+									this.PreferedRadius = radius;
+									this.OverrideRadius = radius;
+									UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+								}
+
+								angleToRotate = ratio * (RotationDistance / radius);
 							}
 
 							if (!TwistCw)
@@ -291,7 +328,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = transformedMesh
 						};
-						twistedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All);
+						twistedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
 						twistedChild.Visible = true;
 
 						twistedChildren.Add(twistedChild);
@@ -325,14 +362,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Clear();
 
 			changeSet.Add(nameof(RotationDistance), RotationType == RotationTypes.Distance);
-			changeSet.Add(nameof(NumberOfVerticalCuts), RotationType == RotationTypes.Distance);
 			changeSet.Add(nameof(Angle), RotationType == RotationTypes.Angle);
-			changeSet.Add(nameof(MinCutsPerRotation), RotationType == RotationTypes.Angle);
 			changeSet.Add(nameof(RotationOffset), Advanced);
 			changeSet.Add(nameof(StartHeightPercent), Advanced);
 			changeSet.Add(nameof(EasingOption), Advanced && EasingType != Easing.EaseType.Linear);
 			changeSet.Add(nameof(EasingType), Advanced);
 			changeSet.Add(nameof(EndHeightPercent), Advanced);
+			changeSet.Add(nameof(EasyModeMessage), !Advanced);
+			changeSet.Add(nameof(PreferedRadius), !this.EditRadius && RotationType == RotationTypes.Distance);
+			changeSet.Add(nameof(OverrideRadius), (RadiusProvider == null || this.EditRadius) && RotationType == RotationTypes.Distance);
+			changeSet.Add(nameof(EditRadius), RadiusProvider != null && RotationType == RotationTypes.Distance);
 
 			// first turn on all the settings we want to see
 			foreach (var kvp in changeSet.Where(c => c.Value))
