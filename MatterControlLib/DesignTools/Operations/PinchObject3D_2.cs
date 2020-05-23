@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = transformedMesh
 						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All);
+						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All, false);
 						this.Children.Add(newMesh);
 					}
 

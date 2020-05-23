@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						{
 							Mesh = transformedMesh
 						};
-						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All);
+						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
 						curvedChild.Visible = true;
 						curvedChild.Translate(new Vector3(rotationCenter));
 						if (!BendCcw)
