@@ -55,6 +55,11 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.IsProtected = true;
+
+			DefaultSort = new SortBehavior()
+			{
+				SortKey = SortKey.ModifiedDate,
+			};
 		}
 
 		public int PageSize { get; set; } = 25;
