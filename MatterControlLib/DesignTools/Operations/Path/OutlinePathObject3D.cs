@@ -42,27 +42,26 @@ using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum ExpandStyles
-	{
-		Flat,
-		Round,
-		Sharp,
-	}
 
-	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw
+	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
-		public InflatePathObject3D()
+		public OutlinePathObject3D()
 		{
-			Name = "Inflate Path".Localize();
+			Name = "Outline Path".Localize();
 		}
 
-		[Description("The amount to expand the path lines.")]
-		public double Inflate { get; set; }
+		[Description("The with of the outline.")]
+		public double OutlineWidth { get; set; }
+
+		public double Ratio { get; set; } = .5;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
-		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
+		public ExpandStyles InnerStyle { get; set; } = ExpandStyles.Sharp;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public ExpandStyles OuterStyle { get; set; } = ExpandStyles.Sharp;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -107,23 +106,26 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				return;
 			}
 
-			VertexSource = path.VertexSource.Offset(Inflate, GetJoinType(Style));
-		}
+			List<List<IntPoint>> aPolys = path.VertexSource.CreatePolygons();
 
-		internal static JoinType GetJoinType(ExpandStyles style)
-		{
-			ClipperLib.JoinType joinType = ClipperLib.JoinType.jtMiter;
-			switch (style)
-			{
-				case ExpandStyles.Flat:
-					joinType = ClipperLib.JoinType.jtSquare;
-					break;
-				case ExpandStyles.Round:
-					joinType = ClipperLib.JoinType.jtRound;
-					break;
-			}
+			ClipperOffset offseter = new ClipperOffset();
 
-			return joinType;
+			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(OuterStyle), EndType.etClosedPolygon);
+			var outerLoops = new List<List<IntPoint>>();
+			offseter.Execute(ref outerLoops, OutlineWidth * Ratio * 1000);
+			Clipper.CleanPolygons(outerLoops);
+
+			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(InnerStyle), EndType.etClosedPolygon);
+			var innerLoops = new List<List<IntPoint>>();
+			offseter.Execute(ref innerLoops, -OutlineWidth * (1 - Ratio) * 1000);
+			Clipper.CleanPolygons(innerLoops);
+
+			var allLoops = outerLoops;
+			allLoops.AddRange(innerLoops);
+
+			VertexSource = allLoops.CreateVertexStorage();
+
+			(VertexSource as VertexStorage).Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 		}
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)

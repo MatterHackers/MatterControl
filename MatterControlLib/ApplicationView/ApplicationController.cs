@@ -1917,6 +1917,36 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "OutlinePath",
+					Title = "Outline Path".Localize(),
+					MappedTypes = new List<Type> { typeof(IPathObject) },
+					ResultType = typeof(OutlinePathObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is IPathObject imageObject)
+						{
+							var outlinePath = new OutlinePathObject3D();
+							var itemClone = sceneItem.Clone();
+							outlinePath.Children.Add(itemClone);
+							outlinePath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { outlinePath }));
+							}
+
+							outlinePath.Invalidate(InvalidateType.Properties);
+						}
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
 					OperationID = "AddBase",
 					Title = "Add Base".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
