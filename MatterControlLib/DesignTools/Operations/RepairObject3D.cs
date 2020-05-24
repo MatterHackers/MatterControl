@@ -27,19 +27,34 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
-		
+
+		[ReadOnly(true)]
+		public int InitialVertices { get; set; }
+
+		[ReadOnly(true)]
+		public int InitialFaces { get; set; }
+
+		[Description("Align and merge any vertices that are nearly coincident.")]
+		public bool WeldVertices { get; set; } = true;
+
 		[Description("Make all the faces have a consistent orientation.")]
-		public bool FaceOrientation { get; set; } = true;
+		public bool FaceOrientation { get; set; } = false;
 
 		[Description("Repair any small cracks or bad seams in the model.")]
-		public bool WeldEdges { get; set; } = true;
+		public bool WeldEdges { get; set; } = false;
 
 		[Description("Try to fill in any holes that are in the model.")]
-		public bool FillHoles { get; set; } = true;
+		public bool FillHoles { get; set; } = false;
 
 
 		[Description("Remove interior faces and bodies. This should only be used if the interior bodies are separate from the external faces, otherwise it may remove requried faces.")]
 		public RemoveModes RemoveMode { get; set; } = RemoveModes.None;
+
+		[ReadOnly(true)]
+		public int FinalVertices { get; set; }
+
+		[ReadOnly(true)]
+		public int FinalFaces { get; set; }
 
 		public override Task Rebuild()
 		{
@@ -58,18 +73,31 @@ namespace MatterHackers.MatterControl.DesignTools
 					SourceContainer.Visible = true;
 					RemoveAllButSource();
 
+					var inititialVertices = 0;
+					var inititialFaces = 0;
+					var finalVertices = 0;
+					var finalFaces = 0;
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
-						var reducedMesh = Repair(originalMesh, cancellationToken);
+						inititialFaces += originalMesh.Faces.Count;
+						inititialVertices += originalMesh.Vertices.Count;
+						var repairedMesh = Repair(originalMesh, cancellationToken);
+						finalFaces += repairedMesh.Faces.Count;
+						finalVertices += repairedMesh.Vertices.Count;
 
-						var newMesh = new Object3D()
+						var repairedChild = new Object3D()
 						{
-							Mesh = reducedMesh
+							Mesh = repairedMesh
 						};
-						newMesh.CopyProperties(sourceItem, Object3DPropertyFlags.All);
-						this.Children.Add(newMesh);
+						repairedChild.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All, false);
+						this.Children.Add(repairedChild);
 					}
+
+					this.InitialFaces = inititialFaces;
+					this.InitialVertices = inititialVertices;
+					this.FinalFaces = finalFaces;
+					this.FinalVertices = finalVertices;
 
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
@@ -85,10 +113,25 @@ namespace MatterHackers.MatterControl.DesignTools
 				});
 		}
 
-		public Mesh Repair(Mesh inMesh, CancellationToken cancellationToken)
+		public Mesh Repair(Mesh sourceMesh, CancellationToken cancellationToken)
 		{
+			var inMesh = sourceMesh;
+
 			try
 			{
+				if (WeldVertices)
+				{
+					inMesh = sourceMesh.Copy(cancellationToken);
+					inMesh.CleanAndMerge();
+					if (!FaceOrientation
+						&& RemoveMode == RemoveModes.None
+						&& !WeldEdges
+						&& !FillHoles)
+					{
+						return inMesh;
+					}
+				}
+
 				var mesh = inMesh.ToDMesh3();
 				int repeatCount = 0;
 				int erosionIterations = 5;

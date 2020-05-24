@@ -90,6 +90,7 @@ namespace MatterHackers.MatterControl
 		Bangers,
 		Courgette,
 		Damion,
+		Firefly_Sung,
 		Fredoka,
 		Great_Vibes,
 		Liberation_Mono,
@@ -1916,6 +1917,36 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
+					OperationID = "OutlinePath",
+					Title = "Outline Path".Localize(),
+					MappedTypes = new List<Type> { typeof(IPathObject) },
+					ResultType = typeof(OutlinePathObject3D),
+					Operation = (sceneItem, scene) =>
+					{
+						if (sceneItem is IPathObject imageObject)
+						{
+							var outlinePath = new OutlinePathObject3D();
+							var itemClone = sceneItem.Clone();
+							outlinePath.Children.Add(itemClone);
+							outlinePath.Matrix = itemClone.Matrix;
+							itemClone.Matrix = Matrix4X4.Identity;
+
+							using (new SelectionMaintainer(scene))
+							{
+								scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { outlinePath }));
+							}
+
+							outlinePath.Invalidate(InvalidateType.Properties);
+						}
+
+						return Task.CompletedTask;
+					},
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+				});
+
+			this.Graph.RegisterOperation(
+				new NodeOperation()
+				{
 					OperationID = "AddBase",
 					Title = "Add Base".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },
@@ -2882,6 +2913,23 @@ namespace MatterHackers.MatterControl
 			string twoLetterIsoLanguageName = string.IsNullOrEmpty(UserSettings.Instance.Language) ?
 				Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName.ToLower() :
 				UserSettings.Instance.Language.ToLower();
+
+			if (twoLetterIsoLanguageName == "ja"
+				|| twoLetterIsoLanguageName == "zh")
+			{
+				AggContext.DefaultFont = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontBold = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+				AggContext.DefaultFontBoldItalic = ApplicationController.GetTypeFace(NamedTypeFace.Firefly_Sung);
+			}
+			else
+			{
+				AggContext.DefaultFont = LiberationSansFont.Instance;
+				AggContext.DefaultFontBold = LiberationSansBoldFont.Instance;
+				AggContext.DefaultFontItalic = LiberationSansFont.Instance;
+				AggContext.DefaultFontBoldItalic = LiberationSansBoldFont.Instance;
+			}
+
 
 			string translationFilePath = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
 

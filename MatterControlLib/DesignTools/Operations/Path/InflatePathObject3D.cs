@@ -28,22 +28,26 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.DataConverters2D;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	using MatterHackers.Agg.VertexSource;
-	using MatterHackers.DataConverters2D;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using Newtonsoft.Json;
-	using System;
-	using System.ComponentModel;
-	using System.Linq;
-	using System.Threading.Tasks;
-	using Polygons = List<List<IntPoint>>;
+	public enum ExpandStyles
+	{
+		Flat,
+		Round,
+		Sharp,
+	}
 
 	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw
 	{
@@ -54,8 +58,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Name = "Inflate Path".Localize();
 		}
 
-		[Description("Change the width of the image lines.")]
+		[Description("The amount to expand the path lines.")]
 		public double Inflate { get; set; }
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -93,14 +100,30 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		private void InsetPath()
 		{
 			var path = this.Children.OfType<IPathObject>().FirstOrDefault();
-			if(path == null)
+			if (path == null)
 			{
 				// clear our existing data
 				VertexSource = new VertexStorage();
 				return;
 			}
 
-			VertexSource = path.VertexSource.Offset(Inflate);
+			VertexSource = path.VertexSource.Offset(Inflate, GetJoinType(Style));
+		}
+
+		internal static JoinType GetJoinType(ExpandStyles style)
+		{
+			ClipperLib.JoinType joinType = ClipperLib.JoinType.jtMiter;
+			switch (style)
+			{
+				case ExpandStyles.Flat:
+					joinType = ClipperLib.JoinType.jtSquare;
+					break;
+				case ExpandStyles.Round:
+					joinType = ClipperLib.JoinType.jtRound;
+					break;
+			}
+
+			return joinType;
 		}
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)

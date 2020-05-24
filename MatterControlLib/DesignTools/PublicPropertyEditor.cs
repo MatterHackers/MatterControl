@@ -323,11 +323,27 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(doubleValue.ToString("0.##"), textColor: theme.TextColor, pointSize: 10);
+					var valueField = new TextWidget(string.Format("{0:n}", doubleValue), textColor: theme.TextColor, pointSize: 10)
+					{
+						AutoExpandBoundsToText = true
+					};
+
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
 						property.Description.Localize(),
 						valueField,
 						theme);
+
+					void RefreshField(object s, InvalidateArgs e)
+					{
+						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+						{
+							double newValue = (double)property.Value;
+							valueField.Text = string.Format("{0:n}", newValue);
+						}
+					}
+
+					object3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{
@@ -535,14 +551,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (readOnly)
 				{
-					var valueField = new TextWidget(intValue.ToString(),
+					var valueField = new TextWidget(string.Format("{0:n0}", intValue),
 						textColor: theme.TextColor,
-						pointSize: 10);
+						pointSize: 10)
+					{
+						AutoExpandBoundsToText = true
+					};
 
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
 						property.Description.Localize(),
 						valueField,
 						theme);
+
+					void RefreshField(object s, InvalidateArgs e)
+					{
+						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
+						{
+							double newValue = (double)property.Value;
+							valueField.Text = string.Format("{0:n0}", newValue);
+						}
+					}
+
+					object3D.Invalidated += RefreshField;
+					valueField.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 				}
 				else // normal edit row
 				{

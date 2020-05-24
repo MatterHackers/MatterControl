@@ -29,19 +29,16 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
-using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.VectorMath;
 
@@ -191,12 +188,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Math.Sqrt(maxDistSqrd);
 		}
 
-		public static VertexStorage Offset(this IVertexSource a, double distance)
+		public static VertexStorage Offset(this IVertexSource a, double distance, JoinType joinType = JoinType.jtMiter)
 		{
 			List<List<IntPoint>> aPolys = a.CreatePolygons();
 
 			ClipperOffset offseter = new ClipperOffset();
-			offseter.AddPaths(aPolys, JoinType.jtMiter, EndType.etClosedPolygon);
+			offseter.AddPaths(aPolys, joinType, EndType.etClosedPolygon);
 			var solution = new List<List<IntPoint>>();
 			offseter.Execute(ref solution, distance * 1000);
 

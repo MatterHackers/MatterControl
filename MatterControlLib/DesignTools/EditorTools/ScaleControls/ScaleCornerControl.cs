@@ -268,7 +268,7 @@ namespace MatterHackers.Plugins.EditorTools
 				yValueDisplayInfo.Visible = false;
 			}
 
-			if (MouseDownOnControl)
+			if (MouseDownOnControl && hitPlane != null)
 			{
 				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 

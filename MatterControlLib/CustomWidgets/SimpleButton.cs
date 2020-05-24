@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 
 namespace MatterHackers.MatterControl.CustomWidgets
@@ -133,7 +134,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (this.TabStop
 				&& hasKeyboardFocus)
 			{
-				graphics2D.Rectangle(this.LocalBounds, theme.EditFieldColors.Focused.BorderColor);
+				var bounds = this.LocalBounds;
+				bounds -= BackgroundInset;
+				var rect = new RoundedRect(bounds.Left + .5, bounds.Bottom + .5, bounds.Right - .5, bounds.Top - .5, RoundRadius);
+				var rectOutline = new Stroke(rect, 1);
+
+				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);
+			}
+		}
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			if (BackgroundColor.Alpha0To255 > 0)
+			{
+				var bounds = this.LocalBounds;
+				bounds -= BackgroundInset;
+				var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
+
+				graphics2D.Render(rect, BackgroundColor);
 			}
 		}
 
@@ -150,6 +168,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 		}
+
+		public BorderDouble BackgroundInset { get; set; }
+
+		public double RoundRadius { get; set; }
 	}
 
 	public class SimpleFlowButton : FlowLayoutWidget
@@ -407,6 +429,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public bool DrawUnderline { get; set; }
+
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseEnterBounds(mouseEvent);
@@ -426,7 +450,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if (this.Checked)
+			if (this.Checked && DrawUnderline)
 			{
 				graphics2D.Rectangle(LocalBounds.Left, 0, LocalBounds.Right, 2, theme.PrimaryAccentColor);
 			}

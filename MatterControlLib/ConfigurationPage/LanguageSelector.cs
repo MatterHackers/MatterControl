@@ -1,5 +1,8 @@
-﻿using MatterHackers.Agg.UI;
+﻿using MatterHackers.Agg.Font;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.VectorMath;
+using System;
 using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl
@@ -13,7 +16,6 @@ namespace MatterHackers.MatterControl
 		{
 			this.MinimumSize = new Vector2(this.LocalBounds.Width, this.LocalBounds.Height);
 			CreateLanguageDict();
-
 
 			foreach (KeyValuePair<string, string> entry in languageDict)
 			{
@@ -38,12 +40,14 @@ namespace MatterHackers.MatterControl
 				["Default"] = "EN",
 				["English"] = "EN",
 				["Čeština"] = "CS",
+				["Chinese "] = "ZH",
 				["Dansk"] = "DA",
 				["Deutsch"] = "DE",
 				["Español"] = "ES",
 				["ελληνικά"] = "EL",
 				["Français"] = "FR",
 				["Italiano"] = "IT",
+				["Japanese"] = "JA",
 				["Norsk"] = "NO",
 				["Polski"] = "PL",
 				//["Português"] = "CR",

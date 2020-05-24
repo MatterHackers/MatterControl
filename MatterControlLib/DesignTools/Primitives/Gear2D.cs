@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private double diametralPitch;
 
-		private double outerRadius;
+		public double OuterRadius { get; private set; }
 
 		private double pitchDiameter;
 
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.shiftedAddendum = this.addendum * (1 + this.profileShift);
 
 			// Outer Circle
-			this.outerRadius = this.pitchRadius + this.shiftedAddendum;
+			this.OuterRadius = this.pitchRadius + this.shiftedAddendum;
 			this.angleToothToTooth = 360.0 / this.ToothCount;
 
 			if (InternalToothCount > 0)
@@ -534,7 +534,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private (IVertexSource tooth, IVertexSource wheel) CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
-			var toothSectorPath = new Arc(Vector2.Zero, new Vector2(this.outerRadius, this.outerRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth))
+			var toothSectorPath = new Arc(Vector2.Zero, new Vector2(this.OuterRadius, this.OuterRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth))
 			{
 				ResolutionScale = 10
 			};
@@ -568,7 +568,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var movedLowerLeftCorner = lowerLeftCorner + xTranslation;
 				movedLowerLeftCorner = Vector2.Rotate(movedLowerLeftCorner, MathHelper.DegreesToRadians(angle));
 
-				if (movedLowerLeftCorner.Length > this.outerRadius)
+				if (movedLowerLeftCorner.Length > this.OuterRadius)
 				{
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;

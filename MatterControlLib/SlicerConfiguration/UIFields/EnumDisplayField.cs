@@ -138,7 +138,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var localIndex = index;
 
-				var radioButton = new RadioTextButton(enumItem.Value, theme);
+				var radioButton = new RadioTextButton(enumItem.Value, theme)
+				{
+					VAnchor = VAnchor.Center,
+					DrawUnderline = false,
+					RoundRadius = 3,
+					BackgroundInset = new BorderDouble(5, 4),
+					SelectedBackgroundColor = theme.PrimaryAccentColor,
+					UnselectedBackgroundColor = theme.MinimalShade,
+					BackgroundColor = theme.MinimalShade,
+				};
+
+				radioButton.CheckedStateChanged += (s, e) =>
+				{
+					var button = s as RadioTextButton;
+					button.TextColor = button.Checked ? theme.BackgroundColor : theme.TextColor;
+				};
 
 				// set it if checked
 				if (enumItem.Value == this.InitialValue)
