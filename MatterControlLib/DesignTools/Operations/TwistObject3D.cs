@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(EasingType), Advanced);
 			changeSet.Add(nameof(EndHeightPercent), Advanced);
 			changeSet.Add(nameof(EasyModeMessage), !Advanced);
-			changeSet.Add(nameof(PreferedRadius), !this.EditRadius && RotationType == RotationTypes.Distance);
+			changeSet.Add(nameof(PreferedRadius), RadiusProvider != null && !this.EditRadius && RotationType == RotationTypes.Distance);
 			changeSet.Add(nameof(OverrideRadius), (RadiusProvider == null || this.EditRadius) && RotationType == RotationTypes.Distance);
 			changeSet.Add(nameof(EditRadius), RadiusProvider != null && RotationType == RotationTypes.Distance);
 
