@@ -37,8 +37,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.DataConverters2D;
-using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {

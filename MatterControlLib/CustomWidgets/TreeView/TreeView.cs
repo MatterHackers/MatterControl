@@ -214,6 +214,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						{
 							SelectedNode = prev;
 							keyEvent.Handled = true;
+							prev.TreeView.NotifyItemClicked(prev.TreeView, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
 						}
 
 						break;
@@ -224,12 +225,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						{
 							SelectedNode = next;
 							keyEvent.Handled = true;
+							next.TreeView.NotifyItemClicked(next.TreeView, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
 						}
 
 						break;
 				}
 			}
-		
+
 			base.OnKeyDown(keyEvent);
 		}
 

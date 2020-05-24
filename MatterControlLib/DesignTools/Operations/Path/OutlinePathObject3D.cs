@@ -27,18 +27,19 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.DataConverters2D;
-using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		[Description("The with of the outline.")]
-		public double OutlineWidth { get; set; }
+		public double OutlineWidth { get; set; } = 3;
 
 		public double Ratio { get; set; } = .5;
 
@@ -87,9 +88,22 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
+
+			if (OutlineWidth < .01 || OutlineWidth > 1000)
+			{
+				OutlineWidth = Math.Min(1000, Math.Max(.01, OutlineWidth));
+				valuesChanged = true;
+			}
+
 			using (RebuildLock())
 			{
 				InsetPath();
+			}
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));

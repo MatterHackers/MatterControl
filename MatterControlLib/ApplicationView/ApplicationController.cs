@@ -1911,7 +1911,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("inflate.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1941,7 +1941,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("outline.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1986,6 +1986,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 
