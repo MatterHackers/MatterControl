@@ -96,6 +96,7 @@ namespace MatterHackers.MatterControl
 							HAnchor = HAnchor.Left
 						});
 					}
+
 					continue;
 				}
 

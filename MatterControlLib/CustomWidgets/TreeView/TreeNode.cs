@@ -163,6 +163,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							{
 								// navigate back up to the parent of this node
 								TreeView.SelectedNode = this.NodeParent;
+								TreeView.NotifyItemClicked(TreeView, new MouseEventArgs(MouseButtons.Left, 1, 0, 0, 0));
 							}
 
 							restoreFocus = false;

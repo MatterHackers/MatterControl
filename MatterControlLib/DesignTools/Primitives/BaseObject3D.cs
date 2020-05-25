@@ -39,7 +39,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -65,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Weighted
 		}
 
-		readonly double scalingForClipper = 1000;
+		private readonly double scalingForClipper = 1000;
 
 		public BaseObject3D()
 		{
@@ -95,7 +94,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DisplayName("")]
 		[ReadOnly(true)]
 		public string SpaceHolder2 { get; set; } = "";
-	
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public CenteringTypes Centering { get; set; } = CenteringTypes.Weighted;
@@ -231,33 +229,59 @@ namespace MatterHackers.MatterControl.DesignTools
 			return boundingPoly;
 		}
 
-		private static Polygon GetBoundingCircle(Polygons basePolygons)
+		private Polygon GetBoundingCircle(Polygons basePolygons)
 		{
-			var min = new IntPoint(long.MaxValue, long.MaxValue);
-			var max = new IntPoint(long.MinValue, long.MinValue);
+			IntPoint center;
+			double radius;
 
-			foreach (Polygon polygon in basePolygons)
+			if (Centering == CenteringTypes.Bounds)
 			{
-				foreach (IntPoint point in polygon)
+				IEnumerable<Vector2> GetVertices()
 				{
-					min.X = Math.Min(point.X, min.X);
-					min.Y = Math.Min(point.Y, min.Y);
-					max.X = Math.Max(point.X, max.X);
-					max.Y = Math.Max(point.Y, max.Y);
-				}
-			}
-
-			IntPoint center = (max - min) / 2 + min;
-			long maxRadius = 0;
-
-			foreach (Polygon polygon in basePolygons)
-			{
-				foreach (IntPoint point in polygon)
-				{
-					long radius = (point - center).Length();
-					if (radius > maxRadius)
+					foreach (var polygon in basePolygons)
 					{
-						maxRadius = radius;
+						foreach (var positon in polygon)
+						{
+							yield return new Vector2(positon.X, positon.Y);
+						}
+					}
+				}
+
+				var circle = SmallestEnclosingCircle.MakeCircle(GetVertices());
+
+				center = new IntPoint(circle.Center.X, circle.Center.Y);
+				radius = (long)circle.Radius;
+			}
+			else
+			{
+				var outsidePolygons = new List<List<IntPoint>>();
+				// remove all holes from the polygons so we only center the major outlines
+				var polygons = VertexSource.CreatePolygons();
+
+				foreach (var polygon in polygons)
+				{
+					if (polygon.GetWindingDirection() == 1)
+					{
+						outsidePolygons.Add(polygon);
+					}
+				}
+
+				IVertexSource outsideSource = outsidePolygons.CreateVertexStorage();
+
+				var polyCenter = outsideSource.GetWeightedCenter();
+
+				center = new IntPoint(polyCenter.X * 1000, polyCenter.Y * 1000);
+				radius = 0;
+
+				foreach (Polygon polygon in basePolygons)
+				{
+					foreach (IntPoint point in polygon)
+					{
+						long length = (point - center).Length();
+						if (length > radius)
+						{
+							radius = length;
+						}
 					}
 				}
 			}
@@ -268,7 +292,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			for (int i = 0; i < numPoints; i++)
 			{
 				double angle = i / 100.0 * Math.PI * 2.0;
-				IntPoint newPointOnCircle = new IntPoint(Math.Cos(angle) * maxRadius, Math.Sin(angle) * maxRadius) + center;
+				IntPoint newPointOnCircle = new IntPoint(Math.Cos(angle) * radius, Math.Sin(angle) * radius) + center;
 				boundingCircle.Add(newPointOnCircle);
 			}
 

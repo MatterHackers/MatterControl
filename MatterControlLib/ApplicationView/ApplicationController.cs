@@ -804,7 +804,7 @@ namespace MatterHackers.MatterControl
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
 							IsEnabled = (sceneContext) => sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any(),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
 						{
@@ -819,7 +819,7 @@ namespace MatterHackers.MatterControl
 								}
 							},
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
 						{
@@ -991,7 +991,7 @@ namespace MatterHackers.MatterControl
 								var cut = new PlaneCutObject3D();
 								cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("plane_cut.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 #endif
@@ -1818,7 +1818,7 @@ namespace MatterHackers.MatterControl
 							&& sceneItem.Parent.Parent == null
 							&& sceneItem is ComponentObject3D componentObject
 							&& componentObject.Finalized
-							&& string.IsNullOrWhiteSpace(componentObject.PermissionKey);
+							&& !componentObject.ProOnly;
 					},
 					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});
@@ -1911,7 +1911,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("inflate.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1941,7 +1941,7 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_expand_1823853_000000.png", 16, 16, invertIcon)
+					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("outline.png", 16, 16, invertIcon)
 				});
 
 			this.Graph.RegisterOperation(
@@ -1986,6 +1986,7 @@ namespace MatterHackers.MatterControl
 			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
 			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
 			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
 		}
 

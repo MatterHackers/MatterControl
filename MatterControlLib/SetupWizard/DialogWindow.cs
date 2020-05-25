@@ -151,6 +151,7 @@ namespace MatterHackers.MatterControl
 						{
 							UiThread.RunOnIdle(() => currentPage.NextButton.InvokeClick());
 						}
+
 						break;
 				}
 			};

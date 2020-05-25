@@ -61,6 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					scene.SelectedItem = null;
 					return;
 				}
+
 				bool isGroupItemType = selectedItem.Children.Count > 0;
 
 				// If not a Group ItemType, look for mesh volumes and split into distinct objects if found
@@ -129,7 +130,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							return Task.CompletedTask;
 						});
 				}
-
 
 				// leave no selection
 				scene.SelectedItem = null;
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							// More useful if it creates the part in the exact position and then the user can move it.
 							// Consistent with other software as well. LBB 2017-12-02
-							//PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
+							// PlatingHelper.MoveToOpenPositionRelativeGroup(clonedItem, Scene.Children);
 
 							return clonedItem;
 						}
@@ -295,9 +295,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var center = aabb.Center;
 
 				newItem.Matrix *= Matrix4X4.CreateTranslation(
-					(sceneContext.BedCenter.X - center.X),
-					(sceneContext.BedCenter.Y - center.Y),
-					 -aabb.MinXYZ.Z);
+					sceneContext.BedCenter.X - center.X,
+					sceneContext.BedCenter.Y - center.Y,
+					-aabb.MinXYZ.Z);
 			}
 
 			// Create and perform a new insert operation
@@ -337,7 +337,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Mesh meshWithLowest = null;
 
 			var items = objectToLayFlat.VisibleMeshes().Where(i => i.OutputType != PrintOutputTypes.Support);
-			if(!items.Any())
+			if (!items.Any())
 			{
 				items = objectToLayFlat.VisibleMeshes();
 			}
@@ -427,6 +427,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 				}
+
 				if (largestAreaFound > largestAreaOfAnyFace)
 				{
 					largestAreaOfAnyFace = largestAreaFound;
@@ -494,7 +495,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				for (int i = 0; i < preArrangeTarnsforms.Count; i++)
 				{
-					//allUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
+					//a llUndoTransforms.Add(new TransformUndoCommand(view3DWidget, i, preArrangeTarnsforms[i], postArrangeTarnsforms[i]));
 				}
 			}
 
