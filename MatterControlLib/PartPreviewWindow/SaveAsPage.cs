@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl
 	public class SaveAsPage : LibraryBrowserPage
 	{
 		public SaveAsPage(Action<string, ILibraryContainer> itemSaver, bool allowNameChange = true)
-			: base (itemSaver, "Save".Localize())
+			: base(itemSaver, "Save".Localize())
 		{
 			this.WindowTitle = "MatterControl - " + "Save As".Localize();
 			this.Name = "Save As Window";
@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl
 				};
 				contentRow.AddChild(fileNameHeader);
 
-				//Adds text box and check box to the above container
+				// Adds text box and check box to the above container
 				itemNameWidget = new MHTextEditWidget("", theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
 				{
 					HAnchor = HAnchor.Stretch,
