@@ -804,7 +804,7 @@ namespace MatterHackers.MatterControl
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
 							IsEnabled = (sceneContext) => sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any(),
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16).SetPreMultiply(),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
 						{
@@ -819,7 +819,7 @@ namespace MatterHackers.MatterControl
 								}
 							},
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16).SetPreMultiply(),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
 						{
@@ -991,7 +991,7 @@ namespace MatterHackers.MatterControl
 								var cut = new PlaneCutObject3D();
 								cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
-							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
+							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("plane_cut.png", 16, 16, invertIcon),
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 #endif
