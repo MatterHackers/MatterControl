@@ -1818,7 +1818,7 @@ namespace MatterHackers.MatterControl
 							&& sceneItem.Parent.Parent == null
 							&& sceneItem is ComponentObject3D componentObject
 							&& componentObject.Finalized
-							&& string.IsNullOrWhiteSpace(componentObject.PermissionKey);
+							&& !componentObject.ProOnly;
 					},
 					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
 				});

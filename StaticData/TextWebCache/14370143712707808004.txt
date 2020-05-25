@@ -1,4 +1,4 @@
-## Reduce is Locked
+## "Reduce" feature is locked
 
 To Unlock upgrade to MatterControl Pro:
 

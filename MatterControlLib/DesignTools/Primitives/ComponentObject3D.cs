@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
@@ -53,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public override bool CanFlatten => Finalized;
+		public override bool CanFlatten => !Finalized || Persistable;
 
 		public override bool Persistable => ApplicationController.Instance.UserHasPermission(this);
 
@@ -65,10 +66,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public string ComponentID { get; set; } = "";
 
 		[Description("MatterHackers Internal Use")]
-		public string DetailPage { get; set; } = "";
-
-		[Description("MatterHackers Internal Use")]
-		public string PermissionKey { get; set; } = "";
+		public bool ProOnly { get; set; }
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
@@ -149,7 +147,34 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else
 			{
-				base.Remove(undoBuffer);
+				if (ProOnly)
+				{
+					// just delete it
+					var parent = this.Parent;
+
+					using (RebuildLock())
+					{
+						if (undoBuffer != null)
+						{
+							// and replace us with nothing
+							undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new List<IObject3D>(), false));
+						}
+						else
+						{
+							parent.Children.Modify(list =>
+							{
+								list.Remove(this);
+							});
+						}
+					}
+
+					parent.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+				}
+				else
+				{
+					// remove the component and leave the inside parts
+					base.Remove(undoBuffer);
+				}
 			}
 		}
 	}
