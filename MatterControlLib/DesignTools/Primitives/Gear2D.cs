@@ -143,6 +143,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		private GearTypes _gearType = GearTypes.External;
+
 		public GearTypes GearType
 		{
 			get => _gearType;
@@ -177,6 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		private int _internalToothCount;
+
 		public int InternalToothCount
 		{
 			get => _internalToothCount;
@@ -388,7 +390,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IVertexSource CreateInternalGearShape()
 		{
 			var singleTooth = this.CreateInternalToothProfile();
-			// return singleTooth;
+			return singleTooth;
 
 			var corners = singleTooth as VertexStorage;
 
@@ -409,17 +411,26 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var outerCorners = new VertexStorage();
 			var command = ShapePath.FlagsAndCommand.MoveTo;
-			for (var i = 2; i < corners.Count - 2; i++)
+			for (var i = 0; i < corners.Count; i++)
 			{
 				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				outerCorners.Add(corner.position.X, corner.position.Y, command);
-				command = ShapePath.FlagsAndCommand.LineTo;
+				if (corner.position.X != 0)
+				{
+					outerCorners.Add(corner.position.X, corner.position.Y, command);
+					command = ShapePath.FlagsAndCommand.LineTo;
+				}
 			}
 
+			//outerCorners.ClosePolygon();
+
+			return outerCorners;
+
 			var reversedOuterCorners = new VertexStorage();
+			command = ShapePath.FlagsAndCommand.MoveTo;
 			foreach (var vertex in new ReversePath(outerCorners).Vertices())
 			{
-				reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, ShapePath.FlagsAndCommand.LineTo);
+				reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, command);
+				command = ShapePath.FlagsAndCommand.LineTo;
 			}
 
 			outerCorners = reversedOuterCorners;

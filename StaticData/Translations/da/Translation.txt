@@ -1,3 +1,6 @@
+English:
+Translated:
+
 English:    • Remove the paper
 Translated:    • Fjern papiret
 
@@ -5,7 +8,7 @@ English:- none -
 Translated:- ingen -
 
 English: Once it is finished homing we will heat the bed.
-Translated: Når det er færdigt, vil vi opvarme sengen.
+Translated: Når det er færdigt med at blive hjemme, varmer vi sengen.
 
 English:$/kg
 Translated:$ / Kg
@@ -14,7 +17,7 @@ English:%
 Translated:%
 
 English:{0} (Update Available)
-Translated:{0} (opdatering tilgængelig)
+Translated:{0} (Opdatering tilgængelig)
 
 English:{0} must be greater than 0.
 Translated:{0} skal være større end 0.
@@ -34,26 +37,29 @@ Translated:°
 English:°C
 Translated:° C
 
+English:0 for no hole
+Translated:0 for intet hul
+
 English:2D Layer View
-Translated:2D Layer View
+Translated:2D-lagsvisning
 
 English:3D
 Translated:3D
 
 English:3D Layer View
-Translated:3D-lagvisning
+Translated:3D-lagsvisning
 
 English:A comma separated list of sample points to probe the bed at. You must specify an x and y position for each point. For example: '20,20,100,180,180,20' will sample the bad at 3 points.
-Translated:En kommasepareret liste over prøvepunkter til at sonde sengen på. Du skal angive en x og y position for hvert punkt. For eksempel: '20, 20,100,180,180,20 'vil prøve det dårlige ved 3 point.
+Translated:En komma-adskilt liste over prøvepunkter for at undersøge sengen kl. Du skal angive en x- og y-position for hvert punkt. For eksempel: '20, 20.100.180.180,20 'vil prøve det dårlige ved 3 point.
 
 English:A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.
-Translated:En modifikator for ekstruderingsbredden for det første lag af printet. En værdi på mere end 100% kan hjælpe med vedhæftning til tryksengen.
+Translated:En ændring af bredden af ekstruderingen til det første lag på udskriften. En værdi på over 100% kan hjælpe med vedhæftning til tryksengen.
 
 English:A modifier of the width of the extrusion when printing outside perimeters. Can be useful to fine-adjust actual print size when objects print larger or smaller than specified in the digital model.
-Translated:En modifikator for ekstruderingsbredden ved udskrivning af ydre perimetre. Kan være nyttigt at finjustere den faktiske udskriftsstørrelse, når objekter udskriver større eller mindre end angivet i den digitale model.
+Translated:En ændring af ekstruderingens bredde ved udskrivning uden for perimetre. Kan være nyttigt til at finjustere den aktuelle udskriftsstørrelse, når objekter udskrives større eller mindre end angivet i den digitale model.
 
 English:A password reset code will be sent to your email.
-Translated:En kode til adgangskode nulstilles til din email.
+Translated:En kode til nulstilling af kodeord sendes til din e-mail.
 
 English:A sheet of paper
 Translated:Et ark papir
@@ -65,22 +71,22 @@ English:A U.S. or Canadian mobile phone number
 Translated:Et amerikansk eller canadisk mobiltelefonnummer
 
 English:A valid email address
-Translated:En gyldig email adresse
+Translated:En gyldig e-mail-adresse
 
 English:Abort Calibration
 Translated:Afbryd kalibrering
 
 English:Abort Print
-Translated:Afbryd udskriften
+Translated:Afbryd udskrivning
 
 English:About
 Translated:Om
 
 English:Acceleration Printing
-Translated:Acceleration Udskrivning
+Translated:Accelerationsudskrivning
 
 English:Acceleration Travel
-Translated:Acceleration Travel
+Translated:Accelerationsrejser
 
 English:Accept
 Translated:Acceptere
@@ -92,7 +98,7 @@ English:Action
 Translated:Handling
 
 English:Action Recommended
-Translated:Handling anbefales
+Translated:Handling anbefalet
 
 English:Action Required
 Translated:Handling påkrævet
@@ -104,7 +110,7 @@ English:Add a new Macro
 Translated:Tilføj en ny makro
 
 English:Add an.stl, .obj, .amf, .gcode or.zip file to the Library
-Translated:Tilføj en.stl, .obj, .amf, .gcode eller .zip-fil til biblioteket
+Translated:Tilføj en.stl, .obj, .amf, .gcode eller.zip-fil til biblioteket
 
 English:Add Base
 Translated:Tilføj base
@@ -119,34 +125,43 @@ English:Add New Setting
 Translated:Tilføj ny indstilling
 
 English:Add to Bed
-Translated:Tilføj til seng
+Translated:Føj til sengen
 
 English:Add to Selection
-Translated:Tilføj til udvælgelse
+Translated:Føj til markering
 
 English:Adhesion
 Translated:vedhæftning
 
 English:Adjust this to correct differences between expected printing speeds and actual printing speeds.
-Translated:Juster dette for at korrigere forskelle mellem forventede udskrivningshastigheder og faktiske udskrivningshastigheder.
+Translated:Juster dette for at rette forskellene mellem forventede udskrivningshastigheder og faktiske udskrivningshastigheder.
 
 English:Advanced
 Translated:Fremskreden
 
 English:Advanced Array
-Translated:Avanceret Array
+Translated:Avanceret matrix
 
 English:After Move
-Translated:Efter Flyt
+Translated:Efter flytning
 
 English:After Tool Change G-Code
-Translated:Efter værktøj Skift G-kode
+Translated:Efter værktøjskift G-kode
 
 English:After Tool Change G-Code 2
-Translated:Efter værktøj Skift G-kode 2
+Translated:Efter værktøjskift G-kode 2
+
+English:After Tool Change G-Code 3
+Translated:Efter værktøjskift G-kode 3
+
+English:After Tool Change G-Code 4
+Translated:Efter værktøjskift G-kode 4
 
 English:Air Gap
 Translated:Luft hul
+
+English:Air Gapped Layer
+Translated:Luft gappet lag
 
 English:Alert
 Translated:Alert
@@ -154,29 +169,32 @@ Translated:Alert
 English:Align
 Translated:Juster
 
+English:Align and merge any vertices that are nearly coincident.
+Translated:Juster og flett alle vertikater, der næsten er sammenfaldende.
+
 English:All extrusions are multiplied by this value. Increasing it above 1 will increase the amount of filament being extruded (1.1 is a good max value); decreasing it will decrease the amount being extruded (.9 is a good minimum value).
-Translated:Alle ekstruderinger multipliceres med denne værdi. Ved at øge det over 1 vil mængden af filament blive ekstruderet (1,1 er en god max værdi); faldende det vil reducere mængden, der ekstruderes (.9 er en god minimumsværdi).
+Translated:Alle ekstruder ganges med denne værdi. Forøgelse af det over 1 vil øge mængden af filament, der ekstruderes (1.1 er en god maksimalværdi); Hvis du mindsker det, reduceres mængden, der ekstruderes (0,9 er en god minimumsværdi).
 
 English:All G-Code lines mush be shorter than 100 characters (excluding comments).
-Translated:Alle G-Code linjer mush være kortere end 100 tegn (eksklusive kommentarer).
+Translated:Alle G-kodelinjer må være kortere end 100 tegn (ekskl. Kommentarer).
 
 English:All Heaters
 Translated:Alle varmeapparater
 
 English:Allow MatterControl to split long lines to improve leveling and print canceling. Critical for printers that are significantly out of level.
-Translated:Tillad MatterControl at opdele lange linjer for at forbedre udjævning og udskriftsafbrydelse. Kritisk for printere, der er betydeligt ude af niveau.
+Translated:Lad MatterControl opdele lange linjer for at forbedre nivelleringen og udskrive annullering. Kritisk for printere, der er markant ude af niveau.
 
 English:Allows for the repositioning of the rotation origin
-Translated:Tillader ompositionering af rotationens oprindelse
+Translated:Giver mulighed for omplacering af rotationsoprøret
 
 English:Allows you turn on and off applying the fit to the x axis.
-Translated:Giver dig mulighed for at tænde og slukke for at anvende pasformen til x-aksen.
+Translated:Gør det muligt at tænde og slukke for at anvende pasningen på x-aksen.
 
 English:Allows you turn on and off applying the fit to the y axis.
-Translated:Giver dig mulighed for at tænde og slukke for at anvende pasformen til y-aksen.
+Translated:Gør det muligt at tænde og slukke for at anvende pasningen på y-aksen.
 
 English:Allows you turn on and off applying the fit to the z axis.
-Translated:Giver dig mulighed for at tænde og slukke for pasformen til z-aksen.
+Translated:Gør det muligt at tænde og slukke for at anvende pasningen på z-aksen.
 
 English:Alpha
 Translated:Alpha
@@ -185,19 +203,22 @@ English:Alpha: The in development version of MatterControl
 Translated:Alpha: Den i udviklingsversion af MatterControl
 
 English:Already Calibrated
-Translated:Altid kalibreret
+Translated:Allerede kalibreret
 
 English:Already Loaded
 Translated:Allerede indlæst
 
 English:An unexpected error occurred during reload
-Translated:Der opstod en uventet fejl under genindlæsningen
+Translated:Der opstod en uventet fejl under genindlæsning
+
+English:Analyze Every Layer
+Translated:Analyser hvert lag
 
 English:Anchor
 Translated:Anker
 
 English:and ensure that no filament is stuck to your nozzle.
-Translated:og sørg for, at der ikke er nogen filament fast i din dyse.
+Translated:og sørg for, at intet glødetråd sidder fast på din dyse.
 
 English:and the hotend to heat to 
 Translated:og hotend at varme til
@@ -206,40 +227,40 @@ English:Angle
 Translated:Vinkel
 
 English:Anyone with this code will have access
-Translated:Alle med denne kode har adgang
+Translated:Enhver med denne kode har adgang
 
 English:Application Cache
-Translated:Application Cache
+Translated:Applikationscache
 
 English:Application Storage
-Translated:Ansøgningsopbevaring
+Translated:Opbevaring af applikationer
 
 English:Apply
 Translated:ansøge
 
 English:Apply leveling to G-Code during export
-Translated:Påfør nivellering til G-kode under eksport
+Translated:Anvend nivellering på G-kode under eksport
 
 English:Are you sure you want to abort calibration?
 Translated:Er du sikker på, at du vil afbryde kalibrering?
 
 English:Are you sure you want to abort the current print and close MatterControl?
-Translated:Er du sikker på, at du vil afbryde den aktuelle udskrift og lukke MatterControl?
+Translated:Er du sikker på, at du vil afbryde den aktuelle udskrivning og lukke MatterControl?
 
 English:Are you sure you want to add this part ({0}) to the Queue?\nThe 3D part you are trying to load may be too complicated and cause performance or stability problems.\n\nConsider reducing the geometry before proceeding.
-Translated:Er du sikker på, at du vil tilføje denne del ({0}) til køen?\nDen 3D-del, du forsøger at indlæse, kan være for kompliceret og medføre ydeevne eller stabilitetsproblemer.\n\nOvervej at reducere geometrien, før du fortsætter.
+Translated:Er du sikker på, at du vil føje denne del ({0}) til køen?\nDen 3D-del, du prøver at indlæse, kan være for kompliceret og forårsage ydelses- eller stabilitetsproblemer.\n\nOvervej at reducere geometrien, før du fortsætter.
 
 English:Are you sure you want to delete printer '{0}'?
 Translated:Er du sikker på, at du vil slette printeren '{0}'?
 
 English:Are you sure you want to exit while a print is running from SD Card?\n\nNote: If you exit, it is recommended you wait until the print is completed before running MatterControl again.
-Translated:Er du sikker på at du vil afslutte, mens et udskriftsprogram kører fra SD-kort?\n\nBemærk: Hvis du forlader, anbefales det at vente, indtil udskriften er færdig, inden du kører MatterControl igen.
+Translated:Er du sikker på, at du vil afslutte, mens en udskrift kører fra SD-kort?\n\nBemærk: Hvis du afslutter, anbefales det, at du venter, indtil udskrivningen er afsluttet, før du kører MatterControl igen.
 
 English:Are you sure you want to remove the currently selected items?
 Translated:Er du sikker på, at du vil fjerne de aktuelt valgte emner?
 
 English:Are you sure you want to sign out? You will not have access to your printer profiles or cloud library.
-Translated:Er du sikker på, at du vil logge ud? Du har ikke adgang til dine printerprofiler eller skydebibliotek.
+Translated:Er du sikker på, at du vil logge ud? Du har ikke adgang til dine printerprofiler eller skybibliotek.
 
 English:Arrange All Parts
 Translated:Arranger alle dele
@@ -248,55 +269,58 @@ English:Array
 Translated:Array
 
 English:As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.
-Translated:Da tiden til at udskrive et lag falder til dette, vil blæserhastigheden øges op til sin maksimale hastighed.
+Translated:Når tiden til udskrivning af et lag mindskes til dette, øges ventilatorhastigheden op til dens maksimale hastighed.
 
 English:Ascending
 Translated:stigende
 
 English:Attempting to connect
-Translated:Forsøger at forbinde
+Translated:Forsøger at oprette forbindelse
 
 English:ATX Power Control
 Translated:ATX Power Control
 
 English:Auto Connect
-Translated:Automatisk forbindelse
+Translated:Auto forbindelse
 
 English:Auto Release Motors
-Translated:Auto Release Motors
+Translated:Auto frigørelsesmotorer
 
 English:Auto Uppercase
 Translated:Auto store bogstaver
 
 English:Automatic Heater Shutdown in
-Translated:Automatisk varmeafbryder i
+Translated:Automatisk nedlukning af varmeapparatet i
 
 English:Avoid contact with your skin.
-Translated:Undgå kontakt med huden.
+Translated:Undgå kontakt med din hud.
 
 English:Avoid Crossing Perimeters
-Translated:Undgå at krydse perimetre
+Translated:Undgå krydsning af perimetre
 
 English:Axis
 Translated:Akse
 
 English:Axis movement speeds
-Translated:Aksens bevægelseshastigheder
+Translated:Hastighed af akser
 
 English:Baby Step Offset
-Translated:Baby Step Offset
+Translated:Baby trin offset
 
 English:Back
 Translated:Tilbage
 
 English:Back Ratio
-Translated:Tilbage forhold
+Translated:Rygforhold
 
 English:Backing Depth
-Translated:Baggrundsdybde
+Translated:Bagdybde
+
+English:Backlash (minimal distance between meshing gears; in mm)
+Translated:Modreaktion (minimal afstand mellem indgreb gear; i mm)
 
 English:Backup Firmware Before Update
-Translated:Backup firmware før opdatering
+Translated:Sikkerhedskopier firmware inden opdatering
 
 English:Base
 Translated:Base
@@ -308,22 +332,22 @@ English:Bed
 Translated:Seng
 
 English:Bed Leveling data created at {0}°C versus current {1}°C
-Translated:Bed Leveling data oprettet ved {0} ° C versus nuværende {1} ° C
+Translated:Bed nivelleringsdata oprettet ved {0} ° C versus nuværende {1} ° C
 
 English:Bed Leveling Temperature
-Translated:Bed Leveling Temperatur
+Translated:Sengetemperatur
 
 English:Bed PID Settings
-Translated:Sæt PID-indstillinger
+Translated:Bed PID-indstillinger
 
 English:Bed Remove Part Temperature
-Translated:Seng Fjern deltemperatur
+Translated:Seng Fjern delstemperatur
 
 English:Bed Shape
-Translated:Sengform
+Translated:Sengeform
 
 English:Bed Size
-Translated:Sengens størrelse
+Translated:Sengestørrelse
 
 English:Bed Temperature
 Translated:Sengetemperatur
@@ -332,34 +356,40 @@ English:Bed Temperature:
 Translated:Sengetemperatur:
 
 English:Before Tool Change
-Translated:Før værktøjsændring
+Translated:Før værktøjsskift
 
 English:Before Tool Change G-Code
-Translated:Før værktøjet Skift G-kode
+Translated:Før værktøjsændring G-kode
 
 English:Before Tool Change G-Code 2
-Translated:Før værktøjet skift G-kode 2
+Translated:Før værktøjsændring G-kode 2
+
+English:Before Tool Change G-Code 3
+Translated:Før værktøjsændring G-kode 3
+
+English:Before Tool Change G-Code 4
+Translated:Før værktøjsændring G-kode 4
 
 English:Behavior
 Translated:Opførsel
 
 English:Bend Up
-Translated:Bend op
+Translated:Bøj dig op
 
 English:Beta
 Translated:Beta
 
 English:Beta: The release candidate version of MatterControl
-Translated:Beta: Udgivelseskandidatversionen af MatterControl
+Translated:Beta: Release-kandidatversionen af MatterControl
 
 English:Booleans
 Translated:Booleans
 
 English:Bottom Solid Infill
-Translated:Bottom Solid Infill
+Translated:Nederste fast udfyldning
 
 English:Bottom Solid Layers
-Translated:Bund solid lag
+Translated:Nederste faste lag
 
 English:Braille
 Translated:Braille
@@ -368,7 +398,7 @@ English:Braille Card
 Translated:Braille Card
 
 English:Bridge Over Infill
-Translated:Bro over infill
+Translated:Bridge Over Infill
 
 English:Bridges
 Translated:Broer
@@ -383,25 +413,25 @@ English:brims
 Translated:skygger
 
 English:Build Height
-Translated:Byg højde
+Translated:Bygge højde
 
 English:Calculate and transmit a standard rep-rap checksum for all commands.
-Translated:Beregn og send et standard rep-raps checksum for alle kommandoer.
+Translated:Beregn og send et standard rep-rap-kontrolsum for alle kommandoer.
 
 English:Calculate Path
 Translated:Beregn sti
 
 English:Calibrate Printer
-Translated:Kalibrere printeren
+Translated:Kalibrer printer
 
 English:Calibration
 Translated:Kalibrering
 
 English:Calibration Face
-Translated:Kalibrerende ansigt
+Translated:Kalibrerings ansigt
 
 English:Calibration Faces
-Translated:Kalibreringsfaser
+Translated:Kalibreringsflader
 
 English:Calibration Files
 Translated:Kalibreringsfiler
@@ -416,7 +446,7 @@ English:Calibration Print
 Translated:Kalibreringsudskrivning
 
 English:Calibration Tab
-Translated:Kalibrering faneblad
+Translated:Fanen Kalibrering
 
 English:Cancel
 Translated:Afbestille
@@ -428,13 +458,13 @@ English:Cancel G-Code
 Translated:Annuller G-kode
 
 English:Cancel Print
-Translated:Annuller Udskriv
+Translated:Annuller udskriv
 
 English:Cancel Print?
-Translated:Annuller Udskriv?
+Translated:Annuller udskrivning?
 
 English:Cancel the current print?
-Translated:Annuller den aktuelle udskrift?
+Translated:Annuller den aktuelle udskrivning?
 
 English:Can't access
 Translated:Kan ikke få adgang
@@ -443,7 +473,7 @@ English:Can't log out while printing
 Translated:Kan ikke logge ud under udskrivning
 
 English:Can't sign in while printing
-Translated:Kan ikke logge ind under udskrivning
+Translated:Kan ikke logge på under udskrivning
 
 English:Change
 Translated:Lave om
@@ -452,13 +482,13 @@ English:Change Password
 Translated:Skift kodeord
 
 English:Change the scale of the image within the coin.
-Translated:Skift billedets skala inden for mønten.
+Translated:Skift skalaen på billedet i mønten.
 
 English:Change the width of the image lines.
-Translated:Ændre bredden af billedslinjerne.
+Translated:Skift bredden på billedlinjerne.
 
 English:Changing your update channel will change the version of MatterControl that you receive when updating
-Translated:Hvis du ændrer din opdateringskanal, ændres den version af MatterControl, du modtager, når du opdaterer
+Translated:Ændring af din opdateringskanal ændrer den version af MatterControl, som du modtager, når du opdaterer
 
 English:Check for Update
 Translated:Søg efter opdatering
@@ -470,22 +500,22 @@ English:Checking Cloud Services
 Translated:Kontrol af Cloud Services
 
 English:Checking for updates...
-Translated:Kontrollerer opdateringer ...
+Translated:Kontrollerer for opdateringer ...
 
 English:Checking with webservice
 Translated:Kontrol med webservice
 
 English:Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)
-Translated:Kontroller før hvert tryk, at lagets højde er mindre end dysediameteren (vigtig for vedhæftning af filament)
+Translated:Kontrollerer inden hver udskrift, at laghøjden er mindre end dysediameteren (vigtig for filamentadhæsion)
 
 English:Choose the command for showing the print progress on the printer's LCD screen, if it has one.
-Translated:Vælg kommandoen for at vise udskriftsfremgangen på printerens LCD-skærm, hvis den har en.
+Translated:Vælg kommandoen til at vise udskriftsforløbet på printerens LCD-skærm, hvis den har en.
 
 English:Choose to render as Braille or standard text. This can help show how grade 2 works.
-Translated:Vælg at gøre som Braille eller standardtekst. Dette kan hjælpe med at vise, hvordan lønklasse 2 virker.
+Translated:Vælg at gengive som blindeskrift eller standardtekst. Dette kan hjælpe med at vise, hvordan klasse 2 fungerer.
 
 English:Clean Filament Page
-Translated:Rens filamentside
+Translated:Ren filamentside
 
 English:Clear
 Translated:Klar
@@ -497,10 +527,13 @@ English:Clear Cache
 Translated:Ryd cache
 
 English:Clear selection
-Translated:Ryd markering
+Translated:Ryd valg
 
 English:Clear ZOffset
 Translated:Ryd ZOffset
+
+English:Clearance (minimal distance between the apex of a tooth and the trough of the other gear; in mm)
+Translated:Afstand (minimal afstand mellem tandens spids og renden til det andet gear; i mm)
 
 English:Click 'Next' to continue.
 Translated:Klik på 'Næste' for at fortsætte.
@@ -512,16 +545,16 @@ English:Close Polygons
 Translated:Luk polygoner
 
 English:Cloud Library
-Translated:Cloud Library
+Translated:Cloudbibliotek
 
 English:Coarse
 Translated:Grov
 
 English:Coarse calibration complete, we will now do a normal calibration to improve accuracy.
-Translated:Grovkalibrering færdig, vi vil nu lave en normal kalibrering for at forbedre nøjagtigheden.
+Translated:Grov kalibrering afsluttet, vi vil nu foretage en normal kalibrering for at forbedre nøjagtigheden.
 
 English:Coast At End
-Translated:Kyst i slutningen
+Translated:Coast At End
 
 English:Collapse All
 Translated:Skjul alle
@@ -539,7 +572,7 @@ English:Community
 Translated:Fællesskab
 
 English:Compile model
-Translated:Kompilere model
+Translated:Udarbejd model
 
 English:Complete Individual Objects
 Translated:Komplette individuelle objekter
@@ -572,28 +605,28 @@ English:Confirm your Password
 Translated:Bekræft dit kodeord
 
 English:Congratulations Print Complete
-Translated:Tillykke Udskriv Komplet
+Translated:Tillykke Print komplet
 
 English:Congratulations! Print Leveling is now configured and enabled.
-Translated:Tillykke! Udskriv nivellering er nu konfigureret og aktiveret.
+Translated:Tillykke! Print Leveling er nu konfigureret og aktiveret.
 
 English:Connect
-Translated:Opret forbindelse
+Translated:Forbinde
 
 English:Connect Bad Edges
-Translated:Tilslut dårlige kanter
+Translated:Forbind dårlige kanter
 
 English:Connect printer (make sure it is on)
 Translated:Tilslut printer (sørg for, at den er tændt)
 
 English:Connect to the currently selected printer
-Translated:Tilslut til den aktuelt valgte printer
+Translated:Opret forbindelse til den aktuelt valgte printer
 
 English:Connect to your printer to continue
-Translated:Tilslut til din printer for at fortsætte
+Translated:Opret forbindelse til din printer for at fortsætte
 
 English:Connect your printer to check for firmware updates.
-Translated:Tilslut din printer for at kontrollere firmwareopdateringer.
+Translated:Tilslut din printer for at kontrollere, om der findes firmwareopdateringer.
 
 English:Connected
 Translated:forbundet
@@ -608,19 +641,19 @@ English:Connection Lost
 Translated:Forbindelse afbrudt
 
 English:Connection succeeded
-Translated:Forbindelse lykkedes
+Translated:Forbindelsen lykkedes
 
 English:Connection timed out
-Translated:Forbindelsen udløbet
+Translated:Forbindelsen blev afbrudt
 
 English:Connection Timeout
-Translated:Connection Timeout
+Translated:Forbindelse Timeout
 
 English:Continue
 Translated:Blive ved
 
 English:Continue Printing
-Translated:Fortsæt Udskrivning
+Translated:Fortsæt med at udskrive
 
 English:Controls
 Translated:Controls
@@ -629,28 +662,28 @@ English:Controls the amount of extrusion
 Translated:Kontrollerer mængden af ekstrudering
 
 English:Controls the speed of printer moves
-Translated:Styrer hastigheden af printeren bevæger sig
+Translated:Kontrollerer hastigheden på printerbevægelser
 
 English:Cooling
 Translated:Køling
 
 English:Cooling Thresholds
-Translated:Køletærskler
+Translated:Kølegrænser
 
 English:Copy
 Translated:Kopi
 
 English:Copy all settings including hardware calibration
-Translated:Kopier alle indstillinger, herunder hardwarekalibrering
+Translated:Kopier alle indstillinger inklusive hardwarekalibrering
 
 English:Copy and recalibrate
-Translated:Kopier og omkalibrere
+Translated:Kopier og kalibrer igen
 
 English:Copy everything but hardware specific calibration settings
-Translated:Kopier alt andet end hardwarespecifikke kalibreringsindstillinger
+Translated:Kopier alt undtagen hardwarespecifikke kalibreringsindstillinger
 
 English:Copy Mesh
-Translated:Kopier Mesh
+Translated:Copy Mesh
 
 English:Copy Printers
 Translated:Kopier printere
@@ -665,25 +698,25 @@ English:Could not find a selected button.
 Translated:Kunne ikke finde en valgt knap.
 
 English:Couldn't load file
-Translated:Kunne ikke indlæse filen
+Translated:Filen kunne ikke indlæses
 
 English:Couldn't save file
-Translated:Kunne ikke gemme filen
+Translated:Filen kunne ikke gemmes
 
 English:count or mm
-Translated:tæller eller mm
+Translated:tælle eller mm
 
 English:Create
 Translated:skab
 
 English:Create a hook so that the coin can be hung from a chain.
-Translated:Lav en krog, så mønten kan hænges fra en kæde.
+Translated:Opret en krog, så mønten kan hænges i en kæde.
 
 English:Create a hook so the Braille can be hung from a necklace or keychain.
-Translated:Lav en krog, så Braille kan hænges fra en halskæde eller nøglering.
+Translated:Opret en krog, så Braille kan hænges i en halskæde eller nøglering.
 
 English:Create a printer to export G-Code
-Translated:Opret en printer til at eksportere G-kode
+Translated:Opret en printer for at eksportere G-kode
 
 English:Create Account
 Translated:Opret konto
@@ -692,13 +725,13 @@ English:Create An Account
 Translated:Opret en konto
 
 English:Create Brim
-Translated:Opret Brim
+Translated:Opret randen
 
 English:Create Folder
 Translated:Opret mappe
 
 English:Create Part Sheet
-Translated:Opret del ark
+Translated:Opret delark
 
 English:Create Perimeter
 Translated:Opret omkreds
@@ -707,7 +740,7 @@ English:Create Printer
 Translated:Opret printer
 
 English:Create Raft
-Translated:Opret raft
+Translated:Opret flåde
 
 English:Create Skirt
 Translated:Opret nederdel
@@ -716,19 +749,22 @@ English:Create Support
 Translated:Opret support
 
 English:Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Opretter en rand fastgjort til bunden af printet. Nyttig til at forhindre forvridning, når du udskriver ABS (og anden væskepåvirket plast), da det hjælper dele med at holde sig til sengen.
+Translated:Opretter en rand bundet til bunden af udskriften. Nyttigt til at forhindre vridning, når du udskriver ABS (og anden snoede plast), da det hjælper dele med at klæbe til sengen.
 
 English:Creates a perimeter around the part on which to wipe the other nozzle when printing using dual extrusion. Set to 0 to disable.
-Translated:Opretter en omkreds rundt om den del, hvor den anden dyse skal tørres ved udskrivning ved hjælp af dobbelt ekstrudering. Indstil til 0 for at deaktivere.
+Translated:Opretter en omkreds omkring den del, hvorpå du kan aftørre den anden dyse, når du udskriver ved hjælp af dobbelt ekstrudering. Indstil til 0 for at deaktivere.
 
 English:Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.
-Translated:Opretter en flåde under den udskrevne del. Nyttig til at forhindre forvridning, når du udskriver ABS (og anden væskepåvirket plast), da det hjælper dele med at holde sig til sengen.
+Translated:Opretter en flåde under den udskrevne del. Nyttigt til at forhindre vridning, når du udskriver ABS (og anden snoede plast), da det hjælper dele med at klæbe til sengen.
 
 English:Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.
-Translated:Opretter en omrids omkring udskriften, men ikke knyttet til den. Dette er nyttigt til priming af dysen for at sikre, at plasten strømmer, når udskriften starter.
+Translated:Opretter en kontur omkring udskriften, men ikke knyttet til den. Dette er nyttigt til forberedelse af dysen for at sikre, at plastikken flyder, når udskrivningen starter.
 
 English:Creating firmware backup...
-Translated:Oprettelse af firmware backup ...
+Translated:Opretter sikkerhedskopi af firmware ...
+
+English:Creating Gear
+Translated:Oprettelse af gear
 
 English:Creation Data
 Translated:Oprettelsesdata
@@ -737,7 +773,7 @@ English:Cube
 Translated:Cube
 
 English:Current Build
-Translated:Nuværende Bygning
+Translated:Nuværende build
 
 English:Currently available serial ports.
 Translated:Aktuelt tilgængelige serielle porte.
@@ -773,10 +809,10 @@ English:Delete Printer?
 Translated:Slet printer?
 
 English:Delete selection
-Translated:Slet markering
+Translated:Slet valg
 
 English:Demo Mode
-Translated:Demo Mode
+Translated:Demotilstand
 
 English:Density
 Translated:Massefylde
@@ -794,28 +830,28 @@ English:Description
 Translated:Beskrivelse
 
 English:Design Apps
-Translated:Design Apps
+Translated:Design-apps
 
 English:Design Name
-Translated:Designnavn
+Translated:Design navn
 
 English:Details
 Translated:detaljer
 
 English:Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.
-Translated:Opdag huller mellem perimetre, der er for tynde til at fylde med normal infill og forsøge at fylde dem.
+Translated:Registrer mellemrum, der er for tynde til at fyldes med normal udfyldning, og forsøg at udfylde dem.
 
 English:Detect perimeters that cross over themselves and combine them.
-Translated:Opdag omkreds, der krydser sig selv og kombinerer dem.
+Translated:Registrer perimetre, der krydser sig selv og kombinerer dem.
 
 English:Detect when walls are too close together and need to be extruded as just one wall.
-Translated:Opdag når vægge er for tæt sammen og skal ekstruderes som kun en væg.
+Translated:Registrer, når væggene er for tæt på hinanden og skal ekstruderes som blot en væg.
 
 English:Detecting device firmware...
-Translated:Registrering af firmware til enheden ...
+Translated:Registrerer enheds firmware ...
 
 English:Detects sections of the model that would be too thin to print and expands them to make them printable.
-Translated:Registrerer dele af modellen, der ville være for tynde til at udskrive og udvider dem for at gøre dem printbare.
+Translated:Registrerer dele af modellen, der ville være for tynd til at udskrive, og udvider dem til at gøre dem udskrivelige.
 
 English:Developed By
 Translated:Udviklet af
@@ -824,7 +860,7 @@ English:Diameter
 Translated:Diameter
 
 English:Disable Fan For The First
-Translated:Deaktiver fan for første gang
+Translated:Deaktiver ventilator til det første
 
 English:Disabled: {0}
 Translated:Deaktiveret: {0}
@@ -833,13 +869,13 @@ English:Disconnect
 Translated:Koble fra
 
 English:Disconnect and stop the current print?
-Translated:Afbryd og stop det aktuelle print?
+Translated:Frakobl og stop den aktuelle udskrivning?
 
 English:Disconnect from current printer
-Translated:Afbryd forbindelsen fra den aktuelle printer
+Translated:Frakobl forbindelsen fra den aktuelle printer
 
 English:Disconnect printer
-Translated:Afbryd printeren
+Translated:Frakobl printeren
 
 English:Disconnected
 Translated:afbrudt
@@ -848,7 +884,7 @@ English:Disconnecting
 Translated:Afbrydelse
 
 English:Disconnecting from printer...
-Translated:Afbrydelse fra printer ...
+Translated:Frakobler printeren ...
 
 English:Dismiss
 Translated:Afskedige
@@ -860,13 +896,13 @@ English:Distance From Object
 Translated:Afstand fra objekt
 
 English:Distance or Loops
-Translated:Afstand eller Loops
+Translated:Afstand eller sløjfer
 
 English:Done
 Translated:Færdig
 
 English:Don't remind me again
-Translated:Husk mig ikke igen
+Translated:Husk ikke igen
 
 English:Don't show this again
 Translated:Vis ikke dette igen
@@ -881,10 +917,10 @@ English:Download Update
 Translated:Download opdatering
 
 English:Downloading firmware update...
-Translated:Hent opdatering af firmware ...
+Translated:Downloader firmwareopdatering ...
 
 English:Downloading updates...
-Translated:Henter opdateringer ...
+Translated:Downloader opdateringer ...
 
 English:Downloading...
 Translated:Downloader ...
@@ -893,13 +929,19 @@ English:Downloads
 Translated:Downloads
 
 English:Dual Extrusion Align
-Translated:Justering af dobbelt ekstrudering
+Translated:Dual Extrusion Align
 
 English:Duplicate
 Translated:Duplikere
 
+English:Each extruder has a separate part cooling fan that is controlled independently.
+Translated:Hver ekstruder har en separat kølevifte, der styres uafhængigt.
+
+English:Each Extruder Has Fan
+Translated:Hver ekstruder har ventilator
+
 English:Each individual part is printed to completion then the nozzle is lowered back to the bed and the next part is printed.
-Translated:Hver enkelt del udskrives til færdiggørelse, så dysen sænkes tilbage til sengen, og den næste del udskrives.
+Translated:Hver enkelt del udskrives til færdiggørelse, derefter sænkes dysen tilbage til sengen, og den næste del udskrives.
 
 English:edit
 Translated:redigere
@@ -917,7 +959,7 @@ English:Edit Macro
 Translated:Rediger makro
 
 English:Edit OpenSCAD script
-Translated:Rediger OpenSCAD script
+Translated:Rediger OpenSCAD-script
 
 English:Edit Page
 Translated:Rediger side
@@ -929,7 +971,7 @@ English:Editor Selector
 Translated:Editor Selector
 
 English:EEProm Settings
-Translated:EEProm Indstillinger
+Translated:EEProm-indstillinger
 
 English:Elbow
 Translated:Albue
@@ -944,19 +986,22 @@ English:Empty Bed
 Translated:Tom seng
 
 English:Emulate Endstops
-Translated:Emulere endeafbrydelser
+Translated:Efterligne endestop
+
+English:Enable advanced features like specifying when the twist starts and stops on the part.
+Translated:Aktivér avancerede funktioner som at specificere, hvornår twist starter og stopper fra delen.
 
 English:Enable Auto Cooling
-Translated:Aktivér automatisk køling
+Translated:Aktivér automatisk afkøling
 
 English:Enable Extruder Lift
 Translated:Aktivér ekstruderløft
 
 English:Enable Fan
-Translated:Aktivér fan
+Translated:Aktivér ventilator
 
 English:Enable Line Splitting
-Translated:Aktivér linjeskiftning
+Translated:Aktivér linjespaltning
 
 English:Enable Recovery
 Translated:Aktivér gendannelse
@@ -965,10 +1010,10 @@ English:Enable Retractions
 Translated:Aktivér tilbagetrækninger
 
 English:Enable Software Leveling
-Translated:Aktivér softwarenivellering
+Translated:Aktivér software nivellering
 
 English:Enable this if your printer has hardware support for G30 (automatic bed probing) and you want to use it rather than manually measuring the probe positions.
-Translated:Aktivér dette, hvis din printer har hardware-understøttelse til G30 (automatisk sengforskydning), og du vil bruge den i stedet for manuelt at måle sondepositionerne.
+Translated:Aktivér dette, hvis din printer har hardwarestøtte til G30 (automatisk sengetest) og du vil bruge den i stedet for manuelt at måle sonde-positioner.
 
 English:End
 Translated:Ende
@@ -976,11 +1021,14 @@ Translated:Ende
 English:End G-Code
 Translated:Afslut G-kode
 
+English:Ensure that each reduced point is on the surface of the original mesh. This is not normally required and slows the computation significantly.
+Translated:Sørg for, at hvert reduceret punkt er på overfladen af det originale net. Dette er normalt ikke påkrævet og bremser beregningen markant.
+
 English:Ensure that the part maintains its proportions.
-Translated:Sørg for, at delen opretholder sine proportioner.
+Translated:Sørg for, at delen opretholder dens proportioner.
 
 English:Ensures the rotated part has a minimum number of sides per complete rotation
-Translated:Sikrer den roterede del har et minimum antal sider pr. Fuldstændig rotation
+Translated:Sikrer, at den roterede del har et minimum antal sider pr. Komplet rotation
 
 English:Enter a Design Name Here
 Translated:Indtast et designnavn her
@@ -995,7 +1043,7 @@ English:Enter reset code
 Translated:Indtast nulstillingskode
 
 English:Enter Share Code
-Translated:Indtast Share Code
+Translated:Indtast delingskode
 
 English:Enter your email address
 Translated:Indtast din e-mailadresse
@@ -1007,13 +1055,13 @@ English:Enter your password
 Translated:Skriv dit kodeord
 
 English:Enter your username or email address
-Translated:Indtast dit brugernavn eller din emailadresse
+Translated:Indtast dit brugernavn eller din e-mail-adresse
 
 English:Error
 Translated:Fejl
 
 English:Error compiling OpenSCAD script
-Translated:Fejl ved compilering af OpenSCAD script
+Translated:Fejl ved kompilering af OpenSCAD-script
 
 English:Error creating profile
 Translated:Fejl ved oprettelse af profil
@@ -1028,19 +1076,25 @@ English:Error Reported
 Translated:Fejl rapporteret
 
 English:Error saving file
-Translated:Fejl ved at gemme fil
+Translated:Fejl ved lagring af fil
 
 English:Estimated Cost
-Translated:Anslået pris
+Translated:Anslåede omkostninger
 
 English:Estimated Mass
 Translated:Anslået masse
+
+English:Evaluate every layer for support requirements. Support will be algorithmically generated and not user editable. NOTE: If there is any user generated support no algorithmic support will be generated.
+Translated:Evaluer hvert lag for supportkrav. Support genereres algoritmisk og kan ikke redigeres af brugeren. BEMÆRK: Hvis der er nogen brugergenereret support, genereres ingen algoritmisk support.
 
 English:Exact clone
 Translated:Præcis klon
 
 English:Exit while printing
 Translated:Afslut under udskrivning
+
+English:Expand
+Translated:Udvide
 
 English:Expand All
 Translated:Udvid alle
@@ -1058,10 +1112,10 @@ English:Export
 Translated:Eksport
 
 English:Export Bed Leveling Data
-Translated:Eksporter Bed Leveling Data
+Translated:Eksporter bed nivelleringsdata
 
 English:Export EEPROM
-Translated:Eksport EEPROM
+Translated:Eksporter EEPROM
 
 English:Export EEPROM Settings
 Translated:Eksporter EEPROM-indstillinger
@@ -1073,7 +1127,7 @@ English:Export File
 Translated:Eksporter fil
 
 English:Export G-Code
-Translated:Eksporter G-kode
+Translated:Eksport af G-kode
 
 English:Export Part Sheet
 Translated:Eksporter delark
@@ -1082,10 +1136,10 @@ English:Export Printer
 Translated:Eksporter printer
 
 English:Export selection to
-Translated:Eksporter udvælgelse til
+Translated:Eksporter markering til
 
 English:Export X3G
-Translated:Eksporter X3G
+Translated:Eksport X3G
 
 English:Exporting
 Translated:Eksport
@@ -1094,13 +1148,13 @@ English:External Perimeters First
 Translated:Eksterne perimetre først
 
 English:Extra Length After Tool Change
-Translated:Ekstra længde efter værktøjsændring
+Translated:Ekstra længde efter skift af værktøj
 
 English:Extra Length On Restart
 Translated:Ekstra længde ved genstart
 
 English:Extrude
-Translated:extrude
+Translated:Extrude
 
 English:Extrude filament
 Translated:Ekstruder filament
@@ -1112,31 +1166,31 @@ English:Extruder
 Translated:ekstruder
 
 English:Extruder 2 Clean Page
-Translated:Ekstruder 2 Rengør side
+Translated:Ekstruder 2 Ren side
 
 English:Extruder 2 Speed
 Translated:Ekstruder 2 hastighed
 
 English:Extruder 2 Temperature
-Translated:Ekstruder 2 Temperatur
+Translated:Ekstruder 2 temperatur
 
 English:Extruder 3 Temperature
-Translated:Ekstruder 3 Temperatur
+Translated:Ekstruder 3 temperatur
 
 English:Extruder 4 Temperature
-Translated:Ekstruder 4 Temperatur
+Translated:Ekstruder 4 temperatur
 
 English:Extruder Change
-Translated:Ekstruder Skift
+Translated:Extruder Change
 
 English:Extruder Count
 Translated:Extruder Count
 
 English:Extruder Temperature
-Translated:Ekstruderingstemperatur
+Translated:Ekstruder temperatur
 
 English:Extruder Wipe Temperature
-Translated:Ekstruder Tørretemperatur
+Translated:Ekstruder Tør temperatur
 
 English:Extruders
 Translated:ekstrudere
@@ -1145,7 +1199,7 @@ English:Extrusion
 Translated:Ekstrudering
 
 English:Extrusion Multiplier
-Translated:Ekstrusionsmultiplikator
+Translated:Ekstruderingsmultiplikator
 
 English:Extrusion Ratio
 Translated:Ekstruderingsforhold
@@ -1154,7 +1208,7 @@ English:Extrusion Width
 Translated:Ekstruderingsbredde
 
 English:Failed to connect server
-Translated:Kunne ikke oprette forbindelse til serveren
+Translated:Kunne ikke tilslutte server
 
 English:Fan
 Translated:Ventilator
@@ -1172,25 +1226,25 @@ English:Filament
 Translated:filament
 
 English:Filament 2 Has Been Loaded
-Translated:Filament 2 er blevet lastet
+Translated:Filament 2 er indlæst
 
 English:Filament Has Been Loaded
-Translated:Filament er blevet lastet
+Translated:Glødetråd er indlæst
 
 English:Filament Length
-Translated:Filamentlængde
+Translated:Glødetrådens længde
 
 English:Filament Loaded
-Translated:Filamentbelastet
+Translated:Glødetråd indlæst
 
 English:Filament Speed
-Translated:Filament Speed
+Translated:Filamenthastighed
 
 English:Filament Unloaded
-Translated:Filament losset
+Translated:Glødetråd aflæst
 
 English:Filament Volume
-Translated:Filament Volume
+Translated:Glødetråd
 
 English:File May Cause Problems
 Translated:Fil kan forårsage problemer
@@ -1199,10 +1253,10 @@ English:File Path
 Translated:Filsti
 
 English:Fill Density
-Translated:Fyldt tæthed
+Translated:Fyldtæthed
 
 English:Fill Pattern
-Translated:Fyldmønster
+Translated:Udfyld mønster
 
 English:Fill Thin Gaps
 Translated:Fyld tynde huller
@@ -1210,11 +1264,14 @@ Translated:Fyld tynde huller
 English:Filters
 Translated:filtre
 
+English:Final Count
+Translated:Endelig tælling
+
 English:Finally click 'Next' to continue.
-Translated:Klik endelig på 'Næste' for at fortsætte.
+Translated:Klik til sidst på 'Næste' for at fortsætte.
 
 English:Find and create supports where needed
-Translated:Find og opret support når det er nødvendigt
+Translated:Find og opret understøttelser, hvor det er nødvendigt
 
 English:Fine
 Translated:Bøde
@@ -1226,10 +1283,10 @@ English:Finished Print
 Translated:Færdig udskrivning
 
 English:Finished Print: {0}
-Translated:Færdig Udskriv: {0}
+Translated:Færdig udskrivning: {0}
 
 English:Finishing Startup
-Translated:Afslutning af opstart
+Translated:Afslut opstart
 
 English:Firmware download failed
 Translated:Firmware-download mislykkedes
@@ -1238,19 +1295,25 @@ English:Firmware EEPROM Settings
 Translated:Firmware EEPROM-indstillinger
 
 English:Firmware restored successfully. Please reconnect.
-Translated:Firmware repareres med succes. Venligst tilslut igen.
+Translated:Firmware gendannes med succes. Forbind igen.
+
+English:Firmware Type
+Translated:Firmwaretype
 
 English:Firmware updated successfully. Please reconnect.
-Translated:Firmware opdateret med succes. Venligst tilslut igen.
+Translated:Firmware blev opdateret. Forbind igen.
 
 English:Firmware Updates
-Translated:Firmware opdateringer
+Translated:Firmware-opdateringer
 
 English:Firmware Version: {0}
-Translated:Firmware Version: {0}
+Translated:Firmwareversion: {0}
 
 English:First Layer
 Translated:Første lag
+
+English:First Layer Bed Temperature
+Translated:Første lags temperatur
 
 English:First Layer Only
 Translated:Kun første lag
@@ -1262,25 +1325,25 @@ English:Fit to Bounds
 Translated:Fit to Bounds
 
 English:Fit to Cylinder
-Translated:Tilpas til cylinder
+Translated:Passer til cylinder
 
 English:Flag for the state of our filament loaded on extruder 2.
-Translated:Flag for tilstanden af vores filament på ekstruderen 2.
+Translated:Flag for tilstanden af vores filament indlæst på ekstruder 2.
 
 English:Flag for the state of our filament loaded.
-Translated:Flag for tilstanden af vores filament belastet.
+Translated:Flag for tilstanden af vores filament indlæst.
 
 English:Flag keeping track if probe calibration wizard has been run.
-Translated:Flag med at holde styr på om probe kalibrering guiden er kørt.
+Translated:Flag holder spor, hvis sondekalibreringsguiden er blevet kørt.
 
 English:Flag keeping track if xy calibration wizard has been run.
-Translated:Flag med at holde styr på, om xy-kalibreringsguiden er kørt.
+Translated:Flag holder spor, hvis xy-kalibreringsguiden er blevet kørt.
 
 English:Flat
 Translated:Flad
 
 English:Flatten
-Translated:Flatten
+Translated:Samkopier
 
 English:Flattened
 Translated:fladtrykt
@@ -1292,19 +1355,19 @@ English:Folders
 Translated:mapper
 
 English:Force a retraction when moving between islands (distinct parts on the layer).
-Translated:Force en tilbagetrækning, når du flytter mellem øer (forskellige dele på laget).
+Translated:Tving en tilbagetrækning, når du bevæger dig mellem øerne (forskellige dele på laget).
 
 English:Forces external perimeters to be printed first. By default, they will print last.
-Translated:Forces ydre perimetre, der skal udskrives først. Som standard vil de udskrive sidst.
+Translated:Tvinger eksterne omkredse, der først skal udskrives. Som standard udskriver de sidst.
 
 English:Forces the print to have only one extrusion and gradually increase the Z height during the print. Only one part will print at a time with this feature.
-Translated:Forcerer udskriften til kun at have en ekstrudering og gradvist øge Z højden under udskriften. Kun en del udskrives ad gangen med denne funktion.
+Translated:Tvinger udskriften til kun at have en ekstrudering og øger gradvist Z-højden under udskrivningen. Kun en del udskrives ad gangen med denne funktion.
 
 English:Forces the printer to heat the nozzle before homing.
-Translated:Forcerer printeren til at opvarme dysen, inden den homing.
+Translated:Tvinger printeren til at varme op dysen, inden den sættes i hjul.
 
 English:Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.
-Translated:Forcerer skiveren for at undgå at have perimeterlinien krydse over eksisterende perimeterlinjer. Dette kan hjælpe med oozing eller strings.
+Translated:Tvinger skæreskæren til at forsøge at undgå, at omkredslinjen krydser eksisterende perimeterlinjer. Dette kan hjælpe med oser eller strenge.
 
 English:Forgot Password
 Translated:Glemt kodeord
@@ -1313,64 +1376,76 @@ English:Forums
 Translated:Fora
 
 English:Found a line that is {0} characters long.\n{1}...
-Translated:Fandt en linje, der er {0} tegn lange.\n{1} ...
+Translated:Fundet en linje, der er {0} tegn lang.\n{1} ...
 
 English:g/cm³
 Translated:g / cm
 
 English:g0
-Translated:G0
+Translated:g0
 
 English:G-Code
 Translated:G-kode
 
 English:G-Code Flavor
-Translated:G-kode smag
+Translated:G-kodens smag
 
 English:G-Code Line
-Translated:G-kode linje
+Translated:G-kodelinje
 
 English:G-Code Output
 Translated:G-kode output
 
 English:G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kode, der skal køres efter hver værktøjsændring. Du kan bruge '; WRITE_RAW 'at springe over checksum eller'; NO_PROCESSING 'for at springe position modregning.
+Translated:G-kode, der skal køres efter hver værktøjsændring. Du kan bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
 
 English:G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kode, der skal køres efter skifte til ekstruder 2. Vil bruge standard efter G-kode, hvis den ikke er indstillet. Du kan bruge '; WRITE_RAW 'at springe over checksum eller'; NO_PROCESSING 'for at springe position modregning.
+Translated:G-kode, der skal køres efter skift til ekstruder 2. Bruger standard efter G-kode, hvis ikke indstillet. Du kan bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
+
+English:G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-kode, der skal køres efter skift til ekstruder 3. Bruger standard efter G-kode, hvis ikke indstillet. Du kan bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
 
 English:G-Code to be run after the change in Z height for the next layer.
-Translated:G-kode, der skal køres efter ændringen i Z-højden for det næste lag.
+Translated:G-kode, der skal køres efter ændringen i Z-højde for det næste lag.
 
 English:G-Code to be run at the end of all automatic output (the very end of the G-Code commands).
-Translated:G-kode, der skal køres ved slutningen af al automatisk udgang (i slutningen af G-kode kommandoer).
+Translated:G-kode, der skal køres i slutningen af al automatisk udgang (selve slutningen af G-kodekommandoer).
 
 English:G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kode, der skal køres før hver værktøjsændring. Du kan bruge '; WRITE_RAW 'at springe over checksum eller'; NO_PROCESSING 'for at springe position modregning.
+Translated:G-kode, der skal køres før hver værktøjsændring. Du kan bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
 
 English:G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
-Translated:G-kode, der skal køres, før der skiftes til ekstruder 2. Vil bruge standard før G-kode, hvis den ikke er indstillet. Du kan bruge [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] for at indstille ekstruderpositionen, hvis det er nødvendigt. Du kan også bruge '; WRITE_RAW 'at springe over checksum eller'; NO_PROCESSING 'for at springe position modregning.
+Translated:G-kode, der skal køres, før der skiftes til ekstruder 2. Bruger standard før G-kode, hvis ikke indstillet. Du kan bruge [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] til at indstille ekstruderpositionen om nødvendigt. Du kan også bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
+
+English:G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.
+Translated:G-kode, der skal køres, før der skiftes til ekstruder 3. Bruger standard før G-kode, hvis ikke indstillet. Du kan bruge [wipe_tower_x] [wipe_tower_y] og [wipe_tower_z] til at indstille ekstruderpositionen om nødvendigt. Du kan også bruge '; WRITE_RAW 'for at springe over testsummer eller'; NO_PROCESSING 'for at springe modregning af position.
 
 English:G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.
-Translated:G-kode, der skal køres umiddelbart efter temperaturindstillingerne. Inkluderet kommandoer til indstilling af temperatur i dette afsnit vil medføre, at de ikke genereres uden for dette afsnit. Vil acceptere Custom G-Code variabler.
+Translated:G-kode, der skal køres umiddelbart efter temperaturindstillingskommandoer. Hvis du inkluderer kommandoer til at indstille temperatur i dette afsnit, vil de ikke blive genereret uden for dette afsnit. Vil acceptere tilpassede G-kodevariabler.
 
 English:G-Code to be run when the print resumes after a pause.
 Translated:G-kode, der skal køres, når udskriften genoptages efter en pause.
 
 English:G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.
-Translated:G-kode for at køre efter vellykket forbindelse til en printer. Dette kan være nyttigt at indstille indstillinger, der er specifikke for en given printer.
+Translated:G-kode til at køre ved en vellykket forbindelse til en printer. Dette kan være nyttigt til at indstille specifikke indstillinger for en given printer.
 
 English:G-Code to run when a print is canceled.
-Translated:G-kode for at køre, når en udskrivning er annulleret.
+Translated:G-kode, der skal køres, når en udskrift annulleres.
 
 English:G-Code to run when the printer is paused.
-Translated:G-kode for at køre, når printeren er pauset.
+Translated:G-kode, der skal køres, når printeren er sat på pause.
+
+English:Gear
+Translated:Gear
 
 English:General
 Translated:Generel
 
 English:Generate
 Translated:Frembringe
+
+English:Generate Everywhere
+Translated:Generer overalt
 
 English:Generate Support
 Translated:Generer support
@@ -1379,13 +1454,13 @@ English:Generate Supports
 Translated:Generer understøtter
 
 English:Generates an outline around the support material to improve strength and hold up interface layers.
-Translated:Genererer et omrids omkring understøtningsmaterialet for at forbedre styrken og holde grænsefladerne op.
+Translated:Genererer en kontur omkring understøttelsesmaterialet for at forbedre styrken og fastholde grænsefladelag.
 
 English:Generating Lithophane
-Translated:Generering af lithofan
+Translated:Generering af litofan
 
 English:Generating Text Meshes
-Translated:Generering af tekstmapper
+Translated:Generering af tekstmasker
 
 English:Give the macro a name
 Translated:Giv makroen et navn
@@ -1397,13 +1472,13 @@ English:Guides and Articles
 Translated:Guider og artikler
 
 English:Half Cylinder
-Translated:Halvcylinder
+Translated:Halv cylinder
 
 English:Half Sphere
-Translated:Halvkugle
+Translated:Halv sfære
 
 English:Half Wedge
-Translated:Halvkile
+Translated:Halv kilen
 
 English:Hardware
 Translated:Hardware
@@ -1411,14 +1486,17 @@ Translated:Hardware
 English:Hardware Error
 Translated:Hardwarefejl
 
+English:Has C Axis
+Translated:Har C Axis
+
 English:Has Fan
-Translated:Har Fan
+Translated:Har ventilator
 
 English:Has Filament Runout Sensor
-Translated:Har Filament Runout Sensor
+Translated:Har filamentudløbssensor
 
 English:Has Hardware Leveling
-Translated:Har hardwarenivellering
+Translated:Har hardware nivellering
 
 English:Has Heated Bed
 Translated:Har opvarmet seng
@@ -1430,31 +1508,31 @@ English:Has SD Card Reader
 Translated:Har SD-kortlæser
 
 English:Has Z Probe
-Translated:Har Z Probe
+Translated:Har Z-sonde
 
 English:Has Z Servo
 Translated:Har Z Servo
 
 English:Have MatterControl send you email messages about your print
-Translated:Har MatterControl sende dig e-mail-meddelelser om dit print
+Translated:Få MatterControl til at sende dig e-mail-beskeder om dit udskrivning
 
 English:Have MatterControl send you text messages about your print
-Translated:Få MatterControl til at sende dig sms'er om dit print
+Translated:Få MatterControl til at sende dig tekstbeskeder om dit udskrivning
 
 English:Heat Before Homing
-Translated:Varm før Homing
+Translated:Varme inden hjemmet
 
 English:Heated Bed
 Translated:Opvarmet seng
 
 English:Heating Bed
-Translated:Opvarmning seng
+Translated:Varme Seng
 
 English:Heating Nozzle
 Translated:Opvarmningsdyse
 
 English:Heating the printer
-Translated:Opvarmning af printeren
+Translated:Opvarm printeren
 
 English:Height
 Translated:Højde
@@ -1469,10 +1547,19 @@ English:History
 Translated:Historie
 
 English:Holding Temperature
-Translated:Indholdstemperatur
+Translated:Holdetemperatur
+
+English:Hollow
+Translated:Hollow
+
+English:Hollow Out
+Translated:Udhule
 
 English:Home
 Translated:Hjem
+
+English:Home C
+Translated:Hjem C
 
 English:Home X
 Translated:Hjem X
@@ -1487,7 +1574,7 @@ English:Home Z
 Translated:Hjem Z
 
 English:Home Z Max
-Translated:Hjem Z Max
+Translated:Hjem Z Maks
 
 English:Homing
 Translated:homing
@@ -1496,7 +1583,7 @@ English:Homing Offset
 Translated:Homing Offset
 
 English:Homing the printer
-Translated:Homing printeren
+Translated:Hjemning af printeren
 
 English:Hotend
 Translated:Hotend
@@ -1511,13 +1598,13 @@ English:Hotend {0} Temperature:
 Translated:Hotend {0} Temperatur:
 
 English:Hotend Temperature
-Translated:Hotend Temperatur
+Translated:Varmetemperatur
 
 English:Hotend Temperature:
-Translated:Hotend Temperatur:
+Translated:Hotend temperatur:
 
 English:How can we improve?
-Translated:Hvordan kan vi forbedre?
+Translated:Hvordan kan vi forbedre os?
 
 English:Hz
 Translated:hz
@@ -1526,94 +1613,94 @@ English:Ideal for cloning settings across different physical printers
 Translated:Ideel til kloning af indstillinger på tværs af forskellige fysiske printere
 
 English:if currently connected
-Translated:hvis den er tilsluttet
+Translated:hvis der for øjeblikket er tilsluttet
 
 English:If set, the printer will automatically attempt to connect when selected.
-Translated:Hvis den er indstillet, forsøger printeren automatisk at tilslutte, når den er valgt.
+Translated:Hvis den er indstillet, forsøger printeren automatisk at oprette forbindelse, når den er valgt.
 
 English:If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.
-Translated:Hvis ekstruderen har kørt i lang tid, kan det være at rapportere værdier, der er for store, det vil det regelmæssigt blive nulstillet.
+Translated:Hvis ekstruderen har kørt i lang tid, rapporterer den muligvis for store værdier, dette nulstilles med jævne mellemrum.
 
 English:If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.
-Translated:Hvis tiden for at udskrive et lag er mindre end dette, vil blæseren tænde med minimumshastigheden. Det vil så rampe op til sin maksimale hastighed, da lagetiden falder.
+Translated:Hvis tiden til udskrivning af et lag er mindre end dette, tændes ventilatoren med sin mindste hastighed. Derefter rampes op til sin maksimale hastighed, når lagtiden reduceres.
 
 English:Image
 Translated:Billede
 
 English:Image Converter
-Translated:Image Converter
+Translated:Billedkonverter
 
 English:Image to Path
 Translated:Billede til sti
 
 English:Immediately turn off heaters
-Translated:Sluk straks varmeovne
+Translated:Sluk straks for varmeapparater
 
 English:Import
 Translated:Importere
 
 English:Import EEPROM
-Translated:Import EEPROM
+Translated:Importer EEPROM
 
 English:Import EEPROM Settings
 Translated:Importer EEPROM-indstillinger
 
 English:Import Presets
-Translated:Import forudindstillinger
+Translated:Importer forudindstillinger
 
 English:Import Printer
-Translated:Import printer
+Translated:Importer printer
 
 English:Import Successful
-Translated:Import Succesfuld
+Translated:Import succesfuld
 
 English:Import Wizard
-Translated:Importguiden
+Translated:Importguide
 
 English:In / Out Indicators
-Translated:Ind / Ud-indikatorer
+Translated:Ind / ud indikatorer
 
 English:Inactive Cool Down
-Translated:Inaktiv nedkøling
+Translated:Inaktiv afkøling
 
 English:Include a picture of my print
 Translated:Medtag et billede af min udskrift
 
 English:Indicates that the Z axis homes the hot end away from the bed (z-max homing)
-Translated:Indikerer, at Z-aksen hjemmer den varme ende væk fra sengen (z-max homing)
+Translated:Angiver, at Z-aksen hjemmer den varme ende væk fra sengen (z-max homing)
 
 English:Infill
 Translated:infill
 
 English:Infill Angle
-Translated:Infill Angle
+Translated:Udfyld vinkel
 
 English:Infill Overlap
-Translated:Infill overlapning
+Translated:Udfyld overlapning
 
 English:Infill Type
-Translated:Infill Type
+Translated:Udfyld type
 
 English:Inflate Path
-Translated:Inflate Path
+Translated:Oppustningssti
 
 English:Initial (Recommended)
-Translated:Initial (Anbefalet)
+Translated:Indledende (anbefalet)
 
 English:Initial Layer Speed
-Translated:Indledende laghastighed
+Translated:Første lagshastighed
 
 English:Initial Layers
 Translated:Indledende lag
 
 English:Initializing hardware...
-Translated:Initialisering af hardware ...
+Translated:Initialiserer hardware ...
 
 English:Initializing Library
 Translated:Initialisering af bibliotek
 
 English:Inner Radius
-Translated:Indre Radius
+Translated:Indre radius
 
 English:Inner Size
 Translated:Indvendig størrelse
@@ -1622,13 +1709,13 @@ English:Insert Filament
 Translated:Indsæt filament
 
 English:Insert Filament 2 Page
-Translated:Indsæt filament 2 side
+Translated:Indsæt filament 2-side
 
 English:Insert Filament Page
 Translated:Indsæt filamentside
 
 English:Inside Perimeters
-Translated:Indvendige perimetre
+Translated:Inde i perimetre
 
 English:Install Update
 Translated:Installer opdatering
@@ -1637,10 +1724,10 @@ English:Interface
 Translated:grænseflade
 
 English:Interface Layer
-Translated:Interface Layer
+Translated:Interfacelag
 
 English:Interface Layers
-Translated:Interface lag
+Translated:Grænsefladelag
 
 English:Interface Tour
 Translated:Interface Tour
@@ -1655,7 +1742,7 @@ English:Invalid Client Token
 Translated:Ugyldig klienttoken
 
 English:Invalid printer selection
-Translated:Ugyldigt valg af printer
+Translated:Ugyldigt printervalg
 
 English:Inventory
 Translated:Beholdning
@@ -1667,34 +1754,34 @@ English:IP Address
 Translated:IP-adresse
 
 English:IP Address of printer/printer controller
-Translated:IP-adresse på printer / printer controller
+Translated:IP-adresse på printer / printercontroller
 
 English:IP Finder
 Translated:IP Finder
 
 English:It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?
-Translated:Det ser ud til, at dit sidste udskriftsbillede ikke kunne gennemføres.\n\nVil du gerne forsøge at komme sig fra den sidste vide position?
+Translated:Det ser ud til, at din sidste udskrivning ikke kunne gennemføres.\n\nVil du gerne prøve at komme sig efter den sidste kendte position?
 
 English:It is currently set to {0}.
-Translated:Den er for øjeblikket sat til {0}.
+Translated:Det er i øjeblikket indstillet til {0}.
 
 English:Item cannot be exported
-Translated:Elementet kan ikke eksporteres
+Translated:Varen kan ikke eksporteres
 
 English:Item cannot be exported as STL
 Translated:Varen kan ikke eksporteres som STL
 
 English:Item not Found
-Translated:Vare ikke fundet
+Translated:Varen er ikke fundet
 
 English:Jerk Velocity
 Translated:Jerk Velocity
 
 English:Keep the entire extents of the part within the angle described.
-Translated:Hold hele delens udstrækning inden for den beskrevne vinkel.
+Translated:Hold hele delene af delen inden for den beskrevne vinkel.
 
 English:Keep Within Angle
-Translated:Hold indenfor vinkel
+Translated:Hold inden for vinkel
 
 English:Keys
 Translated:nøgler
@@ -1703,13 +1790,13 @@ English:Language
 Translated:Sprog
 
 English:Lay Flat
-Translated:Lay Flat
+Translated:Læg fladt
 
 English:Layer
 Translated:Lag
 
 English:Layer Change G-Code
-Translated:Layer Change G-Code
+Translated:Lagskift G-kode
 
 English:Layer Thickness
 Translated:Lagtykkelse
@@ -1718,13 +1805,13 @@ English:Layer Top
 Translated:Layer Top
 
 English:Layer(s) To Pause
-Translated:Layer (s) Til Pause
+Translated:Lag (r) til pause
 
 English:layers
 Translated:lag
 
 English:Layers / Surface
-Translated:Lag / Overflade
+Translated:Lag / overflade
 
 English:layers or mm
 Translated:lag eller mm
@@ -1742,16 +1829,16 @@ English:Length
 Translated:Længde
 
 English:Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).
-Translated:Længden af ekstra filament til ekstrudering efter en komplet værktøjsændring (ud over re-ekstrudering af værktøjsændringen tilbagetrækningsafstand).
+Translated:Længde på ekstra filament til ekstrudering efter en komplet værktøjsskift (ud over genekstrudering af værktøjsskiftets tilbagetrækningsafstand).
 
 English:Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).
-Translated:Længden af filament til ekstrudering efter en fuldstændig tilbagetrækning (ud over re-ekstrudering af længden på bevægelsesafstand).
+Translated:Filamentens længde til ekstrudering efter en fuldstændig tilbagetrækning (ud over genekstrudering af længden længde på bevægelse).
 
 English:Length on Tool Change
-Translated:Længde på værktøjsændring
+Translated:Længde på værktøjsskift
 
 English:Let's show you around before you get started.
-Translated:Lad os vise dig rundt, før du kommer i gang.
+Translated:Lad os vise dig rundt, inden du kommer i gang.
 
 English:Letter
 Translated:Brev
@@ -1775,25 +1862,28 @@ English:Library
 Translated:Bibliotek
 
 English:Library - Enter Share Code
-Translated:Bibliotek - Indtast Share Code
+Translated:Bibliotek - Indtast delingskode
 
 English:Limited Connectivity
 Translated:Begrænset forbindelse
 
 English:Line Checksums
-Translated:Line Checksums
+Translated:Linjekontrol
 
 English:Line Inspector
-Translated:Line Inspector
+Translated:Linieinspektør
+
+English:Line Support Overlap
+Translated:Overlapning af linjesupport
 
 English:Linear Array
-Translated:Lineær Array
+Translated:Lineær array
 
 English:Linear Extrude
-Translated:Lineær Ekstruder
+Translated:Linear Extrude
 
 English:List of IP's discovered on the network
-Translated:Liste over IP'er opdaget på netværket
+Translated:Liste over IP'er fundet på netværket
 
 English:Lithophane
 Translated:Lithophane
@@ -1802,31 +1892,31 @@ English:Load
 Translated:belastning
 
 English:Load Extruder
-Translated:Load Extruder
+Translated:Belastning af ekstruder
 
 English:Load Extruder {0}
-Translated:Load Extruder {0}
+Translated:Indlæs ekstruder {0}
 
 English:Load filament
-Translated:Indlæs filament
+Translated:Læg glødetråd
 
 English:Load Filament
-Translated:Indlæs filament
+Translated:Indlæs glødetråd
 
 English:Load Filament Length
 Translated:Indlæs filamentlængde
 
 English:Load Filament to continue
-Translated:Indlæs filament for at fortsætte
+Translated:Ilæg filament for at fortsætte
 
 English:Load Material
-Translated:Belastningsmateriale
+Translated:Indlæs materiale
 
 English:Loading
 Translated:Indlæser
 
 English:Loading Filament
-Translated:Ilægning af filament
+Translated:Indlæser filament
 
 English:Loading GCode
 Translated:Indlæser GCode
@@ -1850,28 +1940,28 @@ English:Low Precision
 Translated:Lav præcision
 
 English:Lower / Deploy
-Translated:Lavere / implementere
+Translated:Sænk / indsæt
 
 English:Machine File (G-Code)
 Translated:Maskinfil (G-kode)
 
 English:Macro Commands
-Translated:Makrokommandoer
+Translated:Makro-kommandoer
 
 English:Macro Editor
-Translated:Makro Editor
+Translated:Makroeditor
 
 English:Macro Name
-Translated:Makro navn
+Translated:Makronavn
 
 English:Macro Presets
-Translated:Makroindstillinger
+Translated:Makroforudindstillinger
 
 English:Macros
 Translated:Makroer
 
 English:Maintain Proportions
-Translated:Bevar Andel
+Translated:Oprethold proportioner
 
 English:make
 Translated:lave
@@ -1879,44 +1969,44 @@ Translated:lave
 English:Make
 Translated:Lave
 
+English:Make all the faces have a consistent orientation.
+Translated:Få alle ansigterne til at have en ensartet orientering.
+
 English:Make Component
 Translated:Lav komponent
 
 English:Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.
-Translated:Gør MatterControl efterligner sengegrænser og stop i software og forhindrer printeren i at flytte til ugyldige steder.
+Translated:Få MatterControl til at efterligne sengegrænser og endestop i software og forhindre printeren i at flytte til ugyldige placeringer.
 
 English:Make Selection
-Translated:Lav valg
+Translated:Foretag valg
 
 English:Make sure the first point on a perimeter is a concave point.
-Translated:Sørg for at det første punkt på en omkreds er et konkavt punkt.
+Translated:Sørg for, at det første punkt på en omkreds er et konkavt punkt.
 
 English:Make sure the first point on a perimeter is not an overhang.
-Translated:Sørg for at det første punkt på en omkreds ikke er et overhæng.
+Translated:Sørg for, at det første punkt på en omkreds ikke er et overhæng.
 
 English:Make the first layer on top of partial infill use the speed and fan for bridging.
-Translated:Lav det første lag på toppen af delvis infill, brug hastigheden og ventilatoren til brodannelse.
-
-English:Manifold
-Translated:Manifold
+Translated:Lav det første lag oven på delvis udfyldning, brug hastigheden og ventilatoren til at bygge bro.
 
 English:Manual Movement Speeds
-Translated:Manuel bevægelseshastigheder
+Translated:Manuel bevægelseshastighed
 
 English:Manually Configure Connection
-Translated:Manuel konfiguration af forbindelse
+Translated:Konfigurer forbindelse manuelt
 
 English:Markdown Edit
-Translated:Markdown Rediger
+Translated:Markdown Edit
 
 English:Marlin Firmware EEPROM Settings
-Translated:Marlin Firmware EEPROM Indstillinger
+Translated:Marlin Firmware EEPROM-indstillinger
 
 English:Material
 Translated:Materiale
 
 English:Material density. Only used for estimating mass in the Layer View.
-Translated:Materialetæthed. Anvendes kun til estimering af masse i Layer View.
+Translated:Materialetæthed. Bruges kun til beregning af masse i lagvisningen.
 
 English:Materials
 Translated:Materialer
@@ -1928,22 +2018,25 @@ English:MatterControl Help
 Translated:MatterControl Hjælp
 
 English:MatterControl is made possible by the team at MatterHackers and other open source software
-Translated:MatterControl er muliggjort af teamet hos MatterHackers og anden open source software
+Translated:MatterControl er gjort muligt af teamet hos MatterHackers og anden open source-software
 
 English:MatterControl Plugins
-Translated:MatterControl Plugins
+Translated:MatterControl-plugins
 
 English:MatterControl will now attempt to auto-detect printer.
-Translated:MatterControl vil nu forsøge at automatisk registrere printeren.
+Translated:MatterControl vil nu forsøge at registrere automatisk printer.
 
 English:MatterControl: Select Firmware File
-Translated:MatterControl: Vælg Firmware File
+Translated:MatterControl: Vælg firmwarefil
 
 English:MatterHackers Internal Use
 Translated:MatterHackers intern brug
 
 English:Max Acceleration
-Translated:Max acceleration
+Translated:Maks acceleration
+
+English:Max Ratio
+Translated:Maks. Forhold
 
 English:Max Velocity
 Translated:Max hastighed
@@ -1952,67 +2045,67 @@ English:Maximum Acceleration [mm/s²]
 Translated:Maksimal acceleration [mm / s²]
 
 English:Maximum E jerk [mm/s]
-Translated:Maksimal E dug [mm / s]
+Translated:Maksimum E-rykk [mm / s]
 
 English:Maximum feedrates [mm/s]
-Translated:Maksimale tilførselshastigheder [mm / s]
+Translated:Maksimale tilførselshastighed [mm / s]
 
 English:Maximum Speed
 Translated:Maksimal hastighed
 
 English:Maximum X-Y jerk [mm/s]
-Translated:Maksimal X-Y jerk [mm / s]
+Translated:Maksimum X-Y-rykk [mm / s]
 
 English:Maximum Z jerk [mm/s]
-Translated:Maksimal Z rykkelse [mm / s]
+Translated:Maksimum Z-rykk [mm / s]
 
 English:Measure the nozzle offset
-Translated:Mål dysens forskydning
+Translated:Mål dyseforskydningen
 
 English:Medium Precision
-Translated:Medium Precision
+Translated:Medium præcision
 
 English:Merge Overlapping Lines
-Translated:Flette overlappende linjer
+Translated:Flet overlappende linjer
 
 English:Merge Vertices
-Translated:Flette hjørner
+Translated:Flet vertikaler
 
 English:Mesh
 Translated:mesh
 
 English:Mesh Modifiers
-Translated:Mesh Modifikatorer
+Translated:Mesh modificeringsmaskiner
 
 English:Message
 Translated:Besked
 
 English:middle drag
-Translated:mellemtræk
+Translated:midttræk
 
 English:Min feedrate [mm/s]
-Translated:Min strømningshastighed [mm / s]
+Translated:Min foderhastighed [mm / s]
 
 English:Min travel feedrate [mm/s]
-Translated:Min rejsetilførselshastighed [mm / s]
+Translated:Min kørselsfoderhastighed [mm / s]
 
 English:Minimum Extrusion Length
 Translated:Minimum ekstruderingslængde
 
 English:Minimum Extrusion Requiring Retraction
-Translated:Minimum ekstrudering kræver tilbagekaldelse
+Translated:Minimum ekstrudering, der kræver tilbagetrækning
 
 English:Minimum Print Speed
-Translated:Mindste udskrivningshastighed
+Translated:Minimum udskrivningshastighed
 
 English:Minimum segment time [ms]
-Translated:Mindste segmenttid [ms]
+Translated:Minimum segmenttid [ms]
 
 English:Minimum Speed
 Translated:Minimum hastighed
 
 English:Minimum Travel Requiring Retraction
-Translated:Mindste rejse kræver tilbagekaldelse
+Translated:Minimum rejse, der kræver tilbagetrækning
 
 English:Mirror
 Translated:Spejl
@@ -2054,7 +2147,7 @@ English:Modify
 Translated:Modificere
 
 English:Modify T1 speeds during extrusion moves by the ratio or percent.
-Translated:Ændre T1-hastigheder under ekstrudering bevæger sig ved forholdet eller procenten.
+Translated:Rediger T1-hastigheder under ekstruderingsbevægelser med forholdet eller procentdelen.
 
 English:More
 Translated:Mere
@@ -2081,10 +2174,10 @@ English:Move X negative
 Translated:Flyt X negativ
 
 English:Move X positive
-Translated:Flyt X positiv
+Translated:Flyt X-positiv
 
 English:Move Y negative
-Translated:Flyt Y-negativ
+Translated:Flyt Y negativ
 
 English:Move Y positive
 Translated:Flyt Y positiv
@@ -2093,7 +2186,7 @@ English:Move Z negative
 Translated:Flyt Z negativ
 
 English:Move Z positive
-Translated:Flyt Z positiv
+Translated:Flyt Z-positiv
 
 English:Movement
 Translated:Bevægelse
@@ -2102,16 +2195,16 @@ English:Movement Requests
 Translated:Bevægelsesanmodninger
 
 English:Movement Speeds
-Translated:Bevægelseshastigheder
+Translated:Bevægelseshastighed
 
 English:Movement Speeds Presets
-Translated:Bevægelseshastigheder forudindstilles
+Translated:Forudindstillinger for bevægelseshastighed
 
 English:Moves
 Translated:Flytter sig
 
 English:Moves the nozzle up and off the part to allow cooling.
-Translated:Flytter dysen op og ud af delen for at tillade afkøling.
+Translated:Flytter dysen op og ned fra delen for at tillade køling.
 
 English:My Modified Settings
 Translated:Mine ændrede indstillinger
@@ -2135,10 +2228,10 @@ English:New Printer Name
 Translated:Nyt printernavn
 
 English:New updates are ready to install
-Translated:Nye opdateringer er klar til at installere
+Translated:Nye opdateringer er klar til installation
 
 English:New updates may be available
-Translated:Nye opdateringer kan være tilgængelige
+Translated:Nye opdateringer er muligvis tilgængelige
 
 English:New User? 
 Translated:Ny bruger?
@@ -2156,16 +2249,16 @@ English:No COM ports available
 Translated:Ingen COM-porte til rådighed
 
 English:No items to Export
-Translated:Ingen varer til eksport
+Translated:Ingen varer at eksportere
 
 English:No Items to Export
-Translated:Ingen emner til eksport
+Translated:Ingen varer at eksportere
 
 English:No macros are currently set up for this printer.
-Translated:Der er ikke konfigureret nogen makroer til denne printer.
+Translated:Der er i øjeblikket ingen makroer konfigureret til denne printer.
 
 English:No printable parts exists within the bounds of the printer bed. Add content to continue
-Translated:Der findes ingen udskriftsdele inden for grænsen af printerens seng. Tilføj indhold for at fortsætte
+Translated:Der findes ingen udskrivbare dele inden for printersengen. Tilføj indhold for at fortsætte
 
 English:No Printer Selected
 Translated:Ingen printer valgt
@@ -2176,6 +2269,9 @@ Translated:Ingen resultater fundet
 English:None
 Translated:Ingen
 
+English:Non-Manifold
+Translated:Ikke-manifold
+
 English:Normal
 Translated:Normal
 
@@ -2183,22 +2279,22 @@ English:Normal (Recommended)
 Translated:Normal (anbefales)
 
 English:Normally the image is expanded to the edge. This will try to center the weight of the image visually.
-Translated:Normalt udvides billedet til kanten. Dette vil forsøge at centrere vægten af billedet visuelt.
+Translated:Normalt udvides billedet til kanten. Dette vil prøve at centrere vægten på billedet visuelt.
 
 English:Normally the part is expanded to the cylinders. This will try to center the weight of the part in the cylinder.
-Translated:Normalt udvides delen til cylindrene. Dette vil forsøge at centrere vægten af delen i cylinderen.
+Translated:Normalt udvides delen til cylindrene. Dette vil prøve at centrere vægten af delen i cylinderen.
 
 English:Normally you will want to use absolute e distances. Only check this if you know your printer needs relative e distances.
-Translated:Normalt vil du bruge absolutte afstande. Kontroller kun dette, hvis du ved, at din printer har brug for relative e-afstande.
+Translated:Normalt vil du bruge absolutte e-afstande. Kontroller kun dette, hvis du ved, at din printer har brug for relative e-afstande.
 
 English:Not Connected
 Translated:Ikke forbundet
 
 English:Note: Slice Settings are applied before the print actually starts. Changes while printing will not effect the active print.
-Translated:Bemærk: Slice Indstillinger anvendes, før udskriften faktisk starter. Ændringer under udskrivning påvirker ikke den aktive udskrift.
+Translated:Bemærk: Skiveindstillinger anvendes før udskriften faktisk starter. Ændringer under udskrivning påvirker ikke den aktive udskrivning.
 
 English:NOTE: Standard messaging rates may apply.
-Translated:BEMÆRK: Standardmeddelelsessatser kan være gældende.
+Translated:BEMÆRK: Standard meddelelsesfrekvens kan være gældende.
 
 English:Notifications
 Translated:underretninger
@@ -2207,34 +2303,34 @@ English:Nozzle
 Translated:Dyse
 
 English:Nozzle 1 Inset
-Translated:Dyse 1 Indgang
+Translated:Dyse 1 Indsæt
 
 English:Nozzle 2 Inset
-Translated:Dyse 2 indgang
+Translated:Dyse 2 Indsæt
 
 English:Nozzle Calibration
 Translated:Dysekalibrering
 
 English:Nozzle Calibration measures the distance between hotends.
-Translated:Dyse Kalibrering måler afstanden mellem hotends.
+Translated:Dysekalibrering måler afstanden mellem hotends.
 
 English:Nozzle Diameter
-Translated:Dyse Diameter
+Translated:Dysediameter
 
 English:Nozzle Offset Calibration
-Translated:Dysforskydningskalibrering
+Translated:Dyseforskyvningskalibrering
 
 English:Nozzle Offset Calibration Wizard
-Translated:Dysen Offset Calibration Wizard
+Translated:Dyseforskyvningskalibreringsguide
 
 English:Nozzle Offsets
-Translated:Dyseforskydninger
+Translated:Dyseforskyvninger
 
 English:Number
 Translated:Nummer
 
 English:Number of layers to print before printing any parts.
-Translated:Antal lag, der skal udskrives, inden der udskrives dele.
+Translated:Antal lag, der skal udskrives, inden dele udskrives.
 
 English:Number of Samples
 Translated:Antal prøver
@@ -2252,7 +2348,7 @@ English:Offset
 Translated:Offset
 
 English:Offset Calibration complete.
-Translated:Offset kalibrering komplet.
+Translated:Offset kalibrering afsluttet.
 
 English:Ok
 Translated:Okay
@@ -2261,22 +2357,22 @@ English:OK
 Translated:Okay
 
 English:'Ok' Responses
-Translated:'Ok' Svar
+Translated:'Ok'-svar
 
 English:On Connect G-Code
-Translated:På Connect G-Code
+Translated:Tilslut G-kode
 
 English:Oops! Baud Rate must be an integer.
-Translated:Ups! Baud Rate skal være et helt tal.
+Translated:Ups! Baud Rate skal være et heltal.
 
 English:Oops! Could not complete update.
-Translated:Ups! Kunne ikke fuldføre opdateringen.
+Translated:Ups! Opdateringen kunne ikke afsluttes.
 
 English:Oops! Could not find this file
-Translated:Ups! Kunne ikke finde denne fil
+Translated:Ups! Denne fil kunne ikke findes
 
 English:Oops! Field cannot be left blank
-Translated:Ups! Felt kan ikke efterlades tomt
+Translated:Ups! Feltet kan ikke efterlades tomt
 
 English:Oops! Field cannot have special characters
 Translated:Ups! Feltet kan ikke have specialtegn
@@ -2288,19 +2384,19 @@ English:Oops! Invalid username, email or password.
 Translated:Ups! Ugyldigt brugernavn, e-mail eller adgangskode.
 
 English:Oops! Please select a baud rate.
-Translated:Ups! Vælg venligst en baud rate.
+Translated:Ups! Vælg en baudhastighed.
 
 English:Oops! Please select a device to continue.
-Translated:Ups! Vælg venligst en enhed for at fortsætte.
+Translated:Ups! Vælg en enhed for at fortsætte.
 
 English:Oops! Please select a serial port.
-Translated:Ups! Vælg venligst en seriel port.
+Translated:Ups! Vælg en seriel port.
 
 English:Oops! Please sign in to enable this feature.
-Translated:Ups! Log venligst ind for at aktivere denne funktion.
+Translated:Ups! Log ind for at aktivere denne funktion.
 
 English:Oops! Printer could not be detected 
-Translated:Ups! Printeren kunne ikke registreres
+Translated:Ups! Printer kunne ikke opdages
 
 English:Oops! Settings file '{0}' did not contain any settings we could import.
 Translated:Ups! Indstillingsfilen '{0}' indeholdt ingen indstillinger, vi kunne importere.
@@ -2309,10 +2405,10 @@ English:Oops! There is no eeprom mapping for your printer's firmware.
 Translated:Ups! Der er ingen eeprom-kortlægning til din printers firmware.
 
 English:Oops! There was a problem creating your account.
-Translated:Ups! Der opstod et problem med oprettelsen af din konto.
+Translated:Ups! Der opstod et problem med at oprette din konto.
 
 English:Oops! There was a problem processing your request.
-Translated:Ups! Der opstod et problem med behandlingen af din anmodning.
+Translated:Ups! Der opstod et problem med behandling af din anmodning.
 
 English:Oops! There was a problem resetting your password.
 Translated:Ups! Der opstod et problem med at nulstille din adgangskode.
@@ -2321,10 +2417,10 @@ English:Oops! Unable to connect to server
 Translated:Ups! Kunne ikke forbinde til serveren
 
 English:Oops! Unable to initialize device.
-Translated:Ups! Kan ikke initialisere enheden.
+Translated:Ups! Enheden kan ikke initialiseres.
 
 English:Oops! Unable to install update.
-Translated:Ups! Kan ikke installere opdatering.
+Translated:Ups! Opdateringen kunne ikke installeres.
 
 English:Oops! Unable to recognize settings file '{0}'.
 Translated:Ups! Kan ikke genkende indstillingsfilen '{0}'.
@@ -2333,7 +2429,7 @@ English:Oops! You cannot share this item.
 Translated:Ups! Du kan ikke dele denne vare.
 
 English:Oops! Your session has expired.  Please sign-in again to continue.
-Translated:Ups! Din session er udløbet. Venligst log ind igen for at fortsætte.
+Translated:Ups! Din session er udløbet. Log ind igen for at fortsætte.
 
 English:Open
 Translated:Åben
@@ -2348,7 +2444,7 @@ English:Open Package
 Translated:Åben pakke
 
 English:Open Recent
-Translated:Åbn Nyligt
+Translated:Åben for nylig
 
 English:OpenSCAD not installed
 Translated:OpenSCAD ikke installeret
@@ -2366,28 +2462,31 @@ English:Other
 Translated:Andet
 
 English:Outer Radius
-Translated:Yderradius
+Translated:Ydre radius
 
 English:Outer Size
-Translated:Yderstørrelse
+Translated:Udvendig størrelse
 
 English:Outer Surface - Perimeters
-Translated:Yderside - Perimetre
+Translated:Ydre overflade - Perimetre
+
+English:Outline Path
+Translated:Skitse sti
 
 English:Outlines
 Translated:konturer
 
 English:Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.
-Translated:Udfør kun det første lag i udskriften. Specielt nyttigt til udgivelse af gcode data til applikationer som gravering eller skæring.
+Translated:Udskriv kun det første lag på udskriften. Især nyttigt til udgivelse af gkodedata til applikationer som gravering eller klipning.
 
 English:Outside Perimeter
-Translated:Udenfor perimeter
+Translated:Uden for omkredsen
 
 English:Outside Perimeters
 Translated:Udenfor perimetre
 
 English:Overhang
-Translated:overhæng
+Translated:udhæng
 
 English:Overhang Angle
 Translated:Overhængsvinkel
@@ -2402,16 +2501,16 @@ English:Pan View
 Translated:Pan View
 
 English:Part Cooling Fan
-Translated:Del Køleventilator
+Translated:Del kølevifte
 
 English:Password
 Translated:Adgangskode
 
 English:Password Reset Code
-Translated:Password Reset Code
+Translated:Kodeord Nulstil kode
 
 English:Password update complete
-Translated:Kodeord opdatering komplet
+Translated:Adgangskodeopdatering afsluttet
 
 English:Paste
 Translated:sæt ind
@@ -2426,19 +2525,19 @@ English:Pause
 Translated:Pause
 
 English:Pause automatic heater shutdown
-Translated:Sluk for automatisk varmelegemetilstand
+Translated:Pause automatisk nedlukning af varmeren
 
 English:Pause G-Code
 Translated:Pause G-kode
 
 English:Pause Print
-Translated:Pause Print
+Translated:Pause Udskriv
 
 English:Paused
-Translated:Midlertidigt afbrudt
+Translated:Pause
 
 English:Percentage of
-Translated:Andel af
+Translated:Procentdel af
 
 English:perimeters
 Translated:perimetre
@@ -2450,31 +2549,34 @@ English:Permission Denied
 Translated:Adgang nægtet
 
 English:Pick the pad that is the most aligned with the base, the pad that is the most balance and centered.
-Translated:Vælg den pude, der er mest justeret med basen, den pude, der er mest balance og centreret.
+Translated:Vælg den pude, der er mest på linje med basen, den pude, der er mest balance og centreret.
 
 English:PID Settings
 Translated:PID-indstillinger
 
 English:Pillar Size
-Translated:Søjle størrelse
+Translated:Søjlestørrelse
 
 English:Pinch
 Translated:At klemme
 
 English:Pipe Works
-Translated:Rørarbejder
+Translated:Rør fungerer
 
 English:Pixels Per mm
-Translated:Pixels Per mm
+Translated:Pixels pr. Mm
 
 English:Place the paper under the extruder
 Translated:Placer papiret under ekstruderen
+
+English:Plane Cut
+Translated:Flyskæring
 
 English:Plating History
 Translated:Plating History
 
 English:Play a Sound
-Translated:Spil en lyd
+Translated:Afspil en lyd
 
 English:Play a sound for notifications
 Translated:Afspil en lyd til underretninger
@@ -2486,34 +2588,34 @@ English:Please select the material you want to load into extruder {0}.
 Translated:Vælg det materiale, du vil indlæse i ekstruderen {0}.
 
 English:Please select the material you want to load.
-Translated:Vælg venligst det materiale, du vil indlæse.
+Translated:Vælg det materiale, du vil indlæse.
 
 English:Please select the material you want to unload from extruder {0}.
-Translated:Vælg det materiale, du vil aflæse fra ekstruderen {0}.
+Translated:Vælg det materiale, du vil fjerne fra ekstruderen {0}.
 
 English:Please select the material you want to unload.
-Translated:Vælg det materiale, du vil aflæse.
+Translated:Vælg det materiale, du vil fjerne.
 
 English:Please sign in to continue.
-Translated:Log venligst ind for at fortsætte.
+Translated:Log ind for at fortsætte.
 
 English:Please wait until the print has finished and try again.
-Translated:Vent venligst, indtil udskriften er færdig, og prøv igen.
+Translated:Vent indtil udskriften er færdig, og prøv igen.
 
 English:Please wait while we create your account...
 Translated:Vent venligst mens vi opretter din konto ...
 
 English:Please wait while we update your password...
-Translated:Vent venligst mens vi opdaterer dit kodeord ...
+Translated:Vent venligst mens vi opdaterer din adgangskode ...
 
 English:Please wait. Emailing reset code...
-Translated:Vent venligst. Emailing reset code ...
+Translated:Vent venligst. E-mailer til nulstillingskode ...
 
 English:Please wait. Redeeming code...
-Translated:Vent venligst. Indløsning kode ...
+Translated:Vent venligst. Indløse kode ...
 
 English:Please wait. Retrieving share code...
-Translated:Vent venligst. Henter delekode ...
+Translated:Vent venligst. Henter delingskode ...
 
 English:Please wait. Sending invite...
 Translated:Vent venligst. Sender invitation ...
@@ -2540,16 +2642,16 @@ English:Port not found
 Translated:Port ikke fundet
 
 English:Port number to be used with IP Address to connect to printer over the network
-Translated:Portnummer, der skal bruges med IP-adresse for at oprette forbindelse til printeren over netværket
+Translated:Portnummer, der skal bruges med IP-adresse til forbindelse til printer via netværket
 
 English:Port Wizard
-Translated:Port Wizard
+Translated:Portguiden
 
 English:Position
 Translated:Position
 
 English:Possible Unsupported Parts Detected
-Translated:Mulige ikke understøttede dele opdaget
+Translated:Mulige dele, der ikke understøttes, blev fundet
 
 English:Power Control
 Translated:Strømstyring
@@ -2564,7 +2666,7 @@ English:Preparing help index
 Translated:Forberedelse af hjælpeindeks
 
 English:Preparing To Print
-Translated:Forberedelse til udskrivning
+Translated:Klargøring til udskrivning
 
 English:Press
 Translated:Trykke
@@ -2573,7 +2675,10 @@ English:Press [Z-] until there is resistance to moving the paper
 Translated:Tryk på [Z-], indtil der er modstand mod at flytte papiret
 
 English:Press [Z+] once to release the paper
-Translated:Tryk én gang på [Z +] for at frigøre papiret
+Translated:Tryk på [Z +] én gang for at frigøre papiret
+
+English:Pressure Angle (common values are 14.5, 20 and 25 degrees)
+Translated:Trykvinkel (almindelige værdier er 14,5, 20 og 25 grader)
 
 English:Prev
 Translated:forrige
@@ -2582,7 +2687,7 @@ English:Preview
 Translated:Eksempel
 
 English:Primitive Shapes
-Translated:Primitive figurer
+Translated:Primitive former
 
 English:Primitives
 Translated:primitiver
@@ -2591,37 +2696,40 @@ English:Print
 Translated:Print
 
 English:Print Canceled
-Translated:Udskriv Annulleret
+Translated:Udskrivning annulleret
 
 English:Print Center
 Translated:Print Center
 
 English:Print History
-Translated:Udskrivningshistorik
+Translated:Print historie
 
 English:Print Leveling
-Translated:Udskriv nivellering
+Translated:Print Leveling
+
+English:Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled, you can click the button to the left to setup Print Leveling.
+Translated:Print Leveling er en valgfri funktion til denne printer, der kan hjælpe med at forbedre udskriftskvaliteten. Hvis sengen er ujævn eller ikke kan udjævnes mekanisk, kan du klikke på knappen til venstre for at indstille udskrivningsnivellering.
 
 English:Print Leveling measures the plane of the bed.
-Translated:Print Leveling måler sengens plan.
+Translated:Print Leveling måler sengen på flyet.
 
 English:Print Leveling Wizard
-Translated:Udskriv Leveling Wizard
+Translated:Guiden til udskrivning af nivellering
 
 English:Print Notification Settings
-Translated:Udskriv meddelelsesindstillinger
+Translated:Indstillinger for udskrivningsmeddelelse
 
 English:Print Queue
-Translated:Udskriftskø
+Translated:Udskriv kø
 
 English:Print Recovery
-Translated:Udskriv Recovery
+Translated:Printgendannelse
 
 English:Print Time
 Translated:Udskrivningstid
 
 English:Print Ultra Fine Calibration
-Translated:Udskriv ultra fin kalibrering
+Translated:Print ultra fin kalibrering
 
 English:Printer
 Translated:Printer
@@ -2633,40 +2741,40 @@ English:Printer Disconnected
 Translated:Printer frakoblet
 
 English:Printer Hardware Error
-Translated:Printer hardwarefejl
+Translated:Printerhardwarefejl
 
 English:Printer is SLA
-Translated:Printeren er SLA
+Translated:Printer er SLA
 
 English:Printer Name
 Translated:Printernavn
 
 English:Printer name already exists
-Translated:Printernavn eksisterer allerede
+Translated:Printernavnet findes allerede
 
 English:Printer name cannot be blank
-Translated:Printernavn kan ikke være tomt
+Translated:Printernavnet kan ikke være tomt
 
 English:Printer Paused
-Translated:Printer pauset
+Translated:Printer midlertidigt sat på pause
 
 English:Printer Setup
-Translated:Printer Setup
+Translated:Printeropsætning
 
 English:Printer Setup & Calibration
 Translated:Printeropsætning og kalibrering
 
 English:Printer Setup must be run before printing
-Translated:Printer Setup skal køres før udskrivning
+Translated:Printeropsætning skal køres inden udskrivning
 
 English:Printer Setup Required
-Translated:Printeropsætning er påkrævet
+Translated:Printeropsætning krævet
 
 English:Printers
 Translated:Printere
 
 English:Printers to Copy
-Translated:Printere til kopiering
+Translated:Printere, der skal kopieres
 
 English:Printing
 Translated:Trykning
@@ -2680,26 +2788,29 @@ Translated:Udskrivningshastighed
 English:Printing: {0}
 Translated:Udskrivning: {0}
 
+English:Pro Tools
+Translated:Pro-værktøjer
+
 English:Probe at bed center
-Translated:Sonde i sengen
+Translated:Probe i sengen center
 
 English:Probe Has Been Calibrated
 Translated:Proben er blevet kalibreret
 
 English:Probe Offset
-Translated:Probe-forskydning
+Translated:Sondeforskydning
 
 English:Probe Offset Sample Point
-Translated:Probeforskydningsprøvepunkt
+Translated:Probe forskudt prøvepunkt
 
 English:Progress Reporting
-Translated:Progress Reporting
+Translated:Statusrapportering
 
 English:Properties
 Translated:Ejendomme
 
 English:Provide this code to grant someone read-only access.
-Translated:Giv denne kode adgang til at give en skrivebeskyttet adgang.
+Translated:Angiv denne kode for at give nogen skrivebeskyttet adgang.
 
 English:Purchased
 Translated:købt
@@ -2720,13 +2831,13 @@ English:Raft Extruder
 Translated:Raft Extruder
 
 English:Raft Layers
-Translated:Raft Lag
+Translated:Flådelag
 
 English:Raise / Stow
-Translated:Hæv / Stow
+Translated:Løft / stuver
 
 English:Randomize Starting Points
-Translated:Randomize startpunkter
+Translated:Tilfældige startpunkter
 
 English:Ratio or %
 Translated:Forhold eller%
@@ -2747,7 +2858,7 @@ English:Rebuild Thumbnails Now
 Translated:Genopbyg miniaturer nu
 
 English:Recommended Update Available
-Translated:Anbefalet opdatering til rådighed
+Translated:Anbefalet opdatering tilgængelig
 
 English:Recover Last Print
 Translated:Gendan sidste udskrivning
@@ -2756,22 +2867,25 @@ English:Recover Layer Speed
 Translated:Gendan laghastighed
 
 English:Recover Print
-Translated:Gendan Udskriv
+Translated:Gendan udskrivning
 
 English:recovered once
-Translated:inddrives en gang
+Translated:kom sig en gang
 
 English:Recovered printer profile
-Translated:Gendannet printerprofil
+Translated:Genoprettet printerprofil
 
 English:Redeem Code
 Translated:Indløs kode
 
 English:Redo
-Translated:redo
+Translated:Redo
+
+English:Reduce
+Translated:Reducere
 
 English:Re-enter New Password
-Translated:Angiv nyt kodeord igen
+Translated:Indtast nyt kodeord igen
 
 English:Re-enter Password
 Translated:Genindtast kodeord
@@ -2801,13 +2915,16 @@ English:Remove
 Translated:Fjerne
 
 English:Remove all auto generated supports
-Translated:Fjern alle auto genererede understøttelser
+Translated:Fjern alle auto-genererede understøttelser
+
+English:Remove interior faces and bodies. This should only be used if the interior bodies are separate from the external faces, otherwise it may remove requried faces.
+Translated:Fjern indvendige ansigter og kroppe. Dette bør kun bruges, hvis de indvendige kroppe er adskilt fra de ydre flader, ellers kan det fjerne anmodede flader.
 
 English:Remove Items?
-Translated:Fjern elementer?
+Translated:Fjern varer?
 
 English:Remove the calibration part from the bed and compare the sides of the pads in each axis.
-Translated:Fjern kalibreringsdelen fra sengen og sammenlign sidens sider i hver akse.
+Translated:Fjern kalibreringsdelen fra sengen og sammenlign siderne af puderne i hver akse.
 
 English:Remove the paper
 Translated:Fjern papiret
@@ -2816,10 +2933,16 @@ English:Rename
 Translated:Omdøb
 
 English:Rename Item
-Translated:Omdøb vare
+Translated:Omdøb varen
 
 English:Render Leveling Data on the bed
-Translated:Render Leveling Data på sengen
+Translated:Gendér nivelleringsdata på sengen
+
+English:Repair
+Translated:Reparere
+
+English:Repair any small cracks or bad seams in the model.
+Translated:Reparer eventuelle små revner eller dårlige sømme i modellen.
 
 English:Replacing
 Translated:Udskiftning
@@ -2828,10 +2951,10 @@ English:Report a Bug
 Translated:Anmeld en fejl
 
 English:Request the firmware to do retractions rather than specify the extruder movements directly.
-Translated:Anmod om firmware til at gøre tilbagetrækninger i stedet for at angive ekstruderingsbevægelserne direkte.
+Translated:Anmod om firmwaren om at foretage tilbagetrækninger i stedet for at specificere ekstruderbevægelser direkte.
 
 English:Require Leveling To Print
-Translated:Kræv nivellering til udskrivning
+Translated:Kræv nivellering for at udskrive
 
 English:Required
 Translated:Nødvendig
@@ -2846,7 +2969,7 @@ English:Reset Password
 Translated:Nulstille kodeord
 
 English:Reset to Defaults
-Translated:Nulstil til standardindstillingerne
+Translated:Nulstil til standardindstillinger
 
 English:Reset to Factory Defaults
 Translated:Nulstil til fabriksindstillinger
@@ -2855,10 +2978,13 @@ English:Reset View
 Translated:Nulstil visning
 
 English:Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?
-Translated:Nulstilling til standardværdier fjerner dine nuværende overstyringer og gendanner dine oprindelige printerindstillinger.\nEr du sikker på, at du vil fortsætte?
+Translated:Nulstilling af standardværdier fjerner dine nuværende tilsidesættelser og gendanner dine originale printerindstillinger.\nEr du sikker på, at du vil fortsætte?
 
 English:Resolution
 Translated:Løsning
+
+English:Restart Required
+Translated:Genstart påkrævet
 
 English:Restore
 Translated:Gendan
@@ -2873,13 +2999,13 @@ English:Resume
 Translated:Genoptag
 
 English:Resume automatic heater shutdown
-Translated:Genoptag automatisk nedlukning af varmeapparatet
+Translated:Genoptag automatisk nedlukning af varmeren
 
 English:Resume G-Code
 Translated:Genoptag G-kode
 
 English:Resume Print
-Translated:Genoptag Udskriv
+Translated:Genoptag udskrivning
 
 English:Resume Printing
 Translated:Genoptag udskrivning
@@ -2888,16 +3014,16 @@ English:Retract
 Translated:Trække tilbage
 
 English:Retract Acceleration
-Translated:Tilbagetræk acceleration
+Translated:Træk acceleration tilbage
 
 English:Retract filament
-Translated:Træk filament tilbage
+Translated:Træk glødetråden tilbage
 
 English:Retract Length
-Translated:Træk længden tilbage
+Translated:Træk længde tilbage
 
 English:Retract When Changing Islands
-Translated:Træk tilbage, når du ændrer øer
+Translated:Træk tilbage, når du skifter øer
 
 English:Retraction
 Translated:tilbagetrækning
@@ -2906,13 +3032,13 @@ English:Retractions
 Translated:retractions
 
 English:Retrieving download info...
-Translated:Henter downloadoplysninger ...
+Translated:Henter downloadinfo ...
 
 English:Retrieving sync information...
 Translated:Henter synkroniseringsoplysninger ...
 
 English:Retry Login
-Translated:Prøv igen
+Translated:Prøv igen login
 
 English:Revert
 Translated:Vende tilbage
@@ -2921,10 +3047,10 @@ English:Revert Settings
 Translated:Gendan indstillinger
 
 English:Reverting firmware to previous version...
-Translated:Gendan firmware til tidligere version ...
+Translated:Gendanner firmware til tidligere version ...
 
 English:Right
-Translated:Ret
+Translated:Højre
 
 English:Right Arrow
 Translated:Højre pil
@@ -2939,22 +3065,22 @@ English:Rotate
 Translated:Rotere
 
 English:Rotate (Alt + Left Mouse)
-Translated:Rotér (Alt + Venstre mus)
+Translated:Roter (Alt + Venstre mus)
 
 English:Rotate About
-Translated:Roter omkring
+Translated:Rotér om
 
 English:Rotate about the X axis
-Translated:Drej om X-aksen
+Translated:Drej omkring X-aksen
 
 English:Rotate about the Y axis
-Translated:Drej om Y-aksen
+Translated:Drej omkring Y-aksen
 
 English:Rotate about the Z axis
-Translated:Drej om Z-aksen
+Translated:Drej omkring Z-aksen
 
 English:Rotate the part to the same angle as the array.
-Translated:Drej delen i samme vinkel som arrayet.
+Translated:Drej delen til samme vinkel som matrixen.
 
 English:Rotate View
 Translated:Roter visning
@@ -2972,16 +3098,16 @@ English:s
 Translated:s
 
 English:Sailfish Communication
-Translated:Sejlfisk Kommunikation
+Translated:Sailfish-kommunikation
 
 English:Sample Points
-Translated:Prøvepunkter
+Translated:Prøvepoint
 
 English:Sample the bed center position to determine the probe distance to the bed
-Translated:Prøv senterets midterposition for at bestemme afstanden til sengen
+Translated:Prøve sengens centerposition for at bestemme sondeafstand til sengen
 
 English:Sampled Positions
-Translated:Samplede positioner
+Translated:Prøveeksempler
 
 English:Save
 Translated:Gemme
@@ -2993,10 +3119,10 @@ English:Save New Design
 Translated:Gem nyt design
 
 English:Save Parts Sheet
-Translated:Gem Deleark
+Translated:Gem deleark
 
 English:Save to EEProm
-Translated:Gem til EEProm
+Translated:Gem på EEProm
 
 English:Save To EEPROM
 Translated:Gem til EEPROM
@@ -3008,13 +3134,13 @@ English:Saving
 Translated:Lagring
 
 English:Saving Asset
-Translated:Lagring af aktiv
+Translated:Gemme aktiver
 
 English:Saving changes
-Translated:Gem ændringer
+Translated:Gemme ændringer
 
 English:Saving Changes
-Translated:Gem ændringer
+Translated:Gemme ændringer
 
 English:Scale
 Translated:vægt
@@ -3050,16 +3176,16 @@ English:Select a printer to continue
 Translated:Vælg en printer for at fortsætte
 
 English:Select Part
-Translated:Vælg Del
+Translated:Vælg del
 
 English:Select Printer
-Translated:Vælg printer
+Translated:Vælg Printer
 
 English:Select the baud rate.
 Translated:Vælg baud rate.
 
 English:Select What to Import
-Translated:Vælg hvad der skal importeres
+Translated:Vælg Hvad der skal importeres
 
 English:Selection
 Translated:Udvælgelse
@@ -3068,13 +3194,13 @@ English:Send
 Translated:Sende
 
 English:Send email notifications
-Translated:Send email notifikationer
+Translated:Send e-mail-meddelelser
 
 English:Send SMS notifications
-Translated:Send SMS-beskeder
+Translated:Send SMS-meddelelser
 
 English:Send With Checksum
-Translated:Send med Checksum
+Translated:Send Med Checksum
 
 English:Serial Port
 Translated:Serie Port
@@ -3086,7 +3212,7 @@ English:Services
 Translated:Services
 
 English:Session Cleared
-Translated:Session afklaret
+Translated:Session ryddet
 
 English:Session Expired
 Translated:Sessionen er udløbet
@@ -3095,25 +3221,25 @@ English:Set as Default
 Translated:Indstillet som standard
 
 English:Set the rules for how to maintain the part while scaling.
-Translated:Indstil reglerne for, hvordan du opretholder delen, mens du skalerer.
+Translated:Angiv reglerne for, hvordan du vedligeholder delen, mens du skalerer.
 
 English:Set the shape the part will be fit into.
-Translated:Indstil formen, som delen passer ind i.
+Translated:Indstil den form, som delen skal passe ind i.
 
 English:Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)
-Translated:Indstiller MatterControl for at forsøge at oprette forbindelse til en printer via netværket. (Du skal frakoble og genoprette forbindelse til dette for at træde i kraft)
+Translated:Indstiller MatterControl til at forsøge at oprette forbindelse til en printer over netværket. (Du skal afbryde forbindelsen og oprette forbindelse igen for at dette skal træde i kraft)
 
 English:Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)
-Translated:Sætter MatterControl til at bruge s3g kommunikationsmetode. (Du skal frakoble og genoprette forbindelse til dette for at træde i kraft)
+Translated:Indstiller MatterControl til at bruge s3g-kommunikationsmetode. (Du skal afbryde forbindelsen og oprette forbindelse igen for at dette skal træde i kraft)
 
 English:Sets the depth of the tile the Braille is printed on
-Translated:Indstiller dybden af den flise, som punktskriftet er trykt på
+Translated:Indstiller dybden på den flise, som blindeskrift udskrives på
 
 English:Sets the models that will be added to the queue when a new printer is created.
-Translated:Indstiller de modeller, der vil blive tilføjet til køen, når der oprettes en ny printer.
+Translated:Indstiller de modeller, der vil blive føjet til køen, når en ny printer oprettes.
 
 English:Sets the size of the outer solid surface (perimeter) for the entire print.
-Translated:Indstiller størrelsen af den ydre faste overflade (perimeter) for hele udskriften.
+Translated:Indstiller størrelsen på den ydre faste overflade (omkreds) for hele udskriften.
 
 English:Settings
 Translated:Indstillinger
@@ -3125,28 +3251,28 @@ English:Setup Needs to be Run
 Translated:Opsætning skal køres
 
 English:Setup Required
-Translated:Opsætning kræves
+Translated:Opsætning krævet
 
 English:Setup Wizard
 Translated:Opsætningsguide
 
 English:Shaded
-Translated:Skyggefuld
+Translated:Shaded
 
 English:Share
 Translated:Del
 
 English:Share Code
-Translated:Aktiekode
+Translated:Del kode
 
 English:Share Library Item
-Translated:Del biblioteksartikel
+Translated:Del bibliotekspost
 
 English:Share Options
-Translated:Share Options
+Translated:Aktieindstillinger
 
 English:Share Temperature
-Translated:Del Temperatur
+Translated:Del temperatur
 
 English:Share with someone
 Translated:Del med nogen
@@ -3158,16 +3284,16 @@ English:Shop
 Translated:Butik
 
 English:Shop Filament at MatterHackers
-Translated:Shop filament på MatterHackers
+Translated:Shop filament hos MatterHackers
 
 English:Show Controls
-Translated:Vis kontroller
+Translated:Vis kontrol
 
 English:Show file in folder after save
-Translated:Vis fil i mappe efter gem
+Translated:Vis fil i mappe efter gemning
 
 English:Show Firmware Updater
-Translated:Vis Firmware Updater
+Translated:Vis firmwareopdatering
 
 English:Show Help
 Translated:Vis hjælp
@@ -3179,13 +3305,13 @@ English:Show Password
 Translated:Vis adgangskode
 
 English:Show Print Area
-Translated:Vis udskriftsområde
+Translated:Vis udskrivningsområde
 
 English:Show Print Bed
 Translated:Vis Print Bed
 
 English:Show Reset Connection
-Translated:Vis Nulstil forbindelse
+Translated:Vis nulstil forbindelse
 
 English:Show Speeds
 Translated:Vis hastigheder
@@ -3193,8 +3319,17 @@ Translated:Vis hastigheder
 English:Show Terminal
 Translated:Vis terminal
 
+English:Shown Print Canceled Message
+Translated:Vist udskrevet annulleret meddelelse
+
+English:Shown Print Complete Message
+Translated:Vist udskriv Komplet meddelelse
+
+English:Shown Welcome Message
+Translated:Vist velkomstbesked
+
 English:Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.
-Translated:Viser en knap på højre side af printerforbindelseslinjen, der bruges til at nulstille USB-forbindelsen til printeren. Dette kan bruges på printere, der understøtter det som et nødstop.
+Translated:Viser en knap i højre side af printerforbindelseslinjen, der bruges til at nulstille USB-forbindelsen til printeren. Dette kan bruges på printere, der understøtter det som et nødstop.
 
 English:sign in
 Translated:Log ind
@@ -3230,7 +3365,7 @@ English:Skip
 Translated:Springe
 
 English:Skip Connection Setup
-Translated:Spring over tilslutningsopsætningen
+Translated:Spring tilslutningsopsætning over
 
 English:Skirt
 Translated:Nederdel
@@ -3244,26 +3379,29 @@ Translated:nederdele
 English:Slice
 Translated:Skive
 
+English:Slice Engine
+Translated:Skivemotor
+
 English:Slice Presets Editor
-Translated:Skive Presets Editor
+Translated:Slice Presets Editor
 
 English:Slice Settings
-Translated:Skive indstillinger
+Translated:Skiveindstillinger
 
 English:Slicing
 Translated:skiveskæring
 
 English:Slicing Error
-Translated:Skærefejl
+Translated:Skæringsfejl
 
 English:Slicing Item
-Translated:Skæreelement
+Translated:Skære vare
 
 English:Slicing Options
-Translated:Opskæring indstillinger
+Translated:Skiveindstillinger
 
 English:Slow Down If Layer Print Time Is Below
-Translated:Langsom Hvis Lag Udskrivningstid er nede
+Translated:Langsomt ned, hvis lagets udskrivningstid er under
 
 English:Small Perimeters
 Translated:Små perimetre
@@ -3275,19 +3413,19 @@ English:Snap Grid
 Translated:Snap Grid
 
 English:Software License Agreement
-Translated:Software licensaftale
+Translated:Softwarelicensaftale
 
 English:Solid Infill
-Translated:Fast infill
+Translated:Fast udfyldning
 
 English:Some features may require an internet connection.
 Translated:Nogle funktioner kræver muligvis en internetforbindelse.
 
 English:Some parts may require support structures to print correctly
-Translated:Nogle dele kan kræve, at støttestrukturer udskriver korrekt
+Translated:Nogle dele kræver muligvis understøttelsesstrukturer for at udskrive korrekt
 
 English:Sometime a mesh will not have closed a perimeter. When this is checked these non-closed perimeters while be closed.
-Translated:Nogle gange vil et net ikke have lukket en omkreds. Når dette er markeret, er disse ikke-lukkede perimetre, mens de lukkes.
+Translated:Engang har et net ikke lukket en omkreds. Når dette er markeret, lukkes disse ikke-lukkede perimetre.
 
 English:Sorry!  Must be a valid email address.
 Translated:Undskyld! Skal være en gyldig e-mail-adresse.
@@ -3296,22 +3434,22 @@ English:Sorry!  Must be a valid U.S. or Canadian phone number.
 Translated:Undskyld! Skal være et gyldigt amerikansk eller canadisk telefonnummer.
 
 English:Sorry!  We weren't able to submit your request.
-Translated:Undskyld! Vi kunne ikke sende din anmodning.
+Translated:Undskyld! Vi kunne ikke indsende din anmodning.
 
 English:Sorry! Looks like an account already exists for that email address.
-Translated:Undskyld! Det lader til, at der allerede findes en konto til den e-mail-adresse.
+Translated:Undskyld! Det ser ud til, at der allerede findes en konto for den e-mail-adresse.
 
 English:Sorry! Looks like an account already exists for that username.
-Translated:Undskyld! Det lader til, at der allerede findes en konto til det brugernavn.
+Translated:Undskyld! Det ser ud til, at der allerede findes en konto for dette brugernavn.
 
 English:Sorry! Looks like that reset code has expired.
-Translated:Undskyld! Det ser ud til at den nulstillede kode er udløbet.
+Translated:Undskyld! Det ser ud til, at nulstillingskoden er udløbet.
 
 English:Sorry! Looks like that reset code is invalid.
 Translated:Undskyld! Det ser ud til, at nulstillingskoden er ugyldig.
 
 English:Sorry! Too many sign in attempts. Please try again later.
-Translated:Undskyld! For mange tilmeldte forsøg. Prøv igen senere.
+Translated:Undskyld! For mange loginforsøg. Prøv igen senere.
 
 English:Sorry! Unable to connect to server. Please try again later.
 Translated:Undskyld! Kunne ikke forbinde til serveren. Prøv igen senere.
@@ -3323,25 +3461,31 @@ English:Source
 Translated:Kilde
 
 English:Specifies that the firmware has support for ros_0 endstop reporting on M119. TRIGGERED state defines filament has runout. If runout is detected the printers pause G-Code is run.
-Translated:Angiver, at firmwaren har support til ros_0 endstop-rapportering på M119. TRIGGERED state definerer filament har runout. Hvis runout er registreret, køres printerens pause G-kode.
+Translated:Specificerer, at firmwaren har understøttelse af ros_0 endstop-rapportering om M119. TRIGGERED-tilstand definerer filamentens udløb. Hvis der opdages runout, køres printererne pause, hvor G-kode køres.
+
+English:Specifies the number of vertical cuts required to ensure the part can be twist well.
+Translated:Specificerer det antal lodrette snit, der kræves for at sikre, at delen kan drejes godt.
+
+English:Specify the radius to use when calculating the circumference.
+Translated:Angiv den radius, der skal bruges til beregning af omkredsen.
 
 English:Speed
 Translated:Hastighed
 
 English:Speed at 0.025 Height
-Translated:Hastighed ved 0,025 Højde
+Translated:Hastighed på 0,025 højde
 
 English:Speed at 0.1 Height
-Translated:Hastighed ved 0,1 Højde
+Translated:Hastighed på 0,1 højde
 
 English:Speed for Infill
-Translated:Hastighed for infill
+Translated:Hastighed til udfyldning
 
 English:Speed for Perimeters
 Translated:Hastighed for perimetre
 
 English:Speed Multiplier
-Translated:Speed Multiplikator
+Translated:Hastighedsmultiplikator
 
 English:Speeds
 Translated:hastigheder
@@ -3350,13 +3494,13 @@ English:Sphere
 Translated:Sphere
 
 English:Spiral Vase
-Translated:Spiral Vase
+Translated:Spiralvase
 
 English:Split
 Translated:Dele
 
 English:Split Mesh
-Translated:Split Mesh
+Translated:Splittet net
 
 English:Stable
 Translated:stabil
@@ -3368,46 +3512,46 @@ English:Start
 Translated:Start
 
 English:Start At Concave Points
-Translated:Start på konkav punkter
+Translated:Start ved konkave punkter
 
 English:Start At Non Overhang
 Translated:Start ved ikke overhæng
 
 English:Start each new layer from a different vertex to reduce seams.
-Translated:Start hvert nyt lag fra et andet hjørne for at reducere sømme.
+Translated:Start hvert nyt lag fra et andet toppunkt for at reducere sømme.
 
 English:Start End Overlap
-Translated:Start overlapning
+Translated:Start Overlapning
 
 English:Start G-Code
 Translated:Start G-kode
 
 English:Start G-Code cannot contain G29 if Print Leveling is enabled.
-Translated:Start G-kode kan ikke indeholde G29, hvis udskrivningsnivellering er aktiveret.
+Translated:Start G-kode kan ikke indeholde G29, hvis Print Leveling er aktiveret.
 
 English:Start G-Code cannot contain G29 if Print Recovery is enabled.
-Translated:Start G-Code kan ikke indeholde G29, hvis Print Recovery er aktiveret.
+Translated:Start G-kode kan ikke indeholde G29, hvis Printgendannelse er aktiveret.
 
 English:Start G-Code cannot contain G30 if Print Leveling is enabled.
-Translated:Start G-kode kan ikke indeholde G30, hvis udskrivningsnivellering er aktiveret.
+Translated:Start G-kode kan ikke indeholde G30, hvis Print Leveling er aktiveret.
 
 English:Start Height
 Translated:Start højde
 
 English:Start Print
-Translated:Start Print
+Translated:Start udskrivning
 
 English:Starting Angle
 Translated:Startvinkel
 
 English:Starting firmware update...
-Translated:Start af firmwareopdatering ...
+Translated:Starter firmwareopdatering ...
 
 English:Starting Sync
-Translated:Startsynkronisering
+Translated:Starter synkronisering
 
 English:Startup Failure
-Translated:Opstart fejl
+Translated:Opstartssvigt
 
 English:Stay Connected
 Translated:Forbliv forbundet
@@ -3443,73 +3587,76 @@ English:Subtract
 Translated:Trække fra
 
 English:Subtract & Replace
-Translated:Træk og erstat
+Translated:Træk og udskift
 
 English:Subtract the image from a disk so that the negative space will be printed.
-Translated:Træk billedet fra en disk, så det negative rum bliver udskrevet.
+Translated:Træk billedet fra en disk, så det negative mellemrum udskrives.
 
 English:Success! Please check your email for the reset code.
-Translated:Succes! Tjek venligst din email for nulstillingskoden.
+Translated:Succes! Kontroller din e-mail for nulstillingskode.
 
 English:Success! Your account has been created.
 Translated:Succes! Din konto er blevet oprettet.
 
 English:Success! Your password has been updated.
-Translated:Succes! Dit kodeord er blevet opdateret.
+Translated:Succes! Din adgangskode er blevet opdateret.
 
 English:Success!\n\nYour filament should now be loaded
-Translated:Succes!\n\nDin filament skal nu indlæses
+Translated:Succes!\n\nDit filament skal nu indlæses
 
 English:Success!\n\nYour filament should now be unloaded
-Translated:Succes!\n\nDin glødelampe skal nu aflæses
+Translated:Succes!\n\nDit filament skal nu tømmes
 
 English:Support
 Translated:Support
 
+English:Support Expand Distance
+Translated:Support Udvid afstand
+
 English:Support Interface Extruder
-Translated:Support Interface Extruder
+Translated:Support interface ekstruder
 
 English:Support Material
-Translated:Support Materiale
+Translated:Supportmateriale
 
 English:Support Material Extruder
-Translated:Understøtningsmateriale Ekstruder
+Translated:Support Material Extruder
 
 English:Support Options
-Translated:Support Options
+Translated:Supportindstillinger
 
 English:Support Type
 Translated:Support Type
 
 English:Surfaced Editor
-Translated:Surfaced Editor
+Translated:Overfladeditor
 
 English:Switch the settings interface to one intended for SLA printers.
 Translated:Skift indstillingsgrænsefladen til en beregnet til SLA-printere.
 
 English:Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.
-Translated:Skift til ny G-kode?\n\nInden du skifter, skal du kontrollere, at du ser de ændringer, du forventer.
+Translated:Skift til ny G-kode?\n\nFør du skifter, skal du kontrollere, at du ser de ændringer, du forventer.
 
 English:Sync Complete
-Translated:Synkronisering Komplet
+Translated:Synkronisering afsluttet
 
 English:Sync Dashboard
-Translated:Synkroniser Dashboard
+Translated:Synkroniser instrumentbræt
 
 English:Sync Printers
 Translated:Synkroniser printere
 
 English:Sync To Print
-Translated:Synkroniser til udskrivning
+Translated:Synkroniser for at udskrive
 
 English:Syncing Printer Profiles...
-Translated:Synkronisering af printerprofiler ...
+Translated:Synkroniserer printerprofiler ...
 
 English:Tee
 Translated:Tee
 
 English:Temp Lower Amount
-Translated:Temp. Nedre beløb
+Translated:Temp lavere beløb
 
 English:temperature
 Translated:temperatur
@@ -3521,7 +3668,7 @@ English:Temperature Requests
 Translated:Temperaturanmodninger
 
 English:Temperature Responses
-Translated:Temperaturresponser
+Translated:Temperatursvar
 
 English:temperature1
 Translated:temperature1
@@ -3548,7 +3695,7 @@ English:Text2
 Translated:tekst2
 
 English:Thank you!  Your information has been submitted.
-Translated:Tak skal du have! Dine oplysninger er blevet indsendt.
+Translated:Tak skal du have! Dine oplysninger er blevet sendt.
 
 English:The {0} can only go as high as 100%.
 Translated:{0} kan kun gå så højt som 100%.
@@ -3563,106 +3710,127 @@ English:The {0} must be greater than 0.
 Translated:{0} skal være større end 0.
 
 English:The actual diameter of the filament used for printing.
-Translated:Den faktiske diameter af filamentet, der anvendes til trykning.
+Translated:Den faktiske diameter på filamentet, der bruges til udskrivning.
 
 English:The amount of filament to insert into the printer when loading.
-Translated:Mængden af filament, der skal indsættes i printeren, når den læses.
+Translated:Mængden af glødetråd, der skal indsættes i printeren, når du indlæser.
 
 English:The amount of filament to remove from the printer while unloading.
-Translated:Mængden af filament, der skal fjernes fra printeren under aflæsning.
+Translated:Mængden af glødetråd, der skal fjernes fra printeren under aflæsning.
 
 English:The amount of infill material to generate, expressed as a ratio or a percentage.
-Translated:Mængden af fyldmateriale, der skal genereres, udtrykt som et forhold eller en procentdel.
+Translated:Mængden af udfyldningsmateriale, der skal genereres, udtrykt som et forhold eller en procentdel.
 
 English:The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.
-Translated:Mængden af infillkanten vil skubbe ind i omkredsen. Hjælper med at sikre, at infillet er forbundet med kanten. Dette kan udtrykkes som en procentdel af dysediameteren.
+Translated:Det beløb, som udfyldningskanten skubber ind i omkredsen. Hjælper med at sikre, at udfyldningen er forbundet til kanten. Dette kan udtrykkes som en procentdel af dysediameteren.
+
+English:The amount to expand the path lines.
+Translated:Det beløb, der skal udvides stier.
+
+English:The amount to expand the support so it is easy to grab.
+Translated:Det beløb, der skal udvides understøttelsen, så det er let at få fat i.
 
 English:The amount to lower the temperature when the hotend is inactive.
 Translated:Mængden til at sænke temperaturen, når hotend er inaktiv.
 
 English:The angle at which the support material lines will be drawn.
-Translated:Vinklen, hvormed støttematerialelinjerne vil blive tegnet.
+Translated:Vinklen, hvorpå støttemateriale linier vil blive trukket.
 
 English:The angle of the infill, measured from the X axis. Not used when bridging.
-Translated:Fillets vinkel målt fra X-aksen. Ikke brugt ved brodannelse.
+Translated:Udfyldningsvinklen, målt fra X-aksen. Ikke brugt ved brobygning.
 
 English:The angle to generate support for
-Translated:Vinklen til at generere støtte til
+Translated:Vinklen, der skal genereres støtte til
 
 English:The angle to rotate the top of the part
-Translated:Vinklen for at rotere toppen af delen
+Translated:Vinklen til at dreje toppen af delen
 
 English:The bed is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting bed temperature in SETTINGS -> Filament -> Temperatures.\n\n{1}
-Translated:Sengen er i øjeblikket opvarmning, og dens måltemperatur kan ikke ændres, før den når {0} ° C.\n\nDu kan indstille startmadrassens temperatur i INDSTILLINGER -> Filament -> Temperaturer.\n\n{1}
+Translated:Sengen opvarmes i øjeblikket, og dens måltemperatur kan ikke ændres, før den når {0} ° C.\n\nDu kan indstille startbedets temperatur i INDSTILLINGER -> Glødetråd -> temperaturer.\n\n{1}
+
+English:The circumference of the pitch circle divided by the number of teeth
+Translated:Omkretsen af tonehøjdekredsen divideret med antallet af tænder
+
+English:The count of teeth of the gear that will run inside. This is required to cut the internal teeth correctly.
+Translated:Antallet af tænder i gearet, der vil køre indeni. Dette er nødvendigt for at klippe de indre tænder korrekt.
 
 English:The date this file was originally created.
-Translated:Datoen denne fil oprindeligt blev oprettet.
+Translated:Datoen for denne fil blev oprindeligt oprettet.
 
 English:The diameter of the extruder's nozzle.
-Translated:Diameteren af ekstruderens dyse.
+Translated:Diameteren på ekstruderens dyse.
+
+English:The Diameter to the outside of the gear.
+Translated:Diameter til ydersiden af gearet.
+
+English:The distance along the circumference to rotate the top in mm
+Translated:Afstanden langs omkredsen for at dreje toppen i mm
 
 English:The distance between support material lines.
-Translated:Afstanden mellem støttematerialelinjer.
+Translated:Afstanden mellem støttemateriale linjer.
 
 English:The distance between the top of the raft and the bottom of the model. 0.6 mm is a good starting point for PLA and 0.4 mm is a good starting point for ABS. Lower values give a smoother surface, higher values make the print easier to remove.
-Translated:Afstanden mellem toppen af flåden og bunden af modellen. 0,6 mm er et godt udgangspunkt for PLA og 0,4 mm er et godt udgangspunkt for ABS. Lavere værdier giver en glattere overflade, højere værdier gør udskriften lettere at fjerne.
+Translated:Afstanden mellem toppen af flåden og bunden af modellen. 0,6 mm er et godt udgangspunkt for PLA og 0,4 mm er et godt udgangspunkt for ABS. Lavere værdier giver en jævnere overflade, højere værdier gør udskrivningen lettere at fjerne.
 
 English:The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.
-Translated:Afstanden mellem støttens top og bunden af modellen. En god værdi afhænger af typen af materiale. For ABS og PLA fungerer en værdi på henholdsvis 0,4 og 0,6 godt.
+Translated:Afstanden mellem toppen af understøtningen og bunden af modellen. En god værdi afhænger af materialetypen. For ABS og PLA fungerer en værdi mellem henholdsvis 0,4 og 0,6 godt.
 
 English:The distance filament will reverse before each qualifying non-print move
-Translated:Afstandsfilamentet vender om inden hvert kvalificerende ikke-trykbevægelse
+Translated:Afstand filament vil vende tilbage, før hver kvalificerende flytte uden tryk
 
 English:The distance from the model at which the first skirt loop is drawn.
-Translated:Afstanden fra modellen, hvor den første nederdel løber.
+Translated:Afstanden fra modellen, hvorpå den første nederdelsløkke tegnes.
 
 English:The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.
-Translated:Den afstand, som en perimeter overlapper sig selv, når den fuldender sin sløjfe, udtrykt som en procentdel af dysediameteren.
+Translated:Den afstand, som en omkreds vil overlappe sig selv, når den afslutter sin løkke, udtrykt som en procentdel af dysediameteren.
 
 English:The distance the nozzle will lift after each retraction.
-Translated:Afstanden dysen løfter efter hver tilbagetrækning.
+Translated:Den afstand, dysen løfter efter hver tilbagetrækning.
 
 English:The distance the support material will be from the object in the X and Y directions.
-Translated:Afstanden, som understøtningsmaterialet vil være fra objektet i X- og Y-retningen.
+Translated:Afstanden, som støttematerialet er, fra objektet i X- og Y-retningen.
 
 English:The distance to travel after completing a perimeter to improve seams.
-Translated:Afstanden til at rejse efter færdiggørelse af en omkreds for at forbedre sømme.
+Translated:Afstanden til at rejse efter at have afsluttet en omkreds for at forbedre sømmene.
 
 English:The extra distance the raft will extend around the edge of the part.
-Translated:Den ekstra afstand raften vil strække sig omkring kanten af delen.
+Translated:Den ekstra afstand flåden strækker sig rundt på kanten af delen.
 
 English:The extruder is currently heating and its target temperature cannot be changed until it reaches {0}°C.\n\nYou can set the starting extruder temperature in 'Slice Settings' -> 'Filament'.\n\n{1}
-Translated:Ekstruderen opvarmes i øjeblikket, og dens måltemperatur kan ikke ændres, før den når {0} ° C.\n\nDu kan indstille start ekstruderingstemperaturen i 'Slice Settings' -> 'Filament'.\n\n{1}
+Translated:Ekstruderen opvarmes i øjeblikket, og dens måltemperatur kan ikke ændres, før den når {0} ° C.\n\nDu kan indstille startekstruderingstemperaturen i 'Skiveindstillinger' -> 'Filament'.\n\n{1}
 
 English:The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?
-Translated:Filen du forsøger at udskrive er en GCode-fil.\n\nDet anbefales, at du kun udskriver Gcode-filer, der er kendt for at matche din printerens konfiguration.\n\nEr du sikker på, at du vil udskrive denne GCode-fil?
+Translated:Den fil, du forsøger at udskrive, er en GCode-fil.\n\nDet anbefales, at du kun udskriver Gcode-filer, der er kendt for at matche printerens konfiguration.\n\nEr du sikker på, at du vil udskrive denne GCode-fil?
+
+English:The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.
+Translated:Firmware, der bruges af printeren. Tillader forbedringer baseret på firmware såsom optimeret G-kodeproduktion.
 
 English:The geometric shape of the support structure for the inside of parts.
-Translated:Strukturens geometriske form for indersiden af dele.
+Translated:Den geometriske form på bærestrukturen til indersiden af dele.
 
 English:The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.
-Translated:Højden af printerens udskrivbare lydstyrke, i millimeter. Styrer højden af det visuelle printområde, der vises i 3D View.
+Translated:Højden på printerens udskrivbare lydstyrke i millimeter. Kontrollerer højden på det visuelle udskriftsområde, der vises i 3D-visning.
 
 English:The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.
-Translated:Indekset for ekstruderen til brug for udskrivning af understøtningsmateriale. Gælder kun, når ekstruder Count er indstillet til en værdi mere end 1.
+Translated:Indekset for ekstruderen, der skal bruges til udskrivning af understøttelsesmateriale. Gælder kun, når ekstruderantal er indstillet til en værdi mere end 1.
 
 English:The index of the extruder to use for support material interface layer(s).
-Translated:Indekset for ekstruderen til brug for understøtningsmaterialets grænsefladelag (er).
+Translated:Indekset for ekstruderen, der skal bruges til understøttelsesmaterialegrænsefladelag (er).
 
 English:The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.
-Translated:Indekset for ekstruderen til brug for at udskrive flåden. Indstil til 0 for at bruge støtte ekstruder indeks.
+Translated:Indekset for ekstruderen, der skal bruges til at udskrive flåden. Indstil til 0 for at bruge supportekstruderingsindekset.
 
 English:The inset amount for nozzle 1 from the bed
-Translated:Indsatsen beløber for dyse 1 fra sengen
+Translated:Indlægsmængden for dyse 1 fra sengen
 
 English:The inset amount for nozzle 2 from the bed
-Translated:Indstikket beløb til dyse 2 fra sengen
+Translated:Indsættelsesmængden for dyse 2 fra sengen
 
 English:The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: "16; 37".
-Translated:Det lag (er), hvorpå udskriften vil standse, hvilket muliggør en ændring i filament. Printeren er pauset, før du starter det givne lag. Lad være tom for at deaktivere. For at pause på flere lag skal du skille lagnumre med semikoloner. For eksempel: "16; 37".
+Translated:Det (de) lag (er), hvorpå udskriften stopper, hvilket giver mulighed for en ændring i glødetråden. Printeren er sat på pause, inden det givne lag startes. Lad være tom for at deaktivere. For at pause på flere lag skal du adskille lagnumrene med semikolon. For eksempel: "16; 37".
 
 English:The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.
-Translated:Længden og bredden af et tårn skabt bagtil til venstre for printet, der bruges til at tørre den næste dyse, når der skiftes mellem flere ekstrudere. Indstil til 0 for at deaktivere.
+Translated:Længden og bredden af et tårn oprettet bagerst til venstre på udskriften, der bruges til at tørre den næste dyse ved skift mellem flere ekstrudere. Indstil til 0 for at deaktivere.
 
 English:The Markdown that will be shown on the Clean Filament page.
 Translated:Markdown, der vises på siden Clean Filament.
@@ -3671,346 +3839,394 @@ English:The Markdown that will be shown on the Insert Filament page.
 Translated:Markdown, der vises på siden Indsæt filament.
 
 English:The Markdown that will be shown on the second extruders Clean Filament page.
-Translated:Markdown, der vises på den anden ekstruder Clean Filament-siden.
+Translated:Markdown, der vises på den anden side af ekstruderere Clean Filament.
 
 English:The Markdown that will be shown on the second extruders Insert Filament page.
-Translated:Markdown, der vises på den anden ekstruder Indsæt filament-side.
+Translated:Markdown, der vises på den anden side af ekstrudere, indsæt filament.
 
 English:The Markdown that will be shown on the Trim Filament page.
-Translated:Markdown, der vises på Trim Filament-siden.
+Translated:Markdown, der vises på siden Trimfilament.
+
+English:The maximum amount that an avoid crossing travel can exceed the direct distance. If the avoid travel is too long, a direct move will be executed.
+Translated:Det maksimale beløb, som man undgår at krydse rejse, kan overstige den direkte afstand. Hvis undgå rejsen er for lang, udføres en direkte bevægelse.
 
 English:The maximum amount the printer can accelerate on a G-Code move.
-Translated:Det maksimale beløb, som printeren kan accelerere på en G-Code-flytning.
+Translated:Den maksimale mængde, som printeren kan fremskynde ved en G-Code-bevægelse.
 
 English:The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:Den maksimale hastighed, hvormed lagens kølevifte vil køre, udtrykt som en procentdel af fuld effekt.
+Translated:Den maksimale hastighed, hvormed køleviften kører, udtrykt i procent af fuld effekt.
 
 English:The maximum speed that the printer treats as 0 and changes direction instantly.
-Translated:Den maksimale hastighed, som printeren behandler som 0 og ændrer retning med det samme.
+Translated:Den maksimale hastighed, som printeren behandler som 0 og ændrer øjeblikkeligt retning.
 
 English:The maximum speed the printer can move.
-Translated:Den maksimale hastighed, printeren kan flytte.
+Translated:Printerens maksimale hastighed kan bevæge sig.
 
 English:The minimum amount of time a layer must take to print. If a layer will take less than this amount of time, the movement speed is reduced so the layer print time will match this value, down to the minimum print speed at the slowest.
-Translated:Den mindste mængde tid, et lag skal tage for at udskrive. Hvis et lag tager mindre tid end denne tid, reduceres bevægelseshastigheden, så lagets udskrifts tid vil matche denne værdi ned til den laveste udskrivningshastighed ved den langsomste.
+Translated:Den minimale tid, et lag skal tage for at udskrive. Hvis et lag vil tage mindre end denne mængde tid, reduceres bevægelseshastigheden, så lagets udskrivningstid matcher denne værdi, ned til den mindste udskrivningshastighed som langsomst.
 
 English:The minimum distance of a non-print move which will trigger a retraction.
-Translated:Den mindste afstand af et ikke-trykbevægelse, som vil udløse en tilbagetrækning.
+Translated:Den minimale afstand for en ikke-udskrivning, som udløser en tilbagetrækning.
 
 English:The minimum feature size to consider from the model. Leave at 0 to use all the model detail.
-Translated:Den minimale funktionsstørrelse, der skal overvejes fra modellen. Forlad ved 0 for at bruge alle model detaljer.
+Translated:Den minimale funktionstørrelse, som modellen skal overvejes. Lad klokken 0 for at bruge alle modeldetaljer.
 
 English:The minimum length of filament that must be extruded before a retraction can occur.
-Translated:Den mindste længde af filament, som skal ekstruderes, før en tilbagetrækning kan forekomme.
+Translated:Den mindste længde på filament, der skal ekstruderes, før en tilbagetrækning kan forekomme.
 
 English:The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.
-Translated:Den mindste længde af glødetråd, der skal bruges til udskrivning af nederdelens løkker. Nok skørtløkker vil blive tegnet for at bruge denne filamentstørrelse og overstyrer værdien i Loops, hvis værdien i Loops vil producere et nederdel kortere end denne værdi.
+Translated:Den mindste længde på filament til brug ved udskrivning af nederdelsløjferne. Der trækkes tilstrækkeligt med nederdelsløjfer til at bruge denne filamentmængde og tilsidesætter den indstillede værdi i Loops, hvis værdien i Loops producerer et nederdel, der er kortere end denne værdi.
 
 English:The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power.
-Translated:Den minimale hastighed, hvormed lagens kølevifte vil køre, udtrykt som en procentdel af fuld effekt.
+Translated:Den mindste hastighed, hvormed køleviften kører, udtrykt i procent af fuld effekt.
 
 English:The minimum speed to which the printer will reduce to in order to attempt to make the layer print time long enough to satisfy the minimum layer time.
-Translated:Den minimale hastighed, som printeren vil reducere til for at forsøge at lave lagets udskrifts tid tilstrækkelig lang tid til at opfylde minimums lagtid.
+Translated:Den minimale hastighed, som printeren reducerer til for at forsøge at gøre lagets udskrivningstid lang nok til at tilfredsstille den minimale lagtid.
 
 English:The number of CPU cores to use while doing slicing. Increasing this can slow down your machine.
-Translated:Antallet af CPU-kerner, der skal bruges, mens der skæres. Forøgelse af dette kan bremse din maskine.
+Translated:Antallet af CPU-kerner, der skal bruges, mens du udskærer. At øge dette kan bremse din maskine.
 
 English:The number of degrees Centigrade to lower the temperature of a nozzle while it is not active.
-Translated:Antallet grader Celsius for at sænke temperaturen på en dyse, mens den ikke er aktiv.
+Translated:Antallet af grader Celsius for at sænke temperaturen på en dyse, mens den ikke er aktiv.
 
 English:The number of extruders the printer has.
-Translated:Antallet af ekstrudere, som printeren har.
+Translated:Antallet af ekstrudere, printeren har.
 
 English:The number of layers for which the layer cooling fan will be forced off at the start of the print.
-Translated:Antallet af lag, for hvilke lagkølervifteren vil blive tvinget fra ved starten af udskriften.
+Translated:Antallet af lag, som lagkølerventilatoren tvinges fra ved starten af udskrivningen.
 
 English:The number of layers or the distance in millimeters to solid fill on the bottom surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:Antallet af lag eller afstanden i millimeter til fast påfyldning på objektets nederste overflade (r). Tilføj mm til slutningen af nummeret for at angive afstand i millimeter.
+Translated:Antallet af lag eller afstanden i millimeter til fast udfyldning på genstandens bundflade (r). Tilføj mm til slutningen af tallet for at specificere afstanden i millimeter.
 
 English:The number of layers or the distance to print solid material between the supports and the part. Add mm to the end of the number to specify distance.
-Translated:Antallet af lag eller afstanden til at udskrive fast materiale mellem understøtningerne og delen. Tilføj mm til slutningen af nummeret for at angive afstand.
+Translated:Antallet af lag eller afstanden til at udskrive massivt materiale mellem understøttelserne og delen. Tilføj mm til slutningen af tallet for at specificere afstand.
 
 English:The number of layers to consider as the beginning of the print. These will print at initial layer speed.
-Translated:Antallet af lag, der skal overvejes som begyndelsen af udskriften. Disse vil udskrive ved første laghastighed.
+Translated:Antallet af lag, der skal betragtes som begyndelsen af udskrivningen. Disse udskrives med det oprindelige laghastighed.
 
 English:The number of layers to draw the skirt.
-Translated:Antallet af lag til at tegne nederdelen.
+Translated:Antallet af lag til trækning af nederdelen.
 
 English:The number of layers, or the distance in millimeters, to solid fill on the top surface(s) of the object. Add mm to the end of the number to specify distance in millimeters.
-Translated:Antallet af lag, eller afstanden i millimeter, til fast påfyldning på objektets øverste overflade (r). Tilføj mm til slutningen af nummeret for at angive afstand i millimeter.
+Translated:Antallet af lag eller afstanden i millimeter til fast udfyldning på objektets øverste overflade (r). Tilføj mm til slutningen af tallet for at specificere afstanden i millimeter.
 
 English:The number of loops to draw around all the parts on the bed before starting on the parts. Used mostly to prime the nozzle so the flow is even when the actual print begins.
-Translated:Antallet af løkker, der skal trækkes rundt om alle dele på sengen, før de begynder på delene. Bruges for det meste til at prime dysen, så strømmen er selv når den egentlige udskrivning begynder.
+Translated:Antallet af sløjfer, der skal trækkes rundt om alle delene på sengen, inden du starter med delene. Bruges hovedsageligt til at primere dysen, så strømmen er, selv når den egentlige udskrivning begynder.
 
 English:The number of loops to draw around parts. Used to provide additional bed adhesion
-Translated:Antallet af løkker til at tegne rundt dele. Bruges til at give ekstra seng vedhæftning
+Translated:Antallet af løkker, der skal trækkes rundt om dele. Bruges til at give yderligere sengevævning
+
+English:The number of polygons determined by the percentage reduction.
+Translated:Antallet af polygoner bestemt af den procentvise reduktion.
 
 English:The number of times to sample each probe position (results will be averaged).
-Translated:Antallet af gange for at prøve hver sondeposition (resultaterne bliver gennemsnitlige).
+Translated:Antallet af gange, der skal prøves for hver sondeposition (resultaterne gennemsnit).
 
 English:The number, or total width, of external shells to create. Add mm to the end of the number to specify width in millimeters.
-Translated:Antallet eller den samlede bredde af eksterne skaller, der skal oprettes. Tilføj mm til slutningen af nummeret for at angive bredde i millimeter.
+Translated:Antallet eller den totale bredde af eksterne skaller, der skal oprettes. Tilføj mm til slutningen af tallet for at specificere bredden i millimeter.
 
 English:The offset from T0 to the probe.
-Translated:Forskydningen fra T0 til sonden.
+Translated:Offset fra T0 til sonden.
 
 English:The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.
-Translated:Forskydningen af hver dyse i forhold til den første dyse. Kun anvendelig til flere ekstrudermaskiner.
+Translated:Forskydningen af hver dyse i forhold til den første dyse. Kun nyttig til flere ekstrudermaskiner.
+
+English:The original number of polygons.
+Translated:Det originale antal polygoner.
 
 English:The pattern to draw for the generation of support material.
-Translated:Mønsteret til tegning til generering af understøtningsmateriale.
+Translated:Mønsteret, der skal tegnes til generering af støttemateriale.
 
 English:The pattern used on the bottom and top layers of the print.
-Translated:Mønsteret der anvendes på bunden og øverste lag af printet.
+Translated:Mønsteret, der bruges på bund- og øverste lag på udskriften.
+
+English:The percentage of polygons to keep.
+Translated:Procentdel af polygoner, der skal holdes.
+
+English:The percentage overlap a given printed line must have over the layer below to be supported.
+Translated:Den procentvise overlapning af en given udskrevet linje skal have over laget nedenfor for at understøttes.
+
+English:The percentage up from the bottom to end the twist
+Translated:Procentdelen op fra bunden for at afslutte twistet
+
+English:The percentage up from the bottom to start the twist
+Translated:Procentdelen op fra bunden for at starte drejningen
 
 English:The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.
-Translated:Stillingen (X og Y koordinater) i midten af printlejet, i millimeter. Normalt er dette 1/2 sengens størrelse for Cartesian-printere og 0, 0 for Delta-printere.
+Translated:Placeringen (X og Y-koordinater) for printbedets centrum i millimeter. Normalt er dette 1/2 sengestørrelse for kartesiske printere og 0, 0 for Delta-printere.
 
 English:The position to measure the probe offset.
-Translated:Positionen til måling af sondens forskydning.
+Translated:Positionen til måling af sonden er forskudt.
 
 English:The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.
-Translated:Prisen på et kilo filament. Bruges til at estimere omkostningerne ved et print i Layer View.
+Translated:Prisen på et kilogram filament. Bruges til at estimere prisen for en udskrift i lagvisningen.
 
 English:The print leveling algorithm to use.
-Translated:Udskriftsnivelleringsalgoritmen til brug.
+Translated:Den udskrivningsniveaueringsalgoritme, der skal bruges.
+
+English:The printer has a c axis used by too changer (e3d quad extruder).
+Translated:Printeren har en c-akse, der bruges af for skifter (e3d quad-ekstruder).
 
 English:The printer has a heated bed.
 Translated:Printeren har en opvarmet seng.
 
 English:The printer has a layer-cooling fan.
-Translated:Printeren har en lag-køleventilator.
+Translated:Printeren har en ventilator til lagkøling.
 
 English:The printer has a SD card reader.
 Translated:Printeren har en SD-kortlæser.
 
 English:The printer has a servo for lowering and raising the z probe.
-Translated:Printeren har en servo til at sænke og hæve z-sonden.
+Translated:Printeren har en servo til sænkning og hævelse af z-sonden.
 
 English:The printer has a z probe for measuring bed level.
-Translated:Printeren har en z-sonde til måling af sengens niveau.
+Translated:Printeren har en z-sonde til måling af sengeniveau.
 
 English:The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.
-Translated:Printeren har sin egen automatisk beddemåler og procedure, der kan kaldes ved hjælp af en G29-kommando under Start G-Code.
+Translated:Printeren har sin egen auto bed nivelleringssonde og -procedure, der kan kaldes ved hjælp af en G29-kommando under start af G-kode.
 
 English:The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.
-Translated:Printeren har mulighed for at styre strømforsyningen. Aktivér denne funktion for at vise ATX Power Control-sektionen i kontrolpanelet.
+Translated:Printeren har evnen til at kontrollere strømforsyningen. Aktivér denne funktion for at vise ATX Power Control-sektionen i kontrolpanelet.
 
 English:The printer requires print leveling to run correctly.
-Translated:Printeren kræver, at udskrivning skal udføres korrekt.
+Translated:Printeren kræver, at udskrivningsnivelleringen kører korrekt.
 
 English:The printer should now be 'homing'.
-Translated:Printeren skal nu være 'homing'.
+Translated:Printeren skal nu 'homing'.
 
 English:The profile you are attempting to load has been corrupted. We loaded your last usable {0} {1} profile from your recent profile history instead.
-Translated:Profilen du forsøger at indlæse er blevet beskadiget. Vi indlæste din sidste brugbare {0} {1} profil fra din seneste profilhistorik i stedet.
+Translated:Profilen, du forsøger at indlæse, er beskadiget. Vi indlæste din sidste brugbare {0} {1} profil fra din seneste profilhistorie i stedet.
+
+English:The radius described by the source part or implied by the geometry.
+Translated:Radien beskrevet af kildedelen eller antydet af geometrien.
+
+English:The radius of the imaginary circle where this gears mates. To find the correct distance between two gears add their 'Pitch Radii' together.
+Translated:Radien for den imaginære cirkel, hvor dette gear parrer. For at finde den rigtige afstand mellem to gear skal du tilføje deres 'Pitch Radii' sammen.
 
 English:The serial driver to use
 Translated:Den serielle driver, der skal bruges
 
 English:The serial port communication speed of the printers firmware.
-Translated:Serieportens kommunikationshastighed for printerens firmware.
+Translated:Den serielle portkommunikationshastighed for printerens firmware.
 
 English:The 'Serial Port' section lists all available serial\nports on your device. Changing which USB port the printer\nis connected to may change the associated serial port.\n\nTip: If you are uncertain, unplug/plug in your printer\nand hit refresh. The new port that appears should be\nyour printer.
-Translated:Afsnittet 'Seriel port' viser alle tilgængelige serielle \ n-porte på din enhed. Hvis du ændrer hvilken USB-port, printeren\ner tilsluttet, kan den tilhørende serielle port ændres.\n\nTip: Hvis du er usikker, tag stikket ud / tilslut printeren\nog tryk på opdatering. Den nye port, der vises, skal være\ndin printer.
+Translated:Afsnittet 'Seriel port' viser alle tilgængelige serielle \ n-porte på din enhed. Ændring af hvilken USB-port printeren\ner tilsluttet til kan ændre den tilknyttede serielle port.\n\nTip: Hvis du er usikker, skal du fjerne stikket / stikket til printeren\nog trykke på Opdater. Den nye port, der vises, skal være\ndin printer.
 
 English:The serial port to use while connecting to this printer.
-Translated:Den serielle port, der skal bruges, når du tilslutter denne printer.
+Translated:Den serielle port, der skal bruges under forbindelse til denne printer.
 
 English:The shape of the physical print bed.
-Translated:Formen af den fysiske print seng.
+Translated:Formen på den fysiske trykseng.
+
+English:The slicer to use.
+Translated:Skiven at bruge.
+
+English:The source part is specifying a preferred radius. You can turn this off to set a specific radius.
+Translated:Kildedelen specificerer en foretrukken radius. Du kan slå dette fra for at indstille en bestemt radius.
 
 English:The speed at which bridging between walls will print.
-Translated:Den hastighed, hvormed brodannelse mellem vægge vil udskrives.
+Translated:Den hastighed, hvormed broen mellem væggene udskrives.
 
 English:The speed at which filament will retract and re-extrude.
-Translated:Den hastighed, hvormed filamentet trækker sig og reekstruderes.
+Translated:Den hastighed, hvormed glødetråden trækkes tilbage og ekstruderes igen.
 
 English:The speed at which infill will print.
-Translated:Den hastighed, hvormed infill vil udskrive.
+Translated:Den hastighed, hvorpå udfyldningen udskrives.
 
 English:The speed at which inside perimeters will print.
-Translated:Den hastighed hvormed indvendige perimetre vil udskrive.
+Translated:Den hastighed, hvorpå de indvendige perimetre udskrives.
 
 English:The speed at which interface layers will print.
-Translated:Hastigheden hvormed grænsefladelagene vil udskrive.
+Translated:Den hastighed, hvormed interface-lagene udskrives.
 
 English:The speed at which outside, external, or the otherwise visible perimeters will print.
-Translated:Den hastighed hvormed udenfor, ekstern eller de ellers synlige perimetre vil udskrive.
+Translated:Den hastighed, hvorpå udvendige, eksterne eller de ellers synlige perimetre udskrives.
 
 English:The speed at which support material structures will print.
-Translated:Den hastighed, hvormed understøttende materiale strukturer vil udskrive.
-
-English:The speed at which the air gap layer will print.
-Translated:Den hastighed, hvormed luftgabet lagres.
+Translated:Den hastighed, hvorpå understøttelsesmateriale strukturer udskrives.
 
 English:The speed at which the bottom solid layers will print. Can be set explicitly or as a percentage of the Infill speed. Use 0 to match infill speed.
-Translated:Den hastighed, hvormed de nederste faste lag udskriver. Kan indstilles eksplicit eller som en procentdel af infill hastigheden. Brug 0 til at matche infill hastighed.
+Translated:Den hastighed, hvorpå de nederste faste lag udskrives. Kan indstilles eksplicit eller som en procentdel af udfyldningshastigheden. Brug 0 til at matche udfyldningshastighed.
 
 English:The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.
-Translated:Den hastighed, hvormed lagens køleventilator vil køre, når broen udtrykkes som en procentdel af fuld effekt.
+Translated:Den hastighed, hvormed køleviften kører ved brodannelse, udtrykt i procent af fuld effekt.
+
+English:The speed at which the layer on top of the air gap will print.
+Translated:Den hastighed, hvormed laget øverst på luftspalten udskrives.
 
 English:The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Den hastighed, hvorpå lagene på flåden (bortset fra det første lag) vil udskrive. Dette kan indstilles eksplicit eller som en procentdel af infillhastigheden.
+Translated:Den hastighed, hvorpå lagene på flåden (bortset fra det første lag) udskrives. Dette kan indstilles eksplicit eller som en procentdel af udfyldningshastigheden.
 
 English:The speed at which the nozzle will move when not extruding material.
-Translated:Den hastighed, hvormed dysen vil bevæge sig, når der ikke ekstruderes materiale.
+Translated:Den hastighed, hvorpå dysen bevæger sig, når der ikke ekstruderes materiale.
 
 English:The speed at which the nozzle will move when printing the initial layers. If expressed as a percentage the Infill speed is modified.
-Translated:Den hastighed, hvormed dysen vil bevæge sig, når du udskriver de indledende lag. Hvis udtrykt i procent, ændres infillhastigheden.
+Translated:Den hastighed, hvorpå dysen bevæger sig, når du udskriver de indledende lag. Hvis udtrykt i procent, ændres udfyldningshastigheden.
 
 English:The speed at which the nozzle will move when recovering a failed print, for 1 layer.
-Translated:Den hastighed, hvormed dysen vil bevæge sig, når der gendannes et fejlagtigt udskrivning til 1 lag.
+Translated:Den hastighed, hvorpå dysen bevæger sig, når der gendannes en mislykket udskrift, i 1 lag.
 
 English:The speed at which the top solid layers will print. Can be set explicitly or as a percentage of the Infill speed.
-Translated:Den hastighed, hvormed de øverste faste lag udskriver. Kan indstilles eksplicit eller som en procentdel af infill hastigheden.
+Translated:Den hastighed, hvormed de øverste faste lag udskrives. Kan indstilles eksplicit eller som en procentdel af udfyldningshastigheden.
 
 English:The speed to move the laser when the layer height is 0.025mm. Speed will be adjusted linearly at other heights.
-Translated:Hastigheden til at bevæge laseren, når lagets højde er 0,025 mm. Hastigheden justeres lineært i andre højder.
+Translated:Hastigheden for at flytte laseren, når lagets højde er 0,025 mm. Hastigheden justeres lineært i andre højder.
 
 English:The speed to move the laser when the layer height is 0.1mm. Speed will be adjusted linearly at other heights.
-Translated:Hastigheden til at bevæge laseren, når lagets højde er 0,1 mm. Hastigheden justeres lineært i andre højder.
+Translated:Hastigheden for at flytte laseren, når lagets højde er 0,1 mm. Hastigheden justeres lineært i andre højder.
 
 English:The speed to print infill when completely solid. This can be set explicitly or as a percentage of the Infill speed.
-Translated:Hastigheden til at udskrive infill, når den er helt fast. Dette kan indstilles eksplicit eller som en procentdel af infillhastigheden.
+Translated:Hastigheden til udskrivning udfyldes, når den er helt solid. Dette kan indstilles eksplicit eller som en procentdel af udfyldningshastigheden.
 
 English:The speed to run filament into and out of the printer.
-Translated:Hastigheden til at køre filament ind og ud af printeren.
+Translated:Hastigheden til at køre glødetråd ind og ud af printeren.
 
 English:The starting height (z) of the print head before probing each print level position.
-Translated:Starthøjden (z) på printhovedet, før du undersøger hver udskriftsniveauposition.
+Translated:Starthøjde (z) på skrivehovedet, inden man undersøger hver udskrivningsposition.
+
+English:The target number of polygons.
+Translated:Målantal polygoner.
+
+English:The target temperature the bed will attempt to reach during the first layer of the print.
+Translated:Måltemperaturen, som sengen vil forsøge at nå i det første lag på udskriften.
 
 English:The target temperature the extruder will attempt to reach during the print.
-Translated:Måltemperaturen, som ekstruderen vil forsøge at nå under udskriften.
+Translated:Måltemperaturen, som ekstruderen prøver at nå under udskrivningen.
 
 English:The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.
-Translated:Den temperatur, hvor ekstruderen tørrer dysen, som angivet i brugerdefineret G-kode.
+Translated:Den temperatur, hvor ekstruderen tørrer dysen, som specificeret ved brugerdefineret G-kode.
 
 English:The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.
-Translated:Den temperatur, som sengen vil blive indstillet i løbet af trykket. Indstil til 0 for at deaktivere.
+Translated:Den temperatur, som sengen skal indstilles til i udskrivningens varighed. Indstil til 0 for at deaktivere.
 
 English:The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.
-Translated:Den temperatur, som sengen vil varme (eller afkøle) for at fjerne delen, som angivet i Brugerdefineret G-kode.
+Translated:Den temperatur, hvorpå sengen opvarmes (eller afkøles) for at fjerne delen, som specificeret i Custom G-Code.
 
 English:The temperature to which the nozzle will be heated before printing the first layer of a part. The printer will wait until this temperature has been reached before printing.
-Translated:Temperaturen til hvilken dysen vil blive opvarmet, før du udskriver det første lag af en del. Printeren vil vente, indtil denne temperatur er nået før udskrivning.
+Translated:Den temperatur, til hvilken dysen opvarmes, inden det første lag af en del udskrives. Printeren venter, indtil denne temperatur er nået, før udskrivning.
 
 English:The term 'Baud Rate' roughly means the speed at which\ndata is transmitted.  Baud rates may differ from printer to\nprinter. Refer to your printer manual for more info.\n\nTip: If you are uncertain - try 250000.
-Translated:Udtrykket 'Baud Rate' betyder stort set den hastighed, hvor\ndata overføres. Baud-satser kan variere fra printer til printer. Se mere i din printervejledning.\n\nTip: Hvis du er usikker - prøv 250000.
+Translated:Udtrykket 'Baud Rate' betyder groft den hastighed, hvorpå\ndata transmitteres. Baud-satser kan variere fra printer til\nprinter. Se i printerhåndbogen for mere information.\n\nTip: Hvis du er usikker - prøv 250000.
 
 English:The thickness of each layer of the print, except the first layer. A smaller number will create more layers and more vertical accuracy but also a slower print.
-Translated:Tykkelsen af hvert lag af printet, undtagen det første lag. Et mindre antal vil skabe flere lag og mere lodret nøjagtighed, men også en langsommere udskrivning.
+Translated:Tykkelsen på hvert lag på udskriften undtagen det første lag. Et mindre antal skaber flere lag og mere lodret nøjagtighed, men også et langsommere udskrivning.
 
 English:The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.
-Translated:Tykkelsen af det første lag. Et første lag, der er højere end standardlagtykkelsen, kan sikre god vedhæftning af byggepladen.
+Translated:Tykkelsen af det første lag. Et første lag, der er højere end standardlagtykkelsen, kan sikre god vedhæftning til byggepladen.
 
 English:The time it takes to heat back up from a cool down.
-Translated:Den tid det tager at varme op fra en køle ned.
+Translated:Den tid det tager at varme op igen fra en afkøling.
 
 English:The time it will take to unload the filament
-Translated:Den tid det tager at aflaste filamentet
+Translated:Den tid det vil tage at losse glødetråden
 
 English:The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.
-Translated:Den tid, hvorfra ekstra længde på genstart skal øges til maksimumsværdien. Under denne tid vil kun en del af den ekstra længde blive anvendt. Forlad 0 for at anvende hele beløbet hele tiden.
+Translated:Tiden der øges den ekstra længde til genstart til dens maksimale værdi. Under denne tid anvendes kun en del af den ekstra længde. Forlad 0 for at anvende hele beløbet hele tiden.
 
 English:The time to print this G-Code is estimated to be {0} seconds.\n\nPlease check your part for errors if this is unexpected.
-Translated:Tiden til at udskrive denne G-kode anslås at være {0} sekunder.\n\nKontroller din del for fejl, hvis dette er uventet.
+Translated:Tiden til udskrivning af denne G-kode anslås til at være {0} sekunder.\n\nKontroller din del for fejl, hvis dette er uventet.
 
 English:The version of G-Code the printer's firmware communicates with. Some firmware use different G and M codes. Setting this ensures that the output G-Code will use the correct commands.
-Translated:Den version af G-Koden, som printerens firmware kommunikerer med. Nogle firmware bruger forskellige G og M koder. Indstilling af dette sikrer, at output G-Code bruger de korrekte kommandoer.
+Translated:Den version af G-kode, som printerens firmware kommunikerer med. Nogle firmware bruger forskellige G- og M-koder. Indstilling af dette sikrer, at output-G-koden bruger de rigtige kommandoer.
 
 English:The width and depth of the support pillars
-Translated:Bredden og dybden af støttestøtterne
+Translated:Støttesøjlernes bredde og dybde
+
+English:The width of the edge outside the inner teeth
+Translated:Bredden af kanten uden for de indre tænder
+
+English:The with of the outline.
+Translated:Oversigten med.
 
 English:The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.
-Translated:X- og Y-positionen på den varme ende, der minimerer chancen for at kollidere med delene på sengen.
+Translated:X- og Y-positionen i den varme ende, der minimerer risikoen for at kollidere med delene på sengen.
 
 English:The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.
-Translated:X- og Y-værdierne af størrelsen af printmadrassen, i millimeter. For printere med en cirkulær seng er disse værdier diametrene på X- og Y-akserne.
+Translated:X- og Y-værdierne for udskriftsbedets størrelse i millimeter. For printere med en cirkulær seng er disse værdier diametre på X- og Y-akserne.
 
 English:The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.
-Translated:Z-forskydningen til din printer, nogle gange kaldet Baby Stepping, er større end 2 mm og ugyldig. Ryd værdien og genindlæs sengen.
+Translated:Z-forskydningen til din printer, nogle gange kaldet Baby Stepping, er større end 2 mm og ugyldig. Ryd værdien og jævn sengen igen.
 
 English:The z offset to apply to improve the first layer adhesion.
-Translated:Z-forskydningen gælder for at forbedre det første lag vedhæftning.
+Translated:Z forskydes til anvendelse for at forbedre vedhæftningen af det første lag.
 
 English:Theme
 Translated:Tema
 
 English:There is a new update available for download
-Translated:Der er en ny opdatering til rådighed for download
+Translated:Der er en ny opdatering til download
 
 English:There is a recommended update available
-Translated:Der er en anbefalet opdatering til rådighed
+Translated:Der er en anbefalet opdatering tilgængelig
 
 English:There is a recommended update available for MatterControl. Would you like to download it now?
-Translated:Der er en anbefalet opdatering til rådighed for MatterControl. Vil du downloade det nu?
+Translated:Der er en anbefalet opdatering tilgængelig for MatterControl. Vil du downloade det nu?
 
 English:There is a required update available
-Translated:Der er en nødvendig opdatering til rådighed
+Translated:Der er en påkrævet opdatering tilgængelig
 
 English:Thin Walls
 Translated:Tynde vægge
 
 English:This code to will provide read-only access.
-Translated:Denne kode vil give adgang til læseadgang.
+Translated:Denne kode til giver læseadgang.
 
 English:This data compensates for machine misalignment and bed distortion, and ensures good first layer adhesion.
-Translated:Disse data kompenserer for maskinforskydning og sengforvrængning og sikrer god første laghæftning.
+Translated:Disse data kompenserer for maskinejustering og forvrængning af sengen og sikrer god vedhæftning af første lag.
 
 English:This data improves the alignment of dual extrusion prints.
-Translated:Disse data forbedrer justeringen af dobbelte ekstruderingsudskrifter.
+Translated:Disse data forbedrer justeringen af dobbelt ekstruderingsprint.
 
 English:This data is required for software print leveling and ensures good first layer adhesion.
-Translated:Disse data er nødvendige for udskrivning af software og sikrer god første lag vedhæftning.
+Translated:Disse data kræves til udskrivning af softwareprinter og sikrer god vedhæftning af første lag.
 
 English:This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.
-Translated:Dette er et sæt regulære udtryk, der gælder for linjer, efter at de er modtaget fra printeren. De vil blive anvendt for at hver linje modtaget.
+Translated:Dette er et sæt regelmæssige udtryk, der skal anvendes på linjer, efter at de er modtaget fra printeren. De anvendes til hver modtaget linje.
 
 English:This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.
-Translated:Dette er et sæt regulære udtryk, der skal anvendes på linjer, før de sendes til en printer. De vil blive anvendt i den rækkefølge, der er anført før afsendelse. For at returnere mere end en instruktion adskille dem med komma.
+Translated:Dette er et sæt med regelmæssige udtryk, der skal anvendes på linjer, før de sendes til en printer. De vil blive anvendt i den angivne rækkefølge før afsendelse. Hvis du vil returnere mere end en instruktion, skal du adskille dem med komma.
 
 English:This is the angle that lowers or deploys the z probe.
-Translated:Dette er den vinkel, der sænker eller deployerer z-sonden.
+Translated:Dette er den vinkel, der sænker eller udsætter z-sonden.
 
 English:This is the angle that raises or stows the z probe.
-Translated:Dette er den vinkel, der rejser eller støder z-sonden.
+Translated:Dette er den vinkel, der hæver eller stuver z-sonden.
 
 English:This is the make (often the manufacturer) of printer this profile is targeting.
-Translated:Dette er fabrikanten (ofte producenten) af printeren, som denne profil målretter mod.
+Translated:Dette er fabrikanten (ofte producenten) af printeren, som denne profil er målrettet mod.
 
 English:This is the model of printer this profile is targeting.
-Translated:Dette er typen af printer, som denne profil målretter mod.
+Translated:Dette er modellen til printeren, som denne profil er målrettet mod.
 
 English:This is the name of your printer that will be displayed in the choose printer menu.
-Translated:Dette er navnet på din printer, der vises i den valgte printermenu.
+Translated:Dette er navnet på din printer, der vises i menuen Vælg printer.
 
 English:This is the position to perform the scale about.
 Translated:Dette er positionen til at udføre skalaen omkring.
 
 English:This is to help reduce vibrations during printing. If your printer has a resonance frequency that is causing trouble you can set this to try and reduce printing at that frequency.
-Translated:Dette er for at hjælpe med at reducere vibrationer under udskrivning. Hvis din printer har en resonansfrekvens, der forårsager problemer, kan du indstille dette for at forsøge at reducere udskrivningen ved den frekvens.
+Translated:Dette er med til at reducere vibrationer under udskrivning. Hvis din printer har en resonansfrekvens, der skaber problemer, kan du indstille dette til at forsøge at reducere udskrivning på denne frekvens.
 
 English:This should be in 'G-Code'
-Translated:Dette skal være i 'G-Code'
+Translated:Dette skal være i 'G-kode'
 
 English:This will ensure that filament is able to flow through the nozzle.
-Translated:Dette sikrer, at filamentet kan strømme gennem dysen.
+Translated:Dette vil sikre, at glødetråden er i stand til at strømme gennem dysen.
 
 English:This will ensure that no filament is stuck to your nozzle.
-Translated:Dette sikrer, at der ikke sidder fast tråd på din dyse.
+Translated:Dette vil sikre, at intet glødetråd sidder fast på din dyse.
 
 English:This will improve the accuracy of print leveling 
-Translated:Dette vil forbedre nøjagtigheden af udskrivning af nivellering
+Translated:Dette forbedrer nøjagtigheden af udskrivningsniveaueringen
 
 English:This will improve the accuracy of print leveling.
-Translated:Dette vil forbedre nøjagtigheden af udskrivning af nivellering.
+Translated:Dette forbedrer nøjagtigheden af udskrivningsniveaueringen.
 
 English:This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature
-Translated:Dette vil kun fungere på specifik hardware. Brug ikke medmindre du er sikker på, at din printercontroller understøtter denne funktion
+Translated:Dette fungerer kun på specifik hardware. Brug ikke, medmindre du er sikker på, at din printercontroller understøtter denne funktion
 
 English:This wizard will close to print a calibration part and resume after the print completes.
-Translated:Denne guiden lukker for at udskrive en kalibreringsdel og genoptage, efter at udskriften er fuldført.
+Translated:Denne guide lukker for at udskrive en kalibreringsdel og genoptages, når udskrivningen er afsluttet.
 
 English:Threads
 Translated:Tråde
@@ -4022,40 +4238,43 @@ English:Time
 Translated:Tid
 
 English:Time For Extra Length
-Translated:Tid for ekstra længde
+Translated:Tid til ekstra længde
 
 English:Time From Start
 Translated:Tid fra start
 
 English:Time Multiplier
-Translated:Time Multiplikator
+Translated:Tidsmultiplikator
 
 English:Time to End
 Translated:Tid til slut
 
 English:Time to Tool Change
-Translated:Tid til værktøjsændring
+Translated:Tid til værktøjsskift
 
 English:TM
 Translated:TM
 
 English:To complete the next few steps you will need
-Translated:For at gennemføre de næste trin skal du bruge
+Translated:For at gennemføre de næste par trin, du har brug for
+
+English:To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.
+Translated:For at afslutte ændringen af dine skærmindstillinger skal du genstarte MatterControl. Hvis du efter ændring af dine skrifttyper er for lille, kan du justere tekststørrelse.
 
 English:To Folder
 Translated:Til mappe
 
 English:Toggle between specifying the size or the percentage to scale.
-Translated:Skift mellem angivelse af størrelsen eller procentdelen til skalaen.
+Translated:Skift mellem at specificere størrelsen eller den procentdel, der skal skaleres.
 
 English:Toggle Selection
-Translated:Veksle valg
+Translated:Skift valg
 
 English:Toggle Support
 Translated:Skift support
 
 English:Toggle Wipe Tower
-Translated:Veksle Tørretårnet
+Translated:Skift Wipe Tower
 
 English:Tool
 Translated:Værktøj
@@ -4067,22 +4286,22 @@ English:Tools
 Translated:Værktøj
 
 English:Top Solid Infill
-Translated:Top Solid Infill
+Translated:Top solid infill
 
 English:Top Solid Layers
-Translated:Top massive lag
+Translated:Top solide lag
 
 English:Top/Bottom Fill Pattern
-Translated:Top / Bundfyldningsmønster
+Translated:Top / bundfyldningsmønster
 
 English:Torus
 Translated:Torus
 
 English:Touch Screen Mode
-Translated:Touch Screen Mode
+Translated:Berøringsskærmstilstand
 
 English:Transform Wrapper
-Translated:Transform Wrapper
+Translated:Transform indpakning
 
 English:Translate
 Translated:Oversætte
@@ -4094,28 +4313,31 @@ English:Travel
 Translated:Rejse
 
 English:Trim Filament
-Translated:Trim filament
+Translated:Trimtråd
 
 English:Trim Filament Page
-Translated:Trim Filament Page
+Translated:Trim filament side
 
 English:Try to connect mesh edges when the actual mesh data is not all the way connected.
-Translated:Prøv at forbinde netkanter, når de faktiske maskerdata ikke er helt tilsluttede.
+Translated:Prøv at tilslutte maskekanter, når de faktiske maskedata ikke er tilsluttet hele vejen.
+
+English:Try to fill in any holes that are in the model.
+Translated:Prøv at udfylde alle huller, der er i modellen.
 
 English:Tuning Adjustment
-Translated:Tuning Justering
+Translated:Indstilling af tuning
 
 English:Turn off motor current at end of print or after cancel print.
-Translated:Sluk motorstrømmen ved slutningen af udskriften eller efter annullering af udskrivning.
+Translated:Sluk for motorstrøm ved slutningen af udskrivningen eller efter annullering af udskrivning.
 
 English:Turn on if Below
 Translated:Tænd hvis nedenfor
 
 English:Turn retractions on and off.
-Translated:Slå retraktioner til og fra.
+Translated:Tænd og sluk for tilbagetrækninger.
 
 English:Turn the fan on and off regardless of settings.
-Translated:Tænd og sluk for blæseren uanset indstillingerne.
+Translated:Tænd og sluk ventilatoren uanset indstillinger.
 
 English:Turns on and off all cooling settings (all settings below this one).
 Translated:Tænder og slukker for alle køleindstillinger (alle indstillinger under denne).
@@ -4124,16 +4346,16 @@ English:Twist
 Translated:Vride
 
 English:Twist Right
-Translated:Drej til højre
+Translated:Twist Right
 
 English:Uh oh! Passwords do not match.
-Translated:Åh åh! Adgangskoderne stemmer ikke overens.
+Translated:Åh åh! Kodeordene er ikke ens.
 
 English:Uh-oh! Could not connect to printer.
 Translated:Åh åh! Kunne ikke oprette forbindelse til printeren.
 
 English:Unable due to hardware leveling
-Translated:Kan ikke på grund af hardwarenivellering
+Translated:Ikke mulig på grund af hardware-nivellering
 
 English:Unable to Connect
 Translated:Ude af stand til at forbinde
@@ -4142,13 +4364,13 @@ English:Unable to connect to server
 Translated:Kunne ikke forbinde til serveren
 
 English:Unable to Import
-Translated:Kan ikke importere
+Translated:Kan ikke importeres
 
 English:Undo
 Translated:Fortryd
 
 English:Unexpected error validating settings
-Translated:Uventet fejl validering af indstillinger
+Translated:Uventet fejlvalidering af indstillinger
 
 English:Unexpected response
 Translated:Uventet svar
@@ -4160,22 +4382,22 @@ English:Unknown
 Translated:Ukendt
 
 English:Unknown Reason
-Translated:Ukendt årsag
+Translated:Ukendt grund
 
 English:Unload
 Translated:Losse
 
 English:Unload filament
-Translated:Aflæs filament
+Translated:Fjern filament
 
 English:Unload Filament
-Translated:Aflæs filament
+Translated:Fjern filament
 
 English:Unload Filament Length
-Translated:Aflæs filamentlængde
+Translated:Fjern filamentlængde
 
 English:Unload Filament Time
-Translated:Aflæs filament tid
+Translated:Fjern filamenttid
 
 English:Unload Material
 Translated:Aflæs materiale
@@ -4187,7 +4409,7 @@ English:Unlock
 Translated:Lås
 
 English:Unsupported Baud Rate
-Translated:Ikke understøttet Baud Rate
+Translated:Ikke-understøttet Baud-rate
 
 English:Up
 Translated:Op
@@ -4208,13 +4430,16 @@ English:Update Channel
 Translated:Opdater kanal
 
 English:Update In Progress: {0}
-Translated:Opdatering i gang: {0}
+Translated:Opdatering er i gang: {0}
 
 English:Update my password
 Translated:Opdater min adgangskode
 
 English:Updating firmware...
-Translated:Opdatering af firmware ...
+Translated:Opdaterer firmware ...
+
+English:Upgrade
+Translated:Opgrader
 
 English:Upload
 Translated:Upload
@@ -4223,31 +4448,31 @@ English:Uploading...
 Translated:Uploader ...
 
 English:Use Automatic Z Probe
-Translated:Brug Automatisk Z Probe
+Translated:Brug automatisk Z-sonde
 
 English:Use Braille grade 2 (contractions)
-Translated:Brug punktskrift 2 (sammentrækninger)
+Translated:Brug blindeskriftklasse 2 (sammentrækninger)
 
 English:Use cursor keys for axis movements
-Translated:Brug markørtaster til aksebevægelser
+Translated:Brug markørtasterne til akse bevægelser
 
 English:Use Firmware Retraction
-Translated:Brug Firmware Retraction
+Translated:Brug indtastning af firmware
 
 English:Use G0
 Translated:Brug G0
 
 English:Use G0 for moves rather than G1.
-Translated:Brug G0 til bevægelser frem for G1.
+Translated:Brug G0 til træk i stedet for G1.
 
 English:Use Relative E Distances
-Translated:Brug Relative E Distances
+Translated:Brug relative E-afstande
 
 English:Used for small perimeters (usually holes). This can be set explicitly or as a percentage of the Perimeters' speed.
-Translated:Anvendes til små perimetre (normalt huller). Dette kan indstilles eksplicit eller som en procentdel af perimetrehastigheden.
+Translated:Bruges til små perimetre (normalt huller). Dette kan indstilles eksplicit eller som en procentdel af Perimeters 'hastighed.
 
 English:Used to specify if more than one extruder share a common heater cartridge.
-Translated:Bruges til at angive, om mere end en ekstruder deler en fælles varmekassette.
+Translated:Bruges til at specificere, om mere end en ekstruder deler en fælles varmepatron.
 
 English:Username
 Translated:Brugernavn
@@ -4256,13 +4481,16 @@ English:Username or Email
 Translated:Brugernavn eller e-mail
 
 English:Using the [Z] controls on this screen, we will now take a coarse measurement of the extruder height at this position.
-Translated:Ved hjælp af [Z] kontrollerne på denne skærm vil vi nu foretage en grov måling af ekstruderhøjden på denne position.
+Translated:Ved hjælp af [Z] -kontrollerne på denne skærm vil vi nu foretage en grov måling af ekstruderens højde på denne position.
 
 English:Using the above controls
-Translated:Brug ovenstående kontroller
+Translated:Brug af ovenstående kontroller
+
+English:Utilize High Res Monitors
+Translated:Brug skærme med høj opløsning
 
 English:Validate Layer Height
-Translated:Validér laghøjde
+Translated:Valider laghøjde
 
 English:Validation Error
 Translated:Valideringsfejl
@@ -4277,13 +4505,13 @@ English:Version
 Translated:Version
 
 English:Vibration Limit
-Translated:Vibration Limit
+Translated:Vibrationsgrænse
 
 English:View Icons
 Translated:Se ikoner
 
 English:View Just My Settings
-Translated:Se bare mine indstillinger
+Translated:Se Just My Settings
 
 English:View Large Icons
 Translated:Se store ikoner
@@ -4301,37 +4529,37 @@ English:Visit MatterHackers.com to Purchase
 Translated:Besøg MatterHackers.com for at købe
 
 English:Wait For Running Clean
-Translated:Vent til løbende rent
+Translated:Vent på at køre rent
 
 English:'Wait' Responses
-Translated:'Vent' Svar
+Translated:'Vent' svar
 
 English:Waiting For Bed To Heat
-Translated:Venter på seng til varme
+Translated:Venter på at sengen skal varme
 
 English:Waiting for Bed to Heat to
 Translated:Venter på seng at varme til
 
 English:Waiting for Extruder 1 to Heat to
-Translated:Venter på ekstruder 1 til at varme til
+Translated:Venter på at ekstruder 1 opvarmes til
 
 English:Waiting for Extruder 2 to Heat to
-Translated:Venter på ekstruder 2 til at varme til
+Translated:Venter på at ekstruderen 2 bliver opvarmet til
 
 English:Waiting for hotend {0} to heat to 
-Translated:Venter på hotend {0} for at varme til
+Translated:Venter på, at hotend {0} bliver varm til
 
 English:Waiting For Printer To Heat
-Translated:Venter på printeren til at varme
+Translated:Venter på, at printeren bliver varm
 
 English:Waiting for the bed to heat to 
-Translated:Venter på sengen at varme op til
+Translated:Venter på, at sengen opvarmes til
 
 English:Waiting for the hotend to heat to 
-Translated:Venter på hotend at varme til
+Translated:Venter på, at hotend varmes til
 
 English:Waiting for the hotends to heat up.
-Translated:Venter på hotends at varme op.
+Translated:Venter på, at hotendsne bliver varme.
 
 English:Warm up Time
 Translated:Opvarmningstid
@@ -4346,25 +4574,25 @@ English:Warning - No EEProm Mapping
 Translated:Advarsel - Ingen EEProm-kortlægning
 
 English:Warning! The tip of the nozzle will be HOT!
-Translated:Advarsel! Spidsen af dysen bliver VARM!
+Translated:Advarsel! Spidsen på dysen vil være HET!
 
 English:Warning, very short print
-Translated:Advarsel, meget kort print
+Translated:Advarsel, meget kort udskrivning
 
 English:WARNING: Disconnecting will stop the current print.\n\nAre you sure you want to disconnect?
-Translated:ADVARSEL: Afbrydelsen stopper den aktuelle udskrift.\n\nEr du sikker på, at du vil afbryde forbindelsen?
+Translated:ADVARSEL: Frakobling stopper den aktuelle udskrivning.\n\nEr du sikker på, at du vil afbryde forbindelsen?
 
 English:WARNING: In order to perform print recovery, your printer must move down to reach its home position.\nIf your print is too large, part of your printer may collide with it when moving down.\nMake sure it is safe to perform this operation before proceeding.
-Translated:ADVARSEL: For at udføre udskriftsgendannelse skal printeren bevæge sig ned for at nå sin hjemstilling.\nHvis dit udskriftsbillede er for stort, kan en del af din printer kollidere med den, når du går nedad.\nSørg for, at det er sikkert at udføre denne operation, inden du fortsætter.
+Translated:ADVARSEL: For at udføre gendannelse af udskrivning, skal din printer flytte ned for at nå sin hjemmeposition.\nHvis din udskrift er for stor, kan en del af din printer muligvis kollidere med den, når du flytter ned.\nSørg for, at det er sikkert at udføre denne handling, før du fortsætter.
 
 English:WARNING: Write Failed!
-Translated:ADVARSEL: Skrivning mislykkedes!
+Translated:ADVARSEL: Skriv mislykkedes!
 
 English:We will now finalize our measurement of the extruder height at this position.
-Translated:Vi vil nu færdiggøre vores måling af ekstruderhøjden på denne position.
+Translated:Vi afslutter nu vores måling af ekstruderhøjden på denne position.
 
 English:We will now refine our measurement of the extruder height at this position.
-Translated:Vi vil nu forfine vores måling af ekstruderhøjden på denne position.
+Translated:Vi vil nu finjustere vores måling af ekstruderens højde på denne position.
 
 English:We will use this paper to measure the distance between the nozzle and the bed.
 Translated:Vi bruger dette papir til at måle afstanden mellem dysen og sengen.
@@ -4387,29 +4615,32 @@ Translated:Hvad er det?
 English:wheel
 Translated:hjul
 
+English:When generating per layer support, evaluate all surfaces rather than only those above the bed.
+Translated:Når du genererer pr. Lagstøtte, skal du evaluere alle overflader i stedet for kun dem over sengen.
+
 English:When this is checked MatterControl will attempt to recover a print in the event of a failure, such as lost connection or lost power.
-Translated:Når dette er markeret, forsøger MatterControl at genoprette et print i tilfælde af en fejl, som tabt forbindelse eller tabt strøm.
+Translated:Når dette er markeret, vil MatterControl forsøge at gendanne en udskrift i tilfælde af en fejl, såsom mistet forbindelse eller mistet strøm.
 
 English:When upgrading to new firmware, first save a backup of the current firmware.
 Translated:Når du opgraderer til ny firmware, skal du først gemme en sikkerhedskopi af den aktuelle firmware.
 
 English:When using multiple extruders, the distance filament will reverse before changing to a different extruder.
-Translated:Ved anvendelse af flere ekstrudere vil afstandsfilamentet vende om, inden der skiftes til en anden ekstruder.
+Translated:Når der bruges flere ekstrudere, vendes afstandsfilamentet, før det skiftes til en anden ekstruder.
 
 English:Where to start the bend as a percent of the width of the part
-Translated:Hvor skal man starte bøjningen som en procentdel af bredden af delen
+Translated:Hvor skal svingen startes som en procentdel af delens bredde
 
 English:Width
 Translated:Bredde
 
 English:Wifi Setup
-Translated:Wifi Setup
+Translated:WiFi opsætning
 
 English:wipe
 Translated:tørre
 
 English:Wipe Shield Distance
-Translated:Tør skjoldafstand
+Translated:Tør afskærmningsafstand
 
 English:Wipe Tower Size
 Translated:Tør tårnstørrelse
@@ -4427,13 +4658,16 @@ English:X
 Translated:x
 
 English:X and Y Distance
-Translated:X og Y Afstand
+Translated:X- og Y-afstand
 
 English:X Offset
 Translated:X Offset
 
 English:X Y Nozzle Offsets Have Been Calibrated
-Translated:X Y dyseforskydninger er blevet kalibreret
+Translated:X Y dyseforskyvninger er blevet kalibreret
+
+English:XY Calibration
+Translated:XY-kalibrering
 
 English:XY Homing Position
 Translated:XY Homing Position
@@ -4448,37 +4682,37 @@ English:Yes
 Translated:Ja
 
 English:You are switching to a different thumbnail rendering mode. If you want, your current thumbnails can be removed and recreated in the new style. You can switch back and forth at any time. There will be some processing overhead while the new thumbnails are created.\n\nDo you want to rebuild your existing thumbnails now?
-Translated:Du skifter til en anden thumbnail rendering mode. Hvis du vil, kan dine nuværende miniaturebilleder fjernes og genskabes i den nye stil. Du kan til enhver tid skifte frem og tilbage. Der vil være noget forarbejdningsomkostninger, mens de nye miniaturer oprettes.\n\nVil du genopbygge dine eksisterende miniaturebilleder nu?
+Translated:Du skifter til en anden visning af miniaturebilleder. Hvis du vil, kan dine nuværende miniaturer fjernes og gendannes i den nye stil. Du kan når som helst skifte frem og tilbage. Der vil være en vis behandling overhead, mens de nye miniaturer oprettes.\n\nVil du genopbygge dine eksisterende miniaturebilleder nu?
 
 English:You can also
 Translated:Du kan også
 
 English:You can continue to ultra fine calibration, but for most uses this is not necessary.
-Translated:Du kan fortsætte med ultra fin kalibrering, men for de fleste anvendelser er det ikke nødvendigt.
+Translated:Du kan fortsætte med ultrafin kalibrering, men for de fleste anvendelser er dette ikke nødvendigt.
 
 English:You can only connect when not currently connected
-Translated:Du kan kun oprette forbindelsen, når den ikke er tilsluttet
+Translated:Du kan kun oprette forbindelse, når den ikke er tilsluttet i øjeblikket
 
 English:You have successfully imported a new {0} setting. You can find '{1}' in your list of {0} settings.
-Translated:Du har importeret en ny {0} indstilling. Du kan finde '{1}' i din liste over {0} indstillinger.
+Translated:Du har importeret en ny indstilling {0}. Du kan finde '{1}' på din liste over {0} indstillinger.
 
 English:You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.
-Translated:Du har importeret en ny printerprofil. Du kan finde '{0}' i din liste over tilgængelige printere.
+Translated:Du har importeret en ny printerprofil med succes. Du kan finde '{0}' på din liste over tilgængelige printere.
 
 English:You may need to wait a minute for your printer to finish initializing.
-Translated:Det kan være nødvendigt at vente et øjeblik for din printer til at afslutte initialiseringen.
+Translated:Det kan være nødvendigt at vente et minut på, at din printer er færdig med at initialisere.
 
 English:Your 3D print has been auto-paused.\n\nLayer {0} reached.
-Translated:Dit 3D-udskriv er blevet standset automatisk.\n\nLayer {0} nået.
+Translated:Din 3D-udskrivning er auto-pauset.\n\nLag {0} nået.
 
 English:Your 3D print has been paused.\n\nOut of filament, or jam, detected. Please load more filament or clear the jam.
-Translated:Dit 3D-udskriv er blevet standset.\n\nUden filament eller marmelade, detekteres. Indlæs mere filament eller fjern papirstopet.
+Translated:Din 3D-udskrivning er sat på pause.\n\nUd af filament eller papirstop, der blev opdaget. Læg mere glødetråd eller ryd papirstop.
 
 English:Your application is up-to-date
-Translated:Din ansøgning er opdateret
+Translated:Din ansøgning er ajour
 
 English:Your code has been redeemed.  Please check the Library.
-Translated:Din kode er blevet indløst. Kontroller biblioteket.
+Translated:Din kode er indløst. Kontroller venligst biblioteket.
 
 English:Your Email Address
 Translated:Din email adresse
@@ -4493,25 +4727,25 @@ English:Your Phone Number
 Translated:Dit telefonnummer
 
 English:Your printer has been adjusted but we should run calibrating again to improve accuracy.
-Translated:Din printer er blevet justeret, men vi skal køre igen for at forbedre nøjagtigheden.
+Translated:Din printer er blevet justeret, men vi skal køre kalibrering igen for at forbedre nøjagtigheden.
 
 English:Your printer is reporting a HARDWARE ERROR and has been paused. Check the error and cancel the print if required.
-Translated:Din printer rapporterer en HARDWARE ERROR og er blevet standset midlertidigt. Kontroller fejlen og afbryd udskriften, hvis det er nødvendigt.
+Translated:Din printer rapporterer om en HARDWARE-FEJL og er sat på pause. Kontroller fejlen, og annullér udskrivningen om nødvendigt.
 
 English:Your Share Code
-Translated:Din delkode
+Translated:Din aktiekode
 
 English:Your Start G-Code should not contain a G29 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:Din Start G-kode skal ikke indeholde en G29, hvis du planlægger at bruge udskrivningsnivellering. Skift din start G-kode eller sluk for udskrivning.
+Translated:Din Start G-kode skal ikke indeholde en G29, hvis du planlægger at bruge udskrivningsnivellering. Skift din start-G-kode, eller deaktiver udskrivningsnivellering.
 
 English:Your Start G-Code should not contain a G29 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Din Start G-kode skal ikke indeholde en G29, hvis du planlægger at bruge Print Recovery. Skift din start G-kode eller sluk for Print Recovery.
+Translated:Din Start G-kode skal ikke indeholde en G29, hvis du planlægger at bruge Print Recovery. Skift din start-G-kode, eller slå Printgendannelse fra.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using print leveling. Change your start G-Code or turn off print leveling.
-Translated:Din Start G-kode skal ikke indeholde en G30, hvis du planlægger at bruge udskrivning af nivellering. Skift din start G-kode eller sluk for udskrivning.
+Translated:Din Start G-kode skal ikke indeholde en G30, hvis du planlægger at bruge udskrivningsnivellering. Skift din start-G-kode, eller deaktiver udskrivningsnivellering.
 
 English:Your Start G-Code should not contain a G30 if you are planning on using Print Recovery. Change your start G-Code or turn off Print Recovery.
-Translated:Din Start G-kode skal ikke indeholde en G30, hvis du planlægger at bruge Print Recovery. Skift din start G-kode eller sluk for Print Recovery.
+Translated:Din Start G-kode skal ikke indeholde en G30, hvis du planlægger at bruge Print Recovery. Skift din start-G-kode, eller slå Printgendannelse fra.
 
 English:Z
 Translated:Z
@@ -4520,16 +4754,16 @@ English:Z Calibration
 Translated:Z Kalibrering
 
 English:Z Calibration complete.
-Translated:Z Kalibrering færdig.
+Translated:Z Kalibrering afsluttet.
 
 English:Z Calibration measures the z position of the nozzles.
-Translated:Z Kalibrering måler z-positionen på dyserne.
+Translated:Z Kalibrering måler dysernes z-position.
 
 English:Z Lift
-Translated:Z løft
+Translated:Z Løft
 
 English:Z Offset
-Translated:Z forskydning
+Translated:Z Offset
 
 English:Z Offset is too large.
 Translated:Z Offset er for stort.
@@ -4541,7 +4775,7 @@ English:Zoom
 Translated:Zoom
 
 English:Zoom (Ctrl + Left Mouse)
-Translated:Zoom (Ctrl + Venstre mus)
+Translated:Zoom (Ctrl + venstre mus)
 
 English:Zoom in
 Translated:Zoom ind
