@@ -127,6 +127,13 @@ namespace Markdig.Renderers.Agg.Inlines
 					{
 						MinimumSize = new Vector2(Math.Max(20 * DeviceScale, MinimumSize.X), MinimumSize.Y);
 						MaximumSize = new Vector2(imageSequence.Width, imageSequence.Height);
+						UiThread.RunOnIdle(() =>
+						{
+							if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+							{
+								markdownWidget.Width = markdownWidget.Width + 1;
+							}
+						});
 					});
 				}
 
