@@ -103,7 +103,9 @@ namespace MatterHackers.MatterControl
 		/// Download an image from the web into the specified ImageSequence
 		/// </summary>
 		/// <param name="uri"></param>
-		public static void RetrieveImageSquenceAsync(ImageSequence imageSequenceToLoadInto, string uriToLoad)
+		public static void RetrieveImageSquenceAsync(ImageSequence imageSequenceToLoadInto,
+			string uriToLoad,
+			Action doneLoading = null)
 		{
 			var asyncImageSequence = new ImageSequence();
 
@@ -122,6 +124,7 @@ namespace MatterHackers.MatterControl
 						{
 							imageSequenceToLoadInto.Copy(asyncImageSequence);
 							imageSequenceToLoadInto.Invalidate();
+							doneLoading?.Invoke();
 						});
 					});
 
@@ -142,6 +145,7 @@ namespace MatterHackers.MatterControl
 						{
 							imageSequenceToLoadInto.Copy(asyncImageSequence);
 							imageSequenceToLoadInto.Invalidate();
+							doneLoading?.Invoke();
 						});
 					});
 
@@ -183,6 +187,7 @@ namespace MatterHackers.MatterControl
 						{
 							imageSequenceToLoadInto.Copy(asyncImageSequence);
 							imageSequenceToLoadInto.Invalidate();
+							doneLoading?.Invoke();
 						});
 					});
 				}
