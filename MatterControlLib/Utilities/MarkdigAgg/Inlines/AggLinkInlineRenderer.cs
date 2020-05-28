@@ -15,6 +15,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
+using MatterHackers.VectorMath;
 
 namespace Markdig.Renderers.Agg.Inlines
 {
@@ -70,36 +71,76 @@ namespace Markdig.Renderers.Agg.Inlines
 	{
 		private static ImageBuffer icon = AggContext.StaticData.LoadIcon("internet.png", 16, 16);
 
-		public ImageLinkSimpleX(string url)
+		public ImageLinkSimpleX(AggRenderer renderer, string imageUrl, string linkUrl = null)
 		{
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit;
 			this.Selectable = false;
 
-			this.Url = url;
+			this.ImageUrl = imageUrl;
+			this.LinkUrl = linkUrl;
+
+			this.aggRenderer = renderer;
+
+			if (linkUrl != null)
+			{
+				this.Selectable = true;
+			}
 
 			imageSequence = new ImageSequence(icon);
-			//var sequenceWidget = new ImageSequenceWidget(imageSequence);
-			var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence);
+			// var sequenceWidget = new ImageSequenceWidget(imageSequence);
+			var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence)
+			{
+				Cursor = Cursors.Hand,
+			};
+
+			sequenceWidget.Click += SequenceWidget_Click;
+
 			this.AddChild(sequenceWidget);
+		}
+
+		private void SequenceWidget_Click(object sender, MouseEventArgs e)
+		{
+			if (this.LinkUrl != null)
+			{
+				if (LinkUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+				{
+					ApplicationController.Instance.LaunchBrowser(LinkUrl);
+				}
+				else
+				{
+					if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+					{
+						markdownWidget.LoadUri(new Uri(LinkUrl));
+					}
+				}
+			}
 		}
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			if(!hasBeenLoaded)
+			if (!hasBeenLoaded)
 			{
-				if (Url.StartsWith("http"))
+				if (ImageUrl.StartsWith("http"))
 				{
-					WebCache.RetrieveImageSquenceAsync(imageSequence, Url);
+					WebCache.RetrieveImageSquenceAsync(imageSequence, ImageUrl, () =>
+					{
+						MinimumSize = new Vector2(Math.Max(20 * DeviceScale, MinimumSize.X), MinimumSize.Y);
+						MaximumSize = new Vector2(imageSequence.Width, imageSequence.Height);
+					});
 				}
 
 				hasBeenLoaded = true;
 			}
+
 			base.OnDraw(graphics2D);
 		}
 
-		public string Url { get; }
+		public string ImageUrl { get; }
 
+		private string LinkUrl { get; }
+
+		private AggRenderer aggRenderer;
 		private ImageSequence imageSequence;
 		private bool hasBeenLoaded;
 	}
@@ -135,7 +176,7 @@ namespace Markdig.Renderers.Agg.Inlines
 						{
 							response.Content.ReadAsStreamAsync().ContinueWith(streamTask =>
 							{
-								//response.Headers.TryGetValues("", s[""] == "" ||
+								// response.Headers.TryGetValues("", s[""] == "" ||
 								if (string.Equals(Path.GetExtension(url), ".svg", StringComparison.OrdinalIgnoreCase))
 								{
 									// Load svg into SvgWidget, swap for ImageWidget
@@ -206,14 +247,22 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			if (link.IsImage)
 			{
-				renderer.WriteInline(new ImageLinkSimpleX(url));
+				renderer.WriteInline(new ImageLinkSimpleX(renderer, url));
 			}
 			else
 			{
-
-				renderer.Push(new TextLinkX(renderer, url, link));
-				renderer.WriteChildren(link);
-				renderer.Pop();
+				if (link.FirstChild is LinkInline linkInLine
+					&& linkInLine.IsImage)
+				{
+					renderer.WriteInline(new ImageLinkSimpleX(renderer, linkInLine.Url, url));
+					renderer.Pop();
+				}
+				else
+				{
+					renderer.Push(new TextLinkX(renderer, url, link));
+					renderer.WriteChildren(link);
+					renderer.Pop();
+				}
 			}
 		}
 	}

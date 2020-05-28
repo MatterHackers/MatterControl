@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Markdig.Agg;
 using MatterControlLib;
 using MatterHackers.Agg;
@@ -337,6 +338,11 @@ namespace MatterHackers.MatterControl
 			};
 
 			double maxMenuItemWidth = 0;
+
+			while (ApplicationController.Instance.HelpArticles.Path == null)
+			{
+				Thread.Sleep(10);
+			}
 
 			rootNode = ProcessTree(ApplicationController.Instance.HelpArticles);
 			rootNode.Text = "Help";
