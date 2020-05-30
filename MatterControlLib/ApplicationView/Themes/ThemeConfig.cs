@@ -437,7 +437,8 @@ namespace MatterHackers.MatterControl
 							{
 								Border = new BorderDouble(1, 0, 0, 0),
 								BorderColor = this.MinimalShade,
-								HoverColor = this.AccentMimimalOverlay
+								HoverColor = this.AccentMimimalOverlay,
+								Enabled = actionButton.IsEnabled()
 							};
 
 							content.AddChild(button);
