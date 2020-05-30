@@ -384,19 +384,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				tabPill = new TabPill(tabLabel, theme.TextColor, tabImageUrl, pointSize);
 			}
-			tabPill.Margin = (hasClose) ? new BorderDouble(right: 16) : 0;
+
+			tabPill.Margin = hasClose ? new BorderDouble(right: 16) : 0;
 
 			this.AddChild(tabPill);
 
 			if (hasClose)
 			{
+				// var fadeRegion = new LeftClipFlowLayoutWidget();
+				// fadeRegion.HAnchor |= HAnchor.Right;
+				// this.AddChild(fadeRegion);
+
 				var closeButton = theme.CreateSmallResetButton();
-				closeButton.HAnchor = HAnchor.Right;
 				closeButton.Margin = new BorderDouble(right: 7, top: 1);
 				closeButton.Name = "Close Tab Button";
 				closeButton.ToolTipText = "Close".Localize();
 				closeButton.Click += (s, e) => ConditionallyCloseTab();
-
+				closeButton.HAnchor |= HAnchor.Right;
+				// fadeRegion.AddChild(closeButton);
 				this.AddChild(closeButton);
 			}
 		}
@@ -455,13 +460,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
-		protected class TabPill : FlowLayoutWidget
+		public class TabPill : FlowLayoutWidget
 		{
 			private TextWidget label;
 			private ImageWidget imageWidget;
 
 			public TabPill(string tabTitle, Color textColor, string imageUrl = null, double pointSize = 12)
-				: this (tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16).CreateScaledImage(GuiWidget.DeviceScale), pointSize)
+				: this(tabTitle, textColor, string.IsNullOrEmpty(imageUrl) ? null : new ImageBuffer(16, 16).CreateScaledImage(GuiWidget.DeviceScale), pointSize)
 			{
 				if (imageWidget != null
 					&& !string.IsNullOrEmpty(imageUrl))
@@ -577,8 +582,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			int position = siblings.IndexOf(this);
 
-			//MainTab leftSibling = (position > 0) ? siblings[position - 1] : null;
-			//MainTab rightSibling = (position < siblings.Count - 1) ? siblings[position + 1] : null;
+			// MainTab leftSibling = (position > 0) ? siblings[position - 1] : null;
+			// MainTab rightSibling = (position < siblings.Count - 1) ? siblings[position + 1] : null;
 
 			var activeTab = parentTabControl.ActiveTab;
 
@@ -598,6 +603,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				tabShape.LineTo(rect.Right, rect.Bottom);
 			}
+
 			tabShape.LineTo(rect.Right - tabInsetDistance, rect.Bottom);
 			tabShape.LineTo(rect.Left + tabInsetDistance, rect.Bottom);
 			if (!drawLeftTabOverlap)

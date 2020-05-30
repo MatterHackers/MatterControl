@@ -2760,6 +2760,11 @@ namespace MatterHackers.MatterControl
 		public void NotifyPrintersTabRightElement(GuiWidget sourceExentionArea)
 		{
 			AddPrintersTabRightElement?.Invoke(this, new WidgetSourceEventArgs(sourceExentionArea));
+
+			// after adding content to the right side make sure we hold the space in the tab bar
+			var leftChild = sourceExentionArea.Parent.Children.First();
+			var padding = leftChild.Padding;
+			leftChild.Padding = new BorderDouble(padding.Left, padding.Bottom, sourceExentionArea.Width, padding.Height);
 		}
 
 		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)

@@ -38,6 +38,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow.PlusTab;
 using MatterHackers.MatterControl.PrintLibrary;
@@ -752,8 +753,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
-				MinimumSize = new Vector2(120, theme.TabButtonHeight)
+				MinimumSize = new Vector2(120, theme.TabButtonHeight),
 			};
+
+			partTab.MaximumSize = new Vector2(partTab.Width, partTab.MaximumSize.Y);
+			partTab.HAnchor = HAnchor.Stretch;
+
+			var textWidget = partTab.Descendants<TextWidget>().First();
+			textWidget.HAnchor = HAnchor.Stretch;
+			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
+			partTab.ToolTipText = textWidget.Text;
+			tabPill.HAnchor = HAnchor.Stretch;
+			var tabPillMarign = tabPill.Margin;
+			tabPill.Margin = new BorderDouble(tabPillMarign.Left, tabPillMarign.Bottom, tabPillMarign.Right + 10, tabPillMarign.Top);
 
 			tabControl.AddTab(partTab);
 
