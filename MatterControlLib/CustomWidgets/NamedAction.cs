@@ -41,19 +41,19 @@ namespace MatterHackers.Agg.UI
 	{
 		public Action<ISceneContext> Action { get; set; }
 
-		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
-
-		public Type OperationType { get; set; }
-
 		public Func<bool, ImageBuffer> Icon { get; set; }
 
-		public Func<string> TitleResolver { get; set; }
-
-		public string Title => this.TitleResolver?.Invoke();
+		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
 
 		public Func<string> HelpTextResolver { get; set; }
 
+		public Func<string> TitleResolver { get; set; }
+
 		public string HelpText => this.HelpTextResolver?.Invoke();
+
+		public string Title => this.TitleResolver?.Invoke();
+
+		public Type OperationType { get; set; }
 	}
 
 	public class SceneSelectionSeparator : SceneSelectionOperation
