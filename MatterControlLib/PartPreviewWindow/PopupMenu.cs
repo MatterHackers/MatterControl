@@ -123,7 +123,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			public PopupMenu SubMenu { get; set; }
 
-
 			public SubMenuItemButton(GuiWidget content, ThemeConfig theme) : base(content, theme)
 			{
 			}
@@ -308,7 +307,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				UiThread.RunOnIdle(() =>
 				{
 					populateSubMenu(subMenu);
-					
+
 					systemWindow.ShowPopup(
 						new MatePoint(subMenuItemButton)
 						{
@@ -319,15 +318,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 							AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-						}
-						);// altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+						}); // altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 				});
 
 				subMenu.Closed += (s1, e1) =>
 				{
 					subMenu.ClearRemovedFlag();
 					subMenuItemButton.SubMenu = null;
-					if(!this.ContainsFocus)
+					if (!this.ContainsFocus)
 					{
 						this.Close();
 					}
@@ -365,7 +363,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public MenuItem CreateBoolMenuItem(GuiWidget guiWidget, string name, Func<bool> getter, Action<bool> setter, bool useRadioStyle = false, IList<GuiWidget> siblingRadioButtonList = null)
 		{
-			bool isChecked = (getter?.Invoke() == true);
+			bool isChecked = getter?.Invoke() == true;
 
 			MenuItem menuItem;
 
@@ -397,7 +395,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						return;
 					}
 
-					isChecked  = radioMenu.Checked = !radioMenu.Checked;
+					isChecked = radioMenu.Checked = !radioMenu.Checked;
 				}
 				else if (menuItem is CheckboxMenuItem checkboxMenu)
 				{
@@ -433,10 +431,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			private GuiWidget content;
 
 			public MenuItem(GuiWidget content, ThemeConfig theme)
-				: base (theme)
+				: base(theme)
 			{
 				// Inflate padding to match the target (MenuGutterWidth) after scale operation in assignment
-				this.Padding = new BorderDouble(left: Math.Ceiling(theme.MenuGutterWidth / GuiWidget.DeviceScale) , right: 15);
+				this.Padding = new BorderDouble(left: Math.Ceiling(theme.MenuGutterWidth / DeviceScale), right: 15);
 				this.HAnchor = HAnchor.MaxFitOrStretch;
 				this.VAnchor = VAnchor.Fit;
 				this.MinimumSize = new Vector2(150 * GuiWidget.DeviceScale, theme.ButtonHeight);
@@ -455,6 +453,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public ImageBuffer Image { get; set; }
 
 			private ImageBuffer _disabledImage;
+
 			public ImageBuffer DisabledImage
 			{
 				get
@@ -491,7 +490,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var x = this.LocalBounds.Left + (this.GutterWidth / 2 - this.Image.Width / 2);
 					var y = this.Size.Y / 2 - this.Image.Height / 2;
 
-					graphics2D.Render((this.Enabled) ? this.Image : this.DisabledImage, (int)x, (int)y);
+					graphics2D.Render(this.Enabled ? this.Image : this.DisabledImage, (int)x, (int)y);
 				}
 
 				base.OnDraw(graphics2D);

@@ -415,30 +415,82 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-					PopupMenu.MenuItem menuItem;
-
-					if (menuAction is NamedBoolAction boolAction)
+					if (menuAction is NamedActionGroup namedActionButtons)
 					{
-						menuItem = popupMenu.CreateBoolMenuItem(menuAction.Title, boolAction.GetIsActive, boolAction.SetIsActive);
+						var content = new FlowLayoutWidget()
+						{
+							HAnchor = HAnchor.Fit | HAnchor.Stretch
+						};
+
+						var textWidget = new TextWidget(menuAction.Title, pointSize: this.DefaultFontSize, textColor: this.TextColor)
+						{
+							// Padding = MenuPadding,
+							VAnchor = VAnchor.Center
+						};
+						content.AddChild(textWidget);
+
+						content.AddChild(new HorizontalSpacer());
+
+						foreach (var actionButton in namedActionButtons.Group)
+						{
+							var button = new TextButton(actionButton.Title, this)
+							{
+								Border = new BorderDouble(1, 0, 0, 0),
+								BorderColor = this.MinimalShade,
+								HoverColor = this.AccentMimimalOverlay
+							};
+
+							content.AddChild(button);
+
+							if (actionButton.IsEnabled())
+							{
+								button.Click += (s, e) =>
+								{
+									actionButton.Action();
+									popupMenu.Unfocus();
+								};
+							}
+						}
+
+						var menuItem = new PopupMenu.MenuItem(content, this)
+						{
+							HAnchor = HAnchor.Fit | HAnchor.Stretch,
+							VAnchor = VAnchor.Fit,
+							HoverColor = Color.Transparent,
+						};
+						popupMenu.AddChild(menuItem);
+						menuItem.Padding = new BorderDouble(menuItem.Padding.Left,
+							menuItem.Padding.Bottom,
+							0,
+							menuItem.Padding.Top);
 					}
 					else
 					{
-						menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon, menuAction.Shortcut);
-					}
+						PopupMenu.MenuItem menuItem;
 
-					menuItem.Name = $"{menuAction.Title} Menu Item";
-
-					menuItem.Enabled = menuAction.Action != null
-						&& menuAction.IsEnabled?.Invoke() != false;
-
-					menuItem.ClearRemovedFlag();
-
-					if (menuItem.Enabled)
-					{
-						menuItem.Click += (s, e) =>
+						if (menuAction is NamedBoolAction boolAction)
 						{
-							menuAction.Action();
-						};
+							menuItem = popupMenu.CreateBoolMenuItem(menuAction.Title, boolAction.GetIsActive, boolAction.SetIsActive);
+						}
+						else
+						{
+							menuItem = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon, menuAction.Shortcut);
+						}
+
+						menuItem.Name = $"{menuAction.Title} Menu Item";
+
+						menuItem.Enabled = menuAction is NamedActionGroup
+							|| (menuAction.Action != null && menuAction.IsEnabled?.Invoke() != false);
+
+						menuItem.ClearRemovedFlag();
+
+						if (menuItem.Enabled)
+						{
+							menuItem.Click += (s, e) =>
+							{
+								menuAction.Action();
+							};
+						}
 					}
 				}
 			}

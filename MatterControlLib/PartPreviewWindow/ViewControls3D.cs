@@ -574,9 +574,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var actions = new NamedAction[] {
 					new ActionSeparator(),
-					workspaceActions["Cut"],
-					workspaceActions["Copy"],
-					workspaceActions["Paste"],
+					workspaceActions["Edit"],
 					new ActionSeparator(),
 					workspaceActions["Print"],
 					new ActionSeparator(),

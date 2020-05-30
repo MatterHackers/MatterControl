@@ -1537,12 +1537,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new MatePoint(this)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 				},
 				new MatePoint(menu)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 				},
 				altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
 		}
@@ -1585,12 +1585,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new MatePoint(this)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				},
 				new MatePoint(popupMenu)
 				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
 				},
 				altBounds: popupBounds);
 		}

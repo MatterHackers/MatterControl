@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// When the widgets position changes, sync the popup position
 			systemWindow?.AddChild(popup.Widget);
 
-			if(secondsToClose > 0)
+			if (secondsToClose > 0)
 			{
 				UiThread.RunOnIdle(() => anchor_Closed(null, null), secondsToClose);
 			}

@@ -319,9 +319,7 @@ namespace MatterHackers.MatterControl
 			var actions = new[]
 			{
 				new ActionSeparator(),
-				workspaceActions["Cut"],
-				workspaceActions["Copy"],
-				workspaceActions["Paste"],
+				workspaceActions["Edit"],
 				new ActionSeparator(),
 				new NamedAction()
 				{
@@ -578,7 +576,7 @@ namespace MatterHackers.MatterControl
 
 			if (e.Operation != WorkspacesChangedEventArgs.OperationType.Restore)
 			{
-				UiThread.RunOnIdle(async() =>
+				UiThread.RunOnIdle(async () =>
 				{
 					await ApplicationController.Instance.PersistUserTabs();
 				});
@@ -1158,38 +1156,35 @@ namespace MatterHackers.MatterControl
 						|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
 							&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
 				},
-				new NamedAction()
+				new NamedActionGroup()
 				{
-					ID = "Cut",
-					Title = "Cut".Localize(),
-					Shortcut = "Ctrl+X",
-					Action = () =>
+					ID = "Edit",
+					Title = "Edit",
+					Group = new NamedAction[]
 					{
-						sceneContext.Scene.Cut();
+						new NamedAction()
+						{
+							ID = "Cut",
+							Title = "Cut".Localize(),
+							Action = () => sceneContext.Scene.Cut(),
+							IsEnabled = () => sceneContext.Scene.SelectedItem != null
+						},
+						new NamedAction()
+						{
+							ID = "Copy",
+							Title = "Copy".Localize(),
+							Action = () => sceneContext.Scene.Copy(),
+							IsEnabled = () => sceneContext.Scene.SelectedItem != null
+						},
+						new NamedAction()
+						{
+							ID = "Paste",
+							Title = "Paste".Localize(),
+							Action = () => sceneContext.Paste(),
+							IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+						}
 					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Copy",
-					Title = "Copy".Localize(),
-					Shortcut = "Ctrl+C",
-					Action = () =>
-					{
-						sceneContext.Scene.Copy();
-					},
-					IsEnabled = () => sceneContext.Scene.SelectedItem != null
-				},
-				new NamedAction()
-				{
-					ID = "Paste",
-					Title = "Paste".Localize(),
-					Shortcut = "Ctrl+V",
-					Action = () =>
-					{
-						sceneContext.Paste();
-					},
-					IsEnabled = () => Clipboard.Instance.ContainsImage || Clipboard.Instance.GetText() == "!--IObjectSelection--!"
+					IsEnabled = () => true,
 				},
 				new NamedAction()
 				{
