@@ -240,6 +240,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		bool buttonIsBeingClicked;
+
 		private void SwitchModes_Click(object sender, MouseEventArgs e)
 		{
 			buttonIsBeingClicked = true;
@@ -260,6 +261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.ViewState.ViewMode = PartViewMode.Model;
 				}
 			}
+
 			buttonIsBeingClicked = false;
 		}
 
@@ -363,7 +365,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Restore Settings".Localize(),
 					Action = () =>
 					{
-
 						DialogWindow.Show(new PrinterProfileHistoryPage(printer));
 					}
 				},
@@ -445,6 +446,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							DialogWindow.Show(repetierEEPromPage);
 						}
+
 						break;
 
 					case FirmwareTypes.Marlin:
@@ -462,6 +464,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 							DialogWindow.Show(marlinEEPromPage);
 						}
+
 						break;
 
 					default:

@@ -125,8 +125,7 @@ namespace Markdig.Renderers.Agg.Inlines
 				{
 					WebCache.RetrieveImageSquenceAsync(imageSequence, ImageUrl, () =>
 					{
-						MinimumSize = new Vector2(Math.Max(20 * DeviceScale, MinimumSize.X), MinimumSize.Y);
-						MaximumSize = new Vector2(imageSequence.Width, imageSequence.Height);
+						this.MinStretchOrFitHorizontal(20, imageSequence.Width);
 						UiThread.RunOnIdle(() =>
 						{
 							if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
@@ -141,6 +140,21 @@ namespace Markdig.Renderers.Agg.Inlines
 			}
 
 			base.OnDraw(graphics2D);
+		}
+
+
+		/// <summary>
+		/// Sets this control to Stretch and all direct parent FlowLayoutWidgets to Stretch, it then ensures
+		/// this and all direct parent FlowLayouts have a max width of the contents of this.
+		/// </summary>
+		/// <param name="absoluteMinWidth">The minimum size will be set to the larger of the existing minimum size or this value.</param>
+		/// <param name="absoluteMaxWidth">The maximum size will be set to this value.</param>
+		private void MinStretchOrFitHorizontal(double absoluteMinWidth, double absoluteMaxWidth)
+		{
+			this.HAnchor = HAnchor.Stretch;
+
+			MinimumSize = new Vector2(Math.Max(absoluteMinWidth * DeviceScale, MinimumSize.X), MinimumSize.Y);
+			MaximumSize = new Vector2(absoluteMaxWidth, MaximumSize.Y);
 		}
 
 		public string ImageUrl { get; }

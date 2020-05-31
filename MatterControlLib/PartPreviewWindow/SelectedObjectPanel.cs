@@ -76,12 +76,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			scene = sceneContext.Scene;
 
+			// put in the container for dynamic actions
+			primaryActionsPanel = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Center | VAnchor.Fit
+			};
+
+			toolbar.AddChild(primaryActionsPanel);
+
 			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("noun_766157.png", 16, 16, theme.InvertIcons).SetPreMultiply();
+			var icon = AggContext.StaticData.LoadIcon("apply.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			flattenButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Flatten".Localize(),
+				ToolTipText = "Apply".Localize(),
 				Enabled = true
 			};
 			flattenButton.Click += (s, e) =>
@@ -103,10 +112,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(flattenButton);
 
 			// put in a remove button
-			removeButton = new IconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
+			removeButton = new IconButton(AggContext.StaticData.LoadIcon("cancel.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
-				ToolTipText = "Delete".Localize(),
+				ToolTipText = "Cancel".Localize(),
 				Enabled = scene.SelectedItem != null
 			};
 			removeButton.Click += (s, e) =>
@@ -118,14 +127,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			};
 			toolbar.AddChild(removeButton);
-
-			primaryActionsPanel = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Center | VAnchor.Fit
-			};
-
-			toolbar.AddChild(primaryActionsPanel);
 
 			overflowButton = new OverflowBar.OverflowMenuButton(theme)
 			{
@@ -227,6 +228,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					primaryActionsPanel.AddChild(button);
 				}
+			}
+
+			if(primaryActionsPanel.Children.Any())
+			{
+				// add in a separator from the apply and cancel buttons
+				primaryActionsPanel.AddChild(new ToolbarSeparator(theme));
 			}
 
 			editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;
@@ -430,7 +437,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			flattenButton.Enabled = selectedItem != null
 				&& (selectedItem is GroupObject3D
-				|| selectedItem.GetType() == typeof(Object3D)
+				|| (selectedItem.GetType() == typeof(Object3D) && selectedItem.Children.Any())
 				|| selectedItem.CanFlatten);
 			removeButton.Enabled = selectedItem != null;
 			overflowButton.Enabled = selectedItem != null;

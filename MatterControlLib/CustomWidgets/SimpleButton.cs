@@ -85,6 +85,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Invalidate();
 		}
 
+		protected override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button == MouseButtons.Left)
+			{
+				base.OnClick(mouseEvent);
+			}
+		}
+
 		public override void OnKeyUp(KeyEventArgs keyEvent)
 		{
 			if (keyEvent.KeyCode == Keys.Enter
