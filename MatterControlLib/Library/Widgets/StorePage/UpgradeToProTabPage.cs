@@ -74,8 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					{
 						markdownWidget.Markdown = markDown;
 					});
-				},
-				true);
+				});
 		}
 	}
 }

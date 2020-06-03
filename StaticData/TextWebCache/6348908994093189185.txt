@@ -1,7 +1,12 @@
-# Upgrade to [MatterControl Pro](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)
+# [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition): First of its kind software that lets you design, organize, and manage your 3D prints.
 
-MatterControl Pro includes:
-- All the great features of MatterControl
-- Professional support provided by MatterHackers
-- Unlimited storage of your designs in Cloud Library
-- Access to the expanding set of Pro features 
+![MatterControl Pro](https://lh3.googleusercontent.com/d4jHyk2aCJgtsT0H6i3uFba1nfIBtVYlVpwsRf8xfrI8hN661vU46HHPKCaI2QXDjtAD9ykH6smj1c4itc8PVw=w640)]
+
+## Get MatterHackers Professional Support
+- [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition) grants access to [MatterHackers](https://www.matterhackers.com) staff of experts, who are dedicated to helping you succeed from design to print.
+
+## Join the MatterControl community
+- Help support our mission to make 3D printing easier and more accessible. With your assistance MatterControl can reach ever greater heights, continually improving the capabilities of 3D printers and the tools of success.
+
+## Create  with integrated tools and applications
+- Perfect for professional makers interested in tools that optimize creativity and effectiveness. Gain access to Gear Creator, Mesh Repair, Mesh Hollowing, and more. 

@@ -136,26 +136,40 @@ namespace MatterHackers.MatterControl
 			}
 			else if (File.Exists(gifFileName))
 			{
-				try
+
+				Task.Run(() =>
 				{
-					Task.Run(() =>
+					try
 					{
 						AggContext.StaticData.LoadImageSequenceData(new StreamReader(gifFileName).BaseStream, asyncImageSequence);
-						UiThread.RunOnIdle(() =>
+						if (asyncImageSequence.NumFrames > 0)
 						{
-							imageSequenceToLoadInto.Copy(asyncImageSequence);
-							imageSequenceToLoadInto.Invalidate();
-							doneLoading?.Invoke();
-						});
-					});
+							UiThread.RunOnIdle(() =>
+							{
+								imageSequenceToLoadInto.Copy(asyncImageSequence);
+								imageSequenceToLoadInto.Invalidate();
+								doneLoading?.Invoke();
+							});
+						}
+						else
+						{
+							DownloadImageAsync(imageSequenceToLoadInto, uriToLoad, doneLoading, asyncImageSequence, pngFileName, gifFileName);
+						}
+					}
+					catch
+					{
+						DownloadImageAsync(imageSequenceToLoadInto, uriToLoad, doneLoading, asyncImageSequence, pngFileName, gifFileName);
+					}
+				});
 
-					return;
-				}
-				catch
-				{
-				}
+				return;
 			}
 
+			DownloadImageAsync(imageSequenceToLoadInto, uriToLoad, doneLoading, asyncImageSequence, pngFileName, gifFileName);
+		}
+
+		private static void DownloadImageAsync(ImageSequence imageSequenceToLoadInto, string uriToLoad, Action doneLoading, ImageSequence asyncImageSequence, string pngFileName, string gifFileName)
+		{
 			WebClient client = new WebClient();
 			client.DownloadDataCompleted += (object sender, DownloadDataCompletedEventArgs e) =>
 			{
@@ -205,19 +219,14 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void RetrieveText(string uriToLoad, Action<string> updateResult, bool checkStaticData = false)
+		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
-			var textFileName = ApplicationController.CacheablePath("Text", longHash.ToString() + ".txt");
-
-			// change to a path that makes it easy to collect up all the text we want to ship with MC
-			if (checkStaticData)
-			{
-				textFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
-			}
+			var textFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
 
 			string fileText = null;
+			// first try the cache in the users applications folder
 			if (File.Exists(textFileName))
 			{
 				try
@@ -229,7 +238,7 @@ namespace MatterHackers.MatterControl
 				{
 				}
 			}
-			else // We could not find it in the cache. Check if it is in static data.
+			else // We could not find it in the application cache. Check if it is in static data.
 			{
 				if (File.Exists(textFileName))
 				{
@@ -245,6 +254,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
+			// whether we find it or not check the web for the latest version
 			Task.Run(async () =>
 			{
 				var client = new HttpClient();

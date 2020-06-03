@@ -2745,6 +2745,7 @@ namespace MatterHackers.MatterControl
 					{
 						var httpClient = new HttpClient();
 						string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Help/docs/product-tour.json");
+						// string json = await httpClient.GetStringAsync("https://matterhackers.github.io/MatterControl-Docs/Help/product-tour.json");
 
 						return JsonConvert.DeserializeObject<List<TourLocation>>(json);
 
