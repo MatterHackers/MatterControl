@@ -19,7 +19,7 @@ namespace Markdig.Renderers.Agg
 			this.HAnchor = HAnchor.Stretch;
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
@@ -27,7 +27,7 @@ namespace Markdig.Renderers.Agg
 				textWidget.PointSize = 11;
 			}
 
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 
@@ -51,10 +51,10 @@ namespace Markdig.Renderers.Agg
 			});
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			// TODOD: Anything else required for list children?
-			content.AddChild(childToAdd, indexInChildrenList);
+			return content.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 

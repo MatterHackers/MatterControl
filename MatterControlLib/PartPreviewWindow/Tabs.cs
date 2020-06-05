@@ -198,15 +198,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (this.TabContainer == this)
 			{
-				base.AddChild(childToAdd, indexInChildrenList);
+				return base.AddChild(childToAdd, indexInChildrenList);
 			}
 			else
 			{
-				this.TabContainer.AddChild(childToAdd, indexInChildrenList);
+				return this.TabContainer.AddChild(childToAdd, indexInChildrenList);
 			}
 		}
 

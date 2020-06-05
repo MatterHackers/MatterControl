@@ -20,7 +20,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			this.delimiter = delimiter;
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
@@ -42,7 +42,7 @@ namespace Markdig.Renderers.Agg.Inlines
 				}
 			}
 
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 

@@ -52,7 +52,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			base.OnClick(mouseEvent);
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			if (childToAdd is TextWidget textWidget)
 			{
@@ -63,7 +63,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			// Allow link parent to own mouse events
 			childToAdd.Selectable = false;
 
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 

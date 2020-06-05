@@ -66,9 +66,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.RightAnchorItem = rightAnchorItem;
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
-			ActionArea.AddChild(childToAdd, indexInChildrenList);
+			return ActionArea.AddChild(childToAdd, indexInChildrenList);
 		}
 
 		public void AddChildDirect(GuiWidget guiWidget)
