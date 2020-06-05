@@ -693,9 +693,11 @@ namespace MatterHackers.MatterControl
 			public double MoveAmount { get; set; } = 10;
 
 			public double MovementFeedRate { get; set; }
+
 			private PrinterConfig printer;
 
 			private PrinterConnection.Axis moveAxis;
+
 			public MoveButton(string text, PrinterConfig printer, PrinterConnection.Axis axis, double movementFeedRate, ThemeConfig theme)
 				: base(text, theme)
 			{
