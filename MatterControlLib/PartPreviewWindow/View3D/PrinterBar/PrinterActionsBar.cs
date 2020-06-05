@@ -265,10 +265,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			buttonIsBeingClicked = false;
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			childToAdd.VAnchor = VAnchor.Center;
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 
 		public override void OnClosed(EventArgs e)

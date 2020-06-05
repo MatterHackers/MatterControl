@@ -437,7 +437,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public bool DrawUnderline { get; set; }
+		public bool DrawUnderline { get; set; } = true;
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{

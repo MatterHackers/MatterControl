@@ -21,9 +21,9 @@ namespace Markdig.Renderers.Agg.Inlines
 			this.BackgroundColor = theme.MinimalShade;
 		}
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 	}
 

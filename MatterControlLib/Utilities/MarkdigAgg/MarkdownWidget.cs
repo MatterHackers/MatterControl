@@ -147,6 +147,7 @@ namespace Markdig.Agg
 						helpArticleHeader.EditClicked += (s, e) =>
 						{
 							ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Help/blob/master/input/{sourceArticle.Path}");
+							// ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Docs/tree/master/docs/Help/{sourceArticle.Path}");
 						};
 						contentPanel.AddChild(helpArticleHeader);
 					}

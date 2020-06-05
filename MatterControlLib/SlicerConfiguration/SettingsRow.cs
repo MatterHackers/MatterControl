@@ -153,11 +153,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ArrowDirection ArrowDirection { get; set; } = ArrowDirection.Right;
 
-		public override void AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
+		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
 			childToAdd.Selectable = this.FullRowSelect == false;
 
-			base.AddChild(childToAdd, indexInChildrenList);
+			return base.AddChild(childToAdd, indexInChildrenList);
 		}
 
 		protected override void OnClick(MouseEventArgs mouseEvent)

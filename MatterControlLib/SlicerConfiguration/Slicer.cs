@@ -72,7 +72,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (settings.GetValue<int>(SettingsKey.support_material_extruder) != 0)
 				{
-					int supportExtruder = Math.Max(0, Math.Min(extruderCount - 1, settings.GetValue<int>(SettingsKey.support_material_extruder) - 1));
+					int supportExtruder = Math.Max(0, Math.Min(extruderCount - 1, settings.GetValue<int>(SettingsKey.support_material_extruder)));
+					extrudersUsed[supportExtruder] = true;
+				}
+
+				if (settings.GetValue<int>(SettingsKey.support_material_interface_extruder) != 0)
+				{
+					int supportExtruder = Math.Max(0, Math.Min(extruderCount - 1, settings.GetValue<int>(SettingsKey.support_material_interface_extruder)));
 					extrudersUsed[supportExtruder] = true;
 				}
 			}
