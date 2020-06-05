@@ -651,7 +651,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return await ApplicationController.Instance.OpenEmptyPrinter(guid);
 		}
 
-		public async static Task<PrinterSettings> LoadOemSettingsAsync(PublicDevice publicDevice, string make, string model)
+		public static async Task<PrinterSettings> LoadOemSettingsAsync(PublicDevice publicDevice, string make, string model)
 		{
 			string cacheScope = Path.Combine("public-profiles", make);
 			string cachePath = ApplicationController.CacheablePath(cacheScope, publicDevice.CacheKey);
@@ -664,7 +664,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					// The collector specifically returns null to ensure LoadCacheable skips writing the
 					// result to the cache. After this result is returned, it will attempt to load from
 					// the local cache if the collector yielded no result
-					if(File.Exists(cachePath)
+					if (File.Exists(cachePath)
 						|| ApplicationController.DownloadPublicProfileAsync == null)
 					{
 						return null;
