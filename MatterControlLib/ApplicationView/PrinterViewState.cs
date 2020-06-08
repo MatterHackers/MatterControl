@@ -167,25 +167,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public double SelectedObjectPanelWidth
-		{
-			get
-			{
-				if (double.TryParse(UserSettings.Instance.get(UserSettingsKey.SelectedObjectPanelWidth), out double controlWidth))
-				{
-					return Math.Max(controlWidth, 150);
-				}
-
-				return 200;
-			}
-
-			set
-			{
-				var minimumValue = Math.Max(value, 150);
-				UserSettings.Instance.set(UserSettingsKey.SelectedObjectPanelWidth, minimumValue.ToString());
-			}
-		}
-
 		public bool SlicingItem { get; set; }
 	}
 }

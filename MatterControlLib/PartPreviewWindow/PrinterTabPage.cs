@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gcodeContainer = new VerticalResizeContainer(theme, GrabBarSide.Left)
 			{
-				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 200,
+				Width = UserSettings.Instance.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
 				SplitterBarColor = theme.SplitterBackground,
@@ -177,7 +177,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (printer != null)
 				{
-					printer.ViewState.SelectedObjectPanelWidth = gcodeContainer.Width;
+					UserSettings.Instance.SelectedObjectPanelWidth = gcodeContainer.Width;
 				}
 			};
 
