@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private double addendum;
 
-		private double angleToothToTooth;
+		private double AngleToothToTooth => 360.0 / this.ToothCount;
 
 		private Vector2 center = Vector2.Zero;
 
@@ -320,18 +320,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// we want to remove any concave corners that are located between two convex corners
 			var cleanedUpCorners = new VertexStorage();
-			var previousIndex = corners.Count - 1;
-			var currentIndex = 0;
-			for (var i = 0; i < corners.Count; i++)
+			for (var currentIndex = 0; currentIndex < corners.Count; currentIndex++)
 			{
 				var corner = corners[currentIndex];
-				var nextIndex = (i + 1) % corners.Count;
+				var nextIndex = (currentIndex + 1) % corners.Count;
+				var previousIndex = (currentIndex + corners.Count - 1) % corners.Count;
 
 				var isSingleConcave = !isConvex[currentIndex] && isConvex[previousIndex] && isConvex[nextIndex];
 				var isSingleConvex = isConvex[currentIndex] && !isConvex[previousIndex] && !isConvex[nextIndex];
-
-				previousIndex = currentIndex;
-				currentIndex = nextIndex;
 
 				if (removeSingleConvex && isSingleConvex)
 				{
@@ -370,7 +366,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Outer Circle
 			this.OuterRadius = this.pitchRadius + this.shiftedAddendum;
-			this.angleToothToTooth = 360.0 / this.ToothCount;
 
 			if (InternalToothCount > 0)
 			{
@@ -439,7 +434,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			for (var i = 1; i < this.ToothCount; i++)
 			{
-				var angle = i * this.angleToothToTooth;
+				var angle = i * this.AngleToothToTooth;
 				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
 				for (var j = 0; j < cornersCount; j++)
 				{
@@ -511,6 +506,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IVertexSource CreateExternalGearShape()
 		{
 			var tooth = this.CreateSingleTooth();
+			// return tooth.wheel;
+			// return tooth.tooth;
 
 			// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
 			// However, the union operations become more and more complex as the complete gear is built up.
@@ -521,13 +518,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			// first we need to find the corner that sits at the center
 			for (var i = 1; i < this.ToothCount; i++)
 			{
-				var angle = i * this.angleToothToTooth;
+				var angle = i * this.AngleToothToTooth;
 				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
 				var rotatedCorner = new VertexSourceApplyTransform(tooth.tooth, roatationMatrix);
 				outlinePaths = new CombinePaths(outlinePaths, rotatedCorner);
 			}
 
+			// return outlinePaths;
+
 			var gearShape = tooth.wheel.Subtract(outlinePaths);
+
+			// return gearShape;
 
 			if (this.CenterHoleDiameter > 0)
 			{
@@ -539,13 +540,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				gearShape = gearShape.Subtract(centerhole) as VertexStorage;
 			}
 
-			return gearShape; // .RotateZDegrees(-90);
+			return gearShape;
 		}
 
 		private (IVertexSource tooth, IVertexSource wheel) CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
-			var toothSectorPath = new Arc(Vector2.Zero, new Vector2(this.OuterRadius, this.OuterRadius), MathHelper.DegreesToRadians(90), MathHelper.DegreesToRadians(90 - this.angleToothToTooth))
+			var toothSectorPath = new Ellipse(Vector2.Zero, this.OuterRadius)
 			{
 				ResolutionScale = 10
 			};
@@ -557,12 +558,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private IVertexSource CreateToothCutout()
 		{
-			var angleToothToTooth = 360.0 / this.ToothCount;
-			var angleStepSize = this.angleToothToTooth / this.stepsPerToothAngle;
+			var angleStepSize = this.AngleToothToTooth / this.stepsPerToothAngle;
 
 			IVertexSource toothCutout = new VertexStorage();
 
 			var toothCutterShape = this.CreateToothCutter();
+			// return toothCutterShape;
+			
 			var bounds = toothCutterShape.GetBounds();
 			var lowerLeftCorner = new Vector2(bounds.Left, bounds.Bottom);
 
@@ -576,10 +578,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var angle = stepCounter * angleStepSize;
 				var xTranslation = new Vector2(angle * Math.PI / 180 * this.pitchRadius, 0);
 
-				var movedLowerLeftCorner = lowerLeftCorner + xTranslation;
-				movedLowerLeftCorner = Vector2.Rotate(movedLowerLeftCorner, MathHelper.DegreesToRadians(angle));
-
-				if (movedLowerLeftCorner.Length > this.OuterRadius)
+				if (Vector2.Rotate(lowerLeftCorner + xTranslation, MathHelper.DegreesToRadians(angle)).Length > this.OuterRadius)
 				{
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;
@@ -592,7 +591,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				if (xTranslation[0] > 0)
 				{
-					movedToothCutterShape = toothCutterShape.Translate(new Vector2(-xTranslation[0], xTranslation[1]));
+					movedToothCutterShape = toothCutterShape.Translate(new Vector2(-xTranslation.X, xTranslation.Y));
 					movedToothCutterShape = movedToothCutterShape.RotateZDegrees(-angle);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
 				}
@@ -602,7 +601,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			toothCutout = this.SmoothConcaveCorners(toothCutout);
 
-			return toothCutout.RotateZDegrees(-this.angleToothToTooth / 2);
+			return toothCutout.RotateZDegrees(-this.AngleToothToTooth / 2);
 		}
 
 		private IVertexSource CreateToothCutter()
