@@ -414,64 +414,73 @@ namespace MatterHackers.MatterControl.DesignTools
 			var centerCornerIndex = 0;
 			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.Clearance;
 
-			var delta = 0.0000001;
+			var bottomRight = new Vector2(-1000000, -1000000);
+			var deltaFromBR = double.MaxValue;
 			for (var i = 0; i < corners.Count; i++)
 			{
 				var corner = corners[i];
-				if (corner.Y < delta && (corner.X + radius) < delta)
+				var length = (new Vector2(corner.X, corner.Y) - bottomRight).Length;
+				if (length < deltaFromBR)
 				{
 					centerCornerIndex = i;
-					break;
+					deltaFromBR = length;
 				}
 			}
 
-			var outerCorners = new VertexStorage();
+			var outerCorner = new VertexStorage();
 			var command = ShapePath.FlagsAndCommand.MoveTo;
-			for (var i = 0; i < corners.Count; i++)
+			for (var i = 0; i < corners.Count - 2; i++)
 			{
 				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				if (corner.position.X != 0)
-				{
-					outerCorners.Add(corner.position.X, corner.position.Y, command);
-					command = ShapePath.FlagsAndCommand.LineTo;
-				}
+				outerCorner.Add(corner.position.X, corner.position.Y, command);
+				command = ShapePath.FlagsAndCommand.LineTo;
 			}
 
 			//outerCorners.ClosePolygon();
 
-			return outerCorners;
+			debugData.Add(outerCorner);
 
-			var reversedOuterCorners = new VertexStorage();
+			//var reversedOuterCorners = new VertexStorage();
+			//command = ShapePath.FlagsAndCommand.MoveTo;
+			//foreach (var vertex in new ReversePath(outerCorners).Vertices())
+			//{
+			//	reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, command);
+			//	command = ShapePath.FlagsAndCommand.LineTo;
+			//}
+
+			//// debugData.Add(reversedOuterCorners);
+
+			//outerCorners = reversedOuterCorners;
+
+			var cornerCount = outerCorner.Count;
+			var outerCorners = new VertexStorage();
 			command = ShapePath.FlagsAndCommand.MoveTo;
-			foreach (var vertex in new ReversePath(outerCorners).Vertices())
-			{
-				reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, command);
-				command = ShapePath.FlagsAndCommand.LineTo;
-			}
 
-			outerCorners = reversedOuterCorners;
-
-			var cornersCount = outerCorners.Count;
-
-			for (var i = 1; i < this.ToothCount; i++)
+			for (var i = 0; i < this.ToothCount; i++)
 			{
 				var angle = i * this.AngleToothToTooth;
 				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
-				for (var j = 0; j < cornersCount; j++)
+				for (var j = 0; j < cornerCount; j++)
 				{
-					var rotatedCorner = roatationMatrix.Transform(outerCorners[j].position);
-					outerCorners.Add(rotatedCorner.X, rotatedCorner.Y, ShapePath.FlagsAndCommand.LineTo);
+					var rotatedCorner = roatationMatrix.Transform(outerCorner[j].position);
+					outerCorners.Add(rotatedCorner.X, rotatedCorner.Y, command);
+					command = ShapePath.FlagsAndCommand.LineTo;
 				}
 			}
 
 			outerCorners = this.SmoothConcaveCorners(outerCorners) as VertexStorage;
+
+			debugData.Add(outerCorners);
 
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
 			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
 
 			// return outerCorners;
-			return outerCircle.Subtract(outerCorners);
+			var finalShape = outerCircle.Subtract(outerCorners);
+			//debugData.Add(finalShape);
+
+			return finalShape;
 		}
 
 		private IVertexSource CreateRackShape()
