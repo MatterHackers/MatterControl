@@ -190,6 +190,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public bool Debug { get; set; } = false;
+		private List<IVertexSource> debugData = new List<IVertexSource>();
+
 		public override IEnumerable<VertexData> Vertices()
 		{
 			IVertexSource shape = null;
@@ -207,6 +210,21 @@ namespace MatterHackers.MatterControl.DesignTools
 				case GearTypes.Rack:
 					shape = CreateRackShape();
 					break;
+			}
+
+			if (Debug && debugData.Count > 0)
+			{
+				IVertexSource output = debugData[0];
+				var offset = 0.0;
+				for (int i = 1; i < debugData.Count; i++)
+				{
+					offset += debugData[i-1].GetBounds().Height/2 + 2;
+					offset += debugData[i].GetBounds().Height/2 + 2;
+					output = new CombinePaths(output, new VertexSourceApplyTransform(debugData[i], Affine.NewTranslation(0, offset)));
+					offset += debugData[i].GetBounds().Height/2 + 2;
+				}
+
+				return output.Vertices();
 			}
 
 			return shape.Vertices();
@@ -256,15 +274,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 
 			var sector = fullSector.Subtract(innerCircle);
+			debugData.Add(sector);
+
 
 			var cutterTemplate = this.CreateInternalToothCutter();
+			debugData.Add(cutterTemplate);
 
 			var pinion = this.connectedGear;
 			var stepsPerTooth = this.stepsPerToothAngle;
 			var angleStepSize = angleToothToTooth / stepsPerTooth;
-			var toothShape = sector;
 			var cutter = cutterTemplate.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-			toothShape = toothShape.Subtract(cutter);
+			var toothShape = sector.Subtract(cutter);
+			debugData.Add(toothShape);
 
 			for (var i = 1; i < stepsPerTooth; i++)
 			{
@@ -385,7 +406,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IVertexSource CreateInternalGearShape()
 		{
 			var singleTooth = this.CreateInternalToothProfile();
-			return singleTooth;
+			debugData.Add(singleTooth);
 
 			var corners = singleTooth as VertexStorage;
 
