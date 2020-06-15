@@ -35,6 +35,8 @@ using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.VectorMath;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -94,6 +96,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			External,
 			Internal,
 			Rack
+		}
+
+		private IntPoint ScalledPoint(double x, double y, double scale)
+		{
+			return new IntPoint(x * scale, y * scale);
+		}
+
+		private Polygon Rectangle(double left, double bottom, double right, double top, double scale)
+		{
+			var output = new Polygon(4);
+			output.Add(ScalledPoint(left, bottom, scale));
+			output.Add(ScalledPoint(right, bottom, scale));
+			output.Add(ScalledPoint(right, top, scale));
+			output.Add(ScalledPoint(left, top, scale));
+			return output;
 		}
 
 		public double Backlash
@@ -195,16 +212,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override IEnumerable<VertexData> Vertices()
 		{
-			IVertexSource shape = null;
+			Polygons shape = null;
 
 			switch (GearType)
 			{
 				case GearTypes.External:
-					shape = CreateExternalGearShape();
+					//shape = CreateExternalGearShape();
 					break;
 
 				case GearTypes.Internal:
-					shape = CreateInternalGearShape();
+					//shape = CreateInternalGearShape();
 					break;
 
 				case GearTypes.Rack:
@@ -224,10 +241,18 @@ namespace MatterHackers.MatterControl.DesignTools
 					offset += debugData[i].GetBounds().Height/2 + 2;
 				}
 
-				return output.Vertices();
+				// return output.Vertices();
 			}
 
-			return shape.Vertices();
+			foreach (var poly in shape)
+			{
+				var command = ShapePath.FlagsAndCommand.MoveTo;
+				foreach (var point in poly)
+				{
+					yield return new VertexData(command, point.X / 1000.0, point.Y / 1000.0);
+					command = ShapePath.FlagsAndCommand.MoveTo;
+				}
+			}
 		}
 
 		private IVertexSource CreateInternalToothCutter()
@@ -483,32 +508,30 @@ namespace MatterHackers.MatterControl.DesignTools
 			return finalShape;
 		}
 
-		private IVertexSource CreateRackShape()
+		private Polygons CreateRackShape()
 		{
-			IVertexSource rack = new VertexStorage();
+			var rack = new Polygons();
 
 			for (var i = 0; i < ToothCount; i++)
 			{
 				var tooth = this.CreateRackTooth();
-				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2.0 + i) * this.CircularPitch);
-				rack = rack.Union(tooth);
+				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2.0 + i) * this.CircularPitch, 1000);
+				rack = rack.CreateUnion(tooth);
 			}
 
 			// creating the bar backing the teeth
 			var rightX = -(this.addendum + this.Clearance);
 			var width = 4 * this.addendum;
 			var halfHeight = ToothCount * this.CircularPitch / 2.0;
-			var bar = new RoundedRect(rightX - width, -halfHeight, rightX, halfHeight, 0);
+			var bar = Rectangle(rightX - width, -halfHeight, rightX, halfHeight, 1000);
 
-			var rackFinal = rack.Union(bar) as VertexStorage;
-			rackFinal.Translate(this.addendum * this.profileShift, 0);
-			return rackFinal;
+			var rackFinal = rack.CreateUnion(bar);
+			return rackFinal.Translate(this.addendum * this.profileShift, 0, 1000);
 		}
 
-		private IVertexSource CreateRackTooth()
+		private Polygon CreateRackTooth()
 		{
 			var toothWidth = this.CircularPitch / 2;
-			var toothDepth = this.addendum + this.Clearance;
 
 			var sinPressureAngle = Math.Sin(this.PressureAngle * Math.PI / 180);
 			var cosPressureAngle = Math.Cos(this.PressureAngle * Math.PI / 180);
@@ -519,16 +542,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var leftDepth = this.addendum + this.Clearance;
 
-			var upperLeftCorner = new Vector2(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle);
-			var upperRightCorner = new Vector2(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle);
-			var lowerRightCorner = new Vector2(upperRightCorner[0], -upperRightCorner[1]);
-			var lowerLeftCorner = new Vector2(upperLeftCorner[0], -upperLeftCorner[1]);
+			var upperLeftCorner = ScalledPoint(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle, 1000);
+			var upperRightCorner = ScalledPoint(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle, 1000);
+			var lowerRightCorner = ScalledPoint(upperRightCorner.X, -upperRightCorner.Y, 1000);
+			var lowerLeftCorner = ScalledPoint(upperLeftCorner.X, -upperLeftCorner.Y, 1000);
 
-			var tooth = new VertexStorage();
-			tooth.MoveTo(upperLeftCorner);
-			tooth.LineTo(upperRightCorner);
-			tooth.LineTo(lowerRightCorner);
-			tooth.LineTo(lowerLeftCorner);
+			var tooth = new Polygon();
+			tooth.Add(upperLeftCorner);
+			tooth.Add(upperRightCorner);
+			tooth.Add(lowerRightCorner);
+			tooth.Add(lowerLeftCorner);
 
 			return tooth;
 		}
@@ -717,5 +740,20 @@ public static class Extensions
 		output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 		return output;
+	}
+
+	public static Polygons CombinePaths(this Polygons aPolys, Polygons bPolys, ClipType clipType)
+	{
+		var clipper = new Clipper();
+
+		clipper.AddPaths(aPolys, PolyType.ptSubject, true);
+		clipper.AddPaths(bPolys, PolyType.ptClip, true);
+
+		var outputPolys = new List<List<IntPoint>>();
+		clipper.Execute(clipType, outputPolys);
+
+		Clipper.CleanPolygons(outputPolys);
+
+		return outputPolys;
 	}
 }
