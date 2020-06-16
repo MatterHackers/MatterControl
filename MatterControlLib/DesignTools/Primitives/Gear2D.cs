@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -110,6 +111,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			output.Add(ScalledPoint(right, bottom, scale));
 			output.Add(ScalledPoint(right, top, scale));
 			output.Add(ScalledPoint(left, top, scale));
+			return output;
+		}
+
+		private Polygon Circle(double x, double y, double radius, double scale = 1, int steps = 100)
+		{
+			var output = new Polygon(100);
+			for (int i = 0; i < steps; i++)
+			{
+				var angle = 2 * Math.PI * i / steps;
+				output.Add(new IntPoint(Math.Cos(angle) * radius * scale, Math.Sin(angle) * radius * scale));
+			}
+
 			return output;
 		}
 
@@ -208,7 +221,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public bool Debug { get; set; } = false;
-		private List<IVertexSource> debugData = new List<IVertexSource>();
+		private List<Polygons> debugData = new List<Polygons>();
 
 		public override IEnumerable<VertexData> Vertices()
 		{
@@ -217,7 +230,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			switch (GearType)
 			{
 				case GearTypes.External:
-					//shape = CreateExternalGearShape();
+					shape = CreateExternalGearShape();
 					break;
 
 				case GearTypes.Internal:
@@ -231,31 +244,40 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (Debug && debugData.Count > 0)
 			{
-				IVertexSource output = debugData[0];
+				var output = debugData[0];
 				var offset = 0.0;
 				for (int i = 1; i < debugData.Count; i++)
 				{
-					offset += debugData[i-1].GetBounds().Height/2 + 2;
-					offset += debugData[i].GetBounds().Height/2 + 2;
+					offset += debugData[i - 1].GetBounds().Height / 2 + 2;
+					offset += debugData[i].GetBounds().Height / 2 + 2;
 					output = new CombinePaths(output, new VertexSourceApplyTransform(debugData[i], Affine.NewTranslation(0, offset)));
-					offset += debugData[i].GetBounds().Height/2 + 2;
+					offset += debugData[i].GetBounds().Height / 2 + 2;
 				}
 
 				// return output.Vertices();
 			}
 
-			foreach (var poly in shape)
+			if (shape == null)
 			{
-				var command = ShapePath.FlagsAndCommand.MoveTo;
-				foreach (var point in poly)
+				yield return new VertexData(ShapePath.FlagsAndCommand.MoveTo, 0, 0);
+				yield return new VertexData(ShapePath.FlagsAndCommand.LineTo, 20, 0);
+				yield return new VertexData(ShapePath.FlagsAndCommand.LineTo, 0, 20);
+			}
+			else
+			{
+				foreach (var poly in shape)
 				{
-					yield return new VertexData(command, point.X / 1000.0, point.Y / 1000.0);
-					command = ShapePath.FlagsAndCommand.MoveTo;
+					var command = ShapePath.FlagsAndCommand.MoveTo;
+					foreach (var point in poly)
+					{
+						yield return new VertexData(command, point.X / 1000.0, point.Y / 1000.0);
+						command = ShapePath.FlagsAndCommand.LineTo;
+					}
 				}
 			}
 		}
 
-		private IVertexSource CreateInternalToothCutter()
+		private Polygons CreateInternalToothCutter()
 		{
 			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
 			var pinion = this.connectedGear;
@@ -275,7 +297,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			enlargedPinion.CalculateDependants();
 
 			var tooth = enlargedPinion.CreateSingleTooth();
-			return tooth.tooth.RotateZDegrees(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
+			return tooth.tooth.Rotate(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
 		}
 
 		private IVertexSource CreateInternalToothProfile()
@@ -544,8 +566,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var upperLeftCorner = ScalledPoint(-leftDepth, toothWidth / 2 - dx + (this.addendum + this.Clearance) * sinPressureAngle, 1000);
 			var upperRightCorner = ScalledPoint(this.addendum, toothWidth / 2 - dx - this.addendum * sinPressureAngle, 1000);
-			var lowerRightCorner = ScalledPoint(upperRightCorner.X, -upperRightCorner.Y, 1000);
-			var lowerLeftCorner = ScalledPoint(upperLeftCorner.X, -upperLeftCorner.Y, 1000);
+			var lowerRightCorner = ScalledPoint(upperRightCorner.X, -upperRightCorner.Y, 1);
+			var lowerLeftCorner = ScalledPoint(upperLeftCorner.X, -upperLeftCorner.Y, 1);
 
 			var tooth = new Polygon();
 			tooth.Add(upperLeftCorner);
@@ -556,7 +578,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return tooth;
 		}
 
-		private IVertexSource CreateExternalGearShape()
+		private Polygons CreateExternalGearShape()
 		{
 			var tooth = this.CreateSingleTooth();
 			// return tooth.wheel;
@@ -579,7 +601,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// return outlinePaths;
 
-			var gearShape = tooth.wheel.Subtract(outlinePaths);
+			var gearShape = tooth.wheel.CombinePaths(outlinePaths, ClipType.ctDifference);
 
 			// return gearShape;
 
@@ -596,20 +618,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			return gearShape;
 		}
 
-		private (IVertexSource tooth, IVertexSource wheel) CreateSingleTooth()
+		private (Polygons tooth, Polygon wheel) CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
-			var toothSectorPath = new Ellipse(Vector2.Zero, this.OuterRadius)
-			{
-				ResolutionScale = 10
-			};
+			var toothSectorPath = Circle(0, 0, this.OuterRadius, 1000);
 
 			var toothCutOut = CreateToothCutout();
 
 			return (toothCutOut, toothSectorPath);
 		}
 
-		private IVertexSource CreateToothCutout()
+		private Polygons CreateToothCutout()
 		{
 			var angleStepSize = this.AngleToothToTooth / this.stepsPerToothAngle;
 
@@ -617,7 +636,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var toothCutterShape = this.CreateToothCutter();
 			// return toothCutterShape;
-			
+
 			var bounds = toothCutterShape.GetBounds();
 			var lowerLeftCorner = new Vector2(bounds.Left, bounds.Bottom);
 
