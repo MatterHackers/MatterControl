@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using ClipperLib;
 using MatterHackers.Agg;
@@ -102,6 +103,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		private IntPoint ScalledPoint(double x, double y, double scale)
 		{
 			return new IntPoint(x * scale, y * scale);
+		}
+
+		private IntPoint ScalledPoint(Vector2 position, double scale)
+		{
+			return new IntPoint(position.X * scale, position.Y * scale);
 		}
 
 		private Polygon Rectangle(double left, double bottom, double right, double top, double scale)
@@ -244,13 +250,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (Debug && debugData.Count > 0)
 			{
-				var output = debugData[0];
+				var output = new Polygons();
+				output.AddRange(debugData[0]);
 				var offset = 0.0;
 				for (int i = 1; i < debugData.Count; i++)
 				{
 					offset += debugData[i - 1].GetBounds().Height / 2 + 2;
 					offset += debugData[i].GetBounds().Height / 2 + 2;
-					output = new CombinePaths(output, new VertexSourceApplyTransform(debugData[i], Affine.NewTranslation(0, offset)));
+					output.AddRange(debugData[i].Translate(0, offset));
 					offset += debugData[i].GetBounds().Height / 2 + 2;
 				}
 
@@ -300,29 +307,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			return tooth.tooth.Rotate(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
 		}
 
-		private IVertexSource CreateInternalToothProfile()
+		private Polygon CreateInternalToothProfile()
 		{
 			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var angleToothToTooth = 360 / this.ToothCount;
 			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
 			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
 
-			var fullSector = new VertexStorage();
+			var fullSector = new Polygon();
 
-			fullSector.MoveTo(0, 0);
-			fullSector.LineTo(-(radius * cos), radius * sin);
-			fullSector.LineTo(-radius, 0);
-			fullSector.LineTo(-(radius * cos), -radius * sin);
+			fullSector.Add(ScalledPoint(0, 0, 1000));
+			fullSector.Add(ScalledPoint(-(radius * cos), radius * sin, 1000));
+			fullSector.Add(ScalledPoint(-radius, 0, 1000));
+			fullSector.Add(ScalledPoint(-(radius * cos), -radius * sin, 1000));
 
 			var innerRadius = radius - (2 * this.addendum + this.Clearance);
-			var innerCircle = new Ellipse(this.center, innerRadius)
-			{
-				ResolutionScale = 10
-			};
+			var innerCircle = Circle(this.center.X, center.Y, innerRadius, 1000);
 
 			var sector = fullSector.Subtract(innerCircle);
 			debugData.Add(sector);
-
 
 			var cutterTemplate = this.CreateInternalToothCutter();
 			debugData.Add(cutterTemplate);
@@ -339,37 +342,41 @@ namespace MatterHackers.MatterControl.DesignTools
 				var pinionRotationAngle = i * angleStepSize;
 				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
 
-				cutter = cutterTemplate.RotateZDegrees(pinionRotationAngle);
+				cutter = cutterTemplate.Rotate(pinionRotationAngle);
 				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.RotateZDegrees(pinionCenterRayAngle);
+				cutter = cutter.Rotate(pinionCenterRayAngle);
 
 				toothShape = toothShape.Subtract(cutter);
 
-				cutter = cutterTemplate.RotateZDegrees(-pinionRotationAngle);
+				cutter = cutterTemplate.Rotate(-pinionRotationAngle);
 				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.RotateZDegrees(-pinionCenterRayAngle);
+				cutter = cutter.Rotate(-pinionCenterRayAngle);
 
 				toothShape = toothShape.Subtract(cutter);
 			}
 
-			return toothShape;
+			if (toothShape.Count != 1)
+			{
+				return null;
+			}
+
+			return toothShape[0];
 		}
 
-		private IVertexSource SmoothConcaveCorners(IVertexSource corners)
+		private Polygon SmoothConcaveCorners(Polygon corners)
 		{
 			// removes single concave corners located between convex corners
 			return this.SmoothCorners(corners, false); // removeSingleConvex
 		}
 
-		private IVertexSource SmoothConvexCorners(IVertexSource corners)
+		private Polygon SmoothConvexCorners(Polygon corners)
 		{
 			// removes single convex corners located between concave corners
 			return this.SmoothCorners(corners, true); // removeSingleConvex
 		}
 
-		private IVertexSource SmoothCorners(IVertexSource corners_in, bool removeSingleConvex)
+		private Polygon SmoothCorners(Polygon corners, bool removeSingleConvex)
 		{
-			var corners = corners_in as VertexStorage;
 			var isConvex = new List<bool>();
 			var previousCorner = corners[corners.Count - 1];
 			var currentCorner = corners[0];
@@ -377,8 +384,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var nextCorner = corners[(i + 1) % corners.Count];
 
-				var v1 = previousCorner.position - currentCorner.position;
-				var v2 = nextCorner.position - currentCorner.position;
+				var v1 = previousCorner - currentCorner;
+				var v2 = nextCorner - currentCorner;
 				var crossProduct = v1.Cross(v2);
 				isConvex.Add(crossProduct < 0);
 
@@ -387,7 +394,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			// we want to remove any concave corners that are located between two convex corners
-			var cleanedUpCorners = new VertexStorage();
+			var cleanedUpCorners = new Polygon();
 			for (var currentIndex = 0; currentIndex < corners.Count; currentIndex++)
 			{
 				var corner = corners[currentIndex];
@@ -407,7 +414,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					continue;
 				}
 
-				cleanedUpCorners.Add(corner.X, corner.Y, corner.command);
+				cleanedUpCorners.Add(corner);
 			}
 
 			return cleanedUpCorners;
@@ -450,12 +457,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private IVertexSource CreateInternalGearShape()
+		private Polygons CreateInternalGearShape()
 		{
 			var singleTooth = this.CreateInternalToothProfile();
-			debugData.Add(singleTooth);
+			debugData.Add(new Polygons() { singleTooth });
 
-			var corners = singleTooth as VertexStorage;
+			var corners = singleTooth;
 
 			// first we need to find the corner that sits at the center
 			var centerCornerIndex = 0;
@@ -474,18 +481,16 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 
-			var outerCorner = new VertexStorage();
-			var command = ShapePath.FlagsAndCommand.MoveTo;
+			var outerCorner = new Polygon();
 			for (var i = 0; i < corners.Count - 2; i++)
 			{
 				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				outerCorner.Add(corner.position.X, corner.position.Y, command);
-				command = ShapePath.FlagsAndCommand.LineTo;
+				outerCorner.Add(corner);
 			}
 
 			//outerCorners.ClosePolygon();
 
-			debugData.Add(outerCorner);
+			debugData.Add(new Polygons() { outerCorner });
 
 			//var reversedOuterCorners = new VertexStorage();
 			//command = ShapePath.FlagsAndCommand.MoveTo;
@@ -500,28 +505,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			//outerCorners = reversedOuterCorners;
 
 			var cornerCount = outerCorner.Count;
-			var outerCorners = new VertexStorage();
-			command = ShapePath.FlagsAndCommand.MoveTo;
+			var outerCorners = new Polygon();
 
 			for (var i = 0; i < this.ToothCount; i++)
 			{
 				var angle = i * this.AngleToothToTooth;
-				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
+				var radians = MathHelper.DegreesToRadians(angle);
 				for (var j = 0; j < cornerCount; j++)
 				{
-					var rotatedCorner = roatationMatrix.Transform(outerCorner[j].position);
-					outerCorners.Add(rotatedCorner.X, rotatedCorner.Y, command);
-					command = ShapePath.FlagsAndCommand.LineTo;
+					var rotatedCorner = outerCorner[j].GetRotated(radians);
+					outerCorners.Add(rotatedCorner);
 				}
 			}
 
-			outerCorners = this.SmoothConcaveCorners(outerCorners) as VertexStorage;
+			outerCorners = this.SmoothConcaveCorners(outerCorners);
 
-			debugData.Add(outerCorners);
+			debugData.Add(new Polygons() { outerCorners });
 
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
-			var outerCircle = new Ellipse(this.center, outerRadius, outerRadius);
+			var outerCircle = Circle(this.center.X, center.Y, outerRadius, 1000);
 
 			// return outerCorners;
 			var finalShape = outerCircle.Subtract(outerCorners);
@@ -538,7 +541,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var tooth = this.CreateRackTooth();
 				tooth = tooth.Translate(0, (0.5 + -ToothCount / 2.0 + i) * this.CircularPitch, 1000);
-				rack = rack.CreateUnion(tooth);
+				rack = rack.Union(tooth);
 			}
 
 			// creating the bar backing the teeth
@@ -547,7 +550,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var halfHeight = ToothCount * this.CircularPitch / 2.0;
 			var bar = Rectangle(rightX - width, -halfHeight, rightX, halfHeight, 1000);
 
-			var rackFinal = rack.CreateUnion(bar);
+			var rackFinal = rack.Union(bar);
 			return rackFinal.Translate(this.addendum * this.profileShift, 0, 1000);
 		}
 
@@ -594,25 +597,22 @@ namespace MatterHackers.MatterControl.DesignTools
 			for (var i = 1; i < this.ToothCount; i++)
 			{
 				var angle = i * this.AngleToothToTooth;
-				var roatationMatrix = Affine.NewRotation(MathHelper.DegreesToRadians(angle));
-				var rotatedCorner = new VertexSourceApplyTransform(tooth.tooth, roatationMatrix);
-				outlinePaths = new CombinePaths(outlinePaths, rotatedCorner);
+				var radians = MathHelper.DegreesToRadians(angle);
+				var rotatedCorner = tooth.tooth.Rotate(radians);
+				outlinePaths.AddRange(rotatedCorner);
 			}
 
 			// return outlinePaths;
 
-			var gearShape = tooth.wheel.CombinePaths(outlinePaths, ClipType.ctDifference);
+			var gearShape = tooth.wheel.Subtract(outlinePaths);
 
 			// return gearShape;
 
 			if (this.CenterHoleDiameter > 0)
 			{
 				var radius = this.CenterHoleDiameter / 2;
-				var centerhole = new Ellipse(0, 0, radius, radius)
-				{
-					ResolutionScale = 10
-				};
-				gearShape = gearShape.Subtract(centerhole) as VertexStorage;
+				var centerhole = Circle(0, 0, radius, 1000);
+				gearShape = gearShape.Subtract(centerhole);
 			}
 
 			return gearShape;
@@ -632,7 +632,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var angleStepSize = this.AngleToothToTooth / this.stepsPerToothAngle;
 
-			IVertexSource toothCutout = new VertexStorage();
+			var toothCutout = new Polygons();
 
 			var toothCutterShape = this.CreateToothCutter();
 			// return toothCutterShape;
@@ -657,26 +657,26 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				// we move in both directions
-				var movedToothCutterShape = toothCutterShape.Translate(xTranslation);
-				movedToothCutterShape = movedToothCutterShape.RotateZDegrees(angle);
+				var movedToothCutterShape = toothCutterShape.Translate(xTranslation.X, xTranslation.Y);
+				movedToothCutterShape = movedToothCutterShape.Rotate(angle);
 				toothCutout = toothCutout.Union(movedToothCutterShape);
 
 				if (xTranslation[0] > 0)
 				{
-					movedToothCutterShape = toothCutterShape.Translate(new Vector2(-xTranslation.X, xTranslation.Y));
-					movedToothCutterShape = movedToothCutterShape.RotateZDegrees(-angle);
+					movedToothCutterShape = toothCutterShape.Translate(-xTranslation.X, xTranslation.Y);
+					movedToothCutterShape = movedToothCutterShape.Rotate(-angle);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
 				}
 
 				stepCounter++;
 			}
 
-			toothCutout = this.SmoothConcaveCorners(toothCutout);
+			var toothCutout1 = this.SmoothConcaveCorners(toothCutout[0]);
 
-			return toothCutout.RotateZDegrees(-this.AngleToothToTooth / 2);
+			return toothCutout1.Rotate(-this.AngleToothToTooth / 2);
 		}
 
-		private IVertexSource CreateToothCutter()
+		private Polygon CreateToothCutter()
 		{
 			// we create a trapezoidal cutter as described at http://lcamtuf.coredump.cx/gcnc/ch6/ under the section 'Putting it all together'
 			var toothWidth = this.CircularPitch / 2;
@@ -696,8 +696,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			var upperLeftCorner = new Vector2(-upperRightCorner[0], upperRightCorner[1]);
 			var lowerLeftCorner = new Vector2(-lowerRightCorner[0], lowerRightCorner[1]);
 
-			var cutterPath = new VertexStorage();
-			cutterPath.MoveTo(lowerLeftCorner);
+			var cutterPath = new Polygon();
+			cutterPath.Add(ScalledPoint(lowerLeftCorner, 1000));
 			cutterPath.LineTo(upperLeftCorner);
 			cutterPath.LineTo(upperRightCorner);
 			cutterPath.LineTo(lowerRightCorner);
@@ -759,20 +759,5 @@ public static class Extensions
 		output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 		return output;
-	}
-
-	public static Polygons CombinePaths(this Polygons aPolys, Polygons bPolys, ClipType clipType)
-	{
-		var clipper = new Clipper();
-
-		clipper.AddPaths(aPolys, PolyType.ptSubject, true);
-		clipper.AddPaths(bPolys, PolyType.ptClip, true);
-
-		var outputPolys = new List<List<IntPoint>>();
-		clipper.Execute(clipType, outputPolys);
-
-		Clipper.CleanPolygons(outputPolys);
-
-		return outputPolys;
 	}
 }
