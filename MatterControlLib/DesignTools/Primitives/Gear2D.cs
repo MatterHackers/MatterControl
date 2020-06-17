@@ -251,12 +251,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var output = new Polygons();
 				output.AddRange(debugData[0]);
-				var offset = debugData[0].GetBounds().Height + 2000;
+				var top = debugData[0].GetBounds().Top;
 				for (int i = 1; i < debugData.Count; i++)
 				{
-					offset += debugData[i-1].GetBounds().Height + 2;
-					output.AddRange(debugData[i].Translate(0, offset));
-					offset += debugData[i].GetBounds().Height + 2;
+					var offset = top - debugData[i].GetBounds().Bottom + 2000;
+					var offsetPolys = debugData[i].Translate(0, offset);
+					output.AddRange(offsetPolys);
+					top = offsetPolys.GetBounds().Top;
 				}
 
 				shape = output;
@@ -581,27 +582,30 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Polygons CreateExternalGearShape()
 		{
-			var tooth = this.CreateSingleTooth();
-			debugData.Add(new Polygons() { tooth.tooth });
+			var toothParts = this.CreateSingleTooth();
 
 			// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
 			// However, the union operations become more and more complex as the complete gear is built up.
 			// So instead we capture the outer path of the tooth and concatenate rotated versions of this path into a complete outer gear path.
 			// Concatenating paths is inexpensive resulting in significantly faster execution.
-			var outlinePaths = new Polygon();
 
-			// first we need to find the corner that sits at the center
-			for (var i = 1; i < this.ToothCount; i++)
+			var tooth = toothParts.tooth;
+			debugData.Add(new Polygons() { tooth });
+
+			var gearShape = new Polygons();
+			for (var i = 0; i < this.ToothCount; i++)
 			{
 				var angle = i * this.AngleToothToTooth;
 				var radians = MathHelper.DegreesToRadians(angle);
-				var rotatedCorner = tooth.tooth.Rotate(radians);
-				outlinePaths.AddRange(rotatedCorner);
+				var rotatedCorner = tooth.Rotate(radians);
+				gearShape.Add(rotatedCorner);
 			}
 
-			debugData.Add(new Polygons() { outlinePaths });
+			gearShape = gearShape.Union(gearShape, PolyFillType.pftNonZero);
 
-			var gearShape = tooth.wheel.Subtract(outlinePaths);
+			debugData.Add(gearShape);
+		
+			gearShape = toothParts.wheel.Subtract(gearShape);
 
 			debugData.Add(gearShape);
 
@@ -610,6 +614,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var radius = this.CenterHoleDiameter / 2;
 				var centerhole = Circle(0, 0, radius, 1000);
 				gearShape = gearShape.Subtract(centerhole);
+				debugData.Add(gearShape);
 			}
 
 			return gearShape;
