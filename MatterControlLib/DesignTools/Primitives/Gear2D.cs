@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
@@ -252,16 +251,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var output = new Polygons();
 				output.AddRange(debugData[0]);
-				var offset = 0.0;
+				var offset = debugData[0].GetBounds().Height + 2000;
 				for (int i = 1; i < debugData.Count; i++)
 				{
-					offset += debugData[i - 1].GetBounds().Height / 2 + 2;
-					offset += debugData[i].GetBounds().Height / 2 + 2;
+					offset += debugData[i-1].GetBounds().Height + 2;
 					output.AddRange(debugData[i].Translate(0, offset));
-					offset += debugData[i].GetBounds().Height / 2 + 2;
+					offset += debugData[i].GetBounds().Height + 2;
 				}
 
-				// return output.Vertices();
+				shape = output;
 			}
 
 			if (shape == null)
@@ -284,7 +282,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private Polygons CreateInternalToothCutter()
+		private Polygon CreateInternalToothCutter()
 		{
 			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
 			var pinion = this.connectedGear;
@@ -328,7 +326,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			debugData.Add(sector);
 
 			var cutterTemplate = this.CreateInternalToothCutter();
-			debugData.Add(cutterTemplate);
+			debugData.Add(new Polygons() { cutterTemplate });
 
 			var pinion = this.connectedGear;
 			var stepsPerTooth = this.stepsPerToothAngle;
@@ -584,14 +582,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		private Polygons CreateExternalGearShape()
 		{
 			var tooth = this.CreateSingleTooth();
-			// return tooth.wheel;
-			// return tooth.tooth;
+			debugData.Add(new Polygons() { tooth.tooth });
 
 			// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
 			// However, the union operations become more and more complex as the complete gear is built up.
 			// So instead we capture the outer path of the tooth and concatenate rotated versions of this path into a complete outer gear path.
 			// Concatenating paths is inexpensive resulting in significantly faster execution.
-			var outlinePaths = tooth.tooth;
+			var outlinePaths = new Polygon();
 
 			// first we need to find the corner that sits at the center
 			for (var i = 1; i < this.ToothCount; i++)
@@ -602,11 +599,11 @@ namespace MatterHackers.MatterControl.DesignTools
 				outlinePaths.AddRange(rotatedCorner);
 			}
 
-			// return outlinePaths;
+			debugData.Add(new Polygons() { outlinePaths });
 
 			var gearShape = tooth.wheel.Subtract(outlinePaths);
 
-			// return gearShape;
+			debugData.Add(gearShape);
 
 			if (this.CenterHoleDiameter > 0)
 			{
@@ -618,7 +615,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return gearShape;
 		}
 
-		private (Polygons tooth, Polygon wheel) CreateSingleTooth()
+		private (Polygon tooth, Polygon wheel) CreateSingleTooth()
 		{
 			// create outer circle sector covering one tooth
 			var toothSectorPath = Circle(0, 0, this.OuterRadius, 1000);
@@ -628,14 +625,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			return (toothCutOut, toothSectorPath);
 		}
 
-		private Polygons CreateToothCutout()
+		private Polygon CreateToothCutout()
 		{
 			var angleStepSize = this.AngleToothToTooth / this.stepsPerToothAngle;
 
 			var toothCutout = new Polygons();
 
 			var toothCutterShape = this.CreateToothCutter();
-			// return toothCutterShape;
+			debugData.Add(new Polygons() { toothCutterShape });
 
 			var bounds = toothCutterShape.GetBounds();
 			var lowerLeftCorner = new Vector2(bounds.Left, bounds.Bottom);
@@ -648,9 +645,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			while (true)
 			{
 				var angle = stepCounter * angleStepSize;
-				var xTranslation = new Vector2(angle * Math.PI / 180 * this.pitchRadius, 0);
+				var radians = MathHelper.DegreesToRadians(angle);
+				var xTranslation = new Vector2(radians * this.pitchRadius, 0) * 1000;
 
-				if (Vector2.Rotate(lowerLeftCorner + xTranslation, MathHelper.DegreesToRadians(angle)).Length > this.OuterRadius)
+				if (Vector2.Rotate(lowerLeftCorner + xTranslation, radians).Length > this.OuterRadius * 1000)
 				{
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;
@@ -658,13 +656,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				// we move in both directions
 				var movedToothCutterShape = toothCutterShape.Translate(xTranslation.X, xTranslation.Y);
-				movedToothCutterShape = movedToothCutterShape.Rotate(angle);
+				movedToothCutterShape = movedToothCutterShape.Rotate(radians);
 				toothCutout = toothCutout.Union(movedToothCutterShape);
 
 				if (xTranslation[0] > 0)
 				{
 					movedToothCutterShape = toothCutterShape.Translate(-xTranslation.X, xTranslation.Y);
-					movedToothCutterShape = movedToothCutterShape.Rotate(-angle);
+					movedToothCutterShape = movedToothCutterShape.Rotate(-radians);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
 				}
 
@@ -673,7 +671,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var toothCutout1 = this.SmoothConcaveCorners(toothCutout[0]);
 
-			return toothCutout1.Rotate(-this.AngleToothToTooth / 2);
+			return toothCutout1.Rotate(MathHelper.DegreesToRadians(-this.AngleToothToTooth / 2));
 		}
 
 		private Polygon CreateToothCutter()
@@ -698,9 +696,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var cutterPath = new Polygon();
 			cutterPath.Add(ScalledPoint(lowerLeftCorner, 1000));
-			cutterPath.LineTo(upperLeftCorner);
-			cutterPath.LineTo(upperRightCorner);
-			cutterPath.LineTo(lowerRightCorner);
+			cutterPath.Add(ScalledPoint(upperLeftCorner, 1000));
+			cutterPath.Add(ScalledPoint(upperRightCorner, 1000));
+			cutterPath.Add(ScalledPoint(lowerRightCorner, 1000));
 
 			return cutterPath;
 		}
