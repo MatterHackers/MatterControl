@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			modelViewSidePanel = new VerticalResizeContainer(theme, GrabBarSide.Left)
 			{
-				Width = printer?.ViewState.SelectedObjectPanelWidth ?? 250,
+				Width = UserSettings.Instance.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
 				BackgroundColor = theme.InteractionLayerOverlayColor,
@@ -467,10 +467,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ModelViewSidePanel_Resized(object sender, EventArgs e)
 		{
-			if (this.Printer != null)
-			{
-				this.Printer.ViewState.SelectedObjectPanelWidth = selectedObjectPanel.Width;
-			}
+			UserSettings.Instance.SelectedObjectPanelWidth = selectedObjectPanel.Width;
 		}
 
 		private void UpdateRenderView(object sender, EventArgs e)
