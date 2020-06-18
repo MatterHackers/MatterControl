@@ -239,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					break;
 
 				case GearTypes.Internal:
-					//shape = CreateInternalGearShape();
+					shape = CreateInternalGearShape();
 					break;
 
 				case GearTypes.Rack:
@@ -303,15 +303,15 @@ namespace MatterHackers.MatterControl.DesignTools
 			enlargedPinion.CalculateDependants();
 
 			var tooth = enlargedPinion.CreateSingleTooth();
-			return tooth.tooth.Rotate(90 + 180 / enlargedPinion.ToothCount); // we need a tooth pointing to the left
+			return tooth.tooth.Rotate(MathHelper.DegreesToRadians(90 + 180) / enlargedPinion.ToothCount); // we need a tooth pointing to the left
 		}
 
 		private Polygon CreateInternalToothProfile()
 		{
 			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
-			var angleToothToTooth = 360 / this.ToothCount;
-			var sin = Math.Sin(angleToothToTooth / 2 * Math.PI / 180);
-			var cos = Math.Cos(angleToothToTooth / 2 * Math.PI / 180);
+			var toothToToothRadians = MathHelper.Tau / this.ToothCount;
+			var sin = Math.Sin(toothToToothRadians);
+			var cos = Math.Cos(toothToToothRadians);
 
 			var fullSector = new Polygon();
 
@@ -322,7 +322,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var innerRadius = radius - (2 * this.addendum + this.Clearance);
 			var innerCircle = Circle(this.center.X, center.Y, innerRadius, 1000);
-
 			var sector = fullSector.Subtract(innerCircle);
 			debugData.Add(sector);
 
@@ -331,35 +330,31 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var pinion = this.connectedGear;
 			var stepsPerTooth = this.stepsPerToothAngle;
-			var angleStepSize = angleToothToTooth / stepsPerTooth;
-			var cutter = cutterTemplate.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-			var toothShape = sector.Subtract(cutter);
+			var stepSizeRadians = toothToToothRadians / stepsPerTooth;
+
+			var toothShape = sector;
+
+			for (var i = 0; i < stepsPerTooth; i++)
+			{
+				var pinionRadians = i * stepSizeRadians;
+				var pinionCenterRayRadians = -pinionRadians * pinion.ToothCount / this.ToothCount;
+
+				var cutter = cutterTemplate.Rotate(pinionRadians);
+				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Rotate(pinionCenterRayRadians);
+
+				toothShape = toothShape.Subtract(cutter);
+
+				cutter = cutterTemplate.Rotate(-pinionRadians);
+				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Rotate(-pinionCenterRayRadians);
+
+				toothShape = toothShape.Subtract(cutter);
+			}
+
 			debugData.Add(toothShape);
 
-			for (var i = 1; i < stepsPerTooth; i++)
-			{
-				var pinionRotationAngle = i * angleStepSize;
-				var pinionCenterRayAngle = -pinionRotationAngle * pinion.ToothCount / this.ToothCount;
-
-				cutter = cutterTemplate.Rotate(pinionRotationAngle);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.Rotate(pinionCenterRayAngle);
-
-				toothShape = toothShape.Subtract(cutter);
-
-				cutter = cutterTemplate.Rotate(-pinionRotationAngle);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0);
-				cutter = cutter.Rotate(-pinionCenterRayAngle);
-
-				toothShape = toothShape.Subtract(cutter);
-			}
-
-			if (toothShape.Count != 1)
-			{
-				return null;
-			}
-
-			return toothShape[0];
+			return toothShape[toothShape.Count - 1];
 		}
 
 		private Polygon SmoothConcaveCorners(Polygon corners)
@@ -461,65 +456,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			var singleTooth = this.CreateInternalToothProfile();
 			debugData.Add(new Polygons() { singleTooth });
 
-			var corners = singleTooth;
-
-			// first we need to find the corner that sits at the center
-			var centerCornerIndex = 0;
-			var radius = this.pitchRadius + (1 + this.profileShift) * this.addendum + this.Clearance;
-
-			var bottomRight = new Vector2(-1000000, -1000000);
-			var deltaFromBR = double.MaxValue;
-			for (var i = 0; i < corners.Count; i++)
-			{
-				var corner = corners[i];
-				var length = (new Vector2(corner.X, corner.Y) - bottomRight).Length;
-				if (length < deltaFromBR)
-				{
-					centerCornerIndex = i;
-					deltaFromBR = length;
-				}
-			}
-
-			var outerCorner = new Polygon();
-			for (var i = 0; i < corners.Count - 2; i++)
-			{
-				var corner = corners[(i + centerCornerIndex) % corners.Count];
-				outerCorner.Add(corner);
-			}
-
-			//outerCorners.ClosePolygon();
-
-			debugData.Add(new Polygons() { outerCorner });
-
-			//var reversedOuterCorners = new VertexStorage();
-			//command = ShapePath.FlagsAndCommand.MoveTo;
-			//foreach (var vertex in new ReversePath(outerCorners).Vertices())
-			//{
-			//	reversedOuterCorners.Add(vertex.position.X, vertex.position.Y, command);
-			//	command = ShapePath.FlagsAndCommand.LineTo;
-			//}
-
-			//// debugData.Add(reversedOuterCorners);
-
-			//outerCorners = reversedOuterCorners;
-
-			var cornerCount = outerCorner.Count;
-			var outerCorners = new Polygon();
+			var outerCorners = new Polygons();
 
 			for (var i = 0; i < this.ToothCount; i++)
 			{
 				var angle = i * this.AngleToothToTooth;
 				var radians = MathHelper.DegreesToRadians(angle);
-				for (var j = 0; j < cornerCount; j++)
-				{
-					var rotatedCorner = outerCorner[j].GetRotated(radians);
-					outerCorners.Add(rotatedCorner);
-				}
+				outerCorners.Add(singleTooth.Rotate(radians));
 			}
 
-			outerCorners = this.SmoothConcaveCorners(outerCorners);
+			outerCorners = outerCorners.Union(outerCorners, PolyFillType.pftNonZero);
 
-			debugData.Add(new Polygons() { outerCorners });
+			debugData.Add(outerCorners);
 
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + 4 * this.addendum;
@@ -604,7 +552,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			gearShape = gearShape.Union(gearShape, PolyFillType.pftNonZero);
 
 			debugData.Add(gearShape);
-		
+
 			gearShape = toothParts.wheel.Subtract(gearShape);
 
 			debugData.Add(gearShape);
