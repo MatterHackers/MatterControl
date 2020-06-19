@@ -18,6 +18,7 @@ namespace MatterHackers.MatterControl
 		public const string AfterPrintFinishedSendTextMessage = nameof(AfterPrintFinishedSendTextMessage);
 		public const string ApplicationDisplayMode = nameof(ApplicationDisplayMode);
 		public const string ApplicationUseHeigResDisplays = nameof(ApplicationUseHeigResDisplays);
+		public const string ApplicationUseSocketeer = nameof(ApplicationUseSocketeer);
 		public const string ApplicationTextSize = nameof(ApplicationTextSize);
 		public const string ColorPanelExpanded = nameof(ColorPanelExpanded);
 		public const string ConfigurePrinter_CurrentTab = nameof(ConfigurePrinter_CurrentTab);

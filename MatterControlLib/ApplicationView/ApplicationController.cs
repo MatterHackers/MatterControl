@@ -813,7 +813,13 @@ namespace MatterHackers.MatterControl
 								var selectedItem = scene.SelectedItem;
 								if (selectedItem != null)
 								{
-									scene.MakeLowestFaceFlat(selectedItem);
+									try
+									{
+										scene.MakeLowestFaceFlat(selectedItem);
+									}
+									catch
+									{
+									}
 								}
 							},
 							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
@@ -2107,40 +2113,45 @@ namespace MatterHackers.MatterControl
 			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
 		};
 
+		static object locker = new object();
+
 		public static TypeFace GetTypeFace(NamedTypeFace namedTypeFace)
 		{
-			if (!TypeFaceCache.ContainsKey(namedTypeFace))
+			lock (locker)
 			{
-				TypeFace typeFace = new TypeFace();
-				var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
-				var exists = AggContext.StaticData.FileExists(path);
-				var stream = exists ? AggContext.StaticData.OpenStream(path) : null;
-				if (stream != null
-					&& typeFace.LoadTTF(stream))
+				if (!TypeFaceCache.ContainsKey(namedTypeFace))
 				{
-					TypeFaceCache.Add(namedTypeFace, typeFace);
-				}
-				else
-				{
-					// try the svg
-					path = Path.Combine("Fonts", $"{namedTypeFace}.svg");
-					exists = AggContext.StaticData.FileExists(path);
-					typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(path)) : null;
-					if (typeFace != null)
+					TypeFace typeFace = new TypeFace();
+					var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
+					var exists = AggContext.StaticData.FileExists(path);
+					var stream = exists ? AggContext.StaticData.OpenStream(path) : null;
+					if (stream != null
+						&& typeFace.LoadTTF(stream))
 					{
 						TypeFaceCache.Add(namedTypeFace, typeFace);
 					}
 					else
 					{
-						// assign it to the default
-						TypeFaceCache.Add(namedTypeFace, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
+						// try the svg
+						path = Path.Combine("Fonts", $"{namedTypeFace}.svg");
+						exists = AggContext.StaticData.FileExists(path);
+						typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(path)) : null;
+						if (typeFace != null)
+						{
+							TypeFaceCache.Add(namedTypeFace, typeFace);
+						}
+						else
+						{
+							// assign it to the default
+							TypeFaceCache.Add(namedTypeFace, TypeFaceCache[NamedTypeFace.Liberation_Sans]);
+						}
 					}
+
+					stream?.Dispose();
 				}
 
-				stream?.Dispose();
+				return TypeFaceCache[namedTypeFace];
 			}
-
-			return TypeFaceCache[namedTypeFace];
 		}
 
 		private static TypeFace titilliumTypeFace = null;
