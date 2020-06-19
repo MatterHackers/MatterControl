@@ -387,6 +387,12 @@ namespace MatterHackers.MatterControl
 				true,
 				false);
 
+			AddUserBoolToggle(advancedPanel,
+				"Enable Socketeer Client".Localize(),
+				UserSettingsKey.ApplicationUseSocketeer,
+				true,
+				false);
+
 			var openCacheButton = new IconButton(AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Open Folder".Localize(),
