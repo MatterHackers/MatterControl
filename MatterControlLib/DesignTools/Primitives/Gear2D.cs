@@ -71,8 +71,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Vector2 center = Vector2.Zero;
 
-		private Gear2D connectedGear;
-
 		private double diametralPitch;
 
 		public double OuterRadius { get; private set; }
@@ -226,6 +224,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public bool Debug { get; set; } = false;
+
 		private List<Polygons> debugData = new List<Polygons>();
 
 		public override IEnumerable<VertexData> Vertices()
@@ -283,11 +282,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private Polygon CreateInternalToothCutter()
+		private Polygon CreateInternalToothCutter(Gear2D pinion)
 		{
 			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
-			var pinion = this.connectedGear;
-
 			var enlargedPinion = new Gear2D()
 			{
 				CircularPitch = pinion.CircularPitch,
@@ -325,10 +322,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			var sector = fullSector.Subtract(innerCircle);
 			debugData.Add(sector);
 
-			var cutterTemplate = this.CreateInternalToothCutter();
+			var pinion = CreateInternalPinion();
+			var cutterTemplate = this.CreateInternalToothCutter(pinion);
 			debugData.Add(new Polygons() { cutterTemplate });
 
-			var pinion = this.connectedGear;
 			var stepsPerTooth = this.stepsPerToothAngle;
 			var stepSizeRadians = toothToToothRadians / stepsPerTooth;
 
@@ -340,13 +337,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				var pinionCenterRayRadians = -pinionRadians * pinion.ToothCount / this.ToothCount;
 
 				var cutter = cutterTemplate.Rotate(pinionRadians);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Translate(-this.pitchRadius + pinion.pitchRadius, 0, 1000);
 				cutter = cutter.Rotate(pinionCenterRayRadians);
 
 				toothShape = toothShape.Subtract(cutter);
 
 				cutter = cutterTemplate.Rotate(-pinionRadians);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Translate(-this.pitchRadius + pinion.pitchRadius, 0, 1000);
 				cutter = cutter.Rotate(-pinionCenterRayRadians);
 
 				toothShape = toothShape.Subtract(cutter);
@@ -435,20 +432,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Outer Circle
 			this.OuterRadius = this.pitchRadius + this.shiftedAddendum;
+		}
 
-			if (InternalToothCount > 0)
+		private Gear2D CreateInternalPinion()
+		{
+			return new Gear2D()
 			{
-				connectedGear = new Gear2D()
-				{
-					ToothCount = this.InternalToothCount,
-					CircularPitch = this.CircularPitch,
-					CenterHoleDiameter = this.CenterHoleDiameter,
-					PressureAngle = this.PressureAngle,
-					Backlash = this.Backlash,
-					Clearance = this.Clearance,
-					GearType = this.GearType,
-				};
-			}
+				ToothCount = this.InternalToothCount,
+				CircularPitch = this.CircularPitch,
+				CenterHoleDiameter = this.CenterHoleDiameter,
+				PressureAngle = this.PressureAngle,
+				Backlash = this.Backlash,
+				Clearance = this.Clearance,
+				GearType = this.GearType,
+			};
 		}
 
 		private Polygons CreateInternalGearShape()
