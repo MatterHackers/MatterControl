@@ -1041,15 +1041,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 
-			var subGroup = settingData.OrganizerSubGroup;
+			var group = settingData.OrganizerGroup;
 
-			var category = settingData.OrganizerSubGroup.Group.Category;
+			var category = group.Category;
 
 			// Click tab
 			testRunner.ClickByName(category.Name + " Tab");
 
 			// Open the subGroup if required
-			var foundWidget = testRunner.GetWidgetByName(subGroup.Name + " Panel", out _);
+			var foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _);
 			if (foundWidget != null)
 			{
 				var containerCheckBox = foundWidget.Descendants<ExpandCheckboxButton>().First();

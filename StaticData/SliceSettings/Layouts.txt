@@ -1,253 +1,222 @@
 Advanced
   General
     General
-      General
-        layer_height
-        first_layer_height
-        perimeters
-        top_solid_layers
-        bottom_solid_layers
-        fill_density
-        infill_type
+      layer_height
+      first_layer_height
+      perimeters
+      top_solid_layers
+      bottom_solid_layers
+      fill_density
+      infill_type
     Layers / Surface
-      Outer Surface - Perimeters
-        avoid_crossing_perimeters
-        avoid_crossing_max_ratio
-        external_perimeters_first
-        perimeter_start_end_overlap
-        merge_overlapping_lines
-        expand_thin_walls
-        coast_at_end_distance
+      avoid_crossing_perimeters
+      avoid_crossing_max_ratio
+      external_perimeters_first
+      perimeter_start_end_overlap
+      merge_overlapping_lines
+      expand_thin_walls
+      coast_at_end_distance
     Infill
-      Advanced
-        fill_angle
-        infill_overlap_perimeter
-        fill_thin_gaps
+      fill_angle
+      infill_overlap_perimeter
+      fill_thin_gaps
     Extruder Change
-      Extruder Change
-        wipe_shield_distance
-        wipe_tower_size
+      wipe_shield_distance
+      wipe_tower_size
   Speed
-    Speed
-      Printing Speed
-        laser_speed_025
-        laser_speed_100
-      Speed for Infill
-        first_layer_speed
-        infill_speed
-        top_solid_infill_speed
-        raft_print_speed
-      Speed for Perimeters
-        perimeter_speed
-        external_perimeter_speed
-      Other
-        support_material_speed
-        interface_layer_speed
-        air_gap_speed
-        bridge_speed
-        travel_speed
-        number_of_first_layers
-        bridge_over_infill
-        t1_extrusion_move_speed_multiplier
+    Laser Speed
+      laser_speed_025
+      laser_speed_100
+    Infill Speeds
+      first_layer_speed
+      infill_speed
+      top_solid_infill_speed
+      raft_print_speed
+    Perimeter Speeds
+      perimeter_speed
+      external_perimeter_speed
+    Other Speeds
+      support_material_speed
+      interface_layer_speed
+      air_gap_speed
+      bridge_speed
+      travel_speed
+      number_of_first_layers
+      bridge_over_infill
+      t1_extrusion_move_speed_multiplier
     Cooling
-      Cooling Thresholds
-        slowdown_below_layer_time
-        min_print_speed
+      slowdown_below_layer_time
+      min_print_speed
   Adhesion
     Skirt
-      Skirt
-        create_skirt
-        skirts
-        skirt_distance
-        min_skirt_length
+      create_skirt
+      skirts
+      skirt_distance
+      min_skirt_length
     Raft
-      Raft
-        create_raft
-        raft_extra_distance_around_part
-        raft_air_gap
-        raft_extruder
+      create_raft
+      raft_extra_distance_around_part
+      raft_air_gap
+      raft_extruder
     Brim
-      Brim
-        create_brim
-        brims
+      create_brim
+      brims
   Support
     Support
-      Support Options
-        create_per_layer_support
-        create_per_layer_internal_support
-        support_percent
-        support_grab_distance
-        support_material_create_perimeter
-        support_material_interface_layers
-        support_material_xy_distance
-        support_air_gap
-        support_type
-        support_material_spacing
-        support_material_infill_angle
-        support_material_extruder
-        support_material_interface_extruder
+      create_per_layer_support
+      create_per_layer_internal_support
+      support_percent
+      support_grab_distance
+      support_material_create_perimeter
+      support_material_interface_layers
+      support_material_xy_distance
+      support_air_gap
+      support_type
+      support_material_spacing
+      support_material_infill_angle
+      support_material_extruder
+      support_material_interface_extruder
   Filament
     Filament
-      Filament
-        filament_diameter
-        filament_density
-        filament_cost
-        temperature
-        temperature1
-        temperature2
-        temperature3
-        bed_temperature
-        inactive_cool_down
-        seconds_to_reheat
+      filament_diameter
+      filament_density
+      filament_cost
+      temperature
+      temperature1
+      temperature2
+      temperature3
+      bed_temperature
+      inactive_cool_down
+      seconds_to_reheat
     Fan
-      Fan
-        min_fan_speed_layer_time
-        max_fan_speed_layer_time
-        min_fan_speed
-        max_fan_speed
-        bridge_fan_speed
-        disable_fan_first_layers
+      min_fan_speed_layer_time
+      max_fan_speed_layer_time
+      min_fan_speed
+      max_fan_speed
+      bridge_fan_speed
+      disable_fan_first_layers
     Retraction
-      After Move
-        retract_length
-        retract_restart_extra
-        retract_restart_extra_time_to_apply
-        retract_speed
-        retract_lift
-        retract_before_travel
-        retract_when_changing_islands
-        min_extrusion_before_retract
-        wipe
-      Before Tool Change
-        retract_length_tool_change
-        retract_restart_extra_toolchange
+      retract_length
+      retract_restart_extra
+      retract_restart_extra_time_to_apply
+      retract_speed
+      retract_lift
+      retract_before_travel
+      retract_when_changing_islands
+      min_extrusion_before_retract
+      wipe
+      retract_length_tool_change
+      retract_restart_extra_toolchange
     Advanced
-      Temperatures
-        extruder_wipe_temperature
-        bed_remove_part_temperature
-      Extrusion
-        extrusion_multiplier
-      Extrusion Width
-        first_layer_extrusion_width
-        external_perimeter_extrusion_width
+      extruder_wipe_temperature
+      bed_remove_part_temperature
+      extrusion_multiplier
+      first_layer_extrusion_width
+      external_perimeter_extrusion_width
 Printer
   General
     General
-      Settings
-        make
-        model
-        auto_connect
-        baud_rate
-        com_port
-        selector_ip_address
-        ip_address
-        ip_port
+      make
+      model
+      auto_connect
+      baud_rate
+      com_port
+      selector_ip_address
+      ip_address
+      ip_port
     Bed
-      Size and Coordinates
-        bed_size
-        print_center
-        build_height
-        bed_shape
+      bed_size
+      print_center
+      build_height
+      bed_shape
     Extruders
-      Extruders
-        extruder_count
-        nozzle_diameter
-        t0_inset
-        t1_inset
-        extruders_share_temperature
-        extruder_offset
+      extruder_count
+      nozzle_diameter
+      t0_inset
+      t1_inset
+      extruders_share_temperature
+      extruder_offset
   Features
     Leveling
-      Print Leveling
-        print_leveling_solution
-        probe_paper_width
-        leveling_sample_points
-        probe_offset_sample_point
-        print_leveling_required_to_print
-      Leveling Probe
-        print_leveling_probe_start
-        use_z_probe
-        z_probe_samples
-        probe_offset
-        z_servo_depolyed_angle
-        z_servo_retracted_angle
-    Features
-      Interface
-        show_reset_connection
-        include_firmware_updater
-        backup_firmware_before_update
-      Print Recovery
-        recover_is_enabled
-        recover_first_layer_speed
-        recover_position_before_z_home
-      Other
-        progress_reporting
+      print_leveling_solution
+      probe_paper_width
+      leveling_sample_points
+      probe_offset_sample_point
+      print_leveling_required_to_print
+    Print Recovery
+      recover_is_enabled
+      recover_first_layer_speed
+      recover_position_before_z_home
+    Probe
+      print_leveling_probe_start
+      use_z_probe
+      z_probe_samples
+      probe_offset
+      z_servo_depolyed_angle
+      z_servo_retracted_angle
     Behavior
-      Behavior
-        slice_engine
-        z_homes_to_max
-        heat_extruder_before_homing
-        auto_release_motors
-        validate_layer_height
-        emulate_endstops
-        send_with_checksum
-        reset_long_extrusion
-      Slicing Options
-        output_only_first_layer
-        g0
+      slice_engine
+      heat_extruder_before_homing
+      auto_release_motors
+      validate_layer_height
+      emulate_endstops
+      send_with_checksum
+      reset_long_extrusion
+      output_only_first_layer
+      g0
+      progress_reporting
+      include_firmware_updater
+      backup_firmware_before_update
     Hardware
-      Hardware
-        firmware_type
-        has_fan
-        has_fan_per_extruder
-        has_hardware_leveling
-        has_heated_bed
-        has_sd_card_reader
-        has_power_control
-        filament_runout_sensor
-        has_z_probe
-        has_z_servo
-        has_c_axis
-        enable_network_printing
-        enable_sailfish_communication
-        sla_printer
-        max_acceleration
-        max_velocity
-        jerk_velocity
-        print_time_estimate_multiplier
-      Loading
-        load_filament_length
-        unload_filament_length
-        load_filament_speed
-    Oem
-      General
-        trim_filament_markdown
-        insert_filament_markdown2
-        running_clean_markdown2
-        insert_filament_1_markdown
-        running_clean_1_markdown
-        created_date
+      firmware_type
+      show_reset_connection
+      z_homes_to_max
+      has_fan
+      has_fan_per_extruder
+      has_hardware_leveling
+      has_heated_bed
+      has_sd_card_reader
+      has_power_control
+      filament_runout_sensor
+      has_z_probe
+      has_z_servo
+      has_c_axis
+      enable_network_printing
+      enable_sailfish_communication
+      sla_printer
+      max_acceleration
+      max_velocity
+      jerk_velocity
+      print_time_estimate_multiplier
+      load_filament_length
+      unload_filament_length
+      load_filament_speed
+    Printer Help
+      trim_filament_markdown
+      insert_filament_markdown2
+      running_clean_markdown2
+      insert_filament_1_markdown
+      running_clean_1_markdown
+      created_date
   G-Code
-    G-Code
-      G-Code
-        start_gcode
-        end_gcode
-        cancel_gcode
-    Advanced
-      Advanced
-        pause_gcode
-        resume_gcode
-        connect_gcode
-        layer_gcode
-        before_toolchange_gcode
-        toolchange_gcode
-        before_toolchange_gcode_1
-        toolchange_gcode_1
-        before_toolchange_gcode_2
-        toolchange_gcode_2
-        before_toolchange_gcode_3
-        toolchange_gcode_3
+    Printer Control
+      start_gcode
+      end_gcode
+      layer_gcode
+      connect_gcode
+    User Control
+      cancel_gcode
+      pause_gcode
+      resume_gcode
+    Multi-Extruder
+      before_toolchange_gcode
+      toolchange_gcode
+      before_toolchange_gcode_1
+      toolchange_gcode_1
+      before_toolchange_gcode_2
+      toolchange_gcode_2
+      before_toolchange_gcode_3
+      toolchange_gcode_3
     Filters
-      Filters
-        write_regex
-        read_regex
+      write_regex
+      read_regex

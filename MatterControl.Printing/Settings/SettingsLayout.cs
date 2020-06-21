@@ -62,14 +62,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsSection sectionToAddTo = null;
 			Category categoryToAddTo = null;
 			Group groupToAddTo = null;
-			SubGroup subGroupToAddTo = null;
 
 			foreach (string line in AggContext.StaticData.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
 			{
 				if (line.Length > 0)
 				{
 					string sanitizedLine = line.Replace('"', ' ').Trim();
-					switch (CountLeadingSpaces(line))
+					var leadingSpaces = CountLeadingSpaces(line);
+					switch (leadingSpaces)
 					{
 						case 0:
 							sectionToAddTo = new SettingsSection(sanitizedLine);
@@ -87,22 +87,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							break;
 
 						case 6:
-							subGroupToAddTo = new SubGroup(sanitizedLine, groupToAddTo);
-							groupToAddTo.SubGroups.Add(subGroupToAddTo);
-							break;
-
-						case 8:
 							if (PrinterSettings.SettingsData.TryGetValue(sanitizedLine, out SliceSettingData data))
 							{
-								subGroupToAddTo.Settings.Add(data);
-								data.OrganizerSubGroup = subGroupToAddTo;
-								sectionToAddTo.AddSetting(data.SlicerConfigName, subGroupToAddTo);
+								groupToAddTo.Settings.Add(data);
+								data.OrganizerGroup = groupToAddTo;
+								sectionToAddTo.AddSetting(data.SlicerConfigName, groupToAddTo);
 							}
 
 							break;
 
 						default:
-							throw new Exception("Bad file, too many spaces (must be 0, 2, 4 or 6).");
+							throw new Exception($"Bad file, too many spaces - {leadingSpaces} (must be 0, 2, 4 or 6).");
 					}
 				}
 			}
@@ -124,7 +119,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public class SettingsSection
 		{
-			private Dictionary<string, SubGroup> subgroups = new Dictionary<string, SubGroup>();
+			private Dictionary<string, Group> subgroups = new Dictionary<string, Group>();
 
 			public SettingsSection(string settingsSectionName)
 			{
@@ -135,9 +130,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public List<Category> Categories { get; private set; } = new List<Category>();
 
-			internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
+			internal void AddSetting(string slicerConfigName, Group organizerGroup)
 			{
-				subgroups.Add(slicerConfigName, organizerSubGroup);
+				subgroups.Add(slicerConfigName, organizerGroup);
 			}
 
 			public bool ContainsKey(string settingsKey) => subgroups.ContainsKey(settingsKey);
@@ -168,24 +163,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public string Name { get; }
 
-			public List<SubGroup> SubGroups { get; private set; } = new List<SubGroup>();
-
-			public Category Category { get; }
-		}
-
-		public class SubGroup
-		{
-			public SubGroup(string groupName, Group group)
-			{
-				this.Name = groupName;
-				this.Group = group;
-			}
-
-			public string Name { get; }
-
 			public List<SliceSettingData> Settings { get; private set; } = new List<SliceSettingData>();
 
-			public Group Group { get; }
+			public Category Category { get; }
 		}
 	}
 }

@@ -419,33 +419,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			using (groupPanel.LayoutLock())
 			{
-				foreach (var subGroup in group.SubGroups)
+				// Add SettingRows for subgroup
+				foreach (SliceSettingData settingData in group.Settings)
 				{
-					// Add SettingRows for subgroup
-					foreach (SliceSettingData settingData in subGroup.Settings)
+					// Note: tab sections may disappear if / when they are empty, as controlled by:
+					// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+					bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
+						&& CheckIfShouldBeShown(settingData, settingsContext);
+
+					if (printer.Settings.IsActive(settingData.SlicerConfigName)
+						&& settingShouldBeShown)
 					{
-						// Note: tab sections may disappear if / when they are empty, as controlled by:
-						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
-							&& CheckIfShouldBeShown(settingData, settingsContext);
+						settingsRow = CreateItemRow(settingData, errors);
 
-						if (printer.Settings.IsActive(settingData.SlicerConfigName)
-							&& settingShouldBeShown)
+						if (firstRow)
 						{
-							settingsRow = CreateItemRow(settingData, errors);
+							// First row needs top and bottom border
+							settingsRow.Border = new BorderDouble(0, 1);
 
-							if (firstRow)
-							{
-								// First row needs top and bottom border
-								settingsRow.Border = new BorderDouble(0, 1);
-
-								firstRow = false;
-							}
-
-							this.settingsRows.Add((settingsRow, settingData));
-
-							groupPanel.AddChild(settingsRow);
+							firstRow = false;
 						}
+
+						this.settingsRows.Add((settingsRow, settingData));
+
+						groupPanel.AddChild(settingsRow);
 					}
 				}
 			}
