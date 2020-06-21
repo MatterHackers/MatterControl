@@ -36,13 +36,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SettingsLayout
 	{
-		private Dictionary<string, SettingsSection> sections { get; set; } = new Dictionary<string, SettingsSection>();
+		private Dictionary<string, SettingsSection> Sections { get; set; } = new Dictionary<string, SettingsSection>();
 
-		public SettingsSection SliceSettings => sections["Advanced"];
+		public SettingsSection SliceSettings => Sections["Advanced"];
 
-		public SettingsSection Printer => sections["Printer"];
-
-		private static SettingsLayout instance = null;
+		public SettingsSection Printer => Sections["Printer"];
 
 		internal SettingsLayout()
 		{
@@ -51,7 +49,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public bool Contains(string sectionKey, string slicerConfigName)
 		{
-			if (this.sections.TryGetValue(sectionKey, out SettingsSection section))
+			if (this.Sections.TryGetValue(sectionKey, out SettingsSection section))
 			{
 				return section.ContainsKey(slicerConfigName);
 			}
@@ -75,7 +73,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						case 0:
 							sectionToAddTo = new SettingsSection(sanitizedLine);
-							sections.Add(sanitizedLine, sectionToAddTo);
+							Sections.Add(sanitizedLine, sectionToAddTo);
 							break;
 
 						case 2:
@@ -117,6 +115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				numSpaces++;
 			}
+
 			return numSpaces;
 		}
 
@@ -134,7 +133,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public string Name { get; set; }
 
-			public List<Category> Categories = new List<Category>();
+			public List<Category> Categories { get; private set; } = new List<Category>();
 
 			internal void AddSetting(string slicerConfigName, SubGroup organizerSubGroup)
 			{
@@ -154,7 +153,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public string Name { get; set; }
 
-			public List<Group> Groups { get; set; } = new List<Group>();
+			public List<Group> Groups { get; private set; } = new List<Group>();
 
 			public SettingsSection SettingsSection { get; }
 		}
@@ -169,7 +168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			public string Name { get; }
 
-			public List<SubGroup> SubGroups { get; set; } = new List<SubGroup>();
+			public List<SubGroup> SubGroups { get; private set; } = new List<SubGroup>();
 
 			public Category Category { get; }
 		}

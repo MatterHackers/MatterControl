@@ -107,16 +107,6 @@ Advanced
         max_fan_speed
         bridge_fan_speed
         disable_fan_first_layers
-    Advanced
-      Material
-      Temperatures
-        extruder_wipe_temperature
-        bed_remove_part_temperature
-      Extrusion
-        extrusion_multiplier
-      Extrusion Width
-        first_layer_extrusion_width
-        external_perimeter_extrusion_width
     Retraction
       After Move
         retract_length
@@ -131,6 +121,15 @@ Advanced
       Before Tool Change
         retract_length_tool_change
         retract_restart_extra_toolchange
+    Advanced
+      Temperatures
+        extruder_wipe_temperature
+        bed_remove_part_temperature
+      Extrusion
+        extrusion_multiplier
+      Extrusion Width
+        first_layer_extrusion_width
+        external_perimeter_extrusion_width
 Printer
   General
     General
