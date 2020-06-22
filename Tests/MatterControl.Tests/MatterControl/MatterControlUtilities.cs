@@ -1067,7 +1067,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
 			// Click field
-			testRunner.ClickByName($"{settingData.PresentationName} Field");
+			var widgetName = $"{settingData.PresentationName} Field";
+			var foundWidget = testRunner.GetWidgetByName(widgetName, out _);
+			foreach (var scrollable in foundWidget.Parents<ScrollableWidget>())
+			{
+				scrollable.ScrollIntoView(foundWidget);
+			}
+
+			testRunner.ClickByName(widgetName);
 		}
 
 		/// <summary>
