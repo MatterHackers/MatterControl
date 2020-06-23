@@ -224,6 +224,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public bool Debug { get; set; } = false;
+
 		public double OuterEdgeWidth { get; set; }
 
 		private List<Polygons> debugData = new List<Polygons>();
