@@ -46,15 +46,30 @@ namespace MatterHackers.MatterControl
 			ShowMessageBox(null, message, caption, null, messageType, yesOk, noCancel, useMarkdown);
 		}
 
-		public static void ShowMessageBox(Action<bool> callback, string message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "", bool useMarkdown = false)
+		public static void ShowMessageBox(Action<bool> callback,
+			string message,
+			string caption,
+			MessageType messageType = MessageType.OK,
+			string yesOk = "", string noCancel = "",
+			bool useMarkdown = false,
+			int instanceIndex = 0)
 		{
-			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel, useMarkdown);
+			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel, useMarkdown, instanceIndex);
 		}
 
-		public static void ShowMessageBox(Action<bool> callback, string message, string caption, GuiWidget[] extraWidgetsToAdd, MessageType messageType, string yesOk = "", string noCancel = "", bool useMarkdown = false)
+		public static void ShowMessageBox(Action<bool> callback,
+			string message,
+			string caption,
+			GuiWidget[] extraWidgetsToAdd,
+			MessageType messageType,
+			string yesOk = "",
+			string noCancel = "",
+			bool useMarkdown = false,
+			int instanceIndex = 0)
 		{
 			DialogWindow.Show(
-				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel, ApplicationController.Instance.Theme, useMarkdown));
+				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel, ApplicationController.Instance.Theme, useMarkdown),
+				instanceIndex);
 		}
 
 		public class MessageBoxPage : DialogPage
