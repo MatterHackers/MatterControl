@@ -567,8 +567,6 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				return new Emulator();
 			};
 
-			FrostedSerialPort.AllowEmulator = true;
-
 			var sentLines = new List<string>();
 
 			// register to listen to the printer responses
