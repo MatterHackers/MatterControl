@@ -85,19 +85,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public RectangleDouble Offset { get; set; }
 	}
 
+	public interface IOverrideAutoClose
+	{
+		bool AllowAutoClose { get; }
+	}
+
 	public static class SystemWindowExtension
 	{
 		public static void ShowPopover(this SystemWindow systemWindow, MatePoint anchor, MatePoint popup, RectangleDouble altBounds = default(RectangleDouble), double secondsToClose = 0)
 		{
 			var settingsRow = anchor.Widget as SettingsRow;
-			var sliceSettingsPopover = popup.Widget as SliceSettingsPopover;
+			var sliceSettingsPopover = popup.Widget as ClickablePopover;
 
 			var hookedWidgets = new HashSet<GuiWidget>();
 
-			void anchor_Closed(object sender, EventArgs e)
+			void Anchor_Closed(object sender, EventArgs e)
 			{
-				if (popup.Widget is SliceSettingsPopover popover
-					&& !popover.AllowAutoClose)
+				if (popup.Widget is IOverrideAutoClose overideAutoClose
+					&& !overideAutoClose.AllowAutoClose)
 				{
 					return;
 				}
@@ -107,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (var widget in hookedWidgets)
 				{
-					widget.Closed -= anchor_Closed;
+					widget.Closed -= Anchor_Closed;
 				}
 			}
 
@@ -170,13 +175,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						}
 					}
 
-					popup.Widget.Closed += anchor_Closed;
-					anchor.Widget.Closed += anchor_Closed;
+					popup.Widget.Closed += Anchor_Closed;
+					anchor.Widget.Closed += Anchor_Closed;
 					hookedWidgets.Add(anchor.Widget);
 
 					foreach (var widget in anchor.Widget.Parents<GuiWidget>())
 					{
-						widget.Closed += anchor_Closed;
+						widget.Closed += Anchor_Closed;
 						hookedWidgets.Add(widget);
 					}
 
@@ -193,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (secondsToClose > 0)
 			{
-				UiThread.RunOnIdle(() => anchor_Closed(null, null), secondsToClose);
+				UiThread.RunOnIdle(() => Anchor_Closed(null, null), secondsToClose);
 			}
 		}
 

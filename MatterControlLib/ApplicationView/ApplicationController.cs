@@ -213,6 +213,8 @@ namespace MatterHackers.MatterControl
 
 		private static GuiWidget MatterControlToolTipWidget(string toolTipText)
 		{
+			var toolTipPopover = new ClickablePopover(ArrowDirection.Up, new BorderDouble(0, 0), 7, 0);
+
 			var markdownWidegt = new MarkdownWidget(Theme)
 			{
 				HAnchor = HAnchor.Absolute,
@@ -225,8 +227,8 @@ namespace MatterHackers.MatterControl
 
 			markdownWidegt.Markdown = toolTipText;
 			markdownWidegt.Width = 350;
-			var firstParagraph = markdownWidegt.Descendants<ParagraphX>().First();
-			markdownWidegt.Width = firstParagraph.MaxLineWidth + 30;
+			var maxLineWidth = markdownWidegt.Descendants<ParagraphX>().Max(i => i.MaxLineWidth);
+			markdownWidegt.Width = maxLineWidth + 30;
 
 			return markdownWidegt;
 		}
@@ -825,7 +827,10 @@ namespace MatterHackers.MatterControl
 							{
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
-							IsEnabled = (sceneContext, widget) => sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any(),
+							IsEnabled = (sceneContext, widget) =>
+							{
+								return sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any();
+							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
@@ -848,12 +853,14 @@ namespace MatterHackers.MatterControl
 							},
 							IsEnabled = (sceneContext, widget) =>
 							{
+								var enabled = sceneContext.Scene.SelectedItem != null;
+
 								if (widget != null)
 								{
-									widget.ToolTipText = widget.Enabled ? "Lay Flat\nSelect Object to Enable" : "Lay Flat";
+									widget.ToolTipText = enabled ? "Lay Flat".Localize() : "Lay Flat\n\n*At least 1 part must be selected*".Localize();
 								}
 
-								return sceneContext.Scene.SelectedItem != null;
+								return enabled;
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
@@ -869,7 +876,17 @@ namespace MatterHackers.MatterControl
 								align.AddSelectionAsChildren(scene, selectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
+							IsEnabled = (sceneContext, widget) =>
+							{
+								var enabled = sceneContext.Scene.SelectedItem is SelectionGroupObject3D;
+
+								if (widget != null)
+								{
+									widget.ToolTipText = enabled ? "Align".Localize() : "Arrange All Parts\n\n*At least 2 parts must be selected*".Localize();
+								}
+
+								return enabled;
+							},
 						},
 					},
 				},
@@ -2048,8 +2065,7 @@ namespace MatterHackers.MatterControl
 							"Printer Hardware Error".Localize(),
 							StyledMessageBox.MessageType.YES_NO,
 							"Resume".Localize(),
-							"OK".Localize())
-					);
+							"OK".Localize()));
 				}
 			}
 		}
@@ -2080,8 +2096,8 @@ namespace MatterHackers.MatterControl
 									progressStatus.Status = string.Format(
 										"{0} {1:0}m {2:0}s",
 										"Automatic Heater Shutdown in".Localize(),
-										(int)(printerConnection.SecondsToHoldTemperature) / 60,
-										(int)(printerConnection.SecondsToHoldTemperature) % 60);
+										(int)printerConnection.SecondsToHoldTemperature / 60,
+										(int)printerConnection.SecondsToHoldTemperature % 60);
 								}
 								else
 								{
@@ -2099,7 +2115,6 @@ namespace MatterHackers.MatterControl
 
 						return Task.CompletedTask;
 					},
-					
 					taskActions: new RunningTaskOptions()
 					{
 						PauseAction = () => UiThread.RunOnIdle(() =>
@@ -2244,7 +2259,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="collector">The custom collector function to load the content</param>
 		/// <returns></returns>
-		public async static Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<T>> collector, string staticDataFallbackPath = null) where T : class
+		public static async Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<T>> collector, string staticDataFallbackPath = null) where T : class
 		{
 			string cachePath = CacheablePath(cacheScope, cacheKey);
 
@@ -2975,7 +2990,6 @@ namespace MatterHackers.MatterControl
 				AggContext.DefaultFontBoldItalic = LiberationSansBoldFont.Instance;
 			}
 
-
 			string translationFilePath = Path.Combine("Translations", twoLetterIsoLanguageName, "Translation.txt");
 
 			if (twoLetterIsoLanguageName == "en")
@@ -3257,7 +3271,7 @@ namespace MatterHackers.MatterControl
 			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
-				ToolTipText = (buildHeightValid()) ? "Show Print Area".Localize() : "Define printer build height to enable",
+				ToolTipText = buildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Absolute,

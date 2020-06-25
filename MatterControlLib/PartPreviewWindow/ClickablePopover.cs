@@ -32,16 +32,18 @@ using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SliceSettingsPopover : Popover
+	public class ClickablePopover : Popover, IOverrideAutoClose
 	{
-		public SliceSettingsPopover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int p2, bool autoBorderColor = true)
-			: base(arrowDirection, padding, notchSize, p2, autoBorderColor)
+		private bool allowAutoClose = true;
+
+		public ClickablePopover(ArrowDirection arrowDirection, BorderDouble padding, int notchSize, int arrowOffset, bool autoBorderColor = true)
+			: base(arrowDirection, padding, notchSize, arrowOffset, autoBorderColor)
 		{
 		}
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
 		{
-			this.AllowAutoClose = false;
+			this.allowAutoClose = false;
 			base.OnMouseEnterBounds(mouseEvent);
 		}
 
@@ -51,6 +53,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
-		public bool AllowAutoClose { get; set; } = true;
+		public bool AllowAutoClose => allowAutoClose;
 	}
 }
