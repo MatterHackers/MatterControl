@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 	{
 		private DialogPage activePage;
 		private EventHandler unregisterEvents;
-		private static Dictionary<Type, DialogWindow> allWindows = new Dictionary<Type, DialogWindow>();
+		private static Dictionary<(Type, int), DialogWindow> allWindows = new Dictionary<(Type, int), DialogWindow>();
 		private ThemeConfig theme;
 
 		protected DialogWindow()
@@ -58,9 +58,9 @@ namespace MatterHackers.MatterControl
 
 		public bool UseChildWindowSize { get; protected set; } = true;
 
-		public static void Close(Type type)
+		public static void Close(Type type, int instanceIndex = 0)
 		{
-			if (allWindows.TryGetValue(type, out DialogWindow existingWindow))
+			if (allWindows.TryGetValue((type, instanceIndex), out DialogWindow existingWindow))
 			{
 				existingWindow.Close();
 			}
@@ -75,9 +75,9 @@ namespace MatterHackers.MatterControl
 			SetSizeAndShow(wizardWindow, newPanel);
 		}
 
-		public static DialogWindow Show(DialogPage wizardPage)
+		public static DialogWindow Show(DialogPage wizardPage, int instanceIndex = 0)
 		{
-			DialogWindow wizardWindow = GetWindow(wizardPage.GetType());
+			DialogWindow wizardWindow = GetWindow(wizardPage.GetType(), instanceIndex);
 			wizardWindow.Title = wizardPage.WindowTitle;
 
 			SetSizeAndShow(wizardWindow, wizardPage);
@@ -90,10 +90,11 @@ namespace MatterHackers.MatterControl
 		public static DialogWindow Show(IStagedSetupWizard setupWizard, bool advanceToIncompleteStage = false)
 		{
 			var type = setupWizard.GetType();
+			var instanceIndex = 0;
 
 			var wizardWindow = new StagedSetupWindow(setupWizard);
-			wizardWindow.Closed += (s, e) => allWindows.Remove(type);
-			allWindows[type] = wizardWindow;
+			wizardWindow.Closed += (s, e) => allWindows.Remove((type, instanceIndex));
+			allWindows[(type, instanceIndex)] = wizardWindow;
 
 			wizardWindow.Size = setupWizard.WindowSize;
 
@@ -182,11 +183,11 @@ namespace MatterHackers.MatterControl
 			dialogWindow.ShowAsSystemWindow();
 		}
 
-		public static bool IsOpen(Type type) => allWindows.ContainsKey(type);
+		public static bool IsOpen(Type type, int instanceIndex = 0) => allWindows.ContainsKey((type, instanceIndex));
 
-		private static DialogWindow GetWindow(Type type)
+		private static DialogWindow GetWindow(Type type, int instanceIndex = 0)
 		{
-			if (allWindows.TryGetValue(type, out DialogWindow wizardWindow))
+			if (allWindows.TryGetValue((type, instanceIndex), out DialogWindow wizardWindow))
 			{
 				wizardWindow.BringToFront();
 				wizardWindow.Focus();
@@ -194,8 +195,8 @@ namespace MatterHackers.MatterControl
 			else
 			{
 				wizardWindow = new DialogWindow();
-				wizardWindow.Closed += (s, e) => allWindows.Remove(type);
-				allWindows[type] = wizardWindow;
+				wizardWindow.Closed += (s, e) => allWindows.Remove((type, instanceIndex));
+				allWindows[(type, instanceIndex)] = wizardWindow;
 			}
 
 			return wizardWindow;

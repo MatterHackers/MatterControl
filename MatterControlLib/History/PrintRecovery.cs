@@ -88,12 +88,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 								lastPrint.Commit();
 							}
 						},
-						"It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize() 
+						"It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize()
 						+ (safeHomingDirection ? "" : "\n\n" + printRecoveryWarningMessage),
-						"Recover Last Print".Localize(),
+						"Recover Last Print".Localize() + " - " + printer.Settings.GetValue(SettingsKey.printer_name),
 						StyledMessageBox.MessageType.YES_NO,
 						"Recover Print".Localize(),
-						"Cancel".Localize());
+						"Cancel".Localize(),
+						instanceIndex: lastPrint.Id);
 				}
 			}
 		}
