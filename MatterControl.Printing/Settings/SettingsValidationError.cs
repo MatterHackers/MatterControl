@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 		private static string SettingsLocation(string settingsKey)
 		{
 			var settingData = PrinterSettings.SettingsData[settingsKey];
-			var setingsSectionName = settingData.OrganizerSubGroup.Group.Category.SettingsSection.Name;
+			var setingsSectionName = settingData.OrganizerGroup.Category.SettingsSection.Name;
 
 			if (setingsSectionName == "Advanced")
 			{
@@ -61,8 +61,8 @@ namespace MatterHackers.MatterControl
 
 			return "Location".Localize() + ":"
 				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + settingData.OrganizerSubGroup.Group.Category.Name.Localize()
-				 + "\n    • " + settingData.OrganizerSubGroup.Group.Name.Localize()
+				 + "\n  • " + settingData.OrganizerGroup.Category.Name.Localize()
+				 + "\n    • " + settingData.OrganizerGroup.Name.Localize()
 				 + "\n      • " + settingData.PresentationName.Localize();
 		}
 	}

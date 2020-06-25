@@ -188,24 +188,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return Math.Sqrt(maxDistSqrd);
 		}
 
-		public static VertexStorage Offset(this IVertexSource a, double distance, JoinType joinType = JoinType.jtMiter)
-		{
-			List<List<IntPoint>> aPolys = a.CreatePolygons();
-
-			ClipperOffset offseter = new ClipperOffset();
-			offseter.AddPaths(aPolys, joinType, EndType.etClosedPolygon);
-			var solution = new List<List<IntPoint>>();
-			offseter.Execute(ref solution, distance * 1000);
-
-			Clipper.CleanPolygons(solution);
-
-			VertexStorage output = solution.CreateVertexStorage();
-
-			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
-
-			return output;
-		}
-
 		/// <summary>
 		/// Union a and b together. This can either return a single item with a mesh on it
 		/// or a group item that has the a and be items as children

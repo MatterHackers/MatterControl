@@ -602,7 +602,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				sideBar.AddPage(
 					"Printer",
 					"Printer".Localize(),
-					new ConfigurePrinterWidget(sliceSettingsWidget.settingsContext, printer, theme)
+					new ConfigurePrinterWidget(sliceSettingsWidget.SettingsContext, printer, theme)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch,

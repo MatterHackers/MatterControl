@@ -71,8 +71,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Vector2 center = Vector2.Zero;
 
-		private Gear2D connectedGear;
-
 		private double diametralPitch;
 
 		public double OuterRadius { get; private set; }
@@ -226,6 +224,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public bool Debug { get; set; } = false;
+
+		public double OuterEdgeWidth { get; set; }
+
 		private List<Polygons> debugData = new List<Polygons>();
 
 		public override IEnumerable<VertexData> Vertices()
@@ -283,11 +284,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		private Polygon CreateInternalToothCutter()
+		private Polygon CreateInternalToothCutter(Gear2D pinion)
 		{
 			// To cut the internal gear teeth, the actual pinion comes close but we need to enlarge it so properly caters for clearance and backlash
-			var pinion = this.connectedGear;
-
 			var enlargedPinion = new Gear2D()
 			{
 				CircularPitch = pinion.CircularPitch,
@@ -302,11 +301,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			enlargedPinion.CalculateDependants();
 
-			var tooth = enlargedPinion.CreateSingleTooth();
-			return tooth.tooth.Rotate(MathHelper.DegreesToRadians(90 + 180) / enlargedPinion.ToothCount); // we need a tooth pointing to the left
+			var tooth = enlargedPinion.CreateToothCutout();
+			debugData.Add(new Polygons() { tooth });
+			// we need a tooth pointing to the left
+			return tooth.Rotate(MathHelper.DegreesToRadians(90 + 180 / enlargedPinion.ToothCount));
 		}
 
-		private Polygon CreateInternalToothProfile()
+		private Polygons CreateInternalToothProfile()
 		{
 			var radius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var toothToToothRadians = MathHelper.Tau / this.ToothCount;
@@ -319,20 +320,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			fullSector.Add(ScalledPoint(-(radius * cos), radius * sin, 1000));
 			fullSector.Add(ScalledPoint(-radius, 0, 1000));
 			fullSector.Add(ScalledPoint(-(radius * cos), -radius * sin, 1000));
+			debugData.Add(new Polygons() { fullSector });
 
-			var innerRadius = radius - (2 * this.addendum + this.Clearance);
-			var innerCircle = Circle(this.center.X, center.Y, innerRadius, 1000);
-			var sector = fullSector.Subtract(innerCircle);
-			debugData.Add(sector);
-
-			var cutterTemplate = this.CreateInternalToothCutter();
+			var pinion = CreateInternalPinion();
+			var cutterTemplate = this.CreateInternalToothCutter(pinion);
 			debugData.Add(new Polygons() { cutterTemplate });
 
-			var pinion = this.connectedGear;
 			var stepsPerTooth = this.stepsPerToothAngle;
 			var stepSizeRadians = toothToToothRadians / stepsPerTooth;
 
-			var toothShape = sector;
+			var expandedCutter = new Polygons();
 
 			for (var i = 0; i < stepsPerTooth; i++)
 			{
@@ -340,21 +337,30 @@ namespace MatterHackers.MatterControl.DesignTools
 				var pinionCenterRayRadians = -pinionRadians * pinion.ToothCount / this.ToothCount;
 
 				var cutter = cutterTemplate.Rotate(pinionRadians);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Translate(-this.pitchRadius + pinion.pitchRadius, 0, 1000);
 				cutter = cutter.Rotate(pinionCenterRayRadians);
 
-				toothShape = toothShape.Subtract(cutter);
+				expandedCutter.Add(cutter);
 
 				cutter = cutterTemplate.Rotate(-pinionRadians);
-				cutter = cutter.Translate(-this.pitchRadius + this.connectedGear.pitchRadius, 0, 1000);
+				cutter = cutter.Translate(-this.pitchRadius + pinion.pitchRadius, 0, 1000);
 				cutter = cutter.Rotate(-pinionCenterRayRadians);
 
-				toothShape = toothShape.Subtract(cutter);
+				expandedCutter.Add(cutter);
 			}
 
+			expandedCutter = expandedCutter.Union(expandedCutter, PolyFillType.pftNonZero);
+			debugData.Add(expandedCutter);
+
+			var toothShape = fullSector.Subtract(expandedCutter);
 			debugData.Add(toothShape);
 
-			return toothShape[toothShape.Count - 1];
+			var innerRadius = radius - (2 * this.addendum + this.Clearance);
+			var innerCircle = Circle(this.center.X, center.Y, innerRadius, 1000);
+			toothShape = toothShape.Subtract(innerCircle);
+			debugData.Add(toothShape);
+
+			return toothShape;
 		}
 
 		private Polygon SmoothConcaveCorners(Polygon corners)
@@ -435,26 +441,38 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			// Outer Circle
 			this.OuterRadius = this.pitchRadius + this.shiftedAddendum;
+		}
 
-			if (InternalToothCount > 0)
+		private Gear2D CreateInternalPinion()
+		{
+			return new Gear2D()
 			{
-				connectedGear = new Gear2D()
-				{
-					ToothCount = this.InternalToothCount,
-					CircularPitch = this.CircularPitch,
-					CenterHoleDiameter = this.CenterHoleDiameter,
-					PressureAngle = this.PressureAngle,
-					Backlash = this.Backlash,
-					Clearance = this.Clearance,
-					GearType = this.GearType,
-				};
-			}
+				ToothCount = this.InternalToothCount,
+				CircularPitch = this.CircularPitch,
+				CenterHoleDiameter = this.CenterHoleDiameter,
+				PressureAngle = this.PressureAngle,
+				Backlash = this.Backlash,
+				Clearance = this.Clearance,
+				GearType = this.GearType,
+			};
 		}
 
 		private Polygons CreateInternalGearShape()
 		{
+			this.CenterHoleDiameter = 0;
+
+			//var externalGear = CreateExternalGearShape();
+
+			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
+			var outerRadius = innerRadius + OuterEdgeWidth;
+			var outerCircle = Circle(this.center.X, center.Y, outerRadius, 1000);
+
+			//var internalGear = outerCircle.Subtract(externalGear);
+			//debugData.Add(internalGear);
+			// return internalGear;
+
 			var singleTooth = this.CreateInternalToothProfile();
-			debugData.Add(new Polygons() { singleTooth });
+			debugData.Add(singleTooth);
 
 			var outerCorners = new Polygons();
 
@@ -462,20 +480,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var angle = i * this.AngleToothToTooth;
 				var radians = MathHelper.DegreesToRadians(angle);
-				outerCorners.Add(singleTooth.Rotate(radians));
+				outerCorners.AddRange(singleTooth.Rotate(radians));
 			}
 
 			outerCorners = outerCorners.Union(outerCorners, PolyFillType.pftNonZero);
 
 			debugData.Add(outerCorners);
 
-			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
-			var outerRadius = innerRadius + 4 * this.addendum;
-			var outerCircle = Circle(this.center.X, center.Y, outerRadius, 1000);
-
 			// return outerCorners;
 			var finalShape = outerCircle.Subtract(outerCorners);
-			//debugData.Add(finalShape);
+			debugData.Add(finalShape);
 
 			return finalShape;
 		}
@@ -530,14 +544,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Polygons CreateExternalGearShape()
 		{
-			var toothParts = this.CreateSingleTooth();
+			var tooth = this.CreateToothCutout();
 
-			// we could now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
-			// However, the union operations become more and more complex as the complete gear is built up.
-			// So instead we capture the outer path of the tooth and concatenate rotated versions of this path into a complete outer gear path.
-			// Concatenating paths is inexpensive resulting in significantly faster execution.
-
-			var tooth = toothParts.tooth;
+			// we now take the tooth cutout, rotate it tooth count times and union the various slices together into a complete gear.
 			debugData.Add(new Polygons() { tooth });
 
 			var gearShape = new Polygons();
@@ -553,7 +562,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			debugData.Add(gearShape);
 
-			gearShape = toothParts.wheel.Subtract(gearShape);
+			// create outer circle covering the teeth
+			var wheel = Circle(0, 0, this.OuterRadius, 1000);
+
+			gearShape = wheel.Subtract(gearShape);
 
 			debugData.Add(gearShape);
 
@@ -568,26 +580,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			return gearShape;
 		}
 
-		private (Polygon tooth, Polygon wheel) CreateSingleTooth()
-		{
-			// create outer circle sector covering one tooth
-			var toothSectorPath = Circle(0, 0, this.OuterRadius, 1000);
-
-			var toothCutOut = CreateToothCutout();
-
-			return (toothCutOut, toothSectorPath);
-		}
-
 		private Polygon CreateToothCutout()
 		{
-			var angleStepSize = this.AngleToothToTooth / this.stepsPerToothAngle;
+			var angleStepRadians = MathHelper.DegreesToRadians(this.AngleToothToTooth / this.stepsPerToothAngle);
 
 			var toothCutout = new Polygons();
 
-			var toothCutterShape = this.CreateToothCutter();
-			debugData.Add(new Polygons() { toothCutterShape });
+			var trapesoidalCutter = this.CreateTrapezoidalCutter();
+			debugData.Add(new Polygons() { trapesoidalCutter });
 
-			var bounds = toothCutterShape.GetBounds();
+			var bounds = trapesoidalCutter.GetBounds();
 			var lowerLeftCorner = new Vector2(bounds.Left, bounds.Bottom);
 
 			// To create the tooth profile we move the (virtual) infinite gear and then turn the resulting cutter position back.
@@ -597,24 +599,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			var stepCounter = 0;
 			while (true)
 			{
-				var angle = stepCounter * angleStepSize;
-				var radians = MathHelper.DegreesToRadians(angle);
-				var xTranslation = new Vector2(radians * this.pitchRadius, 0) * 1000;
+				var radians = stepCounter * angleStepRadians;
+				// multiply by 1000 as that is what our clipping space is in (scaled by 1000)
+				var xTranslation = radians * this.pitchRadius * 1000;
 
-				if (Vector2.Rotate(lowerLeftCorner + xTranslation, radians).Length > this.OuterRadius * 1000)
+				if (Vector2.Rotate(lowerLeftCorner + new Vector2(xTranslation, 0), radians).Length > this.OuterRadius * 1000)
 				{
 					// the cutter is now completely outside the gear and no longer influences the shape of the gear tooth
 					break;
 				}
 
 				// we move in both directions
-				var movedToothCutterShape = toothCutterShape.Translate(xTranslation.X, xTranslation.Y);
+				var movedToothCutterShape = trapesoidalCutter.Translate(xTranslation, 0);
 				movedToothCutterShape = movedToothCutterShape.Rotate(radians);
 				toothCutout = toothCutout.Union(movedToothCutterShape);
 
-				if (xTranslation[0] > 0)
+				if (xTranslation > 0)
 				{
-					movedToothCutterShape = toothCutterShape.Translate(-xTranslation.X, xTranslation.Y);
+					movedToothCutterShape = trapesoidalCutter.Translate(-xTranslation, 0);
 					movedToothCutterShape = movedToothCutterShape.Rotate(-radians);
 					toothCutout = toothCutout.Union(movedToothCutterShape);
 				}
@@ -622,12 +624,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				stepCounter++;
 			}
 
-			var toothCutout1 = this.SmoothConcaveCorners(toothCutout[0]);
+			var smoothedCutout = this.SmoothConcaveCorners(toothCutout[0]);
 
-			return toothCutout1.Rotate(MathHelper.DegreesToRadians(-this.AngleToothToTooth / 2));
+			return smoothedCutout.Rotate(MathHelper.DegreesToRadians(-this.AngleToothToTooth / 2));
 		}
 
-		private Polygon CreateToothCutter()
+		private Polygon CreateTrapezoidalCutter()
 		{
 			// we create a trapezoidal cutter as described at http://lcamtuf.coredump.cx/gcnc/ch6/ under the section 'Putting it all together'
 			var toothWidth = this.CircularPitch / 2;

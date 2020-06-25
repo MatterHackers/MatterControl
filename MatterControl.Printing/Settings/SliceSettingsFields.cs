@@ -808,7 +808,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "When upgrading to new firmware, first save a backup of the current firmware.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&!include_firmware_updater=None",
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()

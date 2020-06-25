@@ -43,16 +43,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SliceSettingsWidget : FlowLayoutWidget
 	{
-		internal PresetsToolbar settingsControlBar;
-		internal SettingsContext settingsContext;
+		private readonly PresetsToolbar settingsControlBar;
 
-		private PrinterConfig printer;
+		public SettingsContext SettingsContext { get; private set; }
+
+		private readonly PrinterConfig printer;
 
 		public SliceSettingsWidget(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
-			this.settingsContext = settingsContext;
+			this.SettingsContext = settingsContext;
 
 			settingsControlBar = new PresetsToolbar(printer, theme)
 			{
@@ -81,9 +82,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		// TODO: This should just proxy to settingsControlBar.Visible. Having local state and pushing values on event listeners seems off
 		private bool showControlBar = true;
+
 		public bool ShowControlBar
 		{
-			get { return showControlBar; }
+			get
+			{
+				return showControlBar;
+			}
+
 			set
 			{
 				settingsControlBar.Visible = value;
@@ -95,24 +101,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingsTabView : SimpleTabs
 	{
 		// Sanitize group names for use as keys in db fields
-		private static Regex nameSanitizer = new Regex("[^a-zA-Z0-9-]", RegexOptions.Compiled);
+		private static readonly Regex NameSanitizer = new Regex("[^a-zA-Z0-9-]", RegexOptions.Compiled);
 
 		private int tabIndexForItem = 0;
 		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
-		private ThemeConfig theme;
-		private PrinterConfig printer;
-		private SettingsContext settingsContext;
-		private bool isPrimarySettingsView;
+		private readonly ThemeConfig theme;
+		private readonly PrinterConfig printer;
+		private readonly SettingsContext settingsContext;
+		private readonly bool isPrimarySettingsView;
 
-		private SearchInputBox searchPanel;
+		private readonly SearchInputBox searchPanel;
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
-		private Action<PopupMenu> externalExtendMenu;
-		private string scopeName;
+		private readonly Action<PopupMenu> externalExtendMenu;
+		private readonly string scopeName;
 
 		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, SettingsLayout.SettingsSection settingsSection, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
-			: base (theme)
+			: base(theme)
 		{
 			using (this.LayoutLock())
 			{
@@ -321,7 +327,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.PerformLayout();
 		}
 
-		public enum ExpansionMode { Expanded, Collapsed }
+		public enum ExpansionMode
+		{
+			Expanded,
+			Collapsed
+		}
 
 		public void ForceExpansionMode(ExpansionMode expansionMode)
 		{
@@ -387,8 +397,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string userSettingsKey = string.Format(
 				"{0}_{1}_{2}",
 				scopeName,
-				nameSanitizer.Replace(group.Category.Name, ""),
-				nameSanitizer.Replace(group.Name, ""));
+				NameSanitizer.Replace(group.Category.Name, ""),
+				NameSanitizer.Replace(group.Name, ""));
 
 			UIField uiField = null;
 
@@ -404,38 +414,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool firstRow = true;
 			GuiWidget settingsRow = null;
 
-			var presetsView = (settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality);
+			var presetsView = settingsContext.ViewFilter == NamedSettingsLayers.Material || settingsContext.ViewFilter == NamedSettingsLayers.Quality;
 			var ignoredPresets = new HashSet<string> { SettingsKey.temperature2, SettingsKey.temperature3 };
 
 			using (groupPanel.LayoutLock())
 			{
-				foreach (var subGroup in group.SubGroups)
+				// Add SettingRows for subgroup
+				foreach (SliceSettingData settingData in group.Settings)
 				{
-					// Add SettingRows for subgroup
-					foreach (SliceSettingData settingData in subGroup.Settings)
+					// Note: tab sections may disappear if / when they are empty, as controlled by:
+					// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
+					bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
+						&& CheckIfShouldBeShown(settingData, settingsContext);
+
+					if (printer.Settings.IsActive(settingData.SlicerConfigName)
+						&& settingShouldBeShown)
 					{
-						// Note: tab sections may disappear if / when they are empty, as controlled by:
-						// settingShouldBeShown / addedSettingToSubGroup / needToAddSubGroup
-						bool settingShouldBeShown = !(presetsView && ignoredPresets.Contains(settingData.SlicerConfigName))
-							&& CheckIfShouldBeShown(settingData, settingsContext);
+						settingsRow = CreateItemRow(settingData, errors);
 
-						if (printer.Settings.IsActive(settingData.SlicerConfigName)
-							&& settingShouldBeShown)
+						if (firstRow)
 						{
-							settingsRow = CreateItemRow(settingData, errors);
+							// First row needs top and bottom border
+							settingsRow.Border = new BorderDouble(0, 1);
 
-							if (firstRow)
-							{
-								// First row needs top and bottom border
-								settingsRow.Border = new BorderDouble(0, 1);
-
-								firstRow = false;
-							}
-
-							this.settingsRows.Add((settingsRow, settingData));
-
-							groupPanel.AddChild(settingsRow);
+							firstRow = false;
 						}
+
+						this.settingsRows.Add((settingsRow, settingData));
+
+						groupPanel.AddChild(settingsRow);
 					}
 				}
 			}
@@ -477,7 +484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (e.UserInitiated)
 				{
 					ICheckbox checkbox = uiField.Content as ICheckbox;
-					string checkedKey = (checkbox.Checked) ? "OnValue" : "OffValue";
+					string checkedKey = checkbox.Checked ? "OnValue" : "OffValue";
 
 					// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
 					foreach (var setSettingsData in settingData.SetSettingsOnChange)
@@ -511,7 +518,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 
 			uiField.Content.Margin = uiField.Content.Margin.Clone(right: 15);
-			//uiField.Content.ToolTipText = settingData.HelpText;
+			// uiField.Content.ToolTipText = settingData.HelpText;
 			uiField.Content.ToolTipText = "";
 			uiField.HelpText = "";
 
@@ -652,6 +659,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						uiField = new PositiveDoubleField(theme);
 					}
+
 					break;
 
 				case SliceSettingData.DataEditTypes.DOUBLE_OR_PERCENT:
@@ -670,7 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (e.UserInitiated)
 						{
 							ICheckbox checkbox = uiField.Content as ICheckbox;
-							string checkedKey = (checkbox.Checked) ? "OnValue" : "OffValue";
+							string checkedKey = checkbox.Checked ? "OnValue" : "OffValue";
 
 							// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
 							foreach (var setSettingsData in settingData.SetSettingsOnChange)
@@ -760,6 +768,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						uiField = new Vector3Field(theme);
 					}
+
 					break;
 #if !__ANDROID__
 				case SliceSettingData.DataEditTypes.IP_LIST:
@@ -801,7 +810,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				uiField.Content.ToolTipText = "";
 
 				// make sure the undo data goes back to the initial value after a change
-				if(uiField.Content is MHTextEditWidget textWidget)
+				if (uiField.Content is MHTextEditWidget textWidget)
 				{
 					textWidget.ActualTextEditWidget.InternalTextEditWidget.ClearUndoHistory();
 				}
@@ -919,7 +928,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.ShowFilteredView();
 		}
 
-		List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
+		private readonly List<SectionWidget> widgetsThatWereExpanded = new List<SectionWidget>();
 		private SystemWindow systemWindow;
 
 		private void Printer_SettingChanged(object s, StringEventArgs stringEvent)
@@ -990,7 +999,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			foreach (var tab in this.AllTabs)
 			{
-				tab.TabContent.Visible = (tab == this.ActiveTab);
+				tab.TabContent.Visible = tab == this.ActiveTab;
 			}
 
 			foreach (var section in this.Descendants<SectionWidget>())
