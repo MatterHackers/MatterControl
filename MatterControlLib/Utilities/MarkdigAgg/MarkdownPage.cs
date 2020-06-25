@@ -52,6 +52,7 @@ namespace Markdig.Agg
 					theme,
 					new Uri("https://raw.githubusercontent.com/lunet-io/markdig/master/readme.md"));
 			}
+
 			contentRow.AddChild(widget);
 		}
 	}

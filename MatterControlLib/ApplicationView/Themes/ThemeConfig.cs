@@ -28,20 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Collections.Generic;
-	using Agg.Image;
-	using CustomWidgets;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MatterControl.PrinterCommunication;
-	using MatterHackers.VectorMath;
-
 	public class ThemeConfig
 	{
 		private ImageBuffer restoreNormal;

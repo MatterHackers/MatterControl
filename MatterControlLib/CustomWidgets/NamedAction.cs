@@ -43,7 +43,7 @@ namespace MatterHackers.Agg.UI
 
 		public Func<bool, ImageBuffer> Icon { get; set; }
 
-		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
+		public Func<ISceneContext, GuiWidget, bool> IsEnabled { get; set; } = (sceneContext, widget) => true;
 
 		public Func<string> HelpTextResolver { get; set; }
 

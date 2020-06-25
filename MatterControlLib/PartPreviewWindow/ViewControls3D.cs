@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
 
 										operationMenu.ToolTipText = operation.HelpText;
-										operationMenu.Enabled = operation.IsEnabled(sceneContext);
+										operationMenu.Enabled = operation.IsEnabled(sceneContext, operationMenu);
 										operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 										{
 											if (operationGroup.StickySelection
@@ -663,13 +663,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Set enabled level based on operation rules
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
 			{
-				button.Enabled = operation.IsEnabled?.Invoke(sceneContext) ?? false;
+				button.Enabled = operation.IsEnabled?.Invoke(sceneContext, button) ?? false;
 
 				if (operation is OperationGroup operationGroup
 					&& button is PopupMenuButton splitButton
 					&& button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
 				{
-					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext);
+					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext, iconButton);
 				}
 			}
 		}
