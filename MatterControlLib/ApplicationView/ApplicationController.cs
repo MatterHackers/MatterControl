@@ -539,7 +539,7 @@ namespace MatterHackers.MatterControl
 
 		public Action EnterShareCode { get; set; }
 
-		// check permission to an IObject3D class
+		// check permission to an IObject3D instance
 		public Func<IObject3D, bool> UserHasPermission { get; set; } = (item) => false;
 
 		// check permission to a purchase

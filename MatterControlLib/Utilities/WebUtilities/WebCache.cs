@@ -37,14 +37,11 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl
 {
 	public static class WebCache
 	{
-		private static string _cachePath = ".";
-
 		private static HashSet<string> savedImages = new HashSet<string>();
 
 		/// <summary>

@@ -34,7 +34,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-    public class UpgradeToProTabPage : GuiWidget
+	public class UpgradeToProTabPage : GuiWidget
 	{
 		private MarkdownWidget markdownWidget;
 
@@ -62,9 +62,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 		private void CheckForUpdate()
 		{
-			var uri = "https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md";
-
-			WebCache.RetrieveText(uri,
+			WebCache.RetrieveText(
+				"https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md",
 				(markDown) =>
 				{
 					UiThread.RunOnIdle(() =>
