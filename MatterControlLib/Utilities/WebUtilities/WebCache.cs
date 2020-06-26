@@ -244,8 +244,7 @@ namespace MatterHackers.MatterControl
 				{
 					try
 					{
-						textFileName = AggContext.StaticData.ReadAllText(Path.Combine("TextWebCache", longHash.ToString() + ".txt"));
-						fileText = File.ReadAllText(textFileName);
+						fileText = AggContext.StaticData.ReadAllText(Path.Combine("TextWebCache", longHash.ToString() + ".txt"));
 						updateResult?.Invoke(fileText);
 					}
 					catch
