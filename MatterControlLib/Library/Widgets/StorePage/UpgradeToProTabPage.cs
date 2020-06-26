@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2020, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -30,14 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.VectorMath;
-using System;
-using System.Net.Http;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 {
-	public class UpgradeToProTabPage : GuiWidget
+    public class UpgradeToProTabPage : GuiWidget
 	{
 		private MarkdownWidget markdownWidget;
 
@@ -63,11 +60,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 			this.AddChild(markdownWidget);
 		}
 
-		private async void CheckForUpdate()
+		private void CheckForUpdate()
 		{
 			var uri = "https://matterhackers.github.io/MatterControl-Docs/ProContent/Upgrade_To_Pro.md";
 
-			WebCache.RetrieveText(uri.ToString(),
+			WebCache.RetrieveText(uri,
 				(markDown) =>
 				{
 					UiThread.RunOnIdle(() =>
