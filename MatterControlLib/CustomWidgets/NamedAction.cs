@@ -43,13 +43,13 @@ namespace MatterHackers.Agg.UI
 
 		public Func<bool, ImageBuffer> Icon { get; set; }
 
-		public Func<ISceneContext, GuiWidget, bool> IsEnabled { get; set; } = (sceneContext, widget) => true;
+		public Func<ISceneContext, bool> IsEnabled { get; set; } = (sceneContext) => true;
 
 		public Func<string> HelpTextResolver { get; set; }
 
-		public Func<string> TitleResolver { get; set; }
-
 		public string HelpText => this.HelpTextResolver?.Invoke();
+
+		public Func<string> TitleResolver { get; set; }
 
 		public string Title => this.TitleResolver?.Invoke();
 

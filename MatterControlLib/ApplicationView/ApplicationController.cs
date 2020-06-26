@@ -774,7 +774,8 @@ namespace MatterHackers.MatterControl
 
 						scene.SelectedItem = newGroup;
 					},
-					IsEnabled = (sceneContext, widget) => sceneContext.Scene is InteractiveScene scene
+					HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+					IsEnabled = (sceneContext) => sceneContext.Scene is InteractiveScene scene
 						&& scene.SelectedItem != null
 						&& scene.SelectedItem is SelectionGroupObject3D
 						&& scene.SelectedItem.Children.Count > 1,
@@ -784,7 +785,8 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Ungroup".Localize(),
 					Action = (sceneContext) => sceneContext.Scene.UngroupSelection(),
-					IsEnabled = (sceneContext, widget) =>
+					HelpTextResolver = () => "*A single part must be selected*".Localize(),
+					IsEnabled = (sceneContext) =>
 					{
 						var selectedItem = sceneContext.Scene.SelectedItem;
 						if (selectedItem != null)
@@ -803,14 +805,16 @@ namespace MatterHackers.MatterControl
 				{
 					TitleResolver = () => "Duplicate".Localize(),
 					Action = (sceneContext) => sceneContext.DuplicateItem(5),
-					IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+					HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+					IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("duplicate.png").SetPreMultiply(),
 				},
 				new SceneSelectionOperation()
 				{
 					TitleResolver = () => "Remove".Localize(),
 					Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
-					IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+					HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+					IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png").SetPreMultiply(),
 				},
 				new SceneSelectionSeparator(),
@@ -827,7 +831,8 @@ namespace MatterHackers.MatterControl
 							{
 								await sceneContext.Scene.AutoArrangeChildren(new Vector3(sceneContext.BedCenter)).ConfigureAwait(false);
 							},
-							IsEnabled = (sceneContext, widget) =>
+							HelpTextResolver = () => "*No part to arrange*".Localize(),
+							IsEnabled = (sceneContext) =>
 							{
 								return sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any();
 							},
@@ -851,17 +856,8 @@ namespace MatterHackers.MatterControl
 									}
 								}
 							},
-							IsEnabled = (sceneContext, widget) =>
-							{
-								var enabled = sceneContext.Scene.SelectedItem != null;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Lay Flat".Localize() : "Lay Flat\n\n*At least 1 part must be selected*".Localize();
-								}
-
-								return enabled;
-							},
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lay_flat.png", 16, 16, invertIcon).SetPreMultiply(),
 						},
 						new SceneSelectionOperation()
@@ -876,17 +872,8 @@ namespace MatterHackers.MatterControl
 								align.AddSelectionAsChildren(scene, selectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("align_left_dark.png", 16, 16, invertIcon).SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) =>
-							{
-								var enabled = sceneContext.Scene.SelectedItem is SelectionGroupObject3D;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Align".Localize() : "Align\n\n*At least 2 parts must be selected*".Localize();
-								}
-
-								return enabled;
-							},
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 						},
 					},
 				},
@@ -902,17 +889,11 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Combine".Localize(),
 							Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) =>
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Combine".Localize() : "Combine\n\n*At least 2 parts must be selected*".Localize();
-								}
-
-								return enabled;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
 						new SceneSelectionOperation()
@@ -921,17 +902,11 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Subtract".Localize(),
 							Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) =>
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Subtract".Localize() : "Subtract\n\n*At least 2 parts must be selected*".Localize();
-								}
-
-								return enabled;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
 						new SceneSelectionOperation()
@@ -940,17 +915,11 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Intersect".Localize(),
 							Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png"),
-							IsEnabled = (sceneContext, widget) =>
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Intersect".Localize() : "Intersect\n\n*At least 2 parts must be selected*".Localize();
-								}
-
-								return enabled;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						},
 						new SceneSelectionOperation()
@@ -959,17 +928,11 @@ namespace MatterHackers.MatterControl
 							TitleResolver = () => "Subtract & Replace".Localize(),
 							Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) =>
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-
-								if (widget != null)
-								{
-									widget.ToolTipText = enabled ? "Subtract & Replace".Localize() : "Subtract & Replace\n\n*At least 2 parts must be selected*".Localize();
-								}
-
-								return enabled;
+								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
 							},
 						}
 					}
@@ -991,7 +954,8 @@ namespace MatterHackers.MatterControl
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+							HelpTextResolver = () => "*A single part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						},
 						new SceneSelectionOperation()
 						{
@@ -1003,7 +967,8 @@ namespace MatterHackers.MatterControl
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+							HelpTextResolver = () => "*A single part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						},
 						new SceneSelectionOperation()
 						{
@@ -1015,7 +980,8 @@ namespace MatterHackers.MatterControl
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png").SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+							HelpTextResolver = () => "*A single part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						}
 					}
 				},
@@ -1036,7 +1002,8 @@ namespace MatterHackers.MatterControl
 								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
 						{
@@ -1048,7 +1015,8 @@ namespace MatterHackers.MatterControl
 								pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
 						{
@@ -1060,7 +1028,8 @@ namespace MatterHackers.MatterControl
 								curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 #if DEBUG // don't make this part of the distribution until it is working
 						new SceneSelectionOperation()
@@ -1073,7 +1042,8 @@ namespace MatterHackers.MatterControl
 								cut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("plane_cut.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 #endif
 						new SceneSelectionOperation()
@@ -1086,7 +1056,8 @@ namespace MatterHackers.MatterControl
 								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("hollow.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
 						{
@@ -1098,7 +1069,8 @@ namespace MatterHackers.MatterControl
 								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("reduce.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 						new SceneSelectionOperation()
 						{
@@ -1110,7 +1082,8 @@ namespace MatterHackers.MatterControl
 								hollowOut.WrapSelectedItemAndSelect(sceneContext.Scene);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("repair.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null,
+							HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 						},
 					}
 				},
@@ -1149,7 +1122,8 @@ namespace MatterHackers.MatterControl
 								}
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("dual_align.png", 16, 16, invertIcon).SetPreMultiply(),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
+							HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem is SelectionGroupObject3D,
 						},
 						new SceneSelectionOperation()
 						{
@@ -1168,7 +1142,7 @@ namespace MatterHackers.MatterControl
 								}
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						},
 
 		#if DEBUG
@@ -1189,7 +1163,7 @@ namespace MatterHackers.MatterControl
 								}
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("fit.png", 16, 16, invertIcon),
-							IsEnabled = (sceneContext, widget) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
+							IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is SelectionGroupObject3D),
 						},
 #endif
 					},
