@@ -882,7 +882,7 @@ namespace MatterHackers.MatterControl
 
 								if (widget != null)
 								{
-									widget.ToolTipText = enabled ? "Align".Localize() : "Arrange All Parts\n\n*At least 2 parts must be selected*".Localize();
+									widget.ToolTipText = enabled ? "Align".Localize() : "Align\n\n*At least 2 parts must be selected*".Localize();
 								}
 
 								return enabled;
@@ -905,7 +905,14 @@ namespace MatterHackers.MatterControl
 							IsEnabled = (sceneContext, widget) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+
+								if (widget != null)
+								{
+									widget.ToolTipText = enabled ? "Combine".Localize() : "Combine\n\n*At least 2 parts must be selected*".Localize();
+								}
+
+								return enabled;
 							},
 						},
 						new SceneSelectionOperation()
@@ -917,7 +924,14 @@ namespace MatterHackers.MatterControl
 							IsEnabled = (sceneContext, widget) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && sceneContext.Scene.SelectedItem.VisibleMeshes().Count() > 1;
+								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+
+								if (widget != null)
+								{
+									widget.ToolTipText = enabled ? "Subtract".Localize() : "Subtract\n\n*At least 2 parts must be selected*".Localize();
+								}
+
+								return enabled;
 							},
 						},
 						new SceneSelectionOperation()
@@ -929,7 +943,14 @@ namespace MatterHackers.MatterControl
 							IsEnabled = (sceneContext, widget) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+
+								if (widget != null)
+								{
+									widget.ToolTipText = enabled ? "Intersect".Localize() : "Intersect\n\n*At least 2 parts must be selected*".Localize();
+								}
+
+								return enabled;
 							},
 						},
 						new SceneSelectionOperation()
@@ -941,7 +962,14 @@ namespace MatterHackers.MatterControl
 							IsEnabled = (sceneContext, widget) =>
 							{
 								var selectedItem = sceneContext.Scene.SelectedItem;
-								return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+								var enabled = selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
+
+								if (widget != null)
+								{
+									widget.ToolTipText = enabled ? "Subtract & Replace".Localize() : "Subtract & Replace\n\n*At least 2 parts must be selected*".Localize();
+								}
+
+								return enabled;
 							},
 						}
 					}
