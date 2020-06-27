@@ -382,6 +382,7 @@ namespace MatterHackers.GCodeVisualizer
 					{
 						endFeature = Math.Min(startFeature + 1, featuresOnLayer);
 					}
+
 					if (startFeature >= endFeature)
 					{
 						// This can only happen if the start and end are set to the last feature
