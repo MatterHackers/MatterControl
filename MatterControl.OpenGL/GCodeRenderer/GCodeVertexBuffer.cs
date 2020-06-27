@@ -47,7 +47,6 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			try
 			{
-				throw new Exception();
 				GL.GenBuffers(1, out vertexID);
 				GL.GenBuffers(1, out indexID);
 			}
