@@ -301,6 +301,7 @@ namespace MatterHackers.MatterControl
 		private void DebugMenus_CheckedChanged(object sender, EventArgs e)
 		{
 			PopupWidget.DebugKeepOpen = debugMenus.Checked;
+			ToolTipManager.DebugKeepOpen = debugMenus.Checked;
 		}
 
 		private void SceneTreeView_AfterSelect(object sender, TreeViewEventArgs e)

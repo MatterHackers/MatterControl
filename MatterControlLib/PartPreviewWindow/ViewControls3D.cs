@@ -328,8 +328,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									{
 										var operationMenu = popupMenu.CreateMenuItem(operation.Title, operation.Icon?.Invoke(theme.InvertIcons));
 
-										operationMenu.ToolTipText = operation.HelpText;
 										operationMenu.Enabled = operation.IsEnabled(sceneContext);
+										operationMenu.ToolTipText = operation.Title;
+
+										if (!operationMenu.Enabled
+											&& !string.IsNullOrEmpty(operation.HelpText))
+										{
+											operationMenu.ToolTipText += "\n\n" + operation.HelpText;
+										}
+
 										operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 										{
 											if (operationGroup.StickySelection
@@ -664,12 +671,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			foreach (var (button, operation) in operationButtons.Select(kvp => (kvp.Key, kvp.Value)))
 			{
 				button.Enabled = operation.IsEnabled?.Invoke(sceneContext) ?? false;
+				button.ToolTipText = operation.Title;
+				if (!button.Enabled
+					&& !string.IsNullOrEmpty(operation.HelpText))
+				{
+					button.ToolTipText += "\n\n" + operation.HelpText;
+				}
 
 				if (operation is OperationGroup operationGroup
 					&& button is PopupMenuButton splitButton
 					&& button.Descendants<IconButton>().FirstOrDefault() is IconButton iconButton)
 				{
-					iconButton.Enabled = operationGroup.GetDefaultOperation().IsEnabled(sceneContext);
+					var defaultOperation = operationGroup.GetDefaultOperation();
+					iconButton.Enabled = defaultOperation.IsEnabled(sceneContext);
+					iconButton.ToolTipText = defaultOperation.Title;
+
+					if (!iconButton.Enabled
+						&& !string.IsNullOrEmpty(defaultOperation.HelpText))
+					{
+						iconButton.ToolTipText += "\n\n" + defaultOperation.HelpText;
+					}
 				}
 			}
 		}

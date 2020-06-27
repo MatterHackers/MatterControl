@@ -52,13 +52,7 @@ namespace Markdig.Agg
 			this.BaseUri = baseUri;
 		}
 
-		private string matchingText;
-
-		public string MatchingText
-		{
-			get => matchingText;
-			set => matchingText = value;
-		}
+		public string MatchingText { get; set; }
 
 		public Uri BaseUri { get; set; } = new Uri("https://www.matterhackers.com/");
 
@@ -112,10 +106,10 @@ namespace Markdig.Agg
 			{
 				MarkdownPipeline pipeline;
 
-				if (!string.IsNullOrWhiteSpace(matchingText))
+				if (!string.IsNullOrWhiteSpace(MatchingText))
 				{
 					var builder = new MarkdownPipelineBuilder().UseSupportedExtensions();
-					builder.InlineParsers.Add(new MatchingTextParser(matchingText));
+					builder.InlineParsers.Add(new MatchingTextParser(MatchingText));
 
 					pipeline = builder.Build();
 				}

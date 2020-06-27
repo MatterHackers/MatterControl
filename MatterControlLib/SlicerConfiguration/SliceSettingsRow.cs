@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public UIField UIField { get; internal set; }
 
-		protected override void ExtendPopover(SliceSettingsPopover popover)
+		protected override void ExtendPopover(ClickablePopover popover)
 		{
 			string mapsTo = "";
 

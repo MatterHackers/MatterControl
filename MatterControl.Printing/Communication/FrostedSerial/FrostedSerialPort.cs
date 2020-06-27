@@ -115,12 +115,6 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 
 		public static bool MockPortsForTest { get; set; } = false;
 
-#if DEBUG
-		public static bool AllowEmulator { get; set; } = true;
-#else
-		public static bool AllowEmulator { get; set; } = false;
-#endif
-
 		// On non-Android platforms simply return true as port access validation isn't applicable
 		public static bool EnsureDeviceAccess()
 		{
@@ -141,7 +135,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			else
 			{
 				// looks_like_mac -- serialPort.StartsWith("/dev/tty."); looks_like_pc -- serialPort.StartsWith("COM")
-				filteredPorts = allPorts.Where(portName => portName.StartsWith("/dev/tty.") 
+				filteredPorts = allPorts.Where(portName => portName.StartsWith("/dev/tty.")
 					|| portName.StartsWith("COM")
 					|| portName == "Emulator");
 			}
@@ -193,16 +187,15 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 						{
 							string port = subkey.GetValue(value, "").ToString();
 							if (port != "")
+							{
 								serial_ports.Add(port);
+							}
 						}
 					}
 				}
 			}
 
-			if (AllowEmulator)
-			{
-				serial_ports.Add("Emulator");
-			}
+			serial_ports.Add("Emulator");
 
 			return FilterPortsForMac(serial_ports).ToArray();
 		}
@@ -218,9 +211,13 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				int p = (int)Environment.OSVersion.Platform;
 				if (p == 4 || p == 128 || p == 6)
+				{
 					return "ttyS0"; // Default for Unix
+				}
 				else
+				{
 					return "COM1"; // Default for Windows
+				}
 			}
 		}
 
@@ -244,13 +241,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return baud_rate;
 			}
+
 			set
 			{
 				if (value <= 0)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.SetAttributes(value, parity, data_bits, stop_bits, handshake);
+				}
 
 				baud_rate = value;
 			}
@@ -264,11 +266,14 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return break_state;
 			}
+
 			set
 			{
 				CheckOpen();
 				if (value == break_state)
+				{
 					return; // Do nothing.
+				}
 
 				stream.SetBreakState(value);
 				break_state = value;
@@ -328,19 +333,24 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return data_bits;
 			}
+
 			set
 			{
 				if (value < 5 || value > 8)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.SetAttributes(baud_rate, parity, value, stop_bits, handshake);
+				}
 
 				data_bits = value;
 			}
 		}
 
-		//[MonoTODO("Not implemented")]
+		// [MonoTODO("Not implemented")]
 		[Browsable(true)]
 		[MonitoringDescription("")]
 		[DefaultValue(false)]
@@ -350,6 +360,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				throw new NotImplementedException();
 			}
+
 			set
 			{
 				// LAMESPEC: Msdn states that an InvalidOperationException exception
@@ -379,12 +390,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return dtr_enable;
 			}
+
 			set
 			{
 				if (value == dtr_enable)
+				{
 					return;
+				}
+
 				if (is_open)
+				{
 					stream.SetSignal(SerialSignal.Dtr, value);
+				}
 
 				dtr_enable = value;
 			}
@@ -399,10 +416,13 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return encoding;
 			}
+
 			set
 			{
 				if (value == null)
+				{
 					throw new ArgumentNullException("value");
+				}
 
 				encoding = value;
 			}
@@ -417,13 +437,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return handshake;
 			}
+
 			set
 			{
 				if (value < Handshake.None || value > Handshake.RequestToSendXOnXOff)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.SetAttributes(baud_rate, parity, data_bits, stop_bits, value);
+				}
 
 				handshake = value;
 			}
@@ -447,12 +472,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return new_line;
 			}
+
 			set
 			{
 				if (value == null)
+				{
 					throw new ArgumentNullException("value");
+				}
+
 				if (value.Length == 0)
+				{
 					throw new ArgumentException("NewLine cannot be null or empty.", "value");
+				}
 
 				new_line = value;
 			}
@@ -467,19 +498,24 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return parity;
 			}
+
 			set
 			{
 				if (value < Parity.None || value > Parity.Space)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.SetAttributes(baud_rate, value, data_bits, stop_bits, handshake);
+				}
 
 				parity = value;
 			}
 		}
 
-		//[MonoTODO("Not implemented")]
+		// [MonoTODO("Not implemented")]
 		[Browsable(true)]
 		[MonitoringDescription("")]
 		[DefaultValue(63)]
@@ -489,6 +525,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				throw new NotImplementedException();
 			}
+
 			set
 			{
 				throw new NotImplementedException();
@@ -504,14 +541,23 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return port_name;
 			}
+
 			set
 			{
 				if (is_open)
+				{
 					throw new InvalidOperationException("Port name cannot be set while port is open.");
+				}
+
 				if (value == null)
+				{
 					throw new ArgumentNullException("value");
+				}
+
 				if (value.Length == 0 || value.StartsWith("\\\\"))
+				{
 					throw new ArgumentException("value");
+				}
 
 				port_name = value;
 			}
@@ -526,14 +572,23 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return readBufferSize;
 			}
+
 			set
 			{
 				if (is_open)
+				{
 					throw new InvalidOperationException();
+				}
+
 				if (value <= 0)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
+
 				if (value <= DefaultReadBufferSize)
+				{
 					return;
+				}
 
 				readBufferSize = value;
 			}
@@ -548,19 +603,24 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return read_timeout;
 			}
+
 			set
 			{
 				if (value < 0 && value != InfiniteTimeout)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.ReadTimeout = value;
+				}
 
 				read_timeout = value;
 			}
 		}
 
-		//[MonoTODO("Not implemented")]
+		// [MonoTODO("Not implemented")]
 		[DefaultValueAttribute(1)]
 		[Browsable(true)]
 		[MonitoringDescription("")]
@@ -570,10 +630,13 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				throw new NotImplementedException();
 			}
+
 			set
 			{
 				if (value <= 0)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				throw new NotImplementedException();
 			}
@@ -588,12 +651,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return rts_enable;
 			}
+
 			set
 			{
 				if (value == rts_enable)
+				{
 					return;
+				}
+
 				if (is_open)
+				{
 					stream.SetSignal(SerialSignal.Rts, value);
+				}
 
 				rts_enable = value;
 			}
@@ -608,13 +677,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return stop_bits;
 			}
+
 			set
 			{
 				if (value < StopBits.One || value > StopBits.OnePointFive)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.SetAttributes(baud_rate, parity, data_bits, value, handshake);
+				}
 
 				stop_bits = value;
 			}
@@ -629,14 +703,23 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return writeBufferSize;
 			}
+
 			set
 			{
 				if (is_open)
+				{
 					throw new InvalidOperationException();
+				}
+
 				if (value <= 0)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
+
 				if (value <= DefaultWriteBufferSize)
+				{
 					return;
+				}
 
 				writeBufferSize = value;
 			}
@@ -651,13 +734,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				return write_timeout;
 			}
+
 			set
 			{
 				if (value < 0 && value != InfiniteTimeout)
+				{
 					throw new ArgumentOutOfRangeException("value");
+				}
 
 				if (is_open)
+				{
 					stream.WriteTimeout = value;
+				}
 
 				write_timeout = value;
 			}
@@ -673,12 +761,17 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		protected override void Dispose(bool disposing)
 		{
 			if (!is_open)
+			{
 				return;
+			}
 
 			is_open = false;
 			// Do not close the base stream when the finalizer is run; the managed code can still hold a reference to it.
 			if (disposing)
+			{
 				stream.Close();
+			}
+
 			stream = null;
 		}
 
@@ -697,10 +790,22 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		public void Open()
 		{
 			if (is_open)
+			{
 				throw new InvalidOperationException("Port is already open");
+			}
 
-			stream = new FrostedSerialPortStream(port_name, baud_rate, data_bits, parity, stop_bits, dtr_enable,
-				rts_enable, handshake, read_timeout, write_timeout, readBufferSize, writeBufferSize);
+			stream = new FrostedSerialPortStream(port_name,
+				baud_rate,
+				data_bits,
+				parity,
+				stop_bits,
+				dtr_enable,
+				rts_enable,
+				handshake,
+				read_timeout,
+				write_timeout,
+				readBufferSize,
+				writeBufferSize);
 
 			is_open = true;
 		}
@@ -709,13 +814,20 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
+			}
+
 			if (offset < 0 || count < 0)
+			{
 				throw new ArgumentOutOfRangeException("offset or count less than zero.");
+			}
 
 			if (buffer.Length - offset < count)
+			{
 				throw new ArgumentException("offset+count",
 								  "The size of the buffer is less than offset + count.");
+			}
 
 			return stream.Read(buffer, offset, count);
 		}
@@ -724,17 +836,26 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
+			}
+
 			if (offset < 0 || count < 0)
+			{
 				throw new ArgumentOutOfRangeException("offset or count less than zero.");
+			}
 
 			if (buffer.Length - offset < count)
+			{
 				throw new ArgumentException("offset+count",
 								  "The size of the buffer is less than offset + count.");
+			}
 
 			int c, i;
 			for (i = 0; i < count && (c = ReadChar()) != -1; i++)
+			{
 				buffer[offset + i] = (char)c;
+			}
 
 			return i;
 		}
@@ -743,7 +864,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			byte[] buff = new byte[1];
 			if (stream.Read(buff, 0, 1) > 0)
+			{
 				return buff[0];
+			}
 
 			return -1;
 		}
@@ -765,12 +888,18 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				int b = read_byte();
 				if (b == -1)
+				{
 					return -1;
+				}
+
 				buffer[i++] = (byte)b;
 				char[] c = encoding.GetChars(buffer, 0, 1);
 				if (c.Length > 0)
+				{
 					return (int)c[0];
-			} while (i < buffer.Length);
+				}
+			}
+			while (i < buffer.Length);
 
 			return -1;
 		}
@@ -783,7 +912,7 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			byte[] bytes = new byte[count];
 
 			int n = stream.Read(bytes, 0, count);
-			return new String(encoding.GetChars(bytes, 0, n));
+			return new string(encoding.GetChars(bytes, 0, n));
 		}
 
 		public string ReadLine()
@@ -795,9 +924,14 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (value == null)
+			{
 				throw new ArgumentNullException("value");
+			}
+
 			if (value.Length == 0)
+			{
 				throw new ArgumentException("value");
+			}
 
 			// Turn into byte array, so we can compare
 			byte[] byte_value = encoding.GetBytes(value);
@@ -808,19 +942,25 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 			{
 				int n = read_byte();
 				if (n == -1)
+				{
 					break;
+				}
+
 				seen.Add((byte)n);
 				if (n == byte_value[current])
 				{
 					current++;
 					if (current == byte_value.Length)
+					{
 						return encoding.GetString(seen.ToArray(), 0, seen.Count - byte_value.Length);
+					}
 				}
 				else
 				{
 					current = (byte_value[0] == n) ? 1 : 0;
 				}
 			}
+
 			return encoding.GetString(seen.ToArray());
 		}
 
@@ -828,7 +968,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (str == null)
+			{
 				throw new ArgumentNullException("str");
+			}
 
 			byte[] buffer = encoding.GetBytes(str);
 			Write(buffer, 0, buffer.Length);
@@ -838,14 +980,20 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
+			}
 
 			if (offset < 0 || count < 0)
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 
 			if (buffer.Length - offset < count)
+			{
 				throw new ArgumentException("offset+count",
 								 "The size of the buffer is less than offset + count.");
+			}
 
 			stream.Write(buffer, offset, count);
 		}
@@ -854,14 +1002,20 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		{
 			CheckOpen();
 			if (buffer == null)
+			{
 				throw new ArgumentNullException("buffer");
+			}
 
 			if (offset < 0 || count < 0)
+			{
 				throw new ArgumentOutOfRangeException();
+			}
 
 			if (buffer.Length - offset < count)
+			{
 				throw new ArgumentException("offset+count",
 								 "The size of the buffer is less than offset + count.");
+			}
 
 			byte[] bytes = encoding.GetBytes(buffer, offset, count);
 			stream.Write(bytes, 0, bytes.Length);
@@ -875,7 +1029,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 		private void CheckOpen()
 		{
 			if (!is_open)
+			{
 				throw new InvalidOperationException("Specified port is not open.");
+			}
 		}
 
 		internal void OnErrorReceived(SerialErrorReceivedEventArgs args)
@@ -884,7 +1040,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				(SerialErrorReceivedEventHandler)Events[error_received];
 
 			if (handler != null)
+			{
 				handler(this, args);
+			}
 		}
 
 		internal void OnDataReceived(SerialDataReceivedEventArgs args)
@@ -893,7 +1051,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				(SerialDataReceivedEventHandler)Events[data_received];
 
 			if (handler != null)
+			{
 				handler(this, args);
+			}
 		}
 
 		internal void OnDataReceived(SerialPinChangedEventArgs args)
@@ -902,7 +1062,9 @@ namespace MatterHackers.SerialPortCommunication.FrostedSerial
 				(SerialPinChangedEventHandler)Events[pin_changed];
 
 			if (handler != null)
+			{
 				handler(this, args);
+			}
 		}
 
 		// events

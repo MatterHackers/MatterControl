@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnMouseLeaveBounds(mouseEvent);
 		}
 
-		protected virtual void ExtendPopover(SliceSettingsPopover popover)
+		protected virtual void ExtendPopover(ClickablePopover popover)
 		{
 		}
 
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			int arrowOffset = (int)(settingsRow.Height / 2);
 
-			var popover = new SliceSettingsPopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
+			var popover = new ClickablePopover(this.ArrowDirection, new BorderDouble(15, 10), 7, arrowOffset)
 			{
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -291,10 +291,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				HAnchor = HAnchor.Fit,
 			});
 
-			bool alignLeft = (this.ArrowDirection == ArrowDirection.Right);
+			bool alignLeft = this.ArrowDirection == ArrowDirection.Right;
 
 			// after a certain amount of time make the popover close (just like a tool tip)
-			double closeSeconds = Math.Max(1, (settingsRow.HelpText.Length / 50.0)) * 5;
+			double closeSeconds = Math.Max(1, settingsRow.HelpText.Length / 50.0) * 5;
 
 			this.ExtendPopover(popover);
 
