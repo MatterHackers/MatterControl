@@ -1068,7 +1068,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
 			// Click field
 			var widgetName = $"{settingData.PresentationName} Field";
-			var foundWidget = testRunner.GetWidgetByName(widgetName, out _);
+			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, onlyVisible: false);
 			foreach (var scrollable in foundWidget.Parents<ScrollableWidget>())
 			{
 				scrollable.ScrollIntoView(foundWidget);
