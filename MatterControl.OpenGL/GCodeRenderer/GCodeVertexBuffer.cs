@@ -45,8 +45,16 @@ namespace MatterHackers.GCodeVisualizer
 
 		public GCodeVertexBuffer(int[] indexData, ColorVertexData[] colorData)
 		{
-			GL.GenBuffers(1, out vertexID);
-			GL.GenBuffers(1, out indexID);
+			try
+			{
+				throw new Exception();
+				GL.GenBuffers(1, out vertexID);
+				GL.GenBuffers(1, out indexID);
+			}
+			catch
+			{
+				return;
+			}
 
 			// Set vertex data
 			vertexLength = colorData.Length;
@@ -79,6 +87,12 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void RenderRange(int offset, int count)
 		{
+			if (vertexID == 0)
+			{
+				// not allocated don't render
+				return;
+			}
+
 			GL.EnableClientState(ArrayCap.ColorArray);
 			GL.EnableClientState(ArrayCap.NormalArray);
 			GL.EnableClientState(ArrayCap.VertexArray);
@@ -115,6 +129,12 @@ namespace MatterHackers.GCodeVisualizer
 
 		protected virtual void Dispose(bool disposing)
 		{
+			if (vertexID == 0)
+			{
+				// not allocated don't dispose
+				return;
+			}
+
 			// release unmanaged resources
 			if (!disposed)
 			{

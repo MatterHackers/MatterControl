@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl
 		{
 			var toolTipPopover = new ClickablePopover(ArrowDirection.Up, new BorderDouble(0, 0), 7, 0);
 
-			var markdownWidegt = new MarkdownWidget(Theme)
+			var markdownWidegt = new MarkdownWidget(Theme, false)
 			{
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl
 			markdownWidegt.Markdown = toolTipText;
 			markdownWidegt.Width = 350;
 			var maxLineWidth = markdownWidegt.Descendants<ParagraphX>().Max(i => i.MaxLineWidth);
-			markdownWidegt.Width = maxLineWidth + 30;
+			markdownWidegt.Width = maxLineWidth + 15;
 
 			return markdownWidegt;
 		}
