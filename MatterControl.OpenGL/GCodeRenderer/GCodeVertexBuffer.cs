@@ -28,7 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 
 namespace MatterHackers.GCodeVisualizer
@@ -42,6 +45,10 @@ namespace MatterHackers.GCodeVisualizer
 
 		private int vertexID;
 		private int vertexLength;
+		private List<SubTriangleMesh> subMeshs;
+
+		private int[] indexData;
+		private ColorVertexData[] colorData;
 
 		public GCodeVertexBuffer(int[] indexData, ColorVertexData[] colorData)
 		{
@@ -49,12 +56,61 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				GL.GenBuffers(1, out vertexID);
 				GL.GenBuffers(1, out indexID);
+				SetBufferData(ref indexData, ref colorData);
 			}
 			catch
 			{
-				return;
+				this.indexData = indexData;
+				this.colorData = colorData;
+			}
+		}
+
+		private void RenderTriangles(int offset, int count)
+		{
+			GL.EnableClientState(ArrayCap.ColorArray);
+			GL.EnableClientState(ArrayCap.NormalArray);
+			GL.EnableClientState(ArrayCap.VertexArray);
+			GL.EnableClientState(ArrayCap.IndexArray);
+			GL.DisableClientState(ArrayCap.TextureCoordArray);
+			GL.Disable(EnableCap.Texture2D);
+
+			unsafe
+			{
+				fixed (int* pIndexData = indexData)
+				{
+					GL.IndexPointer(IndexPointerType.Int, 0, new IntPtr(pIndexData));
+					fixed (ColorVertexData* pFixedColorData = colorData)
+					{
+						byte* pColorData = (byte*)pFixedColorData;
+						GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(pColorData));
+						byte* pNormalData = pColorData + 4;
+						GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(pNormalData));
+						byte* pPosition = pNormalData + 12;
+						GL.VertexPointer(3, VertexPointerType.Float, ColorVertexData.Stride, new IntPtr(pPosition));
+						// GL.DrawArrays(BeginMode.Triangles, ColorVertexData.Stride, Math.Min(colorData.Length, count));
+						GL.DrawRangeElements(BeginMode.Triangles,
+							0,
+							indexData.Length,
+							count,
+							DrawElementsType.UnsignedInt,
+							new IntPtr(pIndexData + offset));
+					}
+				}
 			}
 
+			GL.DisableClientState(ArrayCap.IndexArray);
+			GL.DisableClientState(ArrayCap.NormalArray);
+			GL.DisableClientState(ArrayCap.VertexArray);
+			GL.DisableClientState(ArrayCap.ColorArray);
+
+			GL.IndexPointer(IndexPointerType.Int, 0, new IntPtr(0));
+			GL.ColorPointer(4, ColorPointerType.UnsignedByte, 0, new IntPtr(0));
+			GL.NormalPointer(NormalPointerType.Float, 0, new IntPtr(0));
+			GL.VertexPointer(3, VertexPointerType.Float, 0, new IntPtr(0));
+		}
+
+		private void SetBufferData(ref int[] indexData, ref ColorVertexData[] colorData)
+		{
 			// Set vertex data
 			vertexLength = colorData.Length;
 			if (vertexLength > 0)
@@ -89,9 +145,16 @@ namespace MatterHackers.GCodeVisualizer
 			if (vertexID == 0)
 			{
 				// not allocated don't render
-				return;
+				RenderTriangles(offset, count);
 			}
+			else
+			{
+				RenderBufferData(offset, count);
+			}
+		}
 
+		private void RenderBufferData(int offset, int count)
+		{
 			GL.EnableClientState(ArrayCap.ColorArray);
 			GL.EnableClientState(ArrayCap.NormalArray);
 			GL.EnableClientState(ArrayCap.VertexArray);
