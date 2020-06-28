@@ -109,9 +109,15 @@ namespace Markdig.Renderers.Agg.Inlines
 				}
 				else
 				{
-					if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+					try
 					{
-						markdownWidget.LoadUri(new Uri(LinkUrl));
+						if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+						{
+							markdownWidget.LoadUri(new Uri(LinkUrl));
+						}
+					}
+					catch
+					{
 					}
 				}
 			}
