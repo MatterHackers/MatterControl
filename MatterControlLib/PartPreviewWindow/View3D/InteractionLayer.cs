@@ -263,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& !SuppressUiVolumes
 				&& FindInteractionVolumeHit(ray, out mouseDownIAVolume, out IntersectInfo info))
 			{
-				mouseDownIAVolume.OnMouseDown(new MouseEvent3DArgs(mouseEvent, ray, info));
+				mouseDownIAVolume.OnMouseDown(new Mouse3DEventArgs(mouseEvent, ray, info));
 				SelectedInteractionVolume = mouseDownIAVolume;
 			}
 			else
@@ -284,7 +284,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			IntersectInfo info = null;
-			var mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
+			var mouseEvent3D = new Mouse3DEventArgs(mouseEvent, ray, info);
 
 			if (MouseDownOnInteractionVolume && mouseDownIAVolume != null)
 			{
@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			bool anyInteractionVolumeHit = FindInteractionVolumeHit(ray, out InteractionVolume iaVolume, out IntersectInfo info);
-			var mouseEvent3D = new MouseEvent3DArgs(mouseEvent, ray, info);
+			var mouseEvent3D = new Mouse3DEventArgs(mouseEvent, ray, info);
 
 			if (MouseDownOnInteractionVolume && mouseDownIAVolume != null)
 			{

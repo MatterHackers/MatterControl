@@ -49,9 +49,17 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class GCodeExport : IExportPlugin, IExportWithOptions
 	{
-		public enum SpiralVaseOptions { USE_SETTINGS, FORCE_ON, FORCE_OFF }
+		public enum SpiralVaseOptions
+		{
+			USE_SETTINGS,
+			FORCE_ON,
+			FORCE_OFF
+		}
+
 		private SpiralVaseOptions spiralVaseOverride = SpiralVaseOptions.USE_SETTINGS;
-		protected PrinterConfig printer { get; set; }
+
+		protected PrinterConfig Printer { get; set; }
+
 		private bool printerSetupRequired;
 
 		public virtual string ButtonText => "Machine File (G-Code)".Localize();
@@ -64,15 +72,15 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public void Initialize(PrinterConfig printer)
 		{
-			this.printer = printer;
+			this.Printer = printer;
 			printerSetupRequired = PrinterCalibrationWizard.SetupRequired(printer, requiresLoadedFilament: false);
 		}
 
 		public virtual bool Enabled
 		{
-			get => printer != null
-				&& printer.Settings.PrinterSelected
-				&& !printer.Settings.GetValue<bool>("enable_sailfish_communication")
+			get => Printer != null
+				&& Printer.Settings.PrinterSelected
+				&& !Printer.Settings.GetValue<bool>("enable_sailfish_communication")
 				&& !printerSetupRequired;
 		}
 
@@ -80,11 +88,11 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			get
 			{
-				if (printer == null)
+				if (Printer == null)
 				{
 					return "Create a printer to export G-Code".Localize();
 				}
-				else if (!printer.Settings.PrinterSelected)
+				else if (!Printer.Settings.PrinterSelected)
 				{
 					return "No Printer Selected".Localize();
 				}
@@ -110,7 +118,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			var spiralVaseCheckbox = new CheckBox("Spiral Vase".Localize(), theme.TextColor, 10)
 			{
-				Checked = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase),
+				Checked = Printer.Settings.GetValue<bool>(SettingsKey.spiral_vase),
 				Cursor = Cursors.Hand,
 			};
 			spiralVaseCheckbox.CheckedStateChanged += (s, e) =>
@@ -127,7 +135,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			container.AddChild(spiralVaseCheckbox);
 
 			// If print leveling is enabled then add in a check box 'Apply Leveling During Export' and default checked.
-			if (printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
+			if (Printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled))
 			{
 				var levelingCheckbox = new CheckBox("Apply leveling to G-Code during export".Localize(), theme.TextColor, 10)
 				{
@@ -158,17 +166,17 @@ namespace MatterHackers.MatterControl.Library.Export
 					using (var gcodeStream = await assetStream.GetStream(progress: null))
 					{
 						this.ApplyStreamPipelineAndExport(
-							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), printer),
+							new GCodeFileStream(new GCodeFileStreamed(gcodeStream.Stream), Printer),
 							outputPath);
 
 						return null;
 					}
 				}
-				else if (firstItem.AssetPath == printer.Bed.EditContext.SourceFilePath)
+				else if (firstItem.AssetPath == Printer.Bed.EditContext.SourceFilePath)
 				{
 					// If item is bedplate, save any pending changes before starting the print
-					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, printer.Bed.SaveChanges);
-					loadedItem = printer.Bed.Scene;
+					await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), Printer, Printer.Bed.SaveChanges);
+					loadedItem = Printer.Bed.Scene;
 					CenterOnBed = false;
 				}
 				else if (firstItem is ILibraryObject3D object3DItem)
@@ -213,20 +221,20 @@ namespace MatterHackers.MatterControl.Library.Export
 								var aabb = loadedItem.GetAxisAlignedBoundingBox();
 
 								// Move to bed center
-								var bedCenter = printer.Bed.BedCenter;
+								var bedCenter = Printer.Bed.BedCenter;
 								loadedItem.Matrix *= Matrix4X4.CreateTranslation(-aabb.Center.X, -aabb.Center.Y, -aabb.MinXYZ.Z) * Matrix4X4.CreateTranslation(bedCenter.X, bedCenter.Y, 0);
 							}
 
 							// Slice
 							try
 							{
-								bool oldSpiralVaseSetting = printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
+								bool oldSpiralVaseSetting = Printer.Settings.GetValue<bool>(SettingsKey.spiral_vase);
 								if (spiralVaseOverride != SpiralVaseOptions.USE_SETTINGS)
 								{
-									printer.Settings.SetValue(SettingsKey.spiral_vase, spiralVaseOverride == SpiralVaseOptions.FORCE_ON ? "1" : "0");
+									Printer.Settings.SetValue(SettingsKey.spiral_vase, spiralVaseOverride == SpiralVaseOptions.FORCE_ON ? "1" : "0");
 								}
 
-								errors = printer.ValidateSettings(validatePrintBed: false);
+								errors = Printer.ValidateSettings(validatePrintBed: false);
 
 								if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 								{
@@ -236,21 +244,21 @@ namespace MatterHackers.MatterControl.Library.Export
 								// This mush be calculated after the settings have been set (spiral vase)
 								// or it uses the wrong slice settings.
 								// TODO: Prior code bypassed GCodeOverridePath mechanisms in EditContext. Consolidating into a single pathway
-								gcodePath = printer.Bed.EditContext.GCodeFilePath(printer);
+								gcodePath = Printer.Bed.EditContext.GCodeFilePath(Printer);
 
 								await ApplicationController.Instance.Tasks.Execute(
 									"Slicing Item".Localize() + " " + loadedItem.Name,
-									printer,
+									Printer,
 									(reporter, cancellationToken2) =>
 									{
-										return Slicer.SliceItem(loadedItem, gcodePath, printer, reporter, cancellationToken2);
+										return Slicer.SliceItem(loadedItem, gcodePath, Printer, reporter, cancellationToken2);
 									});
 
-								printer.Settings.SetValue(SettingsKey.spiral_vase, oldSpiralVaseSetting ? "1" : "0");
+								Printer.Settings.SetValue(SettingsKey.spiral_vase, oldSpiralVaseSetting ? "1" : "0");
 							}
 							finally
 							{
-								printer.Settings.SetValue(SettingsKey.spiral_vase, "0");
+								Printer.Settings.SetValue(SettingsKey.spiral_vase, "0");
 							}
 						}
 
@@ -333,7 +341,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var finalStream = GetExportStream(printer, gCodeFileStream, this.ApplyLeveling);
+				var finalStream = GetExportStream(Printer, gCodeFileStream, this.ApplyLeveling);
 
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
@@ -363,7 +371,7 @@ namespace MatterHackers.MatterControl.Library.Export
 		{
 			try
 			{
-				var settings = printer.Settings;
+				var settings = Printer.Settings;
 				var maxAcceleration = settings.GetValue<double>(SettingsKey.max_acceleration);
 				var maxVelocity = settings.GetValue<double>(SettingsKey.max_velocity);
 				var jerkVelocity = settings.GetValue<double>(SettingsKey.jerk_velocity);
@@ -378,7 +386,7 @@ namespace MatterHackers.MatterControl.Library.Export
 							new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 							new Vector4(multiplier, multiplier, multiplier, multiplier),
 							CancellationToken.None),
-						printer),
+						Printer),
 					outputPath);
 			}
 			catch (Exception e)

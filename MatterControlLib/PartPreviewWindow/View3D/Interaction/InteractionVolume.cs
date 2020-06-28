@@ -153,7 +153,7 @@ namespace MatterHackers.MeshVisualizer
 		{
 		}
 
-		public virtual void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		public virtual void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
 			{
@@ -162,11 +162,11 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		public virtual void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		public virtual void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
 		{
 		}
 
-		public virtual void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		public virtual void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			MouseDownOnControl = false;
 		}

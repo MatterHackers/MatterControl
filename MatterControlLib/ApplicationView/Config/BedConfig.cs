@@ -28,30 +28,29 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterControl.Printing;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.GCodeVisualizer;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.MeshVisualizer;
+using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Threading;
-	using MatterHackers.Agg;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.GCodeVisualizer;
-	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.DataStorage;
-	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MeshVisualizer;
-	using MatterHackers.PolygonMesh;
-	using MatterHackers.VectorMath;
-
 	public class BedConfig : ISceneContext
 	{
 		public event EventHandler ActiveLayerChanged;
@@ -127,7 +126,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Load content from the given EditContext into the current one
 		/// </summary>
-		/// <param name="editContext"></param>
+		/// <param name="editContext">The context to load into.</param>
 		/// <returns></returns>
 		public async Task LoadIntoCurrent(EditContext editContext)
 		{
@@ -353,6 +352,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		private GCodeFile loadedGCode;
+
 		public GCodeFile LoadedGCode
 		{
 			get => loadedGCode;
@@ -506,7 +506,7 @@ namespace MatterHackers.MatterControl
 		public string ContentType { get; private set; }
 
 		/// <summary>
-		/// Return the axis aligned bounding box of the bed
+		/// Gets the axis aligned bounding box of the bed
 		/// </summary>
 		public AxisAlignedBoundingBox Aabb
 		{
@@ -607,7 +607,8 @@ namespace MatterHackers.MatterControl
 				new Vector4(maxVelocity, maxVelocity, maxVelocity, maxVelocity),
 				new Vector4(jerkVelocity, jerkVelocity, jerkVelocity, jerkVelocity),
 				new Vector4(multiplier, multiplier, multiplier, multiplier),
-				cancellationToken, progressReporter);
+				cancellationToken,
+				progressReporter);
 
 			this.GCodeRenderer = new GCodeRenderer(loadedGCode)
 			{

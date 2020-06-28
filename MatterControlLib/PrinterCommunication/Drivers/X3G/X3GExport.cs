@@ -54,17 +54,17 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override bool Enabled
 		{
-			get => printer != null
-				&& printer.Settings.PrinterSelected
-				&& printer.Settings.GetValue<bool>("enable_sailfish_communication");
+			get => Printer != null
+				&& Printer.Settings.PrinterSelected
+				&& Printer.Settings.GetValue<bool>("enable_sailfish_communication");
 		}
 
 		public override string DisabledReason
 		{
 			get
 			{
-				if (printer == null
-					|| printer.Settings.PrinterSelected)
+				if (Printer == null
+					|| Printer.Settings.PrinterSelected)
 				{
 					return "";
 				}
@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			var binaryFileStream = new FileStream(outputPath, FileMode.OpenOrCreate);
 			var outputFile = new BinaryWriter(binaryFileStream);
 
-			var x3gConverter = new X3GWriter(new X3GPrinterDetails(), printer.Settings);
+			var x3gConverter = new X3GWriter(new X3GPrinterDetails(), Printer.Settings);
 
 			var x3gLines = new List<byte[]>();
 			byte[] emptyByteArray = { 0 };
@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 			//Makes sure steps per mm and bed offset is set
 			string splitString = "\\n";
-			string connectGCodeLines = printer.Settings.GetValue(SettingsKey.connect_gcode);
+			string connectGCodeLines = Printer.Settings.GetValue(SettingsKey.connect_gcode);
 			foreach (string connectLine in connectGCodeLines.Split(splitString.ToCharArray(), StringSplitOptions.RemoveEmptyEntries))
 			{
 				bool sendToPrinter;

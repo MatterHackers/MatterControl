@@ -30,6 +30,10 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.Library;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -37,24 +41,18 @@ using System.Runtime.CompilerServices;
 
 namespace MatterHackers.MatterControl
 {
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.PartPreviewWindow;
-	using MatterHackers.MeshVisualizer;
-	using Newtonsoft.Json.Linq;
-
 	public class ExtensionsConfig
 	{
 		private List<IInteractionVolumeProvider> _iaVolumeProviders = new List<IInteractionVolumeProvider>();
 
 		private LibraryConfig libraryConfig;
 
-		//private List<IObject3DEditor> _IObject3DEditorProviders = new List<IObject3DEditor>()
-		//{
-		//	new IntersectionEditor(),
-		//	new SubtractEditor(),
-		//	new SubtractAndReplace()
-		//};
+		// private List<IObject3DEditor> _IObject3DEditorProviders = new List<IObject3DEditor>()
+		// {
+		// 	new IntersectionEditor(),
+		// 	new SubtractEditor(),
+		// 	new SubtractAndReplace()
+		// };
 
 		public ExtensionsConfig(LibraryConfig libraryConfig)
 		{
@@ -83,6 +81,7 @@ namespace MatterHackers.MatterControl
 		{
 			_iaVolumeProviders.Add(volumeProvider);
 		}
+
 		public void Register(IObject3DEditor object3DEditor)
 		{
 			this.MapTypesToEditor(object3DEditor);
