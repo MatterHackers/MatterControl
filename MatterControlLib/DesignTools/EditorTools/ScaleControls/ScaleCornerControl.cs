@@ -226,7 +226,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return SetBottomControlHeight(originalSelectedBounds, cornerPosition);
 		}
 
-		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
@@ -251,7 +251,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
@@ -339,7 +339,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseMove(mouseEvent3D);
 		}
 
-		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (HadClickOnControl)
 			{

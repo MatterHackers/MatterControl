@@ -220,11 +220,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
-				if (SettingIsOem())
-				{
-					return;
-				}
-
 				// show a right click menu ('Set as Default' & 'Help')
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 

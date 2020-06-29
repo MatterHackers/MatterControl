@@ -265,7 +265,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return bestZCornerPosition;
 		}
 
-		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			InteractionContext.Scene.DrawSelection = false;
 
@@ -310,7 +310,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null)
@@ -415,7 +415,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseMove(mouseEvent3D);
 		}
 
-		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			InteractionContext.Scene.DrawSelection = true;
 			// if we rotated it

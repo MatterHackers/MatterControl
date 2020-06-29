@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Lars Brubaker
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,24 +28,23 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using MatterHackers.Agg.UI;
-using MatterHackers.RayTracer;
-using MatterHackers.VectorMath;
 
-namespace MatterHackers.MeshVisualizer
+[assembly: InternalsVisibleTo("MatterControl.Tests")]
+[assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
+[assembly: InternalsVisibleTo("CloudServices.Tests")]
+
+namespace MatterHackers.MatterControl
 {
-	public class MouseEvent3DArgs : EventArgs
+
+	public class ApplicationTopBarCreatedEventArgs : EventArgs
 	{
-		public IntersectInfo info;
-		public MouseEventArgs MouseEvent2D;
+		public GuiWidget Source { get; }
 
-		public Ray MouseRay { get; }
-
-		public MouseEvent3DArgs(MouseEventArgs mouseEvent2D, Ray mouseRay, IntersectInfo info)
+		public ApplicationTopBarCreatedEventArgs(GuiWidget source)
 		{
-			this.info = info;
-			this.MouseEvent2D = mouseEvent2D;
-			this.MouseRay = mouseRay;
+			this.Source = source;
 		}
 	}
 }

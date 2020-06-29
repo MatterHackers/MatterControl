@@ -187,7 +187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return Vector3.Zero;
 		}
 
-		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
 
@@ -210,7 +210,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseMove(mouseEvent3D);
 		}
 
-		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);

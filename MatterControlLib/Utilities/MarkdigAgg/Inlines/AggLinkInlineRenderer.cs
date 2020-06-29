@@ -109,9 +109,15 @@ namespace Markdig.Renderers.Agg.Inlines
 				}
 				else
 				{
-					if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+					try
 					{
-						markdownWidget.LoadUri(new Uri(LinkUrl));
+						if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+						{
+							markdownWidget.LoadUri(new Uri(LinkUrl));
+						}
+					}
+					catch
+					{
 					}
 				}
 			}
@@ -268,15 +274,21 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			if (link.IsImage)
 			{
-				renderer.WriteInline(new ImageLinkSimpleX(renderer, url));
+				if (link.Parent is LinkInline linkInLine)
+				{
+					renderer.WriteInline(new ImageLinkSimpleX(renderer, url, linkInLine.Url));
+				}
+				else
+				{
+					renderer.WriteInline(new ImageLinkSimpleX(renderer, url));
+				}
 			}
 			else
 			{
 				if (link.FirstChild is LinkInline linkInLine
 					&& linkInLine.IsImage)
 				{
-					renderer.WriteInline(new ImageLinkSimpleX(renderer, linkInLine.Url, url));
-					renderer.Pop();
+					renderer.WriteChildren(link);
 				}
 				else
 				{

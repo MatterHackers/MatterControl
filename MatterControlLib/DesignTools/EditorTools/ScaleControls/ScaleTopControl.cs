@@ -210,7 +210,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return new Vector3(originalSelectedBounds.Center.X, originalSelectedBounds.Center.Y, originalSelectedBounds.MaxXYZ.Z);
 		}
 
-		public override void OnMouseDown(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.info != null && InteractionContext.Scene.SelectedItem != null)
 			{
@@ -233,7 +233,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
 
@@ -295,7 +295,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseMove(mouseEvent3D);
 		}
 
-		public override void OnMouseUp(MouseEvent3DArgs mouseEvent3D)
+		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
