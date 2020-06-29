@@ -303,7 +303,15 @@ namespace MatterHackers.PrinterEmulator
 
 		public string ReportMarlinFirmware(string command)
 		{
-			return "FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a\nok\n";
+			var response = @"MatterControl Printer Emulator
+Commands:
+    SLOW // make the emulator simulate actual printing speeds (default)
+    FAST // run as fast as possible
+Emulating:
+FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a
+ok
+";
+			return response;
 		}
 
 		// Add response callbacks here
