@@ -45,12 +45,16 @@ namespace MatterHackers.GCodeVisualizer
 
 		private int vertexID;
 		private int vertexLength;
-		private List<SubTriangleMesh> subMeshs;
 
-		private int[] indexData;
-		private ColorVertexData[] colorData;
+		private ColorVertexData[] colorVertexData;
 
-		public GCodeVertexBuffer(int[] indexData, ColorVertexData[] colorData)
+		/// <summary>
+		/// Create a new VertexBuffer
+		/// </summary>
+		/// <param name="indexData">The array containing the vertex indices.</param>
+		/// <param name="vertexCount">The number of vertices to read from the indexData.</param>
+		/// <param name="colorData">The array containing the colorData.</param>
+		public GCodeVertexBuffer(int[] indexData, int vertexCount, ColorVertexData[] colorData)
 		{
 			try
 			{
@@ -60,8 +64,15 @@ namespace MatterHackers.GCodeVisualizer
 			}
 			catch
 			{
-				this.indexData = indexData;
-				this.colorData = colorData;
+				var triangleData = new List<ColorVertexData>();
+				for (int i = 0; i < vertexCount; i += 3)
+				{
+					triangleData.Add(colorData[indexData[i]]);
+					triangleData.Add(colorData[indexData[i + 1]]);
+					triangleData.Add(colorData[indexData[i + 2]]);
+				}
+
+				this.colorVertexData = triangleData.ToArray();
 			}
 		}
 
@@ -70,40 +81,27 @@ namespace MatterHackers.GCodeVisualizer
 			GL.EnableClientState(ArrayCap.ColorArray);
 			GL.EnableClientState(ArrayCap.NormalArray);
 			GL.EnableClientState(ArrayCap.VertexArray);
-			GL.EnableClientState(ArrayCap.IndexArray);
 			GL.DisableClientState(ArrayCap.TextureCoordArray);
 			GL.Disable(EnableCap.Texture2D);
 
 			unsafe
 			{
-				fixed (int* pIndexData = indexData)
+				fixed (ColorVertexData* pFixedColorData = colorVertexData)
 				{
-					GL.IndexPointer(IndexPointerType.Int, 0, new IntPtr(pIndexData));
-					fixed (ColorVertexData* pFixedColorData = colorData)
-					{
-						byte* pColorData = (byte*)pFixedColorData;
-						GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(pColorData));
-						byte* pNormalData = pColorData + 4;
-						GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(pNormalData));
-						byte* pPosition = pNormalData + 12;
-						GL.VertexPointer(3, VertexPointerType.Float, ColorVertexData.Stride, new IntPtr(pPosition));
-						// GL.DrawArrays(BeginMode.Triangles, ColorVertexData.Stride, Math.Min(colorData.Length, count));
-						GL.DrawRangeElements(BeginMode.Triangles,
-							0,
-							indexData.Length,
-							count,
-							DrawElementsType.UnsignedInt,
-							new IntPtr(pIndexData + offset));
-					}
+					byte* pColorData = (byte*)(pFixedColorData + offset);
+					GL.ColorPointer(4, ColorPointerType.UnsignedByte, ColorVertexData.Stride, new IntPtr(pColorData));
+					byte* pNormalData = pColorData + 4;
+					GL.NormalPointer(NormalPointerType.Float, ColorVertexData.Stride, new IntPtr(pNormalData));
+					byte* pPosition = pNormalData + 12;
+					GL.VertexPointer(3, VertexPointerType.Float, ColorVertexData.Stride, new IntPtr(pPosition));
+					GL.DrawArrays(BeginMode.Triangles, ColorVertexData.Stride, Math.Min(colorVertexData.Length, count));
 				}
 			}
 
-			GL.DisableClientState(ArrayCap.IndexArray);
 			GL.DisableClientState(ArrayCap.NormalArray);
 			GL.DisableClientState(ArrayCap.VertexArray);
 			GL.DisableClientState(ArrayCap.ColorArray);
 
-			GL.IndexPointer(IndexPointerType.Int, 0, new IntPtr(0));
 			GL.ColorPointer(4, ColorPointerType.UnsignedByte, 0, new IntPtr(0));
 			GL.NormalPointer(NormalPointerType.Float, 0, new IntPtr(0));
 			GL.VertexPointer(3, VertexPointerType.Float, 0, new IntPtr(0));

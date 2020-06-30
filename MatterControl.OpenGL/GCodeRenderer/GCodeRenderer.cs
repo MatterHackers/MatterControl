@@ -284,7 +284,7 @@ namespace MatterHackers.GCodeVisualizer
 			}
 
 			// Construct and return the new VertexBuffer object with all color/index data
-			return new GCodeVertexBuffer(vertexIndexArray.Array, colorVertexData.Array);
+			return new GCodeVertexBuffer(vertexIndexArray.Array, vertexIndexArray.Count, colorVertexData.Array);
 		}
 
 		public void Dispose()
