@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl
 
 			while (!partPlaced && itemToMove != null)
 			{
-				int xStep = currentSize;
+				int xStep = 0;
 				int yStep;
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
