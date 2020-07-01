@@ -118,14 +118,14 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				}
 
 				var sceneAabb = scene.GetAxisAlignedBoundingBox();
-				Assert.Greater(sceneAabb.XSize, 60);
-				Assert.Greater(sceneAabb.YSize, 60);
+				Assert.Greater(sceneAabb.XSize, 160);
+				Assert.Greater(sceneAabb.YSize, 160);
 
 				await scene.AutoArrangeChildren(Vector3.Zero);
 
 				sceneAabb = scene.GetAxisAlignedBoundingBox();
 				Assert.Less(sceneAabb.XSize, 60);
-				Assert.Less(sceneAabb.YSize, 60);
+				Assert.Less(sceneAabb.YSize, 75);
 			}
 
 			// arrange 4 items, starting with 1 selected
@@ -144,14 +144,14 @@ namespace MatterHackers.PolygonMesh.UnitTests
 				scene.SelectedItem = child;
 
 				var sceneAabb = scene.GetAxisAlignedBoundingBox();
-				Assert.Greater(sceneAabb.XSize, 60);
-				Assert.Greater(sceneAabb.YSize, 60);
+				Assert.Greater(sceneAabb.XSize, 160);
+				Assert.Greater(sceneAabb.YSize, 160);
 
 				await scene.AutoArrangeChildren(Vector3.Zero);
 
 				sceneAabb = scene.GetAxisAlignedBoundingBox();
 				Assert.Less(sceneAabb.XSize, 60);
-				Assert.Less(sceneAabb.YSize, 60);
+				Assert.Less(sceneAabb.YSize, 75);
 			}
 		}
 

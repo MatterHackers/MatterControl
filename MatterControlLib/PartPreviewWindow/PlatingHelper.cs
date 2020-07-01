@@ -29,24 +29,23 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClipperLib;
 using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
+using MatterHackers.DataConverters3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Linq;
-	using DataConverters3D;
-	using Polygon = List<IntPoint>;
-	using Polygons = List<List<IntPoint>>;
-
 	public static class PlatingHelper
 	{
 		public static VertexStorage PolygonToPathStorage(this Polygons polygons)
 		{
-			VertexStorage output = new VertexStorage();
+			var output = new VertexStorage();
 
 			foreach (Polygon polygon in polygons)
 			{
@@ -66,6 +65,7 @@ namespace MatterHackers.MatterControl
 
 				output.ClosePolygon();
 			}
+
 			output.Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 
 			return output;
@@ -165,25 +165,26 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Moves the target object to the first non-colliding position, starting at the initial position of the target object
 		/// </summary>
-		/// <param name="objectToAdd">The object to position</param>
+		/// <param name="itemToMove">The object to position</param>
 		/// <param name="itemsToAvoid">The objects to hit test against</param>
 		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
 		{
 			// find a place to put it that doesn't hit anything
-			AxisAlignedBoundingBox itemToMoveBounds = itemToMove.GetAxisAlignedBoundingBox();
+			var currentBounds = itemToMove.GetAxisAlignedBoundingBox();
+			var itemToMoveBounds = new AxisAlignedBoundingBox(currentBounds.MinXYZ, currentBounds.MaxXYZ);
 
 			// add in a few mm so that it will not be touching
 			itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
 			itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
 
-			Matrix4X4 transform = Matrix4X4.Identity;
+			var transform = Matrix4X4.Identity;
 			int currentSize = 1;
 			bool partPlaced = false;
 
 			while (!partPlaced && itemToMove != null)
 			{
-				int yStep = 0;
-				int xStep = currentSize;
+				int xStep = 0;
+				int yStep;
 				// check far right edge
 				for (yStep = 0; yStep < currentSize; yStep++)
 				{
@@ -228,7 +229,7 @@ namespace MatterHackers.MatterControl
 			double xStepAmount = 5;
 			double yStepAmount = 5;
 
-			Matrix4X4 positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
+			var positionTransform = Matrix4X4.CreateTranslation(xStep * xStepAmount, yStep * yStepAmount, 0);
 			Vector3 newPosition = Vector3Ex.Transform(Vector3.Zero, positionTransform);
 
 			transform = Matrix4X4.CreateTranslation(newPosition);
@@ -240,7 +241,7 @@ namespace MatterHackers.MatterControl
 				if (meshToTest != itemToMove)
 				{
 					AxisAlignedBoundingBox existingMeshBounds = meshToTest.GetAxisAlignedBoundingBox();
-					AxisAlignedBoundingBox intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
+					var intersection = AxisAlignedBoundingBox.Intersection(testBounds, existingMeshBounds);
 					if (intersection.XSize > 0 && intersection.YSize > 0)
 					{
 						return false;
