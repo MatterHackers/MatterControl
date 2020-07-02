@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		{
 		}
 
-		public static double ExtrusionRatio { get; set; } = 1;
+		public double ExtrusionRatio { get; set; } = 1;
 
 		public override string DebugInfo
 		{
