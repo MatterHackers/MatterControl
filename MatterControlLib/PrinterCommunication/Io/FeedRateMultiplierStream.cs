@@ -40,9 +40,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public FeedRateMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			FeedRateRatio = printer.Settings.GetValue<double>(SettingsKey.feedrate_ratio);
 		}
 
-		public static double FeedRateRatio { get; set; } = 1;
+		public double FeedRateRatio { get; set; }
 
 		public override string DebugInfo => $"Last Destination = {lastDestination}";
 

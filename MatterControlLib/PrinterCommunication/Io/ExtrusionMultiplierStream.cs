@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterControl.Printing;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
@@ -39,9 +40,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public ExtrusionMultiplierStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			ExtrusionRatio = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio);
 		}
 
-		public static double ExtrusionRatio { get; set; } = 1;
+		public double ExtrusionRatio { get; set; }
 
 		public override string DebugInfo
 		{
