@@ -689,7 +689,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			PrinterConfig printer = null;
+			PrinterConfig printer = new PrinterConfig(new PrinterSettings());
 			var gcodeStream = new FeedRateMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
 
 			Assert.AreEqual(1, (int)gcodeStream.FeedRateRatio, "FeedRateRatio should default to 1");
@@ -709,7 +709,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			PrinterConfig printer = null;
+			PrinterConfig printer = new PrinterConfig(new PrinterSettings());
 			var gcodeStream = new ExtrusionMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
 
 			Assert.AreEqual(1, (int)gcodeStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
