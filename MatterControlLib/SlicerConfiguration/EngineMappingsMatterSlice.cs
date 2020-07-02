@@ -452,8 +452,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{
 								if (cancellationToken.IsCancellationRequested)
 								{
-									slicerProcess?.Kill();
-									slicerProcess?.Dispose();
+									// If for some reason we cannot kill the slicing process do not exit
+									try
+									{
+										slicerProcess?.Kill();
+										slicerProcess?.Dispose();
+									}
+									catch
+									{
+									}
+
 									forcedExit = true;
 								}
 
