@@ -689,16 +689,16 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			Assert.AreEqual(1, (int)FeedRateMultiplierStream.FeedRateRatio, "FeedRateRatio should default to 1");
-
 			PrinterConfig printer = null;
 			var gcodeStream = new FeedRateMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 X10 F1000", "G1 Y5 F1000" }));
+
+			Assert.AreEqual(1, (int)gcodeStream.FeedRateRatio, "FeedRateRatio should default to 1");
 
 			line = gcodeStream.ReadLine();
 
 			Assert.AreEqual("G1 X10 F1000", line, "FeedRate should remain unchanged when FeedRateRatio is 1.0");
 
-			FeedRateMultiplierStream.FeedRateRatio = 2;
+			gcodeStream.FeedRateRatio = 2;
 
 			line = gcodeStream.ReadLine();
 			Assert.AreEqual("G1 Y5 F2000", line, "FeedRate should scale from F1000 to F2000 when FeedRateRatio is 2x");
@@ -709,10 +709,10 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string line;
 
-			Assert.AreEqual(1, (int)ExtrusionMultiplierStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
-
 			PrinterConfig printer = null;
 			var gcodeStream = new ExtrusionMultiplierStream(printer, new TestGCodeStream(printer, new string[] { "G1 E10", "G1 E0 ; Move back to 0", "G1 E12" }));
+
+			Assert.AreEqual(1, (int)gcodeStream.ExtrusionRatio, "ExtrusionRatio should default to 1");
 
 			line = gcodeStream.ReadLine();
 			// Move back to E0
@@ -720,7 +720,7 @@ namespace MatterControl.Tests.MatterControl
 
 			Assert.AreEqual("G1 E10", line, "ExtrusionMultiplier should remain unchanged when FeedRateRatio is 1.0");
 
-			ExtrusionMultiplierStream.ExtrusionRatio = 2;
+			gcodeStream.ExtrusionRatio = 2;
 
 			line = gcodeStream.ReadLine();
 

@@ -418,19 +418,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.StartPrint();
 
-					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
-
-					// Scroll the widget into view
-					var scrollable = container.Parents<ManualPrinterControls>().First() as ScrollableWidget;
-					var width = scrollable.Width;
-
-					// Workaround needed to scroll to the bottom of the Controls panel
-					// scrollable.ScrollPosition = new Vector2();
-					scrollable.ScrollPosition = new Vector2(0, 30);
-
-					// Workaround to force layout to fix problems with size of Tuning Widgets after setting ScrollPosition manually
-					scrollable.Width = width - 1;
-					scrollable.Width = width;
+					testRunner.ScrollIntoView("Extrusion Multiplier NumberEdit");
+					testRunner.ScrollIntoView("Feed Rate NumberEdit");
 
 					// Tuning values should default to 1 when missing
 					ConfirmExpectedSpeeds(testRunner, 1, 1, "Initial case");
@@ -463,7 +452,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// Restart the print
 					testRunner.StartPrint();
-					testRunner.Delay(2);
+					testRunner.Delay(1);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print restarted");
@@ -492,10 +481,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.WaitForName("Cancel Wizard Button");
 
-				// Set custom adjustment values
-				FeedRateMultiplierStream.FeedRateRatio = initialFeedRate;
-				ExtrusionMultiplierStream.ExtrusionRatio = initialExtrusionRate;
-
 				// Then validate that they are picked up
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -506,6 +491,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.SwitchToControlsTab();
 
 					var printer = testRunner.FirstPrinter();
+
+					// Set custom adjustment values
+					printer.Connection.FeedRateMultiplierStream.FeedRateRatio = initialFeedRate;
+					printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio = initialExtrusionRate;
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
@@ -681,25 +670,26 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		private static void ConfirmExpectedSpeeds(AutomationRunner testRunner, double targetExtrusionRate, double targetFeedRate, string scope)
 		{
-			SystemWindow systemWindow;
 			SolidSlider slider;
 
 			// Assert the UI has the expected values
-			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out systemWindow, 5) as SolidSlider;
+			slider = testRunner.GetWidgetByName("Extrusion Multiplier Slider", out _) as SolidSlider;
 			testRunner.WaitFor(() => targetExtrusionRate == slider.Value);
 
 			Assert.AreEqual(targetExtrusionRate, slider.Value, $"Unexpected Extrusion Rate Slider Value - {scope}");
 
-			slider = testRunner.GetWidgetByName("Feed Rate Slider", out systemWindow, 5) as SolidSlider;
+			slider = testRunner.GetWidgetByName("Feed Rate Slider", out _) as SolidSlider;
 			testRunner.WaitFor(() => targetFeedRate == slider.Value);
 			Assert.AreEqual(targetFeedRate, slider.Value, $"Unexpected Feed Rate Slider Value - {scope}");
 
-			// Assert the changes took effect on the model
-			testRunner.WaitFor(() => targetExtrusionRate == ExtrusionMultiplierStream.ExtrusionRatio);
-			Assert.AreEqual(targetExtrusionRate, ExtrusionMultiplierStream.ExtrusionRatio, $"Unexpected Extrusion Rate - {scope}");
+			var printer = testRunner.FirstPrinter();
 
-			testRunner.WaitFor(() => targetFeedRate == FeedRateMultiplierStream.FeedRateRatio);
-			Assert.AreEqual(targetFeedRate, FeedRateMultiplierStream.FeedRateRatio, $"Unexpected Feed Rate - {scope}");
+			// Assert the changes took effect on the model
+			testRunner.WaitFor(() => targetExtrusionRate == printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio);
+			Assert.AreEqual(targetExtrusionRate, printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio, $"Unexpected Extrusion Rate - {scope}");
+
+			testRunner.WaitFor(() => targetFeedRate == printer.Connection.FeedRateMultiplierStream.FeedRateRatio);
+			Assert.AreEqual(targetFeedRate, printer.Connection.FeedRateMultiplierStream.FeedRateRatio, $"Unexpected Feed Rate - {scope}");
 		}
 	}
 }

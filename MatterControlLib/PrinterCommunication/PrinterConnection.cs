@@ -2395,8 +2395,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
-			accumulatedStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);
-			accumulatedStream = new FeedRateMultiplierStream(Printer, accumulatedStream);
+			accumulatedStream = ExtrusionMultiplierStream = new ExtrusionMultiplierStream(Printer, accumulatedStream);
+			accumulatedStream = FeedRateMultiplierStream = new FeedRateMultiplierStream(Printer, accumulatedStream);
 			accumulatedStream = new RequestTemperaturesStream(Printer, accumulatedStream);
 
 			if (Printer.Settings.GetValue<bool>(SettingsKey.emulate_endstops))
@@ -2771,6 +2771,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		}
 
 		public PrintTask ActivePrintTask { get; set; }
+
+		public ExtrusionMultiplierStream ExtrusionMultiplierStream { get; private set; }
+		public FeedRateMultiplierStream FeedRateMultiplierStream { get; private set; }
 
 		public void TurnOffPartCoolingFan()
 		{
