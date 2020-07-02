@@ -310,7 +310,8 @@ Commands:
 Emulating:
 FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a
 ok
-";
+".Replace("\r", "");
+
 			return response;
 		}
 
