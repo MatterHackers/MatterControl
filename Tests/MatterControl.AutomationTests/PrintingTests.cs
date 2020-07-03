@@ -194,6 +194,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				"N1 M110 N1*125",
 				"ok",
 				"N2 M115 * 36",
+				"MatterControl Printer Emulator",
+				"Commands:",
+				"    SLOW // make the emulator simulate actual printing speeds (default)",
+				"    FAST // run as fast as possible",
+				"Emulating:",
 				"FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a",
 				"ok",
 				"N3 M104 T0 S0 * 34",
@@ -493,8 +498,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = testRunner.FirstPrinter();
 
 					// Set custom adjustment values
-					printer.Connection.FeedRateMultiplierStream.FeedRateRatio = initialFeedRate;
-					printer.Connection.ExtrusionMultiplierStream.ExtrusionRatio = initialExtrusionRate;
+					printer.Settings.SetValue(SettingsKey.feedrate_ratio, initialFeedRate.ToString());
+					printer.Settings.SetValue(SettingsKey.extrusion_ratio, initialExtrusionRate.ToString());
 
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();

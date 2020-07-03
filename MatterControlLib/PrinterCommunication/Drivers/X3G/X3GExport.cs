@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -82,11 +83,11 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 			string gcodePath = Path.ChangeExtension(outputPath, "_gcode");
 
 			// Generate the gcode
-			var result = await base.Generate(libraryItems, gcodePath, progress, cancellationToken);
+			var errors = await base.Generate(libraryItems, gcodePath, progress, cancellationToken);
 
-			if (result != null && result.Count > 0)
+			if (errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error))
 			{
-				return result;
+				return errors;
 			}
 
 			var inputFile = new StreamReader(gcodePath);

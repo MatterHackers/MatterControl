@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				feedRateRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minFeedRateRatio, maxFeedRateRatio)
+				feedRateRatioSlider = new SolidSlider(default(Vector2), sliderThumbWidth, theme, minFeedRateRatio, maxFeedRateRatio)
 				{
 					Name = "Feed Rate Slider",
 					Margin = new BorderDouble(5, 0),
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				// Remove the HorizontalSpacer
 				settingsRow.Children.Last().Close();
 
-				extrusionRatioSlider = new SolidSlider(new Vector2(), sliderThumbWidth, theme, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
+				extrusionRatioSlider = new SolidSlider(default(Vector2), sliderThumbWidth, theme, minExtrutionRatio, maxExtrusionRatio, Orientation.Horizontal)
 				{
 					Name = "Extrusion Multiplier Slider",
 					TotalWidthInPixels = sliderWidth,
@@ -139,6 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					Margin = new BorderDouble(5, 0),
 					Value = printer.Settings.GetValue<double>(SettingsKey.extrusion_ratio)
 				};
+
 				theme.ApplySliderStyle(extrusionRatioSlider);
 				extrusionRatioSlider.ValueChanged += (sender, e) =>
 				{
@@ -180,6 +181,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
+			printer.Disposed += (s, e) => printer.Settings.SettingChanged -= Printer_SettingChanged;
 		}
 
 		public static SectionWidget CreateSection(PrinterConfig printer, ThemeConfig theme)

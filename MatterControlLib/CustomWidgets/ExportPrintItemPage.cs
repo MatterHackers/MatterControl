@@ -277,7 +277,8 @@ namespace MatterHackers.MatterControl
 										{
 											if (AggContext.OperatingSystem == OSType.Windows || AggContext.OperatingSystem == OSType.X11)
 											{
-												if (showFile) {
+												if (showFile)
+												{
 													AggContext.FileDialogs.ShowFileInFolder(savePath);
 												}
 											}

@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static TreeNode AddItem(ObjectView item, TreeNode parentNode, Dictionary<IObject3D, TreeNode> keyValues, ThemeConfig theme)
 		{
-			if(item.Source is InsertionGroupObject3D insertionGroup)
+			if (item.Source is InsertionGroupObject3D insertionGroup)
 			{
 				return new TreeNode(theme)
 				{
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (parentNode != null)
 			{
 				parentNode.Nodes.Add(node);
-				if(parentNode.Tag is IObject3D object3D)
+				if (parentNode.Tag is IObject3D object3D)
 				{
 					parentNode.Expanded = object3D.Expanded;
 				}
@@ -181,7 +181,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = operationSourceContainerObject3D.Name,
 						Source = item
 					};
-
 
 				default:
 					return new ObjectView(item);
