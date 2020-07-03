@@ -28,13 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
+using MatterHackers.SerialPortCommunication;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -43,15 +47,15 @@ namespace MatterHackers.MatterControl.PrintHistory
 		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
-			this.HAnchor = Agg.UI.HAnchor.Stretch;
-			this.Height = 50;
+			this.HAnchor = HAnchor.Stretch;
+			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
 
 			var mainContainer = new GuiWidget
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
+				VAnchor = VAnchor.Fit
 			};
 
 			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
@@ -83,6 +87,18 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 					string labelName = textInfo.ToTitleCase(printTask.PrintName);
 					labelName = labelName.Replace('_', ' ');
+
+					if (!string.IsNullOrEmpty(printTask.PrinterName))
+					{
+						labelName = printTask.PrinterName + ":\n" + labelName;
+					}
+
+					var mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, printTask.PrintName);
+					if (File.Exists(mcxFileName))
+					{
+						labelName += "\n" + GetStlNames(mcxFileName);
+					}
+
 					var partLabel = new TextWidget(labelName, pointSize: 15)
 					{
 						TextColor = Color.Black
@@ -151,13 +167,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 				var primaryContainer = new GuiWidget
 				{
 					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch
+					VAnchor = VAnchor.Fit
 				};
 
 				var primaryFlow = new FlowLayoutWidget(FlowDirection.LeftToRight)
 				{
 					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch
+					VAnchor = VAnchor.Fit
 				};
 
 				primaryFlow.AddChild(indicator);
@@ -173,6 +189,27 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 
 			this.BackgroundColor = new Color(255, 255, 255, 255);
+		}
+
+		private string GetStlNames(string mcxFileName)
+		{
+			var foundNames = new HashSet<string>();
+			var allLines = File.ReadAllLines(mcxFileName);
+			foreach (var line in allLines)
+			{
+				var find = "\"Name\":";
+				var end = line.IndexOf(find) + find.Length;
+				if (end >= find.Length
+					&& !line.ToLower().Contains(".mcx"))
+				{
+					var nameStart = line.IndexOf("\"", end);
+					var nameEnd = line.IndexOf("\"", nameStart + 1);
+					var name = line.Substring(nameStart + 1, nameEnd - nameStart - 1);
+					foundNames.Add(name);
+				}
+			}
+
+			return string.Join(", ", foundNames);
 		}
 
 		private void AddTimeStamp(PrintTask printTask, Color timeTextColor, FlowLayoutWidget primaryFlow)

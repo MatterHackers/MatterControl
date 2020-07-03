@@ -349,6 +349,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public int PrintTimeSeconds { get; set; }
 
+		public string PrinterName { get; set; }
+
 		public override void Commit()
 		{
 			if (this.PrintEnd != DateTime.MinValue)

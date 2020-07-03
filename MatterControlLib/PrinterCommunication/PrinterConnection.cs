@@ -2141,6 +2141,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									PrintStart = DateTime.Now,
 									PrinterId = this.Printer.Settings.ID.GetHashCode(),
 									PrintName = activePrintItem.PrintItem.Name,
+									PrinterName = this.Printer.Settings.GetValue(SettingsKey.printer_name),
 									PrintItemId = activePrintItem.PrintItem.Id,
 									PrintingGCodeFileName = gcodeFileNameForTask,
 									PrintComplete = false
