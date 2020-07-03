@@ -27,6 +27,21 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using global::MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
@@ -58,21 +73,6 @@ using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -121,6 +121,10 @@ namespace MatterHackers.MatterControl
 		public ThemeConfig MenuTheme => AppContext.MenuTheme;
 
 		public event EventHandler<string> ShellFileOpened;
+
+		public event EventHandler AnyPrintStarted;
+		public event EventHandler AnyPrintCanceled;
+		public event EventHandler AnyPrintComplete;
 
 		public bool IsMatterControlPro()
 		{
@@ -3158,6 +3162,11 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() => this.ShellFileOpened?.Invoke(this, file));
 		}
 
+		public void Connection_PrintStarted(object sender, EventArgs e)
+		{
+			AnyPrintStarted?.Invoke(sender, e);
+		}
+
 		public void Connection_PrintFinished(object sender, string e)
 		{
 			if (sender is PrinterConnection printerConnection
@@ -3182,6 +3191,8 @@ Support and tutorials:
 				var time = Stopwatch.StartNew();
 				ShowNotification("Congratulations Print Complete".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
 			}
+
+			AnyPrintComplete?.Invoke(sender, null);
 		}
 
 		public void Connection_PrintCanceled(object sender, EventArgs e)
@@ -3204,9 +3215,11 @@ Support and tutorials:
 				var time = Stopwatch.StartNew();
 				ShowNotification("Print Canceled".Localize(), markdownText, UserSettingsKey.ShownPrintCanceledMessage);
 			}
-		}
 
-		private void ShowNotification(string title, string markdownText, string userKey)
+			AnyPrintCanceled?.Invoke(sender, e);
+	}
+
+	private void ShowNotification(string title, string markdownText, string userKey)
 		{
 			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
 			{

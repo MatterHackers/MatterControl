@@ -38,19 +38,6 @@ using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class SqliteFileItem : FileSystemFileItem
-	{
-		public PrintItem PrintItem { get; }
-
-		public SqliteFileItem(PrintItem printItem)
-			: base(printItem.FileLocation)
-		{
-			this.PrintItem = printItem;
-		}
-
-		public override string Name { get => this.PrintItem.Name; set => this.PrintItem.Name = value; }
-	}
-
 	public class SqliteLibraryContainer : WritableContainer, ICustomSearch
 	{
 		private string keywordFilter = "";
@@ -106,7 +93,7 @@ namespace MatterHackers.MatterControl.Library
 				else
 				{
 					return new MessageItem($"{printItem.Name} (Missing)");
-					//return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
+					// return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
 				}
 			}).ToList();
 		}
@@ -120,15 +107,19 @@ namespace MatterHackers.MatterControl.Library
 					switch (item)
 					{
 						case CreateFolderItem newFolder:
-							var newFolderCollection = new PrintItemCollection(newFolder.Name, "");
-							newFolderCollection.ParentCollectionID = this.CollectionID;
+							var newFolderCollection = new PrintItemCollection(newFolder.Name, "")
+							{
+								ParentCollectionID = this.CollectionID
+							};
 							newFolderCollection.Commit();
 
 							break;
 
 						case ILibraryContainerLink containerInfo:
-							var newCollection = new PrintItemCollection(containerInfo.Name, "");
-							newCollection.ParentCollectionID = this.CollectionID;
+							var newCollection = new PrintItemCollection(containerInfo.Name, "")
+							{
+								ParentCollectionID = this.CollectionID
+							};
 							newCollection.Commit();
 
 							break;
@@ -176,13 +167,13 @@ namespace MatterHackers.MatterControl.Library
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
 			// TODO: Handle Containers
-			foreach(var item in items)
+			foreach (var item in items)
 			{
 				if (item is SqliteFileItem sqlItem)
 				{
 					sqlItem.PrintItem.Delete();
 				}
-				else if (item is LocalLibraryZipContainerLink  link)
+				else if (item is LocalLibraryZipContainerLink link)
 				{
 					string sql = $"SELECT * FROM PrintItem WHERE ID = @id";
 					var container = Datastore.Instance.dbSQLite.Query<PrintItem>(sql, link.RowID).FirstOrDefault();

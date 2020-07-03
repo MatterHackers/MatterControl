@@ -139,6 +139,7 @@ namespace MatterHackers.MatterControl.DataStorage
 						}
 					}
 				}
+
 				this.hashCode = bigStringForHashCode.ToString().GetHashCode();
 			}
 
@@ -355,6 +356,7 @@ namespace MatterHackers.MatterControl.DataStorage
 				TimeSpan printTimeSpan = PrintEnd.Subtract(PrintStart);
 				PrintTimeSeconds = (int)printTimeSpan.TotalSeconds;
 			}
+
 			base.Commit();
 		}
 	}

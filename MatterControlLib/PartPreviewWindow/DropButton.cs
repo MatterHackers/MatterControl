@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (this.AnchorMate.Widget == null)
 				{
 					this.AnchorMate.Widget = this;
-				};
+				}
 
 				var popupContent = this.PopupContent();
 				if (popupContent == null
@@ -103,14 +103,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					MenuVisible = true;
 
-					void popupContent_Closed(object sender, EventArgs e)
+					void PopupContent_Closed(object sender, EventArgs e)
 					{
 						// Reset menuVisible
 						MenuVisible = false;
-						popupContent.Closed -= popupContent_Closed;
+						popupContent.Closed -= PopupContent_Closed;
 					}
 
-					popupContent.Closed += popupContent_Closed;
+					popupContent.Closed += PopupContent_Closed;
 
 					systemWindow.ShowPopup(
 						this.AnchorMate,

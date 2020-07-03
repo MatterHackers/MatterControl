@@ -33,11 +33,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public interface IListContentView
 	{
 		int ThumbWidth { get; }
+
 		int ThumbHeight { get; }
+
 		ListViewItemBase AddItem(ListViewItem item);
+
 		void ClearItems();
 
 		void BeginReload();
+
 		void EndReload();
 	}
 }

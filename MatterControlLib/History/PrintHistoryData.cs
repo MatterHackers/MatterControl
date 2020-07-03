@@ -36,8 +36,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 	public class PrintHistoryData
 	{
 		public static readonly int RecordLimit = 20;
-		public RootedObjectEventHandler HistoryCleared = new RootedObjectEventHandler();
-		public bool ShowTimestamp;
+
+		public RootedObjectEventHandler HistoryCleared { get; private set; } = new RootedObjectEventHandler();
+
 		private static PrintHistoryData instance;
 
 		public static PrintHistoryData Instance
@@ -48,6 +49,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				{
 					instance = new PrintHistoryData();
 				}
+
 				return instance;
 			}
 		}
