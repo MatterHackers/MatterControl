@@ -154,6 +154,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler<string> PrintFinished;
 
+		public event EventHandler PrintStarted;
+
 		public event EventHandler PrintCanceled;
 
 		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
@@ -2139,6 +2141,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									PrintStart = DateTime.Now,
 									PrinterId = this.Printer.Settings.ID.GetHashCode(),
 									PrintName = activePrintItem.PrintItem.Name,
+									PrinterName = this.Printer.Settings.GetValue(SettingsKey.printer_name),
 									PrintItemId = activePrintItem.PrintItem.Id,
 									PrintingGCodeFileName = gcodeFileNameForTask,
 									PrintComplete = false
@@ -2147,6 +2150,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 								ActivePrintTask.Commit();
 
 								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
+
+								PrintStarted?.Invoke(this, null);
 							}
 						}
 					}
@@ -2773,6 +2778,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 		public PrintTask ActivePrintTask { get; set; }
 
 		public ExtrusionMultiplierStream ExtrusionMultiplierStream { get; private set; }
+
 		public FeedRateMultiplierStream FeedRateMultiplierStream { get; private set; }
 
 		public void TurnOffPartCoolingFan()

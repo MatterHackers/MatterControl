@@ -268,12 +268,14 @@ namespace SQLiteWin32
 			{
 				_mappings = new Dictionary<string, TableMapping>();
 			}
+
 			TableMapping map;
 			if (!_mappings.TryGetValue(type.FullName, out map))
 			{
 				map = new TableMapping(type);
 				_mappings[type.FullName] = map;
 			}
+
 			return map;
 		}
 
@@ -1123,6 +1125,7 @@ namespace SQLiteWin32
 			{
 				return 0;
 			}
+
 			lock (locker)
 			{
 				return Insert(obj, "", obj.GetType());

@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl
 
 			// Register listeners
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
+			this.Connection.PrintStarted += ApplicationController.Instance.Connection_PrintStarted;
 			this.Connection.PrintFinished += ApplicationController.Instance.Connection_PrintFinished;
 			this.Connection.PrintCanceled += ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;

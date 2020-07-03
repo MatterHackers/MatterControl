@@ -29,45 +29,25 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PrintHistory;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class PrintHistoryContainer : LibraryContainer
+	public class SqliteFileItem : FileSystemFileItem
 	{
-		private EventHandler unregisterEvents;
+		public PrintItem PrintItem { get; }
 
-		public PrintHistoryContainer()
+		public SqliteFileItem(PrintItem printItem)
+			: base(printItem.FileLocation)
 		{
-			this.ChildContainers = new List<ILibraryContainerLink>();
-			this.Items = new List<ILibraryItem>();
-			this.Name = "Print History".Localize();
-			this.DefaultView = typeof(HistoryListView);
-
-			PrintHistoryData.Instance.HistoryCleared.RegisterEvent(HistoryChanged, ref unregisterEvents);
-			ApplicationController.Instance.AnyPrintStarted += HistoryChanged;
-			ApplicationController.Instance.AnyPrintCanceled += HistoryChanged;
-			ApplicationController.Instance.AnyPrintComplete += HistoryChanged;
+			this.PrintItem = printItem;
 		}
 
-		private void HistoryChanged(object sender, EventArgs e)
-		{
-			ReloadContent();
-		}
-
-		public override void Dispose()
-		{
-			unregisterEvents?.Invoke(this, null);
-
-			base.Dispose();
-		}
-
-		public override void Load()
-		{
-			// PrintItems projected onto FileSystemFileItem
-			Items = PrintHistoryData.Instance.GetHistoryItems(50).Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
-		}
+		public override string Name { get => this.PrintItem.Name; set => this.PrintItem.Name = value; }
 	}
 }

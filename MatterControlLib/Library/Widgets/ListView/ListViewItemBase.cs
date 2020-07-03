@@ -180,12 +180,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			get
 			{
 				bool isContentItem = listViewItem.Model is ILibraryObject3D;
-				bool isValidStream = (listViewItem.Model is ILibraryAssetStream stream
-					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName));
+				bool isValidStream = listViewItem.Model is ILibraryAssetStream stream
+					&& ApplicationController.Instance.Library.IsContentFileType(stream.FileName);
 				bool isContainerLink = listViewItem.Model is ILibraryContainerLink;
 
-				bool isGCode = listViewItem.Model is FileSystemFileItem item && Path.GetExtension(item.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0
-					|| listViewItem.Model is SDCardFileItem sdItem && Path.GetExtension(sdItem.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0;
+				bool isGCode = (listViewItem.Model is FileSystemFileItem item
+						&& Path.GetExtension(item.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0)
+					|| (listViewItem.Model is SDCardFileItem sdItem
+						&& Path.GetExtension(sdItem.Name).IndexOf(".gco", StringComparison.OrdinalIgnoreCase) == 0);
 
 				return isContentItem || isValidStream || isContainerLink || isGCode;
 			}
@@ -404,6 +406,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		public virtual bool IsHoverItem { get; set; }
+
 		public virtual bool EditMode { get; set; }
 
 		private bool isSelected = false;
@@ -418,11 +421,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				return isSelected;
 			}
+
 			set
 			{
 				if (isSelected != value)
 				{
-					//selectionCheckBox.Checked = value;
+					// selectionCheckBox.Checked = value;
 
 					isSelected = value;
 					UpdateColors();
