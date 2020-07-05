@@ -39,20 +39,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class ExtruderOffsetField : UIField
 	{
-		private SettingsContext settingsContext;
-		private Color textColor;
-		private ThemeConfig theme;
-		private string slicerConfigName;
-		PrinterConfig printer;
+		private readonly SettingsContext settingsContext;
+		private readonly ThemeConfig theme;
+		private readonly PrinterConfig printer;
 
 		private List<Vector3Field> childFields;
 
-		public ExtruderOffsetField(PrinterConfig printer, SettingsContext settingsContext, string slicerConfigName, Color textColor, ThemeConfig theme)
+		public ExtruderOffsetField(PrinterConfig printer, SettingsContext settingsContext, ThemeConfig theme)
 		{
 			this.printer = printer;
-			this.slicerConfigName = slicerConfigName;
 			this.settingsContext = settingsContext;
-			this.textColor = textColor;
 			this.theme = theme;
 		}
 
@@ -87,7 +83,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 				column.AddChild(row);
 
-				var labelWidget = SettingsRow.CreateSettingsLabel(string.Format("{0} {1}", "Nozzle".Localize(), i + 1), "", textColor);
+				var labelWidget = SettingsRow.CreateSettingsLabel(string.Format("{0} {1}", "Nozzle".Localize(), i + 1), "", theme.TextColor);
 				labelWidget.Name = $"Nozzle {i}";
 				labelWidget.Margin = new BorderDouble(right: 60);
 				row.AddChild(labelWidget);

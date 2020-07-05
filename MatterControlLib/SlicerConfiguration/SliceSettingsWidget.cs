@@ -762,7 +762,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					if (settingData.SlicerConfigName == "extruder_offset")
 					{
 						placeFieldInDedicatedRow = true;
-						uiField = new ExtruderOffsetField(printer, settingsContext, settingData.SlicerConfigName, theme.TextColor, theme);
+						uiField = new ExtruderOffsetField(printer, settingsContext, theme);
 					}
 					else
 					{

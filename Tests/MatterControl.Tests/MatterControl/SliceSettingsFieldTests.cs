@@ -322,7 +322,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
-		public void ColorFieldTest()
+		public async void ColorFieldTest()
 		{
 			Assert.Fail();
 		}
@@ -477,10 +477,29 @@ namespace MatterControl.Tests.MatterControl
 			Assert.Fail();
 		}
 
-		[Test, Ignore("Not Implemented")]
-		public void ExtruderOffsetFieldTest()
+		[Test]
+		public async Task ExtruderOffsetFieldTest()
 		{
-			Assert.Fail();
+			var theme = MatterHackers.MatterControl.AppContext.Theme;
+
+			var printer = new PrinterConfig(new PrinterSettings());
+			var testField = new ExtruderOffsetField(printer,
+				new SettingsContext(printer, null, NamedSettingsLayers.All),
+				theme);
+
+			await ValidateAgainstValueMap(
+				testField,
+				theme,
+				(field) =>
+				{
+					return string.Join("x", field.Content.Descendants<MHNumberEdit>().Select(w => w.ActuallNumberEdit.Text).ToArray());
+				},
+				new List<ValueMap>()
+				{
+					{"0x0x0", "0x0x0"},
+					{"0x0", "0x0x0"}, // we store 3 offsets now, when we see 2 we should make 3
+					// {"", "0x0x0"}, // no values should become 0s
+				});
 		}
 
 		[Test, Ignore("Not Implemented")]
