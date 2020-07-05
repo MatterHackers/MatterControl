@@ -1,6 +1,6 @@
 # [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition): First of its kind software that lets you design, organize, and manage your 3D prints.
 
-![MatterControl Pro](https://lh3.googleusercontent.com/d4jHyk2aCJgtsT0H6i3uFba1nfIBtVYlVpwsRf8xfrI8hN661vU46HHPKCaI2QXDjtAD9ykH6smj1c4itc8PVw=w640)]
+[![MatterControl Pro](https://lh3.googleusercontent.com/d4jHyk2aCJgtsT0H6i3uFba1nfIBtVYlVpwsRf8xfrI8hN661vU46HHPKCaI2QXDjtAD9ykH6smj1c4itc8PVw=w640)](https://www.matterhackers.com/store/l/mattercontrol-pro-edition)
 
 ## Get MatterHackers Professional Support
 - [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition) grants access to [MatterHackers](https://www.matterhackers.com) staff of experts, who are dedicated to helping you succeed from design to print.

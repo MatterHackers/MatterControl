@@ -1,0 +1,267 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": null, 
+        "AttributeOptions": [], 
+        "AvailableDate": "2015-10-07", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:28:00.028530", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Oct 7th", 
+        "DisplayListPrice": "299.99", 
+        "DisplayPrice": "249.99", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_qR6i3zBzFcoCX3Xh67bRGtph-XzeMytH1V2ol7lDZvXkFAZQwrxm7XczWKGlFtHTx8FiCu-qRwJV7YEM3zIerA2nsg", 
+            "ImageUrl": "https://lh3.googleusercontent.com/4WoB0fvu6DrlAnZ0oWbE-OE2WtOl-CgfY5jltfwhQJkhA9NDOgvCx7oZ7Zpb9fLD-QkksDZdyPY35DVOrBQ_8QM", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": true, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks1TEc3UAw", 
+        "LeadDays": 3, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GOqxxQ4M", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "MatterControl T7X is the latest addition to a line of highly intuitive 3D printer controllers. This 7\" Android-powered touchscreen is the ultimate upgrade for any 3D printer. With a sleek, contemporary design, MatterControl T7X gives you the ability to create, edit, and prepare models directly on your 3D printer using a modern, yet advanced interface. T7X includes an onboard camera for in-action print monitoring and is Wifi enabled for an integrated 3D printing experience. ", 
+        "ProductListPrice": 29999, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks1TEc3UAw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:07.132710", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<div class=\"collection-marketing\">\r\n<div class=\"collection-copy\">\r\n<div class=\"h3 subtitle\">Experience standalone 3D printing with MatterControl T7X</div>\r\n</div>\r\n</div>\r\n<!-- Give Your 3D Printer a Brain with MatterControl Touch T7X -->", 
+                    "ElementCode": "JY25KY", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"collection-features\">\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Tested\" src=\"https://lh3.googleusercontent.com/JXy3v_Jx99Q5uMLrtW2stpvd7an0tYCL0SBUiXUuPP1l0rXHVZr8nD47zNYTsMRGnIVaEBa9bB2edZuyyE7lfrHChg=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Print Comfortably and Confidently</div>\r\n<div class=\"desc\">MatterControl T7X incorporates all the premium features of MatterControl into one handheld device, replacing the need of your computer, SD cards, or USB connectivity, allowing a completely standalone 3D printing experience.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Custom\" src=\"https://lh3.googleusercontent.com/aRYKFJ9Ka_hF1tC0eeLkt_68RaQJOWV11qN_PA8l4oMiyMW8R7pBcRnYkYg1492kaWSQdH2mMfjWMBDn_rNy_C989EY=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">On-Board Slicing</div>\r\n<div class=\"desc\">Download designs directly onto your T7X from your MatterControl Cloud Library for fast, efficient slicing.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Tested\" src=\"https://lh3.googleusercontent.com/KfaGBs7kOrS2a7HhFpwN4lJtTW3Jo18nY2PLiA7K4A0CpNe-Jja-zwdgVTM0YB05N51DRe5wjQhU4UfocNX5LzpcdQ=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Sleek, Solid Design</div>\r\n<div class=\"desc\">MatterControl T7X&rsquo;s injection molded frame is designed to harmonize your 3D printing workflow - multiple standing angles and ergonomic handles promote the T7X experience.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Tested\" src=\"https://lh3.googleusercontent.com/tDpVkNen_8r7-xUY4guXyPK_zxhDbUWuVHhplRGgjiq-rskNYdWQxVe3Yt_IGDwxSxiquhW4N5ptjIrz6H8vqp3XcQ=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Built-In Camera</div>\r\n<div class=\"desc\">Monitor your print progress remotely using T7X&rsquo;s powerful built-in camera, and even be alerted when your part is complete.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "CTPI9Q", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>About MatterControl T7X</h2>\r\n</div>\r\n<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<p>MatterControl T7X is designed specifically to enhance the user&rsquo;s 3D printing experience. With its compact and sleek build, T7X blends all the great features of MatterControl with the accessibility of creating a standalone 3D printer.</p>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"MatterControl T7X Logo\" src=\"https://lh3.googleusercontent.com/rtsA50ctrjOmNIThC6nQ3HVcaN0ihrz9rBgHat5KQXDzLsLR0-Y_W5RTNfoQHT646pPngVsI_XgjyMAewzNAKrA9=s250\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "W4S233", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"7g6OY8-qNyw\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "7SZGYM", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Give Your 3D Printer a Brain with MatterControl Touch T7X</h2>\r\n</div>\r\n<div class=\"clearfix section\">\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-9 col-sm-9 col-xs-12\">\r\n<p>Printers that require a constant connection can be difficult to operate if you have one computer and are running 15+ hour prints. This means your computer must stay tethered to your printer at all times, which can tie up other areas of your workflow. Enter T7X - the 3D printer controller that not only makes your 3D printer a stand-alone machine, but does so with the power of MatterControl.</p>\r\n</div>\r\n<div class=\"col-lg-3 col-sm-3 hidden-xs icon\"><img alt=\"customization\" src=\"https://lh3.googleusercontent.com/JXy3v_Jx99Q5uMLrtW2stpvd7an0tYCL0SBUiXUuPP1l0rXHVZr8nD47zNYTsMRGnIVaEBa9bB2edZuyyE7lfrHChg=s90\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "ON9P6P", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-desc-photos clearfix\"><img alt=\"MatterControl T7X\" src=\"https://lh3.googleusercontent.com/eVHYwn1iU2_sFHpI-C_hoB-wj9B3802blFglITgs7OxVHCG8eN6qmJmqj29x8kaJWI8kdg806BqHfwzlS6dDgKJn=w660-h350-n\" class=\"rounded\" /></div>", 
+                    "ElementCode": "5ZHP58", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Integrated Slicing</h2>\r\n</div>\r\n<div class=\"clearfix section\">\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-9 col-sm-9 col-xs-12\">\r\n<p>MatterControl T7X has MatterControl at its heart - the powerful slicing engine developed by the team at MatterHackers. That means you only need to provide 3D designs to T7X and the rest is done on board. Customize print settings, modify part orientation, and even export gCode to an SD card for use on other machines. The T7X also has WiFi connectivity and a web browser allowing you to search for and download files from your favorite design store - like the <a href=\"http://www.matterhackers.com/store/c/digital-designs\">one here on MatterHackers.com</a>!</p>\r\n</div>\r\n<div class=\"col-lg-3 col-sm-3 hidden-xs icon\"><img alt=\"customization\" src=\"https://lh3.googleusercontent.com/aRYKFJ9Ka_hF1tC0eeLkt_68RaQJOWV11qN_PA8l4oMiyMW8R7pBcRnYkYg1492kaWSQdH2mMfjWMBDn_rNy_C989EY=s90\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "RGH5E1", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-desc-photos clearfix\"><img alt=\"MatterControl T7X\" src=\"https://lh3.googleusercontent.com/rbqSu9Yo9hgyixpJs18mC3-nkWnfJLT7GIVEU2sJEpbAe9P3KZ_ygEpFhaAMGZ-fZb4te9d5RzXvW5-rEBN5oQrSP9c=w660-h240-pp\" class=\"rounded\" /></div>", 
+                    "ElementCode": "U7PGS4", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Cloud Design Library</h2>\r\n</div>\r\n<div class=\"clearfix section\">\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-9 col-sm-9 col-xs-12\">\r\n<p>MatterControl T7X connects to your MatterControl Cloud Library and allows you to download and print files purchased from the MatterHackers Design Store, as well as any other files&nbsp;stored in your Cloud Library. Seamlessly transfer designs between devices using this powerful feature of MatterControl.</p>\r\n</div>\r\n<div class=\"col-lg-3 col-sm-3 hidden-xs icon\"><img alt=\"customization\" src=\"https://lh3.googleusercontent.com/kdXnSbItwcQRmRCYx3Hb0OTHHC7tascs6IDQ6PdUU0rm1ebOCVjHN2JnNeUx6L0UKF86uL7BwY9A66SHKG3OWBmQVNo=s90\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "08XBM2", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-desc-photos clearfix\"><img alt=\"MatterControl T7X\" src=\"https://lh3.googleusercontent.com/zJh7kZ-sKne_yMjpWZoXaaw-_CFpKnJTIW9lUKaa9ciS1o6IgqCJfQUfN3RjWmHBwpFpynzl9IVCwGxkMAE6T15PTw=w660-h450-n\" class=\"rounded\" /></div>", 
+                    "ElementCode": "4CKDQ1", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Remote Print Monitoring</h2>\r\n</div>\r\n<div class=\"clearfix section\">\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-9 col-sm-9 col-xs-12\">\r\n<p>T7X features a built-in camera, and can text or email you a picture of your printed part as soon as it's finished! The camera can also be used to generate an up-to-the-minute picture of your part as it's printing using MatterControl Cloud Sync. The stand-up design of T7X provides a clear view of your 3D printer's print bed as it is actively printing.</p>\r\n</div>\r\n<div class=\"col-lg-3 col-sm-3 hidden-xs icon\"><img alt=\"customization\" src=\"https://lh3.googleusercontent.com/tDpVkNen_8r7-xUY4guXyPK_zxhDbUWuVHhplRGgjiq-rskNYdWQxVe3Yt_IGDwxSxiquhW4N5ptjIrz6H8vqp3XcQ=s90\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "ACABPY", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-desc-photos clearfix\"><img alt=\"MatterControl T7X\" src=\"https://lh3.googleusercontent.com/hmA6u6b7vzylzUMmRqIyfa26LR5KzAJXAThIF6pJBZm2-Z1Tvvx-Vh07xvWmOR20IlyOKPmJZQlPsD0scqbZ89SgSw=w660-h170-pp\" class=\"rounded\" /></div>", 
+                    "ElementCode": "I7JA3O", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>WiFi Enabled, Not Required</h2>\r\n</div>\r\n<div class=\"clearfix section\">\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-9 col-sm-9 col-xs-12\">\r\n<p>T7X has WiFi connectivity to allow the use of MatterControl cloud features like Cloud Library and Cloud Sync. However, these are not required to operate the device. Your T7X will function out of the box and control your 3D printer without a WiFi connection. The unit has an SD card reader for offline loading of digital designs to ensure maximum functionality even without an internet connection. Though not necessary, we do highly recommend keeping your T7X connected to WiFi to continue receiving the latest updates from our software development team, and to take advantage of the internet connected features of the device.</p>\r\n</div>\r\n<div class=\"col-lg-3 col-sm-3 hidden-xs icon\"><img alt=\"customization\" src=\"https://lh3.googleusercontent.com/BCUlSk7qkDvSiVtt8ePiK-0i1wfnXM8VwVdfUnOm6V6iQSFxSCtYTQ0m8E6RgrcBUTPpRh5SfI0p6_5tJZrPur_K=s90\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "9PSMFD", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-desc-photos clearfix\"><img alt=\"MatterControl T7X\" src=\"https://lh3.googleusercontent.com/TtHzq_6AZ8fSQAa_I8BbxUplFPJsebqNq_7vK1lEXWVxhTWnMNaxlanPsxPunDOhoohn-OL_F4NL7qsK2mVS2V5Arg=w660-h300-pp\" class=\"rounded\" /></div>", 
+                    "ElementCode": "9JZ4XX", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Whats in the box?</h2>\r\n</div>\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-6\">\r\n<ul>\r\n<li>T7X Touchscreen controller</li>\r\n<li>USB power cable</li>\r\n<li>USB power adapter</li>\r\n<li>Getting Started Guide</li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-5\">\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/rfkJnA11NKLyCvtTlY1WWgeaBuZ0W0u4hvrSBkH86TtAklsqtadsLq5YFC1MckuhyTEwyZ-y456DlRZb5MJT3rWPkWc=w360\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "7T6B90", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p><br /><br /></p>\r\n<div class=\"flex-center section\"><img alt=\"MatterControl T7X Logo\" src=\"https://lh3.googleusercontent.com/rtsA50ctrjOmNIThC6nQ3HVcaN0ihrz9rBgHat5KQXDzLsLR0-Y_W5RTNfoQHT646pPngVsI_XgjyMAewzNAKrA9=s350\" /></div>\r\n<div id=\"technical\">\r\n<div class=\"collection-table collection-slant\">\r\n<h2>Technical Information</h2>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<td>Processor</td>\r\n<td>Quad Core 1.3GHz processor</td>\r\n</tr>\r\n<tr>\r\n<td>Ram</td>\r\n<td>1GB</td>\r\n</tr>\r\n<tr>\r\n<td>WiFi</td>\r\n<td>802.11 b/g/n</td>\r\n</tr>\r\n<tr>\r\n<td>Screen</td>\r\n<td>7\" IPS 1024x600</td>\r\n</tr>\r\n</table>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "KCDDZO", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<style>\r\n\r\n\r\n\r\n.product-desc-photos img {\r\nwidth:100%;\r\n}\r\n\r\n    @media (min-width: 768px) {\r\n    .flex-center {\r\n    display:flex;\r\n    justify-content: center;\r\n    align-content: center;\r\n    align-items: center;\r\n    }\r\n    }\r\n    .section {\r\n    padding: 10px 20px;\r\n    }\r\n    .section > .section {\r\n    background: #f7f9f9;\r\n    border-radius:5px;\r\n    }\r\n    .section > .section h2 {\r\n    color: #0071ff;\r\n    } \r\n    .section > .section h3 {\r\n    color: #0071FF;\r\n    text-transform: none;\r\n    } \r\n    .section .icon {\r\n    padding:0 0 10px 10px;\r\n    text-align: center;\r\n    }\r\n    .section .icon img {\r\n    max-width:100%;\r\n    margin-top:5%;\r\n    margin:5% auto;\r\n    padding-left:10px;\r\n    padding-right:10px;\r\n    display: inline-block;\r\n    }\r\n    .product-content .section h3::before {\r\n    display: block;\r\n    position: absolute;\r\n    /* left: 0; */\r\n    margin-top: 8px;\r\n    margin-left: -31px;\r\n    /* top: 0; */\r\n    content: ' ';\r\n    height: 3px;\r\n    width: 20px;\r\n    background-color: #009bf2;\r\n    }\r\n\r\n\r\n\tsection {\r\n    padding: 10px 20px;\r\n    }\r\n    section > section {\r\n    background: #f7f9f9;\r\n    border-radius:5px;\r\n    }\r\n    section > section h2 {\r\n    color: #0071ff;\r\n    } \r\n    section > section h3 {\r\n    color: #0071FF;\r\n    text-transform: none;\r\n    } \r\n    section .icon {\r\n    padding:0 0 10px 10px;\r\n    text-align: center;\r\n    }\r\n    section .icon img {\r\n    max-width:100%;\r\n    margin-top:5%;\r\n    margin:5% auto;\r\n    padding-left:10px;\r\n    padding-right:10px;\r\n    display: inline-block;\r\n    }\r\n    .product-content section h3::before {\r\n    display: block;\r\n    position: absolute;\r\n    /* left: 0; */\r\n    margin-top: 8px;\r\n    margin-left: -31px;\r\n    /* top: 0; */\r\n    content: ' ';\r\n    height: 3px;\r\n    width: 20px;\r\n    background-color: #009bf2;\r\n    }\r\n\r\n    hr {\r\n    margin-top: 30px;\r\n    margin-bottom: 30px;\r\n    border: 0;\r\n    border-top: none; \r\n    background: url(https://lh3.googleusercontent.com/OnsljwEnd-4ytYe1nhco5jQnSWFEDuWoMe23eTpRfJfZzQQnFLkCh7I3DYSASPrtHAaFdSpmp4AJuR2J9g1tUO4Y=s30) no-repeat center center;\r\n    /*background: url(https://lh3.googleusercontent.com/9TdCKmTdgxqi953pBxHferqhZQHdDJ7Ho2Iw4zajp3p4H9Ydqn4k2CN7Zbts5_UHPrdNpZKlZ6ji5aCnhZdHXcIn=s30) no-repeat center center;*/\r\n    background-size: contain;\r\n    height: 20px;\r\n    }\r\n    .product-content h3,\r\n    .product-content h2 {\r\n    text-transform:none;\r\n    font-family:'Montserrat';\r\n    }\r\n\r\n    .product-content .product-heading h2 {\r\n    \tbackground: #00FFD4;\r\n    display:block;\r\n    width:100%;\r\n    /*min-height:250px;*/\r\n    padding: 10px 20px;\r\n    border-radius:5px;\r\n    background:url('https://lh3.googleusercontent.com/lH6jtCx9K_cknsDTV3404UDgtCOeW_yXkX-ejlEnOmg6DgDG0kuaSQVxmjVlVM9pqjY5IuI8I-Wd0KGTA4cyISuqEw=s600') top center no-repeat;\r\nbackground-size:cover;\r\n    position: relative;\r\n    color:#fff;\r\n    }\r\n\r\n    .title {\r\n    font-size: 22px;\r\n    font-family: 'Montserrat', sans-serif;\r\n    word-wrap: normal;\r\n    margin-top: 10px;\r\n    margin-bottom: 5px;\r\n    }\r\n    .collection-page .collection-masthead h1 {\r\n    color:#333;\r\n    }\r\n    /* overrides */\r\n    .products-container {\r\n    justify-content: center;\r\n    }\r\n    .collection-page .collection-masthead {\r\n    background-color: transparent;\r\n    color: #005195;\r\n    border: 1px solid #f7f9f9;\r\n    margin-top: 15px;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-page .collection-masthead {\r\n    padding-bottom:10px;\r\n    }\r\n    }\r\n    .collection-page .collection-masthead .breadcrumb a {\r\n    color: #718282;\r\n    }\r\n    .collection-page .collection-masthead .breadcrumb>li+li:before {\r\n    color: #d7dada;\r\n    }\r\n    .collection-page .collection-masthead .breadcrumb>.active {\r\n    color: rgba(90, 90, 90, 0.33);\r\n    }\r\n    .collection-hero {\r\n    background-image: url('https://lh3.googleusercontent.com/H4Cq88NVTJ88dEv5fsU1x8bI1RgZppSlvinEC_KNIu6trZCYJRQtMDsU2qVBdMG2wQmrCQp0klSJdhPk4g_KS8OeQu4=s1000');\r\n    background-repeat:no-repeat;\r\n    min-height:500px;\r\n    background-size:50%;\r\n    }\r\n    .full-half {\r\n    padding-left:50%;\r\n    }\r\n    .collection-sale img {\r\n    width:100%;\r\n    max-width:1452px;\r\n    margin-top:10px;\r\n    margin-bottom:10px;\r\n    border-radius:3px;\r\n    }\r\n    @keyframes strikethrough {\r\n    0% {\r\n    transform: scaleX(0);\r\n    }\r\n    20% {\r\n    transform: scaleX(1);\r\n    }\r\n    }\r\n    .collection-marketing {\r\n    border-radius:3px;\r\n    padding:5px 5% 20px;\r\n    display:flex;\r\n    justify-content: space-between;\r\n    align-items:center;\r\n    color:#303c2a;\r\n    color:#fff;\r\n    flex-wrap: wrap;\r\n    border-bottom: #10A0DD solid 2px;\r\n    /* gradient */\r\n    background: #0071ff;\r\n    background: -moz-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -webkit-gradient(left bottom, right top, color-stop(0%, #00FFD4), color-stop(100%, #0071ff));\r\n    background: -webkit-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -o-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -ms-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2f254', endColorstr='#91e842', GradientType=1 );  position: relative;\r\n    background:transparent;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-marketing {\r\n    flex-wrap:initial;\r\n    }\r\n    }\r\n    .collection-marketing .collection-logo {\r\n    width:100%;\r\n    text-align:center;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-marketing .collection-logo {\r\n    width:25%;\r\n    }\r\n    }\r\n    .collection-marketing .collection-logo img {\r\n    width:100%;\r\n    max-width:150px;\r\n    }\r\n    .collection-marketing .collection-copy {\r\n    text-align: center;\r\n    width:100%;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-copy {\r\n    width: 50%;\r\n    }\r\n    }\r\n    .collection-marketing .collection-copy .title {\r\n    color:#0071FF;\r\n    }\r\n    .collection-marketing .collection-copy .subtitle {\r\n    color: #00aeec;\r\n    margin-left:8px;\r\nline-height:1.6\r\n    }\r\n    .collection-marketing .title {\r\n    font-family: 'Montserrat';\r\n    font-weight: bold;\r\n    font-size:20px;\r\n    color:#fff;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-marketing .title {\r\n    font-size:27px;\r\n    }\r\n    }\r\n    .collection-copy .subtitle {\r\n    margin-top:5px;\r\n    font-size:19px;\r\n    }\r\n    .collection-widget {\r\n    display:none;\r\n    text-align:center;\r\n    width:25%;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-widget {\r\n    display:inline;\r\n    }\r\n    }\r\n    .collection-widget img {\r\n    width:100%;\r\n    max-width:200px;\r\n    }\r\n    .collection-about {\r\n    margin:50px auto 0;\r\n    padding:5%;\r\n    background: #f6ffe1;\r\n    }\r\n    .collection-about .title {\r\n    font-family:'Montserrat';\r\n    font-weight:bold;\r\n    }\r\n    .collection-slant {\r\n    background: #F7F9F9;\r\n    position: relative;\r\n    z-index: 1;\r\n    margin:50px auto;\r\n    }\r\n    .collection-slant:before,\r\n    .collection-slant:after {\r\n    background: inherit;\r\n    content: '';\r\n    display: block;\r\n    height: 50%;\r\n    left: 0;\r\n    position: absolute;\r\n    right: 0;\r\n    border-radius:3px;\r\n    z-index: -1;\r\n    -webkit-backface-visibility: hidden;\r\n    }\r\n    .collection-slant:before {\r\n    top: 0;\r\n    -webkit-transform: skewY(1.5deg);\r\n    transform: skewY(1.5deg);\r\n    -webkit-transform-origin: 100% 0;\r\n    transform-origin: 100% 0;\r\n    }\r\n    .collection-slant:after {\r\n    bottom: 0;\r\n    -webkit-transform: skewY(-1.5deg);\r\n    transform: skewY(-1.5deg);\r\n    -webkit-transform-origin: 100%;\r\n    transform-origin: 100%;\r\n    }\r\n    .collection-callout {\r\n    border-radius: 5px;\r\n    background: #E2F255;\r\n    width:100%; \r\n    min-height:200px; \r\n    display:flex;\r\n    margin-top:40px;\r\n    align-items: center;\r\n    align-content: center;\r\n    justify-content: center;\r\n    flex-wrap: wrap;\r\n    font-family: 'Montserrat';\r\n    color: #fff;\r\n    background-color: #a45cff;\r\n    background-size: cover;\r\n    background-image: url('https://lh3.googleusercontent.com/j8im3nbJ6qqgmG5kIDbktSeYRaK7ITQm6BmsLH7MNVJZPLJuh-FSXroyPLGP5VEaH_xoNtp6xGWj4HWUAflAhuVoMw=s600')\r\n    }\r\n    .collection-callout .title {\r\n    font-weight: bold;\r\n    width:100%;\r\n    font-size:19px;\r\n    font-family:'Montserrat';\r\n    text-align:center;\r\n    margin-bottom:10px;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-callout .title {\r\n    font-size:23px;\r\n    margin-bottom:0;\r\n    }\r\n    }\r\n    .collection-callout .subtitle {\r\n    font-family:'Montserrat';\r\n    font-size:13px;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-callout .subtitle {\r\n    font-size:18px;\r\n    }\r\n    }\r\n    .collection-callout .cta {\r\n    padding: 4px 12px;\r\n    border-radius: 5px;\r\n    margin: 0 8px;\r\n    border: #f0beff 2px solid;\r\n    color: hsla(287, 100%, 97%, 1);\r\n    font-weight: bold;\r\n    transition: all .1s ease-in-out;\r\n    -moz-transition: all .1s ease-in-out;\r\n    -webkit-transition: all .1s ease-in-out;\r\n    display: block;\r\n    white-space: nowrap;\r\n    }\r\n    a.collection-callout:hover {\r\n    color: #fff;\r\n    text-decoration:none;\r\n    }\r\n    a.collection-callout:hover .cta {\r\n    background: #f0beff;\r\n    color: #4C2B76;\r\n    }\r\n    /* table comparison */\r\n    .collection-table {\r\n    width:100%;\r\n    margin-top:50px;\r\n    padding-left:5%;\r\n    padding-right:5%;\r\n    }\r\n    .collection-table thead td {\r\n    font-weight:bold;\r\n    font-size:125%;\r\n    }\r\n    .collection-table tr td:first-child {\r\n    font-weight: bold;\r\n    width: 30%;\r\n    }\r\n    .collection-table .table>tbody>tr>td.success {\r\n    color: #7ca933; /* MH green #27AF60 */\r\n    background: transparent !important;\r\n    }\r\n    .collection-table .table>tbody>tr>td.danger {\r\n    color: #903434;\r\n    background: transparent !important;\r\n    }\r\n    .collection-table .table>tbody>tr>td.warning {\r\n    /*background: transparent !important;*/\r\n    color:#736a38;\r\n    }\r\n    /* features */\r\n    .collection-features {\r\n    display:flex;\r\n    flex-wrap:wrap;\r\n    margin:0 auto;\r\n    padding:10px 20px;\r\n    color: #303c2a;\r\n    background-color: #f7f9f9;\r\n    background-size: cover;\r\n    background-image: url(https://lh3.googleusercontent.com/S240XH84BYZlNer_GcAauv6aK-Lwk5YPZFlBXdBY2LJ5Dy1IsA6dVwdU4B8oY5yishrDpNicWTKzwwavDGxnahOPVO4=s600);\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-features {\r\n    padding:15px 7%;\r\n    }\r\n    }\r\n    .collection-features .feature {\r\n    width:100%;\r\n    padding-bottom:15px;\r\n    justify-content: center;\r\n    align-items: center;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-features .feature {\r\n    display: flex;\r\n    padding: 10px 0;\r\n    }\r\n    }\r\n    .collection-features .feature img {\r\n    padding:10px 10px 10px 0;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-features .feature img {\r\n    padding:0;\r\n    max-width:100%;\r\n    }\r\n    }\r\n    .collection-features .title {\r\n    font-weight: bold;\r\n    font-size:19px;\r\n    font-family:'Montserrat';\r\n    color:#0097CE;\r\n    }\r\n    /* upgrades */\r\n    .collection-upgrades {\r\n    display:flex;\r\n    flex-wrap:wrap;\r\n    margin:0 auto;\r\n    color: #303c2a;\r\n    background-size: cover;\r\n    }\r\n    .collection-upgrades .feature {\r\n    width:100%;\r\n    padding-bottom:15px;\r\n    justify-content: center;\r\n    align-items: center;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-upgrades .feature {\r\n    display: flex;\r\n    border-top: 1px solid rgba(158, 160, 158, 0.22);\r\n    padding: 10px 0;\r\n    }\r\n    }\r\n    .collection-upgrades .title {\r\n    font-weight: bold;\r\n    font-size:19px;\r\n    font-family:'Montserrat';\r\n    color:#0071ff;\r\n    margin-top:3px;\r\n    margin-bottom:0;\r\n    }\r\n    .collection-upgrades .subtitle {\r\n    color:#00D6E0;\r\n    margin-left:5px;\r\n    }\r\n    .collection-upgrades strike.subtitle {\r\n    margin-right:5px;\r\n    }\r\n    .collection-upgrades span.included {\r\n    color:#E77E22;\r\n    }\r\n    .collection-upgrades .included .subtitle {\r\n    color:#E77E22;\r\n    }\r\n    /* reason to buy from MatterHackers */\r\n    .collection-reason {\r\n    display: flex;\r\n    flex-wrap: wrap;\r\n    justify-content: center;\r\n    background: #297eb7;\r\n    color: #fff;\r\n    padding: 5%;\r\n    align-items: center;\r\n    border-radius:5px;\r\n    margin:50px auto 15px;\r\n    background-image: url(https://lh3.googleusercontent.com/j8im3nbJ6qqgmG5kIDbktSeYRaK7ITQm6BmsLH7MNVJZPLJuh-FSXroyPLGP5VEaH_xoNtp6xGWj4HWUAflAhuVoMw=s600);\r\n    background-position: center center;\r\n    background-size: cover;\r\n    }\r\n    .collection-reason a {\r\n    font-weight:bold;\r\n    color: #fff;\r\n    border-bottom:1px solid hsla(206, 69%, 75%, 1);\r\n    text-decoration:none;\r\n    }\r\n    .collection-reason a:hover {\r\n    border-color: #fff;\r\n    }\t\r\n    .collection-reason .logo {\r\n    display:none;\r\n    }\r\n    .collection-reason .logo img {\r\n    width:100%;\r\n    }\r\n    .collection-reason .content {\r\n    width:100%;\r\n    min-width:50%;\r\n    }\r\n    @media (min-width: 1200px) {\r\n    .collection-reason .content {\r\n    /*padding: 0 50px 0 75px;*/\r\n    /*width:75%;*/\r\n    }\r\n    }\r\n\r\n     #about .about-content {\r\n    padding:20px 10%;\r\n    background: #00FFD4;\r\n    background: -moz-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -webkit-gradient(left bottom, right top, color-stop(0%, #00FFD4), color-stop(100%, #0071ff));\r\n    background: -webkit-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -o-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: -ms-linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    background: linear-gradient(225deg, #00FFD4 0%, #0071ff 30%);\r\n    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e2f254', endColorstr='#91e842', GradientType=1 );\r\n    position: relative;\r\n    }\r\n    h2.product-heading {\r\n    background: #00FFD4;\r\n    display:block;\r\n    width:100%;\r\n    /*min-height:250px;*/\r\n    padding: 10px 20px;\r\n    border-radius:5px;\r\n    background:url('https://lh3.googleusercontent.com/lH6jtCx9K_cknsDTV3404UDgtCOeW_yXkX-ejlEnOmg6DgDG0kuaSQVxmjVlVM9pqjY5IuI8I-Wd0KGTA4cyISuqEw=s600') top center no-repeat;\r\nbackground-size:cover;\r\n    position: relative;\r\n    color:#fff;\r\n    }\r\n    #technical h2 {\r\n    padding-top:30px;\r\n    }\r\n    #upgrades ul {\r\n    display:flex;\r\n    list-style:none;\r\n    padding:0;\r\n    }\r\n    #upgrades li {\r\n    width:25%;\r\n    min-height:160px;\r\n    margin:7px;\r\n    text-align:center;\r\n    padding:5px 10px;\r\n    background-color: #F7F9F9;\r\n    border-radius:3px;\r\n    display: flex;\r\n    align-items: center;\r\n    justify-content: center;\r\n    text-align:center;\r\n    color: #2980b9;\r\n    font-size:16px;\r\n    }\r\n    @media (min-width: 768px) {\r\n    .collection-features .image img {\r\n    padding: 0;\r\n    }\r\n    }\r\n    .collection-upgrades .image img {\r\n    padding:0;\r\n    }\r\n    .rounded {\r\n    border-radius:5px;\r\n    }\r\n    .about-content .title,\r\n    .about-content .desc {\r\n    color: #fff;\r\n    }\r\n</style>", 
+                    "ElementCode": "M8KK5S", 
+                    "Images": [], 
+                    "Type": "html"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_qR6i3zBzFcoCX3Xh67bRGtph-XzeMytH1V2ol7lDZvXkFAZQwrxm7XczWKGlFtHTx8FiCu-qRwJV7YEM3zIerA2nsg", 
+                "ImageUrl": "https://lh3.googleusercontent.com/4WoB0fvu6DrlAnZ0oWbE-OE2WtOl-CgfY5jltfwhQJkhA9NDOgvCx7oZ7Zpb9fLD-QkksDZdyPY35DVOrBQ_8QM", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_qR6i3zBzFcoCX3Xh67bRGtph-XzeMytH1V2ol7lDZvXkFAZQwrxm7XczWKGlFtHTx8FiCu-qRwJV7YEM3zIerA2nsg", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/4WoB0fvu6DrlAnZ0oWbE-OE2WtOl-CgfY5jltfwhQJkhA9NDOgvCx7oZ7Zpb9fLD-QkksDZdyPY35DVOrBQ_8QM", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_NnvuVnxjP2W91ZMUs5QEzrV7m9xl6UUIItpUyfSn6lto26aItF_G0LWQ_ht1zxc4YgAMFn96txmzRjl2NDKGLYs1cJs", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/G6y9hReXXXSruFC_LMD0xctszLdFDd1HQT-sm5q8Xh9LHFeALkB80qYqu9sOVHPMvo_vBnBqLDomwr305aLXcj4", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_j3Md15pIFKCQZqxrkBIYbTYh7qmqWrV85iDP9PUm-_eCa-CfpBaDxKlcBLUsxJRWvg9CPdrbPuHFjwPBrvP_6E0Dfw", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/8Bht3tWpFI3sUeQLMKHwal2yVKBcOAVeyToxVUDYeAB-lVmEW1gTnAj3-0glNgS0Bw1oN2Rjs4aDBklKZ-r_6w", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_nNSz5chui8YtVQmHLyzC_uuF9ppoxR7QOf_OAcBB25bbPpX1CuMs8DpMrgipaA9cjcXo0bnaBrDYK_wSshlSaFhR4g", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/0oS_ohejitTLsx8ebDFXyebfLoNJ7rmcReYKaJzc7jZuVrVK_PaLdBatrKFbNrgrjNa9r6cMzLYXQMSqaZMH1tLO", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_WQxJApJmSihDu2qbQVAKzC_mXfOM-fACxQzNPsS8r1DSQrM_-rtRa3ot5IcNdFXOH3XrJbuEAlpsrjYYhT3_PLp_Yw", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/2TMFokEfgcKAEnJF6Q5uufS94quwox6orX33SG_1fghlG8F8jpQXIaTWJVU3Ma8NEplQatWjYuUJg_TQDndOFPw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_lfL8CCpB_rro_1Al-CP9z-mN0zrH5lBcteERM41zfObC-F8aUBaR9U_Yl0QBwltBZGKHyWzFDRLOFRnvE3nfQ5HQiA", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/VRbnnxzhoABWfR353Lyju8h8EK8r2iI_MFIPOvB75AQdR9y4tmyUh2Y146EdxfZ6QuVr6Bk5FtePWIPMkBCTipM", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_iEwmmiJareOcEimlfLUTyUwBq6vzMh1PZfjbX3ZhOh1I5fHXfG5NYLZd1waZVCSIHH1O7iuZpGn8ncv2lFqXzW8JMcU", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/srxiYBZSUCFf7zzR5WJiGSpfq1iyA1j96wkzUSEnrSMTF1sau2iRnKC3eABiLYemDKHRjWPGWQi-kICzfFhfgaI", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICApKK6sQoM", 
+            "MetaTagKeywords": [
+                "3d printer controller", 
+                "mattercontrol", 
+                "wireless 3d printing", 
+                "untethered 3d printing", 
+                "3d print remotely", 
+                "3d printer screen", 
+                "3d printer upgrade", 
+                "astroprint", 
+                "printtopeer"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:05:07.132750", 
+            "ProductEditedOn": "2019-10-10T18:37:36.500544", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "mattercontrol-touch", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBc0thU2dnZ00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBeEliMW93b00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBck5mR293b00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNnFXdi13Z00M"
+            ], 
+            "ShortDescription": "MatterControl T7X is the latest addition to a line of highly intuitive 3D printer controllers. This 7\" Android-powered touchscreen is the ultimate upgrade for any 3D printer. With a sleek, contemporary design, MatterControl T7X gives you the ability to create, edit, and prepare models directly on your 3D printer using a modern, yet advanced interface. T7X includes an onboard camera for in-action print monitoring and is Wifi enabled for an integrated 3D printing experience. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "MatterControl T7X - Standalone 3D Printer Controller (Refurbished)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M", 
+        "ProductNumber": "30497002", 
+        "ProductPrice": 24999, 
+        "ProductType": "physical-on-demand", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 0, 
+        "QuantityOnHand": 0, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "mattercontrol-touch", 
+        "SID": "MZK5LG7P", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "MatterControl T7X - Standalone 3D Printer Controller (Refurbished)", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 1000000, 
+        "TotalWeightGrams": "1,000.00", 
+        "TotalWeightKilograms": "1.00", 
+        "TotalWeightPounds": "2.20", 
+        "Weight": 1000000, 
+        "WeightGrams": "1,000.00", 
+        "WeightKilograms": "1.00", 
+        "WeightPounds": "2.20"
+    }, 
+    "Status": "success"
+}

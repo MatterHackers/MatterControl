@@ -1,0 +1,155 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-07-05", 
+        "BarCodeID": "", 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-05-30T17:09:25.636073", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jul 5th", 
+        "DisplayListPrice": "75.00", 
+        "DisplayPrice": "69.95", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
+            "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWDhGNzVFTgw", 
+        "LeadDays": 1, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.20", 
+            "9.00", 
+            "10.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Want to include a glass surface as one of your reliable build surface options for your Pulse 3D printer's magnetic base print bed? Check out\u00a0the Glass Plate for Magnetic Base 9\" x 10\"!", 
+        "ProductListPrice": 7500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWDhGNzVFTgw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-05-30T17:09:25.404235", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>Interchangeable Reliability with Glass Plate</strong></h3>\r\n<p>Want a glass surface option for your 3D printer's magnetic base print bed? Check out<span>&nbsp;the Glass Plate for Magnetic Base 9\" x 10\"! Increase the variety of build surfaces currently available for magnetic print beds to include the classic surface every maker can rely on&mdash;the glass plate. When you find yourself missing the shiny, smooth bottom surface achieved through printing on a glass surface, simply take the off the surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base FlexPlate in its place. Because the glass plate is attached to a firm flexplate with high performance transfer adhesive, you end up with a glass flexplate that securely sticks flat against the magnetic bed, removing any chance for bowing around the center of the bed and maintaining consistent heat transfer between the heated print bed and glass plate. Expand your list of reliable, interchangeable build surfaces with the Glass Plate for Magnetic Base.</span></p>", 
+                    "ElementCode": "V0OI4R", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Technical Specifications</strong></h3>\r\n<ul>\r\n<li>Material:&nbsp;<span>Low Expansion Borosilicate Glass with Transfer Adhesive and FlexPlate</span></li>\r\n<li>Size: 229mm (+/-1mm) x 254mm (+/-1mm)</li>\r\n<li>Thickness (with adhesive and flexplate): 6mm</li>\r\n<li><span>Edges: Ground with machined beveled</span></li>\r\n<li><span>Temperature Rating = 500 &deg;F (260 &deg;C) for maximum continuous operation</span></li>\r\n</ul>", 
+                    "ElementCode": "93L6Z7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><span><strong>STREAMLINE YOUR 3D PRINTING EXPERIENCE WITH MATTERHACKERS</strong></span></h3>\r\n<p>At MatterHackers we pride ourselves on offering various quality products for every maker on top of offering friendly service, advice, and support through our staff. Every day MatterHackers constantly works to include various products that streamline the 3D printing experience for makers of every experience level. Have a question about the what conveniences the Glass Extra Plate for Magnetic Base 9\" x 10\" has to offer? No problem. Feel free to give our friendly, knowledgeable staff a call.</p>", 
+                    "ElementCode": "7TKQSC", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
+                "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/a29b8242-25e1-431d-9f26-5221528e47c8", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/pUakiuZQ6Msv7YgvdZ1-VQKDoPfnzWtRnKtEPVTlm-Ln0Nfh7nF32MpiaOntuYqJ7SBdxGR7_L0IJD2eQKxUodc", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/747dda32-6936-45f1-b187-eb7be5bb3c2b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/0xNduOtAgg1Hr883zb3F5jzPGYkffFHgq4JHZYpJyILU2AyufjaYrAVKalfEdXqTbm1gi9Q6WBBCkXsKdXd4v4U", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/8c42c54b-db6e-44b3-af65-59156835284d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/9VBRNWNBsXY432gxoYNfwHSU8rXA8E5J2RcjUEkwLPl6ULjGY5r9O2Bu8fh_pwJ-iI-GkPio2jUDz6Ta-xC_gvPU", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc4vGBCgw", 
+            "MetaTagKeywords": [
+                "glass", 
+                "flexplate", 
+                "build plate", 
+                "magnetic glass beds"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-05-30T17:09:25.404249", 
+            "ProductEditedOn": "2020-01-08T23:52:49.550285", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "glass-plate-for-magnetic-base-9-x-10", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAku6fCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs882LCww"
+            ], 
+            "ShortDescription": "Want to include a glass surface as one of your reliable build surface options for your Pulse 3D printer's magnetic base print bed? Check out\u00a0the Glass Plate for Magnetic Base 9\" x 10\"!", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Glass Plate for Magnetic Base 9\" x 10\""
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc4vGBCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 6995, 
+        "ProductType": "physical-on-demand", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 33, 
+        "QuantityOnHand": 33, 
+        "QuantityReserved": 9, 
+        "ReferenceUrl": "glass-plate-for-magnetic-base-9-x-10", 
+        "SID": "MX8F75EN", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Glass Plate for Magnetic Base 9\" x 10\"", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00"
+    }, 
+    "Status": "success"
+}

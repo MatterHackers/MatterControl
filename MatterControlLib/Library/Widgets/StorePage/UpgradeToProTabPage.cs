@@ -55,9 +55,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 
 			markdownWidget.Markdown = "# Upgrade to [MatterControl Pro](https://www.matterhackers.com/admin/product-preview/ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIC_65WICww)";
 
-			CheckForUpdate();
-
 			this.AddChild(markdownWidget);
+
+			CheckForUpdate();
 		}
 
 		private void CheckForUpdate()

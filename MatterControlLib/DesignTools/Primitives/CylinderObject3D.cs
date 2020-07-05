@@ -150,8 +150,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			using (RebuildLock())
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				Height = Math.Max(Height, .001);
-				Diameter = Math.Max(Diameter, .1);
+				Height = agg_basics.Clamp(Height, .01, Height, ref valuesChanged);
+				Diameter = agg_basics.Clamp(Diameter, .01, Diameter, ref valuesChanged);
 
 				using (new CenterAndHeightMaintainer(this))
 				{
