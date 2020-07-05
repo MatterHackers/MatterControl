@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -112,10 +113,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[Description("The width from one side to the opposite side.")]
 		public double Diameter { get; set; } = 20;
 
 		public double Height { get; set; } = 20;
 
+		[Description("The number of segments around the perimeter.")]
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
