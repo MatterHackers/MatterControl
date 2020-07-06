@@ -322,7 +322,7 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test, Ignore("Not Implemented")]
-		public async void ColorFieldTest()
+		public void ColorFieldTest()
 		{
 			Assert.Fail();
 		}

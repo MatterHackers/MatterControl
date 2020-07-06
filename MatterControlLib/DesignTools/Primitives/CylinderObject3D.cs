@@ -147,12 +147,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
+			Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
+			Height = agg_basics.Clamp(Height, .01, 1000000, ref valuesChanged);
+			Diameter = agg_basics.Clamp(Diameter, .01, 1000000, ref valuesChanged);
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
+			}
+
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				Height = agg_basics.Clamp(Height, .01, Height, ref valuesChanged);
-				Diameter = agg_basics.Clamp(Diameter, .01, Diameter, ref valuesChanged);
-
 				using (new CenterAndHeightMaintainer(this))
 				{
 					if (!Advanced)
@@ -176,11 +181,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
 					}
 				}
-			}
-
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));

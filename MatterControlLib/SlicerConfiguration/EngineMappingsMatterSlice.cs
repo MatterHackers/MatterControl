@@ -668,7 +668,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				AddDefaultIfNotPresent(preStartGCode, "G21", startGCodeLines, "set units to millimeters");
 				AddDefaultIfNotPresent(preStartGCode, "M107", startGCodeLines, "fan off");
 				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
-				if (bed_temperature > 0)
+				if (bed_temperature > 0
+					&& settings.GetValue<bool>(SettingsKey.has_heated_bed))
 				{
 					string setBedTempString = string.Format("M140 S{0}", bed_temperature);
 					AddDefaultIfNotPresent(preStartGCode, setBedTempString, startGCodeLines, "start heating the bed");
@@ -736,6 +737,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				double bed_temperature = settings.GetValue<double>(SettingsKey.bed_temperature);
 				if (bed_temperature > 0
+					&& settings.GetValue<bool>(SettingsKey.has_heated_bed)
 					&& !startGCode.Contains("M109"))
 				{
 					string setBedTempString = string.Format("M190 S{0}", bed_temperature);
