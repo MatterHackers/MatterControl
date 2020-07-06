@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
@@ -144,7 +145,7 @@ namespace MatterHackers.MatterControl.Library
 					}
 				}
 
-				this.ReloadContent();
+				UiThread.RunOnIdle(this.ReloadContent);
 			});
 		}
 

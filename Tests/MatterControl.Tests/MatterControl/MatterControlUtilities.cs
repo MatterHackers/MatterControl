@@ -352,6 +352,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// close the welcome message
 			testRunner.EnsureWelcomePageClosed();
+			testRunner.Delay();
+			if (testRunner.NamedWidgetExists("Cancel Wizard Button"))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
 
 			// Click 'Add Printer' if not on screen
 			if (!testRunner.NameExists("AddPrinterWidget", 0.2))

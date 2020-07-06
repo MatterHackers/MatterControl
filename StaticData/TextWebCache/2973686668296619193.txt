@@ -1,0 +1,198 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": null, 
+        "AttributeOptions": [], 
+        "AvailableDate": "2014-08-14", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:25:51.840480", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Aug 14th", 
+        "DisplayListPrice": "2,495.00", 
+        "DisplayPrice": "2,295.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_cSR2H4w4-5D-gXtuz7iroinHGKUvDhrYQZAHJlDIgZ4ch5JKCGNMqWKYS4j-0pQodG-vEBvI-S41dpfG7TqY8wpi87A", 
+            "ImageUrl": "https://lh3.googleusercontent.com/ZBVNBu4qfGtuvUSSSaiNHROaibtwPdqQvPg9QJZx3-RPrZaAP0vL2BAFHhc6AJ3QNGaPfq9tIm0LakDVOjiwblFj", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": false, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVzQ2VlA3VAw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GIyCmwkM", 
+        "ListingIsActive": false, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Airwolf has done it again! The possibilities are endless with the Airwolf 3D HDL. This printer has a huge build volume which is three to four times larger than competitors - and you can get it without breaking the bank! The Airwolf 3D HDL is fully assembled and calibrated, so all you need to do is buy and print. This printer literally crushes the competition.\r\n\r\nLEAD TIME IS CURRENTLY 4 WEEKS. Order now to reserve your place in the queue. ", 
+        "ProductListPrice": 249500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVzQ2VlA3VAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 24999, 
+                    "AddOnDiscountDisplay": 0, 
+                    "AddOnDisplayBasePrice": "249.99", 
+                    "AddOnDisplayPrice": "249.00", 
+                    "AddOnDisplaySavings": "0.99", 
+                    "AddOnFloatPrice": 249.0, 
+                    "AddOnListingReference": "mattercontrol-touch", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 24900, 
+                    "AddOnSavings": 99, 
+                    "AddOnSkuReference": "MZK5LG7P", 
+                    "AddOnTitle": "MatterControl T7X - Standalone 3D Printer Controller (Refurbished)", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks1TEc3UAw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 229500, 
+            "DateTimeCreated": "2017-07-25T07:06:35.299350", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p>Airwolf 3D has always produced great machines, but they have outdone themselves with this beauty! The HDL is truly a fine printer! If you are new to 3D printing, this is the machine for you. The HDL is designed to cater to beginners, as well as their growing passion for printing. This particular printer contains the same triumphant qualities as other sophisticated printers, but it has the ability to add other features when your printing becomes more advanced. Some of the other features include a&nbsp;jam-resistant JRx hot end, or a&nbsp;dual hot-end, which has the ability to print engineering-grade specialty filaments, like Polycarbonate and Bridge Nylon.</p>\r\n<p>Your large imagination will never be stifled with the HDL. It has a HUGE build volume, so you will have plenty of space to print your creations. The HDL rivals competitors with a&nbsp;build envelope of 1,100 cubic inches (12&rdquo; x 8&rdquo; x 11&rdquo;), which is three to four times larger than similarly priced printers.</p>\r\n<p>The Airwolf 3D HDL has a layer to layer resolution of 0.08mm - this provides a very detailed and accurate print. With this precision, your printed objects will look exactly how you envisioned them! &nbsp;The HDL prints with many filaments, including: Biodegradable PLA, Soft PLA, LayBrick, LayWood, BronzeFill, TPE, and TPU.</p>", 
+                    "ElementCode": "RX0BOK", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p><span>Tech Specs:</span></p>\r\n<ul>\r\n<li>Build Envelope: 1,100 cubic inches</li>\r\n<li>Build Volume:&nbsp;12in x 8in x 11in</li>\r\n<li>Nozzle Diameter: 0.5mm</li>\r\n<li>Minimum Layer Thickness: 0.08mm</li>\r\n<li>Maximum Speed: 150mm/sec</li>\r\n<li>Theoretical Positioning Precision: 0.02mm</li>\r\n<li>Input Format: gcode</li>\r\n<li>Power Supply:&nbsp;Internal auto-switching 13.5V DC, 150W</li>\r\n<li>Overall Size:&nbsp;24in x 18in x 18in</li>\r\n<li>Weight: 16kg</li>\r\n</ul>\r\n<p><span>Includes:</span></p>\r\n<ul>\r\n<li>Integrated Power supply</li>\r\n<li>0.50 orifice nozzle (.35 orifice nozzle&nbsp;&nbsp;is optional)</li>\r\n<li>Tempered glass plate covered with RED&nbsp;tape</li>\r\n<li>One user guide (paper bound)</li>\r\n<li>2 pound spool of PLA&nbsp;filament (3 mm)</li>\r\n<li>Flash drive with all necessary software</li>\r\n<li>USB cord</li>\r\n<li>Set of Allen wrenches</li>\r\n</ul>", 
+                    "ElementCode": "DPAO1N", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img title='Airwolf 3D HDL' src='https://lh5.ggpht.com/wfW-6JZwmuQyhSaoV7JUZVsVhfAjJYqM8o76cSg8KSEsiKW4mJKkqLkyFx-OyNbETaj37VV0vuseoZNaOS8mBznI6A'></p>", 
+                    "ElementCode": "GC2QH3", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_wfW-6JZwmuQyhSaoV7JUZVsVhfAjJYqM8o76cSg8KSEsiKW4mJKkqLkyFx-OyNbETaj37VV0vuseoZNaOS8mBznI6A", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/NwfIKEffkIpbyOXMEqDyKEIJ-qhtMQvUNrb6YxqPqXLO2rJ6cKmuaLpHYu-bTrLWNa4cEyQk3cSk-W8oFx3jikg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p><span>Why Buy an Airwolf</span></p>\n<p>You get to be part of the 3D printing \"circle of life\". Before shipping out your printer, the team at Airwolf uses each new printer to print parts for another 3D printer for 15 hours before boxing it up for you to enjoy. You'll notice several 3D printed parts on every Airwolf model. Each of the parts you see was printed on someone else's 3D printer before they ever pulled it out of the box. Besides offering a warm and fuzzy pay it forward type feeling, the practical truth is that printing with each machine for 15 hours before shipment ensures a level of quality assurance that can't otherwise be matched. As a result when your Airwolf arrives at your door you can be guaranteed it is leveled and fully calibrated. Furthermore, because of the sturdy design of each Airwolf, they stay in alignment very well meaning you rarely need to re-calibrate.</p>\n<p><span>Why Buy from MatterHackers</span></p>\n<p>At MatterHackers we pride ourselves on offering friendly service, advice and support. Our prices are always the lowest in the industry when you factor in our\u00a0<strong>free shipping</strong>\u00a0for every item on the MatterHackers site (including 3D printers). Most of all, our staff is friendly and knowledgeable. They have been 3D printing for several years now and are happy to answer your 3D printing questions. Have a question about the amazing capabilities of your new HDL? No problem. Feel free to give us a call. Additionally, each Airwolf printer ships with\u00a0<a href=\"http://www.mattercontrol.com/\">MatterControl Pro</a>\u00a0- AKA the best 3D printing software you can find. MatterControl is the most intuitive, feature rich 3D printing software and includes MatterSlice - the fastest and most accurate slicing engine on the market.</p>\n<p>In short, buying a 3D printer from MatterHackers is a holistic experience. We are here to partner with you through every step of your 3D printing journey. Additionally, we have all of the\u00a0<a href=\"/store/3d-printer-filament?t=3.00mm%20PLA%20Filament\">PLA</a>,\u00a0<a href=\"/store/3d-printer-filament?t=3.00mm%20ABS%20Filament\">ABS</a>, and\u00a0<a href=\"/store/3d-printer-filament?t=3.00mm%20Specialty%20Filament\">Specialty Filament</a>\u00a0that you could ever need to design anything you can imagine.</p>", 
+                    "ElementCode": "D46I3T", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style=\"text-align: center;\"><img title=\"Airwolf 3D HDL Printer\" src=\"https://lh3.googleusercontent.com/xodJkWHOwXc9r0_Hi8J6XFthwppjuNAL4CsuSHpYXHfNbHwlScewcSfKBi2-CbZ73lE3IxSteXkdY5_B01RL0-zsGyI=s800\" alt=\"\" /></p>", 
+                    "ElementCode": "YTRVSI", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_xodJkWHOwXc9r0_Hi8J6XFthwppjuNAL4CsuSHpYXHfNbHwlScewcSfKBi2-CbZ73lE3IxSteXkdY5_B01RL0-zsGyI", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/reQa1fI-jDnDSf_pLAUd_UxvXr1KPtYz2h0ozItulNkf5JgKjr8HzbhGuaPqGzKxYCsOEwIiIWdfdMqauWhgog", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_cSR2H4w4-5D-gXtuz7iroinHGKUvDhrYQZAHJlDIgZ4ch5JKCGNMqWKYS4j-0pQodG-vEBvI-S41dpfG7TqY8wpi87A", 
+                "ImageUrl": "https://lh3.googleusercontent.com/ZBVNBu4qfGtuvUSSSaiNHROaibtwPdqQvPg9QJZx3-RPrZaAP0vL2BAFHhc6AJ3QNGaPfq9tIm0LakDVOjiwblFj", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": false, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_cSR2H4w4-5D-gXtuz7iroinHGKUvDhrYQZAHJlDIgZ4ch5JKCGNMqWKYS4j-0pQodG-vEBvI-S41dpfG7TqY8wpi87A", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ZBVNBu4qfGtuvUSSSaiNHROaibtwPdqQvPg9QJZx3-RPrZaAP0vL2BAFHhc6AJ3QNGaPfq9tIm0LakDVOjiwblFj", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_2c3Mze8TBuRk3Qa4gT6rzJ-fMSYdeUSAqsX2xQ0Gl8TN_wl_ll3unKCF45GzmJ6w7Kfdvvp0WfmA7XreO0ilaEmk", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/M_WrazHRz_P8-tS4YHCZes31xcDkT3s_-PGJkQDv8dqgotpC_CUgWPJ03RJ2aWPlyql0yeS5C-00YZV6FkzMsMk", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_uCJCV166Eq1h1PDWhb5LY9SCb72InC38m9W-D9ocUFyBP4LhA3Uzrjhh6JhDO-dftIEbiQcfhomEe7rZ93a8GSe8uQ", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/7kiHK3t9bpvUwa1wTVYvWUG5jREsaudq3Mr0D09aP2xoiIjKECJb7z1I9cTQty4Ad1AtHpxvDDMWm9WfXz9PaX4", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": false, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBaU9LMXRRa00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAiOK1tQkM", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2017-07-25T07:06:35.299390", 
+            "ProductEditedOn": "2019-10-02T22:35:05.769885", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "airwolf-3d-hdl", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBd0lMVXJ3a00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBOEp5UHFRc00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M"
+            ], 
+            "ShortDescription": "Airwolf has done it again! The possibilities are endless with the Airwolf 3D HDL. This printer has a huge build volume which is three to four times larger than competitors - and you can get it without breaking the bank! The Airwolf 3D HDL is fully assembled and calibrated, so all you need to do is buy and print. This printer literally crushes the competition.\r\n\r\nLEAD TIME IS CURRENTLY 4 WEEKS. Order now to reserve your place in the queue. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": null, 
+            "TemplateKey": null, 
+            "Title": "Airwolf 3D HDL Printer"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBaU9LMXRRa00M", 
+        "ProductNumber": "19317004", 
+        "ProductPrice": 229500, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 0, 
+        "QuantityOnHand": 0, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "airwolf-3d-hdl", 
+        "SID": "MW46VP7T", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Airwolf 3D HDL Printer", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 16000000, 
+        "TotalWeightGrams": "16,000.00", 
+        "TotalWeightKilograms": "16.00", 
+        "TotalWeightPounds": "35.27", 
+        "Weight": 16000000, 
+        "WeightGrams": "16,000.00", 
+        "WeightKilograms": "16.00", 
+        "WeightPounds": "35.27"
+    }, 
+    "Status": "success"
+}

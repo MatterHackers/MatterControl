@@ -1,0 +1,249 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": null, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-06-09", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-05-24T17:49:45.203596", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jun 9th", 
+        "DisplayListPrice": "95.00", 
+        "DisplayPrice": "89.94", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
+            "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "2.36", 
+            "5.00", 
+            "12.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag. Need convenience in a kit? Check out our MatterHackers 3D Printing Tool Kit Premium.", 
+        "ProductListPrice": 9500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-05-24T17:49:44.947931", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"hvDqEa1EBqk\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "OK929F", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>PREMIUM PERKS DELIVERED BY PREMIUM TOOLS</strong></h3>\r\n<p>In addition to receiving quality tools that are commonly used in the 3D printing experience, this version of the MatterHackers 3D Printing Tool Kit also includes premium products that deliver premium perks for both 3D printing veterans and fresh newcomers. From preparation to printing and post-processing, further streamline your path to successful 3D printed projects with a nozzle cleaning kit to clear up minor clogs in your nozzle, calipers for accurate measuring and a needle file, as well as a deburr tool and spare art knife blades, for refined post processing. In this premium version, you receive even more tools that further refine your path towards smooth 3d printing.</p>", 
+                    "ElementCode": "EMLWN7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/fr_69ampBFeDi1T5ii74VKyX-av33-VaggFywEG5x93q4746JaRRnHyyA3cTUMrKOyDgn2lYHPgxWNWvTeVnTxk'></p>", 
+                    "ElementCode": "F2I7KX", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/14cbc74c-6fcd-4555-9535-e3af431820e6", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/fr_69ampBFeDi1T5ii74VKyX-av33-VaggFywEG5x93q4746JaRRnHyyA3cTUMrKOyDgn2lYHPgxWNWvTeVnTxk", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p></p>\r\n<h2 class=\"align-center\"><strong>WHAT'S IN THE KIT?</strong></h2>\r\n<p><span>MatterHackers 3D Printing Tool Kits entail multiple tools specifically chosen and proven to streamline your 3D printing experience. How exactly will this premium tool kit provide you convenience? These selection of tools will help you&hellip;</span></p>", 
+                    "ElementCode": "KURS27", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/TFW8JsCALhoxE-NVmyuMM8GbchJ4HrZLXi0H_UxgEv6koAEXOYbfTgmQz__P0WKtm0BWmCK1SVWn7qDPGsAGlA=s660\" /></p>", 
+                    "ElementCode": "7SBV06", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/8f1231bb-a1aa-4aea-8a63-91bf51cf5caf", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/TFW8JsCALhoxE-NVmyuMM8GbchJ4HrZLXi0H_UxgEv6koAEXOYbfTgmQz__P0WKtm0BWmCK1SVWn7qDPGsAGlA", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/zKRmL-jFb8JM6LJNHEs-tnr0CclwwbxHA82y7jnxnKaLXtDSd41lgzFV_uQUnpxS8gjxU-7SjSX146a2jteBc-7_=s660\" /></p>", 
+                    "ElementCode": "1VTSZF", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/54675279-911a-46ff-bd13-919fcb39be76", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/zKRmL-jFb8JM6LJNHEs-tnr0CclwwbxHA82y7jnxnKaLXtDSd41lgzFV_uQUnpxS8gjxU-7SjSX146a2jteBc-7_", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>PRINTING EXPERIENCE ENHANCED</strong></h3>\r\n<p>All of these fundamental tools come in a convenient travel size tool bag. How do we know these tools are useful for 3D printing? Our selection of tools in this kit is based on personal 3D printing experience from our staff as well as years of feedback from customers' experiences. MatterHackers 3D Printing Tool Kit Premium is the ultimate tool kit of essential convenience that every maker needs.</p>", 
+                    "ElementCode": "FP2HIS", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/x8VMX8flFrkK4ZwyTUQN168g1Nfz4pJWPytzCtOAzIF4r6vkBx6DohoFjxeasyEKNiehZjV6Mt3IEB41KCkNYmc'></p>", 
+                    "ElementCode": "T6MFW2", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/da896bc9-bf8d-4af7-b224-5def770450e5", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/x8VMX8flFrkK4ZwyTUQN168g1Nfz4pJWPytzCtOAzIF4r6vkBx6DohoFjxeasyEKNiehZjV6Mt3IEB41KCkNYmc", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><span><strong>STREAMLINE YOUR 3D PRINTING EXPERIENCE WITH MATTERHACKERS</strong></span></h3>\r\n<p>At MatterHackers we pride ourselves on offering various quality products for every maker on top of offering friendly service, advice, and support through our staff. Every day MatterHackers constantly works to include various products that streamline the 3D printing experience for makers of every experience level. Have a question about the what conveniences the MatterHackers 3D Printing Tool Kit Premium has to offer? No problem. Feel free to give our friendly, knowledgeable staff a call.</p>", 
+                    "ElementCode": "N6163E", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
+                "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/c9276c18-b2b2-4b4f-9ded-cd4ba40c5eba", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/wzdD20S3ciD4j9JDmcN6mhEIr-mSrb5Dj-jWWsDGlc06J0zkt7Gwc9DRYvVTV1GHnCuhUhZ_C34uvYvYk-vcv6k", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/f86f7a63-64f1-4b4a-8517-9135403976fe", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/b4_T8yjceiJukzgHIazGcyUvOZIlUGK8FoTwU_DjETQDMKof07KFI74yTXeddMxuwlE2AEcQsFJx3gNhepggOiKF", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/0fa93079-a7c4-4c9b-9bc2-b7a82c906309", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/J1gAO3kbvwB0szA_t6f-VTWh4nDOFEseDPnVjgO1n0KLtmaGb7Q9Cb97P0-apIHZHvt4vHdN9s-AhpKV665L1g", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/fd6644db-c378-4313-9631-6e53c2154e7f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/_-OLOwwi_CJlbDf0c3nanjcwjPlwDYX4n4oHsLz0O4ZV9rQSgLUshd1594twhEOLte7ihwukvLeYFRVtJ-7MvQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/6e48b07b-db28-47c7-b88b-0ed4c82a2758", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/OxxIhEwR4lY2-D-T9seMSXV6Bpe_X2LuvALIVB6zogFFA_dtb4T6AZWar-8wFlF4u_db4AUIkdKIvdnFFTGJsNMe", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/9f88ff20-02b6-4d50-bfce-ad32576d29ac", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/TPZNDjNWC0IxR4abhsb8lBmzxpDp8Wk3-NLDNExLAtMkofqzpHrZGKF5IHRBjQuxqMhv_W1JFbOQ89hpECMfhQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/bf1ccd4d-5e58-469e-a8a2-195d7d0b48d2", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ZNkbTuTdvdaU1Ie76-dMqxSEuq2Cn1fyQkabNEYhaf66qLUuKeqT6fSzWcdv9lSHr9ei1ZdbPZB3eUI1nolHC6M", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/a3ba1c07-7310-43b2-a353-5b2780536950", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/yhD0Z3nvlEQ_ZRWKDnRP8rA7G7aOXQqm4OAoq83pBRDZrDnlAWeSFk9UNKbgW-71kwtIDjMTzxdViHwiumos2U_s", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
+            "MetaTagKeywords": [
+                "nozzle cleaning kit", 
+                "nozzle needle cleaners", 
+                "nozzle cleaners", 
+                "deburr tool", 
+                "nozzle needle cleaner", 
+                "caliper", 
+                "debur"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-05-24T17:49:44.947944", 
+            "ProductEditedOn": "2020-05-14T22:40:39.324290", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "matterhackers-3d-printing-tool-kit-premium", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs0pOKCgw", 
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVlsdm9PREEM"
+            ], 
+            "ShortDescription": "Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag. Need convenience in a kit? Check out our MatterHackers 3D Printing Tool Kit Premium.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "MatterHackers 3D Printing Tool Kit Premium"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 8994, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 12, 
+        "QuantityOnHand": 12, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "matterhackers-3d-printing-tool-kit-premium", 
+        "SID": "MNUYE0VF", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "MatterHackers 3D Printing Tool Kit Premium", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 862000, 
+        "TotalWeightGrams": "862.00", 
+        "TotalWeightKilograms": "0.86", 
+        "TotalWeightPounds": "1.90", 
+        "Weight": 862000, 
+        "WeightGrams": "862.00", 
+        "WeightKilograms": "0.86", 
+        "WeightPounds": "1.90"
+    }, 
+    "Status": "success"
+}

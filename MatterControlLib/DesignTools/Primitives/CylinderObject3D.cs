@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -112,10 +113,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[Description("The width from one side to the opposite side.")]
 		public double Diameter { get; set; } = 20;
 
 		public double Height { get; set; } = 20;
 
+		[Description("The number of segments around the perimeter.")]
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
@@ -144,12 +147,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
+			Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
+			Height = agg_basics.Clamp(Height, .01, 1000000, ref valuesChanged);
+			Diameter = agg_basics.Clamp(Diameter, .01, 1000000, ref valuesChanged);
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
+			}
+
 			using (RebuildLock())
 			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-				Height = Math.Max(Height, .001);
-				Diameter = Math.Max(Diameter, .1);
-
 				using (new CenterAndHeightMaintainer(this))
 				{
 					if (!Advanced)
@@ -173,11 +181,6 @@ namespace MatterHackers.MatterControl.DesignTools
 						Mesh = VertexSourceToMesh.Revolve(path, Sides, MathHelper.DegreesToRadians(StartingAngle), MathHelper.DegreesToRadians(EndingAngle));
 					}
 				}
-			}
-
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));

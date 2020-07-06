@@ -114,8 +114,7 @@ namespace MatterHackers.MatterControl
 			// Store
 			this.EditContext = editContext;
 
-			var contentInfo = editContext.SourceItem as ILibraryAsset;
-			if (contentInfo != null)
+			if (editContext.SourceItem is ILibraryAsset contentInfo)
 			{
 				this.ContentType = contentInfo.ContentType;
 			}
@@ -300,6 +299,7 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Loads content to the bed and prepares edit/persistence context for use
 		/// </summary>
+		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
 		public async Task LoadPlateFromHistory()
 		{
 			await this.LoadContent(new EditContext()
@@ -659,9 +659,9 @@ namespace MatterHackers.MatterControl
 		/// <summary>
 		/// Persists modified meshes to assets and saves pending changes back to the EditContext
 		/// </summary>
-		/// <param name="progress"></param>
-		/// <param name="cancellationToken"></param>
-		/// <returns></returns>
+		/// <param name="progress">Allows for progress reporting</param>
+		/// <param name="cancellationToken">Allows for cancellation during processing</param>
+		/// <returns>A task representing success</returns>
 		public async Task SaveChanges(IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
 		{
 			var progressStatus = new ProgressStatus()

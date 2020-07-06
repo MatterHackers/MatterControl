@@ -1,0 +1,199 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-07-17", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-01-23T16:11:27.614182", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jul 17th", 
+        "DisplayListPrice": "279.00", 
+        "DisplayPrice": "279.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/4e2e7e54-ab68-4508-9e5e-3912a3af2e0c", 
+            "ImageUrl": "https://lh3.googleusercontent.com/qCHeZcbey6n5JS2bPxkcGVxUWfiQu994zJ7aeQdIp79-Kbp8NSojRveAOK_1WpnVY_yh5ZxqqIDExfjjrWOpls4t", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "21.50", 
+            "22.50", 
+            "6.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Interested in upgrading your Pulse 3D printer? We have just the thing! The Pulse Enclosure Kit helps regulate temperature around your printer so heated parts function at optimal temperatures and the chances of warped prints are reduced. Made up of laser cut panels that sit on the same surface as your Pulse 3D printer, this kit is specifically designed to help you succeed with your 3D printed projects.", 
+        "ProductListPrice": 27900, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 111800, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "1,118.00", 
+                    "AddOnDisplayPrice": "1,118.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 1118.0, 
+                    "AddOnListingReference": "3d-printpro-3-fume-extractor", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 111800, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M0LNHLF4", 
+                    "AddOnTitle": "BOFA 3D PrintPRO 3 Fume Extractor", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDAnOaRCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMExOSExGNAw", 
+                    "ProductType": "dropship", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 15600, 
+                    "AddOnDiscountDisplay": 3, 
+                    "AddOnDisplayBasePrice": "156.00", 
+                    "AddOnDisplayPrice": "151.00", 
+                    "AddOnDisplaySavings": "5.00", 
+                    "AddOnFloatPrice": 151.0, 
+                    "AddOnListingReference": "blazecut-t-series-fire-supression-for-devices-td100ea", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 15100, 
+                    "AddOnSavings": 500, 
+                    "AddOnSkuReference": "MLCTXZMK", 
+                    "AddOnTitle": "BlazeCut T-Series Fire Suppression for Devices - T100E", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDM5ZvQCAw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTENUWFpNSww", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -13, 
+                    "QuantityOnHand": -13, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-01-23T16:11:27.338628", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>PULSE ENCLOSURE KIT</strong></h3>\r\n<p>Having trouble maintaining a consistent, warm temperature around your <a title=\"Pulse 3D Printers\" href=\"https://www.matterhackers.com/store/c/Pulse\" target=\"_blank\" rel=\"noopener\">Pulse</a>? Check out our solution&mdash;the Pulse Enclosure Kit. Designed to regulate temperature and reduce warping that can occur during printing, this enclosure kit makes successful printing even easier to achieve. In addition to maintaining optimal temperatures, the enclosure protects curious fingers (and paws) from touching hot, moving printer parts as well as your prints. While this is intended to be used with any model of the Pulse 3D printer, this enclosure kit will regulate temperature for any 3D printer of the same size or smaller.</p>\r\n<h3><strong>SUCCESSFUL PRINTING MADE EASY</strong></h3>\r\n<p>Cold temperatures warping your prints are now a thing of the past with the Pulse Enclosure Kit! Maintaining a specific, steady temperature in an entire room can be difficult, but controlling it through a restricted enclosure is much easier. That's where our enclosure kit comes in. With thick, solid panels blocking airflow from all sides, unwanted cold air won't be able to cause excessive cooling that often leads to warping. Thanks to the limited airflow within the enclosure, the heat given off the hotend extruder and heated bed stays trapped in the chamber which keeps temperature consistently and optimally warm for your prints and heated components. Added bonus: the trapped heat during a print session also does well to keep your spool of filament dry, making the enclosure super beneficial when printing with materials that tend to absorb moisture such as <a title=\"PETG\" href=\"https://www.matterhackers.com/store/c/PRO%20Series%20PETG\" target=\"_blank\" rel=\"noopener\">PETG</a>, <a title=\"NylonX\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>, <a title=\"NylonG\" href=\"https://www.matterhackers.com/store/c/nylong\" target=\"_blank\" rel=\"noopener\">NylonG</a>, and more. Successful printing is made easy with the Pulse Enclosure Kit</p>\r\n<h3><strong>SAFETY AND PROTECTION</strong></h3>\r\n<p>On top of protecting the success of your prints, the Pulse Enclosure Kit also protects curious kids and pets from easily touching hot parts of your 3D printer. If your printer is often left unattended where curious fingers (or paws) can access it, this enclosure provides the bonus barrier needed to prevent accidentally touching hot components when the printer is operational out in the open. Add an extra safety measurement to your 3D printer with our Pulse Enclosure Kit.</p>\r\n<h3><strong>DESIGNED WITH PULSE IN MIND</strong></h3>\r\n<p>No other enclosure on the market will work better for the Pulse than this enclosure kit. Every door, knockout and dimension of this enclosure is engineered around the Pulse's specific design for smooth user experience. When you purchase the Pulse Enclosure Kit, you're getting an enclosed build chamber that maintains optimal temperature while also having strategically placed access points to the Pulse for common procedures such as changing spools, adjusting the filament extruder, switching on/off your printer, and more. Keep your Pulse well enclosed without compromising accessibility using our Pulse Enclosure Kit.</p>", 
+                    "ElementCode": "7BN45O", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>WHAT'S IN THE KIT?</strong></h3>\r\n<ul>\r\n<li>Instructions Sheet</li>\r\n<li>Laser Cut Panels &amp; Doors</li>\r\n<li>Door Hinges, Screws, and Nuts for Assembly</li>\r\n</ul>", 
+                    "ElementCode": "J91LFK", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>TECHNICAL SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li>External Dimensions:&nbsp;<span>21.5\" x 22.5\" x 23.5\" in</span></li>\r\n<ul>\r\n<li>These dimensions do not include optional additions/modifications such as mounting the printer's power supply, attaching 60mm fans or mounting the <a title=\"BOFA 3D PrintPro 3 Fume Extractor\" href=\"https://www.matterhackers.com/store/l/3d-printpro-3-fume-extractor/sk/M0LNHLF4\" target=\"_blank\" rel=\"noopener\">BOFA 3D PrintPro 3 Fume Extractor</a>.</li>\r\n</ul>\r\n<li>Fits a printer no larger than 559mm (22 in) deep by 464mm (18.25 in) wide by 584mm (23 in) tall.\r\n<ul>\r\n<li>This measurement includes wires protruding from the printer at maximum X, Y, and Z height.</li>\r\n</ul>\r\n</li>\r\n<li>Hinged door on the front of the enclosure for easy insertion and removal of printer</li>\r\n<li>Hinged door on the left of the enclosure for easy access to printer's USB connectivity and power switch.</li>\r\n<li>Hinged door on the right of the enclosure for easy insertion and removal of spools, loading and unloading filament, adjusting the extruder.</li>\r\n<li>Holes allowing optional LCD mounting outside of the enclosure.</li>\r\n<li>Slots to zip tie the power supply to the enclosure</li>\r\n<li>No glue required for assembly</li>\r\n<li>No drilling, cutting, or other modifications to the printer itself are required.</li>\r\n<li>Can easily disassemble enclosure for moving or replacing panels if damaged</li>\r\n</ul>", 
+                    "ElementCode": "2FBZ2V", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Return Policy</strong></h3>\r\n<p><span>Please note that returns are not accepted on opened kits. Only new, unopened kits may be returned within 30 days of purchase. If a part from the kit is determined to be missing during the warranty period, a replacement part will be supplied.</span></p>", 
+                    "ElementCode": "5C7IH8", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/4e2e7e54-ab68-4508-9e5e-3912a3af2e0c", 
+                "ImageUrl": "https://lh3.googleusercontent.com/qCHeZcbey6n5JS2bPxkcGVxUWfiQu994zJ7aeQdIp79-Kbp8NSojRveAOK_1WpnVY_yh5ZxqqIDExfjjrWOpls4t", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/9ea576cd-1739-4661-b2a2-a8d7ac394bd3", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/tHmihaswAJPK_jVsOgHsyXtNotiPwG5PRoG8X1ALLgV_llsykA_8Phe64s_m1-gSyCw82q5Hd1kTZOOojy4u75o", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/b954bded-1ee5-4217-89f3-982c7de6a12f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/7N1s_h5PArc0nGAi1v0n1AdTxDilsRL0siUzVQYrkTt6dGRnd7DCqZjceEwBVHgb9yMfA3uMOqlZCiuZNwVVSQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/4e2e7e54-ab68-4508-9e5e-3912a3af2e0c", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/qCHeZcbey6n5JS2bPxkcGVxUWfiQu994zJ7aeQdIp79-Kbp8NSojRveAOK_1WpnVY_yh5ZxqqIDExfjjrWOpls4t", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
+            "MetaTagKeywords": [
+                "Pulse", 
+                "Enclosure kit"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-01-23T16:11:27.338649", 
+            "ProductEditedOn": "2020-05-04T19:45:46.244418", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "pulse-enclosure-kit", 
+            "RelatedProducts": [], 
+            "ShortDescription": "Interested in upgrading your Pulse 3D printer? We have just the thing! The Pulse Enclosure Kit helps regulate temperature around your printer so heated parts function at optimal temperatures and the chances of warped prints are reduced. Made up of laser cut panels that sit on the same surface as your Pulse 3D printer, this kit is specifically designed to help you succeed with your 3D printed projects.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Pulse Enclosure Kit - White"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 27900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": -10, 
+        "QuantityOnHand": -10, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "pulse-enclosure-kit", 
+        "SID": "MDWWV1J0", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": true, 
+        "ShownInListing": true, 
+        "SkuName": "Pulse Enclosure Kit - White", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 13607000, 
+        "TotalWeightGrams": "13,607.00", 
+        "TotalWeightKilograms": "13.61", 
+        "TotalWeightPounds": "30.00", 
+        "Weight": 13607000, 
+        "WeightGrams": "13,607.00", 
+        "WeightKilograms": "13.61", 
+        "WeightPounds": "30.00"
+    }, 
+    "Status": "success"
+}

@@ -1,0 +1,479 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-04-27", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 5, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWlYxWDYxMgw", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRDVMREdTNww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTcxTFJKMAw", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQTZRMlBNNww"
+        ], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-04-24T15:18:40.306795", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Apr 27th", 
+        "DisplayListPrice": "3,299.00", 
+        "DisplayPrice": "3,195.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/11b6feb7-9de9-42d4-8db6-d30a0e5e8063", 
+            "ImageUrl": "https://lh3.googleusercontent.com/eBOy32ScO4PeOvZE2Gfclcib-Q7K-Wyw-INOG_zknTeDyjRlBIZqm2-jIPagVYg3RKjA9glCUVHQfiWss62Vcw", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVEEySk5QTQw", 
+        "LeadDays": 35, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "20.00", 
+            "19.00", 
+            "22.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "The Pulse DXE Dual Extrusion 3D Printer\u2014designed for printing complex, functional parts\u2014is the **only multi material printer** that has the capability to **print NylonX and NylonG right out of the box**. Built with industry leading components such as dual Olsson Ruby nozzles, dual Bondtech QR Extruders (each paired with E3D v6 Hotends) and MatterHackers\u2019 LayerLock Garolite Build Surface on a FlexPlate System, the Pulse DXE can print any material you throw at it with ease for accurate, beautiful results. Like the original Pulse XE, the DXE can handle everything from the most advanced materials such as NylonX and NylonG to everyday materials like PLA, PETG, and flexibles. The Pulse DXE also comes with a PrintDry Filament Drying System, one spool of PRO Series filament, one spool of Natural PRO Series Breakaway Support Material, one spool of NylonX and one spool of Ionic Hi-Temp Hybrid Support Material, the hybrid-support material engineered for successfully 3D printing complex designs out of advanced materials. Produce durable usable parts with intricate geometry using the Pulse DXE, the dual extrusion 3D printer designed for advanced engineering material success. ", 
+        "ProductListPrice": 329900, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVEEySk5QTQw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 27900, 
+                    "AddOnDiscountDisplay": 10, 
+                    "AddOnDisplayBasePrice": "279.00", 
+                    "AddOnDisplayPrice": "249.00", 
+                    "AddOnDisplaySavings": "30.00", 
+                    "AddOnFloatPrice": 249.0, 
+                    "AddOnListingReference": "pulse-enclosure-kit", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 24900, 
+                    "AddOnSavings": 3000, 
+                    "AddOnSkuReference": "MDWWV1J0", 
+                    "AddOnTitle": "Pulse Enclosure Kit - White", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -10, 
+                    "QuantityOnHand": -10, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 29900, 
+                    "AddOnDiscountDisplay": 6, 
+                    "AddOnDisplayBasePrice": "299.00", 
+                    "AddOnDisplayPrice": "279.00", 
+                    "AddOnDisplaySavings": "20.00", 
+                    "AddOnFloatPrice": 279.0, 
+                    "AddOnListingReference": "pulse-enclosure-kit-black", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 27900, 
+                    "AddOnSavings": 2000, 
+                    "AddOnSkuReference": "MMH4KUCT", 
+                    "AddOnTitle": "Pulse Enclosure Kit - Black", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTUg0S1VDVAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -14, 
+                    "QuantityOnHand": -14, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 3500, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "35.00", 
+                    "AddOnDisplayPrice": "35.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 35.0, 
+                    "AddOnListingReference": "buildtak-extra-flexplate-9-x-10-for-pulse", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 3500, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M4T7AA9X", 
+                    "AddOnTitle": "BuildTak Extra FlexPlate 9\" x 10\" for Pulse", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsybCDCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNFQ3QUE5WAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 99, 
+                    "QuantityOnHand": 99, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 4900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "49.00", 
+                    "AddOnDisplayPrice": "49.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 49.0, 
+                    "AddOnListingReference": "layerlock-garolite-extra-flexplate-9-x-10-for-pulse", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 4900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M7NWST60", 
+                    "AddOnTitle": "LayerLock Garolite Extra FlexPlate 9\" x 10\" for Pulse", 
+                    "ListingIsActive": false, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4d2HCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNN05XU1Q2MAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 95, 
+                    "QuantityOnHand": 95, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 6995, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "69.95", 
+                    "AddOnDisplayPrice": "69.95", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 69.95, 
+                    "AddOnListingReference": "glass-plate-for-magnetic-base-9-x-10", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 6995, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MX8F75EN", 
+                    "AddOnTitle": "Glass Plate for Magnetic Base 9\" x 10\"", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc4vGBCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWDhGNzVFTgw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 8994, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "89.94", 
+                    "AddOnDisplayPrice": "89.94", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 89.94, 
+                    "AddOnListingReference": "matterhackers-3d-printing-tool-kit-premium", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 8994, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MNUYE0VF", 
+                    "AddOnTitle": "MatterHackers 3D Printing Tool Kit Premium", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 12, 
+                    "QuantityOnHand": 12, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 29900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "299.00", 
+                    "AddOnDisplayPrice": "299.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 299.0, 
+                    "AddOnListingReference": "pulse-protection-extended-2-year-warranty", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 29900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MG3ZJCA9", 
+                    "AddOnTitle": "Pulse Protection Extended 2 Year Warranty", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDArMmUCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRzNaSkNBOQw", 
+                    "ProductType": "service", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-04-24T15:18:39.806567", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<div class=\"collection-marketing\">\r\n<div class=\"collection-copy\">\r\n<div class=\"h3 subtitle\"><strong>Create Durable Engineering Projects with Even the Most Complex Geometry Using NylonX, NylonG, and Other Advanced Materials</strong></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "SVBNU6", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"collection-features\">\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Advanced Materials Unleashed\" src=\"https://lh3.googleusercontent.com/EZ-a0g0IaNi_IECLi4fUEdq1QFqik1B0I-qNyFo-VRGBPVYJpI1t44-4eOD0AlG3UmKjscAlmwbAiWnwenzw-f8fNmg=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Advanced Material Capabilities Unleashed with the Pulse DXE</h4>\r\n<div class=\"desc\">Take projects to the next level when you generate amazingly durable and functional final products out of NylonX and NylonG with Ionic Hi-Temp Hybrid Support Material. Parts printed with dual extrusion can include functional markings, instructions, direction, and logos&mdash;making them ready to put into production, right off the printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Dual Extrusion\" src=\"https://lh3.googleusercontent.com/tsG_e8nHgp72RJHanWcnKGGQfCrfDOYe7z8EdACIf3ioenoNx1tIhYlAdBm1LI1ggZI3LfhPiny6EIBTozuGzCiA3YU=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Dual Extrusion for Double the Productivity</h4>\r\n<div class=\"desc\">Efficiently focus more on creating and less on printing with the Pulse XE&rsquo;s next evolution, the Pulse DXE Dual Extrusion 3D Printer. No more loss time pausing sessions to switch materials or figuring out different ways to work around the complexities of multi-filament printing with a single extruder&mdash;get straight to the print using the Pulse DXE.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Engineered for Engineering-Grade Materials\" src=\"https://lh3.googleusercontent.com/Lhu1_t81p7SE_PCzNAsh69_fYHb-lVnQ2fpFuJj3lBMU_BLncnpX0aPED7ZFoX1mEmSXPWR1AVMUC3tN6HborA_M2w=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Engineered for Engineering-Grade Materials</h4>\r\n<div class=\"desc\">Installed with two Olsson Ruby Nozzles and two E3D All Metal v6 HotEnds, the Pulse DXE is built to handle any high temperature engineering-grade and abrasive-infused materials thrown its way. LayerLock Garolite Build Surface also comes stock on the print bed for maximum strong bed adhesion designed for advanced materials like Nylon and other Nylon-based filaments.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Complex, Functional Prints Made Simple\" src=\"https://lh3.googleusercontent.com/tdL5lAtjkfUZfINnqGO3GCxE6nbip53XVE8Yy0aqi-671XfHHrNIFGgihUdW_hxUXQuaFjrARCu1d5gpswioNhMK1w=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Complex, Functional Prints Made Simple</h4>\r\n<div class=\"desc\">Produce gorgeous detailed parts that are durable enough to survive real life stresses using Pulse DXE Dual Extrusion 3D Printer. Use detachable and dissolvable supports made out of Ionic, the hi-temp hybrid-support material designed specifically for producing complex, functional parts out of NylonX and NylonG, to effortlessly print that intricate model out of sophisticated polymers while also reducing post processing time.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Valuable Professional Quality\" src=\"https://lh3.googleusercontent.com/MEj0Es2d0yyCoYMxWSGyaT3wCKzqehMEZeNTndSf9vnZVzkCNVoFB10J5pegpszywJ8VTmmSYlyG6xRj9hH5ehaS=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<h4 class=\"title\">Valuable Professional Quality</h4>\r\n<div class=\"desc\">Here at MatterHackers, we make sure users get a bang for their buck by balancing your hard earned investment with long-lasting professional quality products. Industry-leading components make up the anatomy of the Pulse DXE so your investment will deliver favorable print results for many years to come&mdash;fully pre-assembled, ready to print straight out of the box with no crucial future upgrades necessary for advanced materials printing.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "8R0GUB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>About Pulse DXE - Print Complex Advanced Materials Out of the Box</h2>\r\n</div>\r\n<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<p>Introducing the next robust and adaptable evolution to the <a title=\"Pulse XE\" href=\"https://www.matterhackers.com/store/l/pulse-xe-nylonx-3d-printer/sk/MFG0HF92\" target=\"_blank\" rel=\"noopener\">Pulse XE</a>&mdash;the Pulse DXE, a dual extrusion 3D printer created specifically to produce intricately designed, functional parts out of <a title=\"NylonX\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>, <a title=\"NylonG\" href=\"https://www.matterhackers.com/store/c/nylong\" target=\"_blank\" rel=\"noopener\">NylonG</a>, other engineering-grade materials. Successfully achieve dual color, multi-material and dissolvable/breakaway supports for functional, detailed geometries with high temperature specialty materials straight out of the box. In addition to printing advanced materials with laser accuracy, the Pulse DXE also beautifully prints standard filaments such as <a title=\"PLA\" href=\"https://www.matterhackers.com/store/3d-printer-filament/pla\" target=\"_blank\" rel=\"noopener\">PLA</a>, <a title=\"PETG\" href=\"https://www.matterhackers.com/store/c/mh-build-series-petg\" target=\"_blank\" rel=\"noopener\">PETG</a>, <a title=\"TPU\" href=\"https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29\" target=\"_blank\" rel=\"noopener\">TPU</a> and so much more. Durable engineering-grade parts with complex geometry are even easier to produce with the Pulse DXE Dual Extrusion 3D Printer.</p>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/ALb9r-5VL8FN3ix0XRejjiq0OwVvpmkU6lsmKdp_7RD28-VDMNKR8WnFxIr5In-m1NxVN4p7S3LmrVnTyU5DowbnkTQ=s150\" /> <img alt=\"Pulse in use\" src=\"https://lh3.googleusercontent.com/ymYxa4TjhCx1fxt_sbCqo4mYGiXU6Dy-ATXBojnTJ5tuDKJScEdVfFBRpws34cwkYLXUifUEqkvARKKG9yluENsq=w300-h200-pp\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "VE7HPJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Pulse DXE Dual Extrusion 3D Printer Bundle</h2>\r\n</div>\r\n<div class=\"section\">\r\n<p>The Pulse DXE is the ideal option for those who plan on printing sturdy functional parts with intricate geometry using <a title=\"NylonX\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>, <a title=\"NylonG\" href=\"https://www.matterhackers.com/store/c/nylong\" target=\"_blank\" rel=\"noopener\">NylonG</a>, and other advanced engineering grade filaments. Every Pulse DXE comes standard with small upgrades that make a large, powerful impact on the user&rsquo;s 3D printing experience. Industry-leading components are precision machined, and each portion of the experience is finely tuned so the best quality results are achieved. Other helpful resources included in this bundle are the PrintDry filament drying system, a spool of PRO Series filament, a spool of Natural PRO Series Breakaway Support Material, a spool of NylonX so you can dive right into printing durable, advanced parts that can handle the stresses in everyday life, and a spool of <a title=\"Ionic Hi-Temp Hybrid Support Material\" href=\"https://www.matterhackers.com/store/l/ionic-hi-temp-hybrid-support-material-175-075/sk/MA6Q2PM7\" target=\"_blank\" rel=\"noopener\">Ionic</a> hybrid-support filament for successful printing of complex designs out of engineering composites. Have everything you need to succeed straight out of the box with the fully pre-assembled Pulse DXE Dual Extrusion 3D Printer Bundle.</p>\r\n</div>", 
+                    "ElementCode": "9GYVQG", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/6bSPDiv-8nIR4Dt0nlHUeJFFWMSy745DEb5fgsYDfDqMkHu2nc157D3uw7hNPviQimZFdH1adlLZlD07en4SYg'></p>", 
+                    "ElementCode": "TUHXA4", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c41c73f5-bb8a-45cf-8ecb-8265954dc8c1", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/6bSPDiv-8nIR4Dt0nlHUeJFFWMSy745DEb5fgsYDfDqMkHu2nc157D3uw7hNPviQimZFdH1adlLZlD07en4SYg", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<div class=\"section\">\r\n<div class=\"section\">\r\n<h3>A Whole New World of 3D Printing Possibilities</h3>\r\n<p>Explore the world of multi-material and multi-color printing with the Pulse DXE Dual Extrusion 3D Printer. Combinations that are impossible, if not extremely difficult to achieve outside of dual extruder printers are much easier to achieve with the Pulse DXE using both standard and specialty filaments. Experiment and push the limitations of your creativity using the Pulse DXE.</p>\r\n<h3>Details as Advanced as its Material</h3>\r\n<p>Printing complex parts out of high temperature engineering-grade materials has never been easier than with the Pulse DXE 3D Printer. With its dual extrusion qualities, you can use Ionic Hi-Temp Hybrid Support Material in tandem with advanced materials like NylonX and NylonG to produce functional parts that have intricate, advanced geometry. Explore unlimited design possibilities for your functional projects using the Pulse DXE Dual Extrusion 3D Printer.</p>\r\n<h3>Quality Components for Quality Results</h3>\r\n<p>Achieve smooth results with NylonX and NylonG using the amazing laser accuracy of the Pulse DXE. Top quality components are hand picked and tested by the experts on our Pulse team to ensure users receive nothing but the best with all evolutions of our Pulse 3D Printers. Using the right fine-tuned settings, your complexly designed printed parts will require no post processing leaving an extremely smooth, clean print that is distinctly achieved with NylonX on a Pulse DXE.</p>\r\n<h3>Next Level Printing&mdash;No Assembly Required</h3>\r\n<p>Take your 3D printing to the next level when you upgrade from a single extruder to a double extruder with an expert touch from our Pulse Pros. Assembling a dual extrusion of the Pulse DXE&rsquo;s caliber takes time and attentive care which is why we have trained professionals dedicated to constructing only the best for our users. When you purchase the Pulse DXE 3D Printer, you will receive a top quality 3D printer with all the bells and whistles pre-assembled and ready to print complex engineering-grade parts straight out of the box.</p>\r\n</div>\r\n</div>", 
+                    "ElementCode": "FYF57L", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Designed by Engineers for Engineer-Level Projects</h2>\r\n</div>\r\n<p>Carefully designed and constructed by the engineers on our Pulse Pros team, the Pulse DXE Dual Extrusion 3D Printer takes its reliable, original single extruder design, the Pulse XE, to the next evolution. Engineered for 3D printing complex designs out of engineering-grade thermoplastics, the Pulse DXE fulfills the needs for both professional and hobbyist engineers who enjoy prototyping and producing durable, advanced projects from the comfort and convenience of their own home on their own time and dime. Whether you are recreating existing parts for personal use or inventing a new product for future markets, the Pulse DXE has you covered to get your project off the ground. Produce sturdy, complex and functional parts for professional projects using the Pulse DXE.</p>", 
+                    "ElementCode": "ZHUUL2", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/LJzpMbMI6L4gvflsQsjuVRoDRnUcvN3zqu3qfIYnZJHUYUVLOBfwC9Hars6f55Md5C1QLYsTyjRFzwJurebVMw'></p>", 
+                    "ElementCode": "A6CPPC", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/24985a1f-0260-4bd8-894c-a6e72eeb9f8f", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/LJzpMbMI6L4gvflsQsjuVRoDRnUcvN3zqu3qfIYnZJHUYUVLOBfwC9Hars6f55Md5C1QLYsTyjRFzwJurebVMw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-left\"><span>Searching for a top quality multi-material 3D printer capable of producing advanced, functional projects out of NylonX and NylonG? Look no further than the Pulse DXE.</span></p>", 
+                    "ElementCode": "DEG0CI", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>3D Printing Experience Enhanced</h2>\r\n</div>\r\n<p>With dual extruder printing, the Pulse DXE printing capabilities include supports for producing complex, advanced material parts to handle the everyday stresses in life, multiple materials for a single project, multiple components for a single print, multiple colors, and so much more. Achieve infinite details throughout your parts with <a title=\"Ionic Hi-Temp Hybrid Support Material\" href=\"https://www.matterhackers.com/store/l/ionic-hi-temp-hybrid-support-material-175-075/sk/MA6Q2PM7\" target=\"_blank\" rel=\"noopener\">Ionic Hi-Temp Hybrid Support Material</a> which both dissolves in water and breaks off by hand, allowing you to minimize post processing so you can immediately start using your parts. Combine rigid and soft materials in a single print to create features such as living hinges and create functional parts with integrated overmolding or low friction components. Do all of this with integrated tools using our free software MatterContol to maximize amazing print results in a fraction of the time. Experience 3D printing like you never have before starting with the Pulse DXE Dual Extrusion 3D Printer.</p>", 
+                    "ElementCode": "ER1AHW", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/5Ldisc9xHx6ZCb7SXmiw4dVv2i5azdt21FnZOzyRs53yPr8YudWWmZaL95Bt5BS3I7QqBmC4dxrxMbAJZnZryw'></p>", 
+                    "ElementCode": "0JUYD2", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/7f43e04c-5f86-4f71-bea7-81b37636a564", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/5Ldisc9xHx6ZCb7SXmiw4dVv2i5azdt21FnZOzyRs53yPr8YudWWmZaL95Bt5BS3I7QqBmC4dxrxMbAJZnZryw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-left\">Print multiple parts for a project, pre-assembled and functional, using the Pulse DXE Dual Extrusion 3D Printer.</p>", 
+                    "ElementCode": "P7SRM3", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Produce Advanced Parts with Intricate Designs</h2>\r\n</div>\r\n<p>Having trouble successfully printing complexly designed projects out of advanced materials? The Pulse DXE has you covered. With a dual extruder, users are able to use separate support material in tandem with their advanced filament for successful, functional prints that have complex designs. No more extra post processing time or difficulty removing same material parts that have fused to your main print. MatterHackers&rsquo; <a title=\"Ionic Hi-Temp Hybrid Support Material\" href=\"https://www.matterhackers.com/store/l/ionic-hi-temp-hybrid-support-material-175-075/sk/MA6Q2PM7\" target=\"_blank\" rel=\"noopener\">Ionic Hi-Temp Hybrid Support Material</a> helps successfully produce intricately designed parts made out of advance engineering-grade material that can handle everyday stresses. Overhangs and bridges on your complex, functional parts will come out smoothly stable and multi-parts can be printed as is with no post assembly required. Produce the advanced parts with intricate designs you&rsquo;ve always imagined in a single go using the Pulse DXE Dual Extrusion 3D Printer.</p>", 
+                    "ElementCode": "JBXVY1", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/X7TLIr7kdf1q7ENn3mguXQB6ByE5aozLcihXwk4B8e-augZNWWPqDs1U6uYzx__wizrin5qfX_wfKOhaPjM3dw'></p>", 
+                    "ElementCode": "SYCB93", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/0571961d-d8f1-4688-8540-7a38f548f335", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/X7TLIr7kdf1q7ENn3mguXQB6ByE5aozLcihXwk4B8e-augZNWWPqDs1U6uYzx__wizrin5qfX_wfKOhaPjM3dw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-left\"><span>With its ability to readily snap off or dissolve in water, Ionic makes successfully printing beautiful unique designs out of sophisticated polymers a breeze.</span></p>", 
+                    "ElementCode": "CCFNFR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Succeed Right Out of the Box</h2>\r\n</div>\r\n<p>Everything you need to succeed in dual extrusion advanced material 3D printing is pre-assembled, calibrated and tested in the form of the Pulse DXE 3D Printer so you can print right out of the box once it is delivered. Composed of industry-leading components used in all of our reliable Pulse 3D Printers, we guarantee the quality of your printer based on numerous years and feedback from customers on their success with our Pulse printers. Trusty components from previous models are further fine-tuned and new industry leading components are added to ensure our users receive more reliable 3D printing capabilities than they bargained for. Included in this bundle are the Pulse DXE 3D Printer, one spool of NylonX to get your engineering projects off the ground, one spool of <a title=\"Ionic Hi-Temp Hybrid Support Material\" href=\"https://www.matterhackers.com/store/l/ionic-hi-temp-hybrid-support-material-175-075/sk/MA6Q2PM7\" target=\"_blank\" rel=\"noopener\">Ionic Hi-Temp Hybrid Support Material</a> for successfully producing complex advanced material parts, and a PrintDry Filament Drying System for proper printing preparation. Succeed from the getgo with our Pulse DXE - Dual Extrusion 3D Printer Bundle.</p>", 
+                    "ElementCode": "A2QJ83", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/JYPfPC6hUZ-PVi1wnieDgRR-7yuM-edQ8DfFdNudAoK7DHoj48glyK-6BJ9YHWcSXiWd0cKVRPmZkEvVCsW_7xE'></p>", 
+                    "ElementCode": "5D3VPN", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c3f121be-0e58-4693-b9f4-ce3e6fc49363", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/JYPfPC6hUZ-PVi1wnieDgRR-7yuM-edQ8DfFdNudAoK7DHoj48glyK-6BJ9YHWcSXiWd0cKVRPmZkEvVCsW_7xE", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p class=\"align-left\">Assembled by MatterHackers' Pulse Pros, the Pulse DXE comes fully assembled with everything you need to start successfully printing advanced materials right out of the box.</p>", 
+                    "ElementCode": "D62OTU", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades for the Pulse DXE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade available for the Pulse DXE 3D printer has been thoroughly tested and calibrated by the Pulse Pros team, and consist of the highest quality parts on the market. Each upgrade you include unlocks more 3D printing capabilities such as control over the temperature surrounding your printer, interchangeable bed surfaces, and easy print removal. Enhance your 3D printing experience with the upgrades below.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit <span class=\"subtitle\">+$279</span></div>\r\n<div class=\"desc\">Designed to consistently help keep prints consistent and reliable, the Pulse Enclosure Kit helps regulate the printing environment to reduce warping. With specialty filaments like Nylon being notorious for its difficulty adhering to build surfaces, enclosure kits are a wonderful solution to combat this issue. This kit consists of laser cut panels that sit on the same surface as your Pulse 3D printer, making it super desktop-friendly. Achieve the success 3D printing results you need when you use the Pulse Enclosure Kit.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/Yo1uyJ4JEKzVFs7z5Er7GbUc36y0OYxJYk1GCNrEi9sx7waEPSc-ATZmzBy_BnpsV38sJoY-D4HViaG7IuipueFtNQQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak Extra FlexPlate <span class=\"subtitle\">+$35</span></div>\r\n<div class=\"desc\">With an extra BuildTak FlexPlate, users will save time and effort alternating between multiple build surfaces for various print jobs. Take off the Garolite build plate right after a finished NylonX print, place the extra BuildTak build plate onto the magnetic base for a PLA print job and you're good to go. Alternating between build plates has never been easier and faster than with an extra FlexPlate. This upgrade comes with a sheet of BuildTak installed on the build plate. <strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/vT325DzdqSZUgCms9yvdWyqDreiDHIjMbuHNPEaEl_vS7ygcgmKjRMPTFN0v7_3C2fzg0YIkq1fTQhGbsnGKR96Nxw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra FlexPlate <span class=\"subtitle\">+$49</span></div>\r\n<div class=\"desc\">Move on to your next print quickly and easily with an extra LayerLock Garolite Build Surface FlexPlate. Detach the build plate right after a finished print, swap the spare onto the magnetic base and immediately begin your next project. Long pauses between prints to struggle scraping off a part is a thing of the past. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate. <strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">Printing on glass with a magnetic base is possible with the Glass Plate for Magnetic Base. When you find yourself missing the benefits of printing on a glass surface, easily do so by simply take the off the Buildtak, garolite or PEI surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base in its place. Because the glass plate attaches firmly to the magnetic base, the base of your prints will come out nice and flat. &nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"><!--<strong>With this upgrade, you receive this spool in addition to the 2 Spools of 1.75 NylonX (0.5kg) that come stock with every Pulse XE.</strong>--></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$89.94</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$79.65</span></div>\r\n<div class=\"desc\">While all of our Pulse 3D Printers are designed and built to last, we recommend you occasionally give your printer a little TLC to maximize its lifespan. The small effort you invest in occasionally maintaining your Pulse will have your 3D printer returning years and years of hard work to provide you the fine, quality prints you need.</div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">Repair or replace your Pulse XE 3D printer for another year with this extended 2 year warranty. This is on top of the current 1 year warranty backed by MatterHackers&rsquo; Success Guarantee, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "LAYHWY", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Technical Specifications - Pulse DXE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>The Pulse DXE - Dual Extrusion 3D Printer Bundle is created specifically for printing complex, functional parts out of NylonX and NylonG, on top of standard filament and other engineering-grade materials, without easily wearing down the printer. This is made possible thanks to the industry-leading components and features we install to ensure your 3D printing experience is nothing short of successful. Each of the components listed below are thoroughly assembled and calibrated before you receive your Pulse DXE.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"32-Bit Electronics\" src=\"https://lh3.googleusercontent.com/meLsBfe6Ntqrlw3MD5c14ChkddfvVmjQaVCmQb23kFLq3JeMdd47HiQ6GIeV892_qxo26uAZeRSXClxxHCM276w=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">32-Bit Electronics</div>\r\n<div class=\"desc\">Print faster, cleaner, and more accurately with 32-Bit electronics! Right out of the box, your Pulse DXE comes with a faster CPU clock, more RAM, and optimized firmware. Running Smoothieware on the 32-bit Azteed X5 GT, this board is the perfect quality component for executing the amazing dual extrusion capabilities that come with the Pulse DXE 3D Printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Bondtech Extruder\" src=\"https://lh3.googleusercontent.com/w9iZ65vDxyb-cYn70b7UcArS3uUUgEpfhW3i5Hoc9_0LshQ-iUcNacXVnU-bkPiaU0TwP4LqJb3YIXb-r4ch2lwh=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Bondtech Extruder with E3D V6 HotEnd (x2)</div>\r\n<div class=\"desc\">The Pulse DXE 3D printer comes stock with not one, but TWO Bondtech extruders that all but eliminates slipping, deformation, and under-extrusion. Dual extrusion means your printer comes stock with double the industry leading, quality components. Along with the Bondtech extruders also comes two E3D V6 hotends that reach temperatures of up to 300&deg;C, making it more than capable of melting tough filaments like NylonX, NylonG and Ionic Hi-Temp Hybrid Support Material.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Olsson Ruby Nozzle\" src=\"https://lh3.googleusercontent.com/t3joFTVZu-VT5dqErHd2CwzfHy4hIcnWbkX0cliwo3ACVYoK-MLNltIc4ZnbcpAIXBQ1tLKj3vIN9Yd04h2aFP7ZjmQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Olsson Ruby Nozzle (x2)</div>\r\n<div class=\"desc\">From PLA to NylonX and various filaments in between&mdash;the wear-resistant Olsson Ruby Nozzle beautifully prints them all and comes stock with your Pulse DXE 3D printer. This gorgeous 0.40mm ruby-tipped nozzle can handle endless amounts of abrasives like carbon-fiber, glass, metals and more with no problem. When printing with tough engineering-grade materials like NylonX and NylonG, you&rsquo;ll see firsthand the luxury of owning this reliable nozzle that arrives pre-installed on your Pulse DXE 3D Printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Magnetic FlexPlate System\" src=\"https://lh3.googleusercontent.com/NeuUWtfMyhxaoUz_z4bbQ-6ZGWFxWSnkvlD763wHWjn_imhAp7hUxS2H_0oKtk5PMXAVBlhq1gm3ev9aUsWYU4R3O74=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak FlexPlate System with LayerLock Garolite Build Surface</div>\r\n<div class=\"desc\">Easily remove large prints off of the bed with the BuildTak FlexPlate System 9\" x 10\". Removable build plates save you from the effort of scraping off a print by simply detaching the build plate from the magnetic base and popping your print off with a little flexing. Make 3D print removal super easy and quick with the BuildTak FlexPlate System. <strong>This upgrade comes with LayerLock Garolite Build Surface installed on the build plate.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Powder Coated PEI Build Plate\" src=\"https://lh3.googleusercontent.com/-JUnmE6BccOJWUl5-YhZnYitU16NHObFfTwv16JGvjJElkswi_O1XHol_BwBhIVqVAmbIKzYOg7qYm1QIEIgNKs=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Powder Coated PEI Build Plate</div>\r\n<div class=\"desc\">Achieve strong bed adhesion with standard filaments using the LayerLock Powder Coated PEI Build Plate that comes stock with every Pulse DXE. If you're having trouble with PLA, ABS, PETG, and flexibles such as TPU and TPE sticking to your current build surface, this wonderful alternative will provide the bed adhesion you need to prevent warping and other print failures. Powder coated with PEI, this durable build plate is resistant to scratches savings you money in replacements in the long run.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Heated Bed\" src=\"https://lh3.googleusercontent.com/c5_njxguU0qCp83eHYW-SMCtdSoIFSL0G7YLgF_ADHh70Hi5BpCHfHMQ9is3MzcojwNXe_M1-DVaAc83HXnSV3g=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Heated Bed<span class=\"included\"></span></div>\r\n<div class=\"desc\">Print anywhere between standard to specialty materials on your Pulse DXE 3D printer heated bed that comes stock with a pre-installed FlexPlate System with LayerLock Garolite Build Surface. This combination makes it the ideal layout for printing a wide variety of filaments ranging from common PLA to advanced NylonX with the additonal luxury of easy print removal.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Viki 2 LCD Screen\" src=\"https://lh3.googleusercontent.com/S_WO4GvVnDjoVOWwQt0UgIcIkm6oS_cR1lrPwDDtJmnhcnYt2kscluu9fTQQXq6EYy497zIT7LWtqJjhzo1TjMX-=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Viki 2 LCD Screen <span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">Have a preference for printing with SD cards? The Pulse DXE offers the option to add untethered printing using the Viki 2 LCD screen with a control wheel and MicroSD memory card slot. Export your gcode from MatterControl onto the MicroSD card, plug into the printer and you are ready to print! Managing your print projects without your computer is simple and easy with the Viki 2 LCD Screen that arrives stock with every Pulse DXE 3D Printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BLTouch Probe\" src=\"https://lh3.googleusercontent.com/J6xFdtfQxARxIHtStcCDBnPuOMrF406HcoaUk44t6neh-hR50JRlvGMDOHISXHAKAaizX0DyguBIaRZAUtYniMuqc_Y=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BLTouch Bed Leveling Probe</div>\r\n<div class=\"desc\">Print on any build surface attached to your print bed with ease using the BLTouch Automatic Bed Leveling Probe, the most technologically advanced auto-calibration solution available. This sensor allows for a faster, flexible, and more efficient 3D printing process by gathering accurate data with a probe that physically touches various points on the print bed. Whether you want to use a FlexPlate System, clipped on sheet of glass or a simple heated bed with tape, your Pulse DXE Dual Extrusion 3D printer will print on all of these surfaces with zero effort thanks to this feature that arrives stock with every Pulse.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"PrintDry Filament Drying System\" src=\"https://lh3.googleusercontent.com/J2FxBzKknV-yZkDMHbkVzGllcw4IYYnAsG71DxR78U5Ot4XIOkP1Q0pUpvdUJTAnvX-uaEHiQEToXV8woTMDaI0SrA=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Print Dry Filament Drying System<span class=\"subtitle\"></span></div>\r\n<div class=\"desc\">PrintDry makes the process of printing with Nylon super simple and easy. This filament drying system that comes stock with every Pulse DXE 3D Printer is the perfect moisture control solution for filament storage. Adjust temperatures anywhere between 35&deg;C-70&deg;C and feed filament through two small openings on the side of the chamber if you would like to print while drying. This filament dry container comes with automatic humidity control and can hold up to two standard spools.</div>\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"One Spool of 1.75mm NylonX (0.5kg)\" src=\"https://lh3.googleusercontent.com/SEKupVk3CHdPoHZHIqR1iPK-7GjELuC3EdXecIqNU1GAFYKnB8_kLaVY3sU2434kihS0jYmWqHQvNB4SCcksD78=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm NylonX (0.5kg)</div>\r\n<div class=\"desc\">Every Pulse DXE Dual Extrusion 3D Printer Bundle includes one spool of NylonX. This engineering grade nylon material, developed by the experts at MatterHackers, is blended with chopped carbon fibers (approximately 20% by weight), creating a high-strength material capable of printing tough, smooth, functional parts.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"One Spool of 1.75mm Ionic Hi-Temp Hybrid Support Material (0.75kg)\" src=\"https://lh3.googleusercontent.com/R3jd0JJJ3wr2noYUhyHnZF5jaGc-FGF-e_QLO5nb2ymKCn-5bb4B7Jh0GbvyM83FkTmksFaRIRgJMVWMI3DkYgI=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm Ionic Hi-Temp Hybrid Support Material (0.75kg)</div>\r\n<div class=\"desc\">Successfully print complex, functional parts out of NylonX and NylonG using Ionic Hi-Temp Hybrid Support Material. Engineered to work specifically with high temperature, advanced materials, Ionic allows users to print intricate details without having to worry about extra post processing afterward. Printing that intricate project you&rsquo;ve always wanted in a single go has never been easier than with Ionic Hi-Temp Hybrid Support Material.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Spool of MatterHackers PRO Series Filament\" src=\"https://lh3.googleusercontent.com/u0YmOnCUuCgLFS9ArV5AY84-a07aM42jDxaIMvixXl8YadbYuQTQoymKT9kB1rIQm5fHs8Q_EKxBBM09M4w88Xo=s150-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm PRO Series Filament (1kg)</div>\r\n<div class=\"desc\">Our MatterHackers PRO Series filament is manufactured to the tightest tolerances on the market. Engineered to highlight the strengths of its printing material, rest assured that the filament you're using is the best of the best, and made in the USA.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Spool of MatterHackers Natural PRO Series Breakaway Support Material\" src=\"https://lh3.googleusercontent.com/jQ8DIJvdcNQ26k9rofS2U_nPX0lcrWiX-pJuZHaokyTaqmkgfau2VBbUS21F4fq3Oy07IlkM3-8ooMrjedxjtmWH=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm Natural PRO Series Breakaway Support Material (1kg)</div>\r\n<div class=\"desc\">MatterHackers PRO Series Breakaway Support Material is engineered to provide the optimal balance between reliable bed adhesion and clean mechanical breakaway from 3D printed parts. Ideal for prints that require support material but that also need to be ready for immediate use after printing &ndash; PRO Series Breakaway support material reduces the need for post-processing and boasts a longer shelf life and moisture resistance when compared to other support materials such as PVA or HIPS.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Robust and Stable i3 design\" src=\"https://lh3.googleusercontent.com/fv8ixm4AmIuDOKZwt3vfqIVE8WVj-ZBdIBYaO_HnbQv1QchoaAocjahs3QQoPMeAst17cx0M1sSTIUfX9XMYEVw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Robust and Reliable i3 Design at its Core</div>\r\n<div class=\"desc\">Based on the proven, open-source Prusa i3 frame design, the Pulse DXE 3D printer&rsquo;s design is robust and reliable at its core. Its current iteration has been improved to include an aluminum extrusion base that provides structural rigidity&mdash;a new design with an even better robust and reliable printer base.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterControl\" src=\"https://lh3.googleusercontent.com/QNxUTXgYzDZVFTk2EhYNw0WvkcAS5gxy6y20O_4S0GDP2socHd3CEz7GeVtN7AnZ4TYYrPR1Q4Q0GgZ5Z61h4Q=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterControl 3D Printer Software Optimized for Dual Extrusion</div>\r\n<div class=\"desc\">MatterControl is a free, open-source, all-in-one software package that lets you design, slice, organize, and manage your 3D prints. Developed in-house by MatterHackers, MatterControl is paired with printer settings ideal for the Pulse DXE 3D printer. Increase your chances of printing success with helpful features such a power recovery, reloading filament mid-print, real-time modification of Z-offset, and more. Do more with your creativity, your time, and your Pulse DXE using MatterControl.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "5WF2OF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>What's in the Bundle?</h2>\r\n</div>\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-6\">\r\n<ul>\r\n<li><span>Pulse DXE Fully Assembled 3D Printer</span></li>\r\n<li>LayerLock Powder Coated PEI Build Plate 9.5\" x 10\"</li>\r\n<li><span>1 Spool of MatterHackers NylonX Filament - 1.75mm (0.5kg)</span></li>\r\n<li><span>1 Spool of MatterHackers Ionic Hi-Temp Hybrid Support Material - 1.75mm (0.75kg)</span></li>\r\n<li><span>1 Spool of MatterHackers PRO Series Filament - 1.75mm (1kg)</span></li>\r\n<li><span>1 Spool of MatterHackers Natural PRO Series Breakaway Support Material - 1.75mm (1kg)</span></li>\r\n<li>Print Dry Filament Drying System</li>\r\n<li><span>Power Supply</span></li>\r\n<li><span>USB Cable</span></li>\r\n<li>PVA Glue Stick</li>\r\n<li>Art Knife<span></span></li>\r\n<li><span>Quick Start Guide</span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/-0hjpfSwKrOXIVH6pbhJ9UslHgWWTIsNU2dM3U1uOoinSC3hPKv_Vk5W4W3g2UaOKUQU6O1xF6HI5L6QEZH47A=w660\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "ElementCode": "T65ZB0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>MatterHackers Success Guarantee</h2>\r\n</div>\r\n<div class=\"section\">\r\n<p>Try your Pulse DXE&nbsp;risk-free today - we&rsquo;re sure you&rsquo;ll be fully satisfied with your Pulse DXE and we take pride in matching you with the best 3D printer for your needs and ensuring your success. If the assembled Pulse DXE is not the right fit, you may exchange it for a different model at MatterHackers within 30 days with no restocking fee. Your success is our guarantee!</p>\r\n</div>", 
+                    "ElementCode": "JBL1HL", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"flex-center section\"><img alt=\"Pulse XE Logo\" src=\"https://lh3.googleusercontent.com/ALb9r-5VL8FN3ix0XRejjiq0OwVvpmkU6lsmKdp_7RD28-VDMNKR8WnFxIr5In-m1NxVN4p7S3LmrVnTyU5DowbnkTQ=s400\" /></div>\r\n<div id=\"technical\">\r\n<div class=\"collection-table collection-slant\">\r\n<h2>Technical Information</h2>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<td>Build Volume</td>\r\n<td>250 x 220 x 215 mm (10 x 9 x 8.5 in)<br />(Smaller if using dual extrusion)</td>\r\n</tr>\r\n<tr>\r\n<td>Machine Volume<br />(L x W x H)</td>\r\n<td>600 x 578 x 584 mm (23.6 x 22.76 x 23 in)<br />These dimensions include wires protruding from the machine. The X, Y, and Z movement do not go beyond these dimensions. <strong>When using a standard size 0.5kg - 1kg spool of filament on the printer's spool holder, the width is about 680 mm (26.77 in).</strong></td>\r\n</tr>\r\n<tr>\r\n<td>Speed</td>\r\n<td>Travel speed of up to 250 mm/s and a print speed as high as 60 mm/s</td>\r\n</tr>\r\n<tr>\r\n<td>Resolution</td>\r\n<td>20 microns (.02mm), and as large as 300 microns (.3 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Layer Height</td>\r\n<td>30 microns (.03mm) to 350 microns (.35 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Filament Diameter</td>\r\n<td>&Oslash;<strong>&nbsp;</strong>1.75 mm</td>\r\n</tr>\r\n<tr>\r\n<td>Extruder</td>\r\n<td>2 x Bondetch QR Extruders</td>\r\n</tr>\r\n<tr>\r\n<td>Nozzle</td>\r\n<td>2 x Olsson Ruby Nozzle (0.4mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Max HotEnd Temp</td>\r\n<td>E3D V6 &gt;295&deg;C</td>\r\n</tr>\r\n<tr>\r\n<td>Max Heated Bed Temp</td>\r\n<td>Currently Set to 120&deg;C</td>\r\n</tr>\r\n<tr>\r\n<td>Print Surface</td>\r\n<td>Heated Bed with installed LayerLock Garolite Build Surface on a BuildTak FlexPlate System</td>\r\n</tr>\r\n<tr>\r\n<td>Power Recovery</td>\r\n<td>Yes - MatterControl will recover a printer power loss</td>\r\n</tr>\r\n<tr>\r\n<td>Calibration</td>\r\n<td>Automatic Print Leveling - 9 point BLTouch sensor</td>\r\n</tr>\r\n<tr>\r\n<td>Remote Control</td>\r\n<td>Monitor and control your Pulse DXE 3D printer from your tablet or phone over networking using the integrated MatterControl Sync portal.</td>\r\n</tr>\r\n<tr>\r\n<td>Open Standards</td>\r\n<td>Pulse uses open standard technology, which means compatibility with open source tools and no artificial restrictions on the materials you can use.</td>\r\n</tr>\r\n<tr>\r\n<td>Returns/Warranty</td>\r\n<td>MatterHackers Success Guarantee, 1-year repair-or-replace warranty, lifetime support.\r\n<p>Upgrade to Pulse Protection Extended 2 Year Warranty for an additional 1-year repair-or-replace warranty extension</p>\r\n</td>\r\n</tr>\r\n</table>\r\n</div>\r\n</div>\r\n</div>\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/ONG-53dyHE29Nk9dRmC3AGPtgVdyplUCdPF-9N-wofc7hmoYWKLentAksv-8OJq6BajEXNdBr_GWRr-k_4SZoEXMV94=w660-h200-pp\" class=\"rounded\" /></div>", 
+                    "ElementCode": "9S5R52", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/11b6feb7-9de9-42d4-8db6-d30a0e5e8063", 
+                "ImageUrl": "https://lh3.googleusercontent.com/eBOy32ScO4PeOvZE2Gfclcib-Q7K-Wyw-INOG_zknTeDyjRlBIZqm2-jIPagVYg3RKjA9glCUVHQfiWss62Vcw", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/f7e1d352-ab23-4840-8f48-432a6db47126", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/O_28WtqHQlXj_k5XiD9V9_wGtZGGbvz7K7bolCldkK_1aCStTCI3W8q3bPUdkurzh-Bkc1tLOJNWS3M-DTRhl90", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/b26199e1-18cf-4890-adb9-46b3cb84f397", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/c5_njxguU0qCp83eHYW-SMCtdSoIFSL0G7YLgF_ADHh70Hi5BpCHfHMQ9is3MzcojwNXe_M1-DVaAc83HXnSV3g", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/2bb1bcd2-dafc-44e1-aab0-99ccc08d0729", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/S_WO4GvVnDjoVOWwQt0UgIcIkm6oS_cR1lrPwDDtJmnhcnYt2kscluu9fTQQXq6EYy497zIT7LWtqJjhzo1TjMX-", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/cf267e9a-5e61-4ec9-88f5-fb87003c3c5d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/o_UDc-MZwx67TySymD6uen6EjbS-92-Vpt3GnhikZvMIU2Ua7kVsQz8id5daZ15Far7S-ZJRBa67nWwYUKmLR8Tw", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/62067ce7-8440-4913-bda7-019e7a2dd4ec", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/UbIBtLfx-cFyBz4NQfpgEjPFU52UsIeKI01C94BJYHVjqNoVixnlx2uo5-neM8Fz9U42pDkkBaEna4nzIpebXg", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/11b6feb7-9de9-42d4-8db6-d30a0e5e8063", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/eBOy32ScO4PeOvZE2Gfclcib-Q7K-Wyw-INOG_zknTeDyjRlBIZqm2-jIPagVYg3RKjA9glCUVHQfiWss62Vcw", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc_I6UCgw", 
+            "MetaTagKeywords": [
+                "original prusa i3", 
+                "MK2S", 
+                "Original Prusa i3 MK2S 3D printer", 
+                "Original Prusa i3 MK2 3D printer", 
+                "Josef Prusa", 
+                "Josef Pr\u016f\u0161a", 
+                "MK3", 
+                "Original Prusa i3 MK3 3D Printer"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-04-24T15:18:39.806595", 
+            "ProductEditedOn": "2020-05-04T18:34:10.531800", 
+            "ProductType": "physical-on-demand", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "pulse-dxe-dual-extrusion-nylonx-3d-printer-bundle", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA392DCgw", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M"
+            ], 
+            "ShortDescription": "The Pulse DXE Dual Extrusion 3D Printer\u2014designed for printing complex, functional parts\u2014is the **only multi material printer** that has the capability to **print NylonX and NylonG right out of the box**. Built with industry leading components such as dual Olsson Ruby nozzles, dual Bondtech QR Extruders (each paired with E3D v6 Hotends) and MatterHackers\u2019 LayerLock Garolite Build Surface on a FlexPlate System, the Pulse DXE can print any material you throw at it with ease for accurate, beautiful results. Like the original Pulse XE, the DXE can handle everything from the most advanced materials such as NylonX and NylonG to everyday materials like PLA, PETG, and flexibles. The Pulse DXE also comes with a PrintDry Filament Drying System, one spool of PRO Series filament, one spool of Natural PRO Series Breakaway Support Material, one spool of NylonX and one spool of Ionic Hi-Temp Hybrid Support Material, the hybrid-support material engineered for successfully 3D printing complex designs out of advanced materials. Produce durable usable parts with intricate geometry using the Pulse DXE, the dual extrusion 3D printer designed for advanced engineering material success. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": false, 
+            "Subtitle": "", 
+            "TemplateKey": "ag9zfm1hdHRlcmhhY2tlcnNyGQsSDFBhZ2VUZW1wbGF0ZRiAgMDHjZugCww", 
+            "Title": "Pulse DXE - Dual Extrusion 3D Printer Bundle"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDc_I6UCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 319500, 
+        "ProductType": "physical-on-demand", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 3, 
+        "QuantityOnHand": 3, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "pulse-dxe-dual-extrusion-nylonx-3d-printer-bundle", 
+        "SID": "MTA2JNPM", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Pulse DXE - Dual Extrusion 3D Printer Bundle", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 19312000, 
+        "TotalWeightGrams": "19,312.00", 
+        "TotalWeightKilograms": "19.31", 
+        "TotalWeightPounds": "42.58", 
+        "Weight": 13607770, 
+        "WeightGrams": "13,607.77", 
+        "WeightKilograms": "13.61", 
+        "WeightPounds": "30.00"
+    }, 
+    "Status": "success"
+}

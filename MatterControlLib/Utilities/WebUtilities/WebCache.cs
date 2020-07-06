@@ -255,7 +255,8 @@ namespace MatterHackers.MatterControl
 			{
 				var client = new HttpClient();
 				var text = await client.GetStringAsync(uriToLoad);
-				if (text != fileText)
+				if (!string.IsNullOrEmpty(text)
+					&& text != fileText)
 				{
 					File.WriteAllText(textFileName, text);
 					updateResult?.Invoke(text);

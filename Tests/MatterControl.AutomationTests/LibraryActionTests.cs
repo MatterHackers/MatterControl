@@ -51,6 +51,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				bool exportWindowExists1 = testRunner.WaitForName("Export Item Window", 0);
 				Assert.IsTrue(exportWindowExists1 == false, "Export window does not exist");
 
+				testRunner.NavigateToFolder("Print Queue Row Item Collection");
 				testRunner.ClickByName("Queue Export Button");
 				SystemWindow containingWindow;
 				GuiWidget exportWindow = testRunner.GetWidgetByName("Export Item Window", out containingWindow, 5);
