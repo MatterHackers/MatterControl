@@ -35,17 +35,19 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
+	[Flags]
 	public enum SortKey
 	{
-		Default,
-		Name,
-		CreatedDate,
-		ModifiedDate,
+		Default = 0,
+		Name = 1,
+		CreatedDate = 2,
+		ModifiedDate = 4,
 	}
 
 	public class SortBehavior
 	{
 		public SortKey SortKey { get; set; }
+
 		public bool Ascending { get; set; }
 	}
 

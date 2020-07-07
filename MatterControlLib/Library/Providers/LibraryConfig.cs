@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.Library
 	public class LibraryConfig : ILibraryContext
 	{
 		public event EventHandler<ContainerChangedEventArgs> ContainerChanged;
+
 		public event EventHandler<ContainerChangedEventArgs> ContentChanged;
 
 		private List<ILibraryContainerLink> libraryProviders;

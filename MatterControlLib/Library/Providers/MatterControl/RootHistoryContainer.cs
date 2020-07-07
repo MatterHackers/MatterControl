@@ -62,9 +62,15 @@ namespace MatterHackers.MatterControl.Library
 					() => "Print History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
-					() => new PrintHistoryContainer())
+					() => new PrintHistoryContainer()
+					{
+						DefaultSort = new SortBehavior()
+						{
+							SortKey = SortKey.ModifiedDate,
+						}
+					})
 				{
-					IsReadOnly = true
+					IsReadOnly = true,
 				});
 		}
 	}
