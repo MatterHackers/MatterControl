@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				var indicator = new GuiWidget
 				{
-					VAnchor = Agg.UI.VAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
 					Width = 15
 				};
 				if (printTask.PrintComplete)
@@ -76,13 +76,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				var middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					HAnchor = Agg.UI.HAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 					Padding = new BorderDouble(6, 3)
 				};
 				{
 					var labelContainer = new FlowLayoutWidget
 					{
-						HAnchor = Agg.UI.HAnchor.Stretch
+						HAnchor = HAnchor.Stretch
 					};
 
 					string labelName = textInfo.ToTitleCase(printTask.PrintName);
@@ -114,7 +114,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				var detailsRow = new FlowLayoutWidget
 				{
 					Margin = new BorderDouble(0),
-					HAnchor = Agg.UI.HAnchor.Stretch
+					HAnchor = HAnchor.Stretch
 				};
 				{
 					var timeLabel = new TextWidget("Time".Localize().ToUpper() + ": ", pointSize: 8)
@@ -216,14 +216,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 		{
 			var timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = Agg.UI.VAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 				BackgroundColor = Color.LightGray,
 				Padding = new BorderDouble(6, 0)
 			};
 
 			var startTimeContainer = new FlowLayoutWidget
 			{
-				HAnchor = Agg.UI.HAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(0, 3)
 			};
 
@@ -245,7 +245,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			var endTimeContainer = new FlowLayoutWidget
 			{
-				HAnchor = Agg.UI.HAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(0, 3)
 			};
 

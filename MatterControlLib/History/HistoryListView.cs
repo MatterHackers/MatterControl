@@ -73,6 +73,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 				exportPrintHistory.Enabled = historyItems.Count > 0;
 				exportPrintHistory.Click += (s, e) =>
 				{
+					if (ApplicationController.Instance.IsMatterControlPro())
+					{
+						// do the export
+					}
+					else // upsell MatterControl Pro
+					{
+					}
 				};
 
 				bool showFilter = false;
