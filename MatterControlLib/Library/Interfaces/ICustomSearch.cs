@@ -27,61 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
-
 namespace MatterHackers.MatterControl.Library
 {
-	[Flags]
-	public enum SortKey
+	public interface ICustomSearch
 	{
-		Default = 0,
-		Name = 1,
-		CreatedDate = 2,
-		ModifiedDate = 4,
-	}
+		void ApplyFilter(string filter, ILibraryContext libraryContext);
 
-	public interface ILibraryContainer : IDisposable
-	{
-		string ID { get; }
-
-		string Name { get; }
-
-		string StatusMessage { get; }
-
-		bool IsProtected { get; }
-
-		Type DefaultView { get; }
-
-		SortBehavior DefaultSort { get; }
-
-		event EventHandler ContentChanged;
-
-		List<ILibraryContainerLink> ChildContainers { get; }
-
-		List<ILibraryItem> Items { get; }
-
-		ICustomSearch CustomSearch { get; }
-
-		ILibraryContainer Parent { get; set; }
-
-		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
-
-		void Deactivate();
-
-		void Activate();
-
-		void Load();
-	}
-
-	public enum ContainerActions
-	{
-		AddItems,
-		AddContainers,
-		RenameItems,
-		RemoveItems
+		void ClearFilter();
 	}
 }

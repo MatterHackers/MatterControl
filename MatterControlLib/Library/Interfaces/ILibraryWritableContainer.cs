@@ -29,59 +29,29 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	[Flags]
-	public enum SortKey
+	public interface ILibraryWritableContainer : ILibraryContainer, IContentStore
 	{
-		Default = 0,
-		Name = 1,
-		CreatedDate = 2,
-		ModifiedDate = 4,
-	}
+		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
 
-	public interface ILibraryContainer : IDisposable
-	{
-		string ID { get; }
+		void Add(IEnumerable<ILibraryItem> items);
 
-		string Name { get; }
+		void Remove(IEnumerable<ILibraryItem> items);
 
-		string StatusMessage { get; }
+		void Rename(ILibraryItem item, string revisedName);
 
-		bool IsProtected { get; }
+		/// <summary>
+		/// Move the given items from the source container to this container
+		/// </summary>
+		/// <param name="items">The items to move</param>
+		/// <param name="sourceContainer">The current parent container</param>
+		void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer);
 
-		Type DefaultView { get; }
+		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 
-		SortBehavior DefaultSort { get; }
-
-		event EventHandler ContentChanged;
-
-		List<ILibraryContainerLink> ChildContainers { get; }
-
-		List<ILibraryItem> Items { get; }
-
-		ICustomSearch CustomSearch { get; }
-
-		ILibraryContainer Parent { get; set; }
-
-		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
-
-		void Deactivate();
-
-		void Activate();
-
-		void Load();
-	}
-
-	public enum ContainerActions
-	{
-		AddItems,
-		AddContainers,
-		RenameItems,
-		RemoveItems
+		bool AllowAction(ContainerActions containerActions);
 	}
 }
