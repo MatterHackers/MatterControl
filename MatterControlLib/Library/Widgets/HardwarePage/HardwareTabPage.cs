@@ -116,9 +116,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+						var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-						var openMenuItem = menu.CreateMenuItem("Open".Localize());
+						var openMenuItem = popupMenu.CreateMenuItem("Open".Localize());
 						openMenuItem.Click += (s2, e2) =>
 						{
 							if (treeView?.SelectedNode.Tag is PrinterInfo printerInfo)
@@ -127,9 +127,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						};
 
-						menu.CreateSeparator();
+						popupMenu.CreateSeparator();
 
-						var deleteMenuItem = menu.CreateMenuItem("Delete".Localize());
+						var deleteMenuItem = popupMenu.CreateMenuItem("Delete".Localize());
 						deleteMenuItem.Click += (s2, e2) =>
 						{
 							if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
@@ -150,19 +150,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							}
 						};
 
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(clickedWidget)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+						popupMenu.ShowMenu(clickedWidget, mouseEvent);
 					});
 				}
 			};

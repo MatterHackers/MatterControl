@@ -188,21 +188,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (sourceEvent.Button == MouseButtons.Right)
 					{
-						var menu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
-
-						var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-						systemWindow.ShowPopup(
-							new MatePoint(clickedWidget)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-							},
-							new MatePoint(menu)
-							{
-								Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-								AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-							},
-							altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+						var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
+						popupMenu.ShowMenu(clickedWidget, sourceEvent);
 					}
 				}
 			};
@@ -1527,21 +1514,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowPartContextMenu(MouseEventArgs mouseEvent, IObject3D selectedItem)
 		{
-			var menu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
-
-			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-			systemWindow.ShowPopup(
-				new MatePoint(this)
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
-				},
-				new MatePoint(menu)
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
-				},
-				altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+			var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
+			popupMenu.ShowMenu(this, mouseEvent);
 		}
 
 		public void ShowBedContextMenu(Vector2 position)

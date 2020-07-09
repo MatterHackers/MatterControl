@@ -34,6 +34,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -110,29 +111,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 					"Clear History".Localize());
 				};
 
-				ShowMenu(mouseEvent, popupMenu);
+				popupMenu.ShowMenu(this, mouseEvent);
 			}
 
 			base.OnClick(mouseEvent);
-		}
-
-		private void ShowMenu(MouseEventArgs mouseEvent, PopupMenu popupMenu)
-		{
-			var sourceEvent = mouseEvent.Position;
-			var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-			this.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
-			systemWindow.ShowPopup(
-				new MatePoint(this)
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-				},
-				new MatePoint(popupMenu)
-				{
-					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-				},
-				altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)

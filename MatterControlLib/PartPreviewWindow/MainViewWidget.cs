@@ -686,6 +686,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					MinimumSize = new Vector2(120, theme.TabButtonHeight)
 				};
 
+				// add a right click menu
+				printerTab.Click += (s, e) =>
+				{
+					if (e.Button == MouseButtons.Right)
+					{
+						AddRightClickPrinterMenu(printerTab, printer, e);
+					}
+				};
+
 				void Tab_CloseClicked(object sender, EventArgs args)
 				{
 					ApplicationController.Instance.ClosePrinter(printer);
@@ -716,6 +725,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return null;
+		}
+
+		private void AddRightClickPrinterMenu(ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		{
+			var menuTheme = ApplicationController.Instance.MenuTheme;
+			var popupMenu = new PopupMenu(menuTheme);
+
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						printer.Settings.GetValue(SettingsKey.printer_name),
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							printer.Settings.SetValue(SettingsKey.printer_name, newName);
+						}));
+			};
+
+			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
 		public async Task<ChromeTab> CreatePartTab()

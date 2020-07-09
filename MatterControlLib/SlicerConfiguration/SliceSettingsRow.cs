@@ -236,21 +236,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printer.Settings.Save();
 				};
 
-				var sourceEvent = mouseEvent.Position;
-				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-				this.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
-				systemWindow.ShowPopup(
-					new MatePoint(this)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-					},
-					new MatePoint(popupMenu)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-					},
-					altBounds: new RectangleDouble(sourceEvent.X + 1, sourceEvent.Y + 1, sourceEvent.X + 1, sourceEvent.Y + 1));
+				popupMenu.ShowMenu(this, mouseEvent);
 			}
 
 			base.OnClick(mouseEvent);
