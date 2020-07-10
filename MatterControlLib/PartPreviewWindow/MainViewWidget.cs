@@ -832,7 +832,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			UpadetMaxWidth();
 
-			textWidget.TextChanged += (s, e) => UpadetMaxWidth();
+			// delay this for an update so that the layout of the text widget has happened and its size has been updated.
+			textWidget.TextChanged += (s, e) => UiThread.RunOnIdle(UpadetMaxWidth);
 
 			void UpadetMaxWidth()
 			{
@@ -851,7 +852,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
-				partTab.Parent.Width = partTab.Width - 1;
+				partTab.Width = partTab.Width - 1;
 			}
 
 			partTab.HAnchor = HAnchor.Stretch;
