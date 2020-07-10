@@ -851,6 +851,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
+				partTab.Parent.Width = partTab.Width - 1;
 			}
 
 			partTab.HAnchor = HAnchor.Stretch;
@@ -890,6 +891,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (printerTab != null)
 				{
 					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);
+					printerTab.ToolTipText = printerTab.Title;
 				}
 			}
 		}
