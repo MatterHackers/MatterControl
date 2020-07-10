@@ -553,6 +553,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Draw transparent objects
 			foreach (var item in transparentMeshes)
 			{
+				GL.Enable(EnableCap.Lighting);
+
 				var object3D = item.Object3D;
 				GLHelper.Render(
 					object3D.Mesh,
