@@ -350,6 +350,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var field = new DoubleField(theme);
 					field.Initialize(0);
 					field.DoubleValue = doubleValue;
+					field.ClearUndoHistory();
 					RegisterValueChanged(field, (valueString) => { return double.Parse(valueString); });
 
 					void RefreshField(object s, InvalidateArgs e)
@@ -388,6 +389,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new Vector2Field(theme);
 				field.Initialize(0);
 				field.Vector2 = vector2;
+				field.ClearUndoHistory();
+
 				RegisterValueChanged(field,
 					(valueString) => Vector2.Parse(valueString),
 					(value) =>
@@ -395,6 +398,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						var s = ((Vector2)value).ToString();
 						return s.Substring(1, s.Length - 2);
 					});
+
 				rowContainer = CreateSettingsColumn(property, field);
 			}
 			else if (propertyValue is Vector3 vector3)
@@ -402,6 +406,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new Vector3Field(theme);
 				field.Initialize(0);
 				field.Vector3 = vector3;
+				field.ClearUndoHistory();
 
 				RegisterValueChanged(
 					field,
@@ -419,6 +424,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new DirectionVectorField(theme);
 				field.Initialize(0);
 				field.SetValue(directionVector);
+				field.ClearUndoHistory();
+			
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);
@@ -434,6 +441,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				var field1 = new DirectionVectorField(theme);
 				field1.Initialize(0);
+				field1.ClearUndoHistory();
+
 				field1.SetValue(new DirectionVector()
 				{
 					Normal = directionAxis.Normal
@@ -447,6 +456,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field2 = new Vector3Field(theme);
 				field2.Initialize(0);
 				field2.Vector3 = directionAxis.Origin - property.Item.Children.First().GetAxisAlignedBoundingBox().Center;
+				field2.ClearUndoHistory();
 
 				var row2 = CreateSettingsColumn("Offset".Localize(), field2);
 
@@ -580,6 +590,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					var field = new IntField(theme);
 					field.Initialize(0);
 					field.IntValue = intValue;
+					field.ClearUndoHistory();
+
 					RegisterValueChanged(field, (valueString) => { return int.Parse(valueString); });
 
 					void RefreshField(object s, InvalidateArgs e)
@@ -629,6 +641,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					var field = new TextField(theme);
 					field.Initialize(0);
 					field.SetValue(stringValue, false);
+					field.ClearUndoHistory();
 					field.Content.HAnchor = HAnchor.Stretch;
 					RegisterValueChanged(field, (valueString) => valueString);
 					rowContainer = CreateSettingsRow(property, field, theme);
@@ -649,6 +662,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var field = new CharField(theme);
 				field.Initialize(0);
 				field.SetValue(charValue.ToString(), false);
+				field.ClearUndoHistory();
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(Convert.ToChar(field.Value));
