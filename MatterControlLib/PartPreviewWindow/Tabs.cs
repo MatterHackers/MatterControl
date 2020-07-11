@@ -525,6 +525,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ToolTab : SimpleTab
 	{
 		public Color InactiveTabColor { get; set; }
+
 		public Color ActiveTabColor { get; set; }
 
 		public override Color BorderColor

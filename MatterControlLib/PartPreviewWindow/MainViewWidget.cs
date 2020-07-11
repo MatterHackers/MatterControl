@@ -821,7 +821,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var textWidget = partTab.Descendants<TextWidget>().First();
 			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
-			partTab.ToolTipText = textWidget.Text;
 			tabPill.HAnchor = HAnchor.Stretch;
 			var closeBox = partTab.Descendants<ImageWidget>().FirstOrDefault();
 			if (closeBox != null)
@@ -852,7 +851,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
-				partTab.Width = partTab.Width - 1;
+				partTab.Width -= 1;
+
+				// wait for this size change to take effect and update the tool tip
+				partTab.BoundsChanged += (s, e) =>
+				{
+					if (partTab.Width < partTab.MaximumSize.X)
+					{
+						partTab.ToolTipText = textWidget.Text;
+					}
+					else
+					{
+						partTab.ToolTipText = "";
+					}
+				};
 			}
 
 			partTab.HAnchor = HAnchor.Stretch;
