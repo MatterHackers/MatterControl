@@ -890,7 +890,7 @@ break;
 
 		static public int sqlite3_changes(sqlite3 db)
 		{
-			return db.nChange;
+			return db == null ? 0 : db.nChange;
 		}
 
 		/*
