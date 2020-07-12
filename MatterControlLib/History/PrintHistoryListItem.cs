@@ -277,7 +277,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 							printTask.Commit();
 							popupMenu.Unfocus();
 							printInfoWidget.Text = GetPrintInfo();
-						}));
+						})
+					{
+						AllowEmpty = true,
+					});
 			};
 		}
 

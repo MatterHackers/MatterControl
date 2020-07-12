@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			actionButton.Click += (s, e) =>
 			{
 				string newName = textEditWidget.ActualTextEditWidget.Text;
-				if (!string.IsNullOrEmpty(newName))
+				if (!string.IsNullOrEmpty(newName) || AllowEmpty)
 				{
 					action.Invoke(newName);
 					this.DialogWindow.CloseOnIdle();
@@ -78,6 +78,8 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddPageAction(actionButton);
 		}
+
+		public bool AllowEmpty { get; set; }
 
 		public override void OnLoad(EventArgs args)
 		{
