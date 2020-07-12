@@ -33,14 +33,15 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lucene.Net.Util;
+using CsvHelper;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.SerialPortCommunication;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -54,6 +55,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
+			this.printTask = printTask;
 
 			var mainContainer = new GuiWidget
 			{
@@ -194,6 +196,247 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.BackgroundColor = new Color(255, 255, 255, 255);
 		}
 
+		protected override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button == MouseButtons.Right)
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				var printTasks = PrintHistoryData.Instance.GetHistoryItems(1000);
+
+				var popupMenu = new PopupMenu(theme);
+				AddRatingsMenu(popupMenu);
+				AddNotesMenu(popupMenu, printTasks);
+
+				popupMenu.CreateSeparator();
+
+				AddExportMenu(popupMenu, printTasks);
+
+				popupMenu.CreateSeparator();
+
+				AddClearHistorMenu(popupMenu, printTasks);
+
+				popupMenu.ShowMenu(this, mouseEvent);
+			}
+
+			base.OnClick(mouseEvent);
+		}
+
+		private void AddNotesMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var addNotest = popupMenu.CreateMenuItem("Add Note...".Localize());
+			addNotest.Enabled = printTasks.Any();
+			addNotest.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Print History Note".Localize(),
+						"Note".Localize(),
+						printTask.Note == null ? "" : printTask.Note,
+						"Enter Note Here".Localize(),
+						printTask.Note == null ? "Add Note".Localize() : "Update".Localize(),
+						(newNote) =>
+						{
+							printTask.Note = newNote;
+							printTask.Commit();
+							popupMenu.Unfocus();
+						}));
+			};
+		}
+
+		private void AddRatingsMenu(PopupMenu popupMenu)
+		{
+			var content = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Stretch
+			};
+
+			var textWidget = new TextWidget("Rating".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				// Padding = MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			content.AddChild(textWidget);
+
+			content.AddChild(new HorizontalSpacer());
+
+			var siblings = new List<GuiWidget>();
+			var toolTips = new string[]
+			{
+				"Failed".Localize(),
+				"Terrible".Localize(),
+				"Bad".Localize(),
+				"Good".Localize(),
+				"Great".Localize(),
+			};
+
+			for (int i = 0; i < toolTips.Length; i++)
+			{
+				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor))
+				{
+					Border = new BorderDouble(1, 0, 0, 0),
+					BorderColor = theme.MinimalShade,
+					Enabled = printTask.PrintComplete,
+					Checked = printTask.RatingWasSet && printTask.Rating == i,
+					ToolTipText = toolTips[i],
+				};
+
+				siblings.Add(button);
+
+				if (button.Checked && button.Enabled)
+				{
+					button.BackgroundColor = theme.AccentMimimalOverlay;
+				}
+
+				button.SiblingRadioButtonList = siblings;
+
+				content.AddChild(button);
+
+				button.Click += (s, e) =>
+				{
+					printTask.Rating = siblings.IndexOf((GuiWidget)s);
+					printTask.RatingWasSet = true;
+					printTask.Commit();
+					popupMenu.Unfocus();
+				};
+			}
+
+			var menuItem = new PopupMenu.MenuItem(content, theme)
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				HoverColor = Color.Transparent,
+			};
+			popupMenu.AddChild(menuItem);
+		}
+
+		private void AddClearHistorMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var clearPrintHistory = popupMenu.CreateMenuItem("Clear History".Localize());
+			clearPrintHistory.Enabled = printTasks.Any();
+			clearPrintHistory.Click += (s, e) =>
+			{
+				// clear history
+				StyledMessageBox.ShowMessageBox(
+				(clearHistory) =>
+				{
+					if (clearHistory)
+					{
+						PrintHistoryData.Instance.ClearHistory();
+					}
+				},
+				"Are you sure you want to clear your print history?".Localize(),
+				"Clear History?".Localize(),
+				StyledMessageBox.MessageType.YES_NO,
+				"Clear History".Localize());
+			};
+		}
+
+		private void AddExportMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var exportPrintHistory = popupMenu.CreateMenuItem("Export History".Localize() + "...");
+			exportPrintHistory.Enabled = printTasks.Any();
+			exportPrintHistory.Click += (s, e) =>
+			{
+				if (ApplicationController.Instance.IsMatterControlPro())
+				{
+					ExportToCsv(printTasks);
+				}
+				else // upsell MatterControl Pro
+				{
+					StyledMessageBox.ShowMessageBox(
+						"Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize(),
+						"Upgrade to Pro".Localize(),
+						StyledMessageBox.MessageType.OK);
+				}
+			};
+		}
+
+		public class RowData
+		{
+			public string Printer { get; set; }
+
+			public string QualitySettingsName { get; set; }
+
+			public string MaterialSettingsName { get; set; }
+
+			public string Name { get; set; }
+
+			public DateTime Start { get; set; }
+
+			public DateTime End { get; set; }
+
+			public int Minutes { get; set; }
+
+			public bool Compleated { get; set; }
+
+			public double RecoveryCount { get; set; }
+
+			public string ItemsPrinted { get; set; }
+
+			public string Notes { get; set; }
+
+			public int Rating { get; set; }
+		}
+
+		private static void ExportToCsv(IEnumerable<PrintTask> printTasks)
+		{
+			// right click success or fail
+			// user settings that are different
+			var records = new List<RowData>();
+
+			// do the export
+			foreach (var printTask in printTasks)
+			{
+				string groupNames = PrintHistoryListItem.GetItemNamesFromMcx(printTask.PrintName);
+
+				records.Add(new RowData()
+				{
+					Printer = printTask.PrinterName,
+					Name = printTask.PrintName,
+					Start = printTask.PrintStart,
+					End = printTask.PrintEnd,
+					Compleated = printTask.PrintComplete,
+					Rating = printTask.Rating,
+					ItemsPrinted = groupNames,
+					Minutes = printTask.PrintTimeMinutes,
+					RecoveryCount = printTask.RecoveryCount,
+					QualitySettingsName = printTask.QualitySettingsName,
+					MaterialSettingsName = printTask.MaterialSettingsName,
+					Notes = printTask.Note,
+				});
+			}
+
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+				{
+					FileName = "Pinter Histor.csv",
+					Filter = "CSV Files|*.csv"
+				},
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							using (var writer = new StreamWriter(saveParams.FileName))
+							{
+								using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+								{
+									csv.WriteRecords(records);
+								}
+							}
+						}
+					}
+					catch (Exception e2)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e2.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
+		}
+
 		public static string GetItemNamesFromMcx(string mcxFileName)
 		{
 			// add in the cache path
@@ -321,6 +564,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 		}
 
 		private PrintItemWrapper itemToRemove;
+		private PrintTask printTask;
 
 		private void OnConfirmRemove(bool messageBoxResponse)
 		{
