@@ -357,11 +357,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							// Validate against active hotends
 							foreach (var hotendIndex in activeHotends)
 							{
-								var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
-								if (!hotendBounds.Contains(itemBounds))
+								if (printer?.Settings?.ToolBounds != null
+									&& hotendIndex < printer.Settings.ToolBounds.Length)
 								{
-									// Draw in red outside of the bounds for the hotend
-									drawColor = Color.Red.WithAlpha(90);
+									var hotendBounds = printer.Settings.ToolBounds[hotendIndex];
+									if (!hotendBounds.Contains(itemBounds))
+									{
+										// Draw in red outside of the bounds for the hotend
+										drawColor = Color.Red.WithAlpha(90);
+									}
 								}
 							}
 						}
@@ -553,6 +557,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Draw transparent objects
 			foreach (var item in transparentMeshes)
 			{
+				GL.Enable(EnableCap.Lighting);
+
 				var object3D = item.Object3D;
 				GLHelper.Render(
 					object3D.Mesh,

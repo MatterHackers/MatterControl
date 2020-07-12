@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Kevin Pope, John Lewin
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,61 +29,29 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using CsvHelper;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
+using MatterHackers.Agg.Image;
 
-namespace MatterHackers.MatterControl.PrintHistory
+namespace MatterHackers.MatterControl.Library
 {
-	public class HistoryListView : FlowLayoutWidget, IListContentView
+	public interface ILibraryWritableContainer : ILibraryContainer, IContentStore
 	{
-		private readonly ThemeConfig theme = ApplicationController.Instance.Theme;
+		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
 
-		public int ThumbWidth { get; } = 50;
+		void Add(IEnumerable<ILibraryItem> items);
 
-		public int ThumbHeight { get; } = 50;
+		void Remove(IEnumerable<ILibraryItem> items);
 
-		// Parameterless constructor required for ListView
-		public HistoryListView()
-			: base(FlowDirection.TopToBottom)
-		{
-		}
+		void Rename(ILibraryItem item, string revisedName);
 
-		public HistoryListView(ThemeConfig theme)
-			: base(FlowDirection.TopToBottom)
-		{
-			this.theme = theme;
-		}
+		/// <summary>
+		/// Move the given items from the source container to this container
+		/// </summary>
+		/// <param name="items">The items to move</param>
+		/// <param name="sourceContainer">The current parent container</param>
+		void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer);
 
-		public ListViewItemBase AddItem(ListViewItem item)
-		{
-			var historyRowItem = item.Model as PrintHistoryItem;
-			var detailsView = new PrintHistoryListItem(item, this.ThumbWidth, this.ThumbHeight, historyRowItem?.PrintTask, theme);
-			this.AddChild(detailsView);
+		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
 
-			return detailsView;
-		}
-
-		public void ClearItems()
-		{
-		}
-
-		public void BeginReload()
-		{
-		}
-
-		public void EndReload()
-		{
-		}
+		bool AllowAction(ContainerActions containerActions);
 	}
 }

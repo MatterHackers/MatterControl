@@ -123,21 +123,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Clipboard.Instance.SetImage(thumbnailWidget.Image);
 					};
 
-					var popupBounds = new RectangleDouble(e.X + 1, e.Y + 1, e.X + 1, e.Y + 1);
-
-					var systemWindow = column.Parents<SystemWindow>().FirstOrDefault();
-					systemWindow.ShowPopup(
-						new MatePoint(thumbnailWidget)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						new MatePoint(popupMenu)
-						{
-							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
-						},
-						altBounds: popupBounds);
+					popupMenu.ShowMenu(thumbnailWidget, e);
 				}
 			};
 

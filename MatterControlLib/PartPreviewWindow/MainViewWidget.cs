@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
@@ -262,10 +263,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			ApplicationController.Instance.NotifyPrintersTabRightElement(extensionArea);
 
+			ChromeTab tab = null;
+
 			// Upgrade tab
 			if (!ApplicationController.Instance.IsMatterControlPro())
 			{
-				GuiWidget tab;
 				tabControl.AddTab(
 					tab = new ChromeTab("Upgrade", "Upgrade".Localize(), tabControl, new UpgradeToProTabPage(theme), theme, hasClose: false)
 					{
@@ -278,13 +280,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Store tab
 				tabControl.AddTab(
-					new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
+					tab = new ChromeTab("Store", "Store".Localize(), tabControl, new StoreTabPage(theme), theme, hasClose: false)
 					{
 						MinimumSize = new Vector2(0, theme.TabButtonHeight),
 						Name = "Store Tab",
 						Padding = new BorderDouble(15, 0),
 					});
 			}
+			EnableReduceWidth(tab, theme);
 
 			// Library tab
 			var libraryWidget = new LibraryWidget(this, theme)
@@ -293,16 +296,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			tabControl.AddTab(
-				new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
+				tab = new ChromeTab("Library", "Library".Localize(), tabControl, libraryWidget, theme, hasClose: false)
 				{
 					MinimumSize = new Vector2(0, theme.TabButtonHeight),
 					Name = "Library Tab",
 					Padding = new BorderDouble(15, 0),
 				});
+			EnableReduceWidth(tab, theme);
 
 			// Hardware tab
 			tabControl.AddTab(
-				new ChromeTab(
+				tab = new ChromeTab(
 					"Hardware",
 					"Hardware".Localize(),
 					tabControl,
@@ -317,6 +321,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "Hardware Tab",
 					Padding = new BorderDouble(15, 0),
 				});
+			EnableReduceWidth(tab, theme);
 
 			SetInitialTab();
 
@@ -683,8 +688,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 				{
 					Name = "3D View Tab",
-					MinimumSize = new Vector2(120, theme.TabButtonHeight)
 				};
+
+				// add a right click menu
+				printerTab.Click += (s, e) =>
+				{
+					if (e.Button == MouseButtons.Right)
+					{
+						AddRightClickPrinterMenu(printerTab, printer, e);
+					}
+				};
+
+				EnableReduceWidth(printerTab, theme);
 
 				void Tab_CloseClicked(object sender, EventArgs args)
 				{
@@ -716,6 +731,30 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			return null;
+		}
+
+		private void AddRightClickPrinterMenu(ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		{
+			var menuTheme = ApplicationController.Instance.MenuTheme;
+			var popupMenu = new PopupMenu(menuTheme);
+
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						printer.Settings.GetValue(SettingsKey.printer_name),
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							printer.Settings.SetValue(SettingsKey.printer_name, newName);
+						}));
+			};
+
+			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
 
 		public async Task<ChromeTab> CreatePartTab()
@@ -753,19 +792,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
-				MinimumSize = new Vector2(120, theme.TabButtonHeight),
 			};
 
-			partTab.MaximumSize = new Vector2(partTab.Width, partTab.MaximumSize.Y);
-			partTab.HAnchor = HAnchor.Stretch;
-
-			var textWidget = partTab.Descendants<TextWidget>().First();
-			textWidget.HAnchor = HAnchor.Stretch;
-			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
-			partTab.ToolTipText = textWidget.Text;
-			tabPill.HAnchor = HAnchor.Stretch;
-			var tabPillMarign = tabPill.Margin;
-			tabPill.Margin = new BorderDouble(tabPillMarign.Left, tabPillMarign.Bottom, tabPillMarign.Right + 10, tabPillMarign.Top);
+			EnableReduceWidth(partTab, theme);
 
 			tabControl.AddTab(partTab);
 
@@ -784,6 +813,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			partTab.Closed += Widget_Closed;
 
 			return partTab;
+		}
+
+		private static void EnableReduceWidth(ChromeTab partTab, ThemeConfig theme)
+		{
+			var scale = GuiWidget.DeviceScale;
+			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight);
+
+			var textWidget = partTab.Descendants<TextWidget>().First();
+			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
+			tabPill.HAnchor = HAnchor.Stretch;
+			var closeBox = partTab.Descendants<ImageWidget>().FirstOrDefault();
+			if (closeBox != null)
+			{
+				var tabPillMarign = tabPill.Margin;
+				tabPill.Margin = new BorderDouble(tabPillMarign.Left, tabPillMarign.Bottom, tabPillMarign.Right + 10, tabPillMarign.Top);
+			}
+
+			UpadetMaxWidth();
+
+			// delay this for an update so that the layout of the text widget has happened and its size has been updated.
+			textWidget.TextChanged += (s, e) => UiThread.RunOnIdle(UpadetMaxWidth);
+
+			void UpadetMaxWidth()
+			{
+				// the text
+				var width = textWidget.Width;
+				// the tab pill
+				width += (tabPill.Margin.Width + tabPill.Padding.Width) * scale;
+				if (closeBox != null)
+				{
+					// the close box
+					width += closeBox.Width;
+				}
+				else
+				{
+					width += 32 * scale;
+				}
+
+				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
+				partTab.Width -= 1;
+
+				// wait for this size change to take effect and update the tool tip
+				partTab.BoundsChanged += (s, e) =>
+				{
+					if (partTab.Width < partTab.MaximumSize.X)
+					{
+						partTab.ToolTipText = textWidget.Text;
+					}
+					else
+					{
+						partTab.ToolTipText = "";
+					}
+				};
+			}
+
+			partTab.HAnchor = HAnchor.Stretch;
 		}
 
 		public override void OnClosed(EventArgs e)
@@ -820,6 +905,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (printerTab != null)
 				{
 					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);
+					printerTab.ToolTipText = printerTab.Title;
 				}
 			}
 		}

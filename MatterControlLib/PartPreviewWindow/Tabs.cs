@@ -122,11 +122,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void TabWidget_Click(object sender, MouseEventArgs e)
 		{
-			var tab = sender as ITab;
-			this.ActiveTab = tab;
+			if (e.Button == MouseButtons.Left)
+			{
+				var tab = sender as ITab;
+				this.ActiveTab = tab;
 
-			// Push focus to tab content on tab pill selection
-			tab.TabContent.Focus();
+				// Push focus to tab content on tab pill selection
+				tab.TabContent.Focus();
+			}
 		}
 
 		public string SelectedTabKey
@@ -522,6 +525,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ToolTab : SimpleTab
 	{
 		public Color InactiveTabColor { get; set; }
+
 		public Color ActiveTabColor { get; set; }
 
 		public override Color BorderColor

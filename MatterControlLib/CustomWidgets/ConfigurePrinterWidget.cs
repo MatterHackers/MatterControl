@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -45,6 +46,23 @@ namespace MatterHackers.MatterControl
 				printer.Settings.SetValue(SettingsKey.printer_name, inlineNameEdit.Text);
 			};
 			this.AddChild(inlineNameEdit);
+
+			void Printer_SettingChanged(object s, StringEventArgs stringEvent)
+			{
+				if (s is PrinterSettings printerSettings
+					&& stringEvent?.Data == SettingsKey.printer_name)
+				{
+					// Try to find a printer tab for the given printer
+					inlineNameEdit.Text = printerSettings.GetValue(SettingsKey.printer_name);
+				}
+			}
+
+			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
+
+			inlineNameEdit.Closed += (s, e) =>
+			{
+				PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
+			};
 
 			this.AddChild(
 				new SliceSettingsTabView(

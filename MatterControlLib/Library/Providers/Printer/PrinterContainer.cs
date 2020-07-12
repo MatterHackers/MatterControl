@@ -29,49 +29,69 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class RootHistoryContainer : LibraryContainer
+	// Printer specific containers
+	public class PrinterContainer : LibraryContainer
 	{
-		public RootHistoryContainer()
+		private PrinterConfig printer;
+
+		public PrinterContainer(PrinterConfig printer)
 		{
+			this.printer = printer;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = "History".Localize();
+			this.Name = printer.Settings.GetValue(SettingsKey.printer_name);
 		}
 
 		public override void Load()
 		{
+			this.Items.Clear();
+			this.ChildContainers.Clear();
+
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Plating History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
-					() => new PlatingHistoryContainer())
+					() => "SD Card".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+					() => new SDCardContainer(printer),
+					() =>
+					{
+						return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
+					})
 				{
 					IsReadOnly = true
 				});
 
+#if false // working on a new container that holds custom parts for a given printer
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Print History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
-					() => new PrintHistoryContainer()
-					{
-						DefaultSort = new SortBehavior()
-						{
-							SortKey = SortKey.ModifiedDate,
-						}
-					})
+					() => "Printer Parts".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					() => new GitHubPartsContainer(printer),
+					() => repositoryExistsAndHasContent) // visibility
 				{
-					IsReadOnly = true,
+					IsReadOnly = true
 				});
+#else
+			this.ChildContainers.Add(
+				new DynamicContainerLink(
+					() => "Calibration Parts".Localize(),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					() => new CalibrationPartsContainer())
+				{
+					IsReadOnly = true
+				});
+#endif
+
+			// TODO: An enumerable list of serialized container paths (or some other markup) to construct for this printer
+			// printer.Settings.GetValue(SettingsKey.library_containers);
 		}
 	}
 }

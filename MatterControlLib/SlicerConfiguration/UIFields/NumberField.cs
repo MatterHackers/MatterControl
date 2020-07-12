@@ -34,9 +34,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public abstract class NumberField : UIField
 	{
 		protected MHNumberEdit numberEdit;
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 
 		protected bool AllowNegatives { get; set; } = true;
+
 		protected bool AllowDecimals { get; set; } = true;
 
 		public NumberField(ThemeConfig theme)

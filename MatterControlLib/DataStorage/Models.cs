@@ -349,7 +349,17 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public int PrintTimeSeconds { get; set; }
 
+		public bool QualityWasSet { get; set; }
+
+		public int PrintQuality { get; set; }
+
 		public string PrinterName { get; set; }
+
+		public string QualitySettingsName { get; set; }
+
+		public string MaterialSettingsName { get; set; }
+
+		public string Note { get; set; }
 
 		public override void Commit()
 		{

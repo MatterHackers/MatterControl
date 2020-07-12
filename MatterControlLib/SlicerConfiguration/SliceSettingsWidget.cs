@@ -810,14 +810,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				uiField.Content.ToolTipText = "";
 
 				// make sure the undo data goes back to the initial value after a change
-				if (uiField.Content is MHTextEditWidget textWidget)
-				{
-					textWidget.ActualTextEditWidget.InternalTextEditWidget.ClearUndoHistory();
-				}
-				else if (uiField.Content is MHNumberEdit numberWidget)
-				{
-					numberWidget.ActuallNumberEdit.InternalTextEditWidget.ClearUndoHistory();
-				}
+				uiField.ClearUndoHistory();
 
 				uiField.ValueChanged += (s, e) =>
 				{

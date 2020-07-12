@@ -318,7 +318,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
 							AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-						}); // altBounds: new RectangleDouble(mouseEvent.X + 1, mouseEvent.Y + 1, mouseEvent.X + 1, mouseEvent.Y + 1));
+						});
 				});
 
 				subMenu.Closed += (s1, e1) =>
@@ -496,5 +496,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				base.OnDraw(graphics2D);
 			}
 		}
+	}
+
+	public static class PopupMenuExtensions
+	{
+		public static void ShowMenu(this PopupMenu popupMenu, GuiWidget anchorWidget, MouseEventArgs mouseEvent)
+		{
+			popupMenu.ShowMenu(anchorWidget, mouseEvent.Position);
+		}
+
+		public static void ShowMenu(this PopupMenu popupMenu, GuiWidget anchorWidget, Vector2 menuPosition)
+		{
+			var systemWindow = anchorWidget.Parents<SystemWindow>().FirstOrDefault();
+			anchorWidget.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
+			systemWindow.ShowPopup(
+				new MatePoint(anchorWidget)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+				},
+				new MatePoint(popupMenu)
+				{
+					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+				},
+				altBounds: new RectangleDouble(menuPosition.X + 1, menuPosition.Y + 1, menuPosition.X + 1, menuPosition.Y + 1));
+		}
+
 	}
 }

@@ -3217,9 +3217,9 @@ Support and tutorials:
 			}
 
 			AnyPrintCanceled?.Invoke(sender, e);
-	}
+		}
 
-	private void ShowNotification(string title, string markdownText, string userKey)
+		private void ShowNotification(string title, string markdownText, string userKey)
 		{
 			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
 			{

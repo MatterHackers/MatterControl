@@ -268,6 +268,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					layer.World.RenderCylinderOutline(this.WorldMatrix(), aabb.Center, Diameter, Height, 30, Color.Red, 1, 1);
 				}
+
 				// turn the lighting back on
 				GL.Enable(EnableCap.Lighting);
 			}

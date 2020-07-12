@@ -350,20 +350,20 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				&& (hitRegion.Contains(mouseEvent.Position)
 					|| mouseEvent.Button == MouseButtons.Right))
 			{
-				var menu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
 				foreach (var menuAction in listViewItem.ListView.MenuActions.Where(m => m.Scope == ActionScope.ListItem))
 				{
 					if (menuAction is MenuSeparator)
 					{
-						menu.CreateSeparator();
+						popupMenu.CreateSeparator();
 					}
 					else if (menuAction.IsEnabled(this.listViewItem.ListView.SelectedItems, this.listViewItem.ListView))
 					{
-						var item = menu.CreateMenuItem(menuAction.Title, menuAction.Icon);
+						var item = popupMenu.CreateMenuItem(menuAction.Title, menuAction.Icon);
 						item.Click += (s, e) =>
 						{
-							menu.Close();
+							popupMenu.Close();
 							menuAction.Action.Invoke(this.listViewItem.ListView.SelectedItems.Select(o => o.Model), this.listViewItem.ListView);
 						};
 					}
@@ -379,19 +379,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					popupBounds = new RectangleDouble(this.Width - 32, this.Height - 32, this.Width, this.Height);
 				}
 
-				var systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
-				systemWindow.ShowPopup(
-					new MatePoint(this)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Bottom),
-						AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
-					},
-					new MatePoint(menu)
-					{
-						Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-						AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
-					},
-					altBounds: popupBounds);
+				popupMenu.ShowMenu(this, mouseEvent);
 			}
 
 			base.OnClick(mouseEvent);

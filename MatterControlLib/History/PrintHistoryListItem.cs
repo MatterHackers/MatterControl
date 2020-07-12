@@ -32,18 +32,31 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using CsvHelper;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.SerialPortCommunication;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class PrintHistoryListItem : ListViewItemBase
 	{
+		private string[] qualityNames = new string[]
+		{
+			"Failed".Localize(),
+			"Terrible".Localize(),
+			"Bad".Localize(),
+			"Good".Localize(),
+			"Great".Localize(),
+		};
+
 		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
@@ -51,70 +64,49 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.VAnchor = VAnchor.Fit;
 			this.Padding = new BorderDouble(0);
 			this.Margin = new BorderDouble(6, 0, 6, 6);
+			this.printTask = printTask;
 
 			var mainContainer = new GuiWidget
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
-
-			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 			{
-				var indicator = new GuiWidget
+				indicator = new GuiWidget
 				{
-					VAnchor = Agg.UI.VAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
 					Width = 15
 				};
-				if (printTask.PrintComplete)
-				{
-					indicator.BackgroundColor = new Color(38, 147, 51, 180);
-				}
-				else
-				{
-					indicator.BackgroundColor = new Color(252, 209, 22, 180);
-				}
+
+				SetIndicatorColor();
 
 				var middleColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
-					HAnchor = Agg.UI.HAnchor.Stretch,
+					HAnchor = HAnchor.Stretch,
 					Padding = new BorderDouble(6, 3)
 				};
+
+				var labelContainer = new FlowLayoutWidget
 				{
-					var labelContainer = new FlowLayoutWidget
-					{
-						HAnchor = Agg.UI.HAnchor.Stretch
-					};
+					HAnchor = HAnchor.Stretch
+				};
 
-					string labelName = textInfo.ToTitleCase(printTask.PrintName);
-					labelName = labelName.Replace('_', ' ');
+				printInfoWidget = new TextWidget(GetPrintInfo(), pointSize: 15)
+				{
+					TextColor = Color.Black,
+					AutoExpandBoundsToText = true,
+				};
 
-					if (!string.IsNullOrEmpty(printTask.PrinterName))
-					{
-						labelName = printTask.PrinterName + ":\n" + labelName;
-					}
+				labelContainer.AddChild(printInfoWidget);
 
-					var mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, printTask.PrintName);
-					if (File.Exists(mcxFileName))
-					{
-						labelName += "\n" + GetStlNames(mcxFileName);
-					}
-
-					var partLabel = new TextWidget(labelName, pointSize: 15)
-					{
-						TextColor = Color.Black
-					};
-
-					labelContainer.AddChild(partLabel);
-
-					middleColumn.AddChild(labelContainer);
-				}
+				middleColumn.AddChild(labelContainer);
 
 				var timeTextColor = new Color(34, 34, 34);
 
 				var detailsRow = new FlowLayoutWidget
 				{
 					Margin = new BorderDouble(0),
-					HAnchor = Agg.UI.HAnchor.Stretch
+					HAnchor = HAnchor.Stretch
 				};
 				{
 					var timeLabel = new TextWidget("Time".Localize().ToUpper() + ": ", pointSize: 8)
@@ -191,39 +183,339 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.BackgroundColor = new Color(255, 255, 255, 255);
 		}
 
-		private string GetStlNames(string mcxFileName)
+		private void SetIndicatorColor()
 		{
-			var foundNames = new HashSet<string>();
-			var allLines = File.ReadAllLines(mcxFileName);
-			foreach (var line in allLines)
+			if (printTask.PrintComplete)
 			{
-				var find = "\"Name\":";
-				var end = line.IndexOf(find) + find.Length;
-				if (end >= find.Length
-					&& !line.ToLower().Contains(".mcx"))
+				if (printTask.QualityWasSet && printTask.PrintQuality == 0)
 				{
-					var nameStart = line.IndexOf("\"", end);
-					var nameEnd = line.IndexOf("\"", nameStart + 1);
-					var name = line.Substring(nameStart + 1, nameEnd - nameStart - 1);
-					foundNames.Add(name);
+					indicator.BackgroundColor = new Color(252, 38, 51, 180);
+				}
+				else
+				{
+					indicator.BackgroundColor = new Color(38, 147, 51, 180);
 				}
 			}
+			else
+			{
+				indicator.BackgroundColor = new Color(252, 209, 22, 180);
+			}
+		}
 
-			return string.Join(", ", foundNames);
+		private string GetPrintInfo()
+		{
+			TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+			var labelName = "";
+			if (!string.IsNullOrEmpty(printTask.PrinterName))
+			{
+				labelName = printTask.PrinterName + ":\n" + labelName;
+			}
+
+			labelName += textInfo.ToTitleCase(printTask.PrintName).Replace('_', ' ');
+
+			string groupNames = GetItemNamesFromMcx(printTask.PrintName);
+			if (!string.IsNullOrEmpty(groupNames))
+			{
+				labelName += "\n" + groupNames;
+			}
+
+			if (printTask.QualityWasSet)
+			{
+				labelName += "\n" + "Print Quality".Localize() + ": " + qualityNames[printTask.PrintQuality];
+			}
+
+			if (!string.IsNullOrWhiteSpace(printTask.Note))
+			{
+				labelName += "\n" + printTask.Note;
+			}
+
+			return labelName;
+		}
+
+		protected override void OnClick(MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button == MouseButtons.Right)
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				var printTasks = PrintHistoryData.Instance.GetHistoryItems(1000);
+
+				var popupMenu = new PopupMenu(theme);
+				AddQualityMenu(popupMenu);
+				AddNotesMenu(popupMenu, printTasks);
+
+				popupMenu.CreateSeparator();
+
+				AddExportMenu(popupMenu, printTasks);
+
+				popupMenu.CreateSeparator();
+
+				AddClearHistorMenu(popupMenu, printTasks);
+
+				popupMenu.ShowMenu(this, mouseEvent);
+			}
+
+			base.OnClick(mouseEvent);
+		}
+
+		private void AddNotesMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var addNotest = popupMenu.CreateMenuItem(string.IsNullOrEmpty(printTask.Note) ? "Add Note...".Localize() : "Edit Note...".Localize());
+			addNotest.Enabled = printTasks.Any();
+			addNotest.Click += (s, e) =>
+			{
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Print History Note".Localize(),
+						"Note".Localize(),
+						printTask.Note == null ? "" : printTask.Note,
+						"Enter Note Here".Localize(),
+						string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
+						(newNote) =>
+						{
+							printTask.Note = newNote;
+							printTask.Commit();
+							popupMenu.Unfocus();
+							printInfoWidget.Text = GetPrintInfo();
+						})
+					{
+						AllowEmpty = true,
+					});
+			};
+		}
+
+		private void AddQualityMenu(PopupMenu popupMenu)
+		{
+			var theme = ApplicationController.Instance.MenuTheme;
+
+			var content = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Stretch
+			};
+
+			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				// Padding = MenuPadding,
+				VAnchor = VAnchor.Center
+			};
+			content.AddChild(textWidget);
+
+			content.AddChild(new HorizontalSpacer());
+
+			var siblings = new List<GuiWidget>();
+
+			for (int i = 0; i < qualityNames.Length; i++)
+			{
+				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor))
+				{
+					Enabled = printTask.PrintComplete,
+					Checked = printTask.QualityWasSet && printTask.PrintQuality == i,
+					ToolTipText = qualityNames[i],
+					Margin = 0,
+					Padding = 5,
+					HAnchor = HAnchor.Fit,
+					VAnchor = VAnchor.Fit,
+				};
+
+				siblings.Add(button);
+
+				if (button.Checked && button.Enabled)
+				{
+					button.BackgroundColor = theme.AccentMimimalOverlay;
+				}
+
+				button.SiblingRadioButtonList = siblings;
+
+				content.AddChild(button);
+
+				button.Click += (s, e) =>
+				{
+					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
+					printTask.QualityWasSet = true;
+					printTask.Commit();
+					popupMenu.Unfocus();
+
+					printInfoWidget.Text = GetPrintInfo();
+					SetIndicatorColor();
+				};
+			}
+
+			var menuItem = new PopupMenu.MenuItem(content, theme)
+			{
+				HAnchor = HAnchor.Fit | HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+				HoverColor = Color.Transparent,
+			};
+			popupMenu.AddChild(menuItem);
+		}
+
+		private void AddClearHistorMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var clearPrintHistory = popupMenu.CreateMenuItem("Clear History".Localize());
+			clearPrintHistory.Enabled = printTasks.Any();
+			clearPrintHistory.Click += (s, e) =>
+			{
+				// clear history
+				StyledMessageBox.ShowMessageBox(
+				(clearHistory) =>
+				{
+					if (clearHistory)
+					{
+						PrintHistoryData.Instance.ClearHistory();
+					}
+				},
+				"Are you sure you want to clear your print history?".Localize(),
+				"Clear History?".Localize(),
+				StyledMessageBox.MessageType.YES_NO,
+				"Clear History".Localize());
+			};
+		}
+
+		private void AddExportMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
+		{
+			var exportPrintHistory = popupMenu.CreateMenuItem("Export History".Localize() + "...");
+			exportPrintHistory.Enabled = printTasks.Any();
+			exportPrintHistory.Click += (s, e) =>
+			{
+				if (ApplicationController.Instance.IsMatterControlPro())
+				{
+					ExportToCsv(printTasks);
+				}
+				else // upsell MatterControl Pro
+				{
+					StyledMessageBox.ShowMessageBox(
+						"Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize(),
+						"Upgrade to Pro".Localize(),
+						StyledMessageBox.MessageType.OK);
+				}
+			};
+		}
+
+		public class RowData
+		{
+			public string Printer { get; set; }
+
+			public string QualitySettingsName { get; set; }
+
+			public string MaterialSettingsName { get; set; }
+
+			public string Name { get; set; }
+
+			public DateTime Start { get; set; }
+
+			public DateTime End { get; set; }
+
+			public int Minutes { get; set; }
+
+			public bool Compleated { get; set; }
+
+			public double RecoveryCount { get; set; }
+
+			public string ItemsPrinted { get; set; }
+
+			public string Notes { get; set; }
+
+			public int PrintQuality { get; set; }
+		}
+
+		private static void ExportToCsv(IEnumerable<PrintTask> printTasks)
+		{
+			// right click success or fail
+			// user settings that are different
+			var records = new List<RowData>();
+
+			// do the export
+			foreach (var printTask in printTasks)
+			{
+				string groupNames = PrintHistoryListItem.GetItemNamesFromMcx(printTask.PrintName);
+
+				records.Add(new RowData()
+				{
+					Printer = printTask.PrinterName,
+					Name = printTask.PrintName,
+					Start = printTask.PrintStart,
+					End = printTask.PrintEnd,
+					Compleated = printTask.PrintComplete,
+					PrintQuality = printTask.PrintQuality,
+					ItemsPrinted = groupNames,
+					Minutes = printTask.PrintTimeMinutes,
+					RecoveryCount = printTask.RecoveryCount,
+					QualitySettingsName = printTask.QualitySettingsName,
+					MaterialSettingsName = printTask.MaterialSettingsName,
+					Notes = printTask.Note,
+				});
+			}
+
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+				{
+					FileName = "Pinter Histor.csv",
+					Filter = "CSV Files|*.csv"
+				},
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							using (var writer = new StreamWriter(saveParams.FileName))
+							{
+								using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+								{
+									csv.WriteRecords(records);
+								}
+							}
+						}
+					}
+					catch (Exception e2)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e2.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
+		}
+
+		public static string GetItemNamesFromMcx(string mcxFileName)
+		{
+			// add in the cache path
+			mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, mcxFileName);
+			if (File.Exists(mcxFileName))
+			{
+				var names = JsonConvert.DeserializeObject<McxDocument.McxNode>(File.ReadAllText(mcxFileName)).AllNames();
+				var grouped = names.GroupBy(n => n)
+					.Select(g =>
+					{
+						if (g.Count() > 1)
+						{
+							return g.Key + " (" + g.Count() + ")";
+						}
+						else
+						{
+							return g.Key;
+						}
+					})
+					.OrderBy(n => n);
+				var groupNames = string.Join(", ", grouped);
+				return groupNames;
+			}
+
+			return null;
 		}
 
 		private void AddTimeStamp(PrintTask printTask, Color timeTextColor, FlowLayoutWidget primaryFlow)
 		{
 			var timestampColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				VAnchor = Agg.UI.VAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
 				BackgroundColor = Color.LightGray,
 				Padding = new BorderDouble(6, 0)
 			};
 
 			var startTimeContainer = new FlowLayoutWidget
 			{
-				HAnchor = Agg.UI.HAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(0, 3)
 			};
 
@@ -245,7 +537,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			var endTimeContainer = new FlowLayoutWidget
 			{
-				HAnchor = Agg.UI.HAnchor.Stretch,
+				HAnchor = HAnchor.Stretch,
 				Padding = new BorderDouble(0, 3)
 			};
 
@@ -312,6 +604,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 		}
 
 		private PrintItemWrapper itemToRemove;
+		private PrintTask printTask;
+		private GuiWidget indicator;
+		private TextWidget printInfoWidget;
 
 		private void OnConfirmRemove(bool messageBoxResponse)
 		{
@@ -319,6 +614,47 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
+			}
+		}
+	}
+
+	public static class McxDocument
+	{
+		public class McxNode
+		{
+			public List<McxNode> Children { get; set; }
+
+			public string Name { get; set; }
+
+			public bool Visible { get; set; }
+
+			public string MeshPath { get; set; }
+
+			private static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)\\s*$", RegexOptions.Compiled);
+
+			public IEnumerable<string> AllNames()
+			{
+				if (Children?.Count > 0)
+				{
+					foreach (var child in Children)
+					{
+						foreach (var name in child.AllNames())
+						{
+							yield return name;
+						}
+					}
+				}
+				else if (!string.IsNullOrWhiteSpace(Name))
+				{
+					if (Name.Contains("("))
+					{
+						yield return fileNameNumberMatch.Replace(Name, "").Trim();
+					}
+					else
+					{
+						yield return Name;
+					}
+				}
 			}
 		}
 	}

@@ -35,25 +35,13 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
+	[Flags]
 	public enum SortKey
 	{
-		Default,
-		Name,
-		CreatedDate,
-		ModifiedDate,
-	}
-
-	public class SortBehavior
-	{
-		public SortKey SortKey { get; set; }
-		public bool Ascending { get; set; }
-	}
-
-	public interface ICustomSearch
-	{
-		void ApplyFilter(string filter, ILibraryContext libraryContext);
-
-		void ClearFilter();
+		Default = 0,
+		Name = 1,
+		CreatedDate = 2,
+		ModifiedDate = 4,
 	}
 
 	public interface ILibraryContainer : IDisposable
@@ -73,7 +61,9 @@ namespace MatterHackers.MatterControl.Library
 		event EventHandler ContentChanged;
 
 		List<ILibraryContainerLink> ChildContainers { get; }
+
 		List<ILibraryItem> Items { get; }
+
 		ICustomSearch CustomSearch { get; }
 
 		ILibraryContainer Parent { get; set; }
@@ -81,27 +71,10 @@ namespace MatterHackers.MatterControl.Library
 		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
 
 		void Deactivate();
+
 		void Activate();
+
 		void Load();
-	}
-
-	public interface ILibraryWritableContainer : ILibraryContainer, IContentStore
-	{
-		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
-
-		void Add(IEnumerable<ILibraryItem> items);
-		void Remove(IEnumerable<ILibraryItem> items);
-		void Rename(ILibraryItem item, string revisedName);
-
-		/// <summary>
-		/// Move the given items from the source container to this container
-		/// </summary>
-		/// <param name="items">The items to move</param>
-		/// <param name="sourceContainer">The current parent container</param>
-		void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer);
-
-		void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer);
-		bool AllowAction(ContainerActions containerActions);
 	}
 
 	public enum ContainerActions
@@ -110,20 +83,5 @@ namespace MatterHackers.MatterControl.Library
 		AddContainers,
 		RenameItems,
 		RemoveItems
-	}
-
-	public class ItemChangedEventArgs : EventArgs
-	{
-		public ILibraryItem LibraryItem { get; }
-
-		public ItemChangedEventArgs(ILibraryItem libraryItem)
-		{
-			this.LibraryItem = libraryItem;
-		}
-	}
-
-	public interface IContentStore
-	{
-		void Save(ILibraryItem item, IObject3D content);
 	}
 }

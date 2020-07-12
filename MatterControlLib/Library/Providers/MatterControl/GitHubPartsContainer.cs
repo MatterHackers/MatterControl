@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,58 +27,82 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
 {
-	// Printer specific containers
-	public class PrinterContainer : LibraryContainer
+	public class GitHubPartsContainer : LibraryContainer
 	{
 		private PrinterConfig printer;
 
-		public PrinterContainer(PrinterConfig printer)
+		public GitHubPartsContainer(PrinterConfig printer)
 		{
-			this.printer = printer;
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = printer.Settings.GetValue(SettingsKey.printer_name);
+			this.Name = "Calibration Parts".Localize();
+			this.printer = printer;
 		}
 
 		public override void Load()
 		{
-			this.Items.Clear();
-			this.ChildContainers.Clear();
+			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
+			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
 
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "SD Card".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
-					() => new SDCardContainer(printer),
-					() =>
-					{
-						return printer.Settings.GetValue<bool>(SettingsKey.has_sd_card_reader);
-					})
+			GithubClient.getRepo("LeanKit-Labs", "cowpoke", "<myToken>");
+		}
+
+		private class StaticDataItem : ILibraryAssetStream
+		{
+			public StaticDataItem()
+			{
+			}
+
+			public StaticDataItem(string relativePath)
+			{
+				this.AssetPath = relativePath;
+			}
+
+			public string AssetPath { get; }
+
+			public string Category { get; } = "";
+
+			public string ContentType => Path.GetExtension(AssetPath).ToLower().Trim('.');
+
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public DateTime DateModified { get; } = DateTime.Now;
+
+			public string FileName => Path.GetFileName(AssetPath);
+
+			public long FileSize { get; } = -1;
+
+			public string ID => agg_basics.GetLongHashCode(AssetPath).ToString();
+
+			public bool IsProtected => true;
+
+			public bool IsVisible => true;
+
+			public bool LocalContentExists => true;
+
+			public string Name => this.FileName;
+
+			public Task<StreamAndLength> GetStream(Action<double, string> progress)
+			{
+				return Task.FromResult(new StreamAndLength()
 				{
-					IsReadOnly = true
+					Stream = AggContext.StaticData.OpenStream(AssetPath),
+					Length = -1
 				});
-
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new CalibrationPartsContainer())
-				{
-					IsReadOnly = true
-				});
-
-			// TODO: An enumerable list of serialized container paths (or some other markup) to construct for this printer
-			// printer.Settings.GetValue(SettingsKey.library_containers);
+			}
 		}
 	}
 }

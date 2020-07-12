@@ -77,5 +77,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			ValueChanged?.Invoke(this, fieldChangedEventArgs);
 		}
+
+		public void ClearUndoHistory()
+		{
+			foreach (var widget in this.Content.DescendantsAndSelf<MHTextEditWidget>())
+			{
+				widget.ActualTextEditWidget.InternalTextEditWidget.ClearUndoHistory();
+			}
+
+			foreach (var widget in this.Content.DescendantsAndSelf<MHNumberEdit>())
+			{
+				widget.ActuallNumberEdit.InternalTextEditWidget.ClearUndoHistory();
+			}
+		}
 	}
 }
