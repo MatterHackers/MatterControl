@@ -27,11 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using CsvHelper;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
@@ -58,6 +65,31 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.theme = theme;
 		}
 
+		public class RowData
+		{
+			public string Printer { get; set; }
+
+			public string QualitySettingsName { get; set; }
+
+			public string MaterialSettingsName { get; set; }
+
+			public string OverridSettings { get; set; }
+
+			public string Name { get; set; }
+
+			public DateTime Start { get; set; }
+
+			public DateTime End { get; set; }
+
+			public int Minutes { get; set; }
+
+			public bool Compleated { get; set; }
+
+			public double RecoveryCount { get; set; }
+
+			public string ItemsPrinted { get; set; }
+		}
+
 		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (mouseEvent.Button == MouseButtons.Right)
@@ -67,18 +99,22 @@ namespace MatterHackers.MatterControl.PrintHistory
 				// show a right click menu ('Set as Default' & 'Help')
 				var popupMenu = new PopupMenu(theme);
 
-				var historyItems = PrintHistoryData.Instance.GetHistoryItems(1).Select(f => new PrintHistoryItem(f)).ToList<ILibraryItem>();
+				var historyItems = PrintHistoryData.Instance.GetHistoryItems(100);
 
 				var exportPrintHistory = popupMenu.CreateMenuItem("Export History".Localize() + "...");
-				exportPrintHistory.Enabled = historyItems.Count > 0;
+				exportPrintHistory.Enabled = historyItems.Any();
 				exportPrintHistory.Click += (s, e) =>
 				{
 					if (ApplicationController.Instance.IsMatterControlPro())
 					{
-						// do the export
+						ExportToCsv(historyItems);
 					}
 					else // upsell MatterControl Pro
 					{
+						StyledMessageBox.ShowMessageBox(
+							"Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize(),
+							"Upgrade to Pro".Localize(),
+							StyledMessageBox.MessageType.OK);
 					}
 				};
 
@@ -100,7 +136,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				popupMenu.CreateSeparator();
 				var clearPrintHistory = popupMenu.CreateMenuItem("Clear History".Localize());
-				clearPrintHistory.Enabled = historyItems.Count > 0;
+				clearPrintHistory.Enabled = historyItems.Any();
 				clearPrintHistory.Click += (s, e) =>
 				{
 					// clear history
@@ -122,6 +158,69 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 
 			base.OnClick(mouseEvent);
+		}
+
+		private static void ExportToCsv(IEnumerable<PrintTask> historyItems)
+		{
+			// right click success or fail
+			// user settings that are different
+			var records = new List<RowData>();
+
+			// do the export
+			foreach (var item in historyItems)
+			{
+				string groupNames = PrintHistoryListItem.GetItemNamesFromMcx(item.PrintName);
+
+				records.Add(new RowData()
+				{
+					Printer = item.PrinterName,
+					Name = item.PrintName,
+					Start = item.PrintStart,
+					End = item.PrintEnd,
+					Compleated = item.PrintComplete,
+					ItemsPrinted = groupNames,
+					Minutes = item.PrintTimeMinutes,
+					RecoveryCount = item.RecoveryCount,
+					QualitySettingsName = item.QualitySettingsName,
+					MaterialSettingsName = item.MaterialSettingsName,
+					OverridSettings = GetUserOverrides(),
+				});
+			}
+
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
+				{
+					FileName = "Pinter Histor.csv",
+					Filter = "CSV Files|*.csv"
+				},
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							using (var writer = new StreamWriter(saveParams.FileName))
+							{
+								using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+								{
+									csv.WriteRecords(records);
+								}
+							}
+						}
+					}
+					catch (Exception e2)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							StyledMessageBox.ShowMessageBox(e2.Message, "Couldn't save file".Localize());
+						});
+					}
+				});
+		}
+
+		private static string GetUserOverrides()
+		{
+			return null;
 		}
 
 		public ListViewItemBase AddItem(ListViewItem item)

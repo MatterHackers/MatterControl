@@ -351,6 +351,10 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string PrinterName { get; set; }
 
+		public string QualitySettingsName { get; set; }
+
+		public string MaterialSettingsName { get; set; }
+
 		public override void Commit()
 		{
 			if (this.PrintEnd != DateTime.MinValue)

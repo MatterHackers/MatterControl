@@ -2144,7 +2144,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									PrinterName = this.Printer.Settings.GetValue(SettingsKey.printer_name),
 									PrintItemId = activePrintItem.PrintItem.Id,
 									PrintingGCodeFileName = gcodeFileNameForTask,
-									PrintComplete = false
+									PrintComplete = false,
+									QualitySettingsName = this.Printer.Settings.QualityLayer?.Name,
+									MaterialSettingsName = this.Printer.Settings.MaterialLayer?.Name,
 								};
 
 								ActivePrintTask.Commit();

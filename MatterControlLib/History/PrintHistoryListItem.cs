@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Lucene.Net.Util;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -39,6 +41,7 @@ using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.SerialPortCommunication;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {
@@ -93,10 +96,10 @@ namespace MatterHackers.MatterControl.PrintHistory
 						labelName = printTask.PrinterName + ":\n" + labelName;
 					}
 
-					var mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, printTask.PrintName);
-					if (File.Exists(mcxFileName))
+					string groupNames = GetItemNamesFromMcx(printTask.PrintName);
+					if (!string.IsNullOrEmpty(groupNames))
 					{
-						labelName += "\n" + GetStlNames(mcxFileName);
+						labelName += "\n" + groupNames;
 					}
 
 					var partLabel = new TextWidget(labelName, pointSize: 15)
@@ -191,25 +194,31 @@ namespace MatterHackers.MatterControl.PrintHistory
 			this.BackgroundColor = new Color(255, 255, 255, 255);
 		}
 
-		private string GetStlNames(string mcxFileName)
+		public static string GetItemNamesFromMcx(string mcxFileName)
 		{
-			var foundNames = new HashSet<string>();
-			var allLines = File.ReadAllLines(mcxFileName);
-			foreach (var line in allLines)
+			// add in the cache path
+			mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, mcxFileName);
+			if (File.Exists(mcxFileName))
 			{
-				var find = "\"Name\":";
-				var end = line.IndexOf(find) + find.Length;
-				if (end >= find.Length
-					&& !line.ToLower().Contains(".mcx"))
-				{
-					var nameStart = line.IndexOf("\"", end);
-					var nameEnd = line.IndexOf("\"", nameStart + 1);
-					var name = line.Substring(nameStart + 1, nameEnd - nameStart - 1);
-					foundNames.Add(name);
-				}
+				var names = JsonConvert.DeserializeObject<McxDocument.McxNode>(File.ReadAllText(mcxFileName)).AllNames();
+				var grouped = names.GroupBy(n => n)
+					.Select(g =>
+					{
+						if (g.Count() > 1)
+						{
+							return g.Key + " (" + g.Count() + ")";
+						}
+						else
+						{
+							return g.Key;
+						}
+					})
+					.OrderBy(n => n);
+				var groupNames = string.Join(", ", grouped);
+				return groupNames;
 			}
 
-			return string.Join(", ", foundNames);
+			return null;
 		}
 
 		private void AddTimeStamp(PrintTask printTask, Color timeTextColor, FlowLayoutWidget primaryFlow)
@@ -319,6 +328,47 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
+			}
+		}
+	}
+
+	public static class McxDocument
+	{
+		public class McxNode
+		{
+			public List<McxNode> Children { get; set; }
+
+			public string Name { get; set; }
+
+			public bool Visible { get; set; }
+
+			public string MeshPath { get; set; }
+
+			private static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)\\s*$", RegexOptions.Compiled);
+
+			public IEnumerable<string> AllNames()
+			{
+				if (Children?.Count > 0)
+				{
+					foreach (var child in Children)
+					{
+						foreach (var name in child.AllNames())
+						{
+							yield return name;
+						}
+					}
+				}
+				else if (!string.IsNullOrWhiteSpace(Name))
+				{
+					if (Name.Contains("("))
+					{
+						yield return fileNameNumberMatch.Replace(Name, "").Trim();
+					}
+					else
+					{
+						yield return Name;
+					}
+				}
 			}
 		}
 	}

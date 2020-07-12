@@ -167,12 +167,13 @@ namespace MatterHackers.MatterControl
 
 			private void AdjustTextWrap()
 			{
-				if (messageContainer != null)
+				if (messageContainer != null
+					&& messageContainer is TextWidget textWidget)
 				{
 					double wrappingSize = contentRow.Width - (contentRow.Padding.Width + messageContainer.Margin.Width);
 					if (wrappingSize > 0)
 					{
-						var wrapper = new EnglishTextWrapping(12 * GuiWidget.DeviceScale);
+						var wrapper = new EnglishTextWrapping(textWidget.PointSize * GuiWidget.DeviceScale);
 						messageContainer.Text = wrapper.InsertCRs(unwrappedMessage, wrappingSize);
 					}
 				}
