@@ -349,9 +349,9 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public int PrintTimeSeconds { get; set; }
 
-		public bool RatingWasSet { get; set; }
+		public bool QualityWasSet { get; set; }
 
-		public int Rating { get; set; }
+		public int PrintQuality { get; set; }
 
 		public string PrinterName { get; set; }
 

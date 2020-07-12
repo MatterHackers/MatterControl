@@ -817,7 +817,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static void EnableReduceWidth(ChromeTab partTab, ThemeConfig theme)
 		{
-			partTab.MinimumSize = new Vector2(80, theme.TabButtonHeight);
+			var scale = GuiWidget.DeviceScale;
+			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight);
 
 			var textWidget = partTab.Descendants<TextWidget>().First();
 			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
@@ -839,7 +840,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// the text
 				var width = textWidget.Width;
 				// the tab pill
-				width += tabPill.Margin.Width + tabPill.Padding.Width;
+				width += (tabPill.Margin.Width + tabPill.Padding.Width) * scale;
 				if (closeBox != null)
 				{
 					// the close box
@@ -847,7 +848,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					width += 32;
+					width += 32 * scale;
 				}
 
 				partTab.MaximumSize = new Vector2(width, partTab.MaximumSize.Y);
