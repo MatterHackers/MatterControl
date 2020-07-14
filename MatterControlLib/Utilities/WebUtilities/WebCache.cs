@@ -220,15 +220,15 @@ namespace MatterHackers.MatterControl
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
-			var textFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
+			var appDataFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
 
 			string fileText = null;
 			// first try the cache in the users applications folder
-			if (File.Exists(textFileName))
+			if (File.Exists(appDataFileName))
 			{
 				try
 				{
-					fileText = File.ReadAllText(textFileName);
+					fileText = File.ReadAllText(appDataFileName);
 					updateResult?.Invoke(fileText);
 				}
 				catch
@@ -237,11 +237,13 @@ namespace MatterHackers.MatterControl
 			}
 			else // We could not find it in the application cache. Check if it is in static data.
 			{
-				if (File.Exists(textFileName))
+				var staticDataPath = Path.Combine("TextWebCache", longHash.ToString() + ".txt");
+
+				if (AggContext.StaticData.FileExists(staticDataPath))
 				{
 					try
 					{
-						fileText = AggContext.StaticData.ReadAllText(Path.Combine("TextWebCache", longHash.ToString() + ".txt"));
+						fileText = AggContext.StaticData.ReadAllText(staticDataPath);
 						updateResult?.Invoke(fileText);
 					}
 					catch
@@ -258,7 +260,7 @@ namespace MatterHackers.MatterControl
 				if (!string.IsNullOrEmpty(text)
 					&& text != fileText)
 				{
-					File.WriteAllText(textFileName, text);
+					File.WriteAllText(appDataFileName, text);
 					updateResult?.Invoke(text);
 				}
 			});
