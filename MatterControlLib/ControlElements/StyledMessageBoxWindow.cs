@@ -39,22 +39,37 @@ namespace MatterHackers.MatterControl
 {
 	public static class StyledMessageBox
 	{
-		public enum MessageType { OK, YES_NO, YES_NO_WITHOUT_HIGHLIGHT };
-
-		public static void ShowMessageBox(string message, string caption, MessageType messageType = MessageType.OK, string yesOk = "", string noCancel = "", bool useMarkdown = false)
+		public enum MessageType
 		{
-			ShowMessageBox(null, message, caption, null, messageType, yesOk, noCancel, useMarkdown);
+			OK,
+			YES_NO,
+			YES_NO_WITHOUT_HIGHLIGHT
+		}
+
+		public static void ShowMessageBox(string message,
+			string caption,
+			MessageType messageType = MessageType.OK,
+			string yesOk = "",
+			string noCancel = "",
+			bool useMarkdown = false,
+			int width = 400,
+			int height = 300)
+		{
+			ShowMessageBox(null, message, caption, null, messageType, yesOk, noCancel, useMarkdown, 0, width, height);
 		}
 
 		public static void ShowMessageBox(Action<bool> callback,
 			string message,
 			string caption,
 			MessageType messageType = MessageType.OK,
-			string yesOk = "", string noCancel = "",
+			string yesOk = "",
+			string noCancel = "",
 			bool useMarkdown = false,
-			int instanceIndex = 0)
+			int instanceIndex = 0,
+			int width = 400,
+			int height = 300)
 		{
-			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel, useMarkdown, instanceIndex);
+			ShowMessageBox(callback, message, caption, null, messageType, yesOk, noCancel, useMarkdown, instanceIndex, width, height);
 		}
 
 		public static void ShowMessageBox(Action<bool> callback,
@@ -65,10 +80,12 @@ namespace MatterHackers.MatterControl
 			string yesOk = "",
 			string noCancel = "",
 			bool useMarkdown = false,
-			int instanceIndex = 0)
+			int instanceIndex = 0,
+			int width = 400,
+			int height = 300)
 		{
 			DialogWindow.Show(
-				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, 400, 300, yesOk, noCancel, ApplicationController.Instance.Theme, useMarkdown),
+				new MessageBoxPage(callback, message, caption, messageType, extraWidgetsToAdd, width, height, yesOk, noCancel, ApplicationController.Instance.Theme, useMarkdown),
 				instanceIndex);
 		}
 
@@ -77,7 +94,7 @@ namespace MatterHackers.MatterControl
 			private string unwrappedMessage;
 			private GuiWidget messageContainer;
 			private Action<bool> responseCallback;
-			bool haveResponded = false;
+			private bool haveResponded = false;
 
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme, bool useMarkdown = false)
 				: base((noCancel == "") ? "No".Localize() : noCancel)
@@ -90,7 +107,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				this.HeaderText = caption;
-				//this.IsModal = true;
+				// this.IsModal = true;
 
 				responseCallback = callback;
 				unwrappedMessage = message;
@@ -104,7 +121,6 @@ namespace MatterHackers.MatterControl
 				}
 				else
 				{
-
 					var scrollable = new ScrollableWidget(true);
 					scrollable.AnchorAll();
 					scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
@@ -185,6 +201,7 @@ namespace MatterHackers.MatterControl
 				{
 					responseCallback?.Invoke(false);
 				}
+
 				base.OnClosed(e);
 			}
 
@@ -195,6 +212,5 @@ namespace MatterHackers.MatterControl
 				base.OnCancel(out abortCancel);
 			}
 		}
-
 	}
 }

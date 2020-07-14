@@ -15,6 +15,7 @@
         "DisplayListPrice": "2,495.00", 
         "DisplayPrice": "2,295.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/legacy_cSR2H4w4-5D-gXtuz7iroinHGKUvDhrYQZAHJlDIgZ4ch5JKCGNMqWKYS4j-0pQodG-vEBvI-S41dpfG7TqY8wpi87A", 
             "ImageUrl": "https://lh3.googleusercontent.com/ZBVNBu4qfGtuvUSSSaiNHROaibtwPdqQvPg9QJZx3-RPrZaAP0vL2BAFHhc6AJ3QNGaPfq9tIm0LakDVOjiwblFj", 
@@ -192,7 +193,8 @@
         "Weight": 16000000, 
         "WeightGrams": "16,000.00", 
         "WeightKilograms": "16.00", 
-        "WeightPounds": "35.27"
+        "WeightPounds": "35.27", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

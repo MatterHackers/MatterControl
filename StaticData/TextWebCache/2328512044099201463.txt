@@ -179,8 +179,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 12, 
-                    "QuantityOnHand": 12, 
+                    "QuantityAvailable": 10, 
+                    "QuantityOnHand": 10, 
                     "SingleSku": true
                 }, 
                 {
@@ -456,8 +456,8 @@
         "ProductPrice": 319500, 
         "ProductType": "physical-on-demand", 
         "ProductUpc": "", 
-        "QuantityAvailable": 3, 
-        "QuantityOnHand": 3, 
+        "QuantityAvailable": 2, 
+        "QuantityOnHand": 2, 
         "QuantityReserved": 3, 
         "ReferenceUrl": "pulse-dxe-dual-extrusion-nylonx-3d-printer-bundle", 
         "SID": "MTA2JNPM", 

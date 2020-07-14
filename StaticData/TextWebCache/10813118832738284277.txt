@@ -1,0 +1,253 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2019-11-07T00:14:46.249041", 
+                "Description": "Palette 2S Pro", 
+                "HexColor": null, 
+                "Image": null, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgIDG1d2MCQwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNaF-YcLDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgICAltfIhAsM", 
+                "Name": "Palette 2S Pro Multi-Material System", 
+                "PriceModifier": 0, 
+                "Reference": "mosaic-upgrade-2s:palette-2s-pro-multi-material-system"
+            }
+        ], 
+        "AvailableDate": "2020-05-12", 
+        "BarCodeID": "6.27844E+11", 
+        "Brand": "", 
+        "ComponentSkuCount": 1, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV0NRMFhFWgw"
+        ], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-11-07T00:14:53.394132", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "May 12th", 
+        "DisplayListPrice": "799.00", 
+        "DisplayPrice": "799.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/6912678c-fb2e-4ce2-b370-ff73ade3d1a2", 
+            "ImageUrl": "https://lh3.googleusercontent.com/4cZgm2yTs5CsdqJ5nqJQZ2eB-kO66TTq_pssxxuMlUe5G95Z69ngyFujI_sYd1wElP9t26Ig4e5L4f_ApA64Gg", 
+            "IsFeatured": false
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRUQ3WTZUUQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Print multiple filaments with the Mosaic Palette 2S Pro, an upgrade from the Mosaic Palette 2 Pro. The Palette 2S Pro is a high-end, reliable multi-material printing system, taking four strands of filament and combining them before feeding the color of your choice into your 3D printer. This means you can switch color at any point in your print for some beautiful, complex, and surprising prints that will look like magic. Unlock your printer's potential with the easy to use Mosaic Palette 2S Pro. The Palette 2S Pro includes all the features of Palette 2S with the addition of the Splice Core Pro. Machined from aluminum for optimal cooling and 20% faster-splicing speeds, this is the big gun of multi-material printing.", 
+        "ProductListPrice": 79900, 
+        "ProductListing": {
+            "ActiveSkuCount": 2, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRUQ3WTZUUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNREpLQ1Y1MQw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 13900, 
+                    "AddOnDiscountDisplay": 5, 
+                    "AddOnDisplayBasePrice": "139.00", 
+                    "AddOnDisplayPrice": "132.05", 
+                    "AddOnDisplaySavings": "6.95", 
+                    "AddOnFloatPrice": 132.05, 
+                    "AddOnListingReference": "mosaic-canvas-hub-for-the-palette-2s-2s-pro", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 13205, 
+                    "AddOnSavings": 695, 
+                    "AddOnSkuReference": "MJQKN4Z5", 
+                    "AddOnTitle": "Mosaic CANVAS Hub S for the Palette 2S & 2S Pro", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICWlr_vCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSlFLTjRaNQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 9, 
+                    "QuantityOnHand": 9, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgIDG1d2MCQwLEhBQcm9kdWN0QXR0cmlidXRlGICAgNaF-YcLDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-11-07T00:13:01.972521", 
+            "DisplayPriceRange": "$149.00 - $799.00", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>How does it work?</strong></h3>\r\n<p>The Palette 2S Pro takes up to four types of filament and combines them into a single filament strand. This strand is then fed to your printer, enabling your <strong><em>single-extruder</em></strong> printer to create multi-filament prints!</p>\r\n<ol>\r\n<li><strong>Drive: </strong><span>Palette 2S Pro's all-metal drive systems accurately control filament flow to ensure the right lengths are driven from each input.</span></li>\r\n<li><strong>Cut: </strong><span>A rotary cutter system slices filament to ensure a clean cut.</span></li>\r\n<li><strong>Connect: </strong><span>Palette 2S Pro's updated Splice Core connects filament together end-to-end before passing them through a machined PTFE (Teflon) channel and splicing them together.</span></li>\r\n<li><strong>Cool: </strong><span>The newly spliced filament is passed to our buffer to cool and ensure that it keeps tight dimensions before being passed to your printer.</span></li>\r\n</ol>\r\n<p><strong>Calibrate:</strong><span> The Scroll Wheel attached to the Palette 2S Pro allows for more precise calibration and a streamlined Palette experience.</span></p>", 
+                    "ElementCode": "3CAOD2", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/9u3C4KqvHL48l_ifey6a3qpK4XROhh8GsJ2VmZISnxCKmWi8oaOz74HRcgA4IK4AFGGXIWM7KXUyqBMZ9c-Aqw'></p>", 
+                    "ElementCode": "CM384E", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/fbb6c6d9-5e24-4d9e-b370-db0465f742a3", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/9u3C4KqvHL48l_ifey6a3qpK4XROhh8GsJ2VmZISnxCKmWi8oaOz74HRcgA4IK4AFGGXIWM7KXUyqBMZ9c-Aqw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>Mosaic Palette 2S Pro main improvements from the Mosaic Palette 2 Pro</strong></h3>\r\n<ul>\r\n<li>P2S and P2S Pro have 10% faster splicing than the P2 and P2 Pro, enabling higher printing speeds</li>\r\n<li>Improved the drive arm geometry to optimize printing with flexible TPU materials</li>\r\n<li>Fresh new look inside with upgraded LED filament sensors to white</li>\r\n<li>P2S and P2S Pro come pre-loaded with firmware, improving the setup experience</li>\r\n<li>Improved firmware for more reliable printing</li>\r\n<li>Updated electronics and various other reliability improvements</li>\r\n</ul>", 
+                    "ElementCode": "QXW3OT", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p class=\"align-center\"><img src=\"https://lh3.googleusercontent.com/3k_LrYlBI_--85siWdEaZtVz8DJvL0DTljw8ubmjohGjja1j8Fqf_Pstnkg83tkXCVW15dEFuBIPa6ln4GxWBiQI\" /></p>\r\n<p class=\"align-center\">These are all the included components in the Mosaic Palette 2S Upgrade Kit</p>", 
+                    "ElementCode": "HCOA3I", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/11ff9cda-4a10-4699-a02d-a02f2772f864", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/3k_LrYlBI_--85siWdEaZtVz8DJvL0DTljw8ubmjohGjja1j8Fqf_Pstnkg83tkXCVW15dEFuBIPa6ln4GxWBiQI", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Upgrade your Palette 2 Pro to a Palette 2S Pro with the Mosaic Palette 2S Pro upgrade kit</strong></h3>\r\n<p><span>If you already own a Palette 2 Pro, and you'd like to get all the features of the Palette 2S Pro, check out the Palette 2S Pro upgrade kit!&nbsp;Designed for current Mosaic users; with a simple upgrade you'll never miss out on the new S series. </span></p>\r\n<ul>\r\n<li><span>Faster splicing with new splice core and thinner splice tubes </span></li>\r\n<li><span>New drive arm assemblies for better flexible printing </span></li>\r\n<li><span>Repositioned homing switch to reduce wear, and steel thumbscrews that are less likely to strip</span><span></span></li>\r\n</ul>\r\n<h3><strong>Canvas Hub S works with the following Mosaic Palettes:</strong></h3>\r\n<ul>\r\n<li>Palette 2</li>\r\n<li>Palette 2 Pro</li>\r\n<li>Palette 2S</li>\r\n<li>Palette 2S Pro</li>\r\n</ul>\r\n<p></p>", 
+                    "ElementCode": "QE10ST", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/WvQLXJonEH7IrmEGZ4gkB2WHBd_GQUHHRBB-CotPt-U_wCibvXFgdewYF6H6c0SQbirDyp_dltzNOCES3RhAtfI'></p>", 
+                    "ElementCode": "BZPSCC", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/ab0abd4a-e5ca-4f24-9e25-4c51975b4c7b", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/WvQLXJonEH7IrmEGZ4gkB2WHBd_GQUHHRBB-CotPt-U_wCibvXFgdewYF6H6c0SQbirDyp_dltzNOCES3RhAtfI", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3 class=\"product-specs__title\"><strong>Palette 2S Pro Technical Specifications</strong></h3>\r\n<div class=\"product-specs__details\">\r\n<ul>\r\n<li>Unit Weight:&nbsp;3.6 kg (7.9 lbs.)</li>\r\n<li>Unit Dimensions:&nbsp;23 x 20.4 x 8.4 cm (9\" x 8\" x 3.3\")</li>\r\n<li>Shipping Weight:&nbsp;7.1 kg (15.6 lbs.)</li>\r\n<li>Shipping Box:&nbsp;41 x 27 x 23 cm (16\" x 11\" x 9\")</li>\r\n<li>Supported Feedstock Size:&nbsp;1.75mm (0.069 IN) FFF Filament (recommended 0.03mm tolerance or better)</li>\r\n<li>Compatible Operating Systems:&nbsp;Windows, Mac, Linux (Tested on Ubuntu 16.04)</li>\r\n<li>Data Interface:&nbsp;Canvas Hub (USB) or SD Card</li>\r\n<li>Splicing Technology:&nbsp;Splice Core S Pro, Solid State Splicer</li>\r\n<li>Ambient Operating Temperature:&nbsp;15 - 30&deg;C (60-86&deg;F)</li>\r\n<li>Filament Production Speed:&nbsp;182 - 280 mm/min</li>\r\n<li>Control Board:&nbsp;32-Bit ARM Processor</li>\r\n<li>Control Interface:&nbsp;3.2\" Color Touch Screen, 240x320 Pixels</li>\r\n<li>Consumables:&nbsp;Filament: Not Included, Splice Core S Pro Tubes: 5 Included</li>\r\n<li>Included Spare Parts:&nbsp;Many Spare Parts</li>\r\n<li>Provided Limited Warranty:&nbsp;24 Months or 50,000 Splices</li>\r\n<li>Power Requirements:&nbsp;12V DC, 3A Max</li>\r\n<li>Power Adapter Input Requirements:&nbsp;100 - 240V (50/60Hz) 1.5A</li>\r\n<li>Power Adapter Compatibility:&nbsp;USA, UK, AU, EU</li>\r\n<li>Mechanical:&nbsp;6 x Nema 17 Stepper Motors</li>\r\n<li>Update Connection:&nbsp;USB (Cable Included)</li>\r\n<li>Certifications:&nbsp;cTUVus, CE (Conformit&eacute; Europ&eacute;ene), TUV-Inspected Manufacturing Facility, CAN/CSA C22.2, NO 62368-1-14</li>\r\n</ul>\r\n</div>", 
+                    "ElementCode": "YK67M4", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/k3Aap2G2QOBeavMsWybNB7UB45eOFsZV9NpOEkOThu32TOieyUzmCqoQQdbAjWbE_eAI2xNS_EIKFjmntH0ZGcs\" /></p>", 
+                    "ElementCode": "JWGB14", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/1f0be143-0e78-4044-9b54-1529077443a4", 
+                "ImageUrl": "https://lh3.googleusercontent.com/72IjajJAe-M27DhBZdnYuPnuaaBOzVAzxo3JZX5aHVe7mSZ7796pnU4dhzFk0hrK-ZE6YROF1tGaq3R9cpIWuw", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/1f0be143-0e78-4044-9b54-1529077443a4", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/72IjajJAe-M27DhBZdnYuPnuaaBOzVAzxo3JZX5aHVe7mSZ7796pnU4dhzFk0hrK-ZE6YROF1tGaq3R9cpIWuw", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/2e526070-5a28-4697-9b8d-5173e935e1d5", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kncuL1Kdk46mejU0u_NnleJcMbRLjM5HBwCrvMN4gTKp5e26Fwpj92tx-jHyYT99glN4krt_5FU-gfRfeLXsYJh3", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/10a87721-1b1d-49c5-9640-d7f760cc9370", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/JVBuxVmLdY3KK5hgeJa_ZJ51VyGto7TFTnlzDKMUbUF4J5Hj_mdyBxY2enYH921dmsYaf6vuOnW3yuFcxTJLKg", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/c1bc33a2-a57b-4d5e-92ac-d8120c350b99", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kXMlf1pQkBvBvS0EotBQb3H08hcITMEY3YW1H6SHPtT83zJd7b3J1GMdtjKrFL3dHB3OvR6CGvo7MXR6t8X-T3M", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/0cd0ca25-a4c7-42b0-8fb9-8281c7f11b3d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/zQscjb3iDzYOrZdvcL4r00WXJ3h5eDXxoM-b8H5MJTG8aFyIUFSVE1J7BQ-mR-EPMHpHLu9ysSlXhkIZI-A41GUC", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d405e905-4b70-42eb-b5f3-8fb58debac60", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/doRwf4vSP65gkGJgAHMvbSDKpVAm_NNkJGYP1XYR87bcpo-qy1zyWB_uQD0KSrwxTpvcYRrTvVBf8MfLpWW_Aw", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDG1d2MCQw", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2019-11-07T00:13:01.972515", 
+            "ProductEditedOn": "2020-01-21T20:22:47.468269", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "mosaic-palette-2s-pro-multi-material-filament-system-175mm", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDs8JKTCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICg1IKSCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICW15yVCww", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs6rafCgw"
+            ], 
+            "ShortDescription": "Print multiple filaments with the Mosaic Palette 2S Pro, an upgrade from the Mosaic Palette 2 Pro. The Palette 2S Pro is a high-end, reliable multi-material printing system, taking four strands of filament and combining them before feeding the color of your choice into your 3D printer. This means you can switch color at any point in your print for some beautiful, complex, and surprising prints that will look like magic. Unlock your printer's potential with the easy to use Mosaic Palette 2S Pro. The Palette 2S Pro includes all the features of Palette 2S with the addition of the Splice Core Pro. Machined from aluminum for optimal cooling and 20% faster-splicing speeds, this is the big gun of multi-material printing.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Mosaic Palette 2S Pro Multi Material Filament System - 1.75mm"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDG1d2MCQw", 
+        "ProductNumber": null, 
+        "ProductPrice": 79900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 7, 
+        "QuantityOnHand": 7, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "mosaic-palette-2s-pro-multi-material-filament-system-175mm", 
+        "SID": "MED7Y6TQ", 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Mosaic Palette 2S Pro Multi Material Filament System - 1.75mm", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 6803890, 
+        "TotalWeightGrams": "6,803.89", 
+        "TotalWeightKilograms": "6.80", 
+        "TotalWeightPounds": "15.00", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00"
+    }, 
+    "Status": "success"
+}

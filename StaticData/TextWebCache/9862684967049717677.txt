@@ -1,0 +1,218 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-03-23", 
+        "BarCodeID": "", 
+        "Brand": "MatterHackers", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-06-19T01:11:49.241805", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Mar 23rd", 
+        "DisplayListPrice": "18.00", 
+        "DisplayPrice": "13.99", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/395f8d9c-36da-4074-a0ce-8f11ee321b4d", 
+            "ImageUrl": "https://lh3.googleusercontent.com/XQ48UKbjbg0La9GvuJddpXcWfakktpYF8VA_drYr0j9LQO30ZgXlYBv-GbYZp9B4TqrLJyVt-kbeZ3oa6fxiZSA", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNS0RRMExXMQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "1.50", 
+            "2.00", 
+            "4.25"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "MatterHackers' Stick Stick 3D printer bed adhesion solution ensures that your 3D printed part will have a superior first layer. The first layer of a 3D printed part is the most important - getting a great first layer ensures that your printed part is on track to being a successful print - MatterHackers' Stick Stick is an excellent solution for getting the best first layer adhesion possible. MatterHackers' Stick Stick bed adhesion solution also makes for easy print removal from your printer's bed - simply let the part cool and pop it right off. ", 
+        "ProductListPrice": 1800, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNS0RRMExXMQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-06-19T01:11:48.895340", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3>Stick Stick 3D Printer Bed Adhesive Solution</h3>\r\n<p>Stick Stick 3D printer bed adhesive solution is a great way to ensure that your 3D printed parts will stick to your 3D printer's bed and provide a solid first layer. From basic materials like PLA and PETG to advanced materials like PRO Series Ryno, Stick Stick will establish a sturdy foundation for you to build your print on.&nbsp;</p>", 
+                    "ElementCode": "MY7K53", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/j5lfCWdow69R2NxPjFpnn0wGommqDjnPzJkeVeCfintEpIzCxJKgVTqtuDuIoFueeSGqibyGfGhuqaT4z0yVwvA\" /></p>\r\n<p><em>Stick Stick 3D printer bed adhesion solution is an excellent way to ensure a solid first layer for most 3D printing materials.&nbsp;</em></p>", 
+                    "ElementCode": "LN3KA0", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/8fcfa4fe-2351-4ac4-b6eb-cba002b6b909", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/j5lfCWdow69R2NxPjFpnn0wGommqDjnPzJkeVeCfintEpIzCxJKgVTqtuDuIoFueeSGqibyGfGhuqaT4z0yVwvA", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>How To Use MatterHackers' Stick Stick 3D Printer Bed Adhesive</h3>\r\n<p>Stick Stick's bottle is designed to make applying the adhesive solution to your 3D printer's bed as easy as possible. Here are the steps to succeed with&nbsp;MatterHackers' Stick Stick 3D Printer Bed Adhesive:</p>\r\n<ul>\r\n<li>Shake the Stick Stick bottle for a few seconds to mix the solution</li>\r\n<li>Prior to heating the print bed, apply a thin layer on the bed by pressing the sponge applicator down to release the solution, then spread the solution around the bed surface evenly.&nbsp;</li>\r\n<li>Start your print - the solution will dry as the bed heats up.&nbsp;</li>\r\n<li>When your print is complete, wait for the bed to cool, and your part will pop right off</li>\r\n<li>Clean your 3D printer's bed using warm water.&nbsp;</li>\r\n</ul>\r\n<p></p>", 
+                    "ElementCode": "LG992R", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/tHwD3RZzHY5N0KIFkdC2u9-vWfE26vneeNGVXpNtKi8VQ8T-0NCarI-Jo-x9H0W_t0zRm0Zd1mYjdSZzf2KkbU9i\" class=\"align-left\" /></p>\r\n<p><em>Applying Stick Stick bed adhesion solution to your 3D printer's bed is easy with the sponge applicator.&nbsp;</em></p>", 
+                    "ElementCode": "6XCIIG", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/cea400b7-2c8a-460a-964c-20467c1f502e", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/tHwD3RZzHY5N0KIFkdC2u9-vWfE26vneeNGVXpNtKi8VQ8T-0NCarI-Jo-x9H0W_t0zRm0Zd1mYjdSZzf2KkbU9i", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Why Getting a Good First Layer for Your 3D Printed Part Matters</h3>\r\n<p>Getting the best first layer for your 3D printed part is a crucial step to the overall success of the print. The first layer is the base on which the rest of your print \"stands\" or builds on - it needs to be stable and secure, otherwise your part might warp off the bed or dislodge from the bed completely turning your print into a \"mess of spaghetti\" on your printer. MatterHackers' Stick Stick 3D printer bed adhesion is an excellent solution to getting your 3D printed part to have a great first layer.&nbsp;</p>", 
+                    "ElementCode": "CEGN43", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/bQjW7ENr5S4ElXxZDzw8918lgGz38uyBKmlt2BzDJBqc0qXP_JohCdF6kRWxRvS03rkv5-dKFz-2-BIPxaEvjW8\" class=\"align-left\" /></p>\r\n<p><em>The first layer of a 3D printed part is an important step - use Stick Stick to help print with confidence.&nbsp;</em></p>", 
+                    "ElementCode": "DP7Y62", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/e8ff0721-1d8f-4e8e-bb49-50596c34a61a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/bQjW7ENr5S4ElXxZDzw8918lgGz38uyBKmlt2BzDJBqc0qXP_JohCdF6kRWxRvS03rkv5-dKFz-2-BIPxaEvjW8", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>The Easiest Way to Remove 3D Printed Parts from Your 3D Printer's Bed</h3>\r\n<p>While getting a great first layer for your 3D prints is an important step in the 3D printing process, you also want to be able to remove that part easily. A good first layer on your 3D printed part also means that it's going to be pretty stuck to the bed. Oftentimes, well-adhered 3D parts can be difficult to remove - while MatterHackers' Stick Stick <a href=\"https://www.matterhackers.com/store/c/3d-printer-adhesive\">bed adhesion solution</a> helps parts stick to the bed, it also makes it easier for you to remove your 3D printed parts. Simply let your 3D printer bed cool and pop the 3D part right off - it's that easy.</p>", 
+                    "ElementCode": "5NKM0L", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/ybOmKkQ2EGLsWgFo2fVRmzn0ZrF7KBZq4Navok7fgeLX8KEP8YKo5HZQ3LoDEosbXPikgltfx5vo2d_x4jPM_RE\" class=\"align-left\" /></p>\r\n<p><em>Stick Stick makes it incredibly easy to remove 3D printed parts from the bed - just let the bed cool and your part will pop right off.&nbsp;</em></p>", 
+                    "ElementCode": "VF32W6", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/33f175fa-81a8-444e-af18-b71315b5ef59", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/ybOmKkQ2EGLsWgFo2fVRmzn0ZrF7KBZq4Navok7fgeLX8KEP8YKo5HZQ3LoDEosbXPikgltfx5vo2d_x4jPM_RE", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>3D Printing Materials Compatible with Stick Stick&nbsp;3D Printer Bed Adhesion Solution</h3>\r\n<p>Stick Stick's non-odorous, water-based chemical formula is designed to print with a wide variety of 3D printing materials - because of it's resistance to high temperatures, this includes most advanced materials. Here is the complete list of materials that Stick Stick Bed Adhesive Solution is compatible with:&nbsp;</p>\r\n<ul>\r\n<li><a href=\"https://www.matterhackers.com/store/3d-printer-filament/pla\">PLA</a> 3D Printing Filament</li>\r\n<li><a href=\"https://www.matterhackers.com/store/3d-printer-filament/abs\">ABS</a> 3D Printing Filament</li>\r\n<li><a href=\"https://www.matterhackers.com/store/c/PET\">PETG</a>&nbsp;3D Printing Filament</li>\r\n<li><a href=\"https://www.matterhackers.com/store/c/pro-series-ryno\">PRO Series Ryno</a>&nbsp;3D Printing Filament</li>\r\n<li>Certain Advanced&nbsp;3D Printing Filament</li>\r\n</ul>\r\n<p></p>", 
+                    "ElementCode": "TJO296", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/395f8d9c-36da-4074-a0ce-8f11ee321b4d", 
+                "ImageUrl": "https://lh3.googleusercontent.com/XQ48UKbjbg0La9GvuJddpXcWfakktpYF8VA_drYr0j9LQO30ZgXlYBv-GbYZp9B4TqrLJyVt-kbeZ3oa6fxiZSA", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/395f8d9c-36da-4074-a0ce-8f11ee321b4d", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/XQ48UKbjbg0La9GvuJddpXcWfakktpYF8VA_drYr0j9LQO30ZgXlYBv-GbYZp9B4TqrLJyVt-kbeZ3oa6fxiZSA", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/ee9e1a62-841d-4060-8025-8db10b15af7e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/pysYnHcYJYKS8zOQE5en0uMYcw3leluTeD19vgXlNOalFBJJ2yFPopzM1nlP9h5BRxZIiMQo5BiqH7XWL8NFmOU", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/c947a0f6-74fa-40a6-92b6-7897f53803f7", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/o_PutjzTBcMAB30vs4WXhFL5Ys7MyG0CRLU6UyS_bfy9Qyhi8Uq_xSQ7kYr7y76YNTjGB2i-bYWXBKOFTP7qXA", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICsj_SMCgw", 
+            "MetaTagKeywords": [
+                "stick stick", 
+                "magigoo", 
+                "3d gloop", 
+                "first layer", 
+                "bed adhesive"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-06-19T01:11:48.895354", 
+            "ProductEditedOn": "2019-11-18T05:10:29.358507", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "stick-stick-3d-printer-bed-adhesion-50ml", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDA19WKCgw"
+            ], 
+            "ShortDescription": "MatterHackers' Stick Stick 3D printer bed adhesion solution ensures that your 3D printed part will have a superior first layer. The first layer of a 3D printed part is the most important - getting a great first layer ensures that your printed part is on track to being a successful print - MatterHackers' Stick Stick is an excellent solution for getting the best first layer adhesion possible. MatterHackers' Stick Stick bed adhesion solution also makes for easy print removal from your printer's bed - simply let the part cool and pop it right off. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Stick Stick 3D Printer Bed Adhesion - 50ml"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICsj_SMCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 1399, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 819, 
+        "QuantityOnHand": 819, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "stick-stick-3d-printer-bed-adhesion-50ml", 
+        "SID": "MKDQ0LW1", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Stick Stick 3D Printer Bed Adhesion - 50ml", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 78000, 
+        "TotalWeightGrams": "78.00", 
+        "TotalWeightKilograms": "0.08", 
+        "TotalWeightPounds": "0.17", 
+        "Weight": 78000, 
+        "WeightGrams": "78.00", 
+        "WeightKilograms": "0.08", 
+        "WeightPounds": "0.17", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}
