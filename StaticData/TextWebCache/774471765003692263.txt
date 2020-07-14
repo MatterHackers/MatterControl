@@ -1,4 +1,4 @@
-# [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition): First of its kind software that lets you design, organize, and manage your 3D prints.
+# Exporting print history is a feature of [MatterControl Pro Edition](https://www.matterhackers.com/store/l/mattercontrol-pro-edition). Upgrade now to enable it.
 
 [![MatterControl Pro](https://lh3.googleusercontent.com/d4jHyk2aCJgtsT0H6i3uFba1nfIBtVYlVpwsRf8xfrI8hN661vU46HHPKCaI2QXDjtAD9ykH6smj1c4itc8PVw=w640)](https://www.matterhackers.com/store/l/mattercontrol-pro-edition)
 
@@ -9,4 +9,4 @@
 - Help support our mission to make 3D printing easier and more accessible. With your assistance MatterControl can reach ever greater heights, continually improving the capabilities of 3D printers and the tools of success.
 
 ## Create  with integrated tools and applications
-- Perfect for professional makers interested in tools that optimize creativity and effectiveness. Gain access to Gear & Thread Tools, Mesh Repair, Mesh Hollowing, and more. 
+- Perfect for professional makers interested in tools that optimize creativity and effectiveness. Gain access to the Gear & Thread Tools, Mesh Repair, Mesh Hollowing, and more. 

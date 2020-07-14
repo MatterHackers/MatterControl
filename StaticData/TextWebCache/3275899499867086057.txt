@@ -1,0 +1,242 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-12-25", 
+        "BarCodeID": "", 
+        "Brand": "PrintDry", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-10-03T00:11:32.545100", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Dec 25th", 
+        "DisplayListPrice": "129.99", 
+        "DisplayPrice": "124.99", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/7ec69a65-afc1-45b3-be1c-f24bc0cae2aa", 
+            "ImageUrl": "https://lh3.googleusercontent.com/PdEwBZq6O5YgbZXkQ1hqeIvikgTVFgw9iyZ6Xxg8NcPu-QQY8CclJD8X2VzuKTSRqULtB0G34ndYBoOVHhdcFBo", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": true, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GPvl0XwM", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "15.00", 
+            "15.00", 
+            "15.00"
+        ], 
+        "PackagedToShip": true, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "The PrintDry Filament Drying System is an easy and affordable solution for 3D printing projects that use hygroscopic materials like nylon, PETG, PVA, and flexible filament. Many types of filament are hygroscopic, meaning it absorbs ambient moisture from the atmosphere if it isn't sealed in an air-tight container. The PrintDry Filament Drying System gives users two options for drying filament. With the included feed ports on the side of the container, feeding filament while it is being dried straight to the 3D printer means there is very little chance that moisture-laden filament will ruin your prints. Users can also pre-dry filament and have it ready to print outside the PrintDry as well. With a capacity of two spools and up to 4.5kg of filament, getting your favorite filament ready for optimized 3D printing is easy. Filament storage vacuum sealed container with air removal pump included.", 
+        "ProductListPrice": 12999, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 9995, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "99.95", 
+                    "AddOnDisplayPrice": "94.99", 
+                    "AddOnDisplaySavings": "4.96", 
+                    "AddOnFloatPrice": 94.99, 
+                    "AddOnListingReference": "printdry-filament-storage-vacuum-sealed-package-of-5", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 9499, 
+                    "AddOnSavings": 496, 
+                    "AddOnSkuReference": "MZK6ZEMP", 
+                    "AddOnTitle": "Printdry Filament Storage Vacuum Sealed - Package of 5  ", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICqmOD_Cgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks2WkVNUAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": -5, 
+                    "QuantityOnHand": -5, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-10-03T00:11:32.412890", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3>PrintDry - 3D Printing Filament Drying Solution</h3>\r\n<p>This PrintDry is the perfect moisture control solution for filament storage. This filament drying container features automatic humidity control that can hold up to two standard spools. This storage provides a quick and simple way to store your filament without any hassle. How does it work? Simply set the desired temperature, put in the filament and the PrintDry will take care of the rest!&nbsp;</p>", 
+                    "ElementCode": "3AYOHB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"bbs-98yWHeE\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "3DLPI0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Print Straight&nbsp;from the PrintDry Moisture Control Solution</h3>\r\n<p>Not only will your filament be kept dry, but also easily accessible via the two small openings on the side of the chamber. This means you don't have to choose between using your filament and drying it - leave it in the PrintDry over night, then feed the dry material directly from the machine into your 3D printer. With PrintDry, your filament will stay completely dry, easily accessible, perfectly identifiable, (i.e. no need to open every container to find the right kind of filament you are looking for) and ready to be used at anytime you start a print.&nbsp;</p>", 
+                    "ElementCode": "NRDXSF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/byHNkSeL0sB9Kvx75AqmURXa4ntt4w1p3D4KIMLgyEYIxeN0s81cE7HLWAYw9UdgHOGNaadSoi6JwMC97N4-5o0'></p>", 
+                    "ElementCode": "TNVFFY", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/f275769a-6224-4c5e-b16f-1457c82363e4", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/byHNkSeL0sB9Kvx75AqmURXa4ntt4w1p3D4KIMLgyEYIxeN0s81cE7HLWAYw9UdgHOGNaadSoi6JwMC97N4-5o0", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>PrintDry - The Best Solution for 3D Printing with Hygroscopic Materials</h3>\r\n<p>Many advanced materials like NylonX, <a href=\"https://www.matterhackers.com/store/c/nylong\">NylonG</a>, <a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20Nylon\">Nylon</a>, <a href=\"https://www.matterhackers.com/store/c/pva-support-filament\">PVA</a>, and <a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20PETG\">PETG</a> are incredibly hygroscopic, which means that they can absorb moisture right from the air. When these (or any) material have moisture in them, they do not print well. It's important to take the time to dry your filament to get the best results possible - the PrintDry 3D filament Drying Solution is the easiest way to get the most from your filament.&nbsp;</p>", 
+                    "ElementCode": "7V8J2X", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/aPQN1mLlVLeo-eTUUyTnTYgfy1SvGcaKlVRuYGgVY30-9jYEEqSZMxOUay64pbBMpAq2nAZ1y2v17YB70Ix8Kw\" /></p>\r\n<p><em>The PrintDry Filament Drying Solution keeps your filament at the ready for precision 3D printing.</em>&nbsp;</p>", 
+                    "ElementCode": "BVBJKT", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/b9cadda4-52d0-4ef7-8422-15b6c02755ef", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/aPQN1mLlVLeo-eTUUyTnTYgfy1SvGcaKlVRuYGgVY30-9jYEEqSZMxOUay64pbBMpAq2nAZ1y2v17YB70Ix8Kw", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Technical Specifications:</h3>\r\n<ul>\r\n<li>Keeps filaments in a low humidity environment</li>\r\n<li>Stores up to 2 spools or 4.5kg of filament</li>\r\n<li>Two feed ports allows direct printing from the container while in storage</li>\r\n<li>Enclosed container keeps out moisture and dust</li>\r\n<li>Adjustable temperature control to keep filaments between 35&deg;C-70&deg;C</li>\r\n<li>No consumable parts, no water tanks to empty</li>\r\n</ul>", 
+                    "ElementCode": "6MV0ES", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/IW15nHz-ofD90aaIomU8bz0QYNIHPIgy3e70Q2hNrwnt2FbWxuh73jIzXKr6vVnq5BaWhNqRCXKLieKHBDwHC_s\" /></p>\r\n<p><em>The PrintDry Filament Drying Solution keeps moisture from all your 3D printing materials.&nbsp;</em></p>", 
+                    "ElementCode": "ZMYNEC", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/94d01bc2-15a9-4d25-8f19-50c8480cb348", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/IW15nHz-ofD90aaIomU8bz0QYNIHPIgy3e70Q2hNrwnt2FbWxuh73jIzXKr6vVnq5BaWhNqRCXKLieKHBDwHC_s", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/7ec69a65-afc1-45b3-be1c-f24bc0cae2aa", 
+                "ImageUrl": "https://lh3.googleusercontent.com/PdEwBZq6O5YgbZXkQ1hqeIvikgTVFgw9iyZ6Xxg8NcPu-QQY8CclJD8X2VzuKTSRqULtB0G34ndYBoOVHhdcFBo", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/2b179da2-4af4-46a8-a24d-986c250e557f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/J18hXrtTgmamNxPjtxMUGFgu9nrRzwFQYWThtFkibU9xy8euE1hUl_L4iQ_mlZJcaatTU3-RfuKBe0zt8Bkv5KAy", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/6c65b86b-e799-4b7b-9920-78d8967a4d93", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/DowsecDd91kP0MxZIaXsml8f5DKBDtMnySzFqc_5WakdFyF346ncNrZvyILMvYhBcYxiofMuAX9Y7xWgKlhwsZA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/05b48fb9-a2cf-499c-9fc1-f5dea7b76940", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/EP-whXHAIlyfMF8HAeeW2Gi28GJbtpXS-D_WTLm-jkb8ZP32vP7ixiiB7Q0q8lA1g3wY-8Pow3yr4k5N8Nbs2Q", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/5fe63deb-3c30-4a2b-92a7-ca837cc81a42", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/EiqlIAlqyfjkRiL9E5qqBJ-nPJ80c2X3rPK4XjaugUhfHqientG1EwgXXvT9qL_4RTkZtFtijPz9_ZKWElcAFpc", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/0dc8ce7f-4d8b-4e46-9dbd-12e1773d8ff1", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/JBAO_ZksfGW_Qdf5pJL8Iba2d6FvAHWPsGtYpc8fkK0lYMEdewRPMvVJ6p8kcVVPTZO9jncqK8kJJyWR7QVZ7SDq", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/7ec69a65-afc1-45b3-be1c-f24bc0cae2aa", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/PdEwBZq6O5YgbZXkQ1hqeIvikgTVFgw9iyZ6Xxg8NcPu-QQY8CclJD8X2VzuKTSRqULtB0G34ndYBoOVHhdcFBo", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgIDA1KfBsAoM", 
+            "MetaTagKeywords": [
+                "print dry", 
+                "drybox", 
+                "dry box", 
+                "dehydrator", 
+                "dry"
+            ], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2017-10-03T00:11:32.412950", 
+            "ProductEditedOn": "2020-04-15T23:18:55.842797", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "printdry-filament-drying-system", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBdS15S3Fnb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M"
+            ], 
+            "ShortDescription": "The PrintDry Filament Drying System is an easy and affordable solution for 3D printing projects that use hygroscopic materials like nylon, PETG, PVA, and flexible filament. Many types of filament are hygroscopic, meaning it absorbs ambient moisture from the atmosphere if it isn't sealed in an air-tight container. The PrintDry Filament Drying System gives users two options for drying filament. With the included feed ports on the side of the container, feeding filament while it is being dried straight to the 3D printer means there is very little chance that moisture-laden filament will ruin your prints. Users can also pre-dry filament and have it ready to print outside the PrintDry as well. With a capacity of two spools and up to 4.5kg of filament, getting your favorite filament ready for optimized 3D printing is easy. Filament storage vacuum sealed container with air removal pump included.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "PrintDry Filament Drying System"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M", 
+        "ProductNumber": "261387003", 
+        "ProductPrice": 12499, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 311, 
+        "QuantityOnHand": 311, 
+        "QuantityReserved": 1, 
+        "ReferenceUrl": "printdry-filament-drying-system", 
+        "SID": "MNXQRWQC", 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "PrintDry Filament Drying System", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 4082000, 
+        "TotalWeightGrams": "4,082.00", 
+        "TotalWeightKilograms": "4.08", 
+        "TotalWeightPounds": "9.00", 
+        "Weight": 4082000, 
+        "WeightGrams": "4,082.00", 
+        "WeightKilograms": "4.08", 
+        "WeightPounds": "9.00"
+    }, 
+    "Status": "success"
+}

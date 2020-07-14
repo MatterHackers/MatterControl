@@ -1,0 +1,127 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-01-24", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-01-24T19:07:49.015057", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jan 24th", 
+        "DisplayListPrice": "499.00", 
+        "DisplayPrice": "399.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/2fa4bbb7-c015-40ee-b6ba-89b64fa7ac5d", 
+            "ImageUrl": "https://lh3.googleusercontent.com/_yn6sGE452OrQp6CuJb7gubgdhqEatKeme4NA_RUZ64XAhWeUprVqkhqzfFfQoPFEBE3aeGntNi0sLVJrWbGo7Q", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVlZWWFRLUAw", 
+        "LeadDays": 11, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "While 8-bit electronics boards are reliable \"brains\" for 3D printers, they still have limited planning ability that affect important aspects like print time and post processing. Enter the 32-bit Azteeg X5 GT running Smoothieware! More speed. Less blemishes. More accuracy. Printing with a Pulse just got even smarter. Unleash your Pulse 3D Printer's potential with 32-bit electronics.", 
+        "ProductListPrice": 49900, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVlZWWFRLUAw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-01-24T19:07:48.727641", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h2 class=\"align-center\"><strong>To purchase this upgrade, you must purchase this as an add-on through the <a title=\"Pulse 3D Printer - Custom Pre-Assembled\" href=\"https://www.matterhackers.com/store/l/pulse-3d-printer/sk/MUY6R1P5\">Custom Pre-Assembled Pulse</a> page.</strong></h2>\r\n<p></p>\r\n<h2><strong>UNLEASH POTENTIAL FROM 8-BIT TO 32-BIT</strong></h2>\r\n<p>Inexpensive, reliable, and easy to work with, 8-bit Arduino-based electronics boards have been the go-to printer electronics for over a decade. However, if you've been printing for a while, you likely are very familiar with the limitations such as limited speeds due to limited planning capabilities, limited step generation, un-optimized acceleration/deceleration, limited resources for advanced kinematics processing, etc.</p>\r\n<p>While these limitations do not prevent you from achieving beautiful prints at standard 3D printing speeds, we wanted to find a smarter solution for faster and smoother printing. Enter the 32-bit Azteeg X5 GT running Smoothieware!</p>\r\n<h2><strong>FASTER. CLEANER. SMARTER.</strong></h2>\r\n<p>Our technicians pre-install and calibrate your Pulse's firmware on this 32-bit board so you can jump right into using the amazing new benefits that come with this smart upgrade. With a faster CPU clock, more RAM and optimized firmware, 32-bit electronics significantly improve the planning ability of your printer. This means that the printer's \"brain\" can make itself move faster, more accurately, and efficiently plan its movements leading to faster, cleaner, and more accurate prints. Bigfoot BSD2660 Stepper Drivers are also installed with this upgrade for an even smoother and more precise 3D printing experience.</p>\r\n<p>In our testing, using the same slice settings as well as the same firmware acceleration, we saw an average decrease in print time of over 32%. On some parts, there was nearly a 50% reduction in print time!</p>\r\n<h2><strong>WHAT TO EXPECT</strong></h2>\r\n<p>With this 32-bit upgrade, you can expect faster print times, crisper corners, less oozing/blobbing, smoother and quieter motor movements, and better acceleration and deceleration. Achieve even smoother 3D printing results when you add this smart upgrade to your Pulse.</p>", 
+                    "ElementCode": "PNO450", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/5d9bd701-2e12-4eb7-b46c-a8535d495456", 
+                "ImageUrl": "https://lh3.googleusercontent.com/85rXitEuacR_prDUui9lzyjVVcGUJynj1eYtZv9qzAZDI5oSlZrjRjYk8utecmwr07cq_W8MRBJSWzvPRqsRLA", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/5d9bd701-2e12-4eb7-b46c-a8535d495456", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/85rXitEuacR_prDUui9lzyjVVcGUJynj1eYtZv9qzAZDI5oSlZrjRjYk8utecmwr07cq_W8MRBJSWzvPRqsRLA", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAlZGKCgw", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-01-24T19:07:48.727674", 
+            "ProductEditedOn": "2020-04-30T23:56:42.169060", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "32-bit-upgrade-for-pulse", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbzU2VHVBb00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-rKNCgw"
+            ], 
+            "ShortDescription": "While 8-bit electronics boards are reliable \"brains\" for 3D printers, they still have limited planning ability that affect important aspects like print time and post processing. Enter the 32-bit Azteeg X5 GT running Smoothieware! More speed. Less blemishes. More accuracy. Printing with a Pulse just got even smarter. Unleash your Pulse 3D Printer's potential with 32-bit electronics.", 
+            "ShowAddToCart": false, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "ag9zfm1hdHRlcmhhY2tlcnNyGQsSDFBhZ2VUZW1wbGF0ZRiAgKCF47vlCAw", 
+            "Title": "32-Bit Upgrade for Pulse (Cannot be Paired with LCD Screen Upgrade)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAlZGKCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 39900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 201, 
+        "QuantityOnHand": 201, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "32-bit-upgrade-for-pulse", 
+        "SID": "MVVVXTKP", 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "32-Bit Upgrade for Pulse (Cannot be Paired with LCD Screen Upgrade)", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00"
+    }, 
+    "Status": "success"
+}

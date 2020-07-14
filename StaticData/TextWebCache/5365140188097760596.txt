@@ -1,0 +1,128 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": null, 
+        "AttributeOptions": [], 
+        "AvailableDate": "2017-12-07", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-12-07T17:44:08.880410", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Dec 7th", 
+        "DisplayListPrice": "95.00", 
+        "DisplayPrice": "95.00", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/ea1b0703-03ed-4789-9c77-b1df48404805", 
+            "ImageUrl": "https://lh3.googleusercontent.com/wDxG77NmyA839Oja0mxhLous8kaqgrG89d7Ctw20Nik08ANmrtVa8DDrU_BFm7i4oJtkf8Vsl4wcarTvIOg-jmwf", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": false, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVFdWMllKMQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": false, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Never worry about running out of filament again! This sensor detects when you run out of filament, automatically pauses the print, and can even send you an SMS or email message alerting you.", 
+        "ProductListPrice": 9500, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVFdWMllKMQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-12-07T17:44:08.573990", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p>Never worry about running out of filament again! This sensor detects when you run out of filament, automatically pauses the print, and can even send you an SMS or email message alerting you.</p>", 
+                    "ElementCode": "DMSBFN", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/ea1b0703-03ed-4789-9c77-b1df48404805", 
+                "ImageUrl": "https://lh3.googleusercontent.com/wDxG77NmyA839Oja0mxhLous8kaqgrG89d7Ctw20Nik08ANmrtVa8DDrU_BFm7i4oJtkf8Vsl4wcarTvIOg-jmwf", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/ea1b0703-03ed-4789-9c77-b1df48404805", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/wDxG77NmyA839Oja0mxhLous8kaqgrG89d7Ctw20Nik08ANmrtVa8DDrU_BFm7i4oJtkf8Vsl4wcarTvIOg-jmwf", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": false, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAutyfCgw", 
+            "MetaTagKeywords": [
+                "runout sensor"
+            ], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-12-07T17:44:08.574020", 
+            "ProductEditedOn": "2019-10-02T22:34:33.499975", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "filament-runout-sensor", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbzU2VHVBb00M"
+            ], 
+            "ShortDescription": "Never worry about running out of filament again! This sensor detects when you run out of filament, automatically pauses the print, and can even send you an SMS or email message alerting you.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": null, 
+            "Title": "Filament Runout Sensor (requires Bondtech Extruder with E3D upgrade)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAutyfCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 9500, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 98, 
+        "QuantityOnHand": 98, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "filament-runout-sensor", 
+        "SID": "MTWV2YJ1", 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Filament Runout Sensor (requires Bondtech Extruder with E3D upgrade)", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00"
+    }, 
+    "Status": "success"
+}

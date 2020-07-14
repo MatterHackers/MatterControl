@@ -1,0 +1,245 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-06-21", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 1, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFAzUlBSRAw"
+        ], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2019-06-21T21:42:24.741988", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Jun 21st", 
+        "DisplayListPrice": "50.00", 
+        "DisplayPrice": "39.99", 
+        "DisplayPriceFlag": true, 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/11389f3c-ea25-42d2-90f8-07c0e7284cd6", 
+            "ImageUrl": "https://lh3.googleusercontent.com/HKujjLraNi_iVi74k4mrm0tv3As1JCycsLesR7kh6E7EoUDm2zAknVDH2RpveWE4JN7fPfWudDFWJ8Ngpq-9jiA", 
+            "IsFeatured": false
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV040QTE2TQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.10", 
+            "10.00", 
+            "9.50"
+        ], 
+        "PackagedToShip": false, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "ProductDescription": "Achieve better bed adhesion with zero hassle using the LayerLock Powder Coated PEI Build Plate! Tired of bubbles from adhesive tapes? How about going through multiple build surface sheets after extensive use or accidental scratches and gouges? Worry no more. This durable steel sheet that is powder coated with PEI is resistant to scratches and requires no careful installation of adhesive. Best of all, LayerLock Power Coated PEI Build Plates are guaranteed to last you much longer than adhesives and sheets, saving you money on multiple replacements in the long run. \r\n\r\nThis build surface is compatible with standard filaments PLA, ABS, PETG, and flexibles such as TPU and TPE. ***Please note that your printer must have a magnetic base installed in order to use this build plate.***", 
+        "ProductListPrice": 5000, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV040QTE2TQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2019-06-21T21:42:24.582596", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p class=\"align-center\">Please note that your printer must have a magnetic base installed in order to use this build plate. If your printer does not come with a pre-installed magnetic base, you can purchase an attachable one <a title=\"BuildTak FlexPlate System\" href=\"https://www.matterhackers.com/store/c/BuildTakFlexPlate\" target=\"_blank\" rel=\"noopener\">here</a>.</p>", 
+                    "ElementCode": "7CJ9KI", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/ImKOBJpROHnUApeuDWqkesMAoKUgGMT2uhT01SiNoJ6QXFThm9ZPayiLBVB1Xk7zc9q_q4fyY5OaUTb3Q6Uviw=s660\" /></p>", 
+                    "ElementCode": "V82EMJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"aWnrzr-G3kY\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "I8YP9R", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>ADHESION LOCKED DOWN</strong></h3>\r\n<p>Looking for strong bed adhesion in a build plate? We&rsquo;ve got you covered. Introducing LayerLock Powder Coated PEI Build Plate&mdash;the reliable PEI build surface you need for your printer bed&rsquo;s magnetic base. If painter&rsquo;s tape or kapton tape haven&rsquo;t been working for you, PEI is a wonderful alternative build surface known for successfully providing strong bed adhesion for standard filaments such as <a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a>, <a title=\"PRO Series ABS\" href=\"https://www.matterhackers.com/store/c/PRO%20Series%20ABS\" target=\"_blank\" rel=\"noopener\">ABS</a>, <a title=\"PRO Series PETG\" href=\"https://www.matterhackers.com/store/c/PRO%20Series%20PETG\" target=\"_blank\" rel=\"noopener\">PETG</a>, and flexibles such as <a title=\"PRO Series TPU\" href=\"https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29\" target=\"_blank\" rel=\"noopener\">TPU</a> and <a title=\"TPE\" href=\"https://www.matterhackers.com/s/store?q=tpe\" target=\"_blank\" rel=\"noopener\">TPE</a>. Tired of watching your prints slip and slide on a build surface? LayerLock&rsquo;s Powder Coated PEI Build Plate will have your prints locked down.</p>", 
+                    "ElementCode": "5KWNSO", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/FUfe5TSV9Ns-CUz6fnVRsFn50inp4G1Pd3QEEuMEe7WBeN0NSHlSUE0jSWLRQJg1m7a9Q6v5HuAkbdQR6Nrp7LI'></p>", 
+                    "ElementCode": "XJ6CQU", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/7b85bedf-7807-4b68-9183-d5daf07f2be2", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/FUfe5TSV9Ns-CUz6fnVRsFn50inp4G1Pd3QEEuMEe7WBeN0NSHlSUE0jSWLRQJg1m7a9Q6v5HuAkbdQR6Nrp7LI", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>FLEXIBILITY WITHOUT COMPROMISING STURDINESS</strong></h3>\r\n<p>Thanks to the thin thickness of this spring steel build plate, you can easily flex off your print if they do not already pop off during cooling. No paint scraper, putty knife, or other sharp tool needed! Big bonus? This thin flexibility neither compromises the sturdiness of the plate nor the sturdiness of the surface. With the PEI powder coated into the high quality spring steel plate, you don&rsquo;t have to worry about the PEI surface wearing out quickly from multiple prints or getting chips or scratches from sharp removal tools. Also, this build plate has double-sided powder coating PEI for double its longevity. Print more successful models, spend less on temporary PEI build surfaces, and save big in the long run.</p>", 
+                    "ElementCode": "DFNT4M", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/JOsps47jgDHdkpxOgH1tocdXvK7OUpAhylUlvx6RtlwKTQYHjuVal5k70PNMBM4hbI3mLGsGJQf7p90KFXcomurc'></p>", 
+                    "ElementCode": "A4NTZ7", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/c475a5e7-0d7a-4594-ab1b-973080977568", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/JOsps47jgDHdkpxOgH1tocdXvK7OUpAhylUlvx6RtlwKTQYHjuVal5k70PNMBM4hbI3mLGsGJQf7p90KFXcomurc", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>ADD CHARACTER WITH TEXTURE</strong></h3>\r\n<p>Get the texture you never knew you wanted on your prints with LayerLock Powder Coated PEI Build Plate&rsquo;s special surface. Smooth surface not giving you the exact look you&rsquo;re seeking? Maybe smooth doesn&rsquo;t work for your print&rsquo;s particular function. With this PEI build plate, you&rsquo;ll get a rugged texture that adds a charming and useful quality to your print. Smooth and sleek is beautiful, but some prints require a rougher surface for useful purposes such as reducing slippage. With the small bumps on the LayerLock Powder Coated PEI Build Plate, you&rsquo;ll have a rough, but not harsh, surface that is both useful and aesthetically pleasing.</p>", 
+                    "ElementCode": "2X5DBL", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/Uw8N35XLaAxH_DqARl52C4m6XOMmenJbjccgTXFTdswshSOiTf97iQQcMtTp14KnijG4afA4ScuKCFxqvBejjeo'></p>", 
+                    "ElementCode": "R5K0EU", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/9eb3e9a4-542f-49d0-9223-3a98211fe26a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Uw8N35XLaAxH_DqARl52C4m6XOMmenJbjccgTXFTdswshSOiTf97iQQcMtTp14KnijG4afA4ScuKCFxqvBejjeo", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3><strong>TECHNICAL SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li>Double-Sided, Powder Coated PEI Spring Steel Build Plate</li>\r\n<li>Dimensions: 9.5 in x 10 in x 0.02 in (241 mm x 254 mm x 0.60 mm)</li>\r\n</ul>", 
+                    "ElementCode": "MIMBKA", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>PRINTER COMPATIBILITY</strong></h3>\r\n<p>This build plate is compatible with the following printers:</p>\r\n<ul>\r\n<li>Original Prusa i3</li>\r\n<ul>\r\n<li>MK2 Model with FlexPlate installation</li>\r\n<li>MK2S Model with FlexPlate installation</li>\r\n<li>MK 2.5S Model</li>\r\n<li>MK3 Model</li>\r\n<li>MK3S Model</li>\r\n</ul>\r\n<li>Pulse 3D Printer</li>\r\n<ul>\r\n<li><a title=\"Custom Pre-Assembled Pulse\" href=\"https://www.matterhackers.com/store/l/pulse-3d-printer/sk/MUY6R1P5\" target=\"_blank\" rel=\"noopener\">Customized Pulse</a> with FlexPlate installation</li>\r\n<li><a title=\"Pulse XE Bundle\" href=\"https://www.matterhackers.com/store/l/pulse-xe-nylonx-3d-printer/sk/MFG0HF92\" target=\"_blank\" rel=\"noopener\">Pulse XE</a> with FlexPlate installation</li>\r\n<li><a title=\"Pulse HV Bundle\" href=\"https://www.matterhackers.com/store/l/pulse-hv/sk/M542K7KQ\" target=\"_blank\" rel=\"noopener\">Pulse HV</a></li>\r\n</ul>\r\n<li>Printers with a Magnetic Base Print Bed</li>\r\n<ul>\r\n<li>Note: As long as the 9.5&rdquo; x 10&rdquo; Build Plate can fit within the printer&rsquo;s frame/enclosure</li>\r\n</ul>\r\n<li>Printers with a <a title=\"BuildTak FlexPlate System\" href=\"https://www.matterhackers.com/store/c/BuildTakFlexPlate\" target=\"_blank\" rel=\"noopener\">BuildTak FlexPlate System</a></li>\r\n<ul>\r\n<li>Note: As long as the 9.5&rdquo; x 10&rdquo; Build Plate can fit within the printer&rsquo;s frame/enclosure</li>\r\n</ul>\r\n</ul>", 
+                    "ElementCode": "QJIBJR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MATERIAL COMPATIBILITY</strong></h3>\r\n<ul>\r\n<li>PLA</li>\r\n<li>ABS</li>\r\n<li>PETG<strong>*</strong></li>\r\n<li>RYNO<strong>*</strong></li>\r\n<li>TPU<strong>*</strong></li>\r\n<li>TPE<strong>*</strong></li>\r\n<li>PVA</li>\r\n</ul>\r\n<p><strong>* Please note that optimal nozzle height is especially crucial for these materials to avoid infusing prints into the build surface.</strong></p>", 
+                    "ElementCode": "SRPFEA", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>INSTALLATION</strong></h3>\r\n<p>Installation is extremely easy for any printer setup. Attach the LayerLock Power Coated PEI Build Plate onto your printer&rsquo;s magnetic base and align accordingly. Ensure the nozzle height is properly set by calibrating the z-height and leveling your print bed according to your specific printer&rsquo;s guidelines. While adjustments to your z-height will be minor thanks to the build plate&rsquo;s thin thickness, it is crucial that you follow this step before any attempts to print with this new set up. <strong>For a more detailed &ldquo;How To Succeed&rdquo; installation, check out our guide <a title=\"How to Succeed with LayerLock Powder Coated PEI Build Plates\" href=\"https://www.matterhackers.com/articles/how-to-succeed-with-layerlock-powder-coated-pei-build-plates\" target=\"_blank\" rel=\"noopener\">here</a>.</strong> That's it! You're ready to print.</p>", 
+                    "ElementCode": "FHC645", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MAINTENANCE</strong></h3>\r\n<p><span>Cleaning the surface isn't necessary. However, if you find prints not adhering after a couple of prints due to debris or dust, use isopropyl alcohol with an IPA 91%+ on a paper towel or lint free cloth to wipe down the print area.</span> As with any build surface, make sure you are not printing too close to the bed to avoid possibly infusing the filament into the build surface. If printing PETG, TPU, TPE, and RYNO, make sure the bed is heated BEFORE attempting to remove the print from the bed.</p>", 
+                    "ElementCode": "699EP7", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/4da158b7-e6cd-4373-8fcd-57667bbb29bf", 
+                "ImageUrl": "https://lh3.googleusercontent.com/2jZoiCTKmhzMkbUB9ZKeUWPP536xpybWDYBOWMBypBo01zcHr4f3_Kv6IOw0eCiBfiITyFBwJHogMNeGlr2i45Q", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/4da158b7-e6cd-4373-8fcd-57667bbb29bf", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/2jZoiCTKmhzMkbUB9ZKeUWPP536xpybWDYBOWMBypBo01zcHr4f3_Kv6IOw0eCiBfiITyFBwJHogMNeGlr2i45Q", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/b9e45f2c-4c28-43a0-bddb-74ab0d197714", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/GpTXz1Yew_X2JqqnUy3ZCKSywiw_3lpMxpGazyGJwuuGPn_7pLRxmg-GorxcOmQokl5gFjlM0susMtwUNle4U4E", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/16c6165d-8419-4675-a2b4-257a2877e478", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/pk3YddXjHPyp0SIKW29QlJnUpGzyz5t1QBxphgboTRIXSS9EQtTVf-11ZGI-YAAcVPTKCkxca_8Xh0JyqDLy9sY", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/86ce4b1f-df59-4dbf-bec7-1a68fe5a7843", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/HE_3chh6mUUtp59UOeURlVZfoeb44edqF_w25cof3JUwbem2RUuVzyjyDyxOeh4RrZRawKFWPShrswWDZUeoSo8", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/4320d907-c3e4-4b20-83e0-2d80574bd903", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/8RIQv-GlmL2clUYraFvLU_oQvFf6AWmvc7gq3fTRTnAsKGM5SVraoh2LzNWEZTjUV4T3ITDF5Ebh9BQ-tQBgeS_N", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDspfCYCgw", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2019-06-21T21:42:24.582609", 
+            "ProductEditedOn": "2020-04-07T23:34:30.981950", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "layerlock-powder-coated-pei-build-plate-9-5-x-10-for-pulse-upgrade", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVk0SWtQREEM", 
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVkyb0FTREEM"
+            ], 
+            "ShortDescription": "Achieve better bed adhesion with zero hassle using the LayerLock Powder Coated PEI Build Plate! Tired of bubbles from adhesive tapes? How about going through multiple build surface sheets after extensive use or accidental scratches and gouges? Worry no more. This durable steel sheet that is powder coated with PEI is resistant to scratches and requires no careful installation of adhesive. Best of all, LayerLock Power Coated PEI Build Plates are guaranteed to last you much longer than adhesives and sheets, saving you money on multiple replacements in the long run. \r\n\r\nThis build surface is compatible with standard filaments PLA, ABS, PETG, and flexibles such as TPU and TPE. ***Please note that your printer must have a magnetic base installed in order to use this build plate.***", 
+            "ShowAddToCart": false, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "LayerLock Powder Coated PEI Build Plate 9.5\" x 10\" for Pulse (Must be paired with Magnetic FlexPlate Upgrade)"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDspfCYCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 3999, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 67, 
+        "QuantityOnHand": 67, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "layerlock-powder-coated-pei-build-plate-9-5-x-10-for-pulse-upgrade", 
+        "SID": "MWN4A16M", 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "LayerLock Powder Coated PEI Build Plate 9.5\" x 10\" for Pulse (Must be paired with Magnetic FlexPlate Upgrade)", 
+        "SkuWarningMessages": [], 
+        "TotalWeight": 190000, 
+        "TotalWeightGrams": "190.00", 
+        "TotalWeightKilograms": "0.19", 
+        "TotalWeightPounds": "0.42", 
+        "Weight": 198000, 
+        "WeightGrams": "198.00", 
+        "WeightKilograms": "0.20", 
+        "WeightPounds": "0.44"
+    }, 
+    "Status": "success"
+}

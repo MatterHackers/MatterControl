@@ -199,7 +199,6 @@ namespace MatterHackers.MatterControl
 				this.Parent.CloseOnIdle();
 			};
 
-
 			this.AddPageAction(exportButton);
 		}
 
@@ -212,17 +211,21 @@ namespace MatterHackers.MatterControl
 				UiThread.RunOnIdle(() =>
 				{
 					AggContext.FileDialogs.SelectFolderDialog(
-						new SelectFolderDialogParams("Select Location To Export Files") {
+						new SelectFolderDialogParams("Select Location To Export Files")
+						{
 							ActionButtonLabel = "Export".Localize(),
 							Title = ApplicationController.Instance.ProductName + " - " + "Select A Folder".Localize()
 						},
-						(openParams) => {
+						(openParams) =>
+						{
 							ApplicationController.Instance.Tasks.Execute(
 								"Saving".Localize() + "...",
 								printer,
-								async (reporter, cancellationToken) => {
+								async (reporter, cancellationToken) =>
+								{
 									string path = openParams.FolderPath;
-									if (!string.IsNullOrEmpty(path)) {
+									if (!string.IsNullOrEmpty(path))
+									{
 										await exportPlugin.Generate(libraryItems, path, reporter, cancellationToken);
 									}
 								});

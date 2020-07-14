@@ -383,10 +383,21 @@ namespace MatterHackers.MatterControl.PrintHistory
 				}
 				else // upsell MatterControl Pro
 				{
-					StyledMessageBox.ShowMessageBox(
-						"Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize(),
+					string text = "Exporting print history is a MatterControl Pro feature. Upgrade to Pro to unlock MatterControl Pro.".Localize();
+					WebCache.RetrieveText(
+						"https://matterhackers.github.io/MatterControl-Docs/ProContent/Unlock_Export_Print_History.md",
+						(markDown) =>
+						{
+							// push the new text into the widget
+							text = markDown;
+						});
+
+					StyledMessageBox.ShowMessageBox(text,
 						"Upgrade to Pro".Localize(),
-						StyledMessageBox.MessageType.OK);
+						StyledMessageBox.MessageType.OK,
+						useMarkdown: true,
+						width: 540,
+						height: 400);
 				}
 			};
 		}
