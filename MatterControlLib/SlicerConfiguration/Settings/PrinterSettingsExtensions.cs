@@ -101,9 +101,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			settings.Save(
-				ProfileManager.Instance.ProfilePath(settings.ID),
-				userDrivenChange);
+			var profilePath = ProfileManager.Instance.ProfilePath(settings.ID);
+
+			// it is possible for a profile to get deleted while printing so we have to check for it
+			if (profilePath != null)
+			{
+				settings.Save(profilePath, userDrivenChange);
+			}
 		}
 
 		public static void Save(this PrinterSettings settings, string filePath, bool userDrivenChange = true)

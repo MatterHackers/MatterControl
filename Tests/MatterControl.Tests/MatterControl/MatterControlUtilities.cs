@@ -511,6 +511,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("User Options Menu");
 		}
 
+		public static void ClickResumeButton(this AutomationRunner testRunner, PrinterConfig printer, bool resume, int expectedLayer)
+		{
+			var buttonName = resume ? "Yes Button" : "No Button";
+			testRunner.WaitForName(buttonName, 90);
+			Assert.AreEqual(expectedLayer, printer.Connection.CurrentlyPrintingLayer);
+
+			testRunner.ClickByName(buttonName);
+			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
+		}
+
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			testRunner.EnsureContentMenuOpen();
@@ -671,6 +681,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.ClickByName(partName);
 			}
+
 			testRunner.ClickByName("Print Library Overflow Menu");
 
 			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;

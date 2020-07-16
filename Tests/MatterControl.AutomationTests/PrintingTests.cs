@@ -321,6 +321,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
+		public async Task PrinterDeletedWhilePrinting()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
+
+					var printer = testRunner.FirstPrinter();
+
+					// print a part
+					testRunner.AddItemToBedplate();
+					testRunner.StartPrint(pauseAtLayers: "2");
+					ProfileManager.DebugPrinterDelete = true;
+
+					// Wait for pause dialog
+					testRunner.ClickResumeButton(printer, true, 1);
+
+					// Wait for done
+					testRunner.WaitForPrintFinished(printer);
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		[Test, Category("Emulator")]
 		public async Task PrinterRecoveryTest()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
@@ -332,11 +359,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
 					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
-
-					// TODO: Delay needed to work around timing issue in MatterHackers/MCCentral#2415
-					testRunner.Delay(1);
-
-					testRunner.WaitForReloadAll(() => { });
 
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
@@ -355,7 +377,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// the printer is now paused
 					// close the pause dialog pop-up do not resume
-					ClickDialogButton(testRunner, printer, "No Button", 3);
+					testRunner.ClickResumeButton(printer, false, 3);
 
 					// Disconnect
 					testRunner.ClickByName("Disconnect from printer button");
@@ -370,11 +392,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(PrintRecovery.RecoveryAvailable(printer), "Recovery should be enabled after Disconnect while printing");
 
 					// Recover the print
-					ClickDialogButton(testRunner, printer, "Yes Button", -1);
+					testRunner.ClickResumeButton(printer, true, -1);
 
 					// The first pause that we get after recovery should be layer 6.
 					// wait for the pause and continue
-					ClickDialogButton(testRunner, printer, "Yes Button", 5);
+					testRunner.ClickResumeButton(printer, true, 5);
 
 					// Wait for done
 					testRunner.WaitForPrintFinished(printer);
@@ -382,16 +404,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 180);
-		}
-
-		// TODO: convert to extension method
-		private static void ClickDialogButton(AutomationRunner testRunner, PrinterConfig printer, string buttonName, int expectedLayer)
-		{
-			testRunner.WaitForName(buttonName, 90);
-			Assert.AreEqual(expectedLayer, printer.Connection.CurrentlyPrintingLayer);
-
-			testRunner.ClickByName(buttonName);
-			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 1);
 		}
 
 		[Test, Category("Emulator")]
