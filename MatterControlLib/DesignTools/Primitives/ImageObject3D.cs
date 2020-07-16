@@ -77,28 +77,31 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				if (_image == null)
 				{
-					_image = this.LoadImage();
+					// set a temp image so we don't have any problems with threading
+					var image = this.LoadImage();
 
-					if (_image != null)
+					if (image != null)
 					{
 						if (this.Invert)
 						{
-							_image = InvertLightness.DoInvertLightness(_image);
+								image = InvertLightness.DoInvertLightness(image);
 						}
 					}
 					else // bad load
 					{
-						_image = new ImageBuffer(200, 200);
-						var graphics2D = _image.NewGraphics2D();
+						image = new ImageBuffer(200, 100);
+						var graphics2D = image.NewGraphics2D();
 						graphics2D.Clear(Color.White);
-						graphics2D.DrawString("Bad Load", 100, 100);
+						graphics2D.DrawString("Image Missing".Localize(), image.Width / 2, image.Height / 2, 20, Agg.Font.Justification.Center, Agg.Font.Baseline.BoundsCenter);
 					}
 
 					// we don't want to invalidate on the mesh change
 					using (RebuildLock())
 					{
-						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+						base.Mesh = this.InitMesh(image) ?? PlatonicSolids.CreateCube(100, 100, 0.2);
 					}
+
+					_image = image;
 
 					// send the invalidate on image change
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Image));
@@ -162,7 +165,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					using (this.RebuildLock())
 					{
 						// TODO: Revise fallback mesh
-						base.Mesh = this.InitMesh() ?? PlatonicSolids.CreateCube(100, 100, 0.2);
+						base.Mesh = this.InitMesh(this.Image) ?? PlatonicSolids.CreateCube(100, 100, 0.2);
 					}
 				}
 
@@ -174,16 +177,15 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override Task Rebuild()
 		{
-			InitMesh();
+			InitMesh(this.Image);
 
 			return base.Rebuild();
 		}
 
-		private Mesh InitMesh()
+		private Mesh InitMesh(ImageBuffer imageBuffer)
 		{
 			if (!string.IsNullOrWhiteSpace(this.AssetPath))
 			{
-				var imageBuffer = this.Image;
 				if (imageBuffer != null)
 				{
 					ScaleMmPerPixels = Math.Min(DefaultSizeMm / imageBuffer.Width, DefaultSizeMm / imageBuffer.Height);
