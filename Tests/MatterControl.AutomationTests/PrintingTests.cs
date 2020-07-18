@@ -94,14 +94,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be defined after add");
 
-					testRunner.OpenPrintPopupMenu();
-
-					testRunner.ClickByName("SetupPrinter");
-
-					testRunner.Complete9StepLeveling();
-
-					// print a part
-					testRunner.AddItemToBedplate();
+					testRunner.OpenPrintPopupMenu()
+						.ClickByName("SetupPrinter")
+						.Complete9StepLeveling()
+						.AddItemToBedplate();
 
 					var printer = testRunner.FirstPrinter();
 
@@ -363,43 +359,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
 
 					// print a part
-					testRunner.AddItemToBedplate();
-					testRunner.StartPrint(pauseAtLayers: "2;4;6");
-
-					// Wait for pause dialog
-					testRunner.WaitForName("Yes Button", 15); // the yes button is 'Resume'
-
-					// validate the current layer
-					Assert.AreEqual(1, printer.Connection.CurrentlyPrintingLayer);
-
-					// Resume
-					testRunner.ClickByName("Yes Button");
-
-					// the printer is now paused
-					// close the pause dialog pop-up do not resume
-					testRunner.ClickResumeButton(printer, false, 3);
-
-					// Disconnect
-					testRunner.ClickByName("Disconnect from printer button");
-
-					// Reconnect
-					testRunner.WaitForName("Connect to printer button", 10);
-					testRunner.ClickByName("Connect to printer button");
-
-					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+					testRunner.AddItemToBedplate()
+						.StartPrint(pauseAtLayers: "2;4;6")
+						.ClickResumeButton(printer, true, 1) // Resume
+						.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
+						.ClickByName("Disconnect from printer button")
+						.ClickByName("Connect to printer button") // Reconnect
+						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 
 					// Assert that recovery happens
 					Assert.IsTrue(PrintRecovery.RecoveryAvailable(printer), "Recovery should be enabled after Disconnect while printing");
 
 					// Recover the print
-					testRunner.ClickResumeButton(printer, true, -1);
-
-					// The first pause that we get after recovery should be layer 6.
-					// wait for the pause and continue
-					testRunner.ClickResumeButton(printer, true, 5);
-
-					// Wait for done
-					testRunner.WaitForPrintFinished(printer);
+					testRunner.ClickButton("Yes Button", "Recover Print")
+						.ClickResumeButton(printer, true, 5) // The first pause that we get after recovery should be layer 6.
+						.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
@@ -433,23 +407,20 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						printFinishedResetEvent.Set();
 					};
 
-					testRunner.StartPrint();
-
-					testRunner.ScrollIntoView("Extrusion Multiplier NumberEdit");
-					testRunner.ScrollIntoView("Feed Rate NumberEdit");
+					testRunner.StartPrint()
+						.ScrollIntoView("Extrusion Multiplier NumberEdit")
+						.ScrollIntoView("Feed Rate NumberEdit");
 
 					// Tuning values should default to 1 when missing
 					ConfirmExpectedSpeeds(testRunner, 1, 1, "Initial case");
 
-					testRunner.Delay();
-					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
-					testRunner.Type(targetExtrusionRate.ToString());
-
-					testRunner.ClickByName("Feed Rate NumberEdit");
-					testRunner.Type(targetFeedRate.ToString());
-
-					// Force focus away from the feed rate field, causing an persisted update
-					testRunner.ClickByName("Extrusion Multiplier NumberEdit");
+					testRunner.Delay()
+						.ClickByName("Extrusion Multiplier NumberEdit")
+						.Type(targetExtrusionRate.ToString())
+						.ClickByName("Feed Rate NumberEdit")
+						.Type(targetFeedRate.ToString())
+						// Force focus away from the feed rate field, causing an persisted update
+						.ClickByName("Extrusion Multiplier NumberEdit");
 
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After setting TextEdit values");
 
@@ -465,17 +436,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
-					testRunner.WaitForPrintFinished(printer);
-
-					// Restart the print
-					testRunner.StartPrint();
-					testRunner.Delay(1);
+					testRunner.WaitForPrintFinished(printer)
+						.StartPrint() // Restart the print
+						.Delay(1);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print restarted");
 
-					testRunner.CancelPrint();
-					testRunner.Delay(1);
+					testRunner.CancelPrint()
+						.Delay(1);
 
 					// Values should match entered values
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After canceled print");
