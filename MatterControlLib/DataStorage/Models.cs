@@ -325,6 +325,8 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public bool PrintComplete { get; set; }
 
+		public bool PrintCanceled { get; set; }
+
 		public DateTime PrintEnd { get; set; }
 
 		[Indexed]

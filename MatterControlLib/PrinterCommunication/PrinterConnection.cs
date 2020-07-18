@@ -2268,6 +2268,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 					ActivePrintTask.PrintEnd = DateTime.Now;
 					ActivePrintTask.PrintComplete = false;
 					ActivePrintTask.PrintingGCodeFileName = "";
+					ActivePrintTask.PrintCanceled = true;
 					ActivePrintTask.Commit();
 				}
 

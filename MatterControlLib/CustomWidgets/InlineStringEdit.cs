@@ -132,6 +132,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					this.Text = textEditWithInlineCancel.Text;
 				}
+
 				this.SetVisibility(showEditPanel: false);
 			};
 			rightPanel.AddChild(saveButton);
