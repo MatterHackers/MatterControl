@@ -251,12 +251,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(workspace.LibraryView, theme);
 			navBar.AddChild(breadCrumbWidget);
 
-			var searchPanel = new SearchInputBox(theme)
+			var searchPanel = new TextEditWithInlineCancel(theme)
 			{
 				Visible = false,
 				Margin = new BorderDouble(10, 0, 5, 0),
 			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			searchPanel.TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
 				this.PerformSearch();
 			};
@@ -265,13 +265,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				breadCrumbWidget.Visible = true;
 				searchPanel.Visible = false;
 
-				searchPanel.searchInput.Text = "";
+				searchPanel.TextEditWidget.Text = "";
 
 				this.ClearSearch();
 			};
 
 			// Store a reference to the input field
-			this.searchInput = searchPanel.searchInput;
+			this.searchInput = searchPanel.TextEditWidget;
 
 			navBar.AddChild(searchPanel);
 
@@ -537,40 +537,42 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		}
 	}
 
-	public class SearchInputBox : GuiWidget
+	public class TextEditWithInlineCancel : GuiWidget
 	{
-		internal MHTextEditWidget searchInput;
+		public MHTextEditWidget TextEditWidget { get; }
 
 		public GuiWidget ResetButton { get; }
 
-		public SearchInputBox(ThemeConfig theme, string emptyText = null)
+		public TextEditWithInlineCancel(ThemeConfig theme, string emptyText = null)
 		{
+			if (emptyText == null)
+			{
+				emptyText = "Search".Localize();
+			}
+
 			this.VAnchor = VAnchor.Center | VAnchor.Fit;
 			this.HAnchor = HAnchor.Stretch;
 
-			searchInput = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText ?? "Search".Localize())
+			TextEditWidget = new MHTextEditWidget("", theme, messageWhenEmptyAndNotSelected: emptyText)
 			{
-				Name = "Search Library Edit",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center
 			};
-			this.AddChild(searchInput);
+			this.AddChild(TextEditWidget);
 
-			var resetButton = theme.CreateSmallResetButton();
-			resetButton.HAnchor |= HAnchor.Right;
-			resetButton.VAnchor |= VAnchor.Center;
-			resetButton.Name = "Close Search";
-			resetButton.ToolTipText = "Clear".Localize();
+			this.ResetButton = theme.CreateSmallResetButton();
+			ResetButton.HAnchor |= HAnchor.Right;
+			ResetButton.VAnchor |= VAnchor.Center;
+			ResetButton.Name = "Close Search";
+			ResetButton.ToolTipText = "Clear".Localize();
 
-			this.AddChild(resetButton);
-
-			this.ResetButton = resetButton;
+			this.AddChild(ResetButton);
 		}
 
 		public override string Text
 		{
-			get => searchInput.ActualTextEditWidget.Text;
-			set => searchInput.ActualTextEditWidget.Text = value;
+			get => TextEditWidget.ActualTextEditWidget.Text;
+			set => TextEditWidget.ActualTextEditWidget.Text = value;
 		}
 	}
 }
