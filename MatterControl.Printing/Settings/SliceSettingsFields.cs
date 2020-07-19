@@ -560,15 +560,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.fill_pattern,
-					PresentationName = "Fill Pattern".Localize(),
-					HelpText = "The geometric shape of the support structure for the inside of parts.".Localize(),
-					DataEditType = DataEditTypes.LIST,
-					ListValues = "rectilinear,line,grid,concentric,honeycomb,hilbertcurve,achimedeancords,octagramspiral,3dhoneycomb",
-					DefaultValue = "honeycomb"
-				},
-				new SliceSettingData()
-				{
 					SlicerConfigName = SettingsKey.fill_thin_gaps,
 					PresentationName = "Fill Thin Gaps".Localize(),
 					HelpText = "Detect gaps between perimeters that are too thin to fill with normal infill and attempt to fill them.".Localize(),
@@ -893,7 +884,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The geometric shape of the support structure for the inside of parts.".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ShowIfSet = "!sla_printer",
-					ListValues = "GRID,TRIANGLES,HEXAGON,LINES,CONCENTRIC",
+					ListValues = "GRID,TRIANGLES,HEXAGON,GYROID,LINES,CONCENTRIC",
 					DefaultValue = "TRIANGLES",
 					Converter = new ValueConverter(),
 				},
@@ -1655,15 +1646,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "30",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed)
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.solid_fill_pattern,
-					PresentationName = "Top/Bottom Fill Pattern".Localize(),
-					HelpText = "The pattern used on the bottom and top layers of the print.".Localize(),
-					DataEditType = DataEditTypes.LIST,
-					ListValues = "rectilinear,concentric,hilbertcurve,achimedeancords,octagramspiral",
-					DefaultValue = "rectilinear"
 				},
 				new SliceSettingData()
 				{
