@@ -66,21 +66,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override void Flatten(UndoBuffer undoBuffer)
 		{
-			// only keep the mesh and get rid of everything else
-			using (RebuildLock())
+			if (Mesh == null)
 			{
-				var meshOnlyItem = new Object3D()
-				{
-					Mesh = this.Mesh.Copy(CancellationToken.None)
-				};
-
-				meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
-
-				// and replace us with the children 
-				undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
+				Remove(undoBuffer);
 			}
+			else
+			{
+				// only keep the mesh and get rid of everything else
+				using (RebuildLock())
+				{
+					var meshOnlyItem = new Object3D()
+					{
+						Mesh = this.Mesh.Copy(CancellationToken.None)
+					};
 
-			Invalidate(InvalidateType.Children);
+					meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
+
+					// and replace us with the children 
+					undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
+				}
+
+				Invalidate(InvalidateType.Children);
+			}
 		}
 
 		public LinearExtrudeObject3D()
