@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit | HAnchor.Left,
 					VAnchor = VAnchor.Fit,
 					Padding = 5,
-					MinimumSize = new Vector2(400, 65),
+					MinimumSize = new Vector2(400 * GuiWidget.DeviceScale, 65 * GuiWidget.DeviceScale),
 				};
 				printPanel.AddChild(optionsPanel);
 

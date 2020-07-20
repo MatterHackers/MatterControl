@@ -147,8 +147,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 					{
 						HAnchor = HAnchor.Absolute,
 						VAnchor = VAnchor.Absolute,
-						Width = 80,
-						Height = 65,
+						Width = 80 * GuiWidget.DeviceScale,
+						Height = 65 * GuiWidget.DeviceScale,
 						Mode = themeName,
 						Border = 1,
 						BorderColor = theme.BorderColor20,
@@ -169,13 +169,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 					if (themeName == AppContext.ThemeSet.ThemesetID)
 					{
-						var imageBuffer = new ImageBuffer(35, 35);
+						var imageSize = (int)(35 * GuiWidget.DeviceScale);
+						var imageBuffer = new ImageBuffer(imageSize, imageSize);
 						var graphics = imageBuffer.NewGraphics2D();
 
 						previewContainer.BorderColor = AppContext.Theme.AccentMimimalOverlay;
 						previewContainer.Border = 1;
 
-						var arrowHeight = 35;
+						var arrowHeight = 35 * GuiWidget.DeviceScale;
 
 						var upArrow = new VertexStorage();
 						upArrow.MoveTo(0, 0);
@@ -183,8 +184,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 						upArrow.LineTo(0, -arrowHeight);
 						upArrow.LineTo(0, 0);
 
-						graphics.Render(upArrow, new Vector2(0, 35), AppContext.Theme.PrimaryAccentColor);
-						graphics.Render(this.CheckMark, 4, 17);
+						graphics.Render(upArrow, new Vector2(0, 35 * GuiWidget.DeviceScale), AppContext.Theme.PrimaryAccentColor);
+						graphics.Render(this.CheckMark, 4 * GuiWidget.DeviceScale, 17 * GuiWidget.DeviceScale);
 
 						imageBuffer.SetPreMultiply();
 

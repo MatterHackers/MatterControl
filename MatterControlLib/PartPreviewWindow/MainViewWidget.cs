@@ -335,6 +335,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.AddChild(brandMenu, 0);
 
+			tabControl.TabBar.ActionArea.VAnchor = VAnchor.Absolute;
+			tabControl.TabBar.ActionArea.Height = brandMenu.Height;
+
 			// Restore active workspace tabs
 			foreach (var workspace in ApplicationController.Instance.Workspaces)
 			{
@@ -363,7 +366,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
 				Padding = 1,
-				Height = 22,
+				Height = 22 * GuiWidget.DeviceScale,
 				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1),
 				BorderColor = theme.BorderColor20,
@@ -390,17 +393,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(1),
 				BackgroundColor = theme.MinimalShade.WithAlpha(10),
 				BorderColor = theme.SlightShade,
-				Width = 200
+				Width = 200 * GuiWidget.DeviceScale
 			};
 			statusBar.AddChild(stretchStatusPanel);
 
 			var panelBackgroundColor = theme.MinimalShade.WithAlpha(10);
 
-			statusBar.AddChild(
-				this.CreateThemeStatusPanel(theme, panelBackgroundColor));
+			statusBar.AddChild(this.CreateThemeStatusPanel(theme, panelBackgroundColor));
 
-			statusBar.AddChild(
-				this.CreateNetworkStatusPanel(theme));
+			statusBar.AddChild(this.CreateNetworkStatusPanel(theme));
 
 			this.RenderRunningTasks(theme, ApplicationController.Instance.Tasks);
 		}
@@ -584,7 +585,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Border = new BorderDouble(1),
 				BackgroundColor = theme.MinimalShade.WithAlpha(10),
 				BorderColor = theme.SlightShade,
-				Width = 120
+				Width = 120 * GuiWidget.DeviceScale
 			};
 			if (ApplicationController.ServicesStatusType != null)
 			{
@@ -633,7 +634,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					HAnchor = HAnchor.Absolute,
 					VAnchor = VAnchor.Fit,
-					Width = 650,
+					Width = 650 * GuiWidget.DeviceScale,
 					Border = 1,
 					BorderColor = theme.DropList.Open.BackgroundColor,
 					// Padding = theme.DefaultContainerPadding,
@@ -818,7 +819,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static void EnableReduceWidth(ChromeTab partTab, ThemeConfig theme)
 		{
 			var scale = GuiWidget.DeviceScale;
-			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight);
+			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight * GuiWidget.DeviceScale);
 
 			var textWidget = partTab.Descendants<TextWidget>().First();
 			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();
@@ -944,7 +945,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Border = new BorderDouble(1),
 					BorderColor = theme.SlightShade,
 					ProgressBackgroundColor = progressBackgroundColor,
-					Width = 200
+					Width = 200 * GuiWidget.DeviceScale
 				};
 
 				tasksContainer.AddChild(runningTaskPanel);
