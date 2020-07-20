@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private readonly SettingsContext settingsContext;
 		private readonly bool isPrimarySettingsView;
 
-		private readonly SearchInputBox searchPanel;
+		private readonly TextEditWithInlineCancel settingsNameEdit;
 		private int groupPanelCount = 0;
 		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
 		private TextWidget filteredItemsHeading;
@@ -135,17 +135,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
 
-				searchPanel = new SearchInputBox(theme)
+				settingsNameEdit = new TextEditWithInlineCancel(theme, "name".Localize())
 				{
 					Visible = false,
 					BackgroundColor = theme.TabBarBackground,
 					MinimumSize = new Vector2(0, this.TabBar.Height)
 				};
 
-				searchPanel.searchInput.Margin = new BorderDouble(3, 0);
-				searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+				settingsNameEdit.TextEditWidget.Margin = new BorderDouble(3, 0);
+				settingsNameEdit.TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 				{
-					var filter = searchPanel.searchInput.Text.Trim();
+					var filter = settingsNameEdit.TextEditWidget.Text.Trim();
 
 					foreach (var item in this.settingsRows)
 					{
@@ -158,16 +158,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					this.ShowFilteredView();
 				};
-				searchPanel.ResetButton.Click += (s, e) =>
+
+				settingsNameEdit.ResetButton.Click += (s, e) =>
 				{
-					searchPanel.Visible = false;
-					searchPanel.searchInput.Text = "";
+					settingsNameEdit.Visible = false;
+					settingsNameEdit.TextEditWidget.Text = "";
 
 					this.ClearFilter();
 				};
 
 				// Add heading for My Settings view
-				searchPanel.AddChild(filteredItemsHeading = new TextWidget(justMySettingsTitle, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+				settingsNameEdit.AddChild(filteredItemsHeading = new TextWidget(justMySettingsTitle, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
 					Margin = new BorderDouble(left: 10),
 					HAnchor = HAnchor.Left,
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Visible = false
 				}, 0);
 
-				this.AddChild(searchPanel, 0);
+				this.AddChild(settingsNameEdit, 0);
 
 				var scrollable = new ScrollableWidget(true)
 				{
@@ -286,10 +287,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				searchButton.Click += (s, e) =>
 				{
 					filteredItemsHeading.Visible = false;
-					searchPanel.searchInput.Visible = true;
+					settingsNameEdit.TextEditWidget.Visible = true;
 
-					searchPanel.Visible = true;
-					searchPanel.searchInput.Focus();
+					settingsNameEdit.Visible = true;
+					settingsNameEdit.TextEditWidget.Focus();
 					this.TabBar.Visible = false;
 				};
 
@@ -914,9 +915,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			filteredItemsHeading.Visible = true;
-			searchPanel.searchInput.Visible = false;
+			settingsNameEdit.TextEditWidget.Visible = false;
 			this.TabBar.Visible = false;
-			searchPanel.Visible = true;
+			settingsNameEdit.Visible = true;
 
 			this.ShowFilteredView();
 		}

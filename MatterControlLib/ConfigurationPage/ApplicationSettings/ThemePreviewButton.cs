@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 				HAnchor = HAnchor.Absolute | HAnchor.Left,
 				VAnchor = VAnchor.Stretch,
 				Margin = new BorderDouble(0),
-				Width = 20,
+				Width = 20 * GuiWidget.DeviceScale,
 				BackgroundColor = theme.MinimalShade,
 			};
 			this.AddChild(secondaryBackground);
@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute | VAnchor.Top,
-				Height = 6,
+				Height = 6 * GuiWidget.DeviceScale,
 				Margin = new BorderDouble(left: 25),
 				BackgroundColor = primaryAccentColor,
 			};
@@ -77,8 +77,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				HAnchor = HAnchor.Absolute | HAnchor.Left,
 				VAnchor = VAnchor.Absolute | VAnchor.Top,
-				Height = 8,
-				Width = 8,
+				Height = 8 * GuiWidget.DeviceScale,
+				Width = 8 * GuiWidget.DeviceScale,
 				Margin = new BorderDouble(left: 6, top: 6),
 				BackgroundColor = primaryAccentColor,
 			};
@@ -88,8 +88,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				HAnchor = HAnchor.Absolute | HAnchor.Left,
 				VAnchor = VAnchor.Absolute | VAnchor.Top,
-				Height = 8,
-				Width = 8,
+				Height = 8 * GuiWidget.DeviceScale,
+				Width = 8 * GuiWidget.DeviceScale,
 				Margin = new BorderDouble(left: 6, top: 20),
 				BackgroundColor = primaryAccentColor,
 			};
@@ -99,8 +99,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				HAnchor = HAnchor.Absolute | HAnchor.Left,
 				VAnchor = VAnchor.Absolute | VAnchor.Top,
-				Height = 8,
-				Width = 8,
+				Height = 8 * GuiWidget.DeviceScale,
+				Width = 8 * GuiWidget.DeviceScale,
 				Margin = new BorderDouble(left: 6, top: 34),
 				BackgroundColor = primaryAccentColor,
 			};
@@ -110,7 +110,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute | VAnchor.Top,
-				Height = 37,
+				Height = 37 * GuiWidget.DeviceScale,
 				Margin = new BorderDouble(left: 25, top: 12),
 				BackgroundColor = theme.SlightShade,
 			};

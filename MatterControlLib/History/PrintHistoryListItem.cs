@@ -147,6 +147,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 						}
 					}
 
+					if (printTask.PrintCanceled)
+					{
+						timeIndicator.Text += " - Canceled";
+					}
+
 					timeIndicator.Margin = new BorderDouble(right: 6);
 					timeIndicator.TextColor = timeTextColor;
 
@@ -196,9 +201,13 @@ namespace MatterHackers.MatterControl.PrintHistory
 					indicator.BackgroundColor = new Color(38, 147, 51, 180);
 				}
 			}
-			else
+			else if (printTask.PrintCanceled)
 			{
 				indicator.BackgroundColor = new Color(252, 209, 22, 180);
+			}
+			else
+			{
+				indicator.BackgroundColor = Color.LightGray;
 			}
 		}
 
@@ -420,6 +429,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			public bool Compleated { get; set; }
 
+			public bool Canceled { get; internal set; }
+
 			public double RecoveryCount { get; set; }
 
 			public string ItemsPrinted { get; set; }
@@ -447,6 +458,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					Start = printTask.PrintStart,
 					End = printTask.PrintEnd,
 					Compleated = printTask.PrintComplete,
+					Canceled = printTask.PrintCanceled,
 					PrintQuality = printTask.PrintQuality,
 					ItemsPrinted = groupNames,
 					Minutes = printTask.PrintTimeMinutes,

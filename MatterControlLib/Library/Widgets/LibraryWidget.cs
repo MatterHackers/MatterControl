@@ -98,12 +98,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryContext, theme);
 			navBar.AddChild(breadCrumbWidget);
 
-			var searchPanel = new SearchInputBox(theme)
+			var searchPanel = new TextEditWithInlineCancel(theme)
 			{
 				Visible = false,
 				Margin = new BorderDouble(10, 0, 5, 0),
 			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			searchPanel.TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
 				this.PerformSearch();
 			};
@@ -112,13 +112,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				breadCrumbWidget.Visible = true;
 				searchPanel.Visible = false;
 
-				searchPanel.searchInput.Text = "";
+				searchPanel.TextEditWidget.Text = "";
 
 				this.ClearSearch();
 			};
 
 			// Store a reference to the input field
-			this.searchInput = searchPanel.searchInput;
+			this.searchInput = searchPanel.TextEditWidget;
 
 			navBar.AddChild(searchPanel);
 

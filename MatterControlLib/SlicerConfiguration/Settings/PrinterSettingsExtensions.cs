@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class PrinterSettingsExtensions
 	{
-		private static Dictionary<string, string> blackListSettings = new Dictionary<string, string>()
+		private static readonly Dictionary<string, string> BlackListSettings = new Dictionary<string, string>()
 		{
 			[SettingsKey.spiral_vase] = "0",
 			[SettingsKey.layer_to_pause] = "",
@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			[SettingsKey.filament_1_has_been_loaded] = "0"
 		};
 
-		private static object writeLock = new object();
+		private static readonly object WriteLock = new object();
 
 		public static double XSpeed(this PrinterSettings printerSettings)
 		{
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static void ClearBlackList(this PrinterSettings settings)
 		{
-			foreach (var kvp in blackListSettings)
+			foreach (var kvp in BlackListSettings)
 			{
 				if (settings.UserLayer.ContainsKey(kvp.Key))
 				{
@@ -101,15 +101,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return;
 			}
 
-			settings.Save(
-				ProfileManager.Instance.ProfilePath(settings.ID),
-				userDrivenChange);
+			var profilePath = ProfileManager.Instance.ProfilePath(settings.ID);
+
+			// it is possible for a profile to get deleted while printing so we have to check for it
+			if (profilePath != null)
+			{
+				settings.Save(profilePath, userDrivenChange);
+			}
 		}
 
 		public static void Save(this PrinterSettings settings, string filePath, bool userDrivenChange = true)
 		{
 			// TODO: Rewrite to be owned by ProfileManager and simply mark as dirty and every n period persist and clear dirty flags
-			lock (writeLock)
+			lock (WriteLock)
 			{
 				string json = settings.ToJson();
 

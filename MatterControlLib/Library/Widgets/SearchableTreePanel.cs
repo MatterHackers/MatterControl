@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public abstract class SearchableTreePanel : FlowLayoutWidget
 	{
-		protected SearchInputBox searchBox;
+		protected TextEditWithInlineCancel searchBox;
 		protected TreeView treeView;
 		protected Splitter horizontalSplitter;
 		protected ThemeConfig theme;
@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var searchIcon = AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
 
-			searchBox = new SearchInputBox(theme)
+			searchBox = new TextEditWithInlineCancel(theme)
 			{
 				Name = "Search",
 				HAnchor = HAnchor.Stretch,
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			searchBox.ResetButton.Visible = false;
 
-			var searchInput = searchBox.searchInput;
+			var searchInput = searchBox.TextEditWidget;
 
 			searchInput.BeforeDraw += (s, e) =>
 			{
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			};
 
-			searchBox.searchInput.ActualTextEditWidget.TextChanged += (s, e) =>
+			searchBox.TextEditWidget.ActualTextEditWidget.TextChanged += (s, e) =>
 			{
 				if (string.IsNullOrWhiteSpace(searchBox.Text))
 				{

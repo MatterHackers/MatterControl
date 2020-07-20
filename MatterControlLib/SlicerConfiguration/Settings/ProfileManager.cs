@@ -230,10 +230,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public IEnumerable<PrinterInfo> ActiveProfiles => Profiles.Where(profile => !profile.MarkedForDelete).ToList();
 
+		public static bool DebugPrinterDelete { get; set; } = false;
+
 		public PrinterInfo this[string profileID]
 		{
 			get
 			{
+				if (DebugPrinterDelete)
+				{
+					return null;
+				}
+
 				return Profiles.Where(p => p.ID == profileID).FirstOrDefault();
 			}
 		}
@@ -279,7 +286,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public string ProfilePath(string printerID)
 		{
-			return ProfilePath(this[printerID]);
+			var printer = this[printerID];
+			if (printer != null)
+			{
+				return ProfilePath(printer);
+			}
+
+			// the printer may have been deleted
+			return null;
 		}
 
 		public string ProfilePath(PrinterInfo printer)

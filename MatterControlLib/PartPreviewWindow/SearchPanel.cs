@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ChromeTabs tabControl;
 		private GuiWidget searchButton;
-		private SearchInputBox searchBox;
+		private TextEditWithInlineCancel searchBox;
 
 		public SearchPanel(ChromeTabs tabControl, GuiWidget searchButton, ThemeConfig theme)
 			: base(theme, GrabBarSide.Left)
@@ -67,13 +67,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch
 			};
 
-			searchBox = new SearchInputBox(theme)
+			searchBox = new TextEditWithInlineCancel(theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Margin = new BorderDouble(5, 8, 5, 5)
 			};
-			searchBox.searchInput.ActualTextEditWidget.EnterPressed += async (s2, e2) =>
+			searchBox.TextEditWidget.ActualTextEditWidget.EnterPressed += async (s2, e2) =>
 			{
 				searchResults.CloseAllChildren();
 
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var searchHits = await Task.Run(() =>
 				{
-					return HelpIndex.Search(searchBox.searchInput.Text);
+					return HelpIndex.Search(searchBox.TextEditWidget.Text);
 				});
 
 				searchResults.CloseAllChildren();
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			searchBox.ResetButton.Click += (s2, e2) =>
 			{
 				searchBox.BackgroundColor = Color.Transparent;
-				searchBox.searchInput.Text = "";
+				searchBox.TextEditWidget.Text = "";
 
 				searchResults.CloseAllChildren();
 			};
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnLoad(EventArgs args)
 		{
 			// Set initial focus to input field
-			searchBox.searchInput.Focus();
+			searchBox.TextEditWidget.Focus();
 
 			base.OnLoad(args);
 		}
@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (helpDocsTab.TabContent is HelpTreePanel treePanel)
 			{
-				treePanel.MatchingText = searchBox.searchInput.Text;
+				treePanel.MatchingText = searchBox.TextEditWidget.Text;
 				treePanel.ActiveNodePath = (sender as HelpSearchResultRow).SearchResult.Path;
 			}
 		}

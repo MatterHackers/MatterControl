@@ -40,38 +40,38 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		public event EventHandler<StringEventArgs> SearchInvoked;
 
-		private SearchInputBox searchPanel;
+		private TextEditWithInlineCancel searchPanel;
 
 		public SearchableSectionWidget(string sectionTitle, GuiWidget sectionContent, ThemeConfig theme, int headingPointSize = -1, bool expandingContent = true, bool expanded = true, string serializationKey = null, bool defaultExpansion = false, bool setContentVAnchor = true, string emptyText = null)
 			: base(sectionTitle, sectionContent, theme, theme.CreateSearchButton(), headingPointSize, expandingContent, expanded, serializationKey, defaultExpansion, setContentVAnchor)
 		{
 			var headerRow = this.Children.First();
 
-			searchPanel = new SearchInputBox(theme, emptyText)
+			searchPanel = new TextEditWithInlineCancel(theme, emptyText)
 			{
 				Visible = false,
 				BackgroundColor = theme.TabBarBackground,
 				MinimumSize = new Vector2(0, headerRow.Height)
 			};
 
-			searchPanel.searchInput.Margin = new BorderDouble(3, 0);
+			searchPanel.TextEditWidget.Margin = new BorderDouble(3, 0);
 
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			searchPanel.TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				var filter = searchPanel.searchInput.Text.Trim();
+				var filter = searchPanel.TextEditWidget.Text.Trim();
 
 				this.SearchInvoked?.Invoke(this, new StringEventArgs(filter));
 
 				searchPanel.Visible = false;
 				headerRow.Visible = true;
-				searchPanel.searchInput.Text = "";
+				searchPanel.TextEditWidget.Text = "";
 			};
 
 			searchPanel.ResetButton.Click += (s, e) =>
 			{
 				searchPanel.Visible = false;
 				headerRow.Visible = true;
-				searchPanel.searchInput.Text = "";
+				searchPanel.TextEditWidget.Text = "";
 			};
 
 			var searchButton = this.rightAlignedContent as GuiWidget;

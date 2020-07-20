@@ -2933,12 +2933,16 @@ namespace MatterHackers.MatterControl
 
 						string settingsFilePath = ProfileManager.Instance.ProfilePath(printer.Settings.ID);
 
-						using (var file = File.OpenWrite(archivePath))
-						using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+						// if the printer was deleted while printing the path can be null
+						if (settingsFilePath != null)
 						{
-							zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
-							zip.CreateEntryFromFile(settingsFilePath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
-							zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+							using (var file = File.OpenWrite(archivePath))
+							using (var zip = new ZipArchive(file, ZipArchiveMode.Create))
+							{
+								zip.CreateEntryFromFile(sourcePath, "PrinterPlate.mcx");
+								zip.CreateEntryFromFile(settingsFilePath, printer.Settings.GetValue(SettingsKey.printer_name) + ".printer");
+								zip.CreateEntryFromFile(gcodeFilePath, "sliced.gcode");
+							}
 						}
 					}
 

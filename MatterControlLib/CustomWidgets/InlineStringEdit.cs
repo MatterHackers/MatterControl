@@ -47,9 +47,14 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected FlowLayoutWidget rightPanel;
 		private GuiWidget editButton;
 		private GuiWidget saveButton;
-		private SearchInputBox searchPanel;
+		private TextEditWithInlineCancel textEditWithInlineCancel;
 
-		public InlineStringEdit(string stringValue, ThemeConfig theme, string automationName, bool boldFont = false, bool editable = true)
+		public InlineStringEdit(string stringValue,
+			ThemeConfig theme,
+			string automationName,
+			bool boldFont = false,
+			bool editable = true,
+			string emptyText = null)
 			: base(theme)
 		{
 			this.Padding = theme.ToolbarPadding;
@@ -75,27 +80,27 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				Name = automationName + " Save",
 			};
 
-			searchPanel = new SearchInputBox(theme)
+			textEditWithInlineCancel = new TextEditWithInlineCancel(theme, emptyText)
 			{
 				Visible = false,
 				Margin = new BorderDouble(left: 4)
 			};
-			searchPanel.searchInput.ActualTextEditWidget.EnterPressed += (s, e) =>
+			textEditWithInlineCancel.TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				this.Text = searchPanel.Text;
+				this.Text = textEditWithInlineCancel.Text;
 				this.SetVisibility(showEditPanel: false);
 				this.ValueChanged?.Invoke(this, null);
 			};
 
-			searchPanel.searchInput.Name = automationName + " Field";
+			textEditWithInlineCancel.TextEditWidget.Name = automationName + " Field";
 
-			searchPanel.ResetButton.Name = "Close Title Edit";
-			searchPanel.ResetButton.ToolTipText = "Close".Localize();
-			searchPanel.ResetButton.Click += (s, e) =>
+			textEditWithInlineCancel.ResetButton.Name = "Close Title Edit";
+			textEditWithInlineCancel.ResetButton.ToolTipText = "Close".Localize();
+			textEditWithInlineCancel.ResetButton.Click += (s, e) =>
 			{
 				this.SetVisibility(showEditPanel: false);
 			};
-			this.AddChild(searchPanel);
+			this.AddChild(textEditWithInlineCancel);
 
 			rightPanel = new FlowLayoutWidget();
 
@@ -115,7 +120,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 				else
 				{
-					searchPanel.Text = this.Text;
+					textEditWithInlineCancel.Text = this.Text;
 					this.SetVisibility(showEditPanel: true);
 				}
 			};
@@ -123,7 +128,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			saveButton.Click += (s, e) =>
 			{
-				this.Text = searchPanel.Text;
+				if (!string.IsNullOrEmpty(textEditWithInlineCancel.Text))
+				{
+					this.Text = textEditWithInlineCancel.Text;
+				}
+
 				this.SetVisibility(showEditPanel: false);
 			};
 			rightPanel.AddChild(saveButton);
@@ -137,7 +146,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override string Text
 		{
-			get => titleText.Text;
+			get
+			{
+				// if the user is still editing the text (has not canceled)
+				// and there is some text there, return the work in progress.
+				if (textEditWithInlineCancel.Visible && !string.IsNullOrEmpty(textEditWithInlineCancel.Text))
+				{
+					return textEditWithInlineCancel.Text;
+				}
+
+				return titleText.Text;
+			}
+
 			set
 			{
 				if (titleText.Text != value)
@@ -154,7 +174,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			titleText.Visible = !showEditPanel;
 
 			saveButton.Visible = showEditPanel;
-			searchPanel.Visible = showEditPanel;
+			textEditWithInlineCancel.Visible = showEditPanel;
 		}
 	}
 }
