@@ -1179,11 +1179,6 @@ namespace MatterHackers.MatterControl
 			this.ActivateHelpTab();
 		}
 
-		public void ShowInterfaceTour()
-		{
-			UiThread.RunOnIdle(ProductTour.StartTour);
-		}
-
 		public void ShowAboutPage()
 		{
 			UiThread.RunOnIdle(() =>

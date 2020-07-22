@@ -89,7 +89,8 @@ namespace MatterHackers.MatterControl.Tour
 
 		public int ActiveIndex
 		{
-			get =>_activeIndex;
+			get => _activeIndex;
+
 			set
 			{
 				if (_activeIndex != value)
@@ -103,7 +104,7 @@ namespace MatterHackers.MatterControl.Tour
 					_activeIndex = value;
 					this.ActiveItem = tourLocations[_activeIndex];
 
-					var tourOverlay = new TourOverlay(systemWindow, this, theme);
+					var tourOverlay = new TourOverlay(this, theme);
 					systemWindow.AddChild(tourOverlay);
 				}
 			}

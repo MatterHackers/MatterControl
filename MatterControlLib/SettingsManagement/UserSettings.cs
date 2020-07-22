@@ -66,7 +66,6 @@ namespace MatterHackers.MatterControl
 		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
-		public const string ShowContainers = nameof(ShowContainers);
 		public const string ShownPrintCanceledMessage = nameof(ShownPrintCanceledMessage);
 		public const string ShownPrintCompleteMessage = nameof(ShownPrintCompleteMessage);
 		public const string ShownWelcomeMessage = nameof(ShownWelcomeMessage);
@@ -88,7 +87,7 @@ namespace MatterHackers.MatterControl
 	{
 		private static UserSettings globalInstance = null;
 
-		private static readonly object syncRoot = new object();
+		private static readonly object SyncRoot = new object();
 
 		private Dictionary<string, UserSetting> settingsDictionary;
 
@@ -96,7 +95,7 @@ namespace MatterHackers.MatterControl
 		{
 			// Load the UserSettings from the database
 			settingsDictionary = new Dictionary<string, UserSetting>();
-			foreach(var userSetting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;"))
+			foreach (var userSetting in Datastore.Instance.dbSQLite.Query<UserSetting>("SELECT * FROM UserSetting;"))
 			{
 				// LastValueWins - allow for duplicate entries in the database with the same .Name value
 				settingsDictionary[userSetting.Name] = userSetting;
@@ -120,7 +119,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (globalInstance == null)
 				{
-					lock(syncRoot)
+					lock (SyncRoot)
 					{
 						if (globalInstance == null)
 						{
@@ -138,9 +137,12 @@ namespace MatterHackers.MatterControl
 
 		public UserSettingsFields Fields { get; private set; } = new UserSettingsFields();
 
-		///<summary>
-		///Returns the first matching value discovered while enumerating the settings layers
-		///</summary>
+		/// <summary>
+		/// Returns the first matching value discovered while enumerating the settings layers
+		/// </summary>
+		/// <typeparam name="T">The type of value being gotten</typeparam>
+		/// <param name="settingsKey">The name of the value to get</param>
+		/// <returns>The typed value</returns>
 		public T GetValue<T>(string settingsKey) where T : IConvertible
 		{
 			if (typeof(T) == typeof(string))
@@ -156,12 +158,12 @@ namespace MatterHackers.MatterControl
 			{
 				int result;
 				int.TryParse(this.get(settingsKey), out result);
-				return (T)(object)(result);
+				return (T)(object)result;
 			}
 			else if (typeof(T) == typeof(double))
 			{
 				double.TryParse(this.get(settingsKey), out double result);
-				return (T)(object)(result);
+				return (T)(object)result;
 			}
 
 			return (T)default(T);
@@ -182,7 +184,7 @@ namespace MatterHackers.MatterControl
 		{
 			UserSetting setting;
 
-			if(!settingsDictionary.TryGetValue(key, out setting))
+			if (!settingsDictionary.TryGetValue(key, out setting))
 			{
 				// If the setting for the given key doesn't exist, create it
 				setting = new UserSetting()
@@ -193,7 +195,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Special case to propagate Language to local property on assignment
-			if(key == "Language")
+			if (key == "Language")
 			{
 				this.Language = value;
 			}
@@ -216,6 +218,7 @@ namespace MatterHackers.MatterControl
 
 				return controlWidth;
 			}
+
 			set
 			{
 				this.set(UserSettingsKey.LibraryViewWidth, value.ToString());
@@ -252,18 +255,10 @@ namespace MatterHackers.MatterControl
 				return renderingMode;
 #endif
 			}
+
 			set
 			{
 				this.set(UserSettingsKey.ThumbnailRenderingMode, value);
-			}
-		}
-
-		public bool ShowContainers
-		{
-			get
-			{
-				var showContainers = this.get(UserSettingsKey.ShowContainers);
-				return string.IsNullOrWhiteSpace(showContainers) || showContainers == "1";
 			}
 		}
 

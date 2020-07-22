@@ -148,22 +148,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			allControls.AddChild(toolbar);
 
-			var showFolders = new ExpandCheckboxButton("Folders".Localize(), theme)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center,
-				Margin = theme.ButtonSpacing,
-				Name = "Show Folders Toggle",
-				Checked = UserSettings.Instance.ShowContainers,
-			};
-			showFolders.SetIconMargin(theme.ButtonSpacing);
-			showFolders.CheckedStateChanged += async (s, e) =>
-			{
-				UserSettings.Instance.set(UserSettingsKey.ShowContainers, showFolders.Checked ? "1" : "0");
-				await libraryView.Reload();
-			};
-			toolbar.AddChild(showFolders);
-
 			PopupMenuButton viewMenuButton;
 
 			toolbar.AddChild(

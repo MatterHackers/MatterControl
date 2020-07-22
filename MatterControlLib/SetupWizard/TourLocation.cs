@@ -34,8 +34,11 @@ namespace MatterHackers.MatterControl.Tour
 	public class TourLocation
 	{
 		public string WidgetName { get; set; }
+
 		public string Title { get; set; }
+
 		public string Description { get; set; }
+
 		public GuiWidget Widget { get; internal set; }
 	}
 }

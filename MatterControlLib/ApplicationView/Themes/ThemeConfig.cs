@@ -45,7 +45,6 @@ namespace MatterHackers.MatterControl
 	{
 		private ImageBuffer restoreNormal;
 		private ImageBuffer restoreHover;
-		private ImageBuffer restorePressed;
 
 		public int FontSize7 { get; } = 7;
 
@@ -292,7 +291,6 @@ namespace MatterHackers.MatterControl
 			// On Android, use red icon as no hover events, otherwise transparent and red on hover
 			restoreNormal = ColorCircle(size, (AggContext.OperatingSystem == OSType.Android) ? new Color(200, 0, 0) : Color.Transparent);
 			restoreHover = ColorCircle(size, new Color("#DB4437"));
-			restorePressed = ColorCircle(size, new Color(255, 0, 0));
 
 			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 

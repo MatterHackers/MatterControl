@@ -66,6 +66,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget searchButton;
 		private TreeView libraryTreeView;
 
+		public bool ShowContainers { get; private set; }
+
 		public LibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme)
 		{
 			this.theme = theme;
@@ -224,6 +226,17 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				var listView = this.libraryView;
 
 				var siblingList = new List<GuiWidget>();
+
+				popupMenu.CreateBoolMenuItem(
+					"Show Folders".Localize(),
+					() => this.ShowContainers,
+					(isChecked) =>
+					{
+						this.ShowContainers = isChecked;
+						listView.Reload().ConfigureAwait(false);
+					});
+
+				popupMenu.CreateSeparator();
 
 				popupMenu.CreateBoolMenuItem(
 					"View List".Localize(),
