@@ -36,7 +36,9 @@ namespace MatterHackers.MatterControl.Library
 	public class DynamicContainerLink : ILibraryContainerLink, IThumbnail
 	{
 		public string ID { get; set; }
+
 		public string Category { get; set; }
+
 		public bool IsProtected { get; set; } = true;
 
 		public bool IsReadOnly { get; set; } = false;
@@ -52,7 +54,7 @@ namespace MatterHackers.MatterControl.Library
 		private ImageBuffer microIcon;
 
 		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer microIcon, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
-			: this (nameResolver, thumbnail, creator, visibilityResolver)
+			: this(nameResolver, thumbnail, creator, visibilityResolver)
 		{
 			this.microIcon = microIcon;
 		}

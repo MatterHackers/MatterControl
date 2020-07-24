@@ -51,6 +51,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public string ID { get; } = "rootLibraryProvider";
 
+		public string CollectionKeyName { get; set; }
+
 		public string Name => "Home".Localize();
 
 		public bool IsProtected => true;

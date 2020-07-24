@@ -53,6 +53,7 @@ namespace MatterHackers.MatterControl
 			{
 				return projectFiles;
 			}
+
 			set
 			{
 				projectFiles = value;
@@ -65,6 +66,7 @@ namespace MatterHackers.MatterControl
 			{
 				return projectName;
 			}
+
 			set
 			{
 				projectName = value;
@@ -77,6 +79,7 @@ namespace MatterHackers.MatterControl
 			{
 				return projectDateCreated;
 			}
+
 			set
 			{
 				projectDateCreated = value;
@@ -109,8 +112,8 @@ namespace MatterHackers.MatterControl
 
 
 			string jsonString = JsonConvert.SerializeObject(this.project, Newtonsoft.Json.Formatting.Indented);
-            string pathToDataFolder = Path.Combine(applicationDataPath, "data");
-            if (!Directory.Exists(pathToDataFolder))
+			string pathToDataFolder = Path.Combine(applicationDataPath, "data");
+			if (!Directory.Exists(pathToDataFolder))
 			{
                 Directory.CreateDirectory(pathToDataFolder);
 			}
@@ -140,6 +143,5 @@ namespace MatterHackers.MatterControl
 
 			return newProject.ProjectFiles;
 		}
-
 	}
 }

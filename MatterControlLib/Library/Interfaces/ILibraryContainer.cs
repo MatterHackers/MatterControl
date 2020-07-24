@@ -60,6 +60,8 @@ namespace MatterHackers.MatterControl.Library
 
 		event EventHandler ContentChanged;
 
+		string CollectionKeyName { get; }
+
 		List<ILibraryContainerLink> ChildContainers { get; }
 
 		List<ILibraryItem> Items { get; }

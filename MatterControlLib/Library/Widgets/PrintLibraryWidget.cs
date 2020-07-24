@@ -77,7 +77,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
-				ContainerFilter = (container) => UserSettings.Instance.ShowContainers,
 				BackgroundColor = libraryBackground,
 				Border = new BorderDouble(top: 1)
 			};

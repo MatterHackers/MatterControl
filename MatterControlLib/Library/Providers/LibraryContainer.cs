@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Name { get; set; }
 
+		public string CollectionKeyName { get; set; }
+
 		public Type DefaultView { get; protected set; }
 
 		public List<ILibraryContainerLink> ChildContainers { get; set; } = new List<ILibraryContainerLink>();
