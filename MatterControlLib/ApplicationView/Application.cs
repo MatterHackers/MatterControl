@@ -544,7 +544,63 @@ namespace MatterHackers.MatterControl
 
 			ReportStartupProgress(0, "ShowAsSystemWindow");
 
+			AddTextWidgetRightClickMenu();
+
 			return systemWindow;
+		}
+
+		private static void AddTextWidgetRightClickMenu()
+		{
+			InternalTextEditWidget.DefaultRightClick += (s, e) =>
+			{
+				var theme = ApplicationController.Instance.MenuTheme;
+				var popupMenu = new PopupMenu(theme);
+
+				var cut = popupMenu.CreateMenuItem("Cut".Localize());
+				cut.Enabled = !string.IsNullOrEmpty(s.Selection);
+				cut.Click += (s2, e2) =>
+				{
+					if (s2 is InternalTextEditWidget textWidget)
+					{
+						textWidget.CopySelection();
+						textWidget.DeleteSelection();
+					}
+				};
+
+				var copy = popupMenu.CreateMenuItem("Copy".Localize());
+				copy.Enabled = !string.IsNullOrEmpty(s.Selection);
+				copy.Click += (s2, e2) =>
+				{
+					if (s2 is InternalTextEditWidget textWidget)
+					{
+						textWidget.CopySelection();
+					}
+				};
+
+				var paste = popupMenu.CreateMenuItem("Paste".Localize());
+				paste.Enabled = Clipboard.Instance.ContainsText;
+				paste.Click += (s2, e2) =>
+				{
+					if (s2 is InternalTextEditWidget textWidget)
+					{
+						textWidget.PasteFromClipboard();
+					}
+				};
+
+				popupMenu.CreateSeparator();
+
+				var selectAll = popupMenu.CreateMenuItem("Select All".Localize());
+				selectAll.Enabled = Clipboard.Instance.ContainsText;
+				selectAll.Click += (s2, e2) =>
+				{
+					if (s2 is InternalTextEditWidget textWidget)
+					{
+						textWidget.SelectAll();
+					}
+				};
+
+				popupMenu.ShowMenu(s, e);
+			};
 		}
 
 		private static void SystemWindow_KeyPressed(object sender, KeyPressEventArgs keyEvent)

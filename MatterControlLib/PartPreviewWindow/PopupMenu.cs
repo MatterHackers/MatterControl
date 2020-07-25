@@ -507,7 +507,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static void ShowMenu(this PopupMenu popupMenu, GuiWidget anchorWidget, Vector2 menuPosition)
 		{
 			var systemWindow = anchorWidget.Parents<SystemWindow>().FirstOrDefault();
-			anchorWidget.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
+			systemWindow.ToolTipManager.Clear();
 			systemWindow.ShowPopup(
 				new MatePoint(anchorWidget)
 				{

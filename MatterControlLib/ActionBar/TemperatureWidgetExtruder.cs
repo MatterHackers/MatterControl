@@ -411,7 +411,6 @@ namespace MatterHackers.MatterControl.ActionBar
 			}
 			else // put in a temperature selector for the correct material
 			{
-
 			}
 
 			// put in the actual extruder controls
