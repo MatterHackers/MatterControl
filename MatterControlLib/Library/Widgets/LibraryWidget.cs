@@ -688,7 +688,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
-				Title = "Enter Share Code...".Localize(),
+				Title = "Enter Share Code".Localize() + "...",
 				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
@@ -787,7 +787,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Share with me
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
-				Title = "Enter Share Code...".Localize(),
+				Title = "Enter Share Code".Localize() + "...",
 				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
@@ -802,11 +802,10 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return s.First()
 						.ViewWidget
 						.Descendants()
-						.Where(i => i.Name != null && i.Name.Contains("Shared with Me"))
+						.Where(i => i.Text != null && i.Text.Contains("Shared with Me"))
 						.Any();
 				}
 			});
-
 
 			// edit menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
@@ -1038,7 +1037,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// share menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
-				Title = "Share".Localize(),
+				Title = "Share".Localize() + "...",
 				Icon = AggContext.StaticData.LoadIcon("share.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{

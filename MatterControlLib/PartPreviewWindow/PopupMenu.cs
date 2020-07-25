@@ -513,15 +513,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new MatePoint(anchorWidget)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
 				new MatePoint(popupMenu)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 				},
 				altBounds: new RectangleDouble(menuPosition.X + 1, menuPosition.Y + 1, menuPosition.X + 1, menuPosition.Y + 1));
 		}
-
 	}
 }
