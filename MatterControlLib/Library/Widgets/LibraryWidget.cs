@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private GuiWidget searchButton;
 		private TreeView libraryTreeView;
 
-		public bool ShowContainers { get; private set; }
+		public bool ShowContainers { get; private set; } = true;
 
 		public LibraryWidget(MainViewWidget mainViewWidget, ThemeConfig theme)
 		{

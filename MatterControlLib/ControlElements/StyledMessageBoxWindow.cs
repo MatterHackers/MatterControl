@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl
 			public MessageBoxPage(Action<bool> callback, string message, string caption, MessageType messageType, GuiWidget[] extraWidgetsToAdd, double width, double height, string yesOk, string noCancel, ThemeConfig theme, bool useMarkdown = false)
 				: base((noCancel == "") ? "No".Localize() : noCancel)
 			{
-				this.WindowSize = new Vector2(width, height);
+				this.WindowSize = new Vector2(width * GuiWidget.DeviceScale, height * GuiWidget.DeviceScale);
 
 				if (yesOk == "")
 				{
