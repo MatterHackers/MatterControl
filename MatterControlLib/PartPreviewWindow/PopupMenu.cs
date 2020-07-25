@@ -37,7 +37,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public HorizontalLine CreateSeparator()
 		{
-			var line = new HorizontalLine(theme: ApplicationController.Instance.MenuTheme)
+			var line = new HorizontalLine(ApplicationController.Instance.MenuTheme.BorderColor20)
 			{
 				Margin = new BorderDouble(theme.MenuGutterWidth - 8, 1, 8, 1),
 				BackgroundColor = theme.RowBorder
