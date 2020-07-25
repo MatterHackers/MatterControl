@@ -686,6 +686,24 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
+			menuActions.Add(new LibraryAction(ActionScope.ListView)
+			{
+				Title = "Enter Share Code...".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						// Implementation already does RunOnIdle
+						ApplicationController.Instance.EnterShareCode?.Invoke();
+					});
+				},
+				IsEnabled = (s, l) =>
+				{
+					return l.ActiveContainer.CollectionKeyName == "sharedwithme";
+				}
+			});
+
 			if (allowPrint)
 			{
 				menuActions.Add(new LibraryAction(ActionScope.ListItem)
@@ -716,7 +734,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 								break;
 							default:
-							//TODO: Otherwise add the selected items to the plate and print the plate?
+							// TODO: Otherwise add the selected items to the plate and print the plate?
 							if (printer != null)
 								{
 									UiThread.RunOnIdle(async () =>
@@ -736,7 +754,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
 								&& !(firstItem is ILibraryContainer)
 								&& (communicationState == CommunicationStates.Connected
-									|| communicationState == CommunicationStates.FinishedPrint);
+									|| communicationState == CommunicationStates.FinishedPrint)
+								&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
 					}
 				});
 			}
@@ -748,15 +767,46 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
+					if (listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink)))
+					{
+						ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
+					}
+					else
+					{
+						// open the folder
+						listView.SelectedItems.First().OnDoubleClick();
+					}
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
-					// Singleselect - disallow containers
-					return listView.SelectedItems.Count == 1
-						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
+					// Singleselect
+					return listView.SelectedItems.Count == 1;
 				}
 			});
+
+			// Share with me
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
+			{
+				Title = "Enter Share Code...".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						// Implementation already does RunOnIdle
+						ApplicationController.Instance.EnterShareCode?.Invoke();
+					});
+				},
+				IsEnabled = (s, l) =>
+				{
+					return s.First()
+						.ViewWidget
+						.Descendants()
+						.Where(i => i.Name != null && i.Name.Contains("Shared with Me"))
+						.Any();
+				}
+			});
+
 
 			// edit menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
@@ -989,6 +1039,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Share".Localize(),
+				Icon = AggContext.StaticData.LoadIcon("share.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - shareFromLibraryButton_Click
