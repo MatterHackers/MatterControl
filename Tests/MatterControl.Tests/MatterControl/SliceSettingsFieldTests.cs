@@ -39,6 +39,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -278,6 +279,57 @@ namespace MatterControl.Tests.MatterControl
 					{"-abc", "0"},
 					{"-abcmm", "0mm"},
 				});
+		}
+
+		[Test]
+		public async Task RightClickMenuWorksOnSliceSettings()
+		{
+			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
+			Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
+
+			var systemWindow = new SystemWindow(800, 600);
+
+			Application.AddTextWidgetRightClickMenu();
+
+			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit,
+			};
+			systemWindow.AddChild(container);
+
+			var theme = ApplicationController.Instance.Theme;
+			var settings = new PrinterSettings();
+			var printer = new PrinterConfig(settings);
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			var settingNames = new string[]
+			{
+				SettingsKey.layer_height,
+				SettingsKey.printer_name,
+				SettingsKey.start_gcode
+			};
+
+			int tabIndex = 0;
+
+			for (int i = 0; i < settingNames.Length; i++)
+			{
+				var settingsData = PrinterSettings.SettingsData[settingNames[i]];
+
+				var itemRow = SliceSettingsTabView.CreateItemRow(settingsData,
+					settingsContext,
+					printer,
+					theme,
+					ref tabIndex);
+
+				container.AddChild(itemRow);
+			}
+
+			await systemWindow.RunTest(testRunner =>
+			{
+				testRunner.Delay(2000);
+				return Task.CompletedTask;
+			},
+			2000);
 		}
 
 		[Test]

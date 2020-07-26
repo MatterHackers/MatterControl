@@ -549,7 +549,7 @@ namespace MatterHackers.MatterControl
 			return systemWindow;
 		}
 
-		private static void AddTextWidgetRightClickMenu()
+		public static void AddTextWidgetRightClickMenu()
 		{
 			InternalTextEditWidget.DefaultRightClick += (s, e) =>
 			{
@@ -593,7 +593,7 @@ namespace MatterHackers.MatterControl
 				selectAll.Enabled = Clipboard.Instance.ContainsText;
 				selectAll.Click += (s2, e2) =>
 				{
-					if (s2 is InternalTextEditWidget textWidget)
+					if (s is InternalTextEditWidget textWidget)
 					{
 						textWidget.SelectAll();
 					}
