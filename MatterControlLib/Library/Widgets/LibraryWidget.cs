@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 
 using MatterHackers.Agg;
@@ -48,23 +49,23 @@ namespace MatterHackers.MatterControl.PrintLibrary
 {
 	public class LibraryWidget : GuiWidget
 	{
-		private FlowLayoutWidget buttonPanel;
-		private ILibraryContext libraryContext;
-		private LibraryListView libraryView;
+		private readonly FlowLayoutWidget buttonPanel;
+		private readonly ILibraryContext libraryContext;
+		private readonly LibraryListView libraryView;
 		private GuiWidget providerMessageContainer;
 		private TextWidget providerMessageWidget;
 
-		private List<LibraryAction> menuActions = new List<LibraryAction>();
+		private readonly List<LibraryAction> menuActions = new List<LibraryAction>();
 
-		private FolderBreadCrumbWidget breadCrumbWidget;
-		private GuiWidget searchInput;
+		private readonly FolderBreadCrumbWidget breadCrumbWidget;
+		private readonly GuiWidget searchInput;
 		private ILibraryContainer searchContainer;
 
 		private MainViewWidget mainViewWidget;
-		private ThemeConfig theme;
-		private OverflowBar navBar;
-		private GuiWidget searchButton;
-		private TreeView libraryTreeView;
+		private readonly ThemeConfig theme;
+		private readonly OverflowBar navBar;
+		private readonly GuiWidget searchButton;
+		private readonly TreeView libraryTreeView;
 
 		public bool ShowContainers { get; private set; } = true;
 
@@ -149,7 +150,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				viewOptionsButton = new PopupMenuButton(
 					new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
 					{
-						//VAnchor = VAnchor.Center
+						// VAnchor = VAnchor.Center
 					},
 					theme)
 				{
@@ -211,7 +212,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				viewMenuButton = new PopupMenuButton(
 					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
 					{
-						//VAnchor = VAnchor.Center
+						// VAnchor = VAnchor.Center
 					},
 					theme)
 				{
@@ -575,7 +576,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				libraryTreeView.SelectedNode = owningNode;
 			}
 
-			//searchInput.Text = activeContainer.KeywordFilter;
+			// searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;
@@ -617,7 +618,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				PointSize = 8,
 				HAnchor = HAnchor.Right,
 				VAnchor = VAnchor.Bottom,
-				TextColor =  theme.BorderColor,
+				TextColor = theme.BorderColor,
 				Margin = new BorderDouble(6),
 				AutoExpandBoundsToText = true,
 			};
@@ -641,8 +642,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							{
 								if (openParams.FileNames != null)
 								{
-									var writableContainer = libraryView.ActiveContainer as ILibraryWritableContainer;
-									if (writableContainer != null
+									if (libraryView.ActiveContainer is ILibraryWritableContainer writableContainer
 										&& openParams.FileNames.Length > 0)
 									{
 										writableContainer.Add(openParams.FileNames.Select(f => new FileSystemFileItem(f)));
@@ -698,9 +698,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 						ApplicationController.Instance.EnterShareCode?.Invoke();
 					});
 				},
-				IsEnabled = (s, l) =>
+				IsEnabled = (selectedListItems, listView) =>
 				{
-					return l.ActiveContainer.CollectionKeyName == "sharedwithme";
+					return true;
 				}
 			});
 
@@ -735,13 +735,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								break;
 							default:
 							// TODO: Otherwise add the selected items to the plate and print the plate?
-							if (printer != null)
+								if (printer != null)
 								{
 									UiThread.RunOnIdle(async () =>
 									{
 										await printer.Bed.StashAndPrint(selectedLibraryItems);
 									});
 								}
+
 								break;
 						}
 					},
@@ -781,29 +782,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				{
 					// Singleselect
 					return listView.SelectedItems.Count == 1;
-				}
-			});
-
-			// Share with me
-			menuActions.Add(new LibraryAction(ActionScope.ListItem)
-			{
-				Title = "Enter Share Code".Localize() + "...",
-				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					UiThread.RunOnIdle(() =>
-					{
-						// Implementation already does RunOnIdle
-						ApplicationController.Instance.EnterShareCode?.Invoke();
-					});
-				},
-				IsEnabled = (s, l) =>
-				{
-					return s.First()
-						.ViewWidget
-						.Descendants()
-						.Where(i => i.Text != null && i.Text.Contains("Shared with Me"))
-						.Any();
 				}
 			});
 
@@ -913,8 +891,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 									var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
 									if (model != null)
 									{
-										var container = libraryView.ActiveContainer as ILibraryWritableContainer;
-										if (container != null)
+										if (libraryView.ActiveContainer is ILibraryWritableContainer container)
 										{
 											container.Rename(model, newName);
 											libraryView.SelectedItems.Clear();
@@ -1061,7 +1038,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			menuActions.Add(new MenuSeparator("Other"));
 
-			foreach(var extension in ApplicationController.Instance.Library.MenuExtensions)
+			foreach (var extension in ApplicationController.Instance.Library.MenuExtensions)
 			{
 				menuActions.Add(extension);
 			}
