@@ -281,8 +281,8 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test]
-		public async Task RightClickMenuWorksOnSliceSettings()
+		[Test, RunInApplicationDomain, Apartment(ApartmentState.STA)]
+		public void RightClickMenuWorksOnSliceSettings()
 		{
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
 			Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
@@ -300,6 +300,8 @@ namespace MatterControl.Tests.MatterControl
 
 			var theme = ApplicationController.Instance.Theme;
 			var settings = new PrinterSettings();
+			settings.SetValue(SettingsKey.printer_name, "Test Name");
+			settings.SetValue(SettingsKey.start_gcode, "Test GCode");
 			var printer = new PrinterConfig(settings);
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			var settingNames = new string[]
@@ -311,6 +313,8 @@ namespace MatterControl.Tests.MatterControl
 
 			int tabIndex = 0;
 
+			var fields = new Dictionary<string, GuiWidget>();
+
 			for (int i = 0; i < settingNames.Length; i++)
 			{
 				var settingsData = PrinterSettings.SettingsData[settingNames[i]];
@@ -321,15 +325,65 @@ namespace MatterControl.Tests.MatterControl
 					theme,
 					ref tabIndex);
 
+				fields[settingNames[i]] = itemRow;
+
 				container.AddChild(itemRow);
 			}
 
-			await systemWindow.RunTest(testRunner =>
+			systemWindow.RunTest(testRunner =>
 			{
+				void RunSingeTest(string setting, string pastText, bool expectSelection)
+				{
+					var textWidget = fields[setting].Descendants<InternalTextEditWidget>().First();
+					if (expectSelection)
+					{
+						Assert.IsFalse(string.IsNullOrEmpty(textWidget.Selection), "Should have selection");
+					}
+					else
+					{
+						Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
+					}
+
+					// select all and ensure everything is selected
+					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Selecting control does not select text");
+					testRunner.ClickByName("Select All Menu Item");
+					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
+
+					// make sure there is no text in the copy buffer
+					Clipboard.Instance.SetText("empty");
+
+					// copy text out and make sure we get it
+					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					testRunner.ClickByName("Copy Menu Item");
+					Assert.AreEqual(Clipboard.Instance.GetText(), textWidget.Text, "Copied everything");
+
+					// past in text and make sure it changed
+					Clipboard.Instance.SetText(pastText);
+					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					testRunner.ClickByName("Past Menu Item");
+					Assert.AreEqual(pastText, textWidget.Text, "Copied everything");
+				}
+
+				// test the multi-line edit control
+				RunSingeTest(SettingsKey.start_gcode, "Past Text", false);
+
+				testRunner.RightClickByName(GetSliceSettingsField(SettingsKey.layer_height));
+				testRunner.ClickByName(GetSliceSettingsField(SettingsKey.layer_height));
+
+				// assert edit field is focused
+				// assert all is selected
+
 				testRunner.Delay(2000);
 				return Task.CompletedTask;
 			},
 			2000);
+		}
+
+		private string GetSliceSettingsField(string sliceSettingsKey)
+		{
+			var settingData = PrinterSettings.SettingsData[sliceSettingsKey];
+			return $"{settingData.PresentationName} Field";
 		}
 
 		[Test]
