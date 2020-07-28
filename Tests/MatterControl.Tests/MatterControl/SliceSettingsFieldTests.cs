@@ -29,12 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
@@ -281,11 +283,49 @@ namespace MatterControl.Tests.MatterControl
 				});
 		}
 
-		[Test, RunInApplicationDomain, Apartment(ApartmentState.STA)]
+		public class SimulatedClipboard : ISystemClipboard
+		{
+			private string Text { get; set; }
+
+			public bool ContainsFileDropList => throw new NotImplementedException();
+
+			public bool ContainsImage => throw new NotImplementedException();
+
+			public bool ContainsText => !string.IsNullOrEmpty(Text);
+
+			public StringCollection GetFileDropList()
+			{
+				throw new NotImplementedException();
+			}
+
+			public ImageBuffer GetImage()
+			{
+				throw new NotImplementedException();
+			}
+
+			public string GetText()
+			{
+				return Text;
+			}
+
+			public void SetImage(ImageBuffer imageBuffer)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetText(string text)
+			{
+				Text = text;
+			}
+		}
+
+		[Test]
 		public void RightClickMenuWorksOnSliceSettings()
 		{
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
-			Clipboard.SetSystemClipboard(new WindowsFormsClipboard());
+			Clipboard.SetSystemClipboard(new SimulatedClipboard());
+
+			AutomationRunner.TimeToMoveMouse = .5;
 
 			var systemWindow = new SystemWindow(800, 600);
 
@@ -304,20 +344,20 @@ namespace MatterControl.Tests.MatterControl
 			settings.SetValue(SettingsKey.start_gcode, "Test GCode");
 			var printer = new PrinterConfig(settings);
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-			var settingNames = new string[]
+			var testData = new (string setting, string paste, bool selectsOnFocus)[]
 			{
-				SettingsKey.layer_height,
-				SettingsKey.printer_name,
-				SettingsKey.start_gcode
+				(SettingsKey.layer_height, "987.654", true),
+				(SettingsKey.printer_name, "three word name", true),
+				(SettingsKey.start_gcode, "Paste text", false),
 			};
 
 			int tabIndex = 0;
 
 			var fields = new Dictionary<string, GuiWidget>();
 
-			for (int i = 0; i < settingNames.Length; i++)
+			for (int i = 0; i < testData.Length; i++)
 			{
-				var settingsData = PrinterSettings.SettingsData[settingNames[i]];
+				var settingsData = PrinterSettings.SettingsData[testData[i].setting];
 
 				var itemRow = SliceSettingsTabView.CreateItemRow(settingsData,
 					settingsContext,
@@ -325,56 +365,60 @@ namespace MatterControl.Tests.MatterControl
 					theme,
 					ref tabIndex);
 
-				fields[settingNames[i]] = itemRow;
+				fields[testData[i].setting] = itemRow;
 
 				container.AddChild(itemRow);
 			}
 
 			systemWindow.RunTest(testRunner =>
 			{
-				void RunSingeTest(string setting, string pastText, bool expectSelection)
+				void RunSingeTest(string setting, string pastText, bool selectsOnFocus)
 				{
 					var textWidget = fields[setting].Descendants<InternalTextEditWidget>().First();
-					if (expectSelection)
-					{
-						Assert.IsFalse(string.IsNullOrEmpty(textWidget.Selection), "Should have selection");
-					}
-					else
-					{
-						Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
-					}
+					// no selection to start
+					Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
 
 					// select all and ensure everything is selected
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					if (selectsOnFocus)
+					{
+						testRunner.Delay(); // wait a moment for the selection
+						Assert.IsTrue(!string.IsNullOrEmpty(textWidget.Selection), "Should have selection");
+					}
+					else
+					{
+						Assert.IsFalse(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
+					}
+
 					Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Selecting control does not select text");
 					testRunner.ClickByName("Select All Menu Item");
+					testRunner.Delay();
 					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
 
 					// make sure there is no text in the copy buffer
-					Clipboard.Instance.SetText("empty");
+					Clipboard.Instance.SetText("");
 
 					// copy text out and make sure we get it
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Selection remains after right click");
 					testRunner.ClickByName("Copy Menu Item");
 					Assert.AreEqual(Clipboard.Instance.GetText(), textWidget.Text, "Copied everything");
 
 					// past in text and make sure it changed
 					Clipboard.Instance.SetText(pastText);
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
-					testRunner.ClickByName("Past Menu Item");
-					Assert.AreEqual(pastText, textWidget.Text, "Copied everything");
+					testRunner.ClickByName("Paste Menu Item");
+					Assert.AreEqual(pastText, textWidget.Text, "Pasted everything");
 				}
 
-				// test the multi-line edit control
-				RunSingeTest(SettingsKey.start_gcode, "Past Text", false);
-
-				testRunner.RightClickByName(GetSliceSettingsField(SettingsKey.layer_height));
-				testRunner.ClickByName(GetSliceSettingsField(SettingsKey.layer_height));
-
-				// assert edit field is focused
-				// assert all is selected
-
 				testRunner.Delay(2000);
+
+				for (int i = 0; i < testData.Length; i++)
+				{
+					var data = testData[i];
+					RunSingeTest(data.setting, data.paste, data.selectsOnFocus);
+				}
+
 				return Task.CompletedTask;
 			},
 			2000);

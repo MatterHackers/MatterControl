@@ -553,6 +553,7 @@ namespace MatterHackers.MatterControl
 		{
 			InternalTextEditWidget.DefaultRightClick += (s, e) =>
 			{
+				var textEditWidget = s as InternalTextEditWidget;
 				var theme = ApplicationController.Instance.MenuTheme;
 				var popupMenu = new PopupMenu(theme);
 
@@ -560,43 +561,31 @@ namespace MatterHackers.MatterControl
 				cut.Enabled = !string.IsNullOrEmpty(s.Selection);
 				cut.Click += (s2, e2) =>
 				{
-					if (s2 is InternalTextEditWidget textWidget)
-					{
-						textWidget.CopySelection();
-						textWidget.DeleteSelection();
-					}
+					textEditWidget?.CopySelection();
+					textEditWidget?.DeleteSelection();
 				};
 
 				var copy = popupMenu.CreateMenuItem("Copy".Localize());
 				copy.Enabled = !string.IsNullOrEmpty(s.Selection);
 				copy.Click += (s2, e2) =>
 				{
-					if (s2 is InternalTextEditWidget textWidget)
-					{
-						textWidget.CopySelection();
-					}
+					textEditWidget?.CopySelection();
 				};
 
 				var paste = popupMenu.CreateMenuItem("Paste".Localize());
 				paste.Enabled = Clipboard.Instance.ContainsText;
 				paste.Click += (s2, e2) =>
 				{
-					if (s2 is InternalTextEditWidget textWidget)
-					{
-						textWidget.PasteFromClipboard();
-					}
+					textEditWidget?.PasteFromClipboard();
 				};
 
 				popupMenu.CreateSeparator();
 
 				var selectAll = popupMenu.CreateMenuItem("Select All".Localize());
-				selectAll.Enabled = Clipboard.Instance.ContainsText;
+				selectAll.Enabled = !string.IsNullOrEmpty(textEditWidget.Text);
 				selectAll.Click += (s2, e2) =>
 				{
-					if (s is InternalTextEditWidget textWidget)
-					{
-						textWidget.SelectAll();
-					}
+					textEditWidget?.SelectAll();
 				};
 
 				popupMenu.ShowMenu(s, e);
