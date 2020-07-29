@@ -366,15 +366,15 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		internal void EnsureGCodeLoaded()
+		internal async void EnsureGCodeLoaded()
 		{
 			if (this.LoadedGCode == null
 				&& !this.Printer.ViewState.SlicingItem
-				&& File.Exists(this.EditContext?.GCodeFilePath(this.Printer)))
+				&& File.Exists(await this.EditContext?.GCodeFilePath(this.Printer)))
 			{
 				UiThread.RunOnIdle(async () =>
 				{
-					using (var stream = File.OpenRead(this.EditContext.GCodeFilePath(this.Printer)))
+					using (var stream = File.OpenRead(await this.EditContext.GCodeFilePath(this.Printer)))
 					{
 						await LoadGCodeContent(stream);
 					}

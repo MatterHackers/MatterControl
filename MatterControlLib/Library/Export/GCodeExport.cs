@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.Library.Export
 								// This mush be calculated after the settings have been set (spiral vase)
 								// or it uses the wrong slice settings.
 								// TODO: Prior code bypassed GCodeOverridePath mechanisms in EditContext. Consolidating into a single pathway
-								gcodePath = Printer.Bed.EditContext.GCodeFilePath(Printer);
+								gcodePath = await Printer.Bed.EditContext.GCodeFilePath(Printer);
 
 								await ApplicationController.Instance.Tasks.Execute(
 									"Slicing Item".Localize() + " " + loadedItem.Name,

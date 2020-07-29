@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(ref string mergeRules, IEnumerable<IObject3D> printableItems, PrinterSettings settings, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		public static List<(Matrix4X4 matrix, string fileName)> GetStlFileLocations(ref string mergeRules, IEnumerable<IObject3D> printableItems, PrinterSettings settings)
 		{
 			var progressStatus = new ProgressStatus();
 
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			string mergeRules = "";
 
-			var stlFileLocations = GetStlFileLocations(ref mergeRules, printableItems, settings, reporter, cancellationToken);
+			var stlFileLocations = GetStlFileLocations(ref mergeRules, printableItems, settings);
 
 			if (stlFileLocations.Count <= 0)
 			{

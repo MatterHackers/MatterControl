@@ -705,7 +705,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							activelySlicing = true;
 							if (bottomRow.Name == null)
 							{
-								bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
+								bottomRow.Name = await printer.Bed.EditContext.GCodeFilePath(printer);
 							}
 
 							await ApplicationController.Instance.Tasks.Execute("Saving".Localize(), printer, printer.Bed.SaveChanges);
@@ -714,7 +714,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							await ApplicationController.Instance.SliceItemLoadOutput(
 								printer,
 								printer.Bed.Scene,
-								printer.Bed.EditContext.GCodeFilePath(printer));
+								await printer.Bed.EditContext.GCodeFilePath(printer));
 
 							// Switch to the 3D layer view if on Model view
 							if (printer.ViewState.ViewMode == PartViewMode.Model)
@@ -757,13 +757,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = "Switch Button"
 					};
 					switchButtonRow.AddChild(switchButton);
-					switchButton.Click += (s, e) =>
+					switchButton.Click += async (s, e) =>
 					{
 						if (printer.Connection != null
 							&& (printer.Connection.Printing || printer.Connection.Paused))
 						{
-							printer.Connection.SwitchToGCode(printer.Bed.EditContext.GCodeFilePath(printer));
-							bottomRow.Name = printer.Bed.EditContext.GCodeFilePath(printer);
+							printer.Connection.SwitchToGCode(await printer.Bed.EditContext.GCodeFilePath(printer));
+							bottomRow.Name = await printer.Bed.EditContext.GCodeFilePath(printer);
 						}
 
 						activelySlicing = false;

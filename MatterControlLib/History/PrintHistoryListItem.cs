@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Kevin Pope, John Lewin
+Copyright (c) 2020, Kevin Pope, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
 using Newtonsoft.Json;
@@ -637,47 +638,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				int index = QueueData.Instance.GetIndex(itemToRemove);
 				UiThread.RunOnIdle(() => QueueData.Instance.RemoveAt(index));
-			}
-		}
-	}
-
-	public static class McxDocument
-	{
-		public class McxNode
-		{
-			public List<McxNode> Children { get; set; }
-
-			public string Name { get; set; }
-
-			public bool Visible { get; set; }
-
-			public string MeshPath { get; set; }
-
-			private static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)\\s*$", RegexOptions.Compiled);
-
-			public IEnumerable<string> AllNames()
-			{
-				if (Children?.Count > 0)
-				{
-					foreach (var child in Children)
-					{
-						foreach (var name in child.AllNames())
-						{
-							yield return name;
-						}
-					}
-				}
-				else if (!string.IsNullOrWhiteSpace(Name))
-				{
-					if (Name.Contains("("))
-					{
-						yield return fileNameNumberMatch.Replace(Name, "").Trim();
-					}
-					else
-					{
-						yield return Name;
-					}
-				}
 			}
 		}
 	}

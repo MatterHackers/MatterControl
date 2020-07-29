@@ -35,7 +35,13 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg;
 	using MatterHackers.DataConverters3D;
 	using MatterHackers.MatterControl.DataStorage;
+	using MatterHackers.MatterControl.DesignTools;
 	using MatterHackers.MatterControl.Library;
+	using MatterHackers.MatterControl.SlicerConfiguration;
+	using Newtonsoft.Json;
+	using System.Linq;
+	using System.Threading;
+	using System.Threading.Tasks;
 
 	public class EditContext
 	{
@@ -73,14 +79,15 @@ namespace MatterHackers.MatterControl
 		public bool IsGGCodeSource => (this.SourceItem as ILibraryAsset)?.ContentType == "gcode";
 
 		// Override or natural path
-		public string GCodeFilePath(PrinterConfig printer)
+		public async Task<string> GCodeFilePath(PrinterConfig printer)
 		{
-			if (File.Exists(this.GCodeOverridePath(printer)))
+			var path = await this.GCodeOverridePath(printer);
+			if (File.Exists(path))
 			{
-				return this.GCodeOverridePath(printer);
+				return path;
 			}
 
-			return GCodePath(printer);
+			return await GCodePath(printer);
 		}
 
 		public static string GCodeFilePath(PrinterConfig printer, IObject3D object3D)
@@ -116,15 +123,33 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Natural path
-		private string GCodePath(PrinterConfig printer)
+		private async Task<string> GCodePath(PrinterConfig printer)
 		{
 			if (File.Exists(this.SourceFilePath))
 			{
-				return this.GetGCodePath(printer, this.SourceFilePath);
+				return await this.GetGCodePath(printer, this.SourceFilePath);
 			}
 
 			return null;
 		}
+
+		public static string[] GetFileNamesFromMcx(string mcxFileName)
+		{
+			// add in the cache path
+			mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, mcxFileName);
+			if (File.Exists(mcxFileName))
+			{
+				var document = JsonConvert.DeserializeObject<McxDocument.McxNode>(File.ReadAllText(mcxFileName));
+				var names = document.AllVisibleMeshFileNames();
+				return names.GroupBy(n => n)
+					.Select(g => g.Key)
+					.OrderBy(n => n)
+					.ToArray();
+			}
+
+			return null;
+		}
+
 
 		/// <summary>
 		/// Returns the computed GCode path given a content file path and considering current settings
@@ -132,7 +157,7 @@ namespace MatterHackers.MatterControl
 		/// <param name="printer">The associated printer</param>
 		/// <param name="fileLocation">The source file</param>
 		/// <returns>The target GCode path</returns>
-		private string GetGCodePath(PrinterConfig printer, string fileLocation)
+		private async Task<string> GetGCodePath(PrinterConfig printer, string fileLocation)
 		{
 			if (fileLocation.Trim() != "")
 			{
@@ -142,6 +167,24 @@ namespace MatterHackers.MatterControl
 				}
 
 				string fileHashCode = HashGenerator.ComputeFileSHA1(fileLocation);
+
+				var fileExtension = Path.GetExtension(fileLocation).ToUpper();
+				if (fileExtension == ".MCX")
+				{
+					var hashCode = fileHashCode.GetLongHashCode();
+					var fileNames = GetFileNamesFromMcx(fileLocation);
+					foreach (var file in fileNames)
+					{
+						var fullPath = await Object3DExtensions.ResolveFilePath(file, null, CancellationToken.None);
+						if (File.Exists(fullPath))
+						{
+							hashCode = File.GetLastWriteTime(fullPath).ToString().GetLongHashCode(hashCode);
+						}
+					}
+
+					fileHashCode = hashCode.ToString();
+				}
+
 				ulong settingsHashCode = printer.Settings.GetGCodeCacheKey();
 
 				return Path.Combine(
@@ -155,9 +198,9 @@ namespace MatterHackers.MatterControl
 		}
 
 		// Override path
-		private string GCodeOverridePath(PrinterConfig printer)
+		private async Task<string> GCodeOverridePath(PrinterConfig printer)
 		{
-			return Path.ChangeExtension(GCodePath(printer), GCodeFile.PostProcessedExtension);
+			return Path.ChangeExtension(await GCodePath(printer), GCodeFile.PostProcessedExtension);
 		}
 	}
 }

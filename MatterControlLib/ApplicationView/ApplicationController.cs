@@ -2650,7 +2650,7 @@ namespace MatterHackers.MatterControl
 		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			var partFilePath = editContext.SourceFilePath;
-			var gcodeFilePath = editContext.GCodeFilePath(printer);
+			var gcodeFilePath = await editContext.GCodeFilePath(printer);
 			var printItemName = editContext.SourceItem.Name;
 
 			// Exit if called in a non-applicable state
