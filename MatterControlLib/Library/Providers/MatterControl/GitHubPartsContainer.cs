@@ -36,28 +36,147 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public class GitHubPartsContainer : LibraryContainer
 	{
+		public struct Directory
+		{
+			public List<FileData> files;
+			public string name;
+			public List<Directory> subDirs;
+		}
+
+		// Structs used to hold file data
+		public struct FileData
+		{
+			public string contents;
+			public string name;
+		}
+
+		internal struct FileInfo
+		{
+			public LinkFields _links;
+			public string download_url;
+			public string name;
+			public string type;
+		}
+
+		// JSON parsing methods
+		internal struct LinkFields
+		{
+			public string self;
+		}
+
 		private PrinterConfig printer;
 
-		public GitHubPartsContainer(PrinterConfig printer)
+		public string Account { get; }
+
+		public string Repository { get; }
+
+		public string RepoDirectory { get; }
+
+		public string AccessToken { get; }
+
+		public GitHubPartsContainer(PrinterConfig printer, string containerName, string account, string repositor, string repoDirectory, string accessToken)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-			this.Name = "Calibration Parts".Localize();
+			this.Name = containerName;
 			this.printer = printer;
+			this.Account = account;
+			this.Repository = repositor;
+			this.RepoDirectory = repoDirectory;
+			this.AccessToken = accessToken;
 		}
 
-		public override void Load()
+		public override async void Load()
 		{
 			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
 			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
 
-			GithubClient.getRepo("LeanKit-Labs", "cowpoke", "<myToken>");
+			await GetRepo();
+
+			OnContentChanged();
+		}
+
+		// Get all files from a repo
+		public async Task<Directory> GetRepo()
+		{
+			HttpClient client = new HttpClient();
+			Directory root = await ReadDirectory("root",
+				client,
+				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}",
+				AccessToken);
+			client.Dispose();
+			return root;
+		}
+
+		private async Task<Directory> ReadDirectory(string name, HttpClient client, string uri, string access_token)
+		{
+			// get the directory contents
+			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+			request.Headers.Add("Authorization",
+				"Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", access_token, "x-oauth-basic"))));
+			request.Headers.Add("User-Agent", "lk-github-client");
+
+			// parse result
+			HttpResponseMessage response = await client.SendAsync(request);
+			string jsonStr = await response.Content.ReadAsStringAsync();
+			response.Dispose();
+			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
+
+			// read in data
+			Directory result;
+			result.name = name;
+			result.subDirs = new List<Directory>();
+			result.files = new List<FileData>();
+			foreach (FileInfo file in dirContents)
+			{
+				if (file.type == "dir")
+				{
+					this.ChildContainers.Add(
+						new DynamicContainerLink(
+							() => file.name,
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
+							() => new GitHubPartsContainer(printer, file.name, Account, Repository, RepoDirectory, AccessToken),
+							() =>
+							{
+								return true;
+							})
+						{
+							IsReadOnly = true
+						});
+
+					// read in the subdirectory
+					// Directory sub = await ReadDirectory(file.name, client, file._links.self, access_token);
+					// result.subDirs.Add(sub);
+				}
+				else
+				{
+					// get the file contents;
+					HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, file.download_url);
+					downLoadUrl.Headers.Add("Authorization",
+						"Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", access_token, "x-oauth-basic"))));
+					request.Headers.Add("User-Agent", "lk-github-client");
+
+					HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl);
+					string content = await contentResponse.Content.ReadAsStringAsync();
+					contentResponse.Dispose();
+
+					FileData data;
+					data.name = file.name;
+					data.contents = content;
+
+					result.files.Add(data);
+				}
+			}
+
+			return result;
 		}
 
 		private class StaticDataItem : ILibraryAssetStream

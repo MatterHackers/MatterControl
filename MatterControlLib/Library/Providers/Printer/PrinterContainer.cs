@@ -67,14 +67,22 @@ namespace MatterHackers.MatterControl.Library
 					IsReadOnly = true
 				});
 
-#if false // working on a new container that holds custom parts for a given printer
+#if true // working on a new container that holds custom parts for a given printer
+			var containerName = $"{printer.Settings.GetValue(SettingsKey.make)} {"Parts".Localize()}";
+			var settings = printer.Settings;
+			var repository = "Machine_Library_Parts";
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
-					() => "Printer Parts".Localize(),
+					() => containerName,
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new GitHubPartsContainer(printer),
-					() => repositoryExistsAndHasContent) // visibility
+					() => new GitHubPartsContainer(printer,
+						containerName,
+						"MatterHackers",
+						repository,
+						$"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}",
+						"d303b977c22c0b8b3ef7ad3202999fcb3b9a1fe2"),
+					() => printer.Settings.GetValue<bool>(SettingsKey.has_fan)) // visibility
 				{
 					IsReadOnly = true
 				});
