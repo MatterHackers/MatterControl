@@ -80,8 +80,7 @@ namespace MatterHackers.MatterControl.Library
 						containerName,
 						"MatterHackers",
 						repository,
-						$"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}",
-						"d303b977c22c0b8b3ef7ad3202999fcb3b9a1fe2"),
+						$"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}"),
 					() => printer.Settings.GetValue<bool>(SettingsKey.has_fan)) // visibility
 				{
 					IsReadOnly = true

@@ -79,9 +79,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string RepoDirectory { get; }
 
-		public string AccessToken { get; }
-
-		public GitHubPartsContainer(PrinterConfig printer, string containerName, string account, string repositor, string repoDirectory, string accessToken)
+		public GitHubPartsContainer(PrinterConfig printer, string containerName, string account, string repositor, string repoDirectory)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
@@ -90,7 +88,6 @@ namespace MatterHackers.MatterControl.Library
 			this.Account = account;
 			this.Repository = repositor;
 			this.RepoDirectory = repoDirectory;
-			this.AccessToken = accessToken;
 		}
 
 		public override async void Load()
@@ -109,19 +106,25 @@ namespace MatterHackers.MatterControl.Library
 			HttpClient client = new HttpClient();
 			Directory root = await ReadDirectory("root",
 				client,
-				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}",
-				AccessToken);
+				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}");
 			client.Dispose();
 			return root;
 		}
 
-		private async Task<Directory> ReadDirectory(string name, HttpClient client, string uri, string access_token)
+		private async Task<Directory> ReadDirectory(string name, HttpClient client, string uri)
 		{
 			// get the directory contents
 			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
-			request.Headers.Add("Authorization",
-				"Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", access_token, "x-oauth-basic"))));
-			request.Headers.Add("User-Agent", "lk-github-client");
+			request.Headers.Add("Host", "api.github.com");
+			request.Headers.Add("Connection", "keep-alive");
+			request.Headers.Add("Upgrade-Insecure-Requests", "1");
+			request.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36");
+			request.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
+			request.Headers.Add("Sec-Fetch-Site", "none");
+			request.Headers.Add("Sec-Fetch-Mode", "navigate");
+			request.Headers.Add("Sec-Fetch-User", "?1");
+			request.Headers.Add("Sec-Fetch-Dest", "document");
+			request.Headers.Add("Accept-Language", "en-US,en;q=0.9");
 
 			// parse result
 			HttpResponseMessage response = await client.SendAsync(request);
@@ -143,7 +146,7 @@ namespace MatterHackers.MatterControl.Library
 							() => file.name,
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
-							() => new GitHubPartsContainer(printer, file.name, Account, Repository, RepoDirectory, AccessToken),
+							() => new GitHubPartsContainer(printer, file.name, Account, Repository, RepoDirectory),
 							() =>
 							{
 								return true;
@@ -158,21 +161,25 @@ namespace MatterHackers.MatterControl.Library
 				}
 				else
 				{
-					// get the file contents;
-					HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, file.download_url);
-					downLoadUrl.Headers.Add("Authorization",
-						"Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", access_token, "x-oauth-basic"))));
-					request.Headers.Add("User-Agent", "lk-github-client");
+					bool getFiles = false;
+					if (getFiles)
+					{
+						// get the file contents;
+						HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, file.download_url);
+						downLoadUrl.Headers.Add("Authorization",
+							"Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(string.Format("{0}:{1}", "access_token", "x-oauth-basic"))));
+						request.Headers.Add("User-Agent", "lk-github-client");
 
-					HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl);
-					string content = await contentResponse.Content.ReadAsStringAsync();
-					contentResponse.Dispose();
+						HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl);
+						string content = await contentResponse.Content.ReadAsStringAsync();
+						contentResponse.Dispose();
 
-					FileData data;
-					data.name = file.name;
-					data.contents = content;
+						FileData data;
+						data.name = file.name;
+						data.contents = content;
 
-					result.files.Add(data);
+						result.files.Add(data);
+					}
 				}
 			}
 
