@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.Library
 					IsReadOnly = true
 				});
 
-#if true // working on a new container that holds custom parts for a given printer
+#if DEBUG // working on a new container that holds custom parts for a given printer
 			var containerName = $"{printer.Settings.GetValue(SettingsKey.make)} {"Parts".Localize()}";
 			var settings = printer.Settings;
 			var repository = "Machine_Library_Parts";
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.Library
 					() => containerName,
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new GitHubPartsContainer(printer,
+					() => new GitHubContainer(printer,
 						containerName,
 						"MatterHackers",
 						repository,
