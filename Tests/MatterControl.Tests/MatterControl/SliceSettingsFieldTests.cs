@@ -325,9 +325,14 @@ namespace MatterControl.Tests.MatterControl
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
 			Clipboard.SetSystemClipboard(new SimulatedClipboard());
 
-			var systemWindow = new SystemWindow(800, 600);
+			var systemWindow = new SystemWindow(800, 600)
+			{
+				Name = "Main Window",
+			};
 
 			Application.AddTextWidgetRightClickMenu();
+
+			AutomationRunner.TimeToMoveMouse = .1;
 
 			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -342,11 +347,11 @@ namespace MatterControl.Tests.MatterControl
 			settings.SetValue(SettingsKey.start_gcode, "Test GCode");
 			var printer = new PrinterConfig(settings);
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
-			var testData = new (string setting, string paste, bool selectsOnFocus)[]
+			var testData = new (string setting, string paste, bool selectsOnFocus, string postCutAll)[]
 			{
-				(SettingsKey.layer_height, "987.654", true),
-				(SettingsKey.printer_name, "three word name", true),
-				(SettingsKey.start_gcode, "Paste text", false),
+				(SettingsKey.layer_height, "987.654", true, "0"),
+				(SettingsKey.start_gcode, "Paste text", false, ""),
+				(SettingsKey.printer_name, "three word name", true, ""),
 			};
 
 			int tabIndex = 0;
@@ -370,7 +375,7 @@ namespace MatterControl.Tests.MatterControl
 
 			systemWindow.RunTest(testRunner =>
 			{
-				void RunSingeTest(string setting, string pastText, bool selectsOnFocus)
+				void RunSingeTest(string setting, string pastText, bool selectsOnFocus, string postCutAll)
 				{
 					var textWidget = fields[setting].Descendants<InternalTextEditWidget>().First();
 					// no selection to start
@@ -388,8 +393,8 @@ namespace MatterControl.Tests.MatterControl
 						Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
 					}
 
-					testRunner.ClickByName("Select All Menu Item");
-					testRunner.Delay();
+					testRunner.ClickByName("Select All Menu Item")
+						.Delay();
 					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
 
 					// make sure there is no text in the copy buffer
@@ -403,21 +408,24 @@ namespace MatterControl.Tests.MatterControl
 
 					// past in text and make sure it changed
 					Clipboard.Instance.SetText(pastText);
-					testRunner.RightClickByName(GetSliceSettingsField(setting));
-					testRunner.ClickByName("Paste Menu Item");
+					testRunner.RightClickByName(GetSliceSettingsField(setting))
+						.ClickByName("Paste Menu Item");
 					Assert.AreEqual(pastText, textWidget.Text, "Pasted everything");
 
 					// cut works
-					testRunner.RightClickByName(GetSliceSettingsField(setting));
-					testRunner.ClickByName("Select All Menu Item");
-					testRunner.Delay();
+					testRunner.RightClickByName(GetSliceSettingsField(setting))
+						.ClickByName("Select All Menu Item")
+						.Delay();
 					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
 
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
 					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Selection remains after right click");
 					var preCutText = textWidget.Text;
 					testRunner.ClickByName("Cut Menu Item");
-					Assert.AreEqual("", textWidget.Text, "Cut everything");
+					// loose the selection
+					testRunner.ClickByName("Main Window")
+						.Delay();
+					Assert.AreEqual(postCutAll, textWidget.Text, "Cut everything");
 					Assert.AreEqual(preCutText, Clipboard.Instance.GetText(), "Cut everything");
 				}
 
@@ -426,7 +434,7 @@ namespace MatterControl.Tests.MatterControl
 				for (int i = 0; i < testData.Length; i++)
 				{
 					var data = testData[i];
-					RunSingeTest(data.setting, data.paste, data.selectsOnFocus);
+					RunSingeTest(data.setting, data.paste, data.selectsOnFocus, data.postCutAll);
 				}
 
 				return Task.CompletedTask;
