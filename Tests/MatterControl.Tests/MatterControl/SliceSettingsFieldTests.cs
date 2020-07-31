@@ -325,8 +325,6 @@ namespace MatterControl.Tests.MatterControl
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();
 			Clipboard.SetSystemClipboard(new SimulatedClipboard());
 
-			AutomationRunner.TimeToMoveMouse = .5;
-
 			var systemWindow = new SystemWindow(800, 600);
 
 			Application.AddTextWidgetRightClickMenu();
@@ -387,10 +385,9 @@ namespace MatterControl.Tests.MatterControl
 					}
 					else
 					{
-						Assert.IsFalse(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
+						Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Should not have selection");
 					}
 
-					Assert.IsTrue(string.IsNullOrEmpty(textWidget.Selection), "Selecting control does not select text");
 					testRunner.ClickByName("Select All Menu Item");
 					testRunner.Delay();
 					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
@@ -409,9 +406,22 @@ namespace MatterControl.Tests.MatterControl
 					testRunner.RightClickByName(GetSliceSettingsField(setting));
 					testRunner.ClickByName("Paste Menu Item");
 					Assert.AreEqual(pastText, textWidget.Text, "Pasted everything");
+
+					// cut works
+					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					testRunner.ClickByName("Select All Menu Item");
+					testRunner.Delay();
+					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Everything is selected");
+
+					testRunner.RightClickByName(GetSliceSettingsField(setting));
+					Assert.IsTrue(textWidget.Selection == textWidget.Text, "Selection remains after right click");
+					var preCutText = textWidget.Text;
+					testRunner.ClickByName("Cut Menu Item");
+					Assert.AreEqual("", textWidget.Text, "Cut everything");
+					Assert.AreEqual(preCutText, Clipboard.Instance.GetText(), "Cut everything");
 				}
 
-				testRunner.Delay(2000);
+				// testRunner.Delay(2000);
 
 				for (int i = 0; i < testData.Length; i++)
 				{
