@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2014, Kevin Pope
+Copyright (c) 2017, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,43 +28,24 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
+using System;
+using System.IO;
 
-namespace MatterHackers.MatterControl.CustomWidgets
+namespace MatterHackers.MatterControl.Library
 {
-	public class HorizontalSpacer : GuiWidget
-	{
-		public HorizontalSpacer()
-		{
-			HAnchor = HAnchor.Stretch;
-		}
-	}
 
-	public class VerticalSpacer : GuiWidget
+	public class MockLibraryItem : ILibraryItem
 	{
-		public VerticalSpacer()
-		{
-			VAnchor = VAnchor.Stretch;
-		}
-	}
+		public DateTime DateCreated { get; } = DateTime.Now;
 
-	public class HorizontalLine : GuiWidget
-	{
-		public HorizontalLine(int height = 1, ThemeConfig theme = null)
-			: base(1, height)
-		{
-			BackgroundColor = (theme ?? ApplicationController.Instance.Theme).BorderColor20;
-			HAnchor = HAnchor.Stretch;
-		}
-	}
+		public DateTime DateModified { get; } = DateTime.Now;
 
-	public class VerticalLine : GuiWidget
-	{
-		public VerticalLine(int alpha = 255)
-			: base(1, 1)
-		{
-			BackgroundColor = ApplicationController.Instance.Theme.GetBorderColor(alpha);
-			VAnchor = VAnchor.Stretch;
-		}
+		public string ID { get; set; }
+
+		public bool IsProtected => true;
+
+		public bool IsVisible => true;
+
+		public string Name { get; set; }
 	}
 }

@@ -37,7 +37,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.ImageProcessing;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -61,7 +60,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public HorizontalLine CreateSeparator()
 		{
-			var line = new HorizontalLine(theme: ApplicationController.Instance.MenuTheme)
+			var line = new HorizontalLine(ApplicationController.Instance.MenuTheme.BorderColor20)
 			{
 				Margin = new BorderDouble(theme.MenuGutterWidth - 8, 1, 8, 1),
 				BackgroundColor = theme.RowBorder
@@ -508,20 +507,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static void ShowMenu(this PopupMenu popupMenu, GuiWidget anchorWidget, Vector2 menuPosition)
 		{
 			var systemWindow = anchorWidget.Parents<SystemWindow>().FirstOrDefault();
-			anchorWidget.Parents<SystemWindow>().FirstOrDefault().ToolTipManager.Clear();
+			systemWindow.ToolTipManager.Clear();
 			systemWindow.ShowPopup(
 				new MatePoint(anchorWidget)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 				},
 				new MatePoint(popupMenu)
 				{
 					Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-					AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+					AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 				},
 				altBounds: new RectangleDouble(menuPosition.X + 1, menuPosition.Y + 1, menuPosition.X + 1, menuPosition.Y + 1));
 		}
-
 	}
 }

@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.ActionBar
 		{
 			var widget = new IgnoredPopupWidget()
 			{
-				Width = 300,
+				Width = 300 * GuiWidget.DeviceScale,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(12, 0),
@@ -128,8 +128,8 @@ namespace MatterHackers.MatterControl.ActionBar
 				GoalColor = menuTheme.PrimaryAccentColor,
 				GoalValue = printer.Settings.GetValue<double>(SettingsKey.bed_temperature),
 				MaxValue = 150, // could come from some profile value in the future
-				Width = widget.Width - 20,
-				Height = 35, // this works better if it is a common multiple of the Width
+				Width = widget.Width - 20 * GuiWidget.DeviceScale,
+				Height = 35 * GuiWidget.DeviceScale, // this works better if it is a common multiple of the Width
 				Margin = new BorderDouble(0, 5, 0, 0),
 			};
 

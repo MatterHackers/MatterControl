@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.Tour
 			: base("Done".Localize())
 		{
 			this.WindowTitle = "MatterControl".Localize();
-			this.WindowSize = new Vector2(400, 250);
+			this.WindowSize = new Vector2(400 * GuiWidget.DeviceScale, 250 * GuiWidget.DeviceScale);
 
 			this.HeaderText = "Welcome to MatterControl".Localize();
 

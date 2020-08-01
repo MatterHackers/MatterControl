@@ -55,7 +55,6 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "local_library_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "local_library_folder.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
@@ -63,7 +62,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
 					() => new CalibrationPartsContainer())
 				{
@@ -73,7 +71,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Primitives".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "primitives_library_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "primitives_library_folder.png")),
 					() => new PrimitivesContainer())
 				{
@@ -91,7 +88,6 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Print Queue".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_folder.png")),
 						() => new PrintQueueContainer()));
 			}
@@ -100,7 +96,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Pipe Works".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new PipeWorksContainer()));
 
@@ -109,7 +104,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Experimental".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new DynamicContainer()
 					{

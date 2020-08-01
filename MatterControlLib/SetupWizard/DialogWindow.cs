@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl
 			theme = ApplicationController.Instance.Theme;
 
 			this.AlwaysOnTopOfMain = true;
-			this.MinimumSize = new Vector2(200, 200);
+			this.MinimumSize = new Vector2(200 * GuiWidget.DeviceScale, 200 * GuiWidget.DeviceScale);
 			this.SetBackgroundColor();
 
 			var defaultPadding = theme.DefaultContainerPadding;

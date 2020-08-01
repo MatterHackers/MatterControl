@@ -49,12 +49,11 @@ namespace MatterHackers.MatterControl.Library
 			this.Items.Clear();
 			this.ChildContainers.Clear();
 
-			foreach(var printer in ApplicationController.Instance.ActivePrinters)
+			foreach (var printer in ApplicationController.Instance.ActivePrinters)
 			{
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => printer.Settings.GetValue(SettingsKey.printer_name),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 						() => new PrinterContainer(printer),
 						() =>

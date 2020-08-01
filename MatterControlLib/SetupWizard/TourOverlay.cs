@@ -41,12 +41,10 @@ namespace MatterHackers.MatterControl.Tour
 		private ProductTour productTour;
 		private Popover popover;
 		private ThemeConfig theme;
-		private GuiWidget tourWindow;
 		private RectangleDouble targetBounds;
 
-		public TourOverlay(SystemWindow tourWindow, ProductTour productTour, ThemeConfig theme)
+		public TourOverlay(ProductTour productTour, ThemeConfig theme)
 		{
-			this.tourWindow = tourWindow;
 			this.theme = theme;
 			this.productTour = productTour;
 
@@ -76,7 +74,7 @@ namespace MatterHackers.MatterControl.Tour
 			base.OnDraw(graphics2D);
 
 			graphics2D.Render(new Stroke(new RoundedRect(targetBounds, 0), 2), Color.White.WithAlpha(50));
-			//graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
+			// graphics2D.Render(new Stroke(new RoundedRect(GetContentBounds(), 3), 4), theme.PrimaryAccentColor);
 		}
 
 		public override void OnKeyDown(KeyEventArgs keyEvent)

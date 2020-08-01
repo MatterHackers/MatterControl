@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.IO;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
@@ -46,7 +47,7 @@ namespace MatterHackers.MatterControl
 		public ILibraryContext LibraryView { get; set; }
 
 		public PartWorkspace(PrinterConfig printer)
-			: this (printer.Bed)
+			: this(printer.Bed)
 		{
 			this.Printer = printer;
 			this.PrinterID = printer.Settings.ID;
@@ -56,7 +57,6 @@ namespace MatterHackers.MatterControl
 				wrappedLibrary.ExtraContainers.Add(
 					new DynamicContainerLink(
 						() => printer.Settings.GetValue(SettingsKey.printer_name),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 						() => new PrinterContainer(printer))
 					{

@@ -36,6 +36,7 @@ using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -205,6 +206,15 @@ namespace MatterHackers.MatterControl
 
 			// Init platformFeaturesProvider before ShowAsSystemWindow
 			string platformFeaturesProvider = "MatterHackers.MatterControl.WindowsPlatformsFeatures, MatterControl.Winforms";
+
+			string textSizeMode = UserSettings.Instance.get(UserSettingsKey.ApplicationTextSize);
+			if (!string.IsNullOrEmpty(textSizeMode))
+			{
+				if (double.TryParse(textSizeMode, out double textSize))
+				{
+					GuiWidget.DeviceScale = textSize;
+				}
+			}
 
 			AppContext.Platform = AggContext.CreateInstanceFrom<INativePlatformFeatures>(platformFeaturesProvider);
 			AppContext.Platform.InitPluginFinder();

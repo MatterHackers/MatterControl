@@ -35,29 +35,15 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class DynamicContainerLink : ILibraryContainerLink, IThumbnail
 	{
-		public string ID { get; set; }
-		public string Category { get; set; }
-		public bool IsProtected { get; set; } = true;
+		private readonly Func<ILibraryContainer> containerCreator;
 
-		public bool IsReadOnly { get; set; } = false;
+		private readonly Func<string> nameResolver;
 
-		public DateTime DateCreated { get; } = DateTime.Now;
+		private readonly ImageBuffer thumbnail;
 
-		public DateTime DateModified { get; } = DateTime.Now;
+		private readonly Func<bool> visibilityResolver;
 
-		private ImageBuffer thumbnail;
-		private Func<ILibraryContainer> containerCreator;
-		private Func<bool> visibilityResolver;
-		private Func<string> nameResolver;
-		private ImageBuffer microIcon;
-
-		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer microIcon, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
-			: this (nameResolver, thumbnail, creator, visibilityResolver)
-		{
-			this.microIcon = microIcon;
-		}
-
-		private DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
+		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
 		{
 			this.thumbnail = thumbnail?.SetPreMultiply();
 			this.nameResolver = nameResolver;
@@ -65,9 +51,21 @@ namespace MatterHackers.MatterControl.Library
 			this.visibilityResolver = visibilityResolver ?? (() => true);
 		}
 
-		public string Name => nameResolver?.Invoke();
+		public string Category { get; set; }
+
+		public DateTime DateCreated { get; } = DateTime.Now;
+
+		public DateTime DateModified { get; } = DateTime.Now;
+
+		public string ID { get; set; }
+
+		public bool IsProtected { get; set; } = true;
+
+		public bool IsReadOnly { get; set; } = false;
 
 		public bool IsVisible => this.visibilityResolver();
+
+		public string Name => nameResolver?.Invoke();
 
 		public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 		{
@@ -76,14 +74,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<ImageBuffer> GetThumbnail(int width, int height)
 		{
-			if (microIcon != null
-				&& width < 24
-				&& height < 24)
-			{
-				return Task.FromResult(microIcon?.AlphaToPrimaryAccent());
-			}
-
-			//return Task.FromResult(thumbnail);
 			return Task.FromResult(thumbnail?.AlphaToPrimaryAccent());
 		}
 	}

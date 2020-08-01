@@ -42,11 +42,11 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class SDCardContainer : LibraryContainer
 	{
-		private bool gotBeginFileList;
-
-		private PrinterConfig printer;
+		private readonly PrinterConfig printer;
 
 		private AutoResetEvent autoResetEvent;
+
+		private bool gotBeginFileList;
 
 		public SDCardContainer(PrinterConfig printer)
 		{
@@ -73,8 +73,24 @@ namespace MatterHackers.MatterControl.Library
 						break;
 				}
 			}
+
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			printer.Disposed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
+		}
+
+		public override void Dispose()
+		{
+			// Ensure released
+			autoResetEvent?.Set();
+		}
+
+		// Container override of child thumbnails
+		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		{
+			return Task.FromResult(
+				AggContext.StaticData.LoadIcon(
+					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"),
+					ApplicationController.Instance.Theme.InvertIcons));
 		}
 
 		public override void Load()
@@ -94,15 +110,6 @@ namespace MatterHackers.MatterControl.Library
 				// Block and wait up to timeout for response
 				autoResetEvent.WaitOne(40 * 1000);
 			}
-		}
-
-		// Container override of child thumbnails
-		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
-		{
-			return Task.FromResult(
-				AggContext.StaticData.LoadIcon(
-					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"),
-					ApplicationController.Instance.Theme.InvertIcons));
 		}
 
 		private void Printer_LineRead(object sender, string line)
@@ -139,16 +146,11 @@ namespace MatterHackers.MatterControl.Library
 									});
 								}
 							}
+
 							break;
 					}
 				}
 			}
-		}
-
-		public override void Dispose()
-		{
-			// Ensure released
-			autoResetEvent?.Set();
 		}
 	}
 }

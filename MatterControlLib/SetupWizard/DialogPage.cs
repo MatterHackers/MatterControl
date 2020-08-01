@@ -44,11 +44,13 @@ namespace MatterHackers.MatterControl
 		protected FlowLayoutWidget footerRow;
 
 		private TextWidget headerLabel;
+
 		private GuiWidget cancelButton { get; }
 
 		public Vector2 WindowSize { get; set; }
 
 		protected double labelFontSize = 12 * GuiWidget.DeviceScale;
+
 		protected double errorFontSize = 10 * GuiWidget.DeviceScale;
 
 		protected ThemeConfig theme;

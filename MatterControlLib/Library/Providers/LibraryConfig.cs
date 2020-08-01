@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -43,9 +42,11 @@ namespace MatterHackers.MatterControl.Library
 {
 	public interface ILibraryContext
 	{
-		ILibraryContainer ActiveContainer { get; set; }
 		event EventHandler<ContainerChangedEventArgs> ContainerChanged;
+
 		event EventHandler<ContainerChangedEventArgs> ContentChanged;
+
+		ILibraryContainer ActiveContainer { get; set; }
 	}
 
 	public class ContainerChangedEventArgs : EventArgs
@@ -57,24 +58,21 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		public ILibraryContainer ActiveContainer { get; }
+
 		public ILibraryContainer PreviousContainer { get; }
 	}
 
 	public class LibraryConfig : ILibraryContext
 	{
-		public event EventHandler<ContainerChangedEventArgs> ContainerChanged;
+		public Dictionary<string, IContentProvider> ContentProviders = new Dictionary<string, IContentProvider>();
 
-		public event EventHandler<ContainerChangedEventArgs> ContentChanged;
+		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
 
-		private List<ILibraryContainerLink> libraryProviders;
+		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
 
 		private ILibraryContainer activeContainer;
 
-		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
-		private static ImageBuffer defaultFolderIconx20 = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")).SetPreMultiply();
-
-		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
-		private static ImageBuffer defaultItemIconx20 = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file_20x20.png"));
+		private List<ILibraryContainerLink> libraryProviders;
 
 		public LibraryConfig()
 		{
@@ -85,13 +83,14 @@ namespace MatterHackers.MatterControl.Library
 			this.ActiveContainer = this.RootLibaryContainer;
 		}
 
-		public ILibraryContainer RootLibaryContainer { get; }
+		public event EventHandler<ContainerChangedEventArgs> ContainerChanged;
 
-		public Dictionary<string, IContentProvider> ContentProviders = new Dictionary<string, IContentProvider>();
+		public event EventHandler<ContainerChangedEventArgs> ContentChanged;
 
 		public ILibraryContainer ActiveContainer
 		{
 			get => activeContainer;
+
 			set
 			{
 				if (activeContainer == value)
@@ -133,11 +132,33 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public PlatingHistoryContainer PlatingHistory { get; internal set; }
-
 		public LibraryCollectionContainer LibraryCollectionContainer { get; internal set; }
 
 		public List<LibraryAction> MenuExtensions { get; } = new List<LibraryAction>();
+
+		public PlatingHistoryContainer PlatingHistory { get; internal set; }
+
+		public ILibraryContainer RootLibaryContainer { get; }
+
+		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer thumbnail, int thumbWidth, int thumbHeight)
+		{
+			// Resize canvas to target as fallback
+			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
+			{
+				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+			}
+			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
+			{
+				thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
+			}
+
+			if (GuiWidget.DeviceScale != 1)
+			{
+				thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+			}
+
+			return thumbnail;
+		}
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
 		{
@@ -156,43 +177,6 @@ namespace MatterHackers.MatterControl.Library
 			ContentProviders.TryGetValue(contentType, out provider);
 
 			return provider;
-		}
-
-		public void RegisterContainer(ILibraryContainerLink containerItem)
-		{
-			libraryProviders.Add(containerItem);
-			libraryProviders.Sort(SortOnName);
-		}
-
-		private int SortOnName(ILibraryContainerLink x, ILibraryContainerLink y)
-		{
-			if (x != null && x.Name != null
-				&& y != null && y.Name != null)
-			{
-				return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
-			}
-
-			return 0;
-		}
-
-		public void RegisterCreator(ILibraryObject3D libraryItem)
-		{
-			this.RootLibaryContainer.Items.Add(libraryItem);
-		}
-
-		public void RegisterCreator(ILibraryAssetStream libraryItem)
-		{
-			this.RootLibaryContainer.Items.Add(libraryItem);
-		}
-
-		private void ActiveContainer_ContentChanged(object sender, EventArgs args)
-		{
-			this.OnContainerChanged(this.ActiveContainer);
-		}
-
-		private void OnContainerChanged(ILibraryContainer container)
-		{
-			ContentChanged?.Invoke(this, new ContainerChangedEventArgs(container, null));
 		}
 
 		public bool IsContentFileType(string fileName)
@@ -275,21 +259,7 @@ namespace MatterHackers.MatterControl.Library
 			if (thumbnail == null)
 			{
 				// Use the listview defaults
-				if (thumbHeight < 24 && thumbWidth < 24)
-				{
-					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIconx20 : defaultItemIconx20);
-
-					//if (!theme.InvertIcons)
-					//{
-					//	thumbnail = thumbnail.InvertLightness();
-					//}
-
-					thumbnail = thumbnail.MultiplyWithPrimaryAccent();
-				}
-				else
-				{
-					thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
-				}
+				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
 			}
 
 			// TODO: Resolve and implement
@@ -299,24 +269,20 @@ namespace MatterHackers.MatterControl.Library
 			setItemThumbnail(thumbnail);
 		}
 
-		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer thumbnail, int thumbWidth, int thumbHeight)
+		public void RegisterContainer(ILibraryContainerLink containerItem)
 		{
-			// Resize canvas to target as fallback
-			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
-			{
-				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
-			}
-			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
-			{
-				thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
-			}
+			libraryProviders.Add(containerItem);
+			libraryProviders.Sort(SortOnName);
+		}
 
-			if (GuiWidget.DeviceScale != 1)
-			{
-				thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
-			}
+		public void RegisterCreator(ILibraryObject3D libraryItem)
+		{
+			this.RootLibaryContainer.Items.Add(libraryItem);
+		}
 
-			return thumbnail;
+		public void RegisterCreator(ILibraryAssetStream libraryItem)
+		{
+			this.RootLibaryContainer.Items.Add(libraryItem);
 		}
 
 		/// <summary>
@@ -325,6 +291,27 @@ namespace MatterHackers.MatterControl.Library
 		internal void NotifyContainerChanged()
 		{
 			this.OnContainerChanged(this.ActiveContainer);
+		}
+
+		private void ActiveContainer_ContentChanged(object sender, EventArgs args)
+		{
+			this.OnContainerChanged(this.ActiveContainer);
+		}
+
+		private void OnContainerChanged(ILibraryContainer container)
+		{
+			ContentChanged?.Invoke(this, new ContainerChangedEventArgs(container, null));
+		}
+
+		private int SortOnName(ILibraryContainerLink x, ILibraryContainerLink y)
+		{
+			if (x != null && x.Name != null
+				&& y != null && y.Name != null)
+			{
+				return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+			}
+
+			return 0;
 		}
 	}
 }

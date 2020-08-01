@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, John Lewin
+Copyright (c) 2020, Kevin Pope, John Lewin, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,21 +28,69 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SDCardFileItem : ILibraryItem
+	public static class McxDocument
 	{
-		public DateTime DateCreated { get; } = DateTime.Now;
+		public class McxNode
+		{
+			public List<McxNode> Children { get; set; }
 
-		public DateTime DateModified { get; } = DateTime.Now;
+			public string Name { get; set; }
 
-		public string ID { get; } = Guid.NewGuid().ToString();
+			public bool Visible { get; set; } = true;
 
-		public bool IsProtected { get; } = true;
+			public string TypeName { get; set; }
 
-		public bool IsVisible { get; } = true;
+			public string MeshPath { get; set; }
 
-		public string Name { get; set; }
+			private static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)\\s*$", RegexOptions.Compiled);
+
+			public IEnumerable<string> AllNames()
+			{
+				if (Children?.Count > 0)
+				{
+					foreach (var child in Children)
+					{
+						foreach (var name in child.AllNames())
+						{
+							yield return name;
+						}
+					}
+				}
+				else if (!string.IsNullOrWhiteSpace(Name))
+				{
+					if (Name.Contains("("))
+					{
+						yield return fileNameNumberMatch.Replace(Name, "").Trim();
+					}
+					else
+					{
+						yield return Name;
+					}
+				}
+			}
+
+			public IEnumerable<string> AllVisibleMeshFileNames()
+			{
+				if (!string.IsNullOrEmpty(MeshPath))
+				{
+					yield return MeshPath;
+				}
+				else if (Children?.Count > 0 && Visible)
+				{
+					foreach (var child in Children)
+					{
+						foreach (var meshPath in child.AllVisibleMeshFileNames())
+						{
+							yield return meshPath;
+						}
+					}
+				}
+			}
+		}
 	}
 }

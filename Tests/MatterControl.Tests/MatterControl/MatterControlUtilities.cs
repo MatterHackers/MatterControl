@@ -635,7 +635,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void InvokeLibraryCreateFolderDialog(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Create Folder Menu Item");
+			testRunner.ClickByName("Create Folder... Menu Item");
 		}
 
 		public static string CreateChildFolder(this AutomationRunner testRunner, string folderName)

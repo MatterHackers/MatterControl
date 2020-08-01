@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ToolbarSeparator : VerticalLine
 	{
 		public ToolbarSeparator(ThemeConfig theme)
-			: base(50)
+			: base(ApplicationController.Instance.Theme.GetBorderColor(50))
 		{
 			Margin = theme.SeparatorMargin;
 		}
