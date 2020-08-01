@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -55,7 +54,7 @@ namespace MatterHackers.MatterControl.Library
 			public string self;
 		}
 
-		private PrinterConfig printer;
+		private readonly PrinterConfig printer;
 
 		public string Account { get; }
 
@@ -91,7 +90,7 @@ namespace MatterHackers.MatterControl.Library
 		// Get all files from a repo
 		public async Task GetRepo()
 		{
-			HttpClient client = new HttpClient();
+			var client = new HttpClient();
 			await ReadDirectory("root",
 				client,
 				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}");
@@ -101,7 +100,7 @@ namespace MatterHackers.MatterControl.Library
 		private async Task ReadDirectory(string name, HttpClient client, string uri)
 		{
 			// get the directory contents
-			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
+			var request = new HttpRequestMessage(HttpMethod.Get, uri);
 			AddCromeHeaders(request);
 
 			// parse result
@@ -118,7 +117,6 @@ namespace MatterHackers.MatterControl.Library
 					this.ChildContainers.Add(
 						new DynamicContainerLink(
 							() => file.name,
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
 							() => new GitHubContainer(printer, file.name, Account, Repository, RepoDirectory + "/" + file.name),
 							() =>

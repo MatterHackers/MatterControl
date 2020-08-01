@@ -27,13 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -41,15 +38,19 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private static char[] pathSeparators = new[] { '/', '\\' };
 
-		public string RelativeDirectory { get; set; }
+		private string pathSeparator = null;
 
 		public string Path { get; set; }
 
-		private string pathSeparator = null;
+		public string RelativeDirectory { get; set; }
+
+		public override void Dispose()
+		{
+		}
 
 		public override void Load()
 		{
-			//string hashCode = this.Url.GetHashCode().ToString();
+			// string hashCode = this.Url.GetHashCode().ToString();
 			var items = new Dictionary<string, long>();
 			var directories = new HashSet<string>();
 
@@ -92,10 +93,6 @@ namespace MatterHackers.MatterControl.Library
 				}).ToList<ILibraryContainerLink>();
 
 			this.Items = items.Select(kvp => new ZipMemoryItem(this.Path, RelativeDirectory.Length == 0 ? kvp.Key : $"{RelativeDirectory}{pathSeparator}{kvp.Key}", kvp.Value)).ToList<ILibraryItem>();
-		}
-
-		public override void Dispose()
-		{
 		}
 	}
 }

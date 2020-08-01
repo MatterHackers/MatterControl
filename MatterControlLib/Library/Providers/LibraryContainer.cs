@@ -54,11 +54,6 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
-			if (item is LocalZipContainerLink)
-			{
-				return Task.FromResult(AggContext.StaticData.LoadIcon(Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply());
-			}
-
 			return Task.FromResult<ImageBuffer>(null);
 		}
 

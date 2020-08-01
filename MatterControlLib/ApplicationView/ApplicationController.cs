@@ -1260,7 +1260,6 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_20x20.png")),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_folder.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
@@ -1277,7 +1276,6 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
 					() => this.Library.LibraryCollectionContainer));
 
@@ -1302,7 +1300,6 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
 					() => new RootHistoryContainer()));
 
@@ -1315,7 +1312,6 @@ namespace MatterHackers.MatterControl
 					{
 						new DynamicContainerLink(
 							() => "Printers".Localize(),
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 							() => new OpenPrintersContainer())
 					}

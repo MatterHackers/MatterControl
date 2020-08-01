@@ -27,12 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
 using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -46,20 +46,20 @@ namespace MatterHackers.MatterControl.Library
 			this.FileSize = fileSize;
 		}
 
-		public override string ID => agg_basics.GetLongHashCode($"{this.Path}/{this.RelativePath}").ToString();
-
-		public string RelativePath { get; set; }
+		public string AssetPath { get; } = null;
 
 		public string ContentType => System.IO.Path.GetExtension(this.Name).ToLower().Trim('.');
-
-		public string AssetPath { get; } = null;
 
 		public string FileName => System.IO.Path.GetFileName(this.Name);
 
 		/// <summary>
-		// Gets the size, in bytes, of the current file.
+		/// Gets the size, in bytes, of the current file.
 		/// </summary>
 		public long FileSize { get; private set; }
+
+		public override string ID => agg_basics.GetLongHashCode($"{this.Path}/{this.RelativePath}").ToString();
+
+		public string RelativePath { get; set; }
 
 		public async Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{

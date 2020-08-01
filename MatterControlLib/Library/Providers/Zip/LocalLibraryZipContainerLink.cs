@@ -32,7 +32,7 @@ namespace MatterHackers.MatterControl.Library
 	public class LocalLibraryZipContainerLink : LocalZipContainerLink
 	{
 		public LocalLibraryZipContainerLink(int id, string filePath, string nameOverride = null)
-			: base (filePath, nameOverride)
+			: base(filePath, nameOverride)
 		{
 			this.RowID = id;
 		}

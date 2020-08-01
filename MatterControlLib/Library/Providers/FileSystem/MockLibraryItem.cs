@@ -27,21 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using System;
+using System.IO;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class SDCardFileItem : ILibraryItem
+
+	public class MockLibraryItem : ILibraryItem
 	{
 		public DateTime DateCreated { get; } = DateTime.Now;
 
 		public DateTime DateModified { get; } = DateTime.Now;
 
-		public string ID { get; } = Guid.NewGuid().ToString();
+		public string ID { get; set; }
 
-		public bool IsProtected { get; } = true;
+		public bool IsProtected => true;
 
-		public bool IsVisible { get; } = true;
+		public bool IsVisible => true;
 
 		public string Name { get; set; }
 	}

@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 		public ILibraryContext LibraryView { get; set; }
 
 		public PartWorkspace(PrinterConfig printer)
-			: this (printer.Bed)
+			: this(printer.Bed)
 		{
 			this.Printer = printer;
 			this.PrinterID = printer.Settings.ID;
@@ -56,8 +56,7 @@ namespace MatterHackers.MatterControl
 			{
 				wrappedLibrary.ExtraContainers.Add(
 					new DynamicContainerLink(
-						() => "Printer Files".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
+						() => printer.Settings.GetValue(SettingsKey.printer_name),
 						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 						() => new PrinterContainer(printer))
 					{

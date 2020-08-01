@@ -38,7 +38,9 @@ namespace MatterHackers.MatterControl.PrintQueue
 	public enum ActionScope
 	{
 		ListItem,
+
 		ListView,
+
 		None
 	}
 
@@ -49,14 +51,17 @@ namespace MatterHackers.MatterControl.PrintQueue
 			this.Scope = scope;
 		}
 
-		public string Title { get; set; }
-
 		public Action<IEnumerable<ILibraryItem>, LibraryListView> Action { get; set; }
 
-		public Func<IEnumerable<ListViewItem>, LibraryListView, bool> IsEnabled { get; set; }
-		public string ToolTipText { get; internal set; }
 		public ImageBuffer Icon { get; internal set; }
+
+		public Func<IEnumerable<ListViewItem>, LibraryListView, bool> IsEnabled { get; set; }
+
 		public ActionScope Scope { get; }
+
+		public string Title { get; set; }
+
+		public string ToolTipText { get; internal set; }
 	}
 
 	public class MenuSeparator : LibraryAction

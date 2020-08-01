@@ -30,24 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
 	public class FileSystemFileItem : FileSystemItem, ILibraryAssetStream
 	{
-		public string FileName => System.IO.Path.GetFileName(this.Path);
-
-		public string ContentType => System.IO.Path.GetExtension(this.Path).ToLower().Trim('.');
-
-		public string AssetPath => this.Path;
-
-		/// <summary>
-		// Gets the size, in bytes, of the current file.
-		/// </summary>
-		public long FileSize { get; private set; }
-
-		public FileSystemFileItem(string path) 
+		public FileSystemFileItem(string path)
 			: base(path)
 		{
 			var fileInfo = new FileInfo(path);
@@ -56,6 +44,17 @@ namespace MatterHackers.MatterControl.Library
 				this.FileSize = fileInfo.Length;
 			}
 		}
+
+		public string AssetPath => this.Path;
+
+		public string ContentType => System.IO.Path.GetExtension(this.Path).ToLower().Trim('.');
+
+		public string FileName => System.IO.Path.GetFileName(this.Path);
+
+		/// <summary>
+		/// Gets the size, in bytes, of the current file.
+		/// </summary>
+		public long FileSize { get; private set; }
 
 		public Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
 		{

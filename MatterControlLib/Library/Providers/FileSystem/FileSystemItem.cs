@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
 using System;
 using System.IO;
+using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -39,12 +39,6 @@ namespace MatterHackers.MatterControl.Library
 	public class FileSystemItem : ILibraryItem
 	{
 		private string fileName;
-
-		public string Path { get; set; }
-		public string Category { get; set; }
-		public virtual bool IsProtected => false;
-		public virtual bool IsVisible => true;
-		public virtual bool LocalContentExists => true;
 
 		public FileSystemItem(string path)
 		{
@@ -76,11 +70,19 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public virtual string ID => agg_basics.GetLongHashCode(this.Path).ToString();
+		public string Category { get; set; }
 
 		public DateTime DateCreated { get; }
 
 		public DateTime DateModified { get; }
+
+		public virtual string ID => agg_basics.GetLongHashCode(this.Path).ToString();
+
+		public virtual bool IsProtected => false;
+
+		public virtual bool IsVisible => true;
+
+		public virtual bool LocalContentExists => true;
 
 		public virtual string Name
 		{
@@ -93,25 +95,13 @@ namespace MatterHackers.MatterControl.Library
 
 				return fileName;
 			}
+
 			set
 			{
 				fileName = value;
 			}
 		}
-	}
 
-	public class MockLibraryItem : ILibraryItem
-	{
-		public string ID { get; set; }
-
-		public string Name { get; set; }
-
-		public bool IsProtected => true;
-
-		public bool IsVisible => true;
-
-		public DateTime DateCreated { get; } = DateTime.Now;
-
-		public DateTime DateModified { get; } = DateTime.Now;
+		public string Path { get; set; }
 	}
 }

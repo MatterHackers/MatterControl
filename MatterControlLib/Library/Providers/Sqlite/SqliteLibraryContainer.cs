@@ -27,15 +27,15 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.PrintQueue;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.PrintQueue;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -64,40 +64,6 @@ namespace MatterHackers.MatterControl.Library
 		public int CollectionID { get; private set; }
 
 		public override ICustomSearch CustomSearch { get; }
-
-		public override void Load()
-		{
-			var childCollections = this.GetChildCollections();
-
-			var allFiles = this.GetLibraryItems(keywordFilter);
-
-			var zipFiles = allFiles.Where(f => string.Equals(Path.GetExtension(f.FileLocation), ".zip", StringComparison.OrdinalIgnoreCase));
-
-			var nonZipFiles = allFiles.Except(zipFiles);
-
-			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
-			{
-				CollectionID = c.Id,
-				Name = c.Name
-			});
-
-			this.ChildContainers = childContainers.Concat(
-				zipFiles.Select(f => new LocalLibraryZipContainerLink(f.Id, f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
-
-			// PrintItems projected onto FileSystemFileItem
-			this.Items = nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
-			{
-				if (File.Exists(printItem.FileLocation))
-				{
-					return new SqliteFileItem(printItem);
-				}
-				else
-				{
-					return new MessageItem($"{printItem.Name} (Missing)");
-					// return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
-				}
-			}).ToList();
-		}
 
 		public override async void Add(IEnumerable<ILibraryItem> items)
 		{
@@ -149,20 +115,56 @@ namespace MatterHackers.MatterControl.Library
 			});
 		}
 
-		private List<PrintItem> GetLibraryItems(string keyphrase = null)
+		public void ApplyFilter(string filter, ILibraryContext libraryContext)
 		{
-			// TODO: String concatenation to build sql statements is the root of all sql injection attacks. This needs to be changed to use parameter objects as would be expected
-			string query;
-			if (string.IsNullOrEmpty(keyphrase))
-			{
-				query = $"SELECT * FROM PrintItem WHERE PrintItemCollectionID = {CollectionID} ORDER BY Name ASC;";
-			}
-			else
-			{
-				query = $"SELECT * FROM PrintItem WHERE PrintItemCollectionID = {CollectionID} AND Name LIKE '%{keyphrase}%' ORDER BY Name ASC;";
-			}
+			keywordFilter = filter;
+			this.Load();
+			this.OnContentChanged();
+		}
 
-			return Datastore.Instance.dbSQLite.Query<PrintItem>(query).ToList();
+		public void ClearFilter()
+		{
+			keywordFilter = null;
+			this.Load();
+			this.OnContentChanged();
+		}
+
+		public override void Dispose()
+		{
+		}
+
+		public override void Load()
+		{
+			var childCollections = this.GetChildCollections();
+
+			var allFiles = this.GetLibraryItems(keywordFilter);
+
+			var zipFiles = allFiles.Where(f => string.Equals(Path.GetExtension(f.FileLocation), ".zip", StringComparison.OrdinalIgnoreCase));
+
+			var nonZipFiles = allFiles.Except(zipFiles);
+
+			IEnumerable<ILibraryContainerLink> childContainers = childCollections.Select(c => new SqliteLibraryContainerLink()
+			{
+				CollectionID = c.Id,
+				Name = c.Name
+			});
+
+			this.ChildContainers = childContainers.Concat(
+				zipFiles.Select(f => new LocalLibraryZipContainerLink(f.Id, f.FileLocation, f.Name))).OrderBy(d => d.Name).ToList();
+
+			// PrintItems projected onto FileSystemFileItem
+			this.Items = nonZipFiles.Select<PrintItem, ILibraryItem>(printItem =>
+			{
+				if (File.Exists(printItem.FileLocation))
+				{
+					return new SqliteFileItem(printItem);
+				}
+				else
+				{
+					return new MessageItem($"{printItem.Name} (Missing)");
+					// return new MissingFileItem() // Needs to return a content specific icon with a missing overlay - needs to lack all print operations
+				}
+			}).ToList();
 		}
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
@@ -207,6 +209,12 @@ namespace MatterHackers.MatterControl.Library
 			this.ReloadContent();
 		}
 
+		protected List<PrintItemCollection> GetChildCollections()
+		{
+			return Datastore.Instance.dbSQLite.Query<PrintItemCollection>(
+				$"SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {CollectionID} ORDER BY Name ASC;").ToList();
+		}
+
 		/// <summary>
 		/// Creates a database PrintItem entity, copies the source file to a new library
 		/// path and updates the PrintItem to point at the new target
@@ -229,37 +237,31 @@ namespace MatterHackers.MatterControl.Library
 			printItem.Commit();
 		}
 
-		protected List<PrintItemCollection> GetChildCollections()
+		private List<PrintItem> GetLibraryItems(string keyphrase = null)
 		{
-			return Datastore.Instance.dbSQLite.Query<PrintItemCollection>(
-				$"SELECT * FROM PrintItemCollection WHERE ParentCollectionID = {CollectionID} ORDER BY Name ASC;").ToList();
-		}
+			// TODO: String concatenation to build sql statements is the root of all sql injection attacks. This needs to be changed to use parameter objects as would be expected
+			string query;
+			if (string.IsNullOrEmpty(keyphrase))
+			{
+				query = $"SELECT * FROM PrintItem WHERE PrintItemCollectionID = {CollectionID} ORDER BY Name ASC;";
+			}
+			else
+			{
+				query = $"SELECT * FROM PrintItem WHERE PrintItemCollectionID = {CollectionID} AND Name LIKE '%{keyphrase}%' ORDER BY Name ASC;";
+			}
 
-		public override void Dispose()
-		{
-		}
-
-		public void ApplyFilter(string filter, ILibraryContext libraryContext)
-		{
-			keywordFilter = filter;
-			this.Load();
-			this.OnContentChanged();
-		}
-
-		public void ClearFilter()
-		{
-			keywordFilter = null;
-			this.Load();
-			this.OnContentChanged();
+			return Datastore.Instance.dbSQLite.Query<PrintItem>(query).ToList();
 		}
 
 		public class SqliteLibraryContainerLink : ILibraryContainerLink
 		{
-			public string ID => "SqliteContainer" + this.CollectionID;
-
 			public int CollectionID { get; set; }
 
-			public string Name { get; set; }
+			public DateTime DateCreated { get; } = DateTime.Now;
+
+			public DateTime DateModified { get; } = DateTime.Now;
+
+			public string ID => "SqliteContainer" + this.CollectionID;
 
 			public bool IsProtected { get; set; } = false;
 
@@ -267,9 +269,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool IsVisible { get; set; } = true;
 
-			public DateTime DateCreated { get; } = DateTime.Now;
-
-			public DateTime DateModified { get; } = DateTime.Now;
+			public string Name { get; set; }
 
 			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{

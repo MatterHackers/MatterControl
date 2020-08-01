@@ -56,7 +56,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "SD Card".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
 					() => new SDCardContainer(printer),
 					() =>
@@ -71,16 +70,18 @@ namespace MatterHackers.MatterControl.Library
 			var containerName = $"{printer.Settings.GetValue(SettingsKey.make)} {"Parts".Localize()}";
 			var settings = printer.Settings;
 			var repository = "Machine_Library_Parts";
+			repository = "PulseOpenSource";
+			var subPath = $"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}";
+			subPath = "C Frame";
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => containerName,
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new GitHubContainer(printer,
 						containerName,
 						"MatterHackers",
 						repository,
-						$"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}"),
+						subPath),
 					() => printer.Settings.GetValue<bool>(SettingsKey.has_fan)) // visibility
 				{
 					IsReadOnly = true
@@ -89,7 +90,6 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new CalibrationPartsContainer())
 				{

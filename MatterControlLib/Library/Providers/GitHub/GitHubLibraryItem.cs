@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public long FileSize { get; private set; }
 
-		public string ID { get; set; }
+		public string ID => agg_basics.GetLongHashCode(Url).ToString();
 
 		public bool IsLocked { get; internal set; }
 
@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.Library
 			try
 			{
 				// get the file contents;
-				HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, Url);
+				var downLoadUrl = new HttpRequestMessage(HttpMethod.Get, Url);
 				GitHubContainer.AddCromeHeaders(downLoadUrl);
 
 				using (var client = new HttpClient())

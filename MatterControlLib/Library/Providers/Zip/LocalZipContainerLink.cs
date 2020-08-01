@@ -37,12 +37,17 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class LocalZipContainerLink : FileSystemItem, ILibraryContainerLink
 	{
-		private static ImageBuffer thumbnail;
+		private static readonly ImageBuffer Thumbnail;
 		private string currentDirectory = "";
 
 		static LocalZipContainerLink()
 		{
-			thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).SetPreMultiply();
+			Thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply();
+		}
+
+		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		{
+			return Task.FromResult<ImageBuffer>(Thumbnail);
 		}
 
 		public bool IsReadOnly { get; } = true;

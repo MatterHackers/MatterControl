@@ -656,7 +656,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
-				Title = "Create Folder...".Localize(),
+				Title = "Create Folder".Localize() + "...",
 				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{

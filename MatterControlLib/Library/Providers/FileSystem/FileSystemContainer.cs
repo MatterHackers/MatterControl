@@ -47,6 +47,10 @@ namespace MatterHackers.MatterControl.Library
 		private bool isDirty;
 		private string keywordFilter;
 
+		private long lastTimeContentsChanged;
+
+		private RunningInterval waitingForRefresh;
+
 		public FileSystemContainer(string fullPath)
 		{
 			this.CustomSearch = this;
@@ -57,7 +61,7 @@ namespace MatterHackers.MatterControl.Library
 
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
-#if !__ANDROID__
+
 			if (AggContext.OperatingSystem == OSType.Windows
 				&& Directory.Exists(fullPath))
 			{
@@ -72,8 +76,9 @@ namespace MatterHackers.MatterControl.Library
 				// Begin watching.
 				directoryWatcher.EnableRaisingEvents = true;
 			}
-#endif
 		}
+
+		public override ICustomSearch CustomSearch { get; }
 
 		public string FullPath { get; protected set; }
 
@@ -86,7 +91,91 @@ namespace MatterHackers.MatterControl.Library
 			base.Activate();
 		}
 
-		public override ICustomSearch CustomSearch { get; }
+		public async override void Add(IEnumerable<ILibraryItem> items)
+		{
+			if (!items.Any())
+			{
+				return;
+			}
+
+			if (directoryWatcher != null)
+			{
+				directoryWatcher.EnableRaisingEvents = false;
+			}
+
+			Directory.CreateDirectory(this.FullPath);
+
+			await Task.Run(async () =>
+			{
+				foreach (var item in items)
+				{
+					switch (item)
+					{
+						case CreateFolderItem newFolder:
+							string targetFolderPath = Path.Combine(this.FullPath, newFolder.Name);
+
+							// TODO: write adaption of GetNonCollidingName for directories
+							Directory.CreateDirectory(targetFolderPath);
+							this.isDirty = true;
+
+							break;
+
+						case ILibraryAssetStream streamItem:
+							string targetPath = Path.Combine(this.FullPath, streamItem.FileName);
+
+							try
+							{
+								if (File.Exists(targetPath))
+								{
+									targetPath = GetNonCollidingName(Path.GetFileName(targetPath));
+								}
+
+								using (var outputStream = File.OpenWrite(targetPath))
+								using (var contentStream = await streamItem.GetStream(null))
+								{
+									contentStream.Stream.CopyTo(outputStream);
+								}
+
+								this.Items.Add(new FileSystemFileItem(targetPath));
+								this.isDirty = true;
+							}
+							catch (Exception ex)
+							{
+								UiThread.RunOnIdle(() =>
+								{
+									ApplicationController.Instance.LogError($"Error adding file: {targetPath}\r\n{ex.Message}");
+								});
+							}
+
+							break;
+					}
+				}
+			});
+
+			if (directoryWatcher != null)
+			{
+				directoryWatcher.EnableRaisingEvents = false;
+			}
+
+			if (this.isDirty)
+			{
+				this.ReloadContent();
+			}
+		}
+
+		public void ApplyFilter(string filter, ILibraryContext libraryContext)
+		{
+			keywordFilter = filter;
+			this.Load();
+			this.OnContentChanged();
+		}
+
+		public void ClearFilter()
+		{
+			keywordFilter = null;
+			this.Load();
+			this.OnContentChanged();
+		}
 
 		public override void Deactivate()
 		{
@@ -104,37 +193,6 @@ namespace MatterHackers.MatterControl.Library
 				directoryWatcher.Created -= DirectoryContentsChanged;
 				directoryWatcher.Deleted -= DirectoryContentsChanged;
 				directoryWatcher.Renamed -= DirectoryContentsChanged;
-			}
-		}
-
-		long lastTimeContentsChanged;
-
-		private RunningInterval waitingForRefresh;
-
-		private void DirectoryContentsChanged(object sender, EventArgs e)
-		{
-			// Flag for reload
-			isDirty = true;
-
-			lastTimeContentsChanged = UiThread.CurrentTimerMs;
-
-			// Only refresh content if we're the active container
-			if (isActiveContainer
-				&& waitingForRefresh == null)
-			{
-				waitingForRefresh = UiThread.SetInterval(WaitToRefresh, .5);
-			}
-		}
-
-		private void WaitToRefresh()
-		{
-			if (UiThread.CurrentTimerMs > lastTimeContentsChanged + 500
-				&& waitingForRefresh != null)
-			{
-				UiThread.ClearInterval(waitingForRefresh);
-
-				waitingForRefresh = null;
-				this.ReloadContent();
 			}
 		}
 
@@ -194,119 +252,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		private bool FileNameContainsFilter(string filename, string filter)
-		{
-			string nameWithSpaces = Path.GetFileNameWithoutExtension(filename.Replace('_', ' '));
-
-			// Split the filter on word boundaries and determine if all terms in the given file name
-			foreach (string word in filter.Split(' '))
-			{
-				if (nameWithSpaces.IndexOf(word, StringComparison.OrdinalIgnoreCase) == -1)
-				{
-					return false;
-				}
-			}
-
-			return true;
-		}
-
-		private string GetNonCollidingName(string fileName)
-		{
-			// Switching from .stl, .obj or similar to AMF. Save the file and update the
-			// the filename with an incremented (n) value to reflect the extension change in the UI
-			var similarFileNames = Directory.GetFiles(this.FullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
-
-			// ;
-			var validName = agg_basics.GetNonCollidingName(fileName, (testName) => !File.Exists(testName));
-
-			return validName;
-		}
-
-		public void ApplyFilter(string filter, ILibraryContext libraryContext)
-		{
-			keywordFilter = filter;
-			this.Load();
-			this.OnContentChanged();
-		}
-
-		public void ClearFilter()
-		{
-			keywordFilter = null;
-			this.Load();
-			this.OnContentChanged();
-		}
-
-		public async override void Add(IEnumerable<ILibraryItem> items)
-		{
-			if (!items.Any())
-			{
-				return;
-			}
-
-			if (directoryWatcher != null)
-			{
-				directoryWatcher.EnableRaisingEvents = false;
-			}
-
-			Directory.CreateDirectory(this.FullPath);
-
-			await Task.Run(async () =>
-			{
-				foreach (var item in items)
-				{
-					switch (item)
-					{
-						case CreateFolderItem newFolder:
-							string targetFolderPath = Path.Combine(this.FullPath, newFolder.Name);
-
-							// TODO: write adaption of GetNonCollidingName for directories
-							Directory.CreateDirectory(targetFolderPath);
-							this.isDirty = true;
-
-							break;
-
-						case ILibraryAssetStream streamItem:
-							string targetPath = Path.Combine(this.FullPath, streamItem.FileName);
-
-							try
-							{
-								if (File.Exists(targetPath))
-								{
-									targetPath = GetNonCollidingName(Path.GetFileName(targetPath));
-								}
-
-								using (var outputStream = File.OpenWrite(targetPath))
-								using (var contentStream = await streamItem.GetStream(null))
-								{
-									contentStream.Stream.CopyTo(outputStream);
-								}
-
-								this.Items.Add(new FileSystemFileItem(targetPath));
-								this.isDirty = true;
-							}
-							catch (Exception ex)
-							{
-								UiThread.RunOnIdle(() =>
-								{
-									ApplicationController.Instance.LogError($"Error adding file: {targetPath}\r\n{ex.Message}");
-								});
-							}
-							break;
-					}
-				}
-			});
-
-			if (directoryWatcher != null)
-			{
-				directoryWatcher.EnableRaisingEvents = false;
-			}
-
-			if (this.isDirty)
-			{
-				this.ReloadContent();
-			}
-		}
-
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
 			// Removing content from the filesystem can have devastating effects - open a shell window allowing the customer make changes as they seem fit
@@ -348,6 +293,61 @@ namespace MatterHackers.MatterControl.Library
 
 					this.ReloadContent();
 				}
+			}
+		}
+
+		private void DirectoryContentsChanged(object sender, EventArgs e)
+		{
+			// Flag for reload
+			isDirty = true;
+
+			lastTimeContentsChanged = UiThread.CurrentTimerMs;
+
+			// Only refresh content if we're the active container
+			if (isActiveContainer
+				&& waitingForRefresh == null)
+			{
+				waitingForRefresh = UiThread.SetInterval(WaitToRefresh, .5);
+			}
+		}
+
+		private bool FileNameContainsFilter(string filename, string filter)
+		{
+			string nameWithSpaces = Path.GetFileNameWithoutExtension(filename.Replace('_', ' '));
+
+			// Split the filter on word boundaries and determine if all terms in the given file name
+			foreach (string word in filter.Split(' '))
+			{
+				if (nameWithSpaces.IndexOf(word, StringComparison.OrdinalIgnoreCase) == -1)
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		private string GetNonCollidingName(string fileName)
+		{
+			// Switching from .stl, .obj or similar to AMF. Save the file and update the
+			// the filename with an incremented (n) value to reflect the extension change in the UI
+			var similarFileNames = Directory.GetFiles(this.FullPath, $"{Path.GetFileNameWithoutExtension(fileName)}.*");
+
+			// ;
+			var validName = agg_basics.GetNonCollidingName(fileName, (testName) => !File.Exists(testName));
+
+			return validName;
+		}
+
+		private void WaitToRefresh()
+		{
+			if (UiThread.CurrentTimerMs > lastTimeContentsChanged + 500
+				&& waitingForRefresh != null)
+			{
+				UiThread.ClearInterval(waitingForRefresh);
+
+				waitingForRefresh = null;
+				this.ReloadContent();
 			}
 		}
 
