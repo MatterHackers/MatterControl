@@ -41,32 +41,18 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class GitHubContainer : LibraryContainer
 	{
-		public struct Directory
-		{
-			public List<FileData> Files;
-			public string Name;
-			public List<Directory> SubDirs;
-		}
-
-		// Used to hold file data
-		public struct FileData
-		{
-			public string Contents;
-			public string Name;
-		}
-
 		internal struct FileInfo
 		{
 			public LinkFields _links;
-			public string DownloadUrl;
-			public string Name;
-			public string Type;
+			public string download_url;
+			public string name;
+			public string type;
 		}
 
 		// JSON parsing methods
 		internal struct LinkFields
 		{
-			public string Self;
+			public string self;
 		}
 
 		private PrinterConfig printer;
@@ -103,17 +89,16 @@ namespace MatterHackers.MatterControl.Library
 		}
 
 		// Get all files from a repo
-		public async Task<Directory> GetRepo()
+		public async Task GetRepo()
 		{
 			HttpClient client = new HttpClient();
-			Directory root = await ReadDirectory("root",
+			await ReadDirectory("root",
 				client,
 				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}");
 			client.Dispose();
-			return root;
 		}
 
-		private async Task<Directory> ReadDirectory(string name, HttpClient client, string uri)
+		private async Task ReadDirectory(string name, HttpClient client, string uri)
 		{
 			// get the directory contents
 			HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, uri);
@@ -126,20 +111,16 @@ namespace MatterHackers.MatterControl.Library
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 
 			// read in data
-			Directory result;
-			result.Name = name;
-			result.SubDirs = new List<Directory>();
-			result.Files = new List<FileData>();
 			foreach (FileInfo file in dirContents)
 			{
-				if (file.Type == "dir")
+				if (file.type == "dir")
 				{
 					this.ChildContainers.Add(
 						new DynamicContainerLink(
-							() => file.Name,
+							() => file.name,
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder_20x20.png")),
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
-							() => new GitHubContainer(printer, file.Name, Account, Repository, file.Name),
+							() => new GitHubContainer(printer, file.name, Account, Repository, RepoDirectory + "/" + file.name),
 							() =>
 							{
 								return true;
@@ -152,13 +133,11 @@ namespace MatterHackers.MatterControl.Library
 					// Directory sub = await ReadDirectory(file.name, client, file._links.self, access_token);
 					// result.subDirs.Add(sub);
 				}
-				else if (file.Type == "file")
+				else if (file.type == "file")
 				{
-					this.Items.Add(new GitHubLibraryItem(file.Name, file.DownloadUrl));
+					this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));
 				}
 			}
-
-			return result;
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)

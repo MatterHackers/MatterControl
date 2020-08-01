@@ -27,15 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DataStorage;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.MatterControl.DataStorage;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -51,7 +48,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public string Category { get; set; }
 
-		public string ContentType => Path.GetExtension(Url);
+		public string ContentType => FileExtension.ToLower();
 
 		public DateTime DateCreated { get; } = DateTime.Now;
 
@@ -72,18 +69,20 @@ namespace MatterHackers.MatterControl.Library
 		public virtual bool LocalContentExists => File.Exists(CachePath);
 
 		public string Name { get; set; }
+
 		public string Url { get; }
+
 		public string ThumbnailUrl { get; internal set; }
 
 		private string CachePath => GetLibraryPath(FileKey, FileExtension);
 
-		public string FileKey { get; private set; }
+		public string FileKey => Url.GetLongHashCode().ToString();
 
-		public string FileExtension { get; private set; }
+		public string FileExtension => Path.GetExtension(Name).Substring(1);
 
 		public static string GetLibraryPath(string fileKey, string fileExtension)
 		{
-			return Path.Combine(ApplicationDataStorage.Instance.CloudLibraryPath, $"{fileKey}.{fileExtension}");
+			return Path.Combine(ApplicationDataStorage.Instance.LibraryAssetsPath, $"{fileKey}.{fileExtension}");
 		}
 
 		public async Task<StreamAndLength> GetStream(Action<double, string> reportProgress)
@@ -110,8 +109,6 @@ namespace MatterHackers.MatterControl.Library
 
 		private async Task<string> DownloadDigitalItem(Action<double, string> reportProgress, string libraryFilePath)
 		{
-			string url = "";
-
 			// Check for library cache file and download if missing
 			if (!File.Exists(libraryFilePath))
 			{
@@ -120,7 +117,7 @@ namespace MatterHackers.MatterControl.Library
 
 				using (var writeStream = File.Create(tempFilePath))
 				{
-					await DownloadWithProgress(url, writeStream, reportProgress);
+					await DownloadWithProgress(writeStream, reportProgress);
 				}
 
 				reportProgress?.Invoke(0, "");
@@ -142,20 +139,22 @@ namespace MatterHackers.MatterControl.Library
 			return libraryFilePath;
 		}
 
-		private async Task DownloadWithProgress(string url, FileStream fileStream, Action<double, string> reportProgress)
+		private async Task DownloadWithProgress(FileStream fileStream, Action<double, string> reportProgress)
 		{
 			try
 			{
 				// get the file contents;
-				HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, url);
+				HttpRequestMessage downLoadUrl = new HttpRequestMessage(HttpMethod.Get, Url);
 				GitHubContainer.AddCromeHeaders(downLoadUrl);
 
-				string content = "";
-				using (HttpClient client = new HttpClient())
+				using (var client = new HttpClient())
 				{
 					using (HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl))
 					{
-						content = await contentResponse.Content.ReadAsStringAsync();
+						using (var readData = await contentResponse.Content.ReadAsStreamAsync())
+						{
+							await readData.CopyToAsync(fileStream);
+						}
 					}
 				}
 			}
