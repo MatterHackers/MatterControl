@@ -200,6 +200,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnabled(true);
 						}
+
 						movementControlsContainer?.jogControls.SetEnabledLevels(enableBabysteppingMode: false, enableEControls: true);
 						break;
 
@@ -246,6 +247,7 @@ namespace MatterHackers.MatterControl
 						{
 							widget?.SetEnabled(true);
 						}
+
 						movementControlsContainer?.jogControls.SetEnabledLevels(enableBabysteppingMode: false, enableEControls: true);
 
 						break;

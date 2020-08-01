@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 using static MatterHackers.MatterControl.StyledMessageBox;
@@ -635,28 +636,98 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			bodyRow.AddChild(expandingContainer);
 
-			var progressContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				VAnchor = VAnchor.Center | VAnchor.Fit,
 				HAnchor = HAnchor.Stretch,
 			};
-			expandingContainer.AddChild(progressContainer);
+			expandingContainer.AddChild(topToBottom);
+
+			var progressRow = new GuiWidget()
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Fit
+			};
+
+			topToBottom.AddChild(progressRow);
 
 			var progressDial = new ProgressDial(theme)
 			{
 				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
 				Height = 200 * DeviceScale,
 				Width = 200 * DeviceScale,
 				Name = "Print Progress Dial"
 			};
-			progressContainer.AddChild(progressDial);
+			progressRow.AddChild(progressDial);
 
+			// create a set of controls to do baby stepping on the first layer
+			var babySteppingControls = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Right,
+				VAnchor = VAnchor.Center | VAnchor.Fit,
+			};
+
+			babySteppingControls.Width = 80 * GuiWidget.DeviceScale;
+
+			progressRow.AddChild(babySteppingControls);
+
+			// add in the move up button
+			var babyStepAmount = .02;
+			var upButton = babySteppingControls.AddChild(new IconButton(AggContext.StaticData.LoadIcon("Up Arrow.png", 32, 32, theme.InvertIcons), theme)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Absolute,
+				Margin = 0,
+				ToolTipText = "Raise extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
+			});
+
+			upButton.Click += (s, e) =>
+			{
+				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+				currentZ += babyStepAmount;
+				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+			};
+
+			// add in the current position display
+			var zTuning = babySteppingControls.AddChild(new ZTuningWidget(printer.Settings, theme, false)
+			{
+				HAnchor = HAnchor.Center | HAnchor.Fit,
+				VAnchor = VAnchor.Fit,
+				Margin = new BorderDouble(0, 3, 0, 0),
+				Padding = 0,
+			});
+
+			babySteppingControls.AddChild(new TextWidget("Z Offset".Localize(), pointSize: 8)
+			{
+				TextColor = theme.TextColor,
+				Margin = new BorderDouble(0, 0, 0, 3),
+				AutoExpandBoundsToText = true,
+				HAnchor = HAnchor.Center,
+			});
+
+			// add in the move down button
+			var downButton = babySteppingControls.AddChild(new IconButton(AggContext.StaticData.LoadIcon("Down Arrow.png", 32, 32, theme.InvertIcons), theme)
+			{
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Absolute,
+				Margin = 0,
+				ToolTipText = "Lower extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
+			});
+			downButton.Click += (s, e) =>
+			{
+				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+				currentZ -= babyStepAmount;
+				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+			};
+
+			// build the bottom row to hold re-slice
 			var bottomRow = new GuiWidget()
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit
 			};
-			progressContainer.AddChild(bottomRow);
+			topToBottom.AddChild(bottomRow);
 
 			var resliceMessageRow = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -664,7 +735,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Visible = false
 			};
-			progressContainer.AddChild(resliceMessageRow);
+			topToBottom.AddChild(resliceMessageRow);
 
 			var timeContainer = new FlowLayoutWidget()
 			{
@@ -681,7 +752,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Right,
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(0, 0, 7, 0),
-					Name = "Re-Slice Button"
+					Name = "Re-Slice Button",
+					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
 				};
 				bool activelySlicing = false;
 				resliceButton.Click += (s, e) =>
@@ -822,41 +894,46 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			timeStack.AddChild(timeToEnd);
 
 			var runningInterval = UiThread.SetInterval(() =>
+			{
+				int totalSecondsPrinted = printer.Connection.SecondsPrinted;
+
+				int hoursPrinted = totalSecondsPrinted / (60 * 60);
+				int minutesPrinted = totalSecondsPrinted / 60 - hoursPrinted * 60;
+				var secondsPrinted = totalSecondsPrinted % 60;
+
+				// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
+				timePrinted.Text = GetFormatedTime(hoursPrinted, minutesPrinted, secondsPrinted);
+
+				int totalSecondsToEnd = printer.Connection.SecondsToEnd;
+
+				int hoursToEnd = totalSecondsToEnd / (60 * 60);
+				int minutesToEnd = totalSecondsToEnd / 60 - hoursToEnd * 60;
+				var secondsToEnd = totalSecondsToEnd % 60;
+
+				timeToEnd.Text = GetFormatedTime(hoursToEnd, minutesToEnd, secondsToEnd);
+
+				progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
+				if (progressDial.LayerIndex > 0)
 				{
-					int totalSecondsPrinted = printer.Connection.SecondsPrinted;
+					babySteppingControls.Visible = false;
+				}
 
-					int hoursPrinted = totalSecondsPrinted / (60 * 60);
-					int minutesPrinted = totalSecondsPrinted / 60 - hoursPrinted * 60;
-					var secondsPrinted = totalSecondsPrinted % 60;
+				progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayerSeconds;
+				progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
 
-					// TODO: Consider if the consistency of a common time format would look and feel better than changing formats based on elapsed duration
-					timePrinted.Text = GetFormatedTime(hoursPrinted, minutesPrinted, secondsPrinted);
+				switch (printer.Connection.CommunicationState)
+				{
+					case CommunicationStates.PreparingToPrint:
+					case CommunicationStates.Printing:
+					case CommunicationStates.Paused:
+						bodyRow.Visible = true;
+						break;
 
-					int totalSecondsToEnd = printer.Connection.SecondsToEnd;
-
-					int hoursToEnd = totalSecondsToEnd / (60 * 60);
-					int minutesToEnd = totalSecondsToEnd / 60 - hoursToEnd * 60;
-					var secondsToEnd = totalSecondsToEnd % 60;
-
-					timeToEnd.Text = GetFormatedTime(hoursToEnd, minutesToEnd, secondsToEnd);
-
-					progressDial.LayerIndex = printer.Connection.CurrentlyPrintingLayer;
-					progressDial.LayerCompletedRatio = printer.Connection.RatioIntoCurrentLayerSeconds;
-					progressDial.CompletedRatio = printer.Connection.PercentComplete / 100;
-
-					switch (printer.Connection.CommunicationState)
-					{
-						case CommunicationStates.PreparingToPrint:
-						case CommunicationStates.Printing:
-						case CommunicationStates.Paused:
-							bodyRow.Visible = true;
-							break;
-
-						default:
-							bodyRow.Visible = false;
-							break;
-					}
-				}, 1);
+					default:
+						bodyRow.Visible = false;
+						break;
+				}
+			}, 1);
 
 			bodyRow.Closed += (s, e) => UiThread.ClearInterval(runningInterval);
 
