@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl
 			}
 
 			// sort them by size
-			object3DList.Sort(SortOnSize);
+			object3DList.Sort(SortOnBigToLittle);
 
 			double ratioPerMeshGroup = 1.0 / object3DList.Count;
 			double currentRatioDone = 0;
@@ -120,10 +120,10 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private static int SortOnSize(IObject3D x, IObject3D y)
+		private static int SortOnBigToLittle(IObject3D a, IObject3D b)
 		{
-			AxisAlignedBoundingBox xAABB = x.GetAxisAlignedBoundingBox();
-			AxisAlignedBoundingBox yAABB = y.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox xAABB = b.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox yAABB = a.GetAxisAlignedBoundingBox();
 			return Math.Max(xAABB.XSize, xAABB.YSize).CompareTo(Math.Max(yAABB.XSize, yAABB.YSize));
 		}
 
