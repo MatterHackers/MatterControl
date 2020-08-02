@@ -41,15 +41,16 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-	public class StlExport : IExportPlugin
+
+	public class AmfExport : IExportPlugin
 	{
-		public string ButtonText => "Part as STL File".Localize();
+		public string ButtonText => "Part as AMF File".Localize();
 
-		public string FileExtension => ".stl";
+		public string FileExtension => ".amf";
 
-		public string ExtensionFilter => "Save as STL|*.stl";
+		public string ExtensionFilter => "Save as AMF|*.amf";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "stl.png"));
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "amf.png"));
 
 		public void Initialize(PrinterConfig printer)
 		{
@@ -75,9 +76,9 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return new List<ValidationError>()
 			{
-				new ValidationError("ItemToSTLExportInvalid")
+				new ValidationError("ItemToAMFExportInvalid")
 				{
-					Error = "Item cannot be exported as STL".Localize(),
+					Error = "Item cannot be exported as AMF".Localize(),
 					Details = firstItem?.ToString() ?? ""
 				}
 			};
