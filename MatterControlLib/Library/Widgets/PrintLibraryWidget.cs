@@ -94,8 +94,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 				Name = "Folders Toolbar",
-				ToolTipText = "Sorting"
 			};
+
+			toolbar.OverflowButton.ToolTipText = "Sorting";
 
 			theme.ApplyBottomBorder(toolbar, shadedBorder: true);
 
@@ -154,13 +155,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			toolbar.AddChild(
 				viewMenuButton = new PopupMenuButton(
-					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
-					{
-						ToolTipText = "View Settings"
-					},
+					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons)),
 					theme)
 				{
-					AlignToRightEdge = true
+					AlignToRightEdge = true,
+					ToolTipText = "View Settings"
 				});
 
 			viewMenuButton.DynamicPopupContent = () =>
