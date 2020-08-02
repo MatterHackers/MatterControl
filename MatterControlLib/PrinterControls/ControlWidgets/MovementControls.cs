@@ -43,18 +43,21 @@ namespace MatterHackers.MatterControl.PrinterControls
 {
 	public class MovementControls : FlowLayoutWidget
 	{
-		private PrinterConfig printer;
-		private ThemeConfig theme;
 		public FlowLayoutWidget manualControlsLayout;
-		internal JogControls jogControls;
 
 		// Provides a list of DisableableWidgets controls that can be toggled on/off at runtime
 		internal List<GuiWidget> DisableableWidgets = new List<GuiWidget>();
 
+		internal JogControls jogControls;
+
+		private PrinterConfig printer;
+
 		private LimitCallingFrequency reportDestinationChanged = null;
 
+		private ThemeConfig theme;
+
 		private MovementControls(PrinterConfig printer, XYZColors xyzColors, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.printer = printer;
 			this.theme = theme;
@@ -97,11 +100,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			base.OnClosed(e);
 		}
 
-		private void EditOptions()
-		{
-			DialogWindow.Show(new MovementSpeedsPage(printer));
-		}
-
 		/// <summary>
 		/// Helper method to populate the DisableableWidgets local property.
 		/// </summary>
@@ -110,6 +108,16 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			this.DisableableWidgets.Add(widget);
 			return widget;
+		}
+
+		private void Connection_DestinationChanged(object s, EventArgs e)
+		{
+			reportDestinationChanged.CallEvent();
+		}
+
+		private void EditOptions()
+		{
+			DialogWindow.Show(new MovementSpeedsPage(printer));
 		}
 
 		private FlowLayoutWidget GetHomeButtonBar()
@@ -229,11 +237,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			return hwDestinationBar;
 		}
 
-		private void Connection_DestinationChanged(object s, EventArgs e)
-		{
-			reportDestinationChanged.CallEvent();
-		}
-
 		private void SetDestinationPositionText(TextWidget xPosition, TextWidget yPosition, TextWidget zPosition)
 		{
 			Vector3 destinationPosition = printer.Connection.CurrentDestination;
@@ -245,30 +248,36 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 	public class XYZColors
 	{
-		public Color EColor { get; }
-		public Color XColor { get; }
-		public Color YColor { get; }
-		public Color ZColor { get; }
-
 		public XYZColors(ThemeConfig theme)
 		{
-			this.EColor = theme.BorderColor40; // new Color(180, 180, 180);
-			this.XColor = theme.BorderColor40; // new Color(180, 180, 180);
-			this.YColor = theme.BorderColor40; //new Color(255, 255, 255);
-			this.ZColor = theme.BorderColor40; //new Color(255, 255, 255);
+			this.EColor = theme.BorderColor40;
+			this.XColor = theme.BorderColor40;
+			this.YColor = theme.BorderColor40;
+			this.ZColor = theme.BorderColor40;
 		}
+
+		public Color EColor { get; }
+
+		public Color XColor { get; }
+
+		public Color YColor { get; }
+
+		public Color ZColor { get; }
 	}
 
 	public class ZTuningWidget : GuiWidget
 	{
-		private TextWidget zOffsetStreamDisplay;
 		private GuiWidget clearZOffsetButton;
-		private FlowLayoutWidget zOffsetStreamContainer;
 
-		private ThemeConfig theme;
 		private PrinterSettings printerSettings;
 
-		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme)
+		private ThemeConfig theme;
+
+		private FlowLayoutWidget zOffsetStreamContainer;
+
+		private TextWidget zOffsetStreamDisplay;
+
+		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool showClearButton = true)
 		{
 			this.theme = theme;
 			this.printerSettings = printerSettings;
@@ -281,8 +290,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Padding = new BorderDouble(3),
 				HAnchor = HAnchor.Fit,
 				VAnchor = VAnchor.Center,
-				BackgroundColor = theme.MinimalShade,
-				Height = 20
+				Height = 20 * GuiWidget.DeviceScale
 			};
 			this.AddChild(zOffsetStreamContainer);
 
@@ -296,15 +304,18 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
 
-			clearZOffsetButton = theme.CreateSmallResetButton();
-			clearZOffsetButton.Name = "Clear ZOffset button";
-			clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
-			clearZOffsetButton.Visible = zoffset != 0;
-			clearZOffsetButton.Click += (sender, e) =>
+			if (showClearButton)
 			{
-				printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
-			};
-			zOffsetStreamContainer.AddChild(clearZOffsetButton);
+				clearZOffsetButton = theme.CreateSmallResetButton();
+				clearZOffsetButton.Name = "Clear ZOffset button";
+				clearZOffsetButton.ToolTipText = "Clear ZOffset".Localize();
+				clearZOffsetButton.Visible = zoffset != 0;
+				clearZOffsetButton.Click += (sender, e) =>
+				{
+					printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
+				};
+				zOffsetStreamContainer.AddChild(clearZOffsetButton);
+			}
 
 			// Register listeners
 			printerSettings.SettingChanged += Printer_SettingChanged;
@@ -323,10 +334,12 @@ namespace MatterHackers.MatterControl.PrinterControls
 			if (e?.Data == SettingsKey.baby_step_z_offset)
 			{
 				double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				bool hasOverriddenZOffset = (zoffset != 0);
+				bool hasOverriddenZOffset = zoffset != 0;
 
-				zOffsetStreamContainer.BackgroundColor = hasOverriddenZOffset ? theme.PresetColors.UserOverride : theme.MinimalShade;
-				clearZOffsetButton.Visible = hasOverriddenZOffset;
+				if (clearZOffsetButton != null)
+				{
+					clearZOffsetButton.Visible = hasOverriddenZOffset;
+				}
 
 				zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
 			}

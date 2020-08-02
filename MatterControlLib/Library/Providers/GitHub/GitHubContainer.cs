@@ -40,6 +40,8 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class GitHubContainer : LibraryContainer
 	{
+#pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
+#pragma warning disable SA1310 // Field names should not contain underscore
 		internal struct FileInfo
 		{
 			public LinkFields _links;
@@ -53,6 +55,8 @@ namespace MatterHackers.MatterControl.Library
 		{
 			public string self;
 		}
+#pragma warning restore SA1310 // Field names should not contain underscore
+#pragma warning restore SA1307 // Accessible fields should begin with upper-case letter
 
 		private readonly PrinterConfig printer;
 

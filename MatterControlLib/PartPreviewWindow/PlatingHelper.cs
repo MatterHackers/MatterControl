@@ -169,6 +169,11 @@ namespace MatterHackers.MatterControl
 		/// <param name="itemsToAvoid">The objects to hit test against</param>
 		public static void MoveToOpenPosition(IObject3D itemToMove, IEnumerable<IObject3D> itemsToAvoid)
 		{
+			if (itemToMove == null)
+			{
+				return;
+			}
+
 			// find a place to put it that doesn't hit anything
 			var currentBounds = itemToMove.GetAxisAlignedBoundingBox();
 			var itemToMoveBounds = new AxisAlignedBoundingBox(currentBounds.MinXYZ, currentBounds.MaxXYZ);
@@ -178,32 +183,16 @@ namespace MatterHackers.MatterControl
 			itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
 
 			var transform = Matrix4X4.Identity;
-			int currentSize = 1;
 			bool partPlaced = false;
 
-			while (!partPlaced && itemToMove != null)
+			while (!partPlaced)
 			{
-				int xStep = 0;
-				int yStep;
-				// check far right edge
-				for (yStep = 0; yStep < currentSize; yStep++)
+				int distance = 0;
+				while (!partPlaced)
 				{
-					partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
-
-					if (partPlaced)
+					for (int i = 0; i <= distance; i++)
 					{
-						break;
-					}
-				}
-
-				if (!partPlaced)
-				{
-					yStep = currentSize;
-					// check top edge
-					for (xStep = 0; xStep < currentSize; xStep++)
-					{
-						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
-
+						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, i, distance, ref transform);
 						if (partPlaced)
 						{
 							break;
@@ -212,13 +201,18 @@ namespace MatterHackers.MatterControl
 
 					if (!partPlaced)
 					{
-						xStep = currentSize;
-						// check top right point
-						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, yStep, xStep, ref transform);
+						for (int i = 0; i <= distance; i++)
+						{
+							partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, distance, i, ref transform);
+							if (partPlaced)
+							{
+								break;
+							}
+						}
 					}
-				}
 
-				currentSize++;
+					distance++;
+				}
 			}
 
 			itemToMove.Matrix *= transform;
