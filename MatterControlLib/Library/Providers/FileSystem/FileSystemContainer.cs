@@ -367,7 +367,8 @@ namespace MatterHackers.MatterControl.Library
 				return Task.FromResult<ILibraryContainer>(
 					new FileSystemContainer(this.Path)
 					{
-						UseIncrementedNameDuringTypeChange = this.UseIncrementedNameDuringTypeChange
+						UseIncrementedNameDuringTypeChange = this.UseIncrementedNameDuringTypeChange,
+						Name = this.Name
 					});
 			}
 		}
