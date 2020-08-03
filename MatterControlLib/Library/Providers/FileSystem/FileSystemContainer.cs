@@ -220,6 +220,8 @@ namespace MatterHackers.MatterControl.Library
 				{
 					var directories = Directory.GetDirectories(FullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
 					containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
+					var libraryFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".library", StringComparison.OrdinalIgnoreCase) != -1);
+					containers = containers.Concat(libraryFiles.Select(f => LibraryJsonFile.ContainerFromLocalFile(f))).OrderBy(d => d.Name).ToList();
 				}
 				else
 				{

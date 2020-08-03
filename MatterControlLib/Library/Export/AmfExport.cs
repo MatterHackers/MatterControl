@@ -41,7 +41,6 @@ using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-
 	public class AmfExport : IExportPlugin
 	{
 		public string ButtonText => "Part as AMF File".Localize();

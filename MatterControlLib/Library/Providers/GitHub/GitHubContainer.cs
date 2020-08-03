@@ -58,20 +58,17 @@ namespace MatterHackers.MatterControl.Library
 #pragma warning restore SA1310 // Field names should not contain underscore
 #pragma warning restore SA1307 // Accessible fields should begin with upper-case letter
 
-		private readonly PrinterConfig printer;
-
 		public string Account { get; }
 
 		public string Repository { get; }
 
 		public string RepoDirectory { get; }
 
-		public GitHubContainer(PrinterConfig printer, string containerName, string account, string repositor, string repoDirectory)
+		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = containerName;
-			this.printer = printer;
 			this.Account = account;
 			this.Repository = repositor;
 			this.RepoDirectory = repoDirectory;
@@ -122,7 +119,7 @@ namespace MatterHackers.MatterControl.Library
 						new DynamicContainerLink(
 							() => file.name,
 							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
-							() => new GitHubContainer(printer, file.name, Account, Repository, RepoDirectory + "/" + file.name),
+							() => new GitHubContainer(file.name, Account, Repository, RepoDirectory + "/" + file.name),
 							() =>
 							{
 								return true;
@@ -198,6 +195,92 @@ namespace MatterHackers.MatterControl.Library
 					Length = -1
 				});
 			}
+		}
+
+		public class GitHubContainerLink : ILibraryContainerLink
+		{
+			private string containerName;
+			private string owner;
+			private string repository;
+			private string path;
+
+			public GitHubContainerLink(string containerName, string owner, string repository, string path)
+			{
+				this.containerName = containerName;
+				this.owner = owner;
+				this.repository = repository;
+				this.path = path;
+			}
+
+			public bool IsReadOnly { get; set; } = true;
+
+			public bool UseIncrementedNameDuringTypeChange { get; set; }
+
+			public string ID => containerName
+				.GetLongHashCode(owner
+					.GetLongHashCode(repository
+						.GetLongHashCode(path
+							.GetLongHashCode()))).ToString();
+
+			public string Name => containerName;
+
+			public bool IsProtected => false;
+
+			public bool IsVisible => true;
+
+			public DateTime DateModified => DateTime.Now;
+
+			public DateTime DateCreated => DateTime.Now;
+
+			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
+			{
+				return Task.FromResult<ILibraryContainer>(new GitHubContainer(containerName, owner, repository, path));
+			}
+		}
+
+	}
+
+	public static class LibraryJsonFile
+	{ 
+		internal struct LibraryDocument
+		{
+#pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
+			public string type; // values: "GitHub", "local"
+
+			public string owner; // for type GitHub is the repository owner
+
+			public string repository; // for the GitHub repository to look in
+
+			public string path; // the path within the type (GitHub the sub folder, local the entire file path)
+#pragma warning restore SA1310 // Field names should not contain underscore
+
+			public ILibraryContainerLink CreateContainer(string containerName)
+			{
+				switch (this.type)
+				{
+					case "GitHub":
+						return new GitHubContainer.GitHubContainerLink(containerName, this.owner, this.repository, this.path);
+
+					case "local":
+						return new FileSystemContainer.DirectoryContainerLink(this.path);
+				}
+
+				return null;
+			}
+
+		}
+
+		public static ILibraryContainerLink ContainerFromLocalFile(string jsonLibraryFilename)
+		{
+			if (File.Exists(jsonLibraryFilename))
+			{
+				var content = File.ReadAllText(jsonLibraryFilename);
+				var libraryDocument = JsonConvert.DeserializeObject<LibraryDocument>(content);
+
+				return libraryDocument.CreateContainer(Path.GetFileNameWithoutExtension(jsonLibraryFilename));
+			}
+
+			return null;
 		}
 	}
 }

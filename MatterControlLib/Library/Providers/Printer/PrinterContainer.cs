@@ -77,8 +77,7 @@ namespace MatterHackers.MatterControl.Library
 				new DynamicContainerLink(
 					() => containerName,
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new GitHubContainer(printer,
-						containerName,
+					() => new GitHubContainer(containerName,
 						"MatterHackers",
 						repository,
 						subPath),
