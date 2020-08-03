@@ -1337,13 +1337,12 @@ namespace MatterHackers.MatterControl
 				else
 				{
 					// If there are no printers setup show the export dialog but have the gcode option disabled
-					if (ProfileManager.Instance.ActiveProfiles.Count() == 0)
+					if (ProfileManager.Instance.ActiveProfiles.Count() == 0
+						|| ProfileManager.Instance.ActiveProfiles.Count() > 1)
 					{
 						DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, null));
 					}
-
-					// If there is only one printer constructed, use it.
-					else if (ProfileManager.Instance.ActiveProfiles.Count() == 1)
+					else // If there is only one printer constructed, use it.
 					{
 						var historyContainer = this.Library.PlatingHistory;
 
@@ -1365,29 +1364,6 @@ namespace MatterHackers.MatterControl
 								DialogWindow.Show(new ExportPrintItemPage(libraryItems, centerOnBed, onlyPrinter));
 							});
 						});
-					}
-					else
-					{
-						// Resolve printer context before showing export page
-						DialogWindow dialogWindow = null;
-
-						dialogWindow = DialogWindow.Show(
-							new SelectPrinterProfilePage(
-								"Next".Localize(),
-								(selectedPrinter) =>
-								{
-									var historyContainer = this.Library.PlatingHistory;
-
-									selectedPrinter.Bed.LoadEmptyContent(
-										new EditContext()
-										{
-											ContentStore = historyContainer,
-											SourceItem = historyContainer.NewPlatingItem()
-										});
-
-									dialogWindow.ChangeToPage(
-										new ExportPrintItemPage(libraryItems, centerOnBed, selectedPrinter));
-								}));
 					}
 				}
 			});

@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Matt Moening, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,59 +28,59 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.DataConverters3D;
+using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library.Export
 {
-	public static class MeshExport
+	public class AmfExport : IExportPlugin
 	{
-		public static async Task<bool> ExportMesh(ILibraryItem source, string filePathToSave)
+		public string ButtonText => "Part as AMF File".Localize();
+
+		public string FileExtension => ".amf";
+
+		public string ExtensionFilter => "Save as AMF|*.amf";
+
+		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "amf.png"));
+
+		public void Initialize(PrinterConfig printer)
 		{
-			try
-			{
-				if (source is ILibraryObject3D contentItem)
-				{
-					// If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
-					var content = await contentItem.GetObject3D(null);
-					return Object3D.Save(content, filePathToSave, CancellationToken.None);
-				}
-				else if (source is ILibraryAssetStream streamContent)
-				{
-					if (!string.IsNullOrEmpty(filePathToSave))
-					{
-						// If the file is already the target type, it just needs copied to the target path
-						if (Path.GetExtension(streamContent.FileName).ToUpper() == Path.GetExtension(filePathToSave).ToUpper())
-						{
-							using (var result = await streamContent.GetStream(null))
-							using (var fileStream = File.Create(filePathToSave))
-							{
-								result.Stream.CopyTo(fileStream);
-							}
+		}
 
-							return true;
-						}
-						else
-						{
-							// Otherwise we need to load the content and MeshFileIO save to the target path
-							using (var result = await streamContent.GetStream(null))
-							{
-								IObject3D item = Object3D.Load(result.Stream, Path.GetExtension(streamContent.FileName), CancellationToken.None);
-								return Object3D.Save(item, filePathToSave, CancellationToken.None);
-							}
-						}
-					}
+		public bool Enabled => true;
+
+		public string DisabledReason => "";
+
+		public bool ExportPossible(ILibraryAsset libraryItem) => true;
+
+		public async Task<List<ValidationError>> Generate(IEnumerable<ILibraryItem> libraryItems, string outputPath, IProgress<ProgressStatus> progress, CancellationToken cancellationToken)
+		{
+			var firstItem = libraryItems.OfType<ILibraryAsset>().FirstOrDefault();
+			if (firstItem is ILibraryAsset libraryItem)
+			{
+				bool exportSuccessful = await MeshExport.ExportMesh(libraryItem, outputPath);
+				if (exportSuccessful)
+				{
+					return null;
 				}
 			}
-			catch (Exception ex)
-			{
-				Trace.WriteLine("Error exporting file: " + ex.Message);
-			}
 
-			return false;
+			return new List<ValidationError>()
+			{
+				new ValidationError("ItemToAMFExportInvalid")
+				{
+					Error = "Item cannot be exported as AMF".Localize(),
+					Details = firstItem?.ToString() ?? ""
+				}
+			};
 		}
 	}
 }

@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class StlExport : IExportPlugin
 	{
-		public string ButtonText => "STL File".Localize();
+		public string ButtonText => "Part as STL File".Localize();
 
 		public string FileExtension => ".stl";
 

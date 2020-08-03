@@ -58,20 +58,17 @@ namespace MatterHackers.MatterControl.Library
 #pragma warning restore SA1310 // Field names should not contain underscore
 #pragma warning restore SA1307 // Accessible fields should begin with upper-case letter
 
-		private readonly PrinterConfig printer;
-
 		public string Account { get; }
 
 		public string Repository { get; }
 
 		public string RepoDirectory { get; }
 
-		public GitHubContainer(PrinterConfig printer, string containerName, string account, string repositor, string repoDirectory)
+		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
 			this.Items = new List<ILibraryItem>();
 			this.Name = containerName;
-			this.printer = printer;
 			this.Account = account;
 			this.Repository = repositor;
 			this.RepoDirectory = repoDirectory;
@@ -118,28 +115,28 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (file.type == "dir")
 				{
-					this.ChildContainers.Add(
-						new DynamicContainerLink(
-							() => file.name,
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
-							() => new GitHubContainer(printer, file.name, Account, Repository, RepoDirectory + "/" + file.name),
-							() =>
-							{
-								return true;
-							})
-						{
-							IsReadOnly = true
-						});
-
-					// read in the subdirectory
-					// Directory sub = await ReadDirectory(file.name, client, file._links.self, access_token);
-					// result.subDirs.Add(sub);
+					ChildContainers.Add(new GitHubContainerLink(file.name,
+						Account,
+						Repository,
+						RepoDirectory + "/" + file.name));
 				}
 				else if (file.type == "file")
 				{
-					this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));
+					if (Path.GetExtension(file.name).ToLower() == ".library")
+					{
+						ChildContainers.Add(new GitHubLibraryLink(Path.GetFileNameWithoutExtension(file.name),
+							Account,
+							Repository,
+							file.download_url));
+					}
+					else
+					{
+						this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));
+					}
 				}
 			}
+
+			this.ChildContainers.Sort((a, b) => a.Name.CompareTo(b.Name));
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
@@ -197,6 +194,79 @@ namespace MatterHackers.MatterControl.Library
 					Stream = AggContext.StaticData.OpenStream(AssetPath),
 					Length = -1
 				});
+			}
+		}
+
+		public class GitHubContainerLink : ILibraryContainerLink
+		{
+			protected readonly string owner;
+			protected readonly string repository;
+			protected readonly string path;
+
+			public GitHubContainerLink(string containerName, string owner, string repository, string path)
+			{
+				this.Name = containerName;
+				this.owner = owner;
+				this.repository = repository;
+				this.path = path;
+			}
+
+			public bool IsReadOnly { get; set; } = true;
+
+			public bool UseIncrementedNameDuringTypeChange { get; set; }
+
+			public string ID => Name
+				.GetLongHashCode(owner
+					.GetLongHashCode(repository
+						.GetLongHashCode(path
+							.GetLongHashCode()))).ToString();
+
+			public string Name { get; }
+
+			public bool IsProtected => false;
+
+			public bool IsVisible => true;
+
+			public DateTime DateModified => DateTime.Now;
+
+			public DateTime DateCreated => DateTime.Now;
+
+			public virtual Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
+			{
+				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, path));
+			}
+		}
+
+		public class GitHubLibraryLink : GitHubContainerLink
+		{
+			public GitHubLibraryLink(string containerName, string owner, string repository, string path)
+				: base(containerName, owner, repository, path)
+			{
+			}
+
+			public override async Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
+			{
+				try
+				{
+					// download the .library file
+					var downLoadUrl = new HttpRequestMessage(HttpMethod.Get, path);
+					GitHubContainer.AddCromeHeaders(downLoadUrl);
+
+					using (var client = new HttpClient())
+					{
+						using (HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl))
+						{
+							var content = await contentResponse.Content.ReadAsStringAsync();
+							// parse it
+							return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
+						}
+					}
+				}
+				catch
+				{
+				}
+
+				return null;
 			}
 		}
 	}

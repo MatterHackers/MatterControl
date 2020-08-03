@@ -215,15 +215,16 @@ namespace MatterHackers.MatterControl.Library
 
 				var nonZipFiles = allFiles.Except(zipFiles);
 
-				List<ILibraryContainerLink> containers;
 				if (filter == "")
 				{
 					var directories = Directory.GetDirectories(FullPath, "*.*", searchDepth).Select(p => new DirectoryContainerLink(p)).ToList<ILibraryContainerLink>();
-					containers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).OrderBy(d => d.Name).ToList();
+					this.ChildContainers = directories.Concat(zipFiles.Select(f => new LocalZipContainerLink(f))).ToList();
+					var libraryFiles = allFiles.Where(f => Path.GetExtension(f).IndexOf(".library", StringComparison.OrdinalIgnoreCase) != -1);
+					this.ChildContainers.AddRange(libraryFiles.Select(f => LibraryJsonFile.ContainerFromLocalFile(f)));
 				}
 				else
 				{
-					containers = new List<ILibraryContainerLink>();
+					this.ChildContainers = new List<ILibraryContainerLink>();
 				}
 
 				var matchedFiles = nonZipFiles.Where(filePath =>
@@ -234,8 +235,7 @@ namespace MatterHackers.MatterControl.Library
 						&& ApplicationController.Instance.Library.IsContentFileType(fileName);
 				});
 
-				// Matched containers
-				this.ChildContainers = containers;
+				this.ChildContainers.Sort((a, b) => a.Name.CompareTo(b.Name));
 
 				// Matched files projected onto FileSystemFileItem
 				this.Items = matchedFiles.OrderBy(f => f).Select(f => new FileSystemFileItem(f)).ToList<ILibraryItem>();
@@ -367,7 +367,8 @@ namespace MatterHackers.MatterControl.Library
 				return Task.FromResult<ILibraryContainer>(
 					new FileSystemContainer(this.Path)
 					{
-						UseIncrementedNameDuringTypeChange = this.UseIncrementedNameDuringTypeChange
+						UseIncrementedNameDuringTypeChange = this.UseIncrementedNameDuringTypeChange,
+						Name = this.Name
 					});
 			}
 		}

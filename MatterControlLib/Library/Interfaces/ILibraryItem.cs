@@ -36,10 +36,15 @@ namespace MatterHackers.MatterControl.Library
 	public interface ILibraryItem
 	{
 		string ID { get; }
+
 		string Name { get; }
+
 		bool IsProtected { get; }
+
 		bool IsVisible { get; }
+
 		DateTime DateModified { get; }
+
 		DateTime DateCreated { get; }
 	}
 
@@ -68,8 +73,11 @@ namespace MatterHackers.MatterControl.Library
 	public interface ILibraryAsset : ILibraryItem
 	{
 		string ContentType { get; }
+
 		string Category { get; }
+
 		string FileName { get; }
+
 		string AssetPath { get; }
 	}
 }
