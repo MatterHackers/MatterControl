@@ -54,7 +54,10 @@ namespace MatterHackers.MatterControl.Library
 						return new GitHubContainer.GitHubContainerLink(containerName, this.owner, this.repository, this.path);
 
 					case "local":
-						return new FileSystemContainer.DirectoryContainerLink(this.path);
+						return new FileSystemContainer.DirectoryContainerLink(this.path)
+						{
+							Name = containerName
+						};
 				}
 
 				return null;
