@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.Library.Export
 			{
 				if (source is ILibraryObject3D contentItem)
 				{
-					// If the content is an IObject3D, the we need to load it and MeshFileIO save to the target path
+					// If the content is an IObject3D, then we need to load it and MeshFileIO save to the target path
 					var content = await contentItem.GetObject3D(null);
 					return Object3D.Save(content, filePathToSave, CancellationToken.None);
 				}

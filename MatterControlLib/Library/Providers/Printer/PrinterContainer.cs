@@ -66,13 +66,13 @@ namespace MatterHackers.MatterControl.Library
 					IsReadOnly = true
 				});
 
-#if DEBUG // working on a new container that holds custom parts for a given printer
+			// a new container that holds custom parts for a given printer
 			var containerName = $"{printer.Settings.GetValue(SettingsKey.make)} {"Parts".Localize()}";
 			var settings = printer.Settings;
 			var repository = "Machine_Library_Parts";
-			repository = "PulseOpenSource";
+			// repository = "PulseOpenSource";
 			var subPath = $"{settings.GetValue(SettingsKey.make)}/{settings.GetValue(SettingsKey.model)}";
-			subPath = "C Frame";
+			// subPath = "C Frame";
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => containerName,
@@ -85,16 +85,6 @@ namespace MatterHackers.MatterControl.Library
 				{
 					IsReadOnly = true
 				});
-#else
-			this.ChildContainers.Add(
-				new DynamicContainerLink(
-					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					() => new CalibrationPartsContainer())
-				{
-					IsReadOnly = true
-				});
-#endif
 
 			// TODO: An enumerable list of serialized container paths (or some other markup) to construct for this printer
 			// printer.Settings.GetValue(SettingsKey.library_containers);

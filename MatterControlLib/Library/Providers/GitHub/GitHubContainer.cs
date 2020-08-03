@@ -115,28 +115,28 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (file.type == "dir")
 				{
-					this.ChildContainers.Add(
-						new DynamicContainerLink(
-							() => file.name,
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_folder.png")),
-							() => new GitHubContainer(file.name, Account, Repository, RepoDirectory + "/" + file.name),
-							() =>
-							{
-								return true;
-							})
-						{
-							IsReadOnly = true
-						});
-
-					// read in the subdirectory
-					// Directory sub = await ReadDirectory(file.name, client, file._links.self, access_token);
-					// result.subDirs.Add(sub);
+					ChildContainers.Add(new GitHubContainerLink(file.name,
+						Account,
+						Repository,
+						RepoDirectory + "/" + file.name));
 				}
 				else if (file.type == "file")
 				{
-					this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));
+					if (Path.GetExtension(file.name).ToLower() == ".library")
+					{
+						ChildContainers.Add(new GitHubLibraryLink(Path.GetFileNameWithoutExtension(file.name),
+							Account,
+							Repository,
+							file.download_url));
+					}
+					else
+					{
+						this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));
+					}
 				}
 			}
+
+			this.ChildContainers.Sort((a, b) => a.Name.CompareTo(b.Name));
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
@@ -199,14 +199,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public class GitHubContainerLink : ILibraryContainerLink
 		{
-			private string containerName;
-			private string owner;
-			private string repository;
-			private string path;
+			protected readonly string owner;
+			protected readonly string repository;
+			protected readonly string path;
 
 			public GitHubContainerLink(string containerName, string owner, string repository, string path)
 			{
-				this.containerName = containerName;
+				this.Name = containerName;
 				this.owner = owner;
 				this.repository = repository;
 				this.path = path;
@@ -216,13 +215,13 @@ namespace MatterHackers.MatterControl.Library
 
 			public bool UseIncrementedNameDuringTypeChange { get; set; }
 
-			public string ID => containerName
+			public string ID => Name
 				.GetLongHashCode(owner
 					.GetLongHashCode(repository
 						.GetLongHashCode(path
 							.GetLongHashCode()))).ToString();
 
-			public string Name => containerName;
+			public string Name { get; }
 
 			public bool IsProtected => false;
 
@@ -232,55 +231,43 @@ namespace MatterHackers.MatterControl.Library
 
 			public DateTime DateCreated => DateTime.Now;
 
-			public Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
+			public virtual Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				return Task.FromResult<ILibraryContainer>(new GitHubContainer(containerName, owner, repository, path));
+				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, path));
 			}
 		}
 
-	}
-
-	public static class LibraryJsonFile
-	{ 
-		internal struct LibraryDocument
+		public class GitHubLibraryLink : GitHubContainerLink
 		{
-#pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
-			public string type; // values: "GitHub", "local"
-
-			public string owner; // for type GitHub is the repository owner
-
-			public string repository; // for the GitHub repository to look in
-
-			public string path; // the path within the type (GitHub the sub folder, local the entire file path)
-#pragma warning restore SA1310 // Field names should not contain underscore
-
-			public ILibraryContainerLink CreateContainer(string containerName)
+			public GitHubLibraryLink(string containerName, string owner, string repository, string path)
+				: base(containerName, owner, repository, path)
 			{
-				switch (this.type)
-				{
-					case "GitHub":
-						return new GitHubContainer.GitHubContainerLink(containerName, this.owner, this.repository, this.path);
+			}
 
-					case "local":
-						return new FileSystemContainer.DirectoryContainerLink(this.path);
+			public override async Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
+			{
+				try
+				{
+					// download the .library file
+					var downLoadUrl = new HttpRequestMessage(HttpMethod.Get, path);
+					GitHubContainer.AddCromeHeaders(downLoadUrl);
+
+					using (var client = new HttpClient())
+					{
+						using (HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl))
+						{
+							var content = await contentResponse.Content.ReadAsStringAsync();
+							// parse it
+							return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
+						}
+					}
+				}
+				catch
+				{
 				}
 
 				return null;
 			}
-
-		}
-
-		public static ILibraryContainerLink ContainerFromLocalFile(string jsonLibraryFilename)
-		{
-			if (File.Exists(jsonLibraryFilename))
-			{
-				var content = File.ReadAllText(jsonLibraryFilename);
-				var libraryDocument = JsonConvert.DeserializeObject<LibraryDocument>(content);
-
-				return libraryDocument.CreateContainer(Path.GetFileNameWithoutExtension(jsonLibraryFilename));
-			}
-
-			return null;
 		}
 	}
 }
