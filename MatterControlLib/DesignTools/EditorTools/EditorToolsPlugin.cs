@@ -52,7 +52,7 @@ namespace MatterHackers.Plugins.EditorTools
 			applicationController.Extensions.Register(new RotateCornerPlugins());
 
 			applicationController.Extensions.Register(new OpenSCADBuilder());
-			//applicationController.Extensions.Register(new PrimitivesEditor());
+			// applicationController.Extensions.Register(new PrimitivesEditor());
 		}
 
 		public PluginInfo MetaData { get; } = new PluginInfo()

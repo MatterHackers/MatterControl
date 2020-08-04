@@ -149,8 +149,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AllowContextMenu = false,
 
 				// restore to state for favorites bar size
-				Width = expanded ? 55 : 33,
-				ListContentView = new IconView(theme, expanded ? 48 : 24)
+				Width = expanded ? 55 * GuiWidget.DeviceScale : 33 * GuiWidget.DeviceScale,
+				ListContentView = new IconView(theme, expanded ? 48 * GuiWidget.DeviceScale : 24 * GuiWidget.DeviceScale)
 				{
 					VAnchor = VAnchor.Fit | VAnchor.Top
 				},
@@ -167,8 +167,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
 				Margin = new BorderDouble(bottom: 3, top: 3),
-				Height = theme.ButtonHeight - 6,
-				Width = theme.ButtonHeight - 6
+				Height = theme.ButtonHeight - 6 * GuiWidget.DeviceScale,
+				Width = theme.ButtonHeight - 6 * GuiWidget.DeviceScale
 			};
 
 			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(() =>
@@ -177,8 +177,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				UserSettings.Instance.set(UserSettingsKey.FavoritesBarExpansion, expanded ? "1" : "0");
 
-				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 : 24);
-				favoritesBar.Width = expanded ? 55 : 33;
+				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 * GuiWidget.DeviceScale : 24 * GuiWidget.DeviceScale);
+				favoritesBar.Width = expanded ? 55 * GuiWidget.DeviceScale : 33 * GuiWidget.DeviceScale;
 				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
 				expandBarButton.Invalidate();
 

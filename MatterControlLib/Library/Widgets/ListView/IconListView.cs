@@ -219,15 +219,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		protected ThemeConfig theme;
 		protected double leftRightMargin;
 
-		public IconView(ThemeConfig theme, int thumbnailSize = -1)
+		public IconView(ThemeConfig theme, double thumbnailSize = -1)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 
 			if (thumbnailSize != -1)
 			{
-				this.ThumbHeight = thumbnailSize;
-				this.ThumbWidth = thumbnailSize;
+				this.ThumbHeight = (int)thumbnailSize;
+				this.ThumbWidth = (int)thumbnailSize;
 			}
 		}
 
