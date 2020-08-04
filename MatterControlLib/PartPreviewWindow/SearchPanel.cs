@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (searchResults.Children.Count == 0)
 				{
-					searchResults.AddChild(new SettingsRow("No results found".Localize(), null, theme, AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png").SetPreMultiply()));
+					searchResults.AddChild(new SettingsRow("No results found".Localize(), null, theme, AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png", 16, 16).SetPreMultiply()));
 				}
 
 				// Add top border to first child

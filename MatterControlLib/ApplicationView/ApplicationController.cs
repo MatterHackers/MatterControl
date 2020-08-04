@@ -3045,7 +3045,7 @@ namespace MatterHackers.MatterControl
 
 		internal void GetViewOptionButtons(GuiWidget parent, ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
-			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", theme.InvertIcons), theme)
+			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -3065,7 +3065,7 @@ namespace MatterHackers.MatterControl
 
 			Func<bool> buildHeightValid = () => sceneContext.BuildHeight > 0;
 
-			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", theme.InvertIcons), theme)
+			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = buildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",

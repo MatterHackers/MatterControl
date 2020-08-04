@@ -864,7 +864,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", theme.InvertIcons))
+			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", 24, 24, theme.InvertIcons))
 			{
 				VAnchor = VAnchor.Center
 			});

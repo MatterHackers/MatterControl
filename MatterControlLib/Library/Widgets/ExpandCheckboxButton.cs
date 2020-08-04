@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public ExpandCheckboxButton(string text, ThemeConfig theme, int pointSize = 11, bool expandable = true)
 		{
-			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", theme.InvertIcons);
-			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", theme.InvertIcons);
+			arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons);
+			arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", 12, 12, theme.InvertIcons);
 
 			imageButton = new IconButton(arrowRight, theme)
 			{

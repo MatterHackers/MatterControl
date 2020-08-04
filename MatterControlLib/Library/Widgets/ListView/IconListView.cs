@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class IconViewItem : ListViewItemBase
 	{
-		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png");
+		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png", 32, 32);
 
 		internal static int ItemPadding = 0;
 

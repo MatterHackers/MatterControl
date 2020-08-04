@@ -255,7 +255,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 
-			var plusTabButton = new NewTabButton(AggContext.StaticData.LoadIcon("fa-plus_12.png", theme.InvertIcons), theme)
+			var plusTabButton = new NewTabButton(AggContext.StaticData.LoadIcon("fa-plus_12.png", 12, 12, theme.InvertIcons), theme)
 			{
 				Height = 20,
 			};
