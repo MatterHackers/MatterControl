@@ -257,7 +257,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							Margin = new BorderDouble(3, 0, 0, 10),
 						};
-						var progressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+						var progressBar = new ProgressBar(150 * GuiWidget.DeviceScale, 15 * GuiWidget.DeviceScale)
 						{
 							FillColor = theme.PrimaryAccentColor,
 							BorderColor = theme.TextColor,

@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute | VAnchor.Center,
-				Height = 2,
+				Height = 2 * GuiWidget.DeviceScale,
 				FillColor = theme.PrimaryAccentColor,
 				BorderColor = Color.Transparent,
 				Margin = new BorderDouble(left: 16, bottom: 3, top: 15)

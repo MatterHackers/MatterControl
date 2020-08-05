@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					});
 
 					// put in the progress bar
-					var hotEndProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+					var hotEndProgressBar = new ProgressBar(150 * GuiWidget.DeviceScale, 15 * GuiWidget.DeviceScale)
 					{
 						FillColor = theme.PrimaryAccentColor,
 						BorderColor = theme.TextColor,
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				});
 
 				// put in progress bar
-				bedProgressBar = new ProgressBar((int)(150 * GuiWidget.DeviceScale), (int)(15 * GuiWidget.DeviceScale))
+				bedProgressBar = new ProgressBar(150 * GuiWidget.DeviceScale, 15 * GuiWidget.DeviceScale)
 				{
 					FillColor = theme.PrimaryAccentColor,
 					BorderColor = theme.TextColor,

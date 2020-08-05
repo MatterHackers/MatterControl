@@ -150,8 +150,8 @@ namespace MatterHackers.MatterControl
 			{
 				FillColor = mutedAccentColor,
 				BorderColor = Color.Gray, // theme.BorderColor75,
-				Height = 11,
-				Width = 230,
+				Height = 11 * GuiWidget.DeviceScale,
+				Width = 230 * GuiWidget.DeviceScale,
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute
 			});

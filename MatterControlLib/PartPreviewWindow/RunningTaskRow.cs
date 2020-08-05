@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			progressBar = new ProgressBar()
 			{
 				HAnchor = HAnchor.Stretch,
-				Height = 2,
+				Height = 2 * GuiWidget.DeviceScale,
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
 				FillColor = theme.PrimaryAccentColor,
 				BorderColor = Color.Transparent,

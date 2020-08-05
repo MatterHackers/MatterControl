@@ -105,8 +105,8 @@ namespace MatterHackers.MatterControl.Library
 			AddCromeHeaders(request);
 
 			// parse result
-			HttpResponseMessage response = await client.SendAsync(request);
-			string jsonStr = await response.Content.ReadAsStringAsync();
+			HttpResponseMessage response = client.SendAsync(request).Result;
+			string jsonStr = response.Content.ReadAsStringAsync().Result;
 			response.Dispose();
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 

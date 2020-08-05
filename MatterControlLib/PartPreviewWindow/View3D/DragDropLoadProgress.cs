@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.TrackingObject = trackingObject;
 			this.view3DWidget = view3DWidget;
 			view3DWidget.AfterDraw += View3DWidget_AfterDraw;
-			progressBar = new ProgressBar(80, 15)
+			progressBar = new ProgressBar(80 * GuiWidget.DeviceScale, 15 * GuiWidget.DeviceScale)
 			{
 				FillColor = theme.PrimaryAccentColor,
 			};
