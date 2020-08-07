@@ -64,6 +64,8 @@ namespace MatterHackers.MatterControl.Library
 
 		public string RepoDirectory { get; }
 
+		private object locker = new object();
+
 		public GitHubContainer(string containerName, string account, string repositor, string repoDirectory)
 		{
 			this.ChildContainers = new List<ILibraryContainerLink>();
@@ -74,40 +76,25 @@ namespace MatterHackers.MatterControl.Library
 			this.RepoDirectory = repoDirectory;
 		}
 
-		public override async void Load()
+		public override void Load()
 		{
-			try
-			{
-				await GetRepo();
-			}
-			catch
-			{
-				// show an error
-			}
-
-			OnContentChanged();
-		}
-
-		// Get all files from a repo
-		public async Task GetRepo()
-		{
-			var client = new HttpClient();
-			await ReadDirectory("root",
-				client,
-				$"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}");
-			client.Dispose();
-		}
-
-		private async Task ReadDirectory(string name, HttpClient client, string uri)
-		{
+			var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/{RepoDirectory}";
 			// get the directory contents
-			var request = new HttpRequestMessage(HttpMethod.Get, uri);
-			AddCromeHeaders(request);
+			WebCache.RetrieveText(uri,
+				(content) =>
+				{
+					lock (locker)
+					{
+						ParseJson(content);
+					}
+				},
+				false,
+				AddCromeHeaders);
+		}
 
+		private void ParseJson(string jsonStr)
+		{
 			// parse result
-			HttpResponseMessage response = client.SendAsync(request).Result;
-			string jsonStr = response.Content.ReadAsStringAsync().Result;
-			response.Dispose();
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 
 			// read in data
@@ -136,7 +123,7 @@ namespace MatterHackers.MatterControl.Library
 				}
 			}
 
-			this.ChildContainers.Sort((a, b) => a.Name.CompareTo(b.Name));
+			OnContentChanged();
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
@@ -246,27 +233,8 @@ namespace MatterHackers.MatterControl.Library
 
 			public override async Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				try
-				{
-					// download the .library file
-					var downLoadUrl = new HttpRequestMessage(HttpMethod.Get, path);
-					GitHubContainer.AddCromeHeaders(downLoadUrl);
-
-					using (var client = new HttpClient())
-					{
-						using (HttpResponseMessage contentResponse = await client.SendAsync(downLoadUrl))
-						{
-							var content = await contentResponse.Content.ReadAsStringAsync();
-							// parse it
-							return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
-						}
-					}
-				}
-				catch
-				{
-				}
-
-				return null;
+				var content = WebCache.GetCachedText(path, false, AddCromeHeaders);
+				return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
 			}
 		}
 	}
