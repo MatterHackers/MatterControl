@@ -145,69 +145,9 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			navBar.AddChild(searchButton);
 
-			PopupMenuButton viewOptionsButton;
-
-			navBar.AddChild(
-				viewOptionsButton = new PopupMenuButton(
-					new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
-					{
-						// VAnchor = VAnchor.Center
-					},
-					theme)
-				{
-					AlignToRightEdge = true,
-					Name = "Print Library View Options"
-				});
-
-			viewOptionsButton.DynamicPopupContent = () =>
-			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				var siblingList = new List<GuiWidget>();
-
-				popupMenu.CreateBoolMenuItem(
-					"Date Created".Localize(),
-					() => libraryView.ActiveSort.HasFlag(SortKey.CreatedDate),
-					(v) => libraryView.ActiveSort = SortKey.CreatedDate,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Date Modified".Localize(),
-					() => libraryView.ActiveSort.HasFlag(SortKey.ModifiedDate),
-					(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Name".Localize(),
-					() => libraryView.ActiveSort.HasFlag(SortKey.Name),
-					(v) => libraryView.ActiveSort = SortKey.Name,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateSeparator();
-
-				siblingList = new List<GuiWidget>();
-
-				popupMenu.CreateBoolMenuItem(
-					"Ascending".Localize(),
-					() => libraryView.Ascending,
-					(v) => libraryView.Ascending = true,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Descending".Localize(),
-					() => !libraryView.Ascending,
-					(v) => libraryView.Ascending = false,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				return popupMenu;
-			};
-
 			navBar.AddChild(CreateViewMenuButton(theme, libraryView, (show) => ShowContainers = show, () => ShowContainers));
+
+			navBar.AddChild(CreateSortingMenuButton(theme, libraryView));
 
 			var horizontalSplitter = new Splitter()
 			{
@@ -289,6 +229,75 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Register listeners
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 			libraryContext.ContainerChanged += Library_ContainerChanged;
+		}
+
+		public static GuiWidget CreateSortingMenuButton(ThemeConfig theme, LibraryListView libraryView)
+		{
+			var viewOptionsButton = new PopupMenuButton(
+				new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
+				{
+					// VAnchor = VAnchor.Center
+				},
+				theme)
+			{
+				AlignToRightEdge = true,
+				Name = "Print Library View Options"
+			};
+
+			viewOptionsButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(theme);
+				CreateSortingMenu(popupMenu, libraryView);
+				return popupMenu;
+			};
+
+			return viewOptionsButton;
+		}
+
+		public static PopupMenu CreateSortingMenu(PopupMenu popupMenu, LibraryListView libraryView)
+		{
+			var siblingList = new List<GuiWidget>();
+
+			popupMenu.CreateBoolMenuItem(
+				"Date Created".Localize(),
+				() => libraryView.ActiveSort.HasFlag(SortKey.CreatedDate),
+				(v) => libraryView.ActiveSort = SortKey.CreatedDate,
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			popupMenu.CreateBoolMenuItem(
+				"Date Modified".Localize(),
+				() => libraryView.ActiveSort.HasFlag(SortKey.ModifiedDate),
+				(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			popupMenu.CreateBoolMenuItem(
+				"Name".Localize(),
+				() => libraryView.ActiveSort.HasFlag(SortKey.Name),
+				(v) => libraryView.ActiveSort = SortKey.Name,
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			popupMenu.CreateSeparator();
+
+			siblingList = new List<GuiWidget>();
+
+			popupMenu.CreateBoolMenuItem(
+				"Ascending".Localize(),
+				() => libraryView.Ascending,
+				(v) => libraryView.Ascending = true,
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			popupMenu.CreateBoolMenuItem(
+				"Descending".Localize(),
+				() => !libraryView.Ascending,
+				(v) => libraryView.Ascending = false,
+				useRadioStyle: true,
+				siblingRadioButtonList: siblingList);
+
+			return popupMenu;
 		}
 
 		public static GuiWidget CreateViewMenuButton(ThemeConfig theme,

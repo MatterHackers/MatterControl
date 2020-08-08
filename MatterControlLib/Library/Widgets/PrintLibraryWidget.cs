@@ -106,49 +106,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			toolbar.OverflowButton.Name = "Print Library View Options";
 			toolbar.Padding = theme.ToolbarPadding;
 
-			toolbar.ExtendOverflowMenu = (popupMenu) =>
-			{
-				var siblingList = new List<GuiWidget>();
-
-				popupMenu.CreateBoolMenuItem(
-					"Date Created".Localize(),
-					() => libraryView.ActiveSort == SortKey.CreatedDate,
-					(v) => libraryView.ActiveSort = SortKey.CreatedDate,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Date Modified".Localize(),
-					() => libraryView.ActiveSort == SortKey.ModifiedDate,
-					(v) => libraryView.ActiveSort = SortKey.ModifiedDate,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Name".Localize(),
-					() => libraryView.ActiveSort == SortKey.Name,
-					(v) => libraryView.ActiveSort = SortKey.Name,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateSeparator();
-
-				siblingList = new List<GuiWidget>();
-
-				popupMenu.CreateBoolMenuItem(
-					"Ascending".Localize(),
-					() => libraryView.Ascending,
-					(v) => libraryView.Ascending = true,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"Descending".Localize(),
-					() => !libraryView.Ascending,
-					(v) => libraryView.Ascending = false,
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-			};
+			toolbar.ExtendOverflowMenu = (popupMenu) => LibraryWidget.CreateSortingMenu(popupMenu, libraryView);
 
 			allControls.AddChild(toolbar);
 
