@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Name = "Folders Toolbar",
 			};
 
-			toolbar.OverflowButton.ToolTipText = "Sorting";
+			toolbar.OverflowButton.ToolTipText = "Sorting".Localize();
 
 			theme.ApplyBottomBorder(toolbar, shadedBorder: true);
 
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			toolbar.AddChild(new HorizontalSpacer());
 
-			toolbar.AddChild(LibraryWidget.CreateViewMenuButton(theme,
+			toolbar.AddChild(LibraryWidget.CreateViewOptionsMenuButton(theme,
 				libraryView,
 				(show) => ShowContainers = show,
 				() => ShowContainers));

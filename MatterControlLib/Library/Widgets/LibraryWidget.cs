@@ -95,7 +95,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,
 			};
-			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
 
 			breadCrumbWidget = new FolderBreadCrumbWidget(libraryContext, theme);
@@ -145,9 +144,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			navBar.AddChild(searchButton);
 
-			navBar.AddChild(CreateViewMenuButton(theme, libraryView, (show) => ShowContainers = show, () => ShowContainers));
+			navBar.AddChild(CreateViewOptionsMenuButton(theme, libraryView, (show) => ShowContainers = show, () => ShowContainers));
 
 			navBar.AddChild(CreateSortingMenuButton(theme, libraryView));
+
+			allControls.AddChild(navBar);
 
 			var horizontalSplitter = new Splitter()
 			{
@@ -234,14 +235,11 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public static GuiWidget CreateSortingMenuButton(ThemeConfig theme, LibraryListView libraryView)
 		{
 			var viewOptionsButton = new PopupMenuButton(
-				new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons))
-				{
-					// VAnchor = VAnchor.Center
-				},
-				theme)
+				new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons)), theme)
 			{
 				AlignToRightEdge = true,
-				Name = "Print Library View Options"
+				Name = "Print Library View Options",
+				ToolTipText = "Sorting".Localize()
 			};
 
 			viewOptionsButton.DynamicPopupContent = () =>
@@ -300,7 +298,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			return popupMenu;
 		}
 
-		public static GuiWidget CreateViewMenuButton(ThemeConfig theme,
+		public static GuiWidget CreateViewOptionsMenuButton(ThemeConfig theme,
 			LibraryListView libraryView,
 			Action<bool> showContainers,
 			Func<bool> containersShown)
@@ -312,7 +310,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				},
 				theme)
 			{
-				AlignToRightEdge = true
+				AlignToRightEdge = true,
+				ToolTipText = "View Settings".Localize()
 			};
 
 			viewMenuButton.DynamicPopupContent = () =>
