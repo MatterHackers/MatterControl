@@ -84,6 +84,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				Name = "LibraryView",
 				// Drop containers if ShowContainers != 1
+				ContainerFilter = (container) => this.ShowContainers,
 				BackgroundColor = theme.BackgroundColor,
 				Border = new BorderDouble(top: 1),
 				DoubleClickAction = LibraryListView.DoubleClickActions.PreviewItem
@@ -206,100 +207,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				return popupMenu;
 			};
 
-			PopupMenuButton viewMenuButton;
-
-			navBar.AddChild(
-				viewMenuButton = new PopupMenuButton(
-					new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
-					{
-						// VAnchor = VAnchor.Center
-					},
-					theme)
-				{
-					AlignToRightEdge = true
-				});
-
-			viewMenuButton.DynamicPopupContent = () =>
-			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
-
-				var listView = this.libraryView;
-
-				var siblingList = new List<GuiWidget>();
-
-				popupMenu.CreateBoolMenuItem(
-					"Show Folders".Localize(),
-					() => this.ShowContainers,
-					(isChecked) =>
-					{
-						this.ShowContainers = isChecked;
-						listView.Reload().ConfigureAwait(false);
-					});
-
-				popupMenu.CreateSeparator();
-
-				popupMenu.CreateBoolMenuItem(
-					"View List".Localize(),
-					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.RowListView,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.RowListView;
-						listView.ListContentView = new RowListView(theme);
-						listView.Reload().ConfigureAwait(false);
-					},
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-#if DEBUG
-				popupMenu.CreateBoolMenuItem(
-					"View XSmall Icons".Localize(),
-					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView18,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView18;
-						listView.ListContentView = new IconListView(theme, 18);
-						listView.Reload().ConfigureAwait(false);
-					},
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"View Small Icons".Localize(),
-					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView70,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView70;
-						listView.ListContentView = new IconListView(theme, 70);
-						listView.Reload().ConfigureAwait(false);
-					},
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-#endif
-				popupMenu.CreateBoolMenuItem(
-					"View Icons".Localize(),
-					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView;
-						listView.ListContentView = new IconListView(theme);
-						listView.Reload().ConfigureAwait(false);
-					},
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				popupMenu.CreateBoolMenuItem(
-					"View Large Icons".Localize(),
-					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView256,
-					(isChecked) =>
-					{
-						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView256;
-						listView.ListContentView = new IconListView(theme, 256);
-						listView.Reload().ConfigureAwait(false);
-					},
-					useRadioStyle: true,
-					siblingRadioButtonList: siblingList);
-
-				return popupMenu;
-			};
+			navBar.AddChild(CreateViewMenuButton(theme, libraryView, (show) => ShowContainers = show, () => ShowContainers));
 
 			var horizontalSplitter = new Splitter()
 			{
@@ -381,6 +289,106 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Register listeners
 			libraryView.SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
 			libraryContext.ContainerChanged += Library_ContainerChanged;
+		}
+
+		public static GuiWidget CreateViewMenuButton(ThemeConfig theme,
+			LibraryListView libraryView,
+			Action<bool> showContainers,
+			Func<bool> containersShown)
+		{
+			var viewMenuButton = new PopupMenuButton(
+				new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
+				{
+					// VAnchor = VAnchor.Center
+				},
+				theme)
+			{
+				AlignToRightEdge = true
+			};
+
+			viewMenuButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				var listView = libraryView;
+
+				var siblingList = new List<GuiWidget>();
+
+				popupMenu.CreateBoolMenuItem(
+					"Show Folders".Localize(),
+					() => containersShown(),
+					(isChecked) =>
+					{
+						showContainers(isChecked);
+						listView.Reload().ConfigureAwait(false);
+					});
+
+				popupMenu.CreateSeparator();
+
+				popupMenu.CreateBoolMenuItem(
+					"View List".Localize(),
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.RowListView,
+					(isChecked) =>
+					{
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.RowListView;
+						listView.ListContentView = new RowListView(theme);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+#if DEBUG
+				popupMenu.CreateBoolMenuItem(
+					"View XSmall Icons".Localize(),
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView18,
+					(isChecked) =>
+					{
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView18;
+						listView.ListContentView = new IconListView(theme, 18);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+
+				popupMenu.CreateBoolMenuItem(
+					"View Small Icons".Localize(),
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView70,
+					(isChecked) =>
+					{
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView70;
+						listView.ListContentView = new IconListView(theme, 70);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+#endif
+				popupMenu.CreateBoolMenuItem(
+					"View Icons".Localize(),
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView,
+					(isChecked) =>
+					{
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView;
+						listView.ListContentView = new IconListView(theme);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+
+				popupMenu.CreateBoolMenuItem(
+					"View Large Icons".Localize(),
+					() => ApplicationController.Instance.ViewState.LibraryViewMode == ListViewModes.IconListView256,
+					(isChecked) =>
+					{
+						ApplicationController.Instance.ViewState.LibraryViewMode = ListViewModes.IconListView256;
+						listView.ListContentView = new IconListView(theme, 256);
+						listView.Reload().ConfigureAwait(false);
+					},
+					useRadioStyle: true,
+					siblingRadioButtonList: siblingList);
+
+				return popupMenu;
+			};
+
+			return viewMenuButton;
 		}
 
 		private void LoadRootLibraryNodes(FlowLayoutWidget rootColumn)

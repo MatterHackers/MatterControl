@@ -29,19 +29,17 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.UI.Tests;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl;
-using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Tests.Automation;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
@@ -110,22 +108,22 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0.12345"},
-					{"1.2345", "1.2345"},
-					{"12.345", "12.345"},
-					{"12.7", "12.7"},
-					{"+0.12345", "0.12345"},
-					{"+1.2345", "1.2345"},
-					{"+12.345", "12.345"},
-					{"-0.12345", "-0.12345"},
-					{"-1.2345", "-1.2345"},
-					{"-12.345", "-12.345"},
-					{"12.7", "12.7"},
-					{"22", "22" },
+					{ "0.12345", "0.12345" },
+					{ "1.2345", "1.2345" },
+					{ "12.345", "12.345" },
+					{ "12.7", "12.7" },
+					{ "+0.12345", "0.12345" },
+					{ "+1.2345", "1.2345" },
+					{ "+12.345", "12.345" },
+					{ "-0.12345", "-0.12345" },
+					{ "-1.2345", "-1.2345" },
+					{ "-12.345", "-12.345" },
+					{ "12.7", "12.7" },
+					{ "22", "22" },
 					// Invalid values revert to expected
-					{"abc", "0"},
-					{"+abc", "0"},
-					{"-abc", "0"},
+					{ "abc", "0" },
+					{ "+abc", "0" },
+					{ "-abc", "0" },
 				});
 		}
 
@@ -141,22 +139,22 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0.12345"},
-					{"1.2345", "1.2345"},
-					{"12.345", "12.345"},
-					{"12.7", "12.7"},
-					{"+0.12345", "0.12345"},
-					{"+1.2345", "1.2345"},
-					{"+12.345", "12.345"},
-					{"-0.12345", "0"},
-					{"-1.2345", "0"},
-					{"-12.345", "0"},
-					{"-12.7", "0"},
-					{"22", "22" },
+					{ "0.12345", "0.12345" },
+					{ "1.2345", "1.2345" },
+					{ "12.345", "12.345" },
+					{ "12.7", "12.7" },
+					{ "+0.12345", "0.12345" },
+					{ "+1.2345", "1.2345" },
+					{ "+12.345", "12.345" },
+					{ "-0.12345", "0" },
+					{ "-1.2345", "0" },
+					{ "-12.345", "0" },
+					{ "-12.7", "0" },
+					{ "22", "22" },
 					// Invalid values revert to expected
-					{"abc", "0"},
-					{"+abc", "0"},
-					{"-abc", "0"},
+					{ "abc", "0" },
+					{ "+abc", "0" },
+					{ "-abc", "0" },
 				});
 		}
 
@@ -172,22 +170,22 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHNumberEdit).ActuallNumberEdit.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0"},
-					{"1.2345", "1"},
-					{"12.345", "12"},
-					{"12.7", "12"}, // Floor not round?
-					{"+0.12345", "0"},
-					{"+1.2345", "1"},
-					{"+12.345", "12"},
-					{"-0.12345", "0"},
-					{"-1.2345", "-1"},
-					{"-12.345", "-12"},
-					{"-12.7", "-12"}, // Floor not round?
-					{"22", "22" },
+					{ "0.12345", "0" },
+					{ "1.2345", "1" },
+					{ "12.345", "12" },
+					{ "12.7", "12" }, // Floor not round?
+					{ "+0.12345", "0" },
+					{ "+1.2345", "1" },
+					{ "+12.345", "12" },
+					{ "-0.12345", "0" },
+					{ "-1.2345", "-1" },
+					{ "-12.345", "-12" },
+					{ "-12.7", "-12" }, // Floor not round?
+					{ "22", "22" },
 					// Invalid values revert to expected
-					{"abc", "0"},
-					{"+abc", "0"},
-					{"-abc", "0"},
+					{ "abc", "0" },
+					{ "+abc", "0" },
+					{ "-abc", "0" },
 				});
 		}
 
@@ -203,37 +201,37 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0.12345"},
-					{"0.12345%", "0.12345%"},
-					{"1.2345", "1.2345"},
-					{"1.2345%", "1.2345%"},
-					{"12.345", "12.345"},
-					{"12.345%", "12.345%"},
-					{"12.7", "12.7"},
-					{"12.7%", "12.7%"},
-					{"+0.12345", "0.12345"},
-					{"+0.12345%", "0.12345%"},
-					{"+1.2345", "1.2345"},
-					{"+1.2345%", "1.2345%"},
-					{"+12.345", "12.345"},
-					{"+12.345%", "12.345%"},
-					{"-0.12345", "-0.12345"},
-					{"-0.12345%", "-0.12345%"},
-					{"-1.2345", "-1.2345"},
-					{"-1.2345%", "-1.2345%"},
-					{"-12.345", "-12.345"},
-					{"-12.345%", "-12.345%"},
-					{"12.7", "12.7"},
-					{"12.7%", "12.7%"},
-					{"22", "22" },
-					{"22%", "22%" },
+					{ "0.12345", "0.12345" },
+					{ "0.12345%", "0.12345%" },
+					{ "1.2345", "1.2345" },
+					{ "1.2345%", "1.2345%" },
+					{ "12.345", "12.345" },
+					{ "12.345%", "12.345%" },
+					{ "12.7", "12.7" },
+					{ "12.7%", "12.7%" },
+					{ "+0.12345", "0.12345" },
+					{ "+0.12345%", "0.12345%" },
+					{ "+1.2345", "1.2345" },
+					{ "+1.2345%", "1.2345%" },
+					{ "+12.345", "12.345" },
+					{ "+12.345%", "12.345%" },
+					{ "-0.12345", "-0.12345" },
+					{ "-0.12345%", "-0.12345%" },
+					{ "-1.2345", "-1.2345" },
+					{ "-1.2345%", "-1.2345%" },
+					{ "-12.345", "-12.345" },
+					{ "-12.345%", "-12.345%" },
+					{ "12.7", "12.7" },
+					{ "12.7%", "12.7%" },
+					{ "22", "22" },
+					{ "22%", "22%" },
 					// Invalid values revert to expected
-					{"abc", "0"},
-					{"abc%", "0%"},
-					{"+abc", "0"},
-					{"+abc%", "0%"},
-					{"-abc", "0"},
-					{"-abc%", "0%"},
+					{ "abc", "0" },
+					{ "abc%", "0%" },
+					{ "+abc", "0" },
+					{ "+abc%", "0%" },
+					{ "-abc", "0" },
+					{ "-abc%", "0%" },
 				});
 		}
 
@@ -249,74 +247,38 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0"},
-					{"0.12345mm", "0.12345mm"},
-					{"1.2345", "1"},
-					{"1.2345mm", "1.2345mm"},
-					{"12.345", "12"},
-					{"12.345mm", "12.345mm"},
-					{"12.7", "12"},
-					{"12.7mm", "12.7mm"},
-					{"+0.12345", "0"},
-					{"+0.12345mm", "0.12345mm"},
-					{"+1.2345", "1"},
-					{"+1.2345mm", "1.2345mm"},
-					{"+12.345", "12"},
-					{"+12.345mm", "12.345mm"},
-					{"-0.12345", "0"},
-					{"-0.12345mm", "0mm"},
-					{"-1.2345", "0"},
-					{"-1.2345mm", "0mm"},
-					{"-12.345", "0"},
-					{"-12.345mm", "0mm"},
-					{"12.7", "12"},
-					{"12.7mm", "12.7mm"},
-					{"22", "22" },
-					{"22mm", "22mm" },
+					{ "0.12345", "0" },
+					{ "0.12345mm", "0.12345mm" },
+					{ "1.2345", "1" },
+					{ "1.2345mm", "1.2345mm" },
+					{ "12.345", "12" },
+					{ "12.345mm", "12.345mm" },
+					{ "12.7", "12" },
+					{ "12.7mm", "12.7mm" },
+					{ "+0.12345", "0" },
+					{ "+0.12345mm", "0.12345mm" },
+					{ "+1.2345", "1" },
+					{ "+1.2345mm", "1.2345mm" },
+					{ "+12.345", "12" },
+					{ "+12.345mm", "12.345mm" },
+					{ "-0.12345", "0" },
+					{ "-0.12345mm", "0mm" },
+					{ "-1.2345", "0" },
+					{ "-1.2345mm", "0mm" },
+					{ "-12.345", "0" },
+					{ "-12.345mm", "0mm" },
+					{ "12.7", "12" },
+					{ "12.7mm", "12.7mm" },
+					{ "22", "22" },
+					{ "22mm", "22mm" },
 					// Invalid values revert to expected
-					{"abc", "0"},
-					{"abcmm", "0mm"},
-					{"+abc", "0"},
-					{"+abcmm", "0mm"},
-					{"-abc", "0"},
-					{"-abcmm", "0mm"},
+					{ "abc", "0" },
+					{ "abcmm", "0mm" },
+					{ "+abc", "0" },
+					{ "+abcmm", "0mm" },
+					{ "-abc", "0" },
+					{ "-abcmm", "0mm" },
 				});
-		}
-
-		public class SimulatedClipboard : ISystemClipboard
-		{
-			private string Text { get; set; }
-
-			public bool ContainsFileDropList => throw new NotImplementedException();
-
-			public bool ContainsImage => throw new NotImplementedException();
-
-			public bool ContainsText => !string.IsNullOrEmpty(Text);
-
-			public StringCollection GetFileDropList()
-			{
-				throw new NotImplementedException();
-			}
-
-			public ImageBuffer GetImage()
-			{
-				throw new NotImplementedException();
-			}
-
-			public string GetText()
-			{
-				return Text;
-			}
-
-			public void SetImage(ImageBuffer imageBuffer)
-			{
-				throw new NotImplementedException();
-			}
-
-			public void SetText(string text)
-			{
-				Text = text;
-			}
 		}
 
 		[Test]
@@ -463,11 +425,11 @@ namespace MatterControl.Tests.MatterControl
 				(f) => (f.Content.Children<DropDownList>().FirstOrDefault() as DropDownList).SelectedLabel,
 				new List<ValueMap>()
 				{
-					{"COM-TestA", "COM-TestA"},
-					{"COM-TestB", "COM-TestB"},
-					{"COM-TestC", "COM-TestC"},
-					{"COM-Test0", "COM-Test0"},
-					{"COM-Test1", "COM-Test1"},
+					{ "COM-TestA", "COM-TestA" },
+					{ "COM-TestB", "COM-TestB" },
+					{ "COM-TestC", "COM-TestC" },
+					{ "COM-Test0", "COM-Test0" },
+					{ "COM-Test1", "COM-Test1" },
 				});
 		}
 
@@ -520,26 +482,24 @@ namespace MatterControl.Tests.MatterControl
 				(field) => (field.Content as MHTextEditWidget).ActualTextEditWidget.Text,
 				new List<ValueMap>()
 				{
-					{"0.12345", "0.12345"},
-					{"1.2345", "1.2345"},
-					{"12.345", "12.345"},
-					{"12.7", "12.7"},
-					{"+0.12345", "+0.12345"},
-					{"+1.2345", "+1.2345"},
-					{"+12.345", "+12.345"},
-					{"-0.12345", "-0.12345"},
-					{"-1.2345", "-1.2345"},
-					{"-12.345", "-12.345"},
-					{"12.7", "12.7"},
-					{"22", "22" },
-					{"abc", "abc"},
-					{"+abc", "+abc"},
-					{"-abc", "-abc"},
-					{"-abc\nline2", "-abc\nline2"},
+					{ "0.12345", "0.12345" },
+					{ "1.2345", "1.2345" },
+					{ "12.345", "12.345" },
+					{ "12.7", "12.7" },
+					{ "+0.12345", "+0.12345" },
+					{ "+1.2345", "+1.2345" },
+					{ "+12.345", "+12.345" },
+					{ "-0.12345", "-0.12345" },
+					{ "-1.2345", "-1.2345" },
+					{ "-12.345", "-12.345" },
+					{ "12.7", "12.7" },
+					{ "22", "22" },
+					{ "abc", "abc" },
+					{ "+abc", "+abc" },
+					{ "-abc", "-abc" },
+					{ "-abc\nline2", "-abc\nline2" },
 				});
 		}
-
-
 
 		[Test]
 		public async Task Vector2FieldTest()
@@ -557,11 +517,11 @@ namespace MatterControl.Tests.MatterControl
 				},
 				new List<ValueMap>()
 				{
-					{"0.1,0.2", "0.1,0.2"},
-					{"1,2", "1,2"},
-					{",2", "0,2"}, // Empty components should revert to 0s
-					{"x,2", "0,2"}, // Non-numeric components should revert to 0s
-					{"2", "0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+					{ "0.1,0.2", "0.1,0.2" },
+					{ "1,2", "1,2" },
+					{ ",2", "0,2" }, // Empty components should revert to 0s
+					{ "x,2", "0,2" }, // Non-numeric components should revert to 0s
+					{ "2", "0,0" }, // Non-vector4 csv should revert to Vector4.Zero
 				});
 		}
 
@@ -581,11 +541,11 @@ namespace MatterControl.Tests.MatterControl
 				},
 				new List<ValueMap>()
 				{
-					{"0.1,0.2,0.3", "0.1,0.2,0.3"},
-					{"1,2,3", "1,2,3"},
-					{",2,", "0,2,0"}, // Empty components should revert to 0s
-					{"x,2,y", "0,2,0"}, // Non-numeric components should revert to 0s
-					{",2", "0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+					{ "0.1,0.2,0.3", "0.1,0.2,0.3" },
+					{ "1,2,3", "1,2,3" },
+					{ ",2,", "0,2,0" }, // Empty components should revert to 0s
+					{ "x,2,y", "0,2,0" }, // Non-numeric components should revert to 0s
+					{ ",2", "0,0,0" }, // Non-vector4 csv should revert to Vector4.Zero
 				});
 		}
 
@@ -607,11 +567,11 @@ namespace MatterControl.Tests.MatterControl
 				},
 				new List<ValueMap>()
 				{
-					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
-					{"1,2,3,4", "1,2,3,4"},
-					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
-					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
-					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+					{ "0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4" },
+					{ "1,2,3,4", "1,2,3,4" },
+					{ ",2,,4", "0,2,0,4" }, // Empty components should revert to 0s
+					{ "x,2,y,4", "0,2,0,4" }, // Non-numeric components should revert to 0s
+					{ ",2,", "0,0,0,0" }, // Non-vector4 csv should revert to Vector4.Zero
 				});
 		}
 
@@ -631,11 +591,11 @@ namespace MatterControl.Tests.MatterControl
 				},
 				new List<ValueMap>()
 				{
-					{"0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4"},
-					{"1,2,3,4", "1,2,3,4"},
-					{",2,,4", "0,2,0,4"}, // Empty components should revert to 0s
-					{"x,2,y,4", "0,2,0,4"}, // Non-numeric components should revert to 0s
-					{",2,", "0,0,0,0"}, // Non-vector4 csv should revert to Vector4.Zero
+					{ "0.1,0.2,0.3,0.4", "0.1,0.2,0.3,0.4" },
+					{ "1,2,3,4", "1,2,3,4" },
+					{ ",2,,4", "0,2,0,4" }, // Empty components should revert to 0s
+					{ "x,2,y,4", "0,2,0,4" }, // Non-numeric components should revert to 0s
+					{ ",2,", "0,0,0,0" }, // Non-vector4 csv should revert to Vector4.Zero
 				});
 		}
 
@@ -664,8 +624,8 @@ namespace MatterControl.Tests.MatterControl
 				},
 				new List<ValueMap>()
 				{
-					{"0x0x0", "0x0x0"},
-					{"0x0", "0x0x0"}, // we store 3 offsets now, when we see 2 we should make 3
+					{ "0x0x0", "0x0x0" },
+					{ "0x0", "0x0x0" }, // we store 3 offsets now, when we see 2 we should make 3
 					// {"", "0x0x0"}, // no values should become 0s
 				});
 		}

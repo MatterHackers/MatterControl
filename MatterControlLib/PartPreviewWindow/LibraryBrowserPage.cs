@@ -65,7 +65,6 @@ namespace MatterHackers.MatterControl
 			librarySelectorWidget = new LibraryListView(libraryNavContext, new IconListView(theme, 75), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
-				ShowItems = true,
 				ContainerFilter = (container) => !container.IsReadOnly,
 			};
 

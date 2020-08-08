@@ -116,6 +116,10 @@ namespace MatterHackers.MatterControl.Library
 							Repository,
 							file.download_url));
 					}
+					else if (file.name.ToLower() == "index.md")
+					{
+
+					}
 					else
 					{
 						this.Items.Add(new GitHubLibraryItem(file.name, file.download_url));

@@ -109,8 +109,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.BackgroundColor = value;
 		}
 
-		public bool ShowItems { get; set; } = true;
-
 		public bool AllowContextMenu { get; set; } = true;
 
 		public Predicate<ILibraryContainerLink> ContainerFilter { get; set; } = (o) => true;
@@ -267,9 +265,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			using (contentView.LayoutLock())
 			{
 				IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
-					where item.IsVisible && this.ContainerFilter(item)
-					                     && this.ContainsActiveFilter(item)
-					select item;
+														   where item.IsVisible && this.ContainerFilter(item)
+																				&& this.ContainsActiveFilter(item)
+														   select item;
 
 				// Folder items
 				foreach (var childContainer in this.SortItems(containerItems))
@@ -284,28 +282,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				// List items
-				if (this.ShowItems)
+				var filteredResults = from item in sourceContainer.Items
+									  where item.IsVisible
+											&& (item.IsContentFileType() || item is MissingFileItem)
+											&& this.ItemFilter(item)
+											&& this.ContainsActiveFilter(item)
+									  select item;
+
+				foreach (var item in this.SortItems(filteredResults))
 				{
-					var filteredResults = from item in sourceContainer.Items
-						where item.IsVisible
-						      && (item.IsContentFileType() || item is MissingFileItem)
-						      && this.ItemFilter(item)
-						      && this.ContainsActiveFilter(item)
-						select item;
+					var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
+					listViewItem.DoubleClick += ListViewItem_DoubleClick;
+					items.Add(listViewItem);
 
-					foreach (var item in this.SortItems(filteredResults))
-					{
-						var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
-						listViewItem.DoubleClick += ListViewItem_DoubleClick;
-						items.Add(listViewItem);
-
-						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-						listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
-						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
-					}
-
-					itemsContentView.EndReload();
+					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
+					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 				}
+
+				itemsContentView.EndReload();
 
 				if (sourceContainer is ILibraryWritableContainer writableContainer)
 				{
@@ -365,7 +360,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		/// <summary>
-		/// The GuiWidget responsible for rendering ListViewItems
+		/// Gets or sets the GuiWidget responsible for rendering ListViewItems
 		/// </summary>
 		public GuiWidget ListContentView
 		{
@@ -421,7 +416,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// originalImage = originalImage.Multiply(this.ThumbnailBackground);
 
-			renderGraphics.Render(originalImage, width /2 - originalImage.Width /2, height /2 - originalImage.Height /2);
+			renderGraphics.Render(originalImage, width / 2 - originalImage.Width / 2, height / 2 - originalImage.Height / 2);
 
 			renderGraphics.FillRectangle(center, Color.Transparent);
 
@@ -589,7 +584,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			if (scrollAmount == -1)
 			{
-				scrollAmount = (int) (this.contentView.Children.FirstOrDefault()?.Height ?? 20);
+				scrollAmount = (int)(this.contentView.Children.FirstOrDefault()?.Height ?? 20);
 			}
 
 			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
