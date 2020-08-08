@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						iconView.Margin = new BorderDouble(leftRightMargin, 0);
 					}
 
-					foreach(var child in Children)
+					foreach (var child in Children)
 					{
 						child.Click -= Row_Click;
 					}
@@ -214,9 +214,13 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class IconView : FlowLayoutWidget, IListContentView
 	{
 		public int ThumbWidth { get; set; } = 100;
+
 		public int ThumbHeight { get; set; } = 100;
+
 		protected int iconViewPadding = IconViewItem.ItemPadding;
+
 		protected ThemeConfig theme;
+
 		protected double leftRightMargin;
 
 		public IconView(ThemeConfig theme, double thumbnailSize = -1)
