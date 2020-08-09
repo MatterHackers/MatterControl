@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		}
 
 		private double babySteppingValue;
+		private double babySteppingValueT1;
 		private bool wizardExited;
 		private bool hasHardwareLeveling;
 
@@ -74,9 +75,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// remember the current baby stepping values
 			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			babySteppingValueT1 = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
 
 			// clear them while we measure the offsets
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, "0");
 
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -135,6 +138,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// set the baby stepping back to the last known good value
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValue.ToString());
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, babySteppingValueT1.ToString());
 
 			wizardExited = true;
 

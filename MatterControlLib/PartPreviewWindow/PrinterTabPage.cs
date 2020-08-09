@@ -684,13 +684,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			upButton.Click += (s, e) =>
 			{
-				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				currentZ += babyStepAmount;
-				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				if (printer.Connection.ActiveExtruderIndex == 0)
+				{
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ += babyStepAmount;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				}
+				else if (printer.Connection.ActiveExtruderIndex == 1)
+				{
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
+					currentZ += babyStepAmount;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, currentZ.ToString("0.##"));
+				}
 			};
 
 			// add in the current position display
-			var zTuning = babySteppingControls.AddChild(new ZTuningWidget(printer.Settings, theme, false)
+			var zTuning = babySteppingControls.AddChild(new ZTuningWidget(printer, theme, false)
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -716,9 +725,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			downButton.Click += (s, e) =>
 			{
-				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				currentZ -= babyStepAmount;
-				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				if (printer.Connection.ActiveExtruderIndex == 0)
+				{
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+					currentZ -= babyStepAmount;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				}
+				else if (printer.Connection.ActiveExtruderIndex == 1)
+				{
+					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
+					currentZ -= babyStepAmount;
+					printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, currentZ.ToString("0.##"));
+				}
 			};
 
 			// build the bottom row to hold re-slice

@@ -447,6 +447,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.baby_step_z_offset_t1,
+					PresentationName = "Baby Step Offset T1".Localize(),
+					HelpText = "The z offset to apply to T1 to improve the first layer adhesion.".Localize(),
+					DataEditType = DataEditTypes.DOUBLE,
+					Units = "mm".Localize(),
+					DefaultValue = "0",
+					ShowIfSet = "!sla_printer",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.extruders_share_temperature,
 					PresentationName = "Share Temperature".Localize(),
 					HelpText = "Used to specify if more than one extruder share a common heater cartridge.".Localize(),

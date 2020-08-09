@@ -39,6 +39,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	public class ZCalibrationWizard : PrinterSetupWizard
 	{
 		private double babySteppingValue;
+		private double babySteppingValueT1;
 
 		public ZCalibrationWizard(PrinterConfig printer)
 			: base(printer)
@@ -73,6 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// set the baby stepping back to the last known good value
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValue.ToString());
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, babySteppingValue.ToString());
 
 			// make sure we raise the probe on close
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
@@ -132,9 +134,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// remember the current baby stepping values
 			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			babySteppingValueT1 = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
 
 			// clear them while we measure the offsets
 			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
+			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, "0");
 
 			// Require user confirmation after this point
 			this.RequireCancelConfirmation = true;

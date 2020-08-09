@@ -34,6 +34,7 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.MatterControl.Utilities;
@@ -188,7 +189,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			};
 			toolbar.AddChild(offsetStreamLabel);
 
-			var ztuningWidget = new ZTuningWidget(printer.Settings, theme);
+			var ztuningWidget = new ZTuningWidget(printer, theme);
 			toolbar.AddChild(ztuningWidget);
 
 			toolbar.AddChild(new HorizontalSpacer());
@@ -265,44 +266,90 @@ namespace MatterHackers.MatterControl.PrinterControls
 		public Color ZColor { get; }
 	}
 
-	public class ZTuningWidget : GuiWidget
+	public class ZTuningWidget : FlowLayoutWidget
 	{
-		private GuiWidget clearZOffsetButton;
-
-		private PrinterSettings printerSettings;
+		private PrinterConfig printer;
 
 		private ThemeConfig theme;
 
-		private FlowLayoutWidget zOffsetStreamContainer;
+		private TextWidget zOffsetStreamDisplayT0;
 
-		private TextWidget zOffsetStreamDisplay;
+		private TextWidget zOffsetStreamDisplayT1;
 
-		public ZTuningWidget(PrinterSettings printerSettings, ThemeConfig theme, bool showClearButton = true)
+		public ZTuningWidget(PrinterConfig printer, ThemeConfig theme, bool showClearButton = true)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
-			this.printerSettings = printerSettings;
+			this.printer = printer;
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
-			{
-				Margin = new BorderDouble(3, 0),
-				Padding = new BorderDouble(3),
-				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Center,
-				Height = 20 * GuiWidget.DeviceScale
-			};
-			this.AddChild(zOffsetStreamContainer);
-
-			double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			zOffsetStreamDisplay = new TextWidget(zoffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
+			var zOffset = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
+			zOffsetStreamDisplayT0 = new TextWidget(zOffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
 			{
 				AutoExpandBoundsToText = true,
 				TextColor = theme.TextColor,
 				Margin = new BorderDouble(5, 0, 8, 0),
 				VAnchor = VAnchor.Center
 			};
-			zOffsetStreamContainer.AddChild(zOffsetStreamDisplay);
+
+			AddExtruder(printer.Settings, SettingsKey.baby_step_z_offset, zOffsetStreamDisplayT0);
+
+			AddDisplay(printer.Settings, theme, showClearButton, SettingsKey.baby_step_z_offset, zOffsetStreamDisplayT0);
+
+			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			{
+				zOffset = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
+
+				zOffsetStreamDisplayT1 = new TextWidget(zOffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
+				{
+					AutoExpandBoundsToText = true,
+					TextColor = theme.TextColor,
+					Margin = new BorderDouble(5, 0, 8, 0),
+					VAnchor = VAnchor.Center
+				};
+				AddExtruder(printer.Settings, SettingsKey.baby_step_z_offset_t1, zOffsetStreamDisplayT1);
+
+				AddDisplay(printer.Settings, theme, showClearButton, SettingsKey.baby_step_z_offset_t1, zOffsetStreamDisplayT1);
+			}
+		}
+
+		private void AddDisplay(PrinterSettings printerSettings,
+			ThemeConfig theme,
+			bool showClearButton,
+			string setting,
+			TextWidget widget)
+		{
+			GuiWidget clearZOffsetButton = null;
+			void Printer_SettingChanged(object s, StringEventArgs e)
+			{
+				if (e?.Data == setting)
+				{
+					double zOffset = printerSettings.GetValue<double>(setting);
+					bool hasOverriddenZOffset = zOffset != 0;
+
+					if (clearZOffsetButton != null)
+					{
+						clearZOffsetButton.Visible = hasOverriddenZOffset;
+					}
+
+					widget.Text = zOffset.ToString("0.##");
+					AddExtruder(printerSettings, setting, widget);
+				}
+			}
+
+			var zOffsetStreamContainer = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Margin = new BorderDouble(3, 0),
+				Padding = new BorderDouble(3),
+				HAnchor = HAnchor.Fit | HAnchor.Right,
+				VAnchor = VAnchor.Absolute,
+				Height = 20 * GuiWidget.DeviceScale
+			};
+			this.AddChild(zOffsetStreamContainer);
+
+			var zoffset = printerSettings.GetValue<double>(setting);
+			zOffsetStreamContainer.AddChild(widget);
 
 			if (showClearButton)
 			{
@@ -312,36 +359,31 @@ namespace MatterHackers.MatterControl.PrinterControls
 				clearZOffsetButton.Visible = zoffset != 0;
 				clearZOffsetButton.Click += (sender, e) =>
 				{
-					printerSettings.SetValue(SettingsKey.baby_step_z_offset, "0");
+					printerSettings.SetValue(setting, "0");
 				};
 				zOffsetStreamContainer.AddChild(clearZOffsetButton);
 			}
 
-			// Register listeners
 			printerSettings.SettingChanged += Printer_SettingChanged;
-		}
 
-		public override void OnClosed(EventArgs e)
-		{
-			// Unregister listeners
-			printerSettings.SettingChanged -= Printer_SettingChanged;
-
-			base.OnClosed(e);
-		}
-
-		private void Printer_SettingChanged(object s, StringEventArgs e)
-		{
-			if (e?.Data == SettingsKey.baby_step_z_offset)
+			this.Closed += (s, e) =>
 			{
-				double zoffset = printerSettings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				bool hasOverriddenZOffset = zoffset != 0;
+				printerSettings.SettingChanged -= Printer_SettingChanged;
+			};
+		}
 
-				if (clearZOffsetButton != null)
+		private static void AddExtruder(PrinterSettings printerSettings, string setting, TextWidget widget)
+		{
+			if (printerSettings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			{
+				if (setting == SettingsKey.baby_step_z_offset)
 				{
-					clearZOffsetButton.Visible = hasOverriddenZOffset;
+					widget.Text += " E1";
 				}
-
-				zOffsetStreamDisplay.Text = zoffset.ToString("0.##");
+				else
+				{
+					widget.Text += " E2";
+				}
 			}
 		}
 	}
