@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
@@ -50,8 +51,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ThemeConfig theme;
 		private ILibraryContext LibraryContext;
-
-		private int scrollAmount = -1;
 
 		private GuiWidget stashedContentView;
 
@@ -133,8 +132,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				// If the current view doesn't match the view requested by the container, construct and switch to the requested view
-				var targetView = Activator.CreateInstance(targetType) as GuiWidget;
-				if (targetView != null)
+				if (Activator.CreateInstance(targetType) is GuiWidget targetView)
 				{
 					this.ListContentView = targetView;
 				}
@@ -264,10 +262,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			using (contentView.LayoutLock())
 			{
-				IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
-														   where item.IsVisible && this.ContainerFilter(item)
-																				&& this.ContainsActiveFilter(item)
-														   select item;
+				var containerItems = sourceContainer.ChildContainers
+					.Where(item => item.IsVisible
+						&& this.ContainerFilter(item)
+						&& this.ContainsActiveFilter(item))
+					.Select(item => item);
 
 				// Folder items
 				foreach (var childContainer in this.SortItems(containerItems))
@@ -369,8 +368,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (value is IListContentView)
 				{
-					scrollAmount = -1;
-
 					if (contentView != null
 						&& contentView != value)
 					{
@@ -578,18 +575,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.filterText = null;
 			this.Reload().ConfigureAwait(false);
-		}
-
-		public override void OnMouseWheel(MouseEventArgs mouseEvent)
-		{
-			if (scrollAmount == -1)
-			{
-				scrollAmount = (int)(this.contentView.Children.FirstOrDefault()?.Height ?? 20);
-			}
-
-			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
-
-			ScrollPosition += new Vector2(0, scrollAmount * direction);
 		}
 
 		public override void OnClosed(EventArgs e)

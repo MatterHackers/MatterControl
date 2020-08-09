@@ -89,7 +89,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right: 8),
-						Enabled = action.IsEnabled == null || action.IsEnabled()
+						Enabled = action.IsEnabled == null || action.IsEnabled(),
+						Name = action.Title + " Button"
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))

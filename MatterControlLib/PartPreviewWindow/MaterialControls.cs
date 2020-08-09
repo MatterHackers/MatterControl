@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			int extruderCount = 4;
 			for (int extruderIndex = -1; extruderIndex < extruderCount; extruderIndex++)
 			{
-				var name = $"{"Material".Localize()} {extruderIndex +1}";
-				if(extruderIndex == -1)
+				var name = $"{"Material".Localize()} {extruderIndex + 1}";
+				if (extruderIndex == -1)
 				{
 					name = "Default".Localize();
 				}
@@ -93,7 +93,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
 					TextColor = theme.TextColor,
-					Checked = extruderIndex == initialMaterialIndex
+					Checked = extruderIndex == initialMaterialIndex,
+					Name = name + " Button"
 				};
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
