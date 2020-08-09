@@ -381,6 +381,58 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
+		public async Task ExtruderT1RecoveryTest()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Pulse", "S-500"))
+				{
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
+
+					var printer = testRunner.FirstPrinter();
+					printer.Settings.SetValue(SettingsKey.recover_is_enabled, "1");
+					printer.Settings.SetValue(SettingsKey.extruder_count, "2");
+					printer.Settings.SetValue(SettingsKey.has_hardware_leveling, "0");
+
+					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
+
+					// print a part
+					testRunner.AddItemToBedplate()
+						.ClickByName("ItemMaterialButton")
+						.ClickByName("Material 2 Button");
+					testRunner.StartPrint(pauseAtLayers: "2;4;6");
+
+					testRunner.ClickResumeButton(printer, true, 1); // Resume
+																	// make sure we are printing with extruder 2 (T1)
+					Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
+					Assert.Greater(printer.Connection.GetTargetHotendTemperature(1), 0);
+
+					testRunner.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
+						.ClickByName("Disconnect from printer button")
+						.ClickByName("Connect to printer button") // Reconnect
+						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+
+					// Assert that recovery happens
+					Assert.IsTrue(PrintRecovery.RecoveryAvailable(printer), "Recovery should be enabled after Disconnect while printing");
+
+					// Recover the print
+					testRunner.ClickButton("Yes Button", "Recover Print");
+
+					testRunner.ClickResumeButton(printer, true, 5); // The first pause that we get after recovery should be layer 6.
+					emulator.RunSlow = true;
+					// make sure we are printing with extruder 2 (T1)
+					Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
+					Assert.Greater(printer.Connection.GetTargetHotendTemperature(1), 0);
+					emulator.RunSlow = false;
+
+					testRunner.WaitForPrintFinished(printer);
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		[Test, Category("Emulator")]
 		public async Task TuningAdjustmentsDefaultToOneAndPersists()
 		{
 			double targetExtrusionRate = 1.5;

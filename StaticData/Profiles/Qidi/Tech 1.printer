@@ -92,7 +92,7 @@
     "perimeter_speed": "60",
     "perimeters": "2",
     "post_process": "",
-    "print_center": "0,0",
+    "print_center": "115,75",
     "print_leveling_method": "Manual",
     "print_leveling_required_to_print": "1",
     "print_leveling_solution": "3 Point Plane",

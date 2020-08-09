@@ -380,6 +380,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				return widget.TreeLoaded;
 			});
 
+			testRunner.Delay(1000);
+
 			// Apply filter
 			testRunner.ClickByName("Search")
 				.Type(model)
@@ -532,7 +534,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			testRunner.EnsureContentMenuOpen();
-			testRunner.EnsureFoldersVisible();
 
 			switch (libraryRowItemName)
 			{
@@ -569,32 +570,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.DoubleClickByName(libraryRowItemName);
-		}
-
-		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
-		{
-			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _, secondsToWait: 0.2);
-			if (checkBox?.Checked == false)
-			{
-				var resetEvent = new AutoResetEvent(false);
-
-				// Wire up event listener
-				var listView = testRunner.GetWidgetByName("LibraryView", out _) as LibraryListView;
-				EventHandler contentReloaded = (s, e) =>
-				{
-					resetEvent.Set();
-				};
-				listView.ContentReloaded += contentReloaded;
-
-				// Start reload
-				testRunner.ClickByName("Show Folders Toggle");
-
-				// Wait for reload
-				resetEvent.WaitOne();
-
-				// Release event listener
-				listView.ContentReloaded -= contentReloaded;
-			}
 		}
 
 		public static void EnsureContentMenuOpen(this AutomationRunner testRunner)
@@ -956,6 +931,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Layer(s) To Pause Field");
 				testRunner.Type(pauseAtLayers);
+			}
+
+			if (testRunner.NameExists("SetupPrinter"))
+			{
+				testRunner.ClickByName("SetupPrinter")
+					.ClickByName("Already Loaded Button")
+					.ClickByName("Cancel Wizard Button")
+					.OpenPrintPopupMenu();
 			}
 
 			testRunner.ClickByName("Start Print Button");
