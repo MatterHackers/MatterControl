@@ -684,18 +684,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			upButton.Click += (s, e) =>
 			{
-				if (printer.Connection.ActiveExtruderIndex == 0)
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 				{
-					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-					currentZ += babyStepAmount;
-					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-				}
-				else if (printer.Connection.ActiveExtruderIndex == 1)
-				{
-					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
-					currentZ += babyStepAmount;
-					printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, currentZ.ToString("0.##"));
-				}
+					if (printer.Connection.ActiveExtruderIndex == i)
+					{
+						var currentZ = value + babyStepAmount;
+						printer.Settings.SetValue(key, currentZ.ToString("0.##"));
+					}
+				});
 			};
 
 			// add in the current position display
@@ -725,18 +721,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			downButton.Click += (s, e) =>
 			{
-				if (printer.Connection.ActiveExtruderIndex == 0)
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 				{
-					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-					currentZ -= babyStepAmount;
-					printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
-				}
-				else if (printer.Connection.ActiveExtruderIndex == 1)
-				{
-					var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
-					currentZ -= babyStepAmount;
-					printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, currentZ.ToString("0.##"));
-				}
+					if (printer.Connection.ActiveExtruderIndex == i)
+					{
+						var currentZ = value - babyStepAmount;
+						printer.Settings.SetValue(key, currentZ.ToString("0.##"));
+					}
+				});
 			};
 
 			// build the bottom row to hold re-slice

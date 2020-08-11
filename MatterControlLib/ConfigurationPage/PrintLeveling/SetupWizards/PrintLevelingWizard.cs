@@ -47,8 +47,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			public Vector3 Position;
 		}
 
-		private double babySteppingValue;
-		private double babySteppingValueT1;
+		private readonly double[] babySteppingValue = new double[4];
 		private bool wizardExited;
 		private bool hasHardwareLeveling;
 
@@ -73,13 +72,13 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		private void Initialize()
 		{
-			// remember the current baby stepping values
-			babySteppingValue = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			babySteppingValueT1 = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
-
-			// clear them while we measure the offsets
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, "0");
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				// remember the current baby stepping values
+				babySteppingValue[i] = value;
+				// clear them while we measure the offsets
+				printer.Settings.SetValue(key, "0");
+			});
 
 			// turn off print leveling
 			printer.Connection.AllowLeveling = false;
@@ -137,8 +136,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			printer.Connection.AllowLeveling = true;
 
 			// set the baby stepping back to the last known good value
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, babySteppingValue.ToString());
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, babySteppingValueT1.ToString());
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				printer.Settings.SetValue(key, babySteppingValue[i].ToString());
+			});
 
 			wizardExited = true;
 
@@ -330,7 +331,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (!printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 			{
 				// clear the baby stepping so we don't save the old values
-				babySteppingValue = 0;
+				var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+				for (i = 0; i < extruderCount; i++)
+				{
+					babySteppingValue[i] = 0;
+				}
 			}
 
 			yield return new LastPageInstructions(

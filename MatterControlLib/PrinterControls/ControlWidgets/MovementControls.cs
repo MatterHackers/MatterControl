@@ -272,10 +272,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 
 		private ThemeConfig theme;
 
-		private TextWidget zOffsetStreamDisplayT0;
-
-		private TextWidget zOffsetStreamDisplayT1;
-
 		public ZTuningWidget(PrinterConfig printer, ThemeConfig theme, bool showClearButton = true)
 			: base(FlowDirection.TopToBottom)
 		{
@@ -284,33 +280,27 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
 
-			var zOffset = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-			zOffsetStreamDisplayT0 = new TextWidget(zOffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 			{
-				AutoExpandBoundsToText = true,
-				TextColor = theme.TextColor,
-				Margin = new BorderDouble(5, 0, 8, 0),
-				VAnchor = VAnchor.Center
-			};
-
-			AddExtruder(printer.Settings, SettingsKey.baby_step_z_offset, zOffsetStreamDisplayT0);
-
-			AddDisplay(printer.Settings, theme, showClearButton, SettingsKey.baby_step_z_offset, zOffsetStreamDisplayT0);
-
-			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
-			{
-				zOffset = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1);
-
-				zOffsetStreamDisplayT1 = new TextWidget(zOffset.ToString("0.##"), pointSize: theme.DefaultFontSize)
+				var zOffsetStreamDisplay = new TextWidget(value.ToString("0.##"), pointSize: theme.DefaultFontSize)
 				{
 					AutoExpandBoundsToText = true,
 					TextColor = theme.TextColor,
 					Margin = new BorderDouble(5, 0, 8, 0),
-					VAnchor = VAnchor.Center
+					VAnchor = VAnchor.Center,
 				};
-				AddExtruder(printer.Settings, SettingsKey.baby_step_z_offset_t1, zOffsetStreamDisplayT1);
 
-				AddDisplay(printer.Settings, theme, showClearButton, SettingsKey.baby_step_z_offset_t1, zOffsetStreamDisplayT1);
+				DescribeExtruder(zOffsetStreamDisplay, i);
+
+				AddDisplay(printer.Settings, theme, showClearButton, key, i, zOffsetStreamDisplay);
+			});
+		}
+
+		private void DescribeExtruder(TextWidget zOffsetStreamDisplay, int index)
+		{
+			if (printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1)
+			{
+				zOffsetStreamDisplay.Text += $" E{index + 1}";
 			}
 		}
 
@@ -318,6 +308,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			ThemeConfig theme,
 			bool showClearButton,
 			string setting,
+			int toolIndex,
 			TextWidget widget)
 		{
 			GuiWidget clearZOffsetButton = null;
@@ -334,7 +325,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					}
 
 					widget.Text = zOffset.ToString("0.##");
-					AddExtruder(printerSettings, setting, widget);
+					DescribeExtruder(widget, toolIndex);
 				}
 			}
 
@@ -370,21 +361,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 			{
 				printerSettings.SettingChanged -= Printer_SettingChanged;
 			};
-		}
-
-		private static void AddExtruder(PrinterSettings printerSettings, string setting, TextWidget widget)
-		{
-			if (printerSettings.GetValue<int>(SettingsKey.extruder_count) > 1)
-			{
-				if (setting == SettingsKey.baby_step_z_offset)
-				{
-					widget.Text += " E1";
-				}
-				else
-				{
-					widget.Text += " E2";
-				}
-			}
 		}
 	}
 }

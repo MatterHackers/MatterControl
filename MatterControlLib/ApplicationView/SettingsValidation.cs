@@ -241,45 +241,28 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				// Make sure the z offsets are not too big
-				if (Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset)) > 2)
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 				{
-					// Static path generation for non-SliceSettings value
-					var location = "Location".Localize() + ":"
-						+ "\n" + "Controls".Localize()
-						+ "\n  • " + "Movement".Localize()
-						+ "\n    • " + "Z Offset".Localize();
+					// Make sure the z offsets are not too big
+					if (Math.Abs(value) > 2)
+					{
+						// Static path generation for non-SliceSettings value
+						var location = "Location".Localize() + ":"
+							+ "\n" + "Controls".Localize()
+							+ "\n  • " + "Movement".Localize()
+							+ "\n    • " + "Z Offset".Localize();
 
-					errors.Add(
-						new ValidationError("ZOffset0TooLarge")
-						{
-							Error = "Z Offset is too large.".Localize(),
-							Details = string.Format(
-								"{0}\n\n{1}",
-								"The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
-								location)
-						});
-				}
-
-				if (extruderCount > 1
-					&& Math.Abs(settings.GetValue<double>(SettingsKey.baby_step_z_offset_t1)) > 2)
-				{
-					// Static path generation for non-SliceSettings value
-					var location = "Location".Localize() + ":"
-						+ "\n" + "Controls".Localize()
-						+ "\n  • " + "Movement".Localize()
-						+ "\n    • " + "Z Offset T1".Localize();
-
-					errors.Add(
-						new ValidationError("ZOffset0TooLarge")
-						{
-							Error = "T1 Z Offset is too large.".Localize(),
-							Details = string.Format(
-								"{0}\n\n{1}",
-								"The Z Offset for your second printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
-								location)
-						});
-				}
+						errors.Add(
+							new ValidationError($"{key}_too_large")
+							{
+								Error = "Z Offset is too large.".Localize(),
+								Details = string.Format(
+									"{0}\n\n{1}",
+									"The Z Offset for your printer, sometimes called Baby Stepping, is greater than 2mm and invalid. Clear the value and re-level the bed.".Localize(),
+									location)
+							});
+					}
+				});
 
 				if (settings.GetValue<double>(SettingsKey.first_layer_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{

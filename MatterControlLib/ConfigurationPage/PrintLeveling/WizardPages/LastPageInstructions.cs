@@ -74,8 +74,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// Invoke setter forcing persistence of leveling data
 			printer.Settings.Helpers.PrintLevelingData = levelingData;
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset, "0");
-			printer.Settings.SetValue(SettingsKey.baby_step_z_offset_t1, "0");
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				printer.Settings.SetValue(key, "0");
+			});
 			printer.Connection.AllowLeveling = true;
 			printer.Settings.Helpers.DoPrintLeveling(true);
 

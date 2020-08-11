@@ -443,18 +443,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer",
-					RebuildGCodeOnChange = false
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.baby_step_z_offset_t1,
-					PresentationName = "Baby Step Offset T1".Localize(),
-					HelpText = "The z offset to apply to T1 to improve the first layer adhesion.".Localize(),
-					DataEditType = DataEditTypes.DOUBLE,
-					Units = "mm".Localize(),
-					DefaultValue = "0",
-					ShowIfSet = "!sla_printer",
-					RebuildGCodeOnChange = false
+					RebuildGCodeOnChange = false,
+					PerToolName = (toolIndex) => $"{SettingsKey.baby_step_z_offset}_{toolIndex}"
 				},
 				new SliceSettingData()
 				{
