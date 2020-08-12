@@ -626,27 +626,38 @@ namespace MatterHackers.MatterControl
 
 			var vector3 = default(Vector3);
 
+			var moveDistance = Math.Max(.1, view3D.InteractionLayer.SnapGridDistance);
+
+			if (keyEvent.Shift)
+			{
+				moveDistance *= 5;
+			}
+			else if (keyEvent.Control)
+			{
+				moveDistance *= .2;
+			}
+
 			// TODO: analyze the view and adjust movements to be relative to the current perspective
 			//
 			// Naive movements in Identity space
 			switch (arrowDirection)
 			{
 				case ArrowDirection.Left:
-					vector3 = new Vector3(-view3D.InteractionLayer.SnapGridDistance, 0, 0);
+					vector3 = new Vector3(-moveDistance, 0, 0);
 					break;
 
 				case ArrowDirection.Right:
-					vector3 = new Vector3(view3D.InteractionLayer.SnapGridDistance, 0, 0);
+					vector3 = new Vector3(moveDistance, 0, 0);
 					break;
 
 				case ArrowDirection.Up:
 					if (keyEvent.Control)
 					{
-						vector3 = new Vector3(0, 0, view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, 0, moveDistance);
 					}
 					else
 					{
-						vector3 = new Vector3(0, view3D.InteractionLayer.SnapGridDistance, 0);
+						vector3 = new Vector3(0, moveDistance, 0);
 					}
 
 					break;
@@ -654,11 +665,11 @@ namespace MatterHackers.MatterControl
 				case ArrowDirection.Down:
 					if (keyEvent.Control)
 					{
-						vector3 = new Vector3(0, 0, -view3D.InteractionLayer.SnapGridDistance);
+						vector3 = new Vector3(0, 0, -moveDistance);
 					}
 					else
 					{
-						vector3 = new Vector3(0, -view3D.InteractionLayer.SnapGridDistance, 0);
+						vector3 = new Vector3(0, -moveDistance, 0);
 					}
 
 					break;
