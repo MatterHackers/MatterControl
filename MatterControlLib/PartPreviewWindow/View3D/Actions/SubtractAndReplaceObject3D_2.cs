@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,6 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[HideFromEditor]
 		public SelectedChildren ComputedChildren { get; set; } = new SelectedChildren();
 
+		[DisplayName("Part(s) to Subtract and Replace")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)

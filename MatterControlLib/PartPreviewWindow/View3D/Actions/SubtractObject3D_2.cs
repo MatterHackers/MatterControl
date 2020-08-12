@@ -29,9 +29,11 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CsvHelper.Configuration.Attributes;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -51,6 +53,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			Name = "Subtract";
 		}
 
+		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
 		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)

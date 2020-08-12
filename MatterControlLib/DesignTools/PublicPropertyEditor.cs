@@ -742,7 +742,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme)
 		{
-			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
+			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Margin = new BorderDouble(0, 3, 0, 0),
+			};
 
 			var parentOfSubtractTargets = sourceContainer.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
@@ -755,7 +758,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				var itemIndex = i;
 				var child = sourceChildren[itemIndex];
-				var rowContainer = new FlowLayoutWidget();
+				var rowContainer = new FlowLayoutWidget()
+				{
+					Padding = new BorderDouble(15, 0, 0, 3)
+				};
 
 				GuiWidget selectWidget;
 				if (sourceChildren.Count == 2)
@@ -763,7 +769,8 @@ namespace MatterHackers.MatterControl.DesignTools
 					var radioButton = new RadioButton(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
 						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor
+						TextColor = theme.TextColor,
+						Margin = 0,
 					};
 					radioSiblings.Add(radioButton);
 					radioButton.SiblingRadioButtonList = radioSiblings;
@@ -774,7 +781,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					selectWidget = new CheckBox(string.IsNullOrWhiteSpace(child.Name) ? $"{itemIndex}" : $"{child.Name}")
 					{
 						Checked = childSelector.Contains(child.ID),
-						TextColor = theme.TextColor
+						TextColor = theme.TextColor,
 					};
 				}
 
