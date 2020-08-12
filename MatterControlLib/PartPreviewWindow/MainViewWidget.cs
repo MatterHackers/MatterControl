@@ -237,7 +237,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Name = "Update Available Link",
 					ToolTipText = "There is a new update available for download".Localize(),
 					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(10, 0)
+					Margin = new BorderDouble(10, 0),
+					TextColor = theme.PrimaryAccentColor
 				};
 
 				// Register listeners
@@ -485,7 +486,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double totalSeconds = 0;
 
 			var textWidgets = updateAvailableButton.Descendants<TextWidget>().Where((w) => w.Visible == true).ToArray();
-			Color startColor = theme.TextColor;
+			Color startColor = theme.PrimaryAccentColor;
 
 			// Show a highlight on the button as the user did not click it
 			var flashBackground = new Animation()
