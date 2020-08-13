@@ -339,16 +339,11 @@ namespace MatterControl.Tests.MatterControl
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
 
-					double maximumLayerHeight = firstLayerExtrusionWidth * 0.85;
-
-					// TODO: Remove once validated and resolved
-					if (firstLayerHeight >= maximumLayerHeight)
+					if (firstLayerHeight > firstLayerExtrusionWidth)
 					{
 						printer.RuleViolated = true;
 						return;
 					}
-
-					Assert.Less(firstLayerHeight, maximumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeFilePath);
 				}
 			});
 		}
@@ -427,13 +422,20 @@ namespace MatterControl.Tests.MatterControl
 		{
 			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
-				// Make exception for extruder assignment on 3D Stuffmaker slice files
-				if (printer.Oem == "3D Stuffmaker")
+				var supportMaterialInterfaceExtruder = settings.GetValue<int>(SettingsKey.support_material_interface_extruder);
+				var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+				// the support extruder should be 0 unless you are on a material setting
+				if (supportMaterialInterfaceExtruder == 0
+					|| (settingsType == SettingsType.Material && extruderCount > 1))
 				{
-					return;
+					// this is a valid printer profile
+				}
+				else
+				{
+					// this needs to be fixed
+					printer.RuleViolated = true;
 				}
 
-				string supportMaterialInterfaceExtruder = settings.GetValue("support_material_interface_extruder");
 				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
 				{
 					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1: " + printer.RelativeFilePath);
