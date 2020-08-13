@@ -43,6 +43,8 @@ namespace MatterHackers.MatterControl
 
 		bool AutoAdvance { get; set; }
 
+		StagedSetupWindow StagedSetupWindow { get; set; }
+
 		Func<DialogPage> HomePageGenerator { get; }
 	}
 }
