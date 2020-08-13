@@ -105,6 +105,9 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
+						column.AddChild(new HorizontalSpacer());
+						column.AddChild(new TextButton("Run Z Calibration".Localize(), theme));
+
 						widget = column;
 					}
 
@@ -113,7 +116,7 @@ namespace MatterHackers.MatterControl
 						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 						var column = CreateColumn(theme);
-					
+
 						if (levelingData != null
 							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
 						{
@@ -182,6 +185,13 @@ namespace MatterHackers.MatterControl
 
 							rightWidget = row;
 
+							var leftToRight = new FlowLayoutWidget()
+							{
+								HAnchor = HAnchor.Stretch
+							};
+
+							column.AddChild(leftToRight);
+
 							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
 								HAnchor = HAnchor.Absolute,
@@ -192,7 +202,13 @@ namespace MatterHackers.MatterControl
 								RenderProbePath = false,
 								SimplePoints = true,
 							};
-							column.AddChild(probeWidget);
+							leftToRight.AddChild(probeWidget);
+
+							leftToRight.AddChild(new HorizontalSpacer());
+							leftToRight.AddChild(new TextButton("Run Print Leveling".Localize(), theme)
+							{
+								VAnchor = VAnchor.Bottom
+							});
 						}
 						else if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 						{
@@ -207,13 +223,13 @@ namespace MatterHackers.MatterControl
 
 					if (stage is XyCalibrationWizard xyWizard)
 					{
-						var column = CreateColumn(theme);
-						column.FlowDirection = FlowDirection.LeftToRight;
+						var row = CreateColumn(theme);
+						row.FlowDirection = FlowDirection.LeftToRight;
 
 						var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
 
 						var tool2Column = new FlowLayoutWidget(FlowDirection.TopToBottom);
-						column.AddChild(tool2Column);
+						row.AddChild(tool2Column);
 
 						tool2Column.AddChild(
 							new TextWidget("Tool".Localize() + " 2", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
@@ -244,7 +260,13 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
-						widget = column;
+						row.AddChild(new HorizontalSpacer());
+						row.AddChild(new TextButton("Run Nozzle Alignment".Localize(), theme)
+						{
+							VAnchor = VAnchor.Bottom
+						});
+
+						widget = row;
 					}
 
 					if (stage.SetupRequired)

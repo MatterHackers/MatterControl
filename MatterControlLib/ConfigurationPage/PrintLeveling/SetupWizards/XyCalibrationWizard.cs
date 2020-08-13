@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			this.ExtruderToCalibrateIndex = extruderToCalibrateIndex;
 
-			this.Title = "Nozzle Calibration".Localize();
+			this.Title = "Nozzle Alignment".Localize();
 			this.WindowSize = new Vector2(600 * GuiWidget.DeviceScale, 700 * GuiWidget.DeviceScale);
 		}
 
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				string.Format("{0} {1}", this.Title, "Overview".Localize()),
 				string.Format(
 					"{0}\n\n{1}\n\n{2}\n\n",
-					"Nozzle Calibration measures the distance between hotends.".Localize(),
+					"Nozzle Alignment measures the distance between hotends.".Localize(),
 					"This data improves the alignment of dual extrusion prints.".Localize(),
 					"Click 'Next' to continue.".Localize()))
 				{
