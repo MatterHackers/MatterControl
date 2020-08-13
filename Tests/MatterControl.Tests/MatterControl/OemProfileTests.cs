@@ -435,11 +435,6 @@ namespace MatterControl.Tests.MatterControl
 					// this needs to be fixed
 					printer.RuleViolated = true;
 				}
-
-				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
-				{
-					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1: " + printer.RelativeFilePath);
-				}
 			});
 		}
 
