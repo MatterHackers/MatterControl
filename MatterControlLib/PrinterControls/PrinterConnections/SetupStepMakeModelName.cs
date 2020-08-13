@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	{
 		private TextButton nextButton;
 		private AddPrinterWidget printerPanel;
-		private bool usingDefaultName;
 
 		private static BorderDouble elementMargin = new BorderDouble(top: 3);
 
@@ -55,7 +54,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
 
 			this.HeaderText = this.WindowTitle = "Printer Setup".Localize();
-			this.WindowSize = new VectorMath.Vector2(800, 600);
+			this.WindowSize = new VectorMath.Vector2(800 * GuiWidget.DeviceScale, 600 * GuiWidget.DeviceScale);
 
 			contentRow.BackgroundColor = theme.SectionBackgroundColor;
 			nextButton = theme.CreateDialogButton("Next".Localize());
@@ -142,8 +141,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			});
 
 			this.AddPageAction(nextButton);
-
-			usingDefaultName = true;
 
 			SetElementVisibility();
 		}
