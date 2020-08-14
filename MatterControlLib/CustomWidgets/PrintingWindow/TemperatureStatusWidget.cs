@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			this.AddChild(extruderName);
 
-			progressBar = new ProgressBar(200, 6)
+			progressBar = new ProgressBar(200 * GuiWidget.DeviceScale, 6 * GuiWidget.DeviceScale)
 			{
 				FillColor = theme.PrimaryAccentColor,
 				Margin = new BorderDouble(right: 10),

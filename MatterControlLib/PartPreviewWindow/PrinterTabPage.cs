@@ -684,13 +684,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			upButton.Click += (s, e) =>
 			{
-				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				currentZ += babyStepAmount;
-				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+				{
+					if (printer.Connection.ActiveExtruderIndex == i)
+					{
+						var currentZ = value + babyStepAmount;
+						printer.Settings.SetValue(key, currentZ.ToString("0.##"));
+					}
+				});
 			};
 
 			// add in the current position display
-			var zTuning = babySteppingControls.AddChild(new ZTuningWidget(printer.Settings, theme, false)
+			var zTuning = babySteppingControls.AddChild(new ZTuningWidget(printer, theme, false)
 			{
 				HAnchor = HAnchor.Center | HAnchor.Fit,
 				VAnchor = VAnchor.Fit,
@@ -716,9 +721,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 			downButton.Click += (s, e) =>
 			{
-				var currentZ = printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset);
-				currentZ -= babyStepAmount;
-				printer.Settings.SetValue(SettingsKey.baby_step_z_offset, currentZ.ToString("0.##"));
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+				{
+					if (printer.Connection.ActiveExtruderIndex == i)
+					{
+						var currentZ = value - babyStepAmount;
+						printer.Settings.SetValue(key, currentZ.ToString("0.##"));
+					}
+				});
 			};
 
 			// build the bottom row to hold re-slice
@@ -864,7 +874,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", theme.InvertIcons))
+			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", 24, 24, theme.InvertIcons))
 			{
 				VAnchor = VAnchor.Center
 			});

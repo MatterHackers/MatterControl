@@ -93,6 +93,7 @@ namespace MatterHackers.MatterControl
 			var instanceIndex = 0;
 
 			var wizardWindow = new StagedSetupWindow(setupWizard);
+			setupWizard.StagedSetupWindow = wizardWindow;
 			wizardWindow.Closed += (s, e) => allWindows.Remove((type, instanceIndex));
 			allWindows[(type, instanceIndex)] = wizardWindow;
 

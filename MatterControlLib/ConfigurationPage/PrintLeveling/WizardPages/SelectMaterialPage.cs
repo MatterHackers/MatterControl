@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				loadFilamentButton.Click += (s, e) =>
 				{
 					base.setupWizard.MoveNext();
-					if(base.setupWizard.Current is WizardPage wizardPage)
+
+					if (base.setupWizard.Current is WizardPage wizardPage)
 					{
 						this.DialogWindow.ChangeToPage(wizardPage);
 					}

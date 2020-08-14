@@ -740,6 +740,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						controlWidth = 400;
 					}
+
 					verticalResizeContainer.Width = controlWidth;
 
 					verticalResizeContainer.BoundsChanged += (s2, e2) =>

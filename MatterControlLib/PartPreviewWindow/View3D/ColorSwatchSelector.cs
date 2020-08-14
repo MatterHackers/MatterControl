@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// put in white and black buttons
 				colorRow.AddChild(MakeColorButton(grayLevel[rowIndex], scaledButtonSize, buttonSpacing, colorChanged));
 
-				switch(rowIndex)
+				switch (rowIndex)
 				{
 					case 0:
 						var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BackgroundColor
 		{
-			get => (this.Enabled) ? base.BackgroundColor : this.DisabledColor;
+			get => this.Enabled ? base.BackgroundColor : this.DisabledColor;
 			set
 			{
 				base.BackgroundColor = value;
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public static Color ToGrayscale(this Color color)
 		{
 			int y = (color.red * 77) + (color.green * 151) + (color.blue * 28);
-			int gray = (y >> 8);
+			int gray = y >> 8;
 
 			return new Color(gray, gray, gray, 255);
 		}

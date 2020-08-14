@@ -41,8 +41,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private readonly Vector3[] extruderOffsets = new Vector3[4];
 		private PrinterMove outputWithBabyStepping = PrinterMove.Unknown;
 		private PrinterMove inputNoBabyStepping = PrinterMove.Unknown;
+		private double[] _babyStepOffset = new double[4];
 
-		public Vector3 BabbyStepOffset { get; private set; } = Vector3.Zero;
+		public double SetBabbyStepOffset(int index, double value) => _babyStepOffset[index] = value;
+
+		public double GetBabbyStepOffset(int index) => _babyStepOffset[index];
+
+		public Vector3 BabbyStepOffsetT1 { get; private set; } = Vector3.Zero;
 
 		public BabyStepsStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -51,7 +56,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			extruderIndex = printer.Connection.ActiveExtruderIndex;
 
-			BabbyStepOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				SetBabbyStepOffset(i, value);
+			});
 
 			ReadExtruderOffsets();
 		}
@@ -74,12 +82,15 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void Printer_SettingChanged(object s, StringEventArgs e)
 		{
-			if (e?.Data == SettingsKey.baby_step_z_offset)
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 			{
-				var currentOffset = BabbyStepOffset.Z;
-				BabbyStepOffset = new Vector3(0, 0, printer.Settings.GetValue<double>(SettingsKey.baby_step_z_offset));
-			}
-			else if (e?.Data == SettingsKey.extruder_offset
+				if (e?.Data == key)
+				{
+					SetBabbyStepOffset(i, value);
+				}
+			});
+
+			if (e?.Data == SettingsKey.extruder_offset
 				&& !printer.Connection.Printing
 				&& !printer.Connection.Paused)
 			{
@@ -94,7 +105,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			// calculate our offset to pass on to internal streams
 			inputNoBabyStepping = outputWithBabyStepping;
-			inputNoBabyStepping.position -= BabbyStepOffset;
+
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				if (extruderIndex == i)
+				{
+					inputNoBabyStepping.position = new Vector3(inputNoBabyStepping.position.X,
+						inputNoBabyStepping.position.Y,
+						inputNoBabyStepping.position.Z - GetBabbyStepOffset(i));
+				}
+			});
+
 			inputNoBabyStepping.position += extruderOffsets[Math.Min(extruderIndex, 4)];
 
 			internalStream.SetPrinterPosition(inputNoBabyStepping);
@@ -134,7 +155,16 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				// it is a struct so this is making a new copy we con modify
 				PrinterMove moveToSend = inputNoBabyStepping;
-				moveToSend.position += BabbyStepOffset;
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+				{
+					if (extruderIndex == i)
+					{
+						moveToSend.position = new Vector3(moveToSend.position.X,
+							moveToSend.position.Y,
+							moveToSend.position.Z + GetBabbyStepOffset(i));
+					}
+				});
+
 				moveToSend.position -= extruderOffsets[Math.Min(extruderIndex, 4)];
 
 				if (moveToSend.HaveAnyPosition)

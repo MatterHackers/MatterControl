@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			};
 			printersNode.TreeView = this;
 
-			var forcedHeight = 20;
+			var forcedHeight = 20 * GuiWidget.DeviceScale;
 			var mainRow = printersNode.Children.FirstOrDefault();
 			mainRow.HAnchor = HAnchor.Stretch;
 			mainRow.AddChild(new HorizontalSpacer());

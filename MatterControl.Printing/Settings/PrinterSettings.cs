@@ -246,6 +246,39 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.z_servo_retracted_angle,
 		};
 
+		/// <summary>
+		/// Call the given function for every active tool
+		/// </summary>
+		/// <typeparam name="T">The type for the given key</typeparam>
+		/// <param name="key">The settings key to lookup per tool</param>
+		/// <param name="applyToEach">The function to call per active tool</param>
+		public void ForTools<T>(string key, Action<string, T, int> applyToEach)
+		{
+			string Tool(int toolIndex)
+			{
+				if (toolIndex == 0)
+				{
+					return key;
+				}
+
+				// If the setting has a described method for constructing the keys per tool, use it.
+				var perToolName = SettingsData[key].PerToolName;
+				if (perToolName != null)
+				{
+					return perToolName(toolIndex);
+				}
+
+				return $"{key}_{toolIndex}";
+			}
+
+			var extruderCount = this.GetValue<int>(SettingsKey.extruder_count);
+			for (int i = 0; i < extruderCount; i++)
+			{
+				var toolKey = Tool(i);
+				applyToEach(toolKey, this.GetValue<T>(toolKey), i);
+			}
+		}
+
 		public void OnSettingChanged(string slicerConfigName)
 		{
 			if (slicerConfigName == SettingsKey.t0_inset
@@ -961,7 +994,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// Items *should* reset to defaults
 						break;
 					default:
-						//Items should *not* reset to defaults
+						// Items should *not* reset to defaults
 						keysToRetain.Add(item.SlicerConfigName);
 						break;
 				}
@@ -1021,9 +1054,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return value;
 		}
 
-		///<summary>
-		///Returns the first matching value discovered while enumerating the settings layers
-		///</summary>
+		/// <summary>
+		/// Returns the first matching value discovered while enumerating the settings layers
+		/// </summary>
+		/// <typeparam name="T">The type to return</typeparam>
+		/// <param name="settingsKey">The setting to look up</param>
+		/// <param name="layerCascade">The settings layers to look at in order</param>
+		/// <returns>The value of the setting cast to type</returns>
 		public T GetValue<T>(string settingsKey, IEnumerable<PrinterSettingsLayer> layerCascade = null)
 		{
 #if DEBUG
@@ -1060,21 +1097,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				switch (settingsValue)
 				{
 					case "3 Point Plane":
-						return (T)(object)(LevelingSystem.Probe3Points);
+						return (T)(object)LevelingSystem.Probe3Points;
 					case "7 Point Disk":
-						return (T)(object)(LevelingSystem.Probe7PointRadial);
+						return (T)(object)LevelingSystem.Probe7PointRadial;
 					case "13 Point Disk":
-						return (T)(object)(LevelingSystem.Probe13PointRadial);
+						return (T)(object)LevelingSystem.Probe13PointRadial;
 					case "100 Point Disk":
-						return (T)(object)(LevelingSystem.Probe100PointRadial);
+						return (T)(object)LevelingSystem.Probe100PointRadial;
 					case "3x3 Mesh":
-						return (T)(object)(LevelingSystem.Probe3x3Mesh);
+						return (T)(object)LevelingSystem.Probe3x3Mesh;
 					case "5x5 Mesh":
-						return (T)(object)(LevelingSystem.Probe5x5Mesh);
+						return (T)(object)LevelingSystem.Probe5x5Mesh;
 					case "10x10 Mesh":
-						return (T)(object)(LevelingSystem.Probe10x10Mesh);
+						return (T)(object)LevelingSystem.Probe10x10Mesh;
 					case "Custom Points":
-						return (T)(object)(LevelingSystem.ProbeCustom);
+						return (T)(object)LevelingSystem.ProbeCustom;
 					default:
 #if DEBUG
 						throw new NotImplementedException();
@@ -1207,7 +1244,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var persistenceLayer = layer ?? UserLayer;
 
 			// If the setting exists and is set to the requested value, exit without setting or saving
-			if (persistenceLayer.TryGetValue(settingsKey, out string existingValue) 
+			if (persistenceLayer.TryGetValue(settingsKey, out string existingValue)
 				&& existingValue == settingsValue)
 			{
 				return;

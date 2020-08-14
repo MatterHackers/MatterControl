@@ -114,6 +114,41 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.Delay(.5);
 		}
 
+		public static void ChangeSettings(this AutomationRunner testRunner,
+			IEnumerable<(string key, string value)> settings,
+			PrinterConfig printer)
+		{
+			bool needReload = false;
+
+			foreach (var setting in settings)
+			{
+				if (printer.Settings.GetValue(setting.key) != setting.value
+					&& PrinterSettings.SettingsData[setting.key].ReloadUiWhenChanged)
+				{
+					needReload = true;
+					break;
+				}
+			}
+
+			if (needReload)
+			{
+				testRunner.WaitForReloadAll(() =>
+				{
+					foreach (var setting in settings)
+					{
+						printer.Settings.SetValue(setting.key, setting.value);
+					}
+				});
+			}
+			else
+			{
+				foreach (var setting in settings)
+				{
+					printer.Settings.SetValue(setting.key, setting.value);
+				}
+			}
+		}
+
 		public static void WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
 		{
 			// Wire up a block and release mechanism to wait until the sign in process has completed
@@ -468,7 +503,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				File.WriteAllText(mcpPath, JsonConvert.SerializeObject(new ManifestFile()
 				{
-					ProjectFiles = new System.Collections.Generic.List<PrintItem>()
+					ProjectFiles = new List<PrintItem>()
 				}, Formatting.Indented));
 			}
 
@@ -532,7 +567,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			testRunner.EnsureContentMenuOpen();
-			testRunner.EnsureFoldersVisible();
 
 			switch (libraryRowItemName)
 			{
@@ -569,32 +603,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.DoubleClickByName(libraryRowItemName);
-		}
-
-		public static void EnsureFoldersVisible(this AutomationRunner testRunner)
-		{
-			var checkBox = (ExpandCheckboxButton)testRunner.GetWidgetByName("Show Folders Toggle", out _, secondsToWait: 0.2);
-			if (checkBox?.Checked == false)
-			{
-				var resetEvent = new AutoResetEvent(false);
-
-				// Wire up event listener
-				var listView = testRunner.GetWidgetByName("LibraryView", out _) as LibraryListView;
-				EventHandler contentReloaded = (s, e) =>
-				{
-					resetEvent.Set();
-				};
-				listView.ContentReloaded += contentReloaded;
-
-				// Start reload
-				testRunner.ClickByName("Show Folders Toggle");
-
-				// Wait for reload
-				resetEvent.WaitOne();
-
-				// Release event listener
-				listView.ContentReloaded -= contentReloaded;
-			}
 		}
 
 		public static void EnsureContentMenuOpen(this AutomationRunner testRunner)
@@ -944,8 +952,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner we are using.</param>
 		/// <param name="pauseAtLayers">The string to write into the pause field in the print menu.</param>
-		/// <returns></returns>
-		public static AutomationRunner StartPrint(this AutomationRunner testRunner, string pauseAtLayers = null)
+		/// <returns>The automation runner to allow fluid design</returns>
+		public static AutomationRunner StartPrint(this AutomationRunner testRunner,
+			PrinterConfig printer,
+			string pauseAtLayers = null)
 		{
 			// Open popup
 			testRunner.OpenPrintPopupMenu();
@@ -956,6 +966,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickByName("Layer(s) To Pause Field");
 				testRunner.Type(pauseAtLayers);
+			}
+
+			if (testRunner.NameExists("SetupPrinter"))
+			{
+				if (printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
+				{
+					testRunner.ClickByName("SetupPrinter")
+						.ClickByName("Already Loaded Button")
+						.ClickByName("Cancel Wizard Button")
+						.OpenPrintPopupMenu();
+				}
+				else
+				{
+					testRunner.ClickByName("SetupPrinter")
+						.ClickByName("Already Loaded Button")
+						.ClickByName("Cancel Wizard Button")
+						.OpenPrintPopupMenu();
+				}
 			}
 
 			testRunner.ClickByName("Start Print Button");

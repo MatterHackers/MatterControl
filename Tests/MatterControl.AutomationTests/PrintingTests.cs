@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Shorten the delay so the test runs in a reasonable time
 					printer.Connection.TimeToHoldTemperature = 5;
 
-					testRunner.StartPrint();
+					testRunner.StartPrint(printer);
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished(printer);
@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.Less(printer.Connection.ActualBedTemperature, 10);
 
 					// Make sure we can run this whole thing again
-					testRunner.StartPrint();
+					testRunner.StartPrint(printer);
 
 					// Wait for print to finish
 					testRunner.WaitForPrintFinished(printer);
@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					currentSettings.SetValue(SettingsKey.pause_gcode, "");
 					currentSettings.SetValue(SettingsKey.resume_gcode, "");
 
-					testRunner.StartPrint(pauseAtLayers: "2");
+					testRunner.StartPrint(printer, pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.Complete9StepLeveling(2);
 
-					testRunner.StartPrint(pauseAtLayers: "2");
+					testRunner.StartPrint(printer, pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -154,7 +154,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.ClickByName("Cancel Wizard Button");
 
-					testRunner.StartPrint(pauseAtLayers: "2");
+					testRunner.StartPrint(printer, pauseAtLayers: "2");
 
 					testRunner.WaitForName("Yes Button", 20); // the yes button is 'Resume'
 
@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// print a part
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartPrint(pauseAtLayers: "2;6");
+					testRunner.StartPrint(testRunner.FirstPrinter(), pauseAtLayers: "2;6");
 
 					// turn on line error simulation
 					emulator.SimulateLineErrors = true;
@@ -329,7 +329,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddItemToBedplate();
-					testRunner.StartPrint(pauseAtLayers: "2");
+					testRunner.StartPrint(printer, pauseAtLayers: "2");
 					ProfileManager.DebugPrinterDelete = true;
 
 					// Wait for pause dialog
@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// print a part
 					testRunner.AddItemToBedplate()
-						.StartPrint(pauseAtLayers: "2;4;6")
+						.StartPrint(printer, pauseAtLayers: "2;4;6")
 						.ClickResumeButton(printer, true, 1) // Resume
 						.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
 						.ClickByName("Disconnect from printer button")
@@ -374,6 +374,74 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickButton("Yes Button", "Recover Print")
 						.ClickResumeButton(printer, true, 5) // The first pause that we get after recovery should be layer 6.
 						.WaitForPrintFinished(printer);
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		[Test, Category("Emulator")]
+		public async Task RecoveryT1NoProbe()
+		{
+			await ExtruderT1RecoveryTest("Airwolf 3D", "HD");
+		}
+
+		[Test, Category("Emulator")]
+		public async Task RecoveryT1WithProbe()
+		{
+			await ExtruderT1RecoveryTest("Pulse", "S-500");
+		}
+
+		public async Task ExtruderT1RecoveryTest(string make, string model)
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator(make, model))
+				{
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
+
+					var printer = testRunner.FirstPrinter();
+					testRunner.ChangeSettings(
+						new (string, string)[]
+						{
+							(SettingsKey.recover_is_enabled, "1"),
+							(SettingsKey.extruder_count, "2"),
+							(SettingsKey.has_hardware_leveling, "0"),
+						}, printer);
+
+					Assert.IsTrue(printer.Connection.RecoveryIsEnabled);
+
+					// print a part
+					testRunner.AddItemToBedplate()
+						.ClickByName("ItemMaterialButton")
+						.ClickByName("Material 2 Button")
+						.StartPrint(printer, pauseAtLayers: "2;3;4;5");
+
+					testRunner.ClickResumeButton(printer, true, 1); // Resume
+																	// make sure we are printing with extruder 2 (T1)
+					Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
+					Assert.Greater(printer.Connection.GetTargetHotendTemperature(1), 0);
+
+					testRunner.ClickResumeButton(printer, false, 2) // close the pause dialog pop-up do not resume
+						.ClickByName("Disconnect from printer button")
+						.ClickByName("Connect to printer button") // Reconnect
+						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+
+					// Assert that recovery happens
+					Assert.IsTrue(PrintRecovery.RecoveryAvailable(printer), "Recovery should be enabled after Disconnect while printing");
+
+					// Recover the print
+					testRunner.ClickButton("Yes Button", "Recover Print");
+
+					// The first pause that we get after recovery should be layer 4 (index 3).
+					testRunner.ClickResumeButton(printer, true, 3);
+					// make sure we are printing with extruder 2 (T1)
+					Assert.AreEqual(0, printer.Connection.GetTargetHotendTemperature(0));
+					Assert.Greater(printer.Connection.GetTargetHotendTemperature(1), 0);
+
+					testRunner.ClickResumeButton(printer, true, 4);
+
+					testRunner.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
@@ -407,7 +475,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						printFinishedResetEvent.Set();
 					};
 
-					testRunner.StartPrint()
+					testRunner.StartPrint(printer)
 						.ScrollIntoView("Extrusion Multiplier NumberEdit")
 						.ScrollIntoView("Feed Rate NumberEdit");
 
@@ -437,7 +505,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					ConfirmExpectedSpeeds(testRunner, targetExtrusionRate, targetFeedRate, "After print finished");
 
 					testRunner.WaitForPrintFinished(printer)
-						.StartPrint() // Restart the print
+						.StartPrint(printer) // Restart the print
 						.Delay(1);
 
 					// Values should match entered values
@@ -485,7 +553,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printFinishedResetEvent = new AutoResetEvent(false);
 					printer.Connection.PrintFinished += (s, e) => printFinishedResetEvent.Set();
 
-					testRunner.StartPrint();
+					testRunner.StartPrint(printer);
 
 					var container = testRunner.GetWidgetByName("ManualPrinterControls.ControlsContainer", out _, 5);
 
@@ -529,7 +597,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForPrintFinished(printer);
 
 					// Values should match entered values
-					testRunner.StartPrint();
+					testRunner.StartPrint(printer);
 					testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Printing, 15);
 
 					// Values should match entered values
@@ -603,15 +671,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartPrint();
+					var printer = testRunner.FirstPrinter();
+
+					testRunner.StartPrint(printer);
 
 					int fanChangedCount = 0;
 					emulator.FanSpeedChanged += (s, e) =>
 					{
 						fanChangedCount++;
 					};
-
-					var printer = testRunner.FirstPrinter();
 
 					emulator.WaitForLayer(printer.Settings, 2);
 					emulator.RunSlow = true;

@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
+using ObjParser;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -144,18 +145,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "LibraryView",
 				// Drop containers
 				ContainerFilter = (container) => false,
+				// HAnchor = HAnchor.Fit,
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Stretch,
 				AllowContextMenu = false,
 
 				// restore to state for favorites bar size
-				Width = expanded ? 55 : 33,
-				ListContentView = new IconView(theme, expanded ? 48 : 24)
+				Width = expanded ? 55 * GuiWidget.DeviceScale : 33 * GuiWidget.DeviceScale,
+				ListContentView = new IconView(theme, expanded ? 48 * GuiWidget.DeviceScale : 24 * GuiWidget.DeviceScale)
 				{
 					VAnchor = VAnchor.Fit | VAnchor.Top
 				},
 			};
+			// favoritesBar.ScrollArea.HAnchor = HAnchor.Fit;
+			favoritesBar.ListContentView.HAnchor = HAnchor.Fit;
 			leftBar.AddChild(favoritesBar);
+
+			void UpdateWidth(object s, EventArgs e)
+			{
+				if (s is GuiWidget widget)
+				{
+					favoritesBar.Width = widget.Width;
+				}
+			}
+
+			favoritesBar.ListContentView.BoundsChanged += UpdateWidth;
 
 			favoritesBar.ScrollArea.VAnchor = VAnchor.Fit;
 
@@ -167,22 +181,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute | VAnchor.Bottom,
 				Margin = new BorderDouble(bottom: 3, top: 3),
-				Height = theme.ButtonHeight - 6,
-				Width = theme.ButtonHeight - 6
+				Height = theme.ButtonHeight - 6 * GuiWidget.DeviceScale,
+				Width = theme.ButtonHeight - 6 * GuiWidget.DeviceScale
 			};
 
-			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(() =>
+			expandBarButton.Click += (s, e) => UiThread.RunOnIdle(async () =>
 			{
 				expanded = !expanded;
 
+				// remove from the one we are deleting
+				favoritesBar.ListContentView.BoundsChanged -= UpdateWidth;
 				UserSettings.Instance.set(UserSettingsKey.FavoritesBarExpansion, expanded ? "1" : "0");
-
-				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 : 24);
-				favoritesBar.Width = expanded ? 55 : 33;
+				favoritesBar.ListContentView = new IconView(theme, expanded ? 48 * GuiWidget.DeviceScale : 24 * GuiWidget.DeviceScale);
+				favoritesBar.ListContentView.HAnchor = HAnchor.Fit;
+				// add to the one we created
+				favoritesBar.ListContentView.BoundsChanged += UpdateWidth;
 				expandBarButton.SetIcon(expanded ? collapsedImage : expandedImage);
 				expandBarButton.Invalidate();
 
-				favoritesBar.Reload().ConfigureAwait(false);
+				await favoritesBar.Reload();
+				UpdateWidth(favoritesBar.ListContentView, null);
 			});
 			leftBar.AddChild(expandBarButton);
 

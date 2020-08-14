@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class HelpSearchResultRow : SettingsRow
 	{
 		public HelpSearchResultRow(HelpSearchResult searchResult, ThemeConfig theme)
-			: base(searchResult.Name, null, theme, AggContext.StaticData.LoadIcon("fa-text-file_16.png"), fullRowSelect: true)
+			: base(searchResult.Name, null, theme, AggContext.StaticData.LoadIcon("fa-text-file_16.png", 16, 16), fullRowSelect: true)
 		{
 			this.SearchResult = searchResult;
 

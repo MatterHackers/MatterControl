@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickByName("Add to Bed Menu Item");
 
 					// start the print
-					testRunner.StartPrint(pauseAtLayers: "50;60");
+					testRunner.StartPrint(printer, pauseAtLayers: "50;60");
 
 					// Wait for pause
 					testRunner.WaitForName("No Button", 80); // the yes button is 'Resume'

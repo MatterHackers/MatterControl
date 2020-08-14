@@ -36,43 +36,50 @@ namespace MatterControl.Tests.MatterControl
 		public void LayerGCodeHasExpectedValue()
 		{
 			// Verifies "layer_gcode" is expected value: "; LAYER:[layer_num]"
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				if (settings.GetValue(SettingsKey.layer_gcode) != "; LAYER:[layer_num]")
 				{
 					printer.RuleViolated = true;
 
-					/* Fix existing invalid items...
-					string layerValue;
-					if (settings.OemLayer.TryGetValue(SettingsKey.layer_gcode, out layerValue) && layerValue == "")
-					{
-						settings.OemLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					if (settings.QualityLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
-					{
-						settings.QualityLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					if (settings.MaterialLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
-					{
-						settings.MaterialLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					// Reset to default values
-					settings.UserLayer.Remove(SettingsKey.active_quality_key);
-					settings.MaterialSettingsKeys = new List<string>();
-					settings.StagedUserSettings = new PrinterSettingsLayer();
-
-					settings.Save(printer.ConfigPath); */
+					// SetSettingInOem(printer, settings, SettingsKey.layer_gcode, "; LAYER:[layer_num]");
 				}
 			});
+		}
+
+		private static void SetSettingInOem(PrinterTestDetails printer, PrinterSettings settings, string key, string value)
+		{
+			// Fix existing invalid items...
+			string layerValue;
+			if (settings.OemLayer.TryGetValue(key, out layerValue) && layerValue == "")
+			{
+				settings.OemLayer.Remove(key);
+			}
+
+			if (settings.QualityLayer?.TryGetValue(key, out layerValue) == true && layerValue == "")
+			{
+				settings.QualityLayer.Remove(key);
+			}
+
+			if (settings.MaterialLayer?.TryGetValue(key, out layerValue) == true && layerValue == "")
+			{
+				settings.MaterialLayer.Remove(key);
+			}
+
+			settings.OemLayer[key] = value;
+
+			// Reset to default values
+			settings.UserLayer.Remove(SettingsKey.active_quality_key);
+			settings.UserLayer.Remove(SettingsKey.active_material_key);
+			settings.StagedUserSettings = new PrinterSettingsLayer();
+
+			settings.Save(printer.ConfigPath);
 		}
 
 		[Test]
 		public void StartGCodeWithExtrudesMustFollowM109Heatup()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				// Get the start_gcode string
 				string startGcode = settings.OemLayer.ValueOrDefault(SettingsKey.start_gcode) ?? string.Empty;
@@ -87,7 +94,7 @@ namespace MatterControl.Tests.MatterControl
 					string m109Line = lines.Where(l => l.StartsWith("M109 ")).FirstOrDefault();
 					string extrudeLine = lines.Where(l => l.StartsWith("G1 E")).FirstOrDefault();
 
-					if(m109Line == null)
+					if (m109Line == null)
 					{
 						printer.RuleViolated = true;
 						return;
@@ -97,8 +104,8 @@ namespace MatterControl.Tests.MatterControl
 					int extrudePos = lines.IndexOf(extrudeLine);
 
 					Assert.IsNotNull(m109Line);
-					//Assert.IsNotNull(emptyExtrudeLine);
-					//Assert.Greater(emptyExtrudePos, m109Pos);
+					// Assert.IsNotNull(emptyExtrudeLine);
+					// Assert.Greater(emptyExtrudePos, m109Pos);
 
 					if (extrudePos < m109Pos)
 					{
@@ -111,7 +118,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CsvBedSizeExistsAndHasTwoValues()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				// Bed size is not required in slice files
 				if (printer.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
@@ -134,7 +141,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CsvPrintCenterExistsAndHasTwoValues()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				// Printer center is not required in slice files
 				if (printer.RelativeFilePath.IndexOf(".slice", StringComparison.OrdinalIgnoreCase) != -1)
@@ -157,7 +164,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void RetractLengthIsLessThanTwenty()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string retractLengthString = settings.GetValue(SettingsKey.retract_length);
 				if (!string.IsNullOrEmpty(retractLengthString))
@@ -176,7 +183,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void ExtruderCountIsGreaterThanZero()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string extruderCountString = settings.GetValue("extruder_count");
 				if (!string.IsNullOrEmpty(extruderCountString))
@@ -196,7 +203,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void MinFanSpeedOneHundredOrLess()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string fanSpeedString = settings.GetValue(SettingsKey.min_fan_speed);
 				if (!string.IsNullOrEmpty(fanSpeedString))
@@ -217,7 +224,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void PlaAndAbsDensitySetCorrectly()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				if (settings.OemLayer.ContainsKey(SettingsKey.layer_name))
 				{
@@ -244,7 +251,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void MaxFanSpeedOneHundredOrLess()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string fanSpeedString = settings.GetValue(SettingsKey.max_fan_speed);
 				if (!string.IsNullOrEmpty(fanSpeedString))
@@ -265,14 +272,14 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void NoCurlyBracketsInGcode()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				// TODO: Why aren't we testing all gcode sections?
 				string[] keysToTest = { SettingsKey.start_gcode, SettingsKey.end_gcode };
 				foreach (string gcodeKey in keysToTest)
 				{
 					string gcode = settings.GetValue(gcodeKey);
-					if (gcode.Contains("{") || gcode.Contains("}") )
+					if (gcode.Contains("{") || gcode.Contains("}"))
 					{
 						Assert.Fail(string.Format("[{0}] Curly brackets not allowed: {1}", gcodeKey, printer.RelativeFilePath));
 					}
@@ -283,7 +290,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void BottomSolidLayersNotZero()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string bottomSolidLayers = settings.GetValue(SettingsKey.bottom_solid_layers);
 				if (!string.IsNullOrEmpty(bottomSolidLayers))
@@ -294,7 +301,7 @@ namespace MatterControl.Tests.MatterControl
 						return;
 					}
 
-					//Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
+					// Assert.AreEqual("1mm", bottomSolidLayers, "[bottom_solid_layers] must be 1mm: " + printer.RelativeFilePath);
 				}
 			});
 		}
@@ -302,7 +309,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void NoFirstLayerBedTempInStartGcode()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				string startGcode = settings.GetValue(SettingsKey.start_gcode);
 				Assert.False(startGcode.Contains(SettingsKey.first_layer_bed_temperature), "[start_gcode] should not contain [first_layer_bed_temperature]" + printer.RelativeFilePath);
@@ -312,7 +319,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void FirstLayerHeightLessThanNozzleDiameterXExtrusionMultiplier()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				if (settings.GetValue(SettingsKey.output_only_first_layer) == "1")
 				{
@@ -321,7 +328,6 @@ namespace MatterControl.Tests.MatterControl
 
 				float nozzleDiameter = float.Parse(settings.GetValue(SettingsKey.nozzle_diameter));
 				float layerHeight = float.Parse(settings.GetValue(SettingsKey.layer_height));
-
 
 				float firstLayerExtrusionWidth;
 
@@ -340,25 +346,19 @@ namespace MatterControl.Tests.MatterControl
 				{
 					float firstLayerHeight = ValueOrPercentageOf(firstLayerHeightString, layerHeight);
 
-					double maximumLayerHeight = firstLayerExtrusionWidth * 0.85;
-
-					// TODO: Remove once validated and resolved
-					if (firstLayerHeight >= maximumLayerHeight)
+					if (firstLayerHeight > firstLayerExtrusionWidth)
 					{
 						printer.RuleViolated = true;
 						return;
 					}
-
-					Assert.Less(firstLayerHeight, maximumLayerHeight, "[first_layer_height] must be less than [firstLayerExtrusionWidth]: " + printer.RelativeFilePath);
 				}
-
 			});
 		}
 
 		[Test]
 		public void LayerHeightLessThanNozzleDiameter()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				if (settings.GetValue(SettingsKey.output_only_first_layer) == "1")
 				{
@@ -384,7 +384,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void FirstLayerExtrusionWidthGreaterThanNozzleDiameterIfSet()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
 				float nozzleDiameter = float.Parse(settings.GetValue(SettingsKey.nozzle_diameter));
 
@@ -406,12 +406,21 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportMaterialAssignedToExtruderOne()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
-				string supportMaterialExtruder = settings.GetValue(SettingsKey.support_material_extruder);
-				if (!string.IsNullOrEmpty(supportMaterialExtruder) && printer.Oem != "Esagono")
+				var supportMaterialExtruder = settings.GetValue<int>(SettingsKey.support_material_extruder);
+				var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+				// the support extruder should be 0 unless you are on a material setting
+				if (supportMaterialExtruder <= 0
+					|| (settingsType == SettingsType.Material && extruderCount > 1)
+					|| (settingsType == SettingsType.Quality && extruderCount > 1))
 				{
-					Assert.AreEqual("1", supportMaterialExtruder, "[support_material_extruder] must be assigned to extruder 1: " + printer.RelativeFilePath);
+					// this is a valid printer profile
+				}
+				else
+				{
+					// this needs to be fixed
+					printer.RuleViolated = true;
 				}
 			});
 		}
@@ -419,18 +428,21 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			ValidateOnAllPrinters((printer, settings) =>
+			ValidateOnAllPrinters((printer, settings, settingsType) =>
 			{
-				// Make exception for extruder assignment on 3D Stuffmaker slice files
-				if (printer.Oem == "3D Stuffmaker")
+				var supportMaterialInterfaceExtruder = settings.GetValue<int>(SettingsKey.support_material_interface_extruder);
+				var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
+				// the support extruder should be 0 unless you are on a material setting
+				if (supportMaterialInterfaceExtruder <= 0
+					|| (settingsType == SettingsType.Material && extruderCount > 1)
+					|| (settingsType == SettingsType.Quality && extruderCount > 1))
 				{
-					return;
+					// this is a valid printer profile
 				}
-
-				string supportMaterialInterfaceExtruder = settings.GetValue("support_material_interface_extruder");
-				if (!string.IsNullOrEmpty(supportMaterialInterfaceExtruder) && printer.Oem != "Esagono")
+				else
 				{
-					Assert.AreEqual("1", supportMaterialInterfaceExtruder, "[support_material_interface_extruder] must be assigned to extruder 1: " + printer.RelativeFilePath);
+					// this needs to be fixed
+					printer.RuleViolated = true;
 				}
 			});
 		}
@@ -448,12 +460,19 @@ namespace MatterControl.Tests.MatterControl
 			}
 		}
 
+		public enum SettingsType
+		{
+			All,
+			Material,
+			Quality
+		}
+
 		/// <summary>
 		/// Calls the given delegate for each printer as well as each quality/material layer, passing in a PrinterConfig object that has
 		/// printer settings loaded into a SettingsLayer as well as state about the printer
 		/// </summary>
 		/// <param name="action">The action to invoke for each printer</param>
-		private void ValidateOnAllPrinters(Action<PrinterTestDetails, PrinterSettings> action)
+		private void ValidateOnAllPrinters(Action<PrinterTestDetails, PrinterSettings, SettingsType> action)
 		{
 			var ruleViolations = new List<string>();
 
@@ -469,7 +488,7 @@ namespace MatterControl.Tests.MatterControl
 				printerSettings.ActiveQualityKey = "";
 
 				// Validate just the OemLayer
-				action(printer, printerSettings);
+				action(printer, printerSettings, SettingsType.All);
 
 				if (printer.RuleViolated)
 				{
@@ -484,7 +503,7 @@ namespace MatterControl.Tests.MatterControl
 					printerSettings.ActiveMaterialKey = layer.LayerID;
 
 					// Validate the settings with this material layer active
-					action(printer, printerSettings);
+					action(printer, printerSettings, SettingsType.Material);
 
 					if (printer.RuleViolated)
 					{
@@ -502,7 +521,7 @@ namespace MatterControl.Tests.MatterControl
 					printerSettings.ActiveQualityKey = layer.LayerID;
 
 					// Validate the settings with this quality layer active
-					action(printer, printerSettings);
+					action(printer, printerSettings, SettingsType.Quality);
 
 					if (printer.RuleViolated)
 					{
@@ -519,9 +538,13 @@ namespace MatterControl.Tests.MatterControl
 		private class PrinterTestDetails
 		{
 			public string PrinterName { get; set; }
+
 			public string Oem { get; set; }
+
 			public string ConfigPath { get; set; }
+
 			public string RelativeFilePath { get; set; }
+
 			public PrinterSettings PrinterSettings { get; set; }
 
 			// HACK: short term hack to support a general purpose test rollup function for cases where multiple config files

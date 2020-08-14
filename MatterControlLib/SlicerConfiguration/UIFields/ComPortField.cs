@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			var configureIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", theme.InvertIcons), theme)
+			var configureIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,

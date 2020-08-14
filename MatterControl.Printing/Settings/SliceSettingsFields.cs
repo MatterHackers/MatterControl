@@ -443,7 +443,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer",
-					RebuildGCodeOnChange = false
+					RebuildGCodeOnChange = false,
+					PerToolName = (toolIndex) => $"{SettingsKey.baby_step_z_offset}_{toolIndex}"
 				},
 				new SliceSettingData()
 				{

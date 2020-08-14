@@ -43,6 +43,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			[SettingsKey.print_leveling_enabled] = "0",
 			[SettingsKey.probe_has_been_calibrated] = "0",
 			[SettingsKey.baby_step_z_offset] = "0",
+			["baby_step_z_offset_t1"] = "0",
+			["baby_step_z_offset_t2"] = "0",
+			["baby_step_z_offset_t3"] = "0",
 			[SettingsKey.xy_offsets_have_been_calibrated] = "0",
 			[SettingsKey.filament_has_been_loaded] = "0",
 			[SettingsKey.filament_1_has_been_loaded] = "0"

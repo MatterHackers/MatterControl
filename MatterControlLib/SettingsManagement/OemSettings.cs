@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using Newtonsoft.Json;
 
@@ -76,13 +77,14 @@ namespace MatterHackers.MatterControl.SettingsManagement
 
 		public ImageBuffer GetIcon(string oemName)
 		{
-			var imageBuffer = new ImageBuffer(16, 16);
+			var size = (int)(16 * GuiWidget.DeviceScale);
+			var imageBuffer = new ImageBuffer(size, size);
 
 			string oemUrl = ApplicationController.Instance.GetFavIconUrl(oemName);
 
 			if (!string.IsNullOrWhiteSpace(oemUrl))
 			{
-				WebCache.RetrieveImageAsync(imageBuffer, oemUrl, scaleToImageX: false);
+				WebCache.RetrieveImageAsync(imageBuffer, oemUrl, scaleToImageX: true);
 			}
 			else
 			{

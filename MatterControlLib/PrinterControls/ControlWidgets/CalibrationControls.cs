@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 					null,
 					theme));
 
-				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("compass.png", theme.InvertIcons), theme)
+				var runWizardButton = new IconButton(AggContext.StaticData.LoadIcon("compass.png", 16, 16, theme.InvertIcons), theme)
 				{
 					VAnchor = VAnchor.Center,
 					Margin = theme.ButtonSpacing,

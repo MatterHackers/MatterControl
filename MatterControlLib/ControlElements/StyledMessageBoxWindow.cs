@@ -126,7 +126,7 @@ namespace MatterHackers.MatterControl
 					scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 					contentRow.AddChild(scrollable);
 
-					scrollable.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12 * DeviceScale)
+					scrollable.AddChild(messageContainer = new TextWidget(message, textColor: theme.TextColor, pointSize: 12)
 					{
 						AutoExpandBoundsToText = true,
 						HAnchor = HAnchor.Left

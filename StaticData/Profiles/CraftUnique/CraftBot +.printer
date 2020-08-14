@@ -1,6 +1,6 @@
 {
   "DocumentVersion": 201606271,
-  "ID": "A-335-6154244480040960",
+  "ID": "ccfced46-2ac4-4d81-96c4-064a2e082df2",
   "StagedUserSettings": {
     "support_air_gap": "0.6",
     "disable_fan_first_layers": "3"
@@ -26,7 +26,7 @@
     "create_raft": "0",
     "default_acceleration": "0",
     "disable_fan_first_layers": "1",
-    "end_gcode": "M104 S0 ; turn off temperature\\nG91\\nG0 Z15 F2000\\nG90\\nG28 X0 Y0\\nG0 Y200 F2000\\nM84     ; disable motors",
+    "end_gcode": "M104 S0 ; turn off temperature\\nM140 S0\\nG91\\nG0 Z15 F2000\\nG90\\nG28 X0 Y0\\nG0 Y200 F2000\\nM84     ; disable motors",
     "external_perimeter_speed": "20",
     "external_perimeters_first": "0",
     "extra_perimeters": "1",
@@ -158,7 +158,7 @@
     "z_offset": "0",
     "make": "CraftUnique",
     "model": "CraftBot +",
-    "created_date": "2017-06-29T20:27:56.438Z",
+    "created_date": "2019-04-19T21:21:14.532Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -183,11 +183,40 @@
     "recover_position_before_z_home": "0,200",
     "read_regex": "\"^(ok X:)\", \"ok C: X:\"",
     "write_regex": "\"^(M400).*\",\"\"",
-    "support_material_create_internal_support": "0"
+    "support_material_create_internal_support": "0",
+    "layer_to_pause": "",
+    "print_leveling_data": "",
+    "print_leveling_enabled": "0",
+    "probe_has_been_calibrated": "0",
+    "xy_offsets_have_been_calibrated": "0",
+    "filament_has_been_loaded": "0",
+    "filament_1_has_been_loaded": "0"
   },
-  "ActiveQualityKey": "aba06ee9-14b3-4ad5-93c1-476d8db89dee",
-  "MaterialSettingsKeys": [
-    "09e848d1-7f40-4344-aae0-b449f60caee7"
+  "HotendBounds": [
+    {
+      "Left": 0,
+      "Bottom": 0,
+      "Right": 250,
+      "Top": 200,
+      "Center": {
+        "X": 125,
+        "Y": 100
+      },
+      "XCenter": 125,
+      "YCenter": 100
+    },
+    {
+      "Left": 0,
+      "Bottom": 0,
+      "Right": 250,
+      "Top": 200,
+      "Center": {
+        "X": 125,
+        "Y": 100
+      },
+      "XCenter": 125,
+      "YCenter": 100
+    }
   ],
   "MaterialLayers": [
     {

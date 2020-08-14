@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 using Newtonsoft.Json;
@@ -67,11 +68,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public List<QuickMenuNameValue> QuickMenuSettings = new List<QuickMenuNameValue>();
 
-		public List<Dictionary<string, string>> SetSettingsOnChange = new List<Dictionary<string,string>>();
+		public List<Dictionary<string, string>> SetSettingsOnChange = new List<Dictionary<string, string>>();
 
 		public bool ResetAtEndOfPrint { get; set; } = false;
 
 		public bool RebuildGCodeOnChange { get; set; } = true;
+
+		public Func<int, string> PerToolName { get; set; } = null;
 
 		public bool ReloadUiWhenChanged { get; set; } = false;
 

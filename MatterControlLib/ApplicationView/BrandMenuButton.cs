@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(row);
 
-			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", theme.InvertIcons), theme)
+			row.AddChild(new IconButton(AggContext.StaticData.LoadIcon("mh-app-logo.png", 16, 16, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Center,
 				Margin = theme.ButtonSpacing,

@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -216,11 +217,68 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public static void RetrieveText(string uriToLoad, Action<string> updateResult)
+		/// <summary>
+		/// Return the first result that can be found (usually the cache). Wait up to 5 seconds to populate the cache
+		/// if it does not exist.
+		/// </summary>
+		/// <param name="uriToLoad"></param>
+		/// <param name="addToAppCache"></param>
+		/// <param name="addHeaders"></param>
+		/// <returns></returns>
+		public static string GetCachedText(string uriToLoad,
+			bool addToAppCache = true,
+			Action<HttpRequestMessage> addHeaders = null)
+		{
+			string results = null;
+			WebCache.RetrieveText(uriToLoad,
+				(content) =>
+				{
+					results = content;
+				},
+				false,
+				addHeaders);
+
+			var startTime = UiThread.CurrentTimerMs;
+			// wait up to 5 seconds for a response
+			while (results == null
+				&& UiThread.CurrentTimerMs < startTime + 5000)
+			{
+				Thread.Sleep(10);
+			}
+
+			return results;
+		}
+
+		/// <summary>
+		/// Retrieve text from a url async, but first return any existing cache of the text synchronously
+		/// </summary>
+		/// <param name="uriToLoad">The web path to find the text, will also be used as the cache key</param>
+		/// <param name="updateResult">A function to call when the text is received if it is different than the cache.</param>
+		/// <param name="addToAppCache">Add the results to a directory that can be copied into the main distribution,
+		/// or add them to a directory that is only for the local machine.</param>
+		public static void RetrieveText(string uriToLoad,
+			Action<string> updateResult,
+			bool addToAppCache = true,
+			Action<HttpRequestMessage> addHeaders = null)
+		{
+			if (addToAppCache)
+			{
+				RetrieveText(uriToLoad, "TextWebCache", updateResult, addHeaders);
+			}
+			else
+			{
+				RetrieveText(uriToLoad, "Text", updateResult, addHeaders);
+			}
+		}
+
+		private static void RetrieveText(string uriToLoad,
+			string cacheFolder,
+			Action<string> updateResult,
+			Action<HttpRequestMessage> addHeaders = null)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
 
-			var appDataFileName = ApplicationController.CacheablePath("TextWebCache", longHash.ToString() + ".txt");
+			var appDataFileName = ApplicationController.CacheablePath(cacheFolder, longHash.ToString() + ".txt");
 
 			string fileText = null;
 			// first try the cache in the users applications folder
@@ -237,7 +295,7 @@ namespace MatterHackers.MatterControl
 			}
 			else // We could not find it in the application cache. Check if it is in static data.
 			{
-				var staticDataPath = Path.Combine("TextWebCache", longHash.ToString() + ".txt");
+				var staticDataPath = Path.Combine(cacheFolder, longHash.ToString() + ".txt");
 
 				if (AggContext.StaticData.FileExists(staticDataPath))
 				{
@@ -255,13 +313,20 @@ namespace MatterHackers.MatterControl
 			// whether we find it or not check the web for the latest version
 			Task.Run(async () =>
 			{
-				var client = new HttpClient();
-				var text = await client.GetStringAsync(uriToLoad);
-				if (!string.IsNullOrEmpty(text)
-					&& text != fileText)
+				var requestMessage = new HttpRequestMessage(HttpMethod.Get, uriToLoad);
+				addHeaders?.Invoke(requestMessage);
+				using (var client = new HttpClient())
 				{
-					File.WriteAllText(appDataFileName, text);
-					updateResult?.Invoke(text);
+					using (HttpResponseMessage response = await client.SendAsync(requestMessage))
+					{
+						var text = await response.Content.ReadAsStringAsync();
+						if (!string.IsNullOrEmpty(text)
+							&& text != fileText)
+						{
+							File.WriteAllText(appDataFileName, text);
+							updateResult?.Invoke(text);
+						}
+					}
 				}
 			});
 		}

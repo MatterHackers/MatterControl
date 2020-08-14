@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintQueue;
@@ -50,8 +51,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		private ThemeConfig theme;
 		private ILibraryContext LibraryContext;
-
-		private int scrollAmount = -1;
 
 		private GuiWidget stashedContentView;
 
@@ -109,8 +108,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.BackgroundColor = value;
 		}
 
-		public bool ShowItems { get; set; } = true;
-
 		public bool AllowContextMenu { get; set; } = true;
 
 		public Predicate<ILibraryContainerLink> ContainerFilter { get; set; } = (o) => true;
@@ -135,8 +132,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				// If the current view doesn't match the view requested by the container, construct and switch to the requested view
-				var targetView = Activator.CreateInstance(targetType) as GuiWidget;
-				if (targetView != null)
+				if (Activator.CreateInstance(targetType) is GuiWidget targetView)
 				{
 					this.ListContentView = targetView;
 				}
@@ -266,10 +262,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			using (contentView.LayoutLock())
 			{
-				IEnumerable<ILibraryItem> containerItems = from item in sourceContainer.ChildContainers
-					where item.IsVisible && this.ContainerFilter(item)
-					                     && this.ContainsActiveFilter(item)
-					select item;
+				var containerItems = sourceContainer.ChildContainers
+					.Where(item => item.IsVisible
+						&& this.ContainerFilter(item)
+						&& this.ContainsActiveFilter(item))
+					.Select(item => item);
 
 				// Folder items
 				foreach (var childContainer in this.SortItems(containerItems))
@@ -284,28 +281,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 
 				// List items
-				if (this.ShowItems)
+				var filteredResults = from item in sourceContainer.Items
+									  where item.IsVisible
+											&& (item.IsContentFileType() || item is MissingFileItem)
+											&& this.ItemFilter(item)
+											&& this.ContainsActiveFilter(item)
+									  select item;
+
+				foreach (var item in this.SortItems(filteredResults))
 				{
-					var filteredResults = from item in sourceContainer.Items
-						where item.IsVisible
-						      && (item.IsContentFileType() || item is MissingFileItem)
-						      && this.ItemFilter(item)
-						      && this.ContainsActiveFilter(item)
-						select item;
+					var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
+					listViewItem.DoubleClick += ListViewItem_DoubleClick;
+					items.Add(listViewItem);
 
-					foreach (var item in this.SortItems(filteredResults))
-					{
-						var listViewItem = new ListViewItem(item, this.ActiveContainer, this);
-						listViewItem.DoubleClick += ListViewItem_DoubleClick;
-						items.Add(listViewItem);
-
-						listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
-						listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
-						listViewItem.ViewWidget.Name = "Row Item " + item.Name;
-					}
-
-					itemsContentView.EndReload();
+					listViewItem.ViewWidget = itemsContentView.AddItem(listViewItem);
+					listViewItem.ViewWidget.HasMenu = this.AllowContextMenu;
+					listViewItem.ViewWidget.Name = "Row Item " + item.Name;
 				}
+
+				itemsContentView.EndReload();
 
 				if (sourceContainer is ILibraryWritableContainer writableContainer)
 				{
@@ -365,7 +359,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		/// <summary>
-		/// The GuiWidget responsible for rendering ListViewItems
+		/// Gets or sets the GuiWidget responsible for rendering ListViewItems
 		/// </summary>
 		public GuiWidget ListContentView
 		{
@@ -374,8 +368,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (value is IListContentView)
 				{
-					scrollAmount = -1;
-
 					if (contentView != null
 						&& contentView != value)
 					{
@@ -421,7 +413,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			// originalImage = originalImage.Multiply(this.ThumbnailBackground);
 
-			renderGraphics.Render(originalImage, width /2 - originalImage.Width /2, height /2 - originalImage.Height /2);
+			renderGraphics.Render(originalImage, width / 2 - originalImage.Width / 2, height / 2 - originalImage.Height / 2);
 
 			renderGraphics.FillRectangle(center, Color.Transparent);
 
@@ -583,18 +575,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			this.filterText = null;
 			this.Reload().ConfigureAwait(false);
-		}
-
-		public override void OnMouseWheel(MouseEventArgs mouseEvent)
-		{
-			if (scrollAmount == -1)
-			{
-				scrollAmount = (int) (this.contentView.Children.FirstOrDefault()?.Height ?? 20);
-			}
-
-			int direction = (mouseEvent.WheelDelta > 0) ? -1 : 1;
-
-			ScrollPosition += new Vector2(0, scrollAmount * direction);
 		}
 
 		public override void OnClosed(EventArgs e)

@@ -52,10 +52,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
-					testRunner.AddItemToBedplate();
-					testRunner.StartPrint(pauseAtLayers: "4;2;a;not;6");
-
 					var printer = testRunner.FirstPrinter();
+
+					testRunner.AddItemToBedplate();
+					testRunner.StartPrint(printer, pauseAtLayers: "4;2;a;not;6");
 
 					WaitForLayerAndResume(testRunner, printer, 2);
 					WaitForLayerAndResume(testRunner, printer, 4);
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					testRunner.AddItemToBedplate();
 
-					testRunner.StartPrint(pauseAtLayers: "2");
+					testRunner.StartPrint(printer, pauseAtLayers: "2");
 
 					// Wait for the Ok button
 					testRunner.WaitForName("Yes Button", 30);

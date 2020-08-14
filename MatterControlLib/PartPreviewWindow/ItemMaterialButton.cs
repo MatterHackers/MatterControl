@@ -43,7 +43,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ColorButton materialColorButton;
 
 		public event EventHandler<int> MaterialChanged;
-		int currentIndex;
+
+		private int currentIndex;
 
 		public ItemMaterialButton(ThemeConfig theme, int initialMaterialIndex)
 		{
@@ -55,6 +56,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Height = 30 * GuiWidget.DeviceScale;
 
 			var menuTheme = AppContext.MenuTheme;
+
+			this.Name = "ItemMaterialButton";
 
 			this.DynamicPopupContent = () =>
 			{

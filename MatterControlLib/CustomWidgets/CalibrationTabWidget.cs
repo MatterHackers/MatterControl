@@ -322,7 +322,7 @@ namespace MatterHackers.MatterControl
 
 			static CalibrationPad()
 			{
-				activeIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", true);
+				activeIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, true);
 				inactiveIcon = new ImageBuffer(16, 16);
 			}
 

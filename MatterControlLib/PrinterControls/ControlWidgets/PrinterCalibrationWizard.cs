@@ -27,9 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -40,11 +37,15 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrinterControls;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MatterHackers.MatterControl
 {
 	public class PrinterCalibrationWizard : IStagedSetupWizard
 	{
+		private PrinterConfig printer;
 		private RoundedToggleSwitch printLevelingSwitch;
 
 		public PrinterCalibrationWizard(PrinterConfig printer, ThemeConfig theme)
@@ -105,6 +106,8 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
+						AddRunStageButton("Run Z Calibration".Localize(), theme, stage, column);
+
 						widget = column;
 					}
 
@@ -113,14 +116,13 @@ namespace MatterHackers.MatterControl
 						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 						var column = CreateColumn(theme);
-					
+
 						if (levelingData != null
 							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
 						{
 							var positions = levelingData.SampledPositions;
 
 							var levelingSolution = printer.Settings.GetValue(SettingsKey.print_leveling_solution);
-
 
 							column.AddChild(
 								new ValueTag(
@@ -182,6 +184,13 @@ namespace MatterHackers.MatterControl
 
 							rightWidget = row;
 
+							var leftToRight = new FlowLayoutWidget()
+							{
+								HAnchor = HAnchor.Stretch
+							};
+
+							column.AddChild(leftToRight);
+
 							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
 								HAnchor = HAnchor.Absolute,
@@ -192,7 +201,9 @@ namespace MatterHackers.MatterControl
 								RenderProbePath = false,
 								SimplePoints = true,
 							};
-							column.AddChild(probeWidget);
+							leftToRight.AddChild(probeWidget);
+
+							AddRunStageButton("Run Print Leveling".Localize(), theme, stage, leftToRight);
 						}
 						else if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
 						{
@@ -207,13 +218,13 @@ namespace MatterHackers.MatterControl
 
 					if (stage is XyCalibrationWizard xyWizard)
 					{
-						var column = CreateColumn(theme);
-						column.FlowDirection = FlowDirection.LeftToRight;
+						var row = CreateColumn(theme);
+						row.FlowDirection = FlowDirection.LeftToRight;
 
 						var hotendOffset = printer.Settings.Helpers.ExtruderOffset(1);
 
 						var tool2Column = new FlowLayoutWidget(FlowDirection.TopToBottom);
-						column.AddChild(tool2Column);
+						row.AddChild(tool2Column);
 
 						tool2Column.AddChild(
 							new TextWidget("Tool".Localize() + " 2", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
@@ -244,7 +255,9 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
-						widget = column;
+						AddRunStageButton("Run Nozzle Alignment".Localize(), theme, stage, row);
+
+						widget = row;
 					}
 
 					if (stage.SetupRequired)
@@ -277,12 +290,46 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private void Settings_PrintLevelingEnabledChanged(object sender, EventArgs e)
+		private void AddRunStageButton(string title, ThemeConfig theme, ISetupWizard stage, FlowLayoutWidget leftToRight)
 		{
-			if (printLevelingSwitch != null)
+			leftToRight.AddChild(new HorizontalSpacer());
+			var runStage = leftToRight.AddChild(new TextButton(title, theme)
 			{
-				printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
-			}
+				VAnchor = VAnchor.Bottom
+			});
+
+			runStage.Click += (s, e) =>
+			{
+				// Only allow leftnav when not running SetupWizard
+				if (StagedSetupWindow?.ActiveStage == null)
+				{
+					StagedSetupWindow.ActiveStage = stage;
+				}
+			};
+		}
+
+		public bool AutoAdvance { get; set; }
+
+		public Func<DialogPage> HomePageGenerator { get; }
+
+		public bool ReturnedToHomePage { get; set; } = false;
+
+		public StagedSetupWindow StagedSetupWindow { get; set; }
+
+		public IEnumerable<ISetupWizard> Stages { get; }
+
+		public string Title { get; } = "Printer Calibration".Localize();
+
+		public Vector2 WindowSize { get; } = new Vector2(1200, 700);
+
+		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
+		{
+			return printer == null
+				|| LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
+				|| ZCalibrationWizard.NeedsToBeRun(printer)
+				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
+				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))
+				|| XyCalibrationWizard.NeedsToBeRun(printer);
 		}
 
 		private static FlowLayoutWidget CreateColumn(ThemeConfig theme)
@@ -293,28 +340,12 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		public bool AutoAdvance { get; set; }
-
-		public string Title { get; } = "Printer Calibration".Localize();
-
-		public Vector2 WindowSize { get; } = new Vector2(1200, 700);
-
-		public IEnumerable<ISetupWizard> Stages { get; }
-
-		private PrinterConfig printer;
-
-		public Func<DialogPage> HomePageGenerator { get; }
-
-		public bool ReturnedToHomePage { get; set; } = false;
-
-		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
+		private void Settings_PrintLevelingEnabledChanged(object sender, EventArgs e)
 		{
-			return printer == null
-				|| LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
-				|| ZCalibrationWizard.NeedsToBeRun(printer)
-				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
-				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))
-				|| XyCalibrationWizard.NeedsToBeRun(printer);
+			if (printLevelingSwitch != null)
+			{
+				printLevelingSwitch.Checked = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+			}
 		}
 	}
 }

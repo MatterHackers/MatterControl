@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						iconView.Margin = new BorderDouble(leftRightMargin, 0);
 					}
 
-					foreach(var child in Children)
+					foreach (var child in Children)
 					{
 						child.Click -= Row_Click;
 					}
@@ -214,20 +214,24 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	public class IconView : FlowLayoutWidget, IListContentView
 	{
 		public int ThumbWidth { get; set; } = 100;
+
 		public int ThumbHeight { get; set; } = 100;
+
 		protected int iconViewPadding = IconViewItem.ItemPadding;
+
 		protected ThemeConfig theme;
+
 		protected double leftRightMargin;
 
-		public IconView(ThemeConfig theme, int thumbnailSize = -1)
+		public IconView(ThemeConfig theme, double thumbnailSize = -1)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
 
 			if (thumbnailSize != -1)
 			{
-				this.ThumbHeight = thumbnailSize;
-				this.ThumbWidth = thumbnailSize;
+				this.ThumbHeight = (int)thumbnailSize;
+				this.ThumbWidth = (int)thumbnailSize;
 			}
 		}
 
@@ -260,7 +264,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class IconViewItem : ListViewItemBase
 	{
-		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png");
+		private static ImageBuffer loadingImage = AggContext.StaticData.LoadIcon("IC_32x32.png", 32, 32);
 
 		internal static int ItemPadding = 0;
 
