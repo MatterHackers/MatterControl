@@ -42,31 +42,38 @@ namespace MatterControl.Tests.MatterControl
 				{
 					printer.RuleViolated = true;
 
-					/* Fix existing invalid items...
-					string layerValue;
-					if (settings.OemLayer.TryGetValue(SettingsKey.layer_gcode, out layerValue) && layerValue == "")
-					{
-						settings.OemLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					if (settings.QualityLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
-					{
-						settings.QualityLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					if (settings.MaterialLayer?.TryGetValue(SettingsKey.layer_gcode, out layerValue) == true && layerValue == "")
-					{
-						settings.MaterialLayer.Remove(SettingsKey.layer_gcode);
-					}
-
-					// Reset to default values
-					settings.UserLayer.Remove(SettingsKey.active_quality_key);
-					settings.MaterialSettingsKeys = new List<string>();
-					settings.StagedUserSettings = new PrinterSettingsLayer();
-
-					settings.Save(printer.ConfigPath); */
+					// SetSettingInOem(printer, settings, SettingsKey.layer_gcode, "; LAYER:[layer_num]");
 				}
 			});
+		}
+
+		private static void SetSettingInOem(PrinterTestDetails printer, PrinterSettings settings, string key, string value)
+		{
+			// Fix existing invalid items...
+			string layerValue;
+			if (settings.OemLayer.TryGetValue(key, out layerValue) && layerValue == "")
+			{
+				settings.OemLayer.Remove(key);
+			}
+
+			if (settings.QualityLayer?.TryGetValue(key, out layerValue) == true && layerValue == "")
+			{
+				settings.QualityLayer.Remove(key);
+			}
+
+			if (settings.MaterialLayer?.TryGetValue(key, out layerValue) == true && layerValue == "")
+			{
+				settings.MaterialLayer.Remove(key);
+			}
+
+			settings.OemLayer[key] = value;
+
+			// Reset to default values
+			settings.UserLayer.Remove(SettingsKey.active_quality_key);
+			settings.UserLayer.Remove(SettingsKey.active_material_key);
+			settings.StagedUserSettings = new PrinterSettingsLayer();
+
+			settings.Save(printer.ConfigPath);
 		}
 
 		[Test]

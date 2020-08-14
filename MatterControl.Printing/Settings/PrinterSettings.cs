@@ -994,7 +994,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// Items *should* reset to defaults
 						break;
 					default:
-						//Items should *not* reset to defaults
+						// Items should *not* reset to defaults
 						keysToRetain.Add(item.SlicerConfigName);
 						break;
 				}

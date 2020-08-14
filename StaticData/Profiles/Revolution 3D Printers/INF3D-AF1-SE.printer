@@ -68,7 +68,6 @@
     "infill_overlap_perimeter": ".06",
     "infill_speed": "75",
     "infill_type": "TRIANGLES",
-    "layer_gcode": "",
     "layer_height": "0.2",
     "max_fan_speed": "100",
     "min_extrusion_before_retract": ".1",
@@ -186,13 +185,11 @@
     "manual_movement_speeds": null,
     "active_quality_key": "1ec630de-a239-4e31-9617-b37663f0a5c5",
     "filament_cost": "0",
-    "created_date": "2017-02-15T19:15:15.332Z"
+    "created_date": "02/15/2017 19:15:15"
   },
-  "ActiveQualityKey": "1ec630de-a239-4e31-9617-b37663f0a5c5",
-  "MaterialSettingsKeys": [
-    "708c3b2f-0e88-406c-8b1e-64629cbfba87",
-    "039b95de-6c57-41e1-9f1a-c59666a2f182"
-  ],
+  "UserLayer": {
+    "active_material_key": ""
+  },
   "MaterialLayers": [
     {
       "bed_temperature": "100",

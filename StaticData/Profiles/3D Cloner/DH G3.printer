@@ -1,24 +1,11 @@
 {
   "DocumentVersion": 201606271,
   "ID": "c1e4d519-fe0b-4458-878d-8863e133b8a7",
-  "StagedUserSettings": {
-    "external_perimeter_speed": "10",
-    "support_material_percent": "10",
-    "travel_speed": "250",
-    "skirts": "5",
-    "bed_temperature": "70",
-    "retract_length": "3",
-    "support_material_create_internal_support": "0",
-    "first_layer_extrusion_width": "0",
-    "infill_type": "LINES",
-    "retract_speed": "200",
-    "fill_density": "30%"
-  },
+  "StagedUserSettings": {},
   "Macros": [
     {
       "Name": "Nivelamento",
       "GCode": "; host.show_message(title:\"Nivelamento.\")\n\nG28\nG1 X160 Y210 F4200\n\n; host.show_message(title:\"Nivelamento posição 1.\", wait_ok:\"true\")\n\nG1 X60 Y15\n\n; host.show_message(title:\"Nivelamento posição 2.\",wait_ok:\"true\")\n\nG1 X260\n\n; host.show_message(title:\"Nivelamento posição 3.\",wait_ok:\"true\")\n\n; host.show_message(title:\"Agora iremos conferir o Nivelamento.\",wait_ok:\"true\")\n\nG1 X160 Y210 F4200\n\n; host.show_message(title:\"Nivelamento posição 1.\",wait_ok:\"true\")\n\nG1 X60 Y15\n\n; host.show_message(title:\"Nivelamento posição 2.\",wait_ok:\"true\")\n\nG1 X260\n\n; host.show_message(title:\"Nivelamento posição 3.\",wait_ok:\"true\")\n\nG4 S1               ; wait for move to finish\nG90                 ; Absolute positioning\nG1 Z10 F600\nG1 X5 Y205 F15000\nG28\n",
-      "ActionGroup": true,
       "LastModified": "0001-01-01T00:00:00"
     }
   ],
@@ -185,22 +172,19 @@
     "z_offset": "0",
     "make": "3D Cloner",
     "model": "DH G3",
-    "created_date": "2017-09-29T15:30:39.225Z",
+    "created_date": "09/29/2017 15:30:39",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Circle.stl",
     "active_theme_name": "Purple - Dark",
     "active_quality_key": "d80aa669-8821-427e-809d-aa675d67f4b6",
-    "layer_gcode": "; LAYER:[layer_num]\\n",
+    "layer_gcode": "; LAYER:[layer_num]",
     "feedrate_ratio": "1",
-    "z_probe_z_offset": "0",
-    "support_material_create_perimeter": "1"
+    "support_material_create_perimeter": "1",
+    "probe_offset": "0,0,0"
   },
-  "ActiveQualityKey": "d80aa669-8821-427e-809d-aa675d67f4b6",
-  "MaterialSettingsKeys": [
-    "378fe860-c0e7-45a3-a3bb-27d621d31344"
-  ],
+  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "PLA",
