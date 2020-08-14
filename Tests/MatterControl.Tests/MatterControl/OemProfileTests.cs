@@ -411,8 +411,9 @@ namespace MatterControl.Tests.MatterControl
 				var supportMaterialExtruder = settings.GetValue<int>(SettingsKey.support_material_extruder);
 				var extruderCount = settings.GetValue<int>(SettingsKey.extruder_count);
 				// the support extruder should be 0 unless you are on a material setting
-				if (supportMaterialExtruder == 0
-					|| (settingsType == SettingsType.Material && extruderCount > 1))
+				if (supportMaterialExtruder <= 0
+					|| (settingsType == SettingsType.Material && extruderCount > 1)
+					|| (settingsType == SettingsType.Quality && extruderCount > 1))
 				{
 					// this is a valid printer profile
 				}
