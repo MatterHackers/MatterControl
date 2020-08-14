@@ -118,7 +118,7 @@
     "solid_infill_speed": "60",
     "spiral_vase": "0",
     "standby_temperature_delta": "-5",
-    "start_gcode": "M117 Heating Bed\\nM106 S255\t\t\t\t\t\t\t\\nM140 S[bed_temperature]\\nM190\\nM117 Heating Nozzles\\nM104 S[temperature]\\nM109\\nM117 Priming Nozzles\\nG21\\nG90\\nM82\\nG92 E0\\nG28\\nG1 F200 E30\\nG92 E0\\nG1 E-5\\nG28 SC\\nG92 X-6\\nM117 Printing",
+    "start_gcode": "M117 Heating Bed\\nM106 S255\t\t\t\t\t\t\t\\nM140 S[bed_temperature]\\nM190\\nM117 Heating Nozzles\\nM104 S[temperature]\\nM109 S[bed_temperature]\\nM117 Priming Nozzles\\nG21\\nG90\\nM82\\nG92 E0\\nG28\\nG1 F200 E30\\nG92 E0\\nG1 E-5\\nG28 SC\\nG92 X-6\\nM117 Printing",
     "start_perimeters_at_concave_points": "0",
     "start_perimeters_at_non_overhang": "0",
     "support_material": "0",
