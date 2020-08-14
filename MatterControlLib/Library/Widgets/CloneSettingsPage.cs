@@ -122,7 +122,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var exactCloneSummary = new WrappedTextWidget("Copy all settings including hardware calibration".Localize(), pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
 			{
-				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(left: 30, bottom: 10, top: 4),
 			};
 			exactCloneColumn.AddChild(exactCloneSummary);
@@ -153,7 +152,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			var copySummary = new WrappedTextWidget(summary, pointSize: theme.DefaultFontSize - 1, textColor: theme.TextColor)
 			{
-				HAnchor = HAnchor.Stretch,
 				Margin = new BorderDouble(left: 30, bottom: 10, top: 4)
 			};
 			copySettingsColumn.AddChild(copySummary);

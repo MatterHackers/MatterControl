@@ -124,11 +124,11 @@ namespace MatterHackers.MatterControl.FieldValidation
 
 		public MHTextEditWidget FieldEditWidget { get; set; }
 
-		public TextWidget FieldErrorMessageWidget { get; set; }
+		public WrappedTextWidget FieldErrorMessageWidget { get; set; }
 
 		private ValidationHandler[] FieldValidationHandlers { get; set; }
 
-		public FormField(MHTextEditWidget textEditWidget, TextWidget errorMessageWidget, ValidationHandler[] validationHandlers)
+		public FormField(MHTextEditWidget textEditWidget, WrappedTextWidget errorMessageWidget, ValidationHandler[] validationHandlers)
 		{
 			this.FieldEditWidget = textEditWidget;
 			this.FieldErrorMessageWidget = errorMessageWidget;

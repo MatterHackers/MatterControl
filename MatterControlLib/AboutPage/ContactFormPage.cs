@@ -47,16 +47,16 @@ namespace MatterHackers.MatterControl.ContactForm
 		private TextWidget submissionStatus;
 
 		internal MHTextEditWidget questionInput;
-		private TextWidget questionErrorMessage;
+		private WrappedTextWidget questionErrorMessage;
 
 		internal MHTextEditWidget detailInput;
-		private TextWidget detailErrorMessage;
+		private WrappedTextWidget detailErrorMessage;
 
 		private MHTextEditWidget emailInput;
-		private TextWidget emailErrorMessage;
+		private WrappedTextWidget emailErrorMessage;
 
 		private MHTextEditWidget nameInput;
-		private TextWidget nameErrorMessage;
+		private WrappedTextWidget nameErrorMessage;
 
 		public ContactFormPage()
 		{
@@ -159,14 +159,12 @@ namespace MatterHackers.MatterControl.ContactForm
 			return labelContainer;
 		}
 
-		private TextWidget CreateErrorRow()
+		private WrappedTextWidget CreateErrorRow()
 		{
-			return new TextWidget("", pointSize: 11)
+			return new WrappedTextWidget("", pointSize: 11)
 			{
-				AutoExpandBoundsToText = true,
 				Margin = new BorderDouble(0, 5),
 				TextColor = Color.Red,
-				HAnchor = HAnchor.Left,
 				Visible = false
 			};
 		}

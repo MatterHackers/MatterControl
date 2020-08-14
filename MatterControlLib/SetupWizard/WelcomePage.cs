@@ -51,7 +51,6 @@ namespace MatterHackers.MatterControl.Tour
 			{
 				Margin = new BorderDouble(left: 10, top: 10),
 				TextColor = theme.TextColor,
-				HAnchor = HAnchor.Stretch
 			};
 
 			contentRow.AddChild(textWidget);
