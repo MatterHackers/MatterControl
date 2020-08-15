@@ -274,8 +274,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			addNotest.Enabled = printTasks.Any();
 			addNotest.Click += (s, e) =>
 			{
-				DialogWindow.Show(
-					new InputBoxPage(
+				var inputBoxPage = new InputBoxPage(
 						"Print History Note".Localize(),
 						"Note".Localize(),
 						printTask.Note == null ? "" : printTask.Note,
@@ -288,10 +287,64 @@ namespace MatterHackers.MatterControl.PrintHistory
 							popupMenu.Unfocus();
 							printInfoWidget.Text = GetPrintInfo();
 						})
-					{
-						AllowEmpty = true,
-					});
+				{
+					AllowEmpty = true,
+				};
+
+				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(printTask));
+
+				DialogWindow.Show(inputBoxPage);
 			};
+		}
+
+		private GuiWidget CreateDefaultOptions(PrintTask printTask)
+		{
+			var issues = new string[]
+			{
+				"Bad print quality",
+				"Print dislodged from bed",
+				"Warping",
+				"Layer shift",
+				"Filament runout",
+				"Filament jam",
+				"Thermal runaway",
+				"Computer crash",
+				"Power outage",
+				"Bed dislodged from printer",
+				"Stringing / Poor retractions",
+				"Skilled layers",
+				"Rough overhangs",
+				"Bowden tube popped out",
+				"Poor retractions and overhangs",
+				"User Error",
+				"MatterControl Crash",
+				"Windows Update",
+				"Unknown",
+			};
+
+			var optionsButton = new TextButton("Standard Issues".Localize(), theme)
+			{
+				HAnchor = HAnchor.Left,
+				VAnchor = VAnchor.Absolute
+			};
+
+			optionsButton.Click += (s, mouseEvent) =>
+			{
+				var popupMenu = new PopupMenu(theme);
+
+				foreach (var issue in issues)
+				{
+					var addNotest = popupMenu.CreateMenuItem(issue);
+					addNotest.Click += (s2, e2) =>
+					{
+						printTask.Note = issue;
+					};
+				}
+
+				popupMenu.ShowMenu(optionsButton, mouseEvent);
+			};
+
+			return optionsButton;
 		}
 
 		private void AddQualityMenu(PopupMenu popupMenu)

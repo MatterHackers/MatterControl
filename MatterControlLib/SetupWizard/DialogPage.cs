@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 		private GuiWidget _acceptButton;
 
 		public DialogPage(string cancelButtonText = null, bool useOverflowBar = false)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			theme = ApplicationController.Instance.Theme;
 

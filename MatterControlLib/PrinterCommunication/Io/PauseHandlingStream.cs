@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										var deltaRatio = sensorDelta / stepperDelta;
 										if (deltaRatio < .5 || deltaRatio > 2)
 										{
-											// we have a reportable discrepancy set a runout state
+											// we have a discrepancy set a runout state
 											positionSensorData.ExtrusionDiscrepency++;
 											if (positionSensorData.ExtrusionDiscrepency > 2)
 											{
