@@ -369,6 +369,16 @@ namespace MatterHackers.MatterControl.PrintHistory
 					VAnchor = VAnchor.Fit,
 				};
 
+				button.MouseEnterBounds += (s, e) =>
+				{
+					button.BackgroundColor = theme.AccentMimimalOverlay;
+				};
+
+				button.MouseLeaveBounds += (s, e) =>
+				{
+					button.BackgroundColor = button.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
+				};
+
 				siblings.Add(button);
 
 				if (button.Checked && button.Enabled)
