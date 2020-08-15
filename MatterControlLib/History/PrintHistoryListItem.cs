@@ -275,76 +275,65 @@ namespace MatterHackers.MatterControl.PrintHistory
 			addNotest.Click += (s, e) =>
 			{
 				var inputBoxPage = new InputBoxPage(
-						"Print History Note".Localize(),
-						"Note".Localize(),
-						printTask.Note == null ? "" : printTask.Note,
-						"Enter Note Here".Localize(),
-						string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
-						(newNote) =>
-						{
-							printTask.Note = newNote;
-							printTask.Commit();
-							popupMenu.Unfocus();
-							printInfoWidget.Text = GetPrintInfo();
-						})
+					"Print History Note".Localize(),
+					"Note".Localize(),
+					printTask.Note == null ? "" : printTask.Note,
+					"Enter Note Here".Localize(),
+					string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
+					(newNote) =>
+					{
+						printTask.Note = newNote;
+						printTask.Commit();
+						popupMenu.Unfocus();
+						printInfoWidget.Text = GetPrintInfo();
+					})
 				{
 					AllowEmpty = true,
 				};
 
-				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(printTask));
+				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage));
 
 				DialogWindow.Show(inputBoxPage);
+
+				inputBoxPage.Parent.Height += 40 * GuiWidget.DeviceScale;
 			};
 		}
 
-		private GuiWidget CreateDefaultOptions(PrintTask printTask)
+		private GuiWidget CreateDefaultOptions(GuiWidget textField)
 		{
 			var issues = new string[]
 			{
-				"Bad print quality",
-				"Print dislodged from bed",
-				"Warping",
+				"Bed Dislodged",
+				"Bowden Tube Popped Out",
+				"Computer Crashed",
+				"Couldn't Resume",
+				"Dislodged From Bed",
+				"Filament Jam",
+				"Filament Runout",
 				"Layer shift",
-				"Filament runout",
-				"Filament jam",
-				"Thermal runaway",
-				"Computer crash",
-				"Power outage",
-				"Bed dislodged from printer",
+				"Power Outage",
+				"Print Quality",
+				"Rough Overhangs",
+				"Skipped Layers",
 				"Stringing / Poor retractions",
-				"Skilled layers",
-				"Rough overhangs",
-				"Bowden tube popped out",
-				"Poor retractions and overhangs",
+				"Thermal Runaway",
 				"User Error",
-				"MatterControl Crash",
-				"Windows Update",
-				"Unknown",
+				"Warping",
 			};
 
-			var optionsButton = new TextButton("Standard Issues".Localize(), theme)
-			{
-				HAnchor = HAnchor.Left,
-				VAnchor = VAnchor.Absolute
-			};
+			var dropdownList = new MHDropDownList("Standard Issues".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
 
-			optionsButton.Click += (s, mouseEvent) =>
+			foreach (var issue in issues)
 			{
-				var popupMenu = new PopupMenu(theme);
+				MenuItem newItem = dropdownList.AddItem(issue);
 
-				foreach (var issue in issues)
+				newItem.Selected += (sender, e) =>
 				{
-					var addNotest = popupMenu.CreateMenuItem(issue);
-					addNotest.Click += (s2, e2) =>
-					{
-						printTask.Note = issue;
-					};
-				}
+					textField.Text = issue;
+				};
+			}
 
-				popupMenu.ShowMenu(optionsButton, mouseEvent);
-			};
-
-			return optionsButton;
+			return dropdownList;
 		}
 
 		private void AddQualityMenu(PopupMenu popupMenu)

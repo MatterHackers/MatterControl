@@ -38,11 +38,13 @@ namespace MatterHackers.MatterControl
 	{
 		private MHTextEditWidget textEditWidget;
 
+		public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
+
 		public InputBoxPage(string windowTitle, string label, string initialValue, string emptyText, string actionButtonTitle, Action<string> action)
 		{
 			this.WindowTitle = windowTitle;
 			this.HeaderText = windowTitle;
-			this.WindowSize = new Vector2(500, 200);
+			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 200 * GuiWidget.DeviceScale);
 
 			GuiWidget actionButton = null;
 

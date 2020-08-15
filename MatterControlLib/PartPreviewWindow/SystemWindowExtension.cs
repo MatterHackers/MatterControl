@@ -58,17 +58,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		public MateEdge HorizontalEdge { get; set; }
+
 		public MateEdge VerticalEdge { get; set; }
 
 		public bool Top => this.VerticalEdge.HasFlag(MateEdge.Top);
+
 		public bool Bottom => this.VerticalEdge.HasFlag(MateEdge.Bottom);
+
 		public bool Left => this.HorizontalEdge.HasFlag(MateEdge.Left);
+
 		public bool Right => this.HorizontalEdge.HasFlag(MateEdge.Right);
 	}
 
 	public class MatePoint
 	{
 		public MateOptions Mate { get; set; } = new MateOptions();
+
 		public MateOptions AltMate { get; set; } = new MateOptions();
 
 		public GuiWidget Widget { get; set; }
@@ -116,7 +121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
+			void WidgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
 				if (anchor.Widget?.Parent != null)
 				{
@@ -171,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						if (settingsRow != null)
 						{
-							settingsRow.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Up ? ArrowDirection.Down: ArrowDirection.Up;
+							settingsRow.ArrowDirection = settingsRow.ArrowDirection == ArrowDirection.Up ? ArrowDirection.Down : ArrowDirection.Up;
 						}
 					}
 
@@ -191,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			widgetRelativeTo_PositionChanged(anchor.Widget, null);
+			WidgetRelativeTo_PositionChanged(anchor.Widget, null);
 
 			// When the widgets position changes, sync the popup position
 			systemWindow?.AddChild(popup.Widget);
@@ -230,7 +235,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			List<IIgnoredPopupChild> ignoredWidgets = popup.Widget.Children.OfType<IIgnoredPopupChild>().ToList();
 
-			void widget_Draw(object sender, DrawEventArgs e)
+			void Widget_Draw(object sender, DrawEventArgs e)
 			{
 				if (borderWidth > 0)
 				{
@@ -242,7 +247,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			void widgetRelativeTo_PositionChanged(object sender, EventArgs e)
+			void WidgetRelativeTo_PositionChanged(object sender, EventArgs e)
 			{
 				if (anchor.Widget?.Parent != null)
 				{
@@ -252,21 +257,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			void CloseMenu()
 			{
-				popup.Widget.AfterDraw -= widget_Draw;
+				popup.Widget.AfterDraw -= Widget_Draw;
 
 				popup.Widget.Close();
 
-				anchor.Widget.Closed -= anchor_Closed;
+				anchor.Widget.Closed -= Anchor_Closed;
 
 				// Unbind callbacks on parents for position_changed if we're closing
 				foreach (GuiWidget widget in hookedParents)
 				{
-					widget.PositionChanged -= widgetRelativeTo_PositionChanged;
-					widget.BoundsChanged -= widgetRelativeTo_PositionChanged;
+					widget.PositionChanged -= WidgetRelativeTo_PositionChanged;
+					widget.BoundsChanged -= WidgetRelativeTo_PositionChanged;
 				}
 
 				// Long lived originating item must be unregistered
-				anchor.Widget.Closed -= anchor_Closed;
+				anchor.Widget.Closed -= Anchor_Closed;
 
 				// Restore focus to originating widget on close
 				if (anchor.Widget?.HasBeenClosed == false)
@@ -296,7 +301,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			void anchor_Closed(object sender, EventArgs e)
+			void Anchor_Closed(object sender, EventArgs e)
 			{
 				// If the owning widget closed, so should we
 				CloseMenu();
@@ -306,16 +311,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (hookedParents.Add(ancestor))
 				{
-					ancestor.PositionChanged += widgetRelativeTo_PositionChanged;
-					ancestor.BoundsChanged += widgetRelativeTo_PositionChanged;
+					ancestor.PositionChanged += WidgetRelativeTo_PositionChanged;
+					ancestor.BoundsChanged += WidgetRelativeTo_PositionChanged;
 				}
 			}
 
 			popup.Widget.ContainsFocusChanged += FocusChanged;
-			popup.Widget.AfterDraw += widget_Draw;
+			popup.Widget.AfterDraw += Widget_Draw;
 
-			widgetRelativeTo_PositionChanged(anchor.Widget, null);
-			anchor.Widget.Closed += anchor_Closed;
+			WidgetRelativeTo_PositionChanged(anchor.Widget, null);
+			anchor.Widget.Closed += Anchor_Closed;
 
 			// When the widgets position changes, sync the popup position
 			systemWindow?.AddChild(popup.Widget);

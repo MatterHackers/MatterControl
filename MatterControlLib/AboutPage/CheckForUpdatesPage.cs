@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			var releaseOptionsDropList = new MHDropDownList("Development", theme, maxHeight: 200)
+			var releaseOptionsDropList = new MHDropDownList("Development", theme, maxHeight: 200 * GuiWidget.DeviceScale)
 			{
 				HAnchor = HAnchor.Fit,
 			};

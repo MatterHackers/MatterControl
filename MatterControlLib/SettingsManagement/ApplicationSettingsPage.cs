@@ -219,7 +219,7 @@ namespace MatterHackers.MatterControl
 
 #if !__ANDROID__
 			// ThumbnailRendering
-			var thumbnailsModeDropList = new MHDropDownList("", theme, maxHeight: 200);
+			var thumbnailsModeDropList = new MHDropDownList("", theme, maxHeight: 200 * GuiWidget.DeviceScale);
 			thumbnailsModeDropList.AddItem("Flat".Localize(), "orthographic");
 			thumbnailsModeDropList.AddItem("3D".Localize(), "raytraced");
 

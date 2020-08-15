@@ -228,7 +228,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private DropDownList CreateDropdown()
 		{
-			var dropDownList = new MHDropDownList(defaultMenuItemText, theme, maxHeight: 300, useLeftIcons: true)
+			var dropDownList = new MHDropDownList(defaultMenuItemText, theme, maxHeight: 300 * GuiWidget.DeviceScale, useLeftIcons: true)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Center,
