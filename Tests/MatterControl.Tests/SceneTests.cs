@@ -265,7 +265,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			Directory.CreateDirectory(Object3D.AssetsPath);
 
 			// Empty temp folder
-			foreach (string tempFile in Directory.GetFiles(Object3D.AssetsPath).ToList())
+			foreach (string tempFile in Directory.GetFiles(tempPath).ToList())
 			{
 				File.Delete(tempFile);
 			}
