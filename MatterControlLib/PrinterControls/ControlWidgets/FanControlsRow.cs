@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 			this.AddChild(container);
 			this.BorderColor = Color.Transparent;
 
-			fanSpeedDisplay = new MHNumberEdit(0, theme, minValue: 0, maxValue: 100, pixelWidth: 30)
+			fanSpeedDisplay = new MHNumberEdit(0, theme, minValue: 0, maxValue: 100, pixelWidth: 30 * GuiWidget.DeviceScale)
 			{
 				Value = printer.Connection.GetFanSpeed0To255(fanIndex) * 100 / 255,
 				VAnchor = VAnchor.Center | VAnchor.Fit,

@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.EeProm
 
 		private GuiWidget CreateMHNumEdit(ref MHNumberEdit numberEditToCreate)
 		{
-			numberEditToCreate = new MHNumberEdit(0, theme, pixelWidth: 80, allowNegatives: true, allowDecimals: true)
+			numberEditToCreate = new MHNumberEdit(0, theme, pixelWidth: 80 * GuiWidget.DeviceScale, allowNegatives: true, allowDecimals: true)
 			{
 				SelectAllOnFocus = true,
 				VAnchor = VAnchor.Center,
