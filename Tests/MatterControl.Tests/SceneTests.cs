@@ -156,6 +156,58 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		}
 
 		[Test]
+		public void AmfFilesSaveObjectProperties()
+		{
+			AssetObject3D.AssetManager = new AssetManager();
+
+			var scene = new InteractiveScene();
+			scene.Children.Add(new Object3D
+			{
+				Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+				Name = "test1",
+				OutputType = PrintOutputTypes.Support,
+				Color = Color.Red,
+				MaterialIndex = 2,
+			});
+
+			scene.Children.Add(new Object3D
+			{
+				Mesh = PlatonicSolids.CreateCube(20, 20, 20),
+				Name = "test2",
+				Matrix = Matrix4X4.CreateTranslation(30, 0, 0)
+			});
+
+			string tempPath = GetSceneTempPath();
+
+			Object3D.AssetsPath = Path.Combine(tempPath, "Assets");
+
+			string filePath = Path.Combine(tempPath, "exportTest.amf");
+			scene.SetSelection(scene.Children.ToList());
+			AmfDocument.Save(scene.SelectedItem, filePath);
+
+			Assert.IsTrue(File.Exists(filePath));
+
+			IObject3D loadedItem = Object3D.Load(filePath, CancellationToken.None);
+			Assert.IsTrue(loadedItem.Children.Count == 2);
+
+			IObject3D item1 = loadedItem.Children.Last();
+			Assert.AreEqual("test1", item1.Name);
+			Assert.AreEqual(PrintOutputTypes.Support, item1.OutputType);
+			Assert.AreEqual(2, item1.MaterialIndex);
+			Assert.AreEqual(Color.Red, item1.Color);
+			Assert.AreEqual(12, item1.Mesh.Faces.Count);
+			var aabb1 = item1.GetAxisAlignedBoundingBox();
+			Assert.True(new AxisAlignedBoundingBox(-10, -10, -10, 10, 10, 10).Equals(aabb1, .001));
+
+			IObject3D item2 = loadedItem.Children.First();
+			Assert.AreEqual("test2", item2.Name);
+			Assert.AreEqual(Color.White, item2.Color);
+			Assert.AreEqual(12, item2.Mesh.Faces.Count);
+			var aabb2 = item2.GetAxisAlignedBoundingBox();
+			Assert.True(new AxisAlignedBoundingBox(20, -10, -10, 40, 10, 10).Equals(aabb2, .001));
+		}
+
+		[Test]
 		public void CreatesAndLinksAmfsForUnsavedMeshes()
 		{
 			AssetObject3D.AssetManager = new AssetManager();
