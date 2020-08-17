@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -75,6 +76,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Height = theme.MicroButtonHeight,
 				Width = theme.MicroButtonHeight,
 				Name = "Create New",
+				ToolTipText = "Create New Design".Localize(),
 				HoverColor = theme.AccentMimimalOverlay
 			};
 
