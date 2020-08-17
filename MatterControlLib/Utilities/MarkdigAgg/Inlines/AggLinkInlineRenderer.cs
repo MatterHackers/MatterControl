@@ -92,6 +92,15 @@ namespace Markdig.Renderers.Agg.Inlines
 				Cursor = Cursors.Hand,
 			};
 
+			sequenceWidget.MaximumSizeChanged += (s, e) =>
+			{
+				this.MinStretchOrFitHorizontal(20 * GuiWidget.DeviceScale, sequenceWidget.MaximumSize.X);
+				if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+				{
+					markdownWidget.Width += 1;
+				}
+			};
+
 			sequenceWidget.Click += SequenceWidget_Click;
 
 			this.AddChild(sequenceWidget);
@@ -127,17 +136,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			{
 				if (ImageUrl.StartsWith("http"))
 				{
-					WebCache.RetrieveImageSquenceAsync(sequenceWidget.ImageSequence, ImageUrl, () =>
-					{
-						this.MinStretchOrFitHorizontal(20 * GuiWidget.DeviceScale, sequenceWidget.MinimumSize.X);
-						UiThread.RunOnIdle(() =>
-						{
-							if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
-							{
-								markdownWidget.Width += 1;
-							}
-						});
-					});
+					WebCache.RetrieveImageSquenceAsync(sequenceWidget.ImageSequence, ImageUrl);
 				}
 
 				hasBeenLoaded = true;
