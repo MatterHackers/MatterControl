@@ -45,12 +45,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class LibraryListView : ScrollableWidget
 	{
-		public enum DoubleClickActions { PreviewItem, AddToBed }
+		public enum DoubleClickActions
+		{
+			PreviewItem,
+			AddToBed
+		}
 
 		public event EventHandler ContentReloaded;
 
-		private ThemeConfig theme;
-		private ILibraryContext LibraryContext;
+		private readonly ThemeConfig theme;
+		private readonly ILibraryContext libraryContext;
 
 		private GuiWidget stashedContentView;
 
@@ -78,7 +82,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			loadingBackgroundColor = new Color(theme.PrimaryAccentColor, 10);
 
 			this.theme = theme;
-			this.LibraryContext = context;
+			this.libraryContext = context;
 
 			// Set Display Attributes
 			this.AnchorAll();
@@ -86,6 +90,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ScrollArea.Padding = new BorderDouble(3);
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 			this.ListContentView = libraryView;
+
+			this.VerticalScrollBar.Show = ScrollBar.ShowState.Never;
 
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContentChanged += ActiveContainer_ContentChanged;
@@ -114,7 +120,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public Predicate<ILibraryItem> ItemFilter { get; set; } = (o) => true;
 
-		public ILibraryContainer ActiveContainer => this.LibraryContext.ActiveContainer;
+		public ILibraryContainer ActiveContainer => this.libraryContext.ActiveContainer;
 
 		private async void ActiveContainer_Changed(object sender, ContainerChangedEventArgs e)
 		{
@@ -181,7 +187,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			await DisplayContainerContent(ActiveContainer);
 		}
 
-		private List<ListViewItem> items = new List<ListViewItem>();
+		private readonly List<ListViewItem> items = new List<ListViewItem>();
 
 		public IEnumerable<ListViewItem> Items => items;
 
@@ -489,7 +495,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetActiveContainer(ILibraryContainer container)
 		{
-			this.LibraryContext.ActiveContainer = container;
+			this.libraryContext.ActiveContainer = container;
 		}
 
 		public ObservableCollection<ListViewItem> SelectedItems { get; } = new ObservableCollection<ListViewItem>();
@@ -579,10 +585,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnClosed(EventArgs e)
 		{
-			if (this.LibraryContext != null)
+			if (this.libraryContext != null)
 			{
-				this.LibraryContext.ContainerChanged -= this.ActiveContainer_Changed;
-				this.LibraryContext.ContentChanged -= this.ActiveContainer_ContentChanged;
+				this.libraryContext.ContainerChanged -= this.ActiveContainer_Changed;
+				this.libraryContext.ContentChanged -= this.ActiveContainer_ContentChanged;
 			}
 
 			base.OnClosed(e);

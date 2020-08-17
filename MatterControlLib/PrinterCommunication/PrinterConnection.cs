@@ -2348,6 +2348,9 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 		private void CreateStreamProcessors(Stream gcodeStream = null)
 		{
+			// reset our assumptions about the flow sensor
+			FilamentPositionSensorDetected = false;
+
 			secondsSinceUpdateHistory = 0;
 			lineSinceUpdateHistory = 0;
 

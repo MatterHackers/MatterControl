@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool canChangeComPort = !printer.Connection.IsConnected && printer.Connection.CommunicationState != CommunicationStates.AttemptingToConnect;
 			//This setting defaults to Manual
 			var selectedMachine = printer.Settings.GetValue(SettingsKey.selector_ip_address);
-			dropdownList = new MHDropDownList(selectedMachine, theme, maxHeight: 200)
+			dropdownList = new MHDropDownList(selectedMachine, theme, maxHeight: 200 * GuiWidget.DeviceScale)
 			{
 				ToolTipText = HelpText,
 				Margin = new BorderDouble(),

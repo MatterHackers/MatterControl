@@ -213,10 +213,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Init static radio icons if null
 				if (radioIconChecked == null)
 				{
-					radioIconChecked = new ImageBuffer(16, 16).SetPreMultiply();
-					radioIconUnchecked = new ImageBuffer(16, 16).SetPreMultiply();
+					var size = (int)Math.Round(16 * GuiWidget.DeviceScale);
+					radioIconChecked = new ImageBuffer(size, size).SetPreMultiply();
+					radioIconUnchecked = new ImageBuffer(size, size).SetPreMultiply();
 
-					var rect = new RectangleDouble(0, 0, 16, 16);
+					var rect = new RectangleDouble(0, 0, size, size);
 
 					RadioImage.DrawCircle(
 						radioIconChecked.NewGraphics2D(),

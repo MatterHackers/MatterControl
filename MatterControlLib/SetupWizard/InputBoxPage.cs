@@ -38,11 +38,13 @@ namespace MatterHackers.MatterControl
 	{
 		private MHTextEditWidget textEditWidget;
 
+		public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
+
 		public InputBoxPage(string windowTitle, string label, string initialValue, string emptyText, string actionButtonTitle, Action<string> action)
 		{
 			this.WindowTitle = windowTitle;
 			this.HeaderText = windowTitle;
-			this.WindowSize = new Vector2(500, 200);
+			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 200 * GuiWidget.DeviceScale);
 
 			GuiWidget actionButton = null;
 
@@ -53,7 +55,7 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Left
 			});
 
-			//Adds text box and check box to the above container
+			// Adds text box and check box to the above container
 			textEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
 			textEditWidget.Name = "InputBoxPage TextEditWidget";
 			textEditWidget.HAnchor = HAnchor.Stretch;

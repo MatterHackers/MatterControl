@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 
 			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 
-			DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
+			ScrollBar.DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
 		}
 
 		public JogControls.MoveButton CreateMoveButton(PrinterConfig printer, string label, PrinterConnection.Axis axis, double movementFeedRate, bool levelingButtons = false)

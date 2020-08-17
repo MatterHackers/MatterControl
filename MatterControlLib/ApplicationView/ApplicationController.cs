@@ -1410,7 +1410,7 @@ namespace MatterHackers.MatterControl
 			ScrollBar.GrowThumbBy = 2;
 
 			// Initialize statics
-			DefaultThumbBackground.DefaultBackgroundColor = Color.Transparent;
+			ScrollBar.DefaultThumbBackground.DefaultBackgroundColor = Color.Transparent;
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();

@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl
 				themeset = themeProvider.GetTheme("Modern-Dark");
 			}
 
-			DefaultThumbView.ThumbColor = new Color(themeset.Theme.TextColor, 30);
+			ScrollBar.DefaultThumbView.ThumbColor = new Color(themeset.Theme.TextColor, 30);
 
 			ToolTipManager.CreateToolTip = MatterControlToolTipWidget;
 		}

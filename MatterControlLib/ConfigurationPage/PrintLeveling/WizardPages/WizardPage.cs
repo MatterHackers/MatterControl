@@ -96,7 +96,6 @@ namespace MatterHackers.MatterControl
 			return new WrappedTextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
 				Margin = new BorderDouble(left: 10, top: 10),
-				HAnchor = HAnchor.Stretch
 			};
 		}
 

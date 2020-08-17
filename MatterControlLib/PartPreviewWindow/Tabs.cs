@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			leadingTabAdornment = new GuiWidget()
 			{
-				MinimumSize = new Vector2(16, theme.TabButtonHeight),
+				MinimumSize = new Vector2(16 * GuiWidget.DeviceScale, theme.TabButtonHeight),
 				VAnchor = VAnchor.Bottom
 			};
 			leadingTabAdornment.AfterDraw += (s, e) =>
@@ -250,14 +250,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			tabTrailer = new TabTrailer(this, theme)
 			{
 				VAnchor = VAnchor.Bottom,
-				MinimumSize = new Vector2(8, theme.TabButtonHeight),
+				MinimumSize = new Vector2(8 * GuiWidget.DeviceScale, theme.TabButtonHeight),
 			};
 
 			this.TabBar.ActionArea.AddChild(tabTrailer);
 
 			var plusTabButton = new NewTabButton(AggContext.StaticData.LoadIcon("fa-plus_12.png", 12, 12, theme.InvertIcons), theme)
 			{
-				Height = 20,
+				Height = 20 * GuiWidget.DeviceScale,
 			};
 
 			plusTabButton.IconButton.Click += (s, e) =>
@@ -404,6 +404,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				closeButton.ToolTipText = "Close".Localize();
 				closeButton.Click += (s, e) => ConditionallyCloseTab();
 				closeButton.HAnchor |= HAnchor.Right;
+				closeButton.VAnchor = VAnchor.Center;
 				// fadeRegion.AddChild(closeButton);
 				this.AddChild(closeButton);
 			}

@@ -274,24 +274,66 @@ namespace MatterHackers.MatterControl.PrintHistory
 			addNotest.Enabled = printTasks.Any();
 			addNotest.Click += (s, e) =>
 			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Print History Note".Localize(),
-						"Note".Localize(),
-						printTask.Note == null ? "" : printTask.Note,
-						"Enter Note Here".Localize(),
-						string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
-						(newNote) =>
-						{
-							printTask.Note = newNote;
-							printTask.Commit();
-							popupMenu.Unfocus();
-							printInfoWidget.Text = GetPrintInfo();
-						})
+				var inputBoxPage = new InputBoxPage(
+					"Print History Note".Localize(),
+					"Note".Localize(),
+					printTask.Note == null ? "" : printTask.Note,
+					"Enter Note Here".Localize(),
+					string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
+					(newNote) =>
 					{
-						AllowEmpty = true,
-					});
+						printTask.Note = newNote;
+						printTask.Commit();
+						popupMenu.Unfocus();
+						printInfoWidget.Text = GetPrintInfo();
+					})
+				{
+					AllowEmpty = true,
+				};
+
+				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage));
+
+				DialogWindow.Show(inputBoxPage);
+
+				inputBoxPage.Parent.Height += 40 * GuiWidget.DeviceScale;
 			};
+		}
+
+		private GuiWidget CreateDefaultOptions(GuiWidget textField)
+		{
+			var issues = new string[]
+			{
+				"Bed Dislodged",
+				"Bowden Tube Popped Out",
+				"Computer Crashed",
+				"Couldn't Resume",
+				"Dislodged From Bed",
+				"Filament Jam",
+				"Filament Runout",
+				"Layer shift",
+				"Power Outage",
+				"Print Quality",
+				"Rough Overhangs",
+				"Skipped Layers",
+				"Stringing / Poor retractions",
+				"Thermal Runaway",
+				"User Error",
+				"Warping",
+			};
+
+			var dropdownList = new MHDropDownList("Standard Issues".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
+
+			foreach (var issue in issues)
+			{
+				MenuItem newItem = dropdownList.AddItem(issue);
+
+				newItem.Selected += (sender, e) =>
+				{
+					textField.Text = issue;
+				};
+			}
+
+			return dropdownList;
 		}
 
 		private void AddQualityMenu(PopupMenu popupMenu)
@@ -325,6 +367,16 @@ namespace MatterHackers.MatterControl.PrintHistory
 					Padding = 5,
 					HAnchor = HAnchor.Fit,
 					VAnchor = VAnchor.Fit,
+				};
+
+				button.MouseEnterBounds += (s, e) =>
+				{
+					button.BackgroundColor = theme.AccentMimimalOverlay;
+				};
+
+				button.MouseLeaveBounds += (s, e) =>
+				{
+					button.BackgroundColor = button.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
 				};
 
 				siblings.Add(button);

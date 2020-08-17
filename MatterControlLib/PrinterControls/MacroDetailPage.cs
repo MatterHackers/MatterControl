@@ -47,8 +47,8 @@ namespace MatterHackers.MatterControl
 			// Form validation fields
 			MHTextEditWidget macroNameInput;
 			MHTextEditWidget macroCommandInput;
-			TextWidget macroCommandError;
-			TextWidget macroNameError;
+			WrappedTextWidget macroCommandError;
+			WrappedTextWidget macroNameError;
 
 			this.HeaderText = "Edit Macro".Localize();
 			this.printerSettings = printerSettings;
@@ -69,10 +69,9 @@ namespace MatterHackers.MatterControl
 				HAnchor = HAnchor.Stretch
 			});
 
-			contentRow.AddChild(macroNameError = new TextWidget("Give the macro a name".Localize() + ".", 0, 0, 10)
+			contentRow.AddChild(macroNameError = new WrappedTextWidget("Give the macro a name".Localize() + ".", 10)
 			{
 				TextColor = theme.TextColor,
-				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
 
@@ -92,10 +91,9 @@ namespace MatterHackers.MatterControl
 			macroCommandInput.DrawFromHintedCache();
 			contentRow.AddChild(macroCommandInput);
 
-			contentRow.AddChild(macroCommandError = new TextWidget("This should be in 'G-Code'".Localize() + ".", 0, 0, 10)
+			contentRow.AddChild(macroCommandError = new WrappedTextWidget("This should be in 'G-Code'".Localize() + ".", 10)
 			{
 				TextColor = theme.TextColor,
-				HAnchor = HAnchor.Stretch,
 				Margin = elementMargin
 			});
 

@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var panel = new FlowLayoutWidget();
 
-			dropdownList = new MHDropDownList("None".Localize(), theme, maxHeight: 200)
+			dropdownList = new MHDropDownList("None".Localize(), theme, maxHeight: 200 * GuiWidget.DeviceScale)
 			{
 				ToolTipText = this.HelpText,
 				TabIndex = tabIndex,

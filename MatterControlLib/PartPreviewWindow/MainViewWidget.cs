@@ -276,6 +276,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Name = "Upgrade",
 						Padding = new BorderDouble(15, 0),
 					});
+
+				tab.AfterDraw += (s, e) =>
+				{
+					e.Graphics2D.Circle(tab.LocalBounds.Right - 25 * DeviceScale,
+						tab.LocalBounds.Bottom + tab.Height / 2 - 1 * DeviceScale,
+						5 * DeviceScale,
+						theme.PrimaryAccentColor);
+				};
 			}
 			else
 			{
@@ -288,6 +296,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Padding = new BorderDouble(15, 0),
 					});
 			}
+
 			EnableReduceWidth(tab, theme);
 
 			// Library tab
@@ -521,7 +530,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			flashBackground.Start();
 		}
 
-		private void SetLinkButtonsVisibility (object s, StringEventArgs e)
+		private void SetLinkButtonsVisibility(object s, StringEventArgs e)
 		{
 			if (UpdateControlData.Instance.UpdateStatus == UpdateControlData.UpdateStatusStates.UpdateAvailable)
 			{
@@ -820,7 +829,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static void EnableReduceWidth(ChromeTab partTab, ThemeConfig theme)
 		{
 			var scale = GuiWidget.DeviceScale;
-			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight * GuiWidget.DeviceScale);
+			partTab.MinimumSize = new Vector2(80 * scale, theme.TabButtonHeight);
 
 			var textWidget = partTab.Descendants<TextWidget>().First();
 			var tabPill = partTab.Descendants<SimpleTab.TabPill>().First();

@@ -87,11 +87,18 @@ namespace Markdig.Renderers.Agg.Inlines
 				this.Selectable = true;
 			}
 
-			imageSequence = new ImageSequence(icon);
-			// var sequenceWidget = new ImageSequenceWidget(imageSequence);
-			var sequenceWidget = new ResponsiveImageSequenceWidget(imageSequence)
+			sequenceWidget = new ResponsiveImageSequenceWidget(new ImageSequence(icon))
 			{
 				Cursor = Cursors.Hand,
+			};
+
+			sequenceWidget.MaximumSizeChanged += (s, e) =>
+			{
+				this.MinStretchOrFitHorizontal(20 * GuiWidget.DeviceScale, sequenceWidget.MaximumSize.X);
+				if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
+				{
+					markdownWidget.Width += 1;
+				}
 			};
 
 			sequenceWidget.Click += SequenceWidget_Click;
@@ -129,17 +136,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			{
 				if (ImageUrl.StartsWith("http"))
 				{
-					WebCache.RetrieveImageSquenceAsync(imageSequence, ImageUrl, () =>
-					{
-						this.MinStretchOrFitHorizontal(20, imageSequence.Width);
-						UiThread.RunOnIdle(() =>
-						{
-							if (aggRenderer.RootWidget.Parents<MarkdownWidget>().FirstOrDefault() is MarkdownWidget markdownWidget)
-							{
-								markdownWidget.Width = markdownWidget.Width + 1;
-							}
-						});
-					});
+					WebCache.RetrieveImageSquenceAsync(sequenceWidget.ImageSequence, ImageUrl);
 				}
 
 				hasBeenLoaded = true;
@@ -147,7 +144,6 @@ namespace Markdig.Renderers.Agg.Inlines
 
 			base.OnDraw(graphics2D);
 		}
-
 
 		/// <summary>
 		/// Sets this control to Stretch and all direct parent FlowLayoutWidgets to Stretch, it then ensures
@@ -159,7 +155,7 @@ namespace Markdig.Renderers.Agg.Inlines
 		{
 			this.HAnchor = HAnchor.Stretch;
 
-			MinimumSize = new Vector2(Math.Max(absoluteMinWidth * DeviceScale, MinimumSize.X), MinimumSize.Y);
+			MinimumSize = new Vector2(Math.Max(absoluteMinWidth, MinimumSize.X), MinimumSize.Y);
 			MaximumSize = new Vector2(absoluteMaxWidth, MaximumSize.Y);
 		}
 
@@ -168,8 +164,8 @@ namespace Markdig.Renderers.Agg.Inlines
 		private string LinkUrl { get; }
 
 		private AggRenderer aggRenderer;
-		private ImageSequence imageSequence;
 		private bool hasBeenLoaded;
+		private ResponsiveImageSequenceWidget sequenceWidget;
 	}
 
 	public class ImageLinkAdvancedX : FlowLayoutWidget

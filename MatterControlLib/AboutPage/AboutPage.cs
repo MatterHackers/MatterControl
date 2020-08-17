@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl
 					pointSize: theme.DefaultFontSize,
 					textColor: theme.TextColor)
 				{
-					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(0, 15)
 				});
 
@@ -210,10 +209,7 @@ namespace MatterHackers.MatterControl
 				{
 					string content = AggContext.StaticData.ReadAllText(filePath);
 
-					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.TextColor)
-					{
-						HAnchor = HAnchor.Stretch
-					});
+					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.TextColor));
 				}
 
 				base.OnLoad(args);

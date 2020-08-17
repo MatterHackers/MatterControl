@@ -10,9 +10,6 @@ using Markdig.Helpers;
 using Markdig.Renderers.Agg;
 using Markdig.Renderers.Agg.Inlines;
 using Markdig.Syntax;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Font;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl;
 

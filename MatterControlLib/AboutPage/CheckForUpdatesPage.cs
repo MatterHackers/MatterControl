@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, "release");
 			}
 
-			var releaseOptionsDropList = new MHDropDownList("Development", theme, maxHeight: 200)
+			var releaseOptionsDropList = new MHDropDownList("Development", theme, maxHeight: 200 * GuiWidget.DeviceScale)
 			{
 				HAnchor = HAnchor.Fit,
 			};
@@ -148,7 +148,6 @@ namespace MatterHackers.MatterControl
 				new WrappedTextWidget("Changing your update channel will change the version of MatterControl that you receive when updating".Localize() + ":")
 				{
 					TextColor = theme.TextColor,
-					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 20)
 				});
 
@@ -156,7 +155,6 @@ namespace MatterHackers.MatterControl
 				new WrappedTextWidget("Stable: The current release version of MatterControl (recommended)".Localize())
 				{
 					TextColor = theme.TextColor,
-					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});
 
@@ -164,7 +162,6 @@ namespace MatterHackers.MatterControl
 				new WrappedTextWidget("Beta: The release candidate version of MatterControl".Localize())
 				{
 					TextColor = theme.TextColor,
-					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});
 
@@ -172,7 +169,6 @@ namespace MatterHackers.MatterControl
 				new WrappedTextWidget("Alpha: The in development version of MatterControl".Localize())
 				{
 					TextColor = theme.TextColor,
-					HAnchor = HAnchor.Stretch,
 					Margin = new BorderDouble(bottom: 10)
 				});
 			contentPanel.AddChild(additionalInfoContainer);

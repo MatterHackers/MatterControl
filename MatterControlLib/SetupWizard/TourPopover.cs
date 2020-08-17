@@ -199,7 +199,6 @@ namespace MatterHackers.MatterControl.Tour
 			body.AddChild(new WrappedTextWidget(productTour.ActiveItem.Description, textColor: theme.TextColor, pointSize: theme.DefaultFontSize)
 			{
 				Margin = 5,
-				HAnchor = HAnchor.Stretch
 			});
 
 			var buttonRow = new FlowLayoutWidget()
