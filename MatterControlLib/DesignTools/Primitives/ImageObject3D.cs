@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (this.Invert)
 						{
-								image = InvertLightness.DoInvertLightness(image);
+							image = InvertLightness.DoInvertLightness(image);
 						}
 					}
 					else // bad load
