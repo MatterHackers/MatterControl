@@ -54,7 +54,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private double ArrowsOffset => 15 * GuiWidget.DeviceScale;
 
-		private double RingWidth => 2015 * GuiWidget.DeviceScale;
+		private double RingWidth => 20 * GuiWidget.DeviceScale;
 
 		private readonly ThemeConfig theme;
 		private readonly InlineEditControl angleTextControl;
@@ -823,7 +823,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 				var unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
-				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100), rotationCenterTransform);
+				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100 * GuiWidget.DeviceScale), rotationCenterTransform);
 
 				Vector2 angleDisplayPosition = InteractionContext.World.GetScreenPosition(anglePosition);
 

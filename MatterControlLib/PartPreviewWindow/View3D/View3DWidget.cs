@@ -63,6 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
+
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
 
 		private TreeView treeView;
@@ -722,7 +723,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						// Project from ListViewItem to ILibraryItem
 						selectedItems = listView.SelectedItems.Select(l => l.Model);
 					}
-					else// Project from ListViewItem to ILibraryItem
+					else // Project from ListViewItem to ILibraryItem
 					{
 						selectedItems = Enumerable.Empty<ILibraryItem>();
 					}
@@ -847,7 +848,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Set focus to View3DWidget after drag-drop
 				this.Focus();
-
 			}
 		}
 
@@ -887,7 +887,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		bool foundTriangleInSelectionBounds;
+		private bool foundTriangleInSelectionBounds;
+
 		private void DoRectangleSelection(DrawEventArgs e)
 		{
 			var allResults = new List<BvhIterator>();
@@ -925,13 +926,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectionRectangle = new RectangleDouble(DragSelectionStartPosition, DragSelectionEndPosition);
 
-			Vector2[] traceBottoms = new Vector2[4];
-			Vector2[] traceTops = new Vector2[4];
+			var traceBottoms = new Vector2[4];
+			var traceTops = new Vector2[4];
 
 			if (foundTriangleInSelectionBounds)
 			{
 				return false;
 			}
+
 			if (x.Bvh is ITriangle tri)
 			{
 				// check if any vertex in screen rect
@@ -992,9 +994,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ViewControls3DButtons? activeButtonBeforeMouseOverride = null;
 
-		Vector2 lastMouseMove;
-		Vector2 mouseDownPositon = Vector2.Zero;
-		Matrix4X4 worldMatrixOnMouseDown;
+		private Vector2 lastMouseMove;
+		private Vector2 mouseDownPositon = Vector2.Zero;
+		private Matrix4X4 worldMatrixOnMouseDown;
+
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			var selectedItem = Scene.SelectedItem;
@@ -1049,7 +1052,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						this.InteractionLayer.SuppressUiVolumes = true;
 
-						IntersectInfo info = new IntersectInfo();
+						var info = new IntersectInfo();
 
 						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject == null)
@@ -1429,7 +1432,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (ModifierKeys == Keys.Control)
 					{
 						// find the think we clicked on
-						IntersectInfo info = new IntersectInfo();
+						var info = new IntersectInfo();
 						var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
 						if (hitObject != null)
 						{
@@ -1462,6 +1465,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									{
 										Scene.SelectedItem = null;
 									}
+
 									Scene.Children.Add(selectedHitItem);
 								}
 								else
@@ -1648,7 +1652,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		internal VerticalResizeContainer modelViewSidePanel;
 
 		public Vector2 DragSelectionStartPosition { get; private set; }
+
 		public bool DragSelectionInProgress { get; private set; }
+
 		public Vector2 DragSelectionEndPosition { get; private set; }
 
 		internal GuiWidget ShowOverflowMenu(PopupMenu popupMenu)
