@@ -35,6 +35,8 @@ Advanced
     Perimeter Speeds
       perimeter_speed
       external_perimeter_speed
+      perimeter_acceleration
+      default_acceleration
     Other Speeds
       support_material_speed
       interface_layer_speed

@@ -1355,6 +1355,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.perimeter_acceleration,
+					PresentationName = "Perimeter Acceleration".Localize(),
+					HelpText = "The acceleration that the printer will be set to for perimeters, will not be changed if set to 0. A typical perimeter acceleration is 800.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ShowIfSet = "!sla_printer",
+					Units = "mm/s^2".Localize(),
+					DefaultValue = "0",
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.default_acceleration,
+					PresentationName = "Default Acceleration".Localize(),
+					HelpText = "The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ShowIfSet = "!sla_printer",
+					Units = "mm/s^2".Localize(),
+					DefaultValue = "0",
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.perimeter_start_end_overlap,
 					PresentationName = "Start End Overlap".Localize(),
 					HelpText = "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.".Localize(),
