@@ -379,7 +379,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								if (revertSettings)
 								{
 									printer.Settings.ClearUserOverrides();
-									printer.Settings.ClearBlackList();
+									printer.Settings.ResetSettingsForNewProfile();
 									// this is user driven
 									printer.Settings.Save();
 									printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();

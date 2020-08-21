@@ -277,7 +277,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		/// <summary>
-		/// Indicates if given import has been run for the current user. For the guest profile, this means the
+		/// Gets or sets a value indicating whether indicates if given import has been run for the current user. For the guest profile, this means the
 		/// Sqlite import has been run and all db printers are now in the guest profile. For normal users
 		/// this means the CopyGuestProfilesToUser wizard has been completed and one or more printers were
 		/// imported or the "Don't ask me again" option was selected
@@ -375,8 +375,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			// Register listener on non-null settings
 			if (printerSettings != null)
 			{
-				// TODO: This is likely to leak and keep printerSettings in memory in some cases until we combine PrinterConfig 
-				// loading into profile manager and have a single owner of loaded printers that can unwire this when their 
+				// TODO: This is likely to leak and keep printerSettings in memory in some cases until we combine PrinterConfig
+				// loading into profile manager and have a single owner of loaded printers that can unwire this when their
 				// tabs close
 				//
 				// Register listener
@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public async static Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
+		public static async Task<PrinterSettings> RecoverProfile(PrinterInfo printerInfo)
 		{
 			bool userIsLoggedIn = !ApplicationController.GuestUserActive?.Invoke() ?? false;
 			if (userIsLoggedIn && printerInfo != null)
@@ -511,7 +511,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		internal static bool ImportFromExisting(string settingsFilePath, bool clearBlackList = true)
+		internal static bool ImportFromExisting(string settingsFilePath, bool resetSettingsForNewProfile = true)
 		{
 			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
 			{
@@ -557,18 +557,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printerInfo.Model = printerSettings.OemLayer[SettingsKey.model] ?? "Other";
 						}
 
-						if (clearBlackList)
+						if (resetSettingsForNewProfile)
 						{
-							printerSettings.ClearBlackList();
+							printerSettings.ResetSettingsForNewProfile();
 						}
 
 						printerSettings.Save(userDrivenChange: false);
 						importSuccessful = true;
 					}
+
 					break;
 
 				case ".ini":
-					//Scope variables
+					// Scope variables
 					{
 						var settingsToImport = PrinterSettingsLayer.LoadFromIni(settingsFilePath);
 						var printerSettings = new PrinterSettings()
@@ -611,9 +612,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 							printerSettings.Helpers.SetName(printerInfo.Name);
 
-							if (clearBlackList)
+							if (resetSettingsForNewProfile)
 							{
-								printerSettings.ClearBlackList();
+								printerSettings.ResetSettingsForNewProfile();
 							}
 
 							printerSettings.Save(userDrivenChange: false);
@@ -658,7 +659,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			});
 
 			// Persist changes to PrinterSettings - must come after adding to Profiles above
-			printerSettings.ClearBlackList();
+			printerSettings.ResetSettingsForNewProfile();
 			printerSettings.Save(userDrivenChange: false);
 
 			// Set as active profile

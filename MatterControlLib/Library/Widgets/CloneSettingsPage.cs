@@ -163,7 +163,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				var filePath = textEditWidget.Text;
 
-				if (ProfileManager.ImportFromExisting(filePath, clearBlackList: copyAndCalibrateOption.Checked))
+				if (ProfileManager.ImportFromExisting(filePath, resetSettingsForNewProfile: copyAndCalibrateOption.Checked))
 				{
 					string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
 					this.DialogWindow.ChangeToPage(
