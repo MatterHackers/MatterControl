@@ -27,12 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.VersionManagement
 {
@@ -48,7 +43,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 			public const string UpdateRequired = nameof(UpdateRequired);
 		}
 
-		public static string[] VersionKeys = 
+		private static readonly string[] VersionKeys =
 		{
 			VersionKey.CurrentBuildToken,
 			VersionKey.CurrentBuildNumber,
@@ -66,34 +61,35 @@ namespace MatterHackers.MatterControl.VersionManagement
 				feedType = "release";
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, feedType);
 			}
+
 			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
-			//requestValues["TestCode"] = "100"; // will cause response of update available and not required
-			//requestValues["TestCode"] = "101"; // will cause response of update available and required
+			// requestValues["TestCode"] = "100"; // will cause response of update available and not required
+			// requestValues["TestCode"] = "101"; // will cause response of update available and required
 			requestValues[UserSettingsKey.UpdateFeedType] = feedType;
 			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-current-release-version";
 		}
 
 		public override void Request()
 		{
-			//If the client token exists, use it, otherwise wait for client token before making request
+			// If the client token exists, use it, otherwise wait for client token before making request
 			if (ApplicationSettings.Instance.GetClientToken() == null)
 			{
 				ClientTokenRequest request = new ClientTokenRequest();
-				request.RequestSucceeded += new EventHandler(onRequestSucceeded);
+				request.RequestSucceeded += new EventHandler(OnRequestSucceeded);
 				request.Request();
 			}
 			else
 			{
-				onClientTokenReady();
+				OnClientTokenReady();
 			}
 		}
 
-		private void onRequestSucceeded(object sender, EventArgs e)
+		private void OnRequestSucceeded(object sender, EventArgs e)
 		{
-			onClientTokenReady();
+			OnClientTokenReady();
 		}
 
-		public void onClientTokenReady()
+		public void OnClientTokenReady()
 		{
 			string clientToken = ApplicationSettings.Instance.GetClientToken();
 			requestValues["ClientToken"] = clientToken;
@@ -107,13 +103,14 @@ namespace MatterHackers.MatterControl.VersionManagement
 		{
 			foreach (string key in VersionKeys)
 			{
-				saveResponse(key, responseValues);
+				SaveResponse(key, responseValues);
 			}
 		}
 
-		private void saveResponse(string key, JsonResponseDictionary responseValues)
+		private void SaveResponse(string key, JsonResponseDictionary responseValues)
 		{
-			string value = responseValues.get(key);
+			string value = null;
+			responseValues.TryGetValue(key, out value);
 			if (value != null)
 			{
 				ApplicationSettings.Instance.set(key, value);

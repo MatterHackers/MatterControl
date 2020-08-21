@@ -52,8 +52,10 @@ namespace MatterHackers.Plugins.EditorTools
 		private static readonly VertexStorage Arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");
 		private static ImageBuffer rotationImageWhite;
 
-		private readonly double arrowsOffset = 15;
-		private readonly double ringWidth = 20;
+		private double ArrowsOffset => 15 * GuiWidget.DeviceScale;
+
+		private double RingWidth => 20 * GuiWidget.DeviceScale;
+
 		private readonly ThemeConfig theme;
 		private readonly InlineEditControl angleTextControl;
 
@@ -534,8 +536,8 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
-				double innerRadius = radius + ringWidth / 2;
-				double outerRadius = innerRadius + ringWidth;
+				double innerRadius = radius + RingWidth / 2;
+				double outerRadius = innerRadius + RingWidth;
 				double snappingMarkRadius = outerRadius + 20;
 
 				double startBlue = 0;
@@ -607,9 +609,10 @@ namespace MatterHackers.Plugins.EditorTools
 				double startAngle = i * snappingRadians + mouseAngle;
 
 				var snapShape = new VertexStorage();
-				snapShape.MoveTo(-10, 0);
-				snapShape.LineTo(5, 7);
-				snapShape.LineTo(5, -7);
+				var scale = GuiWidget.DeviceScale;
+				snapShape.MoveTo(-10 * scale, 0);
+				snapShape.LineTo(5 * scale, 7 * scale);
+				snapShape.LineTo(5 * scale, -7 * scale);
 				snapShape.ClosePolygon();
 
 				var transformed = new VertexSourceApplyTransform(snapShape, Affine.NewTranslation(distanceFromCenter, 0) * Affine.NewRotation(startAngle));
@@ -664,8 +667,8 @@ namespace MatterHackers.Plugins.EditorTools
 			double xSign = otherSideDelta.X > 0 ? 1 : -1;
 			double ySign = otherSideDelta.Y > 0 ? 1 : -1;
 
-			var delta = new Vector3(xSign * (selectCubeSize.X / 2 + arrowsOffset) * distBetweenPixelsWorldSpace,
-				ySign * (selectCubeSize.Y / 2 + arrowsOffset) * distBetweenPixelsWorldSpace,
+			var delta = new Vector3(xSign * (selectCubeSize.X / 2 + ArrowsOffset) * distBetweenPixelsWorldSpace,
+				ySign * (selectCubeSize.Y / 2 + ArrowsOffset) * distBetweenPixelsWorldSpace,
 				-selectCubeSize.Z / 2 * distBetweenPixelsWorldSpace);
 			delta[RotationAxis] = 0;
 			boxCenter -= delta;
@@ -794,9 +797,9 @@ namespace MatterHackers.Plugins.EditorTools
 						{
 							Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
-							double innerRadius = radius + ringWidth / 2;
-							double outerRadius = innerRadius + ringWidth;
-							double snappingMarkRadius = outerRadius + 20;
+							double innerRadius = radius + RingWidth / 2;
+							double outerRadius = innerRadius + RingWidth;
+							double snappingMarkRadius = outerRadius + 20 * GuiWidget.DeviceScale;
 
 							var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 							if (Math.Abs((mouseMoveInfo.HitPosition - center).Length - rotationTransformScale * snappingMarkRadius) < 20 * rotationTransformScale)
@@ -820,7 +823,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Matrix4X4 rotationCenterTransform = GetRotationTransform(selectedItem, out double radius);
 
 				var unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
-				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100), rotationCenterTransform);
+				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100 * GuiWidget.DeviceScale), rotationCenterTransform);
 
 				Vector2 angleDisplayPosition = InteractionContext.World.GetScreenPosition(anglePosition);
 

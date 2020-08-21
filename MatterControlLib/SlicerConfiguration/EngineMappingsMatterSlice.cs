@@ -92,6 +92,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.infill_type] = new ExportField("infillType"),
 				[SettingsKey.min_extrusion_before_retract] = new ExportField("minimumExtrusionBeforeRetraction"),
 				[SettingsKey.min_print_speed] = new ExportField("minimumPrintingSpeed"),
+				[SettingsKey.perimeter_acceleration] = new ExportField("perimeterAcceleration"),
+				[SettingsKey.default_acceleration] = new ExportField("defaultAcceleration"),
 				[SettingsKey.perimeter_speed] = new ExportField("insidePerimetersSpeed"),
 				[SettingsKey.raft_air_gap] = new ExportField("raftAirGap"),
 				[SettingsKey.max_acceleration] = new ExportField("maxAcceleration"),

@@ -350,6 +350,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SettingsKey.infill_speed,
 				SettingsKey.min_print_speed,
 				SettingsKey.perimeter_speed,
+				SettingsKey.perimeter_acceleration,
+				SettingsKey.default_acceleration,
 				SettingsKey.retract_speed,
 				SettingsKey.support_material_speed,
 				SettingsKey.travel_speed,

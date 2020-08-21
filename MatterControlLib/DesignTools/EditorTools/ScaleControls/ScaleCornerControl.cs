@@ -53,8 +53,11 @@ namespace MatterHackers.Plugins.EditorTools
 		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
 		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		protected Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
-		private double distToStart = 10;
-		private double lineLength = 35;
+
+		private double distToStart => 10 * GuiWidget.DeviceScale;
+
+		private double lineLength => 35 * GuiWidget.DeviceScale;
+
 		private List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
 		private int quadrantIndex;
@@ -115,19 +118,14 @@ namespace MatterHackers.Plugins.EditorTools
 			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
 		}
 
-		void EditComplete(object s, EventArgs e)
+		private void EditComplete(object s, EventArgs e)
 		{
 			var selectedItem = ActiveSelectedItem;
 			Matrix4X4 startingTransform = selectedItem.Matrix;
 
 			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
-			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
 			Vector3 lockedCorner = GetCornerPosition(selectedItem, (quadrantIndex + 2) % 4);
-			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, (quadrantIndex + 3) % 4);
-
-			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, quadrantIndex);
 
 			Vector3 newSize = Vector3.Zero;
 			newSize.X = xValueDisplayInfo.Value;
@@ -136,7 +134,7 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, InteractionContext.GuiSurface.ModifierKeys);
 
 			// scale it
-			Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+			var scale = Matrix4X4.CreateScale(scaleAmount);
 
 			selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
@@ -207,11 +205,11 @@ namespace MatterHackers.Plugins.EditorTools
 						}
 					}
 
-					//Vector3 startScreenSpace = InteractionContext.World.GetScreenSpace(startPosition);
-					//e.graphics2D.Circle(startScreenSpace.x, startScreenSpace.y, 5, theme.PrimaryAccentColor);
+					// Vector3 startScreenSpace = InteractionContext.World.GetScreenSpace(startPosition);
+					// e.graphics2D.Circle(startScreenSpace.x, startScreenSpace.y, 5, theme.PrimaryAccentColor);
 
-					//Vector2 startScreenPosition = InteractionContext.World.GetScreenPosition(startPosition);
-					//e.graphics2D.Circle(startScreenPosition.x, startScreenPosition.y, 5, theme.PrimaryAccentColor);
+					// Vector2 startScreenPosition = InteractionContext.World.GetScreenPosition(startPosition);
+					// e.graphics2D.Circle(startScreenPosition.x, startScreenPosition.y, 5, theme.PrimaryAccentColor);
 				}
 			}
 
@@ -291,12 +289,7 @@ namespace MatterHackers.Plugins.EditorTools
 						newPosition.Y = ((int)((newPosition.Y / snapGridDistance) + .5)) * snapGridDistance;
 					}
 
-					Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
-					Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
 					Vector3 lockedCorner = GetCornerPosition(selectedItem, (quadrantIndex + 2) % 4);
-					Vector3 cornerPositionCw = GetCornerPosition(selectedItem, (quadrantIndex + 3) % 4);
-
-					Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, quadrantIndex);
 
 					Vector3 newSize = Vector3.Zero;
 					newSize.X = lockedCorner.X - newPosition.X;
@@ -314,7 +307,7 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, InteractionContext.GuiSurface.ModifierKeys);
 
 					// scale it
-					Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+					var scale = Matrix4X4.CreateScale(scaleAmount);
 
 					selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
@@ -368,13 +361,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(cornerPosition);
-
-			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
-			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, (quadrantIndex + 3) % 4);
 
 			// figure out which way the corner is relative to the bounds
 			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, quadrantIndex);
@@ -387,12 +375,12 @@ namespace MatterHackers.Plugins.EditorTools
 			boxCenter.Y -= ySign * selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 			boxCenter.Z += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 
-			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
+			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 
-			Vector3 xOtherSide = new Vector3(cornerPosition.X + otherSideDelta.X, cornerPosition.Y, cornerPosition.Z);
-			Vector3 yOtherSide = new Vector3(cornerPosition.X, cornerPosition.Y + otherSideDelta.Y, cornerPosition.Z);
+			var xOtherSide = new Vector3(cornerPosition.X + otherSideDelta.X, cornerPosition.Y, cornerPosition.Z);
+			var yOtherSide = new Vector3(cornerPosition.X, cornerPosition.Y + otherSideDelta.Y, cornerPosition.Z);
 
 			lines.Clear();
 			// left lines
@@ -416,9 +404,9 @@ namespace MatterHackers.Plugins.EditorTools
 			Keys modifierKeys)
 		{
 			var minimumSize = .1;
-			Vector3 scaleAmount = Vector3.One;
+			var scaleAmount = Vector3.One;
 
-			if(originalSelectedBounds.XSize <= 0
+			if (originalSelectedBounds.XSize <= 0
 				|| originalSelectedBounds.YSize <= 0
 				|| originalSelectedBounds.ZSize <= 0)
 			{
@@ -496,9 +484,16 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, (quadrantIndex + 3) % 4);
 
 			double xDirection = cornerPositionCcw.X - cornerPosition.X;
-			if (xDirection == 0) xDirection = cornerPositionCw.X - cornerPosition.X;
+			if (xDirection == 0)
+			{
+				xDirection = cornerPositionCw.X - cornerPosition.X;
+			}
+
 			double yDirection = cornerPositionCcw.Y - cornerPosition.Y;
-			if (yDirection == 0) yDirection = cornerPositionCw.Y - cornerPosition.Y;
+			if (yDirection == 0)
+			{
+				yDirection = cornerPositionCw.Y - cornerPosition.Y;
+			}
 
 			return new Vector3(xDirection, yDirection, cornerPosition.Z);
 		}
@@ -511,7 +506,6 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseOver || MouseDownOnControl)
 				{
-
 					for (int i = 0; i < lines.Count; i += 2)
 					{
 						// draw the line that is on the ground

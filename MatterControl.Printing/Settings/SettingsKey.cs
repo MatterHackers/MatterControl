@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string create_raft = nameof(create_raft);
 		public const string create_skirt = nameof(create_skirt);
 		public const string created_date = nameof(created_date);
+		public const string default_acceleration = nameof(default_acceleration);
 		public const string default_material_presets = nameof(default_material_presets);
 		public const string device_token = nameof(device_token);
 		public const string device_type = nameof(device_type);
@@ -160,6 +161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string oem_profile_token = nameof(oem_profile_token);
 		public const string output_only_first_layer = nameof(output_only_first_layer);
 		public const string pause_gcode = nameof(pause_gcode);
+		public const string perimeter_acceleration = nameof(perimeter_acceleration);
 		public const string perimeter_extrusion_width = nameof(perimeter_extrusion_width);
 		public const string perimeter_speed = nameof(perimeter_speed);
 		public const string perimeter_start_end_overlap = nameof(perimeter_start_end_overlap);
