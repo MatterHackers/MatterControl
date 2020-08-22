@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class PrinterSettingsExtensions
 	{
-		private static readonly Dictionary<string, string> BlackListSettings = new Dictionary<string, string>()
+		private static readonly Dictionary<string, string> SettingsToReset = new Dictionary<string, string>()
 		{
 			[SettingsKey.spiral_vase] = "0",
 			[SettingsKey.layer_to_pause] = "",
@@ -83,9 +83,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public static bool AutoSave { get; set; } = true;
 
-		public static void ClearBlackList(this PrinterSettings settings)
+		public static void ResetSettingsForNewProfile(this PrinterSettings settings)
 		{
-			foreach (var kvp in BlackListSettings)
+			foreach (var kvp in SettingsToReset)
 			{
 				if (settings.UserLayer.ContainsKey(kvp.Key))
 				{
