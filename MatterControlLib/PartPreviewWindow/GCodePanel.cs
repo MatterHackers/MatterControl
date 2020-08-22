@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -40,15 +41,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodePanel : FlowLayoutWidget
 	{
-		private ISceneContext sceneContext;
-		private ThemeConfig theme;
-		private PrinterConfig printer;
-		private PrinterTabPage printerTabPage;
+		private readonly ISceneContext sceneContext;
+		private readonly ThemeConfig theme;
+		private readonly PrinterConfig printer;
+		private readonly PrinterTabPage printerTabPage;
 		private SectionWidget speedsWidget;
-		private GuiWidget loadedGCodeSection;
+		private readonly GuiWidget loadedGCodeSection;
 
 		public GCodePanel(PrinterTabPage printerTabPage, PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
@@ -143,6 +144,32 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
+				var copyButton = new TextButton("copy", theme, 8)
+				{
+					Padding = 5,
+					Margin = new BorderDouble(0, 0, 15, 0),
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					ToolTipText = "Copy extrusions data".Localize()
+				};
+
+				copyButton.Click += (s, e) =>
+				{
+					var output = new StringBuilder();
+					// copy all the extrusions to the clipboard as paths
+					var extrusions = printer.Bed.LoadedGCode.GetExtrusionsForLayer(sceneContext.ActiveLayerIndex);
+					foreach (var extrusion in extrusions)
+					{
+						foreach (var position in extrusion)
+						{
+							output.Append($"x:{position.X:0.##}, y:{position.Y:0.##},");
+						}
+
+						output.Append("|");
+					}
+
+					Clipboard.Instance.SetText(output.ToString());
+				};
+
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Layer".Localize(),
@@ -154,6 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						},
 						theme,
 						serializationKey: "gcode_panel_layer_details",
+						rightAlignedContent: copyButton,
 						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,
