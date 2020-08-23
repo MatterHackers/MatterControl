@@ -46,7 +46,8 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleCornerControl : InteractionVolume
 	{
-		public IObject3D ActiveSelectedItem;
+		public IObject3D ActiveSelectedItem { get; set; }
+
 		protected PlaneShape hitPlane;
 		protected Vector3 initialHitPosition;
 		protected Mesh minXminYMesh;
@@ -54,9 +55,9 @@ namespace MatterHackers.Plugins.EditorTools
 		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		protected Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
 
-		private double distToStart => 10 * GuiWidget.DeviceScale;
+		private double DistToStart => 10 * GuiWidget.DeviceScale;
 
-		private double lineLength => 35 * GuiWidget.DeviceScale;
+		private double LineLength => 35 * GuiWidget.DeviceScale;
 
 		private List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
@@ -384,18 +385,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 			lines.Clear();
 			// left lines
-			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
 
-			lines.Add(InteractionContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(InteractionContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
 
 			// bottom lines
-			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * distToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
 
-			lines.Add(InteractionContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * distToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(InteractionContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (distToStart + lineLength) * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(InteractionContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
 		}
 
 		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,

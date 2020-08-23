@@ -53,14 +53,17 @@ namespace MatterHackers.Plugins.EditorTools
 		protected Mesh topScaleMesh;
 		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
 		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private double distToStart = 5;
-		private double lineLength = 55;
+
+		private double DistToStart => 5 * GuiWidget.DeviceScale;
+
+		private double LineLength => 55 * GuiWidget.DeviceScale;
+
 		private List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
 		private double selectCubeSize = 7 * GuiWidget.DeviceScale;
 		private ThemeConfig theme;
 		private InlineEditControl zValueDisplayInfo;
-		private bool HadClickOnControl;
+		private bool hadClickOnControl;
 
 		public ScaleTopControl(IInteractionVolumeContext context)
 			: base(context)
@@ -69,7 +72,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			zValueDisplayInfo = new InlineEditControl()
 			{
-				ForceHide = () => 
+				ForceHide = () =>
 				{
 					// if the selection changes
 					if (RootSelection != ActiveSelectedItem)
@@ -84,16 +87,14 @@ namespace MatterHackers.Plugins.EditorTools
 						return true;
 					}
 
-
 					// if we clicked on the control
-					if (HadClickOnControl)
+					if (hadClickOnControl)
 					{
 						return false;
 					}
 
 					return false;
-				}
-,
+				},
 				GetDisplayString = (value) => "{0:0.0}mm".FormatWith(value)
 			};
 
@@ -101,7 +102,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (!zValueDisplayInfo.Visible)
 				{
-					HadClickOnControl = false;
+					hadClickOnControl = false;
 				}
 			};
 
@@ -214,7 +215,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (mouseEvent3D.info != null && InteractionContext.Scene.SelectedItem != null)
 			{
-				HadClickOnControl = true;
+				hadClickOnControl = true;
 				ActiveSelectedItem = RootSelection;
 
 				zValueDisplayInfo.Visible = true;
@@ -242,7 +243,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				zValueDisplayInfo.Visible = true;
 			}
-			else if (!HadClickOnControl)
+			else if (!hadClickOnControl)
 			{
 				zValueDisplayInfo.Visible = false;
 			}
@@ -335,11 +336,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 			lines.Clear();
 			// left lines
-			lines.Add(InteractionContext.World.GetScreenPosition(topPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(new Vector2(lines[0].X + lineLength, lines[0].Y));
+			lines.Add(InteractionContext.World.GetScreenPosition(topPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(new Vector2(lines[0].X + LineLength, lines[0].Y));
 
-			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(new Vector2(lines[2].X + lineLength, lines[2].Y));
+			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(new Vector2(lines[2].X + LineLength, lines[2].Y));
 		}
 
 		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)

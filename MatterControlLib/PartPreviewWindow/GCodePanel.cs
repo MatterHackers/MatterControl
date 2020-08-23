@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -144,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
-				var copyButton = new TextButton("copy", theme, 8)
+				var copyButton = new TextButton("copy".Localize(), theme, 8)
 				{
 					Padding = 5,
 					Margin = new BorderDouble(0, 0, 15, 0),
@@ -157,14 +158,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var output = new StringBuilder();
 					// copy all the extrusions to the clipboard as paths
 					var extrusions = printer.Bed.LoadedGCode.GetExtrusionsForLayer(sceneContext.ActiveLayerIndex);
-					foreach (var extrusion in extrusions)
+					for (int i = 0; i < extrusions.Count; i++)
 					{
-						foreach (var position in extrusion)
+						var extrusion = extrusions[i];
+						var count = extrusion.Count;
+						for (var j = 0; j < count; j++)
 						{
-							output.Append($"x:{position.X:0.##}, y:{position.Y:0.##},");
+							var position = extrusion[j];
+							bool debugTurns = false;
+							if (debugTurns)
+							{
+								var prevPosition = extrusion[(count + j - 1) % count];
+								var nextPosition = extrusion[(count + j + 1) % count];
+								var angle = position.GetTurnAmount(prevPosition, nextPosition);
+								var lengthToPoint = extrusion.LengthTo(j);
+
+								var leftPosition = extrusion.GetPositionAt(lengthToPoint - 1.6);
+								var rightPosition = extrusion.GetPositionAt(lengthToPoint + 1.6);
+								var nearAngle = position.GetTurnAmount(leftPosition, rightPosition);
+								var directionNormal = (rightPosition - leftPosition).GetNormal().GetPerpendicularRight();
+								var delta = Vector2.Dot(directionNormal, position - leftPosition);
+
+								output.AppendLine($"{lengthToPoint:0.##}, {angle:0.##}, {position.X:0.##}, {position.Y:0.##}, {delta:0.##}");
+							}
+							else
+							{
+								output.Append($"x:{position.X:0.##}, y:{position.Y:0.##},");
+							}
 						}
 
-						output.Append("|");
+						// output.Append("|");
 					}
 
 					Clipboard.Instance.SetText(output.ToString());

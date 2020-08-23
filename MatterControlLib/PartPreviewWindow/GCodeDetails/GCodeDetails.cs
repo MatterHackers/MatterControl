@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (gcode.IsExtruding(instructionIndex))
 					{
-						if (addingExtrudePath)
+						if (!addingExtrudePath)
 						{
 							currentExtrudePath = new List<Vector2>();
 							extrusions.Add(currentExtrudePath);

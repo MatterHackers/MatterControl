@@ -38,15 +38,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SliceLayerSelector : GuiWidget
 	{
-		public static int SliderWidth { get; } = 10;
+		public static double SliderWidth { get; } = 10 * GuiWidget.DeviceScale;
 
-		private InlineEditControl currentLayerInfo;
+		private readonly InlineEditControl currentLayerInfo;
 
-		private LayerScrollbar layerScrollbar;
-
-		private SolidSlider layerSlider;
-		private double layerInfoHalfHeight;
-		private PrinterConfig printer;
+		private readonly LayerScrollbar layerScrollbar;
+		private readonly double layerInfoHalfHeight;
+		private readonly PrinterConfig printer;
 
 		public SliceLayerSelector(PrinterConfig printer, ThemeConfig theme)
 		{
@@ -57,8 +55,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Right
 			});
 
-			layerSlider = layerScrollbar.layerSlider;
-			theme.ApplySliderStyle(layerSlider);
+			SolidSlider = layerScrollbar.layerSlider;
+			theme.ApplySliderStyle(SolidSlider);
 
 			var tagContainer = new HorizontalTag()
 			{
@@ -66,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Fit,
 				Padding = new BorderDouble(6, 4, 10, 4),
 				Margin = new BorderDouble(right: layerScrollbar.Width + layerScrollbar.Margin.Width),
-				TagColor = (theme.IsDarkTheme) ? theme.Shade : theme.SlightShade
+				TagColor = theme.IsDarkTheme ? theme.Shade : theme.SlightShade
 			};
 
 			currentLayerInfo = new InlineEditControl("1000")
@@ -88,20 +86,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerInfoHalfHeight = currentLayerInfo.Height / 2;
 			currentLayerInfo.Visible = false;
 
-			layerSlider.ValueChanged += (s, e) =>
+			SolidSlider.ValueChanged += (s, e) =>
 			{
 				currentLayerInfo.StopEditing();
-				currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
+				currentLayerInfo.Position = new Vector2(0, (double)(SolidSlider.Position.Y + SolidSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
 			};
 
 			// Set initial position
-			currentLayerInfo.Position = new Vector2(0, (double)(layerSlider.Position.Y + layerSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
+			currentLayerInfo.Position = new Vector2(0, (double)(SolidSlider.Position.Y + SolidSlider.PositionPixelsFromFirstValue - layerInfoHalfHeight));
 
 			printer.Bed.ActiveLayerChanged += SetPositionAndValue;
 			layerScrollbar.MouseEnter += SetPositionAndValue;
 		}
 
-		public SolidSlider SolidSlider => layerSlider;
+		public SolidSlider SolidSlider { get; }
 
 		public double Maximum
 		{
@@ -118,7 +116,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnClosed(EventArgs e)
 		{
 			printer.Bed.ActiveLayerChanged -= SetPositionAndValue;
-			layerSlider.MouseEnter -= SetPositionAndValue;
+			SolidSlider.MouseEnter -= SetPositionAndValue;
 
 			base.OnClosed(e);
 		}
@@ -135,9 +133,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private class LayerScrollbar : FlowLayoutWidget
 		{
 			internal SolidSlider layerSlider;
-			private PrinterConfig printer;
-			private TextWidget layerCountText;
-			private TextWidget layerStartText;
+			private readonly PrinterConfig printer;
+			private readonly TextWidget layerCountText;
+			private readonly TextWidget layerStartText;
 
 			public LayerScrollbar(PrinterConfig printer, ThemeConfig theme)
 				: base(FlowDirection.TopToBottom)
@@ -151,7 +149,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				this.AddChild(layerCountText);
 
-				layerSlider = new SolidSlider(new Vector2(), SliderWidth, theme, 0, 1, Orientation.Vertical)
+				layerSlider = new SolidSlider(default(Vector2), SliderWidth, theme, 0, 1, Orientation.Vertical)
 				{
 					HAnchor = HAnchor.Center,
 					VAnchor = VAnchor.Stretch,
@@ -204,7 +202,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (layerSlider != null)
 				{
-					//layerSlider.OriginRelativeParent = new Vector2(this.Width - 20, 78);
+					// layerSlider.OriginRelativeParent = new Vector2(this.Width - 20, 78);
 					layerSlider.TotalWidthInPixels = layerSlider.Height;
 				}
 			}
@@ -223,45 +221,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					layerSlider.Value = printer.Bed.ActiveLayerIndex;
 				}
-			}
-		}
-	}
-
-	public class HorizontalTag : GuiWidget
-	{
-		private IVertexSource tabShape = null;
-
-		public Color TagColor { get; set; }
-
-		public override void OnBoundsChanged(EventArgs e)
-		{
-			base.OnBoundsChanged(e);
-
-			var rect = this.LocalBounds;
-			var centerY = rect.YCenter;
-
-			// Tab - core
-			var radius = 3.0;
-			var tabShape2 = new VertexStorage();
-			tabShape2.MoveTo(rect.Left + radius, rect.Bottom);
-			tabShape2.curve3(rect.Left, rect.Bottom, rect.Left, rect.Bottom + radius);
-			tabShape2.LineTo(rect.Left, rect.Top - radius);
-			tabShape2.curve3(rect.Left, rect.Top, rect.Left + radius, rect.Top);
-			tabShape2.LineTo(rect.Right - 8, rect.Top);
-			tabShape2.LineTo(rect.Right, centerY);
-			tabShape2.LineTo(rect.Right - 8, rect.Bottom);
-			tabShape2.LineTo(rect.Left, rect.Bottom);
-
-			tabShape = new FlattenCurves(tabShape2);
-		}
-
-		public override void OnDrawBackground(Graphics2D graphics2D)
-		{
-			base.OnDrawBackground(graphics2D);
-
-			if (tabShape != null)
-			{
-				graphics2D.Render(tabShape, this.TagColor);
 			}
 		}
 	}
