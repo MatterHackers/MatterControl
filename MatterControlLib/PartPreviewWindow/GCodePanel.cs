@@ -183,11 +183,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							}
 							else
 							{
+								// output.AppendLine($"x:{position.X:0.##}, y:{position.Y:0.##}");
 								output.Append($"x:{position.X:0.##}, y:{position.Y:0.##},");
 							}
 						}
 
-						// output.Append("|");
+						output.Append("|");
 					}
 
 					Clipboard.Instance.SetText(output.ToString());
