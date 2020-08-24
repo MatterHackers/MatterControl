@@ -28,8 +28,10 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using MatterControl.Printing;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -156,6 +158,52 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return loadedGCode.GetLayerTop(layerIndex);
 		}
 
+		public static List<List<Vector2>> GetExtrusionsForLayer(this GCodeFile gcode, int layerIndex)
+		{
+			var extrusions = new List<List<Vector2>>();
+
+			bool addingExtrudePath = false;
+			List<Vector2> currentExtrudePath = null;
+
+			int startRenderIndex = gcode.GetFirstLayerInstruction(layerIndex);
+			int endRenderIndex = gcode.LineCount - 1;
+			if (layerIndex < gcode.LayerCount - 1)
+			{
+				endRenderIndex = gcode.GetFirstLayerInstruction(layerIndex + 1);
+			}
+
+			for (int instructionIndex = startRenderIndex; instructionIndex < endRenderIndex; instructionIndex++)
+			{
+				PrinterMachineInstruction currentInstruction = gcode.Instruction(instructionIndex);
+				PrinterMachineInstruction previousInstruction = currentInstruction;
+				if (instructionIndex > 0)
+				{
+					previousInstruction = gcode.Instruction(instructionIndex - 1);
+				}
+
+				if (currentInstruction.Position != previousInstruction.Position)
+				{
+					if (gcode.IsExtruding(instructionIndex))
+					{
+						if (!addingExtrudePath)
+						{
+							currentExtrudePath = new List<Vector2>();
+							extrusions.Add(currentExtrudePath);
+							addingExtrudePath = true;
+						}
+
+						currentExtrudePath.Add(new Vector2(currentInstruction.Position.X, currentInstruction.Position.Y));
+					}
+					else
+					{
+						addingExtrudePath = false;
+					}
+				}
+			}
+
+			return extrusions;
+		}
+
 		public static string GetLayerFanSpeeds(this GCodeFile loadedGCode, int activeLayerIndex)
 		{
 			if (loadedGCode == null || loadedGCode.LayerCount == 0)
@@ -164,10 +212,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			int startInstruction = loadedGCode.GetFirstLayerInstruction(activeLayerIndex);
-			if(activeLayerIndex == 0)
+			if (activeLayerIndex == 0)
 			{
 				startInstruction = 0;
 			}
+
 			int endInstruction = loadedGCode.GetFirstLayerInstruction(activeLayerIndex + 1);
 
 			string separator = "";
@@ -180,12 +229,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					fanSpeeds += separator + "Off";
 					separator = ", ";
 				}
-				else if(line.StartsWith("M106")) // fan on
+				else if (line.StartsWith("M106")) // fan on
 				{
 					double speed = 0;
 					if (GCodeFile.GetFirstNumberAfter("M106", line, ref speed, 0, ""))
 					{
-						fanSpeeds += separator + $"{speed/255*100:0}%";
+						fanSpeeds += separator + $"{speed / 255 * 100:0}%";
 						separator = ", ";
 					}
 				}

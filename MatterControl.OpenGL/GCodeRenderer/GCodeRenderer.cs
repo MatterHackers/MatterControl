@@ -130,6 +130,7 @@ namespace MatterHackers.GCodeVisualizer
 						// this is a retraction
 						renderFeaturesForLayer.Add(new RenderFeatureRetract(instructionIndex, currentInstruction.Position, eMovement, currentInstruction.ToolIndex, currentInstruction.FeedRate));
 					}
+
 					if (currentInstruction.Line.StartsWith("G10"))
 					{
 						renderFeaturesForLayer.Add(new RenderFeatureRetract(instructionIndex, currentInstruction.Position, -1, currentInstruction.ToolIndex, currentInstruction.FeedRate));

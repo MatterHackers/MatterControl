@@ -30,25 +30,27 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GCodePanel : FlowLayoutWidget
 	{
-		private ISceneContext sceneContext;
-		private ThemeConfig theme;
-		private PrinterConfig printer;
-		private PrinterTabPage printerTabPage;
+		private readonly ISceneContext sceneContext;
+		private readonly ThemeConfig theme;
+		private readonly PrinterConfig printer;
+		private readonly PrinterTabPage printerTabPage;
 		private SectionWidget speedsWidget;
-		private GuiWidget loadedGCodeSection;
+		private readonly GuiWidget loadedGCodeSection;
 
 		public GCodePanel(PrinterTabPage printerTabPage, PrinterConfig printer, ISceneContext sceneContext, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.sceneContext = sceneContext;
 			this.theme = theme;
@@ -143,6 +145,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Fit
 					});
 
+				var copyButton = new TextButton("copy".Localize(), theme, 8)
+				{
+					Padding = 5,
+					Margin = new BorderDouble(0, 0, 15, 0),
+					VAnchor = VAnchor.Center | VAnchor.Fit,
+					ToolTipText = "Copy extrusions data".Localize()
+				};
+
+				copyButton.Click += (s, e) =>
+				{
+					var output = new StringBuilder();
+					// copy all the extrusions to the clipboard as paths
+					var extrusions = printer.Bed.LoadedGCode.GetExtrusionsForLayer(sceneContext.ActiveLayerIndex);
+					for (int i = 0; i < extrusions.Count; i++)
+					{
+						var extrusion = extrusions[i];
+						var count = extrusion.Count;
+						for (var j = 0; j < count; j++)
+						{
+							var position = extrusion[j];
+							bool debugTurns = false;
+							if (debugTurns)
+							{
+								var prevPosition = extrusion[(count + j - 1) % count];
+								var nextPosition = extrusion[(count + j + 1) % count];
+								var angle = position.GetTurnAmount(prevPosition, nextPosition);
+								var lengthToPoint = extrusion.LengthTo(j);
+
+								var leftPosition = extrusion.GetPositionAt(lengthToPoint - 1.6);
+								var rightPosition = extrusion.GetPositionAt(lengthToPoint + 1.6);
+								var nearAngle = position.GetTurnAmount(leftPosition, rightPosition);
+								var directionNormal = (rightPosition - leftPosition).GetNormal().GetPerpendicularRight();
+								var delta = Vector2.Dot(directionNormal, position - leftPosition);
+
+								output.AppendLine($"{lengthToPoint:0.##}, {angle:0.##}, {position.X:0.##}, {position.Y:0.##}, {delta:0.##}");
+							}
+							else
+							{
+								// output.AppendLine($"x:{position.X:0.##}, y:{position.Y:0.##}");
+								output.Append($"x:{position.X:0.##}, y:{position.Y:0.##},");
+							}
+						}
+
+						output.Append("|");
+					}
+
+					Clipboard.Instance.SetText(output.ToString());
+				};
+
 				loadedGCodeSection.AddChild(
 					new SectionWidget(
 						"Layer".Localize(),
@@ -154,6 +205,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						},
 						theme,
 						serializationKey: "gcode_panel_layer_details",
+						rightAlignedContent: copyButton,
 						expanded: true)
 					{
 						HAnchor = HAnchor.Stretch,

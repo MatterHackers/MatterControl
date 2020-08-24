@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				return this.Children.FirstOrDefault();
 			}
 		}
-		
+
 		public static Vector3 GetPositionToAlignTo(IObject3D objectToAlignTo, FaceAlign boundingFacesToAlignTo, Vector3 extraOffset)
 		{
 			var positionToAlignTo = default(Vector3);
