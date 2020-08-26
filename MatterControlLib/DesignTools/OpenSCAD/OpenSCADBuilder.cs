@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.Library
 		public string Name => "Builder";
 
 
-		private string compilerPath = UserSettings.Instance.get(UserSettingsKey.OpenScadPath) ?? "/usr/bin/openscad";
+		private string compilerPath = UserSettings.Instance.get(UserSettingsKey.OpenScadPath) ?? "C:\\Program Files\\OpenSCAD\\openscad.exe";
 
 		public IEnumerable<Type> SupportedTypes() => new Type[]
 		{
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.Library
 				Width = 225
 			};
 
-			FlowLayoutWidget actionButtons = new FlowLayoutWidget();
+			var actionButtons = new FlowLayoutWidget();
 			mainContainer.AddChild(actionButtons);
 
 			// TODO: This should use the same renaming and asset system as stl/amf assets
@@ -128,6 +128,7 @@ namespace MatterHackers.MatterControl.Library
 					updateButton.Enabled = false;
 					updateButton.ToolTipText = "OpenSCAD not installed".Localize();
 				}
+
 				updateButton.Click += async (s, e) =>
 				{
 					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
@@ -136,7 +137,8 @@ namespace MatterHackers.MatterControl.Library
 					}
 
 					// TODO: Use assets system
-					string outputPath = Path.ChangeExtension(item.ScriptPath, ".stl");
+					string folderToSaveStlsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "amf_to_stl");
+					string outputPath = Path.Combine(folderToSaveStlsTo, Path.ChangeExtension(Path.GetFileName(item.ScriptPath), ".stl"));
 					int err = await Task.Run(() => ExecuteScript(item.ScriptPath, outputPath));
 
 					if (err == 0)
