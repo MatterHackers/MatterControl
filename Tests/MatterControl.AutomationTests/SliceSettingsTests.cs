@@ -81,7 +81,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// open the print menu and prove no oem message
 					testRunner.OpenPrintPopupMenu();
 
-					Assert.IsFalse(testRunner.NameExists("Default Settings Have Changed", 1));
+					var expectedWaringName = "Default Settings Have Changed Row";
+
+					Assert.IsFalse(testRunner.NameExists(expectedWaringName, 1));
 
 					// close the menu
 					testRunner.ClickByName("PartPreviewContent");
@@ -91,8 +93,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// open menu again and check that warning is now visible
 					testRunner.OpenPrintPopupMenu();
-					testRunner.Delay(1000);
-					Assert.IsTrue(testRunner.NameExists("Default Settings Have Changed Row", 1));
+					Assert.IsTrue(testRunner.NameExists(expectedWaringName, 1));
 				}
 
 				return Task.CompletedTask;

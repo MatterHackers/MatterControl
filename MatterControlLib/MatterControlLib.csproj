@@ -66,7 +66,6 @@
     <ProjectReference Include="..\MatterControl.OpenGL\MatterControl.OpenGL.csproj" />
     <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\clipper_library\clipper_library.csproj" />
-    <ProjectReference Include="..\Submodules\agg-sharp\CSCad\CSCad.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters2D\DataConverters2D.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\DataConverters3D\DataConverters3D.csproj" />
     <ProjectReference Include="..\Submodules\agg-sharp\GuiAutomation\GuiAutomation.csproj" />

@@ -97,9 +97,16 @@ namespace MatterHackers.MatterControl
 					make,
 					model).Result;
 
+				var ignoreSettings = new HashSet<string>()
+				{
+					SettingsKey.created_date,
+				};
+
 				foreach (var localOemSetting in printer.Settings.OemLayer)
 				{
-					if (serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+					if (!ignoreSettings.Contains(localOemSetting.Key)
+						&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
+						&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
 					{
 						errors.Add(new ValidationError("UnsupportedParts")
 						{
