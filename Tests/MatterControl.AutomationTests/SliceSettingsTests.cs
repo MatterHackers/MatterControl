@@ -69,6 +69,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
+		public async Task OemSettingsChangeOfferedToUserTest()
+		{
+			AutomationRunner.TimeToMoveMouse = .5;
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					var printer = testRunner.FirstPrinter();
+
+					// open the print menu and prove no oem message
+					testRunner.OpenPrintPopupMenu();
+
+					Assert.IsFalse(testRunner.NameExists("Default Settings Have Changed", 1));
+
+					// close the menu
+					testRunner.ClickByName("PartPreviewContent");
+
+					// change some oem settings
+					printer.Settings.SetValue(SettingsKey.layer_height, ".213", printer.Settings.OemLayer);
+
+					// open menu again and check that warning is now visible
+					testRunner.OpenPrintPopupMenu();
+					testRunner.Delay(1000);
+					Assert.IsTrue(testRunner.NameExists("Default Settings Have Changed Row", 1));
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 120);
+		}
+
+		[Test, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

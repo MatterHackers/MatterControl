@@ -36,6 +36,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -74,8 +75,8 @@ namespace MatterHackers.MatterControl
 							Title = "Generate Supports".Localize(),
 							Action = () =>
 							{
-							 // Find and InvokeClick on the Generate Supports toolbar button
-							 var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+								// Find and InvokeClick on the Generate Supports toolbar button
+								var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
 								if (sharedParent != null)
 								{
 									var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
@@ -84,6 +85,46 @@ namespace MatterHackers.MatterControl
 							}
 						}
 					});
+				}
+			}
+
+			// Check to see if current OEM layer matches downloaded OEM layer
+			if (!printer.Settings.GetValue<bool>(SettingsKey.hide_oem_settings_warning))
+			{
+				var make = printer.Settings.GetValue(SettingsKey.make);
+				var model = printer.Settings.GetValue(SettingsKey.model);
+				var serverOemSettings = ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
+					make,
+					model).Result;
+
+				foreach (var localOemSetting in printer.Settings.OemLayer)
+				{
+					if (serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+					{
+						errors.Add(new ValidationError("UnsupportedParts")
+						{
+							Error = "Default Settings Have Changed".Localize(),
+							Details = "The default settings for this printer have changed and can be updated".Localize(),
+							ErrorLevel = ValidationErrorLevel.Warning,
+							FixAction = new NamedAction()
+							{
+								Title = "Update Settings...".Localize(),
+								Action = () =>
+								{
+									// Find and InvokeClick on the Generate Supports toolbar button
+									var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
+									if (sharedParent != null)
+									{
+										var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
+										supportsPopup.InvokeClick();
+									}
+								}
+							}
+						});
+
+						// only add one
+						break;
+					}
 				}
 			}
 

@@ -123,6 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
+		public const string hide_oem_settings_warning = nameof(hide_oem_settings_warning);
 		public const string inactive_cool_down = nameof(inactive_cool_down);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
 		public const string infill_overlap_perimeter = nameof(infill_overlap_perimeter);

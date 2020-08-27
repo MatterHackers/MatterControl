@@ -3350,10 +3350,4 @@ Support and tutorials:
 			public Action Action { get; set; }
 		}
 	}
-
-	public enum ReportSeverity2
-	{
-		Warning,
-		Error
-	}
 }

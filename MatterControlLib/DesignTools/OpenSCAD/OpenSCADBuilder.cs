@@ -133,7 +133,10 @@ namespace MatterHackers.MatterControl.Library
 				{
 					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
 					{
-						this.item.Mesh = Object3D.Load(meshStream, ".stl", CancellationToken.None).Mesh;
+						using (new CenterAndHeightMaintainer(this.item))
+						{
+							this.item.Mesh = Object3D.Load(meshStream, ".stl", CancellationToken.None).Mesh;
+						}
 					}
 
 					// TODO: Use assets system
@@ -143,8 +146,11 @@ namespace MatterHackers.MatterControl.Library
 
 					if (err == 0)
 					{
-						// Reload the mesh
-						this.item.Mesh = StlProcessing.Load(outputPath, CancellationToken.None);
+						using (new CenterAndHeightMaintainer(this.item))
+						{
+							// Reload the mesh
+							this.item.Mesh = StlProcessing.Load(outputPath, CancellationToken.None);
+						}
 					}
 				};
 				actionButtons.AddChild(updateButton);
