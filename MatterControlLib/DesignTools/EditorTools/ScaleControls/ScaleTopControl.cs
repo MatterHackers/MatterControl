@@ -60,7 +60,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
-		private double selectCubeSize = 7 * GuiWidget.DeviceScale;
+		private double arrowSize = 7 * GuiWidget.DeviceScale;
 		private ThemeConfig theme;
 		private InlineEditControl zValueDisplayInfo;
 		private bool hadClickOnControl;
@@ -138,7 +138,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			DrawOnTop = true;
 
-			topScaleMesh = PlatonicSolids.CreateCube(selectCubeSize, selectCubeSize, selectCubeSize);
+			topScaleMesh = PlatonicSolids.CreateCube(arrowSize, arrowSize, arrowSize);
 
 			CollisionVolume = topScaleMesh.CreateBVHData();
 
@@ -327,10 +327,10 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
-			Vector3 boxCenter = topPosition;
-			boxCenter.Z += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
+			Vector3 arrowCenter = topPosition;
+			arrowCenter.Z += arrowSize / 2 * distBetweenPixelsWorldSpace;
 
-			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
+			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 

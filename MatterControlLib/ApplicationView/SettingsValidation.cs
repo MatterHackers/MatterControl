@@ -90,47 +90,22 @@ namespace MatterHackers.MatterControl
 
 			// Check to see if current OEM layer matches downloaded OEM layer
 			{
-				var make = printer.Settings.GetValue(SettingsKey.make);
-				var model = printer.Settings.GetValue(SettingsKey.model);
-				var serverOemSettings = ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
-					make,
-					model).Result;
-
-				var ignoreSettings = new HashSet<string>()
+				if (ProfileManager.GetOemSettingsNeedingUpdate(printer).Any())
 				{
-					SettingsKey.created_date,
-				};
-
-				foreach (var localOemSetting in printer.Settings.OemLayer)
-				{
-					if (!ignoreSettings.Contains(localOemSetting.Key)
-						&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
-						&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+					errors.Add(new ValidationError(ValidationErrors.SettingsUpdateAvailable)
 					{
-						errors.Add(new ValidationError(ValidationErrors.SettingsUpdateAvailable)
+						Error = "Settings Update Available".Localize(),
+						Details = "The default settings for this printer have changed and can be updated".Localize(),
+						ErrorLevel = ValidationErrorLevel.Warning,
+						FixAction = new NamedAction()
 						{
-							Error = "Settings Update Available".Localize(),
-							Details = "The default settings for this printer have changed and can be updated".Localize(),
-							ErrorLevel = ValidationErrorLevel.Warning,
-							FixAction = new NamedAction()
+							Title = "Update Settings...".Localize(),
+							Action = () =>
 							{
-								Title = "Update Settings...".Localize(),
-								Action = () =>
-								{
-									// Find and InvokeClick on the Generate Supports toolbar button
-									var sharedParent = ApplicationController.Instance.DragDropData.View3DWidget.Parents<GuiWidget>().FirstOrDefault(w => w.Name == "View3DContainerParent");
-									if (sharedParent != null)
-									{
-										var supportsPopup = sharedParent.FindDescendant("Support SplitButton");
-										supportsPopup.InvokeClick();
-									}
-								}
+								DialogWindow.Show(new UpdateSettingsPage(printer));
 							}
-						});
-
-						// only add one
-						break;
-					}
+						}
+					});
 				}
 			}
 

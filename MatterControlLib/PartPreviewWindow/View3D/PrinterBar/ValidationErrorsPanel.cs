@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage, fullRowSelect: true)
 				{
 					ArrowDirection = ArrowDirection.Left,
-					Name = errorText + " Row"
+					Name = validationError.ID + " Row"
 				};
 
 				if (validationError.FixAction is NamedAction action)

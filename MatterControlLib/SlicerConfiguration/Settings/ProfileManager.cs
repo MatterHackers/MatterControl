@@ -118,6 +118,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
+		public static IEnumerable<(string key, string currentValue, string newValue)> GetOemSettingsNeedingUpdate(PrinterConfig printer)
+		{
+			var make = printer.Settings.GetValue(SettingsKey.make);
+			var model = printer.Settings.GetValue(SettingsKey.model);
+			var serverOemSettings = ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
+				make,
+				model).Result;
+
+			var ignoreSettings = new HashSet<string>()
+				{
+					SettingsKey.created_date,
+				};
+
+			foreach (var localOemSetting in printer.Settings.OemLayer)
+			{
+				if (!ignoreSettings.Contains(localOemSetting.Key)
+					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
+					&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+				{
+					yield return (localOemSetting.Key, localOemSetting.Value, serverOemSettings.GetValue(localOemSetting.Key));
+				}
+			}
+		}
+
 		public void DeletePrinter(string printerID)
 		{
 			var printerInfo = ProfileManager.Instance[printerID];

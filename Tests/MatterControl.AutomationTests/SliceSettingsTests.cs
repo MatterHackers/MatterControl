@@ -81,19 +81,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// open the print menu and prove no oem message
 					testRunner.OpenPrintPopupMenu();
 
-					var expectedWaringName = "Default Settings Have Changed Row";
+					var expectedWarningName = ValidationErrors.SettingsUpdateAvailable + " Row";
 
-					Assert.IsFalse(testRunner.NameExists(expectedWaringName, 1));
+					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
 
 					// close the menu
 					testRunner.ClickByName("PartPreviewContent");
+					testRunner.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
+
 
 					// change some oem settings
 					printer.Settings.SetValue(SettingsKey.layer_height, ".213", printer.Settings.OemLayer);
 
 					// open menu again and check that warning is now visible
 					testRunner.OpenPrintPopupMenu();
-					Assert.IsTrue(testRunner.NameExists(expectedWaringName, 1));
+					Assert.IsTrue(testRunner.NameExists(expectedWarningName, 1));
 				}
 
 				return Task.CompletedTask;
