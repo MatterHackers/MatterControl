@@ -34,7 +34,9 @@ namespace MatterHackers.MatterControl
 {
 	public enum ValidationErrorLevel
 	{
-		Information, Warning, Error
+		Information,
+		Warning,
+		Error
 	}
 
 	public class ValidationError
@@ -53,5 +55,22 @@ namespace MatterHackers.MatterControl
 		public ValidationErrorLevel ErrorLevel { get; set; } = ValidationErrorLevel.Error;
 
 		public NamedAction FixAction { get; set; }
+	}
+
+	public static class ValidationErrors
+	{
+		public static readonly string BedLevelingTemperature = nameof(BedLevelingTemperature);
+		public static readonly string ExceptionDuringSliceSettingsValidation = nameof(ExceptionDuringSliceSettingsValidation);
+		public static readonly string ItemCannotBeExported = nameof(ItemCannotBeExported);
+		public static readonly string ItemToAMFExportInvalid = nameof(ItemToAMFExportInvalid);
+		public static readonly string ItemToSTLExportInvalid = nameof(ItemToSTLExportInvalid);
+		public static readonly string NoItemsToExport = nameof(NoItemsToExport);
+		public static readonly string NoPrintableParts = nameof(NoPrintableParts);
+		public static readonly string NoZipItemsToExport = nameof(NoZipItemsToExport);
+		public static readonly string PrinterDisconnected = nameof(PrinterDisconnected);
+		public static readonly string PrinterSetupRequired = nameof(PrinterSetupRequired);
+		public static readonly string SettingsUpdateAvailable = nameof(SettingsUpdateAvailable);
+		public static readonly string UnsupportedParts = nameof(UnsupportedParts);
+		public static readonly string ZOffset = nameof(ZOffset);
 	}
 }

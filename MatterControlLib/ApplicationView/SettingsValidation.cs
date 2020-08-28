@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 				var supportGenerator = new SupportGenerator(printer.Bed.Scene, .05);
 				if (supportGenerator.RequiresSupport())
 				{
-					errors.Add(new ValidationError("UnsupportedParts")
+					errors.Add(new ValidationError(ValidationErrors.UnsupportedParts)
 					{
 						Error = "Possible Unsupported Parts Detected".Localize(),
 						Details = "Some parts may require support structures to print correctly".Localize(),
@@ -89,7 +89,6 @@ namespace MatterHackers.MatterControl
 			}
 
 			// Check to see if current OEM layer matches downloaded OEM layer
-			if (!printer.Settings.GetValue<bool>(SettingsKey.hide_oem_settings_warning))
 			{
 				var make = printer.Settings.GetValue(SettingsKey.make);
 				var model = printer.Settings.GetValue(SettingsKey.model);
@@ -108,9 +107,9 @@ namespace MatterHackers.MatterControl
 						&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
 						&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
 					{
-						errors.Add(new ValidationError("UnsupportedParts")
+						errors.Add(new ValidationError(ValidationErrors.SettingsUpdateAvailable)
 						{
-							Error = "Default Settings Have Changed".Localize(),
+							Error = "Settings Update Available".Localize(),
 							Details = "The default settings for this printer have changed and can be updated".Localize(),
 							ErrorLevel = ValidationErrorLevel.Warning,
 							FixAction = new NamedAction()
@@ -141,7 +140,7 @@ namespace MatterHackers.MatterControl
 				&& errors.Count(e => e.ErrorLevel == ValidationErrorLevel.Error) == 0
 				&& !printer.PrintableItems(printer.Bed.Scene).Any())
 			{
-				errors.Add(new ValidationError("NoPrintableParts")
+				errors.Add(new ValidationError(ValidationErrors.NoPrintableParts)
 				{
 					Error = "Empty Bed".Localize(),
 					Details = "No printable parts exists within the bounds of the printer bed. Add content to continue".Localize(),
@@ -265,7 +264,7 @@ namespace MatterHackers.MatterControl
 						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10)
 					{
 						errors.Add(
-							new ValidationError("BedLevelingTemperature")
+							new ValidationError(ValidationErrors.BedLevelingTemperature)
 							{
 								Error = "Bed Leveling Temperature".Localize(),
 								Details = string.Format(
@@ -301,7 +300,7 @@ namespace MatterHackers.MatterControl
 							+ "\n    • " + "Z Offset".Localize();
 
 						errors.Add(
-							new ValidationError($"{key}_too_large")
+							new ValidationError(ValidationErrors.ZOffset)
 							{
 								Error = "Z Offset is too large.".Localize(),
 								Details = string.Format(
@@ -443,7 +442,7 @@ namespace MatterHackers.MatterControl
 			catch (Exception e)
 			{
 				errors.Add(
-					new ValidationError("ExceptionDuringSliceSettingsValidation")
+					new ValidationError(ValidationErrors.ExceptionDuringSliceSettingsValidation)
 					{
 						Error = "Unexpected error validating settings".Localize(),
 						Details = e.Message
@@ -464,7 +463,7 @@ namespace MatterHackers.MatterControl
 
 			if (!printer.Connection.IsConnected)
 			{
-				errors.Add(new ValidationError("PrinterDisconnected")
+				errors.Add(new ValidationError(ValidationErrors.PrinterDisconnected)
 				{
 					Error = "Printer Disconnected".Localize(),
 					Details = "Connect to your printer to continue".Localize(),
@@ -478,7 +477,7 @@ namespace MatterHackers.MatterControl
 
 			if (PrinterSetupRequired(printer))
 			{
-				errors.Add(new ValidationError("PrinterSetupRequired")
+				errors.Add(new ValidationError(ValidationErrors.PrinterSetupRequired)
 				{
 					Error = "Printer Setup Required".Localize(),
 					Details = "Printer Setup must be run before printing".Localize(),

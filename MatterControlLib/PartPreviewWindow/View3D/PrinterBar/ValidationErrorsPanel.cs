@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ValidationErrorsPanel : FlowLayoutWidget
 	{
 		public ValidationErrorsPanel(IEnumerable<ValidationError> errors, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.VAnchor = VAnchor.Fit | VAnchor;
@@ -61,8 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				string errorText, errorDetails;
 
-				var settingsValidationError = validationError as SettingsValidationError;
-				if (settingsValidationError != null)
+				if (validationError is SettingsValidationError settingsValidationError)
 				{
 					errorText = string.Format(
 						"{0} {1}",

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			return new List<ValidationError>()
 			{
-				new ValidationError("ItemToAMFExportInvalid")
+				new ValidationError(ValidationErrors.ItemToAMFExportInvalid)
 				{
 					Error = "Item cannot be exported as AMF".Localize(),
 					Details = firstItem?.ToString() ?? ""
