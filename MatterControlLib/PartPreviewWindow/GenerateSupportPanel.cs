@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Absolute;
-			this.Width = 300;
+			this.Width = 300 * GuiWidget.DeviceScale;
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = theme.DefaultContainerPadding;
 

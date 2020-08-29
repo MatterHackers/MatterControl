@@ -27,18 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -187,7 +181,11 @@ Updating the default will not change any other overrides that you may have appli
 				var updateButton = new TextButton("Update Setting".Localize(), theme)
 				{
 					Margin = new BorderDouble(0, 3, 20, 0),
+					Name = setting.key + " Update",
 				};
+
+				theme.ApplyPrimaryActionStyle(updateButton);
+
 				buttonContainer.AddChild(updateButton);
 
 				updateButton.Click += (s, e) =>
@@ -201,12 +199,6 @@ Updating the default will not change any other overrides that you may have appli
 					});
 				};
 			}
-		}
-
-		private void AddSettingsRow(GuiWidget widget, GuiWidget container)
-		{
-			container.AddChild(widget);
-			widget.Padding = widget.Padding.Clone(right: 10);
 		}
 	}
 }
