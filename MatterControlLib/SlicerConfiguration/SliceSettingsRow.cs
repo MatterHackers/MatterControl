@@ -42,7 +42,7 @@ using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsRow : SettingsRow
+	public class SliceSettingsRow : SettingsRow, IIgnoredPopupChild
 	{
 		private IEnumerable<SettingsValidationError> validationErrors;
 
@@ -202,10 +202,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		// menu open
+		private bool rightClickOpen = false;
+		public bool KeepMenuOpen => rightClickOpen;
+
 		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			if (mouseEvent.Button == MouseButtons.Right)
 			{
+				rightClickOpen = true;
+
 				bool SettingIsOem()
 				{
 					if (printer.Settings.OemLayer.TryGetValue(settingData.SlicerConfigName, out string oemValue))
@@ -221,23 +227,109 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					return false;
 				}
 
+				bool SettingIsSameAsLayer(PrinterSettingsLayer layer)
+				{
+					if (layer != null
+						&& layer.TryGetValue(settingData.SlicerConfigName, out string presetValue))
+					{
+						return printer.Settings.GetValue(settingData.SlicerConfigName) == presetValue;
+					}
+
+					return false;
+				}
+
 				// show a right click menu ('Set as Default' & 'Help')
 				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
 
-				var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Set as Default".Localize());
-				setAsDefaultMenuItem.Focus();
-				setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
-				setAsDefaultMenuItem.Click += (s, e) =>
+				var settingName = settingData.SlicerConfigName;
+
+				// add menu to set default
 				{
-					// we may want to ask if we should save this
-					// figure out what the current setting is and save it to the oem layer, than update the display
-					var settingName = settingData.SlicerConfigName;
-					printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
-					UpdateStyle();
-					printer.Settings.Save();
-				};
+					var setAsDefaultMenuItem = popupMenu.CreateMenuItem("Save to Default".Localize());
+					setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
+					setAsDefaultMenuItem.Click += (s, e) =>
+					{
+						printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
+
+				// add menu item to set quality
+				{
+					var setAsQualityMenuItem = popupMenu.CreateMenuItem("Save to Quality".Localize());
+					setAsQualityMenuItem.Enabled = printer.Settings.QualityLayer != null
+						&& !SettingIsSameAsLayer(printer.Settings.QualityLayer);
+					setAsQualityMenuItem.Click += (s, e) =>
+					{
+						printer.Settings.QualityLayer[settingName] = printer.Settings.GetValue(settingName);
+						printer.Settings.UserLayer.Remove(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
+
+				// add menu item to set material
+				{
+					var setAsMaterialMenuItem = popupMenu.CreateMenuItem("Save to Material".Localize());
+					setAsMaterialMenuItem.Enabled = printer.Settings.MaterialLayer != null
+						&& !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
+					setAsMaterialMenuItem.Click += (s, e) =>
+					{
+						printer.Settings.MaterialLayer[settingName] = printer.Settings.GetValue(settingName);
+						printer.Settings.UserLayer.Remove(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
+
+				popupMenu.CreateSeparator();
+
+				// put in clear layer menu items
+				{
+					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Override".Localize());
+					clearSettingMenuItem.Enabled = printer.Settings.UserLayer.ContainsKey(settingName);
+					clearSettingMenuItem.Click += (s, e) =>
+					{
+						new SettingsContext(printer,
+							new PrinterSettingsLayer[] { printer.Settings.UserLayer },
+							NamedSettingsLayers.User).ClearValue(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
+
+				// quality
+				{
+					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Quality Setting".Localize());
+					clearSettingMenuItem.Enabled = printer.Settings.QualityLayer?.ContainsKey(settingName) == true;
+					clearSettingMenuItem.Click += (s, e) =>
+					{
+						new SettingsContext(printer,
+							new PrinterSettingsLayer[] { printer.Settings.QualityLayer },
+							NamedSettingsLayers.Quality).ClearValue(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
+
+				// material
+				{
+					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Material Setting".Localize());
+					clearSettingMenuItem.Enabled = printer.Settings.MaterialLayer?.ContainsKey(settingName) == true;
+					clearSettingMenuItem.Click += (s, e) =>
+					{
+						new SettingsContext(printer,
+							new PrinterSettingsLayer[] { printer.Settings.MaterialLayer },
+							NamedSettingsLayers.Material).ClearValue(settingName);
+						UpdateStyle();
+						printer.Settings.Save();
+					};
+				}
 
 				popupMenu.ShowMenu(this, mouseEvent);
+
+				popupMenu.Closed += (s, e) => rightClickOpen = false;
 			}
 
 			base.OnClick(mouseEvent);
@@ -386,23 +478,38 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 								else
 								{
 									this.HighlightColor = theme.PresetColors.UserOverride;
-									if (restoreButton != null) restoreButton.Visible = true;
+									if (restoreButton != null)
+									{
+										restoreButton.Visible = true;
+									}
 								}
 							}
 							else
 							{
 								this.HighlightColor = Color.Transparent;
-								if (restoreButton != null) restoreButton.Visible = false;
+								if (restoreButton != null)
+								{
+									restoreButton.Visible = false;
+								}
 							}
 						}
+
 						break;
 					case NamedSettingsLayers.Material:
 						this.HighlightColor = theme.PresetColors.MaterialPreset;
-						if (restoreButton != null) restoreButton.Visible = true;
+						if (restoreButton != null)
+						{
+							restoreButton.Visible = true;
+						}
+
 						break;
 					case NamedSettingsLayers.Quality:
 						this.HighlightColor = theme.PresetColors.QualityPreset;
-						if (restoreButton != null) restoreButton.Visible = true;
+						if (restoreButton != null)
+						{
+							restoreButton.Visible = true;
+						}
+
 						break;
 				}
 			}
@@ -412,7 +519,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				if (isOverride && printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Material))
 				{
-					this.HighlightColor =theme.PresetColors.MaterialPreset;
+					this.HighlightColor = theme.PresetColors.MaterialPreset;
 				}
 				else if (isOverride && printer.Settings.SettingExistsInLayer(settingData.SlicerConfigName, NamedSettingsLayers.Quality))
 				{
@@ -423,11 +530,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					this.HighlightColor = Color.Transparent;
 				}
 
-				if (restoreButton != null) restoreButton.Visible = false;
+				if (restoreButton != null)
+				{
+					restoreButton.Visible = false;
+				}
 			}
 			else
 			{
-				if (restoreButton != null) restoreButton.Visible = false;
+				if (restoreButton != null)
+				{
+					restoreButton.Visible = false;
+				}
+
 				this.HighlightColor = Color.Transparent;
 			}
 		}
