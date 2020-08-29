@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, John Lewin
+Copyright (c) 2020, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,8 @@ namespace MatterHackers.MatterControl
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.DesignTools.Operations;
+    using MatterHackers.ImageProcessing;
+    using MatterHackers.MatterControl.DesignTools.Operations;
 	using MatterHackers.MatterControl.Library;
 	using MatterHackers.RayTracer;
 
@@ -52,6 +53,10 @@ namespace MatterHackers.MatterControl
 		private long MaxFileSizeForTracing => Is32Bit ? 8 * 1000 * 1000 : 16 * 1000 * 1000;
 
 		private long MaxFileSizeForThumbnail => Is32Bit ? 16 * 1000 * 1000 : 32 * 1000 * 1000;
+
+		private ThemeConfig theme = null;
+
+		private ImageBuffer defaultIcon = new ImageBuffer();
 
 		public Task<IObject3D> CreateItem(ILibraryItem item, Action<double, string> progressReporter)
 		{
@@ -174,6 +179,20 @@ namespace MatterHackers.MatterControl
 				allowMultiThreading: !ApplicationController.Instance.AnyPrintTaskRunning);
 		}
 
-		public ImageBuffer DefaultImage { get; } = AggContext.StaticData.LoadIcon("mesh.png");
+		public ImageBuffer DefaultImage
+		{
+			get 
+			{
+				// Ensure icon is reloaded after theme change
+				if (theme != AppContext.Theme)
+				{
+					theme = AppContext.Theme;
+
+					defaultIcon = AggContext.StaticData.LoadIcon("mesh.png", theme.InvertIcons); //.AnyAlphaToColor(theme.PrimaryAccentColor);
+				}
+
+				return defaultIcon;
+			}
+		}
 	}
 }
