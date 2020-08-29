@@ -60,6 +60,14 @@ namespace MatterHackers.MatterControl
 			contentRow.Padding = theme.DefaultContainerPadding;
 			contentRow.Padding = 0;
 			contentRow.BackgroundColor = Color.Transparent;
+
+			AddAllContent();
+		}
+
+		private void AddAllContent()
+		{
+			contentRow.CloseAllChildren();
+
 			GuiWidget settingsColumn;
 
 			var settingsAreaScrollBox = new ScrollableWidget(true);
@@ -83,7 +91,7 @@ namespace MatterHackers.MatterControl
 			{
 				settingsColumn.AddChild(new WrappedTextWidget("No setting currently need to be updated.".Localize(), pointSize: 11)
 				{
-					Margin = new BorderDouble(0, 5),
+					Margin = new BorderDouble(5),
 					TextColor = theme.TextColor
 				});
 			}
@@ -129,40 +137,39 @@ Updating the default will not change any other overrides that you may have appli
 			{
 				void AddSetting(PrinterConfig printer, string description, string key, Color overlay)
 				{
-					var oldUnder = new GuiWidget()
+					generalPanel.AddChild(new TextWidget(description, pointSize: 11)
+					{
+						// HAnchor = HAnchor.Center,
+						Margin = new BorderDouble(5),
+						TextColor = theme.TextColor
+					});
+
+					var under = new GuiWidget()
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Fit
 					};
-					var oldTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					var topToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
 					{
 						HAnchor = HAnchor.Stretch
 					};
 
 					var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.OEMSettings);
 
-					oldTopToBottom.AddChild(SliceSettingsTabView.CreateItemRow(
+					topToBottom.AddChild(SliceSettingsTabView.CreateItemRow(
 						PrinterSettings.SettingsData[key],
 						settingsContext,
 						printer,
 						theme,
 						ref tabIndex));
-					var oldCover = new GuiWidget()
+					var cover = new GuiWidget()
 					{
 						BackgroundColor = overlay,
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch
 					};
-					oldCover.AddChild(new TextWidget(description, pointSize: 11)
-					{
-						HAnchor = HAnchor.Center,
-						VAnchor = VAnchor.Center,
-						BackgroundColor = theme.BackgroundColor,
-						Margin = new BorderDouble(0, 5),
-						TextColor = theme.TextColor
-					});
-					generalPanel.AddChild(oldUnder).AddChild(oldTopToBottom);
-					oldUnder.AddChild(oldCover);
+					generalPanel.AddChild(under).AddChild(topToBottom);
+					under.AddChild(cover);
 				}
 
 				AddSetting(printer, "Current Default".Localize(), setting.key, theme.SlightShade);
@@ -177,10 +184,22 @@ Updating the default will not change any other overrides that you may have appli
 				};
 
 				generalPanel.AddChild(buttonContainer);
-				buttonContainer.AddChild(new TextButton("Update Setting".Localize(), theme)
+				var updateButton = new TextButton("Update Setting".Localize(), theme)
 				{
 					Margin = new BorderDouble(0, 3, 20, 0),
-				});
+				};
+				buttonContainer.AddChild(updateButton);
+
+				updateButton.Click += (s, e) =>
+				{
+					var scrollAmount = contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop;
+					printer.Settings.SetValue(setting.key, setting.newValue, printer.Settings.OemLayer);
+					AddAllContent();
+					UiThread.RunOnIdle(() =>
+					{
+						contentRow.Descendants<ScrollableWidget>().First().ScrollPosition = scrollAmount;
+					});
+				};
 			}
 		}
 
