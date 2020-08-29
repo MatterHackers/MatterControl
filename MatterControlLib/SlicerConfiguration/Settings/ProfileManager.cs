@@ -144,12 +144,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				model);
 
 			var ignoreSettings = new HashSet<string>()
-				{
-					SettingsKey.created_date,
-					SettingsKey.active_material_key,
-					SettingsKey.active_quality_key,
-					SettingsKey.oem_profile_token,
-				};
+			{
+				SettingsKey.created_date,
+				SettingsKey.active_material_key,
+				SettingsKey.active_quality_key,
+				SettingsKey.oem_profile_token,
+			};
 
 			foreach (var localOemSetting in printer.Settings.OemLayer)
 			{
