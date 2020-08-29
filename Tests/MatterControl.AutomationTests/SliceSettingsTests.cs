@@ -78,24 +78,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					var printer = testRunner.FirstPrinter();
 
-					// open the print menu and prove no oem message
-					testRunner.OpenPrintPopupMenu();
-
 					var expectedWarningName = ValidationErrors.SettingsUpdateAvailable + " Row";
 
+					// open the print menu and prove no oem message
+					testRunner.OpenPrintPopupMenu();
 					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
-
 					// close the menu
-					testRunner.ClickByName("PartPreviewContent");
-					testRunner.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
+					testRunner.ClickByName("PartPreviewContent")
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
 
+					// test again in case we have not downloaded the profile the first time
+					testRunner.OpenPrintPopupMenu();
+					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
+					// close the menu
+					testRunner.ClickByName("PartPreviewContent")
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
 
 					// change some oem settings
 					printer.Settings.SetValue(SettingsKey.layer_height, ".213", printer.Settings.OemLayer);
 
 					// open menu again and check that warning is now visible
-					testRunner.OpenPrintPopupMenu();
-					Assert.IsTrue(testRunner.NameExists(expectedWarningName, 1));
+					testRunner.OpenPrintPopupMenu()
+						.ClickByName(ValidationErrors.SettingsUpdateAvailable + " Button");
 				}
 
 				return Task.CompletedTask;

@@ -31,6 +31,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -38,6 +39,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -60,26 +62,31 @@ namespace MatterHackers.MatterControl
 			contentRow.BackgroundColor = Color.Transparent;
 			GuiWidget settingsColumn;
 
+			var settingsAreaScrollBox = new ScrollableWidget(true);
+			settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
+			settingsAreaScrollBox.AnchorAll();
+			settingsAreaScrollBox.BackgroundColor = theme.MinimalShade;
+			contentRow.AddChild(settingsAreaScrollBox);
+
+			settingsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				var settingsAreaScrollBox = new ScrollableWidget(true);
-				settingsAreaScrollBox.ScrollArea.HAnchor |= HAnchor.Stretch;
-				settingsAreaScrollBox.AnchorAll();
-				settingsAreaScrollBox.BackgroundColor = theme.MinimalShade;
-				contentRow.AddChild(settingsAreaScrollBox);
+				HAnchor = HAnchor.MaxFitOrStretch
+			};
 
-				settingsColumn = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					HAnchor = HAnchor.MaxFitOrStretch
-				};
+			settingsAreaScrollBox.AddChild(settingsColumn);
 
-				settingsAreaScrollBox.AddChild(settingsColumn);
+			if (ProfileManager.GetOemSettingsNeedingUpdate(printer).Any())
+			{
+				AddUpgradeInfoPannel(settingsColumn);
 			}
-
-			AddUpgradeInfoPannel(settingsColumn);
-
-			AddUsserOptionsPannel(settingsColumn);
-
-			AddAdvancedPannel(settingsColumn);
+			else
+			{
+				settingsColumn.AddChild(new WrappedTextWidget("No setting currently need to be updated.".Localize(), pointSize: 11)
+				{
+					Margin = new BorderDouble(0, 5),
+					TextColor = theme.TextColor
+				});
+			}
 
 			// Enforce consistent SectionWidget spacing and last child borders
 			foreach (var section in settingsColumn.Children<SectionWidget>())
@@ -99,274 +106,82 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void AddUpgradeInfoPannel(GuiWidget settingsColumn)
+		private async void AddUpgradeInfoPannel(GuiWidget generalPanel)
 		{
-			var generalPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			generalPanel.AddChild(new WrappedTextWidget(@"The following settings have had their default values changed and should be updated.
+Updating the default will not change any other overrides that you may have applied.".Localize(), pointSize: 11)
 			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
+				Margin = new BorderDouble(5, 15),
+				TextColor = theme.TextColor
+			});
 
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
+			int tabIndex = 0;
 
-			var updateSection = new SectionWidget("Update".Localize(), generalPanel, theme, expandingContent: false)
+			var make = printer.Settings.GetValue(SettingsKey.make);
+			var model = printer.Settings.GetValue(SettingsKey.model);
+			var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
+				make,
+				model);
+
+			var oemPrinter = new PrinterConfig(serverOemSettings);
+
+			foreach (var setting in ProfileManager.GetOemSettingsNeedingUpdate(printer))
 			{
-				Name = "Update Section",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-			};
-			settingsColumn.AddChild(updateSection);
-
-			theme.ApplyBoxStyle(updateSection);
-
-			// Print Notifications
-			var configureNotificationsButton = new IconButton(configureIcon, theme)
-			{
-				Name = "Configure Notification Settings Button",
-				ToolTipText = "Configure Notifications".Localize(),
-				Margin = new BorderDouble(left: 6),
-				VAnchor = VAnchor.Center
-			};
-			configureNotificationsButton.Click += (s, e) =>
-			{
-				if (ApplicationController.ChangeToPrintNotification != null)
+				void AddSetting(PrinterConfig printer, string description, string key, Color overlay)
 				{
-					UiThread.RunOnIdle(() =>
+					var oldUnder = new GuiWidget()
 					{
-						ApplicationController.ChangeToPrintNotification(this.DialogWindow);
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Fit
+					};
+					var oldTopToBottom = new FlowLayoutWidget(FlowDirection.TopToBottom)
+					{
+						HAnchor = HAnchor.Stretch
+					};
+
+					var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.OEMSettings);
+
+					oldTopToBottom.AddChild(SliceSettingsTabView.CreateItemRow(
+						PrinterSettings.SettingsData[key],
+						settingsContext,
+						printer,
+						theme,
+						ref tabIndex));
+					var oldCover = new GuiWidget()
+					{
+						BackgroundColor = overlay,
+						HAnchor = HAnchor.Stretch,
+						VAnchor = VAnchor.Stretch
+					};
+					oldCover.AddChild(new TextWidget(description, pointSize: 11)
+					{
+						HAnchor = HAnchor.Center,
+						VAnchor = VAnchor.Center,
+						BackgroundColor = theme.BackgroundColor,
+						Margin = new BorderDouble(0, 5),
+						TextColor = theme.TextColor
 					});
+					generalPanel.AddChild(oldUnder).AddChild(oldTopToBottom);
+					oldUnder.AddChild(oldCover);
 				}
-			};
 
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Notifications".Localize(),
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = UserSettings.Instance.get(UserSettingsKey.PrintNotificationsEnabled) == "true",
-						ToggleAction = (itemChecked) =>
-						{
-							UserSettings.Instance.set(UserSettingsKey.PrintNotificationsEnabled, itemChecked ? "true" : "false");
-						}
-					},
-					configureNotificationsButton,
-					AggContext.StaticData.LoadIcon("notify-24x24.png", 16, 16, theme.InvertIcons)),
-				generalPanel);
+				AddSetting(printer, "Current Default".Localize(), setting.key, theme.SlightShade);
+				AddSetting(oemPrinter, "New Default".Localize(), setting.key, Color.Transparent);
 
-			foreach (var localOemSetting in printer.Settings.OemLayer)
-			{
-				if (!ignoreSettings.Contains(localOemSetting.Key)
-					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
-					&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+				var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
 				{
-				}
-			}
-		}
-		private void AddAdvancedPannel(GuiWidget settingsColumn)
-		{
-			var advancedPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
+					HAnchor = HAnchor.Stretch,
+					Margin = new BorderDouble(0, 25, 0, 3),
+					Border = new BorderDouble(0, 1, 0, 0),
+					BorderColor = theme.MinimalShade,
+				};
 
-			var advancedSection = new SectionWidget("Advanced".Localize(), advancedPanel, theme, serializationKey: "ApplicationSettings-Advanced", expanded: false)
-			{
-				Name = "Advanced Section",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Margin = 0
-			};
-			settingsColumn.AddChild(advancedSection);
-
-			theme.ApplyBoxStyle(advancedSection);
-
-			// Touch Screen Mode
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Touch Screen Mode".Localize(),
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode) == "touchscreen",
-						ToggleAction = (itemChecked) =>
-						{
-							string displayMode = itemChecked ? "touchscreen" : "responsive";
-							if (displayMode != UserSettings.Instance.get(UserSettingsKey.ApplicationDisplayMode))
-							{
-								UserSettings.Instance.set(UserSettingsKey.ApplicationDisplayMode, displayMode);
-								UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
-							}
-						}
-					}),
-				advancedPanel);
-
-			AddUserBoolToggle(advancedPanel,
-				"Utilize High Res Monitors".Localize(),
-				UserSettingsKey.ApplicationUseHeigResDisplays,
-				true,
-				false);
-
-			AddUserBoolToggle(advancedPanel,
-				"Enable Socketeer Client".Localize(),
-				UserSettingsKey.ApplicationUseSocketeer,
-				true,
-				false);
-
-			var openCacheButton = new IconButton(AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons), theme)
-			{
-				ToolTipText = "Open Folder".Localize(),
-			};
-			openCacheButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				Process.Start(ApplicationDataStorage.ApplicationUserDataPath);
-			});
-
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Application Storage".Localize(),
-					openCacheButton,
-					theme),
-				advancedPanel);
-
-			var clearCacheButton = new HoverIconButton(AggContext.StaticData.LoadIcon("remove.png", 16, 16, theme.InvertIcons), theme)
-			{
-				ToolTipText = "Clear Cache".Localize(),
-			};
-			clearCacheButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				CacheDirectory.DeleteCacheData();
-			});
-
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Application Cache".Localize(),
-					clearCacheButton,
-					theme),
-				advancedPanel);
-
-#if DEBUG
-			var configureIcon = AggContext.StaticData.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons);
-
-			var configurePluginsButton = new IconButton(configureIcon, theme)
-			{
-				ToolTipText = "Configure Plugins".Localize(),
-				Margin = 0
-			};
-			configurePluginsButton.Click += (s, e) =>
-			{
-				UiThread.RunOnIdle(() =>
+				generalPanel.AddChild(buttonContainer);
+				buttonContainer.AddChild(new TextButton("Update Setting".Localize(), theme)
 				{
-					DialogWindow.Show<PluginsPage>();
+					Margin = new BorderDouble(0, 3, 20, 0),
 				});
-			};
-
-			this.AddSettingsRow(
-				new SettingsItem(
-					"Plugins".Localize(),
-					configurePluginsButton,
-					theme),
-				advancedPanel);
-#endif
-
-			advancedPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
-		}
-
-		private void AddUsserOptionsPannel(GuiWidget settingsColumn)
-		{
-			var optionsPanel = new FlowLayoutWidget(FlowDirection.TopToBottom);
-
-			var optionsSection = new SectionWidget("Options".Localize(), optionsPanel, theme, serializationKey: "ApplicationSettings-Options", expanded: false)
-			{
-				Name = "Options Section",
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				Margin = 0
-			};
-			settingsColumn.AddChild(optionsSection);
-
-			theme.ApplyBoxStyle(optionsSection);
-
-			AddUserBoolToggle(optionsPanel,
-				"Shown Welcome Message".Localize(),
-				UserSettingsKey.ShownWelcomeMessage,
-				false,
-				false);
-
-			AddUserBoolToggle(optionsPanel,
-				"Shown Print Canceled Message".Localize(),
-				UserSettingsKey.ShownPrintCanceledMessage,
-				false,
-				false);
-
-			AddUserBoolToggle(optionsPanel,
-				"Shown Print Complete Message".Localize(),
-				UserSettingsKey.ShownPrintCompleteMessage,
-				false,
-				false);
-
-			optionsPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
-		}
-
-		private void AddUserBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
-		{
-			this.AddSettingsRow(
-				new SettingsItem(
-					title,
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = UserSettings.Instance.get(boolKey) != "false",
-						ToggleAction = (itemChecked) =>
-						{
-							string boolValue = itemChecked ? "true" : "false";
-							if (boolValue != UserSettings.Instance.get(boolKey))
-							{
-								UserSettings.Instance.set(boolKey, boolValue);
-								if (requiresRestart)
-								{
-									StyledMessageBox.ShowMessageBox(
-										"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
-										"Restart Required".Localize());
-								}
-
-								if (reloadAll)
-								{
-									UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
-								}
-							}
-						}
-					}),
-				advancedPanel);
-		}
-
-		private void AddApplicationBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
-		{
-			this.AddSettingsRow(
-				new SettingsItem(
-					title,
-					theme,
-					new SettingsItem.ToggleSwitchConfig()
-					{
-						Checked = ApplicationSettings.Instance.get(boolKey) == "true",
-						ToggleAction = (itemChecked) =>
-						{
-							string boolValue = itemChecked ? "true" : "false";
-							if (boolValue != UserSettings.Instance.get(boolKey))
-							{
-								ApplicationSettings.Instance.set(boolKey, boolValue);
-								if (requiresRestart)
-								{
-									StyledMessageBox.ShowMessageBox(
-										"To finish changing your monitor settings you need to restart MatterControl. If after changing your fonts are too small you can adjust Text Size.".Localize(),
-										"Restart Required".Localize());
-								}
-
-								if (reloadAll)
-								{
-									UiThread.RunOnIdle(() => ApplicationController.Instance.ReloadAll().ConfigureAwait(false));
-								}
-							}
-						}
-					}),
-				advancedPanel);
+			}
 		}
 
 		private void AddSettingsRow(GuiWidget widget, GuiWidget container)

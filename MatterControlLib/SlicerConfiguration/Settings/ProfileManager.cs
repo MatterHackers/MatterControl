@@ -118,27 +118,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
+		private static List<(string key, string currentValue, string newValue)> oemSettingsNeedingUpdateCache = new List<(string key, string currentValue, string newValue)>();
+
 		public static IEnumerable<(string key, string currentValue, string newValue)> GetOemSettingsNeedingUpdate(PrinterConfig printer)
 		{
-			var make = printer.Settings.GetValue(SettingsKey.make);
-			var model = printer.Settings.GetValue(SettingsKey.model);
-			var serverOemSettings = ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
-				make,
-				model).Result;
+			Task.Run(async () =>
+			{
+				var make = printer.Settings.GetValue(SettingsKey.make);
+				var model = printer.Settings.GetValue(SettingsKey.model);
+				var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
+					make,
+					model);
 
-			var ignoreSettings = new HashSet<string>()
+				var ignoreSettings = new HashSet<string>()
 				{
 					SettingsKey.created_date,
+					SettingsKey.active_material_key,
+					SettingsKey.active_quality_key,
+					SettingsKey.oem_profile_token,
 				};
 
-			foreach (var localOemSetting in printer.Settings.OemLayer)
-			{
-				if (!ignoreSettings.Contains(localOemSetting.Key)
-					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
-					&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+				var oemSettingsNeedingUpdateCache = new List<(string key, string currentValue, string newValue)>();
+
+				foreach (var localOemSetting in printer.Settings.OemLayer)
 				{
-					yield return (localOemSetting.Key, localOemSetting.Value, serverOemSettings.GetValue(localOemSetting.Key));
+					if (!ignoreSettings.Contains(localOemSetting.Key)
+						&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
+						&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+					{
+						oemSettingsNeedingUpdateCache.Add((localOemSetting.Key, localOemSetting.Value, serverOemSettings.GetValue(localOemSetting.Key)));
+					}
 				}
+
+				// and set it
+				ProfileManager.oemSettingsNeedingUpdateCache = oemSettingsNeedingUpdateCache;
+			});
+
+			foreach (var item in ProfileManager.oemSettingsNeedingUpdateCache)
+			{
+				yield return (item.key, item.currentValue, item.newValue);
 			}
 		}
 

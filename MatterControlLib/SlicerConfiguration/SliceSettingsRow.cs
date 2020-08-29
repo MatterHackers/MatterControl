@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ValidationWrapper validationWrapper;
 
 		public SliceSettingsRow(PrinterConfig printer, SettingsContext settingsContext, SliceSettingData settingData, ThemeConfig theme, bool fullRowSelect = false)
-			: base (settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)
+			: base(settingData.PresentationName.Localize(), settingData.HelpText.Localize(), theme, fullRowSelect: fullRowSelect)
 		{
 			this.printer = printer;
 			this.settingData = settingData;
@@ -134,7 +134,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				this.Name = settingData.SlicerConfigName + " Row";
 
-				if (settingData.ShowAsOverride)
+				if (settingData.ShowAsOverride
+					&& settingsContext.ViewFilter != NamedSettingsLayers.OEMSettings)
 				{
 					restoreButton = theme.CreateSmallResetButton();
 					restoreButton.HAnchor = HAnchor.Right;
