@@ -238,6 +238,9 @@ namespace MatterHackers.MatterControl
 			// {
 			// 	this.BedColor = this.ResolveColor(this.BackgroundColor, Color.Gray.WithAlpha(60));
 			// }
+
+			// EnsureDefaults is called after deserialization and at a point when state should be fully loaded. Invoking RebuildTheme here ensures icons are inverted correctly
+			this.RebuildTheme();
 		}
 
 		public Color RowBorder { get; set; }
