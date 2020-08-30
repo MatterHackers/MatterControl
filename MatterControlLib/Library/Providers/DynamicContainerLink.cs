@@ -65,6 +65,8 @@ namespace MatterHackers.MatterControl.Library
 				thumbnail.NewGraphics2D().Render(microIcon,
 					(thumbnail.Width - microIcon.Width) / 2,
 					(thumbnail.Height - microIcon.Height) * .43);
+
+				microIcon.SetPreMultiply();
 			}
 
 			this.nameResolver = nameResolver;
