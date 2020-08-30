@@ -48,7 +48,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		protected bool mouseInBounds = false;
 		private Color hoverColor;
-		private GuiWidget settingsLabel;
 
 		private Popover popoverBubble = null;
 		private static Popover activePopover = null;
@@ -104,7 +103,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					});
 				}
 
-				this.AddChild(settingsLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.TextColor));
+				var textLabel = SettingsRow.CreateSettingsLabel(title, helpText, theme.TextColor);
+				this.AddChild(textLabel);
+				textLabel.Selectable = false;
 
 				this.AddChild(new HorizontalSpacer());
 			}
@@ -175,7 +176,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override Color BackgroundColor
 		{
-			get => (mouseInBounds) ? hoverColor : base.BackgroundColor;
+			get => mouseInBounds ? hoverColor : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 
