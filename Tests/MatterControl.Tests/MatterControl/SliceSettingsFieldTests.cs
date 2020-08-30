@@ -282,6 +282,70 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
+		public void CorrectStyleForSettingsRow()
+		{
+			var settings = new PrinterSettings();
+			var printer = new PrinterConfig(settings);
+
+			settings.OemLayer = new PrinterSettingsLayer();
+			settings.QualityLayer = new PrinterSettingsLayer();
+			settings.MaterialLayer = new PrinterSettingsLayer();
+			Assert.AreEqual(0, settings.UserLayer.Count);
+
+			var theme = new ThemeConfig();
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+
+			var key = SettingsKey.layer_height;
+
+			void TestStyle(Color color, bool restoreButton)
+			{
+				var data = SliceSettingsRow.GetStyleData(printer, theme, settingsContext, key, true);
+				Assert.AreEqual(color, data.highlightColor);
+				Assert.AreEqual(restoreButton, data.showRestoreButton);
+			}
+
+			// make sure all the colors are different
+			Assert.AreNotEqual(Color.Transparent, theme.PresetColors.MaterialPreset);
+			Assert.AreNotEqual(Color.Transparent, theme.PresetColors.QualityPreset);
+			Assert.AreNotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.QualityPreset);
+			Assert.AreNotEqual(theme.PresetColors.MaterialPreset, theme.PresetColors.UserOverride);
+			Assert.AreNotEqual(theme.PresetColors.QualityPreset, theme.PresetColors.UserOverride);
+
+			// nothing set no override
+			TestStyle(Color.Transparent, false);
+
+			// user override
+			settings.UserLayer[key] = "123";
+			TestStyle(theme.PresetColors.UserOverride, true);
+			settings.UserLayer.Remove(key);
+
+			// Quality override
+			settings.QualityLayer[key] = "123";
+			TestStyle(theme.PresetColors.QualityPreset, false);
+			settings.QualityLayer.Remove(key);
+
+			// Material override
+			settings.MaterialLayer[key] = "123";
+			TestStyle(theme.PresetColors.MaterialPreset, false);
+			settings.MaterialLayer.Remove(key);
+
+			// user override that is the same as the default
+			settings.UserLayer[key] = settings.BaseLayer[key];
+			TestStyle(Color.Transparent, false);
+			settings.UserLayer.Remove(key);
+
+			// Quality override same as default
+			settings.QualityLayer[key] = settings.BaseLayer[key];
+			TestStyle(theme.PresetColors.QualityPreset, false);
+			settings.QualityLayer.Remove(key);
+
+			// Material override same as default
+			settings.MaterialLayer[key] = settings.BaseLayer[key];
+			TestStyle(theme.PresetColors.MaterialPreset, false);
+			settings.MaterialLayer.Remove(key);
+		}
+
+		[Test]
 		public void RightClickMenuWorksOnSliceSettings()
 		{
 			PrinterSettings.SliceEngines["MatterSlice"] = new EngineMappingsMatterSlice();

@@ -588,6 +588,12 @@ namespace MatterHackers.MatterControl
 					textEditWidget?.SelectAll();
 				};
 
+				textEditWidget.KeepMenuOpen = true;
+				popupMenu.Closed += (s3, e3) =>
+				{
+					textEditWidget.KeepMenuOpen = false;
+				};
+
 				popupMenu.ShowMenu(s, e);
 			};
 		}
