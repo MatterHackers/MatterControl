@@ -50,7 +50,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PlatingHistoryContainer())
 				{
 					IsReadOnly = true
@@ -59,7 +60,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PrintHistoryContainer()
 					{
 						DefaultSort = new SortBehavior()
