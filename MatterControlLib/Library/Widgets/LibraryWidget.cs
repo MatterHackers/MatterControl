@@ -482,8 +482,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				null,
 				containerItem,
 				null,
-				16,
-				16,
+				(int)Math.Round(20 * DeviceScale),
+				(int)Math.Round(20 * DeviceScale),
 				theme).ConfigureAwait(false);
 
 			treeNode.ExpandedChanged += (s, e) =>

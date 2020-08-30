@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 {
 	public class UnloadFilamentWizard : PrinterSetupWizard
 	{
-		private int extruderIndex;
+		private readonly int extruderIndex;
 
 		public UnloadFilamentWizard(PrinterConfig printer, int extruderIndex)
 			: base(printer)
@@ -99,6 +99,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					temps);
 			}
 
+			var extrusionMultiplierStream = printer.Connection.ExtrusionMultiplierStream;
+			var oldExtrusionMultiplier = extrusionMultiplierStream.ExtrusionRatio;
+
 			// show the unloading filament progress bar
 			{
 				int extruderPriorToUnload = printer.Connection.ActiveExtruderIndex;
@@ -108,6 +111,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PageLoad = (page) =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = 1;
+
 						page.NextButton.Enabled = false;
 
 						// add the progress bar
@@ -203,6 +208,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					PageClose = () =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = oldExtrusionMultiplier;
+
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
@@ -214,6 +221,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						// reset the extruder that was active
 						printer.Connection.QueueLine($"T{extruderPriorToUnload}");
 					}
+
 					printer.Connection.QueueLine("G92 E0");
 				};
 
@@ -223,34 +231,34 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// put up a success message
 			yield return new DoneUnloadingPage(this, extruderIndex);
 		}
-	}
 
-	public class DoneUnloadingPage : WizardPage
-	{
-		public DoneUnloadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
-			: base(setupWizard, "Filament Unloaded".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
+		public class DoneUnloadingPage : WizardPage
 		{
-			var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+			public DoneUnloadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
+				: base(setupWizard, "Filament Unloaded".Localize(), "Success!\n\nYour filament should now be unloaded".Localize())
 			{
-				Name = "Load Filament",
-				BackgroundColor = theme.MinimalShade,
-			};
-			loadFilamentButton.Click += (s, e) =>
+				var loadFilamentButton = new TextButton("Load Filament".Localize(), theme)
+				{
+					Name = "Load Filament",
+					BackgroundColor = theme.MinimalShade,
+				};
+				loadFilamentButton.Click += (s, e) =>
+				{
+					this.DialogWindow.ClosePage();
+
+					DialogWindow.Show(
+						new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
+				};
+
+				this.AcceptButton = loadFilamentButton;
+				this.AddPageAction(loadFilamentButton);
+			}
+
+			public override void OnLoad(EventArgs args)
 			{
-				this.DialogWindow.ClosePage();
-
-				DialogWindow.Show(
-					new LoadFilamentWizard(printer, extruderIndex, showAlreadyLoadedButton: false));
-			};
-
-			this.AcceptButton = loadFilamentButton;
-			this.AddPageAction(loadFilamentButton);
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			this.ShowWizardFinished();
-			base.OnLoad(args);
+				this.ShowWizardFinished();
+				base.OnLoad(args);
+			}
 		}
 	}
 }

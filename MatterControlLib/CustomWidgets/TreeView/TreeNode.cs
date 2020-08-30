@@ -42,12 +42,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class TreeNode : FlowLayoutWidget, ICheckbox
 	{
-		private GuiWidget content;
+		private readonly GuiWidget content;
 		private TreeView _treeView;
 		private ImageBuffer _image = null;
-		private TextWidget textWidget;
-		private TreeExpandWidget expandWidget;
-		private ImageWidget imageWidget;
+		private readonly TextWidget textWidget;
+		private readonly TreeExpandWidget expandWidget;
+		private readonly ImageWidget imageWidget;
 		private bool isDirty;
 
 		public TreeNode(ThemeConfig theme, bool useIcon = true, TreeNode nodeParent = null)
@@ -207,11 +207,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		// **** Not implemented ****
 		public void BeginEdit() => throw new NotImplementedException();
+
 		public void Collapse(bool collapseChildren) => throw new NotImplementedException();
+
 		public void Collapse() => throw new NotImplementedException();
+
 		public void EndEdit(bool cancel) => throw new NotImplementedException();
+
 		public void EnsureVisible() => throw new NotImplementedException();
+
 		public void ExpandAll() => throw new NotImplementedException();
+
 		public void Remove() => throw new NotImplementedException();
 
 		public int GetNodeCount(bool includeSubTrees)
@@ -304,8 +310,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			return textWidget?.Text ?? "";
 		}
 
-		#region Properties
-
 		public bool Checked { get; set; }
 
 		public bool Editing { get; }
@@ -323,6 +327,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		}
 
 		private bool _expanded;
+
 		public bool Expanded
 		{
 			get => _expanded;
@@ -354,7 +359,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					_image = value;
 
-					if(imageWidget != null)
+					if (imageWidget != null)
 					{
 						imageWidget.Image = _image;
 					}
@@ -485,24 +490,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			ImageChanged?.Invoke(this, null);
 		}
 
-		#endregion Properties
-
-		#region Events
-
 		public event EventHandler CheckedStateChanged;
 
 		public event EventHandler ExpandedChanged;
 
 		public event EventHandler ImageChanged;
 
-		#endregion Events
-
 		private class TreeExpandWidget : FlowLayoutWidget
 		{
-			private ImageBuffer arrowRight;
-			private ImageBuffer arrowDown;
-			private ImageBuffer placeholder;
-			private IconButton imageButton = null;
+			private readonly ImageBuffer arrowRight;
+			private readonly ImageBuffer arrowDown;
+			private readonly ImageBuffer placeholder;
+			private readonly IconButton imageButton = null;
 
 			public TreeExpandWidget(ThemeConfig theme)
 			{
@@ -514,28 +513,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 				imageButton = new IconButton(placeholder, theme)
 				{
-					MinimumSize = new Vector2(16, 16),
+					MinimumSize = new Vector2(16 * DeviceScale, 16 * DeviceScale),
 					VAnchor = VAnchor.Center,
 					Selectable = false,
-					Width = 16,
-					Height = 16
+					Width = 16 * DeviceScale,
+					Height = 16 * DeviceScale
 				};
 
 				this.AddChild(imageButton);
 			}
 
 			private bool _alwaysExpandable;
+
 			public bool AlwaysExpandable
 			{
 				get => _alwaysExpandable;
 				set
 				{
-					imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
+					imageButton.SetIcon(_expanded ? arrowDown : arrowRight);
 					_alwaysExpandable = value;
 				}
 			}
 
 			private bool? _expandable = null;
+
 			public bool Expandable
 			{
 				get => _expandable == true || this.AlwaysExpandable;
@@ -551,6 +552,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 
 			private bool _expanded;
+
 			public bool Expanded
 			{
 				get => _expanded;
@@ -579,7 +581,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				else
 				{
 					imageButton.Visible = true;
-					imageButton.SetIcon((_expanded) ? arrowDown : arrowRight);
+					imageButton.SetIcon(_expanded ? arrowDown : arrowRight);
 				}
 			}
 
