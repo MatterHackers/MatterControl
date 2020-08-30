@@ -92,17 +92,19 @@ namespace MatterHackers.MatterControl
 			var expectedCachePath = this.CachePath(libraryItem, width, height);
 
 			ImageBuffer cachedItem = LoadImage(expectedCachePath);
-			if(cachedItem != null)
+			if (cachedItem != null
+				&& cachedItem.Width > 0 && cachedItem.Height > 0)
 			{
 				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 				return cachedItem;
 			}
 
 			// if we don't find it see if it is in the cache at a bigger size
-			foreach(var cacheSize in cacheSizes.Where(s => s > width))
+			foreach (var cacheSize in cacheSizes.Where(s => s > width))
 			{
 				cachedItem = LoadImage(this.CachePath(libraryItem, cacheSize, cacheSize));
-				if(cachedItem != null)
+				if (cachedItem != null
+					&& cachedItem.Width > 0 && cachedItem.Height > 0)
 				{
 					cachedItem = cachedItem.CreateScaledImage(width, height);
 					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());

@@ -201,6 +201,11 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (icon != null)
 				{
+					if (icon.Width == 0)
+					{
+						return;
+					}
+
 					icon = await Task.Run(() => this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight));
 					thumbnailListener?.Invoke(icon);
 				}
