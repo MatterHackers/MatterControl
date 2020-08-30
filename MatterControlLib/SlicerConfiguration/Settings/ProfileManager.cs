@@ -155,6 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SettingsKey.active_material_key,
 				SettingsKey.active_quality_key,
 				SettingsKey.oem_profile_token,
+				SettingsKey.extruder_offset,
 			};
 
 			foreach (var localOemSetting in printer.Settings.OemLayer)
