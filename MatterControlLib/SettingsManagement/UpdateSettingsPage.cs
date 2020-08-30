@@ -166,8 +166,15 @@ Updating the default will not change any other overrides that you may have appli
 					under.AddChild(cover);
 				}
 
-				AddSetting(printer, "Current Default".Localize(), setting.key, theme.SlightShade);
-				AddSetting(oemPrinter, "New Default".Localize(), setting.key, Color.Transparent);
+				var currentText = "Current Default".Localize();
+				var settingData = PrinterSettings.SettingsData[setting.key];
+				var group = settingData.OrganizerGroup;
+				var category = group.Category;
+
+				currentText += ": " + category.Name + " > " + group.Name + " > " + settingData.PresentationName;
+
+				AddSetting(printer, currentText, setting.key, theme.SlightShade);
+				AddSetting(oemPrinter, "Will be update to:".Localize(), setting.key, Color.Transparent);
 
 				var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
 				{
@@ -190,12 +197,12 @@ Updating the default will not change any other overrides that you may have appli
 
 				updateButton.Click += (s, e) =>
 				{
-					var scrollAmount = contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop;
+					var scrollAmount = this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop;
 					printer.Settings.SetValue(setting.key, setting.newValue, printer.Settings.OemLayer);
 					AddAllContent();
 					UiThread.RunOnIdle(() =>
 					{
-						contentRow.Descendants<ScrollableWidget>().First().ScrollPosition = scrollAmount;
+						this.contentRow.Descendants<ScrollableWidget>().First().ScrollPositionFromTop = scrollAmount;
 					});
 				};
 			}
