@@ -193,8 +193,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public event EventHandler ImageSet;
-
 		protected void SetUnsizedThumbnail(ImageBuffer thumbnail)
 		{
 			this.SetSizedThumbnail(
@@ -212,7 +210,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				|| !thumbnail.Equals(this.imageWidget.Image, 5)))
 			{
 				this.imageWidget.Image = thumbnail;
-				this.ImageSet?.Invoke(this, null);
 				this.Invalidate();
 			}
 		}

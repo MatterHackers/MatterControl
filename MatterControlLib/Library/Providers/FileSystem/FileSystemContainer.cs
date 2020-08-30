@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.Library
 				&& Directory.Exists(fullPath))
 			{
 				directoryWatcher = new FileSystemWatcher(fullPath);
-				directoryWatcher.NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+				directoryWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
 				directoryWatcher.Changed += DirectoryContentsChanged;
 				directoryWatcher.Created += DirectoryContentsChanged;
 				directoryWatcher.Deleted += DirectoryContentsChanged;
