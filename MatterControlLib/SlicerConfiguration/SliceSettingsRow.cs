@@ -524,7 +524,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 			else if (settingsContext.IsPrimarySettingsView)
 			{
-				var defalutValue = settings.OemLayer.ContainsKey(key) ? settings.OemLayer[key] : settings.BaseLayer[key];
+				var defalutValue = settings.BaseLayer[key];
+				if (settings.OemLayer?.ContainsKey(key) == true)
+				{
+					defalutValue = settings.OemLayer[key];
+				}
 
 				if (settings.SettingExistsInLayer(key, NamedSettingsLayers.User)
 					&& settings.UserLayer[key] != defalutValue)
