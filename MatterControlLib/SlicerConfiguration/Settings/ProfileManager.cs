@@ -118,18 +118,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
-		private static List<(string key, string currentValue, string newValue)> oemSettingsNeedingUpdateCache = new List<(string key, string currentValue, string newValue)>();
+		private static Dictionary<string,  List<(string key, string currentValue, string newValue)>> oemSettingsNeedingUpdateCache 
+			= new Dictionary<string, List<(string key, string currentValue, string newValue)>>();
 
 		public static IEnumerable<(string key, string currentValue, string newValue)> GetOemSettingsNeedingUpdate(PrinterConfig printer)
 		{
+			var key = printer.Settings.ID;
 			Task.Run(async () =>
 			{
-				ProfileManager.oemSettingsNeedingUpdateCache = await GetChangedOemSettings(printer);
+				ProfileManager.oemSettingsNeedingUpdateCache[key] = await GetChangedOemSettings(printer);
 			});
 
-			foreach (var item in ProfileManager.oemSettingsNeedingUpdateCache)
+			List<(string key, string currentValue, string newValue)> cache;
+			if (oemSettingsNeedingUpdateCache.TryGetValue(key, out cache))
 			{
-				yield return (item.key, item.currentValue, item.newValue);
+				foreach (var item in cache)
+				{
+					yield return (item.key, item.currentValue, item.newValue);
+				}
 			}
 		}
 
