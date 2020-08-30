@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		private readonly bool showAlreadyLoadedButton;
 
-		private int extruderIndex;
+		private readonly int extruderIndex;
 
 		public LoadFilamentWizard(PrinterConfig printer, int extruderIndex, bool showAlreadyLoadedButton)
 			: base(printer)
@@ -157,8 +157,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						printer.Connection.SetTargetHotendTemperature(extruderIndex, printer.Settings.GetValue<double>(SettingsKey.temperature));
 
 						var markdownText = printer.Settings.GetValue(SettingsKey.trim_filament_markdown);
-						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+						var markdownWidget = new MarkdownWidget(theme)
+						{
+							Markdown = markdownText = markdownText.Replace("\\n", "\n")
+						};
 						page.ContentRow.AddChild(markdownWidget);
 					}
 				};
@@ -173,6 +175,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			// reset the extrusion amount so this is easier to debug
 			printer.Connection.QueueLine("G92 E0");
+			var extrusionMultiplierStream = printer.Connection.ExtrusionMultiplierStream;
+			var oldExtrusionMultiplier = extrusionMultiplierStream.ExtrusionRatio;
 
 			// show the insert filament page
 			{
@@ -181,6 +185,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PageLoad = (page) =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = 1;
+
 						var markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_markdown2);
 
 						if (extruderIndex == 1)
@@ -188,8 +194,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							markdownText = printer.Settings.GetValue(SettingsKey.insert_filament_1_markdown);
 						}
 
-						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+						var markdownWidget = new MarkdownWidget(theme)
+						{
+							Markdown = markdownText = markdownText.Replace("\\n", "\n")
+						};
 						page.ContentRow.AddChild(markdownWidget);
 
 						// turn off the fan
@@ -203,18 +211,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								if (false)
-								{
-									// Quite mode
-									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 80);
-									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
-								}
-								else
-								{
-									// Pulse mode
-									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 150);
-									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
-								}
+								// Pulse mode
+								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 1, 150);
+								printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
 
 								if (runningTime.ElapsedMilliseconds > maxSecondsToStartLoading * 1000)
 								{
@@ -226,6 +225,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					PageClose = () =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = oldExtrusionMultiplier;
+
 						if (runningGCodeCommands != null)
 						{
 							UiThread.ClearInterval(runningGCodeCommands);
@@ -250,6 +251,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PageLoad = (page) =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = 1;
+
 						page.NextButton.Enabled = false;
 
 						// add the progress bar
@@ -326,6 +329,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					PageClose = () =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = oldExtrusionMultiplier;
+
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
@@ -361,6 +366,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				{
 					PageLoad = (page) =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = 1;
+
 						var markdownText = printer.Settings.GetValue(SettingsKey.running_clean_markdown2);
 
 						if (extruderIndex == 1)
@@ -368,8 +375,10 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 							markdownText = printer.Settings.GetValue(SettingsKey.running_clean_1_markdown);
 						}
 
-						var markdownWidget = new MarkdownWidget(theme);
-						markdownWidget.Markdown = markdownText = markdownText.Replace("\\n", "\n");
+						var markdownWidget = new MarkdownWidget(theme)
+						{
+							Markdown = markdownText = markdownText.Replace("\\n", "\n")
+						};
 						page.ContentRow.AddChild(markdownWidget);
 
 						var runningTime = Stopwatch.StartNew();
@@ -377,18 +386,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							if (printer.Connection.NumQueuedCommands == 0)
 							{
-								if (false)
-								{
-									// Quite mode
-									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 140);
-									printer.Connection.QueueLine("G4 P1"); // empty buffer - allow for cancel
-								}
-								else
-								{
-									// Pulse mode
-									printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 150);
-									printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
-								}
+								// Pulse mode
+								printer.Connection.MoveRelative(PrinterCommunication.PrinterConnection.Axis.E, 2, 150);
+								printer.Connection.QueueLine("G4 P10"); // empty buffer - allow for cancel
 
 								int secondsToRun = 90;
 								if (runningTime.ElapsedMilliseconds > secondsToRun * 1000)
@@ -401,6 +401,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					},
 					PageClose = () =>
 					{
+						extrusionMultiplierStream.ExtrusionRatio = oldExtrusionMultiplier;
+
 						UiThread.ClearInterval(runningGCodeCommands);
 					}
 				};
@@ -411,51 +413,51 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// put up a success message
 			yield return new DoneLoadingPage(this, extruderIndex);
 		}
-	}
 
-	public class DoneLoadingPage : WizardPage
-	{
-		private int extruderIndex;
-
-		public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
-			: base(setupWizard, "Filament Loaded".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
+		public class DoneLoadingPage : WizardPage
 		{
-			this.extruderIndex = extruderIndex;
+			private readonly int extruderIndex;
 
-			if (printer.Connection.Paused)
+			public DoneLoadingPage(PrinterSetupWizard setupWizard, int extruderIndex)
+				: base(setupWizard, "Filament Loaded".Localize(), "Success!\n\nYour filament should now be loaded".Localize())
 			{
-				var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
+				this.extruderIndex = extruderIndex;
+
+				if (printer.Connection.Paused)
 				{
-					Name = "Resume Printing Button",
-					BackgroundColor = theme.MinimalShade,
-				};
-				resumePrintingButton.Click += (s, e) =>
-				{
-					printer.Connection.Resume();
-					this.DialogWindow.ClosePage();
-				};
+					var resumePrintingButton = new TextButton("Resume Printing".Localize(), theme)
+					{
+						Name = "Resume Printing Button",
+						BackgroundColor = theme.MinimalShade,
+					};
+					resumePrintingButton.Click += (s, e) =>
+					{
+						printer.Connection.Resume();
+						this.DialogWindow.ClosePage();
+					};
 
-				this.AcceptButton = resumePrintingButton;
-				this.AddPageAction(resumePrintingButton);
-			}
-		}
-
-		public override void OnLoad(EventArgs args)
-		{
-			switch (extruderIndex)
-			{
-				case 0:
-					printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
-					break;
-
-				case 1:
-					printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
-					break;
+					this.AcceptButton = resumePrintingButton;
+					this.AddPageAction(resumePrintingButton);
+				}
 			}
 
-			this.ShowWizardFinished();
+			public override void OnLoad(EventArgs args)
+			{
+				switch (extruderIndex)
+				{
+					case 0:
+						printer.Settings.SetValue(SettingsKey.filament_has_been_loaded, "1");
+						break;
 
-			base.OnLoad(args);
+					case 1:
+						printer.Settings.SetValue(SettingsKey.filament_1_has_been_loaded, "1");
+						break;
+				}
+
+				this.ShowWizardFinished();
+
+				base.OnLoad(args);
+			}
 		}
 	}
 }

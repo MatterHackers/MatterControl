@@ -1260,7 +1260,8 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_icon.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
 							UseIncrementedNameDuringTypeChange = true,
@@ -1276,7 +1277,8 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_icon.png")),
 					() => this.Library.LibraryCollectionContainer));
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
@@ -1300,7 +1302,8 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new RootHistoryContainer()));
 
 			// Create a new library context for the SaveAs view
@@ -1312,7 +1315,8 @@ namespace MatterHackers.MatterControl
 					{
 						new DynamicContainerLink(
 							() => "Printers".Localize(),
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+							AggContext.StaticData.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 							() => new OpenPrintersContainer())
 					}
 				}
@@ -3349,11 +3353,5 @@ Support and tutorials:
 
 			public Action Action { get; set; }
 		}
-	}
-
-	public enum ReportSeverity2
-	{
-		Warning,
-		Error
 	}
 }

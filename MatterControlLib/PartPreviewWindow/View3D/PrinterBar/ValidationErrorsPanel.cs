@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ValidationErrorsPanel : FlowLayoutWidget
 	{
 		public ValidationErrorsPanel(IEnumerable<ValidationError> errors, ThemeConfig theme)
-			: base (FlowDirection.TopToBottom)
+			: base(FlowDirection.TopToBottom)
 		{
 			this.HAnchor = HAnchor.Absolute;
 			this.VAnchor = VAnchor.Fit | VAnchor;
@@ -61,8 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				string errorText, errorDetails;
 
-				var settingsValidationError = validationError as SettingsValidationError;
-				if (settingsValidationError != null)
+				if (validationError is SettingsValidationError settingsValidationError)
 				{
 					errorText = string.Format(
 						"{0} {1}",
@@ -79,7 +78,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var row = new SettingsRow(errorText, errorDetails, theme, validationError.ErrorLevel == ValidationErrorLevel.Error ? errorImage : warningImage, fullRowSelect: true)
 				{
-					ArrowDirection = ArrowDirection.Left
+					ArrowDirection = ArrowDirection.Left,
+					Name = validationError.ID + " Row"
 				};
 
 				if (validationError.FixAction is NamedAction action)
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right: 8),
 						Enabled = action.IsEnabled == null || action.IsEnabled(),
-						Name = action.Title + " Button"
+						Name = validationError.ID + " Button"
 					};
 
 					if (!string.IsNullOrEmpty(action.ID))

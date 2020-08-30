@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -40,12 +41,34 @@ namespace MatterHackers.MatterControl.Library
 		private readonly Func<string> nameResolver;
 
 		private readonly ImageBuffer thumbnail;
-
+		private readonly ImageBuffer microIcon;
 		private readonly Func<bool> visibilityResolver;
 
-		public DynamicContainerLink(Func<string> nameResolver, ImageBuffer thumbnail, Func<ILibraryContainer> creator = null, Func<bool> visibilityResolver = null)
+		public DynamicContainerLink(Func<string> nameResolver,
+			ImageBuffer thumbnail,
+			Func<ILibraryContainer> creator = null,
+			Func<bool> visibilityResolver = null)
+			: this(nameResolver, thumbnail, null, creator, visibilityResolver)
+		{
+		}
+
+		public DynamicContainerLink(Func<string> nameResolver,
+			ImageBuffer thumbnail,
+			ImageBuffer microIcon,
+			Func<ILibraryContainer> creator = null,
+			Func<bool> visibilityResolver = null)
 		{
 			this.thumbnail = thumbnail?.SetPreMultiply();
+			this.microIcon = microIcon;
+			if (microIcon != null)
+			{
+				thumbnail.NewGraphics2D().Render(microIcon,
+					(thumbnail.Width - microIcon.Width) / 2,
+					(thumbnail.Height - microIcon.Height) * .43);
+
+				microIcon.SetPreMultiply();
+			}
+
 			this.nameResolver = nameResolver;
 			this.containerCreator = creator;
 			this.visibilityResolver = visibilityResolver ?? (() => true);
@@ -74,6 +97,13 @@ namespace MatterHackers.MatterControl.Library
 
 		public Task<ImageBuffer> GetThumbnail(int width, int height)
 		{
+			if (microIcon != null
+				&& width < 24 * GuiWidget.DeviceScale
+				&& height < 24 * GuiWidget.DeviceScale)
+			{
+				return Task.FromResult(microIcon?.AlphaToPrimaryAccent());
+			}
+
 			return Task.FromResult(thumbnail?.AlphaToPrimaryAccent());
 		}
 	}

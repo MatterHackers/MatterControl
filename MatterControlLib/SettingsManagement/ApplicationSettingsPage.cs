@@ -32,14 +32,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -586,16 +584,6 @@ namespace MatterHackers.MatterControl
 		{
 			container.AddChild(widget);
 			widget.Padding = widget.Padding.Clone(right: 10);
-		}
-
-		private class IgnoredFlowLayout : FlowLayoutWidget, IIgnoredPopupChild
-		{
-			public IgnoredFlowLayout()
-				: base(FlowDirection.TopToBottom)
-			{
-			}
-
-			public bool KeepMenuOpen => false;
 		}
 	}
 }

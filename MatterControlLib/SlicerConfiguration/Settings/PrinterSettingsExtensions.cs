@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class PrinterSettingsExtensions
 	{
-		private static readonly Dictionary<string, string> SettingsToReset = new Dictionary<string, string>()
+		public static readonly Dictionary<string, string> SettingsToReset = new Dictionary<string, string>()
 		{
 			[SettingsKey.spiral_vase] = "0",
 			[SettingsKey.layer_to_pause] = "",

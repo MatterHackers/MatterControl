@@ -362,7 +362,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new ActionSeparator(),
 				new NamedAction()
 				{
-					Title = "Restore Settings".Localize(),
+					Title = "Update Settings...".Localize(),
+					Action = () =>
+					{
+						DialogWindow.Show(new UpdateSettingsPage(printer));
+					},
+					Icon = AggContext.StaticData.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
+				},
+				new NamedAction()
+				{
+					Title = "Restore Settings...".Localize(),
 					Action = () =>
 					{
 						DialogWindow.Show(new PrinterProfileHistoryPage(printer));
@@ -370,7 +379,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedAction()
 				{
-					Title = "Reset to Defaults".Localize(),
+					Title = "Reset to Defaults...".Localize(),
 					Action = () =>
 					{
 						StyledMessageBox.ShowMessageBox(

@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.WaitForReloadAll(() =>
 					{
 						testRunner.ClickByName("Printer Overflow Menu");
-						testRunner.ClickByName("Reset to Defaults Menu Item");
+						testRunner.ClickByName("Reset to Defaults... Menu Item");
 						testRunner.ClickByName("Yes Button");
 					});
 

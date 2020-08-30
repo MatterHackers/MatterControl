@@ -304,10 +304,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string ID { get; set; }
 
 		[JsonIgnore]
-		public PrinterSettingsLayer QualityLayer { get; private set; }
+		public PrinterSettingsLayer QualityLayer { get; set; }
 
 		[JsonIgnore]
-		public PrinterSettingsLayer MaterialLayer { get; private set; }
+		public PrinterSettingsLayer MaterialLayer { get; set; }
 
 		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
 

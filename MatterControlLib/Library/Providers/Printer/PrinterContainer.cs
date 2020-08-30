@@ -56,7 +56,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "SD Card".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_icon.png")),
 					() => new SDCardContainer(printer),
 					() =>
 					{

@@ -27,8 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -36,14 +37,11 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Threading.Tasks;
-using System.Linq;
-using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -91,7 +89,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Sortable]
 		[JsonConverter(typeof(StringEnumConverter))]
-		public NamedTypeFace Font { get; set; } = new NamedTypeFace();
+		public NamedTypeFace Font { get; set; } = NamedTypeFace.Nunito_Bold;
 
 		public override bool CanFlatten => true;
 
@@ -108,6 +106,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				clone.Name = MapIfSymbol(newName);
 				newContainer.Children.Add(clone);
 			}
+
 			undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { newContainer }));
 			newContainer.Name = this.Name + " - " + "Flattened".Localize();
 		}

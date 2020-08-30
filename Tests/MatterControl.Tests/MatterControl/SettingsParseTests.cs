@@ -210,9 +210,9 @@ namespace MatterControl.Tests.MatterControl
 			var settingsByName = PrinterSettings.SettingsData;
 			var allSettings = settingsByName.Values;
 
-			foreach(var boundSetting in allSettings.Where(s => s.SetSettingsOnChange.Count > 0))
+			foreach (var boundSetting in allSettings.Where(s => s.SetSettingsOnChange.Count > 0))
 			{
-				foreach(var linkedSetting in boundSetting.SetSettingsOnChange)
+				foreach (var linkedSetting in boundSetting.SetSettingsOnChange)
 				{
 					// TargetSetting definition must exist
 					Assert.IsTrue(linkedSetting.TryGetValue("TargetSetting", out string targetSettingSource), "TargetSetting field should exist");
@@ -241,10 +241,11 @@ namespace MatterControl.Tests.MatterControl
 		PrinterSettings GetProfile(string[] settings)
 		{
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();
-			for(int i=0; i<settings.Length; i+=2)
+			for (int i = 0; i < settings.Length; i += 2)
 			{
 				dictionary.Add(settings[i], settings[i + 1]);
 			}
+
 			var profile = new PrinterSettings()
 			{
 				OemLayer = new PrinterSettingsLayer(dictionary)

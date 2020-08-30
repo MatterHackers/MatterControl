@@ -588,6 +588,12 @@ namespace MatterHackers.MatterControl
 					textEditWidget?.SelectAll();
 				};
 
+				textEditWidget.KeepMenuOpen = true;
+				popupMenu.Closed += (s3, e3) =>
+				{
+					textEditWidget.KeepMenuOpen = false;
+				};
+
 				popupMenu.ShowMenu(s, e);
 			};
 		}
@@ -637,9 +643,6 @@ namespace MatterHackers.MatterControl
 				moveDistance *= .2;
 			}
 
-			// TODO: analyze the view and adjust movements to be relative to the current perspective
-			//
-			// Naive movements in Identity space
 			switch (arrowDirection)
 			{
 				case ArrowDirection.Left:
@@ -653,7 +656,7 @@ namespace MatterHackers.MatterControl
 				case ArrowDirection.Up:
 					if (keyEvent.Control)
 					{
-						vector3 = new Vector3(0, 0, moveDistance);
+						vector3 = new Vector3(0, moveDistance, 0);
 					}
 					else
 					{
@@ -665,7 +668,7 @@ namespace MatterHackers.MatterControl
 				case ArrowDirection.Down:
 					if (keyEvent.Control)
 					{
-						vector3 = new Vector3(0, 0, -moveDistance);
+						vector3 = new Vector3(0, -moveDistance, 0);
 					}
 					else
 					{

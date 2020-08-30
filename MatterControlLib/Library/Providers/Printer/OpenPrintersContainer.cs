@@ -54,7 +54,8 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => printer.Settings.GetValue(SettingsKey.printer_name),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+						AggContext.StaticData.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 						() => new PrinterContainer(printer),
 						() =>
 						{

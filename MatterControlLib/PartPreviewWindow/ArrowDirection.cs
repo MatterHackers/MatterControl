@@ -30,5 +30,12 @@ either expressed or implied, of the FreeBSD Project.
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public enum ArrowDirection { Right, Left, Up, Down, None }
+	public enum ArrowDirection
+	{
+		Right,
+		Left,
+		Up,
+		Down,
+		None
+	}
 }

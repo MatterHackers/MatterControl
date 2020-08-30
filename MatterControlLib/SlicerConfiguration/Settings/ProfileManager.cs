@@ -118,6 +118,73 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
+		private static Dictionary<string,  List<(string key, string currentValue, string newValue)>> oemSettingsNeedingUpdateCache 
+			= new Dictionary<string, List<(string key, string currentValue, string newValue)>>();
+
+		public static IEnumerable<(string key, string currentValue, string newValue)> GetOemSettingsNeedingUpdate(PrinterConfig printer)
+		{
+			var key = printer.Settings.ID;
+			Task.Run(async () =>
+			{
+				ProfileManager.oemSettingsNeedingUpdateCache[key] = await GetChangedOemSettings(printer);
+			});
+
+			List<(string key, string currentValue, string newValue)> cache;
+			if (oemSettingsNeedingUpdateCache.TryGetValue(key, out cache))
+			{
+				foreach (var item in cache)
+				{
+					yield return (item.key, item.currentValue, item.newValue);
+				}
+			}
+		}
+
+		public static async Task<List<(string key, string currentValue, string newValue)>> GetChangedOemSettings(PrinterConfig printer)
+		{
+			var oemSettingsNeedingUpdateCache = new List<(string key, string currentValue, string newValue)>();
+
+			var make = printer.Settings.GetValue(SettingsKey.make);
+			var model = printer.Settings.GetValue(SettingsKey.model);
+			var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
+				make,
+				model);
+
+			var ignoreSettings = new HashSet<string>()
+			{
+				SettingsKey.created_date,
+				SettingsKey.active_material_key,
+				SettingsKey.active_quality_key,
+				SettingsKey.oem_profile_token,
+			};
+
+			foreach (var localOemSetting in printer.Settings.OemLayer)
+			{
+				if (!ignoreSettings.Contains(localOemSetting.Key)
+					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
+					&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+				{
+					oemSettingsNeedingUpdateCache.Add((localOemSetting.Key, localOemSetting.Value, serverOemSettings.GetValue(localOemSetting.Key)));
+				}
+			}
+
+			oemSettingsNeedingUpdateCache.Sort((a, b) =>
+			{
+				var aData = PrinterSettings.SettingsData[a.key];
+				var aGroup = aData.OrganizerGroup;
+				var aCategory = aGroup.Category;
+				var aInfo = $"{aCategory.Name}:{aGroup.Name}:{aData.PresentationName}";
+
+				var bData = PrinterSettings.SettingsData[b.key];
+				var bGroup = bData.OrganizerGroup;
+				var bCategory = bGroup.Category;
+				var bInfo = $"{bCategory.Name}:{bGroup.Name}:{bData.PresentationName}";
+
+				return string.Compare(aInfo, bInfo);
+			});
+
+			return oemSettingsNeedingUpdateCache;
+		}
+
 		public void DeletePrinter(string printerID)
 		{
 			var printerInfo = ProfileManager.Instance[printerID];

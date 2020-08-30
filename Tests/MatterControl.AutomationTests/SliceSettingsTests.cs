@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -8,7 +7,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.VectorMath;
 using NUnit.Framework;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -65,6 +63,68 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
+			}, maxTimeToRun: 120);
+		}
+
+		[Test, Category("Emulator")]
+		public async Task OemSettingsChangeOfferedToUserTest()
+		{
+			await MatterControlUtilities.RunTest(async (testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					var printer = testRunner.FirstPrinter();
+
+					var expectedWarningName = ValidationErrors.SettingsUpdateAvailable + " Row";
+
+					// open the print menu and prove no oem message
+					testRunner.OpenPrintPopupMenu();
+					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
+					// close the menu
+					testRunner.ClickByName("PartPreviewContent")
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
+
+					// test again in case we have not downloaded the profile the first time
+					testRunner.OpenPrintPopupMenu();
+					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
+					// close the menu
+					testRunner.ClickByName("PartPreviewContent")
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
+
+					Assert.AreEqual(0, (await ProfileManager.GetChangedOemSettings(printer)).Count());
+
+					// change some oem settings
+					printer.Settings.SetValue(SettingsKey.layer_height, ".213", printer.Settings.OemLayer);
+					printer.Settings.SetValue(SettingsKey.first_layer_height, ".213", printer.Settings.OemLayer);
+
+					Assert.AreEqual(2, (await ProfileManager.GetChangedOemSettings(printer)).Count());
+
+					// open menu again and check that warning is now visible
+					testRunner.OpenPrintPopupMenu()
+						.ClickByName(ValidationErrors.SettingsUpdateAvailable + " Button");
+
+					testRunner.ClickByName(SettingsKey.layer_height + " Update");
+
+					Assert.AreEqual(1, (await ProfileManager.GetChangedOemSettings(printer)).Count());
+
+					testRunner.ClickByName("Cancel Wizard Button");
+
+					testRunner.OpenPrintPopupMenu();
+					Assert.IsTrue(testRunner.NameExists(expectedWarningName, 1));
+
+					// close the menu
+					testRunner.ClickByName("PartPreviewContent")
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
+
+					// open the menu button
+					testRunner.ClickByName("Printer Overflow Menu");
+					testRunner.ClickByName("Update Settings... Menu Item");
+
+					testRunner.ClickByName(SettingsKey.first_layer_height + " Update");
+
+					// accept the last option
+					Assert.AreEqual(0, (await ProfileManager.GetChangedOemSettings(printer)).Count());
+				}
 			}, maxTimeToRun: 120);
 		}
 

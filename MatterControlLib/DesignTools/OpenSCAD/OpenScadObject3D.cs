@@ -35,8 +35,11 @@ namespace MatterHackers.MatterControl.Library
 	public class OpenScadObject3D : Object3D
 	{
 		public string AssetName { get; set; }
+
 		public string AssetUrl { get; set; }
-		public Dictionary<string, string> Variables = new Dictionary<string, string>();
+
+		public Dictionary<string, string> Variables { get; set; } = new Dictionary<string, string>();
+
 		public string ScriptPath { get; set; }
 	}
 
