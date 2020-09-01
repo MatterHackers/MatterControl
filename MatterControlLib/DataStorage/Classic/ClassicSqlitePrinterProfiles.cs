@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			}
 
 			// Import macros from the database
-			var allMacros =  Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
+			var allMacros = Datastore.Instance.dbSQLite.Query<CustomCommands>("SELECT * FROM CustomCommands WHERE PrinterId = " + printer.Id);
 			printerSettings.Macros = allMacros.Select(macro => new GCodeMacro()
 			{
 				GCode = macro.Value.Trim(),
@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			printerSettings.OemLayer[SettingsKey.layer_to_pause] = "";
 
 			// TODO: Where can we find CalibrationFiiles in the current model?
-			//layeredProfile.SetActiveValue(""calibration_files"", ???);
+			// layeredProfile.SetActiveValue(""calibration_files"", ???);
 
 			printerSettings.ID = printer.Id.ToString();
 
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 		private static void LoadMaterialSettings(PrinterSettings layeredProfile, Printer printer)
 		{
 			var materialAssignments = printer.MaterialCollectionIds?.Split(',');
-			if(materialAssignments == null)
+			if (materialAssignments == null)
 			{
 				return;
 			}
