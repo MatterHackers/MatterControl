@@ -110,8 +110,12 @@ namespace MatterHackers.MatterControl
 
 		private async void AddUpgradeInfoPannel(GuiWidget generalPanel)
 		{
-			generalPanel.AddChild(new WrappedTextWidget(@"The following settings have had their default values changed and should be updated.
-Updating the default will not change any other overrides that you may have applied.".Localize(), pointSize: 11)
+			var make = printer.Settings.GetValue(SettingsKey.make);
+			var model = printer.Settings.GetValue(SettingsKey.model);
+			var message = $"The default settings for the {make} {model} have been updated.";
+			message += "\nBelow you can find a list of each setting that has changed.".Localize();
+			message += "\nUpdating the default setting will not change any other overrides that you may have applied.".Localize();
+			generalPanel.AddChild(new WrappedTextWidget(message, pointSize: 11)
 			{
 				Margin = new BorderDouble(5, 15),
 				TextColor = theme.TextColor
@@ -119,8 +123,6 @@ Updating the default will not change any other overrides that you may have appli
 
 			int tabIndex = 0;
 
-			var make = printer.Settings.GetValue(SettingsKey.make);
-			var model = printer.Settings.GetValue(SettingsKey.model);
 			var serverOemSettings = await ProfileManager.LoadOemSettingsAsync(OemSettings.Instance.OemProfiles[make][model],
 				make,
 				model);
