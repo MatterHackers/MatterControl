@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			bool containerSupportsEdits = activeContainer is ILibraryWritableContainer;
 
-			//searchInput.Text = activeContainer.KeywordFilter;
+			// searchInput.Text = activeContainer.KeywordFilter;
 			breadCrumbWidget.SetContainer(activeContainer);
 
 			activeContainer.ContentChanged += UpdateStatus;
@@ -436,6 +436,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			ResetButton.ToolTipText = "Clear".Localize();
 
 			this.AddChild(ResetButton);
+		}
+
+		public override void OnLoad(EventArgs args)
+		{
+			TextEditWidget.Focus();
+			base.OnLoad(args);
 		}
 
 		public override string Text

@@ -208,10 +208,14 @@ namespace MatterHackers.MatterControl
 						if (destIsMaterial)
 						{
 							printer.Settings.MaterialLayers.Add(printerSettingsLayer);
+							var newMaterial = printer.Settings.MaterialLayers[printer.Settings.MaterialLayers.Count - 1];
+							printer.Settings.SetValue(SettingsKey.active_material_key, newMaterial.LayerID);
 						}
 						else
 						{
 							printer.Settings.QualityLayers.Add(printerSettingsLayer);
+							var newQuality = printer.Settings.QualityLayers[printer.Settings.QualityLayers.Count - 1];
+							printer.Settings.SetValue(SettingsKey.active_quality_key, newQuality.LayerID);
 						}
 					}
 					else

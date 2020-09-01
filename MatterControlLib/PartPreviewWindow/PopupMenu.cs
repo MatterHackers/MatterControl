@@ -312,12 +312,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						new MatePoint(subMenuItemButton)
 						{
 							Mate = new MateOptions(MateEdge.Right, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Left, MateEdge.Top)
+							AltMate = new MateOptions(MateEdge.Left, MateEdge.Bottom)
 						},
 						new MatePoint(subMenu)
 						{
 							Mate = new MateOptions(MateEdge.Left, MateEdge.Top),
-							AltMate = new MateOptions(MateEdge.Right, MateEdge.Top)
+							AltMate = new MateOptions(MateEdge.Right, MateEdge.Bottom)
 						});
 				});
 

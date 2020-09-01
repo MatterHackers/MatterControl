@@ -35,8 +35,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class PresetsContext
 	{
 		public List<PrinterSettingsLayer> PresetLayers { get; }
+
 		public PrinterSettingsLayer PersistenceLayer { get; set; }
+
 		public Action<string> SetAsActive { get; set; }
+
 		public Action DeleteLayer { get; set; }
 
 		public NamedSettingsLayers LayerType { get; set; }

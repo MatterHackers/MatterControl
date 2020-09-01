@@ -83,14 +83,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(top: 6),
 				Padding = new BorderDouble(left: (accentColor != Color.Transparent) ? 6 : 0)
 			};
-			pullDownContainer.AddChild(this.GetPulldownContainer());
+			pullDownContainer.AddChild(this.NewPulldownContainer());
 			this.AddChild(pullDownContainer);
 
 			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
 		}
 
-		public FlowLayoutWidget GetPulldownContainer()
+		private FlowLayoutWidget NewPulldownContainer()
 		{
 			dropDownList = CreateDropdown();
 
@@ -422,7 +422,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private void RebuildDropDownList()
 		{
 			pullDownContainer.CloseAllChildren();
-			pullDownContainer.AddChild(this.GetPulldownContainer());
+			pullDownContainer.AddChild(this.NewPulldownContainer());
 		}
 
 		private void SettingsLayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
