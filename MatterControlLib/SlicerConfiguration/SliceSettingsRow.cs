@@ -286,17 +286,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					};
 				}
 
-				if (enableClearMaterial || enableClearQuality || enableClearUser)
+				var canSaveDefault = !SettingIsOem();
+				var isPrinterSetting = PrinterSettings.Layout.Printer.ContainsKey(settingName);
+				var canSaveQuality = !isPrinterSetting && printer.Settings.QualityLayer != null && !SettingIsSameAsLayer(printer.Settings.QualityLayer);
+				var canSaveMaterial = !isPrinterSetting && printer.Settings.MaterialLayer != null && !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
+
+				if (canSaveDefault || canSaveQuality || canSaveMaterial)
 				{
 					popupMenu.CreateSeparator();
 
 					popupMenu.CreateSubMenu("Save to", menuTheme, (subMenu) =>
 					{
-					// add menu to set default
-					{
+						// add menu to set default
+						{
 							var setAsDefaultMenuItem = subMenu.CreateMenuItem("Printer Default".Localize());
-							setAsDefaultMenuItem.Enabled = !SettingIsOem(); // check if the settings is already the default
-						setAsDefaultMenuItem.Click += (s, e) =>
+							setAsDefaultMenuItem.Enabled = canSaveDefault; // check if the settings is already the default
+							setAsDefaultMenuItem.Click += (s, e) =>
 							{
 								printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
 								UpdateStyle();
@@ -304,11 +309,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							};
 						}
 
-					// add menu item to set quality
-					{
+						// add menu item to set quality
+						{
 							var setAsQualityMenuItem = subMenu.CreateMenuItem("Quality Setting".Localize());
-							setAsQualityMenuItem.Enabled = printer.Settings.QualityLayer != null
-								&& !SettingIsSameAsLayer(printer.Settings.QualityLayer);
+							setAsQualityMenuItem.Enabled = canSaveQuality;
 							setAsQualityMenuItem.Click += (s, e) =>
 							{
 								printer.Settings.QualityLayer[settingName] = printer.Settings.GetValue(settingName);
@@ -318,11 +322,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							};
 						}
 
-					// add menu item to set material
-					{
+						// add menu item to set material
+						{
 							var setAsMaterialMenuItem = subMenu.CreateMenuItem("Material Setting".Localize());
-							setAsMaterialMenuItem.Enabled = printer.Settings.MaterialLayer != null
-								&& !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
+							setAsMaterialMenuItem.Enabled = canSaveMaterial;
 							setAsMaterialMenuItem.Click += (s, e) =>
 							{
 								printer.Settings.MaterialLayer[settingName] = printer.Settings.GetValue(settingName);
