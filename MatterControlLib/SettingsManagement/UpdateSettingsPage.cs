@@ -174,7 +174,7 @@ Updating the default will not change any other overrides that you may have appli
 				currentText += ": " + category.Name + " > " + group.Name + " > " + settingData.PresentationName;
 
 				AddSetting(printer, currentText, setting.key, theme.SlightShade);
-				AddSetting(oemPrinter, "Will be update to:".Localize(), setting.key, Color.Transparent);
+				AddSetting(oemPrinter, "Will be updated to:".Localize(), setting.key, Color.Transparent);
 
 				var buttonContainer = new FlowLayoutWidget(FlowDirection.RightToLeft)
 				{
