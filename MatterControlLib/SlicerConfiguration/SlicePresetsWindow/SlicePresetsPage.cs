@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.AlwaysOnTopOfMain = true;
 
 			this.WindowTitle = "Slice Presets Editor".Localize();
-			this.WindowSize = new Vector2(640, 480);
+			this.WindowSize = new Vector2(640 * DeviceScale, 480 * DeviceScale);
 			this.AnchorAll();
 
 			this.headerRow.Visible = false;
@@ -67,6 +67,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				presetsContext.LayerType.ToString() + " Name",
 				boldFont: true,
 				emptyText: "Setting Name".Localize());
+
 			inlineNameEdit.ValueChanged += (s, e) =>
 			{
 				printer.Settings.SetValue(SettingsKey.layer_name, inlineNameEdit.Text, presetsContext.PersistenceLayer);
