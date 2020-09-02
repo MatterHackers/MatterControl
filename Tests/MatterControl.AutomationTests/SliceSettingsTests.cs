@@ -455,6 +455,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(4, layerHeightChangedCount, "Changed to standard.");
 				Assert.AreEqual(theme.PresetColors.QualityPreset, indicator.BackgroundColor);
 
+				// TODO: delete one of the settings
+				// asserts that the deleted setting has been removed from the list
+
 				return Task.CompletedTask;
 			}, maxTimeToRun: 1000);
 		}
