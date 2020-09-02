@@ -402,6 +402,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			{
 				testRunner.AddAndSelectPrinter();
 
+				var printer = testRunner.FirstPrinter();
+
+				printer.Settings.OemLayer[SettingsKey.layer_height] = ".2";
+
 				int layerHeightChangedCount = 0;
 
 				PrinterSettings.AnyPrinterSettingChanged += (s, stringEvent) =>
@@ -415,27 +419,47 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 				};
 
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
 				// Navigate to Local Library
 				testRunner.SwitchToSliceSettings();
 
 				// Navigate to General Tab -> Layers / Surface Tab
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "layer_height");
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.layer_height);
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
-				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("Fine Menu");
-				testRunner.Delay(.5);
-				Assert.AreEqual(1, layerHeightChangedCount, "Changed to fine.");
+				var theme = ApplicationController.Instance.Theme;
+				var indicator = testRunner.GetWidgetByName("Layer Thickness OverrideIndicator", out _);
 
-				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("Standard Menu");
-				testRunner.Delay(.5);
+				Assert.AreEqual(Color.Transparent, indicator.BackgroundColor);
+
+				testRunner.ClickByName("Quality")
+					.ClickByName("Fine Menu")
+					.Delay(.5);
+				Assert.AreEqual(1, layerHeightChangedCount, "Changed to fine.");
+				Assert.AreEqual(theme.PresetColors.QualityPreset, indicator.BackgroundColor);
+
+				testRunner.ClickByName("Quality")
+					.ClickByName("Standard Menu")
+					.Delay(.5);
 				Assert.AreEqual(2, layerHeightChangedCount, "Changed to standard.");
+				Assert.AreEqual(theme.PresetColors.QualityPreset, indicator.BackgroundColor);
+
+				testRunner.ClickByName("Quality")
+					.ClickByName("- none - Menu Item")
+					.Delay(.5);
+				Assert.AreEqual(Color.Transparent, indicator.BackgroundColor);
+				Assert.AreEqual(3, layerHeightChangedCount, "Changed to - none -.");
+
+				testRunner.ClickByName("Quality")
+					.ClickByName("Standard Menu")
+					.Delay(.5);
+				Assert.AreEqual(4, layerHeightChangedCount, "Changed to standard.");
+				Assert.AreEqual(theme.PresetColors.QualityPreset, indicator.BackgroundColor);
+
+				// TODO: delete one of the settings
+				// asserts that the deleted setting has been removed from the list
 
 				return Task.CompletedTask;
-			}, overrideWidth: 1224, overrideHeight: 900);
+			}, maxTimeToRun: 1000);
 		}
 
 		[Test]

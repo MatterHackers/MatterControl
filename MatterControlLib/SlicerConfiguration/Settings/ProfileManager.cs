@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string OpenTabsPath => Path.Combine(UserProfilesDirectory, "opentabs.json");
 
 		/// <summary>
-		/// The user specific path to the Profiles document
+		/// Gets the user specific path to the Profiles document
 		/// </summary>
 		[JsonIgnore]
 		public string ProfilesDocPath => GetProfilesDocPathForUser(this.UserName);
@@ -118,7 +118,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return userProfilesDirectory;
 		}
 
-		private static Dictionary<string,  List<(string key, string currentValue, string newValue)>> oemSettingsNeedingUpdateCache 
+		private static Dictionary<string,  List<(string key, string currentValue, string newValue)>> oemSettingsNeedingUpdateCache
 			= new Dictionary<string, List<(string key, string currentValue, string newValue)>>();
 
 		public static IEnumerable<(string key, string currentValue, string newValue)> GetOemSettingsNeedingUpdate(PrinterConfig printer)
@@ -129,8 +129,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				ProfileManager.oemSettingsNeedingUpdateCache[key] = await GetChangedOemSettings(printer);
 			});
 
-			List<(string key, string currentValue, string newValue)> cache;
-			if (oemSettingsNeedingUpdateCache.TryGetValue(key, out cache))
+			if (oemSettingsNeedingUpdateCache.TryGetValue(key, out List<(string key, string currentValue, string newValue)> cache))
 			{
 				foreach (var item in cache)
 				{
@@ -487,8 +486,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					printerSettings.SetValue(SettingsKey.printer_name, printerInfo.Name);
 
 					// Add any setting value to the OemLayer to pass the .PrinterSelected property
-					printerSettings.OemLayer = new PrinterSettingsLayer();
-					printerSettings.OemLayer.Add("empty", "setting");
+					printerSettings.OemLayer = new PrinterSettingsLayer
+					{
+						{ "empty", "setting" }
+					};
 					printerSettings.Save(userDrivenChange: false);
 				}
 
@@ -647,10 +648,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 						bool containsValidSetting = false;
 
-						printerSettings.OemLayer = new PrinterSettingsLayer();
-
-						printerSettings.OemLayer[SettingsKey.make] = "Other";
-						printerSettings.OemLayer[SettingsKey.model] = "Other";
+						printerSettings.OemLayer = new PrinterSettingsLayer
+						{
+							[SettingsKey.make] = "Other",
+							[SettingsKey.model] = "Other"
+						};
 
 						foreach (var item in settingsToImport)
 						{
@@ -792,7 +794,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void Printer_SettingsChanged(object sender, StringEventArgs e)
 		{
-			var settings = (sender as PrinterSettings);
+			var settings = sender as PrinterSettings;
 			string printerID = settings?.ID;
 
 			if (string.IsNullOrWhiteSpace(printerID))
@@ -834,7 +836,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public void Save()
 		{
-			lock(writeLock)
+			lock (writeLock)
 			{
 				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Formatting.Indented));
 			}

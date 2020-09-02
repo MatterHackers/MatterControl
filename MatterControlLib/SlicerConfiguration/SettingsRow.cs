@@ -99,7 +99,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Absolute,
 						Width = 3,
-						Margin = new BorderDouble(right: 6)
+						Margin = new BorderDouble(right: 6),
+						Name = $"{title} OverrideIndicator",
 					});
 				}
 
