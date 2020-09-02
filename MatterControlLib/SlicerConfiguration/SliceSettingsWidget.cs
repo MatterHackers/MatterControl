@@ -627,6 +627,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			bool fullRowSelect = settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX;
 			var settingsRow = new SliceSettingsRow(printer, settingsContext, settingData, theme, fullRowSelect: fullRowSelect);
 
+			void UpdateStyle(object s, StringEventArgs e)
+			{
+				if (e.Data == settingData.SlicerConfigName)
+				{
+					settingsRow.UpdateStyle();
+				}
+			}
+
+			printer.Settings.SettingChanged += UpdateStyle;
+
+			settingsRow.Closed += (s, e) => printer.Settings.SettingChanged -= UpdateStyle;
+
 			switch (settingData.DataEditType)
 			{
 				case SliceSettingData.DataEditTypes.INT:

@@ -351,6 +351,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var activeSettings = printer.Settings;
 			MenuItem item = (MenuItem)sender;
 
+			PrinterSettingsLayer prevSelection = null;
+			PrinterSettingsLayer nextSelection = null;
+
 			if (layerType == NamedSettingsLayers.Material)
 			{
 				if (extruderIndex == 0)
@@ -392,10 +395,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (activeSettings.ActiveQualityKey != item.Value)
 				{
+					prevSelection = activeSettings.QualityLayer;
 					// Restore deactivated user overrides by iterating the Quality preset we're coming off of
 					activeSettings.RestoreConflictingUserOverrides(activeSettings.QualityLayer);
 
 					activeSettings.ActiveQualityKey = item.Value;
+					nextSelection = activeSettings.QualityLayer;
 
 					// Deactivate conflicting user overrides by iterating the Quality preset we've just switched to
 					activeSettings.DeactivateConflictingUserOverrides(activeSettings.QualityLayer);
@@ -407,12 +412,34 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			UiThread.RunOnIdle(() =>
 			{
+				var settingsToUpdate = new HashSet<string>();
 				foreach (var keyName in PrinterSettings.KnownSettings)
 				{
 					if (settingBeforeChange[keyName] != printer.Settings.GetValue(keyName))
 					{
-						printer.Settings.OnSettingChanged(keyName);
+						settingsToUpdate.Add(keyName);
 					}
+				}
+
+				if (prevSelection != null)
+				{
+					foreach (var kvp in prevSelection)
+					{
+						settingsToUpdate.Add(kvp.Key);
+					}
+				}
+
+				if (nextSelection != null)
+				{
+					foreach (var kvp in nextSelection)
+					{
+						settingsToUpdate.Add(kvp.Key);
+					}
+				}
+
+				foreach (var keyName in settingsToUpdate)
+				{
+					printer.Settings.OnSettingChanged(keyName);
 				}
 			});
 
