@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.Library
 			OnContentChanged();
 		}
 
-		private List<(string name, string url)> imageCache;
+		private static Dictionary<string, List<(string name, string url)>> imageUrlCaches = new Dictionary<string, List<(string name, string url)>>();
 
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
@@ -138,13 +138,17 @@ namespace MatterHackers.MatterControl.Library
 
 			if (existingThumbnail.Result == null)
 			{
-				LoadImageCache();
+				var imageUrlCache = LoadImageUrlCache();
 
-				foreach (var entry in imageCache)
+				foreach (var imageUrl in imageUrlCache)
 				{
-					if (entry.name.Contains(item.ID))
+					if (imageUrl.name.Contains(item.ID))
 					{
 						// download the image and cache it
+						var image = new ImageBuffer(1, 1);
+						image.SetRecieveBlender(new BlenderPreMultBGRA());
+						WebCache.RetrieveImageAsync(image, imageUrl.url, false);
+						return Task.FromResult<ImageBuffer>(image);
 					}
 				}
 			}
@@ -152,34 +156,45 @@ namespace MatterHackers.MatterControl.Library
 			return existingThumbnail;
 		}
 
-		private void LoadImageCache()
+		private List<(string name, string url)> LoadImageUrlCache()
 		{
-			if (imageCache == null)
+			lock (locker)
 			{
-				imageCache = new List<(string name, string url)>();
+				var key = $"{Account}:{Repository}";
 
-				// Check if we can find the thumbnail in the GitHub .images directory
-				var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/.images";
-				// get the directory contents
-				WebCache.RetrieveText(uri,
-					(content) =>
-					{
-						lock (locker)
+				if (!imageUrlCaches.ContainsKey(key))
+				{
+					var imageUrlCache = new List<(string name, string url)>();
+
+					// Check if we can find the thumbnail in the GitHub .images directory
+					var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/.images";
+					// get the directory contents
+					WebCache.RetrieveText(uri,
+						(content) =>
 						{
-							FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
-
-							// read in data
-							foreach (FileInfo file in dirContents)
+							lock (locker)
 							{
-								if (file.type == "file")
+								FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
+
+								// read in data
+								foreach (FileInfo file in dirContents)
 								{
-									imageCache.Add((file.name, file.download_url));
+									if (file.type == "file")
+									{
+										imageUrlCache.Add((file.name, file.download_url));
+									}
 								}
+
+								imageUrlCaches[key] = imageUrlCache;
 							}
-						}
-					},
-					false,
-					AddCromeHeaders);
+						},
+						false,
+						AddCromeHeaders);
+
+					imageUrlCaches[key] = imageUrlCache;
+				}
+
+				return imageUrlCaches[key];
 			}
 		}
 
@@ -243,16 +258,16 @@ namespace MatterHackers.MatterControl.Library
 
 		public class GitHubContainerLink : ILibraryContainerLink
 		{
-			protected readonly string owner;
-			protected readonly string repository;
-			protected readonly string path;
+			private readonly string owner;
+			private readonly string repository;
+			protected string Path { get; }
 
 			public GitHubContainerLink(string containerName, string owner, string repository, string path)
 			{
 				this.Name = containerName;
 				this.owner = owner;
 				this.repository = repository;
-				this.path = path;
+				this.Path = path;
 			}
 
 			public bool IsReadOnly { get; set; } = true;
@@ -262,7 +277,7 @@ namespace MatterHackers.MatterControl.Library
 			public string ID => Name
 				.GetLongHashCode(owner
 					.GetLongHashCode(repository
-						.GetLongHashCode(path
+						.GetLongHashCode(Path
 							.GetLongHashCode()))).ToString();
 
 			public string Name { get; }
@@ -277,7 +292,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public virtual Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, path));
+				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, Path));
 			}
 		}
 
@@ -290,7 +305,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public override async Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				var content = WebCache.GetCachedText(path, false, AddCromeHeaders);
+				var content = WebCache.GetCachedText(Path, false, AddCromeHeaders);
 				return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
 			}
 		}
