@@ -33,6 +33,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using Newtonsoft.Json;
 
@@ -118,7 +119,6 @@ namespace MatterHackers.MatterControl.Library
 					}
 					else if (file.name.ToLower() == "index.md")
 					{
-
 					}
 					else
 					{
@@ -128,6 +128,59 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 			OnContentChanged();
+		}
+
+		private List<(string name, string url)> imageCache;
+
+		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		{
+			var existingThumbnail = base.GetThumbnail(item, width, height);
+
+			if (existingThumbnail.Result == null)
+			{
+				LoadImageCache();
+
+				foreach (var entry in imageCache)
+				{
+					if (entry.name.Contains(item.ID))
+					{
+						// download the image and cache it
+					}
+				}
+			}
+
+			return existingThumbnail;
+		}
+
+		private void LoadImageCache()
+		{
+			if (imageCache == null)
+			{
+				imageCache = new List<(string name, string url)>();
+
+				// Check if we can find the thumbnail in the GitHub .images directory
+				var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/.images";
+				// get the directory contents
+				WebCache.RetrieveText(uri,
+					(content) =>
+					{
+						lock (locker)
+						{
+							FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
+
+							// read in data
+							foreach (FileInfo file in dirContents)
+							{
+								if (file.type == "file")
+								{
+									imageCache.Add((file.name, file.download_url));
+								}
+							}
+						}
+					},
+					false,
+					AddCromeHeaders);
+			}
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
