@@ -169,15 +169,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			oemSettingsNeedingUpdateCache.Sort((a, b) =>
 			{
-				var aData = PrinterSettings.SettingsData[a.key];
-				var aGroup = aData.OrganizerGroup;
-				var aCategory = aGroup.Category;
-				var aInfo = $"{aCategory.Name}:{aGroup.Name}:{aData.PresentationName}";
+				var aInfo = "Unknown";
+				if (PrinterSettings.SettingsData.ContainsKey(a.key))
+				{
+					var aData = PrinterSettings.SettingsData[a.key];
+					var aGroup = aData.OrganizerGroup;
+					var aCategory = aGroup?.Category;
+					aInfo = $"{aCategory?.Name}:{aGroup?.Name}:{aData.PresentationName}";
+				}
 
-				var bData = PrinterSettings.SettingsData[b.key];
-				var bGroup = bData.OrganizerGroup;
-				var bCategory = bGroup.Category;
-				var bInfo = $"{bCategory.Name}:{bGroup.Name}:{bData.PresentationName}";
+				var bInfo = "Unknown";
+				if (PrinterSettings.SettingsData.ContainsKey(b.key))
+				{
+					var bData = PrinterSettings.SettingsData[b.key];
+					var bGroup = bData.OrganizerGroup;
+					var bCategory = bGroup?.Category;
+					bInfo = $"{bCategory?.Name}:{bGroup?.Name}:{bData.PresentationName}";
+				}
 
 				return string.Compare(aInfo, bInfo);
 			});
