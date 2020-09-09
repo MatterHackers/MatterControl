@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public string UserName { get; set; }
 
 		/// <summary>
-		/// The user specific path to the Profiles directory
+		/// Gets the user specific path to the Profiles directory
 		/// </summary>
 		[JsonIgnore]
 		private string UserProfilesDirectory => GetProfilesDirectoryForUser(this.UserName);
@@ -157,13 +157,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				SettingsKey.extruder_offset,
 			};
 
+			var serverValuesToIgnore = new Dictionary<string, string>()
+			{
+				[SettingsKey.probe_offset] = "0,0,0"
+			};
+
 			foreach (var localOemSetting in printer.Settings.OemLayer)
 			{
-				if (!ignoreSettings.Contains(localOemSetting.Key)
-					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(localOemSetting.Key)
-					&& serverOemSettings.GetValue(localOemSetting.Key) != localOemSetting.Value)
+				var key = localOemSetting.Key;
+				if (!ignoreSettings.Contains(key)
+					&& !PrinterSettingsExtensions.SettingsToReset.ContainsKey(key)
+					&& serverOemSettings.GetValue(key) != localOemSetting.Value)
 				{
-					oemSettingsNeedingUpdateCache.Add((localOemSetting.Key, localOemSetting.Value, serverOemSettings.GetValue(localOemSetting.Key)));
+					var serverSetting = serverOemSettings.GetValue(localOemSetting.Key);
+					if (!serverValuesToIgnore.ContainsKey(key)
+						|| serverSetting != serverValuesToIgnore[key])
+					{
+						oemSettingsNeedingUpdateCache.Add((localOemSetting.Key, localOemSetting.Value, serverSetting));
+					}
 				}
 			}
 
