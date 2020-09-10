@@ -33,6 +33,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using Newtonsoft.Json;
 
@@ -118,7 +119,6 @@ namespace MatterHackers.MatterControl.Library
 					}
 					else if (file.name.ToLower() == "index.md")
 					{
-
 					}
 					else
 					{
@@ -128,6 +128,74 @@ namespace MatterHackers.MatterControl.Library
 			}
 
 			OnContentChanged();
+		}
+
+		private static Dictionary<string, List<(string name, string url)>> imageUrlCaches = new Dictionary<string, List<(string name, string url)>>();
+
+		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
+		{
+			var existingThumbnail = base.GetThumbnail(item, width, height);
+
+			if (existingThumbnail.Result == null)
+			{
+				var imageUrlCache = LoadImageUrlCache();
+
+				foreach (var imageUrl in imageUrlCache)
+				{
+					if (imageUrl.name.Contains(item.ID))
+					{
+						// download the image and cache it
+						var image = new ImageBuffer(1, 1);
+						image.SetRecieveBlender(new BlenderPreMultBGRA());
+						WebCache.RetrieveImageAsync(image, imageUrl.url, false);
+						return Task.FromResult<ImageBuffer>(image);
+					}
+				}
+			}
+
+			return existingThumbnail;
+		}
+
+		private List<(string name, string url)> LoadImageUrlCache()
+		{
+			lock (locker)
+			{
+				var key = $"{Account}:{Repository}";
+
+				if (!imageUrlCaches.ContainsKey(key))
+				{
+					var imageUrlCache = new List<(string name, string url)>();
+
+					// Check if we can find the thumbnail in the GitHub .images directory
+					var uri = $"https://api.github.com/repos/{Account}/{Repository}/contents/.images";
+					// get the directory contents
+					WebCache.RetrieveText(uri,
+						(content) =>
+						{
+							lock (locker)
+							{
+								FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(content);
+
+								// read in data
+								foreach (FileInfo file in dirContents)
+								{
+									if (file.type == "file")
+									{
+										imageUrlCache.Add((file.name, file.download_url));
+									}
+								}
+
+								imageUrlCaches[key] = imageUrlCache;
+							}
+						},
+						false,
+						AddCromeHeaders);
+
+					imageUrlCaches[key] = imageUrlCache;
+				}
+
+				return imageUrlCaches[key];
+			}
 		}
 
 		public static void AddCromeHeaders(HttpRequestMessage request)
@@ -190,16 +258,17 @@ namespace MatterHackers.MatterControl.Library
 
 		public class GitHubContainerLink : ILibraryContainerLink
 		{
-			protected readonly string owner;
-			protected readonly string repository;
-			protected readonly string path;
+			private readonly string owner;
+			private readonly string repository;
+
+			protected string Path { get; }
 
 			public GitHubContainerLink(string containerName, string owner, string repository, string path)
 			{
 				this.Name = containerName;
 				this.owner = owner;
 				this.repository = repository;
-				this.path = path;
+				this.Path = path;
 			}
 
 			public bool IsReadOnly { get; set; } = true;
@@ -209,7 +278,7 @@ namespace MatterHackers.MatterControl.Library
 			public string ID => Name
 				.GetLongHashCode(owner
 					.GetLongHashCode(repository
-						.GetLongHashCode(path
+						.GetLongHashCode(Path
 							.GetLongHashCode()))).ToString();
 
 			public string Name { get; }
@@ -224,7 +293,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public virtual Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, path));
+				return Task.FromResult<ILibraryContainer>(new GitHubContainer(Name, owner, repository, Path));
 			}
 		}
 
@@ -237,7 +306,7 @@ namespace MatterHackers.MatterControl.Library
 
 			public override async Task<ILibraryContainer> GetContainer(Action<double, string> reportProgress)
 			{
-				var content = WebCache.GetCachedText(path, false, AddCromeHeaders);
+				var content = WebCache.GetCachedText(Path, false, AddCromeHeaders);
 				return await LibraryJsonFile.ContainerFromJson(Name, content).GetContainer(null);
 			}
 		}

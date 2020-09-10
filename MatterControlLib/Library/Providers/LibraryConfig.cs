@@ -140,24 +140,35 @@ namespace MatterHackers.MatterControl.Library
 
 		public ILibraryContainer RootLibaryContainer { get; }
 
-		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer thumbnail, int thumbWidth, int thumbHeight)
+		public ImageBuffer EnsureCorrectThumbnailSizing(ImageBuffer originalThumbnail, int thumbWidth, int thumbHeight, Action<ImageBuffer> resizedImage)
 		{
+			var processingImage = originalThumbnail;
 			// Resize canvas to target as fallback
-			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
+			if (processingImage.Width < thumbWidth || processingImage.Height < thumbHeight)
 			{
-				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+				processingImage = LibraryListView.ResizeCanvas(processingImage, thumbWidth, thumbHeight);
 			}
-			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
+			else if (processingImage.Width > thumbWidth || processingImage.Height > thumbHeight)
 			{
-				thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
-			}
-
-			if (GuiWidget.DeviceScale != 1)
-			{
-				thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+				processingImage = LibraryProviderHelpers.ResizeImage(processingImage, thumbWidth, thumbHeight);
 			}
 
-			return thumbnail;
+			if (GuiWidget.DeviceScale != 1
+				&& processingImage.Width != thumbWidth * GuiWidget.DeviceScale)
+			{
+				processingImage = processingImage.CreateScaledImage(GuiWidget.DeviceScale);
+			}
+
+			originalThumbnail.ImageChanged += (s, e) =>
+			{
+				// this happens when we get an updated image from a web request
+				UiThread.RunOnIdle(() =>
+				{
+					resizedImage?.Invoke(originalThumbnail.CreateScaledImage(GuiWidget.DeviceScale));
+				});
+			};
+
+			return processingImage;
 		}
 
 		public IContentProvider GetContentProvider(ILibraryItem item)
@@ -206,7 +217,10 @@ namespace MatterHackers.MatterControl.Library
 						return;
 					}
 
-					icon = await Task.Run(() => this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight));
+					icon = await Task.Run(() => this.EnsureCorrectThumbnailSizing(icon, thumbWidth, thumbHeight, (image) =>
+					{
+						setItemThumbnail(image);
+					}));
 					thumbnailListener?.Invoke(icon);
 				}
 			}

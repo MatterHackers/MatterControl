@@ -121,6 +121,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						requeueRaytraceOnDraw = false;
 						raytracePending = false;
 
+						if (GuiWidget.DeviceScale != 1
+							&& thumbnail.Width != thumbWidth * GuiWidget.DeviceScale)
+						{
+							thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+						}
+
 						if (thumbnail.Width != thumbWidth
 						|| thumbnail.Height != thumbHeight)
 						{
@@ -199,7 +205,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				ApplicationController.Instance.Library.EnsureCorrectThumbnailSizing(
 					thumbnail,
 					thumbWidth,
-					thumbHeight));
+					thumbHeight,
+					(image) =>
+					{
+						SetSizedThumbnail(image);
+					}));
 		}
 
 		private void SetSizedThumbnail(ImageBuffer thumbnail)
