@@ -401,7 +401,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		public static void ResizeCanvas(ImageBuffer originalImage, int width, int height)
+		public static ImageBuffer ResizeCanvas(ImageBuffer originalImage, int width, int height)
 		{
 			var destImage = new ImageBuffer(width, height, 32, originalImage.GetRecieveBlender());
 
@@ -419,9 +419,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			renderGraphics.FillRectangle(center, Color.Transparent);
 
-			originalImage.Allocate(width, height, 32, originalImage.GetRecieveBlender());
-
-			originalImage.CopyFrom(destImage);
+			return destImage;
 		}
 
 		private void ListViewItem_DoubleClick(object sender, MouseEventArgs e)

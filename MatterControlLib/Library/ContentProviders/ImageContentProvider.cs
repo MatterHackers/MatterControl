@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				var thumbnail = await LoadImage(item);
 				if (thumbnail != null)
 				{
-					LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
+					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
 
 					// Cache library thumbnail
 					AggContext.ImageIO.SaveImageData(
