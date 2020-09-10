@@ -504,7 +504,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					ShowIfSet = "!sla_printer",
-					DefaultValue = "2",
+					DefaultValue = "3",
 					Converter = new AsPercentOrDirect(),
 				},
 				new SliceSettingData()
