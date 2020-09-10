@@ -152,10 +152,16 @@ namespace MatterHackers.MatterControl.Library
 				LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
 			}
 
-			if (GuiWidget.DeviceScale != 1)
+			if (GuiWidget.DeviceScale != 1
+				&& thumbnail.Width != thumbWidth * GuiWidget.DeviceScale)
 			{
 				thumbnail.ScaleImage(GuiWidget.DeviceScale);
 			}
+
+			thumbnail.ImageChanged += (s, e) =>
+			{
+				thumbnail.ScaleImage(GuiWidget.DeviceScale);
+			};
 
 			return thumbnail;
 		}
