@@ -145,16 +145,16 @@ namespace MatterHackers.MatterControl.Library
 			// Resize canvas to target as fallback
 			if (thumbnail.Width < thumbWidth || thumbnail.Height < thumbHeight)
 			{
-				thumbnail = LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
+				LibraryListView.ResizeCanvas(thumbnail, thumbWidth, thumbHeight);
 			}
 			else if (thumbnail.Width > thumbWidth || thumbnail.Height > thumbHeight)
 			{
-				thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
+				LibraryProviderHelpers.ResizeImage(thumbnail, thumbWidth, thumbHeight);
 			}
 
 			if (GuiWidget.DeviceScale != 1)
 			{
-				thumbnail = thumbnail.CreateScaledImage(GuiWidget.DeviceScale);
+				thumbnail.ScaleImage(GuiWidget.DeviceScale);
 			}
 
 			return thumbnail;

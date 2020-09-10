@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 		/// <param name="targetWidth">The target width</param>
 		/// <param name="targetHeight">The target height</param>
 		/// <returns>A resized ImageBuffer constrained to the given bounds and centered on the new surface</returns>
-		public static ImageBuffer ResizeImage(ImageBuffer imageBuffer, int targetWidth, int targetHeight)
+		public static void ResizeImage(ImageBuffer imageBuffer, int targetWidth, int targetHeight)
 		{
 			var expectedSize = new Vector2((int)(targetWidth * GuiWidget.DeviceScale), (int)(targetHeight * GuiWidget.DeviceScale));
 
@@ -70,10 +70,8 @@ namespace MatterHackers.MatterControl.Library
 				var scaledImageBuffer = imageBuffer.CreateScaledImage(targetWidth, targetHeight);
 				scaledImageBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 
-				return scaledImageBuffer;
+				imageBuffer.CopyFrom(scaledImageBuffer);
 			}
-
-			return imageBuffer;
 		}
 	}
 }

@@ -260,6 +260,7 @@ namespace MatterHackers.MatterControl.Library
 		{
 			private readonly string owner;
 			private readonly string repository;
+
 			protected string Path { get; }
 
 			public GitHubContainerLink(string containerName, string owner, string repository, string path)

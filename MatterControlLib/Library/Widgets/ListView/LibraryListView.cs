@@ -401,8 +401,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		// TODO: ResizeCanvas is also colorizing thumbnails as a proof of concept
-		public static ImageBuffer ResizeCanvas(ImageBuffer originalImage, int width, int height)
+		public static void ResizeCanvas(ImageBuffer originalImage, int width, int height)
 		{
 			var destImage = new ImageBuffer(width, height, 32, originalImage.GetRecieveBlender());
 
@@ -413,17 +412,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			var y = height / 2 - originalImage.Height / 2;
 
 			var center = new RectangleInt(x, y + originalImage.Height, x + originalImage.Width, y);
-			// renderGraphics.FillRectangle(center, this.ThumbnailForeground);
 
 			renderGraphics.ImageRenderQuality = Graphics2D.TransformQuality.Best;
-
-			// originalImage = originalImage.Multiply(this.ThumbnailBackground);
 
 			renderGraphics.Render(originalImage, width / 2 - originalImage.Width / 2, height / 2 - originalImage.Height / 2);
 
 			renderGraphics.FillRectangle(center, Color.Transparent);
 
-			return destImage;
+			originalImage.Allocate(width, height, 32, originalImage.GetRecieveBlender());
+
+			originalImage.CopyFrom(destImage);
 		}
 
 		private void ListViewItem_DoubleClick(object sender, MouseEventArgs e)
