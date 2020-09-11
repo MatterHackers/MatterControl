@@ -27,7 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -35,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D
+	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier
 	{
 		public WedgeObject3D()
 		{
@@ -52,8 +55,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Width { get; set; } = 20;
+
 		public double Depth { get; set; } = 20;
+
 		public double Height { get; set; } = 20;
+
+		public bool Round { get; set; } = false;
+
+		public int RoundSegments { get; set; } = 15;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -71,6 +80,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
+
+			RoundSegments = agg_basics.Clamp(RoundSegments, 3, 360 / 4 - 2, ref valuesChanged);
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
+			}
+
 			using (RebuildLock())
 			{
 				using (new CenterAndHeightMaintainer(this))
@@ -78,6 +96,18 @@ namespace MatterHackers.MatterControl.DesignTools
 					var path = new VertexStorage();
 					path.MoveTo(0, 0);
 					path.LineTo(Width, 0);
+
+					if (Round)
+					{
+						var range = 360 / 4;
+						for (int i = 1; i < RoundSegments - 1; i++)
+						{
+							var angle = range / (RoundSegments - 1) * i;
+							var rad = MathHelper.DegreesToRadians(angle);
+							path.LineTo(Width - Math.Sin(rad) * Width, Height - Math.Cos(rad) * Height);
+						}
+					}
+
 					path.LineTo(0, Height);
 
 					Mesh = VertexSourceToMesh.Extrude(path, Depth);
@@ -88,6 +118,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 
 			return Task.CompletedTask;
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			if (change.Context.GetEditRow(nameof(RoundSegments)) is GuiWidget segmentsWidget)
+			{
+				segmentsWidget.Visible = Round;
+			}
 		}
 	}
 }

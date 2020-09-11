@@ -289,11 +289,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
-			boxCenter.Z += (10 + upArrowSize / 2) * distBetweenPixelsWorldSpace;
+			boxCenter.Z += (10 * GuiWidget.DeviceScale + upArrowSize / 2) * distBetweenPixelsWorldSpace;
 
 			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
-			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
-			TotalTransform = centerMatrix;
+			TotalTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace * GuiWidget.DeviceScale) * centerMatrix;
 
 			lines.Clear();
 			// left lines

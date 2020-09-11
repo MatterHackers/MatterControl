@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library
 
 		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
 
-		private static ImageBuffer defaultItemIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
+		public static ImageBuffer DefaultItemIcon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
 
 		private ILibraryContainer activeContainer;
 
@@ -278,7 +278,7 @@ namespace MatterHackers.MatterControl.Library
 			if (thumbnail == null)
 			{
 				// Use the listview defaults
-				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : defaultItemIcon).AlphaToPrimaryAccent();
+				thumbnail = ((libraryItem is ILibraryContainerLink) ? defaultFolderIcon : DefaultItemIcon).AlphaToPrimaryAccent();
 			}
 
 			// TODO: Resolve and implement
