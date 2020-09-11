@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.Library
 					if (imageUrl.name.Contains(item.ID))
 					{
 						// download the image and cache it
-						var image = new ImageBuffer(1, 1);
+						var image = new ImageBuffer(LibraryConfig.DefaultItemIcon);
 						image.SetRecieveBlender(new BlenderPreMultBGRA());
 						WebCache.RetrieveImageAsync(image, imageUrl.url, false);
 						return Task.FromResult<ImageBuffer>(image);
