@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (componentObject3D?.Finalized == false
 					|| !hideChildren)
 				{
-					foreach (var child in item.Children)
+					foreach (var child in item.Children.OrderBy(i => i.Name))
 					{
 						if (child != null
 							&& !child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())

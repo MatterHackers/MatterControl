@@ -29,7 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -58,9 +57,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private bool deferEditorTillMouseUp = false;
 
-		public readonly int EditButtonHeight = 44;
+		public int EditButtonHeight { get; set; } = 44;
 
-		private Color[] SelectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
+		private Color[] selectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
 		private Stopwatch timeSinceLastSpin = new Stopwatch();
 		private Stopwatch timeSinceReported = new Stopwatch();
 
@@ -415,17 +414,33 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Dictionary<IObject3D, TreeNode> treeNodesByObject = new Dictionary<IObject3D, TreeNode>();
 
+		private bool watingToScroll = false;
+
 		private void RebuildTree()
 		{
 			rebuildTreePending = false;
 			workspaceName.Text = sceneContext.Scene.Name ?? "";
+
+			if (!watingToScroll)
+			{
+				// This is a mess. The goal is that the tree view will not scroll as we add and remove items.
+				// This is better than always reseting to the top, but only a little.
+				watingToScroll = true;
+				beforeReubildScrollPosition = treeView.TopLeftOffset;
+
+				UiThread.RunOnIdle(() =>
+				{
+					treeView.TopLeftOffset = beforeReubildScrollPosition;
+					watingToScroll = false;
+				}, .5);
+			}
 
 			// Top level selection only - rebuild tree
 			treeNodeContainer.CloseAllChildren();
 
 			treeNodesByObject.Clear();
 
-			foreach (var child in sceneContext.Scene.Children)
+			foreach (var child in sceneContext.Scene.Children.OrderBy(i => i.Name))
 			{
 				if (child.GetType().GetCustomAttributes(typeof(HideFromTreeViewAttribute), true).Any())
 				{
@@ -444,6 +459,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				treeView.SelectedNode = treeNode;
 			}
+
+			treeView.TopLeftOffset = beforeReubildScrollPosition;
 
 			Invalidate();
 		}
@@ -1577,7 +1594,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_Invalidated(object sender, InvalidateArgs e)
 		{
-			if (Scene.Descendants().Count() != lastSceneDescendantsCount)
+			if (Scene.Descendants().Count() != lastSceneDescendantsCount
+				&& !rebuildTreePending)
 			{
 				rebuildTreePending = true;
 				UiThread.RunOnIdle(this.RebuildTree);
@@ -1675,6 +1693,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		
 		private InlineStringEdit workspaceName;
 		private int lastSceneDescendantsCount;
+		private Vector2 beforeReubildScrollPosition;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
