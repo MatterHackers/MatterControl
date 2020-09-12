@@ -139,51 +139,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static ObjectView BuildItemView(IObject3D item)
 		{
-			switch (item)
+			string GetArrayName(ArrayObject3D arrayItem)
 			{
-				case TransformWrapperObject3D transformWrapperObject3D:
-					return new ObjectView()
+				if (string.IsNullOrWhiteSpace(item.Name)
+					&& arrayItem?.SourceContainer?.Children?.Any() == true)
+				{
+					var childName = arrayItem.SourceContainer.Children.First().Name;
+					if (childName.Length > 20)
 					{
-						Children = transformWrapperObject3D.UntransformedChildren,
-						Name = item.Name,
-						Source = item
-					};
+						childName = childName.Substring(0, 20) + "...";
+					}
 
-				case ArrayLinearObject3D arrayLinear3D:
-					return new ObjectView()
-					{
-						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
-						Name = $"{arrayLinear3D.Name} ({arrayLinear3D.Count})",
-						Source = item
-					};
+					return $"{childName} - x{arrayItem.Count}";
+				}
 
-				case ArrayAdvancedObject3D arrayAdvanced3D:
-					return new ObjectView()
-					{
-						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
-						Name = $"{arrayAdvanced3D.Name} ({arrayAdvanced3D.Count})",
-						Source = item
-					};
+				return arrayItem.Name;
+			}
 
-				// TODO: array operations should only expose OperationSource
-				case ArrayRadialObject3D arrayRadial3D:
-					return new ObjectView()
-					{
-						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
-						Name = $"{arrayRadial3D.Name} ({arrayRadial3D.Count})",
-						Source = item
-					};
+			if (item is ArrayObject3D array)
+			{
+				return new ObjectView()
+				{
+					Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
+					Name = GetArrayName(array),
+					Source = item
+				};
+			}
+			else
+			{
+				switch (item)
+				{
+					case TransformWrapperObject3D transformWrapperObject3D:
+						return new ObjectView()
+						{
+							Children = transformWrapperObject3D.UntransformedChildren,
+							Name = item.Name,
+							Source = item
+						};
 
-				case OperationSourceContainerObject3D operationSourceContainerObject3D:
-					return new ObjectView()
-					{
-						Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
-						Name = operationSourceContainerObject3D.Name,
-						Source = item
-					};
+					case OperationSourceContainerObject3D operationSourceContainerObject3D:
+						return new ObjectView()
+						{
+							Children = item.Children.OfType<OperationSourceObject3D>().ToList(),
+							Name = operationSourceContainerObject3D.Name,
+							Source = item
+						};
 
-				default:
-					return new ObjectView(item);
+					default:
+						return new ObjectView(item);
+				}
 			}
 		}
 

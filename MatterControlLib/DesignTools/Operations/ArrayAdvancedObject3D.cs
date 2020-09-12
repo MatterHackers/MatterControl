@@ -36,7 +36,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayAdvancedObject3D : OperationSourceContainerObject3D
+	public class ArrayAdvancedObject3D : ArrayObject3D
 	{
 		public ArrayAdvancedObject3D()
 		{
@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public int Count { get; set; } = 3;
+		public override int Count { get; set; } = 3;
 
 		public Vector3 Offset { get; set; } = new Vector3(30, 0, 0);
 

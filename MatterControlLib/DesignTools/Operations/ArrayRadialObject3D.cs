@@ -42,7 +42,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : OperationSourceContainerObject3D, IEditorDraw
+	public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public int Count { get; set; } = 3;
+		public override int Count { get; set; } = 3;
 
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;

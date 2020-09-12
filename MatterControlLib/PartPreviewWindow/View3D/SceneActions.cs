@@ -261,9 +261,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var clonedItem = sourceItem.Clone();
 
 							clonedItem.Translate(xOffset);
-							// make the name unique
-							var newName = agg_basics.GetNonCollidingName(sourceItem.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
-							clonedItem.Name = newName;
+							// an empty string is used do denote special name processing for some container types
+							if (!string.IsNullOrWhiteSpace(sourceItem.Name))
+							{
+								// make the name unique
+								var newName = agg_basics.GetNonCollidingName(sourceItem.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
+								clonedItem.Name = newName;
+							}
 
 							// More useful if it creates the part in the exact position and then the user can move it.
 							// Consistent with other software as well. LBB 2017-12-02

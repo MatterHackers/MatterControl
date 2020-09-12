@@ -773,6 +773,7 @@ namespace MatterHackers.MatterControl
 							Action = (sceneContext) =>
 							{
 								var array = new ArrayLinearObject3D();
+								array.Name = ""; // this will get the default behavior of showing the child's name + a count
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png", 16, 16).SetPreMultiply(),
@@ -786,6 +787,7 @@ namespace MatterHackers.MatterControl
 							Action = (sceneContext) =>
 							{
 								var array = new ArrayRadialObject3D();
+								array.Name = ""; // this will get the default behavior of showing the child's name + a count
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png", 16, 16).SetPreMultiply(),
@@ -799,6 +801,7 @@ namespace MatterHackers.MatterControl
 							Action = (sceneContext) =>
 							{
 								var array = new ArrayAdvancedObject3D();
+								array.Name = ""; // this will get the default behavior of showing the child's name + a count
 								array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 							},
 							Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png", 16, 16).SetPreMultiply(),
