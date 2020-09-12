@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			foreach (var widget in this.ActionArea.Children.Where(c => !ignoredTypes.Contains(c.GetType())))
 			{
-				var totalX = widget.Width + widget.Margin.Width;
+				var totalX = widget.Width + widget.DeviceMarginAndBorder.Width;
 
 				withinLimits &= (accumulatedX + totalX / 2) <= maxRight;
 

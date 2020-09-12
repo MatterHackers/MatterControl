@@ -134,6 +134,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										{
 											childOperation.Action?.Invoke(sceneContext);
 										});
+
+										menuItem.Enabled = childOperation.IsEnabled(sceneContext);
+										menuItem.ToolTipText = childOperation.HelpText ?? "";
 									}
 								});
 						}
@@ -141,6 +144,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
 							menuItem.Click += (s, e) => operation.Action(sceneContext);
+							menuItem.Enabled = operation.IsEnabled(sceneContext);
+							menuItem.ToolTipText = operation.HelpText ?? "";
 						}
 					}
 				}
