@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl
 {
 	public class ExtensionsConfig
 	{
-		private List<IInteractionVolumeProvider> _iaVolumeProviders = new List<IInteractionVolumeProvider>();
+		private List<IObject3DControlProvider> _iaVolumeProviders = new List<IObject3DControlProvider>();
 
 		private LibraryConfig libraryConfig;
 
@@ -75,9 +75,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public IEnumerable<IInteractionVolumeProvider> IAVolumeProviders => _iaVolumeProviders;
+		public IEnumerable<IObject3DControlProvider> IAVolumeProviders => _iaVolumeProviders;
 
-		public void Register(IInteractionVolumeProvider volumeProvider)
+		public void Register(IObject3DControlProvider volumeProvider)
 		{
 			_iaVolumeProviders.Add(volumeProvider);
 		}

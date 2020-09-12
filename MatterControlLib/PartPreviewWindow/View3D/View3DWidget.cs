@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; private set; }
 
-		public InteractionLayer InteractionLayer { get; }
+		public Object3DControlLayer Object3DControlLayer { get; }
 
 		public ISceneContext sceneContext;
 
@@ -92,20 +92,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, InteractionLayer.EditorType editorType = InteractionLayer.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlLayer.EditorType editorType = Object3DControlLayer.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Printer = printer;
 
-			this.InteractionLayer = new InteractionLayer(sceneContext, theme, editorType)
+			this.Object3DControlLayer = new Object3DControlLayer(sceneContext, theme, editorType)
 			{
-				Name = "InteractionLayer",
+				Name = "Object3DControlLayer",
 			};
-			this.InteractionLayer.AnchorAll();
+			this.Object3DControlLayer.AnchorAll();
 
 			// Register ourself as an IDrawable
-			this.InteractionLayer.RegisterDrawable(this);
+			this.Object3DControlLayer.RegisterDrawable(this);
 
 			this.viewControls3D = viewControls3D;
 			this.printer = printer;
@@ -130,9 +130,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.BoundsChanged += UpdateRenderView;
 
 			// TumbleWidget
-			this.InteractionLayer.AddChild(TrackballTumbleWidget);
+			this.Object3DControlLayer.AddChild(TrackballTumbleWidget);
 
-			this.InteractionLayer.SetRenderTarget(this);
+			this.Object3DControlLayer.SetRenderTarget(this);
 
 			// Add splitter support with the InteractionLayer on the left and resize containers on the right
 			var splitContainer = new FlowLayoutWidget()
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			};
-			splitContainer.AddChild(this.InteractionLayer);
+			splitContainer.AddChild(this.Object3DControlLayer);
 			this.AddChild(splitContainer);
 
 			Scene.SelectionChanged += Scene_SelectionChanged;
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = UserSettings.Instance.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
-				BackgroundColor = theme.InteractionLayerOverlayColor,
+				BackgroundColor = theme.Object3DControlLayerOverlayColor,
 				SplitterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				MinimumSize = new Vector2(theme.SplitterWidth, 0)
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			var tumbleCubeControl = new TumbleCubeControl(this.InteractionLayer, theme)
+			var tumbleCubeControl = new TumbleCubeControl(this.Object3DControlLayer, theme)
 			{
 				Margin = new BorderDouble(0, 0, 10, 35),
 				VAnchor = VAnchor.Top,
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Tumble Cube Control"
 			};
 
-			this.InteractionLayer.AddChild(tumbleCubeControl);
+			this.Object3DControlLayer.AddChild(tumbleCubeControl);
 
 			var viewOptionsBar = new FlowLayoutWidget()
 			{
@@ -285,7 +285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.MinimalShade,
 				Name = "View Options Bar"
 			};
-			this.InteractionLayer.AddChild(viewOptionsBar);
+			this.Object3DControlLayer.AddChild(viewOptionsBar);
 
 			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
 			{
@@ -297,7 +297,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewOptionsBar.AddChild(homeButton);
 
 #if DEBUG
-			var renderOptionsButton = new RenderOptionsButton(theme, this.InteractionLayer)
+			var renderOptionsButton = new RenderOptionsButton(theme, this.Object3DControlLayer)
 			{
 				ToolTipText = "Model View Style".Localize(),
 				PopupMate = new MatePoint()
@@ -333,7 +333,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			ApplicationController.Instance.GetViewOptionButtons(viewOptionsBar, sceneContext, printer, theme);
 
 			// now add the grid snap button
-			var gridSnapButton = new GridOptionsPanel(InteractionLayer, theme)
+			var gridSnapButton = new GridOptionsPanel(Object3DControlLayer, theme)
 			{
 				ToolTipText = "Snap Grid".Localize(),
 				PopupMate = new MatePoint()
@@ -346,17 +346,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewOptionsBar.AddChild(gridSnapButton);
 
-			this.InteractionLayer.RegisterIAVolume(new MoveInZControl(this.InteractionLayer));
-			this.InteractionLayer.RegisterIAVolume(new SelectionShadow(this.InteractionLayer));
-			this.InteractionLayer.RegisterIAVolume(new SnappingIndicators(this.InteractionLayer, this.CurrentSelectInfo));
+			this.Object3DControlLayer.RegisterObject3DControl(new MoveInZControl(this.Object3DControlLayer));
+			this.Object3DControlLayer.RegisterObject3DControl(new SelectionShadow(this.Object3DControlLayer));
+			this.Object3DControlLayer.RegisterObject3DControl(new SnappingIndicators(this.Object3DControlLayer, this.CurrentSelectInfo));
 
 			// Add IAVolumeProviderPlugins
 			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
 			{
-				this.InteractionLayer.RegisterIAVolumes(ivProvider.Create(this.InteractionLayer));
+				this.Object3DControlLayer.RegisterObject3DControls(ivProvider.Create(this.Object3DControlLayer));
 			}
 
-			this.InteractionLayer.AfterDraw += AfterDraw3DContent;
+			this.Object3DControlLayer.AfterDraw += AfterDraw3DContent;
 
 			Scene.SelectFirstChild();
 
@@ -670,9 +670,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				printer.ViewState.ViewModeChanged -= this.ViewState_ViewModeChanged;
 			}
 
-			if (this.InteractionLayer != null)
+			if (this.Object3DControlLayer != null)
 			{
-				this.InteractionLayer.AfterDraw -= AfterDraw3DContent;
+				this.Object3DControlLayer.AfterDraw -= AfterDraw3DContent;
 			}
 
 			base.OnClosed(e);
@@ -700,7 +700,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// If the mouse is within the MeshViewer process the Drag move
-			var meshViewerScreenBounds = this.InteractionLayer.TransformToScreenSpace(this.InteractionLayer.LocalBounds);
+			var meshViewerScreenBounds = this.Object3DControlLayer.TransformToScreenSpace(this.Object3DControlLayer.LocalBounds);
 			if (meshViewerScreenBounds.Contains(screenSpaceMousePosition))
 			{
 				// If already started, process drag move
@@ -743,7 +743,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& selectedItem != null)
 			{
 				// Move the DropDropObject the target item
-				DragSelectedObject(selectedItem, localMousePosition: this.InteractionLayer.TransformFromScreenSpace(screenSpaceMousePosition));
+				DragSelectedObject(selectedItem, localMousePosition: this.Object3DControlLayer.TransformFromScreenSpace(screenSpaceMousePosition));
 			}
 		}
 
@@ -767,7 +767,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.SceneReplacement = firstItem as ILibraryAssetStream;
 
 				// TODO: Figure out a mechanism to disable View3DWidget with dark overlay, displaying something like "Switch to xxx.gcode", make disappear on mouseLeaveBounds and dragfinish
-				this.InteractionLayer.BackgroundColor = new Color(Color.Black, 200);
+				this.Object3DControlLayer.BackgroundColor = new Color(Color.Black, 200);
 
 				return;
 			}
@@ -813,7 +813,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (this.DragOperationActive)
 			{
-				this.InteractionLayer.BackgroundColor = Color.Transparent;
+				this.Object3DControlLayer.BackgroundColor = Color.Transparent;
 				this.DragOperationActive = false;
 
 				if (mouseUpInBounds)
@@ -869,7 +869,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (selectedItem != null)
 			{
-				foreach (var volume in this.InteractionLayer.InteractionVolumes)
+				foreach (var volume in this.Object3DControlLayer.Object3DControls)
 				{
 					volume.SetPosition(selectedItem);
 				}
@@ -917,7 +917,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					InteractionLayer.RenderBounds(e, sceneContext.World, allResults);
+					Object3DControlLayer.RenderBounds(e, sceneContext.World, allResults);
 				}
 			}
 		}
@@ -1032,7 +1032,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mouseEvent.Button == MouseButtons.Right ||
 				mouseEvent.Button == MouseButtons.Middle)
 			{
-				this.InteractionLayer.SuppressUiVolumes = true;
+				this.Object3DControlLayer.SuppressUiVolumes = true;
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -1048,9 +1048,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
-					if (!this.InteractionLayer.MouseDownOnInteractionVolume)
+					if (!this.Object3DControlLayer.MouseDownOnObject3DControlVolume)
 					{
-						this.InteractionLayer.SuppressUiVolumes = true;
+						this.Object3DControlLayer.SuppressUiVolumes = true;
 
 						var info = new IntersectInfo();
 
@@ -1250,8 +1250,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				DragSelectionEndPosition = mouseEvent.Position - OffsetToMeshViewerWidget();
 				DragSelectionEndPosition = new Vector2(
-					Math.Max(Math.Min((double)DragSelectionEndPosition.X, this.InteractionLayer.LocalBounds.Right), this.InteractionLayer.LocalBounds.Left),
-					Math.Max(Math.Min((double)DragSelectionEndPosition.Y, this.InteractionLayer.LocalBounds.Top), this.InteractionLayer.LocalBounds.Bottom));
+					Math.Max(Math.Min((double)DragSelectionEndPosition.X, this.Object3DControlLayer.LocalBounds.Right), this.Object3DControlLayer.LocalBounds.Left),
+					Math.Max(Math.Min((double)DragSelectionEndPosition.Y, this.Object3DControlLayer.LocalBounds.Top), this.Object3DControlLayer.LocalBounds.Bottom));
 				Invalidate();
 			}
 
@@ -1261,7 +1261,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public IntersectInfo GetIntersectPosition(Vector2 screenSpacePosition)
 		{
 			// Translate to local
-			Vector2 localPosition = this.InteractionLayer.TransformFromScreenSpace(screenSpacePosition);
+			Vector2 localPosition = this.Object3DControlLayer.TransformFromScreenSpace(screenSpacePosition);
 
 			Ray ray = sceneContext.World.GetRayForLocalBounds(localPosition);
 
@@ -1279,7 +1279,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return;
 			}
 
-			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, localMousePosition);
+			Vector2 meshViewerWidgetScreenPosition = this.Object3DControlLayer.TransformFromParentSpace(this, localMousePosition);
 			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			IntersectInfo info = CurrentSelectInfo.HitPlane.GetClosestIntersection(ray);
@@ -1298,7 +1298,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				Vector3 delta = info.HitPosition - CurrentSelectInfo.PlaneDownHitPos;
 
-				double snapGridDistance = this.InteractionLayer.SnapGridDistance;
+				double snapGridDistance = this.Object3DControlLayer.SnapGridDistance;
 				if (snapGridDistance > 0)
 				{
 					// snap this position to the grid
@@ -1360,7 +1360,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		Vector2 OffsetToMeshViewerWidget()
 		{
 			List<GuiWidget> parents = new List<GuiWidget>();
-			GuiWidget parent = this.InteractionLayer.Parent;
+			GuiWidget parent = this.Object3DControlLayer.Parent;
 			while (parent != this)
 			{
 				parents.Add(parent);
@@ -1412,7 +1412,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			this.InteractionLayer.SuppressUiVolumes = false;
+			this.Object3DControlLayer.SuppressUiVolumes = false;
 
 			CurrentSelectInfo.DownOnPart = false;
 
@@ -1685,7 +1685,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
 		{
-			Vector2 meshViewerWidgetScreenPosition = this.InteractionLayer.TransformFromParentSpace(this, screenPosition);
+			Vector2 meshViewerWidgetScreenPosition = this.Object3DControlLayer.TransformFromParentSpace(this, screenPosition);
 			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
 			intersectionInfo = Scene.GetBVHData().GetClosestIntersection(ray);

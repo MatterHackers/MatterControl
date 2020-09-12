@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectionShadow : InteractionVolume
+	public class SelectionShadow : Object3DControlBase
 	{
 		static Mesh normalShadowMesh;
 
@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private ThemeConfig theme;
 
-		public SelectionShadow(IInteractionVolumeContext context)
+		public SelectionShadow(IObject3DControlContext context)
 			: base(context)
 		{
 			theme = AppContext.Theme;
@@ -69,11 +69,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return normalShadowMesh;
 		}
 
-		public override void DrawGlContent(DrawGlContentEventArgs e)
+		public override void Draw(DrawGlContentEventArgs e)
 		{
 			var selectedItem = RootSelection;
 			if (selectedItem != null
-				&& InteractionContext.Scene.ShowSelectionShadow)
+				&& object3DControlContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
 				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GLHelper.Render(GetNormalShadowMesh(), shadowColor, withScale, RenderTypes.Shaded);
 			}
 
-			base.DrawGlContent(e);
+			base.Draw(e);
 		}
 	}
 }

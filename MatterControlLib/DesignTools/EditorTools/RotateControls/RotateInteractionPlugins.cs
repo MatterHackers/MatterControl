@@ -32,9 +32,9 @@ using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class RotateCornerPlugins : IInteractionVolumeProvider
+	public class RotateCornerPlugins : IObject3DControlProvider
 	{
-		public IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context)
+		public IEnumerable<Object3DControlBase> Create(IObject3DControlContext context)
 		{
 			// X, Y, Z RotateCornerControls
 			return new[] 

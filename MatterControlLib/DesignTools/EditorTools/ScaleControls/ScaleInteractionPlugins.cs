@@ -32,11 +32,11 @@ using MatterHackers.MeshVisualizer;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleCornersPlugin : IInteractionVolumeProvider
+	public class ScaleCornersPlugin : IObject3DControlProvider
 	{
-		public IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context)
+		public IEnumerable<Object3DControlBase> Create(IObject3DControlContext context)
 		{
-			return new List<InteractionVolume>
+			return new List<Object3DControlBase>
 			{
 				new ScaleTopControl(context),
 				new ScaleCornerControl(context, 0),

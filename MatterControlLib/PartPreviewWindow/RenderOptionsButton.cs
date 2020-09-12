@@ -36,8 +36,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RenderOptionsButton : DropButton
 	{
-		public RenderOptionsButton(ThemeConfig theme, InteractionLayer interactionLayer)
-			: base (theme)
+		public RenderOptionsButton(ThemeConfig theme, Object3DControlLayer object3DControlLayer)
+			: base(theme)
 		{
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Console.WriteLine();
 				};
 
-				foreach (var drawable in ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.Drawables)
+				foreach (var drawable in ApplicationController.Instance.DragDropData.View3DWidget.Object3DControlLayer.Drawables)
 				{
 					var row = new SettingsRow(drawable.Title, drawable.Description, theme);
 					subPanel.AddChild(row);
@@ -80,7 +80,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					row.AddChild(toggleSwitch);
 				}
 
-				foreach (var drawable in ApplicationController.Instance.DragDropData.View3DWidget.InteractionLayer.ItemDrawables)
+				foreach (var drawable in ApplicationController.Instance.DragDropData.View3DWidget.Object3DControlLayer.ItemDrawables)
 				{
 					var row = new SettingsRow(drawable.Title, drawable.Description, theme);
 					subPanel.AddChild(row);

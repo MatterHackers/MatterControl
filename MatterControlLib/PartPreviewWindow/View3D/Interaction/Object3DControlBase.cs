@@ -27,28 +27,22 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.MatterControl;
 using MatterHackers.RayTracer;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public class InteractionVolume : IInteractionElement, IGLInteractionElement
+	public abstract class Object3DControlBase : IObject3DControl
 	{
-		private bool mouseOver = false;
+		private bool _mouseIsOver = false;
 
-		public Matrix4X4 TotalTransform = Matrix4X4.Identity;
+		public Matrix4X4 TotalTransform { get; set; } = Matrix4X4.Identity;
 
-		public InteractionVolume(IInteractionVolumeContext meshViewerToDrawWith)
+		public Object3DControlBase(IObject3DControlContext meshViewerToDrawWith)
 		{
-			this.InteractionContext = meshViewerToDrawWith;
+			this.object3DControlContext = meshViewerToDrawWith;
 		}
 
 		public IPrimitive CollisionVolume { get; set; }
@@ -61,14 +55,14 @@ namespace MatterHackers.MeshVisualizer
 
 		public IntersectInfo MouseMoveInfo { get; set; }
 
-		public bool MouseOver
+		public bool MouseIsOver
 		{
-			get => mouseOver;
+			get => _mouseIsOver;
 			set
 			{
-				if (mouseOver != value)
+				if (_mouseIsOver != value)
 				{
-					mouseOver = value;
+					_mouseIsOver = value;
 					Invalidate();
 				}
 			}
@@ -76,46 +70,15 @@ namespace MatterHackers.MeshVisualizer
 
 		public string Name { get; set; }
 
-		protected IInteractionVolumeContext InteractionContext { get; }
+		protected IObject3DControlContext object3DControlContext { get; }
 
 		public IObject3D RootSelection
 		{
 			get
 			{
-				var selectedItemRoot = InteractionContext.Scene.SelectedItemRoot;
-				var selectedItem = InteractionContext.Scene.SelectedItem;
+				var selectedItemRoot = object3DControlContext.Scene.SelectedItemRoot;
+				var selectedItem = object3DControlContext.Scene.SelectedItem;
 				return (selectedItemRoot == selectedItem) ? selectedItem : null;
-			}
-		}
-
-		public static void DrawMeasureLine(Graphics2D graphics2D, Vector2 lineStart, Vector2 lineEnd, LineArrows arrows, ThemeConfig theme)
-		{
-			graphics2D.Line(lineStart, lineEnd, theme.TextColor);
-
-			Vector2 direction = lineEnd - lineStart;
-			if (direction.LengthSquared > 0
-				&& (arrows.HasFlag(LineArrows.Start) || arrows.HasFlag(LineArrows.End)))
-			{
-				var arrow = new VertexStorage();
-				arrow.MoveTo(-3, -5);
-				arrow.LineTo(0, 0);
-				arrow.LineTo(3, -5);
-
-				if (arrows.HasFlag(LineArrows.End))
-				{
-					double rotation = Math.Atan2(direction.Y, direction.X);
-					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
-					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineEnd));
-					graphics2D.Render(inPosition, theme.TextColor);
-				}
-
-				if (arrows.HasFlag(LineArrows.Start))
-				{
-					double rotation = Math.Atan2(direction.Y, direction.X) + MathHelper.Tau / 2;
-					IVertexSource correctRotation = new VertexSourceApplyTransform(arrow, Affine.NewRotation(rotation - MathHelper.Tau / 4));
-					IVertexSource inPosition = new VertexSourceApplyTransform(correctRotation, Affine.NewTranslation(lineStart));
-					graphics2D.Render(inPosition, theme.TextColor);
-				}
 			}
 		}
 
@@ -136,13 +99,13 @@ namespace MatterHackers.MeshVisualizer
 			return cornerPosition;
 		}
 
-		public virtual void DrawGlContent(DrawGlContentEventArgs e)
+		public virtual void Draw(DrawGlContentEventArgs e)
 		{
 		}
 
 		public void Invalidate()
 		{
-			InteractionContext.GuiSurface.Invalidate();
+			object3DControlContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void CancelOperation()
@@ -158,7 +121,7 @@ namespace MatterHackers.MeshVisualizer
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
 			{
 				MouseDownOnControl = true;
-				InteractionContext.GuiSurface.Invalidate();
+				object3DControlContext.GuiSurface.Invalidate();
 			}
 		}
 

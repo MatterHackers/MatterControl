@@ -27,20 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
+using System.Collections.Generic;
 
 namespace MatterHackers.MeshVisualizer
 {
-	/// <summary>
-	/// Basic Interaction control - notified of position per OpenGL draw
-	/// </summary>
-	public interface IInteractionElement
+	public interface IObject3DControlProvider
 	{
-		string Name { get; }
-
-		void SetPosition(IObject3D selectedItem);
-
-		void CancelOperation();
-		void LostFocus();
+		IEnumerable<Object3DControlBase> Create(IObject3DControlContext context);
 	}
 }

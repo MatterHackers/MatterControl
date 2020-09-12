@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					int i = 0;
 					foreach(var p in items)
 					{
-						InteractionLayer.RenderBounds(e, world, p.Matrix, p.BvhItem, i++);
+						Object3DControlLayer.RenderBounds(e, world, p.Matrix, p.BvhItem, i++);
 					}
 				}
 			}

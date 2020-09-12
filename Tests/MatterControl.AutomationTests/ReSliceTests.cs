@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					printer.Settings.SetValue(SettingsKey.enable_line_splitting, "0");
 
 					var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-					var scene = view3D.InteractionLayer.Scene;
+					var scene = view3D.Object3DControlLayer.Scene;
 
 					// Add a callback to check that every line has an extruder
 					// distance greater than the largest distance minus the max retraction

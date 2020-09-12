@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class FloorDrawable : IDrawable, IDisposable
 	{
 		private ISceneContext sceneContext;
-		private InteractionLayer.EditorType editorType;
+		private Object3DControlLayer.EditorType editorType;
 		private ThemeConfig theme;
 		private PrinterConfig printer;
 
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool loadingTextures = false;
 
-		public FloorDrawable(InteractionLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
+		public FloorDrawable(Object3DControlLayer.EditorType editorType, ISceneContext sceneContext, Color buildVolumeColor, ThemeConfig theme)
 		{
 			this.buildVolumeColor = buildVolumeColor;
 			this.sceneContext = sceneContext;
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
-			if (editorType == InteractionLayer.EditorType.Printer)
+			if (editorType == Object3DControlLayer.EditorType.Printer)
 			{
 				// only render if we are above the bed
 				if (sceneContext.RendererOptions.RenderBed)

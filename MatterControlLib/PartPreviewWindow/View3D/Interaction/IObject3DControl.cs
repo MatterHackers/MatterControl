@@ -27,16 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MeshVisualizer
 {
-	[Flags]
-	public enum LineArrows
+	/// <summary>
+	/// Basic Interaction control - notified of position per OpenGL draw
+	/// </summary>
+	public interface IObject3DControl
 	{
-		None = 0,
-		Start = 1,
-		End = 2,
-		Both = 3
+		string Name { get; }
+
+		void SetPosition(IObject3D selectedItem);
+
+		/// <summary>
+		/// The Control has been requested to cancel (usually by the user).
+		/// The current state of the operation or edit should be returned to the starting state.
+		/// </summary>
+		void CancelOperation();
+
+		void LostFocus();
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the control is currently visible.
+		/// </summary>
+		bool Visible { get; set; }
+
+		bool DrawOnTop { get; }
+
+		void Draw(DrawGlContentEventArgs e);
 	}
 }

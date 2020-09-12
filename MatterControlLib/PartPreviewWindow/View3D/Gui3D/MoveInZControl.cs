@@ -45,23 +45,24 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MoveInZControl : InteractionVolume
+	public class MoveInZControl : Object3DControlBase
 	{
-		public IObject3D ActiveSelectedItem;
-		protected PlaneShape hitPlane;
-		protected Vector3 initialHitPosition;
-		protected Mesh upArrowMesh;
-		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
-		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private double distToStart = 5;
-		private double lineLength = 55;
-		private List<Vector2> lines = new List<Vector2>();
-		private double upArrowSize = 7 * GuiWidget.DeviceScale;
-		private InlineEditControl zHeightDisplayInfo;
-		private bool HadClickOnControl;
-		private ThemeConfig theme;
+		public IObject3D ActiveSelectedItem { get; set; }
 
-		public MoveInZControl(IInteractionVolumeContext context)
+		private PlaneShape hitPlane;
+		private Vector3 initialHitPosition;
+		private readonly Mesh upArrowMesh;
+		private AxisAlignedBoundingBox mouseDownSelectedBounds;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private readonly double distToStart = 5;
+		private readonly double lineLength = 55;
+		private readonly List<Vector2> lines = new List<Vector2>();
+		private readonly double upArrowSize = 7 * GuiWidget.DeviceScale;
+		private readonly InlineEditControl zHeightDisplayInfo;
+		private bool hadClickOnControl;
+		private readonly ThemeConfig theme;
+
+		public MoveInZControl(IObject3DControlContext context)
 			: base(context)
 		{
 			theme = AppContext.Theme;
@@ -78,21 +79,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// if another control gets a hover
-					if (InteractionContext.HoveredInteractionVolume != this
-					&& InteractionContext.HoveredInteractionVolume != null)
+					if (object3DControlContext.HoveredObject3DControl != this
+					&& object3DControlContext.HoveredObject3DControl != null)
 					{
 						return true;
 					}
 
 					// if we clicked on the control
-					if (HadClickOnControl)
+					if (hadClickOnControl)
 					{
 						return false;
 					}
 
 					return false;
-				}
-,
+				},
 				GetDisplayString = (value) => "{0:0.0#}mm".FormatWith(value)
 			};
 
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (!zHeightDisplayInfo.Visible)
 				{
-					HadClickOnControl = false;
+					hadClickOnControl = false;
 				}
 			};
 
@@ -112,10 +112,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var newZPosition = zHeightDisplayInfo.Value;
 
-				if (InteractionContext.SnapGridDistance > 0)
+				if (object3DControlContext.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
-					double snapGridDistance = InteractionContext.SnapGridDistance;
+					double snapGridDistance = object3DControlContext.SnapGridDistance;
 
 					// snap this position to the grid
 					newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -126,14 +126,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (moveAmount != 0)
 				{
-					selectedItem.Matrix = selectedItem.Matrix * Matrix4X4.CreateTranslation(0, 0, moveAmount);
+					selectedItem.Matrix *= Matrix4X4.CreateTranslation(0, 0, moveAmount);
 					Invalidate();
 				}
 
 				context.Scene.AddTransformSnapshot(startingTransform);
 			};
 
-			InteractionContext.GuiSurface.AddChild(zHeightDisplayInfo);
+			object3DControlContext.GuiSurface.AddChild(zHeightDisplayInfo);
 
 			DrawOnTop = true;
 
@@ -144,14 +144,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CollisionVolume = upArrowMesh.CreateBVHData();
 
-			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
+			object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
-		public override void DrawGlContent(DrawGlContentEventArgs e)
+		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawMoveControls = true;
-			if (InteractionContext.SelectedInteractionVolume != null
-				&& InteractionContext.SelectedInteractionVolume as MoveInZControl == null)
+			if (object3DControlContext.SelectedObject3DControl != null
+				&& object3DControlContext.SelectedObject3DControl as MoveInZControl == null)
 			{
 				shouldDrawMoveControls = false;
 			}
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (shouldDrawMoveControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseOver)
+					if (MouseIsOver)
 					{
 						GLHelper.Render(upArrowMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
@@ -173,7 +173,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			base.DrawGlContent(e);
+			base.Draw(e);
 		}
 
 		public Vector3 GetTopPosition(IObject3D selectedItem)
@@ -194,7 +194,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mouseEvent3D.info != null
 				&& selectedItem != null)
 			{
-				HadClickOnControl = true;
+				hadClickOnControl = true;
 				ActiveSelectedItem = selectedItem;
 
 				zHeightDisplayInfo.Visible = true;
@@ -214,11 +214,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
-			if (MouseOver)
+			if (MouseIsOver)
 			{
 				zHeightDisplayInfo.Visible = true;
 			}
-			else if (!HadClickOnControl)
+			else if (!hadClickOnControl)
 			{
 				zHeightDisplayInfo.Visible = false;
 			}
@@ -234,10 +234,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					double newZPosition = mouseDownSelectedBounds.MinXYZ.Z + delta;
 
-					if (InteractionContext.SnapGridDistance > 0)
+					if (object3DControlContext.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = InteractionContext.SnapGridDistance;
+						double snapGridDistance = object3DControlContext.SnapGridDistance;
 
 						// snap this position to the grid
 						newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -248,7 +248,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (moveAmount != 0)
 					{
-						selectedItem.Matrix = selectedItem.Matrix * Matrix4X4.CreateTranslation(0, 0, moveAmount);
+						selectedItem.Matrix *= Matrix4X4.CreateTranslation(0, 0, moveAmount);
 						Invalidate();
 					}
 				}
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
+			object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 
@@ -271,10 +271,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				selectedItem.Matrix = transformOnMouseDown;
 				MouseDownOnControl = false;
-				MouseOver = false;
+				MouseIsOver = false;
 
-				InteractionContext.Scene.DrawSelection = true;
-				InteractionContext.Scene.ShowSelectionShadow = true;
+				object3DControlContext.Scene.DrawSelection = true;
+				object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.CancelOperation();
@@ -285,27 +285,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
-			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
-			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
+			var bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
+			double distBetweenPixelsWorldSpace = object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
 			boxCenter.Z += (10 * GuiWidget.DeviceScale + upArrowSize / 2) * distBetweenPixelsWorldSpace;
 
-			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
+			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
 			TotalTransform = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace * GuiWidget.DeviceScale) * centerMatrix;
 
 			lines.Clear();
 			// left lines
 			// the lines on the bed
 			var bedPosition = new Vector3(topPosition.X, topPosition.Y, 0);
-			lines.Add(InteractionContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(object3DControlContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[0].X + lineLength, lines[0].Y));
 
-			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(object3DControlContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[2].X + lineLength, lines[2].Y));
 		}
 
-		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
 
@@ -322,13 +322,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
+						drawEvent.Graphics2D.DrawMeasureLine((lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
 					}
 
 					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 					zHeightDisplayInfo.Value = selectedBounds.MinXYZ.Z;
-					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, - zHeightDisplayInfo.LocalBounds.Center.Y);
+					zHeightDisplayInfo.OriginRelativeParent = lines[1] + new Vector2(10, -zHeightDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
 		}

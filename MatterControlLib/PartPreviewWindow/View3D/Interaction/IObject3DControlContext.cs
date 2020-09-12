@@ -27,17 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
+
 namespace MatterHackers.MeshVisualizer
 {
-	/// <summary>
-	/// Interaction control which draws adornments with native OpenGL calls
-	/// </summary>
-	public interface IGLInteractionElement : IInteractionElement
+	public interface IObject3DControlContext
 	{
-		bool Visible { get; set; }
+		Object3DControlBase HoveredObject3DControl { get; }
 
-		bool DrawOnTop { get; }
+		Object3DControlBase SelectedObject3DControl { get; }
 
-		void DrawGlContent(DrawGlContentEventArgs e);
+		InteractiveScene Scene { get; }
+
+		WorldView World { get; }
+
+		GuiWidget GuiSurface { get; }
+
+		double SnapGridDistance { get; }
 	}
 }

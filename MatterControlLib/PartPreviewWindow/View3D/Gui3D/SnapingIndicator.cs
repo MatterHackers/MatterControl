@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SnappingIndicators : InteractionVolume
+	public class SnappingIndicators : Object3DControlBase
 	{
 		private double distToStart = 10;
 		private double lineLength = 15;
@@ -43,12 +43,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private MeshSelectInfo meshSelectInfo;
 
-		public SnappingIndicators(IInteractionVolumeContext context, MeshSelectInfo currentSelectInfo)
+		public SnappingIndicators(IObject3DControlContext context, MeshSelectInfo currentSelectInfo)
 			: base(context)
 		{
 			this.DrawOnTop = true;
 			this.meshSelectInfo = currentSelectInfo;
-			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
+			object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// draw the hight from the bottom to the bed
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			var world = InteractionContext.World;
+			var world = object3DControlContext.World;
 
 			switch (meshSelectInfo.HitQuadrant)
 			{
@@ -114,10 +114,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void InteractionLayer_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
+		private void Object3DControl_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
 		{
-			if (InteractionContext.Scene.SelectedItem != null
-				&& InteractionContext.SnapGridDistance > 0
+			if (object3DControlContext.Scene.SelectedItem != null
+				&& object3DControlContext.SnapGridDistance > 0
 				&& meshSelectInfo.DownOnPart)
 			{
 				if (drawEvent != null)

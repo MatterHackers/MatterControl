@@ -44,25 +44,24 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class PathControl : IGLInteractionElement
+	public class PathControl : IObject3DControl
 	{
-		private IInteractionVolumeContext context;
+		private readonly IObject3DControlContext context;
 
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 
-		private WorldView world;
+		private readonly WorldView world;
 
 		private IObject3D lastItem;
 
-		private List<VertexPointWidget> targets = new List<VertexPointWidget>();
+		private readonly List<VertexPointWidget> targets = new List<VertexPointWidget>();
 
-		private bool controlsRegistered = false;
 		private IEnumerable<VertexData> activePoints;
 		private FlattenCurves flattened;
-		private bool m_visible;
+		private bool visible;
 		private PointWidget _activeItem;
 
-		public PathControl(IInteractionVolumeContext context)
+		public PathControl(IObject3DControlContext context)
 		{
 			this.context = context;
 			theme = MatterControl.AppContext.Theme;
@@ -74,16 +73,16 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public bool Visible
 		{
-			get => m_visible;
+			get => visible;
 			set
 			{
-				if (m_visible != value)
+				if (visible != value)
 				{
-					m_visible = value;
+					visible = value;
 
 					foreach (var widget in targets)
 					{
-						widget.Visible = m_visible && !(widget is CurveControlPoint);
+						widget.Visible = visible && !(widget is CurveControlPoint);
 					}
 				}
 			}
@@ -119,7 +118,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 		}
 
-		public void DrawGlContent(DrawGlContentEventArgs e)
+		public void Draw(DrawGlContentEventArgs e)
 		{
 			if (flattened != null
 				&& e.Graphics2D is Graphics2DOpenGL glGraphics)
@@ -156,6 +155,7 @@ namespace MatterHackers.Plugins.EditorTools
 						}
 					}
 				}
+
 				GL.End();
 			}
 		}
@@ -207,9 +207,9 @@ namespace MatterHackers.Plugins.EditorTools
 						{
 							if (command == ShapePath.FlagsAndCommand.Curve4)
 							{
-								//vertexDataManager.AddVertex(x_ctrl1, y_ctrl1, ShapePath.FlagsAndCommand.Curve4);
-								//vertexDataManager.AddVertex(x_ctrl2, y_ctrl2, ShapePath.FlagsAndCommand.Curve4);
-								//vertexDataManager.AddVertex(x_to, y_to, ShapePath.FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_ctrl1, y_ctrl1, ShapePath.FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_ctrl2, y_ctrl2, ShapePath.FlagsAndCommand.Curve4);
+								// vertexDataManager.AddVertex(x_to, y_to, ShapePath.FlagsAndCommand.Curve4);
 
 								var lastItem = targets.LastOrDefault();
 
@@ -221,7 +221,6 @@ namespace MatterHackers.Plugins.EditorTools
 								var controlPoint2 = new CurveControlPoint(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 1);
 								context.GuiSurface.AddChild(controlPoint2);
 								targets.Add(controlPoint2);
-
 
 								command = vertexStorage.vertex(i + 2, out x, out y);
 								var curveWidget = new Curve4AnchorWidget(context, this, vertexStorage, new Vector3(x, y, 0), command, i + 2)
@@ -236,8 +235,8 @@ namespace MatterHackers.Plugins.EditorTools
 									curveWidget.LinkedPoint = vertexPointWidget;
 								}
 
-								//controlPoint1.ParentPoint = curveWidget;
-								//controlPoint2.ParentPoint = curveWidget;
+								// controlPoint1.ParentPoint = curveWidget;
+								// controlPoint2.ParentPoint = curveWidget;
 
 								widget = curveWidget;
 
@@ -248,6 +247,7 @@ namespace MatterHackers.Plugins.EditorTools
 							{
 								widget = new VertexPointWidget(context, this, vertexStorage, new Vector3(x, y, 0), command, i);
 							}
+
 							// widget.Click += (s, e) =>
 
 							targets.Add(widget);
@@ -272,23 +272,23 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private class CurveControlPoint : VertexPointWidget
 		{
-			public CurveControlPoint(IInteractionVolumeContext context, PathControl interactionControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
-				: base(context, interactionControl, vertexStorage, point, flagsandCommand, index)
+			public CurveControlPoint(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+				: base(context, pathControl, vertexStorage, point, flagsandCommand, index)
 			{
 				this.ClaimSelection = false;
 				this.Visible = false;
 				this.HandleStyle = HandleStyle.Circle;
 			}
 
-			//public Curve4PointWidget ParentPoint { get; internal set; }
+			// public Curve4PointWidget ParentPoint { get; internal set; }
 		}
 
 		private class Curve4AnchorWidget : VertexPointWidget
 		{
-			private bool _focused;
+			private readonly bool _focused;
 
-			public Curve4AnchorWidget(IInteractionVolumeContext context, PathControl interactionControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
-				: base(context, interactionControl, vertexStorage, point, flagsandCommand, index)
+			public Curve4AnchorWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+				: base(context, pathControl, vertexStorage, point, flagsandCommand, index)
 			{
 			}
 
@@ -309,14 +309,14 @@ namespace MatterHackers.Plugins.EditorTools
 				base.OnFocusChanged(e);
 			}
 
-			//public VertexPointWidget ControlPoint1 { get; set; }
+			// public VertexPointWidget ControlPoint1 { get; set; }
 
-			//public VertexPointWidget ControlPoint2 { get; set; }
+			// public VertexPointWidget ControlPoint2 { get; set; }
 		}
 
 		private class VertexPointWidget : PointWidget
 		{
-			public PathControl PathInteractionControl { get; }
+			public PathControl PathControl { get; }
 
 			private readonly ShapePath.FlagsAndCommand command;
 
@@ -325,10 +325,10 @@ namespace MatterHackers.Plugins.EditorTools
 			private Vector3 controlPointDelta;
 			private readonly int index;
 
-			public VertexPointWidget(IInteractionVolumeContext context, PathControl interactionControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
+			public VertexPointWidget(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)
 				: base(context, point)
 			{
-				this.PathInteractionControl = interactionControl;
+				this.PathControl = pathControl;
 				this.command = flagsandCommand;
 				this.index = index;
 				this.vertexStorage = vertexStorage;
@@ -373,7 +373,7 @@ namespace MatterHackers.Plugins.EditorTools
 					&& this.PositionWithinLocalBounds(mouseEvent.Position))
 				{
 					this.Selected = true;
-					this.PathInteractionControl.ActiveItem = this;
+					this.PathControl.ActiveItem = this;
 				}
 
 				base.OnMouseDown(mouseEvent);
@@ -394,19 +394,19 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public class PointWidget : GuiWidget
 		{
-			private WorldView world;
-			private GuiWidget guiSurface;
+			private readonly WorldView world;
+			private readonly GuiWidget guiSurface;
 			private bool mouseInBounds;
 			private GuiWidget systemWindow;
 			private bool mouseDownOnWidget;
-			private IInteractionVolumeContext interactionContext;
-			private static PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
-			private ThemeConfig theme;
+			private readonly IObject3DControlContext object3DControlContext;
+			private static readonly PlaneShape BedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
+			private readonly ThemeConfig theme;
 
-			public PointWidget(IInteractionVolumeContext interactionContext, Vector3 point)
+			public PointWidget(IObject3DControlContext object3DControlContext, Vector3 point)
 			{
 				this.theme = MatterControl.AppContext.Theme;
-				this.interactionContext = interactionContext;
+				this.object3DControlContext = object3DControlContext;
 				this.HAnchor = HAnchor.Absolute;
 				this.VAnchor = VAnchor.Absolute;
 				this.Width = 8;
@@ -414,8 +414,8 @@ namespace MatterHackers.Plugins.EditorTools
 				this.Point = point;
 				this.PointColor = theme.PrimaryAccentColor;
 
-				world = interactionContext.World;
-				guiSurface = interactionContext.GuiSurface;
+				world = object3DControlContext.World;
+				guiSurface = object3DControlContext.GuiSurface;
 			}
 
 			public virtual Vector3 Point { get; set; }
@@ -462,7 +462,7 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector2 meshViewerWidgetScreenPosition = this.TransformToParentSpace(guiSurface, localMousePosition);
 					Ray ray = world.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
 
-					if (bedPlane.GetClosestIntersection(ray) is IntersectInfo info)
+					if (BedPlane.GetClosestIntersection(ray) is IntersectInfo info)
 					{
 						this.OnDragTo(info);
 					}

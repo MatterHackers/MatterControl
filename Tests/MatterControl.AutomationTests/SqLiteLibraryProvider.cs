@@ -18,7 +18,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitFor(() => scene.SelectedItem != null);
 				Assert.IsNotNull(scene.SelectedItem, "Expect part selection after Add to Bed action");

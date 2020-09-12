@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.undoBuffer = undoBuffer;
 			this.ActionArea.Click += (s, e) =>
 			{
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 
 			this.OverflowButton.DynamicPopupContent = () =>
@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Undo();
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 			this.AddChild(undoButton);
 
@@ -204,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Redo();
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 			this.AddChild(redoButton);
 
@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							namedAction.Action.Invoke(sceneContext);
 							var partTab = button.Parents<PartTabPage>().FirstOrDefault();
 							var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
-							view3D.InteractionLayer.Focus();
+							view3D.Object3DControlLayer.Focus();
 						});
 					}
 

@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			VertexSource = outputPolygons.CreateVertexStorage();
 		}
 
-		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

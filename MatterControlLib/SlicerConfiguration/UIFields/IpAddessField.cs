@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				TextColor = canChangeComPort ? theme.TextColor : new Color(theme.TextColor, 150),
 			};
 
-			//Create default option
+			// Create default option
 			MenuItem defaultOption = dropdownList.AddItem("Manual", "127.0.0.1:23");
 			defaultOption.Selected += (sender, e) =>
 			{
@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				dropdownList.TextColor = theme.TextColor;
 				dropdownList.Enabled = canChangeComPort;
 			}
+
 			printer.Connection.CommunicationStateChanged += CommunicationStateChanged;
 			dropdownList.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= CommunicationStateChanged;
 
@@ -90,24 +91,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			MenuItem defaultOption = dropdownList.AddItem("Manual", "127.0.0.1:23");
 			defaultOption.Selected += (sender, e) =>
 			{
-				printer.Settings.SetValue(SettingsKey.selector_ip_address,defaultOption.Text);
+				printer.Settings.SetValue(SettingsKey.selector_ip_address, defaultOption.Text);
 			};
 
 			foreach (Zeroconf.IZeroconfHost host in possibleHosts)
 			{
-				// Add each found telnet host to the dropdown list 
+				// Add each found telnet host to the dropdown list
 				IService service;
 				bool exists = host.Services.TryGetValue("_telnet._tcp.local.", out service);
-				int port = exists ? service.Port:23;
-				MenuItem newItem = dropdownList.AddItem(host.DisplayName, $"{host.IPAddress}:{port}"); //The port may be unnecessary
+				int port = exists ? service.Port : 23;
+				MenuItem newItem = dropdownList.AddItem(host.DisplayName, $"{host.IPAddress}:{port}"); // The port may be unnecessary
 				// When the given menu item is selected, save its value back into settings
 				newItem.Selected += (sender, e) =>
 				{
 					if (sender is MenuItem menuItem)
 					{
-						//this.SetValue(
-						//	menuItem.Text,
-						//	userInitiated: true);
+						// this.SetValue(
+						// menuItem.Text,
+						// userInitiated: true);
 						string[] ipAndPort = menuItem.Value.Split(':');
 						printer.Settings.SetValue(SettingsKey.ip_address, ipAndPort[0]);
 						printer.Settings.SetValue(SettingsKey.ip_port, ipAndPort[1]);
@@ -115,6 +116,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}
 				};
 			}
+
 			refreshButton.Enabled = true;
 		}
 
