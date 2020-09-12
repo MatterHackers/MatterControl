@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			gcodeOptions = sceneContext.RendererOptions;
 
-			view3DWidget.Object3DControlLayer.EditorMode = Object3DControlLayer.EditorType.Printer;
+			view3DWidget.Object3DControlLayer.EditorMode = Object3DControlsLayer.EditorType.Printer;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{

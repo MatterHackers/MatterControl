@@ -275,6 +275,21 @@ namespace MatterHackers.Plugins.EditorTools
 			throw new NotImplementedException();
 		}
 
+		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		{
+			throw new NotImplementedException();
+		}
+
+		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
+		{
+			throw new NotImplementedException();
+		}
+
 		private class CurveControlPoint : VertexPointWidget
 		{
 			public CurveControlPoint(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)

@@ -44,7 +44,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleCornerControl : Object3DControlBase
+	public class ScaleCornerControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 

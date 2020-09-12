@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		#endregion // editable properties
 
-		public void DrawEditor(Object3DControlLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())

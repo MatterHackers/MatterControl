@@ -105,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return fitToBounds;
 		}
 
-		public void DrawEditor(Object3DControlLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			var aabb = this.WorldAxisAlignedBoundingBox();
 			layer.World.RenderCylinderOutline(Matrix4X4.Identity, aabb.Center, Diameter, aabb.ZSize, 90, Color.Red);

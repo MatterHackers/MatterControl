@@ -37,9 +37,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GridOptionsPanel : DropButton
 	{
-		Object3DControlLayer object3DControlLayer;
+		Object3DControlsLayer object3DControlLayer;
 
-		public GridOptionsPanel(Object3DControlLayer object3DControlLayer, ThemeConfig theme)
+		public GridOptionsPanel(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
 			: base(theme)
 		{
 			this.object3DControlLayer = object3DControlLayer;

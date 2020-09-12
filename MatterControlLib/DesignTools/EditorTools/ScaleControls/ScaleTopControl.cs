@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleTopControl : Object3DControlBase
+	public class ScaleTopControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem;
 		protected PlaneShape hitPlane;

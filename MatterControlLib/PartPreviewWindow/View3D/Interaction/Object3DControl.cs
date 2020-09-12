@@ -35,15 +35,15 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	public abstract class Object3DControlBase : IObject3DControl
+	public abstract class Object3DControl : IObject3DControl
 	{
 		private bool _mouseIsOver = false;
 
 		public Matrix4X4 TotalTransform { get; set; } = Matrix4X4.Identity;
 
-		public Object3DControlBase(IObject3DControlContext meshViewerToDrawWith)
+		public Object3DControl(IObject3DControlContext object3DControlContext)
 		{
-			this.Object3DControlContext = meshViewerToDrawWith;
+			this.Object3DControlContext = object3DControlContext;
 		}
 
 		public ITraceable CollisionVolume { get; set; }
@@ -122,7 +122,7 @@ namespace MatterHackers.MeshVisualizer
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
 			{
 				MouseDownOnControl = true;
-				Object3DControlContext.GuiSurface.Invalidate();
+				this.Object3DControlContext.GuiSurface.Invalidate();
 			}
 		}
 

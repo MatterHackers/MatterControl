@@ -35,7 +35,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SnappingIndicators : Object3DControlBase
+	public class SnappingIndicators : Object3DControl
 	{
 		private double distToStart = 10;
 		private double lineLength = 15;

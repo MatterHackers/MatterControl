@@ -36,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class RenderOptionsButton : DropButton
 	{
-		public RenderOptionsButton(ThemeConfig theme, Object3DControlLayer object3DControlLayer)
+		public RenderOptionsButton(ThemeConfig theme, Object3DControlsLayer object3DControlLayer)
 			: base(theme)
 		{
 			this.HAnchor = HAnchor.Fit;

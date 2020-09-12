@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
 		private ITraceable cubeTraceData;
-		private Object3DControlLayer object3DControlLayer;
+		private Object3DControlsLayer object3DControlLayer;
 		private Vector2 lastMovePosition;
 		private LightingData lighting = new LightingData();
 		private Vector2 mouseDownPosition;
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<ConnectedFaces> connections = new List<ConnectedFaces>();
 		private HitData lastHitData = new HitData();
 
-		public TumbleCubeControl(Object3DControlLayer object3DControlLayer, ThemeConfig theme)
+		public TumbleCubeControl(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
 		{
 			this.theme = theme;

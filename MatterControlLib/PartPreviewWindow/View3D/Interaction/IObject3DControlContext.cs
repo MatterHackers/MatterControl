@@ -35,9 +35,9 @@ namespace MatterHackers.MeshVisualizer
 {
 	public interface IObject3DControlContext
 	{
-		Object3DControlBase HoveredObject3DControl { get; }
+		IObject3DControl HoveredObject3DControl { get; }
 
-		Object3DControlBase SelectedObject3DControl { get; }
+		IObject3DControl SelectedObject3DControl { get; }
 
 		InteractiveScene Scene { get; }
 

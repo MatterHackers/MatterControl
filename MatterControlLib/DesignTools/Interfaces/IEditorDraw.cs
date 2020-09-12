@@ -35,6 +35,6 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IEditorDraw
 	{
-		void DrawEditor(Object3DControlLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw);
+		void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw);
 	}
 }

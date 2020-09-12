@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class MoveInZControl : Object3DControlBase
+	public class MoveInZControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 

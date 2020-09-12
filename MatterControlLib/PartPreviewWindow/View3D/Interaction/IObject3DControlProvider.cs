@@ -33,6 +33,6 @@ namespace MatterHackers.MeshVisualizer
 {
 	public interface IObject3DControlProvider
 	{
-		IEnumerable<Object3DControlBase> Create(IObject3DControlContext context);
+		IEnumerable<IObject3DControl> Create(IObject3DControlContext context);
 	}
 }

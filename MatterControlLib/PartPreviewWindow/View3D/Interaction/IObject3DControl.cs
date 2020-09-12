@@ -47,6 +47,12 @@ namespace MatterHackers.MeshVisualizer
 		/// </summary>
 		void CancelOperation();
 
+		void OnMouseDown(Mouse3DEventArgs mouseEvent3D);
+
+		void OnMouseMove(Mouse3DEventArgs mouseEvent3D);
+
+		void OnMouseUp(Mouse3DEventArgs mouseEvent3D);
+
 		void LostFocus();
 
 		/// <summary>

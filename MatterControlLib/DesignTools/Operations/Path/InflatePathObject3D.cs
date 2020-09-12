@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			return joinType;
 		}
 
-		public void DrawEditor(Object3DControlLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

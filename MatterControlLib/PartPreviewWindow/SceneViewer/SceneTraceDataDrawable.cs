@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return false;
 			});
 
-			Object3DControlLayer.RenderBounds(e, world, bvhIterator);
+			Object3DControlsLayer.RenderBounds(e, world, bvhIterator);
 		}
 	}
 }

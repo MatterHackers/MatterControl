@@ -36,7 +36,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectionShadow : Object3DControlBase
+	public class SelectionShadow : Object3DControl
 	{
 		static Mesh normalShadowMesh;
 

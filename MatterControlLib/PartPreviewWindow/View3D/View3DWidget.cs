@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public TrackballTumbleWidget TrackballTumbleWidget { get; private set; }
 
-		public Object3DControlLayer Object3DControlLayer { get; }
+		public Object3DControlsLayer Object3DControlLayer { get; }
 
 		public ISceneContext sceneContext;
 
@@ -91,13 +91,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private PrinterTabPage printerTabPage;
 
-		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlLayer.EditorType editorType = Object3DControlLayer.EditorType.Part)
+		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.printerTabPage = printerTabBase as PrinterTabPage;
 			this.Printer = printer;
 
-			this.Object3DControlLayer = new Object3DControlLayer(sceneContext, theme, editorType)
+			this.Object3DControlLayer = new Object3DControlsLayer(sceneContext, theme, editorType)
 			{
 				Name = "Object3DControlLayer",
 			};
@@ -934,7 +934,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else
 				{
-					Object3DControlLayer.RenderBounds(e, sceneContext.World, allResults);
+					Object3DControlsLayer.RenderBounds(e, sceneContext.World, allResults);
 				}
 			}
 		}
