@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			this.DrawOnTop = true;
 			this.meshSelectInfo = currentSelectInfo;
-			object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem)
@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// draw the hight from the bottom to the bed
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
-			var world = object3DControlContext.World;
+			var world = Object3DControlContext.World;
 
 			switch (meshSelectInfo.HitQuadrant)
 			{
@@ -116,8 +116,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Object3DControl_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
 		{
-			if (object3DControlContext.Scene.SelectedItem != null
-				&& object3DControlContext.SnapGridDistance > 0
+			if (Object3DControlContext.Scene.SelectedItem != null
+				&& Object3DControlContext.SnapGridDistance > 0
 				&& meshSelectInfo.DownOnPart)
 			{
 				if (drawEvent != null)

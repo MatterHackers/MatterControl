@@ -614,10 +614,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			foreach (var item in this.Object3DControls.OfType<IObject3DControl>())
 			{
-				item.Visible = !SuppressUiVolumes;
+				item.Visible = !SuppressObject3DControls;
 			}
 
-			if (SuppressUiVolumes)
+			if (SuppressObject3DControls)
 			{
 				return;
 			}

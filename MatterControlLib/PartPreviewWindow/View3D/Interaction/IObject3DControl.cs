@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using MatterHackers.RayTracer;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -56,5 +57,7 @@ namespace MatterHackers.MeshVisualizer
 		bool DrawOnTop { get; }
 
 		void Draw(DrawGlContentEventArgs e);
+
+		ITraceable GetTraceable();
 	}
 }

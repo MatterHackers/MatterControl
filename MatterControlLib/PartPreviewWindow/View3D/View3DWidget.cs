@@ -1049,7 +1049,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (mouseEvent.Button == MouseButtons.Right ||
 				mouseEvent.Button == MouseButtons.Middle)
 			{
-				this.Object3DControlLayer.SuppressUiVolumes = true;
+				this.Object3DControlLayer.SuppressObject3DControls = true;
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -1067,7 +1067,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (!this.Object3DControlLayer.MouseDownOnObject3DControlVolume)
 					{
-						this.Object3DControlLayer.SuppressUiVolumes = true;
+						this.Object3DControlLayer.SuppressObject3DControls = true;
 
 						var info = new IntersectInfo();
 
@@ -1429,7 +1429,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			this.Object3DControlLayer.SuppressUiVolumes = false;
+			this.Object3DControlLayer.SuppressObject3DControls = false;
 
 			CurrentSelectInfo.DownOnPart = false;
 

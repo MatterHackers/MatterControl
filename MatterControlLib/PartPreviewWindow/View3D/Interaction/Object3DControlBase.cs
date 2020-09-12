@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.RayTracer;
+using MatterHackers.RayTracer.Traceable;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
@@ -42,10 +43,10 @@ namespace MatterHackers.MeshVisualizer
 
 		public Object3DControlBase(IObject3DControlContext meshViewerToDrawWith)
 		{
-			this.object3DControlContext = meshViewerToDrawWith;
+			this.Object3DControlContext = meshViewerToDrawWith;
 		}
 
-		public IPrimitive CollisionVolume { get; set; }
+		public ITraceable CollisionVolume { get; set; }
 
 		public bool DrawOnTop { get; protected set; }
 
@@ -70,14 +71,14 @@ namespace MatterHackers.MeshVisualizer
 
 		public string Name { get; set; }
 
-		protected IObject3DControlContext object3DControlContext { get; }
+		protected IObject3DControlContext Object3DControlContext { get; }
 
 		public IObject3D RootSelection
 		{
 			get
 			{
-				var selectedItemRoot = object3DControlContext.Scene.SelectedItemRoot;
-				var selectedItem = object3DControlContext.Scene.SelectedItem;
+				var selectedItemRoot = Object3DControlContext.Scene.SelectedItemRoot;
+				var selectedItem = Object3DControlContext.Scene.SelectedItem;
 				return (selectedItemRoot == selectedItem) ? selectedItem : null;
 			}
 		}
@@ -105,7 +106,7 @@ namespace MatterHackers.MeshVisualizer
 
 		public void Invalidate()
 		{
-			object3DControlContext.GuiSurface.Invalidate();
+			Object3DControlContext.GuiSurface.Invalidate();
 		}
 
 		public virtual void CancelOperation()
@@ -121,7 +122,7 @@ namespace MatterHackers.MeshVisualizer
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
 			{
 				MouseDownOnControl = true;
-				object3DControlContext.GuiSurface.Invalidate();
+				Object3DControlContext.GuiSurface.Invalidate();
 			}
 		}
 
@@ -136,6 +137,17 @@ namespace MatterHackers.MeshVisualizer
 
 		public virtual void SetPosition(IObject3D selectedItem)
 		{
+		}
+
+		public ITraceable GetTraceable()
+		{
+			if (CollisionVolume != null)
+			{
+				ITraceable traceData = CollisionVolume;
+				return new Transform(traceData, TotalTransform);
+			}
+
+			return null;
 		}
 	}
 }

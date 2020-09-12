@@ -260,7 +260,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Ray ray = this.World.GetRayForLocalBounds(mouseEvent.Position);
 			if (this.Scene.SelectedItem != null
-				&& !SuppressUiVolumes
+				&& !SuppressObject3DControls
 				&& FindHitObject3DControl(ray, out mouseDownObject3DControl, out IntersectInfo info))
 			{
 				mouseDownObject3DControl.OnMouseDown(new Mouse3DEventArgs(mouseEvent, ray, info));
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseMove(mouseEvent);
 
-			if (SuppressUiVolumes
+			if (SuppressObject3DControls
 				|| !this.PositionWithinLocalBounds(mouseEvent.X, mouseEvent.Y))
 			{
 				return;
@@ -320,7 +320,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			Invalidate();
 
-			if (SuppressUiVolumes)
+			if (SuppressObject3DControls)
 			{
 				return;
 			}
@@ -407,28 +407,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				return false;
 			}
 
-			// TODO: Rewrite as projection without extra list
-			// - Looks like the extra list is always required as CreateNewHierachy requires a List and we can only produce an IEnumerable without the list overhead
-			// - var uiTraceables = iaVolumes.Where(ia => ia.CollisionVolume != null).Select(ia => new Transform(ia.CollisionVolume, ia.TotalTransform)).ToList<IPrimitive>();
-			var uiTraceables = new List<IPrimitive>();
-			foreach (var object3DControl in object3DControls.OfType<Object3DControlBase>())
+			var traceables = new List<ITraceable>();
+			foreach (var object3DControl in object3DControls)
 			{
-				if (object3DControl.CollisionVolume != null)
+				ITraceable traceable = object3DControl.GetTraceable();
+				if (traceable != null)
 				{
-					IPrimitive traceData = object3DControl.CollisionVolume;
-					uiTraceables.Add(new Transform(traceData, object3DControl.TotalTransform));
+					traceables.Add(traceable);
 				}
 			}
 
-			if (uiTraceables.Count <= 0)
+			if (traceables.Count <= 0)
 			{
 				info = null;
 				return false;
 			}
 
-			IPrimitive allUiObjects = BoundingVolumeHierarchy.CreateNewHierachy(uiTraceables);
+			var bvhHierachy = BoundingVolumeHierarchy.CreateNewHierachy(traceables);
 
-			info = allUiObjects.GetClosestIntersection(ray);
+			info = bvhHierachy.GetClosestIntersection(ray);
 			if (info != null)
 			{
 				foreach (var object3DControlBase in object3DControls.OfType<Object3DControlBase>())
@@ -449,7 +446,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return false;
 		}
 
-		public bool SuppressUiVolumes { get; set; } = false;
+		public bool SuppressObject3DControls { get; set; } = false;
 
 		public bool MouseDownOnObject3DControlVolume => SelectedObject3DControl != null;
 

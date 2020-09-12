@@ -105,8 +105,8 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			};
 
-			object3DControlContext.GuiSurface.AddChild(xValueDisplayInfo);
-			object3DControlContext.GuiSurface.AddChild(yValueDisplayInfo);
+			Object3DControlContext.GuiSurface.AddChild(xValueDisplayInfo);
+			Object3DControlContext.GuiSurface.AddChild(yValueDisplayInfo);
 
 			this.quadrantIndex = cornerIndex;
 
@@ -116,7 +116,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = minXminYMesh.CreateBVHData();
 
-			object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
 		private void EditComplete(object s, EventArgs e)
@@ -132,7 +132,7 @@ namespace MatterHackers.Plugins.EditorTools
 			newSize.X = xValueDisplayInfo.Value;
 			newSize.Y = yValueDisplayInfo.Value;
 
-			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, object3DControlContext.GuiSurface.ModifierKeys);
+			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
 			// scale it
 			var scale = Matrix4X4.CreateScale(scaleAmount);
@@ -150,7 +150,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			Invalidate();
 
-			object3DControlContext.Scene.AddTransformSnapshot(startingTransform);
+			Object3DControlContext.Scene.AddTransformSnapshot(startingTransform);
 
 			transformAppliedByThis = selectedItem.Matrix;
 		}
@@ -158,8 +158,8 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawScaleControls = true;
-			if (object3DControlContext.SelectedObject3DControl != null
-				&& object3DControlContext.SelectedObject3DControl as ScaleCornerControl == null)
+			if (Object3DControlContext.SelectedObject3DControl != null
+				&& Object3DControlContext.SelectedObject3DControl as ScaleCornerControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
@@ -167,7 +167,7 @@ namespace MatterHackers.Plugins.EditorTools
 			var selectedItem = RootSelection;
 
 			if (selectedItem != null
-				&& object3DControlContext.Scene.ShowSelectionShadow)
+				&& Object3DControlContext.Scene.ShowSelectionShadow)
 			{
 				// Ensures that functions in this scope run against the original instance reference rather than the
 				// current value, thus avoiding null reference errors that would occur otherwise
@@ -191,18 +191,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 					Vector3 endPosition = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
 
-					Frustum clippingFrustum = object3DControlContext.World.GetClippingFrustum();
+					Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
 
 					if (clippingFrustum.ClipLine(ref startPosition, ref endPosition))
 					{
 						if (e.ZBuffered)
 						{
-							object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor);
+							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor);
 						}
 						else
 						{
 							// render on top of everything very lightly
-							object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false);
+							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false);
 						}
 					}
 
@@ -280,10 +280,10 @@ namespace MatterHackers.Plugins.EditorTools
 
 					Vector3 newPosition = originalPointToMove + delta;
 
-					if (object3DControlContext.SnapGridDistance > 0)
+					if (Object3DControlContext.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = object3DControlContext.SnapGridDistance;
+						double snapGridDistance = Object3DControlContext.SnapGridDistance;
 
 						// snap this position to the grid
 						newPosition.X = ((int)((newPosition.X / snapGridDistance) + .5)) * snapGridDistance;
@@ -305,7 +305,7 @@ namespace MatterHackers.Plugins.EditorTools
 						newSize.Y *= -1;
 					}
 
-					Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, object3DControlContext.GuiSurface.ModifierKeys);
+					Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
 					// scale it
 					var scale = Matrix4X4.CreateScale(scaleAmount);
@@ -337,7 +337,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (HadClickOnControl)
 			{
-				object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
+				Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			}
 
 			base.OnMouseUp(mouseEvent3D);
@@ -353,8 +353,8 @@ namespace MatterHackers.Plugins.EditorTools
 				MouseDownOnControl = false;
 				MouseIsOver = false;
 
-				object3DControlContext.Scene.DrawSelection = true;
-				object3DControlContext.Scene.ShowSelectionShadow = true;
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.CancelOperation();
@@ -363,7 +363,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void SetPosition(IObject3D selectedItem)
 		{
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
-			double distBetweenPixelsWorldSpace = object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(cornerPosition);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(cornerPosition);
 
 			// figure out which way the corner is relative to the bounds
 			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, quadrantIndex);
@@ -385,18 +385,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 			lines.Clear();
 			// left lines
-			lines.Add(object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
 
-			lines.Add(object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
 
 			// bottom lines
-			lines.Add(object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
 
-			lines.Add(object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
 		}
 
 		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,
@@ -463,8 +463,8 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			// if another control gets a hover
-			if (object3DControlContext.HoveredObject3DControl != this
-			&& object3DControlContext.HoveredObject3DControl != null)
+			if (Object3DControlContext.HoveredObject3DControl != this
+			&& Object3DControlContext.HoveredObject3DControl != null)
 			{
 				return true;
 			}

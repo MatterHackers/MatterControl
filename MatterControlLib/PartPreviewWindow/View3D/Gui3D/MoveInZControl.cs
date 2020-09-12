@@ -79,8 +79,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 
 					// if another control gets a hover
-					if (object3DControlContext.HoveredObject3DControl != this
-					&& object3DControlContext.HoveredObject3DControl != null)
+					if (Object3DControlContext.HoveredObject3DControl != this
+					&& Object3DControlContext.HoveredObject3DControl != null)
 					{
 						return true;
 					}
@@ -112,10 +112,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var newZPosition = zHeightDisplayInfo.Value;
 
-				if (object3DControlContext.SnapGridDistance > 0)
+				if (Object3DControlContext.SnapGridDistance > 0)
 				{
 					// snap this position to the grid
-					double snapGridDistance = object3DControlContext.SnapGridDistance;
+					double snapGridDistance = Object3DControlContext.SnapGridDistance;
 
 					// snap this position to the grid
 					newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				context.Scene.AddTransformSnapshot(startingTransform);
 			};
 
-			object3DControlContext.GuiSurface.AddChild(zHeightDisplayInfo);
+			Object3DControlContext.GuiSurface.AddChild(zHeightDisplayInfo);
 
 			DrawOnTop = true;
 
@@ -144,14 +144,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CollisionVolume = upArrowMesh.CreateBVHData();
 
-			object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawMoveControls = true;
-			if (object3DControlContext.SelectedObject3DControl != null
-				&& object3DControlContext.SelectedObject3DControl as MoveInZControl == null)
+			if (Object3DControlContext.SelectedObject3DControl != null
+				&& Object3DControlContext.SelectedObject3DControl as MoveInZControl == null)
 			{
 				shouldDrawMoveControls = false;
 			}
@@ -234,10 +234,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					double newZPosition = mouseDownSelectedBounds.MinXYZ.Z + delta;
 
-					if (object3DControlContext.SnapGridDistance > 0)
+					if (Object3DControlContext.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = object3DControlContext.SnapGridDistance;
+						double snapGridDistance = Object3DControlContext.SnapGridDistance;
 
 						// snap this position to the grid
 						newZPosition = ((int)((newZPosition / snapGridDistance) + .5)) * snapGridDistance;
@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
+			Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 
@@ -273,8 +273,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				MouseDownOnControl = false;
 				MouseIsOver = false;
 
-				object3DControlContext.Scene.DrawSelection = true;
-				object3DControlContext.Scene.ShowSelectionShadow = true;
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.CancelOperation();
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
 			var bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
-			double distBetweenPixelsWorldSpace = object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 boxCenter = topPosition;
 			boxCenter.Z += (10 * GuiWidget.DeviceScale + upArrowSize / 2) * distBetweenPixelsWorldSpace;
@@ -298,10 +298,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// left lines
 			// the lines on the bed
 			var bedPosition = new Vector3(topPosition.X, topPosition.Y, 0);
-			lines.Add(object3DControlContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(bedPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[0].X + lineLength, lines[0].Y));
 
-			lines.Add(object3DControlContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(bottomPosition + new Vector3(distToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[2].X + lineLength, lines[2].Y));
 		}
 

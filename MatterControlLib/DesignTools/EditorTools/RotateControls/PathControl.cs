@@ -270,6 +270,11 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
+		public ITraceable GetTraceable()
+		{
+			throw new NotImplementedException();
+		}
+
 		private class CurveControlPoint : VertexPointWidget
 		{
 			public CurveControlPoint(IObject3DControlContext context, PathControl pathControl, VertexStorage vertexStorage, Vector3 point, ShapePath.FlagsAndCommand flagsandCommand, int index)

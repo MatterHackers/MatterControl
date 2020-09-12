@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class TumbleCubeControl : GuiWidget
 	{
 		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
-		private IPrimitive cubeTraceData;
+		private ITraceable cubeTraceData;
 		private Object3DControlLayer object3DControlLayer;
 		private Vector2 lastMovePosition;
 		private LightingData lighting = new LightingData();

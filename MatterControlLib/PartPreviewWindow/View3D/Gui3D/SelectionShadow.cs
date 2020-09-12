@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var selectedItem = RootSelection;
 			if (selectedItem != null
-				&& object3DControlContext.Scene.ShowSelectionShadow)
+				&& Object3DControlContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
 				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
