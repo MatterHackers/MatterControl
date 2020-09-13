@@ -46,9 +46,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		private readonly double blockSize = 7 * GuiWidget.DeviceScale;
 
 		private ITraceable collisionVolume;
-
-		private Color color;
-
+		private ThemeConfig theme;
 		private IObject3DControlContext context;
 
 		private Func<Vector3> getPosition;
@@ -58,13 +56,14 @@ namespace MatterHackers.MatterControl.DesignTools
 		private Action<Vector3> setPosition;
 
 		private Mesh shape;
+		private bool mouseOver;
 
-		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Color color, Func<Vector3> getPosition, Action<Vector3> setPosition)
+		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Func<Vector3> getPosition, Action<Vector3> setPosition)
 		{
+			this.theme = ApplicationController.Instance.Theme;
 			this.context = context;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
-			this.color = color;
 			this.shape = PlatonicSolids.CreateCube();
 			this.owner = owner;
 			collisionVolume = shape.CreateBVHData();
@@ -86,6 +85,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Draw(DrawGlContentEventArgs e)
 		{
+			var color = Color.Black;
+			if (mouseOver)
+			{
+				color = theme.PrimaryAccentColor;
+			}
+
 			GLHelper.Render(shape, color, ShapeMatrix(), RenderTypes.Shaded);
 		}
 
@@ -109,8 +114,13 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 		}
 
-		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
+			if (mouseOver != mouseIsOver)
+			{
+				mouseOver = mouseIsOver;
+				context.GuiSurface.Invalidate();
+			}
 		}
 
 		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)

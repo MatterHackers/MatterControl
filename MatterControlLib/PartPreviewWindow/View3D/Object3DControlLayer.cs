@@ -291,7 +291,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (MouseDownOnObject3DControlVolume && mouseDownObject3DControl != null)
 			{
-				mouseDownObject3DControl.OnMouseMove(mouseEvent3D);
+				mouseDownObject3DControl.OnMouseMove(mouseEvent3D, false);
 			}
 			else
 			{
@@ -299,22 +299,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var object3DControls = this.Object3DControls;
 
-				foreach (var object3DControl in object3DControls.OfType<Object3DControl>())
+				foreach (var object3DControl in object3DControls.OfType<IObject3DControl>())
 				{
 					if (hitObject3DControl == object3DControl)
 					{
-						object3DControl.MouseIsOver = true;
-						object3DControl.MouseMoveInfo = info;
 						HoveredObject3DControl = object3DControl;
+						object3DControl.OnMouseMove(mouseEvent3D, true);
 					}
 					else
 					{
-						object3DControl.MouseIsOver = false;
-						object3DControl.MouseMoveInfo = null;
+						object3DControl.OnMouseMove(mouseEvent3D, false);
 					}
-
-					// TODO: Why do non-hit volumes get mouse move?
-					object3DControl.OnMouseMove(mouseEvent3D);
 				}
 			}
 		}

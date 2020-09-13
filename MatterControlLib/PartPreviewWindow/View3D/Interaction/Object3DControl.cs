@@ -55,8 +55,6 @@ namespace MatterHackers.MeshVisualizer
 
 		protected bool MouseDownOnControl { get; set; }
 
-		public IntersectInfo MouseMoveInfo { get; set; }
-
 		public abstract void Dispose();
 
 		public bool MouseIsOver
@@ -125,8 +123,9 @@ namespace MatterHackers.MeshVisualizer
 			}
 		}
 
-		public virtual void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public virtual void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
+			this.MouseIsOver = mouseIsOver;
 		}
 
 		public virtual void OnMouseUp(Mouse3DEventArgs mouseEvent3D)

@@ -276,7 +276,7 @@ namespace MatterHackers.Plugins.EditorTools
 			throw new NotImplementedException();
 		}
 
-		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
 			throw new NotImplementedException();
 		}

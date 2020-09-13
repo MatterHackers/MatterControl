@@ -72,12 +72,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			return new List<IObject3DControl>
 			{
-				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Green, () => StartPosition, (position) =>
+				new TracedPositionObject3DControl(object3DControlsLayer, this, () => StartPosition, (position) =>
 				{
 					StartPosition = position;
 					Distance = (StartPosition - EndPosition).Length;
 				}),
-				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Red, () => EndPosition, (position) =>
+				new TracedPositionObject3DControl(object3DControlsLayer, this, () => EndPosition, (position) =>
 				{
 					EndPosition = position;
 					Distance = (StartPosition - EndPosition).Length;

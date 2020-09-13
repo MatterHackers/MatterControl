@@ -225,7 +225,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
 			var selectedItem = RootSelection;
 
@@ -284,7 +284,7 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			base.OnMouseMove(mouseEvent3D);
+			base.OnMouseMove(mouseEvent3D, mouseIsOver);
 		}
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)

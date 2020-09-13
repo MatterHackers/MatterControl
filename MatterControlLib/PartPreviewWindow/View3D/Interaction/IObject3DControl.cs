@@ -51,7 +51,7 @@ namespace MatterHackers.MeshVisualizer
 
 		void OnMouseDown(Mouse3DEventArgs mouseEvent3D);
 
-		void OnMouseMove(Mouse3DEventArgs mouseEvent3D);
+		void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver);
 
 		void OnMouseUp(Mouse3DEventArgs mouseEvent3D);
 
