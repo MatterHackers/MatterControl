@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -42,18 +43,25 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class TracedPositionObject3DControl : IObject3DControl
 	{
+		private readonly double blockSize = 7 * GuiWidget.DeviceScale;
+
+		private ITraceable collisionVolume;
+
 		private Color color;
 
+		private IObject3DControlContext context;
+
 		private Func<Vector3> getPosition;
+
+		private IObject3D owner;
 
 		private Action<Vector3> setPosition;
 
 		private Mesh shape;
-		private IObject3D owner;
-		private ITraceable collisionVolume;
 
 		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Color color, Func<Vector3> getPosition, Action<Vector3> setPosition)
 		{
+			this.context = context;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
 			this.color = color;
@@ -78,7 +86,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Draw(DrawGlContentEventArgs e)
 		{
-			GLHelper.Render(shape, color, owner.Matrix * Matrix4X4.CreateTranslation(getPosition()), RenderTypes.Shaded);
+			var worldPosition = getPosition().Transform(owner.Matrix);
+			double distBetweenPixelsWorldSpace = context.World.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
+			var scale = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace * blockSize);
+			var offset = Matrix4X4.CreateTranslation(getPosition());
+
+			var cubeMatrix = scale * owner.Matrix * offset;
+
+			GLHelper.Render(shape, color, cubeMatrix, RenderTypes.Shaded);
 		}
 
 		public ITraceable GetTraceable()
