@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -58,16 +59,29 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[HideFromEditor]
 		public Vector3 StartPosition { get; set; } = new Vector3(-5, 0, 15);
 
+		[HideFromEditor]
 		public Vector3 EndPosition { get; set; } = new Vector3(5, 0, 15);
+
+		[ReadOnly(true)]
+		public double Distance { get; set; } = 10;
 
 		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			return new List<IObject3DControl>
 			{
-				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Green, () => StartPosition, (position) => StartPosition = position),
-				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Red, () => EndPosition, (position) => EndPosition = position),
+				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Green, () => StartPosition, (position) =>
+				{
+					StartPosition = position;
+					Distance = (StartPosition - EndPosition).Length;
+				}),
+				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Red, () => EndPosition, (position) =>
+				{
+					EndPosition = position;
+					Distance = (StartPosition - EndPosition).Length;
+				}),
 			};
 		}
 

@@ -429,14 +429,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			info = bvhHierachy.GetClosestIntersection(ray);
 			if (info != null)
 			{
-				foreach (var object3DControlBase in object3DControls.OfType<Object3DControl>())
+				// we hit some part of the collection of controls, figure out which one
+				foreach (var object3DControlBase in object3DControls.OfType<IObject3DControl>())
 				{
 					var insideBounds = new List<IBvhItem>();
-					if (object3DControlBase.CollisionVolume != null)
+					var traceable = object3DControlBase.GetTraceable();
+					if (traceable != null)
 					{
-						object3DControlBase.CollisionVolume.GetContained(insideBounds, info.closestHitObject.GetAxisAlignedBoundingBox());
-						if (insideBounds.Contains(info.closestHitObject))
+						traceable.GetContained(insideBounds, info.ClosestHitObject.GetAxisAlignedBoundingBox());
+						if (insideBounds.Contains(info.ClosestHitObject))
 						{
+							// we hit the control that has the hit point within its bounds
 							hitObject3DControl = object3DControlBase;
 							return true;
 						}

@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.NormalAtHit.Dot(-Vector3.UnitZ)));
 									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits
@@ -440,7 +440,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.NormalAtHit.Dot(-Vector3.UnitZ)));
 									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits

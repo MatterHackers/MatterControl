@@ -86,19 +86,23 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void Draw(DrawGlContentEventArgs e)
 		{
+			GLHelper.Render(shape, color, ShapeMatrix(), RenderTypes.Shaded);
+		}
+
+		private Matrix4X4 ShapeMatrix()
+		{
 			var worldPosition = getPosition().Transform(owner.Matrix);
 			double distBetweenPixelsWorldSpace = context.World.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
 			var scale = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace * blockSize);
 			var offset = Matrix4X4.CreateTranslation(getPosition());
 
 			var cubeMatrix = scale * owner.Matrix * offset;
-
-			GLHelper.Render(shape, color, cubeMatrix, RenderTypes.Shaded);
+			return cubeMatrix;
 		}
 
 		public ITraceable GetTraceable()
 		{
-			return new Transform(collisionVolume, owner.Matrix);
+			return new Transform(collisionVolume, ShapeMatrix());
 		}
 
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
