@@ -53,37 +53,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private IObject3DControl mouseDownObject3DControl = null;
 
-		/// <summary>
-		/// Gets the mapping for Object3DControls for a given type
-		/// </summary>
-		private Dictionary<Type, List<IObject3DControl>> Object3DControlMappings { get; } = new Dictionary<Type, List<IObject3DControl>>();
-
-		/// <summary>
-		/// Object3DControl Overrides for the selected scene item
-		/// </summary>
-		private List<IObject3DControl> Object3DControlOverrides = null;
-
-		private Type selectedItemType;
-
 		public WorldView World => sceneContext.World;
 
 		public InteractiveScene Scene => sceneContext.Scene;
 
 		public bool DrawOpenGLContent { get; set; } = true;
 
-		private List<IObject3DControl> DefaultObject3DControls { get; } = new List<IObject3DControl>();
+		private List<IObject3DControl> CurrentObject3DControls { get; set; } = new List<IObject3DControl>();
 
 		public IEnumerable<IObject3DControl> Object3DControls
 		{
 			get
 			{
-				if (selectedItemType == null)
+				if (CurrentObject3DControls == null)
 				{
 					return Enumerable.Empty<IObject3DControl>();
 				}
 				else
 				{
-					return Object3DControlOverrides ?? DefaultObject3DControls;
+					return CurrentObject3DControls;
 				}
 			}
 		}
@@ -119,9 +107,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				});
 			}
 
-			Object3DControlMappings.Add(typeof(ImageObject3D), new List<IObject3DControl> { new MoveInZControl(this) });
-			Object3DControlMappings.Add(typeof(PathObject3D), new List<IObject3DControl> { new PathControl(this) });
-
 			// Register listeners
 			sceneContext.Scene.SelectionChanged += this.Scene_SelectionChanged;
 			if (sceneContext.Printer != null)
@@ -147,16 +132,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void RegisterDrawable(IDrawable drawable)
 		{
 			drawables.Add(drawable);
-		}
-
-		public void RegisterObject3DControl(IObject3DControl object3DControl)
-		{
-			DefaultObject3DControls.Add(object3DControl);
-		}
-
-		public void RegisterObject3DControls(IEnumerable<IObject3DControl> Object3DControls)
-		{
-			DefaultObject3DControls.AddRange(Object3DControls);
 		}
 
 		public IEnumerable<IDrawable> Drawables => drawables;
@@ -189,19 +164,43 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			foreach (var item in this.Object3DControls)
-			{
-				item.LostFocus();
-			}
+			DisposeCurrentSelectionObject3DControls();
 
 			// On selection change, update state for mappings
-			selectedItemType = scene.SelectedItem?.GetType();
-			Object3DControlOverrides = null;
+			CurrentObject3DControls = null;
 
-			if (selectedItemType != null)
+			if (scene.SelectedItem is IObject3DControlsProvider provider)
 			{
-				Object3DControlMappings.TryGetValue(selectedItemType, out Object3DControlOverrides);
+				CurrentObject3DControls = provider.GetObject3DControls(this);
 			}
+			else
+			{
+				CurrentObject3DControls = new List<IObject3DControl>(new IObject3DControl[]
+				{
+					// add default controls
+					new RotateCornerControl(this, 0),
+					new RotateCornerControl(this, 1),
+					new RotateCornerControl(this, 2),
+					new MoveInZControl(this),
+					new ScaleTopControl(this),
+					new ScaleCornerControl(this, 0),
+					new ScaleCornerControl(this, 1),
+					new ScaleCornerControl(this, 2),
+					new ScaleCornerControl(this, 3),
+					new SelectionShadow(this),
+					new SnappingIndicators(this),
+				});
+			}
+		}
+
+		private void DisposeCurrentSelectionObject3DControls()
+		{
+			foreach (var item in this.Object3DControls)
+			{
+				item.Dispose();
+			}
+
+			this.CurrentObject3DControls = null;
 		}
 
 		public static void RenderBounds(DrawEventArgs e, WorldView world, IEnumerable<BvhIterator> allResults)
@@ -390,9 +389,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 
 			// Clear lists and references
-			Object3DControlOverrides?.Clear();
-			Object3DControlMappings.Clear();
-			DefaultObject3DControls.Clear();
+			DisposeCurrentSelectionObject3DControls();
 			drawables.Clear();
 			itemDrawables.Clear();
 			SelectedObject3DControl = null;

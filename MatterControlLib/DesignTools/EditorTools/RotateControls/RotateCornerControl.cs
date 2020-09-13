@@ -455,7 +455,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			Vector3 boxCenter = GetControlCenter(selectedItem);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
@@ -845,6 +845,11 @@ namespace MatterHackers.Plugins.EditorTools
 			var rotationMatrix = Matrix4X4.CreateRotation(rotationVector);
 
 			selectedItem.Matrix = selectedItem.Matrix.ApplyAtPosition(mouseDownInfo.SelectedObjectRotationCenter, rotationMatrix);
+		}
+
+		public override void Dispose()
+		{
+			angleTextControl.Close();
 		}
 
 		internal class Mouse3DInfo

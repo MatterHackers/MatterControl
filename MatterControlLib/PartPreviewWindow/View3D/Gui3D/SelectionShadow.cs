@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			shadowColor = theme.ResolveColor(theme.BackgroundColor, Color.Black.WithAlpha(80)).WithAlpha(110);
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			Vector3 boundsCenter = selectedBounds.Center;
@@ -83,6 +83,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			base.Draw(e);
+		}
+
+		public override void Dispose()
+		{
+			// no widgets allocated so nothing to close
 		}
 	}
 }

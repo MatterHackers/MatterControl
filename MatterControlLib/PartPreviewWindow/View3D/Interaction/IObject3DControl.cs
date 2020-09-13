@@ -28,18 +28,20 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RayTracer;
+using System;
 
 namespace MatterHackers.MeshVisualizer
 {
 	/// <summary>
 	/// Basic Interaction control - notified of position per OpenGL draw
 	/// </summary>
-	public interface IObject3DControl
+	public interface IObject3DControl : IDisposable
 	{
 		string Name { get; }
 
-		void SetPosition(IObject3D selectedItem);
+		void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo);
 
 		/// <summary>
 		/// The Control has been requested to cancel (usually by the user).
@@ -52,8 +54,6 @@ namespace MatterHackers.MeshVisualizer
 		void OnMouseMove(Mouse3DEventArgs mouseEvent3D);
 
 		void OnMouseUp(Mouse3DEventArgs mouseEvent3D);
-
-		void LostFocus();
 
 		/// <summary>
 		/// Gets or sets a value indicating whether the control is currently visible.

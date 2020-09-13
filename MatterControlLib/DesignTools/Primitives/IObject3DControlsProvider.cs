@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 
-namespace MatterHackers.MeshVisualizer
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IObject3DControlProvider
+	public interface IObject3DControlsProvider
 	{
-		IEnumerable<IObject3DControl> Create(IObject3DControlContext context);
+		List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer);
 	}
+
+
 }

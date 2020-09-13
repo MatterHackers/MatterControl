@@ -36,6 +36,7 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
@@ -44,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class PathControl : IObject3DControl
+	public class PathControl : IObject3DControl, IObject3DControlsProvider
 	{
 		private readonly IObject3DControlContext context;
 
@@ -160,11 +161,6 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		public void LostFocus()
-		{
-			this.Reset();
-		}
-
 		private void Reset()
 		{
 			// Clear and close selection targets
@@ -178,7 +174,7 @@ namespace MatterHackers.Plugins.EditorTools
 			lastItem = null;
 		}
 
-		public void SetPosition(IObject3D selectedItem)
+		public void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			if (selectedItem != lastItem)
 			{
@@ -286,6 +282,21 @@ namespace MatterHackers.Plugins.EditorTools
 		}
 
 		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
+		{
+			throw new NotImplementedException();
+		}
+
+		public IEnumerable<IObject3DControl> CreateObject3DControls(IObject3DControlContext context)
+		{
+			return new List<IObject3DControl> { new PathControl(context) };
+		}
+
+		public void Dispose()
+		{
+			Reset();
+		}
+
+		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			throw new NotImplementedException();
 		}

@@ -345,16 +345,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewOptionsBar.AddChild(gridSnapButton);
 
-			this.Object3DControlLayer.RegisterObject3DControl(new MoveInZControl(this.Object3DControlLayer));
-			this.Object3DControlLayer.RegisterObject3DControl(new SelectionShadow(this.Object3DControlLayer));
-			this.Object3DControlLayer.RegisterObject3DControl(new SnappingIndicators(this.Object3DControlLayer, this.CurrentSelectInfo));
-
-			// Add IAVolumeProviderPlugins
-			foreach (var ivProvider in ApplicationController.Instance.Extensions.IAVolumeProviders)
-			{
-				this.Object3DControlLayer.RegisterObject3DControls(ivProvider.Create(this.Object3DControlLayer));
-			}
-
 			this.Object3DControlLayer.AfterDraw += AfterDraw3DContent;
 
 			Scene.SelectFirstChild();
@@ -888,7 +878,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				foreach (var volume in this.Object3DControlLayer.Object3DControls)
 				{
-					volume.SetPosition(selectedItem);
+					volume.SetPosition(selectedItem, CurrentSelectInfo);
 				}
 			}
 
@@ -1782,14 +1772,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		DrawStage IDrawable.DrawStage { get; } = DrawStage.OpaqueContent;
 	}
 
-	public enum HitQuadrant { LB, LT, RB, RT }
+	public enum HitQuadrant
+	{
+		LB,
+		LT,
+		RB,
+		RT
+	}
 
 	public class MeshSelectInfo
 	{
-		public HitQuadrant HitQuadrant;
-		public bool DownOnPart;
-		public PlaneShape HitPlane;
-		public Vector3 LastMoveDelta;
-		public Vector3 PlaneDownHitPos;
+		public HitQuadrant HitQuadrant { get; set; }
+
+		public bool DownOnPart { get; set; }
+
+		public PlaneShape HitPlane { get; set; }
+
+		public Vector3 LastMoveDelta { get; set; }
+
+		public Vector3 PlaneDownHitPos { get; set; }
 	}
 }

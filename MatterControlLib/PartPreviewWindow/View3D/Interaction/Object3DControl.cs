@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.RayTracer;
 using MatterHackers.RayTracer.Traceable;
 using MatterHackers.VectorMath;
@@ -55,6 +56,8 @@ namespace MatterHackers.MeshVisualizer
 		protected bool MouseDownOnControl { get; set; }
 
 		public IntersectInfo MouseMoveInfo { get; set; }
+
+		public abstract void Dispose();
 
 		public bool MouseIsOver
 		{
@@ -113,10 +116,6 @@ namespace MatterHackers.MeshVisualizer
 		{
 		}
 
-		public virtual void LostFocus()
-		{
-		}
-
 		public virtual void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left)
@@ -135,7 +134,7 @@ namespace MatterHackers.MeshVisualizer
 			MouseDownOnControl = false;
 		}
 
-		public virtual void SetPosition(IObject3D selectedItem)
+		public virtual void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 		}
 

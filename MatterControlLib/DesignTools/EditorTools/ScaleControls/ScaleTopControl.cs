@@ -319,7 +319,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
@@ -373,6 +373,11 @@ namespace MatterHackers.Plugins.EditorTools
 					zValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -zValueDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
+		}
+
+		public override void Dispose()
+		{
+			zValueDisplayInfo.Close();
 		}
 	}
 }

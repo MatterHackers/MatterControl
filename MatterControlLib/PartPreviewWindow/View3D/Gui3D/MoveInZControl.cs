@@ -147,6 +147,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
+		public override void Dispose()
+		{
+			zHeightDisplayInfo.Close();
+		}
+
 		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawMoveControls = true;
@@ -280,7 +285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 

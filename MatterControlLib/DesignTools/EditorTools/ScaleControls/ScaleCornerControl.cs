@@ -360,7 +360,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(cornerPosition);
@@ -535,6 +535,12 @@ namespace MatterHackers.Plugins.EditorTools
 					yValueDisplayInfo.OriginRelativeParent = heightDisplayCenter - yValueDisplayInfo.LocalBounds.Center;
 				}
 			}
+		}
+
+		public override void Dispose()
+		{
+			xValueDisplayInfo.Close();
+			yValueDisplayInfo.Close();
 		}
 	}
 }

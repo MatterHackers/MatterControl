@@ -48,9 +48,6 @@ namespace MatterHackers.Plugins.EditorTools
 				applicationController.Library.RegisterCreator(item);
 			}
 
-			applicationController.Extensions.Register(new ScaleCornersPlugin());
-			applicationController.Extensions.Register(new RotateCornerPlugins());
-
 			applicationController.Extensions.Register(new OpenSCADBuilder());
 			// applicationController.Extensions.Register(new PrimitivesEditor());
 		}
