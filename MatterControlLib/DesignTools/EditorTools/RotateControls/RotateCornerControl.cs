@@ -554,7 +554,7 @@ namespace MatterHackers.Plugins.EditorTools
 					mouseAngle = mouseDownInfo.AngleOfHit;
 				}
 
-				var graphics2DOpenGL = new Graphics2DOpenGL();
+				var graphics2DOpenGL = new Graphics2DOpenGL(GuiWidget.DeviceScale);
 
 				if (mouseDownInfo != null || MouseIsOver)
 				{
@@ -600,7 +600,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void DrawSnappingMarks(DrawGlContentEventArgs drawEventArgs, double mouseAngle, double alphaValue, Matrix4X4 rotationCenterTransform, double distanceFromCenter, int numSnapPoints, int markToSnapTo)
 		{
-			var graphics2DOpenGL = new Graphics2DOpenGL();
+			var graphics2DOpenGL = new Graphics2DOpenGL(GuiWidget.DeviceScale);
 
 			double snappingRadians = MathHelper.Tau / numSnapPoints;
 

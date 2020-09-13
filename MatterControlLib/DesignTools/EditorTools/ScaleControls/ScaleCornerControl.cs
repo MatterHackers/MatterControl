@@ -48,25 +48,25 @@ namespace MatterHackers.Plugins.EditorTools
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 
-		protected PlaneShape hitPlane;
-		protected Vector3 initialHitPosition;
-		protected Mesh minXminYMesh;
-		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
-		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		protected Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
+		private PlaneShape hitPlane;
+		private Vector3 initialHitPosition;
+		private readonly Mesh minXminYMesh;
+		private AxisAlignedBoundingBox mouseDownSelectedBounds;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
 
 		private double DistToStart => 10 * GuiWidget.DeviceScale;
 
 		private double LineLength => 35 * GuiWidget.DeviceScale;
 
-		private List<Vector2> lines = new List<Vector2>();
+		private readonly List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
-		private int quadrantIndex;
-		private double selectCubeSize = 7 * GuiWidget.DeviceScale;
-		private ThemeConfig theme;
-		private InlineEditControl xValueDisplayInfo;
-		private InlineEditControl yValueDisplayInfo;
-		private bool HadClickOnControl;
+		private readonly int quadrantIndex;
+		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
+		private readonly ThemeConfig theme;
+		private readonly InlineEditControl xValueDisplayInfo;
+		private readonly InlineEditControl yValueDisplayInfo;
+		private bool hadClickOnControl;
 
 		public ScaleCornerControl(IObject3DControlContext context, int cornerIndex)
 			: base(context)
@@ -85,7 +85,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (!xValueDisplayInfo.Visible)
 				{
-					HadClickOnControl = false;
+					hadClickOnControl = false;
 				}
 			};
 
@@ -101,7 +101,7 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (!yValueDisplayInfo.Visible)
 				{
-					HadClickOnControl = false;
+					hadClickOnControl = false;
 				}
 			};
 
@@ -234,7 +234,7 @@ namespace MatterHackers.Plugins.EditorTools
 				&& mouseEvent3D.info != null
 				&& selectedItem != null)
 			{
-				HadClickOnControl = true;
+				hadClickOnControl = true;
 
 				yValueDisplayInfo.Visible = true;
 				xValueDisplayInfo.Visible = true;
@@ -260,7 +260,7 @@ namespace MatterHackers.Plugins.EditorTools
 				xValueDisplayInfo.Visible = true;
 				yValueDisplayInfo.Visible = true;
 			}
-			else if (!HadClickOnControl
+			else if (!hadClickOnControl
 				|| (selectedItem != null && selectedItem.Matrix != transformAppliedByThis))
 			{
 				xValueDisplayInfo.Visible = false;
@@ -335,7 +335,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (HadClickOnControl)
+			if (hadClickOnControl)
 			{
 				Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			}
@@ -470,7 +470,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			// if we clicked on the control
-			if (HadClickOnControl)
+			if (hadClickOnControl)
 			{
 				return false;
 			}

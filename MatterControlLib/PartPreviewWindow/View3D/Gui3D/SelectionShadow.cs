@@ -38,11 +38,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class SelectionShadow : Object3DControl
 	{
-		static Mesh normalShadowMesh;
+		private static Mesh normalShadowMesh;
 
 		private Color shadowColor;
 
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 
 		public SelectionShadow(IObject3DControlContext context)
 			: base(context)
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.X, boundsCenter.Y, 0.1));
 		}
 
-		Mesh GetNormalShadowMesh()
+		private Mesh GetNormalShadowMesh()
 		{
 			if (normalShadowMesh == null)
 			{

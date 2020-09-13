@@ -27,10 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -47,22 +45,22 @@ namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleTopControl : Object3DControl
 	{
-		public IObject3D ActiveSelectedItem;
-		protected PlaneShape hitPlane;
-		protected Vector3 initialHitPosition;
-		protected Mesh topScaleMesh;
-		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
-		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private IObject3D activeSelectedItem;
+		private PlaneShape hitPlane;
+		private Vector3 initialHitPosition;
+		private readonly Mesh topScaleMesh;
+		private AxisAlignedBoundingBox mouseDownSelectedBounds;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 
 		private double DistToStart => 5 * GuiWidget.DeviceScale;
 
 		private double LineLength => 55 * GuiWidget.DeviceScale;
 
-		private List<Vector2> lines = new List<Vector2>();
+		private readonly List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
-		private double arrowSize = 7 * GuiWidget.DeviceScale;
-		private ThemeConfig theme;
-		private InlineEditControl zValueDisplayInfo;
+		private readonly double arrowSize = 7 * GuiWidget.DeviceScale;
+		private readonly ThemeConfig theme;
+		private readonly InlineEditControl zValueDisplayInfo;
 		private bool hadClickOnControl;
 
 		public ScaleTopControl(IObject3DControlContext context)
@@ -75,7 +73,7 @@ namespace MatterHackers.Plugins.EditorTools
 				ForceHide = () =>
 				{
 					// if the selection changes
-					if (RootSelection != ActiveSelectedItem)
+					if (RootSelection != activeSelectedItem)
 					{
 						return true;
 					}
@@ -108,24 +106,24 @@ namespace MatterHackers.Plugins.EditorTools
 
 			zValueDisplayInfo.EditComplete += (s, e) =>
 			{
-				var selectedItem = ActiveSelectedItem;
+				var selectedItem = activeSelectedItem;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
 				var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 				Vector3 topPosition = GetTopPosition(selectedItem);
-				Vector3 lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
+				var lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
 
 				Vector3 newSize = Vector3.Zero;
 				newSize.Z = zValueDisplayInfo.Value;
 				Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
-				Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+				var scale = Matrix4X4.CreateScale(scaleAmount);
 
 				selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 				// and keep the locked edge in place
 				AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-				Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
+				var newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 				selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
 
@@ -181,13 +179,6 @@ namespace MatterHackers.Plugins.EditorTools
 					bottomPosition.Z = originalSelectedBounds.MinXYZ.Z;
 
 					// render with z-buffer full black
-					double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
-					Vector3 delta = topPosition - bottomPosition;
-					Vector3 centerPosition = (topPosition + bottomPosition) / 2;
-					Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(delta, Vector3.UnitX));
-					Matrix4X4 scaleTransform = Matrix4X4.CreateScale((topPosition - bottomPosition).Length, distBetweenPixelsWorldSpace, distBetweenPixelsWorldSpace);
-					Matrix4X4 lineTransform = scaleTransform * rotateTransform * Matrix4X4.CreateTranslation(centerPosition);
-
 					Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
 
 					if (e.ZBuffered)
@@ -216,11 +207,11 @@ namespace MatterHackers.Plugins.EditorTools
 			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
 			{
 				hadClickOnControl = true;
-				ActiveSelectedItem = RootSelection;
+				activeSelectedItem = RootSelection;
 
 				zValueDisplayInfo.Visible = true;
 
-				var selectedItem = ActiveSelectedItem;
+				var selectedItem = activeSelectedItem;
 
 				double distanceToHit = Vector3Ex.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
@@ -238,7 +229,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			var selectedItem = RootSelection;
 
-			ActiveSelectedItem = selectedItem;
+			activeSelectedItem = selectedItem;
 			if (MouseIsOver)
 			{
 				zValueDisplayInfo.Visible = true;
@@ -271,7 +262,7 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 
 					Vector3 topPosition = GetTopPosition(selectedItem);
-					Vector3 lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
+					var lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
 
 					Vector3 newSize = Vector3.Zero;
 					newSize.Z = newPosition.Z - lockedBottom.Z;
@@ -279,13 +270,13 @@ namespace MatterHackers.Plugins.EditorTools
 					// scale it
 					Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
-					Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+					var scale = Matrix4X4.CreateScale(scaleAmount);
 
 					selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 					// and keep the locked edge in place
 					AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-					Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
+					var newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
 
@@ -324,13 +315,13 @@ namespace MatterHackers.Plugins.EditorTools
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
-			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
+			var bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 arrowCenter = topPosition;
 			arrowCenter.Z += arrowSize / 2 * distBetweenPixelsWorldSpace;
 
-			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
+			var centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 

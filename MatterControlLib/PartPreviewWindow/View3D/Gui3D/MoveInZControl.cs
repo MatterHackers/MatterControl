@@ -54,8 +54,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly Mesh upArrowMesh;
 		private AxisAlignedBoundingBox mouseDownSelectedBounds;
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private readonly double distToStart = 5;
-		private readonly double lineLength = 55;
+		private readonly double distToStart = 5 * GuiWidget.DeviceScale;
+		private readonly double lineLength = 55 * GuiWidget.DeviceScale;
 		private readonly List<Vector2> lines = new List<Vector2>();
 		private readonly double upArrowSize = 7 * GuiWidget.DeviceScale;
 		private readonly InlineEditControl zHeightDisplayInfo;
