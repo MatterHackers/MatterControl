@@ -27,75 +27,79 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RayTracer;
+using MatterHackers.RayTracer.Traceable;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D
+	public class TracedPositionObject3DControl : IObject3DControl
 	{
-		public CubeObject3D()
+		private Color color;
+
+		private Func<Vector3> getPosition;
+
+		private Action<Vector3> setPosition;
+
+		private Mesh shape;
+		private IObject3D owner;
+		private ITraceable collisionVolume;
+
+		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Color color, Func<Vector3> getPosition, Action<Vector3> setPosition)
 		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
+			this.getPosition = getPosition;
+			this.setPosition = setPosition;
+			this.color = color;
+			this.shape = PlatonicSolids.CreateCube();
+			this.owner = owner;
+			collisionVolume = shape.CreateBVHData();
 		}
 
-		public double Width { get; set; } = 20;
+		public bool DrawOnTop => false;
 
-		public double Depth { get; set; } = 20;
+		public string Name => "Traced Position";
 
-		public double Height { get; set; } = 20;
+		public bool Visible { get; set; }
 
-		public static async Task<CubeObject3D> Create()
+		public void CancelOperation()
 		{
-			var item = new CubeObject3D();
-			await item.Rebuild();
-			return item;
 		}
 
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
+		public void Dispose()
 		{
-			var item = new CubeObject3D()
-			{
-				Width = x,
-				Depth = y,
-				Height = z,
-			};
-
-			await item.Rebuild();
-			return item;
 		}
 
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		public void Draw(DrawGlContentEventArgs e)
 		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
+			GLHelper.Render(shape, color, owner.Matrix * Matrix4X4.CreateTranslation(getPosition()), RenderTypes.Shaded);
 		}
 
-		public override Task Rebuild()
+		public ITraceable GetTraceable()
 		{
-			this.DebugDepth("Rebuild");
+			return new Transform(collisionVolume, owner.Matrix);
+		}
 
-			using (RebuildLock())
-			{
-				using (new CenterAndHeightMaintainer(this))
-				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
-				}
-			}
+		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
+		{
+		}
 
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
+		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		{
+		}
+
+		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
+		{
+		}
+
+		public void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
+		{
 		}
 	}
 }

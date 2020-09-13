@@ -183,12 +183,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 					if (e.ZBuffered)
 					{
-						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor);
+						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor, width: GuiWidget.DeviceScale);
 					}
 					else
 					{
 						// render on top of everything very lightly
-						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false);
+						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false, GuiWidget.DeviceScale);
 					}
 				}
 			}
@@ -369,6 +369,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void Dispose()
 		{
 			zValueDisplayInfo.Close();
+			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
 		}
 	}
 }

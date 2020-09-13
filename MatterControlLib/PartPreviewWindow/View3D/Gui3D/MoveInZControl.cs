@@ -150,6 +150,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void Dispose()
 		{
 			zHeightDisplayInfo.Close();
+			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)

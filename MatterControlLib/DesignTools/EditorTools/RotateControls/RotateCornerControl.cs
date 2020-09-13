@@ -850,6 +850,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void Dispose()
 		{
 			angleTextControl.Close();
+			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
 		}
 
 		internal class Mouse3DInfo

@@ -27,46 +27,48 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D
+
+	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IEditorDraw
 	{
-		public CubeObject3D()
+		public MeasureToolObject3D()
 		{
-			Name = "Cube".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
+			Name = "Measure Tool".Localize();
+			Color = Color.FromHSL(.11, .98, .76);
 		}
 
-		public double Width { get; set; } = 20;
-
-		public double Depth { get; set; } = 20;
-
-		public double Height { get; set; } = 20;
-
-		public static async Task<CubeObject3D> Create()
+		public static async Task<MeasureToolObject3D> Create()
 		{
-			var item = new CubeObject3D();
+			var item = new MeasureToolObject3D();
 			await item.Rebuild();
 			return item;
 		}
 
-		public static async Task<CubeObject3D> Create(double x, double y, double z)
+		public Vector3 StartPosition { get; set; } = new Vector3(-5, 0, 15);
+
+		public Vector3 EndPosition { get; set; } = new Vector3(5, 0, 15);
+
+		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			var item = new CubeObject3D()
+			return new List<IObject3DControl>
 			{
-				Width = x,
-				Depth = y,
-				Height = z,
+				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Green, () => StartPosition, (position) => StartPosition = position),
+				new TracedPositionObject3DControl(object3DControlsLayer, this, Color.Red, () => EndPosition, (position) => EndPosition = position),
 			};
-
-			await item.Rebuild();
-			return item;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -90,12 +92,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					Mesh = PlatonicSolids.CreateCube(Width, Depth, Height);
+					Mesh = PlatonicSolids.CreateCube(20, 20, 10);
 				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
+		}
+
+		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		{
+			object3DControlLayer.World.Render3DLine(StartPosition.Transform(Matrix), EndPosition.Transform(Matrix), Color.Black, width: GuiWidget.DeviceScale);
 		}
 	}
 }
