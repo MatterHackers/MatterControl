@@ -167,7 +167,7 @@ namespace MatterHackers.MatterControl
 
 		public Color InactiveTabColor { get; set; }
 
-		public Color Object3DControlLayerOverlayColor { get; set; }
+		public Color InteractionLayerOverlayColor { get; set; }
 
 		public TextWidget CreateHeading(string text)
 		{

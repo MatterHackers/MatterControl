@@ -50,50 +50,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class EditableProperty
-	{
-		public IObject3D Item { get; private set; }
-
-		public object Source { get; private set; }
-
-		public PropertyInfo PropertyInfo { get; private set; }
-
-		public EditableProperty(PropertyInfo p, object source)
-		{
-			this.Source = source;
-			this.Item = source as IObject3D;
-			this.PropertyInfo = p;
-		}
-
-		private string GetDescription(PropertyInfo prop)
-		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
-			return nameAttribute?.Description ?? null;
-		}
-
-		public static string GetDisplayName(PropertyInfo prop)
-		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
-			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
-		}
-
-		public object Value => PropertyInfo.GetGetMethod().Invoke(Source, null);
-
-		/// <summary>
-		/// Use reflection to set property value.
-		/// </summary>
-		/// <param name="value">The value to set through reflection.</param>
-		public void SetValue(object value)
-		{
-			this.PropertyInfo.GetSetMethod().Invoke(Source, new object[] { value });
-		}
-
-		public string DisplayName => GetDisplayName(PropertyInfo);
-
-		public string Description => GetDescription(PropertyInfo);
-
-		public Type PropertyType => PropertyInfo.PropertyType;
-	}
 
 	public class PublicPropertyEditor : IObject3DEditor
 	{
@@ -101,7 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public IEnumerable<Type> SupportedTypes() => new Type[] { typeof(IObject3D) };
 
-		private static readonly Type[] allowedTypes =
+		private static readonly Type[] AllowedTypes =
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Color),
@@ -264,7 +220,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
 		{
 			return item.GetType().GetProperties(OwnedPropertiesOnly)
-				.Where(pi => (allowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
+				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
 				.Select(p => new EditableProperty(p, item));
@@ -425,7 +381,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				field.Initialize(0);
 				field.SetValue(directionVector);
 				field.ClearUndoHistory();
-			
+
 				field.ValueChanged += (s, e) =>
 				{
 					property.SetValue(field.DirectionVector);

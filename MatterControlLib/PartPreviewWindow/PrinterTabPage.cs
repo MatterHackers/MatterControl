@@ -158,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				BackgroundColor = theme.Object3DControlLayerOverlayColor,
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 			};
 
 			var modelViewSidePanel = view3DWidget.Descendants<VerticalResizeContainer>().FirstOrDefault();
