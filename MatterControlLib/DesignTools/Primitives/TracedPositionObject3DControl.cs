@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class TracedPositionObject3DControl : IObject3DControl
 	{
-		private readonly double blockSize = 7 * GuiWidget.DeviceScale;
+		private readonly double blockSize = 9 * GuiWidget.DeviceScale;
 
 		private ITraceable collisionVolume;
 		private ThemeConfig theme;
@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Mesh shape;
 		private bool mouseOver;
+		private bool downOnControl;
 
 		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Func<Vector3> getPosition, Action<Vector3> setPosition)
 		{
@@ -64,12 +65,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.context = context;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
-			this.shape = PlatonicSolids.CreateCube();
-			this.owner = owner;
+			this.shape = PlatonicSolids.CreateCube(); // SphereObject3D.CreateSphere();
 			collisionVolume = shape.CreateBVHData();
+			this.owner = owner;
 		}
 
-		public bool DrawOnTop => false;
+		public bool DrawOnTop => true;
 
 		public string Name => "Traced Position";
 
@@ -96,12 +97,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Matrix4X4 ShapeMatrix()
 		{
-			var worldPosition = getPosition().Transform(owner.Matrix);
+			var worldPosition = getPosition();
 			double distBetweenPixelsWorldSpace = context.World.GetWorldUnitsPerScreenPixelAtPosition(worldPosition);
 			var scale = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace * blockSize);
 			var offset = Matrix4X4.CreateTranslation(getPosition());
 
-			var cubeMatrix = scale * owner.Matrix * offset;
+			var cubeMatrix = scale * offset;
 			return cubeMatrix;
 		}
 
@@ -112,6 +113,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
+			downOnControl = true;
 		}
 
 		public void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
@@ -121,10 +123,34 @@ namespace MatterHackers.MatterControl.DesignTools
 				mouseOver = mouseIsOver;
 				context.GuiSurface.Invalidate();
 			}
+
+			if (downOnControl)
+			{
+				var ray = context.World.GetRayForLocalBounds(mouseEvent3D.MouseEvent2D.Position);
+				var scene = context.Scene;
+				var intersectionInfo = scene.GetBVHData().GetClosestIntersection(ray);
+				if (intersectionInfo != null)
+				{
+					foreach (var object3D in scene.Children)
+					{
+						if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
+						{
+							var newPosition = intersectionInfo.HitPosition;
+							if (newPosition != getPosition())
+							{
+								setPosition(newPosition);
+								context.GuiSurface.Invalidate();
+								break;
+							}
+						}
+					}
+				}
+			}
 		}
 
 		public void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
+			downOnControl = false;
 		}
 
 		public void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)

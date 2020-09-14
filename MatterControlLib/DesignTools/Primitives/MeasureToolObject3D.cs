@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -50,6 +51,16 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			Name = "Measure Tool".Localize();
 			Color = Color.FromHSL(.11, .98, .76);
+
+			var height = 10;
+			var diameter = 20;
+			var path = new VertexStorage();
+			path.MoveTo(0, 0);
+			path.LineTo(diameter / 2, 0);
+			path.LineTo(diameter / 3, height);
+			path.LineTo(0, height);
+
+			Mesh = VertexSourceToMesh.Revolve(path, 30);
 		}
 
 		public static async Task<MeasureToolObject3D> Create()
@@ -68,19 +79,48 @@ namespace MatterHackers.MatterControl.DesignTools
 		[ReadOnly(true)]
 		public double Distance { get; set; } = 10;
 
+		[HideFromEditor]
+		public bool PositionsHaveBeenSet { get; set; } = false;
+
 		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			return new List<IObject3DControl>
 			{
-				new TracedPositionObject3DControl(object3DControlsLayer, this, () => StartPosition, (position) =>
+				new TracedPositionObject3DControl(object3DControlsLayer,
+				this,
+				() =>
 				{
+					return PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
+				},
+				(position) =>
+				{
+					if (!PositionsHaveBeenSet)
+					{
+						PositionsHaveBeenSet = true;
+						EndPosition = EndPosition.Transform(this.Matrix);
+					}
+
 					StartPosition = position;
 					Distance = (StartPosition - EndPosition).Length;
+					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 				}),
-				new TracedPositionObject3DControl(object3DControlsLayer, this, () => EndPosition, (position) =>
+				new TracedPositionObject3DControl(object3DControlsLayer,
+				this,
+				() =>
 				{
+					return PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+				},
+				(position) =>
+				{
+					if (!PositionsHaveBeenSet)
+					{
+						PositionsHaveBeenSet = true;
+						StartPosition = StartPosition.Transform(this.Matrix);
+					}
+
 					EndPosition = position;
 					Distance = (StartPosition - EndPosition).Length;
+					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 				}),
 			};
 		}
@@ -106,7 +146,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				using (new CenterAndHeightMaintainer(this))
 				{
-					Mesh = PlatonicSolids.CreateCube(20, 20, 10);
 				}
 			}
 
@@ -116,7 +155,9 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
-			object3DControlLayer.World.Render3DLine(StartPosition.Transform(Matrix), EndPosition.Transform(Matrix), Color.Black, width: GuiWidget.DeviceScale);
+			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
+			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+			object3DControlLayer.World.Render3DLine(start, end, Color.Black, width: GuiWidget.DeviceScale);
 		}
 	}
 }

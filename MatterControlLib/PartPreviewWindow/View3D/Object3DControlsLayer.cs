@@ -76,14 +76,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private LightingData lighting = new LightingData();
+		private readonly LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
 
 		public Object3DControlsLayer(ISceneContext sceneContext, ThemeConfig theme, EditorType editorType = EditorType.Part)
 		{
 			this.sceneContext = sceneContext;
 			this.EditorMode = editorType;
-			this.theme = theme;
 
 			scene = sceneContext.Scene;
 
@@ -93,17 +92,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			floorDrawable = new FloorDrawable(editorType, sceneContext, this.BuildVolumeColor, theme);
 
-			if (ViewOnlyTexture == null)
+			if (viewOnlyTexture == null)
 			{
 				// TODO: What is the ViewOnlyTexture???
 				UiThread.RunOnIdle(() =>
 				{
-					ViewOnlyTexture = new ImageBuffer(32, 32, 32);
-					var graphics2D = ViewOnlyTexture.NewGraphics2D();
+					viewOnlyTexture = new ImageBuffer(32, 32, 32);
+					var graphics2D = viewOnlyTexture.NewGraphics2D();
 					graphics2D.Clear(Color.White);
-					graphics2D.FillRectangle(0, 0, ViewOnlyTexture.Width / 2, ViewOnlyTexture.Height, Color.LightGray);
+					graphics2D.FillRectangle(0, 0, viewOnlyTexture.Width / 2, viewOnlyTexture.Height, Color.LightGray);
 					// request the texture so we can set it to repeat
-					ImageGlPlugin.GetImageGlPlugin(ViewOnlyTexture, true, true, false);
+					ImageGlPlugin.GetImageGlPlugin(viewOnlyTexture, true, true, false);
 				});
 			}
 
@@ -295,11 +294,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				this.FindHitObject3DControl(ray, out IObject3DControl hitObject3DControl, out info);
+				_ = this.FindHitObject3DControl(ray, out IObject3DControl hitObject3DControl, out _);
 
 				var object3DControls = this.Object3DControls;
 
-				foreach (var object3DControl in object3DControls.OfType<IObject3DControl>())
+				foreach (var object3DControl in object3DControls)
 				{
 					if (hitObject3DControl == object3DControl)
 					{
@@ -425,7 +424,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (info != null)
 			{
 				// we hit some part of the collection of controls, figure out which one
-				foreach (var object3DControlBase in object3DControls.OfType<IObject3DControl>())
+				foreach (var object3DControlBase in object3DControls)
 				{
 					var insideBounds = new List<IBvhItem>();
 					var traceable = object3DControlBase.GetTraceable();
@@ -473,7 +472,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public GuiWidget GuiSurface => this;
 
-		private static ImageBuffer ViewOnlyTexture;
+		private static ImageBuffer viewOnlyTexture;
 
 		private Color lightWireframe = new Color("#aaa4");
 		private Color darkWireframe = new Color("#3334");
@@ -483,7 +482,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private readonly ISceneContext sceneContext;
 
-		private readonly ThemeConfig theme;
 		private readonly FloorDrawable floorDrawable;
 
 		private ModelRenderStyle modelRenderStyle = ModelRenderStyle.Wireframe;
@@ -687,7 +685,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private static void ValidateViewOnlyTexturing(IObject3D item)
 		{
 			// if there is no view only texture or the item is locked
-			if (Object3DControlsLayer.ViewOnlyTexture == null
+			if (Object3DControlsLayer.viewOnlyTexture == null
 				|| item.Mesh.Faces.Count == 0)
 			{
 				return;
@@ -697,7 +695,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!item.RebuildLocked)
 			{
 				item.Mesh.FaceTextures.TryGetValue(0, out FaceTextureData faceTexture);
-				bool viewOnlyTexture = faceTexture?.image == Object3DControlsLayer.ViewOnlyTexture;
+				bool viewOnlyTexture = faceTexture?.image == Object3DControlsLayer.viewOnlyTexture;
 
 				// if not persistable and has view only texture, remove the view only texture if it has it
 				if (item.WorldPersistable()
@@ -706,7 +704,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// make sure it does not have the view only texture
 					using (item.RebuildLock())
 					{
-						item.Mesh.RemoveTexture(ViewOnlyTexture, 0);
+						item.Mesh.RemoveTexture(Object3DControlsLayer.viewOnlyTexture, 0);
 					}
 				}
 				else if (!item.WorldPersistable()
@@ -725,7 +723,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						using (item.RebuildLock())
 						{
 							item.Mesh = item.Mesh.Copy(CancellationToken.None);
-							item.Mesh.PlaceTexture(ViewOnlyTexture, matrix);
+							item.Mesh.PlaceTexture(Object3DControlsLayer.viewOnlyTexture, matrix);
 						}
 					});
 				}
@@ -1036,7 +1034,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawObject3DControlVolumes(DrawEventArgs e)
 		{
-			foreach (var item in this.Object3DControls.OfType<IObject3DControl>())
+			foreach (var item in this.Object3DControls)
 			{
 				item.Visible = !SuppressObject3DControls;
 			}
@@ -1049,7 +1047,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// draw on top of anything that is already drawn
 			GL.Disable(EnableCap.DepthTest);
 
-			foreach (var object3DControl in this.Object3DControls.OfType<IObject3DControl>())
+			foreach (var object3DControl in this.Object3DControls)
 			{
 				if (object3DControl.DrawOnTop)
 				{
@@ -1061,7 +1059,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Enable(EnableCap.DepthTest);
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (var object3DVolume in this.Object3DControls.OfType<IObject3DControl>())
+			foreach (var object3DVolume in this.Object3DControls)
 			{
 				object3DVolume.Draw(new DrawGlContentEventArgs(true, e));
 			}

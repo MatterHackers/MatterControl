@@ -1047,11 +1047,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (TrackballTumbleWidget.UnderMouseState == UnderMouseState.FirstUnderMouse
 				&& sceneContext.ViewState.ModelView)
 			{
-				if (mouseEvent.Button == MouseButtons.Left
+				if ((mouseEvent.Button == MouseButtons.Left
 					&& viewControls3D.ActiveButton == ViewControls3DButtons.PartSelect
-					&& ModifierKeys == Keys.Shift
-					|| (
-						TrackballTumbleWidget.TransformState == TrackBallTransformType.None
+					&& ModifierKeys == Keys.Shift)
+					|| (TrackballTumbleWidget.TransformState == TrackBallTransformType.None
 						&& ModifierKeys != Keys.Control
 						&& ModifierKeys != Keys.Alt))
 				{
@@ -1061,7 +1060,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						var info = new IntersectInfo();
 
-						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+						IObject3D hitObject = FindHitObject3D(mouseEvent.Position, out info);
 						if (hitObject == null)
 						{
 							if (selectedItem != null)
@@ -1440,7 +1439,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						// find the think we clicked on
 						var info = new IntersectInfo();
-						var hitObject = FindHitObject3D(mouseEvent.Position, ref info);
+						var hitObject = FindHitObject3D(mouseEvent.Position, out info);
 						if (hitObject != null)
 						{
 							if (selectedItem == hitObject
@@ -1494,7 +1493,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var info = new IntersectInfo();
 
-				if (FindHitObject3D(mouseEvent.Position, ref info) is IObject3D hitObject
+				if (FindHitObject3D(mouseEvent.Position, out info) is IObject3D hitObject
 					&& (this.Printer == null // Allow Model -> Right Click in Part view
 						|| this.Printer?.ViewState.ViewMode == PartViewMode.Model)) // Disallow Model -> Right Click in GCode views
 				{
@@ -1692,7 +1691,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public MeshSelectInfo CurrentSelectInfo { get; } = new MeshSelectInfo();
 
 
-		protected IObject3D FindHitObject3D(Vector2 screenPosition, ref IntersectInfo intersectionInfo)
+		private IObject3D FindHitObject3D(Vector2 screenPosition, out IntersectInfo intersectionInfo)
 		{
 			Vector2 meshViewerWidgetScreenPosition = this.Object3DControlLayer.TransformFromParentSpace(this, screenPosition);
 			Ray ray = sceneContext.World.GetRayForLocalBounds(meshViewerWidgetScreenPosition);
@@ -1700,7 +1699,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			intersectionInfo = Scene.GetBVHData().GetClosestIntersection(ray);
 			if (intersectionInfo != null)
 			{
-				foreach (Object3D object3D in Scene.Children)
+				foreach (var object3D in Scene.Children)
 				{
 					if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
 					{
