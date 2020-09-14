@@ -30,8 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -39,28 +42,30 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-
 	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IEditorDraw
 	{
+		private static Mesh shape = null;
+
 		public MeasureToolObject3D()
 		{
 			Name = "Measure Tool".Localize();
 			Color = Color.FromHSL(.11, .98, .76);
 
-			var height = 10;
-			var diameter = 20;
-			var path = new VertexStorage();
-			path.MoveTo(0, 0);
-			path.LineTo(diameter / 2, 0);
-			path.LineTo(diameter / 3, height);
-			path.LineTo(0, height);
+			if (shape == null)
+			{
+				using (Stream measureAmfStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "measure_tool.stl")))
+				{
+					shape = StlProcessing.Load(measureAmfStream, CancellationToken.None);
+				}
+			}
 
-			Mesh = VertexSourceToMesh.Revolve(path, 30);
+			Mesh = shape;
 		}
 
 		public static async Task<MeasureToolObject3D> Create()
@@ -71,16 +76,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		[HideFromEditor]
-		public Vector3 StartPosition { get; set; } = new Vector3(-5, 0, 15);
+		public Vector3 StartPosition { get; set; } = new Vector3(-10, 5, 3);
 
 		[HideFromEditor]
-		public Vector3 EndPosition { get; set; } = new Vector3(5, 0, 15);
+		public Vector3 EndPosition { get; set; } = new Vector3(10, 5, 3);
 
 		[ReadOnly(true)]
 		public double Distance { get; set; } = 10;
 
 		[HideFromEditor]
 		public bool PositionsHaveBeenSet { get; set; } = false;
+
+		public override bool Persistable { get => false; set => base.Persistable = value; }
 
 		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
