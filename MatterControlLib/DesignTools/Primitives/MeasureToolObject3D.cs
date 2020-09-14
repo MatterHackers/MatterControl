@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[HideFromEditor]
 		public bool PositionsHaveBeenSet { get; set; } = false;
 
-		public override bool Persistable { get => false; set => base.Persistable = value; }
+		public override bool Persistable => false;
 
 		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
-			object3DControlLayer.World.Render3DLine(start, end, Color.Black, width: GuiWidget.DeviceScale);
+			object3DControlLayer.World.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
 		}
 	}
 }

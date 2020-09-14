@@ -917,21 +917,25 @@ namespace MatterHackers.MatterControl.DesignTools
 			if (!item.Persistable)
 			{
 				// find the first self or child that is not authorized
-				var unlockItem = item.DescendantsAndSelf()
-					.Where(i => !i.Persistable && !ApplicationController.Instance.UserHasPermission(i))
-					.First();
-				var unlockdata = ApplicationController.Instance.GetUnlockData?.Invoke(unlockItem, theme);
+				var permission = item.DescendantsAndSelf()
+					.Where(i => !i.Persistable && !ApplicationController.Instance.UserHasPermission(i));
 
-				if (unlockdata != null
-					&& !string.IsNullOrEmpty(unlockdata.Value.url))
+				if (permission.Any())
 				{
-					if (unlockdata.Value.markdownWidget != null)
-					{
-						unlockdata.Value.markdownWidget.VAnchor = VAnchor.Fit;
-						editControlsContainer.AddChild(unlockdata.Value.markdownWidget);
-					}
+					var unlockItem = permission.First();
+					var unlockdata = ApplicationController.Instance.GetUnlockData?.Invoke(unlockItem, theme);
 
-					editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
+					if (unlockdata != null
+						&& !string.IsNullOrEmpty(unlockdata.Value.url))
+					{
+						if (unlockdata.Value.markdownWidget != null)
+						{
+							unlockdata.Value.markdownWidget.VAnchor = VAnchor.Fit;
+							editControlsContainer.AddChild(unlockdata.Value.markdownWidget);
+						}
+
+						editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
+					}
 				}
 			}
 		}
