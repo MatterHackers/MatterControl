@@ -27,18 +27,23 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.EditableTypes;
-using MatterHackers.VectorMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.EditableTypes;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayLinearObject3D : OperationSourceContainerObject3D
+	public abstract class ArrayObject3D : OperationSourceContainerObject3D
+	{
+		public abstract int Count { get; set; }
+	}
+
+	public class ArrayLinearObject3D : ArrayObject3D
 	{
 		public ArrayLinearObject3D()
 		{
@@ -46,10 +51,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		}
 
 		public override bool CanFlatten => true;
-		public int Count { get; set; } = 3;
+
+		public override int Count { get; set; } = 3;
+
 		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
+
 		public double Distance { get; set; } = 30;
-		
+
 		public override async Task Rebuild()
 		{
 			var rebuildLock = this.RebuildLock();
@@ -84,6 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 							list.AddRange(newChildren);
 						});
 					}
+
 					SourceContainer.Visible = false;
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));

@@ -152,8 +152,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class TumbleCubeControl : GuiWidget
 	{
 		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
-		private IPrimitive cubeTraceData;
-		private InteractionLayer interactionLayer;
+		private ITraceable cubeTraceData;
+		private Object3DControlsLayer object3DControlLayer;
 		private Vector2 lastMovePosition;
 		private LightingData lighting = new LightingData();
 		private Vector2 mouseDownPosition;
@@ -164,11 +164,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private List<ConnectedFaces> connections = new List<ConnectedFaces>();
 		private HitData lastHitData = new HitData();
 
-		public TumbleCubeControl(InteractionLayer interactionLayer, ThemeConfig theme)
+		public TumbleCubeControl(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
 		{
 			this.theme = theme;
-			this.interactionLayer = interactionLayer;
+			this.object3DControlLayer = object3DControlLayer;
 
 			// this data needs to be made on the ui thread
 			UiThread.RunOnIdle(() =>
@@ -208,10 +208,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			world = new WorldView(screenSpaceBounds.Width, screenSpaceBounds.Height);
 
 			var forward = -Vector3.UnitZ;
-			var directionForward = Vector3Ex.TransformNormal(forward, interactionLayer.World.InverseModelviewMatrix);
+			var directionForward = Vector3Ex.TransformNormal(forward, object3DControlLayer.World.InverseModelviewMatrix);
 
 			var up = Vector3.UnitY;
-			var directionUp = Vector3Ex.TransformNormal(up, interactionLayer.World.InverseModelviewMatrix);
+			var directionUp = Vector3Ex.TransformNormal(up, object3DControlLayer.World.InverseModelviewMatrix);
 			world.RotationMatrix = Matrix4X4.LookAt(Vector3.Zero, directionForward, directionUp) * Matrix4X4.CreateScale(.8);
 
 			GLHelper.SetGlContext(world, screenSpaceBounds, lighting);
@@ -246,8 +246,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (activeRotationQuaternion != Quaternion.Identity)
 				{
 					lastMovePosition = movePosition;
-					interactionLayer.World.RotationMatrix = interactionLayer.World.RotationMatrix * Matrix4X4.CreateRotation(activeRotationQuaternion);
-					interactionLayer.Invalidate();
+					object3DControlLayer.World.RotationMatrix = object3DControlLayer.World.RotationMatrix * Matrix4X4.CreateRotation(activeRotationQuaternion);
+					object3DControlLayer.Invalidate();
 				}
 			}
 			else if (world != null
@@ -392,7 +392,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var look = Matrix4X4.LookAt(Vector3.Zero, normalAndUp.normal, normalAndUp.up);
 
-					var start = new Quaternion(interactionLayer.World.RotationMatrix);
+					var start = new Quaternion(object3DControlLayer.World.RotationMatrix);
 					var end = new Quaternion(look);
 
 					Task.Run(() =>
@@ -407,20 +407,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var current = Quaternion.Slerp(start, end, time / duration);
 							UiThread.RunOnIdle(() =>
 							{
-								interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(current);
+								object3DControlLayer.World.RotationMatrix = Matrix4X4.CreateRotation(current);
 								Invalidate();
 							});
 							time = timer.Elapsed.TotalSeconds;
 							Thread.Sleep(10);
 						}
 
-						interactionLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
+						object3DControlLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
 						Invalidate();
 					});
 				}
 			}
 
-			interactionLayer.Focus();
+			object3DControlLayer.Focus();
 		}
 
 		private (Vector3 normal, Vector3 up) GetDirectionForFace(HitData hitData)

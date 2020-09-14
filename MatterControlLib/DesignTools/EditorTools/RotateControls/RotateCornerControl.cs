@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class RotateCornerControl : InteractionVolume
+	public class RotateCornerControl : Object3DControl
 	{
 		private IObject3D selectedItemOnMouseDown;
 		private static readonly VertexStorage Arrows = new VertexStorage("M267.96599,177.26875L276.43374,168.80101C276.43374,170.2123 276.43374,171.62359 276.43374,173.03488C280.02731,173.01874 282.82991,174.13254 286.53647,171.29154C290.08503,168.16609 288.97661,164.24968 289.13534,160.33327L284.90147,160.33327L293.36921,151.86553L301.83695,160.33327L297.60308,160.33327C297.60308,167.38972 298.67653,171.4841 293.23666,177.24919C286.80975,182.82626 283.014,181.02643 276.43374,181.50262L276.43374,185.73649L267.96599,177.26875L267.96599,177.26875z");
@@ -67,7 +67,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private double rotationTransformScale = 1;
 		private Vector3 selectCubeSize = new Vector3(30, 30, .1) * GuiWidget.DeviceScale;
 
-		public RotateCornerControl(IInteractionVolumeContext context, int axisIndex)
+		public RotateCornerControl(IObject3DControlContext context, int axisIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
@@ -85,7 +85,7 @@ namespace MatterHackers.Plugins.EditorTools
 				Invalidate();
 			};
 
-			InteractionContext.GuiSurface.AddChild(angleTextControl);
+			Object3DControlContext.GuiSurface.AddChild(angleTextControl);
 
 			angleTextControl.EditComplete += (s, e) =>
 			{
@@ -113,7 +113,7 @@ namespace MatterHackers.Plugins.EditorTools
 						lastSnappedRotation = SnappedRotationAngle;
 					}
 
-					InteractionContext.Scene.AddTransformSnapshot(mouseDownInfo.SelectedObjectTransform);
+					Object3DControlContext.Scene.AddTransformSnapshot(mouseDownInfo.SelectedObjectTransform);
 				}
 			};
 
@@ -153,7 +153,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = rotationHandle.CreateBVHData();
 
-			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
+			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
 		public int RotationAxis { get; private set; }
@@ -172,7 +172,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private double SnappedRotationAngle { get; set; }
 
-		public override void DrawGlContent(DrawGlContentEventArgs e)
+		public override void Draw(DrawGlContentEventArgs e)
 		{
 			IObject3D selectedItem = RootSelection;
 			// We only draw rotation controls if something is selected
@@ -181,22 +181,22 @@ namespace MatterHackers.Plugins.EditorTools
 				// make sure the image is initialized
 				RenderOpenGl.ImageGlPlugin.GetImageGlPlugin(rotationImageWhite, true);
 
-				// We only draw the rotation arrows when the user has not selected any interaction volumes (they are not actively scaling or rotating anything).
-				if (InteractionContext.SelectedInteractionVolume == null)
+				// We only draw the rotation arrows when the user has not selected any Object3DControl volumes (they are not actively scaling or rotating anything).
+				if (Object3DControlContext.SelectedObject3DControl == null)
 				{
-					var color = MouseOver ? theme.PrimaryAccentColor : theme.TextColor;
+					var color = MouseIsOver ? theme.PrimaryAccentColor : theme.TextColor;
 					GLHelper.Render(rotationHandle, new Color(color, 254), TotalTransform, RenderTypes.Shaded);
 				}
 
 				// If the user is over the control or has clicked on it
 				if (mouseMoveInfo != null || mouseDownInfo != null
-					|| MouseOver)
+					|| MouseIsOver)
 				{
 					DrawRotationCompass(selectedItem, e);
 				}
 			}
 
-			base.DrawGlContent(e);
+			base.Draw(e);
 		}
 
 		public Vector3 GetCornerPosition(IObject3D objectBeingRotated)
@@ -221,7 +221,7 @@ namespace MatterHackers.Plugins.EditorTools
 			for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++)
 			{
 				Vector3 cornerPosition = currentSelectedBounds.GetBottomCorner(cornerIndex);
-				Vector3 cornerScreenSpace = InteractionContext.World.GetScreenSpace(cornerPosition);
+				Vector3 cornerScreenSpace = Object3DControlContext.World.GetScreenSpace(cornerPosition);
 				if (cornerScreenSpace.Z < bestCornerZ)
 				{
 					zCornerIndex = cornerIndex;
@@ -269,7 +269,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
-			InteractionContext.Scene.DrawSelection = false;
+			Object3DControlContext.Scene.DrawSelection = false;
 
 			IObject3D selectedItem = RootSelection;
 
@@ -299,7 +299,7 @@ namespace MatterHackers.Plugins.EditorTools
 				SnappedRotationAngle = 0;
 				RotatingCW = true;
 				mouseMoveInfo = mouseDownInfo;
-				InteractionContext.Scene.ShowSelectionShadow = false;
+				Object3DControlContext.Scene.ShowSelectionShadow = false;
 
 				mouseMoveInfo = new Mouse3DInfo(
 					mouseEvent3D.info.HitPosition,
@@ -312,7 +312,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null)
@@ -366,7 +366,7 @@ namespace MatterHackers.Plugins.EditorTools
 						{
 							SnappedRotationAngle = snappingIndex * MathHelper.Tau / numSnapPoints;
 						}
-						else if (InteractionContext.GuiSurface.ModifierKeys == Keys.Shift)
+						else if (Object3DControlContext.GuiSurface.ModifierKeys == Keys.Shift)
 						{
 							snapRadians = MathHelper.DegreesToRadians(45);
 
@@ -414,22 +414,22 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			base.OnMouseMove(mouseEvent3D);
+			base.OnMouseMove(mouseEvent3D, mouseIsOver);
 		}
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			InteractionContext.Scene.DrawSelection = true;
+			Object3DControlContext.Scene.DrawSelection = true;
 			// if we rotated it
 			if (mouseDownInfo != null)
 			{
 				// put in the start transform so we can go back to it if we have to
-				InteractionContext.Scene.AddTransformSnapshot(mouseDownInfo.SelectedObjectTransform);
+				Object3DControlContext.Scene.AddTransformSnapshot(mouseDownInfo.SelectedObjectTransform);
 			}
 
 			if (mouseDownInfo != null)
 			{
-				InteractionContext.Scene.ShowSelectionShadow = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.OnMouseUp(mouseEvent3D);
@@ -444,21 +444,21 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				selectedItem.Matrix = mouseDownInfo.SelectedObjectTransform;
 				MouseDownOnControl = false;
-				MouseOver = false;
+				MouseIsOver = false;
 				mouseDownInfo = null;
 				mouseMoveInfo = null;
 
-				InteractionContext.Scene.DrawSelection = true;
-				InteractionContext.Scene.ShowSelectionShadow = true;
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			Vector3 boxCenter = GetControlCenter(selectedItem);
-			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
 
 			GetCornerPosition(selectedItem, out int cornerIndexOut);
 
@@ -514,7 +514,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void DrawRotationCompass(IObject3D selectedItem, DrawGlContentEventArgs drawEventArgs)
 		{
-			if (InteractionContext.Scene.SelectedItem == null)
+			if (Object3DControlContext.Scene.SelectedItem == null)
 			{
 				return;
 			}
@@ -554,9 +554,9 @@ namespace MatterHackers.Plugins.EditorTools
 					mouseAngle = mouseDownInfo.AngleOfHit;
 				}
 
-				var graphics2DOpenGL = new Graphics2DOpenGL();
+				var graphics2DOpenGL = new Graphics2DOpenGL(GuiWidget.DeviceScale);
 
-				if (mouseDownInfo != null || MouseOver)
+				if (mouseDownInfo != null || MouseIsOver)
 				{
 					IVertexSource blueRing = new JoinPaths(new Arc(0, 0, outerRadius, outerRadius, startBlue, endBlue, Arc.Direction.CounterClockWise),
 						new Arc(0, 0, innerRadius, innerRadius, startBlue, endBlue, Arc.Direction.ClockWise));
@@ -589,7 +589,7 @@ namespace MatterHackers.Plugins.EditorTools
 						var center = Vector3Ex.Transform(Vector3.Zero, rotationCenterTransform);
 						if ((mouseMoveInfo.HitPosition - center).Length > rotationTransformScale * innerRadius)
 						{
-							InteractionContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, theme.PrimaryAccentColor, drawEventArgs.ZBuffered);
+							Object3DControlContext.World.Render3DLine(startPosition, mouseMoveInfo.HitPosition, theme.PrimaryAccentColor, drawEventArgs.ZBuffered);
 						}
 
 						DrawSnappingMarks(drawEventArgs, mouseAngle, alphaValue, rotationCenterTransform, snappingMarkRadius, numSnapPoints, GetSnapIndex(selectedItem, numSnapPoints));
@@ -600,7 +600,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private void DrawSnappingMarks(DrawGlContentEventArgs drawEventArgs, double mouseAngle, double alphaValue, Matrix4X4 rotationCenterTransform, double distanceFromCenter, int numSnapPoints, int markToSnapTo)
 		{
-			var graphics2DOpenGL = new Graphics2DOpenGL();
+			var graphics2DOpenGL = new Graphics2DOpenGL(GuiWidget.DeviceScale);
 
 			double snappingRadians = MathHelper.Tau / numSnapPoints;
 
@@ -639,14 +639,14 @@ namespace MatterHackers.Plugins.EditorTools
 				Vector3 startPosition = Vector3Ex.Transform(unitPosition * innerRadius, rotationCenterTransform);
 				Vector3 endPosition = Vector3Ex.Transform(unitPosition * outerRadius, rotationCenterTransform);
 
-				InteractionContext.World.Render3DLine(startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
+				Object3DControlContext.World.Render3DLine(startPosition, endPosition, new Color(theme.TextColor, (int)(254 * alphaValue)), drawEventArgs.ZBuffered);
 			}
 		}
 
 		private bool ForceHideAngle()
 		{
-			return (InteractionContext.HoveredInteractionVolume != this
-			&& InteractionContext.HoveredInteractionVolume != null)
+			return (Object3DControlContext.HoveredObject3DControl != this
+			&& Object3DControlContext.HoveredObject3DControl != null)
 			|| RootSelection != selectedItemOnMouseDown;
 		}
 
@@ -660,7 +660,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 GetControlCenter(IObject3D selectedItem)
 		{
 			Vector3 boxCenter = GetCornerPosition(selectedItem);
-			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(boxCenter);
 			// figure out which way the corner is relative to the bounds
 			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem);
 
@@ -728,7 +728,7 @@ namespace MatterHackers.Plugins.EditorTools
 				controlCenter = mouseDownInfo.ControlCenter;
 			}
 
-			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(rotationCenter);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(rotationCenter);
 			double lengthFromCenterToControl = (rotationCenter - controlCenter).Length;
 
 			radius = lengthFromCenterToControl * (1 / distBetweenPixelsWorldSpace);
@@ -814,7 +814,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return -1;
 		}
 
-		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
@@ -825,7 +825,7 @@ namespace MatterHackers.Plugins.EditorTools
 				var unitPosition = new Vector3(Math.Cos(mouseDownInfo.AngleOfHit), Math.Sin(mouseDownInfo.AngleOfHit), 0);
 				Vector3 anglePosition = Vector3Ex.Transform(unitPosition * (radius + 100 * GuiWidget.DeviceScale), rotationCenterTransform);
 
-				Vector2 angleDisplayPosition = InteractionContext.World.GetScreenPosition(anglePosition);
+				Vector2 angleDisplayPosition = Object3DControlContext.World.GetScreenPosition(anglePosition);
 
 				var displayAngle = MathHelper.RadiansToDegrees(SnappedRotationAngle);
 				if (!RotatingCW && SnappedRotationAngle > 0)
@@ -845,6 +845,12 @@ namespace MatterHackers.Plugins.EditorTools
 			var rotationMatrix = Matrix4X4.CreateRotation(rotationVector);
 
 			selectedItem.Matrix = selectedItem.Matrix.ApplyAtPosition(mouseDownInfo.SelectedObjectRotationCenter, rotationMatrix);
+		}
+
+		public override void Dispose()
+		{
+			angleTextControl.Close();
+			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
 		}
 
 		internal class Mouse3DInfo

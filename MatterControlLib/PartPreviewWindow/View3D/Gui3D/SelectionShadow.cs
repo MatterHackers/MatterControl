@@ -36,22 +36,22 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
-	public class SelectionShadow : InteractionVolume
+	public class SelectionShadow : Object3DControl
 	{
-		static Mesh normalShadowMesh;
+		private static Mesh normalShadowMesh;
 
 		private Color shadowColor;
 
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 
-		public SelectionShadow(IInteractionVolumeContext context)
+		public SelectionShadow(IObject3DControlContext context)
 			: base(context)
 		{
 			theme = AppContext.Theme;
 			shadowColor = theme.ResolveColor(theme.BackgroundColor, Color.Black.WithAlpha(80)).WithAlpha(110);
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			Vector3 boundsCenter = selectedBounds.Center;
@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			TotalTransform = Matrix4X4.CreateTranslation(new Vector3(boundsCenter.X, boundsCenter.Y, 0.1));
 		}
 
-		Mesh GetNormalShadowMesh()
+		private Mesh GetNormalShadowMesh()
 		{
 			if (normalShadowMesh == null)
 			{
@@ -69,11 +69,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return normalShadowMesh;
 		}
 
-		public override void DrawGlContent(DrawGlContentEventArgs e)
+		public override void Draw(DrawGlContentEventArgs e)
 		{
 			var selectedItem = RootSelection;
 			if (selectedItem != null
-				&& InteractionContext.Scene.ShowSelectionShadow)
+				&& Object3DControlContext.Scene.ShowSelectionShadow)
 			{
 				// draw the bounds on the bed
 				AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
@@ -82,7 +82,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				GLHelper.Render(GetNormalShadowMesh(), shadowColor, withScale, RenderTypes.Shaded);
 			}
 
-			base.DrawGlContent(e);
+			base.Draw(e);
+		}
+
+		public override void Dispose()
+		{
+			// no widgets allocated so nothing to close
 		}
 	}
 }

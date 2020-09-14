@@ -19,10 +19,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public bool DynamicallyScaleRange { get; set; } = true;
 
-		Color _goalColor = Color.Yellow;
+		private Color _goalColor = Color.Yellow;
+
 		public Color GoalColor
 		{
-			get { return _goalColor; }
+			get
+			{
+				return _goalColor;
+			}
+
 			set
 			{
 				_goalColor = value;
@@ -30,10 +35,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		double _goalValue;
+		private double _goalValue;
+
 		public double GoalValue
 		{
-			get { return _goalValue; }
+			get
+			{
+				return _goalValue;
+			}
+
 			set
 			{
 				_goalValue = value;
@@ -45,29 +55,35 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			get => base.LocalBounds; set
 			{
-				dataHistoryArray = new HistoryData(Math.Min(1000, Math.Max(1, (int)(value.Width))));
+				dataHistoryArray = new HistoryData(Math.Min(1000, Math.Max(1, (int)value.Width)));
 				base.LocalBounds = value;
 			}
 		}
 
 		public double MaxValue { get; set; } = double.MinValue;
+
 		public double MinValue { get; set; } = double.MaxValue;
+
 		public bool ShowGoal { get; set; }
+
 		public int TotalAdds { get; private set; }
 
-		public void AddData(double NewData)
+		public void AddData(double newData)
 		{
 			if (DynamicallyScaleRange)
 			{
-				MaxValue = System.Math.Max(MaxValue, NewData);
-				MinValue = System.Math.Min(MinValue, NewData);
+				MaxValue = System.Math.Max(MaxValue, newData);
+				MinValue = System.Math.Min(MinValue, newData);
 			}
 
-			dataHistoryArray.Add(NewData);
+			dataHistoryArray.Add(newData);
 
 			TotalAdds++;
 
-			Invalidate();
+			if (this.ActuallyVisibleOnScreen())
+			{
+				Invalidate();
+			}
 		}
 
 		public double GetAverageValue()
@@ -78,16 +94,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			var linesToDrawStorage = new VertexStorage();
-			double Range = (MaxValue - MinValue);
+			double range = MaxValue - MinValue;
 
 			if (ShowGoal)
 			{
-				var yPos = (GoalValue - MinValue) * Height / Range;
+				var yPos = (GoalValue - MinValue) * Height / range;
 				graphics2D.Line(0, yPos, Width, yPos, GoalColor);
 			}
 
 			Color backgroundGridColor = Color.Gray;
-
 
 			double pixelSkip = Height;
 			for (int i = 0; i < Width / pixelSkip; i++)
@@ -101,11 +116,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (i == 0)
 				{
-					linesToDrawStorage.MoveTo(i + Width - dataHistoryArray.Count, ((dataHistoryArray.GetItem(i) - MinValue) * Height / Range));
+					linesToDrawStorage.MoveTo(i + Width - dataHistoryArray.Count, (dataHistoryArray.GetItem(i) - MinValue) * Height / range);
 				}
 				else
 				{
-					linesToDrawStorage.LineTo(i + Width - dataHistoryArray.Count, ((dataHistoryArray.GetItem(i) - MinValue) * Height / Range));
+					linesToDrawStorage.LineTo(i + Width - dataHistoryArray.Count, (dataHistoryArray.GetItem(i) - MinValue) * Height / range);
 				}
 			}
 
@@ -122,8 +137,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		internal class HistoryData
 		{
 			internal double currentDataSum;
-			private int capacity;
-			private List<double> data;
+			private readonly int capacity;
+			private readonly List<double> data;
 
 			internal HistoryData(int capacity)
 			{
@@ -140,16 +155,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				}
 			}
 
-			internal void Add(double Value)
+			internal void Add(double value)
 			{
 				if (data.Count == capacity)
 				{
 					currentDataSum -= data[0];
 					data.RemoveAt(0);
 				}
-				data.Add(Value);
 
-				currentDataSum += Value;
+				data.Add(value);
+
+				currentDataSum += value;
 			}
 
 			internal double GetAverageValue()
@@ -157,11 +173,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				return currentDataSum / data.Count;
 			}
 
-			internal double GetItem(int ItemIndex)
+			internal double GetItem(int itemIndex)
 			{
-				if (ItemIndex < data.Count)
+				if (itemIndex < data.Count)
 				{
-					return data[ItemIndex];
+					return data[itemIndex];
 				}
 				else
 				{
@@ -171,30 +187,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			internal double GetMaxValue()
 			{
-				double Max = -double.MinValue;
+				double max = -double.MinValue;
 				for (int i = 0; i < data.Count; i++)
 				{
-					if (data[i] > Max)
+					if (data[i] > max)
 					{
-						Max = data[i];
+						max = data[i];
 					}
 				}
 
-				return Max;
+				return max;
 			}
 
 			internal double GetMinValue()
 			{
-				double Min = double.MaxValue;
+				double min = double.MaxValue;
 				for (int i = 0; i < data.Count; i++)
 				{
-					if (data[i] < Min)
+					if (data[i] < min)
 					{
-						Min = data[i];
+						min = data[i];
 					}
 				}
 
-				return Min;
+				return min;
 			}
 
 			internal void Reset()
@@ -202,6 +218,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				currentDataSum = 0;
 				data.Clear();
 			}
-		};
-	};
+		}
+	}
 }

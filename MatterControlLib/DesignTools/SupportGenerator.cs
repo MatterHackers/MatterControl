@@ -131,9 +131,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public static IPrimitive CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, int maxRecursion = int.MaxValue)
+		public static ITraceable CreateTraceData(FaceList faceList, List<Vector3Float> vertexList, int maxRecursion = int.MaxValue)
 		{
-			var allPolys = new List<IPrimitive>();
+			var allPolys = new List<ITraceable>();
 
 			foreach (var face in faceList)
 			{
@@ -424,7 +424,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.NormalAtHit.Dot(-Vector3.UnitZ)));
 									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits
@@ -440,7 +440,7 @@ namespace MatterHackers.MatterControl.DesignTools
 								upHit = traceData.GetClosestIntersection(upRay);
 								if (upHit != null)
 								{
-									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.normalAtHit.Dot(-Vector3.UnitZ)));
+									var angle = MathHelper.RadiansToDegrees(Math.Acos(upHit.NormalAtHit.Dot(-Vector3.UnitZ)));
 									thisTracePlanes.Add(new HitPlane(upHit.HitPosition.Z, angle));
 
 									// make a new ray just past the last hit to keep looking for up hits
@@ -468,7 +468,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return supportColumnData;
 		}
 
-		private IPrimitive GetTraceData(IEnumerable<IObject3D> supportCandidates)
+		private ITraceable GetTraceData(IEnumerable<IObject3D> supportCandidates)
 		{
 			List<Vector3Float> supportVerts;
 			FaceList supportFaces;

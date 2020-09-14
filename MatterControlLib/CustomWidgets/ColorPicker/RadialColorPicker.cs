@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.UI;
@@ -34,20 +35,9 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
-using System;
 
 namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 {
-	public static class Graphics2DOverrides
-	{
-		public static void Ring(this Graphics2D graphics2D, Vector2 center, double radius, double width, Color color)
-		{
-			var ring = new Ellipse(center, radius);
-			var ringStroke = new Stroke(ring, width);
-			graphics2D.Render(ringStroke, color);
-		}
-	}
-
 	public class RadialColorPicker : GuiWidget
 	{
 		private double colorAngle = 0;
@@ -64,21 +54,24 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
 			{
-				//throw new Exception("Incorrect transform");
+				// throw new Exception("Incorrect transform");
 			}
+
 			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
 			{
-				//throw new Exception("Incorrect transform");
+				// throw new Exception("Incorrect transform");
 			}
+
 			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
 			{
-				//throw new Exception("Incorrect transform");
+				// throw new Exception("Incorrect transform");
 			}
 		}
 
 		public event EventHandler SelectedColorChanged;
 
-		public bool mouseDownOnTriangle { get; private set; }
+		public bool MouseDownOnTriangle { get; private set; }
+
 		public double RingWidth { get => Width / 10; }
 
 		public Color SelectedColor
@@ -114,7 +107,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			set
 			{
-				value.ToColorF().GetHSL(out double h, out double s, out double l);
+				value.ToColorF().GetHSL(out double h, out _, out _);
 				colorAngle = h * MathHelper.Tau;
 			}
 		}
@@ -138,7 +131,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			var center = new Vector2(Width / 2, Height / 2);
-			var radius = new Vector2(RingRadius, RingRadius);
 
 			// draw the big outside ring (color part)
 			DrawColorRing(graphics2D, RingRadius, RingWidth);
@@ -191,22 +183,24 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					{
 						colorAngle += MathHelper.Tau;
 					}
+
 					Invalidate();
 				}
 				else
 				{
-					var trianglePositon = WidgetToUnitTriangle(mouseEvent.Position);
+					var (inside, position) = WidgetToUnitTriangle(mouseEvent.Position);
 
-					if (trianglePositon.inside)
+					if (inside)
 					{
-						mouseDownOnTriangle = true;
-						unitTrianglePosition = trianglePositon.position;
+						MouseDownOnTriangle = true;
+						unitTrianglePosition = position;
 					}
+
 					Invalidate();
 				}
 			}
 
-			if(startColor != SelectedColor)
+			if (startColor != SelectedColor)
 			{
 				SelectedColorChanged?.Invoke(this, null);
 			}
@@ -228,9 +222,10 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				{
 					colorAngle += MathHelper.Tau;
 				}
+
 				Invalidate();
 			}
-			else if (mouseDownOnTriangle)
+			else if (MouseDownOnTriangle)
 			{
 				unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
 				Invalidate();
@@ -247,7 +242,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
 			mouseDownOnRing = false;
-			mouseDownOnTriangle = false;
+			MouseDownOnTriangle = false;
 
 			base.OnMouseUp(mouseEvent);
 		}

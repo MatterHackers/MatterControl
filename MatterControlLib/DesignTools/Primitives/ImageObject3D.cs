@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,12 +38,14 @@ using MatterHackers.Agg.ImageProcessing;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageObject3D : AssetObject3D
+	public class ImageObject3D : AssetObject3D, IObject3DControlsProvider
 	{
 		private const double DefaultSizeMm = 60;
 
@@ -124,6 +127,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					Invalidate(InvalidateType.Image);
 				}
 			}
+		}
+
+		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			return new List<IObject3DControl>
+			{
+				new MoveInZControl(object3DControlsLayer),
+				new SelectionShadow(object3DControlsLayer),
+				new SnappingIndicators(object3DControlsLayer),
+			};
 		}
 
 		private ImageBuffer LoadImage()

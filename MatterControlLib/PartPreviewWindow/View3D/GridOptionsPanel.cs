@@ -37,12 +37,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GridOptionsPanel : DropButton
 	{
-		InteractionLayer interactionLayer;
+		Object3DControlsLayer object3DControlLayer;
 
-		public GridOptionsPanel(InteractionLayer interactionLayer, ThemeConfig theme)
+		public GridOptionsPanel(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
 			: base(theme)
 		{
-			this.interactionLayer = interactionLayer;
+			this.object3DControlLayer = object3DControlLayer;
 			this.PopupContent = () => ShowGridOptions(theme);
 
 			this.AddChild(new IconButton(AggContext.StaticData.LoadIcon("1694146.png", 16, 16, theme.InvertIcons), theme)
@@ -61,10 +61,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupMenu.CreateBoolMenuItem(
 				"Off".Localize(),
-				() => interactionLayer.SnapGridDistance ==  0,
+				() => object3DControlLayer.SnapGridDistance ==  0,
 				(isChecked) =>
 				{
-					interactionLayer.SnapGridDistance = 0;
+					object3DControlLayer.SnapGridDistance = 0;
 				},
 				useRadioStyle: true,
 				siblingRadioButtonList: siblingList);
@@ -74,14 +74,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				.1, .25, .5, 1, 2, 5
 			};
 
-			foreach(var snap in snapSettings)
+			foreach (var snap in snapSettings)
 			{
 				popupMenu.CreateBoolMenuItem(
 					snap.ToString(),
-					() => interactionLayer.SnapGridDistance == snap,
+					() => object3DControlLayer.SnapGridDistance == snap,
 					(isChecked) =>
 					{
-						interactionLayer.SnapGridDistance =  snap;
+						object3DControlLayer.SnapGridDistance =  snap;
 					},
 					useRadioStyle: true,
 					siblingRadioButtonList: siblingList);

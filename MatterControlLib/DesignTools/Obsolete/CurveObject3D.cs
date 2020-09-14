@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
-		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			if (layer.Scene.SelectedItem != null
 				&& layer.Scene.SelectedItem.DescendantsAndSelf().Where((i) => i == this).Any())

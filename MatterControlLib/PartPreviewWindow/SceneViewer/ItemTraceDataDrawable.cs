@@ -76,9 +76,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (items.Any())
 				{
 					int i = 0;
-					foreach(var p in items)
+					foreach (var (BvhItem, Matrix) in items)
 					{
-						InteractionLayer.RenderBounds(e, world, p.Matrix, p.BvhItem, i++);
+						Object3DControlsLayer.RenderBounds(e, world, Matrix, BvhItem, i++);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 	public static class PrimitivesExtensions
 	{
-		public static IEnumerable<(IBvhItem BvhItem, Matrix4X4 Matrix)> FilterX(this IPrimitive source, Predicate<BvhItemView> filter)
+		public static IEnumerable<(IBvhItem BvhItem, Matrix4X4 Matrix)> FilterX(this ITraceable source, Predicate<BvhItemView> filter)
 		{
 			var items = new Stack<(IBvhItem BvhItem, Matrix4X4 Matrix)>();
 			items.Push((source, Matrix4X4.Identity));

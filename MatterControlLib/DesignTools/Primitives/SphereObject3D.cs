@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -63,11 +64,15 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double Diameter { get; set; } = 20;
+
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
+
 		public double StartingAngle { get; set; } = 0;
+
 		public double EndingAngle { get; set; } = 360;
+
 		public int LatitudeSides { get; set; } = 30;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -104,24 +109,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						latitudeSides = Sides;
 					}
 
-					var path = new VertexStorage();
-					var angleDelta = MathHelper.Tau / 2 / latitudeSides;
-					var angle = -MathHelper.Tau / 4;
-					var radius = Diameter / 2;
-					path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-					for (int i = 0; i < latitudeSides; i++)
-					{
-						angle += angleDelta;
-						path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
-					}
-
-					var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-					var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
-					var steps = Math.Max(1, (int)(Sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
-					Mesh = VertexSourceToMesh.Revolve(path,
-						steps,
-						startAngle,
-						endAngle);
+					Mesh = CreateSphere(Diameter, Sides, latitudeSides, startingAngle, endingAngle);
 				}
 			}
 
@@ -132,6 +120,28 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
+		}
+
+		public static Mesh CreateSphere(double diameter = 1, int sides = 30, int latitudeSides = 30, double startingAngle = 0, double endingAngle = MathHelper.Tau)
+		{
+			var path = new VertexStorage();
+			var angleDelta = MathHelper.Tau / 2 / latitudeSides;
+			var angle = -MathHelper.Tau / 4;
+			var radius = diameter / 2;
+			path.MoveTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			for (int i = 0; i < latitudeSides; i++)
+			{
+				angle += angleDelta;
+				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
+			}
+
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+			var steps = Math.Max(1, (int)(sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
+			return VertexSourceToMesh.Revolve(path,
+				steps,
+				startAngle,
+				endAngle);
 		}
 
 		public void UpdateControls(PublicPropertyChange change)

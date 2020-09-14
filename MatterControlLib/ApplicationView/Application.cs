@@ -346,9 +346,9 @@ namespace MatterHackers.MatterControl
 								keyEvent.SuppressKeyPress = true;
 							}
 
-							foreach (var interactionVolume in view3D.InteractionLayer.InteractionVolumes)
+							foreach (var object3DControls in view3D.Object3DControlLayer.Object3DControls)
 							{
-								interactionVolume.CancelOperation();
+								object3DControls.CancelOperation();
 							}
 
 							break;
@@ -628,11 +628,11 @@ namespace MatterHackers.MatterControl
 		private static void NudgeItem(View3DWidget view3D, IObject3D item, ArrowDirection arrowDirection, KeyEventArgs keyEvent)
 		{
 
-			var world = view3D.InteractionLayer.World;
+			var world = view3D.Object3DControlLayer.World;
 
 			var vector3 = default(Vector3);
 
-			var moveDistance = Math.Max(.1, view3D.InteractionLayer.SnapGridDistance);
+			var moveDistance = Math.Max(.1, view3D.Object3DControlLayer.SnapGridDistance);
 
 			if (keyEvent.Shift)
 			{

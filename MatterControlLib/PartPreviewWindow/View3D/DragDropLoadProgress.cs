@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox bounds = TrackingObject.GetAxisAlignedBoundingBox(offset);
 
 				Vector3 renderPosition = bounds.GetBottomCorner(2);
-				Vector2 cornerScreenSpace = view3DWidget.InteractionLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 0);
+				Vector2 cornerScreenSpace = view3DWidget.Object3DControlLayer.World.GetScreenPosition(renderPosition) - new Vector2(20, 0);
 
 				e.Graphics2D.PushTransform();
 				Affine currentGraphics2DTransform = e.Graphics2D.GetTransform();
@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public void ProgressReporter(double progress0To1, string processingState)
 		{
 			progressBar.RatioComplete = progress0To1;
-			view3DWidget?.InteractionLayer?.Invalidate();
+			view3DWidget?.Object3DControlLayer?.Invalidate();
 
 			this.State = processingState;
 

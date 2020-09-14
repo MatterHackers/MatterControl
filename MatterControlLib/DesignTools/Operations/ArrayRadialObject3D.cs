@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -34,15 +39,10 @@ using MatterHackers.MatterControl.DesignTools.EditableTypes;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : OperationSourceContainerObject3D, IEditorDraw
+	public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{
@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public override bool CanFlatten => true;
 
-		public int Count { get; set; } = 3;
+		public override int Count { get; set; } = 3;
 
 		[Description("Rotate the part to the same angle as the array.")]
 		public bool RotatePart { get; set; } = true;
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 		}
 
-		public void DrawEditor(InteractionLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
 		{
 			layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
 		}

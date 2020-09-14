@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -41,7 +40,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PrintLibrary;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -83,22 +81,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler<TransformStateChangedEventArgs> TransformStateChanged;
 
-		private RadioIconButton translateButton;
-		private RadioIconButton rotateButton;
-		private RadioIconButton scaleButton;
-		private RadioIconButton partSelectButton;
+		private readonly RadioIconButton translateButton;
+		private readonly RadioIconButton rotateButton;
+		private readonly RadioIconButton scaleButton;
+		private readonly RadioIconButton partSelectButton;
 
 		private View3DWidget view3DWidget;
-		private ISceneContext sceneContext;
-		private PartWorkspace workspace;
+		private readonly ISceneContext sceneContext;
+		private readonly PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
-		private Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
+		private readonly Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
-		private PopupMenuButton bedMenuButton;
-		private ThemeConfig theme;
-		private UndoBuffer undoBuffer;
-		private IconButton undoButton;
-		private IconButton redoButton;
+		private readonly PopupMenuButton bedMenuButton;
+		private readonly ThemeConfig theme;
+		private readonly UndoBuffer undoBuffer;
+		private readonly IconButton undoButton;
+		private readonly IconButton redoButton;
 
 		public ViewControls3D(PartWorkspace workspace, ThemeConfig theme,  UndoBuffer undoBuffer, bool isPrinterType, bool showPrintButton)
 			: base(theme)
@@ -107,14 +105,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.undoBuffer = undoBuffer;
 			this.ActionArea.Click += (s, e) =>
 			{
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 
 			this.OverflowButton.DynamicPopupContent = () =>
 			{
 				var menuTheme = AppContext.MenuTheme;
 				var popupMenu = new PopupMenu(theme);
-				int i = 0;
 
 				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 				{
@@ -134,6 +131,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 										{
 											childOperation.Action?.Invoke(sceneContext);
 										});
+
+										menuItem.Enabled = childOperation.IsEnabled(sceneContext);
+										menuItem.ToolTipText = childOperation.HelpText ?? "";
 									}
 								});
 						}
@@ -141,6 +141,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
 							menuItem.Click += (s, e) => operation.Action(sceneContext);
+							menuItem.Enabled = operation.IsEnabled(sceneContext);
+							menuItem.ToolTipText = operation.HelpText ?? "";
 						}
 					}
 				}
@@ -189,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			undoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Undo();
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 			this.AddChild(undoButton);
 
@@ -204,7 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			redoButton.Click += (sender, e) =>
 			{
 				sceneContext.Scene.Redo();
-				view3DWidget.InteractionLayer.Focus();
+				view3DWidget.Object3DControlLayer.Focus();
 			};
 			this.AddChild(redoButton);
 
@@ -307,7 +309,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (operationGroup.Collapse)
 					{
-
 						var defaultOperation = operationGroup.GetDefaultOperation();
 
 						PopupMenuButton groupButton = null;
@@ -405,7 +406,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					};
 				}
 
-
 				if (button != null)
 				{
 					operationButtons.Add(button, namedAction);
@@ -418,7 +418,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							namedAction.Action.Invoke(sceneContext);
 							var partTab = button.Parents<PartTabPage>().FirstOrDefault();
 							var view3D = partTab.Descendants<View3DWidget>().FirstOrDefault();
-							view3D.InteractionLayer.Focus();
+							view3D.Object3DControlLayer.Focus();
 						});
 					}
 
@@ -479,6 +479,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							partSelectButton.Checked = true;
 						}
+
 						break;
 				}
 
@@ -579,7 +580,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				});
 
-				var actions = new NamedAction[] {
+				var actions = new NamedAction[]
+				{
 					new ActionSeparator(),
 					workspaceActions["Edit"],
 					new ActionSeparator(),
@@ -593,13 +595,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Action = () =>
 						{
 							ApplicationController.Instance.ExportLibraryItems(
-								new[] { new InMemoryLibraryItem(sceneContext.Scene)},
+								new[] { new InMemoryLibraryItem(sceneContext.Scene) },
 								centerOnBed: false,
 								printer: view3DWidget.Printer);
 						},
 						IsEnabled = () => sceneContext.EditableScene
 							|| (sceneContext.EditContext.SourceItem is ILibraryAsset libraryAsset
-								&& string.Equals(Path.GetExtension(libraryAsset.FileName) ,".gcode" ,StringComparison.OrdinalIgnoreCase))
+								&& string.Equals(Path.GetExtension(libraryAsset.FileName), ".gcode", StringComparison.OrdinalIgnoreCase))
 					},
 					new ActionSeparator(),
 					new NamedAction()
@@ -768,9 +770,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					verticalResizeContainer.AddChild(printLibraryWidget);
 
-					systemWindow.MouseDown += systemWindownMouseDown;
+					systemWindow.MouseDown += SystemWindownMouseDown;
 
-					void systemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
+					void SystemWindownMouseDown(object s2, MouseEventArgs mouseEvent)
 					{
 						if (verticalResizeContainer.Parent != null)
 						{
@@ -782,14 +784,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							if (!mouseUpOnWidget)
 							{
 								libraryPopup.CloseMenu();
-								systemWindow.MouseDown -= systemWindownMouseDown;
+								systemWindow.MouseDown -= SystemWindownMouseDown;
 							}
 						}
 						else
 						{
-							systemWindow.MouseDown -= systemWindownMouseDown;
+							systemWindow.MouseDown -= SystemWindownMouseDown;
 						}
-					};
+					}
 
 					return verticalResizeContainer;
 				},

@@ -127,7 +127,10 @@ namespace MatterHackers.MatterControl
 		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
 			this.ConditionalyAddToVisible(terminalLine);
-			this.Invalidate();
+			if (this.ActuallyVisibleOnScreen())
+			{
+				this.Invalidate();
+			}
 		}
 
 		private void TerminalLog_LogCleared(object sender, EventArgs e)

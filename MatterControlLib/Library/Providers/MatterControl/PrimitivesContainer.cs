@@ -133,6 +133,11 @@ namespace MatterHackers.MatterControl.Library
 						return Task.FromResult<IObject3D>(constructedComponent);
 					})
 					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "Measure Tool".Localize(),
+					async () => await MeasureToolObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
+
 			};
 
 			string title = "Primitive Shapes".Localize();

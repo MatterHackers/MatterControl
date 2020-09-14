@@ -57,6 +57,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
+				var count = 6;
 				if (_primitiveColors == null)
 				{
 					_primitiveColors = new Dictionary<string, Color>();
@@ -70,12 +71,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					_primitiveColors.Add("Wedge", BlendHsl("Cube", "Text", 2, 3));
 					_primitiveColors.Add("HalfWedge", BlendHsl("Cube", "Text", 3, 3));
 					// mid color
-					_primitiveColors.Add("Cylinder", BlendHsl("Text", "HalfSphere", 1, 6));
-					_primitiveColors.Add("Cone", BlendHsl("Text", "HalfSphere", 2, 6));
-					_primitiveColors.Add("HalfCylinder", BlendHsl("Text", "HalfSphere", 3, 6));
-					_primitiveColors.Add("Torus", BlendHsl("Text", "HalfSphere", 4, 6));
-					_primitiveColors.Add("Ring", BlendHsl("Text", "HalfSphere", 5, 6));
-					_primitiveColors.Add("Sphere", BlendHsl("Text", "HalfSphere", 6, 6));
+					_primitiveColors.Add("Cylinder", BlendHsl("Text", "HalfSphere", 1, count));
+					_primitiveColors.Add("Cone", BlendHsl("Text", "HalfSphere", 2, count));
+					_primitiveColors.Add("HalfCylinder", BlendHsl("Text", "HalfSphere", 3, count));
+					_primitiveColors.Add("Torus", BlendHsl("Text", "HalfSphere", 4, count));
+					_primitiveColors.Add("Ring", BlendHsl("Text", "HalfSphere", 5, count));
+					_primitiveColors.Add("Sphere", BlendHsl("Text", "HalfSphere", 6, count));
 					// end color
 				}
 

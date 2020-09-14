@@ -170,16 +170,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddTestAssetsToLibrary(new[] { "Batman.stl" });
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene = view3D.Object3DControlLayer.Scene;
 
 				Assert.AreEqual(0, scene.Children.Count, "The scene should have zero items before drag/drop");
 
-				testRunner.DragDropByName("Row Item Batman", "InteractionLayer");
+				testRunner.DragDropByName("Row Item Batman", "Object3DControlLayer");
 				Assert.AreEqual(1, scene.Children.Count, "The scene should have one item after drag/drop");
 
 				testRunner.Delay(.2);
 
-				testRunner.DragDropByName("Row Item Batman", "InteractionLayer");
+				testRunner.DragDropByName("Row Item Batman", "Object3DControlLayer");
 				Assert.AreEqual(2, scene.Children.Count, "The scene should have two items after drag/drop");
 
 				return Task.CompletedTask;

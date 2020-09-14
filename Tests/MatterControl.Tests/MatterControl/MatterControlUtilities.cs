@@ -224,7 +224,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 			}
 
-			testRunner.DragDropByName("InteractionLayer", "InteractionLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
+			testRunner.DragDropByName("Object3DControlLayer", "Object3DControlLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
 
 			testRunner.Delay(1);
 			testRunner.ClickByName(partNameToSelect);
@@ -701,7 +701,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Print Library Overflow Menu");
 
 			var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-			var scene = view3D.InteractionLayer.Scene;
+			var scene = view3D.Object3DControlLayer.Scene;
 			var preAddCount = scene.Children.Count();
 
 			testRunner.ClickByName("Add to Bed Menu Item");

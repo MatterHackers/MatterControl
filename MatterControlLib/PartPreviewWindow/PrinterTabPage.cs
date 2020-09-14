@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			gcodeOptions = sceneContext.RendererOptions;
 
-			view3DWidget.InteractionLayer.EditorMode = InteractionLayer.EditorType.Printer;
+			view3DWidget.Object3DControlLayer.EditorMode = Object3DControlsLayer.EditorType.Printer;
 
 			viewControls3D.TransformStateChanged += (s, e) =>
 			{
@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Maximum = sceneContext.LoadedGCode?.LayerCount ?? 1
 			};
 			LayerScrollbar.SolidSlider.View.TrackColor = opaqueTrackColor;
-			view3DWidget.InteractionLayer.AddChild(LayerScrollbar);
+			view3DWidget.Object3DControlLayer.AddChild(LayerScrollbar);
 
 			layerRenderRatioSlider = new DoubleSolidSlider(default(Vector2), SliceLayerSelector.SliderWidth, theme);
 			layerRenderRatioSlider.FirstValue = 0;
@@ -128,14 +128,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				this.Invalidate();
 			};
-			view3DWidget.InteractionLayer.AddChild(layerRenderRatioSlider);
+			view3DWidget.Object3DControlLayer.AddChild(layerRenderRatioSlider);
 			theme.ApplySliderStyle(layerRenderRatioSlider);
 
 			layerRenderRatioSlider.View.TrackColor = opaqueTrackColor;
 
 			AddSettingsTabBar(leftToRight, view3DWidget);
 
-			view3DWidget.InteractionLayer.BoundsChanged += (s, e) =>
+			view3DWidget.Object3DControlLayer.BoundsChanged += (s, e) =>
 			{
 				SetSliderSizes();
 			};
@@ -147,18 +147,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Must come after we have an instance of View3DWidget an its undo buffer
 			topToBottom.AddChild(PrinterActionsBar, 0);
 
-			var trackball = view3DWidget.InteractionLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
+			var trackball = view3DWidget.Object3DControlLayer.Children<TrackballTumbleWidget>().FirstOrDefault();
 
-			tumbleCubeControl = view3DWidget.InteractionLayer.Children<TumbleCubeControl>().FirstOrDefault();
+			tumbleCubeControl = view3DWidget.Object3DControlLayer.Children<TumbleCubeControl>().FirstOrDefault();
 
-			var position = view3DWidget.InteractionLayer.Children.IndexOf(trackball);
+			var position = view3DWidget.Object3DControlLayer.Children.IndexOf(trackball);
 
 			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
 			{
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
-				BackgroundColor = theme.InteractionLayerOverlayColor,
+				BackgroundColor = theme.Object3DControlLayerOverlayColor,
 			};
 
 			var modelViewSidePanel = view3DWidget.Descendants<VerticalResizeContainer>().FirstOrDefault();
@@ -209,7 +209,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = printer.ViewState.ViewMode == PartViewMode.Layers2D
 			};
-			view3DWidget.InteractionLayer.AddChild(gcode2DWidget, position + 1);
+			view3DWidget.Object3DControlLayer.AddChild(gcode2DWidget, position + 1);
 
 			SetSliderSizes();
 
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
-			view3DWidget.InteractionLayer.DrawOpenGLContent = printer?.ViewState.ViewMode != PartViewMode.Layers2D;
+			view3DWidget.Object3DControlLayer.DrawOpenGLContent = printer?.ViewState.ViewMode != PartViewMode.Layers2D;
 
 			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
 
@@ -472,7 +472,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			layerRenderRatioSlider.OriginRelativeParent = new Vector2(4, 13);
-			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.InteractionLayer.Width - 32;
+			layerRenderRatioSlider.TotalWidthInPixels = view3DWidget.Object3DControlLayer.Width - 32;
 		}
 
 		private double lastPosition = 0;

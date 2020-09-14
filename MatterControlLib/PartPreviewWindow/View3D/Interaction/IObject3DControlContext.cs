@@ -27,20 +27,24 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MeshVisualizer
 {
-	/// <summary>
-	/// Basic Interaction control - notified of position per OpenGL draw
-	/// </summary>
-	public interface IInteractionElement
+	public interface IObject3DControlContext
 	{
-		string Name { get; }
+		IObject3DControl HoveredObject3DControl { get; }
 
-		void SetPosition(IObject3D selectedItem);
+		IObject3DControl SelectedObject3DControl { get; }
 
-		void CancelOperation();
-		void LostFocus();
+		InteractiveScene Scene { get; }
+
+		WorldView World { get; }
+
+		GuiWidget GuiSurface { get; }
+
+		double SnapGridDistance { get; }
 	}
 }

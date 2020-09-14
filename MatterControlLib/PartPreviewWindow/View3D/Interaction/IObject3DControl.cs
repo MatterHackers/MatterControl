@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2017, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,22 +27,43 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.MeshVisualizer;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.RayTracer;
+using System;
 
-namespace MatterHackers.Plugins.EditorTools
+namespace MatterHackers.MeshVisualizer
 {
-	public class RotateCornerPlugins : IInteractionVolumeProvider
+	/// <summary>
+	/// Basic Interaction control - notified of position per OpenGL draw
+	/// </summary>
+	public interface IObject3DControl : IDisposable
 	{
-		public IEnumerable<InteractionVolume> Create(IInteractionVolumeContext context)
-		{
-			// X, Y, Z RotateCornerControls
-			return new[] 
-			{
-				new RotateCornerControl(context, 0),
-				new RotateCornerControl(context, 1),
-				new RotateCornerControl(context, 2)
-			};
-		}
+		string Name { get; }
+
+		void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo);
+
+		/// <summary>
+		/// The Control has been requested to cancel (usually by the user).
+		/// The current state of the operation or edit should be returned to the starting state.
+		/// </summary>
+		void CancelOperation();
+
+		void OnMouseDown(Mouse3DEventArgs mouseEvent3D);
+
+		void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver);
+
+		void OnMouseUp(Mouse3DEventArgs mouseEvent3D);
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the control is currently visible.
+		/// </summary>
+		bool Visible { get; set; }
+
+		bool DrawOnTop { get; }
+
+		void Draw(DrawGlContentEventArgs e);
+
+		ITraceable GetTraceable();
 	}
 }

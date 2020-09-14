@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2017, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,16 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using System.Collections.Generic;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MeshVisualizer;
 
-namespace MatterHackers.MeshVisualizer
+namespace MatterHackers.MatterControl.DesignTools
 {
-	[Flags]
-	public enum LineArrows
+	public interface IObject3DControlsProvider
 	{
-		None = 0,
-		Start = 1,
-		End = 2,
-		Both = 3
+		List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer);
 	}
+
+
 }

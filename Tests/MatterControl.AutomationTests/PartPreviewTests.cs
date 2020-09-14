@@ -20,7 +20,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Get View3DWidget
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.WaitForName("Calibration - Box.stl");
 				Assert.AreEqual(1, scene.Children.Count, "Should have 1 part before copy");
@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				// Get View3DWidget and count Scene.Children before Copy button is clicked
 				View3DWidget view3D = testRunner.GetWidgetByName("View3DWidget", out _, 3) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene = view3D.Object3DControlLayer.Scene;
 
 				// Assert expected start count
 				Assert.AreEqual(1, scene.Children.Count, "Should have one part before copy");
@@ -99,7 +99,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate();
 
 				var view3D = testRunner.GetWidgetByName("View3DWidget", out _) as View3DWidget;
-				var scene = view3D.InteractionLayer.Scene;
+				var scene = view3D.Object3DControlLayer.Scene;
 
 				testRunner.Select3DPart("Calibration - Box.stl");
 

@@ -27,10 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
-using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
@@ -45,27 +43,27 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleTopControl : InteractionVolume
+	public class ScaleTopControl : Object3DControl
 	{
-		public IObject3D ActiveSelectedItem;
-		protected PlaneShape hitPlane;
-		protected Vector3 initialHitPosition;
-		protected Mesh topScaleMesh;
-		protected AxisAlignedBoundingBox mouseDownSelectedBounds;
-		protected Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
+		private IObject3D activeSelectedItem;
+		private PlaneShape hitPlane;
+		private Vector3 initialHitPosition;
+		private readonly Mesh topScaleMesh;
+		private AxisAlignedBoundingBox mouseDownSelectedBounds;
+		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 
 		private double DistToStart => 5 * GuiWidget.DeviceScale;
 
 		private double LineLength => 55 * GuiWidget.DeviceScale;
 
-		private List<Vector2> lines = new List<Vector2>();
+		private readonly List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
-		private double arrowSize = 7 * GuiWidget.DeviceScale;
-		private ThemeConfig theme;
-		private InlineEditControl zValueDisplayInfo;
+		private readonly double arrowSize = 7 * GuiWidget.DeviceScale;
+		private readonly ThemeConfig theme;
+		private readonly InlineEditControl zValueDisplayInfo;
 		private bool hadClickOnControl;
 
-		public ScaleTopControl(IInteractionVolumeContext context)
+		public ScaleTopControl(IObject3DControlContext context)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
@@ -75,14 +73,14 @@ namespace MatterHackers.Plugins.EditorTools
 				ForceHide = () =>
 				{
 					// if the selection changes
-					if (RootSelection != ActiveSelectedItem)
+					if (RootSelection != activeSelectedItem)
 					{
 						return true;
 					}
 
 					// if another control gets a hover
-					if (InteractionContext.HoveredInteractionVolume != this
-					&& InteractionContext.HoveredInteractionVolume != null)
+					if (Object3DControlContext.HoveredObject3DControl != this
+					&& Object3DControlContext.HoveredObject3DControl != null)
 					{
 						return true;
 					}
@@ -108,33 +106,33 @@ namespace MatterHackers.Plugins.EditorTools
 
 			zValueDisplayInfo.EditComplete += (s, e) =>
 			{
-				var selectedItem = ActiveSelectedItem;
+				var selectedItem = activeSelectedItem;
 
 				Matrix4X4 startingTransform = selectedItem.Matrix;
 				var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 				Vector3 topPosition = GetTopPosition(selectedItem);
-				Vector3 lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
+				var lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
 
 				Vector3 newSize = Vector3.Zero;
 				newSize.Z = zValueDisplayInfo.Value;
-				Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, InteractionContext.GuiSurface.ModifierKeys);
+				Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
-				Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+				var scale = Matrix4X4.CreateScale(scaleAmount);
 
 				selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 				// and keep the locked edge in place
 				AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-				Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
+				var newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 				selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
 
 				Invalidate();
 
-				InteractionContext.Scene.AddTransformSnapshot(startingTransform);
+				Object3DControlContext.Scene.AddTransformSnapshot(startingTransform);
 			};
 
-			InteractionContext.GuiSurface.AddChild(zValueDisplayInfo);
+			Object3DControlContext.GuiSurface.AddChild(zValueDisplayInfo);
 
 			DrawOnTop = true;
 
@@ -142,16 +140,16 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = topScaleMesh.CreateBVHData();
 
-			InteractionContext.GuiSurface.AfterDraw += InteractionLayer_AfterDraw;
+			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
 		}
 
-		public override void DrawGlContent(DrawGlContentEventArgs e)
+		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawScaleControls = true;
 			var selectedItem = RootSelection;
 
-			if (InteractionContext.SelectedInteractionVolume != null
-				&& InteractionContext.SelectedInteractionVolume as ScaleTopControl == null)
+			if (Object3DControlContext.SelectedObject3DControl != null
+				&& Object3DControlContext.SelectedObject3DControl as ScaleTopControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
@@ -161,7 +159,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseOver)
+					if (MouseIsOver)
 					{
 						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
@@ -181,28 +179,21 @@ namespace MatterHackers.Plugins.EditorTools
 					bottomPosition.Z = originalSelectedBounds.MinXYZ.Z;
 
 					// render with z-buffer full black
-					double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
-					Vector3 delta = topPosition - bottomPosition;
-					Vector3 centerPosition = (topPosition + bottomPosition) / 2;
-					Matrix4X4 rotateTransform = Matrix4X4.CreateRotation(new Quaternion(delta, Vector3.UnitX));
-					Matrix4X4 scaleTransform = Matrix4X4.CreateScale((topPosition - bottomPosition).Length, distBetweenPixelsWorldSpace, distBetweenPixelsWorldSpace);
-					Matrix4X4 lineTransform = scaleTransform * rotateTransform * Matrix4X4.CreateTranslation(centerPosition);
-
-					Frustum clippingFrustum = InteractionContext.World.GetClippingFrustum();
+					Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
 
 					if (e.ZBuffered)
 					{
-						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor);
+						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor, width: GuiWidget.DeviceScale);
 					}
 					else
 					{
 						// render on top of everything very lightly
-						InteractionContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false);
+						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false, GuiWidget.DeviceScale);
 					}
 				}
 			}
 
-			base.DrawGlContent(e);
+			base.Draw(e);
 		}
 
 		public Vector3 GetTopPosition(IObject3D selectedItem)
@@ -213,14 +204,14 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (mouseEvent3D.info != null && InteractionContext.Scene.SelectedItem != null)
+			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
 			{
 				hadClickOnControl = true;
-				ActiveSelectedItem = RootSelection;
+				activeSelectedItem = RootSelection;
 
 				zValueDisplayInfo.Visible = true;
 
-				var selectedItem = ActiveSelectedItem;
+				var selectedItem = activeSelectedItem;
 
 				double distanceToHit = Vector3Ex.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
@@ -234,12 +225,12 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D)
+		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
 			var selectedItem = RootSelection;
 
-			ActiveSelectedItem = selectedItem;
-			if (MouseOver)
+			activeSelectedItem = selectedItem;
+			if (MouseIsOver)
 			{
 				zValueDisplayInfo.Visible = true;
 			}
@@ -261,31 +252,31 @@ namespace MatterHackers.Plugins.EditorTools
 
 					Vector3 newPosition = originalPointToMove + delta;
 
-					if (InteractionContext.SnapGridDistance > 0)
+					if (Object3DControlContext.SnapGridDistance > 0)
 					{
 						// snap this position to the grid
-						double snapGridDistance = InteractionContext.SnapGridDistance;
+						double snapGridDistance = Object3DControlContext.SnapGridDistance;
 
 						// snap this position to the grid
 						newPosition.Z = ((int)((newPosition.Z / snapGridDistance) + .5)) * snapGridDistance;
 					}
 
 					Vector3 topPosition = GetTopPosition(selectedItem);
-					Vector3 lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
+					var lockedBottom = new Vector3(topPosition.X, topPosition.Y, originalSelectedBounds.MinXYZ.Z);
 
 					Vector3 newSize = Vector3.Zero;
 					newSize.Z = newPosition.Z - lockedBottom.Z;
 
 					// scale it
-					Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, InteractionContext.GuiSurface.ModifierKeys);
+					Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
-					Matrix4X4 scale = Matrix4X4.CreateScale(scaleAmount);
+					var scale = Matrix4X4.CreateScale(scaleAmount);
 
 					selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
 
 					// and keep the locked edge in place
 					AxisAlignedBoundingBox scaledSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-					Vector3 newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
+					var newLockedBottom = new Vector3(topPosition.X, topPosition.Y, scaledSelectedBounds.MinXYZ.Z);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedBottom - newLockedBottom);
 
@@ -293,12 +284,12 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			base.OnMouseMove(mouseEvent3D);
+			base.OnMouseMove(mouseEvent3D, mouseIsOver);
 		}
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			InteractionContext.Scene.AddTransformSnapshot(transformOnMouseDown);
+			Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
 			base.OnMouseUp(mouseEvent3D);
 		}
 
@@ -310,40 +301,40 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				selectedItem.Matrix = transformOnMouseDown;
 				MouseDownOnControl = false;
-				MouseOver = false;
+				MouseIsOver = false;
 
-				InteractionContext.Scene.DrawSelection = true;
-				InteractionContext.Scene.ShowSelectionShadow = true;
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.CancelOperation();
 		}
 
-		public override void SetPosition(IObject3D selectedItem)
+		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 topPosition = GetTopPosition(selectedItem);
-			Vector3 bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
-			double distBetweenPixelsWorldSpace = InteractionContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
+			var bottomPosition = new Vector3(topPosition.X, topPosition.Y, selectedBounds.MinXYZ.Z);
+			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
 			Vector3 arrowCenter = topPosition;
 			arrowCenter.Z += arrowSize / 2 * distBetweenPixelsWorldSpace;
 
-			Matrix4X4 centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
+			var centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 
 			lines.Clear();
 			// left lines
-			lines.Add(InteractionContext.World.GetScreenPosition(topPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(topPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[0].X + LineLength, lines[0].Y));
 
-			lines.Add(InteractionContext.World.GetScreenPosition(bottomPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
+			lines.Add(Object3DControlContext.World.GetScreenPosition(bottomPosition + new Vector3(DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
 			lines.Add(new Vector2(lines[2].X + LineLength, lines[2].Y));
 		}
 
-		private void InteractionLayer_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
 
@@ -359,7 +350,10 @@ namespace MatterHackers.Plugins.EditorTools
 
 					for (int i = 0; i < lines.Count; i += 4)
 					{
-						DrawMeasureLine(drawEvent.Graphics2D, (lines[i] + lines[i + 1]) / 2, (lines[i + 2] + lines[i + 3]) / 2, LineArrows.Both, theme);
+						drawEvent.Graphics2D.DrawMeasureLine((lines[i] + lines[i + 1]) / 2,
+							(lines[i + 2] + lines[i + 3]) / 2,
+							LineArrows.Both,
+							theme);
 					}
 
 					int j = 0;
@@ -370,6 +364,12 @@ namespace MatterHackers.Plugins.EditorTools
 					zValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -zValueDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
+		}
+
+		public override void Dispose()
+		{
+			zValueDisplayInfo.Close();
+			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
 		}
 	}
 }
