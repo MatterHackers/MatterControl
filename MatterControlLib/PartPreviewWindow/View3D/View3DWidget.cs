@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Width = UserSettings.Instance.SelectedObjectPanelWidth,
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Absolute,
-				BackgroundColor = theme.Object3DControlLayerOverlayColor,
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 				SplitterBarColor = theme.SplitterBackground,
 				SplitterWidth = theme.SplitterWidth,
 				MinimumSize = new Vector2(theme.SplitterWidth, 0)

@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			pendingTasksList = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				BackgroundColor = theme.Object3DControlLayerOverlayColor,
+				BackgroundColor = theme.InteractionLayerOverlayColor,
 				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Fit,
 				MinimumSize = new Vector2(325 * GuiWidget.DeviceScale, 0),

@@ -14,7 +14,7 @@
   "BackgroundColor": "#F1F1F1",
   "TabBarBackground": "#A7A7A7",
   "InactiveTabColor": "#D1D1D1",
-  "Object3DControlLayerOverlayColor": "#C4C4C4F0",
+  "InteractionLayerOverlayColor": "#C4C4C4F0",
   "SplitterBackground": "#ABABAB",
   "TabBodyBackground": "#00000000",
   "ToolbarButtonBackground": "#00000000",
