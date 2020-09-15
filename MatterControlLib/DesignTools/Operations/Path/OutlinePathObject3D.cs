@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			(VertexSource as VertexStorage).Add(0, 0, ShapePath.FlagsAndCommand.Stop);
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

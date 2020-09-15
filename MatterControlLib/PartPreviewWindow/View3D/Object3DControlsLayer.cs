@@ -904,7 +904,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var transparentMeshes = new List<Object3DView>();
 
 			var selectedItem = scene.SelectedItem;
-			bool suppressNormalDraw = false;
 			if (selectedItem != null)
 			{
 				// Invoke existing IEditorDraw when iterating items
@@ -912,14 +911,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
 					// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
-					editorDraw.DrawEditor(this, transparentMeshes, e, ref suppressNormalDraw);
+					editorDraw.DrawEditor(this, transparentMeshes, e);
 				}
 			}
 
 			foreach (var item in scene.Children)
 			{
 				if (item.Visible
-					&& (item != selectedItem || suppressNormalDraw == false))
+					&& (item != selectedItem))
 				{
 					DrawObject(item, transparentMeshes, e);
 				}

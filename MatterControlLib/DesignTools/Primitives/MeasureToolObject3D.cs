@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
-		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);

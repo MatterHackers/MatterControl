@@ -59,10 +59,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DisplayName("Part(s) to Subtract and Replace")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			suppressNormalDraw = true;
-
 			var parentOfSourceItems = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
 
 			var sourceItems = parentOfSourceItems.Children.ToList();
