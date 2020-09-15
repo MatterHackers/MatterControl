@@ -163,33 +163,36 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
-			DisposeCurrentSelectionObject3DControls();
-
-			// On selection change, update state for mappings
-			CurrentObject3DControls = null;
-
-			if (scene.SelectedItem is IObject3DControlsProvider provider)
+			UiThread.RunOnIdle(() =>
 			{
-				CurrentObject3DControls = provider.GetObject3DControls(this);
-			}
-			else
-			{
-				CurrentObject3DControls = new List<IObject3DControl>(new IObject3DControl[]
+				DisposeCurrentSelectionObject3DControls();
+
+				// On selection change, update state for mappings
+				CurrentObject3DControls = null;
+
+				if (scene.SelectedItem is IObject3DControlsProvider provider)
 				{
-					// add default controls
-					new RotateCornerControl(this, 0),
-					new RotateCornerControl(this, 1),
-					new RotateCornerControl(this, 2),
-					new MoveInZControl(this),
-					new ScaleTopControl(this),
-					new ScaleCornerControl(this, 0),
-					new ScaleCornerControl(this, 1),
-					new ScaleCornerControl(this, 2),
-					new ScaleCornerControl(this, 3),
-					new SelectionShadow(this),
-					new SnappingIndicators(this),
-				});
-			}
+					CurrentObject3DControls = provider.GetObject3DControls(this);
+				}
+				else
+				{
+					CurrentObject3DControls = new List<IObject3DControl>(new IObject3DControl[]
+					{
+						// add default controls
+						new RotateCornerControl(this, 0),
+						new RotateCornerControl(this, 1),
+						new RotateCornerControl(this, 2),
+						new MoveInZControl(this),
+						new ScaleTopControl(this),
+						new ScaleCornerControl(this, 0),
+						new ScaleCornerControl(this, 1),
+						new ScaleCornerControl(this, 2),
+						new ScaleCornerControl(this, 3),
+						new SelectionShadow(this),
+						new SnappingIndicators(this),
+					});
+				}
+			});
 		}
 
 		private void DisposeCurrentSelectionObject3DControls()
