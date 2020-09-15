@@ -122,7 +122,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
-		public static Mesh CreateSphere(double diameter = 1, int sides = 30, int latitudeSides = 30, double startingAngle = 0, double endingAngle = MathHelper.Tau)
+		public static Mesh CreateSphere(double diameter = 1, int sides = 30, int latitudeSides = 30, double startingAngleDeg = 0, double endingAngleDeg = 360)
 		{
 			var path = new VertexStorage();
 			var angleDelta = MathHelper.Tau / 2 / latitudeSides;
@@ -135,8 +135,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				path.LineTo(new Vector2(radius * Math.Cos(angle), radius * Math.Sin(angle)));
 			}
 
-			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngle));
-			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngle));
+			var startAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(startingAngleDeg));
+			var endAngle = MathHelper.Range0ToTau(MathHelper.DegreesToRadians(endingAngleDeg));
 			var steps = Math.Max(1, (int)(sides * MathHelper.Tau / Math.Abs(MathHelper.GetDeltaAngle(startAngle, endAngle)) + .5));
 			return VertexSourceToMesh.Revolve(path,
 				steps,

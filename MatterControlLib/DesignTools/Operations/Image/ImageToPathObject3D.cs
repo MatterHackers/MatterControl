@@ -252,7 +252,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			ImageToPathObject3D.DrawPath(this);
 		}

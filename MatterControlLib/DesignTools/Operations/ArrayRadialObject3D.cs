@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e, ref bool suppressNormalDraw)
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			layer.World.RenderDirectionAxis(Axis, this.WorldMatrix(), 30);
 		}

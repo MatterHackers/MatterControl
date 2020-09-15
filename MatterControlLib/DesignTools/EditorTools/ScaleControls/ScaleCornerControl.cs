@@ -76,7 +76,7 @@ namespace MatterHackers.Plugins.EditorTools
 			xValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
-				GetDisplayString = (value) => "{0:0.0}mm".FormatWith(value),
+				GetDisplayString = (value) => "{0:0.0}".FormatWith(value),
 			};
 
 			xValueDisplayInfo.EditComplete += EditComplete;
@@ -92,7 +92,7 @@ namespace MatterHackers.Plugins.EditorTools
 			yValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
-				GetDisplayString = (value) => "{0:0.0}mm".FormatWith(value)
+				GetDisplayString = (value) => "{0:0.0}".FormatWith(value)
 			};
 
 			yValueDisplayInfo.EditComplete += EditComplete;
