@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public class TracedPositionObject3DControl : IObject3DControl
 	{
-		private readonly double blockSize = 9 * GuiWidget.DeviceScale;
+		private readonly double blockSize = 11 * GuiWidget.DeviceScale;
 
 		private ITraceable collisionVolume;
 		private ThemeConfig theme;
@@ -65,7 +65,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.context = context;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
-			this.shape = PlatonicSolids.CreateCube(); // SphereObject3D.CreateSphere();
+			this.shape = PlatonicSolids.CreateCube();
+			this.shape = SphereObject3D.CreateSphere(1, 15, 10);
 			collisionVolume = shape.CreateBVHData();
 			this.owner = owner;
 		}

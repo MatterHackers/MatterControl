@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -36,7 +35,6 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -51,6 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IEditorDraw
 	{
 		private static Mesh shape = null;
+		private List<IObject3DControl> editorControls;
 
 		public MeasureToolObject3D()
 		{
@@ -91,45 +90,50 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			return new List<IObject3DControl>
+			if (editorControls == null)
 			{
-				new TracedPositionObject3DControl(object3DControlsLayer,
-				this,
-				() =>
+				editorControls = new List<IObject3DControl>
 				{
-					return PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
-				},
-				(position) =>
-				{
-					if (!PositionsHaveBeenSet)
+					new TracedPositionObject3DControl(object3DControlsLayer,
+					this,
+					() =>
 					{
-						PositionsHaveBeenSet = true;
-						EndPosition = EndPosition.Transform(this.Matrix);
-					}
-
-					StartPosition = position;
-					Distance = (StartPosition - EndPosition).Length;
-					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
-				}),
-				new TracedPositionObject3DControl(object3DControlsLayer,
-				this,
-				() =>
-				{
-					return PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
-				},
-				(position) =>
-				{
-					if (!PositionsHaveBeenSet)
+						return PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
+					},
+					(position) =>
 					{
-						PositionsHaveBeenSet = true;
-						StartPosition = StartPosition.Transform(this.Matrix);
-					}
+						if (!PositionsHaveBeenSet)
+						{
+							PositionsHaveBeenSet = true;
+							EndPosition = EndPosition.Transform(this.Matrix);
+						}
 
-					EndPosition = position;
-					Distance = (StartPosition - EndPosition).Length;
-					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
-				}),
-			};
+						StartPosition = position;
+						Distance = (StartPosition - EndPosition).Length;
+						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+					}),
+					new TracedPositionObject3DControl(object3DControlsLayer,
+					this,
+					() =>
+					{
+						return PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+					},
+					(position) =>
+					{
+						if (!PositionsHaveBeenSet)
+						{
+							PositionsHaveBeenSet = true;
+							StartPosition = StartPosition.Transform(this.Matrix);
+						}
+
+						EndPosition = position;
+						Distance = (StartPosition - EndPosition).Length;
+						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+					}),
+				};
+			}
+
+			return editorControls;
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

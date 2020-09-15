@@ -909,16 +909,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Invoke existing IEditorDraw when iterating items
 				if (selectedItem is IEditorDraw editorDraw)
 				{
-					// TODO: Putting the drawing code in the IObject3D means almost certain bindings to MatterControl in IObject3D. If instead
-					// we had a UI layer object that used binding to register scene drawing hooks for specific types, we could avoid the bindings
 					editorDraw.DrawEditor(this, transparentMeshes, e);
 				}
 			}
 
 			foreach (var item in scene.Children)
 			{
-				if (item.Visible
-					&& (item != selectedItem))
+				if (item.Visible)
 				{
 					DrawObject(item, transparentMeshes, e);
 				}

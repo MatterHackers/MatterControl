@@ -31,6 +31,7 @@ using System;
 using System.Diagnostics;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 
 namespace MatterHackers.MatterControl.CustomWidgets
 {
@@ -42,20 +43,39 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private RunningInterval runningInterval;
 		private ThemeConfig theme;
 
-		public InlineEditControl(string defaultSizeString = "-0000.00", Agg.Font.Justification justification = Agg.Font.Justification.Left)
+		public InlineEditControl(string defaultSizeString = "-0000.00")
 		{
 			theme = AppContext.Theme;
 			base.Visible = false;
 
-			double pointSize = 12;
+			double pointSize = 10;
 
-			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: justification, textColor: theme.TextColor)
+			this.Padding = new BorderDouble(3);
+
+			numberDisplay = new TextWidget(defaultSizeString, 0, 0, pointSize, justification: Agg.Font.Justification.Center, textColor: theme.TextColor)
 			{
 				Visible = false,
 				VAnchor = VAnchor.Bottom,
 				HAnchor = HAnchor.Left,
 				Text = "0",
+				AutoExpandBoundsToText = true,
 			};
+
+			this.BeforeDraw += (s, e) =>
+			{
+				if (s is GuiWidget widget)
+				{
+					var test = true;
+					if (test)
+					{
+						// return;
+					}
+
+					var bounds = widget.LocalBounds;
+					e.Graphics2D.Render(new RoundedRect(bounds, 3 * GuiWidget.DeviceScale), theme.BackgroundColor.WithAlpha(200));
+				}
+			};
+
 			AddChild(numberDisplay);
 
 			numberEdit = new MHNumberEdit(0, theme, pixelWidth: numberDisplay.Width, allowNegatives: true, allowDecimals: true)
@@ -68,7 +88,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			numberEdit.ActuallNumberEdit.InternalNumberEdit.TextChanged += (s, e) =>
 			{
 				numberDisplay.Text = GetDisplayString == null ? "None" : GetDisplayString.Invoke(Value);
-				base.OnTextChanged(e);
+				this.OnTextChanged(e);
 			};
 			numberEdit.ActuallNumberEdit.InternalNumberEdit.MaxDecimalsPlaces = 2;
 
