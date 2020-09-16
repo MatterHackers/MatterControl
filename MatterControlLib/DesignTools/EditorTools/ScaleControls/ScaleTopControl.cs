@@ -140,7 +140,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = topScaleMesh.CreateBVHData();
 
-			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)
@@ -334,7 +334,7 @@ namespace MatterHackers.Plugins.EditorTools
 			lines.Add(new Vector2(lines[2].X + LineLength, lines[2].Y));
 		}
 
-		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
 
@@ -369,7 +369,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void Dispose()
 		{
 			zValueDisplayInfo.Close();
-			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 	}
 }

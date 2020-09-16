@@ -116,7 +116,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = minXminYMesh.CreateBVHData();
 
-			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
 		private void EditComplete(object s, EventArgs e)
@@ -499,7 +499,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return new Vector3(xDirection, yDirection, cornerPosition.Z);
 		}
 
-		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
 
@@ -541,7 +541,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			xValueDisplayInfo.Close();
 			yValueDisplayInfo.Close();
-			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 	}
 }

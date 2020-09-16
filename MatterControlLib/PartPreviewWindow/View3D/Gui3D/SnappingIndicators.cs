@@ -45,14 +45,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			: base(context)
 		{
 			this.DrawOnTop = true;
-			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
 		private MeshSelectInfo meshSelectInfo;
 
 		public override void Dispose()
 		{
-			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo meshSelectInfo)
@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private void Object3DControl_AfterDraw(object drawingWidget, DrawEventArgs drawEvent)
+		private void Object3DControl_BeforeDraw(object drawingWidget, DrawEventArgs drawEvent)
 		{
 			if (Object3DControlContext.Scene.SelectedItem != null
 				&& Object3DControlContext.SnapGridDistance > 0

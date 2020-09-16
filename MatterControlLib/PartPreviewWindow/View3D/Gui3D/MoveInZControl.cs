@@ -144,13 +144,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			CollisionVolume = upArrowMesh.CreateBVHData();
 
-			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
 		public override void Dispose()
 		{
 			zHeightDisplayInfo.Close();
-			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)
@@ -311,7 +311,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			lines.Add(new Vector2(lines[2].X + lineLength, lines[2].Y));
 		}
 
-		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
 

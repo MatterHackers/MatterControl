@@ -153,7 +153,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			CollisionVolume = rotationHandle.CreateBVHData();
 
-			Object3DControlContext.GuiSurface.AfterDraw += Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
 		public int RotationAxis { get; private set; }
@@ -814,7 +814,7 @@ namespace MatterHackers.Plugins.EditorTools
 			return -1;
 		}
 
-		private void Object3DControl_AfterDraw(object sender, DrawEventArgs drawEvent)
+		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
 		{
 			IObject3D selectedItem = RootSelection;
 			if (selectedItem != null
@@ -850,7 +850,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void Dispose()
 		{
 			angleTextControl.Close();
-			Object3DControlContext.GuiSurface.AfterDraw -= Object3DControl_AfterDraw;
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
 		internal class Mouse3DInfo
