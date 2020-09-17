@@ -56,8 +56,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.AddWorldRotateControls();
 			var object3DControls = object3DControlsLayer.Object3DControls;
 
-			//object3DControls.Add(new ScaleMatrixTopControl(object3DControlsLayer));
-			object3DControls.Add(new ScaleHeightControl(object3DControlsLayer));
+			object3DControls.Add(new ScaleMatrixTopControl(object3DControlsLayer));
+			// object3DControls.Add(new ScaleHeightControl(object3DControlsLayer));
 
 			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 0));
 			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 1));
