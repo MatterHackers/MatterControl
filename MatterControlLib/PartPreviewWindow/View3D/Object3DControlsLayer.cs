@@ -59,22 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DrawOpenGLContent { get; set; } = true;
 
-		private List<IObject3DControl> CurrentObject3DControls { get; set; } = new List<IObject3DControl>();
-
-		public IEnumerable<IObject3DControl> Object3DControls
-		{
-			get
-			{
-				if (CurrentObject3DControls == null)
-				{
-					return Enumerable.Empty<IObject3DControl>();
-				}
-				else
-				{
-					return CurrentObject3DControls;
-				}
-			}
-		}
+		public List<IObject3DControl> Object3DControls { get; set; } = new List<IObject3DControl>();
 
 		private readonly LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
@@ -168,31 +153,42 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DisposeCurrentSelectionObject3DControls();
 
 				// On selection change, update state for mappings
-				CurrentObject3DControls = null;
+				Object3DControls.Clear();
 
 				if (scene.SelectedItem is IObject3DControlsProvider provider)
 				{
-					CurrentObject3DControls = provider.GetObject3DControls(this);
+					provider.AddObject3DControls(this);
 				}
 				else
 				{
-					CurrentObject3DControls = new List<IObject3DControl>(new IObject3DControl[]
-					{
-						// add default controls
-						new RotateCornerControl(this, 0),
-						new RotateCornerControl(this, 1),
-						new RotateCornerControl(this, 2),
-						new MoveInZControl(this),
-						new ScaleTopControl(this),
-						new ScaleCornerControl(this, 0),
-						new ScaleCornerControl(this, 1),
-						new ScaleCornerControl(this, 2),
-						new ScaleCornerControl(this, 3),
-						new SelectionShadow(this),
-						new SnappingIndicators(this),
-					});
+					// add default controls
+					Object3DControls.Add(new ScaleMatrixTopControl(this));
+					Object3DControls.Add(new ScaleCornerControl(this, 0));
+					Object3DControls.Add(new ScaleCornerControl(this, 1));
+					Object3DControls.Add(new ScaleCornerControl(this, 2));
+					Object3DControls.Add(new ScaleCornerControl(this, 3));
+
+					AddWorldRotateControls();
+					AddDefaultControls();
 				}
 			});
+		}
+
+		/// <summary>
+		/// Add in MoveInZ, SelectionShadow & SnappingIndicators
+		/// </summary>
+		public void AddDefaultControls()
+		{
+			Object3DControls.Add(new MoveInZControl(this));
+			Object3DControls.Add(new SelectionShadow(this));
+			Object3DControls.Add(new SnappingIndicators(this));
+		}
+
+		public void AddWorldRotateControls()
+		{
+			Object3DControls.Add(new RotateCornerControl(this, 0));
+			Object3DControls.Add(new RotateCornerControl(this, 1));
+			Object3DControls.Add(new RotateCornerControl(this, 2));
 		}
 
 		private void DisposeCurrentSelectionObject3DControls()
@@ -202,7 +198,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				item.Dispose();
 			}
 
-			this.CurrentObject3DControls = null;
+			this.Object3DControls.Clear();
 		}
 
 		public static void RenderBounds(DrawEventArgs e, WorldView world, IEnumerable<BvhIterator> allResults)

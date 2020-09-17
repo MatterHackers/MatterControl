@@ -43,7 +43,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleTopControl : Object3DControl
+	public abstract class ScaleTopControl : Object3DControl
 	{
 		private IObject3D activeSelectedItem;
 		private PlaneShape hitPlane;
@@ -66,7 +66,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public ScaleTopControl(IObject3DControlContext context)
 			: base(context)
 		{
-			theme = MatterControl.AppContext.Theme;
+			theme = AppContext.Theme;
 
 			zValueDisplayInfo = new InlineEditControl()
 			{
@@ -370,6 +370,22 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			zValueDisplayInfo.Close();
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
+		}
+	}
+
+	public class ScaleMatrixTopControl : ScaleTopControl
+	{
+		public ScaleMatrixTopControl(IObject3DControlContext context)
+			: base(context)
+		{
+		}
+	}
+
+	public class ScaleHeightControl : ScaleTopControl
+	{
+		public ScaleHeightControl(IObject3DControlContext context)
+			: base(context)
+		{
 		}
 	}
 }

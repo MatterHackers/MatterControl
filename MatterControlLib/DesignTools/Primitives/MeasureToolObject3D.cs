@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IEditorDraw
 	{
 		private static Mesh shape = null;
-		private List<IObject3DControl> editorControls;
+		private List<IObject3DControl> editorControls = null;
 
 		public MeasureToolObject3D()
 		{
@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override bool Persistable => false;
 
-		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			if (editorControls == null)
 			{
@@ -133,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			return editorControls;
+			object3DControlsLayer.Object3DControls.AddRange(editorControls);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
