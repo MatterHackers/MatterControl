@@ -28,14 +28,15 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.Plugins.EditorTools;
 using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D
+	public class CubeObject3D : PrimitiveObject3D, IObject3DControlsProvider
 	{
 		public CubeObject3D()
 		{
@@ -48,6 +49,21 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Depth { get; set; } = 20;
 
 		public double Height { get; set; } = 20;
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddDefaultControls();
+			object3DControlsLayer.AddWorldRotateControls();
+			var object3DControls = object3DControlsLayer.Object3DControls;
+
+			object3DControls.Add(new ScaleMatrixTopControl(object3DControlsLayer));
+			// object3DControls.Add(new ScaleHeightControl(object3DControlsLayer));
+
+			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 0));
+			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 1));
+			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 2));
+			object3DControls.Add(new ScaleCornerControl(object3DControlsLayer, 3));
+		}
 
 		public static async Task<CubeObject3D> Create()
 		{

@@ -296,7 +296,7 @@ namespace MatterHackers.Plugins.EditorTools
 			Reset();
 		}
 
-		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
 			throw new NotImplementedException();
 		}

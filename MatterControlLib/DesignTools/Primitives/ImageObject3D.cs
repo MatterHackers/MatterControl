@@ -129,14 +129,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			return new List<IObject3DControl>
-			{
-				new MoveInZControl(object3DControlsLayer),
-				new SelectionShadow(object3DControlsLayer),
-				new SnappingIndicators(object3DControlsLayer),
-			};
+			object3DControlsLayer.AddDefaultControls();
 		}
 
 		private ImageBuffer LoadImage()

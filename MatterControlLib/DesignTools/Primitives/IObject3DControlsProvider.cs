@@ -35,8 +35,6 @@ namespace MatterHackers.MatterControl.DesignTools
 {
 	public interface IObject3DControlsProvider
 	{
-		List<IObject3DControl> GetObject3DControls(Object3DControlsLayer object3DControlsLayer);
+		void AddObject3DControls(Object3DControlsLayer object3DControlsLayer);
 	}
-
-
 }

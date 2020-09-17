@@ -105,6 +105,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 										var deltaRatio = sensorDelta / stepperDelta;
 										if (deltaRatio < .5 || deltaRatio > 2)
 										{
+											printer.Connection.TerminalLog.WriteLine($"RUNNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:#.0}) / Stepper ({stepperDelta:#.0}) = {deltaRatio:#.00}");
 											// we have a discrepancy set a runout state
 											positionSensorData.ExtrusionDiscrepency++;
 											if (positionSensorData.ExtrusionDiscrepency > 2)
