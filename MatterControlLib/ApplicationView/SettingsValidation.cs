@@ -316,7 +316,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
-					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > 0)
+					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.infill_overlap_perimeter)
@@ -331,19 +331,13 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				if (printer.Settings?.Helpers.ComPort() == "Emulator")
 				{
 					errors.Add(
-						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
+						new SettingsValidationError(SettingsKey.com_port)
 						{
-							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
-								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-								GetSettingsName(SettingsKey.nozzle_diameter)),
-							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
-								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
-								GetSettingsName(SettingsKey.nozzle_diameter),
-								settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+							Error = "You are connected to the Emulator not an actual printer.".Localize(),
+							ErrorLevel = ValidationErrorLevel.Warning,
 						});
 				}
 
