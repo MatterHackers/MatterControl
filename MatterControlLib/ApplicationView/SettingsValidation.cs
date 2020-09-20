@@ -315,6 +315,22 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
+				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
+					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > 0)
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.infill_overlap_perimeter)
+						{
+							Error = "{0} must be greater than 0 and less than your nozzle diameter. You may be missing a '%'.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.infill_overlap_perimeter)),
+							ValueDetails = "{0} = {1}, {2} = {3}".FormatWith(
+								GetSettingsName(SettingsKey.infill_overlap_perimeter),
+								settings.GetValue<double>(SettingsKey.infill_overlap_perimeter),
+								GetSettingsName(SettingsKey.nozzle_diameter),
+								settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+						});
+				}
+
 				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
 				{
 					errors.Add(
