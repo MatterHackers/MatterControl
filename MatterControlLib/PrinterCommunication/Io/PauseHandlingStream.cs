@@ -61,73 +61,85 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string DebugInfo => "";
 
+		void LineReceived(object sender, string line)
+		{
+			if (line != null)
+			{
+				if (line.Contains("ros_"))
+				{
+					if (line.Contains("TRIGGERED"))
+					{
+						readOutOfFilament = true;
+					}
+				}
+
+				if (line.Contains("pos_"))
+				{
+					double sensorDistance = 0;
+					double stepperDistance = 0;
+					if (GCodeFile.GetFirstNumberAfter("SENSOR:", line, ref sensorDistance))
+					{
+						if (sensorDistance < -1 || sensorDistance > 1)
+						{
+							printer.Connection.FilamentPositionSensorDetected = true;
+						}
+
+						if (printer.Connection.FilamentPositionSensorDetected)
+						{
+							GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
+
+							var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
+
+							// if we think we should have move the filament by more than 1mm
+							if (stepperDelta > 1)
+							{
+								var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
+								var deltaRatio = sensorDelta / stepperDelta;
+
+								if (printer.Settings.GetValue<bool>(SettingsKey.report_runout_sensor_data))
+								{
+									// report the position for debugging
+									printer.Connection.TerminalLog.WriteLine($"RUNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:#.0}) / Stepper ({stepperDelta:#.0}) = {deltaRatio:#.00}");
+								}
+
+								// check if the sensor data is within a tolerance of the stepper data
+								if (deltaRatio < .5 || deltaRatio > 2)
+								{
+									// we have a discrepancy set a runout state
+									positionSensorData.ExtrusionDiscrepency++;
+									if (positionSensorData.ExtrusionDiscrepency > 2)
+									{
+										readOutOfFilament = true;
+										positionSensorData.ExtrusionDiscrepency = 0;
+									}
+								}
+								else
+								{
+									positionSensorData.ExtrusionDiscrepency = 0;
+								}
+
+								// and record this position
+								positionSensorData.LastSensorDistance = sensorDistance;
+								positionSensorData.LastStepperDistance = stepperDistance;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		public override void Dispose()
+		{
+			printer.Connection.LineReceived -= LineReceived;
+		}
+
 		public PauseHandlingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
 			// if we have a runout sensor, register to listen for lines to check it
 			if (printer.Settings.GetValue<bool>(SettingsKey.filament_runout_sensor))
 			{
-				printer.Connection.LineReceived += (s, line) =>
-				{
-					if (line != null)
-					{
-						if (line.Contains("ros_"))
-						{
-							if (line.Contains("TRIGGERED"))
-							{
-								readOutOfFilament = true;
-							}
-						}
-
-						if (line.Contains("pos_"))
-						{
-							double sensorDistance = 0;
-							double stepperDistance = 0;
-							if (GCodeFile.GetFirstNumberAfter("SENSOR:", line, ref sensorDistance))
-							{
-								if (sensorDistance < -1 || sensorDistance > 1)
-								{
-									printer.Connection.FilamentPositionSensorDetected = true;
-								}
-
-								if (printer.Connection.FilamentPositionSensorDetected)
-								{
-									GCodeFile.GetFirstNumberAfter("STEPPER:", line, ref stepperDistance);
-
-									var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
-
-									// if we think we should have move the filament by more than 1mm
-									if (stepperDelta > 1)
-									{
-										var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
-										// check if the sensor data is within a tolerance of the stepper data
-
-										var deltaRatio = sensorDelta / stepperDelta;
-										if (deltaRatio < .5 || deltaRatio > 2)
-										{
-											printer.Connection.TerminalLog.WriteLine($"RUNNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:#.0}) / Stepper ({stepperDelta:#.0}) = {deltaRatio:#.00}");
-											// we have a discrepancy set a runout state
-											positionSensorData.ExtrusionDiscrepency++;
-											if (positionSensorData.ExtrusionDiscrepency > 2)
-											{
-												readOutOfFilament = true;
-												positionSensorData.ExtrusionDiscrepency = 0;
-											}
-										}
-										else
-										{
-											positionSensorData.ExtrusionDiscrepency = 0;
-										}
-
-										// and record this position
-										positionSensorData.LastSensorDistance = sensorDistance;
-										positionSensorData.LastStepperDistance = stepperDistance;
-									}
-								}
-							}
-						}
-					}
-				};
+				printer.Connection.LineReceived += LineReceived;
 			}
 		}
 

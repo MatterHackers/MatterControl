@@ -191,6 +191,12 @@ namespace MatterHackers.MatterControl.EeProm
 			currentEePromSettings.SettingAdded += NewSettingReadFromPrinter;
 			currentEePromSettings.AskPrinterForSettings(printer.Connection);
 
+			this.Closed += (s, e) =>
+			{
+				printer.Connection.LineReceived -= currentEePromSettings.Add;
+				currentEePromSettings.SettingAdded -= NewSettingReadFromPrinter;
+			};
+
 #if SIMULATE_CONNECTION
             UiThread.RunOnIdle(AddSimulatedItems);
 #endif
