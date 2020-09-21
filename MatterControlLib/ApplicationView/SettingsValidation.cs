@@ -315,19 +315,29 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width) > settings.GetValue<double>(SettingsKey.nozzle_diameter) * 4)
+				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
+					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 				{
 					errors.Add(
-						new SettingsValidationError(SettingsKey.external_perimeter_extrusion_width)
+						new SettingsValidationError(SettingsKey.infill_overlap_perimeter)
 						{
-							Error = "{0} must be less than or equal to the {1} * 4.".Localize().FormatWith(
-								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-								GetSettingsName(SettingsKey.nozzle_diameter)),
-							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
-								GetSettingsName(SettingsKey.external_perimeter_extrusion_width),
-								settings.GetValue<double>(SettingsKey.external_perimeter_extrusion_width),
+							Error = "{0} must be greater than 0 and less than your nozzle diameter. You may be missing a '%'.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.infill_overlap_perimeter)),
+							ValueDetails = "{0} = {1}, {2} = {3}".FormatWith(
+								GetSettingsName(SettingsKey.infill_overlap_perimeter),
+								settings.GetValue<double>(SettingsKey.infill_overlap_perimeter),
 								GetSettingsName(SettingsKey.nozzle_diameter),
 								settings.GetValue<double>(SettingsKey.nozzle_diameter)),
+						});
+				}
+
+				if (printer.Settings?.Helpers.ComPort() == "Emulator")
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.com_port)
+						{
+							Error = "You are connected to the Emulator not an actual printer.".Localize(),
+							ErrorLevel = ValidationErrorLevel.Warning,
 						});
 				}
 
