@@ -174,6 +174,11 @@ namespace MatterHackers.MatterControl.EeProm
 
 			printer.Connection.LineReceived += currentEePromSettings.Add;
 
+			this.Closed += (s, e) =>
+			{
+				printer.Connection.LineReceived -= currentEePromSettings.Add;
+			};
+
 			// and ask the printer to send the settings
 			currentEePromSettings.Update();
 

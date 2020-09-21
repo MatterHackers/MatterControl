@@ -169,6 +169,8 @@ Printer
       progress_reporting
       include_firmware_updater
       backup_firmware_before_update
+    Diagnostics
+      report_runout_sensor_data
     Hardware
       firmware_type
       show_reset_connection

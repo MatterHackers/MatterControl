@@ -960,6 +960,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.report_runout_sensor_data,
+					PresentationName = "Report Filament Runout Sensor Data".Localize(),
+					HelpText = "Report the data analysis of the run out sensor data each time it is read.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer&filament_runout_sonsor",
+					ResetAtEndOfPrint = false,
+					DefaultValue = "0",
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.probe_has_been_calibrated,
 					PresentationName = "Probe Has Been Calibrated".Localize(),
 					HelpText = "Flag keeping track if probe calibration wizard has been run.".Localize(),
