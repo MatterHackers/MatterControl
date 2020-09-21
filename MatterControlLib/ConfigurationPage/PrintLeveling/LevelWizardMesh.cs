@@ -51,19 +51,43 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
 		{
-			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
-			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
+			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
+
+			aabb.Expand(aabb.XSize * -.1, aabb.YSize * -.1, 0);
 
 			if (printer.Settings.GetValue<BedShape>(SettingsKey.bed_shape) == BedShape.Circular)
 			{
 				// reduce the bed size by the ratio of the radius (square root of 2) so that the sample positions will fit on a circular bed
-				bedSize *= 1.0 / Math.Sqrt(2);
+				aabb.Expand(aabb.XSize * .5 * (1 - Math.Sqrt(2)),
+					aabb.YSize * .5 * (1 - Math.Sqrt(2)),
+					0);
 			}
 
-			double halfXSize = (bedSize.X / 2) * .8;
-			double xStep = (halfXSize * 2) / (gridWidth - 1);
-			double halfYSize = (bedSize.Y / 2) * .8;
-			double yStep = (halfYSize * 2) / (gridHeight - 1);
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
+			{
+				var probeOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
+				if (probeOffset.X < 0)
+				{
+					aabb.MinXYZ.X -= probeOffset.X;
+				}
+				else
+				{
+					aabb.MaxXYZ.X -= probeOffset.X;
+				}
+
+				if (probeOffset.Y < 0)
+				{
+					aabb.MinXYZ.Y -= probeOffset.Y;
+				}
+				else
+				{
+					aabb.MaxXYZ.Y -= probeOffset.Y;
+				}
+			}
+
+			double xStep = aabb.XSize / (gridWidth - 1);
+			double yStep = aabb.YSize / (gridHeight - 1);
 
 			for (int y = 0; y < gridHeight; y++)
 			{
@@ -76,9 +100,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						dirX = (gridWidth - 1) - x;
 					}
 
-					var samplePosition = new Vector2();
-					samplePosition.X = printCenter.X - halfXSize + (dirX * xStep);
-					samplePosition.Y = printCenter.Y - halfYSize + (y * yStep);
+					var samplePosition = new Vector2
+					{
+						X = aabb.MinXYZ.X + dirX * xStep,
+						Y = aabb.MinXYZ.Y + y * yStep
+					};
 
 					yield return samplePosition;
 				}
