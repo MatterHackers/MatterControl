@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		public static extern int DeleteInt(ref IntPtr handle);
 
 		[DllImport(BooleanAssembly, CallingConvention = CallingConvention.Cdecl)]
-		public static extern void DoBooleanOperation(double[] va, int vaCount, int[] fa, int faCount, double[] vb, int vbCount, int[] fb, int fbCount, int opperation, out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
+		public static extern void DoBooleanOperation(double[] va, int vaCount, int[] fa, int faCount, double[] vb, int vbCount, int[] fb, int fbCount, int operation, out IntPtr pVc, out int vcCount, out IntPtr pVf, out int vfCount);
 
 		public static Mesh Do(Mesh inMeshA,
 			Matrix4X4 matrixA,

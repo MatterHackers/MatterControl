@@ -671,7 +671,8 @@ namespace MatterHackers.MatterControl
 					{
 						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 					},
-					IsEnabled = () => sceneContext.EditableScene
+					IsEnabled = () => sceneContext.EditableScene,
+					Icon = AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcons),
 				},
 				new NamedAction()
 				{
