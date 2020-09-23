@@ -226,7 +226,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 
 					addOnRow.Click += (s, e) =>
 					{
-						ApplicationController.Instance.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
+						ApplicationController.LaunchBrowser($"https://www.matterhackers.com/store/l/{item.AddOnListingReference}/sk/{item.AddOnSkuReference}");
 					};
 
 					addonsColumn.AddChild(addOnRow);

@@ -44,6 +44,11 @@ namespace MatterHackers.MatterControl.Library
 		public PrimitivesContainer()
 		{
 			Name = "Primitives".Localize();
+			DefaultSort = new SortBehavior()
+			{
+				SortKey = SortKey.ModifiedDate,
+				Ascending = true,
+			};
 		}
 
 		public override void Load()

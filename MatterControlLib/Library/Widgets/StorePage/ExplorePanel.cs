@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 							{
 								if (e.Button == MouseButtons.Left)
 								{
-									ApplicationController.Instance.LaunchBrowser(content.link);
+									ApplicationController.LaunchBrowser(content.link);
 								}
 							};
 						}
@@ -183,7 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 								{
 									if (e.Button == MouseButtons.Left)
 									{
-										ApplicationController.Instance.LaunchBrowser(content.link);
+										ApplicationController.LaunchBrowser(content.link);
 									}
 								};
 							}

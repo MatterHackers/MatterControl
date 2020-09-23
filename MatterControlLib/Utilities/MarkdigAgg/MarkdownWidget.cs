@@ -152,8 +152,8 @@ namespace Markdig.Agg
 						var helpArticleHeader = new HelpArticleHeader(sourceArticle, theme, boldFont: true, pointSize: theme.FontSize14, editToolTipText: "Edit Page".Localize());
 						helpArticleHeader.EditClicked += (s, e) =>
 						{
-							ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Help/blob/master/input/{sourceArticle.Path}");
-							// ApplicationController.Instance.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Docs/tree/master/docs/Help/{sourceArticle.Path}");
+							ApplicationController.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Help/blob/master/input/{sourceArticle.Path}");
+							// ApplicationController.LaunchBrowser($"https://github.com/MatterHackers/MatterControl-Docs/tree/master/docs/Help/{sourceArticle.Path}");
 						};
 						contentPanel.AddChild(helpArticleHeader);
 					}

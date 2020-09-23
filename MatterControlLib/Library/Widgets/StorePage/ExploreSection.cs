@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					// if we can go out to the site than do that
 					if (content.group_link != null)
 					{
-						ApplicationController.Instance.LaunchBrowser(content.group_link);
+						ApplicationController.LaunchBrowser(content.group_link);
 					}
 					else // show more items in the list
 					{

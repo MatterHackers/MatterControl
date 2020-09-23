@@ -34,7 +34,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.VectorMath;
-using ObjParser;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -75,7 +74,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Left | HAnchor.Stretch,
 				Visible = true,
 			};
-			theme.ApplyBottomBorder(viewControls3D, shadedBorder: (this is PrinterTabPage)); // Shade border if toolbar is secondary rather than primary
+
+			// Shade border if toolbar is secondary rather than primary
+			theme.ApplyBottomBorder(viewControls3D, shadedBorder: this is PrinterTabPage);
 
 			viewControls3D.ResetView += (sender, e) =>
 			{
@@ -94,7 +95,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				viewControls3D,
 				theme,
 				this,
-				editorType: (isPrinterType) ? Object3DControlsLayer.EditorType.Printer : Object3DControlsLayer.EditorType.Part);
+				editorType: isPrinterType ? Object3DControlsLayer.EditorType.Printer : Object3DControlsLayer.EditorType.Part);
 
 			viewControls3D.SetView3DWidget(view3DWidget);
 
@@ -149,7 +150,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Absolute,
 				VAnchor = VAnchor.Stretch,
 				AllowContextMenu = false,
-
+				ActiveSort = SortKey.ModifiedDate,
+				Ascending = true,
 				// restore to state for favorites bar size
 				Width = expanded ? 55 * GuiWidget.DeviceScale : 33 * GuiWidget.DeviceScale,
 				ListContentView = new IconView(theme, expanded ? 48 * GuiWidget.DeviceScale : 24 * GuiWidget.DeviceScale)
@@ -157,6 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit | VAnchor.Top
 				},
 			};
+
 			// favoritesBar.ScrollArea.HAnchor = HAnchor.Fit;
 			favoritesBar.ListContentView.HAnchor = HAnchor.Fit;
 			leftBar.AddChild(favoritesBar);

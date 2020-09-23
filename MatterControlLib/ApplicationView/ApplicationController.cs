@@ -123,7 +123,9 @@ namespace MatterHackers.MatterControl
 		public event EventHandler<string> ShellFileOpened;
 
 		public event EventHandler AnyPrintStarted;
+
 		public event EventHandler AnyPrintCanceled;
+
 		public event EventHandler AnyPrintComplete;
 
 		public bool IsMatterControlPro()
@@ -143,21 +145,15 @@ namespace MatterHackers.MatterControl
 
 		public ExtensionsConfig Extensions { get; }
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, View3DWidget view3DWidget, IEnumerable<NodeOperation> nodeOperations = null)
+		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, View3DWidget view3DWidget)
 		{
-			// If parameter was not supplied, fall back to unfiltered list of operations
-			if (nodeOperations == null)
-			{
-				nodeOperations = this.Graph.Operations.Values;
-			}
-
 			var popupMenu = new PopupMenu(this.MenuTheme);
 			var selectedItemType = selectedItem.GetType();
 			var menuTheme = this.MenuTheme;
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				AddModifyMenuItems(selectedItem, scene, addInSubmenu, nodeOperations, menuTheme, popupMenu, selectedItemType);
+				AddActionMenuItems(selectedItem, scene, addInSubmenu, this.Graph.Operations.Values, menuTheme, popupMenu, selectedItemType);
 			}
 
 			var workspaceActions = GetWorkspaceActions(view3DWidget);
@@ -243,7 +239,7 @@ namespace MatterHackers.MatterControl
 		{
 			var popupMenu = new PopupMenu(this.MenuTheme);
 
-			AddModifyMenuItems(
+			AddActionMenuItems(
 				selectedItem,
 				scene,
 				false,
@@ -255,7 +251,7 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		private static void AddModifyMenuItems(IObject3D selectedItem, InteractiveScene scene, bool useSubMenu, IEnumerable<NodeOperation> nodeOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
+		private static void AddActionMenuItems(IObject3D selectedItem, InteractiveScene scene, bool useSubMenu, IEnumerable<NodeOperation> nodeOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
 		{
 			void AddItems(PopupMenu menu)
 			{
@@ -299,7 +295,7 @@ namespace MatterHackers.MatterControl
 			if (useSubMenu)
 			{
 				// Create items in a 'Modify' sub-menu
-				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
+				popupMenu.CreateSubMenu("Actions".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
 			}
 			else
 			{
@@ -398,6 +394,7 @@ namespace MatterHackers.MatterControl
 		private static ApplicationController globalInstance;
 
 		public RootedObjectEventHandler CloudSyncStatusChanged { get; private set; } = new RootedObjectEventHandler();
+
 		public RootedObjectEventHandler DoneReloadingAll = new RootedObjectEventHandler();
 		public RootedObjectEventHandler ActiveProfileModified = new RootedObjectEventHandler();
 
@@ -466,7 +463,7 @@ namespace MatterHackers.MatterControl
 			printer.Dispose();
 		}
 
-		public void LaunchBrowser(string targetUri)
+		public static void LaunchBrowser(string targetUri)
 		{
 			UiThread.RunOnIdle(() =>
 			{
@@ -1193,7 +1190,6 @@ namespace MatterHackers.MatterControl
 		public ImageSequence GetProcessingSequence(Color color)
 		{
 			int size = (int)Math.Round(80 * GuiWidget.DeviceScale);
-			double radius = size / 8.0;
 			var workingAnimation = new ImageSequence();
 			var frameCount = 30.0;
 			var strokeWidth = 4 * GuiWidget.DeviceScale;
@@ -1224,7 +1220,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (applicationInstanceCount == 0)
 				{
-					Assembly mcAssembly = Assembly.GetEntryAssembly();
+					var mcAssembly = Assembly.GetEntryAssembly();
 					if (mcAssembly != null)
 					{
 						string applicationName = Path.GetFileNameWithoutExtension(mcAssembly.Location).ToUpper();
@@ -1568,8 +1564,9 @@ namespace MatterHackers.MatterControl
 						using (new SelectionMaintainer(scene))
 						{
 							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
-						}                       // Invalidate image to kick off rebuild of ImageConverter stack
+						}
 
+						// Invalidate image to kick off rebuild of ImageConverter stack
 						imageObject.Invalidate(InvalidateType.Image);
 
 						return Task.CompletedTask;
@@ -1969,7 +1966,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (!TypeFaceCache.ContainsKey(namedTypeFace))
 				{
-					TypeFace typeFace = new TypeFace();
+					var typeFace = new TypeFace();
 					var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
 					var exists = AggContext.StaticData.FileExists(path);
 					var stream = exists ? AggContext.StaticData.OpenStream(path) : null;
@@ -2055,11 +2052,7 @@ namespace MatterHackers.MatterControl
 			return Task.FromResult(default(T));
 		}
 
-		/// <summary>
-		/// Requests fresh content from online services, falling back to cached content if offline
-		/// </summary>
-		/// <param name="collector">The custom collector function to load the content</param>
-		/// <returns></returns>
+		// Requests fresh content from online services, falling back to cached content if offline
 		public static async Task<T> LoadCacheableAsync<T>(string cacheKey, string cacheScope, Func<Task<T>> collector, string staticDataFallbackPath = null) where T : class
 		{
 			string cachePath = CacheablePath(cacheScope, cacheKey);
@@ -2315,16 +2308,13 @@ namespace MatterHackers.MatterControl
 
 		public async Task<PrinterConfig> OpenEmptyPrinter(string printerID)
 		{
-			PartWorkspace workspace = null;
-
 			if (!string.IsNullOrEmpty(printerID)
 				&& ProfileManager.Instance[printerID] != null)
 			{
 				var printer = await this.LoadPrinter(printerID);
 
 				// Add workspace for printer
-				workspace = new PartWorkspace(printer);
-
+				var workspace = new PartWorkspace(printer);
 				var history = this.Library.PlatingHistory;
 
 				await workspace.SceneContext.LoadContent(new EditContext()
@@ -2508,10 +2498,10 @@ namespace MatterHackers.MatterControl
 			using (var sha1 = System.Security.Cryptography.SHA1.Create())
 			{
 				byte[] hash = sha1.ComputeHash(bytes);
-				string SHA1 = BitConverter.ToString(hash).Replace("-", string.Empty);
+				string sHA1 = BitConverter.ToString(hash).Replace("-", string.Empty);
 
 				// Console.WriteLine("{0} {1} {2}", SHA1, timer.ElapsedMilliseconds, filePath);
-				return SHA1;
+				return sHA1;
 			}
 		}
 
@@ -2549,7 +2539,7 @@ namespace MatterHackers.MatterControl
 		/// Enumerate the given section, returning all registered actions
 		/// </summary>
 		/// <param name="section">The section to enumerate</param>
-		/// <returns></returns>
+		/// <returns>The registered Actions</returns>
 		public IEnumerable<LibraryAction> RegisteredLibraryActions(string section)
 		{
 			if (registeredLibraryActions.TryGetValue(section, out List<LibraryAction> items))
@@ -3070,17 +3060,17 @@ namespace MatterHackers.MatterControl
 			};
 			parent.AddChild(bedButton);
 
-			Func<bool> buildHeightValid = () => sceneContext.BuildHeight > 0;
+			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
 
 			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
-				ToolTipText = buildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
+				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
 				Checked = sceneContext.RendererOptions.RenderBuildVolume,
 				Margin = theme.ButtonSpacing,
 				VAnchor = VAnchor.Absolute,
 				ToggleButton = true,
-				Enabled = buildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
+				Enabled = BuildHeightValid() && printer?.ViewState.ViewMode != PartViewMode.Layers2D,
 				Height = theme.ButtonHeight,
 				Width = theme.ButtonHeight,
 				SiblingRadioButtonList = new List<GuiWidget>()
@@ -3096,24 +3086,24 @@ namespace MatterHackers.MatterControl
 			if (printer != null)
 			{
 				// Disable print area button in GCode2D view
-				EventHandler<ViewModeChangedEventArgs> viewModeChanged = (s, e) =>
+				void ViewModeChanged(object s, ViewModeChangedEventArgs e)
 				{
 					// Button is conditionally created based on BuildHeight, only set enabled if created
-					printAreaButton.Enabled = buildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
-				};
+					printAreaButton.Enabled = BuildHeightValid() && printer.ViewState.ViewMode != PartViewMode.Layers2D;
+				}
 
-				printer.ViewState.ViewModeChanged += viewModeChanged;
+				printer.ViewState.ViewModeChanged += ViewModeChanged;
 
 				parent.Closed += (s, e) =>
 				{
-					printer.ViewState.ViewModeChanged -= viewModeChanged;
+					printer.ViewState.ViewModeChanged -= ViewModeChanged;
 				};
 			}
 		}
 
 		public void BindBedOptions(GuiWidget container, ICheckbox bedButton, ICheckbox printAreaButton, View3DConfig renderOptions)
 		{
-			PropertyChangedEventHandler syncProperties = (s, e) =>
+			void SyncProperties(object s, PropertyChangedEventArgs e)
 			{
 				switch (e.PropertyName)
 				{
@@ -3125,13 +3115,13 @@ namespace MatterHackers.MatterControl
 						printAreaButton.Checked = renderOptions.RenderBuildVolume;
 						break;
 				}
-			};
+			}
 
-			renderOptions.PropertyChanged += syncProperties;
+			renderOptions.PropertyChanged += SyncProperties;
 
 			container.Closed += (s, e) =>
 			{
-				renderOptions.PropertyChanged -= syncProperties;
+				renderOptions.PropertyChanged -= SyncProperties;
 			};
 		}
 

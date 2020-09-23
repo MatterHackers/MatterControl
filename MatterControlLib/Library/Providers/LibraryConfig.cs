@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.Library
 
 			// TODO: Resolve and implement
 			// Allow the container to draw an overlay - use signal interface or add method to interface?
-			//var iconWithOverlay = ActiveContainer.DrawOverlay()
+			// var iconWithOverlay = ActiveContainer.DrawOverlay()
 
 			setItemThumbnail(thumbnail);
 		}
