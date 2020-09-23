@@ -27,18 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
+using MatterHackers.MatterControl.Library;
+
 namespace MatterHackers.MatterControl
 {
-	using System;
-	using System.Collections.Generic;
-	using System.IO;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-	using MatterHackers.Agg.Image;
-	using MatterHackers.Agg.Platform;
-	using MatterHackers.MatterControl.Library;
-
 	public class ThumbnailsConfig
 	{
 		private static int[] cacheSizes = new int[]
@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl
 			18, 22, 50, 70, 100, 256
 		};
 
-		private readonly static object thumbsLock = new object();
+		private static readonly object ThumbsLock = new object();
 
 		private Queue<Func<Task>> queuedThumbCallbacks = new Queue<Func<Task>>();
 
@@ -54,15 +54,13 @@ namespace MatterHackers.MatterControl
 
 		private Task thumbnailGenerator = null;
 
-		private ThemeConfig theme => ApplicationController.Instance.Theme;
+		private ThemeConfig Theme => ApplicationController.Instance.Theme;
 
 		public ThumbnailsConfig()
 		{
 		}
 
-		public Dictionary<Type, Func<bool, ImageBuffer>> OperationIcons { get; internal set; }
-
-		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons);
+		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, Theme.InvertIcons);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{
@@ -148,7 +146,7 @@ namespace MatterHackers.MatterControl
 
 		public string CacheFilename(ILibraryItem libraryItem, int width, int height)
 		{
-			return $"{ libraryItem.ID}-{ width}x{ height}.png";
+			return $"{libraryItem.ID}-{width}x{height}.png";
 		}
 
 		public string CachePath(ILibraryItem libraryItem, int width, int height)
@@ -160,7 +158,7 @@ namespace MatterHackers.MatterControl
 
 		internal void QueueForGeneration(Func<Task> func)
 		{
-			lock (thumbsLock)
+			lock (ThumbsLock)
 			{
 				if (thumbnailGenerator == null)
 				{
@@ -186,7 +184,7 @@ namespace MatterHackers.MatterControl
 					if (queuedThumbCallbacks.Count > 0)
 					{
 						Func<Task> callback;
-						lock (thumbsLock)
+						lock (ThumbsLock)
 						{
 							callback = queuedThumbCallbacks.Dequeue();
 						}

@@ -77,9 +77,9 @@ namespace MatterHackers.MatterControl.Library
 
 			var resultType = nodeOperation.ResultType;
 
-			if (!thumbnails.OperationIcons.ContainsKey(resultType))
+			if (!SceneOperations.Instance.Icons.ContainsKey(resultType))
 			{
-				thumbnails.OperationIcons.Add(resultType, nodeOperation.IconCollector);
+				SceneOperations.Instance.Icons.Add(resultType, nodeOperation.IconCollector);
 			}
 
 			this.Operations.Add(nodeOperation.OperationID, nodeOperation);

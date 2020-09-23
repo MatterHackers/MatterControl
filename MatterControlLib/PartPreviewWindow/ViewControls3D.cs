@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			operationButtons = new Dictionary<GuiWidget, SceneSelectionOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
+			foreach (var namedAction in SceneOperations.Instance.RegisteredOperations)
 			{
 				if (namedAction is SceneSelectionSeparator)
 				{

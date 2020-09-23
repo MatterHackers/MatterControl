@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			keyValues.Add(item.Source, node);
 
 			// Check for operation resulting in the given type
-			if (ApplicationController.Instance.Thumbnails.OperationIcons.TryGetValue(item.Source.GetType(), out Func<bool, ImageBuffer> iconSource))
+			if (SceneOperations.Instance.Icons.TryGetValue(item.Source.GetType(), out Func<bool, ImageBuffer> iconSource))
 			{
 				// If exists, use the operation icon
 				node.Image = iconSource?.Invoke(theme.InvertIcons);
