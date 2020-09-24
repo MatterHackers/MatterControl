@@ -296,9 +296,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// add the create support before the align
 				if (namedAction is OperationGroup group
-					&& group.GroupName == "Align")
+					&& group.GroupName == "Adjust")
 				{
-					this.AddChild(CreateWipeTowerButton(theme));
 					this.AddChild(CreateSupportButton(theme));
 					this.AddChild(new ToolbarSeparator(theme));
 				}
@@ -809,82 +808,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return libraryPopup;
 		}
 
-		private GuiWidget CreateWipeTowerButton(ThemeConfig theme)
-		{
-			var iconButton = new IconButton(
-				AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, theme.InvertIcons),
-				theme)
-			{
-				ToolTipText = "Toggle Wipe Tower".Localize(),
-			};
-
-			iconButton.Click += (s, e) =>
-			{
-				var scene = sceneContext.Scene;
-				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					bool allAreWipeTower = false;
-
-					if (selectedItem is SelectionGroupObject3D)
-					{
-						allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
-					}
-					else
-					{
-						allAreWipeTower = selectedItem.OutputType == PrintOutputTypes.WipeTower;
-					}
-
-					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
-				}
-			};
-
-			sceneContext.Scene.SelectionChanged += (s, e) =>
-			{
-				iconButton.Enabled = sceneContext.Scene.SelectedItem != null;
-			};
-
-			return iconButton;
-		}
-
 		private GuiWidget CreateSupportButton(ThemeConfig theme)
 		{
 			PopupMenuButton toggleSupportButton = null;
-
-			var iconButton = new IconButton(
-				AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons),
-				theme)
-			{
-				ToolTipText = "Toggle Support".Localize(),
-			};
-
-			iconButton.Click += (s, e) =>
-			{
-				var scene = sceneContext.Scene;
-				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					bool allAreSupport = false;
-					if (selectedItem is SelectionGroupObject3D)
-					{
-						allAreSupport = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Support);
-					}
-					else
-					{
-						allAreSupport = selectedItem.OutputType == PrintOutputTypes.Support;
-					}
-
-					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
-				}
-			};
-
-			sceneContext.Scene.SelectionChanged += (s, e) =>
-			{
-				iconButton.Selectable = sceneContext.Scene.SelectedItem != null;
-			};
-
-			// Remove right Padding for drop style
-			iconButton.Padding = iconButton.Padding.Clone(right: 0);
 
 			var minimumSupportHeight = .05;
 			if (sceneContext.Printer != null)
@@ -892,7 +818,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
 			}
 
-			toggleSupportButton = new PopupMenuButton(iconButton, theme)
+			toggleSupportButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
@@ -906,8 +832,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};
-
-			iconButton.Selectable = true;
 
 			return toggleSupportButton;
 		}

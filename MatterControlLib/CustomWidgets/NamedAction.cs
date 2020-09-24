@@ -39,6 +39,8 @@ namespace MatterHackers.Agg.UI
 {
 	public class SceneSelectionOperation
 	{
+		public string Id { get; set; }
+
 		public Action<ISceneContext> Action { get; set; }
 
 		public Func<bool, ImageBuffer> Icon { get; set; }

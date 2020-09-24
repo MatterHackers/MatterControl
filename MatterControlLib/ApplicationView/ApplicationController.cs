@@ -1128,54 +1128,6 @@ namespace MatterHackers.MatterControl
 			this.Graph.RegisterOperation(
 				new NodeOperation()
 				{
-					OperationID = "MakeComponent",
-					Title = "Make Component".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(ComponentObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						IEnumerable<IObject3D> items = new[] { sceneItem };
-
-						// If SelectionGroup, operate on Children instead
-						if (sceneItem is SelectionGroupObject3D)
-						{
-							items = sceneItem.Children;
-						}
-
-						// Dump selection forcing collapse of selection group
-						using (new SelectionMaintainer(scene))
-						{
-							var component = new ComponentObject3D
-							{
-								Name = "New Component",
-								Finalized = false
-							};
-
-							// Copy an selected item into the component as a clone
-							component.Children.Modify(children =>
-							{
-								children.AddRange(items.Select(o => o.Clone()));
-							});
-
-							component.MakeNameNonColliding();
-
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
-						}
-
-						return Task.CompletedTask;
-					},
-					IsVisible = (sceneItem) =>
-					{
-						return sceneItem.Parent != null
-							&& sceneItem.Parent.Parent == null
-							&& sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
 					OperationID = "EditComponent",
 					Title = "Edit Component".Localize(),
 					MappedTypes = new List<Type> { typeof(IObject3D) },

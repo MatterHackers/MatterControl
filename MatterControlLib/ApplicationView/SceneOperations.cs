@@ -84,6 +84,9 @@ namespace MatterHackers.MatterControl
 
 			registeredOperations = new List<SceneSelectionOperation>()
 			{
+				ArrangeAllPartsOperation(),
+				new SceneSelectionSeparator(),
+				LayFlatOperation(),
 				GroupOperation(),
 				UngroupOperation(),
 				new SceneSelectionSeparator(),
@@ -105,18 +108,33 @@ namespace MatterHackers.MatterControl
 				},
 				new OperationGroup("Align")
 				{
+					Collapse = true,
 					TitleResolver = () => "Align".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
-						ArrangeAllPartsOperation(),
-						LayFlatOperation(),
 						AlignOperation(),
+						DualExtrusionAlignOperation(),
 					},
 				},
-				new OperationGroup("Booleans")
+				new OperationGroup("Modify")
 				{
-					TitleResolver = () => "Booleans".Localize(),
+					TitleResolver = () => "Modify".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
+						CurveOperation(),
+						PinchOperation(),
+						TwistOperation(),
+#if DEBUG // don't make this part of the distribution until it is working
+						PlaneCutOperation(),
+#endif
+						HollowOutOperation(),
+					}
+				},
+				new OperationGroup("Boolean")
+				{
+					TitleResolver = () => "Boolean".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -129,7 +147,7 @@ namespace MatterHackers.MatterControl
 				new OperationGroup("Array")
 				{
 					Collapse = true,
-					TitleResolver = () => "Array Options".Localize(),
+					TitleResolver = () => "Array".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
@@ -138,36 +156,40 @@ namespace MatterHackers.MatterControl
 						AdvancedArrayOperation(),
 					}
 				},
-				new OperationGroup("ModifyMesh")
+				new OperationGroup("Mesh")
 				{
 					Collapse = true,
-					TitleResolver = () => "Mesh Modifiers".Localize(),
+					TitleResolver = () => "Mesh".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
-						CurveOperation(),
-						PinchOperation(),
-						TwistOperation(),
-#if DEBUG // don't make this part of the distribution until it is working
-						PlaneCutOperation(),
-#endif
-						HollowOutOperation(),
 						ReduceOperation(),
 						RepairOperation(),
 					}
 				},
-				new OperationGroup("Other")
+				new OperationGroup("Printing")
 				{
-					TitleResolver = () => "Other".Localize(),
+					Collapse = true,
+					TitleResolver = () => "Printing".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneSelectionOperation>()
 					{
-						DualExtrusionAlignOperation(),
+						ToggleWipeTowerOperation(),
+						ToggleSupportOperation(),
+					}
+				},
+				new OperationGroup("Design Apps")
+				{
+					TitleResolver = () => "Design Apps".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneSelectionOperation>()
+					{
 						FitToBoundsOperation(),
 
 #if DEBUG
 						FitToCylinderOperation(),
 #endif
+						MakeComponentOperation(),
 					},
 				},
 			};
@@ -191,6 +213,117 @@ namespace MatterHackers.MatterControl
 			}
 
 			iconsByType.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon));
+		}
+
+		private SceneSelectionOperation MakeComponentOperation()
+		{
+			return new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Make Component".Localize(),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+
+					IEnumerable<IObject3D> items = new[] { sceneItem };
+
+					// If SelectionGroup, operate on Children instead
+					if (sceneItem is SelectionGroupObject3D)
+					{
+						items = sceneItem.Children;
+					}
+
+					// Dump selection forcing collapse of selection group
+					using (new SelectionMaintainer(scene))
+					{
+						var component = new ComponentObject3D
+						{
+							Name = "New Component",
+							Finalized = false
+						};
+
+						// Copy an selected item into the component as a clone
+						component.Children.Modify(children =>
+						{
+							children.AddRange(items.Select(o => o.Clone()));
+						});
+
+						component.MakeNameNonColliding();
+
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+				IsEnabled = (sceneContext) =>
+				{
+					var sceneItem = sceneContext.Scene.SelectedItem;
+					return sceneItem?.Parent != null
+						&& sceneItem.Parent.Parent == null
+						&& sceneItem.DescendantsAndSelf().All(d => !(d is ComponentObject3D));
+				},
+			};
+		}
+
+		private SceneSelectionOperation ToggleSupportOperation()
+		{
+			return new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Toggle Support".Localize(),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
+					{
+						bool allAreSupport = false;
+						if (selectedItem is SelectionGroupObject3D)
+						{
+							allAreSupport = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Support);
+						}
+						else
+						{
+							allAreSupport = selectedItem.OutputType == PrintOutputTypes.Support;
+						}
+
+						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("support.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+			};
+		}
+
+		private SceneSelectionOperation ToggleWipeTowerOperation()
+		{
+			return new SceneSelectionOperation()
+			{
+				TitleResolver = () => "Toggle Wipe Tower".Localize(),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var selectedItem = scene.SelectedItem;
+					if (selectedItem != null)
+					{
+						bool allAreWipeTower = false;
+
+						if (selectedItem is SelectionGroupObject3D)
+						{
+							allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
+						}
+						else
+						{
+							allAreWipeTower = selectedItem.OutputType == PrintOutputTypes.WipeTower;
+						}
+
+						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+			};
 		}
 
 		private SceneSelectionOperation MirrorOperation()
@@ -566,6 +699,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneSelectionOperation()
 			{
+				Id = "ArrangeAllPartsOperation",
 				TitleResolver = () => "Arrange All Parts".Localize(),
 				Action = async (sceneContext) =>
 				{
