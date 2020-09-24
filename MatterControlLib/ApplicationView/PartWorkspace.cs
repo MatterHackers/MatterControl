@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public PartWorkspace(ISceneContext bedConfig)
+		public PartWorkspace(ISceneContext sceneContext)
 		{
 			// Create a new library context for the SaveAs view
 			this.LibraryView = new LibraryConfig()
@@ -74,8 +74,8 @@ namespace MatterHackers.MatterControl
 				ActiveContainer = new WrappedLibraryContainer(ApplicationController.Instance.Library.RootLibaryContainer)
 			};
 
-			this.SceneContext = bedConfig;
-			Name = bedConfig.EditContext?.SourceItem?.Name ?? "Unknown";
+			this.SceneContext = sceneContext;
+			Name = sceneContext.EditContext?.SourceItem?.Name ?? "Unknown";
 		}
 
 		public string Name { get; set; }

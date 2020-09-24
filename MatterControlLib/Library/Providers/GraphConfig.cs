@@ -30,61 +30,35 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
+using MatterHackers.Agg.UI;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class NodeOperation
-	{
-		/// <summary>
-		/// Gets or sets the unlocalized string identifier for an operation
-		/// </summary>
-		public string OperationID { get; set; }
-
-		public string Title { get; set; }
-
-		public IEnumerable<Type> MappedTypes { get; set; }
-
-		public Func<IObject3D, InteractiveScene, Task> Operation { get; set; }
-
-		public Func<IObject3D, bool> IsEnabled { get; set; }
-
-		public Func<IObject3D, bool> IsVisible { get; set; }
-
-		public Func<bool, ImageBuffer> IconCollector { get; set; }
-
-		public Type ResultType { get; set; }
-	}
-
 	public class GraphConfig
 	{
 		private ApplicationController applicationController;
 
-		public Dictionary<string, NodeOperation> Operations { get; } = new Dictionary<string, NodeOperation>();
+		public Dictionary<string, SceneOperation> Operations { get; } = new Dictionary<string, SceneOperation>();
 
-		public Dictionary<Type, List<NodeOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<NodeOperation>>();
+		public Dictionary<Type, List<SceneOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<SceneOperation>>();
 
 		public GraphConfig(ApplicationController applicationController)
 		{
 			this.applicationController = applicationController;
 		}
 
-		public NodeOperation RegisterOperation(NodeOperation nodeOperation)
+		public void RegisterOperation(SceneOperation sceneSelectionOperation)
 		{
 			var thumbnails = applicationController.Thumbnails;
 
-			var resultType = nodeOperation.ResultType;
+			var resultType = sceneSelectionOperation.ResultType;
 
 			if (!SceneOperations.Instance.Icons.ContainsKey(resultType))
 			{
-				SceneOperations.Instance.Icons.Add(resultType, nodeOperation.IconCollector);
+				SceneOperations.Instance.Icons.Add(resultType, sceneSelectionOperation.Icon);
 			}
 
-			this.Operations.Add(nodeOperation.OperationID, nodeOperation);
-
-			return nodeOperation;
+			this.Operations.Add(sceneSelectionOperation.OperationID, sceneSelectionOperation);
 		}
 	}
 }

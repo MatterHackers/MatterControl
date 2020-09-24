@@ -37,11 +37,13 @@ using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
-	public class SceneSelectionOperation
+	public class SceneOperation
 	{
-		public string Id { get; set; }
+		public string OperationID { get; set; }
 
 		public Action<ISceneContext> Action { get; set; }
+
+		public Type ResultType { get; set; }
 
 		public Func<bool, ImageBuffer> Icon { get; set; }
 
@@ -56,20 +58,22 @@ namespace MatterHackers.Agg.UI
 		public string Title => this.TitleResolver?.Invoke();
 
 		public Type OperationType { get; set; }
+
+		public Func<object, bool> IsVisible { get; set; }
 	}
 
-	public class SceneSelectionSeparator : SceneSelectionOperation
+	public class SceneSelectionSeparator : SceneOperation
 	{
 	}
 
-	public class OperationGroup : SceneSelectionOperation
+	public class OperationGroup : SceneOperation
 	{
 		public OperationGroup(string groupName)
 		{
 			this.GroupName = groupName;
 		}
 
-		public List<SceneSelectionOperation> Operations { get; set; } = new List<SceneSelectionOperation>();
+		public List<SceneOperation> Operations { get; set; } = new List<SceneOperation>();
 
 		public bool StickySelection { get; internal set; }
 
@@ -81,7 +85,7 @@ namespace MatterHackers.Agg.UI
 
 		public bool Collapse { get; set; }
 
-		public SceneSelectionOperation GetDefaultOperation()
+		public SceneOperation GetDefaultOperation()
 		{
 			if (this.StickySelection)
 			{

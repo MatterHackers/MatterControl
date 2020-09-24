@@ -145,19 +145,20 @@ namespace MatterHackers.MatterControl
 
 		public ExtensionsConfig Extensions { get; }
 
-		public PopupMenu GetActionMenuForSceneItem(IObject3D selectedItem, InteractiveScene scene, bool addInSubmenu, View3DWidget view3DWidget)
+		public PopupMenu GetActionMenuForSceneItem(bool addInSubmenu, View3DWidget view3DWidget)
 		{
+			var sceneContext = view3DWidget.sceneContext;
+			var selectedItem = sceneContext.Scene.SelectedItem;
 			var popupMenu = new PopupMenu(this.MenuTheme);
 			var selectedItemType = selectedItem.GetType();
 			var menuTheme = this.MenuTheme;
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				AddActionMenuItems(selectedItem, scene, addInSubmenu, this.Graph.Operations.Values, menuTheme, popupMenu, selectedItemType);
+				AddActionMenuItems(sceneContext, addInSubmenu, this.Graph.Operations.Values, menuTheme, popupMenu, selectedItemType);
 			}
 
 			var workspaceActions = GetWorkspaceActions(view3DWidget);
-			var sceneContext = view3DWidget.sceneContext;
 			var printer = view3DWidget.Printer;
 
 			var actions = new[]
@@ -235,40 +236,38 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public PopupMenu GetModifyMenu(IObject3D selectedItem, InteractiveScene scene, IEnumerable<NodeOperation> nodeOperations = null)
+		public PopupMenu GetModifyMenu(ISceneContext sceneContext, IEnumerable<SceneOperation> sceneSelectionOperation = null)
 		{
 			var popupMenu = new PopupMenu(this.MenuTheme);
 
-			AddActionMenuItems(
-				selectedItem,
-				scene,
+			AddActionMenuItems(sceneContext,
 				false,
-				nodeOperations,
+				sceneSelectionOperation,
 				this.MenuTheme,
 				popupMenu,
-				selectedItem.GetType());
+				sceneContext.Scene.SelectedItem.GetType());
 
 			return popupMenu;
 		}
 
-		private static void AddActionMenuItems(IObject3D selectedItem, InteractiveScene scene, bool useSubMenu, IEnumerable<NodeOperation> nodeOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
+		private static void AddActionMenuItems(ISceneContext sceneContext, bool useSubMenu, IEnumerable<SceneOperation> sceneOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
 		{
+			var selectedItem = sceneContext.Scene.SelectedItem;
 			void AddItems(PopupMenu menu)
 			{
-				foreach (var nodeOperation in nodeOperations)
+				foreach (var sceneOperation in sceneOperations)
 				{
-					foreach (var type in nodeOperation.MappedTypes)
+					var type = sceneOperation.OperationType;
+
+					if (type.IsAssignableFrom(selectedItemType)
+						&& (sceneOperation.IsVisible?.Invoke(selectedItem) != false)
+						&& sceneOperation.IsEnabled?.Invoke(sceneContext) != false)
 					{
-						if (type.IsAssignableFrom(selectedItemType)
-							&& (nodeOperation.IsVisible?.Invoke(selectedItem) != false)
-							&& nodeOperation.IsEnabled?.Invoke(selectedItem) != false)
+						var menuItem = menu.CreateMenuItem(sceneOperation.Title, sceneOperation.Icon?.Invoke(menuTheme.InvertIcons));
+						menuItem.Click += (s, e) =>
 						{
-							var menuItem = menu.CreateMenuItem(nodeOperation.Title, nodeOperation.IconCollector?.Invoke(menuTheme.InvertIcons));
-							menuItem.Click += (s, e) =>
-							{
-								nodeOperation.Operation(selectedItem, scene).ConfigureAwait(false);
-							};
-						}
+							sceneOperation.Action(sceneContext);
+						};
 					}
 				}
 			}
@@ -957,205 +956,13 @@ namespace MatterHackers.MatterControl
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
 			this.Library.ContentProviders.Add(new[] { "scad" }, new OpenScadContentProvider());
 
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "ImageToPath",
-					Title = "Image to Path".Localize(),
-					MappedTypes = new List<Type> { typeof(ImageObject3D) },
-					ResultType = typeof(ImageToPathObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						if (sceneItem is IObject3D imageObject)
-						{
-							// TODO: make it look like this (and get rid of all the other stuff)
-							// scene.Replace(sceneItem, new ImageToPathObject3D(sceneItem.Clone()));
-
-							var path = new ImageToPathObject3D();
-
-							var itemClone = sceneItem.Clone();
-							path.Children.Add(itemClone);
-							path.Matrix = itemClone.Matrix;
-							itemClone.Matrix = Matrix4X4.Identity;
-
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { path }));
-							scene.SelectedItem = null;
-							scene.SelectedItem = path;
-							path.Invalidate(InvalidateType.Properties);
-						}
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("noun_479927.png", 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "Translate",
-					Title = "Translate".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(TranslateObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						var items = scene.GetSelectedItems();
-						using (new SelectionMaintainer(scene))
-						{
-							var translate = new TranslateObject3D();
-							translate.WrapItems(items, scene.UndoBuffer);
-						}
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "Rotate",
-					Title = "Rotate".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(RotateObject3D_2),
-					Operation = (sceneItem, scene) =>
-					{
-						var items = scene.GetSelectedItems();
-						using (new SelectionMaintainer(scene))
-						{
-							var rotate = new RotateObject3D_2();
-							rotate.WrapItems(items, scene.UndoBuffer);
-						}
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "Scale",
-					Title = "Scale".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(ScaleObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						var items = scene.GetSelectedItems();
-						using (new SelectionMaintainer(scene))
-						{
-							var scale = new ScaleObject3D();
-							scale.WrapItems(items, scene.UndoBuffer);
-						}
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "ImageConverter",
-					Title = "Image Converter".Localize(),
-					MappedTypes = new List<Type> { typeof(ImageObject3D) },
-					ResultType = typeof(ComponentObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						var imageObject = sceneItem.Clone() as ImageObject3D;
-
-						var path = new ImageToPathObject3D();
-						path.Children.Add(imageObject);
-
-						var smooth = new SmoothPathObject3D();
-						smooth.Children.Add(path);
-
-						var extrude = new LinearExtrudeObject3D();
-						extrude.Children.Add(smooth);
-
-						var baseObject = new BaseObject3D()
-						{
-							BaseType = BaseTypes.None
-						};
-						baseObject.Children.Add(extrude);
-
-						var component = new ComponentObject3D(new[] { baseObject })
-						{
-							Name = "Image Converter".Localize(),
-							ComponentID = "4D9BD8DB-C544-4294-9C08-4195A409217A",
-							SurfacedEditors = new List<string>
-							{
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>.Children<ImageObject3D>",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Height",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.SmoothDistance",
-								"$.Children<BaseObject3D>.Children<LinearExtrudeObject3D>.Children<SmoothPathObject3D>.Children<ImageToPathObject3D>",
-								"$.Children<BaseObject3D>",
-							}
-						};
-
-						component.Matrix = imageObject.Matrix;
-						imageObject.Matrix = Matrix4X4.Identity;
-
-						using (new SelectionMaintainer(scene))
-						{
-							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { component }));
-						}
-
-						// Invalidate image to kick off rebuild of ImageConverter stack
-						imageObject.Invalidate(InvalidateType.Image);
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "Mirror",
-					Title = "Mirror".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(MirrorObject3D_2),
-					Operation = (sceneItem, scene) =>
-					{
-						var mirror = new MirrorObject3D_2();
-						mirror.WrapSelectedItemAndSelect(scene);
-
-						return Task.CompletedTask;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, invertIcon)
-				});
-
-			this.Graph.RegisterOperation(
-				new NodeOperation()
-				{
-					OperationID = "EditComponent",
-					Title = "Edit Component".Localize(),
-					MappedTypes = new List<Type> { typeof(IObject3D) },
-					ResultType = typeof(ComponentObject3D),
-					Operation = (sceneItem, scene) =>
-					{
-						if (sceneItem is ComponentObject3D componentObject)
-						{
-							// Enable editing mode
-							componentObject.Finalized = false;
-
-							// Force editor rebuild
-							scene.SelectedItem = null;
-							scene.SelectedItem = componentObject;
-						}
-
-						return Task.CompletedTask;
-					},
-					IsVisible = (sceneItem) =>
-					{
-						return sceneItem.Parent != null
-							&& sceneItem.Parent.Parent == null
-							&& sceneItem is ComponentObject3D componentObject
-							&& componentObject.Finalized
-							&& !componentObject.ProOnly;
-					},
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon)
-				});
+			this.Graph.RegisterOperation(SceneOperations.ImageToPathOperation());
+			this.Graph.RegisterOperation(SceneOperations.TranslateOperation());
+			this.Graph.RegisterOperation(SceneOperations.RotateOperation());
+			this.Graph.RegisterOperation(SceneOperations.ScaleOperation());
+			this.Graph.RegisterOperation(SceneOperations.ImageConverterOperation());
+			this.Graph.RegisterOperation(SceneOperations.MirrorOperation());
+			this.Graph.RegisterOperation(SceneOperations.EditComponentOperation());
 
 			this.Graph.RegisterOperation(
 				new NodeOperation()
@@ -1316,12 +1123,12 @@ namespace MatterHackers.MatterControl
 
 			this.InitializeLibrary();
 
-			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<NodeOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
-			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
-			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
-			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
-			this.Graph.PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<NodeOperation> { this.Graph.Operations["LinearExtrude"] });
-			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<NodeOperation> { this.Graph.Operations["Scale"] });
+			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
+			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
+			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"] });
+			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { this.Graph.Operations["Scale"] });
 		}
 
 		public void Connection_ErrorReported(object sender, string line)

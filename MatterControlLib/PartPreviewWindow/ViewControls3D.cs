@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly ISceneContext sceneContext;
 		private readonly PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
-		private readonly Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
+		private readonly Dictionary<GuiWidget, SceneOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
 		private readonly PopupMenuButton bedMenuButton;
 		private readonly ThemeConfig theme;
@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 				{
-					if (operationButtons.TryGetValue(widget, out SceneSelectionOperation operation))
+					if (operationButtons.TryGetValue(widget, out SceneOperation operation))
 					{
 						if (operation is OperationGroup operationGroup)
 						{
@@ -283,7 +283,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(partSelectButton);
 			}
 
-			operationButtons = new Dictionary<GuiWidget, SceneSelectionOperation>();
+			operationButtons = new Dictionary<GuiWidget, SceneOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
 			foreach (var namedAction in SceneOperations.Instance.RegisteredOperations)

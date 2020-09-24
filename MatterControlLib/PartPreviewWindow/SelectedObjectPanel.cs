@@ -136,7 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var remainingOperations = ApplicationController.Instance.Graph.Operations.Values.Except(primaryActions);
 
-				return ApplicationController.Instance.GetModifyMenu(item, sceneContext.Scene, remainingOperations);
+				return ApplicationController.Instance.GetModifyMenu(view3DWidget.sceneContext, remainingOperations);
 			};
 			toolbar.AddChild(overflowButton);
 
@@ -177,10 +177,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
 
-		private List<NodeOperation> primaryActions = new List<NodeOperation>();
+		private List<SceneOperation> primaryActions = new List<SceneOperation>();
 
-		public void SetActiveItem(IObject3D selectedItem)
+		public void SetActiveItem(ISceneContext sceneContext)
 		{
+			var selectedItem = sceneContext.Scene.SelectedItem;
 			if (this.item == selectedItem)
 			{
 				return;
@@ -203,7 +204,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var graph = ApplicationController.Instance.Graph;
 			if (!graph.PrimaryOperations.TryGetValue(selectedItemType, out primaryActions))
 			{
-				primaryActions = new List<NodeOperation>();
+				primaryActions = new List<SceneOperation>();
 			}
 			else
 			{
@@ -211,7 +212,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				foreach (var primaryAction in primaryActions)
 				{
 					// TODO: Run visible/enable rules on actions, conditionally add/enable as appropriate
-					var button = new IconButton(primaryAction.IconCollector(theme.InvertIcons), theme)
+					var button = new IconButton(primaryAction.Icon(theme.InvertIcons), theme)
 					{
 						// Name = namedAction.Title + " Button",
 						ToolTipText = primaryAction.Title,
@@ -223,7 +224,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					button.Click += (s, e) =>
 					{
-						primaryAction.Operation.Invoke(item, scene);
+						primaryAction.Action.Invoke(sceneContext);
 					};
 
 					primaryActionsPanel.AddChild(button);
@@ -362,19 +363,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private class OperationButton : TextButton
 		{
-			private readonly NodeOperation graphOperation;
-			private readonly IObject3D sceneItem;
+			private readonly SceneOperation sceneOperation;
+			private readonly ISceneContext sceneContext;
 
-			public OperationButton(NodeOperation graphOperation, IObject3D sceneItem, ThemeConfig theme)
-				: base(graphOperation.Title, theme)
+			public OperationButton(SceneOperation sceneOperation, ISceneContext sceneContext, ThemeConfig theme)
+				: base(sceneOperation.Title, theme)
 			{
-				this.graphOperation = graphOperation;
-				this.sceneItem = sceneItem;
+				this.sceneOperation = sceneOperation;
+				this.sceneContext = sceneContext;
 			}
 
 			public void EnsureAvailablity()
 			{
-				this.Enabled = graphOperation.IsEnabled?.Invoke(sceneItem) != false;
+				this.Enabled = sceneOperation.IsEnabled?.Invoke(sceneContext) != false;
 			}
 		}
 
