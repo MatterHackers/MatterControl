@@ -73,6 +73,8 @@ namespace MatterHackers.Agg.UI
 
 		public bool StickySelection { get; internal set; }
 
+		public int InitialSelection { get; set; } = 0;
+
 		public string GroupName { get; }
 
 		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
@@ -83,7 +85,10 @@ namespace MatterHackers.Agg.UI
 		{
 			if (this.StickySelection)
 			{
-				int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID);
+				if (!int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID))
+				{
+					activeButtonID = InitialSelection;
+				}
 
 				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
 

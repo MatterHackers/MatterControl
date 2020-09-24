@@ -98,6 +98,7 @@ namespace MatterHackers.MatterControl
 					Collapse = true,
 					TitleResolver = () => "Adjust".Localize(),
 					StickySelection = true,
+					InitialSelection = 2,
 					Operations = new List<SceneSelectionOperation>()
 					{
 						TranslateOperation(),
@@ -253,7 +254,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) =>
 				{
@@ -289,7 +290,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("support.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("support.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -320,7 +321,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -336,7 +337,7 @@ namespace MatterHackers.MatterControl
 				{
 					new MirrorObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -352,7 +353,7 @@ namespace MatterHackers.MatterControl
 				{
 					new ScaleObject3D().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -384,7 +385,7 @@ namespace MatterHackers.MatterControl
 				{
 					new TranslateObject3D().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -622,7 +623,7 @@ namespace MatterHackers.MatterControl
 
 					return false;
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("ungroup.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("ungroup.png", 16, 16, !invertIcon).SetPreMultiply(),
 			};
 		}
 
@@ -646,7 +647,7 @@ namespace MatterHackers.MatterControl
 				Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png", 16, 16, !invertIcon).SetPreMultiply(),
 			};
 		}
 
@@ -738,7 +739,7 @@ namespace MatterHackers.MatterControl
 				OperationType = typeof(CombineObject3D_2),
 				TitleResolver = () => "Combine".Localize(),
 				Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png", 16, 16, !invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
 				IsEnabled = (sceneContext) =>
 				{
@@ -794,7 +795,7 @@ namespace MatterHackers.MatterControl
 				{
 					var array = new ArrayRadialObject3D();
 					array.Name = ""; // this will get the default behavior of showing the child's name + a count
-				array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
+					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*A single part must be selected*".Localize(),
