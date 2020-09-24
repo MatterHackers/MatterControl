@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl
 						scene.UndoBuffer.AddAndDo(new ReplaceCommand(items, new[] { component }));
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("component.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) =>
 				{
