@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl
 		// ****             Printer specific                  ****
 		// *******************************************************
 		event EventHandler ActiveLayerChanged;
+
 		event EventHandler LoadedGCodeChanged;
 
 		int ActiveLayerIndex { get; set; }
@@ -105,9 +106,13 @@ namespace MatterHackers.MatterControl
 		double BuildHeight { get; }
 
 		Mesh BuildVolumeMesh { get; }
+
 		Mesh Mesh { get; }
+
 		PrinterConfig Printer { get; set; }
+
 		Mesh PrinterShape { get; }
+
 		View3DConfig RendererOptions { get; }
 
 		GCodeRenderInfo RenderInfo { get; set; }
@@ -115,6 +120,7 @@ namespace MatterHackers.MatterControl
 		void InvalidateBedMesh();
 
 		void LoadGCode(Stream stream, CancellationToken cancellationToken, Action<double, string> progressReporter);
+
 		void LoadActiveSceneGCode(string filePath, CancellationToken cancellationToken, Action<double, string> progressReporter);
 
 		Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems);

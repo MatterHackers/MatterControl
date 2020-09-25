@@ -73,24 +73,24 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		public void Initialize()
 		{
 			ApplicationController.Instance.Graph.RegisterOperation(
-				new Library.NodeOperation()
+				new SceneOperation()
 				{
 					OperationID = "Lithophane".Localize(),
-					Title = "Lithophane".Localize(),
-					MappedTypes = new List<Type> { typeof(ImageObject3D) },
+					TitleResolver = () => "Lithophane".Localize(),
+					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),
-					Operation = (sceneItem, scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
+						var sceneItem = scene.SelectedItem;
 						if (sceneItem is IObject3D imageObject)
 						{
 							WrapWith(sceneItem, new LithophaneObject3D(), scene);
 						}
-
-						return Task.CompletedTask;
 					},
 					IsEnabled = (sceneItem) => true,
 					IsVisible = (sceneItem) => true,
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
 				});
 		}
 
