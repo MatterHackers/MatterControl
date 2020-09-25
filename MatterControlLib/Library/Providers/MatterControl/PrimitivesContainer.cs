@@ -124,12 +124,13 @@ namespace MatterHackers.MatterControl.Library
 						};
 
 						// Construct a scene
-						var tempScene = new InteractiveScene();
+						var bedConfig = new BedConfig(null);
+						var tempScene = bedConfig.Scene;
 						tempScene.Children.Add(imageObject);
 						tempScene.SelectedItem = imageObject;
 
 						// Invoke ImageConverter operation, passing image and scene
-						ApplicationController.Instance.Graph.Operations["ImageConverter"].Action(imageObject, tempScene);
+						ApplicationController.Instance.Graph.Operations["ImageConverter"].Action(bedConfig);
 
 						// Return replacement object constructed in ImageConverter operation
 						var constructedComponent = tempScene.SelectedItem;

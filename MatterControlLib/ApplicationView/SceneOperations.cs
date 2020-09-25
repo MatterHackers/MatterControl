@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -40,11 +45,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MatterControl.Tests")]
 [assembly: InternalsVisibleTo("MatterControl.AutomationTests")]
@@ -118,9 +118,9 @@ namespace MatterHackers.MatterControl
 						DualExtrusionAlignOperation(),
 					},
 				},
-				new OperationGroup("Modify")
+				new OperationGroup("Form")
 				{
-					TitleResolver = () => "Modify".Localize(),
+					TitleResolver = () => "Form".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
@@ -331,7 +331,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(MirrorObject3D_2),
+				OperationID = "Mirror",
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(MirrorObject3D_2),
 				TitleResolver = () => "Mirror".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -347,7 +349,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(ScaleObject3D),
+				OperationID = "Scale",
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(ScaleObject3D),
 				TitleResolver = () => "Scale".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -363,7 +367,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(RotateObject3D_2),
+				OperationID = "Rotate",
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(RotateObject3D_2),
 				TitleResolver = () => "Rotate".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -379,7 +385,9 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(TranslateObject3D),
+				OperationID = "Translate",
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(TranslateObject3D),
 				TitleResolver = () => "Translate".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -757,8 +765,10 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Advanced Array".Localize(),
 				Action = (sceneContext) =>
 				{
-					var array = new ArrayAdvancedObject3D();
-					array.Name = ""; // this will get the default behavior of showing the child's name + a count
+					var array = new ArrayAdvancedObject3D
+					{
+						Name = "" // this will get the default behavior of showing the child's name + a count
+					};
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_advanced.png", 16, 16).SetPreMultiply(),
@@ -775,8 +785,10 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Linear Array".Localize(),
 				Action = (sceneContext) =>
 				{
-					var array = new ArrayLinearObject3D();
-					array.Name = ""; // this will get the default behavior of showing the child's name + a count
+					var array = new ArrayLinearObject3D
+					{
+						Name = "" // this will get the default behavior of showing the child's name + a count
+					};
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_linear.png", 16, 16).SetPreMultiply(),
@@ -906,7 +918,7 @@ namespace MatterHackers.MatterControl
 
 					inflatePath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("smooth_path.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("inflate_path.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
 			};
@@ -1008,6 +1020,7 @@ namespace MatterHackers.MatterControl
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
 			};
 		}
+
 		public static SceneOperation EditComponentOperation()
 		{
 			return new SceneOperation()
@@ -1089,8 +1102,10 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Radial Array".Localize(),
 				Action = (sceneContext) =>
 				{
-					var array = new ArrayRadialObject3D();
-					array.Name = ""; // this will get the default behavior of showing the child's name + a count
+					var array = new ArrayRadialObject3D
+					{
+						Name = "" // this will get the default behavior of showing the child's name + a count
+					};
 					array.AddSelectionAsChildren(sceneContext.Scene, sceneContext.Scene.SelectedItem);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("array_radial.png", 16, 16).SetPreMultiply(),

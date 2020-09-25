@@ -294,7 +294,7 @@ namespace MatterHackers.MatterControl
 			if (useSubMenu)
 			{
 				// Create items in a 'Modify' sub-menu
-				popupMenu.CreateSubMenu("Actions".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
+				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
 			}
 			else
 			{
