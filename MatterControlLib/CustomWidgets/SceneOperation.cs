@@ -43,6 +43,9 @@ namespace MatterHackers.Agg.UI
 
 		public Action<ISceneContext> Action { get; set; }
 
+		/// <summary>
+		/// Gets or sets the type this operation outputs
+		/// </summary>
 		public Type ResultType { get; set; }
 
 		public Func<bool, ImageBuffer> Icon { get; set; }
@@ -57,9 +60,12 @@ namespace MatterHackers.Agg.UI
 
 		public string Title => this.TitleResolver?.Invoke();
 
+		/// <summary>
+		/// Gets or sets the type that this operation can be applied to
+		/// </summary>
 		public Type OperationType { get; set; }
 
-		public Func<object, bool> IsVisible { get; set; }
+		public Func<ISceneContext, bool> IsVisible { get; set; }
 	}
 
 	public class SceneSelectionSeparator : SceneOperation

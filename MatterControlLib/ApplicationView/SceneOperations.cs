@@ -881,6 +881,133 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
+		public static SceneOperation InflatePathOperation()
+		{
+			return new SceneOperation()
+			{
+				OperationID = "InflatePath",
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Inflate Path".Localize(),
+				ResultType = typeof(InflatePathObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					var inflatePath = new InflatePathObject3D();
+					var itemClone = sceneItem.Clone();
+					inflatePath.Children.Add(itemClone);
+					inflatePath.Matrix = itemClone.Matrix;
+					itemClone.Matrix = Matrix4X4.Identity;
+
+					using (new SelectionMaintainer(scene))
+					{
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { inflatePath }));
+					}
+
+					inflatePath.Invalidate(InvalidateType.Properties);
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("smooth_path.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+			};
+		}
+
+		public static SceneOperation OutlinePathOperation()
+		{
+			return new SceneOperation()
+			{
+				OperationID = "OutlinePath",
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Outline Path".Localize(),
+				ResultType = typeof(OutlinePathObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					var outlinePath = new OutlinePathObject3D();
+					var itemClone = sceneItem.Clone();
+					outlinePath.Children.Add(itemClone);
+					outlinePath.Matrix = itemClone.Matrix;
+					itemClone.Matrix = Matrix4X4.Identity;
+
+					using (new SelectionMaintainer(scene))
+					{
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { outlinePath }));
+					}
+
+					outlinePath.Invalidate(InvalidateType.Properties);
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("outline.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+			};
+		}
+
+		public static SceneOperation AddBaseOperation()
+		{
+			return new SceneOperation()
+			{
+				OperationID = "AddBase",
+				OperationType = typeof(IObject3D),
+				TitleResolver = () => "Add Base".Localize(),
+				ResultType = typeof(BaseObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var item = scene.SelectedItem;
+
+					var newChild = item.Clone();
+					var baseMesh = new BaseObject3D()
+					{
+						Matrix = newChild.Matrix
+					};
+					newChild.Matrix = Matrix4X4.Identity;
+					baseMesh.Children.Add(newChild);
+					baseMesh.Invalidate(InvalidateType.Properties);
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D> { item },
+							new List<IObject3D> { baseMesh }));
+
+					scene.SelectedItem = baseMesh;
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("add_base.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+			};
+		}
+
+		public static SceneOperation SmoothPathOperation()
+		{
+			return new SceneOperation()
+			{
+				OperationID = "SmoothPath",
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Smooth Path".Localize(),
+				ResultType = typeof(SmoothPathObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					var smoothPath = new SmoothPathObject3D();
+					var itemClone = sceneItem.Clone();
+					smoothPath.Children.Add(itemClone);
+					smoothPath.Matrix = itemClone.Matrix;
+					itemClone.Matrix = Matrix4X4.Identity;
+
+					using (new SelectionMaintainer(scene))
+					{
+						scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { smoothPath }));
+					}
+
+					smoothPath.Invalidate(InvalidateType.Properties);
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("smooth_path.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+			};
+		}
 		public static SceneOperation EditComponentOperation()
 		{
 			return new SceneOperation()
@@ -903,7 +1030,7 @@ namespace MatterHackers.MatterControl
 						scene.SelectedItem = componentObject;
 					}
 				},
-				IsVisible = (sceneItem) =>
+				IsVisible = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
@@ -916,6 +1043,41 @@ namespace MatterHackers.MatterControl
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*A component must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
+			};
+		}
+
+		public static SceneOperation LinearExtrudeOperation()
+		{
+			return new SceneOperation()
+			{
+				OperationID = "LinearExtrude",
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Linear Extrude".Localize(),
+				ResultType = typeof(LinearExtrudeObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					if (sceneItem is IPathObject imageObject)
+					{
+						var extrude = new LinearExtrudeObject3D();
+
+						var itemClone = sceneItem.Clone();
+						extrude.Children.Add(itemClone);
+						extrude.Matrix = itemClone.Matrix;
+						itemClone.Matrix = Matrix4X4.Identity;
+
+						using (new SelectionMaintainer(scene))
+						{
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { extrude }));
+						}
+
+						extrude.Invalidate(InvalidateType.Properties);
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("linear_extrude.png", 16, 16).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
 			};
 		}
 

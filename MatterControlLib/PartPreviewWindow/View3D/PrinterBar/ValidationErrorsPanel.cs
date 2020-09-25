@@ -49,7 +49,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var errorImage = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
 			var warningImage = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
 			var infoImage = AggContext.StaticData.LoadIcon("StatusInfoTip_16x.png", 16, 16);
-			var fixIcon = AggContext.StaticData.LoadIcon("noun_1306.png", 16, 16, theme.InvertIcons);
 
 			foreach (var validationError in errors.OrderByDescending(e => e.ErrorLevel))
 			{
