@@ -65,6 +65,10 @@ namespace MatterHackers.Agg.UI
 		/// </summary>
 		public Type OperationType { get; set; }
 
+		/// <summary>
+		/// Gets or sets if this operation should be visible when for a specific selected item. Usef for right click
+		/// and context menu in properties panel.
+		/// </summary>
 		public Func<ISceneContext, bool> IsVisible { get; set; }
 	}
 

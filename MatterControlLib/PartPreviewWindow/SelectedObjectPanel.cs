@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void SetActiveItem(ISceneContext sceneContext)
 		{
-			var selectedItem = sceneContext.Scene.SelectedItem;
+			var selectedItem = sceneContext?.Scene?.SelectedItem;
 			if (this.item == selectedItem)
 			{
 				return;

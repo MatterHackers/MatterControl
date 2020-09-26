@@ -148,6 +148,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void Scene_SelectionChanged(object sender, EventArgs e)
 		{
+			var selectedItem = scene.SelectedItem;
 			UiThread.RunOnIdle(() =>
 			{
 				DisposeCurrentSelectionObject3DControls();
@@ -155,14 +156,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// On selection change, update state for mappings
 				Object3DControls.Clear();
 
-				if (scene.SelectedItem is IObject3DControlsProvider provider)
+				if (selectedItem is IObject3DControlsProvider provider)
 				{
 					provider.AddObject3DControls(this);
 				}
 				else
 				{
 					// add default controls
-					Object3DControls.Add(new ScaleMatrixTopControl(this));
+					if (selectedItem is IObjectWithHeight heightObject)
+					{
+						// Object3DControls.Add(new ScaleHeightControl(this));
+						Object3DControls.Add(new ScaleMatrixTopControl(this));
+					}
+					else
+					{
+						Object3DControls.Add(new ScaleMatrixTopControl(this));
+					}
+
 					Object3DControls.Add(new ScaleCornerControl(this, 0));
 					Object3DControls.Add(new ScaleCornerControl(this, 1));
 					Object3DControls.Add(new ScaleCornerControl(this, 2));
