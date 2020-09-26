@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl
 
 			if (!selectedItemType.IsDefined(typeof(ImmutableAttribute), false))
 			{
-				AddActionMenuItems(sceneContext, addInSubmenu, this.Graph.Operations.Values, menuTheme, popupMenu, selectedItemType);
+				AddActionMenuItems(sceneContext, addInSubmenu, menuTheme, popupMenu);
 			}
 
 			var workspaceActions = GetWorkspaceActions(view3DWidget);
@@ -236,41 +236,20 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public PopupMenu GetModifyMenu(ISceneContext sceneContext, IEnumerable<SceneOperation> sceneSelectionOperation = null)
+		public PopupMenu GetModifyMenu(ISceneContext sceneContext)
 		{
 			var popupMenu = new PopupMenu(this.MenuTheme);
 
 			AddActionMenuItems(sceneContext,
 				false,
-				sceneSelectionOperation,
 				this.MenuTheme,
-				popupMenu,
-				sceneContext.Scene.SelectedItem.GetType());
+				popupMenu);
 
 			return popupMenu;
 		}
 
-		private static void AddActionMenuItems(ISceneContext sceneContext, bool useSubMenu, IEnumerable<SceneOperation> sceneOperations, ThemeConfig menuTheme, PopupMenu popupMenu, Type selectedItemType)
+		private static void AddActionMenuItems(ISceneContext sceneContext, bool useSubMenu, ThemeConfig menuTheme, PopupMenu popupMenu)
 		{
-			void AddItems(PopupMenu menu)
-			{
-				foreach (var sceneOperation in sceneOperations)
-				{
-					var type = sceneOperation.OperationType;
-
-					if (type.IsAssignableFrom(selectedItemType)
-						&& (sceneOperation.IsVisible?.Invoke(sceneContext) != false)
-						&& sceneOperation.IsEnabled?.Invoke(sceneContext) != false)
-					{
-						var menuItem = menu.CreateMenuItem(sceneOperation.Title, sceneOperation.Icon?.Invoke(menuTheme.InvertIcons));
-						menuItem.Click += (s, e) =>
-						{
-							sceneOperation.Action(sceneContext);
-						};
-					}
-				}
-			}
-
 			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
 			renameMenuItem.Click += (s, e) =>
 			{
@@ -294,12 +273,14 @@ namespace MatterHackers.MatterControl
 			if (useSubMenu)
 			{
 				// Create items in a 'Modify' sub-menu
-				popupMenu.CreateSubMenu("Modify".Localize(), menuTheme, (modifyMenu) => AddItems(modifyMenu));
+				popupMenu.CreateSubMenu("Modify".Localize(),
+					menuTheme,
+					(modifyMenu) => SceneOperations.AddModifyItems(modifyMenu, menuTheme, sceneContext));
 			}
 			else
 			{
 				// Create items directly in the referenced menu
-				AddItems(popupMenu);
+				SceneOperations.AddModifyItems(popupMenu, menuTheme, sceneContext);
 			}
 		}
 
@@ -785,8 +766,6 @@ namespace MatterHackers.MatterControl
 
 		public ILibraryContext LibraryTabContext { get; private set; }
 
-		public GraphConfig Graph { get; }
-
 		private void InitializeLibrary()
 		{
 			if (Directory.Exists(ApplicationDataStorage.Instance.DownloadsDirectory))
@@ -950,33 +929,12 @@ namespace MatterHackers.MatterControl
 			Object3D.AssetsPath = ApplicationDataStorage.Instance.LibraryAssetsPath;
 
 			this.Library = new LibraryConfig();
-			this.Graph = new GraphConfig(this);
 			this.Library.ContentProviders.Add(new[] { "stl", "obj", "amf", "mcx" }, new MeshContentProvider());
 			this.Library.ContentProviders.Add("gcode", new GCodeContentProvider());
 			this.Library.ContentProviders.Add(new[] { "png", "gif", "jpg", "jpeg" }, new ImageContentProvider());
 			this.Library.ContentProviders.Add(new[] { "scad" }, new OpenScadContentProvider());
 
-			this.Graph.RegisterOperation(SceneOperations.ImageToPathOperation());
-			this.Graph.RegisterOperation(SceneOperations.TranslateOperation());
-			this.Graph.RegisterOperation(SceneOperations.RotateOperation());
-			this.Graph.RegisterOperation(SceneOperations.ScaleOperation());
-			this.Graph.RegisterOperation(SceneOperations.ImageConverterOperation());
-			this.Graph.RegisterOperation(SceneOperations.MirrorOperation());
-			this.Graph.RegisterOperation(SceneOperations.EditComponentOperation());
-			this.Graph.RegisterOperation(SceneOperations.LinearExtrudeOperation());
-			this.Graph.RegisterOperation(SceneOperations.SmoothPathOperation());
-			this.Graph.RegisterOperation(SceneOperations.InflatePathOperation());
-			this.Graph.RegisterOperation(SceneOperations.OutlinePathOperation());
-			this.Graph.RegisterOperation(SceneOperations.AddBaseOperation());
-
 			this.InitializeLibrary();
-
-			this.Graph.PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { this.Graph.Operations["ImageConverter"], this.Graph.Operations["ImageToPath"], });
-			this.Graph.PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["SmoothPath"], this.Graph.Operations["InflatePath"] });
-			this.Graph.PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"], this.Graph.Operations["InflatePath"] });
-			this.Graph.PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"] });
-			this.Graph.PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { this.Graph.Operations["LinearExtrude"] });
-			this.Graph.PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { this.Graph.Operations["Scale"] });
 		}
 
 		public void Connection_ErrorReported(object sender, string line)

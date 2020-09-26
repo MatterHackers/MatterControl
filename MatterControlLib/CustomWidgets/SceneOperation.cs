@@ -39,7 +39,7 @@ namespace MatterHackers.Agg.UI
 {
 	public class SceneOperation
 	{
-		public string OperationID { get; set; }
+		public string Id { get; set; }
 
 		public Action<ISceneContext> Action { get; set; }
 
@@ -66,7 +66,7 @@ namespace MatterHackers.Agg.UI
 		public Type OperationType { get; set; }
 
 		/// <summary>
-		/// Gets or sets if this operation should be visible when for a specific selected item. Usef for right click
+		/// Gets or sets if this operation should be visible when for a specific selected item. Used for right click
 		/// and context menu in properties panel.
 		/// </summary>
 		public Func<ISceneContext, bool> IsVisible { get; set; }

@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl.Library
 						tempScene.SelectedItem = imageObject;
 
 						// Invoke ImageConverter operation, passing image and scene
-						ApplicationController.Instance.Graph.Operations["ImageConverter"].Action(bedConfig);
+						SceneOperations.ById("ImageConverter").Action(bedConfig);
 
 						// Return replacement object constructed in ImageConverter operation
 						var constructedComponent = tempScene.SelectedItem;

@@ -52,39 +52,134 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
-	public class SceneOperations
+	public static class SceneOperations
 	{
-		private static SceneOperations _instance = null;
+		private static List<SceneOperation> registeredOperations;
 
-		private List<SceneOperation> registeredOperations;
+		private static bool built;
 
-		private SceneOperations()
+		private static Dictionary<Type, Func<bool, ImageBuffer>> Icons { get; set; }
+
+		private static Dictionary<Type, List<SceneOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<SceneOperation>>();
+
+
+
+		public static void AddOperation(SceneOperation operation)
 		{
+			Build();
+
+			registeredOperations.Add(operation);
+			RegisterIconsAndIdsRecursive(operation);
 		}
 
-		public static SceneOperations Instance
+		public static PopupMenu GetModifyMenu(ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeOperation = null)
 		{
-			get
+			var popupMenu = new PopupMenu(theme);
+			AddModifyItems(popupMenu, theme, sceneContext, includeOperation);
+			return popupMenu;
+		}
+
+		public static PopupMenu AddModifyItems(PopupMenu popupMenu, ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeOperation = null)
+		{
+			foreach (var operation in All)
 			{
-				if (_instance == null)
+				if (includeOperation?.Invoke(operation) == false)
 				{
-					_instance = new SceneOperations();
-					_instance.Build();
+					// skip this one
+					continue;
 				}
 
-				return _instance;
+				if (operation is OperationGroup operationGroup)
+				{
+					popupMenu.CreateSubMenu(
+						operationGroup.Title,
+						theme,
+						(subMenu) =>
+						{
+							foreach (var childOperation in operationGroup.Operations)
+							{
+								var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(theme.InvertIcons));
+								menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
+								{
+									childOperation.Action?.Invoke(sceneContext);
+								});
+
+								menuItem.Enabled = childOperation.IsEnabled(sceneContext);
+								menuItem.ToolTipText = childOperation.HelpText ?? "";
+							}
+						});
+				}
+				else if (operation is SceneSelectionSeparator separator)
+				{
+				}
+				else
+				{
+					var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(theme.InvertIcons));
+					menuItem.Click += (s, e) => operation.Action(sceneContext);
+					menuItem.Enabled = operation.IsEnabled(sceneContext);
+					menuItem.ToolTipText = operation.HelpText ?? "";
+				}
+			}
+
+			return popupMenu;
+		}
+
+		private static void RegisterIconsAndIdsRecursive(SceneOperation operation)
+		{
+			if (operation.ResultType != null
+				&& !Icons.ContainsKey(operation.ResultType))
+			{
+				Icons.Add(operation.ResultType, operation.Icon);
+			}
+
+			if (operation.Id != null)
+			{
+				OperationsById.Add(operation.Id, operation);
+			}
+
+			if (operation is OperationGroup group)
+			{
+				foreach (var item in group.Operations)
+				{
+					RegisterIconsAndIdsRecursive(item);
+				}
 			}
 		}
 
-		public Dictionary<Type, Func<bool, ImageBuffer>> Icons { get; private set; }
+		public static IEnumerable<SceneOperation> GetPrimaryOperations(Type type)
+		{
+			if (PrimaryOperations.ContainsKey(type))
+			{
+				return PrimaryOperations[type];
+			}
 
-		public IEnumerable<SceneOperation> RegisteredOperations => registeredOperations;
+			return null;
+		}
+
+		public static ImageBuffer GetIcon(Type type, bool invertIcon)
+		{
+			if (Icons.ContainsKey(type))
+			{
+				return Icons[type].Invoke(invertIcon);
+			}
+
+			return ApplicationController.Instance.Thumbnails.DefaultThumbnail();
+		}
+
+		private static Dictionary<string, SceneOperation> OperationsById { get; } = new Dictionary<string, SceneOperation>();
+
+		public static SceneOperation ById(string id)
+		{
+			return OperationsById[id];
+		}
+
+		public static IEnumerable<SceneOperation> All => registeredOperations;
 
 		public static SceneOperation AddBaseOperation()
 		{
 			return new SceneOperation()
 			{
-				OperationID = "AddBase",
+				Id = "AddBase",
 				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Add Base".Localize(),
 				ResultType = typeof(BaseObject3D),
@@ -119,7 +214,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "EditComponent",
+				Id = "EditComponent",
 				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Edit Component".Localize(),
 				ResultType = typeof(ComponentObject3D),
@@ -157,7 +252,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "ImageConverter",
+				Id = "ImageConverter",
 				OperationType = typeof(ImageObject3D),
 				TitleResolver = () => "Image Converter".Localize(),
 				ResultType = typeof(ComponentObject3D),
@@ -207,7 +302,7 @@ namespace MatterHackers.MatterControl
 					// Invalidate image to kick off rebuild of ImageConverter stack
 					imageObject.Invalidate(InvalidateType.Image);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*An image must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
 			};
@@ -217,7 +312,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "ImageToPath",
+				Id = "ImageToPath",
 				OperationType = typeof(ImageObject3D),
 				TitleResolver = () => "Image to Path".Localize(),
 				ResultType = typeof(ImageToPathObject3D),
@@ -253,7 +348,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "InflatePath",
+				Id = "InflatePath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Inflate Path".Localize(),
 				ResultType = typeof(InflatePathObject3D),
@@ -284,7 +379,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "LinearExtrude",
+				Id = "LinearExtrude",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Linear Extrude".Localize(),
 				ResultType = typeof(LinearExtrudeObject3D),
@@ -369,7 +464,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "Mirror",
+				Id = "Mirror",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(MirrorObject3D_2),
 				TitleResolver = () => "Mirror".Localize(),
@@ -387,7 +482,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "OutlinePath",
+				Id = "OutlinePath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Outline Path".Localize(),
 				ResultType = typeof(OutlinePathObject3D),
@@ -418,7 +513,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "Rotate",
+				Id = "Rotate",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(RotateObject3D_2),
 				TitleResolver = () => "Rotate".Localize(),
@@ -436,7 +531,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "Scale",
+				Id = "Scale",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ScaleObject3D),
 				TitleResolver = () => "Scale".Localize(),
@@ -454,7 +549,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "SmoothPath",
+				Id = "SmoothPath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Smooth Path".Localize(),
 				ResultType = typeof(SmoothPathObject3D),
@@ -485,7 +580,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationID = "Translate",
+				Id = "Translate",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(TranslateObject3D),
 				TitleResolver = () => "Translate".Localize(),
@@ -499,21 +594,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		/// <summary>
-		/// Register the given SceneSelectionOperation
-		/// </summary>
-		/// <param name="operation">The action to register</param>
-		public void RegisterSceneOperation(SceneOperation operation)
-		{
-			if (operation.OperationType != null)
-			{
-				Icons.Add(operation.OperationType, operation.Icon);
-			}
-
-			registeredOperations.Add(operation);
-		}
-
-		private SceneOperation AdvancedArrayOperation()
+		private static SceneOperation AdvancedArrayOperation()
 		{
 			return new SceneOperation()
 			{
@@ -533,7 +614,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation AlignOperation()
+		private static SceneOperation AlignOperation()
 		{
 			return new SceneOperation()
 			{
@@ -552,11 +633,11 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation ArrangeAllPartsOperation()
+		private static SceneOperation ArrangeAllPartsOperation()
 		{
 			return new SceneOperation()
 			{
-				OperationID = "ArrangeAllPartsOperation",
+				Id = "ArrangeAllPartsOperation",
 				TitleResolver = () => "Arrange All Parts".Localize(),
 				Action = async (sceneContext) =>
 				{
@@ -571,8 +652,15 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private void Build()
+		private static void Build()
 		{
+			if (built)
+			{
+				return;
+			}
+
+			built = true;
+
 			OperationSourceContainerObject3D.TaskBuilder = (name, func) => ApplicationController.Instance.Tasks.Execute(name, null, func);
 
 			registeredOperations = new List<SceneOperation>()
@@ -625,6 +713,21 @@ namespace MatterHackers.MatterControl
 						PlaneCutOperation(),
 #endif
 						HollowOutOperation(),
+					}
+				},
+				new OperationGroup("Image")
+				{
+					Collapse = true,
+					TitleResolver = () => "Image".Localize(),
+					StickySelection = true,
+					Operations = new List<SceneOperation>()
+					{
+						ImageConverterOperation(),
+						ImageToPathOperation(),
+						InflatePathOperation(),
+						OutlinePathOperation(),
+						SmoothPathOperation(),
+						LinearExtrudeOperation(),
 					}
 				},
 				new OperationGroup("Boolean")
@@ -695,10 +798,7 @@ namespace MatterHackers.MatterControl
 
 			foreach (var operation in registeredOperations)
 			{
-				if (operation.OperationType != null)
-				{
-					Icons.Add(operation.OperationType, operation.Icon);
-				}
+				RegisterIconsAndIdsRecursive(operation);
 			}
 
 			// TODO: Use custom selection group icon if reusing group icon seems incorrect
@@ -709,10 +809,15 @@ namespace MatterHackers.MatterControl
 				Icons.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
-			Icons.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("140.png", 16, 16, invertIcon));
+			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
+			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("SmoothPath"), SceneOperations.ById("InflatePath") });
+			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("InflatePath") });
+			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
+			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
+			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
 		}
 
-		private SceneOperation CombineOperation()
+		private static SceneOperation CombineOperation()
 		{
 			return new SceneOperation()
 			{
@@ -729,7 +834,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation CurveOperation()
+		private static SceneOperation CurveOperation()
 		{
 			return new SceneOperation()
 			{
@@ -746,7 +851,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation DualExtrusionAlignOperation()
+		private static SceneOperation DualExtrusionAlignOperation()
 		{
 			return new SceneOperation()
 			{
@@ -782,7 +887,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation DuplicateOperation()
+		private static SceneOperation DuplicateOperation()
 		{
 			return new SceneOperation()
 			{
@@ -794,7 +899,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation FitToBoundsOperation()
+		private static SceneOperation FitToBoundsOperation()
 		{
 			return new SceneOperation()
 			{
@@ -817,7 +922,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation FitToCylinderOperation()
+		private static SceneOperation FitToCylinderOperation()
 		{
 			return new SceneOperation()
 			{
@@ -840,7 +945,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation GroupOperation()
+		private static SceneOperation GroupOperation()
 		{
 			return new SceneOperation()
 			{
@@ -886,7 +991,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation HollowOutOperation()
+		private static SceneOperation HollowOutOperation()
 		{
 			return new SceneOperation()
 			{
@@ -903,7 +1008,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation IntersectOperation()
+		private static SceneOperation IntersectOperation()
 		{
 			return new SceneOperation()
 			{
@@ -920,7 +1025,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation LayFlatOperation()
+		private static SceneOperation LayFlatOperation()
 		{
 			return new SceneOperation()
 			{
@@ -946,7 +1051,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation LinearArrayOperation()
+		private static SceneOperation LinearArrayOperation()
 		{
 			return new SceneOperation()
 			{
@@ -966,7 +1071,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation PinchOperation()
+		private static SceneOperation PinchOperation()
 		{
 			return new SceneOperation()
 			{
@@ -983,7 +1088,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation PlaneCutOperation()
+		private static SceneOperation PlaneCutOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1000,7 +1105,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation RadialArrayOperation()
+		private static SceneOperation RadialArrayOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1020,7 +1125,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation ReduceOperation()
+		private static SceneOperation ReduceOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1037,7 +1142,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation RemoveOperation()
+		private static SceneOperation RemoveOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1049,7 +1154,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation RepairOperation()
+		private static SceneOperation RepairOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1066,7 +1171,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation SubtractAndReplaceOperation()
+		private static SceneOperation SubtractAndReplaceOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1083,11 +1188,12 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation SubtractOperation()
+		private static SceneOperation SubtractOperation()
 		{
 			return new SceneOperation()
 			{
 				OperationType = typeof(SubtractObject3D_2),
+				ResultType = typeof(SubtractObject3D_2),
 				TitleResolver = () => "Subtract".Localize(),
 				Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
@@ -1100,7 +1206,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation ToggleSupportOperation()
+		private static SceneOperation ToggleSupportOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1130,7 +1236,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation ToggleWipeTowerOperation()
+		private static SceneOperation ToggleWipeTowerOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1161,7 +1267,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation TwistOperation()
+		private static SceneOperation TwistOperation()
 		{
 			return new SceneOperation()
 			{
@@ -1178,7 +1284,7 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private SceneOperation UngroupOperation()
+		private static SceneOperation UngroupOperation()
 		{
 			return new SceneOperation()
 			{

@@ -134,9 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			overflowButton.DynamicPopupContent = () =>
 			{
-				var remainingOperations = ApplicationController.Instance.Graph.Operations.Values.Except(primaryActions);
-
-				return ApplicationController.Instance.GetModifyMenu(view3DWidget.sceneContext, remainingOperations);
+				return ApplicationController.Instance.GetModifyMenu(view3DWidget.sceneContext);
 			};
 			toolbar.AddChild(overflowButton);
 
@@ -177,8 +175,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly InteractiveScene scene;
 		private readonly FlowLayoutWidget primaryActionsPanel;
 
-		private List<SceneOperation> primaryActions = new List<SceneOperation>();
-
 		public void SetActiveItem(ISceneContext sceneContext)
 		{
 			var selectedItem = sceneContext?.Scene?.SelectedItem;
@@ -201,8 +197,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			primaryActionsPanel.RemoveAllChildren();
 
-			var graph = ApplicationController.Instance.Graph;
-			if (!graph.PrimaryOperations.TryGetValue(selectedItemType, out primaryActions))
+			IEnumerable<SceneOperation> primaryActions;
+
+			if ((primaryActions = SceneOperations.GetPrimaryOperations(selectedItemType)) == null)
 			{
 				primaryActions = new List<SceneOperation>();
 			}
@@ -231,7 +228,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if(primaryActionsPanel.Children.Any())
+			if (primaryActionsPanel.Children.Any())
 			{
 				// add in a separator from the apply and cancel buttons
 				primaryActionsPanel.AddChild(new ToolbarSeparator(theme));

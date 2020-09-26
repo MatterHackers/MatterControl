@@ -113,6 +113,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 		}
 
-		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("140.png", 16, 16);
+		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16);
 	}
 }

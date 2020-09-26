@@ -72,10 +72,10 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public void Initialize()
 		{
-			ApplicationController.Instance.Graph.RegisterOperation(
+			SceneOperations.AddOperation(
 				new SceneOperation()
 				{
-					OperationID = "Lithophane".Localize(),
+					Id = "Lithophane".Localize(),
 					TitleResolver = () => "Lithophane".Localize(),
 					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),

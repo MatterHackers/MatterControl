@@ -110,44 +110,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.OverflowButton.DynamicPopupContent = () =>
 			{
-				var menuTheme = AppContext.MenuTheme;
-				var popupMenu = new PopupMenu(theme);
-
-				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+				bool IncludeInMenu(SceneOperation operation)
 				{
-					if (operationButtons.TryGetValue(widget, out SceneOperation operation))
+					foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 					{
-						if (operation is OperationGroup operationGroup)
+						if (operationButtons.TryGetValue(widget, out SceneOperation buttonOperation)
+							&& buttonOperation == operation)
 						{
-							popupMenu.CreateSubMenu(
-								operationGroup.Title,
-								menuTheme,
-								(subMenu) =>
-								{
-									foreach (var childOperation in operationGroup.Operations)
-									{
-										var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(menuTheme.InvertIcons));
-										menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-										{
-											childOperation.Action?.Invoke(sceneContext);
-										});
-
-										menuItem.Enabled = childOperation.IsEnabled(sceneContext);
-										menuItem.ToolTipText = childOperation.HelpText ?? "";
-									}
-								});
-						}
-						else
-						{
-							var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
-							menuItem.Click += (s, e) => operation.Action(sceneContext);
-							menuItem.Enabled = operation.IsEnabled(sceneContext);
-							menuItem.ToolTipText = operation.HelpText ?? "";
+							return false;
 						}
 					}
+
+					return true;
 				}
 
-				return popupMenu;
+				return SceneOperations.GetModifyMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
 			};
 
 			this.IsPrinterMode = isPrinterType;
@@ -286,7 +263,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			operationButtons = new Dictionary<GuiWidget, SceneOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
-			foreach (var namedAction in SceneOperations.Instance.RegisteredOperations)
+			foreach (var namedAction in SceneOperations.All)
 			{
 				if (namedAction is SceneSelectionSeparator)
 				{
