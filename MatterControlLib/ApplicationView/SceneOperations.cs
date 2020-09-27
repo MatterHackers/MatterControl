@@ -178,11 +178,21 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public static void AddOperation(SceneOperation operation)
+		public static void AddOperation(SceneOperation operation, string groupId)
 		{
 			Build();
 
-			registeredOperations.Add(operation);
+			foreach (var item in All)
+			{
+				if (item is OperationGroup group)
+				{
+					if (group.GroupName == groupId)
+					{
+						group.Operations.Add(operation);
+					}
+				}
+			}
+
 			RegisterIconsAndIdsRecursive(operation);
 		}
 
