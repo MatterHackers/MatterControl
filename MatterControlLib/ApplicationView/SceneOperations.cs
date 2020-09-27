@@ -68,9 +68,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation AddBaseOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("AddBase")
 			{
-				Id = "AddBase",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Add Base".Localize(),
 				ResultType = typeof(BaseObject3D),
@@ -108,7 +107,17 @@ namespace MatterHackers.MatterControl
 				// If we are creating the toolbar overflow
 				if (includeInToolbarOverflow != null)
 				{
-					return includeInToolbarOverflow(operation);
+					if (registeredOperations.Where(i => i.Id == operation.Id).Any())
+					{
+						// it is in the root so check it
+						return includeInToolbarOverflow(operation);
+					}
+					else
+					{
+						// if the group it is in is expanded, check it
+					}
+
+					return true;
 				}
 
 				// It is a context popup menu, do more filtering
@@ -178,7 +187,7 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public static void AddOperation(SceneOperation operation, string groupId)
+		public static void AddOperation(SceneOperation operation, string id)
 		{
 			Build();
 
@@ -186,7 +195,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (item is OperationGroup group)
 				{
-					if (group.GroupName == groupId)
+					if (group.Id == id)
 					{
 						group.Operations.Add(operation);
 					}
@@ -203,9 +212,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation EditComponentOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("EditComponent")
 			{
-				Id = "EditComponent",
 				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Edit Component".Localize(),
 				ResultType = typeof(ComponentObject3D),
@@ -268,9 +276,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation ImageConverterOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("ImageConverter")
 			{
-				Id = "ImageConverter",
 				OperationType = typeof(ImageObject3D),
 				TitleResolver = () => "Image Converter".Localize(),
 				ResultType = typeof(ComponentObject3D),
@@ -328,9 +335,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation ImageToPathOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("ImageToPath")
 			{
-				Id = "ImageToPath",
 				OperationType = typeof(ImageObject3D),
 				TitleResolver = () => "Image to Path".Localize(),
 				ResultType = typeof(ImageToPathObject3D),
@@ -364,9 +370,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation InflatePathOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("InflatePath")
 			{
-				Id = "InflatePath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Inflate Path".Localize(),
 				ResultType = typeof(InflatePathObject3D),
@@ -395,9 +400,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation LinearExtrudeOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("LinearExtrude")
 			{
-				Id = "LinearExtrude",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Linear Extrude".Localize(),
 				ResultType = typeof(LinearExtrudeObject3D),
@@ -430,7 +434,7 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation MakeComponentOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Make Component")
 			{
 				TitleResolver = () => "Make Component".Localize(),
 				Action = (sceneContext) =>
@@ -480,9 +484,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation MirrorOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Mirror")
 			{
-				Id = "Mirror",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(MirrorObject3D_2),
 				TitleResolver = () => "Mirror".Localize(),
@@ -498,9 +501,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation OutlinePathOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("OutlinePath")
 			{
-				Id = "OutlinePath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Outline Path".Localize(),
 				ResultType = typeof(OutlinePathObject3D),
@@ -529,9 +531,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation RotateOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Rotate")
 			{
-				Id = "Rotate",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(RotateObject3D_2),
 				TitleResolver = () => "Rotate".Localize(),
@@ -547,9 +548,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation ScaleOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Scale")
 			{
-				Id = "Scale",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ScaleObject3D),
 				TitleResolver = () => "Scale".Localize(),
@@ -565,9 +565,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation SmoothPathOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("SmoothPath")
 			{
-				Id = "SmoothPath",
 				OperationType = typeof(IPathObject),
 				TitleResolver = () => "Smooth Path".Localize(),
 				ResultType = typeof(SmoothPathObject3D),
@@ -596,9 +595,8 @@ namespace MatterHackers.MatterControl
 
 		public static SceneOperation TranslateOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Translate")
 			{
-				Id = "Translate",
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(TranslateObject3D),
 				TitleResolver = () => "Translate".Localize(),
@@ -614,7 +612,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation AdvancedArrayOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Advanced Array")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayAdvancedObject3D),
@@ -635,7 +633,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation AlignOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Align")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(AlignObject3D),
@@ -655,9 +653,8 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation ArrangeAllPartsOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("ArrangeAllParts")
 			{
-				Id = "ArrangeAllPartsOperation",
 				TitleResolver = () => "Arrange All Parts".Localize(),
 				Action = async (sceneContext) =>
 				{
@@ -706,7 +703,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Transform".Localize(),
-					StickySelection = true,
 					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
 					{
@@ -716,11 +712,10 @@ namespace MatterHackers.MatterControl
 						MirrorOperation(),
 					}
 				},
-				new OperationGroup("Align")
+				new OperationGroup("Placement")
 				{
 					Collapse = true,
-					TitleResolver = () => "Align".Localize(),
-					StickySelection = true,
+					TitleResolver = () => "Placement".Localize(),
 					Operations = new List<SceneOperation>()
 					{
 						AlignOperation(),
@@ -731,7 +726,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Reshape".Localize(),
-					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
 						CurveOperation(),
@@ -747,7 +741,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Image".Localize(),
-					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
 						ImageConverterOperation(),
@@ -758,11 +751,10 @@ namespace MatterHackers.MatterControl
 						LinearExtrudeOperation(),
 					}
 				},
-				new OperationGroup("Fuse")
+				new OperationGroup("Merge")
 				{
 					Collapse = true,
-					TitleResolver = () => "Fuse".Localize(),
-					StickySelection = true,
+					TitleResolver = () => "Merge".Localize(),
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
@@ -776,7 +768,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Duplication".Localize(),
-					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
 						LinearArrayOperation(),
@@ -788,7 +779,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Mesh".Localize(),
-					StickySelection = true,
 					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
@@ -800,7 +790,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Printing".Localize(),
-					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
 						ToggleWipeTowerOperation(),
@@ -811,7 +800,6 @@ namespace MatterHackers.MatterControl
 				{
 					Collapse = true,
 					TitleResolver = () => "Design Apps".Localize(),
-					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
 						FitToBoundsOperation(),
@@ -852,7 +840,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation CombineOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Combine")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CombineObject3D_2),
@@ -866,7 +854,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation CurveOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Curve")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CurveObject3D_2),
@@ -884,7 +872,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation DualExtrusionAlignOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Dual Extrusion Align")
 			{
 				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Dual Extrusion Align".Localize(),
@@ -920,7 +908,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation DuplicateOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Duplicate")
 			{
 				TitleResolver = () => "Duplicate".Localize(),
 				Action = (sceneContext) => sceneContext.DuplicateItem(5),
@@ -932,7 +920,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation FitToBoundsOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Fit to Bounds")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToBoundsObject3D_2),
@@ -956,7 +944,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation FitToCylinderOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Fit to Cylinder")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(FitToCylinderObject3D),
@@ -980,7 +968,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation GroupOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Group")
 			{
 				OperationType = typeof(SelectionGroupObject3D),
 				ResultType = typeof(GroupObject3D),
@@ -1026,7 +1014,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation HollowOutOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Hollow Out")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(HollowOutObject3D),
@@ -1044,7 +1032,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation IntersectOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Intersect")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(IntersectionObject3D_2),
@@ -1065,7 +1053,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation LayFlatOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Lay Flat")
 			{
 				TitleResolver = () => "Lay Flat".Localize(),
 				Action = (sceneContext) =>
@@ -1091,7 +1079,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation LinearArrayOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Linear Array")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayLinearObject3D),
@@ -1112,7 +1100,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation PinchOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Pinch")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(PinchObject3D_2),
@@ -1130,7 +1118,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation PlaneCutOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Plane Cut")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(PlaneCutObject3D),
@@ -1148,7 +1136,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation RadialArrayOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Radial Array")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(ArrayRadialObject3D),
@@ -1169,7 +1157,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation ReduceOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Reduce")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(DecimateObject3D),
@@ -1209,7 +1197,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation RemoveOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Remove")
 			{
 				Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
@@ -1222,7 +1210,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation RepairOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Repair")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(RepairObject3D),
@@ -1240,7 +1228,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation SubtractAndReplaceOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Subtract & Replace")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractAndReplaceObject3D_2),
@@ -1254,7 +1242,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation SubtractOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Subtract")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractObject3D_2),
@@ -1268,7 +1256,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation ToggleSupportOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Convert to Support")
 			{
 				TitleResolver = () => "Convert to Support".Localize(),
 				Action = (sceneContext) =>
@@ -1298,7 +1286,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation ToggleWipeTowerOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Convert to Wipe Tower")
 			{
 				TitleResolver = () => "Convert to Wipe Tower".Localize(),
 				Action = (sceneContext) =>
@@ -1329,7 +1317,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation TwistOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Twist")
 			{
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(TwistObject3D),
@@ -1347,7 +1335,7 @@ namespace MatterHackers.MatterControl
 
 		private static SceneOperation UngroupOperation()
 		{
-			return new SceneOperation()
+			return new SceneOperation("Ungroup")
 			{
 				TitleResolver = () => "Ungroup".Localize(),
 				Action = (sceneContext) => sceneContext.Scene.UngroupSelection(),

@@ -27,10 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -73,9 +70,8 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		public void Initialize()
 		{
 			SceneOperations.AddOperation(
-				new SceneOperation()
+				new SceneOperation("Lithophane")
 				{
-					Id = "Lithophane".Localize(),
 					TitleResolver = () => "Lithophane".Localize(),
 					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),

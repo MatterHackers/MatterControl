@@ -117,11 +117,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						if (operationButtons.TryGetValue(widget, out SceneOperation buttonOperation)
 							&& buttonOperation == operation)
 						{
-							return false;
+							return true;
 						}
 					}
 
-					return true;
+					return false;
 				}
 
 				return SceneOperations.GetToolbarOverflowMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// add the create support before the align
 				if (namedAction is OperationGroup group
-					&& group.GroupName == "Adjust")
+					&& group.Id == "Adjust")
 				{
 					this.AddChild(CreateSupportButton(theme));
 					this.AddChild(new ToolbarSeparator(theme));

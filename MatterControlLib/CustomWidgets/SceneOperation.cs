@@ -39,7 +39,12 @@ namespace MatterHackers.Agg.UI
 {
 	public class SceneOperation
 	{
-		public string Id { get; set; }
+		public SceneOperation(string id)
+		{
+			this.Id = id;
+		}
+
+		public string Id { get; }
 
 		public Action<ISceneContext> Action { get; set; }
 
@@ -73,24 +78,26 @@ namespace MatterHackers.Agg.UI
 
 	public class SceneSelectionSeparator : SceneOperation
 	{
+		public SceneSelectionSeparator()
+			: base(null)
+		{
+		}
 	}
 
 	public class OperationGroup : SceneOperation
 	{
-		public OperationGroup(string groupName)
+		public OperationGroup(string id)
+			: base(id)
 		{
-			this.GroupName = groupName;
 		}
 
 		public List<SceneOperation> Operations { get; set; } = new List<SceneOperation>();
 
-		public bool StickySelection { get; internal set; }
+		public bool StickySelection { get; }
 
 		public int InitialSelectionIndex { get; set; } = 0;
 
-		public string GroupName { get; }
-
-		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
+		public string GroupRecordId => $"ActiveButton_{this.Id}_Group";
 
 		public bool Collapse { get; set; }
 
