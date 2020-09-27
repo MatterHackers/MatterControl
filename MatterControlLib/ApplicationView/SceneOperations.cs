@@ -54,38 +54,87 @@ namespace MatterHackers.MatterControl
 {
 	public static class SceneOperations
 	{
+		private static bool built;
+
 		private static List<SceneOperation> registeredOperations;
 
-		private static bool built;
+		public static IEnumerable<SceneOperation> All => registeredOperations;
 
 		private static Dictionary<Type, Func<bool, ImageBuffer>> Icons { get; set; }
 
+		private static Dictionary<string, SceneOperation> OperationsById { get; } = new Dictionary<string, SceneOperation>();
+
 		private static Dictionary<Type, List<SceneOperation>> PrimaryOperations { get; } = new Dictionary<Type, List<SceneOperation>>();
 
-
-
-		public static void AddOperation(SceneOperation operation)
+		public static SceneOperation AddBaseOperation()
 		{
-			Build();
+			return new SceneOperation()
+			{
+				Id = "AddBase",
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Add Base".Localize(),
+				ResultType = typeof(BaseObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var item = scene.SelectedItem;
 
-			registeredOperations.Add(operation);
-			RegisterIconsAndIdsRecursive(operation);
+					var newChild = item.Clone();
+					var baseMesh = new BaseObject3D()
+					{
+						Matrix = newChild.Matrix
+					};
+					newChild.Matrix = Matrix4X4.Identity;
+					baseMesh.Children.Add(newChild);
+					baseMesh.Invalidate(InvalidateType.Properties);
+
+					scene.UndoBuffer.AddAndDo(
+						new ReplaceCommand(
+							new List<IObject3D> { item },
+							new List<IObject3D> { baseMesh }));
+
+					scene.SelectedItem = baseMesh;
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("add_base.png", 16, 16, invertIcon).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+			};
 		}
 
-		public static PopupMenu GetModifyMenu(ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeOperation = null)
+		public static PopupMenu AddModifyItems(PopupMenu popupMenu, ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeInToolbarOverflow = null)
 		{
-			var popupMenu = new PopupMenu(theme);
-			AddModifyItems(popupMenu, theme, sceneContext, includeOperation);
-			return popupMenu;
-		}
+			bool Show(SceneOperation operation)
+			{
+				// If we are creating the toolbar overflow
+				if (includeInToolbarOverflow != null)
+				{
+					return includeInToolbarOverflow(operation);
+				}
 
-		public static PopupMenu AddModifyItems(PopupMenu popupMenu, ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeOperation = null)
-		{
+				// It is a context popup menu, do more filtering
+				if (operation.ShowInModifyMenu?.Invoke(sceneContext) == false
+					|| operation.IsEnabled?.Invoke(sceneContext) != true)
+				{
+					return false;
+				}
+
+				bool visible = true;
+				if (operation is OperationGroup operationGroup)
+				{
+					visible = false;
+					foreach (var childOperation in operationGroup.Operations)
+					{
+						visible |= Show(childOperation);
+					}
+				}
+
+				return visible;
+			}
+
 			foreach (var operation in All)
 			{
-				if (includeOperation?.Invoke(operation) == false)
+				if (!Show(operation))
 				{
-					// skip this one
 					continue;
 				}
 
@@ -98,6 +147,11 @@ namespace MatterHackers.MatterControl
 						{
 							foreach (var childOperation in operationGroup.Operations)
 							{
+								if (!Show(childOperation))
+								{
+									continue;
+								}
+
 								var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(theme.InvertIcons));
 								menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
 								{
@@ -124,90 +178,17 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		private static void RegisterIconsAndIdsRecursive(SceneOperation operation)
+		public static void AddOperation(SceneOperation operation)
 		{
-			if (operation.ResultType != null
-				&& !Icons.ContainsKey(operation.ResultType))
-			{
-				Icons.Add(operation.ResultType, operation.Icon);
-			}
+			Build();
 
-			if (operation.Id != null)
-			{
-				OperationsById.Add(operation.Id, operation);
-			}
-
-			if (operation is OperationGroup group)
-			{
-				foreach (var item in group.Operations)
-				{
-					RegisterIconsAndIdsRecursive(item);
-				}
-			}
+			registeredOperations.Add(operation);
+			RegisterIconsAndIdsRecursive(operation);
 		}
-
-		public static IEnumerable<SceneOperation> GetPrimaryOperations(Type type)
-		{
-			if (PrimaryOperations.ContainsKey(type))
-			{
-				return PrimaryOperations[type];
-			}
-
-			return null;
-		}
-
-		public static ImageBuffer GetIcon(Type type, bool invertIcon)
-		{
-			if (Icons.ContainsKey(type))
-			{
-				return Icons[type].Invoke(invertIcon);
-			}
-
-			return ApplicationController.Instance.Thumbnails.DefaultThumbnail();
-		}
-
-		private static Dictionary<string, SceneOperation> OperationsById { get; } = new Dictionary<string, SceneOperation>();
 
 		public static SceneOperation ById(string id)
 		{
 			return OperationsById[id];
-		}
-
-		public static IEnumerable<SceneOperation> All => registeredOperations;
-
-		public static SceneOperation AddBaseOperation()
-		{
-			return new SceneOperation()
-			{
-				Id = "AddBase",
-				OperationType = typeof(IObject3D),
-				TitleResolver = () => "Add Base".Localize(),
-				ResultType = typeof(BaseObject3D),
-				Action = (sceneContext) =>
-				{
-					var scene = sceneContext.Scene;
-					var item = scene.SelectedItem;
-
-					var newChild = item.Clone();
-					var baseMesh = new BaseObject3D()
-					{
-						Matrix = newChild.Matrix
-					};
-					newChild.Matrix = Matrix4X4.Identity;
-					baseMesh.Children.Add(newChild);
-					baseMesh.Invalidate(InvalidateType.Properties);
-
-					scene.UndoBuffer.AddAndDo(
-						new ReplaceCommand(
-							new List<IObject3D> { item },
-							new List<IObject3D> { baseMesh }));
-
-					scene.SelectedItem = baseMesh;
-				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("add_base.png", 16, 16).SetPreMultiply(),
-				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
-			};
 		}
 
 		public static SceneOperation EditComponentOperation()
@@ -232,7 +213,7 @@ namespace MatterHackers.MatterControl
 						scene.SelectedItem = componentObject;
 					}
 				},
-				IsVisible = (sceneContext) =>
+				ShowInModifyMenu = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
@@ -242,10 +223,37 @@ namespace MatterHackers.MatterControl
 						&& componentObject.Finalized
 						&& !componentObject.ProOnly;
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A component must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
 			};
+		}
+
+		public static ImageBuffer GetIcon(Type type, bool invertIcon)
+		{
+			if (Icons.ContainsKey(type))
+			{
+				return Icons[type].Invoke(invertIcon);
+			}
+
+			return ApplicationController.Instance.Thumbnails.DefaultThumbnail();
+		}
+
+		public static IEnumerable<SceneOperation> GetPrimaryOperations(Type type)
+		{
+			if (PrimaryOperations.ContainsKey(type))
+			{
+				return PrimaryOperations[type];
+			}
+
+			return null;
+		}
+
+		public static PopupMenu GetToolbarOverflowMenu(ThemeConfig theme, ISceneContext sceneContext, Func<SceneOperation, bool> includeInToolbarOverflow = null)
+		{
+			var popupMenu = new PopupMenu(theme);
+			AddModifyItems(popupMenu, theme, sceneContext, includeInToolbarOverflow);
+			return popupMenu;
 		}
 
 		public static SceneOperation ImageConverterOperation()
@@ -302,9 +310,9 @@ namespace MatterHackers.MatterControl
 					// Invalidate image to kick off rebuild of ImageConverter stack
 					imageObject.Invalidate(InvalidateType.Image);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*An image must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
 			};
 		}
 
@@ -338,9 +346,9 @@ namespace MatterHackers.MatterControl
 						path.Invalidate(InvalidateType.Properties);
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("image_to_path.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("image_to_path.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*An image must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is ImageObject3D),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is ImageObject3D,
 			};
 		}
 
@@ -369,9 +377,9 @@ namespace MatterHackers.MatterControl
 
 					inflatePath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("inflate_path.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("inflate_path.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
 
@@ -404,9 +412,9 @@ namespace MatterHackers.MatterControl
 						extrude.Invalidate(InvalidateType.Properties);
 					}
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("linear_extrude.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("linear_extrude.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
 
@@ -474,7 +482,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("mirror_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -503,9 +511,9 @@ namespace MatterHackers.MatterControl
 
 					outlinePath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("outline.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("outline.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
 
@@ -521,7 +529,7 @@ namespace MatterHackers.MatterControl
 				{
 					new RotateObject3D_2().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 			};
@@ -570,9 +578,9 @@ namespace MatterHackers.MatterControl
 
 					smoothPath.Invalidate(InvalidateType.Properties);
 				},
-				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("smooth_path.png", 16, 16).SetPreMultiply(),
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("smooth_path.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
 		}
 
@@ -598,7 +606,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(ArrayAdvancedObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(ArrayAdvancedObject3D),
 				TitleResolver = () => "Advanced Array".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -618,7 +627,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(AlignObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(AlignObject3D),
 				TitleResolver = () => "Align".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -649,7 +659,15 @@ namespace MatterHackers.MatterControl
 					return sceneContext.EditableScene && sceneContext.Scene.VisibleMeshes().Any();
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcon).SetPreMultiply(),
+				ShowInModifyMenu = (sceneContext) => false,
 			};
+		}
+
+		private static bool BooleanCandidate(IObject3D selectedItem)
+		{
+			return selectedItem != null
+				&& selectedItem.VisibleMeshes().Count() > 1
+				&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i));
 		}
 
 		private static void Build()
@@ -674,12 +692,12 @@ namespace MatterHackers.MatterControl
 				DuplicateOperation(),
 				RemoveOperation(),
 				new SceneSelectionSeparator(),
-				new OperationGroup("Adjust")
+				new OperationGroup("Transform")
 				{
 					Collapse = true,
-					TitleResolver = () => "Adjust".Localize(),
+					TitleResolver = () => "Transform".Localize(),
 					StickySelection = true,
-					InitialSelection = 2,
+					InitialSelectionIndex = 2,
 					Operations = new List<SceneOperation>()
 					{
 						TranslateOperation(),
@@ -699,10 +717,10 @@ namespace MatterHackers.MatterControl
 						DualExtrusionAlignOperation(),
 					},
 				},
-				new OperationGroup("Form")
+				new OperationGroup("Reshape")
 				{
 					Collapse = true,
-					TitleResolver = () => "Form".Localize(),
+					TitleResolver = () => "Reshape".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
@@ -730,11 +748,12 @@ namespace MatterHackers.MatterControl
 						LinearExtrudeOperation(),
 					}
 				},
-				new OperationGroup("Boolean")
+				new OperationGroup("Fuse")
 				{
 					Collapse = true,
-					TitleResolver = () => "Boolean".Localize(),
+					TitleResolver = () => "Fuse".Localize(),
 					StickySelection = true,
+					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
 						CombineOperation(),
@@ -743,10 +762,10 @@ namespace MatterHackers.MatterControl
 						SubtractAndReplaceOperation(),
 					}
 				},
-				new OperationGroup("Array")
+				new OperationGroup("Duplication")
 				{
 					Collapse = true,
-					TitleResolver = () => "Array".Localize(),
+					TitleResolver = () => "Duplication".Localize(),
 					StickySelection = true,
 					Operations = new List<SceneOperation>()
 					{
@@ -760,6 +779,7 @@ namespace MatterHackers.MatterControl
 					Collapse = true,
 					TitleResolver = () => "Mesh".Localize(),
 					StickySelection = true,
+					InitialSelectionIndex = 1,
 					Operations = new List<SceneOperation>()
 					{
 						ReduceOperation(),
@@ -815,22 +835,22 @@ namespace MatterHackers.MatterControl
 			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
 			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
 			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
+
+			Icons.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16, invertIcon).SetPreMultiply());
+			// Icons.Add(typeof(CubeObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16, invertIcon).SetPreMultiply());
 		}
 
 		private static SceneOperation CombineOperation()
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(CombineObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(CombineObject3D_2),
 				TitleResolver = () => "Combine".Localize(),
 				Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png", 16, 16, !invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) =>
-				{
-					var selectedItem = sceneContext.Scene.SelectedItem;
-					return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-				},
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -838,7 +858,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(CurveObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(CurveObject3D_2),
 				TitleResolver = () => "Curve".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -847,7 +868,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("curve.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -855,7 +876,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(AlignObject3D),
+				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Dual Extrusion Align".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -903,7 +924,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(FitToBoundsObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(FitToBoundsObject3D_2),
 				TitleResolver = () => "Fit to Bounds".Localize(),
 				Action = async (sceneContext) =>
 				{
@@ -926,7 +948,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(FitToCylinderObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(FitToCylinderObject3D),
 				TitleResolver = () => "Fit to Cylinder".Localize(),
 				Action = async (sceneContext) =>
 				{
@@ -949,8 +972,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(GroupObject3D),
-
+				OperationType = typeof(SelectionGroupObject3D),
+				ResultType = typeof(GroupObject3D),
 				TitleResolver = () => "Group".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -995,7 +1018,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(HollowOutObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(HollowOutObject3D),
 				TitleResolver = () => "Hollow Out".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1004,7 +1028,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("hollow.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1012,17 +1036,21 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(IntersectionObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(IntersectionObject3D_2),
 				TitleResolver = () => "Intersect".Localize(),
 				Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png", 16, 16),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) =>
-				{
-					var selectedItem = sceneContext.Scene.SelectedItem;
-					return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-				},
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
 			};
+		}
+
+		private static bool IsMeshObject(IObject3D item)
+		{
+			return item != null
+				&& !(item is ImageObject3D)
+				&& !(item is IPathObject);
 		}
 
 		private static SceneOperation LayFlatOperation()
@@ -1055,7 +1083,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(ArrayLinearObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(ArrayLinearObject3D),
 				TitleResolver = () => "Linear Array".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1075,7 +1104,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(PinchObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(PinchObject3D_2),
 				TitleResolver = () => "Pinch".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1084,7 +1114,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("pinch.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1092,7 +1122,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(PlaneCutObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(PlaneCutObject3D),
 				TitleResolver = () => "Plane Cut".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1101,7 +1132,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("plane_cut.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1109,7 +1140,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(ArrayRadialObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(ArrayRadialObject3D),
 				TitleResolver = () => "Radial Array".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1129,7 +1161,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(DecimateObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(DecimateObject3D),
 				TitleResolver = () => "Reduce".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1138,19 +1171,42 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("reduce.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
+		}
+
+		private static void RegisterIconsAndIdsRecursive(SceneOperation operation)
+		{
+			if (operation.ResultType != null
+				&& !Icons.ContainsKey(operation.ResultType))
+			{
+				Icons.Add(operation.ResultType, operation.Icon);
+			}
+
+			if (operation.Id != null)
+			{
+				OperationsById.Add(operation.Id, operation);
+			}
+
+			if (operation is OperationGroup group)
+			{
+				foreach (var item in group.Operations)
+				{
+					RegisterIconsAndIdsRecursive(item);
+				}
+			}
 		}
 
 		private static SceneOperation RemoveOperation()
 		{
 			return new SceneOperation()
 			{
-				TitleResolver = () => "Remove".Localize(),
 				Action = (sceneContext) => sceneContext.Scene.DeleteSelection(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("remove.png", 16, 16, !invertIcon).SetPreMultiply(),
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
+				ShowInModifyMenu = (sceneContext) => false,
+				TitleResolver = () => "Remove".Localize(),
 			};
 		}
 
@@ -1158,7 +1214,8 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(RepairObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(RepairObject3D),
 				TitleResolver = () => "Repair".Localize(),
 				Action = (sceneContext) =>
 				{
@@ -1167,7 +1224,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("repair.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1175,16 +1232,13 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(SubtractAndReplaceObject3D_2),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(SubtractAndReplaceObject3D_2),
 				TitleResolver = () => "Subtract & Replace".Localize(),
 				Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) =>
-				{
-					var selectedItem = sceneContext.Scene.SelectedItem;
-					return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-				},
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1192,17 +1246,13 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(SubtractObject3D_2),
+				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractObject3D_2),
 				TitleResolver = () => "Subtract".Localize(),
 				Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) =>
-				{
-					var selectedItem = sceneContext.Scene.SelectedItem;
-					return selectedItem != null && selectedItem.VisibleMeshes().Count() > 1;
-				},
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1210,7 +1260,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				TitleResolver = () => "Toggle Support".Localize(),
+				TitleResolver = () => "Convert to Support".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1232,7 +1282,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("support.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1240,7 +1290,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				TitleResolver = () => "Toggle Wipe Tower".Localize(),
+				TitleResolver = () => "Convert to Wipe Tower".Localize(),
 				Action = (sceneContext) =>
 				{
 					var scene = sceneContext.Scene;
@@ -1263,7 +1313,7 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 
@@ -1271,16 +1321,17 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation()
 			{
-				OperationType = typeof(TwistObject3D),
+				OperationType = typeof(IObject3D),
+				ResultType = typeof(TwistObject3D),
 				TitleResolver = () => "Twist".Localize(),
 				Action = (sceneContext) =>
 				{
-					var curve = new TwistObject3D();
-					curve.WrapSelectedItemAndSelect(sceneContext.Scene);
+					var twist = new TwistObject3D();
+					twist.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("twist.png", 16, 16, invertIcon),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null,
+				IsEnabled = (sceneContext) => IsMeshObject(sceneContext.Scene.SelectedItem),
 			};
 		}
 

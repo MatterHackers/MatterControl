@@ -88,8 +88,9 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 							WrapWith(sceneItem, new LithophaneObject3D(), scene);
 						}
 					},
-					IsEnabled = (sceneItem) => true,
-					IsVisible = (sceneItem) => true,
+					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
+					HelpTextResolver = () => "*An image must be selected*".Localize(),
+					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
 					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
 				});
 		}

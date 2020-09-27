@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		}
 
 		[JsonIgnore]
-		public ImageObject3D Image => this.Children.OfType<ImageObject3D>().FirstOrDefault();
+		public ImageObject3D ImageChild => this.Children.OfType<ImageObject3D>().FirstOrDefault();
 
 		[DisplayName("Pixels Per mm"), Range(0.5, 3, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		public double PixelsPerMM { get; set; } = 1.5;
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			var activeImage = AggContext.ImageIO.LoadImage(this.Image.AssetPath);
+			var activeImage = this.ImageChild.Image;
 
 			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationToken) =>
 			{

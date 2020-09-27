@@ -124,7 +124,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return true;
 				}
 
-				return SceneOperations.GetModifyMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
+				return SceneOperations.GetToolbarOverflowMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
 			};
 
 			this.IsPrinterMode = isPrinterType;

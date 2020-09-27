@@ -66,10 +66,9 @@ namespace MatterHackers.Agg.UI
 		public Type OperationType { get; set; }
 
 		/// <summary>
-		/// Gets or sets if this operation should be visible when for a specific selected item. Used for right click
-		/// and context menu in properties panel.
+		/// Gets or sets if this operation should be shown in right click and modify menu.
 		/// </summary>
-		public Func<ISceneContext, bool> IsVisible { get; set; }
+		public Func<ISceneContext, bool> ShowInModifyMenu { get; set; }
 	}
 
 	public class SceneSelectionSeparator : SceneOperation
@@ -87,7 +86,7 @@ namespace MatterHackers.Agg.UI
 
 		public bool StickySelection { get; internal set; }
 
-		public int InitialSelection { get; set; } = 0;
+		public int InitialSelectionIndex { get; set; } = 0;
 
 		public string GroupName { get; }
 
@@ -101,7 +100,7 @@ namespace MatterHackers.Agg.UI
 			{
 				if (!int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID))
 				{
-					activeButtonID = InitialSelection;
+					activeButtonID = InitialSelectionIndex;
 				}
 
 				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
