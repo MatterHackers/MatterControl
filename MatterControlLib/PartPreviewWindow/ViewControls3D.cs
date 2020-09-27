@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private readonly ISceneContext sceneContext;
 		private readonly PartWorkspace workspace;
 		private ViewControls3DButtons activeTransformState = ViewControls3DButtons.PartSelect;
-		private readonly Dictionary<GuiWidget, SceneSelectionOperation> operationButtons;
+		private readonly Dictionary<GuiWidget, SceneOperation> operationButtons;
 		private MainViewWidget mainViewWidget = null;
 		private readonly PopupMenuButton bedMenuButton;
 		private readonly ThemeConfig theme;
@@ -110,44 +110,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.OverflowButton.DynamicPopupContent = () =>
 			{
-				var menuTheme = AppContext.MenuTheme;
-				var popupMenu = new PopupMenu(theme);
-
-				foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
+				bool IncludeInMenu(SceneOperation operation)
 				{
-					if (operationButtons.TryGetValue(widget, out SceneSelectionOperation operation))
+					foreach (var widget in this.ActionArea.Children.Where(c => !c.Visible && !ignoredInMenuTypes.Contains(c.GetType())))
 					{
-						if (operation is OperationGroup operationGroup)
+						if (operationButtons.TryGetValue(widget, out SceneOperation buttonOperation)
+							&& buttonOperation == operation)
 						{
-							popupMenu.CreateSubMenu(
-								operationGroup.Title,
-								menuTheme,
-								(subMenu) =>
-								{
-									foreach (var childOperation in operationGroup.Operations)
-									{
-										var menuItem = subMenu.CreateMenuItem(childOperation.Title, childOperation.Icon(menuTheme.InvertIcons));
-										menuItem.Click += (s, e) => UiThread.RunOnIdle(() =>
-										{
-											childOperation.Action?.Invoke(sceneContext);
-										});
-
-										menuItem.Enabled = childOperation.IsEnabled(sceneContext);
-										menuItem.ToolTipText = childOperation.HelpText ?? "";
-									}
-								});
-						}
-						else
-						{
-							var menuItem = popupMenu.CreateMenuItem(operation.Title, operation.Icon(menuTheme.InvertIcons));
-							menuItem.Click += (s, e) => operation.Action(sceneContext);
-							menuItem.Enabled = operation.IsEnabled(sceneContext);
-							menuItem.ToolTipText = operation.HelpText ?? "";
+							return true;
 						}
 					}
+
+					return false;
 				}
 
-				return popupMenu;
+				return SceneOperations.GetToolbarOverflowMenu(AppContext.MenuTheme, sceneContext, IncludeInMenu);
 			};
 
 			this.IsPrinterMode = isPrinterType;
@@ -283,10 +260,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(partSelectButton);
 			}
 
-			operationButtons = new Dictionary<GuiWidget, SceneSelectionOperation>();
+			operationButtons = new Dictionary<GuiWidget, SceneOperation>();
 
 			// Add Selected IObject3D -> Operations to toolbar
-			foreach (var namedAction in ApplicationController.Instance.RegisteredSceneOperations)
+			foreach (var namedAction in SceneOperations.All)
 			{
 				if (namedAction is SceneSelectionSeparator)
 				{
@@ -296,9 +273,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// add the create support before the align
 				if (namedAction is OperationGroup group
-					&& group.GroupName == "Align")
+					&& group.Id == "Adjust")
 				{
-					this.AddChild(CreateWipeTowerButton(theme));
 					this.AddChild(CreateSupportButton(theme));
 					this.AddChild(new ToolbarSeparator(theme));
 				}
@@ -809,82 +785,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return libraryPopup;
 		}
 
-		private GuiWidget CreateWipeTowerButton(ThemeConfig theme)
-		{
-			var iconButton = new IconButton(
-				AggContext.StaticData.LoadIcon("wipe_tower.png", 16, 16, theme.InvertIcons),
-				theme)
-			{
-				ToolTipText = "Toggle Wipe Tower".Localize(),
-			};
-
-			iconButton.Click += (s, e) =>
-			{
-				var scene = sceneContext.Scene;
-				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					bool allAreWipeTower = false;
-
-					if (selectedItem is SelectionGroupObject3D)
-					{
-						allAreWipeTower = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.WipeTower);
-					}
-					else
-					{
-						allAreWipeTower = selectedItem.OutputType == PrintOutputTypes.WipeTower;
-					}
-
-					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreWipeTower ? PrintOutputTypes.Default : PrintOutputTypes.WipeTower));
-				}
-			};
-
-			sceneContext.Scene.SelectionChanged += (s, e) =>
-			{
-				iconButton.Enabled = sceneContext.Scene.SelectedItem != null;
-			};
-
-			return iconButton;
-		}
-
 		private GuiWidget CreateSupportButton(ThemeConfig theme)
 		{
 			PopupMenuButton toggleSupportButton = null;
-
-			var iconButton = new IconButton(
-				AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons),
-				theme)
-			{
-				ToolTipText = "Toggle Support".Localize(),
-			};
-
-			iconButton.Click += (s, e) =>
-			{
-				var scene = sceneContext.Scene;
-				var selectedItem = scene.SelectedItem;
-				if (selectedItem != null)
-				{
-					bool allAreSupport = false;
-					if (selectedItem is SelectionGroupObject3D)
-					{
-						allAreSupport = selectedItem.Children.All(i => i.OutputType == PrintOutputTypes.Support);
-					}
-					else
-					{
-						allAreSupport = selectedItem.OutputType == PrintOutputTypes.Support;
-					}
-
-					scene.UndoBuffer.AddAndDo(new SetOutputType(selectedItem, allAreSupport ? PrintOutputTypes.Default : PrintOutputTypes.Support));
-				}
-			};
-
-			sceneContext.Scene.SelectionChanged += (s, e) =>
-			{
-				iconButton.Selectable = sceneContext.Scene.SelectedItem != null;
-			};
-
-			// Remove right Padding for drop style
-			iconButton.Padding = iconButton.Padding.Clone(right: 0);
 
 			var minimumSupportHeight = .05;
 			if (sceneContext.Printer != null)
@@ -892,7 +795,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
 			}
 
-			toggleSupportButton = new PopupMenuButton(iconButton, theme)
+			toggleSupportButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
@@ -906,8 +809,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				DrawArrow = true,
 				Margin = theme.ButtonSpacing,
 			};
-
-			iconButton.Selectable = true;
 
 			return toggleSupportButton;
 		}

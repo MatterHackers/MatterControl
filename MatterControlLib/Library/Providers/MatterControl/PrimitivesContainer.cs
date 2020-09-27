@@ -44,6 +44,11 @@ namespace MatterHackers.MatterControl.Library
 		public PrimitivesContainer()
 		{
 			Name = "Primitives".Localize();
+			DefaultSort = new SortBehavior()
+			{
+				SortKey = SortKey.ModifiedDate,
+				Ascending = true,
+			};
 		}
 
 		public override void Load()
@@ -105,7 +110,7 @@ namespace MatterHackers.MatterControl.Library
 #if DEBUG
 				new GeneratorItem(
 					() => "XY Calibration".Localize(),
-					async() => await XyCalibrationFaceObject3D.Create())
+					async () => await XyCalibrationFaceObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
@@ -119,12 +124,13 @@ namespace MatterHackers.MatterControl.Library
 						};
 
 						// Construct a scene
-						var tempScene = new InteractiveScene();
+						var bedConfig = new BedConfig(null);
+						var tempScene = bedConfig.Scene;
 						tempScene.Children.Add(imageObject);
 						tempScene.SelectedItem = imageObject;
 
 						// Invoke ImageConverter operation, passing image and scene
-						ApplicationController.Instance.Graph.Operations["ImageConverter"].Operation(imageObject, tempScene);
+						SceneOperations.ById("ImageConverter").Action(bedConfig);
 
 						// Return replacement object constructed in ImageConverter operation
 						var constructedComponent = tempScene.SelectedItem;
@@ -137,7 +143,6 @@ namespace MatterHackers.MatterControl.Library
 					() => "Measure Tool".Localize(),
 					async () => await MeasureToolObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
-
 			};
 
 			string title = "Primitive Shapes".Localize();

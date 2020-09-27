@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (sourceEvent.Button == MouseButtons.Right)
 					{
-						var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem((IObject3D)treeView.SelectedNode.Tag, Scene, true, this);
+						var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem(true, this);
 						popupMenu.ShowMenu(clickedWidget, sourceEvent);
 					}
 				}
@@ -1524,7 +1524,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ShowPartContextMenu(MouseEventArgs mouseEvent, IObject3D selectedItem)
 		{
-			var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem(selectedItem, Scene, true, this);
+			var popupMenu = ApplicationController.Instance.GetActionMenuForSceneItem(true, this);
 			popupMenu.ShowMenu(this, mouseEvent);
 		}
 
@@ -1639,7 +1639,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					treeView.SelectedNode = null;
 				}
 
-				selectedObjectPanel.SetActiveItem(selectedItem);
+				selectedObjectPanel.SetActiveItem(this.sceneContext);
 			}
 		}
 

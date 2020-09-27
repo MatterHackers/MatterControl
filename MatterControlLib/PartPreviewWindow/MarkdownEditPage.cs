@@ -125,7 +125,7 @@ namespace MatterHackers.MatterControl
 			};
 			link.Click += (s, e) =>
 			{
-				ApplicationController.Instance.LaunchBrowser("https://guides.github.com/features/mastering-markdown/");
+				ApplicationController.LaunchBrowser("https://guides.github.com/features/mastering-markdown/");
 			};
 			footerRow.AddChild(link, 0);
 		}

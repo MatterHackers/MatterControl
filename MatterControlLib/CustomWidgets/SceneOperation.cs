@@ -37,9 +37,21 @@ using MatterHackers.MatterControl;
 
 namespace MatterHackers.Agg.UI
 {
-	public class SceneSelectionOperation
+	public class SceneOperation
 	{
+		public SceneOperation(string id)
+		{
+			this.Id = id;
+		}
+
+		public string Id { get; }
+
 		public Action<ISceneContext> Action { get; set; }
+
+		/// <summary>
+		/// Gets or sets the type this operation outputs
+		/// </summary>
+		public Type ResultType { get; set; }
 
 		public Func<bool, ImageBuffer> Icon { get; set; }
 
@@ -53,35 +65,50 @@ namespace MatterHackers.Agg.UI
 
 		public string Title => this.TitleResolver?.Invoke();
 
+		/// <summary>
+		/// Gets or sets the type that this operation can be applied to
+		/// </summary>
 		public Type OperationType { get; set; }
+
+		/// <summary>
+		/// Gets or sets if this operation should be shown in right click and modify menu.
+		/// </summary>
+		public Func<ISceneContext, bool> ShowInModifyMenu { get; set; }
 	}
 
-	public class SceneSelectionSeparator : SceneSelectionOperation
+	public class SceneSelectionSeparator : SceneOperation
 	{
-	}
-
-	public class OperationGroup : SceneSelectionOperation
-	{
-		public OperationGroup(string groupName)
+		public SceneSelectionSeparator()
+			: base(null)
 		{
-			this.GroupName = groupName;
+		}
+	}
+
+	public class OperationGroup : SceneOperation
+	{
+		public OperationGroup(string id)
+			: base(id)
+		{
 		}
 
-		public List<SceneSelectionOperation> Operations { get; set; } = new List<SceneSelectionOperation>();
+		public List<SceneOperation> Operations { get; set; } = new List<SceneOperation>();
 
-		public bool StickySelection { get; internal set; }
+		public bool StickySelection { get; }
 
-		public string GroupName { get; }
+		public int InitialSelectionIndex { get; set; } = 0;
 
-		public string GroupRecordId => $"ActiveButton_{this.GroupName}_Group";
+		public string GroupRecordId => $"ActiveButton_{this.Id}_Group";
 
 		public bool Collapse { get; set; }
 
-		public SceneSelectionOperation GetDefaultOperation()
+		public SceneOperation GetDefaultOperation()
 		{
 			if (this.StickySelection)
 			{
-				int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID);
+				if (!int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID))
+				{
+					activeButtonID = InitialSelectionIndex;
+				}
 
 				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
 

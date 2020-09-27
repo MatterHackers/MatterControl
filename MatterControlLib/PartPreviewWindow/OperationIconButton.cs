@@ -34,10 +34,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class OperationIconButton : IconButton
 	{
-		private SceneSelectionOperation sceneOperation;
+		private SceneOperation sceneOperation;
 		private ISceneContext sceneContext;
 
-		public OperationIconButton(SceneSelectionOperation sceneOperation, ISceneContext sceneContext, ThemeConfig theme)
+		public OperationIconButton(SceneOperation sceneOperation, ISceneContext sceneContext, ThemeConfig theme)
 			: base(sceneOperation.Icon(theme.InvertIcons), theme)
 		{
 			this.sceneOperation = sceneOperation;

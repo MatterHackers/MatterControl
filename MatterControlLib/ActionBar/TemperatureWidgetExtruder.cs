@@ -402,7 +402,7 @@ namespace MatterHackers.MatterControl.ActionBar
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
+						ApplicationController.LaunchBrowser("https://www.matterhackers.com/store/c/3d-printer-filament");
 					});
 				};
 				materialSettingsRow.AddChild(shopButton);

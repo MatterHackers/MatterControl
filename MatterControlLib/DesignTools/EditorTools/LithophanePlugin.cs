@@ -3,13 +3,13 @@ Copyright (c) 2018, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met: 
+modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution. 
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -23,14 +23,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -64,7 +61,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					var topParent = wrapper.Ancestors().LastOrDefault(i => i.Parent != null);
 					UiThread.RunOnIdle(() =>
 					{
-						scene.SelectedItem = topParent != null ? topParent : wrapper;
+						scene.SelectedItem = topParent ?? wrapper;
 					});
 				}
 			}
@@ -72,26 +69,27 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 		public void Initialize()
 		{
-			ApplicationController.Instance.Graph.RegisterOperation(
-				new Library.NodeOperation()
+			SceneOperations.AddOperation(
+				new SceneOperation("Lithophane")
 				{
-					OperationID = "Lithophane".Localize(),
-					Title = "Lithophane".Localize(),
-					MappedTypes = new List<Type> { typeof(ImageObject3D) },
+					TitleResolver = () => "Lithophane".Localize(),
+					OperationType = typeof(ImageObject3D),
 					ResultType = typeof(LithophaneObject3D),
-					Operation = (sceneItem, scene) =>
+					Action = (sceneContext) =>
 					{
+						var scene = sceneContext.Scene;
+						var sceneItem = scene.SelectedItem;
 						if (sceneItem is IObject3D imageObject)
 						{
 							WrapWith(sceneItem, new LithophaneObject3D(), scene);
 						}
-
-						return Task.CompletedTask;
 					},
-					IsEnabled = (sceneItem) => true,
-					IsVisible = (sceneItem) => true,
-					IconCollector = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
-				});
+					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
+					HelpTextResolver = () => "*An image must be selected*".Localize(),
+					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
+					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
+				},
+				"Image");
 		}
 
 		public PluginInfo MetaData { get; } = new PluginInfo()

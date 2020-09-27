@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,7 +38,6 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using Newtonsoft.Json;
 
@@ -72,6 +70,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 			}
 		}
+
+		public override bool CanFlatten => false;
 
 		[JsonIgnore]
 		public ImageBuffer Image

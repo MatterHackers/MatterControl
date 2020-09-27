@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 				var linkButton = new IconButton(linkIcon, theme);
 				linkButton.Click += (s, e) => UiThread.RunOnIdle(() =>
 				{
-					ApplicationController.Instance.LaunchBrowser(item.Url);
+					ApplicationController.LaunchBrowser(item.Url);
 				});
 
 				section = new SectionWidget(item.Title ?? item.Name, new LazyLicenseText(item.Name, theme), theme, linkButton, expanded: false)
@@ -182,7 +182,7 @@ namespace MatterHackers.MatterControl
 			};
 			siteLink.Click += (s, e) => UiThread.RunOnIdle(() =>
 			{
-				ApplicationController.Instance.LaunchBrowser("http://www.matterhackers.com");
+				ApplicationController.LaunchBrowser("http://www.matterhackers.com");
 			});
 			contentRow.AddChild(siteLink);
 		}

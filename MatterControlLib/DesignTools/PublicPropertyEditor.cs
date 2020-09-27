@@ -905,7 +905,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			};
 			detailsLink.Click += (s, e) =>
 			{
-				ApplicationController.Instance.LaunchBrowser(url);
+				ApplicationController.LaunchBrowser(url);
 			};
 			theme.ApplyPrimaryActionStyle(detailsLink);
 
@@ -923,7 +923,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 				detailsLink.Click += (s, e) =>
 				{
-					ApplicationController.Instance.LaunchBrowser(unlockLink.Url);
+					ApplicationController.LaunchBrowser(unlockLink.Url);
 				};
 
 				// website row

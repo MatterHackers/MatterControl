@@ -133,21 +133,21 @@ namespace MatterHackers.MatterControl
 			popupMenu.CreateSubMenu("Community".Localize(), menuTheme, (modifyMenu) =>
 			{
 				menuItem = modifyMenu.CreateMenuItem("Forums".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
+				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://forums.matterhackers.com/category/20/mattercontrol");
 
 				menuItem = modifyMenu.CreateMenuItem("Guides and Articles".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/topic/mattercontrol");
+				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://www.matterhackers.com/topic/mattercontrol");
 
 				menuItem = modifyMenu.CreateMenuItem("Support".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support");
+				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support");
 
 				menuItem = modifyMenu.CreateMenuItem("Release Notes".Localize(), linkIcon);
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support/release-notes");
+				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://www.matterhackers.com/mattercontrol/support/release-notes");
 
 				modifyMenu.CreateSeparator();
 
 				menuItem = modifyMenu.CreateMenuItem("Report a Bug".Localize(), AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
-				menuItem.Click += (s, e) => ApplicationController.Instance.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
+				menuItem.Click += (s, e) => ApplicationController.LaunchBrowser("https://github.com/MatterHackers/MatterControl/issues");
 			}, AggContext.StaticData.LoadIcon("feedback.png", 16, 16, menuTheme.InvertIcons));
 
 			popupMenu.CreateSeparator();

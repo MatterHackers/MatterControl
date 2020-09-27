@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					imageType = "";
 				}
 
-				ApplicationController.Instance.LaunchBrowser($"http://www.google.com/search?q={e.Data}{imageType}&tbm=isch");
+				ApplicationController.LaunchBrowser($"http://www.google.com/search?q={e.Data}{imageType}&tbm=isch");
 			};
 
 			theme.ApplyBoxStyle(imageSection, margin: 0);

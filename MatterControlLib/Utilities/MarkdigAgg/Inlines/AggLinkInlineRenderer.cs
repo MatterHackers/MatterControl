@@ -6,7 +6,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using Markdig.Agg;
 using Markdig.Syntax.Inlines;
@@ -39,7 +38,7 @@ namespace Markdig.Renderers.Agg.Inlines
 		{
 			if (linkInline.Url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
 			{
-				ApplicationController.Instance.LaunchBrowser(linkInline.Url);
+				ApplicationController.LaunchBrowser(linkInline.Url);
 			}
 			else
 			{
@@ -112,7 +111,7 @@ namespace Markdig.Renderers.Agg.Inlines
 			{
 				if (LinkUrl.StartsWith("http", StringComparison.OrdinalIgnoreCase))
 				{
-					ApplicationController.Instance.LaunchBrowser(LinkUrl);
+					ApplicationController.LaunchBrowser(LinkUrl);
 				}
 				else
 				{
