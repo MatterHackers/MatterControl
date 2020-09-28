@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl
 				return Icons[type].Invoke(invertIcon);
 			}
 
-			return ApplicationController.Instance.Thumbnails.DefaultThumbnail();
+			return null;
 		}
 
 		public static IEnumerable<SceneOperation> GetPrimaryOperations(Type type)

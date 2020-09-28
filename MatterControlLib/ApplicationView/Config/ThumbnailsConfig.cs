@@ -64,21 +64,41 @@ namespace MatterHackers.MatterControl
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{
-			ImageBuffer cachedItem = LoadImage(this.CachePath(cacheId, width, height));
+			var expectedCachePath = this.CachePath(cacheId, width, height);
+			ImageBuffer cachedItem = LoadImage(expectedCachePath);
 			if (cachedItem != null)
 			{
 				return cachedItem;
 			}
 
-			if (width < 100
-				&& height < 100)
+			// if we don't find it see if it in the cache at a bigger size
+			foreach (var cacheSize in cacheSizes.Where(s => s > width))
 			{
-				// check for a 100x100 image
-				var cachedAt100x100 = LoadImage(this.CachePath(cacheId, 100, 100));
-				if (cachedAt100x100 != null)
+				cachedItem = LoadImage(this.CachePath(cacheId, cacheSize, cacheSize));
+				if (cachedItem != null
+					&& cachedItem.Width > 0 && cachedItem.Height > 0)
 				{
-					return cachedAt100x100.CreateScaledImage(width, height);
+					cachedItem = cachedItem.CreateScaledImage(width, height);
+					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+
+					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+
+					return cachedItem;
 				}
+			}
+
+			// could not find it in the user cache, try to load it from static data
+			var staticDataFilename = Path.Combine("Images", "Thumbnails", $"{cacheId}-{256}x{256}.png");
+			if (AggContext.StaticData.FileExists(staticDataFilename))
+			{
+				cachedItem = AggContext.StaticData.LoadImage(staticDataFilename);
+				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
+
+				cachedItem = cachedItem.CreateScaledImage(width, height);
+
+				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+
+				return cachedItem;
 			}
 
 			return null;
@@ -97,7 +117,7 @@ namespace MatterHackers.MatterControl
 				return cachedItem;
 			}
 
-			// if we don't find it see if it is in the cache at a bigger size
+			// if we don't find it see if it in the cache at a bigger size
 			foreach (var cacheSize in cacheSizes.Where(s => s > width))
 			{
 				cachedItem = LoadImage(this.CachePath(libraryItem, cacheSize, cacheSize));

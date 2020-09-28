@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Wedge"];
 		}
 
+		public override string ThumbnailName => "Wedge";
+	
 		public static async Task<WedgeObject3D> Create()
 		{
 			var item = new WedgeObject3D();

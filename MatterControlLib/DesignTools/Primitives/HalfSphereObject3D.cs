@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["HalfSphere"];
 		}
 
+		public override string ThumbnailName => "Half Sphere";
+	
 		public HalfSphereObject3D(double diametar, int sides)
 		{
 			this.Diameter = diametar;

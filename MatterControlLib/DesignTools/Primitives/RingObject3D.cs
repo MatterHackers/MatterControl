@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Ring"];
 		}
 
+		public override string ThumbnailName => "Ring";
+	
 		public RingObject3D(double outerDiameter, double innerDiameter, double height, int sides)
 			: this()
 		{

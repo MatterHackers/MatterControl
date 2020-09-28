@@ -46,6 +46,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Sphere"];
 		}
 
+		public override string ThumbnailName => "Sphere";
+
 		public SphereObject3D(double diameter, int sides)
 			: this()
 		{

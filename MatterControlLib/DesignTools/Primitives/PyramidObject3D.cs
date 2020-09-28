@@ -44,6 +44,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Pyramid"];
 		}
 
+		public override string ThumbnailName => "Pyramid";
+		
 		public static async Task<PyramidObject3D> Create()
 		{
 			var item = new PyramidObject3D();
