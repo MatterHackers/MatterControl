@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["HalfCylinder"];
 		}
 
+		public override string ThumbnailName => "Half Cylinder";
+
 		public static async Task<HalfCylinderObject3D> Create()
 		{
 			var item = new HalfCylinderObject3D();

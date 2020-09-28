@@ -43,6 +43,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cone"];
 		}
 
+		public override string ThumbnailName => "Cone";
+
 		public static async Task<ConeObject3D> Create()
 		{
 			var item = new ConeObject3D();

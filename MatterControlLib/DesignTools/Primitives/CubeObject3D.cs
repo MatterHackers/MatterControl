@@ -42,6 +42,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cube"];
 		}
 
+		public override string ThumbnailName => "Cube";
+
 		public double Width { get; set; } = 20;
 
 		public double Depth { get; set; } = 20;

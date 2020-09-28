@@ -48,6 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Cylinder"];
 		}
 
+		public override string ThumbnailName => "Cylinder";
 		public CylinderObject3D(double diameter, double height, int sides)
 			: this()
 		{

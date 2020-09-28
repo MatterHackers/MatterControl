@@ -34,8 +34,10 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class PrimitiveObject3D : Object3D
+	public abstract class PrimitiveObject3D : Object3D, IStaticThumbnail
 	{
+		public abstract string ThumbnailName { get; }
+
 		public override Mesh Mesh
 		{
 			get
@@ -50,5 +52,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			set => base.Mesh = value;
 		}
+	}
+
+	public interface IStaticThumbnail
+	{
+		string ThumbnailName { get; }
 	}
 }

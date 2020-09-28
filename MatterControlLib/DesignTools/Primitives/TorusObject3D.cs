@@ -45,6 +45,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Color = Operations.Object3DExtensions.PrimitiveColors["Torus"];
 		}
 
+		public override string ThumbnailName => "Torus";
+
 		public static async Task<TorusObject3D> Create()
 		{
 			var item = new TorusObject3D();

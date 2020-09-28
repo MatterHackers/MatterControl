@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -102,7 +103,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			keyValues.Add(item.Source, node);
 
 			// Check for operation resulting in the given type
-			node.Image = SceneOperations.GetIcon(item.Source.GetType(), theme.InvertIcons);
+			var image = SceneOperations.GetIcon(item.Source.GetType(), theme.InvertIcons);
+
+			if (image != null)
+			{
+				node.Image = image;
+			}
+			else
+			{
+				node.Image = ApplicationController.Instance.Thumbnails.DefaultThumbnail();
+
+				node.Load += (s, e) =>
+				{
+					string contentID = item.Source.MeshRenderId().ToString();
+					if (item.Source is IStaticThumbnail staticThumbnail)
+					{
+						contentID = $"MatterHackers/ItemGenerator/{staticThumbnail.ThumbnailName}".GetLongHashCode().ToString();
+					}
+
+					var thumbnail = ApplicationController.Instance.Thumbnails.LoadCachedImage(contentID, 16, 16);
+
+					node.Image = thumbnail ?? ApplicationController.Instance.Thumbnails.DefaultThumbnail();
+				};
+			}
 
 			if (parentNode != null)
 			{
