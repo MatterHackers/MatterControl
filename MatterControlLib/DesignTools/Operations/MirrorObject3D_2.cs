@@ -56,59 +56,62 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			var rebuildLock = this.RebuildLock();
 
-			return ApplicationController.Instance.Tasks.Execute(
-				"Mirror".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					SourceContainer.Visible = true;
-					RemoveAllButSource();
-
-					var oldMatrix = this.Matrix;
-					this.Matrix = Matrix4X4.Identity;
-
-					var mirrorMatrix = Matrix4X4.Identity;
-					switch (MirrorOn)
+			using (new CenterAndHeightMaintainer(this))
+			{
+				return ApplicationController.Instance.Tasks.Execute(
+					"Mirror".Localize(),
+					null,
+					(reporter, cancellationToken) =>
 					{
-						case MirrorAxis.X_Axis:
-							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
-							break;
+						SourceContainer.Visible = true;
+						RemoveAllButSource();
 
-						case MirrorAxis.Y_Axis:
-							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
-							break;
+						var oldMatrix = this.Matrix;
+						this.Matrix = Matrix4X4.Identity;
 
-						case MirrorAxis.Z_Axis:
-							mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
-							break;
-					}
-
-					foreach (var sourceItem in SourceContainer.VisibleMeshes())
-					{
-						var originalMesh = sourceItem.Mesh;
-						var transformedMesh = originalMesh.Copy(CancellationToken.None);
-
-						var sourceToThisMatrix = sourceItem.WorldMatrix(this);
-
-						// move it to us then mirror then move it back
-						transformedMesh.Transform(sourceToThisMatrix * mirrorMatrix * sourceToThisMatrix.Inverted);
-
-						transformedMesh.ReverseFaces();
-
-						var newMesh = new Object3D()
+						var mirrorMatrix = Matrix4X4.Identity;
+						switch (MirrorOn)
 						{
-							Mesh = transformedMesh
-						};
-						newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All, false);
-						this.Children.Add(newMesh);
-					}
+							case MirrorAxis.X_Axis:
+								mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(-1, 1, 1));
+								break;
 
-					this.Matrix = oldMatrix;
-					SourceContainer.Visible = false;
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					return Task.CompletedTask;
-				});
+							case MirrorAxis.Y_Axis:
+								mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, -1, 1));
+								break;
+
+							case MirrorAxis.Z_Axis:
+								mirrorMatrix = this.ApplyAtBoundsCenter(Matrix4X4.CreateScale(1, 1, -1));
+								break;
+						}
+
+						foreach (var sourceItem in SourceContainer.VisibleMeshes())
+						{
+							var originalMesh = sourceItem.Mesh;
+							var transformedMesh = originalMesh.Copy(CancellationToken.None);
+
+							var sourceToThisMatrix = sourceItem.WorldMatrix(this);
+
+							// move it to us then mirror then move it back
+							transformedMesh.Transform(sourceToThisMatrix * mirrorMatrix * sourceToThisMatrix.Inverted);
+
+							transformedMesh.ReverseFaces();
+
+							var newMesh = new Object3D()
+							{
+								Mesh = transformedMesh
+							};
+							newMesh.CopyWorldProperties(sourceItem, this, Object3DPropertyFlags.All, false);
+							this.Children.Add(newMesh);
+						}
+
+						this.Matrix = oldMatrix;
+						SourceContainer.Visible = false;
+						rebuildLock.Dispose();
+						Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
+						return Task.CompletedTask;
+					});
+			}
 		}
 	}
 }

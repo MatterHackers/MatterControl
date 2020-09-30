@@ -76,6 +76,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.first_layer_height] = new ExportField("firstLayerThickness"),
 				[SettingsKey.end_gcode] = new ExportField("endCode"),
 				[SettingsKey.retract_before_travel] = new ExportField("minimumTravelToCauseRetraction"),
+				[SettingsKey.retract_before_travel_avoid] = new ExportField("minimumTravelToCauseAvoidRetraction"),
 				[SettingsKey.retract_length] = new ExportField("retractionOnTravel"),
 				[SettingsKey.retract_lift] = new ExportField("retractionZHop"),
 				[SettingsKey.retract_restart_extra] = new ExportField("unretractExtraExtrusion"),

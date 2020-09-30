@@ -1451,6 +1451,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
+					DefaultValue = "5",
+					Converter = new MapFirstValue(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.retract_before_travel_avoid,
+					PresentationName = "Minimum Avoid Travel Requiring Retraction ".Localize(),
+					HelpText = "The minimum distance with, avoid crossing perimeters turned on, of a non-print move which will trigger a retraction.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					ShowIfSet = "!sla_printer",
+					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "20",
 					Converter = new MapFirstValue(),
 				},
