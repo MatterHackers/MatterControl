@@ -60,6 +60,7 @@ namespace MatterHackers.MatterControl
 	public static class ValidationErrors
 	{
 		public static readonly string BedLevelingTemperature = nameof(BedLevelingTemperature);
+		public static readonly string BedLevelingMesh = nameof(BedLevelingMesh);
 		public static readonly string ExceptionDuringSliceSettingsValidation = nameof(ExceptionDuringSliceSettingsValidation);
 		public static readonly string ItemCannotBeExported = nameof(ItemCannotBeExported);
 		public static readonly string ItemToAMFExportInvalid = nameof(ItemToAMFExportInvalid);

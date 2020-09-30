@@ -261,6 +261,43 @@ namespace MatterHackers.MatterControl
 								}
 							});
 					}
+
+					// check if the leveling data has too large a range
+					if (printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count > 3)
+					{
+						var minLevelZ = double.MaxValue;
+						var maxLevelZ = double.MinValue;
+						foreach (var levelPosition in printer.Settings.Helpers.PrintLevelingData.SampledPositions)
+						{
+							minLevelZ = Math.Min(minLevelZ, levelPosition.Z);
+							maxLevelZ = Math.Max(minLevelZ, levelPosition.Z);
+						}
+
+						var delta = maxLevelZ - minLevelZ;
+						var maxDelta = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) * 10;
+						if (delta > maxDelta)
+						{
+							errors.Add(
+								new ValidationError(ValidationErrors.BedLevelingMesh)
+								{
+									Error = "Bed Leveling Mesh".Localize(),
+									Details = "The Leveling data has a very large range (great than {0:0.##}). Leveling calibration should be re-run".Localize().FormatWith(maxDelta),
+									ErrorLevel = ValidationErrorLevel.Warning,
+									FixAction = new NamedAction()
+									{
+										Title = "Recalibrate",
+										Action = () =>
+										{
+											UiThread.RunOnIdle(() =>
+											{
+												DialogWindow.Show(new PrintLevelingWizard(printer));
+											});
+										},
+										IsEnabled = () => printer.Connection.IsConnected
+									}
+								});
+						}
+					}
 				}
 
 				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
