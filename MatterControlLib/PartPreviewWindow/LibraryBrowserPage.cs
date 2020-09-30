@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 	{
 		protected GuiWidget acceptButton = null;
 		protected MHTextEditWidget itemNameWidget;
-		private ILibraryContext libraryNavContext;
+		protected ILibraryContext libraryNavContext;
 		protected LibraryListView librarySelectorWidget;
 
 		public LibraryBrowserPage(Action<string, ILibraryWritableContainer> acceptCallback, string acceptButtonText)
