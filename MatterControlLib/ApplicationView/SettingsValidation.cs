@@ -171,7 +171,8 @@ namespace MatterHackers.MatterControl
 				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 
 				// Print recovery is incompatible with firmware leveling - ensure not enabled in startGCode
-				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled))
+				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
 					// Ensure we don't have hardware leveling commands in the start gcode.
 					foreach (string startGCodeLine in startGCode)
@@ -198,7 +199,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) & !settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 				var levelingRequired = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 
 				if (levelingEnabled || levelingRequired)
