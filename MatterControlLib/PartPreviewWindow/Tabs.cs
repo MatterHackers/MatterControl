@@ -43,7 +43,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public interface ITab
 	{
 		GuiWidget TabContent { get; }
+
 		string Key { get; }
+
 		string Text { get; }
 	}
 
@@ -84,6 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public event EventHandler ActiveTabChanged;
 
 		private List<ITab> _allTabs = new List<ITab>();
+
 		public IEnumerable<ITab> AllTabs => _allTabs;
 
 		public int TabCount => _allTabs.Count;
@@ -180,6 +183,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		}
 
 		private ITab _activeTab;
+
 		public ITab ActiveTab
 		{
 			get => _activeTab;
@@ -193,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					foreach (var tab in _allTabs)
 					{
-						tab.TabContent.Visible = (tab == clickedWidget);
+						tab.TabContent.Visible = tab == clickedWidget;
 					}
 
 					this.OnActiveTabChanged();
