@@ -98,12 +98,14 @@ namespace MatterHackers.MatterControl.Library
 			// parse result
 			FileInfo[] dirContents = JsonConvert.DeserializeObject<FileInfo[]>(jsonStr);
 
+			var childContainers = new List<ILibraryContainerLink>();
+
 			// read in data
 			foreach (FileInfo file in dirContents)
 			{
 				if (file.type == "dir")
 				{
-					ChildContainers.Add(new GitHubContainerLink(file.name,
+					childContainers.Add(new GitHubContainerLink(file.name,
 						Account,
 						Repository,
 						RepoDirectory + "/" + file.name));
@@ -112,7 +114,7 @@ namespace MatterHackers.MatterControl.Library
 				{
 					if (Path.GetExtension(file.name).ToLower() == ".library")
 					{
-						ChildContainers.Add(new GitHubLibraryLink(Path.GetFileNameWithoutExtension(file.name),
+						childContainers.Add(new GitHubLibraryLink(Path.GetFileNameWithoutExtension(file.name),
 							Account,
 							Repository,
 							file.download_url));
@@ -126,6 +128,8 @@ namespace MatterHackers.MatterControl.Library
 					}
 				}
 			}
+
+			this.ChildContainers = childContainers;
 
 			OnContentChanged();
 		}
