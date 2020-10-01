@@ -618,7 +618,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which the nozzle will move when recovering a failed print, for 1 layer.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
-					ShowIfSet = "!has_hardware_leveling",
+					ShowIfSet = "!has_hardware_leveling&recover_is_enabled",
 					DefaultValue = "10",
 					RebuildGCodeOnChange = false
 				},
@@ -630,6 +630,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
+					ReloadUiWhenChanged = true,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -662,7 +663,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The X and Y position of the hot end that minimizes the chance of colliding with the parts on the bed.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
 					Units = "mm".Localize().Localize(),
-					ShowIfSet = "!has_hardware_leveling&!	",
+					ShowIfSet = "!has_hardware_leveling&recover_is_enabled",
 					DefaultValue = "0,0",
 					RebuildGCodeOnChange = false
 				},
@@ -1447,6 +1448,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.retract_before_travel,
 					PresentationName = "Minimum Travel Requiring Retraction".Localize(),
 					HelpText = "The minimum distance of a non-print move which will trigger a retraction.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					ShowIfSet = "!sla_printer",
+					EnableIfSet = SettingsKey.enable_retractions,
+					DefaultValue = "5",
+					Converter = new MapFirstValue(),
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.retract_before_travel_avoid,
+					PresentationName = "Minimum Avoid Travel Requiring Retraction ".Localize(),
+					HelpText = "The minimum distance with, avoid crossing perimeters turned on, of a non-print move which will trigger a retraction.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",

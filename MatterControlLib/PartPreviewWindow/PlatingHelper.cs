@@ -182,43 +182,36 @@ namespace MatterHackers.MatterControl
 			itemToMoveBounds.MinXYZ -= new Vector3(2, 2, 0);
 			itemToMoveBounds.MaxXYZ += new Vector3(2, 2, 0);
 
-			var transform = Matrix4X4.Identity;
-			bool partPlaced = false;
-
-			while (!partPlaced)
+			while (true)
 			{
 				int distance = 0;
-				while (!partPlaced)
+				while (true)
 				{
 					for (int i = 0; i <= distance; i++)
 					{
-						partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, i, distance, ref transform);
-						if (partPlaced)
-						{
-							break;
-						}
-					}
+						var transform = Matrix4X4.Identity;
 
-					if (!partPlaced)
-					{
-						for (int i = 0; i <= distance; i++)
+						if (CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, i, distance, out transform))
 						{
-							partPlaced = CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, distance, i, ref transform);
-							if (partPlaced)
-							{
-								break;
-							}
+							itemToMove.Matrix *= transform;
+							return;
+						}
+
+						// don't check if the position is the same the one we just checked
+						if (distance != i
+							&& CheckPosition(itemsToAvoid, itemToMove, itemToMoveBounds, distance, i, out transform))
+						{
+							itemToMove.Matrix *= transform;
+							return;
 						}
 					}
 
 					distance++;
 				}
 			}
-
-			itemToMove.Matrix *= transform;
 		}
 
-		private static bool CheckPosition(IEnumerable<IObject3D> itemsToAvoid, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, ref Matrix4X4 transform)
+		private static bool CheckPosition(IEnumerable<IObject3D> itemsToAvoid, IObject3D itemToMove, AxisAlignedBoundingBox meshToMoveBounds, int yStep, int xStep, out Matrix4X4 transform)
 		{
 			double xStepAmount = 5;
 			double yStepAmount = 5;

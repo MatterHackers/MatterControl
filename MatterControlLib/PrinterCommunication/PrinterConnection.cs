@@ -333,6 +333,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 			readLineContainsCallBacks.Register("Heater decoupled", PrinterReportsError);
 			readLineContainsCallBacks.Register("cold extrusion prevented", PrinterReportsError);
 			readLineContainsCallBacks.Register("Error:Thermal Runaway, system stopped!", PrinterReportsError);
+			readLineContainsCallBacks.Register("Error:Probing Failed", PrinterReportsError);
 			readLineContainsCallBacks.Register("Error:Heating failed", PrinterReportsError);
 			readLineStartCallBacks.Register("temp sensor defect", PrinterReportsError);
 			readLineStartCallBacks.Register("Error:Printer halted", PrinterReportsError);

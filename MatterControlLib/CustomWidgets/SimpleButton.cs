@@ -517,6 +517,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 	{
 		private TextWidget textWidget;
 
+		public bool DrawIconOverlayOnDisabled { get; set; } = false;
+
 		public TextIconButton(string text, ImageBuffer icon, ThemeConfig theme)
 			: base(theme)
 		{
@@ -542,6 +544,18 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.AddChild(textContainer);
 
 			textContainer.AddChild(textWidget = new TextWidget(text, pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			base.OnDraw(graphics2D);
+
+			// now draw an overlay on the image if it is disabled
+			if (DrawIconOverlayOnDisabled && !ImageWidget.Enabled)
+			{
+				graphics2D.Render(new RoundedRect(ImageWidget.TransformToParentSpace(this, ImageWidget.LocalBounds), 0),
+					theme.BackgroundColor.WithAlpha(200));
+			}
 		}
 
 		public ImageWidget ImageWidget { get; }

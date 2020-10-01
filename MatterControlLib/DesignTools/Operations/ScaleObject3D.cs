@@ -27,26 +27,32 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterHackers.MeshVisualizer;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg.UI;
+using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class ScaleObject3D : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
 	{
-		public enum ScaleType { Specify, Inches_to_mm, mm_to_Inches, mm_to_cm, cm_to_mm };
+		public enum ScaleType
+		{
+			Specify,
+			Inches_to_mm,
+			mm_to_Inches,
+			mm_to_cm,
+			cm_to_mm
+		}
+
 		public ScaleObject3D()
 		{
 			Name = "Scale".Localize();
@@ -80,7 +86,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		// this is the size we actually serialize
 		public Vector3 ScaleRatio = Vector3.One;
 
-		#region // editable properties
 		public ScaleType Operation { get; set; } = ScaleType.Specify;
 
 		[JsonIgnore]
@@ -89,7 +94,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			get
 			{
-				if(UsePercentage)
+				if (UsePercentage)
 				{
 					return ScaleRatio.X * 100;
 				}
@@ -174,8 +179,6 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		[Description("This is the position to perform the scale about.")]
 		public Vector3 ScaleAbout { get; set; }
 
-		#endregion // editable properties
-
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			if (layer.Scene.SelectedItem != null
@@ -212,11 +215,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 			using (RebuildLock())
 			{
-				// set the matrix for the transform object
-				ItemWithTransform.Matrix = Matrix4X4.Identity;
-				ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(-ScaleAbout);
-				ItemWithTransform.Matrix *= Matrix4X4.CreateScale(ScaleRatio);
-				ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
+				using (new CenterAndHeightMaintainer(this))
+				{
+					// set the matrix for the transform object
+					ItemWithTransform.Matrix = Matrix4X4.Identity;
+					ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(-ScaleAbout);
+					ItemWithTransform.Matrix *= Matrix4X4.CreateScale(ScaleRatio);
+					ItemWithTransform.Matrix *= Matrix4X4.CreateTranslation(ScaleAbout);
+				}
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Matrix));
@@ -233,7 +239,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			change.SetRowVisible(nameof(UsePercentage), () => Operation == ScaleType.Specify);
 			change.SetRowVisible(nameof(ScaleAbout), () => Operation == ScaleType.Specify);
 
-			if(change.Changed == nameof(Operation))
+			if (change.Changed == nameof(Operation))
 			{
 				// recalculate the scaling
 				double scale = 1;
@@ -252,10 +258,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						scale = 10;
 						break;
 				}
+
 				ScaleRatio = new Vector3(scale, scale, scale);
 				Rebuild();
 			}
-			else if(change.Changed == nameof(UsePercentage))
+			else if (change.Changed == nameof(UsePercentage))
 			{
 				// make sure we update the controls on screen to reflect the different data type
 				Invalidate(new InvalidateArgs(null, InvalidateType.DisplayValues));

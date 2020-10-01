@@ -104,6 +104,7 @@ Advanced
       retract_speed
       retract_lift
       retract_before_travel
+      retract_before_travel_avoid
       retract_when_changing_islands
       min_extrusion_before_retract
       wipe

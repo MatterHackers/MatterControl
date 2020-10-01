@@ -196,6 +196,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string resolution = nameof(resolution);
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string retract_before_travel = nameof(retract_before_travel);
+		public const string retract_before_travel_avoid = nameof(retract_before_travel_avoid);
 		public const string retract_length = nameof(retract_length);
 		public const string retract_length_tool_change = nameof(retract_length_tool_change);
 		public const string retract_lift = nameof(retract_lift);

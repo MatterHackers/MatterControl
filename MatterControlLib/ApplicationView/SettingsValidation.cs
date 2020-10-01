@@ -171,7 +171,8 @@ namespace MatterHackers.MatterControl
 				string[] startGCode = settings.GetValue(SettingsKey.start_gcode).Replace("\\n", "\n").Split('\n');
 
 				// Print recovery is incompatible with firmware leveling - ensure not enabled in startGCode
-				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled))
+				if (settings.GetValue<bool>(SettingsKey.recover_is_enabled)
+					&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 				{
 					// Ensure we don't have hardware leveling commands in the start gcode.
 					foreach (string startGCodeLine in startGCode)
@@ -198,7 +199,7 @@ namespace MatterHackers.MatterControl
 					}
 				}
 
-				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled);
+				var levelingEnabled = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_enabled) & !settings.GetValue<bool>(SettingsKey.has_hardware_leveling);
 				var levelingRequired = printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print);
 
 				if (levelingEnabled || levelingRequired)
@@ -260,6 +261,43 @@ namespace MatterHackers.MatterControl
 									IsEnabled = () => printer.Connection.IsConnected
 								}
 							});
+					}
+
+					// check if the leveling data has too large a range
+					if (printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count > 3)
+					{
+						var minLevelZ = double.MaxValue;
+						var maxLevelZ = double.MinValue;
+						foreach (var levelPosition in printer.Settings.Helpers.PrintLevelingData.SampledPositions)
+						{
+							minLevelZ = Math.Min(minLevelZ, levelPosition.Z);
+							maxLevelZ = Math.Max(maxLevelZ, levelPosition.Z);
+						}
+
+						var delta = maxLevelZ - minLevelZ;
+						var maxDelta = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) * 10;
+						if (delta > maxDelta)
+						{
+							errors.Add(
+								new ValidationError(ValidationErrors.BedLevelingMesh)
+								{
+									Error = "Leveling Data Warning".Localize(),
+									Details = "The leveling data might be invalid. It changes by as much as {0:0.##}mm. Leveling calibration should be re-run".Localize().FormatWith(delta),
+									ErrorLevel = ValidationErrorLevel.Warning,
+									FixAction = new NamedAction()
+									{
+										Title = "Recalibrate",
+										Action = () =>
+										{
+											UiThread.RunOnIdle(() =>
+											{
+												DialogWindow.Show(new PrintLevelingWizard(printer));
+											});
+										},
+										IsEnabled = () => printer.Connection.IsConnected
+									}
+								});
+						}
 					}
 				}
 
