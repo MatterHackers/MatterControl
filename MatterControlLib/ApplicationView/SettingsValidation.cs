@@ -270,7 +270,7 @@ namespace MatterHackers.MatterControl
 						foreach (var levelPosition in printer.Settings.Helpers.PrintLevelingData.SampledPositions)
 						{
 							minLevelZ = Math.Min(minLevelZ, levelPosition.Z);
-							maxLevelZ = Math.Max(minLevelZ, levelPosition.Z);
+							maxLevelZ = Math.Max(maxLevelZ, levelPosition.Z);
 						}
 
 						var delta = maxLevelZ - minLevelZ;
@@ -280,8 +280,8 @@ namespace MatterHackers.MatterControl
 							errors.Add(
 								new ValidationError(ValidationErrors.BedLevelingMesh)
 								{
-									Error = "Bed Leveling Mesh".Localize(),
-									Details = "The Leveling data has a very large range (great than {0:0.##}). Leveling calibration should be re-run".Localize().FormatWith(maxDelta),
+									Error = "Leveling Data Warning".Localize(),
+									Details = "The leveling data might be invalid. It changes by as much as {0:0.##}mm. Leveling calibration should be re-run".Localize().FormatWith(delta),
 									ErrorLevel = ValidationErrorLevel.Warning,
 									FixAction = new NamedAction()
 									{
