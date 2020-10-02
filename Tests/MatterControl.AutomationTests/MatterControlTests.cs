@@ -75,6 +75,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
+		public async Task ViewGenerateSupportMenu()
+		{
+			await MatterControlUtilities.RunTest(testRunner =>
+			{
+				testRunner.WaitForFirstDraw();
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
+
+				testRunner.ClickByName("Support SplitButton");
+				testRunner.ClickByName("Generate Support Button");
+
+				return Task.CompletedTask;
+			});
+		}
+
+		[Test]
 		public async Task PrinterTabRemainsAfterReloadAll()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

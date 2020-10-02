@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add 'Generate Supports' button
 			var generateButton = theme.CreateDialogButton("Generate".Localize());
+			generateButton.Name = "Generate Support Button";
 			generateButton.ToolTipText = "Find and create supports where needed".Localize();
 			generateButton.Click += (s, e) => Rebuild();
 			buttonRow.AddChild(generateButton);

@@ -273,7 +273,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// add the create support before the align
 				if (namedAction is OperationGroup group
-					&& group.Id == "Adjust")
+					&& group.Id == "Transform")
 				{
 					this.AddChild(CreateSupportButton(theme));
 					this.AddChild(new ToolbarSeparator(theme));
@@ -316,8 +316,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 										operationMenu.Click += (s, e) => UiThread.RunOnIdle(() =>
 										{
-											if (operationGroup.StickySelection
-												&& defaultOperation != operation)
+											if (defaultOperation != operation)
 											{
 												// Update button
 												var iconButton = groupButton.Children.OfType<IconButton>().First();

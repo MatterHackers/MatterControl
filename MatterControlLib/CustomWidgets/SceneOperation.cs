@@ -93,8 +93,6 @@ namespace MatterHackers.Agg.UI
 
 		public List<SceneOperation> Operations { get; set; } = new List<SceneOperation>();
 
-		public bool StickySelection { get; }
-
 		public int InitialSelectionIndex { get; set; } = 0;
 
 		public string GroupRecordId => $"ActiveButton_{this.Id}_Group";
@@ -103,19 +101,14 @@ namespace MatterHackers.Agg.UI
 
 		public SceneOperation GetDefaultOperation()
 		{
-			if (this.StickySelection)
+			if (!int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID))
 			{
-				if (!int.TryParse(UserSettings.Instance.get(GroupRecordId), out int activeButtonID))
-				{
-					activeButtonID = InitialSelectionIndex;
-				}
-
-				activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
-
-				return this.Operations[activeButtonID];
+				activeButtonID = InitialSelectionIndex;
 			}
 
-			return this.Operations.FirstOrDefault();
+			activeButtonID = agg_basics.Clamp(activeButtonID, 0, this.Operations.Count - 1);
+
+			return this.Operations[activeButtonID];
 		}
 	}
 }
