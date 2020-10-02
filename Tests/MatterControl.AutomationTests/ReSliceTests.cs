@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			},
-			maxTimeToRun: 290,
+			maxTimeToRun: 390,
 			queueItemFolderToAdd: QueueTemplate.ReSliceParts);
 		}
 	}
