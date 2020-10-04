@@ -126,7 +126,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var key = printer.Settings.ID;
 			Task.Run(async () =>
 			{
-				ProfileManager.oemSettingsNeedingUpdateCache[key] = await GetChangedOemSettings(printer);
+				if (ProfileManager.oemSettingsNeedingUpdateCache.ContainsKey(key))
+				{
+					ProfileManager.oemSettingsNeedingUpdateCache[key] = await GetChangedOemSettings(printer);
+				}
 			});
 
 			if (oemSettingsNeedingUpdateCache.TryGetValue(key, out List<(string key, string currentValue, string newValue)> cache))
