@@ -672,6 +672,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public ChromeTabs TabControl => tabControl;
 
+		private static int debugPrinterTabIndex = 0;
+
 		private ChromeTab CreatePrinterTab(PartWorkspace workspace, ThemeConfig theme)
 		{
 			var printer = workspace.Printer;
@@ -698,7 +700,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					theme,
 					tabImageUrl: ApplicationController.Instance.GetFavIconUrl(oemName: printer.Settings.GetValue(SettingsKey.make)))
 				{
-					Name = "3D View Tab",
+					Name = $"3D View Tab {debugPrinterTabIndex++}",
 				};
 
 				// add a right click menu

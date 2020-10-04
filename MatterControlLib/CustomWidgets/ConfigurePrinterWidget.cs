@@ -57,11 +57,11 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			PrinterSettings.AnyPrinterSettingChanged += Printer_SettingChanged;
+			printer.Settings.SettingChanged += Printer_SettingChanged;
 
 			inlineNameEdit.Closed += (s, e) =>
 			{
-				PrinterSettings.AnyPrinterSettingChanged -= Printer_SettingChanged;
+				printer.Settings.SettingChanged -= Printer_SettingChanged;
 			};
 
 			this.AddChild(

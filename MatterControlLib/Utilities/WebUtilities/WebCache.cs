@@ -45,10 +45,9 @@ namespace MatterHackers.MatterControl
 	{
 		private static HashSet<string> savedImages = new HashSet<string>();
 
-		/// <summary>
-		/// Download an image from the web into the specified ImageBuffer
-		/// </summary>
-		/// <param name="uri"></param>
+		private static object locker = new object();
+
+		// Download an image from the web into the specified ImageBuffer
 		public static void RetrieveImageAsync(ImageBuffer imageToLoadInto, string uriToLoad, bool scaleToImageX, IRecieveBlenderByte scalingBlender = null)
 		{
 			var longHash = uriToLoad.GetLongHashCode();
@@ -97,10 +96,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		/// <summary>
-		/// Download an image from the web into the specified ImageSequence
-		/// </summary>
-		/// <param name="uri"></param>
+		// Download an image from the web into the specified ImageSequence
 		public static void RetrieveImageSquenceAsync(ImageSequence imageSequenceToLoadInto,
 			string uriToLoad,
 			Action doneLoading = null)
@@ -117,7 +113,11 @@ namespace MatterHackers.MatterControl
 				{
 					Task.Run(() =>
 					{
-						AggContext.StaticData.LoadImageSequenceData(new StreamReader(pngFileName).BaseStream, asyncImageSequence);
+						lock (locker)
+						{
+							AggContext.StaticData.LoadImageSequenceData(new StreamReader(pngFileName).BaseStream, asyncImageSequence);
+						}
+
 						UiThread.RunOnIdle(() =>
 						{
 							imageSequenceToLoadInto.Copy(asyncImageSequence);
@@ -139,7 +139,11 @@ namespace MatterHackers.MatterControl
 				{
 					try
 					{
-						AggContext.StaticData.LoadImageSequenceData(new StreamReader(gifFileName).BaseStream, asyncImageSequence);
+						lock (locker)
+						{
+							AggContext.StaticData.LoadImageSequenceData(new StreamReader(gifFileName).BaseStream, asyncImageSequence);
+						}
+
 						if (asyncImageSequence.NumFrames > 0)
 						{
 							UiThread.RunOnIdle(() =>
@@ -179,12 +183,18 @@ namespace MatterHackers.MatterControl
 						byte[] raw = e.Result;
 						Stream stream = new MemoryStream(raw);
 
-						AggContext.StaticData.LoadImageSequenceData(stream, asyncImageSequence);
+						lock (locker)
+						{
+							AggContext.StaticData.LoadImageSequenceData(stream, asyncImageSequence);
+						}
 
 						if (asyncImageSequence.Frames.Count == 1)
 						{
 							// save the as png
-							AggContext.ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
+							lock (locker)
+							{
+								AggContext.ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
+							}
 						}
 						else // save original stream as gif
 						{
@@ -286,7 +296,11 @@ namespace MatterHackers.MatterControl
 			{
 				try
 				{
-					fileText = File.ReadAllText(appDataFileName);
+					lock (locker)
+					{
+						fileText = File.ReadAllText(appDataFileName);
+					}
+
 					updateResult?.Invoke(fileText);
 				}
 				catch
@@ -301,7 +315,11 @@ namespace MatterHackers.MatterControl
 				{
 					try
 					{
-						fileText = AggContext.StaticData.ReadAllText(staticDataPath);
+						lock (locker)
+						{
+							fileText = AggContext.StaticData.ReadAllText(staticDataPath);
+						}
+
 						updateResult?.Invoke(fileText);
 					}
 					catch
@@ -341,8 +359,11 @@ namespace MatterHackers.MatterControl
 			ImageBuffer unScaledImage = new ImageBuffer(10, 10);
 			if (scaleToImageX)
 			{
-				// scale the loaded image to the size of the target image
-				AggContext.StaticData.LoadImageData(stream, unScaledImage);
+				lock (locker)
+				{
+					// scale the loaded image to the size of the target image
+					AggContext.StaticData.LoadImageData(stream, unScaledImage);
+				}
 
 				// If the source image (the one we downloaded) is more than twice as big as our dest image.
 				while (unScaledImage.Width > imageToLoadInto.Width * 2)

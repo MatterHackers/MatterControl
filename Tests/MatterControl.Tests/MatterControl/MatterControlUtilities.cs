@@ -1090,17 +1090,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Switch to printer settings
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner in use</param>
-		public static void SwitchToPrinterSettings(this AutomationRunner testRunner)
+		public static AutomationRunner SwitchToPrinterSettings(this AutomationRunner testRunner)
 		{
 			EnsurePrinterSidebarOpen(testRunner);
 
 			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
-				testRunner.ClickByName("Printer Overflow Menu");
-				testRunner.ClickByName("Configure Printer Menu Item");
+				testRunner.ClickByName("Printer Overflow Menu")
+					.ClickByName("Configure Printer Menu Item");
 			}
 
-			testRunner.ClickByName("Printer Tab");
+			return testRunner.ClickByName("Printer Tab");
 		}
 
 		public static void InlineTitleEdit(this AutomationRunner testRunner, string controlName, string replaceString)
@@ -1208,7 +1208,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (testRunner.WaitForName("Slice Settings Sidebar", 0.2))
 			{
 				testRunner.ClickByName("Slice Settings Sidebar");
-				testRunner.ClickByName("Pin Settings Button");
+				if (UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) != "true")
+				{
+					testRunner.ClickByName("Pin Settings Button");
+				}
 			}
 		}
 
