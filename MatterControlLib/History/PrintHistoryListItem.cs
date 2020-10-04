@@ -49,15 +49,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class PrintHistoryListItem : ListViewItemBase
 	{
-		private string[] qualityNames = new string[]
-		{
-			"Failed".Localize(),
-			"Terrible".Localize(),
-			"Bad".Localize(),
-			"Good".Localize(),
-			"Great".Localize(),
-		};
-
 		public PrintHistoryListItem(ListViewItem listViewItem, int thumbWidth, int thumbHeight, PrintTask printTask, ThemeConfig theme)
 			: base(listViewItem, thumbWidth, thumbHeight, theme)
 		{
@@ -232,7 +223,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			if (printTask.QualityWasSet)
 			{
-				labelName += "\n" + "Print Quality".Localize() + ": " + qualityNames[printTask.PrintQuality];
+				labelName += "\n" + "Print Quality".Localize() + ": " + PrintHistoryEditor.QualityNames[printTask.PrintQuality];
 			}
 
 			if (!string.IsNullOrWhiteSpace(printTask.Note))
@@ -251,8 +242,17 @@ namespace MatterHackers.MatterControl.PrintHistory
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(1000);
 
 				var popupMenu = new PopupMenu(theme);
-				AddQualityMenu(popupMenu);
-				AddNotesMenu(popupMenu, printTasks);
+				var printHistoryEditor = new PrintHistoryEditor(theme, printTask, printTasks);
+				printHistoryEditor.AddQualityMenu(popupMenu, () =>
+				{
+					printInfoWidget.Text = GetPrintInfo();
+					SetIndicatorColor();
+				});
+
+				printHistoryEditor.AddNotesMenu(popupMenu, printTasks, () =>
+				{
+					printInfoWidget.Text = GetPrintInfo();
+				});
 
 				popupMenu.CreateSeparator();
 
@@ -266,159 +266,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 
 			base.OnClick(mouseEvent);
-		}
-
-		private void AddNotesMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)
-		{
-			var addNotest = popupMenu.CreateMenuItem(string.IsNullOrEmpty(printTask.Note) ? "Add Note...".Localize() : "Edit Note...".Localize());
-			addNotest.Enabled = printTasks.Any();
-			addNotest.Click += (s, e) =>
-			{
-				var inputBoxPage = new InputBoxPage(
-					"Print History Note".Localize(),
-					"Note".Localize(),
-					printTask.Note == null ? "" : printTask.Note,
-					"Enter Note Here".Localize(),
-					string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
-					(newNote) =>
-					{
-						printTask.Note = newNote;
-						printTask.Commit();
-						popupMenu.Unfocus();
-						printInfoWidget.Text = GetPrintInfo();
-					})
-				{
-					AllowEmpty = true,
-				};
-
-				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage));
-
-				DialogWindow.Show(inputBoxPage);
-
-				inputBoxPage.Parent.Height += 40 * GuiWidget.DeviceScale;
-			};
-		}
-
-		private GuiWidget CreateDefaultOptions(GuiWidget textField)
-		{
-			var issues = new string[]
-			{
-				"Bed Dislodged",
-				"Bowden Tube Popped Out",
-				"Computer Crashed",
-				"Computer Slow/Lagging",
-				"Couldn't Resume",
-				"Dislodged From Bed",
-				"Filament Jam",
-				"Filament Runout",
-				"Filament Snapped",
-				"First Layer Bad Quality",
-				"Flooded Hot End",
-				"Initial Z Height Incorrect",
-				"Layer Shift",
-				"Power Outage",
-				"Print Quality",
-				"Rough Overhangs",
-				"Skipped Layers",
-				"Some Parts Lifted",
-				"Stringing / Poor retractions",
-				"Thermal Runaway - Bed",
-				"Thermal Runaway - Hot End",
-				"Thermal Runaway",
-				"Took Too Long To Heat",
-				"User Error",
-				"Warping",
-				"Wouldn’t Slice Correctly",
-			};
-
-			var dropdownList = new MHDropDownList("Standard Issues".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
-
-			foreach (var issue in issues)
-			{
-				MenuItem newItem = dropdownList.AddItem(issue);
-
-				newItem.Selected += (sender, e) =>
-				{
-					textField.Text = issue;
-				};
-			}
-
-			return dropdownList;
-		}
-
-		private void AddQualityMenu(PopupMenu popupMenu)
-		{
-			var theme = ApplicationController.Instance.MenuTheme;
-
-			var content = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Fit | HAnchor.Stretch
-			};
-
-			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-			{
-				// Padding = MenuPadding,
-				VAnchor = VAnchor.Center
-			};
-			content.AddChild(textWidget);
-
-			content.AddChild(new HorizontalSpacer());
-
-			var siblings = new List<GuiWidget>();
-
-			for (int i = 0; i < qualityNames.Length; i++)
-			{
-				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor))
-				{
-					Enabled = printTask.PrintComplete,
-					Checked = printTask.QualityWasSet && printTask.PrintQuality == i,
-					ToolTipText = qualityNames[i],
-					Margin = 0,
-					Padding = 5,
-					HAnchor = HAnchor.Fit,
-					VAnchor = VAnchor.Fit,
-				};
-
-				button.MouseEnterBounds += (s, e) =>
-				{
-					button.BackgroundColor = theme.AccentMimimalOverlay;
-				};
-
-				button.MouseLeaveBounds += (s, e) =>
-				{
-					button.BackgroundColor = button.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
-				};
-
-				siblings.Add(button);
-
-				if (button.Checked && button.Enabled)
-				{
-					button.BackgroundColor = theme.AccentMimimalOverlay;
-				}
-
-				button.SiblingRadioButtonList = siblings;
-
-				content.AddChild(button);
-
-				button.Click += (s, e) =>
-				{
-					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
-					printTask.QualityWasSet = true;
-					printTask.Commit();
-					popupMenu.Unfocus();
-
-					printInfoWidget.Text = GetPrintInfo();
-					SetIndicatorColor();
-				};
-			}
-
-			var menuItem = new PopupMenu.MenuItem(content, theme)
-			{
-				HAnchor = HAnchor.Fit | HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				HoverColor = Color.Transparent,
-			};
-			popupMenu.AddChild(menuItem);
 		}
 
 		private void AddClearHistorMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks)

@@ -63,6 +63,7 @@ using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Plugins;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
+using MatterHackers.MatterControl.PrintHistory;
 using MatterHackers.MatterControl.PrintQueue;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -2223,24 +2224,9 @@ namespace MatterHackers.MatterControl
 			if (sender is PrinterConnection printerConnection
 				&& !printerConnection.CalibrationPrint)
 			{
-				// show a long running task asking about print feedback and up-selling more materials
-				// Ask about the print, offer help if needed.
-				// Let us know how your print came out.
-				string markdownText = @"**Find more at MatterHackers**
-
-Supplies and accessories:
-- [Filament](https://www.matterhackers.com/store/c/3d-printer-filament)
-- [Bed Adhesives](https://www.matterhackers.com/store/c/3d-printer-adhesive)
-- [Digital Designs](https://www.matterhackers.com/store/c/digital-designs)
-
-Support and tutorials:
-- [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
-- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
-- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
-- [User Forum](https://forums.matterhackers.com/recent)";
-
-				var time = Stopwatch.StartNew();
-				ShowNotification("Congratulations Print Complete".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
+				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
+				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
+				printHistoryEditor.CollectInfoPrintFinished();
 			}
 
 			AnyPrintComplete?.Invoke(sender, null);
@@ -2251,59 +2237,12 @@ Support and tutorials:
 			if (sender is PrinterConnection printerConnection
 				&& !printerConnection.CalibrationPrint)
 			{
-				// show a long running task showing support options
-				// add links to forum, articles and documentation
-				// support: "https://www.matterhackers.com/support#mattercontrol"
-				// documentation: "https://www.matterhackers.com/mattercontrol/support"
-				// forum: "https://forums.matterhackers.com/recent"
-
-				string markdownText = @"Looks like you canceled this print. If you need help, here are some links that might be useful.
-- [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
-- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
-- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
-- [User Forum](https://forums.matterhackers.com/recent)";
-
-				var time = Stopwatch.StartNew();
-				ShowNotification("Print Canceled".Localize(), markdownText, UserSettingsKey.ShownPrintCanceledMessage);
+				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
+				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
+				printHistoryEditor.CollectInfoPrintCanceled();
 			}
 
 			AnyPrintCanceled?.Invoke(sender, e);
-		}
-
-		private void ShowNotification(string title, string markdownText, string userKey)
-		{
-			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
-			{
-				TextColor = AppContext.Theme.TextColor,
-				Margin = new BorderDouble(top: 6, left: 6),
-				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = UserSettings.Instance.get(userKey) == "false",
-			};
-			hideAfterPrintMessage.Click += (s, e1) =>
-			{
-				if (hideAfterPrintMessage.Checked)
-				{
-					UserSettings.Instance.set(userKey, "false");
-				}
-				else
-				{
-					UserSettings.Instance.set(userKey, "true");
-				}
-			};
-
-			if (!hideAfterPrintMessage.Checked
-				&& !string.IsNullOrEmpty(markdownText))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null,
-						markdownText,
-						title,
-						new[] { hideAfterPrintMessage },
-						StyledMessageBox.MessageType.OK,
-						useMarkdown: true);
-				});
-			}
 		}
 
 		public void ConnectToPrinter(PrinterConfig printer)
