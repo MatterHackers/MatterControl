@@ -27,33 +27,74 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public class OpenScadObject3D : Object3D
+	public class OpenScadScriptObject3D : Object3D
 	{
-		public string AssetName { get; set; }
+		[MultiLineEditAttribute]
+		public string NameToWrite { get; set; } = "cube([20, 20, 20]);";
 
-		public string AssetUrl { get; set; }
+		public OpenScadScriptObject3D()
+		{
+			Name = "SCAD Script".Localize();
+		}
 
-		public Dictionary<string, string> Variables { get; set; } = new Dictionary<string, string>();
+		public static async Task<IObject3D> Create()
+		{
+			var item = new OpenScadScriptObject3D();
+			await item.Rebuild();
+			return item;
+		}
 
-		public string ScriptPath { get; set; }
-	}
+		public override async void OnInvalidate(InvalidateArgs invalidateType)
+		{
+			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
+				&& invalidateType.Source == this)
+			{
+				await Rebuild();
+			}
+			else
+			{
+				base.OnInvalidate(invalidateType);
+			}
+		}
 
-	public class MetaInfo
-	{
-		public List<Field> Fields { get; set; }
-	}
+		public override Task Rebuild()
+		{
+			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
+			using (RebuildLock())
+			{
+				if (Mesh == null)
+				{
+					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
+					{
+						using (new CenterAndHeightMaintainer(this))
+						{
+							this.Mesh = Object3D.Load(meshStream, ".stl", CancellationToken.None).Mesh;
+						}
+					}
+				}
+			}
 
-	public class Field
-	{
-		public string Title { get; set; }
 
-		public string Key { get; set; }
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
+			}
 
-		public string Type { get; set; }
+			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
+			return Task.CompletedTask;
+		}
 	}
 }

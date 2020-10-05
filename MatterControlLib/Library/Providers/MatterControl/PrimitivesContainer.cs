@@ -112,6 +112,10 @@ namespace MatterHackers.MatterControl.Library
 					() => "XY Calibration".Localize(),
 					async () => await XyCalibrationFaceObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "SCAD Script".Localize(),
+					async () => await OpenScadScriptObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
 					() => "Image Converter".Localize(),

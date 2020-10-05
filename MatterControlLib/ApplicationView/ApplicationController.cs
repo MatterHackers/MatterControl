@@ -2238,7 +2238,7 @@ namespace MatterHackers.MatterControl
 				&& !printerConnection.CalibrationPrint)
 			{
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
+				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.CanceledPrintTask, printTasks);
 				printHistoryEditor.CollectInfoPrintCanceled();
 			}
 

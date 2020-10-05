@@ -93,10 +93,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 			};
 		}
 
-		public void AddQualityMenu(PopupMenu popupMenu, Action notesChanged)
+		public static GuiWidget GetQualityWidget(ThemeConfig theme, PrintTask printTask, Action clicked)
 		{
-			var theme = ApplicationController.Instance.MenuTheme;
-
 			var content = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Stretch
@@ -152,18 +150,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
 					printTask.QualityWasSet = true;
 					printTask.Commit();
-					popupMenu.Unfocus();
-					notesChanged();
+					clicked();
 				};
 			}
 
-			var menuItem = new PopupMenu.MenuItem(content, theme)
-			{
-				HAnchor = HAnchor.Fit | HAnchor.Stretch,
-				VAnchor = VAnchor.Fit,
-				HoverColor = Color.Transparent,
-			};
-			popupMenu.AddChild(menuItem);
+			return content;
 		}
 
 		private GuiWidget CreateDefaultOptions(GuiWidget textField)
@@ -224,10 +215,12 @@ namespace MatterHackers.MatterControl.PrintHistory
 - [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
 - [User Forum](https://forums.matterhackers.com/recent)";
 
-			ShowNotification("Congratulations Print Complete".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
-			//var details = new CollectPrintDetailsPage(ShowNotification("Print Canceled".Localize(),
-				//markdownText,
-				//UserSettingsKey.ShownPrintCanceledMessage);
+			var details = new CollectPrintDetailsPage("Print Canceled".Localize(),
+				markdownText,
+				UserSettingsKey.ShownPrintCanceledMessage,
+				printTask);
+
+			UiThread.RunOnIdle(() => DialogWindow.Show(details, 0));
 		}
 
 		public void CollectInfoPrintFinished()
@@ -294,7 +287,7 @@ Support and tutorials:
 
 		public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
 
-		public CollectPrintDetailsPage(string windowTitle, string initialValue, string emptyText, string discriptionMarkdown, string linkoutMarkdown)
+		public CollectPrintDetailsPage(string windowTitle, string discriptionMarkdown, string linkoutMarkdown, PrintTask printTask)
 		{
 			this.WindowTitle = windowTitle;
 			this.HeaderText = windowTitle;
@@ -305,7 +298,13 @@ Support and tutorials:
 				Markdown = discriptionMarkdown,
 			});
 
+			contentRow.AddChild(PrintHistoryEditor.GetQualityWidget(theme, printTask, () =>
+			{
+			}));
+
 			// Adds text box and check box to the above container
+			var emptyText = "Enter Note Here".Localize();
+			var initialValue = printTask.Note == null ? "" : printTask.Note;
 			textEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
 			textEditWidget.Name = "InputBoxPage TextEditWidget";
 			textEditWidget.HAnchor = HAnchor.Stretch;

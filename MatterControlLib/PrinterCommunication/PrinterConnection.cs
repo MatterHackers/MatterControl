@@ -2274,6 +2274,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 
 				// no matter what we no longer have a print task
+				CanceledPrintTask = ActivePrintTask;
 				ActivePrintTask = null;
 			}
 		}
@@ -2782,6 +2783,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 		}
 
+		public PrintTask CanceledPrintTask { get; private set; }
 		public PrintTask ActivePrintTask { get; set; }
 
 		public ExtrusionMultiplierStream ExtrusionMultiplierStream { get; private set; }

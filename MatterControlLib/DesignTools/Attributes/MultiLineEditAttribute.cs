@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
-using MatterHackers.DataConverters3D;
+using System;
 
-namespace MatterHackers.MatterControl.Library
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class OpenScadObject3D : Object3D
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class MultiLineEditAttribute : Attribute
 	{
-		public string AssetName { get; set; }
-
-		public string AssetUrl { get; set; }
-
-		public Dictionary<string, string> Variables { get; set; } = new Dictionary<string, string>();
-
-		public string ScriptPath { get; set; }
-	}
-
-	public class MetaInfo
-	{
-		public List<Field> Fields { get; set; }
-	}
-
-	public class Field
-	{
-		public string Title { get; set; }
-
-		public string Key { get; set; }
-
-		public string Type { get; set; }
 	}
 }
