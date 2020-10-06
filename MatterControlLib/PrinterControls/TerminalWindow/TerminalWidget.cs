@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl
 			};
 			this.AddChild(bodyRow);
 
-			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog.PrinterLines)
+			textScrollWidget = new TextScrollWidget(printer, printer.Connection.TerminalLog)
 			{
 				BackgroundColor = theme.MinimalShade,
 				TextColor = theme.TextColor,
