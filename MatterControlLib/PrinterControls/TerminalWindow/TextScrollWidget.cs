@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ConditionalyAddToVisible(TerminalLine terminalLine)
+		private bool ConditionalyAddToVisible(TerminalLine terminalLine)
 		{
 			var line = terminalLine.Line;
 
@@ -121,13 +121,16 @@ namespace MatterHackers.MatterControl
 			if (!string.IsNullOrEmpty(line))
 			{
 				visibleLines.Add(line);
+				return true;
 			}
+
+			return false;
 		}
 
 		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
-			this.ConditionalyAddToVisible(terminalLine);
-			if (this.ActuallyVisibleOnScreen())
+			if (this.ConditionalyAddToVisible(terminalLine)
+				&& this.ActuallyVisibleOnScreen())
 			{
 				this.Invalidate();
 			}
