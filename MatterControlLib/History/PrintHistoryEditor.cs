@@ -93,27 +93,23 @@ namespace MatterHackers.MatterControl.PrintHistory
 			};
 		}
 
-		public static GuiWidget GetQualityWidget(ThemeConfig theme, PrintTask printTask, Action clicked)
+		public static GuiWidget GetQualityWidget(ThemeConfig theme, PrintTask printTask, Action clicked, double buttonFontSize)
 		{
 			var content = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Stretch
 			};
 
-			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
-			{
-				// Padding = MenuPadding,
-				VAnchor = VAnchor.Center
-			};
+			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor);
 			content.AddChild(textWidget);
 
-			content.AddChild(new HorizontalSpacer());
+			content.AddChild(new GuiWidget(buttonFontSize * 2 * GuiWidget.DeviceScale, 1));
 
 			var siblings = new List<GuiWidget>();
 
 			for (int i = 0; i < QualityNames.Length; i++)
 			{
-				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor))
+				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: buttonFontSize, textColor: theme.TextColor))
 				{
 					Enabled = printTask.PrintComplete,
 					Checked = printTask.QualityWasSet && printTask.PrintQuality == i,
@@ -215,12 +211,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 - [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
 - [User Forum](https://forums.matterhackers.com/recent)";
 
-			var details = new CollectPrintDetailsPage("Print Canceled".Localize(),
+			new CollectPrintDetailsPage("Print Canceled".Localize(),
+				"Top Markdown",
 				markdownText,
 				UserSettingsKey.ShownPrintCanceledMessage,
 				printTask);
-
-			UiThread.RunOnIdle(() => DialogWindow.Show(details, 0));
 		}
 
 		public void CollectInfoPrintFinished()
@@ -241,43 +236,11 @@ Support and tutorials:
 - [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
 - [User Forum](https://forums.matterhackers.com/recent)";
 
-			ShowNotification("Congratulations Print Complete".Localize(), markdownText, UserSettingsKey.ShownPrintCompleteMessage);
-		}
-
-		private void ShowNotification(string title, string markdownText, string userKey)
-		{
-			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
-			{
-				TextColor = AppContext.Theme.TextColor,
-				Margin = new BorderDouble(top: 6, left: 6),
-				HAnchor = Agg.UI.HAnchor.Left,
-				Checked = UserSettings.Instance.get(userKey) == "false",
-			};
-			hideAfterPrintMessage.Click += (s, e1) =>
-			{
-				if (hideAfterPrintMessage.Checked)
-				{
-					UserSettings.Instance.set(userKey, "false");
-				}
-				else
-				{
-					UserSettings.Instance.set(userKey, "true");
-				}
-			};
-
-			if (!hideAfterPrintMessage.Checked
-				&& !string.IsNullOrEmpty(markdownText))
-			{
-				UiThread.RunOnIdle(() =>
-				{
-					StyledMessageBox.ShowMessageBox(null,
-						markdownText,
-						title,
-						new[] { hideAfterPrintMessage },
-						StyledMessageBox.MessageType.OK,
-						useMarkdown: true);
-				});
-			}
+			new CollectPrintDetailsPage("Congratulations Print Complete".Localize(),
+				"Top Markdown",
+				markdownText,
+				UserSettingsKey.ShownPrintCompleteMessage,
+				printTask);
 		}
 	}
 
@@ -287,20 +250,39 @@ Support and tutorials:
 
 		public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
 
-		public CollectPrintDetailsPage(string windowTitle, string discriptionMarkdown, string linkoutMarkdown, PrintTask printTask)
+		public CollectPrintDetailsPage(string windowTitle, string topMarkDown, string descriptionMarkdown, string userKey, PrintTask printTask)
 		{
 			this.WindowTitle = windowTitle;
 			this.HeaderText = windowTitle;
-			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 200 * GuiWidget.DeviceScale);
+			this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
 
-			contentRow.AddChild(new MarkdownWidget(theme)
+			var scrollable = new ScrollableWidget(autoScroll: true)
 			{
-				Markdown = discriptionMarkdown,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				Margin = new BorderDouble(bottom: 10),
+			};
+
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			scrollable.ScrollArea.VAnchor = VAnchor.Fit;
+			contentRow.AddChild(scrollable);
+
+			var topToBottom = scrollable.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
 			});
 
-			contentRow.AddChild(PrintHistoryEditor.GetQualityWidget(theme, printTask, () =>
+			topToBottom.AddChild(new MarkdownWidget(theme, false)
 			{
-			}));
+				Markdown = topMarkDown,
+			});
+
+			topToBottom.AddChild(PrintHistoryEditor.GetQualityWidget(theme,
+				printTask,
+				() =>
+				{
+				},
+				16));
 
 			// Adds text box and check box to the above container
 			var emptyText = "Enter Note Here".Localize();
@@ -309,6 +291,7 @@ Support and tutorials:
 			textEditWidget.Name = "InputBoxPage TextEditWidget";
 			textEditWidget.HAnchor = HAnchor.Stretch;
 			textEditWidget.Margin = new BorderDouble(5);
+
 			//textEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			//{
 			//	actionButton.InvokeClick();
@@ -329,9 +312,41 @@ Support and tutorials:
 			//};
 			//this.AddPageAction(actionButton);
 
-			contentRow.AddChild(new MarkdownWidget(theme)
+			topToBottom.AddChild(new MarkdownWidget(theme, false)
 			{
-				Markdown = linkoutMarkdown,
+				Markdown = descriptionMarkdown,
+			});
+
+			var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
+			{
+				TextColor = AppContext.Theme.TextColor,
+				Margin = new BorderDouble(top: 6, left: 6),
+				HAnchor = Agg.UI.HAnchor.Left,
+				Checked = UserSettings.Instance.get(userKey) == "false",
+			};
+			contentRow.AddChild(hideAfterPrintMessage);
+
+			hideAfterPrintMessage.Click += (s, e1) =>
+			{
+				if (hideAfterPrintMessage.Checked)
+				{
+					UserSettings.Instance.set(userKey, "false");
+				}
+				else
+				{
+					UserSettings.Instance.set(userKey, "true");
+				}
+			};
+
+			if (!hideAfterPrintMessage.Checked)
+			{
+				UiThread.RunOnIdle(() => DialogWindow.Show(this, 0));
+			}
+
+			UiThread.RunOnIdle(() =>
+			{
+				this.Width = this.Width + 1;
+				this.Width = this.Width - 1;
 			});
 		}
 

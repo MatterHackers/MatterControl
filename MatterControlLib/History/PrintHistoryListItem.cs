@@ -243,12 +243,15 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				var popupMenu = new PopupMenu(theme);
 				var printHistoryEditor = new PrintHistoryEditor(theme, printTask, printTasks);
-				var qualityWidget = PrintHistoryEditor.GetQualityWidget(theme, printTask, () =>
-				{
-					popupMenu.Unfocus();
-					printInfoWidget.Text = GetPrintInfo();
-					SetIndicatorColor();
-				});
+				var qualityWidget = PrintHistoryEditor.GetQualityWidget(theme,
+					printTask,
+					() =>
+					{
+						popupMenu.Unfocus();
+						printInfoWidget.Text = GetPrintInfo();
+						SetIndicatorColor();
+					},
+					theme.DefaultFontSize);
 
 				var menuItem = new PopupMenu.MenuItem(qualityWidget, theme)
 				{
