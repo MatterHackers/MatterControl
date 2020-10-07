@@ -38,59 +38,8 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
-	public class ArrayLinearObject3D : ArrayObject3D
+	public abstract class ArrayObject3D : OperationSourceContainerObject3D
 	{
-		public ArrayLinearObject3D()
-		{
-			Name = "Linear Array".Localize();
-		}
-
-		public override bool CanFlatten => true;
-
-		public override int Count { get; set; } = 3;
-
-		public DirectionVector Direction { get; set; } = new DirectionVector { Normal = new Vector3(1, 0, 0) };
-
-		public double Distance { get; set; } = 30;
-
-		public override async Task Rebuild()
-		{
-			var rebuildLock = this.RebuildLock();
-			SourceContainer.Visible = true;
-
-			await ApplicationController.Instance.Tasks.Execute(
-				"Linear Array".Localize(),
-				null,
-				(reporter, cancellationToken) =>
-				{
-					this.DebugDepth("Rebuild");
-
-					var newChildren = new List<IObject3D>();
-
-					newChildren.Add(SourceContainer);
-
-					var arrayItem = SourceContainer.Children.First();
-
-					// add in all the array items
-					for (int i = 0; i < Math.Max(Count, 1); i++)
-					{
-						var next = arrayItem.Clone();
-						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-						newChildren.Add(next);
-					}
-
-					Children.Modify(list =>
-					{
-						list.Clear();
-						list.AddRange(newChildren);
-					});
-
-					SourceContainer.Visible = false;
-					rebuildLock.Dispose();
-					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
-					return Task.CompletedTask;
-				});
-		}
+		public abstract int Count { get; set; }
 	}
 }
