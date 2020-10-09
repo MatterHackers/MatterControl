@@ -42,6 +42,7 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -168,7 +169,12 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
-			object3DControlLayer.World.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
+
+			// draw on top of anything that is already drawn
+			object3DControlLayer.World.Render3DLine(start, end, Color.Red.WithAlpha(100), false, width: GuiWidget.DeviceScale);
+
+			// Restore DepthTest
+			// object3DControlLayer.World.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
 		}
 	}
 }

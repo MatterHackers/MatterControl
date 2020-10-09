@@ -910,14 +910,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var transparentMeshes = new List<Object3DView>();
 
 			var selectedItem = scene.SelectedItem;
-			if (selectedItem != null)
-			{
-				// Invoke existing IEditorDraw when iterating items
-				if (selectedItem is IEditorDraw editorDraw)
-				{
-					editorDraw.DrawEditor(this, transparentMeshes, e);
-				}
-			}
 
 			foreach (var item in scene.Children)
 			{
@@ -1000,6 +992,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!lookingDownOnBed)
 			{
 				floorDrawable.Draw(this, e, Matrix4X4.Identity, this.World);
+			}
+
+			// Draw the editor items in the same scope as the 3D Controls
+			if (selectedItem != null)
+			{
+				// Invoke existing IEditorDraw when iterating items
+				if (selectedItem is IEditorDraw editorDraw)
+				{
+					editorDraw.DrawEditor(this, transparentMeshes, e);
+				}
 			}
 
 			DrawObject3DControlVolumes(e);

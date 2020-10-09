@@ -1728,7 +1728,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AxisAlignedBoundingBox selectedBounds = Scene.SelectedItem.GetAxisAlignedBoundingBox();
 
 				var drawCenter = CurrentSelectInfo.PlaneDownHitPos;
-				var drawColor = new Color(Color.Red, 20);
+				var drawColor = Color.Red.WithAlpha(20);
 				bool zBuffer = false;
 
 				for (int i = 0; i < 2; i++)

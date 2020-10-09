@@ -188,7 +188,7 @@ namespace MatterHackers.Plugins.EditorTools
 					else
 					{
 						// render on top of everything very lightly
-						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, new Color(theme.TextColor, 20), false, GuiWidget.DeviceScale);
+						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor.WithAlpha(20), false, GuiWidget.DeviceScale);
 					}
 				}
 			}
