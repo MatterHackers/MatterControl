@@ -188,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				HAnchor = HAnchor.Stretch
 			};
-			
+
 			if (!fullWidth)
 			{
 				row.AddChild(new HorizontalSpacer());

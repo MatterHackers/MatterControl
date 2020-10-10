@@ -792,8 +792,8 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Printing".Localize(),
 					Operations = new List<SceneOperation>()
 					{
-						ToggleWipeTowerOperation(),
 						ToggleSupportOperation(),
+						ToggleWipeTowerOperation(),
 					}
 				},
 				new OperationGroup("Design Apps")

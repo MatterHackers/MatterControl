@@ -120,9 +120,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				return;
 			}
 
-			List<List<IntPoint>> aPolys = path.VertexSource.CreatePolygons();
+			var aPolys = path.VertexSource.CreatePolygons();
 
-			ClipperOffset offseter = new ClipperOffset();
+			var offseter = new ClipperOffset();
 
 			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(OuterStyle), EndType.etClosedPolygon);
 			var outerLoops = new List<List<IntPoint>>();
