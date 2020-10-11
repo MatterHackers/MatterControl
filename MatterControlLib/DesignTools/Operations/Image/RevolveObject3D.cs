@@ -44,7 +44,7 @@ using Newtonsoft.Json;
 namespace MatterHackers.MatterControl.DesignTools
 {
 
-	public class RevolveObject3D : Object3D, IObject3DControlsProvider
+	public class RevolveObject3D : Object3D
 	{
 		public double AxisPosition { get; set; } = 0;
 
@@ -71,11 +71,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return null;
 			}
-		}
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)
@@ -161,22 +156,27 @@ namespace MatterHackers.MatterControl.DesignTools
 					var vertexSource = this.VertexSource;
 					var bounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-bounds.Left - AxisPosition, 0);
+					Mesh mesh = null;
 					if (!Advanced)
 					{
-						Mesh = VertexSourceToMesh.Revolve(vertexSource, Sides);
+						mesh = VertexSourceToMesh.Revolve(vertexSource, Sides);
 					}
 					else
 					{
-						Mesh = VertexSourceToMesh.Revolve(vertexSource,
+						mesh = VertexSourceToMesh.Revolve(vertexSource,
 							Sides,
 							MathHelper.DegreesToRadians(StartingAngle),
 							MathHelper.DegreesToRadians(EndingAngle));
 					}
 
-					if (Mesh.Vertices.Count == 0)
+					mesh.Transform(Matrix4X4.CreateTranslation(bounds.Left + AxisPosition, 0, -mesh.GetAxisAlignedBoundingBox().MinXYZ.Z));
+
+					if (mesh.Vertices.Count == 0)
 					{
-						Mesh = null;
+						mesh = null;
 					}
+
+					Mesh = mesh;
 
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
