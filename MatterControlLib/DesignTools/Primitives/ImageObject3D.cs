@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
 		{
-			object3DControlsLayer.AddDefaultControls();
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
 		private ImageBuffer LoadImage()

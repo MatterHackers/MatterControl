@@ -44,7 +44,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 
-	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw
+	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -83,6 +83,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				base.OnInvalidate(invalidateType);
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
 		public override Task Rebuild()

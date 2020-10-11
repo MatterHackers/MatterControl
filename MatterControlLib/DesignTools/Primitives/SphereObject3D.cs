@@ -98,6 +98,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 				LatitudeSides = agg_basics.Clamp(LatitudeSides, 3, 360, ref valuesChanged);
+				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
 
 				using (new CenterAndHeightMaintainer(this))
 				{

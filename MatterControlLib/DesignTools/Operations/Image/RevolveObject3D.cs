@@ -30,19 +30,31 @@ either expressed or implied, of the FreeBSD Project.
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class LinearExtrudeObject3D : Object3D
+
+	public class RevolveObject3D : Object3D, IObject3DControlsProvider
 	{
-		public double Height { get; set; } = 5;
+		public double AxisPosition { get; set; } = 0;
+
+		public int Sides { get; set; } = 30;
+
+		public bool Advanced { get; set; } = false;
+
+		public double StartingAngle { get; set; } = 0;
+
+		public double EndingAngle { get; set; } = 360;
 
 		public override bool CanFlatten => true;
 
@@ -59,6 +71,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				return null;
 			}
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
 		public override void Flatten(UndoBuffer undoBuffer)
@@ -87,9 +104,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public LinearExtrudeObject3D()
+		public RevolveObject3D()
 		{
-			Name = "Linear Extrude".Localize();
+			Name = "Revolve".Localize();
 		}
 
 		public override async void OnInvalidate(InvalidateArgs eventArgs)
@@ -115,16 +132,47 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
+
+			if (Advanced && (StartingAngle > 0 || EndingAngle < 360))
+			{
+				Sides = agg_basics.Clamp(Sides, 1, 360, ref valuesChanged);
+			}
+			else
+			{
+				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
+			}
+
+			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
+			}
 
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
 			return ApplicationController.Instance.Tasks.Execute(
-				"Linear Extrude".Localize(),
+				"Revolve".Localize(),
 				null,
 				(reporter, cancellationToken) =>
 				{
 					var vertexSource = this.VertexSource;
-					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height);
+					var bounds = vertexSource.GetBounds();
+					vertexSource = vertexSource.Translate(-bounds.Left - AxisPosition, 0);
+					if (!Advanced)
+					{
+						Mesh = VertexSourceToMesh.Revolve(vertexSource, Sides);
+					}
+					else
+					{
+						Mesh = VertexSourceToMesh.Revolve(vertexSource,
+							Sides,
+							MathHelper.DegreesToRadians(StartingAngle),
+							MathHelper.DegreesToRadians(EndingAngle));
+					}
+
 					if (Mesh.Vertices.Count == 0)
 					{
 						Mesh = null;

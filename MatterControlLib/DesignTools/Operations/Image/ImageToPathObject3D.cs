@@ -51,7 +51,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class ImageToPathObject3D : Object3D, IPathObject, IEditorDraw
+	public class ImageToPathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		private ThresholdFunctions _featureDetector = ThresholdFunctions.Silhouette;
 
@@ -193,6 +193,12 @@ namespace MatterHackers.MatterControl.DesignTools
 				return new MapOnMaxIntensity(RangeStart, RangeEnd);
 			}
 		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+		}
+
 
 		public static void DrawPath(IObject3D item)
 		{

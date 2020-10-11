@@ -49,6 +49,20 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
+	[Flags]
+	public enum ControlTypes
+	{
+		MoveInZ = 1,
+		RotateXYZ = 2,
+		RotateZ = 4,
+		ScaleCornersXY = 8,
+		ScaleMatrixXY = 16,
+		Shadow = 32,
+		SnappingIndicators = 64,
+
+		Standard2D = MoveInZ | Shadow | SnappingIndicators | RotateZ | ScaleMatrixXY
+	}
+
 	public class Object3DControlsLayer : GuiWidget, IObject3DControlContext
 	{
 		private IObject3DControl mouseDownObject3DControl = null;
@@ -172,32 +186,55 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Object3DControls.Add(new ScaleMatrixTopControl(this));
 					}
 
-					Object3DControls.Add(new ScaleCornerControl(this, 0));
-					Object3DControls.Add(new ScaleCornerControl(this, 1));
-					Object3DControls.Add(new ScaleCornerControl(this, 2));
-					Object3DControls.Add(new ScaleCornerControl(this, 3));
-
-					AddWorldRotateControls();
-					AddDefaultControls();
+					AddControls(ControlTypes.RotateXYZ
+						| ControlTypes.MoveInZ
+						| ControlTypes.ScaleMatrixXY
+						| ControlTypes.Shadow
+						| ControlTypes.SnappingIndicators);
 				}
 			});
 		}
 
-		/// <summary>
-		/// Add in MoveInZ, SelectionShadow & SnappingIndicators
-		/// </summary>
-		public void AddDefaultControls()
+		public void AddControls(ControlTypes controls)
 		{
-			Object3DControls.Add(new MoveInZControl(this));
-			Object3DControls.Add(new SelectionShadow(this));
-			Object3DControls.Add(new SnappingIndicators(this));
+			if (controls.HasFlag(ControlTypes.RotateXYZ))
+			{
+				Object3DControls.Add(new RotateCornerControl(this, 0));
+				Object3DControls.Add(new RotateCornerControl(this, 1));
+				Object3DControls.Add(new RotateCornerControl(this, 2));
+			}
+
+			if (controls.HasFlag(ControlTypes.RotateZ))
+			{
+				Object3DControls.Add(new RotateCornerControl(this, 2));
+			}
+
+			if (controls.HasFlag(ControlTypes.MoveInZ))
+			{
+				Object3DControls.Add(new MoveInZControl(this));
+			}
+
+			if (controls.HasFlag(ControlTypes.ScaleMatrixXY))
+			{
+				Object3DControls.Add(new ScaleCornerControl(this, 0));
+				Object3DControls.Add(new ScaleCornerControl(this, 1));
+				Object3DControls.Add(new ScaleCornerControl(this, 2));
+				Object3DControls.Add(new ScaleCornerControl(this, 3));
+			}
+
+			if (controls.HasFlag(ControlTypes.Shadow))
+			{
+				Object3DControls.Add(new SelectionShadow(this));
+			}
+
+			if (controls.HasFlag(ControlTypes.SnappingIndicators))
+			{
+				Object3DControls.Add(new SnappingIndicators(this));
+			}
 		}
 
 		public void AddWorldRotateControls()
 		{
-			Object3DControls.Add(new RotateCornerControl(this, 0));
-			Object3DControls.Add(new RotateCornerControl(this, 1));
-			Object3DControls.Add(new RotateCornerControl(this, 2));
 		}
 
 		private void DisposeCurrentSelectionObject3DControls()

@@ -93,6 +93,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 				RingSides = agg_basics.Clamp(RingSides, 3, 360, ref valuesChanged);
 
+				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+
 				var ringSides = RingSides;
 				var startingAngle = StartingAngle;
 				var endingAngle = EndingAngle;

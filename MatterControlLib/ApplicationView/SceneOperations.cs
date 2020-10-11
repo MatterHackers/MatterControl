@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is IPathObject imageObject)
+					if (sceneItem is IPathObject pathObject)
 					{
 						var extrude = new LinearExtrudeObject3D();
 
@@ -427,6 +427,40 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("linear_extrude.png", 16, 16, invertIcon).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+			};
+		}
+
+		public static SceneOperation RevolveOperation()
+		{
+			return new SceneOperation("Revolve")
+			{
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Revolve".Localize(),
+				ResultType = typeof(RevolveObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					if (sceneItem is IPathObject pathObject)
+					{
+						var revolve = new RevolveObject3D();
+
+						var itemClone = sceneItem.Clone();
+						revolve.Children.Add(itemClone);
+						revolve.Matrix = itemClone.Matrix;
+						itemClone.Matrix = Matrix4X4.Identity;
+
+						using (new SelectionMaintainer(scene))
+						{
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { revolve }));
+						}
+
+						revolve.Invalidate(InvalidateType.Properties);
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("revolve.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
@@ -754,6 +788,7 @@ namespace MatterHackers.MatterControl
 					Operations = new List<SceneOperation>()
 					{
 						LinearExtrudeOperation(),
+						RevolveOperation(),
 						SmoothPathOperation(),
 						InflatePathOperation(),
 						OutlinePathOperation(),

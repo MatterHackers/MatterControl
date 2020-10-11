@@ -151,6 +151,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 			Height = agg_basics.Clamp(Height, .01, 1000000, ref valuesChanged);
 			Diameter = agg_basics.Clamp(Diameter, .01, 1000000, ref valuesChanged);
+			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
 
 			if (valuesChanged)
 			{
