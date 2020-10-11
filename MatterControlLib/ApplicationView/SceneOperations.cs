@@ -745,10 +745,18 @@ namespace MatterHackers.MatterControl
 					{
 						ImageConverterOperation(),
 						ImageToPathOperation(),
+					}
+				},
+				new OperationGroup("Path")
+				{
+					Collapse = true,
+					TitleResolver = () => "Path".Localize(),
+					Operations = new List<SceneOperation>()
+					{
+						LinearExtrudeOperation(),
+						SmoothPathOperation(),
 						InflatePathOperation(),
 						OutlinePathOperation(),
-						SmoothPathOperation(),
-						LinearExtrudeOperation(),
 					}
 				},
 				new OperationGroup("Merge")
@@ -827,11 +835,15 @@ namespace MatterHackers.MatterControl
 				Icons.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
+			// image operations
 			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
-			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("SmoothPath"), SceneOperations.ById("InflatePath") });
-			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("InflatePath") });
-			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
-			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
+
+			// path operations
+			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("SmoothPath") });
+			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath") });
+			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("OutlinePath") });
+			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("InflatePath") });
+
 			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
 
 			Icons.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16, invertIcon).SetPreMultiply());
