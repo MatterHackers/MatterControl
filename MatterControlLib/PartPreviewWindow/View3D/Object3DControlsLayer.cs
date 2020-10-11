@@ -165,8 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// add default controls
 					if (selectedItem is IObjectWithHeight heightObject)
 					{
-						// Object3DControls.Add(new ScaleHeightControl(this));
-						Object3DControls.Add(new ScaleMatrixTopControl(this));
+						Object3DControls.Add(new ScaleHeightControl(this));
 					}
 					else
 					{

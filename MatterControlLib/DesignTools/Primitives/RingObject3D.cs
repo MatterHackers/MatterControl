@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier
+	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight
 	{
 		public RingObject3D()
 		{
