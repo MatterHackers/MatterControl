@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			ImageToPathObject3D.DrawPath(this);
+			this.DrawPath();
 		}
 	}
 }

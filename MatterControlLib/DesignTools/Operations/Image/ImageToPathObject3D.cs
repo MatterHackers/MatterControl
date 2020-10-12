@@ -42,8 +42,8 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MarchingSquares;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
@@ -199,68 +199,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
-
-		public static void DrawPath(IObject3D item)
-		{
-			if (item is IPathObject pathObject)
-			{
-				if (pathObject.VertexSource == null)
-				{
-					return;
-				}
-
-				bool first = true;
-				var lastPosition = Vector2.Zero;
-				var aabb = item.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
-				var firstMove = Vector2.Zero;
-				foreach (var vertex in pathObject.VertexSource.Vertices())
-				{
-					var position = vertex.position;
-					if (first)
-					{
-						GL.PushMatrix();
-						GL.PushAttrib(AttribMask.EnableBit);
-						GL.MultMatrix(item.WorldMatrix().GetAsFloatArray());
-
-						GL.Disable(EnableCap.Texture2D);
-						GL.Disable(EnableCap.Blend);
-
-						GL.Begin(BeginMode.Lines);
-						GL.Color4(255, 0, 0, 255);
-					}
-
-					if (vertex.IsMoveTo)
-					{
-						firstMove = position;
-					}
-					else if (vertex.IsLineTo)
-					{
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
-						GL.Vertex3(position.X, position.Y, aabb.MaxXYZ.Z + 0.002);
-					}
-					else if (vertex.IsClose)
-					{
-						GL.Vertex3(firstMove.X, firstMove.Y, aabb.MaxXYZ.Z + 0.002);
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
-					}
-
-					lastPosition = position;
-					first = false;
-				}
-
-				// if we drew anything
-				if (!first)
-				{
-					GL.End();
-					GL.PopAttrib();
-					GL.PopMatrix();
-				}
-			}
-		}
-
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			ImageToPathObject3D.DrawPath(this);
+			this.DrawPath();
 		}
 
 		public void GenerateMarchingSquaresAndLines(Action<double, string> progressReporter, ImageBuffer image, IThresholdFunction thresholdFunction)

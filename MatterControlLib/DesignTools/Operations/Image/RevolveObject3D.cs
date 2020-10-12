@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,15 +37,17 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
+using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
 
-	public class RevolveObject3D : Object3D
+	public class RevolveObject3D : Object3D, IEditorDraw
 	{
 		public double AxisPosition { get; set; } = 0;
 
@@ -124,6 +127,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		{
+			var child = this.Children.FirstOrDefault();
+			if (child is IPathObject pathObject)
+			{
+				// draw the path
+				child.DrawPath();
+
+				// draw the line that is the rotation point
+				var aabb = this.GetAxisAlignedBoundingBox();
+				var vertexSource = this.VertexSource.Transform(Matrix);
+				var bounds = vertexSource.GetBounds();
+				var lineX = bounds.Left + AxisPosition;
+
+				var start = new Vector3(lineX, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
+				var end = new Vector3(lineX, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
+
+				layer.World.Render3DLine(start, end, Color.Red, true);
+				layer.World.Render3DLine(start, end, Color.Red.WithAlpha(20), false);
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -153,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var vertexSource = this.VertexSource;
+					var vertexSource = this.VertexSource.Transform(Matrix);
 					var bounds = vertexSource.GetBounds();
 					vertexSource = vertexSource.Translate(-bounds.Left - AxisPosition, 0);
 					Mesh mesh = null;
