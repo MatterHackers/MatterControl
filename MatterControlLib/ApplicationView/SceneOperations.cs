@@ -706,9 +706,24 @@ namespace MatterHackers.MatterControl
 
 		private static bool BooleanCandidate(IObject3D selectedItem)
 		{
-			return selectedItem != null
-				&& selectedItem.VisibleMeshes().Count() > 1
-				&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i));
+			if (selectedItem != null)
+			{
+				// mesh items
+				if (selectedItem.VisibleMeshes().Count() > 1
+					&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i)))
+				{
+					return true;
+				}
+
+				// path items
+				if (selectedItem.VisiblePaths().Count() > 1
+					&& selectedItem.VisiblePaths().All(i => IsPathObject(i)))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private static void Build()
@@ -892,7 +907,17 @@ namespace MatterHackers.MatterControl
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CombineObject3D_2),
 				TitleResolver = () => "Combine".Localize(),
-				Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+				Action = (sceneContext) =>
+				{
+					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
+					{
+						new CombinePathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+					else
+					{
+						new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png", 16, 16, !invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
@@ -1096,6 +1121,14 @@ namespace MatterHackers.MatterControl
 			return item != null
 				&& !(item is ImageObject3D)
 				&& !(item is IPathObject);
+		}
+
+		private static bool IsPathObject(IObject3D item)
+		{
+			return item != null
+				&& !(item is ImageObject3D)
+				&& (item is IPathObject)
+				&& (item.Mesh == null);
 		}
 
 		private static SceneOperation LayFlatOperation()

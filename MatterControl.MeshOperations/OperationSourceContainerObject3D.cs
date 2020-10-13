@@ -184,6 +184,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			if ((invalidateType.InvalidateType.HasFlag(InvalidateType.Children)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Matrix)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Mesh)
+				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Path)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.Color)
 				|| invalidateType.InvalidateType.HasFlag(InvalidateType.OutputType))
 				&& invalidateType.Source != this

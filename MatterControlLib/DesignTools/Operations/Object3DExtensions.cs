@@ -101,7 +101,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 				bool first = true;
 				var lastPosition = Vector2.Zero;
-				var aabb = item.VisibleMeshes().FirstOrDefault().GetAxisAlignedBoundingBox();
+				var maxXYZ = item.GetAxisAlignedBoundingBox().MaxXYZ;
+				maxXYZ = maxXYZ.Transform(item.Matrix.Inverted);
 				var firstMove = Vector2.Zero;
 				foreach (var vertex in pathObject.VertexSource.Vertices())
 				{
@@ -125,13 +126,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 					else if (vertex.IsLineTo)
 					{
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
-						GL.Vertex3(position.X, position.Y, aabb.MaxXYZ.Z + 0.002);
+						GL.Vertex3(lastPosition.X, lastPosition.Y, maxXYZ.Z + 0.002);
+						GL.Vertex3(position.X, position.Y, maxXYZ.Z + 0.002);
 					}
 					else if (vertex.IsClose)
 					{
-						GL.Vertex3(firstMove.X, firstMove.Y, aabb.MaxXYZ.Z + 0.002);
-						GL.Vertex3(lastPosition.X, lastPosition.Y, aabb.MaxXYZ.Z + 0.002);
+						GL.Vertex3(firstMove.X, firstMove.Y, maxXYZ.Z + 0.002);
+						GL.Vertex3(lastPosition.X, lastPosition.Y, maxXYZ.Z + 0.002);
 					}
 
 					lastPosition = position;

@@ -43,7 +43,6 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
 	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
@@ -104,6 +103,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				InsetPath();
+				// set the mesh to show the path
+				this.Mesh = VertexSource.Extrude(.1);
 			}
 
 			if (valuesChanged)

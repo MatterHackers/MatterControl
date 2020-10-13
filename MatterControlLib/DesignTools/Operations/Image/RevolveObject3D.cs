@@ -51,13 +51,11 @@ namespace MatterHackers.MatterControl.DesignTools
 	{
 		public double AxisPosition { get; set; } = 0;
 
-		public int Sides { get; set; } = 30;
-
-		public bool Advanced { get; set; } = false;
-
 		public double StartingAngle { get; set; } = 0;
 
-		public double EndingAngle { get; set; } = 360;
+		public double EndingAngle { get; set; } = 45;
+
+		public int Sides { get; set; } = 30;
 
 		public override bool CanFlatten => true;
 
@@ -132,9 +130,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			var child = this.Children.FirstOrDefault();
 			if (child is IPathObject pathObject)
 			{
-				// draw the path
-				child.DrawPath();
-
 				// draw the line that is the rotation point
 				var aabb = this.GetAxisAlignedBoundingBox();
 				var vertexSource = this.VertexSource.Transform(Matrix);
@@ -154,7 +149,10 @@ namespace MatterHackers.MatterControl.DesignTools
 			this.DebugDepth("Rebuild");
 			bool valuesChanged = false;
 
-			if (Advanced && (StartingAngle > 0 || EndingAngle < 360))
+			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
+
+			if (StartingAngle > 0 || EndingAngle < 360)
 			{
 				Sides = agg_basics.Clamp(Sides, 1, 360, ref valuesChanged);
 			}
@@ -162,9 +160,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 			}
-
-			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
 
 			if (valuesChanged)
 			{
@@ -179,22 +174,18 @@ namespace MatterHackers.MatterControl.DesignTools
 				(reporter, cancellationToken) =>
 				{
 					var vertexSource = this.VertexSource.Transform(Matrix);
-					var bounds = vertexSource.GetBounds();
-					vertexSource = vertexSource.Translate(-bounds.Left - AxisPosition, 0);
-					Mesh mesh = null;
-					if (!Advanced)
-					{
-						mesh = VertexSourceToMesh.Revolve(vertexSource, Sides);
-					}
-					else
-					{
-						mesh = VertexSourceToMesh.Revolve(vertexSource,
-							Sides,
-							MathHelper.DegreesToRadians(StartingAngle),
-							MathHelper.DegreesToRadians(EndingAngle));
-					}
+					var pathBounds = vertexSource.GetBounds();
+					vertexSource = vertexSource.Translate(-pathBounds.Left - AxisPosition, 0);
+					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
+						Sides,
+						MathHelper.DegreesToRadians(360 - EndingAngle),
+						MathHelper.DegreesToRadians(360 - StartingAngle),
+						false);
 
-					mesh.Transform(Matrix4X4.CreateTranslation(bounds.Left + AxisPosition, 0, -mesh.GetAxisAlignedBoundingBox().MinXYZ.Z));
+					// take the axis offset out
+					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + AxisPosition, 0, 0));
+					// move back to object space
+					mesh.Transform(this.Matrix.Inverted);
 
 					if (mesh.Vertices.Count == 0)
 					{
