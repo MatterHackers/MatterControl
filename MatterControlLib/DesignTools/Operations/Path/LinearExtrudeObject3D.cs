@@ -31,31 +31,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
-using MatterHackers.RenderOpenGl;
-using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
-	public class RevolveObject3D : Object3D, IEditorDraw
+	public class LinearExtrudeObject3D : Object3D, IPropertyGridModifier
 	{
-		public double AxisPosition { get; set; } = 0;
+		public double Height { get; set; } = 5;
 
-		public double StartingAngle { get; set; } = 0;
+		public bool BevelTop { get; set; } = false;
 
-		public double EndingAngle { get; set; } = 45;
+		public double BevelInset { get; set; } = 2;
 
-		public int Sides { get; set; } = 30;
+		public double BevelHeight { get; set; } = 4;
+
+		public int BevelSteps { get; set; } = 1;
 
 		public override bool CanFlatten => true;
 
@@ -92,7 +88,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					meshOnlyItem.CopyProperties(this, Object3DPropertyFlags.All);
 
-					// and replace us with the children 
+					// and replace us with the children
 					undoBuffer.AddAndDo(new ReplaceCommand(new[] { this }, new[] { meshOnlyItem }));
 				}
 
@@ -100,9 +96,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public RevolveObject3D()
+		public LinearExtrudeObject3D()
 		{
-			Name = "Revolve".Localize();
+			Name = "Linear Extrude".Localize();
 		}
 
 		public override async void OnInvalidate(InvalidateArgs eventArgs)
@@ -125,79 +121,51 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 		}
 
-		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
-		{
-			var child = this.Children.FirstOrDefault();
-			if (child is IPathObject pathObject)
-			{
-				// draw the line that is the rotation point
-				var aabb = this.GetAxisAlignedBoundingBox();
-				var vertexSource = this.VertexSource.Transform(Matrix);
-				var bounds = vertexSource.GetBounds();
-				var lineX = bounds.Left + AxisPosition;
-
-				var start = new Vector3(lineX, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
-				var end = new Vector3(lineX, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
-
-				layer.World.Render3DLine(start, end, Color.Red, true);
-				layer.World.Render3DLine(start, end, Color.Red.WithAlpha(20), false);
-			}
-		}
-
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
-			bool valuesChanged = false;
-
-			StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
-			EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
-
-			if (StartingAngle > 0 || EndingAngle < 360)
-			{
-				Sides = agg_basics.Clamp(Sides, 1, 360, ref valuesChanged);
-			}
-			else
-			{
-				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
-			}
-
-			if (valuesChanged)
-			{
-				Invalidate(InvalidateType.DisplayValues);
-			}
 
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
 			return ApplicationController.Instance.Tasks.Execute(
-				"Revolve".Localize(),
+				"Linear Extrude".Localize(),
 				null,
 				(reporter, cancellationToken) =>
 				{
-					var vertexSource = this.VertexSource.Transform(Matrix);
-					var pathBounds = vertexSource.GetBounds();
-					vertexSource = vertexSource.Translate(-pathBounds.Left - AxisPosition, 0);
-					Mesh mesh = VertexSourceToMesh.Revolve(vertexSource,
-						Sides,
-						MathHelper.DegreesToRadians(360 - EndingAngle),
-						MathHelper.DegreesToRadians(360 - StartingAngle),
-						false);
-
-					// take the axis offset out
-					mesh.Transform(Matrix4X4.CreateTranslation(pathBounds.Left + AxisPosition, 0, 0));
-					// move back to object space
-					mesh.Transform(this.Matrix.Inverted);
-
-					if (mesh.Vertices.Count == 0)
+					var vertexSource = this.VertexSource;
+					List<(double height, double inset)> bevel = null;
+					if (BevelTop)
 					{
-						mesh = null;
+						bevel = new List<(double height, double inset)>();
+						for (int i = 0; i < BevelSteps; i++)
+						{
+							var heightRatio = i / BevelSteps;
+							var height = heightRatio * (Height - BevelHeight) + BevelHeight;
+							var insetRatio = (i + 1) / BevelSteps;
+							var inset = insetRatio * -BevelInset;
+							bevel.Add((height, inset));
+						}
 					}
 
-					Mesh = mesh;
+					Mesh = VertexSourceToMesh.Extrude(this.VertexSource,
+						Height,
+						bevel);
+					if (Mesh.Vertices.Count == 0)
+					{
+						Mesh = null;
+					}
 
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					return Task.CompletedTask;
 				});
+		}
+
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(BevelHeight), () => BevelTop);
+			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
+			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
 		}
 	}
 }

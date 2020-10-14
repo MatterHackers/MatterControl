@@ -37,12 +37,11 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
-namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
+namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 
 	public class CombinePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
