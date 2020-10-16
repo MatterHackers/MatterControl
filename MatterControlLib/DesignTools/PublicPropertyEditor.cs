@@ -50,7 +50,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-
 	public class PublicPropertyEditor : IObject3DEditor
 	{
 		public string Name => "Property Editor";
@@ -484,7 +483,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer = CreateSettingsColumn(property);
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
-						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme));
+						Action selected = null;
+						if (!(context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
+						{
+							selected = () =>
+							{
+								object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							};
+						}
+
+						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme, selected));
 					}
 					else
 					{
@@ -715,7 +723,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme)
+		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -783,6 +791,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								childSelector.Remove(objectChecks[checkbox].ID);
 							}
 						}
+
+						selectionChanged?.Invoke();
 					}
 				};
 

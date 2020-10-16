@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
 
 			// draw on top of anything that is already drawn
-			object3DControlLayer.World.Render3DLine(start, end, Color.Black.WithAlpha(20), false, width: GuiWidget.DeviceScale);
+			object3DControlLayer.World.Render3DLine(start, end, Color.Black.WithAlpha(Constants.LineAlpha), false, width: GuiWidget.DeviceScale);
 
 			// Restore DepthTest
 			object3DControlLayer.World.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);

@@ -35,19 +35,20 @@ using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.RenderOpenGl;
+
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
-	[ShowUpdateButton]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, IEditorDraw
+	public class SubtractPathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
-		public SubtractObject3D_2()
+		public SubtractPathObject3D()
 		{
 			Name = "Subtract";
 		}
@@ -55,44 +56,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 		[DisplayName("Part(s) to Subtract")]
 		public SelectedChildren SelectedChildren { get; set; } = new SelectedChildren();
 
+		public IVertexSource VertexSource { get; set; } = new VertexStorage();
+
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			if (layer.Scene.SelectedItem != null
-				&& layer.Scene.SelectedItem == this)
-			{
-				var parentOfSubtractTargets = this.SourceContainer.DescendantsAndSelfMultipleChildrenFirstOrSelf();
+			this.DrawPath();
+		}
 
-				var removeObjects = parentOfSubtractTargets.Children
-					.Where(i => SelectedChildren.Contains(i.ID))
-					.SelectMany(c => c.VisibleMeshes())
-					.ToList();
-
-				foreach (var item in removeObjects)
-				{
-					transparentMeshes.Add(new Object3DView(item, new Color(item.WorldColor(this.SourceContainer), 80)));
-				}
-
-				var keepItems = parentOfSubtractTargets.Children
-					.Where(i => !SelectedChildren.Contains(i.ID))
-					.ToList();
-
-				foreach (var keepItem in keepItems)
-				{
-					var drawItem = keepItem;
-
-					var keepItemResult = this.Children.Where(i => i.OwnerID == keepItem.ID).FirstOrDefault();
-					drawItem = keepItemResult != null ? keepItemResult : drawItem;
-
-					foreach (var item in drawItem.VisibleMeshes())
-					{
-						GLHelper.Render(item.Mesh,
-							item.WorldColor(),
-							item.WorldMatrix(),
-							RenderTypes.Outlines,
-							item.WorldMatrix() * layer.World.ModelviewMatrix);
-					}
-				}
-			}
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -138,6 +111,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 					{
 					}
 
+					// set the mesh to show the path
+					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+
 					rebuildLocks.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 					return Task.CompletedTask;
@@ -172,14 +148,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 			var removeVisibleItems = parentOfSubtractTargets.Children
 				.Where((i) => SelectedChildren
 				.Contains(i.ID))
-				.SelectMany(c => c.VisibleMeshes())
+				.SelectMany(c => c.VisiblePaths())
 				.ToList();
 
 			var keepItems = parentOfSubtractTargets.Children
 				.Where((i) => !SelectedChildren
 				.Contains(i.ID));
 
-			var keepVisibleItems = keepItems.SelectMany(c => c.VisibleMeshes()).ToList();
+			var keepVisibleItems = keepItems.SelectMany(c => c.VisiblePaths()).ToList();
 
 			if (removeVisibleItems.Any()
 				&& keepVisibleItems.Any())
@@ -190,31 +166,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 				var progressStatus = new ProgressStatus
 				{
-					Status = "Do CSG"
+					Status = "Do Subtract"
 				};
+
+				bool first = true;
 				foreach (var keep in keepVisibleItems)
 				{
-					var resultsMesh = keep.Mesh;
-					var keepWorldMatrix = keep.WorldMatrix(SourceContainer);
+					var resultsVertexSource = (keep as IPathObject).VertexSource.Transform(keep.Matrix);
 
 					foreach (var remove in removeVisibleItems)
 					{
-						resultsMesh = BooleanProcessing.Do(resultsMesh,
-							keepWorldMatrix,
-							// other mesh
-							remove.Mesh,
-							remove.WorldMatrix(SourceContainer),
-							// operation type
-							1,
-							// reporting
-							reporter,
-							amountPerOperation,
-							percentCompleted,
-							progressStatus,
-							cancellationToken);
-
-						// after the first time we get a result the results mesh is in the right coordinate space
-						keepWorldMatrix = Matrix4X4.Identity;
+						resultsVertexSource = resultsVertexSource.MergePaths(((IPathObject)remove).VertexSource.Transform(remove.Matrix), ClipperLib.ClipType.ctDifference);
 
 						// report our progress
 						percentCompleted += amountPerOperation;
@@ -222,26 +184,24 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 						reporter?.Report(progressStatus);
 					}
 
-					// store our results mesh
-					var resultsItem = new Object3D()
+					if (first)
 					{
-						Mesh = resultsMesh,
-						Visible = false,
-						OwnerID = keep.ID
-					};
-
-					// copy all the properties but the matrix
-					resultsItem.CopyWorldProperties(keep, SourceContainer, Object3DPropertyFlags.All & (~(Object3DPropertyFlags.Matrix | Object3DPropertyFlags.Visible)));
-					// and add it to this
-					this.Children.Add(resultsItem);
+						this.VertexSource = resultsVertexSource;
+						first = false;
+					}
+					else
+					{
+						this.VertexSource.MergePaths(resultsVertexSource, ClipperLib.ClipType.ctUnion);
+					}
 				}
 
-				bool first = true;
+				// this.VertexSource = this.VertexSource.Transform(Matrix.Inverted);
+				first = true;
 				foreach (var child in Children)
 				{
 					if (first)
 					{
-						// hid the source item
+						// hide the source item
 						child.Visible = false;
 						first = false;
 					}

@@ -94,6 +94,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
 
+					// set the mesh to show the path
+					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
+
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
 					return Task.CompletedTask;

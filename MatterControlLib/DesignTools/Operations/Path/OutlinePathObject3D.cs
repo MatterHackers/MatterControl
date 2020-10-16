@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				InsetPath();
 				// set the mesh to show the path
-				this.Mesh = VertexSource.Extrude(.1);
+				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			if (valuesChanged)

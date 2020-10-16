@@ -36,19 +36,22 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
-	public class CombinePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class MergePathObject3D : OperationSourceContainerObject3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
-		public CombinePathObject3D()
+		private bool union;
+		private string operationName;
+
+		public MergePathObject3D(string name, bool union)
 		{
-			Name = "Combine";
+			this.operationName = name;
+			this.union = union;
+			Name = name;
 		}
 
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
@@ -70,7 +73,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			var rebuildLocks = this.RebuilLockAll();
 
 			return ApplicationController.Instance.Tasks.Execute(
-				"Combine".Localize(),
+				operationName,
 				null,
 				(reporter, cancellationToken) =>
 				{
@@ -79,11 +82,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 					try
 					{
-						Combine(cancellationToken, reporter);
+						Merge(reporter, cancellationToken);
 					}
 					catch
 					{
 					}
+
+					// set the mesh to show the path
+					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 
 					rebuildLocks.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
@@ -91,12 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				});
 		}
 
-		public void Combine()
-		{
-			Combine(CancellationToken.None, null);
-		}
-
-		private void Combine(CancellationToken cancellationToken, IProgress<ProgressStatus> reporter)
+		private void Merge(IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
 		{
 			SourceContainer.Visible = true;
 			RemoveAllButSource();
@@ -131,7 +132,14 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					var itemVertexSource = pathItem.VertexSource.Transform(item.Matrix);
 
-					resultsVertexSource = resultsVertexSource.Union(itemVertexSource);
+					if (union)
+					{
+						resultsVertexSource = resultsVertexSource.Union(itemVertexSource);
+					}
+					else
+					{
+						resultsVertexSource = resultsVertexSource.MergePaths(itemVertexSource, ClipperLib.ClipType.ctIntersection);
+					}
 
 					percentCompleted += amountPerOperation;
 					progressStatus.Progress0To1 = percentCompleted;
@@ -140,8 +148,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 
 			this.VertexSource = resultsVertexSource;
-			// set the mesh to show the path
-			this.Mesh = resultsVertexSource.Extrude(.1);
+
 			SourceContainer.Visible = false;
 		}
 	}

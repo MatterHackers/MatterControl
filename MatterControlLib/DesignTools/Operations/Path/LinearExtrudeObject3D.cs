@@ -147,9 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						}
 					}
 
-					Mesh = VertexSourceToMesh.Extrude(this.VertexSource,
-						Height,
-						bevel);
+					Mesh = VertexSourceToMesh.Extrude(this.VertexSource, Height, bevel);
 					if (Mesh.Vertices.Count == 0)
 					{
 						Mesh = null;

@@ -317,6 +317,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						RangeStart = 1 - minSeparation;
 					}
 				}
+
 				propertyUpdated = true;
 			}
 
