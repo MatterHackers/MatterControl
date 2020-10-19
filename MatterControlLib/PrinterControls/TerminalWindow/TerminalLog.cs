@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
@@ -200,6 +201,7 @@ namespace MatterHackers.MatterControl
 					{
 						commandHistoryIndex = 0;
 					}
+
 					changeToHistory = true;
 				}
 				else if (keyEvent.KeyCode == Keys.Down)
@@ -393,8 +395,14 @@ namespace MatterHackers.MatterControl
 			{
 				textToSend = textToSend.ToUpper();
 			}
-			commandHistory.Add(textToSend);
+
+			if (commandHistory.LastOrDefault() != textToSend)
+			{
+				commandHistory.Add(textToSend);
+			}
+
 			commandHistoryIndex = commandHistory.Count;
+
 			printer.Connection.QueueLine(textToSend);
 			manualCommandTextEdit.Text = "";
 		}
