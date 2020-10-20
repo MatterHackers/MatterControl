@@ -229,7 +229,14 @@ namespace MatterHackers.MatterControl
 
 			var systemWindow = Application.LoadRootWindow(width, height);
 
-			SingleWindowProvider.SetWindowTheme(Color.Black, 12, false, () => new Button("X", 0, 0), 3, Color.LightGray, Color.DarkGray);
+			var theme = ApplicationController.Instance.Theme;
+			SingleWindowProvider.SetWindowTheme(theme.TextColor,
+				theme.DefaultFontSize - 1,
+				theme.InvertIcons,
+				() => theme.CreateSmallResetButton(),
+				theme.ToolbarPadding,
+				theme.TabBarBackground,
+				new Color(theme.PrimaryAccentColor, 175));
 
 			systemWindow.ShowAsSystemWindow();
 		}

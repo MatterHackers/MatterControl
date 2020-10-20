@@ -1211,6 +1211,15 @@ namespace MatterHackers.MatterControl
 
 				this.IsReloading = true;
 
+				var theme = ApplicationController.Instance.Theme;
+				SingleWindowProvider.SetWindowTheme(theme.TextColor,
+					theme.DefaultFontSize - 1,
+					theme.InvertIcons,
+					() => theme.CreateSmallResetButton(),
+					theme.ToolbarPadding,
+					theme.TabBarBackground,
+					new Color(theme.PrimaryAccentColor, 175));
+
 				reloadingOverlay = new GuiWidget
 				{
 					HAnchor = HAnchor.Stretch,
