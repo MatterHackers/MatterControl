@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Stretch;
 
-			var toolbar = new Toolbar(theme)
+			var toolbar = new Toolbar(theme.TabbarPadding, theme.CreateSmallResetButton())
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

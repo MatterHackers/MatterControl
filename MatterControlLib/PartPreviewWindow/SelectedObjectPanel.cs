@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (primaryActionsPanel.Children.Any())
 			{
 				// add in a separator from the apply and cancel buttons
-				primaryActionsPanel.AddChild(new ToolbarSeparator(theme));
+				primaryActionsPanel.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 			}
 
 			editorSectionWidget.Text = selectedItem.Name ?? selectedItemType.Name;

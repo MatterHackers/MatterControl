@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			bool boldFont = false,
 			bool editable = true,
 			string emptyText = null)
-			: base(theme)
+			: base(theme.TabbarPadding, theme.CreateSmallResetButton())
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;

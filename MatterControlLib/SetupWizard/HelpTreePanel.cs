@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 		{
 			horizontalSplitter.Panel1.BackgroundColor = Color.Black.WithAlpha(12);
 
-			var toolbar = new Toolbar(theme)
+			var toolbar = new Toolbar(theme.TabbarPadding, theme.CreateSmallResetButton())
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

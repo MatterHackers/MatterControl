@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(right: 20)
 			};
 
-			var headerBar = new Toolbar(theme, rightLabel)
+			var headerBar = new Toolbar(theme.TabbarPadding, rightLabel)
 			{
 				Height = theme.ButtonHeight,
 				Padding = theme.ToolbarPadding,

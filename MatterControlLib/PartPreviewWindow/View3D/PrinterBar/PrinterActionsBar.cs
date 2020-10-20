@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// Add vertical separator
-			this.AddChild(new ToolbarSeparator(theme)
+			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin)
 			{
 				VAnchor = VAnchor.Absolute,
 				Height = theme.ButtonHeight,
