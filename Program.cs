@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -227,6 +228,9 @@ namespace MatterHackers.MatterControl
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
 			var systemWindow = Application.LoadRootWindow(width, height);
+
+			SingleWindowProvider.SetWindowTheme(Color.Black, 12, false, () => new Button("X", 0, 0), 3, Color.LightGray, Color.DarkGray);
+
 			systemWindow.ShowAsSystemWindow();
 		}
 
