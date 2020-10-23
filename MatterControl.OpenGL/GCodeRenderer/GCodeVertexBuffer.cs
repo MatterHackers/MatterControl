@@ -58,8 +58,8 @@ namespace MatterHackers.GCodeVisualizer
 		{
 			try
 			{
-				GL.GenBuffers(1, out vertexID);
-				GL.GenBuffers(1, out indexID);
+				vertexID = GL.GenBuffer();
+				indexID = GL.GenBuffer();
 				SetBufferData(ref indexData, ref colorData);
 			}
 			catch

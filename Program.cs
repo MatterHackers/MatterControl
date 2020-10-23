@@ -39,7 +39,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
