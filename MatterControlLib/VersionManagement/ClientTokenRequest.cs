@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public ClientTokenRequest()
 		{
 			requestValues["RequestToken"] = "ekshdsd5d5ssss5kels";
-			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
+			requestValues["ProjectToken"] = VersionInfo.Instance.GetProjectToken();
 			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-client-consumer-token";
 		}
 

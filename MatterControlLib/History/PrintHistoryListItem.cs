@@ -215,7 +215,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			labelName += textInfo.ToTitleCase(printTask.PrintName).Replace('_', ' ');
 
-			string groupNames = GetItemNamesFromMcx(printTask.PrintName);
+			string groupNames = printTask.ItemsPrinted();
 			if (!string.IsNullOrEmpty(groupNames))
 			{
 				labelName += "\n" + groupNames;
@@ -359,6 +359,8 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			public string Notes { get; set; }
 
+			public string Guid { get; set; }
+
 			public int PrintQuality { get; set; }
 		}
 
@@ -371,7 +373,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			// do the export
 			foreach (var printTask in printTasks)
 			{
-				string groupNames = PrintHistoryListItem.GetItemNamesFromMcx(printTask.PrintName);
+				string groupNames = printTask.ItemsPrinted();
 
 				records.Add(new RowData()
 				{
@@ -388,13 +390,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 					QualitySettingsName = printTask.QualitySettingsName,
 					MaterialSettingsName = printTask.MaterialSettingsName,
 					Notes = printTask.Note,
+					Guid = printTask.Guid,
 				});
 			}
 
 			AggContext.FileDialogs.SaveFileDialog(
 				new SaveFileDialogParams("MatterControl Printer Export|*.printer", title: "Export Printer Settings")
 				{
-					FileName = "Pinter Histor.csv",
+					FileName = "Printer History.csv",
 					Filter = "CSV Files|*.csv"
 				},
 				(saveParams) =>
@@ -420,33 +423,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 						});
 					}
 				});
-		}
-
-		public static string GetItemNamesFromMcx(string mcxFileName)
-		{
-			// add in the cache path
-			mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, mcxFileName);
-			if (File.Exists(mcxFileName))
-			{
-				var names = JsonConvert.DeserializeObject<McxDocument.McxNode>(File.ReadAllText(mcxFileName)).AllNames();
-				var grouped = names.GroupBy(n => n)
-					.Select(g =>
-					{
-						if (g.Count() > 1)
-						{
-							return g.Key + " (" + g.Count() + ")";
-						}
-						else
-						{
-							return g.Key;
-						}
-					})
-					.OrderBy(n => n);
-				var groupNames = string.Join(", ", grouped);
-				return groupNames;
-			}
-
-			return null;
 		}
 
 		private void AddTimeStamp(PrintTask printTask, Color timeTextColor, FlowLayoutWidget primaryFlow)

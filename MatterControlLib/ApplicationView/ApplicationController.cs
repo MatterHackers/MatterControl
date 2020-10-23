@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, destinationContainer) =>
+								(newName, destinationContainer) =>
 								{
 									// Save to the destination provider
 									if (destinationContainer is ILibraryWritableContainer writableContainer)
@@ -371,6 +371,8 @@ namespace MatterHackers.MatterControl
 		public Func<string, bool> UserHasPermissionToId { get; set; }
 
 		public Func<IObject3D, ThemeConfig, (string url, GuiWidget markdownWidget)> GetUnlockData { get; set; }
+
+		public Func<PrintTask, Task<Dictionary<string, string>>> PushPrintTaskToServer { get; set; }
 
 		private static ApplicationController globalInstance;
 

@@ -52,6 +52,20 @@ namespace MatterHackers.MatterControl
 
 		public string ProjectToken { get; set; }
 
+		public string TestProjectToken { get; set; }
+
+		public string GetProjectToken()
+		{
+			if (AppContext.Options.McwsTestEnvironment)
+			{
+				return TestProjectToken;
+			}
+			else
+			{
+				return ProjectToken;
+			}
+		}
+
 		private static VersionInfo DeserializeFromDisk()
 		{
 			string content = AggContext.StaticData.ReadAllText("BuildInfo.txt");

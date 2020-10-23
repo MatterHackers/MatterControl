@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					(newNote) =>
 					{
 						printTask.Note = newNote;
-						printTask.Commit();
+						printTask.CommitAndPushToServer();
 						popupMenu.Unfocus();
 						notesChanged();
 					})
@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				{
 					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
 					printTask.QualityWasSet = true;
-					printTask.Commit();
+					printTask.CommitAndPushToServer();
 					clicked();
 				};
 			}
