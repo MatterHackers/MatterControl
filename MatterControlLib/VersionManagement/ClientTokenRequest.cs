@@ -27,13 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-
 namespace MatterHackers.MatterControl.VersionManagement
 {
 	public class ClientTokenRequest : WebRequestBase

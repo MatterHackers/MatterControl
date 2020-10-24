@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					HAnchor = HAnchor.Stretch
 				};
 
-				printInfoWidget = new TextWidget(GetPrintInfo(), pointSize: 15)
+				printInfoWidget = new TextWidget(GetPrintInfo(), pointSize: 12)
 				{
 					TextColor = Color.Black,
 					AutoExpandBoundsToText = true,
