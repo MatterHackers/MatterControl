@@ -102,7 +102,10 @@ namespace MatterHackers.MatterControl.Library
 					() => "Pipe Works".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					null,
-					() => new PipeWorksContainer()));
+					() => new PipeWorksContainer())
+				{
+					IsReadOnly = true
+				});
 
 			int index = 0;
 
@@ -146,7 +149,10 @@ namespace MatterHackers.MatterControl.Library
 								})
 								{ DateCreated = new System.DateTime(index++) },
 						}
-					}));
+					})
+				{
+					IsReadOnly = true
+				});
 #endif
 		}
 

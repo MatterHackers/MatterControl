@@ -820,7 +820,10 @@ namespace MatterHackers.MatterControl
 					() => "History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
-					() => new RootHistoryContainer()));
+					() => new RootHistoryContainer())
+				{
+					IsReadOnly = true
+				});
 
 			// Create a new library context for the SaveAs view
 			this.LibraryTabContext = new LibraryConfig()
