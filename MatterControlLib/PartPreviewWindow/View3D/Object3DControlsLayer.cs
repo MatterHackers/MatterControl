@@ -179,7 +179,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// add default controls
 					if (selectedItem is IObjectWithHeight heightObject)
 					{
+						// When this is ready make the debug behavior the only behavior
+#if DEBUG
 						Object3DControls.Add(new ScaleHeightControl(this));
+#else
+						Object3DControls.Add(new ScaleMatrixTopControl(this));
+#endif
 					}
 					else
 					{
