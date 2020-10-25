@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl
 		public const string SelectedObjectEditorHeight = nameof(SelectedObjectEditorHeight);
 		public const string SelectedObjectPanelWidth = nameof(SelectedObjectPanelWidth);
 		public const string SelectionTreeViewPanelExpanded = nameof(SelectionTreeViewPanelExpanded);
-		public const string ShownPrintCanceledMessage = nameof(ShownPrintCanceledMessage);
-		public const string ShownPrintCompleteMessage = nameof(ShownPrintCompleteMessage);
+		public const string ShownPrintCanceledMessage2 = nameof(ShownPrintCanceledMessage2);
+		public const string ShownPrintCompleteMessage2 = nameof(ShownPrintCompleteMessage2);
 		public const string ShownWelcomeMessage = nameof(ShownWelcomeMessage);
 		public const string SliceSettingsTabIndex = nameof(SliceSettingsTabIndex);
 		public const string SliceSettingsTabPinned = nameof(SliceSettingsTabPinned);

@@ -42,12 +42,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 {
 	public class PrintHistoryEditor
 	{
+		private readonly PrinterConfig printer;
 		private readonly ThemeConfig theme;
 		private readonly PrintTask printTask;
 		private readonly IEnumerable<PrintTask> printTasks;
 
-		public PrintHistoryEditor(ThemeConfig theme, PrintTask printTask, IEnumerable<PrintTask> printTasks)
+		public PrintHistoryEditor(PrinterConfig printer, ThemeConfig theme, PrintTask printTask, IEnumerable<PrintTask> printTasks)
 		{
+			this.printer = printer;
 			this.theme = theme;
 			this.printTask = printTask;
 			this.printTasks = printTasks;
@@ -100,10 +102,14 @@ namespace MatterHackers.MatterControl.PrintHistory
 				HAnchor = HAnchor.Fit | HAnchor.Stretch
 			};
 
-			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor);
+			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				VAnchor = VAnchor.Center
+			};
+
 			content.AddChild(textWidget);
 
-			content.AddChild(new GuiWidget(buttonFontSize * 2 * GuiWidget.DeviceScale, 1));
+			content.AddChild(new GuiWidget(buttonFontSize * GuiWidget.DeviceScale, 1));
 
 			var siblings = new List<GuiWidget>();
 
@@ -203,18 +209,22 @@ namespace MatterHackers.MatterControl.PrintHistory
 			return dropdownList;
 		}
 
-		public void CollectInfoPrintCanceled()
-		{
-			string markdownText = @"If you need help, here are some links that might be useful.
+		private static string articles = @"
+- [MatterControl Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
+- [Trick, Tips & Support Articles](https://www.matterhackers.com/topic/tips-and-tricks)
+- [MatterControl Articles](https://www.matterhackers.com/topic/mattercontrol)
 - [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
-- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
-- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
 - [User Forum](https://forums.matterhackers.com/recent)";
 
+		public void CollectInfoPrintCanceled()
+		{
+			string markdownText = @"If you need help, here are some links that might be useful." + articles;
+
 			new CollectPrintDetailsPage("Print Canceled".Localize(),
+				printer,
 				"Oops, looks like you canceled the print.",
 				markdownText,
-				UserSettingsKey.ShownPrintCanceledMessage,
+				UserSettingsKey.ShownPrintCanceledMessage2,
 				printTask,
 				false);
 		}
@@ -230,16 +240,13 @@ Supplies and accessories:
 
 [![Filament](https://lh3.googleusercontent.com/2QmeGU_t2KKvAuXTSCYHq1EQTMHRurwreztY52jGdtRQStAEit7Yjsz_hW9l1akGjun7dVcaCGdHEHdGNIGkKykoMg=w100-h100)](https://www.matterhackers.com/store/c/3d-printer-filament) [![Adhesives](https://lh3.googleusercontent.com/LwlavuKk8UXhOuRVB8Q3hqj-AYDHUl8vg_cDanQ8weKM1M7iyMRLjvVD0QWvj6dmCGpSE1t2lKSeMDAmTpJVHLS1bQ=w100-h100)](https://www.matterhackers.com/store/c/3d-printer-adhesive) [![Accessories](https://lh3.googleusercontent.com/pizcbdPu1qn2_QLwyoB2mSr00ckkKkSNkRJ3YmYP-ydkwTpyKy1P_hb6SV2lrH9CbWyy4HViO3VPXV5Q7q-9iGm0wg=w100-h100)](https://www.matterhackers.com/store/c/printer-accessories)
 
-Support and tutorials:
-- [MatterControl Docs](https://www.matterhackers.com/mattercontrol/support)
-- [Tutorials](https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6#tutorials)
-- [Trick, Tips & Support Articles](https://www.matterhackers.com/support#mattercontrol)
-- [User Forum](https://forums.matterhackers.com/recent)";
+Support and tutorials:" + articles;
 
-			new CollectPrintDetailsPage("Congratulations Print Complete".Localize(),
+			new CollectPrintDetailsPage("Print Complete".Localize(),
+				printer,
 				"How did this print come out?",
 				markdownText,
-				UserSettingsKey.ShownPrintCompleteMessage,
+				UserSettingsKey.ShownPrintCompleteMessage2,
 				printTask,
 				true);
 		}
@@ -251,11 +258,13 @@ Support and tutorials:
 			public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
 
 			public CollectPrintDetailsPage(string windowTitle,
+				PrinterConfig printer,
 				string topMarkDown,
 				string descriptionMarkdown,
 				string userKey,
 				PrintTask printTask,
 				bool collectQuality)
+				: base("Close".Localize())
 			{
 				this.WindowTitle = windowTitle;
 				this.HeaderText = windowTitle;
@@ -363,6 +372,13 @@ Support and tutorials:
 						this.Width -= 1;
 						this.Descendants<ScrollableWidget>().First().ScrollPositionFromTop = new Vector2(0, 0);
 					});
+				}
+
+				if (printer != null)
+				{
+					var printAgainButton = PrintPopupMenu.CreateStartPrintButton("Print Again", printer, theme, out _);
+					printAgainButton.Click += (s, e) => this.DialogWindow?.ClosePage();
+					AddPageAction(printAgainButton);
 				}
 			}
 

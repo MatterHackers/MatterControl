@@ -242,7 +242,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(1000);
 
 				var popupMenu = new PopupMenu(theme);
-				var printHistoryEditor = new PrintHistoryEditor(theme, printTask, printTasks);
+				var printHistoryEditor = new PrintHistoryEditor(null, theme, printTask, printTasks);
 				var qualityWidget = PrintHistoryEditor.GetQualityWidget(theme,
 					printTask,
 					() =>

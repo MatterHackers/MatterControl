@@ -473,13 +473,13 @@ namespace MatterHackers.MatterControl
 
 			AddUserBoolToggle(optionsPanel,
 				"Shown Print Canceled Message".Localize(),
-				UserSettingsKey.ShownPrintCanceledMessage,
+				UserSettingsKey.ShownPrintCanceledMessage2,
 				false,
 				false);
 
 			AddUserBoolToggle(optionsPanel,
 				"Shown Print Complete Message".Localize(),
-				UserSettingsKey.ShownPrintCompleteMessage,
+				UserSettingsKey.ShownPrintCompleteMessage2,
 				false,
 				false);
 
