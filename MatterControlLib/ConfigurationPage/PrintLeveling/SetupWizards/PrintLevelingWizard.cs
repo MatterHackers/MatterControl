@@ -30,7 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -189,7 +188,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// Require user confirmation after this point
 			this.RequireCancelConfirmation = true;
 
-			// start heating up the now so it has more time to heat
+			// start heating up now so it has more time to heat
 			var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
 				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
 				: 0;
