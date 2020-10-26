@@ -39,6 +39,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
@@ -173,10 +174,14 @@ namespace MatterHackers.MatterControl
 			{
 				SetProcessDpiAwareness((int)DpiAwareness.PerMonitorAware);
 			}
+
+			var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
 			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+			if (string.IsNullOrEmpty(channel)
+				|| channel != "release"
+				|| isExperimental)
 #endif
 			{
 				System.Windows.Forms.Application.ThreadException += (s, e) =>
