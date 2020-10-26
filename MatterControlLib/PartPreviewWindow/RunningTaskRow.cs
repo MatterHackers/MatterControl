@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.taskDetails = taskDetails;
 			this.theme = theme;
 
-			this.MinimumSize = new Vector2(100, 20);
+			this.MinimumSize = new Vector2(100 * GuiWidget.DeviceScale, 20 * GuiWidget.DeviceScale);
 
 			var detailsPanel = new GuiWidget()
 			{

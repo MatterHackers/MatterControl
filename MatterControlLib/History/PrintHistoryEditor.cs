@@ -235,7 +235,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 				printer,
 				"Oops, looks like you canceled the print.",
 				markdownText,
-				UserSettingsKey.ShownPrintCanceledMessage2,
 				printTask,
 				false);
 		}
@@ -257,7 +256,6 @@ Support and tutorials:" + articles;
 				printer,
 				"How did this print come out?",
 				markdownText,
-				UserSettingsKey.ShownPrintCompleteMessage2,
 				printTask,
 				true);
 		}
@@ -272,7 +270,6 @@ Support and tutorials:" + articles;
 				PrinterConfig printer,
 				string topMarkDown,
 				string descriptionMarkdown,
-				string userKey,
 				PrintTask printTask,
 				bool collectQuality)
 				: base("Close".Localize())
@@ -357,7 +354,7 @@ Support and tutorials:" + articles;
 					TextColor = AppContext.Theme.TextColor,
 					Margin = new BorderDouble(top: 6, left: 6),
 					HAnchor = Agg.UI.HAnchor.Left,
-					Checked = UserSettings.Instance.get(userKey) == "false",
+					Checked = UserSettings.Instance.get(UserSettingsKey.CollectPrintHistoryData) == "false",
 				};
 				contentRow.AddChild(hideAfterPrintMessage);
 
@@ -365,11 +362,11 @@ Support and tutorials:" + articles;
 				{
 					if (hideAfterPrintMessage.Checked)
 					{
-						UserSettings.Instance.set(userKey, "false");
+						UserSettings.Instance.set(UserSettingsKey.CollectPrintHistoryData, "false");
 					}
 					else
 					{
-						UserSettings.Instance.set(userKey, "true");
+						UserSettings.Instance.set(UserSettingsKey.CollectPrintHistoryData, "true");
 					}
 				};
 

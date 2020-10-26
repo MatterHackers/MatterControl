@@ -380,14 +380,14 @@ namespace MatterHackers.MatterControl
 				advancedPanel);
 
 			AddUserBoolToggle(advancedPanel,
-				"Utilize High Res Monitors".Localize(),
-				UserSettingsKey.ApplicationUseHeigResDisplays,
+				"Enable Socketeer Client".Localize(),
+				UserSettingsKey.ApplicationUseSocketeer,
 				true,
 				false);
 
 			AddUserBoolToggle(advancedPanel,
-				"Enable Socketeer Client".Localize(),
-				UserSettingsKey.ApplicationUseSocketeer,
+				"Utilize High Res Monitors".Localize(),
+				UserSettingsKey.ApplicationUseHeigResDisplays,
 				true,
 				false);
 
@@ -466,27 +466,21 @@ namespace MatterHackers.MatterControl
 			theme.ApplyBoxStyle(optionsSection);
 
 			AddUserBoolToggle(optionsPanel,
+				"Collect Print History Data".Localize(),
+				UserSettingsKey.CollectPrintHistoryData,
+				false,
+				false);
+
+			AddUserBoolToggle(optionsPanel,
 				"Shown Welcome Message".Localize(),
 				UserSettingsKey.ShownWelcomeMessage,
-				false,
-				false);
-
-			AddUserBoolToggle(optionsPanel,
-				"Shown Print Canceled Message".Localize(),
-				UserSettingsKey.ShownPrintCanceledMessage2,
-				false,
-				false);
-
-			AddUserBoolToggle(optionsPanel,
-				"Shown Print Complete Message".Localize(),
-				UserSettingsKey.ShownPrintCompleteMessage2,
 				false,
 				false);
 
 			optionsPanel.Children<SettingsItem>().First().Border = new BorderDouble(0, 1);
 		}
 
-		private void AddUserBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
+		private void AddUserBoolToggle(FlowLayoutWidget panelToAddTo, string title, string boolKey, bool requiresRestart, bool reloadAll)
 		{
 			this.AddSettingsRow(
 				new SettingsItem(
@@ -515,7 +509,7 @@ namespace MatterHackers.MatterControl
 							}
 						}
 					}),
-				advancedPanel);
+				panelToAddTo);
 		}
 
 		private void AddApplicationBoolToggle(FlowLayoutWidget advancedPanel, string title, string boolKey, bool requiresRestart, bool reloadAll)
