@@ -217,6 +217,7 @@ namespace MatterHackers.MatterControl
 			{
 				return Minimum + (Maximum - Minimum) * SecondPosition0To1;
 			}
+
 			set
 			{
 				double newPosition0To1 = Math.Max(0, Math.Min((value - Minimum) / (Maximum - Minimum), 1));
@@ -227,6 +228,7 @@ namespace MatterHackers.MatterControl
 					{
 						SecondValueChanged(this, null);
 					}
+
 					Invalidate();
 				}
 			}

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -62,23 +63,42 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler LogCleared;
 
-		public List<TerminalLine> PrinterLines { get; } = new List<TerminalLine>();
+		private List<TerminalLine> printerLines = new List<TerminalLine>();
 
-		private void OnLineAdded(TerminalLine terminalLine)
+		public string[] AllLines()
 		{
-			PrinterLines.Add(terminalLine);
-
-			LineAdded?.Invoke(this, terminalLine);
-
-			if (PrinterLines.Count > maxLinesToBuffer)
+			lock (printerLines)
 			{
-				this.Clear();
+				return printerLines.Select(ld => ld.Line).ToArray();
+			}
+		}
+
+		public TerminalLine[] AllTerminalLines()
+		{
+			lock (printerLines)
+			{
+				return printerLines.ToArray();
+			}
+		}
+
+		private void AddLine(TerminalLine terminalLine)
+		{
+			lock (printerLines)
+			{
+				printerLines.Add(terminalLine);
+
+				LineAdded?.Invoke(this, terminalLine);
+
+				if (printerLines.Count > maxLinesToBuffer)
+				{
+					this.Clear();
+				}
 			}
 		}
 
 		private void Printer_LineReceived(object sender, string line)
 		{
-			this.OnLineAdded(
+			this.AddLine(
 				new TerminalLine(
 					line,
 					TerminalLine.MessageDirection.FromPrinter));
@@ -86,7 +106,7 @@ namespace MatterHackers.MatterControl
 
 		private void Printer_LineSent(object sender, string line)
 		{
-			this.OnLineAdded(
+			this.AddLine(
 				new TerminalLine(
 					line,
 					TerminalLine.MessageDirection.ToPrinter));
@@ -98,7 +118,7 @@ namespace MatterHackers.MatterControl
 			{
 				foreach (var segment in line.Replace("\r\n", "\n").Split('\n'))
 				{
-					this.OnLineAdded(
+					this.AddLine(
 						new TerminalLine(
 							segment,
 							TerminalLine.MessageDirection.ToTerminal));
@@ -106,7 +126,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				this.OnLineAdded(
+				this.AddLine(
 					new TerminalLine(
 						line,
 						TerminalLine.MessageDirection.ToTerminal));
@@ -152,9 +172,9 @@ namespace MatterHackers.MatterControl
 
 		public void Clear()
 		{
-			lock (PrinterLines)
+			lock (printerLines)
 			{
-				PrinterLines.Clear();
+				printerLines.Clear();
 			}
 
 			this.LogCleared?.Invoke(this, null);

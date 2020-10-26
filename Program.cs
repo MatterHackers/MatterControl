@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.DataStorage;
@@ -173,10 +174,14 @@ namespace MatterHackers.MatterControl
 			{
 				SetProcessDpiAwareness((int)DpiAwareness.PerMonitorAware);
 			}
+
+			var isExperimental = OemSettings.Instance.WindowTitleExtra == "Experimental";
 #if !DEBUG
 			// Conditionally spin up error reporting if not on the Stable channel
 			string channel = UserSettings.Instance.get(UserSettingsKey.UpdateFeedType);
-			if (string.IsNullOrEmpty(channel) || channel != "release" || OemSettings.Instance.WindowTitleExtra == "Experimental")
+			if (string.IsNullOrEmpty(channel)
+				|| channel != "release"
+				|| isExperimental)
 #endif
 			{
 				System.Windows.Forms.Application.ThreadException += (s, e) =>
@@ -227,6 +232,16 @@ namespace MatterHackers.MatterControl
 			var (width, height) = RootSystemWindow.GetStartupBounds();
 
 			var systemWindow = Application.LoadRootWindow(width, height);
+
+			var theme = ApplicationController.Instance.Theme;
+			SingleWindowProvider.SetWindowTheme(theme.TextColor,
+				theme.DefaultFontSize - 1,
+				theme.InvertIcons,
+				() => theme.CreateSmallResetButton(),
+				theme.ToolbarPadding,
+				theme.TabBarBackground,
+				new Color(theme.PrimaryAccentColor, 175));
+
 			systemWindow.ShowAsSystemWindow();
 		}
 

@@ -163,39 +163,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Perform validation before popup
 				var errors = printer.Validate();
 
-				// Enable print option when no validation Errors exists
-				var printingOrPause = printer.Connection.Printing || printer.Connection.Paused;
-				var printEnabled = !printingOrPause && !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
-
-				var startPrintButton = new TextButton("Start Print".Localize(), menuTheme)
-				{
-					Name = "Start Print Button",
-					Enabled = printEnabled
-				};
-
-				startPrintButton.Click += (s, e) =>
-				{
-					// Exit if the bed is not GCode and the bed has no printable items
-					if (!printer.Bed.EditContext.IsGGCodeSource
-						&& !printer.PrintableItems(printer.Bed.Scene).Any())
-					{
-						return;
-					}
-
-					UiThread.RunOnIdle(async () =>
-					{
-						// Save any pending changes before starting print operation
-						await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
-
-						await ApplicationController.Instance.PrintPart(
-							printer.Bed.EditContext,
-							printer,
-							null,
-							CancellationToken.None);
-					});
-
-					this.CloseMenu();
-				};
+				var startPrintButton = CreateStartPrintButton("Start Print".Localize(), printer, menuTheme, out bool printEnabled);
+				startPrintButton.Click += (s, e) => this.CloseMenu();
 
 				var hasErrors = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Error);
 				var hasWarnings = errors.Any(e => e.ErrorLevel == ValidationErrorLevel.Warning
@@ -312,6 +281,47 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// Register listeners
 			printer.Settings.SettingChanged += Printer_SettingChanged;
+		}
+
+		public static GuiWidget CreateStartPrintButton(string buttonText,
+			PrinterConfig printer,
+			ThemeConfig theme,
+			out bool printEnabled)
+		{
+			// Enable print option when no validation Errors exists
+			var printingOrPause = printer.Connection.Printing || printer.Connection.Paused;
+			var errors = printer.Validate();
+			printEnabled = !printingOrPause && !errors.Any(err => err.ErrorLevel == ValidationErrorLevel.Error);
+
+			var startPrintButton = new TextButton(buttonText, theme)
+			{
+				Name = "Start Print Button",
+				Enabled = printEnabled
+			};
+
+			startPrintButton.Click += (s, e) =>
+			{
+				// Exit if the bed is not GCode and the bed has no printable items
+				if (!printer.Bed.EditContext.IsGGCodeSource
+					&& !printer.PrintableItems(printer.Bed.Scene).Any())
+				{
+					return;
+				}
+
+				UiThread.RunOnIdle(async () =>
+				{
+					// Save any pending changes before starting print operation
+					await ApplicationController.Instance.Tasks.Execute("Saving Changes".Localize(), printer, printer.Bed.SaveChanges);
+
+					await ApplicationController.Instance.PrintPart(
+						printer.Bed.EditContext,
+						printer,
+						null,
+						CancellationToken.None);
+				});
+			};
+
+			return startPrintButton;
 		}
 
 		public override void OnClosed(EventArgs e)

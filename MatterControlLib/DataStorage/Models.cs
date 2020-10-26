@@ -30,11 +30,15 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading;
 using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.DesignTools;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.DataStorage
 {
@@ -332,8 +336,7 @@ namespace MatterHackers.MatterControl.DataStorage
 		[Indexed]
 		public int PrinterId { get; set; }
 
-		[Indexed]
-		public int PrintItemId { get; set; }
+		public string Guid { get; set; }
 
 		public string PrintName { get; set; }
 
@@ -363,6 +366,16 @@ namespace MatterHackers.MatterControl.DataStorage
 
 		public string Note { get; set; }
 
+		public string DeviceToken { get; set; }
+
+		public void CommitAndPushToServer()
+		{
+			// push to the web service if registered
+			ApplicationController.Instance.PushPrintTaskToServer?.Invoke(this);
+			// and do the normal commit
+			Commit();
+		}
+
 		public override void Commit()
 		{
 			if (this.PrintEnd != DateTime.MinValue)
@@ -372,6 +385,35 @@ namespace MatterHackers.MatterControl.DataStorage
 			}
 
 			base.Commit();
+		}
+
+		public string ItemsPrinted()
+		{
+			var mcxFileName = this.PrintName;
+
+			// add in the cache path
+			mcxFileName = Path.Combine(ApplicationDataStorage.Instance.PlatingDirectory, mcxFileName);
+			if (File.Exists(mcxFileName))
+			{
+				var names = JsonConvert.DeserializeObject<McxDocument.McxNode>(File.ReadAllText(mcxFileName)).AllNames();
+				var grouped = names.GroupBy(n => n)
+					.Select(g =>
+					{
+						if (g.Count() > 1)
+						{
+							return g.Key + " (" + g.Count() + ")";
+						}
+						else
+						{
+							return g.Key;
+						}
+					})
+					.OrderBy(n => n);
+				var groupNames = string.Join(", ", grouped);
+				return groupNames;
+			}
+
+			return null;
 		}
 	}
 

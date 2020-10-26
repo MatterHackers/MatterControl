@@ -38,7 +38,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier
+	public class WedgeObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight
 	{
 		public WedgeObject3D()
 		{

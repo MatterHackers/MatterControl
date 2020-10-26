@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 				UserSettings.Instance.set(UserSettingsKey.UpdateFeedType, feedType);
 			}
 
-			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
+			requestValues["ProjectToken"] = VersionInfo.Instance.GetProjectToken();
 			// requestValues["TestCode"] = "100"; // will cause response of update available and not required
 			// requestValues["TestCode"] = "101"; // will cause response of update available and required
 			requestValues[UserSettingsKey.UpdateFeedType] = feedType;

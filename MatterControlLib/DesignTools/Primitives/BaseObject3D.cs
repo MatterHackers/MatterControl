@@ -360,7 +360,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					VertexStorage rawVectorShape = basePolygons.PolygonToPathStorage();
 					var vectorShape = new VertexSourceApplyTransform(rawVectorShape, Affine.NewScaling(1.0 / scalingForClipper));
 
-					var mesh = VertexSourceToMesh.Extrude(vectorShape, zHeight: ExtrusionHeight);
+					var mesh = VertexSourceToMesh.Extrude(vectorShape, zHeightTop: ExtrusionHeight);
 					mesh.Translate(new Vector3(0, 0, -ExtrusionHeight + bottomWithoutBase));
 
 					var baseObject = new Object3D()

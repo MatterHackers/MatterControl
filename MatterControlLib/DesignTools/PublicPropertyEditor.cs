@@ -50,7 +50,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-
 	public class PublicPropertyEditor : IObject3DEditor
 	{
 		public string Name => "Property Editor";
@@ -169,26 +168,31 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private static GuiWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme)
 		{
-			return new SettingsRow(property.DisplayName.Localize(), property.Description.Localize(), field.Content, theme);
+			return new SettingsRow(property.DisplayName.Localize(), property.Description, field.Content, theme);
 		}
 
-		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field)
+		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property, UIField field, bool fullWidth = false)
 		{
-			return CreateSettingsColumn(property.DisplayName.Localize(), field, property.Description.Localize());
+			return CreateSettingsColumn(property.DisplayName.Localize(), field, property.Description, fullWidth: fullWidth);
 		}
 
 		private static FlowLayoutWidget CreateSettingsColumn(EditableProperty property)
 		{
-			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description.Localize());
+			return CreateSettingsColumn(property.DisplayName.Localize(), property.Description);
 		}
 
-		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null)
+		private static FlowLayoutWidget CreateSettingsColumn(string labelText, UIField field, string toolTipText = null, bool fullWidth = false)
 		{
 			var row = new FlowLayoutWidget()
 			{
 				HAnchor = HAnchor.Stretch
 			};
-			row.AddChild(new HorizontalSpacer());
+
+			if (!fullWidth)
+			{
+				row.AddChild(new HorizontalSpacer());
+			}
+
 			row.AddChild(field.Content);
 
 			var column = CreateSettingsColumn(labelText, toolTipText);
@@ -285,7 +289,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
-						property.Description.Localize(),
+						property.Description,
 						valueField,
 						theme);
 
@@ -479,7 +483,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					rowContainer = CreateSettingsColumn(property);
 					if (property.Item is OperationSourceContainerObject3D sourceContainer)
 					{
-						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme));
+						Action selected = null;
+						if (!(context.item.GetType().GetCustomAttributes(typeof(ShowUpdateButtonAttribute), true).FirstOrDefault() is ShowUpdateButtonAttribute showUpdate))
+						{
+							selected = () =>
+							{
+								object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+							};
+						}
+
+						rowContainer.AddChild(CreateSourceChildSelector(childSelector, sourceContainer, theme, selected));
 					}
 					else
 					{
@@ -525,7 +538,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					};
 
 					rowContainer = new SettingsRow(property.DisplayName.Localize(),
-						property.Description.Localize(),
+						property.Description,
 						valueField,
 						theme);
 
@@ -593,19 +606,33 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else // normal edit row
 				{
-					// create a string editor
-					var field = new TextField(theme);
-					field.Initialize(0);
-					field.SetValue(stringValue, false);
-					field.ClearUndoHistory();
-					field.Content.HAnchor = HAnchor.Stretch;
-					RegisterValueChanged(field, (valueString) => valueString);
-					rowContainer = CreateSettingsRow(property, field, theme);
+					var multiLineEditAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault();
 
-					var label = rowContainer.Children.First();
-
-					if (field is TextField)
+					if (multiLineEditAttribute != null)
 					{
+						// create a a multi-line string editor
+						var field = new MultilineStringField(theme);
+						field.Initialize(0);
+						field.SetValue(stringValue, false);
+						field.ClearUndoHistory();
+						field.Content.HAnchor = HAnchor.Stretch;
+						// field.Content.MinimumSize = new Vector2(0, 200 * GuiWidget.DeviceScale);
+						RegisterValueChanged(field, (valueString) => valueString);
+						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+					}
+					else
+					{
+						// create a string editor
+						var field = new TextField(theme);
+						field.Initialize(0);
+						field.SetValue(stringValue, false);
+						field.ClearUndoHistory();
+						field.Content.HAnchor = HAnchor.Stretch;
+						RegisterValueChanged(field, (valueString) => valueString);
+						rowContainer = CreateSettingsRow(property, field, theme);
+
+						var label = rowContainer.Children.First();
+
 						var spacer = rowContainer.Children.OfType<HorizontalSpacer>().FirstOrDefault();
 						spacer.HAnchor = HAnchor.Absolute;
 						spacer.Width = Math.Max(0, 100 - label.Width);
@@ -696,7 +723,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return rowContainer;
 		}
 
-		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme)
+		private static GuiWidget CreateSourceChildSelector(SelectedChildren childSelector, OperationSourceContainerObject3D sourceContainer, ThemeConfig theme, Action selectionChanged)
 		{
 			GuiWidget tabContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -764,6 +791,8 @@ namespace MatterHackers.MatterControl.DesignTools
 								childSelector.Remove(objectChecks[checkbox].ID);
 							}
 						}
+
+						selectionChanged?.Invoke();
 					}
 				};
 

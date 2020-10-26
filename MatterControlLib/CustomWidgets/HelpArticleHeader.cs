@@ -42,7 +42,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public event EventHandler EditClicked;
 
 		public HelpArticleHeader(HelpArticle helpArticle, ThemeConfig theme, bool boldFont = false, int pointSize = -1, string editToolTipText = null)
-			: base(theme)
+			: base(theme.TabbarPadding, theme.CreateSmallResetButton())
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;

@@ -37,7 +37,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier
+	public class RingObject3D : PrimitiveObject3D, IPropertyGridModifier, IObjectWithHeight
 	{
 		public RingObject3D()
 		{
@@ -96,6 +96,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
+				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
 
 				using (new CenterAndHeightMaintainer(this))
 				{

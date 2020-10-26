@@ -50,9 +50,18 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public enum FitType { Box, Cylinder }
+	public enum FitType
+	{
+		Box,
+		Cylinder
+	}
 
-	public enum MaintainRatio { None, X_Y, X_Y_Z }
+	public enum MaintainRatio
+	{
+		None,
+		X_Y,
+		X_Y_Z
+	}
 
 	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_2", true)]
 	public class FitToBoundsObject3D : Object3D, IEditorDraw, IPropertyGridModifier
@@ -61,20 +70,27 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public FitType FitType { get; set; } = FitType.Box;
 
 		public double Width { get; set; }
+
 		public double Depth { get; set; }
+
 		public double Diameter { get; set; }
-		public double Height { get; set; } 
+
+		public double Height { get; set; }
 
 		[Description("Set the rules for how to maintain the part while scaling.")]
 		public MaintainRatio MaintainRatio { get; set; } = MaintainRatio.X_Y;
+
 		[Description("Allows you turn on and off applying the fit to the x axis.")]
 		public bool StretchX { get; set; } = true;
+
 		[Description("Allows you turn on and off applying the fit to the y axis.")]
 		public bool StretchY { get; set; } = true;
+
 		[Description("Allows you turn on and off applying the fit to the z axis.")]
 		public bool StretchZ { get; set; } = true;
 
-		IObject3D ScaleItem => Children.First();
+		private IObject3D ScaleItem => Children.First();
+
 		[JsonIgnore]
 		public IObject3D ItemToScale => Children.First().Children.First();
 
@@ -103,6 +119,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					list.AddRange(ScaleItem.Children);
 				});
 			}
+
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Children));
 		}
 
@@ -150,7 +167,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public static async Task<FitToBoundsObject3D> Create(IObject3D itemToFit)
 		{
-			FitToBoundsObject3D fitToBounds = new FitToBoundsObject3D();
+			var fitToBounds = new FitToBoundsObject3D();
 			var aabb = itemToFit.GetAxisAlignedBoundingBox();
 
 			fitToBounds.Width = aabb.XSize;
@@ -193,10 +210,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				size.X = Width;
 			}
+
 			if (StretchY)
 			{
 				size.Y = Depth;
 			}
+
 			if (StretchZ)
 			{
 				size.Z = Height;
@@ -215,10 +234,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			{
 				scale.X = Width / aabb.XSize;
 			}
+
 			if (StretchY)
 			{
 				scale.Y = Depth / aabb.YSize;
 			}
+
 			if (StretchZ)
 			{
 				scale.Z = Height / aabb.ZSize;
@@ -259,7 +280,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					var minXyz = center - new Vector3(Width / 2, Depth / 2, Height / 2);
 					var maxXyz = center + new Vector3(Width / 2, Depth / 2, Height / 2);
 					var bounds = new AxisAlignedBoundingBox(minXyz, maxXyz);
-					//var leftW = Vector3Ex.Transform(, worldMatrix);
+					// var leftW = Vector3Ex.Transform(, worldMatrix);
 					var right = Vector3Ex.Transform(center + new Vector3(Width / 2, 0, 0), worldMatrix);
 					// layer.World.Render3DLine(left, right, Agg.Color.Red);
 					layer.World.RenderAabb(bounds, worldMatrix, Agg.Color.Red, 1, 1);

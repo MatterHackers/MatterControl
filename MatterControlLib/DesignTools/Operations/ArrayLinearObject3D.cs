@@ -38,10 +38,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public abstract class ArrayObject3D : OperationSourceContainerObject3D
-	{
-		public abstract int Count { get; set; }
-	}
 
 	public class ArrayLinearObject3D : ArrayObject3D
 	{
@@ -70,28 +66,25 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				{
 					this.DebugDepth("Rebuild");
 
-					using (new CenterAndHeightMaintainer(this))
+					var newChildren = new List<IObject3D>();
+
+					newChildren.Add(SourceContainer);
+
+					var arrayItem = SourceContainer.Children.First();
+
+					// add in all the array items
+					for (int i = 0; i < Math.Max(Count, 1); i++)
 					{
-						var newChildren = new List<IObject3D>();
-
-						newChildren.Add(SourceContainer);
-
-						var arrayItem = SourceContainer.Children.First();
-
-						// add in all the array items
-						for (int i = 0; i < Math.Max(Count, 1); i++)
-						{
-							var next = arrayItem.Clone();
-							next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
-							newChildren.Add(next);
-						}
-
-						Children.Modify(list =>
-						{
-							list.Clear();
-							list.AddRange(newChildren);
-						});
+						var next = arrayItem.Clone();
+						next.Matrix = arrayItem.Matrix * Matrix4X4.CreateTranslation(Direction.Normal.GetNormal() * Distance * i);
+						newChildren.Add(next);
 					}
+
+					Children.Modify(list =>
+					{
+						list.Clear();
+						list.AddRange(newChildren);
+					});
 
 					SourceContainer.Visible = false;
 					rebuildLock.Dispose();

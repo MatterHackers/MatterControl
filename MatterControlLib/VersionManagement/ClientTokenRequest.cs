@@ -27,13 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Localizations;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Threading.Tasks;
-
 namespace MatterHackers.MatterControl.VersionManagement
 {
 	public class ClientTokenRequest : WebRequestBase
@@ -41,7 +34,7 @@ namespace MatterHackers.MatterControl.VersionManagement
 		public ClientTokenRequest()
 		{
 			requestValues["RequestToken"] = "ekshdsd5d5ssss5kels";
-			requestValues["ProjectToken"] = VersionInfo.Instance.ProjectToken;
+			requestValues["ProjectToken"] = VersionInfo.Instance.GetProjectToken();
 			uri = $"{MatterControlApplication.MCWSBaseUri}/api/1/get-client-consumer-token";
 		}
 

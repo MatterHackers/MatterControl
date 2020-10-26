@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw
+	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -62,6 +62,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public ExpandStyles Style { get; set; } = ExpandStyles.Sharp;
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -90,6 +95,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				InsetPath();
+				// set the mesh to show the path
+				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
@@ -127,7 +134,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			ImageToPathObject3D.DrawPath(this);
+			this.DrawPath();
 		}
 	}
 }

@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 							else // the recovery has been canceled
 							{
 								lastPrint.PrintingGCodeFileName = null;
-								lastPrint.Commit();
+								lastPrint.CommitAndPushToServer();
 							}
 						},
 						"It appears your last print failed to complete.\n\nWould your like to attempt to recover from the last know position?".Localize()

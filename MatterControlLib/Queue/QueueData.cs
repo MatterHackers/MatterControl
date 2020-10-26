@@ -65,9 +65,11 @@ namespace MatterHackers.MatterControl.PrintQueue
 		}
 
 		public RootedObjectEventHandler ItemAdded = new RootedObjectEventHandler();
+
 		public RootedObjectEventHandler ItemRemoved = new RootedObjectEventHandler();
 
 		private static QueueData instance;
+
 		public static QueueData Instance
 		{
 			get
@@ -140,6 +142,7 @@ namespace MatterHackers.MatterControl.PrintQueue
 					listToReturn.Add(printItem);
 				}
 			}
+
 			return listToReturn;
 		}
 

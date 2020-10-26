@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,34 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.Agg.VertexSource;
+using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
+using MatterHackers.MatterControl.DesignTools;
 
-namespace MatterHackers.MatterControl.DesignTools
+namespace MatterHackers.MatterControl.Library
 {
-	public class HalfWedgeObject3D : PrimitiveObject3D, IObjectWithHeight
+	public class OpenScadScriptObject3D : Object3D
 	{
-		public HalfWedgeObject3D()
+		[MultiLineEditAttribute]
+		public string NameToWrite { get; set; } = "cube([20, 20, 20]);";
+
+		public OpenScadScriptObject3D()
 		{
-			Name = "Half Wedge".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["HalfWedge"];
+			Name = "SCAD Script".Localize();
 		}
 
-		public override string ThumbnailName => "Half Wedge";
-	
-		public static async Task<HalfWedgeObject3D> Create()
+		public static async Task<IObject3D> Create()
 		{
-			var item = new HalfWedgeObject3D();
-
+			var item = new OpenScadScriptObject3D();
 			await item.Rebuild();
 			return item;
 		}
-
-		public double Width { get; set; } = 20;
-		public double Depth { get; set; } = 20;
-		public double Height { get; set; } = 10;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -73,19 +72,25 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
 			using (RebuildLock())
 			{
-				using (new CenterAndHeightMaintainer(this))
+				if (Mesh == null)
 				{
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(Width, 0);
-					path.LineTo(Width / 2, Height);
-
-					var mesh = VertexSourceToMesh.Extrude(path, Depth);
-					mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-					Mesh = mesh;
+					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
+					{
+						using (new CenterAndHeightMaintainer(this))
+						{
+							this.Mesh = Object3D.Load(meshStream, ".stl", CancellationToken.None).Mesh;
+						}
+					}
 				}
+			}
+
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));

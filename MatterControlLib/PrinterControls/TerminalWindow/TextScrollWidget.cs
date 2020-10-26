@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl
 	{
 		private object locker = new object();
 
-		private List<TerminalLine> allSourceLines;
+		private TerminalLog terminalLog;
 		private List<string> visibleLines;
 
 		private TypeFacePrinter typeFacePrinter = null;
@@ -51,13 +51,13 @@ namespace MatterHackers.MatterControl
 
 		private Func<TerminalLine, string> _lineFilterFunction;
 
-		public TextScrollWidget(PrinterConfig printer, List<TerminalLine> sourceLines)
+		public TextScrollWidget(PrinterConfig printer, TerminalLog terminalLog)
 		{
 			this.printer = printer;
 			this.typeFacePrinter = new TypeFacePrinter("", new StyledTypeFace(ApplicationController.GetTypeFace(NamedTypeFace.Liberation_Mono), 12));
 			this.typeFacePrinter.DrawFromHintedCache = true;
-			this.allSourceLines = sourceLines;
-			this.visibleLines = sourceLines.Select(ld => ld.Line).ToList();
+			this.terminalLog = terminalLog;
+			this.visibleLines = terminalLog.AllLines().ToList();
 
 			// Register listeners
 			printer.Connection.TerminalLog.LineAdded += this.TerminalLog_LineAdded;
@@ -109,7 +109,7 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		private void ConditionalyAddToVisible(TerminalLine terminalLine)
+		private bool ConditionalyAddToVisible(TerminalLine terminalLine)
 		{
 			var line = terminalLine.Line;
 
@@ -121,13 +121,15 @@ namespace MatterHackers.MatterControl
 			if (!string.IsNullOrEmpty(line))
 			{
 				visibleLines.Add(line);
+				return true;
 			}
+
+			return false;
 		}
 
 		private void TerminalLog_LineAdded(object sender, TerminalLine terminalLine)
 		{
-			this.ConditionalyAddToVisible(terminalLine);
-			if (this.ActuallyVisibleOnScreen())
+			if (this.ConditionalyAddToVisible(terminalLine))
 			{
 				this.Invalidate();
 			}
@@ -140,22 +142,15 @@ namespace MatterHackers.MatterControl
 
 		public void RebuildFilteredList()
 		{
-			lock (locker)
+			foreach (var lineData in terminalLog.AllTerminalLines())
 			{
-				visibleLines = new List<string>();
-				var allSourceLinesTemp = allSourceLines.ToArray();
-				foreach (var lineData in allSourceLinesTemp)
-				{
-					ConditionalyAddToVisible(lineData);
-				}
+				ConditionalyAddToVisible(lineData);
 			}
 		}
 
 		public void WriteToFile(string filePath)
 		{
-			// Make a copy so we don't have it change while writing.
-			string[] allSourceLinesTemp = allSourceLines.Select(ld => ld.Line).ToArray();
-			System.IO.File.WriteAllLines(filePath, allSourceLinesTemp);
+			System.IO.File.WriteAllLines(filePath, terminalLog.AllLines());
 		}
 
 		public override void OnClosed(EventArgs e)

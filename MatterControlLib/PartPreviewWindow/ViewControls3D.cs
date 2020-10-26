@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(CreateAddButton(sceneContext, theme));
 
-			this.AddChild(new ToolbarSeparator(theme));
+			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 			bedMenuButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
@@ -149,13 +149,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(bedMenuButton);
 
-			this.AddChild(new ToolbarSeparator(theme));
+			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 			this.AddChild(CreateOpenButton(theme));
 
 			this.AddChild(CreateSaveButton(theme));
 
-			this.AddChild(new ToolbarSeparator(theme));
+			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 			undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
@@ -201,7 +201,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(printButton);
 			}
 
-			this.AddChild(new ToolbarSeparator(theme));
+			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 			undoButton.Enabled = undoBuffer.UndoCount > 0;
 			redoButton.Enabled = undoBuffer.RedoCount > 0;
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				rotateButton.Checked = true;
 
 				// Add vertical separator
-				this.AddChild(new ToolbarSeparator(theme));
+				this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
 				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (namedAction is SceneSelectionSeparator)
 				{
-					this.AddChild(new ToolbarSeparator(theme));
+					this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 					continue;
 				}
 
@@ -276,7 +276,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					&& group.Id == "Transform")
 				{
 					this.AddChild(CreateSupportButton(theme));
-					this.AddChild(new ToolbarSeparator(theme));
+					this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 				}
 
 				GuiWidget button = null;
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						if (!(this.ActionArea.Children.LastOrDefault() is ToolbarSeparator))
 						{
-							this.AddChild(new ToolbarSeparator(theme));
+							this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 						}
 
 						foreach (var operation in operationGroup.Operations)
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							this.AddChild(operationButton);
 						}
 
-						this.AddChild(new ToolbarSeparator(theme));
+						this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 					}
 				}
 				else if (namedAction.Icon != null)

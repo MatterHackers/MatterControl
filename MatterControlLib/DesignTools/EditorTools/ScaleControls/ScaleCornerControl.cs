@@ -34,6 +34,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -202,7 +203,7 @@ namespace MatterHackers.Plugins.EditorTools
 						else
 						{
 							// render on top of everything very lightly
-							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, 20), false, GuiWidget.DeviceScale);
+							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, Constants.LineAlpha), false, GuiWidget.DeviceScale);
 						}
 					}
 

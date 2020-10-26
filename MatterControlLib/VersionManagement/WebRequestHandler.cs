@@ -261,9 +261,14 @@ namespace MatterHackers.MatterControl.VersionManagement
 
 		public event EventHandler RequestSucceeded;
 
-		public static void Request(string requestUrl, string[] requestStringPairs)
+		public static void Request(string requestUrl, string[] requestStringPairs, Action requestSucceeded = null)
 		{
 			WebRequestBase tempRequest = new WebRequestBase();
+
+			if (requestSucceeded != null)
+			{
+				tempRequest.RequestSucceeded += (s, e) => requestSucceeded();
+			}
 
 			tempRequest.uri = requestUrl;
 			for (int i = 0; i < requestStringPairs.Length; i += 2)

@@ -43,7 +43,7 @@ using Polygons = System.Collections.Generic.List<System.Collections.Generic.List
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw
+	public class SmoothPathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -55,6 +55,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public double SmoothDistance { get; set; } = .3;
 
 		public int Iterations { get; set; } = 3;
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{
@@ -88,6 +93,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				(reporter, cancellationToken) =>
 				{
 					DoSmoothing((long)(SmoothDistance * 1000), Iterations);
+
+					// set the mesh to show the path
+					this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 
 					rebuildLock.Dispose();
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Path));
@@ -162,7 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			ImageToPathObject3D.DrawPath(this);
+			this.DrawPath();
 		}
 	}
 }

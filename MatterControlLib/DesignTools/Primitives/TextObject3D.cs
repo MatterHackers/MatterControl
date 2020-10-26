@@ -46,7 +46,7 @@ using Newtonsoft.Json.Converters;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[HideChildrenFromTreeView]
-	public class TextObject3D : Object3D, IStaticThumbnail
+	public class TextObject3D : Object3D, IStaticThumbnail, IObjectWithHeight
 	{
 		public TextObject3D()
 		{

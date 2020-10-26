@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				.ClickByName("Stop Task Button")
 				.WaitForName("Ok Button", 10); // Wait for and dismiss the new PrintCompleted dialog
 
-			testRunner.ClickByName("Ok Button");
+			testRunner.ClickByName("Cancel Wizard Button");
 
 			return testRunner;
 		}
@@ -739,7 +739,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			testRunner.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.FinishedPrint, maxSeconds);
 			// click the ok button on the print complete dialog
-			testRunner.ClickByName("Ok Button");
+			testRunner.ClickByName("Cancel Wizard Button");
 
 			return testRunner;
 		}

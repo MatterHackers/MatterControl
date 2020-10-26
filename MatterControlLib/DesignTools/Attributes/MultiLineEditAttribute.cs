@@ -27,69 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Threading.Tasks;
-using MatterHackers.Agg.VertexSource;
-using MatterHackers.DataConverters3D;
-using MatterHackers.Localizations;
-using MatterHackers.VectorMath;
+using System;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfWedgeObject3D : PrimitiveObject3D, IObjectWithHeight
+
+	[AttributeUsage(AttributeTargets.Property)]
+	public class MultiLineEditAttribute : Attribute
 	{
-		public HalfWedgeObject3D()
-		{
-			Name = "Half Wedge".Localize();
-			Color = Operations.Object3DExtensions.PrimitiveColors["HalfWedge"];
-		}
-
-		public override string ThumbnailName => "Half Wedge";
-	
-		public static async Task<HalfWedgeObject3D> Create()
-		{
-			var item = new HalfWedgeObject3D();
-
-			await item.Rebuild();
-			return item;
-		}
-
-		public double Width { get; set; } = 20;
-		public double Depth { get; set; } = 20;
-		public double Height { get; set; } = 10;
-
-		public override async void OnInvalidate(InvalidateArgs invalidateType)
-		{
-			if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
-				&& invalidateType.Source == this)
-			{
-				await Rebuild();
-			}
-			else
-			{
-				base.OnInvalidate(invalidateType);
-			}
-		}
-
-		public override Task Rebuild()
-		{
-			this.DebugDepth("Rebuild");
-			using (RebuildLock())
-			{
-				using (new CenterAndHeightMaintainer(this))
-				{
-					var path = new VertexStorage();
-					path.MoveTo(0, 0);
-					path.LineTo(Width, 0);
-					path.LineTo(Width / 2, Height);
-
-					var mesh = VertexSourceToMesh.Extrude(path, Depth);
-					mesh.Transform(Matrix4X4.CreateRotationX(MathHelper.Tau / 4));
-					Mesh = mesh;
-				}
-			}
-
-			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
-			return Task.CompletedTask;
-		}
 	}
 }

@@ -43,8 +43,7 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-
-	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw
+	public class OutlinePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 
@@ -85,6 +84,11 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.Standard2D);
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -99,6 +103,8 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			using (RebuildLock())
 			{
 				InsetPath();
+				// set the mesh to show the path
+				this.Mesh = this.VertexSource.Extrude(Constants.PathPolygonsHeight);
 			}
 
 			if (valuesChanged)
@@ -120,9 +126,9 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 				return;
 			}
 
-			List<List<IntPoint>> aPolys = path.VertexSource.CreatePolygons();
+			var aPolys = path.VertexSource.CreatePolygons();
 
-			ClipperOffset offseter = new ClipperOffset();
+			var offseter = new ClipperOffset();
 
 			offseter.AddPaths(aPolys, InflatePathObject3D.GetJoinType(OuterStyle), EndType.etClosedPolygon);
 			var outerLoops = new List<List<IntPoint>>();
@@ -144,7 +150,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			ImageToPathObject3D.DrawPath(this);
+			this.DrawPath();
 		}
 	}
 }

@@ -27,62 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg.UI;
-using MatterHackers.MatterControl.CustomWidgets;
-
-namespace MatterHackers.MatterControl.PartPreviewWindow
+namespace MatterHackers.MatterControl.DesignTools
 {
-	/// <summary>
-	/// A toolbar with an optional right anchored element and an ActionBar child to add actions to the bar
-	/// </summary>
-	public class Toolbar : GuiWidget
+	public static class Constants
 	{
-		public Toolbar(ThemeConfig theme, GuiWidget rightAnchorItem = null)
-		{
-			this.Padding = theme.ToolbarPadding;
+		/// <summary>
+		/// Gets the height of the geometry that shows the shape of a path object (it cannot be used in mesh operations).
+		/// </summary>
+		public static double PathPolygonsHeight => .2;
 
-			this.ActionArea = new FlowLayoutWidget()
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Fit | VAnchor.Center
-			};
-
-			base.AddChild(this.ActionArea, 0);
-			this.SetRightAnchorItem(rightAnchorItem);
-		}
-
-		public FlowLayoutWidget ActionArea { get; }
-
-		public GuiWidget RightAnchorItem { get; private set; }
-
-		public void SetRightAnchorItem(GuiWidget rightAnchorItem)
-		{
-			if (rightAnchorItem != null)
-			{
-				rightAnchorItem.HAnchor |= HAnchor.Right;
-				base.AddChild(rightAnchorItem);
-			}
-
-			this.RightAnchorItem = rightAnchorItem;
-		}
-
-		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
-		{
-			return ActionArea.AddChild(childToAdd, indexInChildrenList);
-		}
-
-		public void AddChildDirect(GuiWidget guiWidget)
-		{
-			base.AddChild(guiWidget);
-		}
-	}
-
-	public class ToolbarSeparator : VerticalLine
-	{
-		public ToolbarSeparator(ThemeConfig theme)
-			: base(ApplicationController.Instance.Theme.GetBorderColor(50))
-		{
-			Margin = theme.SeparatorMargin;
-		}
+		/// <summary>
+		/// Gets the alpha of the non z-buffered lines in the editor
+		/// </summary>
+		public static int LineAlpha => 30;
 	}
 }

@@ -174,7 +174,7 @@ namespace MatterHackers.MatterControl
 					{
 						DialogWindow.Show(
 							new SaveAsPage(
-								async (newName, destinationContainer) =>
+								(newName, destinationContainer) =>
 								{
 									// Save to the destination provider
 									if (destinationContainer is ILibraryWritableContainer writableContainer)
@@ -371,6 +371,8 @@ namespace MatterHackers.MatterControl
 		public Func<string, bool> UserHasPermissionToId { get; set; }
 
 		public Func<IObject3D, ThemeConfig, (string url, GuiWidget markdownWidget)> GetUnlockData { get; set; }
+
+		public Func<PrintTask, Task<Dictionary<string, string>>> PushPrintTaskToServer { get; set; }
 
 		private static ApplicationController globalInstance;
 
@@ -818,7 +820,10 @@ namespace MatterHackers.MatterControl
 					() => "History".Localize(),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
 					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
-					() => new RootHistoryContainer()));
+					() => new RootHistoryContainer())
+				{
+					IsReadOnly = true
+				});
 
 			// Create a new library context for the SaveAs view
 			this.LibraryTabContext = new LibraryConfig()
@@ -1210,6 +1215,15 @@ namespace MatterHackers.MatterControl
 #endif
 
 				this.IsReloading = true;
+
+				var theme = ApplicationController.Instance.Theme;
+				SingleWindowProvider.SetWindowTheme(theme.TextColor,
+					theme.DefaultFontSize - 1,
+					theme.InvertIcons,
+					() => theme.CreateSmallResetButton(),
+					theme.ToolbarPadding,
+					theme.TabBarBackground,
+					new Color(theme.PrimaryAccentColor, 175));
 
 				reloadingOverlay = new GuiWidget
 				{
@@ -2225,7 +2239,7 @@ namespace MatterHackers.MatterControl
 				&& !printerConnection.CalibrationPrint)
 			{
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
+				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
 				printHistoryEditor.CollectInfoPrintFinished();
 			}
 
@@ -2238,7 +2252,7 @@ namespace MatterHackers.MatterControl
 				&& !printerConnection.CalibrationPrint)
 			{
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
-				var printHistoryEditor = new PrintHistoryEditor(AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
+				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.CanceledPrintTask, printTasks);
 				printHistoryEditor.CollectInfoPrintCanceled();
 			}
 

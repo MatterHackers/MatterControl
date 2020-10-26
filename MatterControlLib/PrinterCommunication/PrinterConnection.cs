@@ -576,7 +576,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 										ActivePrintTask.PrintEnd = DateTime.Now;
 										ActivePrintTask.PercentDone = 100;
 										ActivePrintTask.PrintComplete = true;
-										ActivePrintTask.Commit();
+										ActivePrintTask.CommitAndPushToServer();
 									}
 
 									LastPrintedItemName = PrintingItemName;
@@ -2143,14 +2143,15 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									PrinterId = this.Printer.Settings.ID.GetHashCode(),
 									PrintName = activePrintItem.PrintItem.Name,
 									PrinterName = this.Printer.Settings.GetValue(SettingsKey.printer_name),
-									PrintItemId = activePrintItem.PrintItem.Id,
+									Guid = Guid.NewGuid().ToString(),
 									PrintingGCodeFileName = gcodeFileNameForTask,
 									PrintComplete = false,
 									QualitySettingsName = this.Printer.Settings.QualityLayer?.Name,
 									MaterialSettingsName = this.Printer.Settings.MaterialLayer?.Name,
+									DeviceToken = this.Printer.Settings.GetValue(SettingsKey.device_token),
 								};
 
-								ActivePrintTask.Commit();
+								ActivePrintTask.CommitAndPushToServer();
 
 								Task.Run(() => this.SyncProgressToDB(printingCancellation.Token));
 
@@ -2270,10 +2271,11 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 					ActivePrintTask.PrintComplete = false;
 					ActivePrintTask.PrintingGCodeFileName = "";
 					ActivePrintTask.PrintCanceled = true;
-					ActivePrintTask.Commit();
+					ActivePrintTask.CommitAndPushToServer();
 				}
 
 				// no matter what we no longer have a print task
+				CanceledPrintTask = ActivePrintTask;
 				ActivePrintTask = null;
 			}
 		}
@@ -2368,7 +2370,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, ActivePrintTask.PercentDone), Printer);
 					// And increment the recovery count
 					ActivePrintTask.RecoveryCount++;
-					ActivePrintTask.Commit();
+					ActivePrintTask.CommitAndPushToServer();
 				}
 				else
 				{
@@ -2403,7 +2405,12 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 			if (!LevelingValidation.NeedsToBeRun(Printer))
 			{
-				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
+				printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
+				if (Printer.Settings.Helpers.UseZProbe()
+					&& Printer.Settings.GetValue(SettingsKey.start_gcode).Contains(ValidatePrintLevelingStream.BeginString))
+				{
+					accumulatedStream = new ValidatePrintLevelingStream(Printer, printLevelingStream);
+				}
 			}
 
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);
@@ -2781,6 +2788,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 			}
 		}
+
+		public PrintTask CanceledPrintTask { get; private set; }
 
 		public PrintTask ActivePrintTask { get; set; }
 

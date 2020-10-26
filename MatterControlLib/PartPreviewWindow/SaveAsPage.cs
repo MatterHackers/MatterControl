@@ -65,7 +65,10 @@ namespace MatterHackers.MatterControl
 			};
 			itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
-				acceptButton.InvokeClick();
+				if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer)
+				{
+					acceptButton.InvokeClick();
+				}
 			};
 			contentRow.AddChild(itemNameWidget);
 
@@ -76,23 +79,68 @@ namespace MatterHackers.MatterControl
 				isEnabled = writableContainer?.AllowAction(ContainerActions.AddContainers) == true;
 			}
 
+			var folderButtonRow = new FlowLayoutWidget()
+			{
+				HAnchor = HAnchor.Left | HAnchor.Fit,
+			};
+			contentRow.AddChild(folderButtonRow);
+
+			// add a create folder button
 			var createFolderButton = new TextIconButton("Create Folder".Localize(), icon, theme)
 			{
 				Enabled = isEnabled,
-				HAnchor = HAnchor.Left,
 				VAnchor = VAnchor.Absolute,
 				DrawIconOverlayOnDisabled = true
 			};
+			createFolderButton.Name = "Create Folder In Button";
+			folderButtonRow.AddChild(createFolderButton);
+
+			var refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons), theme)
+			{
+				ToolTipText = "Refresh Folder".Localize(),
+				Enabled = isEnabled,
+			};
+			refreshButton.Click += (s, e) =>
+			{
+				librarySelectorWidget.ActiveContainer.Load();
+			};
+
+			// folderButtonRow.AddChild(refreshButton);
+
+			createFolderButton.Click += CreateFolder_Click;
+
+			// add a message to navigate to a writable folder
+			var writableMessage = new TextWidget("Please select a writable folder".Localize(), pointSize: theme.DefaultFontSize)
+			{
+				TextColor = theme.TextColor,
+				Margin = new BorderDouble(5, 0),
+				VAnchor = VAnchor.Center
+			};
+			footerRow.AddChild(writableMessage, 0);
+
+			footerRow.AddChild(new HorizontalSpacer(), 1);
+
+			// change footer in this context
+			footerRow.HAnchor = HAnchor.Stretch;
+			footerRow.Margin = 0;
 
 			libraryNavContext.ContainerChanged += (s, e) =>
 			{
-				createFolderButton.Enabled = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
+				var writable = libraryNavContext.ActiveContainer is ILibraryWritableContainer;
+				createFolderButton.Enabled = writable;
+				refreshButton.Enabled = writable;
+				writableMessage.Visible = !writable;
 			};
+		}
 
-			createFolderButton.Name = "Create Folder In Button";
-			contentRow.AddChild(createFolderButton);
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (keyEvent.KeyCode == Keys.F5)
+			{
+				librarySelectorWidget.ActiveContainer.Load();
+			}
 
-			createFolderButton.Click += CreateFolder_Click;
+			base.OnKeyDown(keyEvent);
 		}
 
 		private void CreateFolder_Click(object sender, MouseEventArgs e)
@@ -108,7 +156,6 @@ namespace MatterHackers.MatterControl
 					{
 						if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
 						{
-
 							if (!string.IsNullOrEmpty(newName)
 								&& writableContainer != null)
 							{

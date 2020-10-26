@@ -55,13 +55,19 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public double OuterDiameter { get; set; } = 20;
+
 		public double InnerDiameter { get; set; } = 10;
+
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
+
 		public double StartingAngle { get; set; } = 0;
+
 		public double EndingAngle { get; set; } = 360;
+
 		public int RingSides { get; set; } = 15;
+
 		public int RingPhaseAngle { get; set; } = 0;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -86,6 +92,9 @@ namespace MatterHackers.MatterControl.DesignTools
 				InnerDiameter = agg_basics.Clamp(InnerDiameter, 0, OuterDiameter - .1, ref valuesChanged);
 				Sides = agg_basics.Clamp(Sides, 3, 360, ref valuesChanged);
 				RingSides = agg_basics.Clamp(RingSides, 3, 360, ref valuesChanged);
+
+				StartingAngle = agg_basics.Clamp(StartingAngle, 0, 360 - .01, ref valuesChanged);
+				EndingAngle = agg_basics.Clamp(EndingAngle, StartingAngle + .01, 360, ref valuesChanged);
 
 				var ringSides = RingSides;
 				var startingAngle = StartingAngle;

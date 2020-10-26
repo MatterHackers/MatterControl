@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl
 				{
 					var scene = sceneContext.Scene;
 					var sceneItem = scene.SelectedItem;
-					if (sceneItem is IPathObject imageObject)
+					if (sceneItem is IPathObject pathObject)
 					{
 						var extrude = new LinearExtrudeObject3D();
 
@@ -427,6 +427,40 @@ namespace MatterHackers.MatterControl
 					}
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("linear_extrude.png", 16, 16, invertIcon).SetPreMultiply(),
+				HelpTextResolver = () => "*A path must be selected*".Localize(),
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
+			};
+		}
+
+		public static SceneOperation RevolveOperation()
+		{
+			return new SceneOperation("Revolve")
+			{
+				OperationType = typeof(IPathObject),
+				TitleResolver = () => "Revolve".Localize(),
+				ResultType = typeof(RevolveObject3D),
+				Action = (sceneContext) =>
+				{
+					var scene = sceneContext.Scene;
+					var sceneItem = scene.SelectedItem;
+					if (sceneItem is IPathObject pathObject)
+					{
+						var revolve = new RevolveObject3D();
+
+						var itemClone = sceneItem.Clone();
+						revolve.Children.Add(itemClone);
+						revolve.Matrix = itemClone.Matrix;
+						itemClone.Matrix = Matrix4X4.Identity;
+
+						using (new SelectionMaintainer(scene))
+						{
+							scene.UndoBuffer.AddAndDo(new ReplaceCommand(new[] { sceneItem }, new[] { revolve }));
+						}
+
+						revolve.Invalidate(InvalidateType.Properties);
+					}
+				},
+				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("revolve.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
 				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem is IPathObject,
 			};
@@ -670,11 +704,28 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private static bool BooleanCandidate(IObject3D selectedItem)
+		private static bool BooleanCandidate(IObject3D selectedItem, bool includePaths = true)
 		{
-			return selectedItem != null
-				&& selectedItem.VisibleMeshes().Count() > 1
-				&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i));
+			if (selectedItem != null)
+			{
+				// mesh items
+				if (selectedItem.VisibleMeshes().Count() > 1
+					&& selectedItem.VisibleMeshes().All(i => IsMeshObject(i)))
+				{
+					return true;
+				}
+
+				includePaths = false;
+				// path items
+				if (includePaths
+					&& selectedItem.VisiblePaths().Count() > 1
+					&& selectedItem.VisiblePaths().All(i => IsPathObject(i)))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private static void Build()
@@ -745,10 +796,19 @@ namespace MatterHackers.MatterControl
 					{
 						ImageConverterOperation(),
 						ImageToPathOperation(),
+					}
+				},
+				new OperationGroup("Path")
+				{
+					Collapse = true,
+					TitleResolver = () => "Path".Localize(),
+					Operations = new List<SceneOperation>()
+					{
+						LinearExtrudeOperation(),
+						RevolveOperation(),
+						SmoothPathOperation(),
 						InflatePathOperation(),
 						OutlinePathOperation(),
-						SmoothPathOperation(),
-						LinearExtrudeOperation(),
 					}
 				},
 				new OperationGroup("Merge")
@@ -792,8 +852,8 @@ namespace MatterHackers.MatterControl
 					TitleResolver = () => "Printing".Localize(),
 					Operations = new List<SceneOperation>()
 					{
-						ToggleWipeTowerOperation(),
 						ToggleSupportOperation(),
+						ToggleWipeTowerOperation(),
 					}
 				},
 				new OperationGroup("Design Apps")
@@ -819,19 +879,34 @@ namespace MatterHackers.MatterControl
 				RegisterIconsAndIdsRecursive(operation);
 			}
 
-			// TODO: Use custom selection group icon if reusing group icon seems incorrect
-			//
 			// Explicitly register SelectionGroup icon
 			if (Icons.TryGetValue(typeof(GroupObject3D), out Func<bool, ImageBuffer> groupIconSource))
 			{
 				Icons.Add(typeof(SelectionGroupObject3D), groupIconSource);
 			}
 
+			// image operations
 			PrimaryOperations.Add(typeof(ImageObject3D), new List<SceneOperation> { SceneOperations.ById("ImageConverter"), SceneOperations.ById("ImageToPath"), });
-			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("SmoothPath"), SceneOperations.ById("InflatePath") });
-			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude"), SceneOperations.ById("InflatePath") });
-			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
-			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation> { SceneOperations.ById("LinearExtrude") });
+
+			// path operations
+			PrimaryOperations.Add(typeof(ImageToPathObject3D), new List<SceneOperation>
+			{
+				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("SmoothPath")
+			});
+			PrimaryOperations.Add(typeof(SmoothPathObject3D), new List<SceneOperation>
+			{
+				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath"), SceneOperations.ById("OutlinePath")
+			});
+			PrimaryOperations.Add(typeof(InflatePathObject3D), new List<SceneOperation>
+			{
+				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("OutlinePath")
+			});
+			PrimaryOperations.Add(typeof(OutlinePathObject3D), new List<SceneOperation>
+			{
+				SceneOperations.ById("LinearExtrude"), SceneOperations.ById("Revolve"), SceneOperations.ById("InflatePath")
+			});
+
+			// default operations
 			PrimaryOperations.Add(typeof(Object3D), new List<SceneOperation> { SceneOperations.ById("Scale") });
 
 			Icons.Add(typeof(ImageObject3D), (invertIcon) => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16, invertIcon).SetPreMultiply());
@@ -845,7 +920,17 @@ namespace MatterHackers.MatterControl
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(CombineObject3D_2),
 				TitleResolver = () => "Combine".Localize(),
-				Action = (sceneContext) => new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+				Action = (sceneContext) =>
+				{
+					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
+					{
+						new MergePathObject3D("Combine".Localize(), true).WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+					else
+					{
+						new CombineObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("combine.png", 16, 16, !invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
@@ -1037,7 +1122,17 @@ namespace MatterHackers.MatterControl
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(IntersectionObject3D_2),
 				TitleResolver = () => "Intersect".Localize(),
-				Action = (sceneContext) => new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+				Action = (sceneContext) =>
+				{
+					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
+					{
+						new MergePathObject3D("Intersect".Localize(), false).WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+					else
+					{
+						new IntersectionObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("intersect.png", 16, 16),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
@@ -1049,6 +1144,13 @@ namespace MatterHackers.MatterControl
 			return item != null
 				&& !(item is ImageObject3D)
 				&& !(item is IPathObject);
+		}
+
+		private static bool IsPathObject(IObject3D item)
+		{
+			return item != null
+				&& !(item is ImageObject3D)
+				&& (item is IPathObject);
 		}
 
 		private static SceneOperation LayFlatOperation()
@@ -1236,7 +1338,7 @@ namespace MatterHackers.MatterControl
 				Action = (sceneContext) => new SubtractAndReplaceObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract_and_replace.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
-				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
+				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem, false),
 			};
 		}
 
@@ -1247,7 +1349,17 @@ namespace MatterHackers.MatterControl
 				OperationType = typeof(IObject3D),
 				ResultType = typeof(SubtractObject3D_2),
 				TitleResolver = () => "Subtract".Localize(),
-				Action = (sceneContext) => new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene),
+				Action = (sceneContext) =>
+				{
+					if (sceneContext.Scene.SelectedItem.VisiblePaths().Count() > 1)
+					{
+						new SubtractPathObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+					else
+					{
+						new SubtractObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
+					}
+				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("subtract.png", 16, 16).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 2 parts must be selected*".Localize(),
 				IsEnabled = (sceneContext) => BooleanCandidate(sceneContext.Scene.SelectedItem),
