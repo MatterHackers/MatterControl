@@ -2405,7 +2405,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 			if (!LevelingValidation.NeedsToBeRun(Printer))
 			{
-				printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
+				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
+
 				if (Printer.Settings.Helpers.UseZProbe()
 					&& Printer.Settings.GetValue(SettingsKey.start_gcode).Contains(ValidatePrintLevelingStream.BeginString))
 				{
