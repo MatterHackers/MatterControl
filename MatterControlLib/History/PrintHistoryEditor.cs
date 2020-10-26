@@ -37,6 +37,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.PartPreviewWindow;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintHistory
@@ -73,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				var inputBoxPage = new InputBoxPage(
 					"Print History Note".Localize(),
-					"Note".Localize(),
+					"",
 					printTask.Note ?? "",
 					"Enter Note Here".Localize(),
 					string.IsNullOrEmpty(printTask.Note) ? "Add Note".Localize() : "Update".Localize(),
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					AllowEmpty = true,
 				};
 
-				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage, theme));
+				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage.TextEditWidget, theme), 0);
 
 				DialogWindow.Show(inputBoxPage);
 
@@ -174,38 +175,41 @@ namespace MatterHackers.MatterControl.PrintHistory
 		{
 			var issues = new string[]
 			{
-				"Bad Thermistor",
-				"Bed Dislodged",
-				"Bowden Tube Popped Out",
-				"Computer Crashed",
-				"Computer Slow/Lagging",
-				"Couldn't Resume",
-				"Dislodged From Bed",
-				"Extruder Slipping",
-				"Filament Jam",
-				"Filament Runout",
-				"Filament Snapped",
-				"First Layer Bad Quality",
-				"Flooded Hot End",
-				"Initial Z Height Incorrect",
-				"Layer Shift",
-				"Power Outage",
-				"Print Quality",
-				"Rough Overhangs",
-				"Skipped Layers",
-				"Some Parts Lifted",
-				"Stringing / Poor retractions",
-				"Test Print",
-				"Thermal Runaway - Bed",
-				"Thermal Runaway - Hot End",
-				"Thermal Runaway",
-				"Took Too Long To Heat",
-				"User Error",
-				"Warping",
-				"Wouldn’t Slice Correctly",
+				"Bad Thermistor".Localize(),
+				"Bed Dislodged".Localize(),
+				"Bowden Tube Popped Out".Localize(),
+				"Computer Crashed".Localize(),
+				"Computer Slow/Lagging".Localize(),
+				"Couldn't Resume".Localize(),
+				"Dislodged From Bed".Localize(),
+				"Extruder Slipping".Localize(),
+				"Filament Jam".Localize(),
+				"Filament Runout".Localize(),
+				"Filament Snapped".Localize(),
+				"First Layer Bad Quality".Localize(),
+				"Flooded Hot End".Localize(),
+				"Initial Z Height Incorrect".Localize(),
+				"Layer Shift".Localize(),
+				"Power Outage".Localize(),
+				"Print Quality".Localize(),
+				"Rough Overhangs".Localize(),
+				"Skipped Layers".Localize(),
+				"Some Parts Lifted".Localize(),
+				"Stringing / Poor retractions".Localize(),
+				"Test Print".Localize(),
+				"Thermal Runaway - Bed".Localize(),
+				"Thermal Runaway - Hot End".Localize(),
+				"Thermal Runaway".Localize(),
+				"Took Too Long To Heat".Localize(),
+				"User Error".Localize(),
+				"Warping".Localize(),
+				"Wouldn’t Slice Correctly".Localize(),
+				"Other...".Localize()
 			};
 
-			var dropdownList = new MHDropDownList("Standard Issues".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
+			textField.Visible = false;
+
+			var dropdownList = new MHDropDownList("What went wrong?".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
 
 			foreach (var issue in issues)
 			{
@@ -213,7 +217,17 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				newItem.Selected += (sender, e) =>
 				{
-					textField.Text = issue;
+					if (dropdownList.SelectedIndex == issues.Length - 1)
+					{
+						textField.Text = "";
+						textField.Visible = true;
+						UiThread.RunOnIdle(textField.Focus);
+					}
+					else
+					{
+						textField.Text = issue;
+						textField.Visible = false;
+					}
 				};
 			}
 
@@ -275,8 +289,8 @@ Support and tutorials:" + articles;
 				: base("Close".Localize())
 			{
 				this.WindowTitle = windowTitle;
-				this.HeaderText = windowTitle;
-				this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 400 * GuiWidget.DeviceScale);
+				this.HeaderText = printer.Settings.GetValue(SettingsKey.printer_name) + ": " + windowTitle;
+				this.WindowSize = new Vector2(500 * GuiWidget.DeviceScale, 440 * GuiWidget.DeviceScale);
 
 				var scrollable = new ScrollableWidget(autoScroll: true)
 				{
@@ -329,7 +343,7 @@ Support and tutorials:" + articles;
 				{
 					Name = "InputBoxPage TextEditWidget",
 					HAnchor = HAnchor.Stretch,
-					Margin = new BorderDouble(5)
+					Margin = new BorderDouble(5),
 				};
 
 				textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
@@ -338,12 +352,11 @@ Support and tutorials:" + articles;
 					printTask.CommitAndPushToServer();
 				};
 
-				reasonSection.AddChild(textEditWidget);
-
-				var dropDownList = PrintHistoryEditor.CreateDefaultOptions(textEditWidget, theme);
+				var dropDownList = CreateDefaultOptions(textEditWidget, theme);
 				dropDownList.Margin = new BorderDouble(5, 0);
 				dropDownList.HAnchor = HAnchor.Left;
 				reasonSection.AddChild(dropDownList);
+				reasonSection.AddChild(textEditWidget);
 
 				dropDownList.SelectionChanged += (s, e) =>
 				{
@@ -372,9 +385,12 @@ Support and tutorials:" + articles;
 					{
 						DialogWindow.Show(this, 0);
 						// this will cause a layout that fixes a display issue
-						this.Width += 1;
-						this.Width -= 1;
-						this.Descendants<ScrollableWidget>().First().ScrollPositionFromTop = new Vector2(0, 0);
+						scrollable.ScrollArea.BoundsChanged += (s, e) =>
+						{
+							scrollable.ScrollPositionFromTop = new Vector2(0, 0);
+						};
+
+						scrollable.ScrollPositionFromTop = new Vector2(0, 0);
 					});
 				}
 

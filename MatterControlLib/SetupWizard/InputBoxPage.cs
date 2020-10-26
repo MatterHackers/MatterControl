@@ -36,9 +36,9 @@ namespace MatterHackers.MatterControl
 {
 	public class InputBoxPage : DialogPage
 	{
-		private MHTextEditWidget textEditWidget;
+		public MHTextEditWidget TextEditWidget { get; private set; }
 
-		public override string Text { get => textEditWidget.Text; set => textEditWidget.Text = value; }
+		public override string Text { get => TextEditWidget.Text; set => TextEditWidget.Text = value; }
 
 		public InputBoxPage(string windowTitle, string label, string initialValue, string emptyText, string actionButtonTitle, Action<string> action)
 		{
@@ -56,22 +56,22 @@ namespace MatterHackers.MatterControl
 			});
 
 			// Adds text box and check box to the above container
-			textEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
-			textEditWidget.Name = "InputBoxPage TextEditWidget";
-			textEditWidget.HAnchor = HAnchor.Stretch;
-			textEditWidget.Margin = new BorderDouble(5);
-			textEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
+			TextEditWidget = new MHTextEditWidget(initialValue, theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: emptyText);
+			TextEditWidget.Name = "InputBoxPage TextEditWidget";
+			TextEditWidget.HAnchor = HAnchor.Stretch;
+			TextEditWidget.Margin = new BorderDouble(5);
+			TextEditWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
 				actionButton.InvokeClick();
 			};
-			contentRow.AddChild(textEditWidget);
+			contentRow.AddChild(TextEditWidget);
 
 			actionButton = theme.CreateDialogButton(actionButtonTitle);
 			actionButton.Name = "InputBoxPage Action Button";
 			actionButton.Cursor = Cursors.Hand;
 			actionButton.Click += (s, e) =>
 			{
-				string newName = textEditWidget.ActualTextEditWidget.Text;
+				string newName = TextEditWidget.ActualTextEditWidget.Text;
 				if (!string.IsNullOrEmpty(newName) || AllowEmpty)
 				{
 					action.Invoke(newName);
@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl
 		{
 			UiThread.RunOnIdle(() =>
 			{
-				textEditWidget.Focus();
-				textEditWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
+				TextEditWidget.Focus();
+				TextEditWidget.ActualTextEditWidget.InternalTextEditWidget.SelectAll();
 			});
 			base.OnLoad(args);
 		}
