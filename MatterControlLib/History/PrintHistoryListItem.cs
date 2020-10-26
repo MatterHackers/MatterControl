@@ -349,7 +349,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			public int Minutes { get; set; }
 
-			public bool Compleated { get; set; }
+			public bool Completed { get; set; }
 
 			public bool Canceled { get; internal set; }
 
@@ -381,7 +381,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					Name = printTask.PrintName,
 					Start = printTask.PrintStart,
 					End = printTask.PrintEnd,
-					Compleated = printTask.PrintComplete,
+					Completed = printTask.PrintComplete,
 					Canceled = printTask.PrintCanceled,
 					PrintQuality = printTask.PrintQuality,
 					ItemsPrinted = groupNames,
