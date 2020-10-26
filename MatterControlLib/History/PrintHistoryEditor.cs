@@ -67,9 +67,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public void AddNotesMenu(PopupMenu popupMenu, IEnumerable<PrintTask> printTasks, Action notesChanged)
 		{
-			var addNotest = popupMenu.CreateMenuItem(string.IsNullOrEmpty(printTask.Note) ? "Add Note...".Localize() : "Edit Note...".Localize());
-			addNotest.Enabled = printTasks.Any();
-			addNotest.Click += (s, e) =>
+			var addNote = popupMenu.CreateMenuItem(string.IsNullOrEmpty(printTask.Note) ? "Add Note...".Localize() : "Edit Note...".Localize());
+			addNote.Enabled = printTasks.Any();
+			addNote.Click += (s, e) =>
 			{
 				var inputBoxPage = new InputBoxPage(
 					"Print History Note".Localize(),
@@ -170,7 +170,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			return content;
 		}
 
-		public static GuiWidget CreateDefaultOptions(GuiWidget textField, ThemeConfig theme)
+		public static MHDropDownList CreateDefaultOptions(GuiWidget textField, ThemeConfig theme)
 		{
 			var issues = new string[]
 			{
@@ -332,12 +332,28 @@ Support and tutorials:" + articles;
 					Margin = new BorderDouble(5)
 				};
 
+				textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
+				{
+					printTask.Note = textEditWidget.Text;
+					printTask.CommitAndPushToServer();
+				};
+
 				reasonSection.AddChild(textEditWidget);
 
-				var reasons = PrintHistoryEditor.CreateDefaultOptions(textEditWidget, theme);
-				reasons.Margin = new BorderDouble(5, 0);
-				reasons.HAnchor = HAnchor.Left;
-				reasonSection.AddChild(reasons);
+				var dropDownList = PrintHistoryEditor.CreateDefaultOptions(textEditWidget, theme);
+				dropDownList.Margin = new BorderDouble(5, 0);
+				dropDownList.HAnchor = HAnchor.Left;
+				reasonSection.AddChild(dropDownList);
+
+				dropDownList.SelectionChanged += (s, e) =>
+				{
+					// Delay this so we wait for the text to be updated
+					UiThread.RunOnIdle(() =>
+					{
+						printTask.Note = textEditWidget.Text;
+						printTask.CommitAndPushToServer();
+					});
+				};
 
 				topToBottom.AddChild(new HorizontalLine(theme.BorderColor40)
 				{
@@ -349,28 +365,8 @@ Support and tutorials:" + articles;
 					Markdown = descriptionMarkdown,
 				});
 
-				var hideAfterPrintMessage = new CheckBox("Don't show this again".Localize())
-				{
-					TextColor = AppContext.Theme.TextColor,
-					Margin = new BorderDouble(top: 6, left: 6),
-					HAnchor = Agg.UI.HAnchor.Left,
-					Checked = UserSettings.Instance.get(UserSettingsKey.CollectPrintHistoryData) == "false",
-				};
-				contentRow.AddChild(hideAfterPrintMessage);
-
-				hideAfterPrintMessage.Click += (s, e1) =>
-				{
-					if (hideAfterPrintMessage.Checked)
-					{
-						UserSettings.Instance.set(UserSettingsKey.CollectPrintHistoryData, "false");
-					}
-					else
-					{
-						UserSettings.Instance.set(UserSettingsKey.CollectPrintHistoryData, "true");
-					}
-				};
-
-				if (!hideAfterPrintMessage.Checked)
+				var collectHistoryHidden = UserSettings.Instance.get(UserSettingsKey.CollectPrintHistoryData) == "false";
+				if (!collectHistoryHidden)
 				{
 					UiThread.RunOnIdle(() =>
 					{
