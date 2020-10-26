@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Markdig.Agg;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -109,13 +110,18 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			content.AddChild(textWidget);
 
-			content.AddChild(new GuiWidget(buttonFontSize * GuiWidget.DeviceScale, 1));
+			var size = (int)(buttonFontSize * GuiWidget.DeviceScale);
+
+			var star = AggContext.StaticData.LoadIcon("star.png", size, size, theme.InvertIcons);
+			var failure = AggContext.StaticData.LoadIcon("failure.png", size, size, theme.InvertIcons);
+
+			content.AddChild(new GuiWidget(size, 1));
 
 			var siblings = new List<GuiWidget>();
 
 			for (int i = 0; i < QualityNames.Length; i++)
 			{
-				var button = new RadioButton(new TextWidget(i.ToString(), pointSize: buttonFontSize, textColor: theme.TextColor))
+				var button = new RadioButton(new ImageWidget(i == 0 ? failure : star))
 				{
 					Enabled = printTask.PrintComplete,
 					Checked = printTask.QualityWasSet && printTask.PrintQuality == i,
@@ -149,6 +155,11 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				button.Click += (s, e) =>
 				{
+					foreach (var button2 in content.Descendants<RadioButton>())
+					{
+						button2.BackgroundColor = button2.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
+					}
+
 					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
 					printTask.QualityWasSet = true;
 					printTask.CommitAndPushToServer();
