@@ -427,7 +427,7 @@ ok
 				Thread.Sleep(500);
 			}
 
-			return "Bed Position X: 0 Y: 0 Z: { rand.NextDouble() }\n"
+			return $"Bed Position X: {CurrentPosition.X} Y: {CurrentPosition.Y} Z: {rand.NextDouble():0.###}\n"
 				 + "ok\n";
 		}
 
