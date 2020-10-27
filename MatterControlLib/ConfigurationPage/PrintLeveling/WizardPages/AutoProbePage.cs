@@ -47,7 +47,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		private int probePositionsBeingEditedIndex;
 
 		private List<double> samples = new List<double>();
-		private int numberOfSamples;
 		private AutoResetEvent autoResetEvent;
 		private Vector3 feedRates;
 		private Vector3 adjustedProbePosition;
@@ -79,7 +78,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			// Collect settings
 			servoDeployCommand = printer.Settings.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
 			feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
-			numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples) - 1;
 
 			autoResetEvent = new AutoResetEvent(false);
 
@@ -123,8 +121,6 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 				var validProbePosition = PrintLevelingWizard.EnsureInPrintBounds(printer, goalProbePosition);
 				var probePosition = new Vector3(validProbePosition, startProbeHeight);
-
-				//this.lastReportedPosition = printer.Connection.LastReportedPosition;
 
 				probePositionsWidget.ActiveProbeIndex = i;
 				probePositionsWidget.Invalidate();
