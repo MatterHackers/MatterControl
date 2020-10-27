@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{ }
 
 		public OverflowBar(ImageBuffer icon, ThemeConfig theme)
-			: base(theme.TabbarPadding, theme.CreateSmallResetButton())
+			: base(theme.TabbarPadding)
 		{
 			this.theme = theme;
 
