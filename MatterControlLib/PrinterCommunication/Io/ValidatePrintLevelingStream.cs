@@ -53,6 +53,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool validationHasBeenRun;
 		private bool validationRunning;
 		private bool waitingToCompleteNextSample;
+		private bool haveSeenM190;
+		private bool haveSeenG28;
 
 		public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -81,6 +83,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				validationRunning = false;
 				validationHasBeenRun = true;
+				haveSeenG28 = false;
+				haveSeenM190 = false;
 
 				printer.Connection.LineReceived -= GetZProbeHeight;
 
@@ -134,20 +138,35 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (lineToSend != null
-				&& !validationHasBeenRun
-				&& !gcodeAlreadyLeveled
-				&& printer.Connection.IsConnected
-				&& printer.Connection.Printing
-				&& printer.Connection.CurrentlyPrintingLayer <= 0
-				&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
+			if (lineToSend != null)
 			{
-				// we are setting the bed temp
 				if (lineToSend.Contains("M190"))
 				{
-					SetupForValidation();
-					// still set the bed temp and wait
-					return lineToSend;
+					haveSeenM190 = true;
+				}
+
+				if (lineToSend.Contains("G28"))
+				{
+					haveSeenG28 = true;
+				}
+
+				if (!validationHasBeenRun
+					&& !gcodeAlreadyLeveled
+					&& printer.Connection.IsConnected
+					&& printer.Connection.Printing
+					&& printer.Connection.CurrentlyPrintingLayer <= 0
+					&& printer.Connection.ActivePrintTask?.RecoveryCount < 1
+					&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
+				{
+					// we are setting the bed temp
+					if (haveSeenG28 && haveSeenM190)
+					{
+						haveSeenG28 = false;
+						haveSeenM190 = false;
+						SetupForValidation();
+						// still set the bed temp and wait
+						return lineToSend;
+					}
 				}
 			}
 
