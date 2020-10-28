@@ -251,6 +251,7 @@ namespace MatterHackers.MatterControl
 			{
 				printer.Connection.TerminalLog.Clear();
 			};
+
 			footerRow.AddChild(clearButton);
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());

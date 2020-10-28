@@ -73,7 +73,7 @@ namespace MatterHackers.MatterControl
 
 		public override Color BackgroundColor
 		{
-			get => (Active) ? theme.AccentMimimalOverlay : base.BackgroundColor;
+			get => Active ? theme.AccentMimimalOverlay : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 

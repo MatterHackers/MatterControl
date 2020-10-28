@@ -2403,15 +2403,16 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
-			if (!LevelingValidation.NeedsToBeRun(Printer))
+			var hasProbeWithLevelingValidation = Printer.Settings.Helpers.HasProbeWithLevelingValidation;
+			if (!LevelingValidation.NeedsToBeRun(Printer)
+				|| hasProbeWithLevelingValidation)
 			{
-				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
-
-				if (Printer.Settings.Helpers.UseZProbe()
-					&& Printer.Settings.GetValue(SettingsKey.start_gcode).Contains(ValidatePrintLevelingStream.BeginString))
+				if (hasProbeWithLevelingValidation)
 				{
-					accumulatedStream = new ValidatePrintLevelingStream(Printer, printLevelingStream);
+					accumulatedStream = new ValidatePrintLevelingStream(Printer, accumulatedStream);
 				}
+
+				accumulatedStream = printLevelingStream = new PrintLevelingStream(Printer, accumulatedStream);
 			}
 
 			accumulatedStream = waitForTempStream = new WaitForTempStream(Printer, accumulatedStream);

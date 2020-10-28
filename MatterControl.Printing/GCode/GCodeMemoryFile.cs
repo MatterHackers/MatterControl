@@ -1082,7 +1082,7 @@ namespace MatterControl.Printing
 					break;
 
 				case "109":
-					// set heated platform temperature
+					// wait for extruder temperature to be reached
 					break;
 
 				case "114":

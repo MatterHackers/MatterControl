@@ -142,6 +142,7 @@ namespace MatterHackers.MatterControl
 
 		public void RebuildFilteredList()
 		{
+			visibleLines.Clear();
 			foreach (var lineData in terminalLog.AllTerminalLines())
 			{
 				ConditionalyAddToVisible(lineData);
