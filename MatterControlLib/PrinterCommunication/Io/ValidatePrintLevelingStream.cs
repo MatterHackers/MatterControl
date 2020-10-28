@@ -135,11 +135,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			if (lineToSend != null
+				&& !validationHasBeenRun
 				&& !gcodeAlreadyLeveled
 				&& printer.Connection.IsConnected
 				&& printer.Connection.Printing
 				&& printer.Connection.CurrentlyPrintingLayer <= 0
-				&& !validationHasBeenRun
 				&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
 			{
 				// we are setting the bed temp
@@ -192,6 +192,23 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						}
 
 						sampledPositions[activeProbeIndex].Position.Z = Math.Round(samplesForSinglePosition.Average(), 2);
+
+						// If we are sampling the first point, check if it is unchanged from the last time we ran leveling
+						if (activeProbeIndex == 0)
+						{
+							var levelingData = printer.Settings.Helpers.PrintLevelingData;
+
+							var delta = sampledPositions[activeProbeIndex].Position.Z - levelingData.SampledPositions[activeProbeIndex].Z;
+							if (levelingData.SampledPositions.Count == sampledPositions.Count
+								&& Math.Abs(delta) < printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 10.0)
+							{
+								// the last leveling is still good abort this new calibration and start printing
+								ShutdownProbing();
+								waitingToCompleteNextSample = false;
+								validationRunning = false;
+								validationHasBeenRun = true;
+							}
+						}
 
 						// When probe data has been collected, resume our thread to continue collecting
 						waitingToCompleteNextSample = false;
@@ -264,6 +281,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private void SetupForValidation()
 		{
 			validationRunning = true;
+			activeProbeIndex = 0;
 
 			printer.Connection.LineReceived += GetZProbeHeight;
 
