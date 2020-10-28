@@ -64,20 +64,20 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void Connection_PrintCanceled(object sender, EventArgs e)
 		{
-			ShutdownProbing();
+			CancelValidation();
 		}
 
 		public override string DebugInfo => "";
 
 		public override void Dispose()
 		{
-			ShutdownProbing();
+			CancelValidation();
 			printer.Connection.PrintCanceled -= Connection_PrintCanceled;
 
 			base.Dispose();
 		}
 
-		private void ShutdownProbing()
+		private void CancelValidation()
 		{
 			if (validationRunning)
 			{
@@ -88,27 +88,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 				printer.Connection.LineReceived -= GetZProbeHeight;
 
-				if (validationRunning || validationHasBeenRun)
+				// If leveling was on when we started, make sure it is on when we are done.
+				printer.Connection.AllowLeveling = true;
+
+				// set the baby stepping back to the last known good value
+				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
 				{
-					// If leveling was on when we started, make sure it is on when we are done.
-					printer.Connection.AllowLeveling = true;
+					printer.Settings.SetValue(key, babySteppingValue[i].ToString());
+				});
 
-					// set the baby stepping back to the last known good value
-					printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
-					{
-						printer.Settings.SetValue(key, babySteppingValue[i].ToString());
-					});
+				queuedCommands.Clear();
+				RetractProbe();
+			}
+		}
 
-					// make sure we raise the probe on close
-					if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-						&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-					{
-						// make sure the servo is retracted
-						var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-						queuedCommands.Enqueue($"M280 P0 S{servoRetract}");
-					}
-				}
+		private void RetractProbe()
+		{
+			// make sure we raise the probe on close
+			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+				&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+			{
+				// make sure the servo is retracted
+				var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+				queuedCommands.Enqueue($"M280 P0 S{servoRetract}");
 			}
 		}
 
@@ -136,6 +139,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend == "; Software Leveling Applied")
 			{
 				gcodeAlreadyLeveled = true;
+			}
+
+			if (validationRunning && printer.Connection.PrintWasCanceled)
+			{
+				CancelValidation();
 			}
 
 			if (lineToSend != null)
@@ -222,7 +230,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								&& Math.Abs(delta) < printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 10.0)
 							{
 								// the last leveling is still good abort this new calibration and start printing
-								ShutdownProbing();
+								CancelValidation();
 								waitingToCompleteNextSample = false;
 								validationRunning = false;
 								validationHasBeenRun = true;
@@ -265,7 +273,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			else
 			{
 				SaveSamplePoints();
-				ShutdownProbing();
+				CancelValidation();
 			}
 		}
 
