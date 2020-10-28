@@ -721,7 +721,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
-					ResetAtEndOfPrint = false,
 					DefaultValue = "0",
 					ReloadUiWhenChanged = true,
 					RebuildGCodeOnChange = false
@@ -734,7 +733,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
-					ResetAtEndOfPrint = false,
 					DefaultValue = "0",
 					ReloadUiWhenChanged = true,
 					RebuildGCodeOnChange = false
@@ -747,7 +745,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "has_z_probe",
-					ResetAtEndOfPrint = false,
 					DefaultValue = "0",
 					ReloadUiWhenChanged = true,
 					RebuildGCodeOnChange = false
@@ -955,7 +952,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
-					ResetAtEndOfPrint = false,
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
 				},
@@ -967,7 +963,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer&filament_runout_sonsor",
-					ResetAtEndOfPrint = false,
+
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
 				},
@@ -1030,9 +1026,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe",
-					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
 					ReloadUiWhenChanged = true,
+					DefaultValue = "0"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.validate_leveling,
+					PresentationName = "Validate Calibration Before Printing".Localize(),
+					HelpText = "Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
+					RebuildGCodeOnChange = false,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1044,7 +1050,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer&!has_hardware_leveling&has_z_probe&use_z_probe",
-					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0,0,0"
 				},
@@ -1057,7 +1062,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
-					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
 					DefaultValue = "1"
 				},
@@ -1070,7 +1074,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "°".Localize(),
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
-					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0"
 				},
@@ -1083,7 +1086,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "°".Localize(),
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe&has_z_servo",
-					ResetAtEndOfPrint = false,
 					RebuildGCodeOnChange = false,
 					DefaultValue = "0"
 				},
@@ -1751,7 +1753,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
-					ResetAtEndOfPrint = false,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -1763,7 +1764,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
-					ResetAtEndOfPrint = false,
 					DefaultValue = ""
 				},
 				new SliceSettingData()
@@ -2207,7 +2207,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					ShowAsOverride = false,
 					ShowIfSet = null,
-					ResetAtEndOfPrint = false,
 					DefaultValue = "250000",
 					RebuildGCodeOnChange = false
 				},

@@ -51,48 +51,81 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private List<PrintLevelingWizard.ProbePosition> sampledPositions;
 		private bool validationHasBeenRun;
 		private bool validationRunning;
-		private bool waitingForG30Result;
+		private bool waitingToCompleteNextSample;
+		private string moveAfterLevel;
 
 		public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
+			printer.Connection.PrintCanceled += Connection_PrintCanceled;
 		}
 
-		public static string BeginString => "; VALIDATE_LEVELING";
+		private void Connection_PrintCanceled(object sender, EventArgs e)
+		{
+			ShutdownProbing();
+		}
 
 		public override string DebugInfo => "";
 
 		public override void Dispose()
 		{
-			printer.Connection.LineReceived -= GetZProbeHeight;
-
-			if (validationRunning || validationHasBeenRun)
-			{
-				// If leveling was on when we started, make sure it is on when we are done.
-				printer.Connection.AllowLeveling = true;
-
-				// set the baby stepping back to the last known good value
-				printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
-				{
-					printer.Settings.SetValue(key, babySteppingValue[i].ToString());
-				});
-
-				// make sure we raise the probe on close
-				if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
-					&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
-				{
-					// make sure the servo is retracted
-					var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
-					queuedCommands.Enqueue($"M280 P0 S{servoRetract}");
-				}
-			}
+			ShutdownProbing();
+			printer.Connection.PrintCanceled -= Connection_PrintCanceled;
 
 			base.Dispose();
 		}
 
+		private void ShutdownProbing()
+		{
+			if (validationRunning)
+			{
+				validationRunning = false;
+				validationHasBeenRun = true;
+
+				if (!string.IsNullOrEmpty(moveAfterLevel))
+				{
+					queuedCommands.Enqueue(moveAfterLevel);
+				}
+
+				printer.Connection.LineReceived -= GetZProbeHeight;
+
+				if (validationRunning || validationHasBeenRun)
+				{
+					// If leveling was on when we started, make sure it is on when we are done.
+					printer.Connection.AllowLeveling = true;
+
+					// set the baby stepping back to the last known good value
+					printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+					{
+						printer.Settings.SetValue(key, babySteppingValue[i].ToString());
+					});
+
+					// make sure we raise the probe on close
+					if (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+						&& printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
+					{
+						// make sure the servo is retracted
+						var servoRetract = printer.Settings.GetValue<double>(SettingsKey.z_servo_retracted_angle);
+						queuedCommands.Enqueue($"M280 P0 S{servoRetract}");
+					}
+				}
+			}
+		}
+
 		public override string ReadLine()
 		{
+			if (queuedCommands.Count > 0)
+			{
+				return queuedCommands.Dequeue();
+			}
+
+			if (validationRunning
+				&& !validationHasBeenRun)
+			{
+				SampleProbePoints();
+			}
+
 			string lineToSend = base.ReadLine();
 
 			if (lineToSend != null
@@ -101,31 +134,38 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return lineToSend;
 			}
 
-			if (queuedCommands.Count > 0)
-			{
-				return queuedCommands.Dequeue();
-			}
-
 			if (lineToSend == "; Software Leveling Applied")
 			{
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (validationRunning)
-			{
-				SampleProbePoints();
-			}
-
 			if (lineToSend != null
 				&& !gcodeAlreadyLeveled
 				&& printer.Connection.IsConnected
-				&& printer.Connection.CurrentlyPrintingLayer == 0
-				&& !validationHasBeenRun)
+				&& printer.Connection.CurrentlyPrintingLayer <= 0
+				&& !validationHasBeenRun
+				&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
 			{
-				if (lineToSend == BeginString)
+				// we are setting the bed temp
+				if (lineToSend.Contains("M190"))
 				{
 					SetupForValidation();
+					// still set the bed temp and wait
 					return lineToSend;
+				}
+
+				if (LineIsMovement(lineToSend))
+				{
+					var destination = GetPosition(lineToSend, PrinterMove.Unknown);
+					// double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
+					if (destination.position.Z < printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start))
+					{
+						SetupForValidation();
+						// remember the move
+						moveAfterLevel = lineToSend;
+						// and send nothing until leveling done
+						return "";
+					}
 				}
 			}
 
@@ -172,7 +212,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						sampledPositions[activeProbeIndex].Position.Z = Math.Round(samplesForSinglePosition.Average(), 2);
 
 						// When probe data has been collected, resume our thread to continue collecting
-						waitingForG30Result = false;
+						waitingToCompleteNextSample = false;
 						// and go on to the next point
 						activeProbeIndex++;
 					}
@@ -190,7 +230,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		private void SampleProbePoints()
 		{
-			if (waitingForG30Result)
+			if (waitingToCompleteNextSample)
 			{
 				return;
 			}
@@ -202,13 +242,41 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				var validProbePosition2D = PrintLevelingWizard.EnsureInPrintBounds(printer, positionsToSample[activeProbeIndex]);
 				positionToSample = new Vector3(validProbePosition2D, startProbeHeight);
 
-				this.StartSampling();
-				waitingForG30Result = true;
+				this.SampleNextPoint();
 			}
 			else
 			{
-				validationHasBeenRun = true;
+				SaveSamplePoints();
+				ShutdownProbing();
 			}
+		}
+
+		private void SaveSamplePoints()
+		{
+			PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
+			levelingData.SampledPositions.Clear();
+
+			for (int i = 0; i < sampledPositions.Count; i++)
+			{
+				levelingData.SampledPositions.Add(sampledPositions[i].Position);
+			}
+
+			levelingData.LevelingSystem = printer.Settings.GetValue<LevelingSystem>(SettingsKey.print_leveling_solution);
+			levelingData.CreationDate = DateTime.Now;
+			// record the temp the bed was when we measured it (or 0 if no heated bed)
+			levelingData.BedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?
+				printer.Settings.GetValue<double>(SettingsKey.bed_temperature)
+				: 0;
+			levelingData.IssuedLevelingTempWarning = false;
+
+			// Invoke setter forcing persistence of leveling data
+			printer.Settings.Helpers.PrintLevelingData = levelingData;
+			printer.Settings.ForTools<double>(SettingsKey.baby_step_z_offset, (key, value, i) =>
+			{
+				printer.Settings.SetValue(key, "0");
+			});
+			printer.Connection.AllowLeveling = true;
+			printer.Settings.Helpers.DoPrintLeveling(true);
 		}
 
 		private void SetupForValidation()
@@ -280,8 +348,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			positionsToSample = levelingPlan.GetPrintLevelPositionToSample().ToList();
 		}
 
-		private void StartSampling()
+		private void SampleNextPoint()
 		{
+			waitingToCompleteNextSample = true;
+
 			samplesForSinglePosition.Clear();
 
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_z_servo))
