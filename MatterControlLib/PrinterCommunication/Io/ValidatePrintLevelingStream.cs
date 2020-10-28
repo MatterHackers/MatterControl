@@ -49,10 +49,10 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private Vector3 positionToSample;
 		private Vector3 positionToSampleWithProbeOffset;
 		private List<PrintLevelingWizard.ProbePosition> sampledPositions;
+
 		private bool validationHasBeenRun;
 		private bool validationRunning;
 		private bool waitingToCompleteNextSample;
-		private string moveAfterLevel;
 
 		public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -81,11 +81,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			{
 				validationRunning = false;
 				validationHasBeenRun = true;
-
-				if (!string.IsNullOrEmpty(moveAfterLevel))
-				{
-					queuedCommands.Enqueue(moveAfterLevel);
-				}
 
 				printer.Connection.LineReceived -= GetZProbeHeight;
 
@@ -142,6 +137,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			if (lineToSend != null
 				&& !gcodeAlreadyLeveled
 				&& printer.Connection.IsConnected
+				&& printer.Connection.Printing
 				&& printer.Connection.CurrentlyPrintingLayer <= 0
 				&& !validationHasBeenRun
 				&& printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
@@ -152,20 +148,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					SetupForValidation();
 					// still set the bed temp and wait
 					return lineToSend;
-				}
-
-				if (LineIsMovement(lineToSend))
-				{
-					var destination = GetPosition(lineToSend, PrinterMove.Unknown);
-					// double startProbeHeight = printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start);
-					if (destination.position.Z < printer.Settings.GetValue<double>(SettingsKey.print_leveling_probe_start))
-					{
-						SetupForValidation();
-						// remember the move
-						moveAfterLevel = lineToSend;
-						// and send nothing until leveling done
-						return "";
-					}
 				}
 			}
 

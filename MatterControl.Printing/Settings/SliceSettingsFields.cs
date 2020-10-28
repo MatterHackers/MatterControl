@@ -1034,7 +1034,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.validate_leveling,
 					PresentationName = "Validate Calibration Before Printing".Localize(),
-					HelpText = "Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print.".Localize(),
+					HelpText = "Enable this if your printer has an automatic Z Probe and you want to validate the leveling before every print. This will run immediately after M190 (print bed reaches temp).".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",

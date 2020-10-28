@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public LevelingPlan LevelingPlan { get; set; }
 
-		public override bool Visible => !printer.Settings.Helpers.HasProbeWithLevelingValidation;
+		public override bool Visible => true;
 
 		public override string HelpText => hasHardwareLeveling ? "Unable due to hardware leveling".Localize() : null;
 
