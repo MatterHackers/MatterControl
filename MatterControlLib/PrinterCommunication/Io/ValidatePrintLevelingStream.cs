@@ -30,7 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using MatterControl.Printing;
+using MatterHackers.Agg;
+using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -373,6 +377,41 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			}
 
 			positionsToSample = levelingPlan.GetPrintLevelPositionToSample().ToList();
+
+			StartReporting();
+		}
+
+		private void StartReporting()
+		{
+			ApplicationController.Instance.Tasks.Execute(
+				"Leveling".Localize(),
+				printer,
+				(reporter, cancellationToken) =>
+				{
+					var progressStatus = new ProgressStatus();
+
+					while (validationRunning)
+					{
+						if (activeProbeIndex == 0)
+						{
+							progressStatus.Status = "Validating";
+						}
+						else
+						{
+							progressStatus.Status = $"Probing point {activeProbeIndex} of {sampledPositions.Count}";
+						}
+
+						progressStatus.Progress0To1 = (activeProbeIndex + 1) / (double)sampledPositions.Count;
+						reporter.Report(progressStatus);
+						Thread.Sleep(100);
+					}
+
+					return Task.CompletedTask;
+				},
+				new RunningTaskOptions()
+				{
+					ReadOnlyReporting = true
+				});
 		}
 
 		private void SampleNextPoint()
@@ -387,6 +426,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				var servoDeployCommand = printer.Settings.GetValue<double>(SettingsKey.z_servo_depolyed_angle);
 				queuedCommands.Enqueue($"M280 P0 S{servoDeployCommand}");
 			}
+
+			Thread.Sleep(500);
 
 			positionToSampleWithProbeOffset = positionToSample;
 
