@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			bool boldFont = false,
 			bool editable = true,
 			string emptyText = null)
-			: base(theme.TabbarPadding, theme.CreateSmallResetButton())
+			: base(theme.TabbarPadding)
 		{
 			this.Padding = theme.ToolbarPadding;
 			this.HAnchor = HAnchor.Stretch;
@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public void SetVisibility(bool showEditPanel)
 		{
 			editButton.Visible = !showEditPanel;
-			titleText.Visible = !showEditPanel;
+			titleText.Visible = !showEditPanel; 
 
 			saveButton.Visible = showEditPanel;
 			textEditWithInlineCancel.Visible = showEditPanel;
