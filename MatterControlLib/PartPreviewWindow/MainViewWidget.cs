@@ -371,7 +371,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl.RefreshTabPointers();
 			}
 
-			statusBar = new Toolbar(theme.TabbarPadding, theme.CreateSmallResetButton())
+			statusBar = new Toolbar(theme.TabbarPadding)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Absolute,
