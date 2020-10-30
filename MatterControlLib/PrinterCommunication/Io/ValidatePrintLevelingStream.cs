@@ -427,8 +427,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				queuedCommands.Enqueue($"M280 P0 S{servoDeployCommand}");
 			}
 
-			Thread.Sleep(500);
-
 			positionToSampleWithProbeOffset = positionToSample;
 
 			// subtract out the probe offset
