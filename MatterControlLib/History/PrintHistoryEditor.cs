@@ -103,6 +103,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 			{
 				HAnchor = HAnchor.Fit | HAnchor.Stretch
 			};
+			var siblings = new List<GuiWidget>();
 
 			var textWidget = new TextWidget("Print Quality".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
@@ -114,15 +115,43 @@ namespace MatterHackers.MatterControl.PrintHistory
 			var size = (int)(buttonFontSize * GuiWidget.DeviceScale);
 
 			var star = AggContext.StaticData.LoadIcon("star.png", size, size, theme.InvertIcons);
+			var openStar = AggContext.StaticData.LoadIcon("open_star.png", size, size, theme.InvertIcons);
 			var failure = AggContext.StaticData.LoadIcon("failure.png", size, size, theme.InvertIcons);
 
 			content.AddChild(new GuiWidget(size, 1));
 
-			var siblings = new List<GuiWidget>();
+			content.MouseLeaveBounds += (s, e) =>
+			{
+				SetStarState(theme, siblings, printTask);
+			};
 
 			for (int i = 0; i < QualityNames.Length; i++)
 			{
-				var button = new RadioButton(new ImageWidget(i == 0 ? failure : star))
+				var buttonIndex = i;
+				GuiWidget buttonContent;
+				if (i == 0)
+				{
+					buttonContent = new ImageWidget(failure);
+				}
+				else
+				{
+					buttonContent = new GuiWidget()
+					{
+						HAnchor = HAnchor.Fit,
+						VAnchor = VAnchor.Fit
+					};
+					buttonContent.AddChild(new ImageWidget(openStar)
+					{
+						Name = "open"
+					});
+					buttonContent.AddChild(new ImageWidget(star)
+					{
+						Name = "closed",
+						Visible = false
+					});
+				}
+
+				var button = new RadioButton(buttonContent)
 				{
 					Enabled = printTask.PrintComplete,
 					Checked = printTask.QualityWasSet && printTask.PrintQuality == i,
@@ -135,20 +164,52 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				button.MouseEnterBounds += (s, e) =>
 				{
-					button.BackgroundColor = theme.AccentMimimalOverlay;
-				};
+					// set the correct filled stars for the hover
+					for (int j = 0; j < siblings.Count; j++)
+					{
+						var open = siblings[j].Descendants().Where(d => d.Name == "open").FirstOrDefault();
+						var closed = siblings[j].Descendants().Where(d => d.Name == "closed").FirstOrDefault();
 
-				button.MouseLeaveBounds += (s, e) =>
-				{
-					button.BackgroundColor = button.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
+						if (j == 0)
+						{
+							if (buttonIndex == 0)
+							{
+								siblings[j].BackgroundColor = theme.AccentMimimalOverlay;
+							}
+							else
+							{
+								siblings[j].BackgroundColor = Color.Transparent;
+							}
+						}
+						else if (j <= buttonIndex)
+						{
+							siblings[j].BackgroundColor = theme.AccentMimimalOverlay;
+						}
+						else
+						{
+							siblings[j].BackgroundColor = Color.Transparent;
+						}
+
+						if (j <= buttonIndex)
+						{
+							if (open != null)
+							{
+								open.Visible = false;
+								closed.Visible = true;
+							}
+						}
+						else
+						{
+							if (open != null)
+							{
+								open.Visible = true;
+								closed.Visible = false;
+							}
+						}
+					}
 				};
 
 				siblings.Add(button);
-
-				if (button.Checked && button.Enabled)
-				{
-					button.BackgroundColor = theme.AccentMimimalOverlay;
-				}
 
 				button.SiblingRadioButtonList = siblings;
 
@@ -156,11 +217,6 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 				button.Click += (s, e) =>
 				{
-					foreach (var button2 in content.Descendants<RadioButton>())
-					{
-						button2.BackgroundColor = button2.Checked ? theme.AccentMimimalOverlay : Color.Transparent;
-					}
-
 					printTask.PrintQuality = siblings.IndexOf((GuiWidget)s);
 					printTask.QualityWasSet = true;
 					printTask.CommitAndPushToServer();
@@ -168,7 +224,61 @@ namespace MatterHackers.MatterControl.PrintHistory
 				};
 			}
 
+			SetStarState(theme, siblings, printTask);
+
 			return content;
+		}
+
+		private static void SetStarState(ThemeConfig theme, List<GuiWidget> siblings, PrintTask printTask)
+		{
+			var checkedButton = -1;
+			if (printTask.QualityWasSet)
+			{
+				checkedButton = printTask.PrintQuality;
+			}
+
+			for (int j = 0; j < siblings.Count; j++)
+			{
+				var open = siblings[j].Descendants().Where(d => d.Name == "open").FirstOrDefault();
+				var closed = siblings[j].Descendants().Where(d => d.Name == "closed").FirstOrDefault();
+
+				if (j == 0)
+				{
+					if (checkedButton == 0)
+					{
+						siblings[j].BackgroundColor = theme.AccentMimimalOverlay;
+					}
+					else
+					{
+						siblings[j].BackgroundColor = Color.Transparent;
+					}
+				}
+				else if (j <= checkedButton)
+				{
+					siblings[j].BackgroundColor = theme.AccentMimimalOverlay;
+				}
+				else
+				{
+					siblings[j].BackgroundColor = Color.Transparent;
+				}
+
+				if (j <= checkedButton)
+				{
+					if (open != null)
+					{
+						open.Visible = false;
+						closed.Visible = true;
+					}
+				}
+				else
+				{
+					if (open != null)
+					{
+						open.Visible = true;
+						closed.Visible = false;
+					}
+				}
+			}
 		}
 
 		public static MHDropDownList CreateDefaultOptions(GuiWidget textField, ThemeConfig theme)
