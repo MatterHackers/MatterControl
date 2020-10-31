@@ -38,7 +38,6 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PrintLibrary
 {
-
 	public class CloneSettingsPage : DialogPage
 	{
 		public CloneSettingsPage()
@@ -83,7 +82,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			openButton.Click += (s, e) =>
 			{
 				AggContext.FileDialogs.OpenFileDialog(
-					new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice"),
+					new OpenFileDialogParams("settings files|*.ini;*.printer;*.slice;*.fff"),
 					(result) =>
 					{
 						if (!string.IsNullOrEmpty(result.FileName)
@@ -163,12 +162,12 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				var filePath = textEditWidget.Text;
 
-				if (ProfileManager.ImportFromExisting(filePath, resetSettingsForNewProfile: copyAndCalibrateOption.Checked))
+				if (ProfileManager.ImportFromExisting(filePath, copyAndCalibrateOption.Checked, out string importedName))
 				{
 					string importPrinterSuccessMessage = "You have successfully imported a new printer profile. You can find '{0}' in your list of available printers.".Localize();
 					this.DialogWindow.ChangeToPage(
 						new ImportSucceededPage(
-							importPrinterSuccessMessage.FormatWith(Path.GetFileNameWithoutExtension(filePath))));
+							importPrinterSuccessMessage.FormatWith(importedName)));
 				}
 				else
 				{
