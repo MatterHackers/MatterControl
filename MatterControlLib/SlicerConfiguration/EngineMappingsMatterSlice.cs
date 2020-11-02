@@ -716,7 +716,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				// If we have bed temp and the start gcode specifies to finish heating the extruders,
 				// make sure we also finish heating the bed. This preserves legacy expectation.
 				if (bed_temperature > 0
-					&& startGCode.Contains("M109"))
+					&& startGCode.Contains("M109")
+					&& !startGCode.Contains("M190"))
 				{
 					string setBedTempString = string.Format("M190 S{0}", bed_temperature);
 					AddDefaultIfNotPresent(preStartGCode, setBedTempString, startGCodeLines, "wait for bed temperature to be reached");

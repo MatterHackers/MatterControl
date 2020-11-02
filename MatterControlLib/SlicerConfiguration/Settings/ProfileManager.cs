@@ -599,8 +599,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return null;
 		}
 
-		internal static bool ImportFromExisting(string settingsFilePath, bool resetSettingsForNewProfile = true)
+		internal static bool ImportFromExisting(string settingsFilePath, bool resetSettingsForNewProfile, out string printerName)
 		{
+			printerName = Path.GetFileNameWithoutExtension(settingsFilePath);
+
 			if (string.IsNullOrEmpty(settingsFilePath) || !File.Exists(settingsFilePath))
 			{
 				return false;
@@ -649,6 +651,95 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							printerSettings.ResetSettingsForNewProfile();
 						}
+
+						printerSettings.Save(userDrivenChange: false);
+						importSuccessful = true;
+					}
+
+					break;
+
+				case ".fff": // simplify profile
+					{
+						// load the material settings
+						var materials = PrinterSettingsLayer.LoadMaterialSettingsFromFff(settingsFilePath);
+						// load the quality settings
+						var qualitySettings = PrinterSettingsLayer.LoadQualitySettingsFromFff(settingsFilePath);
+						// load the main settings
+						var settingsToImport = PrinterSettingsLayer.LoadFromFff(settingsFilePath);
+						var printerSettings = new PrinterSettings()
+						{
+							ID = printerInfo.ID,
+						};
+
+						// create the profile we will populate
+						printerSettings.OemLayer = new PrinterSettingsLayer
+						{
+							[SettingsKey.make] = "Other",
+							[SettingsKey.model] = "Other"
+						};
+
+						// add all the main settings
+						foreach (var item in settingsToImport)
+						{
+							if (printerSettings.Contains(item.Key))
+							{
+								string currentValue = printerSettings.GetValue(item.Key).Trim();
+								// Compare the value to import to the layer cascade value and only set if different
+								if (currentValue != item.Value)
+								{
+									printerSettings.OemLayer[item.Key] = item.Value;
+								}
+							}
+						}
+
+						printerName = settingsToImport[SettingsKey.printer_name];
+						printerSettings.UserLayer[SettingsKey.printer_name] = printerName;
+
+						printerSettings.ClearValue(SettingsKey.device_token);
+						printerInfo.DeviceToken = "";
+						printerInfo.Name = printerName;
+
+						Instance.Profiles.Add(printerInfo);
+
+						printerSettings.Helpers.SetName(printerName);
+
+						// copy in the material settings
+						if (materials.Count > 0)
+						{
+							printerSettings.MaterialLayers.AddRange(materials.Values);
+							// set the preferred setting if described
+							if (settingsToImport.ContainsKey("printMaterial"))
+							{
+								foreach (var material in printerSettings.MaterialLayers)
+								{
+									if (material.Name == settingsToImport["printMaterial"])
+									{
+										printerSettings.SetValue(SettingsKey.active_material_key, material.LayerID);
+										break;
+									}
+								}
+							}
+						}
+
+						// copy in the quality settings
+						if (qualitySettings.Count > 0)
+						{
+							printerSettings.QualityLayers.AddRange(qualitySettings.Values);
+							// set the preferred setting if described
+							if (settingsToImport.ContainsKey("printQuality"))
+							{
+								foreach (var qualitySetting in printerSettings.QualityLayers)
+								{
+									if (qualitySetting.Name == settingsToImport["printQuality"])
+									{
+										printerSettings.SetValue(SettingsKey.active_quality_key, qualitySetting.LayerID);
+										break;
+									}
+								}
+							}
+						}
+
+						printerSettings.ResetSettingsForNewProfile();
 
 						printerSettings.Save(userDrivenChange: false);
 						importSuccessful = true;
@@ -857,7 +948,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			lock (writeLock)
 			{
-				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Formatting.Indented));
+				File.WriteAllText(ProfilesDocPath, JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.Indented));
 			}
 		}
 
