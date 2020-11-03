@@ -153,6 +153,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var profile = xmlDoc.SelectSingleNode("profile");
 
+			profile.ReadNumber("defaultSpeed", out double defaultSpeed, (value) => value / 60.0);
+
 			var materials = new Dictionary<string, PrinterSettingsLayer>();
 
 			var materialNodes = profile.SelectNodes(xmlNodes);
@@ -160,7 +162,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				var materialNode = materialNodes[i];
 				var material = new PrinterSettingsLayer();
-				materialNode.ReadSettings(material, false);
+				materialNode.ReadSettings(material, false, defaultSpeed);
 				var materialName = materialNode.Attributes["name"].InnerText;
 				material[SettingsKey.layer_name] = materialName;
 				materials.Add(materialName, material);
@@ -184,7 +186,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			var layer = new PrinterSettingsLayer();
 
 			layer[SettingsKey.printer_name] = profile.Attributes["name"].InnerText;
-			profile.ReadSettings(layer, true);
+			profile.ReadNumber("defaultSpeed", out double defaultSpeed, (value) => value / 60.0);
+			profile.ReadSettings(layer, true, defaultSpeed);
 
 			return layer;
 		}
@@ -192,7 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 	public static class XmlDocSettingsReader
 	{
-		public static void ReadSettings(this XmlNode profile, PrinterSettingsLayer layer, bool inculdePrinterSettings)
+		public static void ReadSettings(this XmlNode profile, PrinterSettingsLayer layer, bool inculdePrinterSettings, double defaultSpeed)
 		{
 			if (inculdePrinterSettings)
 			{
@@ -245,14 +248,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			profile.SetNumber(layer, "externalInfillAngles", SettingsKey.fill_angle);
 			profile.SetPercent(layer, "infillPercentage", SettingsKey.fill_density);
 			// speeds
-			profile.SetPercent(layer, "defaultSpeed", SettingsKey.infill_speed);
-			profile.ReadNumber("defaultSpeed", out double defaultSpeed);
-			profile.SetPercent(layer, "firstLayerUnderspeed", SettingsKey.first_layer_speed, (value) => value * defaultSpeed);
-			profile.SetPercent(layer, "outlineUnderspeed", SettingsKey.external_perimeter_speed, (value) => value * defaultSpeed);
-			profile.SetPercent(layer, "solidInfillUnderspeed", SettingsKey.top_solid_infill_speed, (value) => value * defaultSpeed);
-			profile.SetPercent(layer, "supportUnderspeed", SettingsKey.support_material_speed, (value) => value * defaultSpeed);
-			profile.SetPercent(layer, "bridgingSpeedMultiplier", SettingsKey.bridge_speed, (value) => value * defaultSpeed);
-			profile.SetPercent(layer, "rapidXYspeed", SettingsKey.travel_speed);
+			profile.SetNumber(layer, "defaultSpeed", SettingsKey.infill_speed, (value) => value / 60.0);
+			if (layer.ContainsKey(SettingsKey.infill_speed))
+			{
+				defaultSpeed = double.Parse(layer[SettingsKey.infill_speed]);
+			}
+
+			profile.SetPercent(layer, "firstLayerUnderspeed", SettingsKey.first_layer_speed, (value) => value * 100);
+			layer[SettingsKey.perimeter_speed] = defaultSpeed.ToString();
+			layer[SettingsKey.interface_layer_speed] = defaultSpeed.ToString();
+			profile.SetPercent(layer, "outlineUnderspeed", SettingsKey.external_perimeter_speed, (value) => value * 100);
+			profile.SetPercent(layer, "solidInfillUnderspeed", SettingsKey.top_solid_infill_speed, (value) => value * 100);
+			profile.SetNumber(layer, "supportUnderspeed", SettingsKey.support_material_speed, (value) => value * defaultSpeed);
+			profile.SetNumber(layer, "bridgingSpeedMultiplier", SettingsKey.bridge_speed, (value) => value * defaultSpeed);
+			profile.SetNumber(layer, "rapidXYspeed", SettingsKey.travel_speed, (value) => value / 60.0);
 			// perimeters
 			profile.SetNumber(layer, "perimeterOutlines", SettingsKey.perimeters);
 			profile.SetBool(layer, "printPerimetersInsideOut", SettingsKey.external_perimeters_first, true);
