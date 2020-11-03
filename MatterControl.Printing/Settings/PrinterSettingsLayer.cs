@@ -244,10 +244,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			profile.SetNumber(layer, "bottomSolidLayers", SettingsKey.bottom_solid_layers);
 			profile.SetNumber(layer, "externalInfillAngles", SettingsKey.fill_angle);
 			profile.SetPercent(layer, "infillPercentage", SettingsKey.fill_density);
-			profile.SetPercent(layer, "firstLayerUnderspeed", SettingsKey.first_layer_speed, (value) => value * 100);
+			// speeds
+			profile.SetPercent(layer, "defaultSpeed", SettingsKey.infill_speed);
+			profile.ReadNumber("defaultSpeed", out double defaultSpeed);
+			profile.SetPercent(layer, "firstLayerUnderspeed", SettingsKey.first_layer_speed, (value) => value * defaultSpeed);
+			profile.SetPercent(layer, "outlineUnderspeed", SettingsKey.external_perimeter_speed, (value) => value * defaultSpeed);
+			profile.SetPercent(layer, "solidInfillUnderspeed", SettingsKey.top_solid_infill_speed, (value) => value * defaultSpeed);
+			profile.SetPercent(layer, "supportUnderspeed", SettingsKey.support_material_speed, (value) => value * defaultSpeed);
+			profile.SetPercent(layer, "bridgingSpeedMultiplier", SettingsKey.bridge_speed, (value) => value * defaultSpeed);
+			profile.SetPercent(layer, "rapidXYspeed", SettingsKey.travel_speed);
 			// perimeters
 			profile.SetNumber(layer, "perimeterOutlines", SettingsKey.perimeters);
 			profile.SetBool(layer, "printPerimetersInsideOut", SettingsKey.external_perimeters_first, true);
+			profile.SetBool(layer, "avoidCrossingOutline", SettingsKey.avoid_crossing_perimeters);
+			profile.SetBool(layer, "maxMovementDetourFactor", SettingsKey.avoid_crossing_max_ratio);
 			// support
 			profile.SetNumber(layer, "supportGridSpacing", SettingsKey.support_material_spacing);
 			profile.SetNumber(layer, "supportAngles", SettingsKey.support_material_infill_angle);
@@ -262,7 +272,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			profile.SetNumber(layer, "skirtOffset", SettingsKey.skirt_distance);
 			profile.SetNumber(layer, "skirtOutlines", SettingsKey.skirts);
 			// fan settings
+			if (profile.IsSet("adjustSpeedForCooling"))
+			{
+				profile.SetNumber(layer, "minSpeedLayerTime", SettingsKey.slowdown_below_layer_time);
+				// profile.SetNumber(layer, "minCoolingSpeedSlowdown", SettingsKey.);
+			}
 
+			profile.SetNumber(layer, "bridgingFanSpeed", SettingsKey.bridge_fan_speed);
 			// extruder
 			var extruder = profile.SelectSingleNode("extruder");
 			if (extruder != null)
@@ -273,6 +289,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				extruder.SetNumber(layer, "extrusionMultiplier", SettingsKey.extrusion_multiplier);
+				extruder.SetNumber(layer, "retractionSpeed", SettingsKey.retract_speed);
 				extruder.SetNumber(layer, "retractionDistance", SettingsKey.retract_length);
 				extruder.SetNumber(layer, "extraRestartDistance", SettingsKey.retract_restart_extra);
 				extruder.SetNumber(layer, "retractionZLift", SettingsKey.retract_lift);

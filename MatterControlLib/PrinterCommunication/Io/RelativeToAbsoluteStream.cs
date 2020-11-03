@@ -27,22 +27,16 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using MatterHackers.Agg;
-using MatterHackers.GCodeVisualizer;
-using MatterHackers.VectorMath;
-using System.Text;
-using System.Collections.Generic;
-
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
 	public class RelativeToAbsoluteStream : GCodeStreamProxy
 	{
 		protected PrinterMove lastDestination = PrinterMove.Unknown;
+
 		public PrinterMove LastDestination { get { return lastDestination; } }
 
-		bool xyzAbsoluteMode = true;
-		bool eAbsoluteMode = true;
+		private bool xyzAbsoluteMode = true;
+		private bool eAbsoluteMode = true;
 		private bool haveSentG90;
 
 		public RelativeToAbsoluteStream(PrinterConfig printer, GCodeStream internalStream)
@@ -66,34 +60,39 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public string ProcessLine(string lineToProcess)
 		{
-			if (lineToProcess != null
-				&& lineToProcess.StartsWith("G9"))
+			if (lineToProcess != null)
 			{
-				if (lineToProcess.StartsWith("G91"))
+				if (lineToProcess.StartsWith("G9"))
 				{
-					xyzAbsoluteMode = false;
-					eAbsoluteMode = false;
-					return "";
-				}
-				else if (lineToProcess.StartsWith("G90"))
-				{
-					xyzAbsoluteMode = true;
-					eAbsoluteMode = true;
-					if (haveSentG90)
+					if (lineToProcess.StartsWith("G91"))
 					{
-						// If we have already set the printer to absolute mode, do not send it again.
-						// This will guarantee we send it once and then we don't send it again (as this ensures we never send a G91).
+						xyzAbsoluteMode = false;
+						eAbsoluteMode = false;
+						// do not actually send this to the printer
 						return "";
 					}
-					haveSentG90 = true;
-				}
+					else if (lineToProcess.StartsWith("G90"))
+					{
+						xyzAbsoluteMode = true;
+						eAbsoluteMode = true;
+						if (haveSentG90)
+						{
+							// If we have already set the printer to absolute mode, do not send it again.
+							// This will guarantee we send it once and then we don't send it again (as this ensures we never send a G91).
+							return "";
+						}
 
-				if (lineToProcess.StartsWith("M83"))
+						haveSentG90 = true;
+					}
+				}
+				else if (lineToProcess.StartsWith("M83"))
 				{
 					// extruder to relative mode
 					eAbsoluteMode = false;
+					// do not actually send this to the printer
+					return "";
 				}
-				else if (lineToProcess.StartsWith("82"))
+				else if (lineToProcess.StartsWith("M82"))
 				{
 					// extruder to absolute mode
 					eAbsoluteMode = true;
@@ -104,32 +103,48 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& LineIsMovement(lineToProcess))
 			{
 				PrinterMove currentDestination;
-				if (xyzAbsoluteMode && eAbsoluteMode)
-				{
-					currentDestination = GetPosition(lineToProcess, lastDestination);
-				}
-				else
+				currentDestination = GetPosition(lineToProcess, lastDestination);
+				if (!xyzAbsoluteMode || !eAbsoluteMode)
 				{
 					PrinterMove xyzDestination = GetPosition(lineToProcess, lastDestination);
-					double feedRate = xyzDestination.feedRate;
-					if (!xyzAbsoluteMode)
+					if (xyzDestination.HaveAnyPosition)
 					{
-						xyzDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-						xyzDestination += lastDestination;
+						double feedRate = xyzDestination.feedRate;
+						if (!xyzAbsoluteMode)
+						{
+							xyzDestination = GetPosition(lineToProcess, PrinterMove.Zero);
+							if (lastDestination.position.X != double.PositiveInfinity)
+							{
+								xyzDestination.position.X += lastDestination.position.X;
+							}
+
+							if (lastDestination.position.Y != double.PositiveInfinity)
+							{
+								xyzDestination.position.Y += lastDestination.position.Y;
+							}
+
+							if (lastDestination.position.Z != double.PositiveInfinity)
+							{
+								xyzDestination.position.Z += lastDestination.position.Z;
+							}
+						}
+
+						PrinterMove eDestination = GetPosition(lineToProcess, lastDestination);
+						if (!eAbsoluteMode)
+						{
+							eDestination = GetPosition(lineToProcess, PrinterMove.Zero);
+							if (lastDestination.extrusion != double.PositiveInfinity)
+							{
+								eDestination += lastDestination;
+							}
+						}
+
+						currentDestination.extrusion = eDestination.extrusion;
+						currentDestination.feedRate = feedRate;
+						currentDestination.position = xyzDestination.position;
+
+						lineToProcess = CreateMovementLine(currentDestination, lastDestination);
 					}
-
-					PrinterMove eDestination = GetPosition(lineToProcess, lastDestination);
-					if (!eAbsoluteMode)
-					{
-						eDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-						eDestination += lastDestination;
-					}
-
-					currentDestination.extrusion = eDestination.extrusion;
-					currentDestination.feedRate = feedRate;
-					currentDestination.position = xyzDestination.position;
-
-					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
 				}
 
 				// send the first one

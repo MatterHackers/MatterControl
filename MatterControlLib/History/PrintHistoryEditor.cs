@@ -493,7 +493,7 @@ Support and tutorials:" + articles;
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						DialogWindow.Show(this, 0);
+						DialogWindow.Show(this, printTask.Id);
 						// this will cause a layout that fixes a display issue
 						scrollable.ScrollArea.BoundsChanged += (s, e) =>
 						{
