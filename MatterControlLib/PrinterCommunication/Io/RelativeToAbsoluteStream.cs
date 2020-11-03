@@ -103,11 +103,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				&& LineIsMovement(lineToProcess))
 			{
 				PrinterMove currentDestination;
-				if (xyzAbsoluteMode && eAbsoluteMode)
-				{
-					currentDestination = GetPosition(lineToProcess, lastDestination);
-				}
-				else
+				currentDestination = GetPosition(lineToProcess, lastDestination);
+				if (!xyzAbsoluteMode || !eAbsoluteMode)
 				{
 					PrinterMove xyzDestination = GetPosition(lineToProcess, lastDestination);
 					if (xyzDestination.HaveAnyPosition)
@@ -116,14 +113,30 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						if (!xyzAbsoluteMode)
 						{
 							xyzDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-							xyzDestination += lastDestination;
+							if (lastDestination.position.X != double.PositiveInfinity)
+							{
+								xyzDestination.position.X += lastDestination.position.X;
+							}
+
+							if (lastDestination.position.Y != double.PositiveInfinity)
+							{
+								xyzDestination.position.Y += lastDestination.position.Y;
+							}
+
+							if (lastDestination.position.Z != double.PositiveInfinity)
+							{
+								xyzDestination.position.Z += lastDestination.position.Z;
+							}
 						}
 
 						PrinterMove eDestination = GetPosition(lineToProcess, lastDestination);
 						if (!eAbsoluteMode)
 						{
 							eDestination = GetPosition(lineToProcess, PrinterMove.Zero);
-							eDestination += lastDestination;
+							if (lastDestination.extrusion != double.PositiveInfinity)
+							{
+								eDestination += lastDestination;
+							}
 						}
 
 						currentDestination.extrusion = eDestination.extrusion;
@@ -131,11 +144,11 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						currentDestination.position = xyzDestination.position;
 
 						lineToProcess = CreateMovementLine(currentDestination, lastDestination);
-
-						// send the first one
-						lastDestination = currentDestination;
 					}
 				}
+
+				// send the first one
+				lastDestination = currentDestination;
 			}
 
 			return lineToProcess;
