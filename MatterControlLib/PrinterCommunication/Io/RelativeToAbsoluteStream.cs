@@ -38,6 +38,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private bool xyzAbsoluteMode = true;
 		private bool eAbsoluteMode = true;
 		private bool haveSentG90;
+		private bool haveSentM82;
 
 		public RelativeToAbsoluteStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
@@ -96,6 +97,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					// extruder to absolute mode
 					eAbsoluteMode = true;
+
+					if (haveSentM82)
+					{
+						return "";
+					}
+
+					haveSentM82 = true;
 				}
 			}
 
@@ -142,9 +150,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						currentDestination.extrusion = eDestination.extrusion;
 						currentDestination.feedRate = feedRate;
 						currentDestination.position = xyzDestination.position;
-
-						lineToProcess = CreateMovementLine(currentDestination, lastDestination);
 					}
+				}
+
+				if (!lineToProcess.StartsWith("G28")
+					&& !lineToProcess.StartsWith("G29")
+					&& !lineToProcess.StartsWith("G30"))
+				{
+					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
 				}
 
 				// send the first one

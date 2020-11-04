@@ -320,26 +320,25 @@ namespace MatterControl.Tests.MatterControl
 		}
 
 		[Test]
-		public void CorrectEOutputPositions()
+		public void CorrectEOutputPositionsG91()
 		{
 			string[] inputLines = new string[]
 			{
-				"G1 E11 F300",
-				// BCN tool change test
+				"G1 E11 F300", // E = 11
 				// Before:
-				"G92 E0",
+				"G92 E0", // E = 0
 				"G91",
-				"G1 E - 5 F302",
+				"G1 E - 5 F302", // E = -5
 				"G90",
 				// After:
 				"G91",
-				"G1 E8 F150",
+				"G1 E8 F150", // E = 3
 				"G90",
 				"G4 P0",
-				"G92 E0",
+				"G92 E0",  // E = 0
 				"G4 P0",
 				"G91",
-				"G1 E-2 F301",
+				"G1 E-2 F301",  // E = -2
 				"G90",
 			};
 
@@ -373,6 +372,163 @@ namespace MatterControl.Tests.MatterControl
 				"G1 E-1 F301",
 				"G1 E-2",
 				"",
+			};
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
+			ValidateStreamResponse(expected, testStream);
+		}
+
+		[Test]
+		public void CorrectEOutputPositionsM83()
+		{
+			string[] inputLines = new string[]
+			{
+				"G1 E11 F300",
+				// Before:
+				"G92 E0",
+				"M83", // relative extruder
+				"G1 E - 5 F302",
+				"M82",
+				// After:
+				"M83",
+				"G1 E8 F150",
+				"M82",
+				"G4 P0",
+				"G92 E0",
+				"G4 P0",
+				"M83",
+				"G1 E-2 F301",
+				"M82",
+				"G1 E2 F301",
+			};
+
+			string[] expected = new string[]
+			{
+				"G1 E11 F300",
+				"G92 E0",
+				"",
+				"G1 E-1 F302",
+				"G1 E-2",
+				"G1 E-3",
+				"G1 E-4",
+				"G1 E-5",
+				"M82",
+				"", // 10
+				"G1 E-4 F150",
+				"G1 E-3",
+				"G1 E-2",
+				"G1 E-1",
+				"G1 E0",
+				"G1 E1",
+				"G1 E2",
+				"G1 E3",
+				"",
+				"G4 P0", // 20
+				"G92 E0",
+				"G4 P0",
+				"",
+				"G1 E-1 F301",
+				"G1 E-2",
+				"",
+				"G1 E-1",
+				"G1 E0",
+				"G1 E1",
+				"G1 E2", // 30
+			};
+
+			var printer = new PrinterConfig(new PrinterSettings());
+
+			GCodeStream testStream = CreateTestGCodeStream(printer, inputLines, out List<GCodeStream> streamList);
+			ValidateStreamResponse(expected, testStream);
+		}
+
+		[Test]
+		public void CorrectEOutputForMiniStartupWithM83()
+		{
+			string[] inputLines = new string[]
+			{
+				"G21 ; set units to millimeters",
+				"M107 ; fan off",
+				"T0 ; set the active extruder to 0",
+				"; settings from start_gcode",
+				"M83",
+				"M104 S170 ; set hotend temperature for bed leveling",
+				"M140 S60 ; set bed temperature",
+				"M109 R170",
+				"G28",
+				"G29",
+				"M104 S215 ; set hotend temperature",
+				"G92 E0.0",
+				"G1 X0 Y0 F2400",
+				"G1 Z3 F720",
+				"G92 E0.0",
+				"G1 X5 F1000",
+				"G1 Z0 F720",
+				"G1 X10 E5 F900",
+				"G1 X15 E5",
+				"G92 E0.0",
+				"; automatic settings after start_gcode",
+				"T0 ; set the active extruder to 0",
+				"G90 ; use absolute coordinates",
+				"G92 E0 ; reset the expected extruder position",
+				"M82 ; use absolute distance for extrusion",
+				"G1 E5 F440",
+				"G1 E10",
+			};
+
+			string[] expected = new string[]
+			{
+				"G21 ; set units to millimeters",
+				"M107 ; fan off",
+				"T0 ; set the active extruder to 0",
+				"; settings from start_gcode",
+				"", // set to relative e
+				"M104 S170 ; set hotend temperature for bed leveling",
+				"M140 S60 ; set bed temperature",
+				"M109 R170",
+				"G28",
+				"G29", // 10
+				"M104 S215 ; set hotend temperature",
+				"G92 E0.0",
+				"G1 F2400",
+				"G1 Z1 F720",
+				"G1 Z2",
+				"G1 Z3",
+				"G92 E0.0",
+				"G1 X1 F1000",
+				"G1 X2",
+				"G1 X3", // 20
+				"G1 X4",
+				"G1 X5",
+				"G1 F720",
+				"G1 X6 E1 F900",
+				"G1 X7 E2",
+				"G1 X8 E3",
+				"G1 X9 E4",
+				"G1 X10 E5",
+				"G1 X11 E6",
+				"G1 X12 E7", // 30
+				"G1 X13 E8",
+				"G1 X14 E9",
+				"G1 X15 E10",
+				"G92 E0.0",
+				"; automatic settings after start_gcode",
+				"T0 ; set the active extruder to 0",
+				"G90 ; use absolute coordinates",
+				"G92 E0 ; reset the expected extruder position",
+				"M82 ; use absolute distance for extrusion",
+				"G1 E1 F440", // 40
+				"G1 E2",
+				"G1 E3",
+				"G1 E4",
+				"G1 E5",
+				"G1 E6",
+				"G1 E7",
+				"G1 E8",
+				"G1 E9",
+				"G1 E10",
 			};
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -597,12 +753,12 @@ namespace MatterControl.Tests.MatterControl
 
 			while (actualLine != null)
 			{
-				if (actualLine == "G92 E0")
+				if (actualLine.StartsWith("G92 E0"))
 				{
-					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 300));
+					testStream.SetPrinterPosition(new PrinterMove(default(Vector3), 0, 300));
 				}
 
-				if (actualLine == "G92 Z0")
+				if (actualLine.StartsWith("G92 Z0"))
 				{
 					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 0));
 				}
