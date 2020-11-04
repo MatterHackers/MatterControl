@@ -61,54 +61,50 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public string ProcessLine(string lineToProcess)
 		{
-			if (lineToProcess != null)
+			if (lineToProcess.StartsWith("G9"))
 			{
-				if (lineToProcess.StartsWith("G9"))
+				if (lineToProcess.StartsWith("G91"))
 				{
-					if (lineToProcess.StartsWith("G91"))
-					{
-						xyzAbsoluteMode = false;
-						eAbsoluteMode = false;
-						// do not actually send this to the printer
-						return "";
-					}
-					else if (lineToProcess.StartsWith("G90"))
-					{
-						xyzAbsoluteMode = true;
-						eAbsoluteMode = true;
-						if (haveSentG90)
-						{
-							// If we have already set the printer to absolute mode, do not send it again.
-							// This will guarantee we send it once and then we don't send it again (as this ensures we never send a G91).
-							return "";
-						}
-
-						haveSentG90 = true;
-					}
-				}
-				else if (lineToProcess.StartsWith("M83"))
-				{
-					// extruder to relative mode
+					xyzAbsoluteMode = false;
 					eAbsoluteMode = false;
 					// do not actually send this to the printer
 					return "";
 				}
-				else if (lineToProcess.StartsWith("M82"))
+				else if (lineToProcess.StartsWith("G90"))
 				{
-					// extruder to absolute mode
+					xyzAbsoluteMode = true;
 					eAbsoluteMode = true;
-
-					if (haveSentM82)
+					if (haveSentG90)
 					{
+						// If we have already set the printer to absolute mode, do not send it again.
+						// This will guarantee we send it once and then we don't send it again (as this ensures we never send a G91).
 						return "";
 					}
 
-					haveSentM82 = true;
+					haveSentG90 = true;
 				}
 			}
+			else if (lineToProcess.StartsWith("M83"))
+			{
+				// extruder to relative mode
+				eAbsoluteMode = false;
+				// do not actually send this to the printer
+				return "";
+			}
+			else if (lineToProcess.StartsWith("M82"))
+			{
+				// extruder to absolute mode
+				eAbsoluteMode = true;
 
-			if (lineToProcess != null
-				&& LineIsMovement(lineToProcess))
+				if (haveSentM82)
+				{
+					return "";
+				}
+
+				haveSentM82 = true;
+			}
+
+			if (LineIsMovement(lineToProcess))
 			{
 				PrinterMove currentDestination;
 				currentDestination = GetPosition(lineToProcess, lastDestination);
@@ -151,13 +147,13 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 						currentDestination.feedRate = feedRate;
 						currentDestination.position = xyzDestination.position;
 					}
-				}
 
-				if (!lineToProcess.StartsWith("G28")
-					&& !lineToProcess.StartsWith("G29")
-					&& !lineToProcess.StartsWith("G30"))
-				{
-					lineToProcess = CreateMovementLine(currentDestination, lastDestination);
+					if (!lineToProcess.StartsWith("G28")
+						&& !lineToProcess.StartsWith("G29")
+						&& !lineToProcess.StartsWith("G30"))
+					{
+						lineToProcess = CreateMovementLine(currentDestination, lastDestination);
+					}
 				}
 
 				// send the first one
@@ -172,13 +168,17 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			// G91 Relative
 			// G90 Absolute
 			string lineToSend = base.ReadLine();
-			if (lineToSend != null
-				&& lineToSend.EndsWith("; NO_PROCESSING"))
+			if (lineToSend != null)
 			{
-				return lineToSend;
+				if (lineToSend.EndsWith("; NO_PROCESSING"))
+				{
+					return lineToSend;
+				}
+
+				return ProcessLine(lineToSend);
 			}
 
-			return ProcessLine(lineToSend);
+			return null;
 		}
 	}
 }

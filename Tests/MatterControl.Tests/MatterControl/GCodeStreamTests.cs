@@ -187,7 +187,6 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, testStream);
 		}
 
-
 		[Test]
 		public void LineCuttingOnWhenLevelingOnWithProbeTest()
 		{
@@ -305,7 +304,7 @@ namespace MatterControl.Tests.MatterControl
 		public void RegexReplacementStreamIsLast()
 		{
 			var printer = new PrinterConfig(new PrinterSettings());
-			var context = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, new []{ "" }), true);
+			var context = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, new[] { "" }), true);
 
 			var streamProcessors = new List<GCodeStream>();
 
@@ -316,7 +315,6 @@ namespace MatterControl.Tests.MatterControl
 			}
 
 			Assert.IsTrue(streamProcessors.First() is ProcessWriteRegexStream, "ProcessWriteRegexStream should be the last stream in the stack");
-
 		}
 
 		[Test]

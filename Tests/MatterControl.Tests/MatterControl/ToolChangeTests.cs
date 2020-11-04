@@ -433,7 +433,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 				"M114",
 				"M104 T1 S240",
 				"G1 Y222",
-				"M114",
+				"M114", // 20
 				"G1 X19 Y8 F3000",
 				"G1 Z7 F315",
 				"G1 F2500",
