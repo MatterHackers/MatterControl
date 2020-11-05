@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			if (!string.IsNullOrEmpty(sectionTitle))
 			{
 				// Add heading
-				var pointSize = (headingPointSize) == -1 ? theme.DefaultFontSize : headingPointSize;
+				var pointSize = headingPointSize == -1 ? theme.DefaultFontSize : headingPointSize;
 
 				// If the control is expandable and a serialization key is supplied, set expanded from persisted value
 				if (serializationKey != null && expandingContent)
@@ -81,8 +81,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						ContentPanel.Visible = checkbox.Checked;
 						this.ExpandedChanged?.Invoke(this, checkbox.Checked);
 					}
+
 					// TODO: Remove this Height = 10 and figure out why the layout engine is not sizing these correctly without this.
-					ContentPanel.Height = 10;
+					ContentPanel.Height = 10 * GuiWidget.DeviceScale;
 				};
 
 				if (serializationKey != null)
@@ -172,7 +173,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override bool Enabled
 		{
-			get => (this.ExpandableWhenDisabled) ? true: base.Enabled;
+			get => this.ExpandableWhenDisabled ? true : base.Enabled;
 			set
 			{
 				if (this.ExpandableWhenDisabled)

@@ -473,7 +473,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
 			// Create toggle field for key
-			UIField uiField = new ToggleboxField(theme)
+			var uiField = new ToggleboxField(theme)
 			{
 				HelpText = settingData.HelpText,
 				Name = $"{settingData.PresentationName} Field"
