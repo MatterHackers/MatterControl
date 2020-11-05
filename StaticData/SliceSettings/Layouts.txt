@@ -154,6 +154,7 @@ Printer
       print_leveling_probe_start
       use_z_probe
       validate_leveling
+      validation_threshold
       z_probe_samples
       probe_offset
       z_servo_depolyed_angle

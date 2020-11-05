@@ -526,7 +526,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "g/cm³".Localize(),
 					DefaultValue = "1.24",
 					RebuildGCodeOnChange = false,
-					QuickMenuSettings = { { "PLA", "1.24" }, { "PET", "1.27" }, { "ABS","1.04" } },
+					QuickMenuSettings = { { "PLA", "1.24" }, { "PET", "1.27" }, { "ABS", "1.04" } },
 				},
 				new SliceSettingData()
 				{
@@ -1039,7 +1039,20 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
 					RebuildGCodeOnChange = false,
+					ReloadUiWhenChanged = true,
 					DefaultValue = "0"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.validation_threshold,
+					PresentationName = "Validation Threshold".Localize(),
+					HelpText = "The deviation from the last measured value allowed without re-calculating the leveling solution.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer&!has_hardware_leveling&has_z_probe&use_z_probe&validate_leveling",
+					RebuildGCodeOnChange = false,
+					DefaultValue = ".05"
 				},
 				new SliceSettingData()
 				{
@@ -1130,7 +1143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							{ "Value", "[current_value]" }
 						}
 					},
-						SlicerConfigName = SettingsKey.solid_shell,
+					SlicerConfigName = SettingsKey.solid_shell,
 					PresentationName = "Width".Localize(),
 					HelpText = "Sets the size of the outer solid surface (perimeter) for the entire print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
@@ -2288,7 +2301,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
 					{
-						new  Dictionary<string, string>
+						new Dictionary<string, string>
 						{
 							{ "TargetSetting", SettingsKey.driver_type },
 							{ "OnValue", "TCPIP" },

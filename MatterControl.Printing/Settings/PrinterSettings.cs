@@ -239,6 +239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.unload_filament_length,
 			SettingsKey.use_z_probe,
 			SettingsKey.validate_leveling,
+			SettingsKey.validation_threshold,
 			SettingsKey.validate_layer_height,
 			SettingsKey.write_regex,
 			SettingsKey.xy_offsets_have_been_calibrated,

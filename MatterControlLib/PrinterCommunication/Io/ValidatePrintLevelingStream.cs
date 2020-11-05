@@ -231,7 +231,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 							var delta = sampledPositions[activeProbeIndex].Position.Z - levelingData.SampledPositions[activeProbeIndex].Z;
 							if (levelingData.SampledPositions.Count == sampledPositions.Count
-								&& Math.Abs(delta) < printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 10.0)
+								&& Math.Abs(delta) < printer.Settings.GetValue<double>(SettingsKey.validation_threshold))
 							{
 								// the last leveling is still good abort this new calibration and start printing
 								CancelValidation();
