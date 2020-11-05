@@ -261,6 +261,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string use_z_probe = nameof(use_z_probe);
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string validate_leveling = nameof(validate_leveling);
+		public const string validation_threshold = nameof(validation_threshold);
 		public const string vibration_limit = nameof(vibration_limit);
 		public const string windows_driver = nameof(windows_driver);
 		public const string wipe_shield_distance = nameof(wipe_shield_distance);

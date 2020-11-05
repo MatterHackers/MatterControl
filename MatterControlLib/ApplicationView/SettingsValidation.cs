@@ -264,6 +264,23 @@ namespace MatterHackers.MatterControl
 							});
 					}
 
+					if (levelingEnabled
+						&& !settings.GetValue<bool>(SettingsKey.has_hardware_leveling)
+						&& settings.GetValue<bool>(SettingsKey.has_z_probe)
+						&& settings.GetValue<bool>(SettingsKey.use_z_probe)
+						&& settings.GetValue<bool>(SettingsKey.validate_leveling)
+						&& (settings.GetValue<double>(SettingsKey.validation_threshold) < .001
+						|| settings.GetValue<double>(SettingsKey.validation_threshold) > .5))
+					{
+						var threshold = settings.GetValue<double>(SettingsKey.validation_threshold);
+						errors.Add(
+							new SettingsValidationError(SettingsKey.validation_threshold)
+							{
+								Error = "The Validation Threshold mush be greater than 0 and less than .5mm. It is currently {0}.".Localize().FormatWith(threshold),
+								ValueDetails = "{0} = {1}".FormatWith(GetSettingsName(SettingsKey.validation_threshold), threshold),
+							});
+					}
+
 					// check if the leveling data has too large a range
 					if (printer.Settings.Helpers.PrintLevelingData.SampledPositions.Count > 3)
 					{
