@@ -42,7 +42,7 @@ using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public class SliceSettingsRow : SettingsRow, IIgnoredPopupChild
+	public class SliceSettingsRow : SettingsRow, ISetableIgnoredPopupChild
 	{
 		private IEnumerable<SettingsValidationError> validationErrors;
 
@@ -200,149 +200,160 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public bool KeepMenuOpen { get; private set; } = false;
+		public bool KeepMenuOpen { get; set; } = false;
 
 		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
-			if (mouseEvent.Button == MouseButtons.Right)
-			{
-				KeepMenuOpen = true;
-
-				bool SettingIsOem()
-				{
-					if (printer.Settings.OemLayer.TryGetValue(settingData.SlicerConfigName, out string oemValue))
-					{
-						return printer.Settings.GetValue(settingData.SlicerConfigName) == oemValue;
-					}
-
-					if (printer.Settings.BaseLayer.TryGetValue(settingData.SlicerConfigName, out string baseValue))
-					{
-						return printer.Settings.GetValue(settingData.SlicerConfigName) == baseValue;
-					}
-
-					return false;
-				}
-
-				bool SettingIsSameAsLayer(PrinterSettingsLayer layer)
-				{
-					if (layer != null
-						&& layer.TryGetValue(settingData.SlicerConfigName, out string presetValue))
-					{
-						return printer.Settings.GetValue(settingData.SlicerConfigName) == presetValue;
-					}
-
-					return false;
-				}
-
-				// show a right click menu ('Set as Default' & 'Help')
-				var menuTheme = ApplicationController.Instance.MenuTheme;
-				var popupMenu = new PopupMenu(menuTheme);
-				var settingName = settingData.SlicerConfigName;
-
-				var enableClearUser = printer.Settings.UserLayer.ContainsKey(settingName);
-				var enableClearMaterial = printer.Settings.MaterialLayer?.ContainsKey(settingName) == true;
-				var enableClearQuality = printer.Settings.QualityLayer?.ContainsKey(settingName) == true;
-				// put in clear layer menu items
-				{
-					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Override".Localize());
-					clearSettingMenuItem.Enabled = enableClearUser;
-					clearSettingMenuItem.Click += (s, e) =>
-					{
-						new SettingsContext(printer,
-							new PrinterSettingsLayer[] { printer.Settings.UserLayer },
-							NamedSettingsLayers.User).ClearValue(settingName);
-						UpdateStyle();
-						printer.Settings.Save();
-					};
-				}
-
-				// quality
-				if (enableClearQuality)
-				{
-					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Quality Setting".Localize());
-					clearSettingMenuItem.Enabled = enableClearQuality;
-					clearSettingMenuItem.Click += (s, e) =>
-					{
-						new SettingsContext(printer,
-							new PrinterSettingsLayer[] { printer.Settings.QualityLayer },
-							NamedSettingsLayers.Quality).ClearValue(settingName);
-						UpdateStyle();
-						printer.Settings.Save();
-					};
-				}
-
-				// material
-				if (enableClearMaterial)
-				{
-					var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Material Setting".Localize());
-					clearSettingMenuItem.Enabled = enableClearMaterial;
-					clearSettingMenuItem.Click += (s, e) =>
-					{
-						new SettingsContext(printer,
-							new PrinterSettingsLayer[] { printer.Settings.MaterialLayer },
-							NamedSettingsLayers.Material).ClearValue(settingName);
-						UpdateStyle();
-						printer.Settings.Save();
-					};
-				}
-
-				var canSaveDefault = !SettingIsOem();
-				var isPrinterSetting = PrinterSettings.Layout.Printer.ContainsKey(settingName);
-				var canSaveQuality = !isPrinterSetting && printer.Settings.QualityLayer != null && !SettingIsSameAsLayer(printer.Settings.QualityLayer);
-				var canSaveMaterial = !isPrinterSetting && printer.Settings.MaterialLayer != null && !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
-
-				if (canSaveDefault || canSaveQuality || canSaveMaterial)
-				{
-					popupMenu.CreateSeparator();
-
-					popupMenu.CreateSubMenu("Save to", menuTheme, (subMenu) =>
-					{
-						// add menu to set default
-						{
-							var setAsDefaultMenuItem = subMenu.CreateMenuItem("Printer Default".Localize());
-							setAsDefaultMenuItem.Enabled = canSaveDefault; // check if the settings is already the default
-							setAsDefaultMenuItem.Click += (s, e) =>
-							{
-								printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
-								UpdateStyle();
-								printer.Settings.Save();
-							};
-						}
-
-						// add menu item to set quality
-						{
-							var setAsQualityMenuItem = subMenu.CreateMenuItem("Quality Setting".Localize());
-							setAsQualityMenuItem.Enabled = canSaveQuality;
-							setAsQualityMenuItem.Click += (s, e) =>
-							{
-								printer.Settings.QualityLayer[settingName] = printer.Settings.GetValue(settingName);
-								printer.Settings.UserLayer.Remove(settingName);
-								UpdateStyle();
-								printer.Settings.Save();
-							};
-						}
-
-						// add menu item to set material
-						{
-							var setAsMaterialMenuItem = subMenu.CreateMenuItem("Material Setting".Localize());
-							setAsMaterialMenuItem.Enabled = canSaveMaterial;
-							setAsMaterialMenuItem.Click += (s, e) =>
-							{
-								printer.Settings.MaterialLayer[settingName] = printer.Settings.GetValue(settingName);
-								printer.Settings.UserLayer.Remove(settingName);
-								UpdateStyle();
-								printer.Settings.Save();
-							};
-						}
-					});
-				}
-
-				popupMenu.ShowMenu(this, mouseEvent);
-
-				popupMenu.Closed += (s, e) => KeepMenuOpen = false;
-			}
+			OpenRightClickMenu(printer, settingData, this, this, mouseEvent);
 
 			base.OnClick(mouseEvent);
+		}
+
+		public static void OpenRightClickMenu(PrinterConfig printer,
+			SliceSettingData settingData,
+			SliceSettingsRow sliceSettingsRow,
+			ISetableIgnoredPopupChild ignoredPopupChild,
+			MouseEventArgs mouseEvent)
+		{
+			if (mouseEvent.Button != MouseButtons.Right)
+			{
+				return;
+			}
+
+			ignoredPopupChild.KeepMenuOpen = true;
+
+			bool SettingIsOem()
+			{
+				if (printer.Settings.OemLayer.TryGetValue(settingData.SlicerConfigName, out string oemValue))
+				{
+					return printer.Settings.GetValue(settingData.SlicerConfigName) == oemValue;
+				}
+
+				if (printer.Settings.BaseLayer.TryGetValue(settingData.SlicerConfigName, out string baseValue))
+				{
+					return printer.Settings.GetValue(settingData.SlicerConfigName) == baseValue;
+				}
+
+				return false;
+			}
+
+			bool SettingIsSameAsLayer(PrinterSettingsLayer layer)
+			{
+				if (layer != null
+					&& layer.TryGetValue(settingData.SlicerConfigName, out string presetValue))
+				{
+					return printer.Settings.GetValue(settingData.SlicerConfigName) == presetValue;
+				}
+
+				return false;
+			}
+
+			// show a right click menu ('Set as Default' & 'Help')
+			var menuTheme = ApplicationController.Instance.MenuTheme;
+			var popupMenu = new PopupMenu(menuTheme);
+			var settingName = settingData.SlicerConfigName;
+
+			var enableClearUser = printer.Settings.UserLayer.ContainsKey(settingName);
+			var enableClearMaterial = printer.Settings.MaterialLayer?.ContainsKey(settingName) == true;
+			var enableClearQuality = printer.Settings.QualityLayer?.ContainsKey(settingName) == true;
+			// put in clear layer menu items
+			{
+				var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Override".Localize());
+				clearSettingMenuItem.Enabled = enableClearUser;
+				clearSettingMenuItem.Click += (s, e) =>
+				{
+					new SettingsContext(printer,
+						new PrinterSettingsLayer[] { printer.Settings.UserLayer },
+						NamedSettingsLayers.User).ClearValue(settingName);
+					sliceSettingsRow.UpdateStyle();
+					printer.Settings.Save();
+				};
+			}
+
+			// quality
+			if (enableClearQuality)
+			{
+				var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Quality Setting".Localize());
+				clearSettingMenuItem.Enabled = enableClearQuality;
+				clearSettingMenuItem.Click += (s, e) =>
+				{
+					new SettingsContext(printer,
+						new PrinterSettingsLayer[] { printer.Settings.QualityLayer },
+						NamedSettingsLayers.Quality).ClearValue(settingName);
+					sliceSettingsRow.UpdateStyle();
+					printer.Settings.Save();
+				};
+			}
+
+			// material
+			if (enableClearMaterial)
+			{
+				var clearSettingMenuItem = popupMenu.CreateMenuItem("Clear Material Setting".Localize());
+				clearSettingMenuItem.Enabled = enableClearMaterial;
+				clearSettingMenuItem.Click += (s, e) =>
+				{
+					new SettingsContext(printer,
+						new PrinterSettingsLayer[] { printer.Settings.MaterialLayer },
+						NamedSettingsLayers.Material).ClearValue(settingName);
+					sliceSettingsRow.UpdateStyle();
+					printer.Settings.Save();
+				};
+			}
+
+			var canSaveDefault = !SettingIsOem();
+			var isPrinterSetting = PrinterSettings.Layout.Printer.ContainsKey(settingName);
+			var canSaveQuality = !isPrinterSetting && printer.Settings.QualityLayer != null && !SettingIsSameAsLayer(printer.Settings.QualityLayer);
+			var canSaveMaterial = !isPrinterSetting && printer.Settings.MaterialLayer != null && !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
+
+			if (canSaveDefault || canSaveQuality || canSaveMaterial)
+			{
+				popupMenu.CreateSeparator();
+
+				popupMenu.CreateSubMenu("Save to", menuTheme, (subMenu) =>
+				{
+					// add menu to set default
+					{
+						var setAsDefaultMenuItem = subMenu.CreateMenuItem("Printer Default".Localize());
+						setAsDefaultMenuItem.Enabled = canSaveDefault; // check if the settings is already the default
+						setAsDefaultMenuItem.Click += (s, e) =>
+						{
+							printer.Settings.OemLayer[settingName] = printer.Settings.GetValue(settingName);
+							sliceSettingsRow.UpdateStyle();
+							printer.Settings.Save();
+						};
+					}
+
+					// add menu item to set quality
+					{
+						var setAsQualityMenuItem = subMenu.CreateMenuItem("Quality Setting".Localize());
+						setAsQualityMenuItem.Enabled = canSaveQuality;
+						setAsQualityMenuItem.Click += (s, e) =>
+						{
+							printer.Settings.QualityLayer[settingName] = printer.Settings.GetValue(settingName);
+							printer.Settings.UserLayer.Remove(settingName);
+							sliceSettingsRow.UpdateStyle();
+							printer.Settings.Save();
+						};
+					}
+
+					// add menu item to set material
+					{
+						var setAsMaterialMenuItem = subMenu.CreateMenuItem("Material Setting".Localize());
+						setAsMaterialMenuItem.Enabled = canSaveMaterial;
+						setAsMaterialMenuItem.Click += (s, e) =>
+						{
+							printer.Settings.MaterialLayer[settingName] = printer.Settings.GetValue(settingName);
+							printer.Settings.UserLayer.Remove(settingName);
+							sliceSettingsRow.UpdateStyle();
+							printer.Settings.Save();
+						};
+					}
+				});
+			}
+
+			popupMenu.ShowMenu(sliceSettingsRow, mouseEvent);
+
+			popupMenu.Closed += (s, e) => ignoredPopupChild.KeepMenuOpen = false;
 		}
 
 		public UIField UIField { get; internal set; }

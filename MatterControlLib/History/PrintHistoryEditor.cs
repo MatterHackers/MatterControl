@@ -283,6 +283,40 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 		public static MHDropDownList CreateDefaultOptions(GuiWidget textField, ThemeConfig theme)
 		{
+			var options = new List<(string group, string item)>()
+			{
+				("First Layer", "First Layer Bad Quality"),
+				("First Layer", "Initial Z Height Incorrect"),
+				("Quality", "Dislodged From Bed"),
+				("Quality", "Layer Shift"),
+				("Quality", "General Quality"),
+				("Quality", "Rough Overhangs"),
+				("Quality", "Skipped Layers"),
+				("Quality", "Some Parts Lifted"),
+				("Quality", "Stringing / Poor retractions"),
+				("Quality", "Warping"),
+				("Mechanical", "Bed Dislodged"),
+				("Mechanical", "Bowden Tube Popped Out"),
+				("Mechanical", "Extruder Slipping"),
+				("Mechanical", "Flooded Hot End"),
+				("Mechanical", "Power Outage"),
+				("Computer / MatterControl", "Computer Crashed"),
+				("Computer / MatterControl", "Computer Slow / Lagging"),
+				("Computer / MatterControl", "Couldn't Resume"),
+				("Computer / MatterControl", "Wouldn’t Slice Correctly"),
+				("Filament", "Filament Jam"),
+				("Filament", "Filament Runout"),
+				("Filament", "Filament Snapped"),
+				("Heating", "Thermal Runaway - Bed"),
+				("Heating", "Thermal Runaway - Hot End"),
+				("Heating", "Thermal Runaway"),
+				("Heating", "Took Too Long To Heat"),
+				("Heating", "Bad Thermistor"),
+				("X", "Test Print"),
+				("X", "User Error"),
+				("X", "Other"),
+			};
+
 			var issues = new string[]
 			{
 				"Bad Thermistor".Localize(),
