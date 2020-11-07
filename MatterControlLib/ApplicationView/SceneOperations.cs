@@ -868,6 +868,7 @@ namespace MatterHackers.MatterControl
 						FitToCylinderOperation(),
 #endif
 						MakeComponentOperation(),
+						EditComponentOperation(),
 					},
 				},
 			};
