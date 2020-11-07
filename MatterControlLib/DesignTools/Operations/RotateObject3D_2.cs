@@ -72,6 +72,15 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 		}
 
+		public override void WrapSelectedItemAndSelect(InteractiveScene scene)
+		{
+			base.WrapSelectedItemAndSelect(scene);
+
+			// use source item as the wrapper may have cloned it
+			var aabb = UntransformedChildren.GetAxisAlignedBoundingBox();
+			this.RotateAbout.Origin = aabb.Center;
+		}
+
 		public override void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
 		{
 			base.WrapItems(items, undoBuffer);
