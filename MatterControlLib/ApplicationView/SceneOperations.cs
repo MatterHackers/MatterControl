@@ -844,6 +844,7 @@ namespace MatterHackers.MatterControl
 					{
 						ReduceOperation(),
 						RepairOperation(),
+						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Printing")
