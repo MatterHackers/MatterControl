@@ -380,6 +380,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
+		[JsonIgnore]
 		public IEnumerable<PrinterSettingsLayer> DefaultLayerCascade
 		{
 			get
@@ -420,6 +421,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public PrinterSettingsLayer MaterialLayer { get; set; }
 
+		[JsonIgnore]
 		public IEnumerable<PrinterSettingsLayer> MaterialLayerCascade
 		{
 			get
@@ -448,6 +450,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		[JsonIgnore]
 		public PrinterSettingsLayer QualityLayer { get; set; }
 
+		[JsonIgnore]
 		public IEnumerable<PrinterSettingsLayer> QualityLayerCascade
 		{
 			get
