@@ -27,110 +27,62 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
+using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using MatterHackers.Agg;
-using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-using MatterHackers.DataConverters3D;
-using MatterHackers.VectorMath;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
-	public enum NamedSettingsLayers
-	{
-		MHBaseSettings,
-		OEMSettings,
-		Quality,
-		Material,
-		User,
-		All
-	}
-
 	public enum BedShape
 	{
 		Rectangular,
+
 		Circular
 	}
-
 	[JsonConverter(typeof(StringEnumConverter))]
 	public enum LevelingSystem
 	{
 		Probe3Points,
+
 		Probe7PointRadial,
+
 		Probe13PointRadial,
+
 		Probe100PointRadial,
+
 		Probe3x3Mesh,
+
 		Probe5x5Mesh,
+
 		Probe10x10Mesh,
+
 		ProbeCustom
+	}
+	public enum NamedSettingsLayers
+	{
+		MHBaseSettings,
+
+		OEMSettings,
+
+		Quality,
+
+		Material,
+
+		User,
+
+		All
 	}
 
 	public class PrinterSettings
 	{
-		private IObjectSlicer _slicer = null;
-
-		[JsonIgnore]
-		public IObjectSlicer Slicer
-		{
-			get
-			{
-				if (_slicer == null)
-				{
-					string userSlicer = this.GetValue(SettingsKey.slice_engine);
-
-					if (SliceEngines.TryGetValue(userSlicer, out IObjectSlicer slicer))
-					{
-						_slicer = slicer;
-					}
-					else
-					{
-						_slicer = SliceEngines.Values.First();
-					}
-				}
-
-				return _slicer;
-			}
-			set => _slicer = value;
-		}
-
-		public static Dictionary<string, IObjectSlicer> SliceEngines { get; } = new Dictionary<string, IObjectSlicer>();
-
-		// Latest version should be in the form of:
-		// Year|month|day|versionForDay (to support multiple revisions on a given day)
-		public static int LatestVersion { get; } = 201606271;
-
-		public static Dictionary<string, SliceSettingData> SettingsData { get; }
-
-		public static SettingsLayout Layout { get; }
-
-		public static event EventHandler<StringEventArgs> AnyPrinterSettingChanged;
-
-		public event EventHandler<StringEventArgs> SettingChanged;
-
-		private static HashSet<string> knownSettings;
-
-		private HashSet<string> replacementTerms;
-
-		private static HashSet<string> ScaledSpeedFields = new HashSet<string>()
-		{
-			SettingsKey.first_layer_speed,
-			SettingsKey.external_perimeter_speed,
-			SettingsKey.raft_print_speed,
-			SettingsKey.infill_speed,
-			SettingsKey.min_print_speed,
-			SettingsKey.perimeter_speed,
-			SettingsKey.retract_speed,
-			SettingsKey.support_material_speed,
-			SettingsKey.travel_speed,
-			SettingsKey.load_filament_speed,
-		};
-
 		/// <summary>
 		/// Application level settings control MatterControl behaviors but aren't used or passed through to the slice engine. Putting settings
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
@@ -249,70 +201,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.z_servo_retracted_angle,
 		};
 
-		/// <summary>
-		/// Call the given function for every active tool
-		/// </summary>
-		/// <typeparam name="T">The type for the given key</typeparam>
-		/// <param name="key">The settings key to lookup per tool</param>
-		/// <param name="applyToEach">The function to call per active tool</param>
-		public void ForTools<T>(string key, Action<string, T, int> applyToEach)
+		private static HashSet<string> knownSettings;
+
+		private static HashSet<string> ScaledSpeedFields = new HashSet<string>()
 		{
-			string Tool(int toolIndex)
-			{
-				if (toolIndex == 0)
-				{
-					return key;
-				}
+			SettingsKey.first_layer_speed,
+			SettingsKey.external_perimeter_speed,
+			SettingsKey.raft_print_speed,
+			SettingsKey.infill_speed,
+			SettingsKey.min_print_speed,
+			SettingsKey.perimeter_speed,
+			SettingsKey.retract_speed,
+			SettingsKey.support_material_speed,
+			SettingsKey.travel_speed,
+			SettingsKey.load_filament_speed,
+		};
 
-				// If the setting has a described method for constructing the keys per tool, use it.
-				var perToolName = SettingsData[key].PerToolName;
-				if (perToolName != null)
-				{
-					return perToolName(toolIndex);
-				}
+		private PrinterSettingsLayer _baseLayer;
 
-				return $"{key}_{toolIndex}";
-			}
+		private IObjectSlicer _slicer = null;
 
-			var extruderCount = this.GetValue<int>(SettingsKey.extruder_count);
-			for (int i = 0; i < extruderCount; i++)
-			{
-				var toolKey = Tool(i);
-				applyToEach(toolKey, this.GetValue<T>(toolKey), i);
-			}
-		}
-
-		public void OnSettingChanged(string slicerConfigName)
-		{
-			if (slicerConfigName == SettingsKey.t0_inset
-				|| slicerConfigName == SettingsKey.t1_inset
-				|| slicerConfigName == SettingsKey.bed_size
-				|| slicerConfigName == SettingsKey.print_center)
-			{
-				this.ResetHotendBounds();
-			}
-
-			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
-			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
-		}
-
-		public event EventHandler PrintLevelingEnabledChanged;
-
-		public event EventHandler MacrosChanged;
-
-		public static PrinterSettings Empty { get; }
-
-		public int DocumentVersion { get; set; } = LatestVersion;
-
-		public string ID { get; set; }
-
-		[JsonIgnore]
-		public PrinterSettingsLayer QualityLayer { get; set; }
-
-		[JsonIgnore]
-		public PrinterSettingsLayer MaterialLayer { get; set; }
-
-		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
+		private HashSet<string> replacementTerms;
 
 		static PrinterSettings()
 		{
@@ -367,69 +276,390 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
+		public static event EventHandler<StringEventArgs> AnyPrinterSettingChanged;
 
-		/// <summary>
-		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
-		/// </summary>
-		public void RestoreConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
+		public event EventHandler MacrosChanged;
+
+		public event EventHandler PrintLevelingEnabledChanged;
+
+		public event EventHandler<StringEventArgs> SettingChanged;
+
+		public static PrinterSettings Empty { get; }
+
+		[JsonIgnore]
+		public static HashSet<string> KnownSettings
 		{
-			if (settingsLayer == null)
+			get
 			{
-				return;
-			}
+				if (knownSettings == null)
+				{
+					knownSettings = LoadSettingsNamesFromPropertiesJson();
+				}
 
-			foreach (var settingsKey in settingsLayer.Keys)
-			{
-				RestoreUserOverride(settingsLayer, settingsKey);
+				return knownSettings;
 			}
 		}
 
-		public string ReplaceMacroValues(string gcodeWithMacros)
+		// Latest version should be in the form of:
+		// Year|month|day|versionForDay (to support multiple revisions on a given day)
+		public static int LatestVersion { get; } = 201606271;
+
+		public static SettingsLayout Layout { get; }
+
+		public static Dictionary<string, SliceSettingData> SettingsData { get; }
+
+		public static Dictionary<string, IObjectSlicer> SliceEngines { get; } = new Dictionary<string, IObjectSlicer>();
+
+		[JsonIgnore]
+		public string ActiveMaterialKey
 		{
-			foreach (string replacementTerm in replacementTerms)
+			get => GetValue(SettingsKey.active_material_key);
+
+			set
 			{
-				// first check if this setting is anywhere in the line
-				if (gcodeWithMacros.Contains(replacementTerm))
+				if (this.ActiveMaterialKey != value)
 				{
-					// Acquire the replacement value
-					string value = this.ResolveValue(replacementTerm);
+					SetValue(SettingsKey.active_material_key, value);
+					MaterialLayer = GetMaterialLayer(value);
+				}
+			}
+		}
 
-					if (ScaledSpeedFields.Contains(replacementTerm)
-						&& double.TryParse(value, out double doubleValue))
+		[JsonIgnore]
+		public string ActiveQualityKey
+		{
+			get => GetValue(SettingsKey.active_quality_key);
+
+			set
+			{
+				if (this.ActiveQualityKey != value)
+				{
+					SetValue(SettingsKey.active_quality_key, value);
+					QualityLayer = GetQualityLayer(value);
+				}
+			}
+		}
+
+		[JsonIgnore]
+		public bool AutoSave { get; set; } = true;
+
+		[JsonIgnore]
+		public PrinterSettingsLayer BaseLayer
+		{
+			get
+			{
+				if (_baseLayer == null)
+				{
+					var settingsLayer = new PrinterSettingsLayer();
+
+					foreach (var settingsData in PrinterSettings.SettingsData.Values)
 					{
-						doubleValue *= 60;
-						value = $"{doubleValue:0.###}";
+						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
 					}
 
-					// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
-					if (replacementTerm == SettingsKey.first_layer_bed_temperature
-						&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
-					{
-						value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
-					}
+					_baseLayer = settingsLayer;
+				}
 
-					// braces then brackets replacement
-					gcodeWithMacros = gcodeWithMacros.Replace("{" + replacementTerm + "}", value);
-					gcodeWithMacros = gcodeWithMacros.Replace("[" + replacementTerm + "]", value);
+				return _baseLayer;
+			}
+		}
+
+		// Properties
+		[JsonIgnore]
+		public RectangleDouble BedBounds
+		{
+			get
+			{
+				var bedSize = this.GetValue<Vector2>(SettingsKey.bed_size);
+				var printCenter = this.GetValue<Vector2>(SettingsKey.print_center);
+
+				return new RectangleDouble(printCenter.X - bedSize.X / 2,
+					printCenter.Y - bedSize.Y / 2,
+					printCenter.X + bedSize.X / 2,
+					printCenter.Y + bedSize.Y / 2);
+			}
+		}
+
+		public IEnumerable<PrinterSettingsLayer> DefaultLayerCascade
+		{
+			get
+			{
+				if (this.UserLayer != null)
+				{
+					yield return this.UserLayer;
+				}
+
+				if (this.MaterialLayer != null)
+				{
+					yield return this.MaterialLayer;
+				}
+
+				if (this.QualityLayer != null)
+				{
+					yield return this.QualityLayer;
+				}
+
+				if (this.OemLayer != null)
+				{
+					yield return this.OemLayer;
+				}
+
+				yield return this.BaseLayer;
+			}
+		}
+
+		public int DocumentVersion { get; set; } = LatestVersion;
+
+		[JsonIgnore]
+		public SettingsHelpers Helpers { get; set; }
+
+		public string ID { get; set; }
+
+		public List<GCodeMacro> Macros { get; set; } = new List<GCodeMacro>();
+
+		[JsonIgnore]
+		public PrinterSettingsLayer MaterialLayer { get; set; }
+
+		public IEnumerable<PrinterSettingsLayer> MaterialLayerCascade
+		{
+			get
+			{
+				if (this.MaterialLayer != null)
+				{
+					yield return this.MaterialLayer;
+				}
+
+				if (this.OemLayer != null)
+				{
+					yield return this.OemLayer;
+				}
+
+				yield return this.BaseLayer;
+			}
+		}
+
+		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
+
+		public PrinterSettingsLayer OemLayer { get; set; }
+
+		[JsonIgnore]
+		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
+
+		[JsonIgnore]
+		public PrinterSettingsLayer QualityLayer { get; set; }
+
+		public IEnumerable<PrinterSettingsLayer> QualityLayerCascade
+		{
+			get
+			{
+				if (this.QualityLayer != null)
+				{
+					yield return this.QualityLayer;
+				}
+
+				if (this.OemLayer != null)
+				{
+					yield return this.OemLayer;
+				}
+
+				yield return this.BaseLayer;
+			}
+		}
+
+		public List<PrinterSettingsLayer> QualityLayers { get; private set; } = new List<PrinterSettingsLayer>();
+
+		[JsonIgnore]
+		public IObjectSlicer Slicer
+		{
+			get
+			{
+				if (_slicer == null)
+				{
+					string userSlicer = this.GetValue(SettingsKey.slice_engine);
+
+					if (SliceEngines.TryGetValue(userSlicer, out IObjectSlicer slicer))
+					{
+						_slicer = slicer;
+					}
+					else
+					{
+						_slicer = SliceEngines.Values.First();
+					}
+				}
+
+				return _slicer;
+			}
+
+			set => _slicer = value;
+		}
+
+		public PrinterSettingsLayer StagedUserSettings { get; set; } = new PrinterSettingsLayer();
+
+		/// <summary>
+		/// Gets the bounds that are accessible for a given hotend
+		/// </summary>
+		[JsonIgnore]
+		public RectangleDouble[] ToolBounds { get; private set; }
+
+		/// <summary>
+		/// User settings overrides
+		/// </summary>
+		public PrinterSettingsLayer UserLayer { get; private set; } = new PrinterSettingsLayer();
+
+		public static PrinterSettings LoadFile(string printerProfilePath, bool performMigrations = false)
+		{
+			if (performMigrations)
+			{
+				JObject jObject = null;
+
+				try
+				{
+					jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
+				}
+				catch
+				{
+					return null;
+				}
+
+				int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
+				if (documentVersion < PrinterSettings.LatestVersion)
+				{
+					printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
 				}
 			}
 
-			return gcodeWithMacros;
-		}
-
-		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
-		{
-			if (StagedUserSettings.TryGetValue(settingsKey, out string stagedUserOverride))
+			try
 			{
-				StagedUserSettings.Remove(settingsKey);
-				UserLayer[settingsKey] = stagedUserOverride;
+				var settings = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
+				settings.OnDeserialize();
+
+				return settings;
+			}
+			catch
+			{
+				return null;
 			}
 		}
 
-		public void NotifyMacrosChanged()
+		public void ClearUserOverrides()
 		{
-			this.MacrosChanged?.Invoke(this, null);
+			var userOverrides = this.UserLayer.Keys.ToArray();
+
+			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
+			var keysToRetain = new HashSet<string>(userOverrides.Except(KnownSettings));
+
+			// Print leveling data has no SliceSettingsWidget editor but should be removed on 'Reset to Defaults'
+			keysToRetain.Remove(SettingsKey.print_leveling_data);
+			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
+
+			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
+			foreach (var item in PrinterSettings.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
+			{
+				switch (item.SlicerConfigName)
+				{
+					case SettingsKey.baud_rate:
+					case SettingsKey.auto_connect:
+						// Items *should* reset to defaults
+						break;
+
+					default:
+						// Items should *not* reset to defaults
+						keysToRetain.Add(item.SlicerConfigName);
+						break;
+				}
+			}
+
+			var keysToRemove = (from keyValue in this.UserLayer
+								where !keysToRetain.Contains(keyValue.Key)
+								select keyValue.Key).ToList();
+
+			foreach (string key in keysToRemove)
+			{
+				this.UserLayer.Remove(key);
+			}
+		}
+
+		public void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
+		{
+			var persistenceLayer = layer ?? UserLayer;
+			if (persistenceLayer.ContainsKey(settingsKey))
+			{
+				persistenceLayer.Remove(settingsKey);
+
+				// Restore user overrides if a non-user override is being cleared
+				if (layer != null && layer != UserLayer)
+				{
+					RestoreUserOverride(layer, settingsKey);
+				}
+
+				if (PrinterSettings.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
+				{
+					if (settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX)
+					{
+						string checkedKey = this.GetValue<bool>(settingsKey) ? "OnValue" : "OffValue";
+
+						// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
+						foreach (var setSettingsData in settingData.SetSettingsOnChange)
+						{
+							if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
+							{
+								if (this.GetValue(setSettingsData["TargetSetting"]) != targetValue)
+								{
+									this.SetValue(setSettingsData["TargetSetting"], targetValue);
+								}
+							}
+						}
+					}
+				}
+
+				this.OnSettingChanged(settingsKey);
+			}
+		}
+
+		public string ComputeSHA1()
+		{
+			return ComputeSHA1(this.ToJson());
+		}
+
+		public string ComputeSHA1(string json)
+		{
+			// SHA1 value is based on UTF8 encoded file contents
+			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+			{
+				return HashGenerator.ComputeSHA1(memoryStream);
+			}
+		}
+
+		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = DefaultLayerCascade;
+			}
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.ContainsKey(sliceSetting))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public void CopyFrom(PrinterSettings printerSettings)
+		{
+			this.OemLayer = printerSettings.OemLayer;
+			this.MaterialLayers = printerSettings.MaterialLayers;
+			this.QualityLayers = printerSettings.QualityLayers;
+			this.UserLayer = printerSettings.UserLayer;
+
+			this.ID = printerSettings.ID;
+			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
+			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
+			this.StagedUserSettings = printerSettings.StagedUserSettings;
+			this.Macros = printerSettings.Macros;
 		}
 
 		/// <summary>
@@ -446,6 +676,281 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				StashUserOverride(settingsLayer, settingsKey);
 			}
+		}
+
+		/// <summary>
+		/// Call the given function for every active tool
+		/// </summary>
+		/// <typeparam name="T">The type for the given key</typeparam>
+		/// <param name="key">The settings key to lookup per tool</param>
+		/// <param name="applyToEach">The function to call per active tool</param>
+		public void ForTools<T>(string key, Action<string, T, int> applyToEach)
+		{
+			string Tool(int toolIndex)
+			{
+				if (toolIndex == 0)
+				{
+					return key;
+				}
+
+				// If the setting has a described method for constructing the keys per tool, use it.
+				var perToolName = SettingsData[key].PerToolName;
+				if (perToolName != null)
+				{
+					return perToolName(toolIndex);
+				}
+
+				return $"{key}_{toolIndex}";
+			}
+
+			var extruderCount = this.GetValue<int>(SettingsKey.extruder_count);
+			for (int i = 0; i < extruderCount; i++)
+			{
+				var toolKey = Tool(i);
+				applyToEach(toolKey, this.GetValue<T>(toolKey), i);
+			}
+		}
+
+		// Helper method to debug settings layers per setting
+		public List<(string layerName, string currentValue)> GetLayerValues(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = DefaultLayerCascade;
+			}
+
+			var results = new List<(string layerName, string currentValue)>();
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					string layerName = "User";
+
+					if (layer == this.BaseLayer)
+					{
+						layerName = "Base";
+					}
+					else if (layer == this.OemLayer)
+					{
+						layerName = "Oem";
+					}
+					else if (layer == this.MaterialLayer)
+					{
+						layerName = "Material";
+					}
+					else if (layer == this.QualityLayer)
+					{
+						layerName = "Quality";
+					}
+
+					results.Add((layerName, value));
+				}
+			}
+
+			return results;
+		}
+
+		/// <summary>
+		/// Gets the first matching value discovered while enumerating the settings layers
+		/// </summary>
+		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = DefaultLayerCascade;
+			}
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				if (layer.TryGetValue(sliceSetting, out string value))
+				{
+					return value;
+				}
+			}
+
+			return "";
+		}
+
+		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
+		{
+			if (layerCascade == null)
+			{
+				layerCascade = DefaultLayerCascade;
+			}
+
+			foreach (PrinterSettingsLayer layer in layerCascade)
+			{
+				string value;
+				if (layer.TryGetValue(sliceSetting, out value))
+				{
+					string layerName = "User";
+
+					if (layer == this.BaseLayer)
+					{
+						layerName = "Base";
+					}
+					else if (layer == this.OemLayer)
+					{
+						layerName = "Oem";
+					}
+					else if (layer == this.MaterialLayer)
+					{
+						layerName = "Material";
+					}
+					else if (layer == this.QualityLayer)
+					{
+						layerName = "Quality";
+					}
+
+					return (value, layerName);
+				}
+			}
+
+			return ("", "");
+		}
+
+		public bool IsActive(string canonicalSettingsName)
+		{
+			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
+				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
+		}
+
+		public bool IsOverride(string sliceSetting, IEnumerable<PrinterSettingsLayer> layers)
+		{
+			string GetDefaultValue()
+			{
+				foreach (var layer in layers)
+				{
+					if (layer == this.BaseLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+					else if (layer == this.OemLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+				}
+
+				return null;
+			}
+
+			string GetOverrideValue()
+			{
+				foreach (var layer in layers)
+				{
+					if (layer == this.QualityLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+					else if (layer == this.MaterialLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+				}
+
+				return null;
+			}
+
+			string GetUserValue()
+			{
+				foreach (var layer in layers)
+				{
+					if (layer == this.UserLayer
+						&& layer.ContainsKey(sliceSetting))
+					{
+						return layer[sliceSetting];
+					}
+				}
+
+				return null;
+			}
+
+			string defaultValue = GetDefaultValue();
+			string overrideValue = GetOverrideValue();
+			string userValue = GetUserValue();
+
+			if (!string.IsNullOrEmpty(overrideValue))
+			{
+				// any override (even if the user overrides that) means we need to show the value
+				return true;
+			}
+			else if (!string.IsNullOrEmpty(userValue)
+				&& userValue != defaultValue)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
+		{
+			var skipKeys = new HashSet<string>
+			{
+				"layer_id",
+			};
+
+			if (!setLayerName)
+			{
+				skipKeys.Add(SettingsKey.layer_name);
+			}
+
+			var destinationFilter = new List<PrinterSettingsLayer>
+			{
+				OemLayer,
+				BaseLayer,
+				destinationLayer,
+			}.Where(layer => layer != null);
+
+			var sourceFilter = rawSourceFilter.Where(layer => layer != null);
+
+			foreach (var keyName in PrinterSettings.KnownSettings)
+			{
+				if (settingsToImport.Contains(keyName))
+				{
+					// Compare the value to import to the layer cascade value and only set if different
+					string currentValue = this.GetValue(keyName, destinationFilter).Trim();
+					string importValue = settingsToImport.GetValue(keyName, sourceFilter).Trim();
+
+					if (!string.IsNullOrEmpty(importValue)
+						&& currentValue != importValue
+						&& !skipKeys.Contains(keyName))
+					{
+						destinationLayer[keyName] = importValue;
+					}
+				}
+			}
+
+			if (setLayerName)
+			{
+				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
+			}
+
+			this.OnSettingChanged("na");
+		}
+
+		public void NotifyMacrosChanged()
+		{
+			this.MacrosChanged?.Invoke(this, null);
+		}
+
+		public void OnSettingChanged(string slicerConfigName)
+		{
+			if (slicerConfigName == SettingsKey.t0_inset
+				|| slicerConfigName == SettingsKey.t1_inset
+				|| slicerConfigName == SettingsKey.bed_size
+				|| slicerConfigName == SettingsKey.print_center)
+			{
+				this.ResetHotendBounds();
+			}
+
+			SettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
+			AnyPrinterSettingChanged?.Invoke(this, new StringEventArgs(slicerConfigName));
 		}
 
 		/// <summary>
@@ -519,78 +1024,89 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return true;
 		}
 
-		/// <summary>
-		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
-		/// </summary>
-		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
+		public string ReplaceMacroValues(string gcodeWithMacros)
 		{
-			if (this.UserLayer.TryGetValue(settingsKey, out string userOverride))
+			foreach (string replacementTerm in replacementTerms)
 			{
-				this.UserLayer.Remove(settingsKey);
-				this.StagedUserSettings[settingsKey] = userOverride;
-			}
-		}
-
-		public PrinterSettingsLayer OemLayer { get; set; }
-
-		public void Merge(PrinterSettingsLayer destinationLayer, PrinterSettings settingsToImport, List<PrinterSettingsLayer> rawSourceFilter, bool setLayerName)
-		{
-			var skipKeys = new HashSet<string>
-			{
-				"layer_id",
-			};
-
-			if (!setLayerName)
-			{
-				skipKeys.Add(SettingsKey.layer_name);
-			}
-
-			var destinationFilter = new List<PrinterSettingsLayer>
-			{
-				OemLayer,
-				BaseLayer,
-				destinationLayer,
-			}.Where(layer => layer != null);
-
-			var sourceFilter = rawSourceFilter.Where(layer => layer != null);
-
-			foreach (var keyName in PrinterSettings.KnownSettings)
-			{
-				if (settingsToImport.Contains(keyName))
+				// first check if this setting is anywhere in the line
+				if (gcodeWithMacros.Contains(replacementTerm))
 				{
-					// Compare the value to import to the layer cascade value and only set if different
-					string currentValue = this.GetValue(keyName, destinationFilter).Trim();
-					string importValue = settingsToImport.GetValue(keyName, sourceFilter).Trim();
+					// Acquire the replacement value
+					string value = this.ResolveValue(replacementTerm);
 
-					if (!string.IsNullOrEmpty(importValue)
-						&& currentValue != importValue
-						&& !skipKeys.Contains(keyName))
+					if (ScaledSpeedFields.Contains(replacementTerm)
+						&& double.TryParse(value, out double doubleValue))
 					{
-						destinationLayer[keyName] = importValue;
+						doubleValue *= 60;
+						value = $"{doubleValue:0.###}";
 					}
+
+					// Use bed_temperature if the slice engine does not have first_layer_bed_temperature
+					if (replacementTerm == SettingsKey.first_layer_bed_temperature
+						&& !this.Slicer.Exports.ContainsKey(SettingsKey.first_layer_bed_temperature))
+					{
+						value = $"{this.GetValue<double>(SettingsKey.bed_temperature)}";
+					}
+
+					// braces then brackets replacement
+					gcodeWithMacros = gcodeWithMacros.Replace("{" + replacementTerm + "}", value);
+					gcodeWithMacros = gcodeWithMacros.Replace("[" + replacementTerm + "]", value);
 				}
 			}
 
-			if (setLayerName)
-			{
-				destinationLayer[SettingsKey.layer_name] = settingsToImport.GetValue(SettingsKey.layer_name, sourceFilter);
-			}
-
-			this.OnSettingChanged("na");
+			return gcodeWithMacros;
 		}
 
-		public void CopyFrom(PrinterSettings printerSettings)
+		/// <summary>
+		/// Restore deactivated user overrides by iterating the active preset and removing/restoring matching items
+		/// </summary>
+		public void RestoreConflictingUserOverrides(PrinterSettingsLayer settingsLayer)
 		{
-			this.OemLayer = printerSettings.OemLayer;
-			this.MaterialLayers = printerSettings.MaterialLayers;
-			this.QualityLayers = printerSettings.QualityLayers;
-			this.UserLayer = printerSettings.UserLayer;
+			if (settingsLayer == null)
+			{
+				return;
+			}
 
-			this.ID = printerSettings.ID;
-			this.QualityLayer = GetQualityLayer(printerSettings.ActiveQualityKey);
-			this.MaterialLayer = GetMaterialLayer(printerSettings.ActiveMaterialKey);
-			this.StagedUserSettings = printerSettings.StagedUserSettings;
-			this.Macros = printerSettings.Macros;
+			foreach (var settingsKey in settingsLayer.Keys)
+			{
+				RestoreUserOverride(settingsLayer, settingsKey);
+			}
+		}
+
+		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
+		{
+			// Stash user overrides if a non-user override is being set
+			if (layer != null && layer != UserLayer)
+			{
+				StashUserOverride(layer, settingsKey);
+			}
+			else
+			{
+				// Remove any staged/conflicting user override, making this the new and active user override
+				if (StagedUserSettings.ContainsKey(settingsKey))
+				{
+					StagedUserSettings.Remove(settingsKey);
+				}
+			}
+
+			var persistenceLayer = layer ?? UserLayer;
+
+			// If the setting exists and is set to the requested value, exit without setting or saving
+			if (persistenceLayer.TryGetValue(settingsKey, out string existingValue)
+				&& existingValue == settingsValue)
+			{
+				return;
+			}
+
+			// Otherwise, set and save
+			persistenceLayer[settingsKey] = settingsValue;
+
+			this.OnSettingChanged(settingsKey);
+		}
+
+		public string ToJson()
+		{
+			return JsonConvert.SerializeObject(this, Formatting.Indented);
 		}
 
 		internal PrinterSettingsLayer GetMaterialLayer(string layerID)
@@ -603,54 +1119,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return MaterialLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
+		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
+		{
+			PrintLevelingEnabledChanged?.Invoke(s, e);
+		}
+
+		internal void RunInTransaction(Action<PrinterSettings> action)
+		{
+			// TODO: Implement RunInTransaction
+			// Suspend writes
+			action(this);
+			// Commit
+		}
+
+		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
+		{
+			return new HashSet<string>(PrinterSettings.SettingsData.Keys);
+		}
+
 		private PrinterSettingsLayer GetQualityLayer(string layerID)
 		{
 			return QualityLayers.Where(layer => layer.LayerID == layerID).FirstOrDefault();
 		}
 
-		// Properties
-
-		[JsonIgnore]
-		public string ActiveQualityKey
+		private void OnDeserialize()
 		{
-			get => GetValue(SettingsKey.active_quality_key);
-			set
-			{
-				if (this.ActiveQualityKey != value)
-				{
-					SetValue(SettingsKey.active_quality_key, value);
-					QualityLayer = GetQualityLayer(value);
-				}
-			}
-		}
-
-		[JsonIgnore]
-		public string ActiveMaterialKey
-		{
-			get => GetValue(SettingsKey.active_material_key);
-			set
-			{
-				if (this.ActiveMaterialKey != value)
-				{
-					SetValue(SettingsKey.active_material_key, value);
-					MaterialLayer = GetMaterialLayer(value);
-				}
-			}
-		}
-
-		[JsonIgnore]
-		public RectangleDouble BedBounds
-		{
-			get
-			{
-				var bedSize = this.GetValue<Vector2>(SettingsKey.bed_size);
-				var printCenter = this.GetValue<Vector2>(SettingsKey.print_center);
-
-				return new RectangleDouble(printCenter.X - bedSize.X / 2,
-					printCenter.Y - bedSize.Y / 2,
-					printCenter.X + bedSize.X / 2,
-					printCenter.Y + bedSize.Y / 2);
-			}
+			this.ResetHotendBounds();
 		}
 
 		private void ResetHotendBounds()
@@ -676,348 +1170,30 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			};
 		}
 
-		/// <summary>
-		/// Gets the bounds that are accessible for a given hotend
-		/// </summary>
-		[JsonIgnore]
-		public RectangleDouble[] ToolBounds { get; private set; }
-
-		[JsonIgnore]
-		public bool AutoSave { get; set; } = true;
-
-		public string ComputeSHA1()
+		private void RestoreUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
 		{
-			return ComputeSHA1(this.ToJson());
-		}
-
-		public string ComputeSHA1(string json)
-		{
-			// SHA1 value is based on UTF8 encoded file contents
-			using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
+			if (StagedUserSettings.TryGetValue(settingsKey, out string stagedUserOverride))
 			{
-				return HashGenerator.ComputeSHA1(memoryStream);
+				StagedUserSettings.Remove(settingsKey);
+				UserLayer[settingsKey] = stagedUserOverride;
 			}
 		}
 
 		/// <summary>
-		/// User settings overrides
+		/// Move conflicting user overrides to the temporary staging area, allowing presets values to take effect
 		/// </summary>
-		public PrinterSettingsLayer UserLayer { get; private set; } = new PrinterSettingsLayer();
-
-		public static PrinterSettings LoadFile(string printerProfilePath, bool performMigrations = false)
+		private void StashUserOverride(PrinterSettingsLayer settingsLayer, string settingsKey)
 		{
-			if (performMigrations)
+			if (this.UserLayer.TryGetValue(settingsKey, out string userOverride))
 			{
-				JObject jObject = null;
-
-				try
-				{
-					jObject = JObject.Parse(File.ReadAllText(printerProfilePath));
-				}
-				catch
-				{
-					return null;
-				}
-
-				int documentVersion = jObject?.GetValue("DocumentVersion")?.Value<int>() ?? PrinterSettings.LatestVersion;
-				if (documentVersion < PrinterSettings.LatestVersion)
-				{
-					printerProfilePath = ProfileMigrations.MigrateDocument(printerProfilePath, documentVersion);
-				}
-			}
-
-			try
-			{
-				var settings = JsonConvert.DeserializeObject<PrinterSettings>(File.ReadAllText(printerProfilePath), new PrinterSettingsConverter());
-				settings.OnDeserialize();
-
-				return settings;
-			}
-			catch
-			{
-				return null;
-			}
-		}
-
-		private void OnDeserialize()
-		{
-			this.ResetHotendBounds();
-		}
-
-		internal void OnPrintLevelingEnabledChanged(object s, EventArgs e)
-		{
-			PrintLevelingEnabledChanged?.Invoke(s, e);
-		}
-
-		public List<PrinterSettingsLayer> MaterialLayers { get; private set; } = new List<PrinterSettingsLayer>();
-
-		public List<PrinterSettingsLayer> QualityLayers { get; private set; } = new List<PrinterSettingsLayer>();
-
-		/// <summary>
-		/// Gets the first matching value discovered while enumerating the settings layers
-		/// </summary>
-		public string GetValue(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
-		{
-			if (layerCascade == null)
-			{
-				layerCascade = defaultLayerCascade;
-			}
-
-			foreach (PrinterSettingsLayer layer in layerCascade)
-			{
-				if (layer.TryGetValue(sliceSetting, out string value))
-				{
-					return value;
-				}
-			}
-
-			return "";
-		}
-
-		public bool IsOverride(string sliceSetting)
-		{
-			var values = new List<string>();
-
-			string firstBaseValue = null;
-
-			foreach (PrinterSettingsLayer layer in defaultLayerCascade)
-			{
-				if (layer.TryGetValue(sliceSetting, out string value))
-				{
-					if (layer == this.BaseLayer
-						|| layer == this.OemLayer)
-					{
-						firstBaseValue = value;
-						break;
-					}
-
-					values.Add(value);
-				}
-			}
-
-			string currentValue = values.FirstOrDefault();
-
-			string firstPresetValue = values.Skip(1).FirstOrDefault();
-
-			bool differsFromPreset = values.Count > 0
-				&& firstPresetValue != null
-				&& firstPresetValue != currentValue;
-
-			bool differsFromBase = currentValue != firstBaseValue;
-
-			return currentValue != null
-				&& (differsFromPreset || differsFromBase);
-		}
-
-		public bool IsActive(string canonicalSettingsName)
-		{
-			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
-				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
-		}
-
-		// Helper method to debug settings layers per setting
-		public List<(string layerName, string currentValue)> GetLayerValues(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
-		{
-			if (layerCascade == null)
-			{
-				layerCascade = defaultLayerCascade;
-			}
-
-			var results = new List<(string layerName, string currentValue)>();
-
-			foreach (PrinterSettingsLayer layer in layerCascade)
-			{
-				if (layer.TryGetValue(sliceSetting, out string value))
-				{
-					string layerName = "User";
-
-					if (layer == this.BaseLayer)
-					{
-						layerName = "Base";
-					}
-					else if (layer == this.OemLayer)
-					{
-						layerName = "Oem";
-					}
-					else if (layer == this.MaterialLayer)
-					{
-						layerName = "Material";
-					}
-					else if (layer == this.QualityLayer)
-					{
-						layerName = "Quality";
-					}
-
-					results.Add((layerName, value));
-				}
-			}
-
-			return results;
-		}
-
-		public (string currentValue, string layerName) GetValueAndLayerName(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
-		{
-			if (layerCascade == null)
-			{
-				layerCascade = defaultLayerCascade;
-			}
-
-			foreach (PrinterSettingsLayer layer in layerCascade)
-			{
-				string value;
-				if (layer.TryGetValue(sliceSetting, out value))
-				{
-					string layerName = "User";
-
-					if (layer == this.BaseLayer)
-					{
-						layerName = "Base";
-					}
-					else if (layer == this.OemLayer)
-					{
-						layerName = "Oem";
-					}
-					else if (layer == this.MaterialLayer)
-					{
-						layerName = "Material";
-					}
-					else if (layer == this.QualityLayer)
-					{
-						layerName = "Quality";
-					}
-
-					return (value, layerName);
-				}
-			}
-
-			return ("", "");
-		}
-
-		public bool Contains(string sliceSetting, IEnumerable<PrinterSettingsLayer> layerCascade = null)
-		{
-			if (layerCascade == null)
-			{
-				layerCascade = defaultLayerCascade;
-			}
-
-			foreach (PrinterSettingsLayer layer in layerCascade)
-			{
-				if (layer.ContainsKey(sliceSetting))
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		private PrinterSettingsLayer _baseLayer;
-
-		[JsonIgnore]
-		public PrinterSettingsLayer BaseLayer
-		{
-			get
-			{
-				if (_baseLayer == null)
-				{
-					var settingsLayer = new PrinterSettingsLayer();
-
-					foreach (var settingsData in PrinterSettings.SettingsData.Values)
-					{
-						settingsLayer[settingsData.SlicerConfigName] = settingsData.DefaultValue;
-					}
-
-					_baseLayer = settingsLayer;
-				}
-
-				return _baseLayer;
-			}
-		}
-
-		private IEnumerable<PrinterSettingsLayer> defaultLayerCascade
-		{
-			get
-			{
-				if (this.UserLayer != null)
-				{
-					yield return this.UserLayer;
-				}
-
-				if (this.MaterialLayer != null)
-				{
-					yield return this.MaterialLayer;
-				}
-
-				if (this.QualityLayer != null)
-				{
-					yield return this.QualityLayer;
-				}
-
-				if (this.OemLayer != null)
-				{
-					yield return this.OemLayer;
-				}
-
-				yield return this.BaseLayer;
-			}
-		}
-
-		public IEnumerable<PrinterSettingsLayer> GetDefaultLayerCascade() => defaultLayerCascade;
-
-		[JsonIgnore]
-		public SettingsHelpers Helpers { get; set; }
-
-		[JsonIgnore]
-		public bool PrinterSelected => OemLayer?.Keys.Count > 0;
-
-		internal void RunInTransaction(Action<PrinterSettings> action)
-		{
-			// TODO: Implement RunInTransaction
-			// Suspend writes
-			action(this);
-			// Commit
-		}
-
-		public void ClearUserOverrides()
-		{
-			var userOverrides = this.UserLayer.Keys.ToArray();
-
-			// Leave user layer items that have no Organizer definition and thus cannot be changed by the user
-			var keysToRetain = new HashSet<string>(userOverrides.Except(KnownSettings));
-
-			// Print leveling data has no SliceSettingsWidget editor but should be removed on 'Reset to Defaults'
-			keysToRetain.Remove(SettingsKey.print_leveling_data);
-			keysToRetain.Remove(SettingsKey.print_leveling_enabled);
-
-			// Iterate all items that have .ShowAsOverride = false and conditionally add to the retention list
-			foreach (var item in PrinterSettings.SettingsData.Values.Where(settingsItem => settingsItem.ShowAsOverride == false))
-			{
-				switch (item.SlicerConfigName)
-				{
-					case SettingsKey.baud_rate:
-					case SettingsKey.auto_connect:
-						// Items *should* reset to defaults
-						break;
-					default:
-						// Items should *not* reset to defaults
-						keysToRetain.Add(item.SlicerConfigName);
-						break;
-				}
-			}
-
-			var keysToRemove = (from keyValue in this.UserLayer
-								where !keysToRetain.Contains(keyValue.Key)
-								select keyValue.Key).ToList();
-
-			foreach (string key in keysToRemove)
-			{
-				this.UserLayer.Remove(key);
+				this.UserLayer.Remove(settingsKey);
+				this.StagedUserSettings[settingsKey] = userOverride;
 			}
 		}
 
 		#region Migrate to LayeredProfile
 
-		static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
+		private static Dictionary<string, Type> expectedMappingTypes = new Dictionary<string, Type>()
 		{
 			[SettingsKey.extruders_share_temperature] = typeof(int),
 			[SettingsKey.extruders_share_temperature] = typeof(bool),
@@ -1026,37 +1202,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			[SettingsKey.bed_temperature] = typeof(double),
 		};
 
-		void ValidateType<T>(string settingsKey)
+		public ulong GetGCodeCacheKey()
 		{
-			if (expectedMappingTypes.ContainsKey(settingsKey))
+			var bigStringForHashCode = new StringBuilder();
+
+			// Loop over all known settings
+			foreach (var keyValue in PrinterSettings.SettingsData)
 			{
-				if (expectedMappingTypes[settingsKey] != typeof(T))
+				// Add key/value to accumulating string for hash
+				if (keyValue.Value?.RebuildGCodeOnChange == true)
 				{
-					throw new Exception("You must request the correct type of this settingsKey.");
+					bigStringForHashCode.Append(keyValue.Key);
+					bigStringForHashCode.Append(this.GetValue(keyValue.Key));
 				}
 			}
 
-			if (settingsKey.Contains("%"))
-			{
-				if (typeof(T) != typeof(double)
-					|| typeof(T) != typeof(int))
-				{
-					throw new Exception("To get processing of a % you must request the type as double.");
-				}
-			}
-		}
-
-		public string ResolveValue(string settingsKey)
-		{
-			string value = this.GetValue(settingsKey);
-
-			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
-				&& settingsData.Converter is ValueConverter resolver)
-			{
-				return resolver.Convert(value, this);
-			}
-
-			return value;
+			return bigStringForHashCode.ToString().GetLongHashCode();
 		}
 
 		/// <summary>
@@ -1074,7 +1235,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			if (layerCascade == null)
 			{
-				layerCascade = defaultLayerCascade;
+				layerCascade = DefaultLayerCascade;
 			}
 
 			string settingsValue = null;
@@ -1103,20 +1264,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					case "3 Point Plane":
 						return (T)(object)LevelingSystem.Probe3Points;
+
 					case "7 Point Disk":
 						return (T)(object)LevelingSystem.Probe7PointRadial;
+
 					case "13 Point Disk":
 						return (T)(object)LevelingSystem.Probe13PointRadial;
+
 					case "100 Point Disk":
 						return (T)(object)LevelingSystem.Probe100PointRadial;
+
 					case "3x3 Mesh":
 						return (T)(object)LevelingSystem.Probe3x3Mesh;
+
 					case "5x5 Mesh":
 						return (T)(object)LevelingSystem.Probe5x5Mesh;
+
 					case "10x10 Mesh":
 						return (T)(object)LevelingSystem.Probe10x10Mesh;
+
 					case "Custom Points":
 						return (T)(object)LevelingSystem.ProbeCustom;
+
 					default:
 #if DEBUG
 						throw new NotImplementedException();
@@ -1173,6 +1342,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return (T)default(T);
 		}
 
+		public string ResolveValue(string settingsKey)
+		{
+			string value = this.GetValue(settingsKey);
+
+			if (SettingsData.TryGetValue(settingsKey, out SliceSettingData settingsData)
+				&& settingsData.Converter is ValueConverter resolver)
+			{
+				return resolver.Convert(value, this);
+			}
+
+			return value;
+		}
+
 		/// <summary>
 		/// Returns whether or not the setting is overridden by the active layer
 		/// </summary>
@@ -1182,132 +1364,49 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				case NamedSettingsLayers.Quality:
 					return QualityLayer?.ContainsKey(sliceSetting) == true;
+
 				case NamedSettingsLayers.Material:
 					return MaterialLayer?.ContainsKey(sliceSetting) == true;
+
 				case NamedSettingsLayers.User:
 					return UserLayer?.ContainsKey(sliceSetting) == true;
+
 				default:
 					return false;
 			}
 		}
 
-		public ulong GetGCodeCacheKey()
+		private void ValidateType<T>(string settingsKey)
 		{
-			var bigStringForHashCode = new StringBuilder();
-
-			// Loop over all known settings
-			foreach (var keyValue in PrinterSettings.SettingsData)
+			if (expectedMappingTypes.ContainsKey(settingsKey))
 			{
-				// Add key/value to accumulating string for hash
-				if (keyValue.Value?.RebuildGCodeOnChange == true)
+				if (expectedMappingTypes[settingsKey] != typeof(T))
 				{
-					bigStringForHashCode.Append(keyValue.Key);
-					bigStringForHashCode.Append(this.GetValue(keyValue.Key));
+					throw new Exception("You must request the correct type of this settingsKey.");
 				}
 			}
 
-			return bigStringForHashCode.ToString().GetLongHashCode();
-		}
-
-		#endregion
-
-		[JsonIgnore]
-		public static HashSet<string> KnownSettings
-		{
-			get
+			if (settingsKey.Contains("%"))
 			{
-				if (knownSettings == null)
+				if (typeof(T) != typeof(double)
+					|| typeof(T) != typeof(int))
 				{
-					knownSettings = LoadSettingsNamesFromPropertiesJson();
-				}
-
-				return knownSettings;
-			}
-		}
-
-		private static HashSet<string> LoadSettingsNamesFromPropertiesJson()
-		{
-			return new HashSet<string>(PrinterSettings.SettingsData.Keys);
-		}
-
-		public void SetValue(string settingsKey, string settingsValue, PrinterSettingsLayer layer = null)
-		{
-			// Stash user overrides if a non-user override is being set
-			if (layer != null && layer != UserLayer)
-			{
-				StashUserOverride(layer, settingsKey);
-			}
-			else
-			{
-				// Remove any staged/conflicting user override, making this the new and active user override
-				if (StagedUserSettings.ContainsKey(settingsKey))
-				{
-					StagedUserSettings.Remove(settingsKey);
+					throw new Exception("To get processing of a % you must request the type as double.");
 				}
 			}
-
-			var persistenceLayer = layer ?? UserLayer;
-
-			// If the setting exists and is set to the requested value, exit without setting or saving
-			if (persistenceLayer.TryGetValue(settingsKey, out string existingValue)
-				&& existingValue == settingsValue)
-			{
-				return;
-			}
-
-			// Otherwise, set and save
-			persistenceLayer[settingsKey] = settingsValue;
-
-			this.OnSettingChanged(settingsKey);
 		}
 
-		public string ToJson()
-		{
-			return JsonConvert.SerializeObject(this, Formatting.Indented);
-		}
-
-		public void ClearValue(string settingsKey, PrinterSettingsLayer layer = null)
-		{
-			var persistenceLayer = layer ?? UserLayer;
-			if (persistenceLayer.ContainsKey(settingsKey))
-			{
-				persistenceLayer.Remove(settingsKey);
-
-				// Restore user overrides if a non-user override is being cleared
-				if (layer != null && layer != UserLayer)
-				{
-					RestoreUserOverride(layer, settingsKey);
-				}
-
-				if (PrinterSettings.SettingsData.TryGetValue(settingsKey, out SliceSettingData settingData))
-				{
-					if (settingData.DataEditType == SliceSettingData.DataEditTypes.CHECK_BOX)
-					{
-						string checkedKey = this.GetValue<bool>(settingsKey) ? "OnValue" : "OffValue";
-
-						// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
-						foreach (var setSettingsData in settingData.SetSettingsOnChange)
-						{
-							if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
-							{
-								if (this.GetValue(setSettingsData["TargetSetting"]) != targetValue)
-								{
-									this.SetValue(setSettingsData["TargetSetting"], targetValue);
-								}
-							}
-						}
-					}
-				}
-
-				this.OnSettingChanged(settingsKey);
-			}
-		}
+		#endregion Migrate to LayeredProfile
 
 		/// <summary>
 		/// Provides a one-way import mechanism for ActiveMaterialKey from the retired MaterialSettingsKeys array
 		/// </summary>
 		private class PrinterSettingsConverter : JsonConverter
 		{
+			public override bool CanRead => true;
+
+			public override bool CanWrite => false;
+
 			public override bool CanConvert(Type objectType)
 			{
 				return objectType == typeof(PrinterSettings);
@@ -1352,6 +1451,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				return settings;
 			}
 
+			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+			{
+				throw new NotImplementedException();
+			}
+
 			private static void MigrateProbeOffset(PrinterSettingsLayer settingsLayer, Vector3 position = default(Vector3))
 			{
 				if (settingsLayer.ContainsKey("z_probe_xy_offset")
@@ -1384,15 +1488,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					settingsLayer.Remove("z_probe_xy_offset");
 				}
 			}
-
-			public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-			{
-				throw new NotImplementedException();
-			}
-
-			public override bool CanRead => true;
-
-			public override bool CanWrite => false;
 		}
 	}
 }

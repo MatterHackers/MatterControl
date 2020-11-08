@@ -489,11 +489,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					case NamedSettingsLayers.All:
 						if (showAsOverride)
 						{
-							var defaultCascade = settings.GetDefaultLayerCascade();
+							var defaultCascade = settings.DefaultLayerCascade;
 							var firstParentValue = settings.GetValueAndLayerName(key, defaultCascade.Skip(1));
 							var (currentValue, layerName) = settings.GetValueAndLayerName(key, defaultCascade);
 
-							if (settings.IsOverride(key))
+							if (settings.IsOverride(key, defaultCascade))
 							{
 								if (firstParentValue.currentValue == currentValue)
 								{
