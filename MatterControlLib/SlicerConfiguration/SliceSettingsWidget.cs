@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MatterHackers.Agg;
@@ -117,7 +118,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private readonly Action<PopupMenu> externalExtendMenu;
 		private readonly string scopeName;
 
-		public SliceSettingsTabView(SettingsContext settingsContext, string scopeName, PrinterConfig printer, SettingsLayout.SettingsSection settingsSection, ThemeConfig theme, bool isPrimarySettingsView, string databaseMRUKey, string justMySettingsTitle, Action<PopupMenu> extendPopupMenu = null)
+		public SliceSettingsTabView(SettingsContext settingsContext,
+			string scopeName,
+			PrinterConfig printer,
+			SettingsLayout.SettingsSection settingsSection,
+			ThemeConfig theme,
+			bool isPrimarySettingsView,
+			string databaseMRUKey,
+			string justMySettingsTitle,
+			Action<PopupMenu> extendPopupMenu = null)
 			: base(theme)
 		{
 			using (this.LayoutLock())
@@ -355,7 +364,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
 			{
-				this.FilterToOverrides();
+				switch (settingsContext.ViewFilter)
+				{
+					case NamedSettingsLayers.All:
+						this.FilterToOverrides(printer.Settings.DefaultLayerCascade);
+						break;
+					case NamedSettingsLayers.Material:
+						this.FilterToOverrides(printer.Settings.MaterialLayerCascade);
+						break;
+					case NamedSettingsLayers.Quality:
+						this.FilterToOverrides(printer.Settings.QualityLayerCascade);
+						break;
+				}
 			};
 
 			popupMenu.CreateSeparator();
@@ -473,7 +493,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
 
 			// Create toggle field for key
-			UIField uiField = new ToggleboxField(theme)
+			var uiField = new ToggleboxField(theme)
 			{
 				HelpText = settingData.HelpText,
 				Name = $"{settingData.PresentationName} Field"
@@ -919,11 +939,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public void FilterToOverrides()
+		public void FilterToOverrides(IEnumerable<PrinterSettingsLayer> layers)
 		{
 			foreach (var item in this.settingsRows)
 			{
-				item.widget.Visible = printer.Settings.IsOverride(item.settingData.SlicerConfigName);
+				item.widget.Visible = printer.Settings.IsOverride(item.settingData.SlicerConfigName, layers);
 			}
 
 			filteredItemsHeading.Visible = true;

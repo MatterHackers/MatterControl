@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 	{
 		public class ClassicSettingsLayer
 		{
-			//Container class representing a collection of setting along with the meta info for that collection
+			// Container class representing a collection of setting along with the meta info for that collection
 			public Dictionary<string, SliceSetting> settingsDictionary;
 
 			public SliceSettingsCollection settingsCollectionData;
@@ -51,15 +51,15 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			}
 		}
 
-		public static void ImportPrinters(ProfileManager profileData, string profilePath)
+		public static void ImportPrinters(ProfileManager profileData)
 		{
 			foreach (Printer printer in Datastore.Instance.dbSQLite.Query<Printer>("SELECT * FROM Printer;"))
 			{
-				ImportPrinter(printer, profileData, profilePath);
+				ImportPrinter(printer, profileData);
 			}
 		}
 
-		public static void ImportPrinter(Printer printer, ProfileManager profileData, string profilePath)
+		public static void ImportPrinter(Printer printer, ProfileManager profileData)
 		{
 			var printerInfo = new PrinterInfo()
 			{
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			};
 
 			printerSettings.OemLayer[SettingsKey.make] = printerInfo.Make;
-			printerSettings.OemLayer[SettingsKey.model] = printer.Model;
+			printerSettings.OemLayer[SettingsKey.model] = printerInfo.Model;
 
 			LoadQualitySettings(printerSettings, printer);
 			LoadMaterialSettings(printerSettings, printer);
@@ -188,10 +188,8 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			var settings = Datastore.Instance.dbSQLite.Query<SliceSetting>(
 				string.Format("SELECT * FROM SliceSetting WHERE SettingsCollectionID = " + collection.Id));
 
-			//return settings.ToDictionary(s => s.Name, s => s.Value);
-
 			var dictionary = new Dictionary<string, string>();
-			foreach(var setting in settings)
+			foreach (var setting in settings)
 			{
 				// Not distinct on .Name; last value wins
 				dictionary[setting.Name] = setting.Value;

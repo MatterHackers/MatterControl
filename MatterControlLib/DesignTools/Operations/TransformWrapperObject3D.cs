@@ -125,6 +125,66 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			Invalidate(InvalidateType.Children);
 		}
 
+		public virtual void WrapSelectedItemAndSelect(InteractiveScene scene)
+		{
+			var items = scene.GetSelectedItems();
+
+			var parent = items.First().Parent;
+			RebuildLocks parentLock = (parent == null) ? null : parent.RebuilLockAll();
+
+			var firstChild = new Object3D();
+			this.Children.Add(firstChild);
+
+			// if the items we are replacing are already in a list
+			if (parent != null)
+			{
+				if (scene.UndoBuffer != null)
+				{
+					foreach (var item in items)
+					{
+						firstChild.Children.Add(item.Clone());
+					}
+
+					var replace = new ReplaceCommand(items, new[] { this });
+					scene.UndoBuffer.AddAndDo(replace);
+				}
+				else
+				{
+					parent.Children.Modify(list =>
+					{
+						foreach (var item in items)
+						{
+							list.Remove(item);
+							firstChild.Children.Add(item);
+						}
+
+						list.Add(this);
+					});
+				}
+			}
+			else // just add them
+			{
+				firstChild.Children.Modify(list =>
+				{
+					list.AddRange(items);
+				});
+			}
+
+			parentLock?.Dispose();
+
+			// and select this
+			var rootItem = this.Ancestors().Where(i => scene.Children.Contains(i)).FirstOrDefault();
+			if (rootItem != null)
+			{
+				scene.SelectedItem = rootItem;
+			}
+
+			scene.SelectedItem = this;
+
+
+			parent?.Invalidate(new InvalidateArgs(parent, InvalidateType.Children));
+		}
+
 		public virtual void WrapItems(IEnumerable<IObject3D> items, UndoBuffer undoBuffer = null)
 		{
 			var parent = items.First().Parent;

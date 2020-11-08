@@ -572,7 +572,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Rotate".Localize(),
 				Action = (sceneContext) =>
 				{
-					new RotateObject3D_2().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
+					new RotateObject3D_2().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "rotate.png"), 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
@@ -589,7 +589,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Scale".Localize(),
 				Action = (sceneContext) =>
 				{
-					new ScaleObject3D().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
+					new ScaleObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon("scale_32x32.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
@@ -636,7 +636,7 @@ namespace MatterHackers.MatterControl
 				TitleResolver = () => "Translate".Localize(),
 				Action = (sceneContext) =>
 				{
-					new TranslateObject3D().WrapItems(sceneContext.Scene.GetSelectedItems(), sceneContext.Scene.UndoBuffer);
+					new TranslateObject3D().WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => AggContext.StaticData.LoadIcon(Path.Combine("ViewTransformControls", "translate.png"), 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*At least 1 part must be selected*".Localize(),
@@ -844,6 +844,7 @@ namespace MatterHackers.MatterControl
 					{
 						ReduceOperation(),
 						RepairOperation(),
+						AddBaseOperation(),
 					}
 				},
 				new OperationGroup("Printing")
@@ -868,6 +869,7 @@ namespace MatterHackers.MatterControl
 						FitToCylinderOperation(),
 #endif
 						MakeComponentOperation(),
+						EditComponentOperation(),
 					},
 				},
 			};

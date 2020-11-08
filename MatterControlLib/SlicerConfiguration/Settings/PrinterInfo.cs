@@ -47,11 +47,15 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			get => id;
 			set
 			{
-				// Update in memory state if IDs match
-				if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == this.ID) is PrinterConfig activePrinter)
+				try
 				{
-					activePrinter.Settings.ID = value;
+					// Update in memory state if IDs match
+					if (ApplicationController.Instance.ActivePrinters.FirstOrDefault(p => p.Settings.ID == this.ID) is PrinterConfig activePrinter)
+					{
+						activePrinter.Settings.ID = value;
+					}
 				}
+				catch { }
 
 				ProfileManager.Instance.ChangeID(this.ID, value);
 
