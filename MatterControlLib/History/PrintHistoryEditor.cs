@@ -89,7 +89,7 @@ namespace MatterHackers.MatterControl.PrintHistory
 					AllowEmpty = true,
 				};
 
-				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage.TextEditWidget, theme), 0);
+				inputBoxPage.ContentRow.AddChild(CreateDefaultOptions(inputBoxPage.TextEditWidget, theme, null), 0);
 
 				DialogWindow.Show(inputBoxPage);
 
@@ -281,101 +281,110 @@ namespace MatterHackers.MatterControl.PrintHistory
 			}
 		}
 
-		public static MHDropDownList CreateDefaultOptions(GuiWidget textField, ThemeConfig theme)
+		public static GuiWidget CreateDefaultOptions(GuiWidget textField, ThemeConfig theme, Action selectionChanged)
 		{
-			var options = new List<(string group, string item)>()
+			var selectString = "- " + "What went wrong?".Localize() + " -";
+			var menuButton = new PopupMenuButton(selectString, theme);
+			var menuButtonText = menuButton.Descendants<TextWidget>().First();
+			menuButtonText.AutoExpandBoundsToText = true;
+
+			void AddSelection(PopupMenu menu, string text, bool other = false)
 			{
-				("First Layer", "First Layer Bad Quality"),
-				("First Layer", "Initial Z Height Incorrect"),
-				("Quality", "Dislodged From Bed"),
-				("Quality", "Layer Shift"),
-				("Quality", "General Quality"),
-				("Quality", "Rough Overhangs"),
-				("Quality", "Skipped Layers"),
-				("Quality", "Some Parts Lifted"),
-				("Quality", "Stringing / Poor retractions"),
-				("Quality", "Warping"),
-				("Mechanical", "Bed Dislodged"),
-				("Mechanical", "Bowden Tube Popped Out"),
-				("Mechanical", "Extruder Slipping"),
-				("Mechanical", "Flooded Hot End"),
-				("Mechanical", "Power Outage"),
-				("Computer / MatterControl", "Computer Crashed"),
-				("Computer / MatterControl", "Computer Slow / Lagging"),
-				("Computer / MatterControl", "Couldn't Resume"),
-				("Computer / MatterControl", "Wouldn’t Slice Correctly"),
-				("Filament", "Filament Jam"),
-				("Filament", "Filament Runout"),
-				("Filament", "Filament Snapped"),
-				("Heating", "Thermal Runaway - Bed"),
-				("Heating", "Thermal Runaway - Hot End"),
-				("Heating", "Thermal Runaway"),
-				("Heating", "Took Too Long To Heat"),
-				("Heating", "Bad Thermistor"),
-				("X", "Test Print"),
-				("X", "User Error"),
-				("X", "Other"),
-			};
+				var menuItem = menu.CreateMenuItem(text);
 
-			var issues = new string[]
-			{
-				"Bad Thermistor".Localize(),
-				"Bed Dislodged".Localize(),
-				"Bowden Tube Popped Out".Localize(),
-				"Computer Crashed".Localize(),
-				"Computer Slow/Lagging".Localize(),
-				"Couldn't Resume".Localize(),
-				"Dislodged From Bed".Localize(),
-				"Extruder Slipping".Localize(),
-				"Filament Jam".Localize(),
-				"Filament Runout".Localize(),
-				"Filament Snapped".Localize(),
-				"First Layer Bad Quality".Localize(),
-				"Flooded Hot End".Localize(),
-				"Initial Z Height Incorrect".Localize(),
-				"Layer Shift".Localize(),
-				"Power Outage".Localize(),
-				"Print Quality".Localize(),
-				"Rough Overhangs".Localize(),
-				"Skipped Layers".Localize(),
-				"Some Parts Lifted".Localize(),
-				"Stringing / Poor retractions".Localize(),
-				"Test Print".Localize(),
-				"Thermal Runaway - Bed".Localize(),
-				"Thermal Runaway - Hot End".Localize(),
-				"Thermal Runaway".Localize(),
-				"Took Too Long To Heat".Localize(),
-				"User Error".Localize(),
-				"Warping".Localize(),
-				"Wouldn’t Slice Correctly".Localize(),
-				"Other...".Localize()
-			};
-
-			textField.Visible = false;
-
-			var dropdownList = new MHDropDownList("What went wrong?".Localize(), theme, maxHeight: 300 * GuiWidget.DeviceScale);
-
-			foreach (var issue in issues)
-			{
-				MenuItem newItem = dropdownList.AddItem(issue);
-
-				newItem.Selected += (sender, e) =>
+				menuItem.Click += (s, e) =>
 				{
-					if (dropdownList.SelectedIndex == issues.Length - 1)
+					if (other)
 					{
 						textField.Text = "";
 						textField.Visible = true;
 						UiThread.RunOnIdle(textField.Focus);
+						menuButtonText.Text = "Other".Localize() + "...";
 					}
 					else
 					{
-						textField.Text = issue;
+						textField.Text = text;
 						textField.Visible = false;
+						menuButtonText.Text = textField.Text;
 					}
+
+					selectionChanged?.Invoke();
 				};
 			}
 
-			return dropdownList;
+			menuButton.DynamicPopupContent = () =>
+			{
+				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+
+				popupMenu.CreateSubMenu("First Layer".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "First Layer Bad Quality".Localize());
+						AddSelection(menu, "Initial Z Height Incorrect".Localize());
+					});
+				popupMenu.CreateSubMenu("Quality".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "General Quality".Localize());
+						AddSelection(menu, "Rough Overhangs".Localize());
+						AddSelection(menu, "Skipped Layers".Localize());
+						AddSelection(menu, "Some Parts Lifted".Localize());
+						AddSelection(menu, "Stringing / Poor retractions".Localize());
+						AddSelection(menu, "Warping".Localize());
+						AddSelection(menu, "Dislodged From Bed".Localize());
+						AddSelection(menu, "Layer Shift".Localize());
+					});
+				popupMenu.CreateSubMenu("Mechanical".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "Bed Dislodged".Localize());
+						AddSelection(menu, "Bowden Tube Popped Out".Localize());
+						AddSelection(menu, "Extruder Slipping".Localize());
+						AddSelection(menu, "Flooded Hot End".Localize());
+						AddSelection(menu, "Power Outage".Localize());
+					});
+				popupMenu.CreateSubMenu("Computer / MatterControl    ".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "Computer Crashed".Localize());
+						AddSelection(menu, "Computer Slow / Lagging".Localize());
+						AddSelection(menu, "Couldn't Resume".Localize());
+						AddSelection(menu, "Wouldn’t Slice Correctly".Localize());
+					});
+				popupMenu.CreateSubMenu("Filament".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "Filament Jam".Localize());
+						AddSelection(menu, "Filament Runout".Localize());
+						AddSelection(menu, "Filament Snapped".Localize());
+					});
+				popupMenu.CreateSubMenu("Heating".Localize(),
+					theme,
+					(menu) =>
+					{
+						AddSelection(menu, "Thermal Runaway - Bed".Localize());
+						AddSelection(menu, "Thermal Runaway - Hot End".Localize());
+						AddSelection(menu, "Heating".Localize());
+						AddSelection(menu, "Took Too Long To Heat".Localize());
+						AddSelection(menu, "Bad Thermistor".Localize());
+						AddSelection(menu, "Bad Thermistor".Localize());
+					});
+				AddSelection(popupMenu, "Test Print".Localize());
+				AddSelection(popupMenu, "User Error".Localize());
+				AddSelection(popupMenu, "Other".Localize(), true);
+
+				return popupMenu;
+			};
+
+			textField.Visible = false;
+			menuButton.VAnchor = VAnchor.Fit;
+
+			return menuButton;
 		}
 
 		private static string articles = @"
@@ -496,13 +505,7 @@ Support and tutorials:" + articles;
 					printTask.CommitAndPushToServer();
 				};
 
-				var dropDownList = CreateDefaultOptions(textEditWidget, theme);
-				dropDownList.Margin = new BorderDouble(5, 0);
-				dropDownList.HAnchor = HAnchor.Left;
-				reasonSection.AddChild(dropDownList);
-				reasonSection.AddChild(textEditWidget);
-
-				dropDownList.SelectionChanged += (s, e) =>
+				var dropDownList = CreateDefaultOptions(textEditWidget, theme, () =>
 				{
 					// Delay this so we wait for the text to be updated
 					UiThread.RunOnIdle(() =>
@@ -510,7 +513,11 @@ Support and tutorials:" + articles;
 						printTask.Note = textEditWidget.Text;
 						printTask.CommitAndPushToServer();
 					});
-				};
+				});
+				dropDownList.Margin = new BorderDouble(5, 0);
+				dropDownList.HAnchor |= HAnchor.Left;
+				reasonSection.AddChild(dropDownList);
+				reasonSection.AddChild(textEditWidget);
 
 				topToBottom.AddChild(new HorizontalLine(theme.BorderColor40)
 				{
