@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			public int ExtrusionDiscrepency { get; internal set; }
 		}
 
-		protected PrinterMove lastDestination = PrinterMove.Unknown;
+		private PrinterMove lastDestination = PrinterMove.Unknown;
 		private readonly List<string> commandQueue = new List<string>();
 		private readonly object locker = new object();
 		private PrinterMove moveLocationAtEndOfPauseCode;
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 		public override string DebugInfo => "";
 
-		void LineReceived(object sender, string line)
+		private void LineReceived(object sender, string line)
 		{
 			if (line != null)
 			{
@@ -79,7 +79,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					double stepperDistance = 0;
 					if (GCodeFile.GetFirstNumberAfter("SENSOR:", line, ref sensorDistance))
 					{
-						if (sensorDistance < -1 || sensorDistance > 1)
+						var checkDistance = printer.Settings.GetValue<double>(SettingsKey.runout_sensor_check_distance);
+
+						if (sensorDistance < -checkDistance || sensorDistance > checkDistance)
 						{
 							printer.Connection.FilamentPositionSensorDetected = true;
 						}
@@ -90,8 +92,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 							var stepperDelta = Math.Abs(stepperDistance - positionSensorData.LastStepperDistance);
 
-							// if we think we should have move the filament by more than 1mm
-							if (stepperDelta > 1)
+							// if we think we should have moved the filament by more than 1mm
+							if (stepperDelta > checkDistance)
 							{
 								var sensorDelta = Math.Abs(sensorDistance - positionSensorData.LastSensorDistance);
 								var deltaRatio = sensorDelta / stepperDelta;
@@ -102,8 +104,12 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 									printer.Connection.TerminalLog.WriteLine($"RUNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:#.0}) / Stepper ({stepperDelta:#.0}) = {deltaRatio:#.00}");
 								}
 
+								var ratio = Math.Max(.1, Math.Min(20, printer.Settings.GetValue<double>(SettingsKey.runout_sensor_trigger_ratio)));
+								var sensorMaxRatio = Math.Max(ratio, 1 / ratio);
+								var sensorMinRatio = Math.Min(ratio, 1 / ratio);
+
 								// check if the sensor data is within a tolerance of the stepper data
-								if (deltaRatio < .5 || deltaRatio > 2)
+								if (deltaRatio < sensorMinRatio || deltaRatio > sensorMaxRatio)
 								{
 									// we have a discrepancy set a runout state
 									positionSensorData.ExtrusionDiscrepency++;

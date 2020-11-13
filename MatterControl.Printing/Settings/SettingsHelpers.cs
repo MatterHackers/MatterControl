@@ -190,8 +190,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			get
 			{
-				return printerSettings.GetValue<bool>(SettingsKey.print_leveling_enabled)
-					&& printerSettings.GetValue<bool>(SettingsKey.has_z_probe)
+				return printerSettings.GetValue<bool>(SettingsKey.has_z_probe)
 					&& printerSettings.GetValue<bool>(SettingsKey.use_z_probe)
 					&& printerSettings.GetValue<bool>(SettingsKey.validate_leveling);
 			}

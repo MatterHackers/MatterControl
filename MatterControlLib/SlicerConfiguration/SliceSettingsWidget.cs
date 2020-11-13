@@ -429,7 +429,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				uiField = CreateToggleFieldForSection(settingData);
 			}
 
-			var sectionWidget = new SectionWidget(group.Name.Localize(), groupPanel, theme, serializationKey: userSettingsKey, rightAlignedContent: uiField?.Content);
+			var sectionName = group.Name.Localize();
+
+			var sectionWidget = new SectionWidget(sectionName, groupPanel, theme, serializationKey: userSettingsKey, rightAlignedContent: uiField?.Content);
 			theme.ApplyBoxStyle(sectionWidget);
 
 			bool firstRow = true;

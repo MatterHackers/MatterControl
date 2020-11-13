@@ -62,6 +62,11 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				return false;
 			}
 
+			if (printer.Settings.Helpers.HasProbeWithLevelingValidation)
+			{
+				return false;
+			}
+
 			// check if leveling is turned on
 			if (required && !enabled)
 			{

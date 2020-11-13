@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl
 				{
 					contentRow.AddChild(
 						new WrappedTextWidget(
-							@"Select the calibration task on the left to continue".Replace("\r\n", "\n"),
+							@"Select the calibration task to continue".Replace("\r\n", "\n"),
 							pointSize: theme.DefaultFontSize,
 							textColor: theme.TextColor));
 				}
@@ -106,8 +106,23 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
+						column.AddChild(new HorizontalSpacer());
 						AddRunStageButton("Run Z Calibration".Localize(), theme, stage, column);
 
+						widget = column;
+					}
+
+					if (stage is LoadFilamentWizard loadWizard)
+					{
+						var column = CreateColumn(theme);
+						column.FlowDirection = FlowDirection.LeftToRight;
+						var lastRow = new FlowLayoutWidget()
+						{
+							HAnchor = HAnchor.Stretch
+						};
+						column.AddChild(lastRow);
+						lastRow.AddChild(new HorizontalSpacer());
+						AddRunStageButton("Load Filament".Localize(), theme, stage, lastRow).Margin = new BorderDouble(10);
 						widget = column;
 					}
 
@@ -116,6 +131,11 @@ namespace MatterHackers.MatterControl
 						PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 						var column = CreateColumn(theme);
+
+						var lastRow = new FlowLayoutWidget()
+						{
+							HAnchor = HAnchor.Stretch
+						};
 
 						if (levelingData != null
 							&& printer.Settings?.GetValue<bool>(SettingsKey.print_leveling_enabled) == true)
@@ -184,12 +204,7 @@ namespace MatterHackers.MatterControl
 
 							rightWidget = row;
 
-							var leftToRight = new FlowLayoutWidget()
-							{
-								HAnchor = HAnchor.Stretch
-							};
-
-							column.AddChild(leftToRight);
+							column.AddChild(lastRow);
 
 							var probeWidget = new ProbePositionsWidget(printer, positions.Select(v => new Vector2(v)).ToList(), theme)
 							{
@@ -201,17 +216,33 @@ namespace MatterHackers.MatterControl
 								RenderProbePath = false,
 								SimplePoints = true,
 							};
-							leftToRight.AddChild(probeWidget);
-
-							AddRunStageButton("Run Print Leveling".Localize(), theme, stage, leftToRight);
+							lastRow.AddChild(probeWidget);
 						}
-						else if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+						else
 						{
-							column.AddChild(new WrappedTextWidget(
-								@"Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled, you can click the button to the left to setup Print Leveling.".Localize(),
-								pointSize: theme.DefaultFontSize,
-								textColor: theme.TextColor));
+							column.AddChild(lastRow);
+
+							if (!printer.Settings.GetValue<bool>(SettingsKey.print_leveling_required_to_print))
+							{
+								lastRow.AddChild(new WrappedTextWidget(
+									@"Print Leveling is an optional feature for this printer that can help improve print quality. If the bed is uneven or cannot be mechanically leveled.".Localize(),
+									pointSize: theme.DefaultFontSize,
+									textColor: theme.TextColor));
+							}
+							else if (printer.Settings.GetValue<bool>(SettingsKey.validate_leveling))
+							{
+								lastRow.AddChild(new WrappedTextWidget(
+									@"Print Leveling will run automatically at the start of each print.".Localize(),
+									pointSize: theme.DefaultFontSize,
+									textColor: theme.TextColor));
+							}
+							else
+							{
+								lastRow.AddChild(new HorizontalSpacer());
+							}
 						}
+
+						AddRunStageButton("Run Print Leveling".Localize(), theme, stage, lastRow);
 
 						widget = column;
 					}
@@ -255,24 +286,33 @@ namespace MatterHackers.MatterControl
 								MinimumSize = new Vector2(125, 0)
 							});
 
+						row.AddChild(new HorizontalSpacer());
 						AddRunStageButton("Run Nozzle Alignment".Localize(), theme, stage, row);
 
 						widget = row;
 					}
 
-					if (stage.SetupRequired)
-					{
-						var column = CreateColumn(theme);
-						column.AddChild(new TextWidget("Setup Required".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
-
-						widget = column;
-					}
-					else if (stage is LoadFilamentWizard filamentWizard)
+					if (stage is LoadFilamentWizard filamentWizard)
 					{
 						widget.Margin = new BorderDouble(left: theme.DefaultContainerPadding);
 					}
 
-					var section = new SectionWidget(stage.Title, widget, theme, rightAlignedContent: rightWidget, expandingContent: false);
+					var sectionName = stage.Title;
+					if (stage.SetupRequired)
+					{
+						sectionName += " - " + "Required".Localize();
+					}
+					else if (stage.Completed)
+					{
+						sectionName += " - " + "Completed".Localize();
+					}
+					else
+					{
+						sectionName += " - " + "Optional".Localize();
+					}
+
+
+					var section = new SectionWidget(sectionName, widget, theme, rightAlignedContent: rightWidget, expandingContent: false);
 					theme.ApplyBoxStyle(section);
 
 					section.Margin = section.Margin.Clone(left: 0);
@@ -290,9 +330,8 @@ namespace MatterHackers.MatterControl
 			};
 		}
 
-		private void AddRunStageButton(string title, ThemeConfig theme, ISetupWizard stage, FlowLayoutWidget leftToRight)
+		private GuiWidget AddRunStageButton(string title, ThemeConfig theme, ISetupWizard stage, FlowLayoutWidget leftToRight)
 		{
-			leftToRight.AddChild(new HorizontalSpacer());
 			var runStage = leftToRight.AddChild(new TextButton(title, theme)
 			{
 				VAnchor = VAnchor.Bottom
@@ -306,6 +345,8 @@ namespace MatterHackers.MatterControl
 					StagedSetupWindow.ActiveStage = stage;
 				}
 			};
+
+			return runStage;
 		}
 
 		public bool AutoAdvance { get; set; }
