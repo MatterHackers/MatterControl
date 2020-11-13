@@ -93,7 +93,7 @@ namespace MatterHackers.MatterControl
 
 				contentRow.BackgroundColor = Color.Transparent;
 
-				foreach (var stage in this.Stages.Where(s => s.Enabled && s.Visible))
+				foreach (var stage in this.Stages.Where(s => s.Visible))
 				{
 					GuiWidget rightWidget = null;
 					var widget = new GuiWidget();
