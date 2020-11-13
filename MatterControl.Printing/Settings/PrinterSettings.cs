@@ -131,6 +131,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.filament_has_been_loaded,
 			SettingsKey.filament_1_has_been_loaded,
 			SettingsKey.filament_runout_sensor,
+			SettingsKey.runout_sensor_check_distance,
+			SettingsKey.runout_sensor_trigger_ratio,
 			SettingsKey.report_runout_sensor_data,
 			SettingsKey.firmware_type,
 			SettingsKey.has_c_axis,

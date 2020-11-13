@@ -185,6 +185,8 @@ Printer
       has_sd_card_reader
       has_power_control
       filament_runout_sensor
+      runout_sensor_check_distance
+      runout_sensor_trigger_ratio
       has_z_probe
       has_z_servo
       has_c_axis

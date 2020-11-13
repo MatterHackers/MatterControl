@@ -953,7 +953,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
+					ReloadUiWhenChanged = true,
 					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.runout_sensor_check_distance,
+					PresentationName = "Runout Check Distance".Localize(),
+					HelpText = "The distance that the filament has to extrude before we check the measured distance.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					Units = "mm".Localize(),
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer&filament_runout_sensor",
+					RebuildGCodeOnChange = false,
+					DefaultValue = "1"
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.runout_sensor_trigger_ratio,
+					PresentationName = "Runout Trigger Ratio".Localize(),
+					HelpText = "The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.".Localize(),
+					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ShowAsOverride = true,
+					ShowIfSet = "!sla_printer&filament_runout_sensor",
+					RebuildGCodeOnChange = false,
+					DefaultValue = "2"
 				},
 				new SliceSettingData()
 				{
