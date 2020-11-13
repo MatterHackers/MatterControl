@@ -43,7 +43,6 @@ namespace MatterHackers.MatterControl.PrinterControls
 	public class CalibrationControls : FlowLayoutWidget
 	{
 		private readonly PrinterConfig printer;
-		private readonly RoundedToggleSwitch printLevelingSwitch;
 
 		private CalibrationControls(PrinterConfig printer, ThemeConfig theme)
 			: base(FlowDirection.TopToBottom)
@@ -108,7 +107,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		private void SetVisibleControls()
 		{
 			if (!printer.Settings.PrinterSelected
-				|| printer.Connection.CommunicationState == CommunicationStates.Printing
+				|| printer.Connection.Printing
 				|| printer.Connection.Paused)
 			{
 				this.Enabled = false;
