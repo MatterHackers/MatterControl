@@ -211,6 +211,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				{
 					samplesForSinglePosition.Add(sampleRead);
 
+					printer.Connection.TerminalLog.WriteLine($"Probe Z: {sampleRead}");
+
 					int numberOfSamples = printer.Settings.GetValue<int>(SettingsKey.z_probe_samples);
 					if (samplesForSinglePosition.Count >= numberOfSamples)
 					{
