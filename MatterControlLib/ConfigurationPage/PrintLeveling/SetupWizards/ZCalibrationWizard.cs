@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public override bool Enabled => true;
+		public override bool Enabled => printer.Connection.IsConnected;
 
 		public static bool NeedsToBeRun(PrinterConfig printer)
 		{

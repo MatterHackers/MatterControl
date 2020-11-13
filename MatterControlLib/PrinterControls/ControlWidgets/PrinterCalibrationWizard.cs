@@ -73,11 +73,22 @@ namespace MatterHackers.MatterControl
 
 				if (!ReturnedToHomePage)
 				{
-					contentRow.AddChild(
-						new WrappedTextWidget(
-							@"Select the calibration task to continue".Replace("\r\n", "\n"),
-							pointSize: theme.DefaultFontSize,
-							textColor: theme.TextColor));
+					if (printer.Connection.IsConnected)
+					{
+						contentRow.AddChild(
+							new WrappedTextWidget(
+								@"Select the calibration task to continue".Replace("\r\n", "\n"),
+								pointSize: theme.DefaultFontSize,
+								textColor: theme.TextColor));
+					}
+					else
+					{
+						contentRow.AddChild(
+							new WrappedTextWidget(
+								@"Connect the printer to complete the calibration tasks.".Replace("\r\n", "\n"),
+								pointSize: theme.DefaultFontSize,
+								textColor: theme.TextColor));
+					}
 				}
 
 				contentRow.BackgroundColor = Color.Transparent;
@@ -242,6 +253,7 @@ namespace MatterHackers.MatterControl
 							}
 						}
 
+						lastRow.AddChild(new HorizontalSpacer());
 						AddRunStageButton("Run Print Leveling".Localize(), theme, stage, lastRow);
 
 						widget = column;
@@ -334,7 +346,8 @@ namespace MatterHackers.MatterControl
 		{
 			var runStage = leftToRight.AddChild(new TextButton(title, theme)
 			{
-				VAnchor = VAnchor.Bottom
+				VAnchor = VAnchor.Bottom,
+				Enabled = printer.Connection.IsConnected
 			});
 
 			runStage.Click += (s, e) =>

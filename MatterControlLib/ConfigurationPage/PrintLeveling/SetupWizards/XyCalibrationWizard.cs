@@ -99,8 +99,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		{
 			// Wizard should be disabled until requirements are met
 			get => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
-					&& !LoadFilamentWizard.NeedsToBeRun0(printer)
-					&& printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded);
+				&& !LoadFilamentWizard.NeedsToBeRun0(printer)
+				&& printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded)
+				&& printer.Connection.IsConnected;
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)

@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 			column.AddChild(sectionWidget);
 
 			// Disable borders on all SettingsRow children in control panels
-			foreach(var settingsRow in sectionWidget.ContentPanel.Descendants<SettingsRow>())
+			foreach (var settingsRow in sectionWidget.ContentPanel.Descendants<SettingsRow>())
 			{
 				settingsRow.BorderColor = Color.Transparent;
 			}
@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
 			{
 				movementControlsContainer?.SetEnabled(false);
 				macroControlsContainer?.SetEnabled(false);
-				calibrationControlsContainer?.SetEnabled(false);
+				calibrationControlsContainer?.SetEnabled(true);
 				tuningAdjustmentControlsContainer?.SetEnabled(false);
 			}
 			else // we at least have a printer selected
@@ -179,12 +179,13 @@ namespace MatterHackers.MatterControl
 						movementControlsContainer?.SetEnabled(false);
 						macroControlsContainer?.SetEnabled(false);
 						tuningAdjustmentControlsContainer?.SetEnabled(false);
-						calibrationControlsContainer?.SetEnabled(false);
+						calibrationControlsContainer?.SetEnabled(true);
 
 						foreach (var widget in movementControlsContainer.DisableableWidgets)
 						{
 							widget?.SetEnabled(true);
 						}
+
 						movementControlsContainer?.jogControls.SetEnabledLevels(false, false);
 
 						break;
@@ -235,6 +236,7 @@ namespace MatterHackers.MatterControl
 							default:
 								throw new NotImplementedException();
 						}
+
 						break;
 
 					case CommunicationStates.Paused:
