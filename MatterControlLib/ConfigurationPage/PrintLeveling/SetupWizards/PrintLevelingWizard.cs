@@ -356,6 +356,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 				Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
 				var bedBounds = new RectangleDouble(printCenter - bedSize / 2, printCenter + bedSize / 2);
+				bedBounds.Inflate(-1);
 				Vector2 adjustedPosition = bedBounds.Clamp(actualNozzlePosition);
 
 				// and push it back into the probePosition
