@@ -101,7 +101,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			get => printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1
 				&& !LoadFilamentWizard.NeedsToBeRun0(printer)
 				&& printer.Settings.GetValue<bool>(SettingsKey.filament_1_has_been_loaded)
-				&& printer.Connection.IsConnected;
+				&& printer.Connection.IsConnected
+				&& !printer.Connection.Printing
+				&& !printer.Connection.Paused;
 		}
 
 		public static bool NeedsToBeRun(PrinterConfig printer)

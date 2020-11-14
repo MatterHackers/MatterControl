@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public override bool Enabled => printer.Connection.IsConnected;
+		public override bool Enabled => printer.Connection.IsConnected && !printer.Connection.Printing && !printer.Connection.Paused;
 
 		public override void Dispose()
 		{

@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override string HelpText => hasHardwareLeveling ? "Unable due to hardware leveling".Localize() : null;
 
-		public override bool Enabled => !hasHardwareLeveling && Visible && printer.Connection.IsConnected;
+		public override bool Enabled => !hasHardwareLeveling && Visible && printer.Connection.IsConnected && !printer.Connection.Printing && !printer.Connection.Paused;
 
 		public override bool Completed => !hasHardwareLeveling && !LevelingValidation.NeedsToBeRun(printer);
 
