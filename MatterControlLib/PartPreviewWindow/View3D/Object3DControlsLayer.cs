@@ -59,6 +59,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		ScaleMatrixXY = 16,
 		Shadow = 32,
 		SnappingIndicators = 64,
+		ScaleHeight = 128,
 
 		Standard2D = MoveInZ | Shadow | SnappingIndicators | RotateZ | ScaleMatrixXY
 	}
@@ -217,6 +218,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (controls.HasFlag(ControlTypes.MoveInZ))
 			{
 				Object3DControls.Add(new MoveInZControl(this));
+			}
+
+			if (controls.HasFlag(ControlTypes.ScaleHeight))
+			{
+				Object3DControls.Add(new ScaleHeightControl(this));
 			}
 
 			if (controls.HasFlag(ControlTypes.ScaleMatrixXY))

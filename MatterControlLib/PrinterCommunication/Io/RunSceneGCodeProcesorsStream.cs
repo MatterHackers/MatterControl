@@ -28,23 +28,34 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using MatterControl.Printing;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.PrinterCommunication.Io
 {
-	public class ProcessWriteRegexStream : GCodeStreamProxy
-	{
-		public static Regex GetQuotedParts { get; } = new Regex(@"([""'])(\\?.)*?\1", RegexOptions.Compiled);
 
+	public class RunSceneGCodeProcesorsStream : GCodeStreamProxy
+	{
 		private QueuedCommandsStream queueStream;
+		private List<IGCodeTransformer> gcodeTransformers;
 
 		public override string DebugInfo => "";
 
-		public ProcessWriteRegexStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
+		public RunSceneGCodeProcesorsStream(PrinterConfig printer, GCodeStream internalStream, QueuedCommandsStream queueStream)
 			: base(printer, internalStream)
 		{
 			this.queueStream = queueStream;
+
+			// get all the gcode processors that are in the scene
+			gcodeTransformers = printer.Bed.Scene.Descendants().Where(i => i is IGCodeTransformer).Select(i => (IGCodeTransformer)i).ToList();
+
+			foreach (var gcodeTransformer in gcodeTransformers)
+			{
+				gcodeTransformer.Reset();
+			}
 		}
 
 		public override string ReadLine()
@@ -61,14 +72,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				return baseLine;
 			}
 
-			// if the line has no content don't process it
+			// if we are not printing or the line has no content don't process it
 			if (baseLine.Length == 0
 				|| baseLine.Trim().Length == 0)
 			{
 				return baseLine;
 			}
 
-			var lines = ProcessWriteRegEx(baseLine, printer);
+			var lines = ProcessGCodeLine(baseLine, printer);
 			for (int i = lines.Count - 1; i >= 1; i--)
 			{
 				queueStream.Add(lines[i], true);
@@ -79,7 +90,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			return lineToSend;
 		}
 
-		public static List<string> ProcessWriteRegEx(string lineToWrite, PrinterConfig printer)
+		private List<string> ProcessGCodeLine(string lineToWrite, PrinterConfig printer)
 		{
 			var linesToWrite = new List<string>
 			{
@@ -87,28 +98,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			};
 
 			var addedLines = new List<string>();
-			for (int i = 0; i < linesToWrite.Count; i++)
+			foreach (var gcodeTransformer in gcodeTransformers)
 			{
-				foreach (var item in printer.Settings.Helpers.WriteLineReplacements)
-				{
-					var splitReplacement = item.Replacement.Split(',');
-					if (splitReplacement.Length > 0)
-					{
-						if (item.Regex.IsMatch(lineToWrite))
-						{
-							// replace on the first replacement group only
-							var replacedString = item.Regex.Replace(lineToWrite, splitReplacement[0]);
-							linesToWrite[i] = replacedString;
-							// add in the other replacement groups
-							for (int j = 1; j < splitReplacement.Length; j++)
-							{
-								addedLines.Add(splitReplacement[j]);
-							}
-
-							break;
-						}
-					}
-				}
+				addedLines.AddRange(gcodeTransformer.ProcessCGcode(lineToWrite, printer));
 			}
 
 			linesToWrite.AddRange(addedLines);

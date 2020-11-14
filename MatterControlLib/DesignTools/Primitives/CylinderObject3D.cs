@@ -49,6 +49,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public override string ThumbnailName => "Cylinder";
+
 		public CylinderObject3D(double diameter, double height, int sides)
 			: this()
 		{

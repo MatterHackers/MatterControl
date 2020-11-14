@@ -2431,6 +2431,8 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
 
+			accumulatedStream = new RunSceneGCodeProcesorsStream(Printer, accumulatedStream, queuedCommandStream);
+
 			totalGCodeStream = accumulatedStream;
 
 			// Force a reset of the printer checksum state (but allow it to be write regexed)

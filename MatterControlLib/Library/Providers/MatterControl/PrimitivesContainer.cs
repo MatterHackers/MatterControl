@@ -116,6 +116,10 @@ namespace MatterHackers.MatterControl.Library
 					() => "SCAD Script".Localize(),
 					async () => await OpenScadScriptObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "Set Temperature".Localize(),
+					async () => await SetTemperatureObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
 					() => "Image Converter".Localize(),
