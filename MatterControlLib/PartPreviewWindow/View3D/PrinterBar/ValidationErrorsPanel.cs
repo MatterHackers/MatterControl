@@ -67,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						settingsValidationError.PresentationName,
 						validationError.ErrorLevel == ValidationErrorLevel.Error ? "Error".Localize() : "Warning".Localize());
 
-					errorDetails = validationError.Error;
+					errorDetails = validationError.Error + "\n\n" + settingsValidationError.Location;
 				}
 				else
 				{

@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
@@ -34,11 +35,18 @@ namespace MatterHackers.MatterControl
 {
 	public class SettingsValidationError : ValidationError
 	{
-		public SettingsValidationError(string settingsName)
+		public SettingsValidationError(string settingsName, string presentationNameOverride = null)
 			: base(settingsName)
 		{
 			this.CanonicalSettingsName = settingsName;
-			this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;
+			if (string.IsNullOrEmpty(presentationNameOverride))
+			{
+				this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;
+			}
+			else
+			{
+				PresentationName = presentationNameOverride;
+			}
 		}
 
 		public string CanonicalSettingsName { get; }
@@ -59,11 +67,11 @@ namespace MatterHackers.MatterControl
 				setingsSectionName = "Slice Settings";
 			}
 
-			return "Location".Localize() + ":"
+			return "Location of the '{0}' setting".Localize().FormatWith(settingData.PresentationName) + ":"
 				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + settingData.OrganizerGroup.Category.Name.Localize()
-				 + "\n    • " + settingData.OrganizerGroup.Name.Localize()
-				 + "\n      • " + settingData.PresentationName.Localize();
+				 + "\n  • " + settingData.OrganizerGroup.Category.Name
+				 + "\n    • " + settingData.OrganizerGroup.Name
+				 + "\n      • " + settingData.PresentationName;
 		}
 	}
 }
