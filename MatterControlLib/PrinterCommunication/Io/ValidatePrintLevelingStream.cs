@@ -230,7 +230,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							var levelingData = printer.Settings.Helpers.PrintLevelingData;
 
 							var currentSample = sampledPositions[activeProbeIndex].Position.Z;
-							var oldSample = levelingData.SampledPositions[activeProbeIndex].Z;
+							var oldSample = levelingData.SampledPositions.Count > 0 ? levelingData.SampledPositions[activeProbeIndex].Z : 0;
 							var delta = currentSample - oldSample;
 
 							printer.Connection.TerminalLog.WriteLine($"Validation Sample: Old {oldSample}, New {currentSample}, Delta {delta}");

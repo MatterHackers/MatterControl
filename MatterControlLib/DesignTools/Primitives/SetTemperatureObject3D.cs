@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2019, Lars Brubaker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -83,12 +83,20 @@ namespace MatterHackers.MatterControl.DesignTools
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
+			bool valuesChanged = false;
 
 			using (RebuildLock())
 			{
+				Temperature = agg_basics.Clamp(Temperature, 140, 400, ref valuesChanged);
+
 				using (new CenterAndHeightMaintainer(this))
 				{
 				}
+			}
+
+			if (valuesChanged)
+			{
+				Invalidate(InvalidateType.DisplayValues);
 			}
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));

@@ -735,6 +735,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// turn lighting back on after rendering selection outlines
 				GL.Enable(EnableCap.Lighting);
+				GL.Disable(EnableCap.Blend);
 			}
 		}
 

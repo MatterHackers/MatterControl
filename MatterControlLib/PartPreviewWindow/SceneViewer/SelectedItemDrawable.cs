@@ -99,7 +99,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					guiWidget.Invalidate();
 				}
 
-				this.RenderSelection(item, selectionColor.WithAlpha(item.Color.Alpha0To255), world);
+				if (item.Color != Color.Transparent)
+				{
+					selectionColor = selectionColor.WithAlpha(item.Color.Alpha0To255);
+				}
+
+				this.RenderSelection(item, selectionColor, world);
 			}
 		}
 

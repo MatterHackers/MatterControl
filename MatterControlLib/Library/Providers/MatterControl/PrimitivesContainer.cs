@@ -109,16 +109,8 @@ namespace MatterHackers.MatterControl.Library
 					{ DateCreated = new System.DateTime(index++) },
 #if DEBUG
 				new GeneratorItem(
-					() => "XY Calibration".Localize(),
-					async () => await XyCalibrationFaceObject3D.Create())
-					{ DateCreated = new System.DateTime(index++) },
-				new GeneratorItem(
 					() => "SCAD Script".Localize(),
 					async () => await OpenScadScriptObject3D.Create())
-					{ DateCreated = new System.DateTime(index++) },
-				new GeneratorItem(
-					() => "Set Temperature".Localize(),
-					async () => await SetTemperatureObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
 #endif
 				new GeneratorItem(
