@@ -2427,11 +2427,10 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			}
 
 			accumulatedStream = new RemoveNOPsStream(Printer, accumulatedStream);
+			accumulatedStream = new RunSceneGCodeProcesorsStream(Printer, accumulatedStream, queuedCommandStream);
 
 			processWriteRegexStream = new ProcessWriteRegexStream(Printer, accumulatedStream, queuedCommandStream);
 			accumulatedStream = processWriteRegexStream;
-
-			accumulatedStream = new RunSceneGCodeProcesorsStream(Printer, accumulatedStream, queuedCommandStream);
 
 			totalGCodeStream = accumulatedStream;
 

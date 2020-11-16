@@ -162,6 +162,14 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					haveSeenG28 = true;
 				}
 
+				if (haveSeenG28
+					&& haveSeenM190
+					&& !validationRunning
+					&& !validationHasBeenRun)
+				{
+					SetupForValidation();
+				}
+
 				if (!validationHasBeenRun
 					&& !gcodeAlreadyLeveled
 					&& printer.Connection.IsConnected
@@ -175,7 +183,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 					{
 						haveSeenG28 = false;
 						haveSeenM190 = false;
-						SetupForValidation();
 						// still set the bed temp and wait
 						return lineToSend;
 					}
