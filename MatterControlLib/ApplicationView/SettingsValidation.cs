@@ -30,13 +30,11 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl
@@ -238,7 +236,8 @@ namespace MatterHackers.MatterControl
 						&& !PrinterSetupRequired(printer)
 						&& printer.Settings.Helpers.PrintLevelingData is PrintLevelingData levelingData
 						&& !levelingData.IssuedLevelingTempWarning
-						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10)
+						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10
+						&& !printer.Settings.Helpers.HasProbeWithLevelingValidation)
 					{
 						errors.Add(
 							new ValidationError(ValidationErrors.BedLevelingTemperature)
@@ -390,7 +389,7 @@ namespace MatterHackers.MatterControl
 				if (printer.Settings?.Helpers.ComPort() == "Emulator")
 				{
 					errors.Add(
-						new SettingsValidationError(SettingsKey.com_port)
+						new SettingsValidationError(SettingsKey.com_port, "Connected to Emulator".Localize())
 						{
 							Error = "You are connected to the Emulator not an actual printer.".Localize(),
 							ErrorLevel = ValidationErrorLevel.Warning,

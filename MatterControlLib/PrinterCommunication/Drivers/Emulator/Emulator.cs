@@ -94,6 +94,7 @@ namespace MatterHackers.PrinterEmulator
 				{ "M20",  ListSdCard },
 				{ "M21",  InitSdCard },
 				{ "M306", SetHomeOffset },
+				{ "M851", SetXYZProbeOffset },
 				{ "N",    ParseChecksumLine },
 				{ "T0",    SetExtruderIndex },
 				{ "T1",    SetExtruderIndex },
@@ -242,7 +243,7 @@ namespace MatterHackers.PrinterEmulator
 					Console.WriteLine(command);
 				}
 
-				if(command.StartsWith("T"))
+				if (command.StartsWith("T"))
 				{
 					int a = 0;
 				}
@@ -414,6 +415,13 @@ ok
 		private string SetHomeOffset(string command)
 		{
 			HomePosition = Destination;
+
+			return "ok\n";
+		}
+
+		private string SetXYZProbeOffset(string command)
+		{
+			XYZProbeOffset = Destination;
 
 			return "ok\n";
 		}
@@ -708,6 +716,8 @@ ok
 		public int WriteTimeout { get; set; }
 
 		public Vector3 HomePosition { get; set; } = default(Vector3);
+
+		public Vector3 XYZProbeOffset { get; set; } = default(Vector3);
 
 		public void Close()
 		{

@@ -347,7 +347,8 @@ namespace MatterHackers.MatterControl
 			var runStage = leftToRight.AddChild(new TextButton(title, theme)
 			{
 				VAnchor = VAnchor.Bottom,
-				Enabled = printer.Connection.IsConnected
+				Enabled = printer.Connection.IsConnected && !printer.Connection.Printing && !printer.Connection.Paused,
+				BackgroundColor = theme.MinimalShade.WithAlpha(25),
 			});
 
 			runStage.Click += (s, e) =>

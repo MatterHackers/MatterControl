@@ -332,6 +332,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 			accumulatedStream = new RemoveNOPsStream(printer, accumulatedStream);
 
+			accumulatedStream = new RunSceneGCodeProcesorsStream(printer, accumulatedStream, queuedCommandStream);
+
 			accumulatedStream = new ProcessWriteRegexStream(printer, accumulatedStream, queuedCommandStream);
 
 			return accumulatedStream;

@@ -35,6 +35,7 @@ using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.DesignTools;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -51,6 +52,40 @@ namespace MatterHackers.MatterControl.Library
 		{
 			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
 			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
+
+			Items.Add(new GeneratorItem(
+				() => "Set Temperature".Localize(),
+				async () => await SetTemperatureObject3D.Create())
+				{
+					Category = this.Name
+				});
+
+			Items.Add(new GeneratorItem(
+				() => "PLA Temperature Tower".Localize(),
+				async () => await TemperatureTowerObject3D.Create(220))
+			{
+				Category = this.Name
+			});
+			Items.Add(new GeneratorItem(
+				() => "ABS Temperature Tower".Localize(),
+				async () => await TemperatureTowerObject3D.Create(250))
+			{
+				Category = this.Name
+			});
+			Items.Add(new GeneratorItem(
+				() => "PETG Temperature Tower".Localize(),
+				async () => await TemperatureTowerObject3D.Create(260))
+			{
+				Category = this.Name
+			});
+#if DEBUG
+			Items.Add(new GeneratorItem(
+				() => "XY Calibration".Localize(),
+				async () => await XyCalibrationFaceObject3D.Create())
+			{
+				Category = this.Name
+			});
+#endif
 		}
 
 		private class StaticDataItem : ILibraryAssetStream

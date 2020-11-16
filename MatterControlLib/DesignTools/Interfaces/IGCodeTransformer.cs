@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,51 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using MatterHackers.Agg;
-using MatterHackers.Localizations;
-using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Collections.Generic;
 
-namespace MatterHackers.MatterControl
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SettingsValidationError : ValidationError
+	public interface IGCodeTransformer
 	{
-		public SettingsValidationError(string settingsName, string presentationNameOverride = null)
-			: base(settingsName)
-		{
-			this.CanonicalSettingsName = settingsName;
-			if (string.IsNullOrEmpty(presentationNameOverride))
-			{
-				this.PresentationName = PrinterSettings.SettingsData[settingsName].PresentationName;
-			}
-			else
-			{
-				PresentationName = presentationNameOverride;
-			}
-		}
+		IEnumerable<string> ProcessCGcode(string lineToWrite, PrinterConfig printer);
 
-		public string CanonicalSettingsName { get; }
-
-		public string PresentationName { get; }
-
-		public string Location => SettingsLocation(this.CanonicalSettingsName);
-
-		public string ValueDetails { get; set; }
-
-		private static string SettingsLocation(string settingsKey)
-		{
-			var settingData = PrinterSettings.SettingsData[settingsKey];
-			var setingsSectionName = settingData.OrganizerGroup.Category.SettingsSection.Name;
-
-			if (setingsSectionName == "Advanced")
-			{
-				setingsSectionName = "Slice Settings";
-			}
-
-			return "Location of the '{0}' setting".Localize().FormatWith(settingData.PresentationName) + ":"
-				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + settingData.OrganizerGroup.Category.Name
-				 + "\n    • " + settingData.OrganizerGroup.Name
-				 + "\n      • " + settingData.PresentationName;
-		}
+		void Reset();
 	}
 }
