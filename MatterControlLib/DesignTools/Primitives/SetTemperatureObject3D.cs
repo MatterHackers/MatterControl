@@ -31,6 +31,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterControl.Printing;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
+using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
@@ -39,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer
+	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, IEditorDraw
 	{
 		private bool hasBeenReached;
 		private double accumulatedLayerHeight;
@@ -47,8 +50,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		public SetTemperatureObject3D()
 		{
 			Name = "Set Temperature".Localize();
-			Color = new Color(.11, .98, .26, .2);
-			Mesh = PlatonicSolids.CreateCube(40, 40, 0.2);
+			Color = Color.White.WithAlpha(.2);
+			Mesh = new RoundedRect(-20, -20, 20, 20, 3)
+			{
+				ResolutionScale = 10
+			}.Extrude(.2);
 		}
 
 		public static async Task<SetTemperatureObject3D> Create()
@@ -99,9 +105,15 @@ namespace MatterHackers.MatterControl.DesignTools
 				Invalidate(InvalidateType.DisplayValues);
 			}
 
+			UpdateTexture();
+
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
 		}
+
+		private double WorldZ => default(Vector3).Transform(this.WorldMatrix()).Z;
+
+		private (double temp, double worldZ) displayInfo = (double.MinValue, double.MinValue);
 
 		public IEnumerable<string> ProcessCGcode(string lineToWrite, PrinterConfig printer)
 		{
@@ -112,9 +124,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (GCodeFile.GetFirstNumberAfter("; LAYER_HEIGHT", lineToWrite, ref layerHeight, out _, stopCheckingString: ":"))
 				{
 					accumulatedLayerHeight += layerHeight;
-					var worldPosition = default(Vector3);
-					worldPosition = worldPosition.Transform(this.WorldMatrix());
-					if (accumulatedLayerHeight > worldPosition.Z)
+					if (accumulatedLayerHeight > WorldZ)
 					{
 						hasBeenReached = true;
 						yield return $"M104 S{Temperature} ; Change Layer Temperature";
@@ -127,6 +137,42 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			hasBeenReached = false;
 			accumulatedLayerHeight = 0;
+		}
+
+		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		{
+			if (displayInfo.temp == double.MinValue
+				|| displayInfo.temp != Temperature
+				|| displayInfo.worldZ != WorldZ)
+			{
+				UpdateTexture();
+			}
+		}
+
+		private void UpdateTexture()
+		{
+			Mesh.FaceTextures.Clear();
+			displayInfo.temp = Temperature;
+			displayInfo.worldZ = WorldZ;
+			var theme = AppContext.Theme;
+			var texture = new ImageBuffer(128, 128, 32);
+			var graphics2D = texture.NewGraphics2D();
+			graphics2D.Clear(theme.BackgroundColor);
+			graphics2D.DrawString($"Height: {displayInfo.worldZ:0.##}",
+				texture.Width / 2,
+				texture.Height / 5 * 3,
+				15,
+				Agg.Font.Justification.Center,
+				Agg.Font.Baseline.BoundsCenter,
+				theme.TextColor);
+			graphics2D.DrawString($"Temp: {displayInfo.temp:0.##}",
+				texture.Width / 2,
+				texture.Height / 5 * 2,
+				15,
+				Agg.Font.Justification.Center,
+				Agg.Font.Baseline.BoundsCenter,
+				theme.TextColor);
+			Mesh.PlaceTextureOnFaces(0, texture);
 		}
 	}
 }

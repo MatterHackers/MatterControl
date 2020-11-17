@@ -752,11 +752,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (!item.RebuildLocked)
 			{
 				item.Mesh.FaceTextures.TryGetValue(0, out FaceTextureData faceTexture);
-				bool viewOnlyTexture = faceTexture?.image == Object3DControlsLayer.viewOnlyTexture;
+				bool faceIsTextured = faceTexture?.image != null;
 
 				// if not persistable and has view only texture, remove the view only texture if it has it
 				if (item.WorldPersistable()
-					&& viewOnlyTexture)
+					&& faceIsTextured)
 				{
 					// make sure it does not have the view only texture
 					using (item.RebuildLock())
@@ -765,7 +765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					}
 				}
 				else if (!item.WorldPersistable()
-					&& !viewOnlyTexture
+					&& !faceIsTextured
 					&& !item.RebuildLocked)
 				{
 					// add a view only texture if it does not have one

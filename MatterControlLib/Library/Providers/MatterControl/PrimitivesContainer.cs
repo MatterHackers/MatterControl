@@ -78,7 +78,6 @@ namespace MatterHackers.MatterControl.Library
 					() => "Text".Localize(),
 					async () => await TextObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
-
 				new GeneratorItem(
 					() => "Cylinder".Localize(),
 					async () => await CylinderObject3D.Create())

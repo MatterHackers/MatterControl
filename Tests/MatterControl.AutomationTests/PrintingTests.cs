@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.GuiAutomation;
 using MatterHackers.MatterControl.PrinterCommunication;
@@ -374,6 +375,42 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.ClickButton("Yes Button", "Recover Print")
 						.ClickResumeButton(printer, true, 5) // The first pause that we get after recovery should be layer 6.
 						.WaitForPrintFinished(printer);
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 180);
+		}
+
+		[Test, Category("Emulator")]
+		public async Task TemperatureTowerWorks()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should exist after add");
+
+					var printer = testRunner.FirstPrinter();
+
+					bool foundTemp = false;
+					printer.Connection.LineSent += (s, e) =>
+					{
+						if (e.StartsWith("M104 S222.2"))
+						{
+							foundTemp = true;
+						}
+					};
+
+					// print a part
+					testRunner.AddItemToBedplate()
+						.AddItemToBedplate(partName: "Row Item Set Temperature")
+						.DragDropByName("MoveInZControl", "MoveInZControl", offsetDrag: new Point2D(0, 0), offsetDrop: new Point2D(0, 10))
+						.ClickByName("Temperature Edit")
+						.Type("222.2")
+						.StartPrint(printer)
+						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+
+					Assert.IsTrue(foundTemp);
 				}
 
 				return Task.CompletedTask;
