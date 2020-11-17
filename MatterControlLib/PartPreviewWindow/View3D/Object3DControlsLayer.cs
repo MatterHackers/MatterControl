@@ -857,7 +857,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			if (drawColor.alpha != 255
+			if (drawColor.alpha < 255
+				&& drawColor.alpha > 0
 				&& item is Object3D item3D)
 			{
 				item3D.EnsureTransparentSorting();

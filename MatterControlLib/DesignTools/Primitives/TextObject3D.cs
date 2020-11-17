@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (!this.Children.Where(c => c.Mesh != null).Any()
 					&& !RebuildLocked)
 				{
-					this.Invalidate(InvalidateType.Properties);
+					this.Rebuild().Wait();
 				}
 
 				return base.Mesh;
