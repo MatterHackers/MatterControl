@@ -326,6 +326,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					object3D.Invalidated += RefreshField;
+					field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
 					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
 					rowContainer = CreateSettingsRow(property, field, theme);

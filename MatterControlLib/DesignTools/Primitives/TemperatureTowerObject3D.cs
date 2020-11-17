@@ -54,6 +54,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		public TemperatureTowerObject3D()
 		{
 			Name = "Temperature Tower".Localize();
+			Color = Color.White;
 
 			if (shape == null)
 			{
@@ -172,7 +173,6 @@ namespace MatterHackers.MatterControl.DesignTools
 								PointSize = 10,
 								NameToWrite = $"{temp:0.##}",
 								Matrix = Matrix4X4.CreateRotationX(MathHelper.Tau / 4) * Matrix4X4.CreateTranslation(0, -4.3, .8),
-								Color = Color.Transparent
 							};
 							text.Rebuild().Wait();
 							var textBounds = text.GetAxisAlignedBoundingBox();
