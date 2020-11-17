@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 
 				return Task.CompletedTask;
-			}, maxTimeToRun: 130);
+			}, maxTimeToRun: 230);
 		}
 
 		[Test, Category("Emulator")]

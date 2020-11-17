@@ -60,7 +60,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (source is Object3D object3D
 				&& color != source.Color
-					&& color.alpha != 255)
+					&& color.alpha < 255
+					&& color.alpha > 0)
 			{
 				object3D.EnsureTransparentSorting();
 			}
