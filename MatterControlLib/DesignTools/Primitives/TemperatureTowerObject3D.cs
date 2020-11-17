@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TemperatureTowerObject3D : Object3D, IObject3DControlsProvider
+	public class TemperatureTowerObject3D : Object3D
 	{
 		private static Mesh shape = null;
 
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
-		private double BaseHeight => 2;
+		private double BaseHeight => 1;
 
 		private double SectionHeight => 10;
 
@@ -88,11 +88,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		[Description("The number of tower section to create.")]
 		public int Sections { get; set; } = 5;
-
-		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
-		{
-			object3DControlsLayer.AddControls(ControlTypes.MoveInZ | ControlTypes.Shadow | ControlTypes.ScaleMatrixXY);
-		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

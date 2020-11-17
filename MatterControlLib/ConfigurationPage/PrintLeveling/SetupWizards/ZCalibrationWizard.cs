@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			get
 			{
 				return (printer.Settings.GetValue<bool>(SettingsKey.has_z_probe)
-						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
+						&& printer.Settings.GetValue<bool>(SettingsKey.use_z_probe)
+						&& !printer.Settings.GetValue<bool>(SettingsKey.has_hardware_leveling))
 						|| printer.Settings.GetValue<int>(SettingsKey.extruder_count) > 1;
 			}
 		}
