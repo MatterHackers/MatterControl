@@ -1038,7 +1038,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The starting height (z) of the print head before probing each print level position.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
 					Units = "mm".Localize(),
-					ShowIfSet = "!has_hardware_leveling",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe",
 					DefaultValue = "10",
 					RebuildGCodeOnChange = false
 				},
