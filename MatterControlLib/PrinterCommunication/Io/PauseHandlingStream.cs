@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								if (printer.Settings.GetValue<bool>(SettingsKey.report_runout_sensor_data))
 								{
 									// report the position for debugging
-									printer.Connection.TerminalLog.WriteLine($"RUNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:#.0}) / Stepper ({stepperDelta:#.0}) = {deltaRatio:#.00}");
+									printer.Connection.TerminalLog.WriteLine($"RUNOUT ({positionSensorData.ExtrusionDiscrepency}): Sensor ({sensorDelta:0.##}) / Stepper ({stepperDelta:0.##}) = {deltaRatio:0.##}");
 								}
 
 								var ratio = Math.Max(.1, Math.Min(20, printer.Settings.GetValue<double>(SettingsKey.runout_sensor_trigger_ratio)));

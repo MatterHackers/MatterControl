@@ -161,14 +161,14 @@ namespace MatterHackers.MatterControl.DesignTools
 			graphics2D.DrawString($"Height: {displayInfo.worldZ:0.##}",
 				texture.Width / 2,
 				texture.Height / 5 * 3,
-				15,
+				14,
 				Agg.Font.Justification.Center,
 				Agg.Font.Baseline.BoundsCenter,
 				theme.TextColor);
 			graphics2D.DrawString($"Temp: {displayInfo.temp:0.##}",
 				texture.Width / 2,
 				texture.Height / 5 * 2,
-				15,
+				14,
 				Agg.Font.Justification.Center,
 				Agg.Font.Baseline.BoundsCenter,
 				theme.TextColor);
