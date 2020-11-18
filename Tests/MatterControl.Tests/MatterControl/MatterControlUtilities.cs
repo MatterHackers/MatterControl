@@ -951,6 +951,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Open the Print popup menu and click the Start Print button
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner we are using.</param>
+		/// <param name="printer">The printer to run the print on.</param>
 		/// <param name="pauseAtLayers">The string to write into the pause field in the print menu.</param>
 		/// <returns>The automation runner to allow fluid design</returns>
 		public static AutomationRunner StartPrint(this AutomationRunner testRunner,
@@ -968,7 +969,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Type(pauseAtLayers);
 			}
 
-			if (testRunner.NameExists("SetupPrinter"))
+			if (testRunner.NameExists("SetupPrinter", .2))
 			{
 				if (printer.Settings.GetValue<bool>(SettingsKey.use_z_probe))
 				{
@@ -988,6 +989,37 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			testRunner.ClickByName("Start Print Button");
 
+			return testRunner;
+		}
+
+		/// <summary>
+		/// Open the Print popup menu and click the Start Print button
+		/// </summary>
+		/// <param name="testRunner">The AutomationRunner we are using.</param>
+		/// <param name="printer">The printer to run the print on.</param>
+		/// <param name="exportedGCode">The exported gcode is loaded and put into this variable.</param>
+		/// <returns>The automation runner to allow fluid design</returns>
+		public static AutomationRunner ExportPrintAndLoadGCode(this AutomationRunner testRunner,
+			PrinterConfig printer,
+			out string exportedGCode)
+		{
+			// Open popup
+			testRunner.OpenPrintPopupMenu();
+
+			if (testRunner.NameExists("SetupPrinter"))
+			{
+				testRunner.ClickByName("SetupPrinter")
+					.ClickByName("Already Loaded Button")
+					.ClickByName("Cancel Wizard Button")
+					.OpenPrintPopupMenu();
+			}
+
+			testRunner.ClickByName("Export Gcode Button");
+
+			// wait for the export to finish
+			throw new NotImplementedException();
+
+			exportedGCode = "";
 			return testRunner;
 		}
 

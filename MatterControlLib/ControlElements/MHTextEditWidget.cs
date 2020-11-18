@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (noContentFieldDescription != null)
 			{
-				noContentFieldDescription.Visible = Text == "";
+				noContentFieldDescription.Visible = string.IsNullOrEmpty(Text);
 			}
 		}
 

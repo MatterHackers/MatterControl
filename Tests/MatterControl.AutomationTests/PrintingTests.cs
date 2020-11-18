@@ -395,7 +395,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					bool foundTemp = false;
 					printer.Connection.LineSent += (s, e) =>
 					{
-						if (e.StartsWith("M104 S222.2"))
+						if (e.Contains("M104 S222.2"))
 						{
 							foundTemp = true;
 						}
@@ -408,7 +408,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.ClickByName("Temperature Edit")
 						.Type("222.2")
 						.StartPrint(printer)
-						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
+						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.FinishedPrint, 60);
+						// TODO: finish export test
+						//.ExportPrintAndLoadGCode(printer, out string gcode);
 
 					Assert.IsTrue(foundTemp);
 				}
