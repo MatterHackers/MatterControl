@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				},
 				new NamedBoolAction()
 				{
-					Title = "Configure Printer".Localize(),
+					Title = "Show Printer".Localize(),
 					Action = () => { },
 					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
 					SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
