@@ -200,8 +200,8 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				UiThread.RunOnIdle(() =>
 				{
-					GL.DeleteBuffers(1, ref vertexID);
-					GL.DeleteBuffers(1, ref indexID);
+					GL.DeleteBuffer(vertexID);
+					GL.DeleteBuffer(indexID);
 				});
 
 				disposed = true;

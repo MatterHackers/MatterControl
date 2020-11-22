@@ -818,7 +818,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// setup the message row
 				{
 					// when it is done queue it to the change to gcode stream
-					var switchMessage = "Switch to new G-Code?\n\nBefore you switch, check that your are seeing the changes you expect.".Localize();
+					var switchMessage = "Switch to new G-Code?\n\nBefore you switch, check that you are seeing the changes you expect.".Localize();
 					resliceMessageRow.AddChild(new WrappedTextWidget(switchMessage, theme.DefaultFontSize, textColor: theme.TextColor)
 					{
 						Margin = new BorderDouble(7, 3)
