@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl
 		{
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
-				using (var mediaStream = AggContext.StaticData.OpenStream(Path.Combine("Sounds", fileName)))
+				using (var mediaStream = StaticData.Instance.OpenStream(Path.Combine("Sounds", fileName)))
 				{
 					(new System.Media.SoundPlayer(mediaStream)).Play();
 				}
@@ -124,18 +124,12 @@ namespace MatterHackers.MatterControl
 
 		public void PlatformInit(Action<string> reporter)
 		{
-			if (AggContext.OperatingSystem == OSType.Mac && AggContext.StaticData == null)
+			if (AggContext.OperatingSystem == OSType.Mac)
 			{
 				// Set working directory - this duplicates functionality in Main but is necessary on OSX as Main fires much later (after the constructor in this case)
 				// resulting in invalid paths due to path tests running before the working directory has been overridden. Setting the value before initializing StaticData
 				// works around this architectural difference.
 				Directory.SetCurrentDirectory(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location));
-			}
-
-			// Initialize a standard file system backed StaticData provider
-			if (AggContext.StaticData == null) // it may already be initialized by tests
-			{
-				AggContext.StaticData = new FileSystemStaticData();
 			}
 
 			if (Clipboard.Instance == null)
@@ -164,7 +158,7 @@ namespace MatterHackers.MatterControl
 
 		public void GenerateLocalizationValidationFile()
 		{
-			if (AggContext.StaticData is FileSystemStaticData fileSystemStaticData)
+			if (StaticData.Instance is StaticData fileSystemStaticData)
 			{
 				char currentChar = 'A';
 

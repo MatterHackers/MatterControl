@@ -176,8 +176,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			favoritesBar.ScrollArea.VAnchor = VAnchor.Fit;
 
-			var expandedImage = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
-			var collapsedImage = AggContext.StaticData.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
+			var expandedImage = StaticData.Instance.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
+			var collapsedImage = StaticData.Instance.LoadIcon("collapse.png", 16, 16, theme.InvertIcons);
 
 			var expandBarButton = new IconButton(expanded ? collapsedImage : expandedImage, theme)
 			{

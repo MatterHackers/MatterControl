@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
@@ -113,6 +114,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 		}
 
-		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16);
+		public ImageBuffer DefaultImage => StaticData.Instance.LoadIcon("image_converter.png", 16, 16);
 	}
 }

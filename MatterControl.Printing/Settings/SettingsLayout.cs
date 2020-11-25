@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
@@ -63,7 +64,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			Category categoryToAddTo = null;
 			Group groupToAddTo = null;
 
-			foreach (string line in AggContext.StaticData.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
+			foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
 			{
 				if (line.Length > 0)
 				{

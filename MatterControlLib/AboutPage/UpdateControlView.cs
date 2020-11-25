@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 			this.AddChild(new HorizontalSpacer());
 
-			checkUpdateButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", 14, 14, theme.InvertIcons), theme)
+			checkUpdateButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 14, 14, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Check for Update".Localize(),
 				BackgroundColor = theme.MinimalShade,

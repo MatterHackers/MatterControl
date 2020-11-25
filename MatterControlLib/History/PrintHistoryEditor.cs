@@ -114,9 +114,9 @@ namespace MatterHackers.MatterControl.PrintHistory
 
 			var size = (int)(buttonFontSize * GuiWidget.DeviceScale);
 
-			var star = AggContext.StaticData.LoadIcon("star.png", size, size, theme.InvertIcons);
-			var openStar = AggContext.StaticData.LoadIcon("open_star.png", size, size, theme.InvertIcons);
-			var failure = AggContext.StaticData.LoadIcon("failure.png", size, size, theme.InvertIcons);
+			var star = StaticData.Instance.LoadIcon("star.png", size, size, theme.InvertIcons);
+			var openStar = StaticData.Instance.LoadIcon("open_star.png", size, size, theme.InvertIcons);
+			var failure = StaticData.Instance.LoadIcon("failure.png", size, size, theme.InvertIcons);
 
 			content.AddChild(new GuiWidget(size, 1));
 

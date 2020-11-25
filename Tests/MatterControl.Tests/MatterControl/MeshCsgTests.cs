@@ -54,10 +54,10 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public void CsgCylinderMinusCylinder()
 		{
-			//AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			//StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
 			//MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
-			//AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
+			//StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
 			//MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5));
 
 			//// check that we subtract two 3 sided cylinders

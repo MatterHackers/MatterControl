@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				return Task.FromResult(new StreamAndLength()
 				{
-					Stream = AggContext.StaticData.OpenStream(AssetPath),
+					Stream = StaticData.Instance.OpenStream(AssetPath),
 					Length = -1
 				});
 			}

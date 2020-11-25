@@ -627,7 +627,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			themePanel.AddChild(
-				new ImageWidget(AggContext.StaticData.LoadIcon("theme.png", 16, 16, theme.InvertIcons), false)
+				new ImageWidget(StaticData.Instance.LoadIcon("theme.png", 16, 16, theme.InvertIcons), false)
 				{
 					HAnchor = HAnchor.Center | HAnchor.Absolute,
 					VAnchor = VAnchor.Center | VAnchor.Absolute,
@@ -802,7 +802,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				tabControl,
 				new PartTabPage(workspace, theme, ""),
 				theme,
-				AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
+				StaticData.Instance.LoadIcon("cube.png", 16, 16, theme.InvertIcons))
 			{
 				Name = "newPart" + tabControl.AllTabs.Count(),
 			};

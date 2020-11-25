@@ -27,6 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.CustomWidgets;
 
@@ -35,7 +36,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class HelpSearchResultRow : SettingsRow
 	{
 		public HelpSearchResultRow(HelpSearchResult searchResult, ThemeConfig theme)
-			: base(searchResult.Name, null, theme, AggContext.StaticData.LoadIcon("fa-text-file_16.png", 16, 16), fullRowSelect: true)
+			: base(searchResult.Name, null, theme, StaticData.Instance.LoadIcon("fa-text-file_16.png", 16, 16), fullRowSelect: true)
 		{
 			this.SearchResult = searchResult;
 

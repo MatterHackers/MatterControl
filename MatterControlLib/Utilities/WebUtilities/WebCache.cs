@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 					{
 						lock (locker)
 						{
-							AggContext.StaticData.LoadImageSequenceData(new StreamReader(pngFileName).BaseStream, asyncImageSequence);
+							StaticData.Instance.LoadImageSequenceData(new StreamReader(pngFileName).BaseStream, asyncImageSequence);
 						}
 
 						UiThread.RunOnIdle(() =>
@@ -141,7 +141,7 @@ namespace MatterHackers.MatterControl
 					{
 						lock (locker)
 						{
-							AggContext.StaticData.LoadImageSequenceData(new StreamReader(gifFileName).BaseStream, asyncImageSequence);
+							StaticData.Instance.LoadImageSequenceData(new StreamReader(gifFileName).BaseStream, asyncImageSequence);
 						}
 
 						if (asyncImageSequence.NumFrames > 0)
@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl
 
 						lock (locker)
 						{
-							AggContext.StaticData.LoadImageSequenceData(stream, asyncImageSequence);
+							StaticData.Instance.LoadImageSequenceData(stream, asyncImageSequence);
 						}
 
 						if (asyncImageSequence.Frames.Count == 1)
@@ -311,13 +311,13 @@ namespace MatterHackers.MatterControl
 			{
 				var staticDataPath = Path.Combine(cacheFolder, longHash.ToString() + ".txt");
 
-				if (AggContext.StaticData.FileExists(staticDataPath))
+				if (StaticData.Instance.FileExists(staticDataPath))
 				{
 					try
 					{
 						lock (locker)
 						{
-							fileText = AggContext.StaticData.ReadAllText(staticDataPath);
+							fileText = StaticData.Instance.ReadAllText(staticDataPath);
 						}
 
 						updateResult?.Invoke(fileText);
@@ -362,7 +362,7 @@ namespace MatterHackers.MatterControl
 				lock (locker)
 				{
 					// scale the loaded image to the size of the target image
-					AggContext.StaticData.LoadImageData(stream, unScaledImage);
+					StaticData.Instance.LoadImageData(stream, unScaledImage);
 				}
 
 				// If the source image (the one we downloaded) is more than twice as big as our dest image.
@@ -383,7 +383,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				AggContext.StaticData.LoadImageData(stream, imageToLoadInto);
+				StaticData.Instance.LoadImageData(stream, imageToLoadInto);
 				imageToLoadInto.MarkImageChanged();
 			}
 		}

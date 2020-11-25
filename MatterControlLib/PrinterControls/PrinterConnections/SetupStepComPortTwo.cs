@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerErrorMessage);
 
-			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "insert usb.png")).SetPreMultiply();
+			var removeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "insert usb.png")).SetPreMultiply();
 			container.AddChild(new ImageWidget(removeImage)
 			{
 				HAnchor = HAnchor.Center,

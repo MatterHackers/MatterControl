@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.SlicerConfiguration;
@@ -56,8 +57,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "SD Card".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "sd_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "sd_icon.png")),
 					() => new SDCardContainer(printer),
 					() =>
 					{
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => containerName,
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					() => new GitHubContainer(containerName,
 						"MatterHackers",
 						repository,

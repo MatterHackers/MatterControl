@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.object3DControlLayer = object3DControlLayer;
 			this.PopupContent = () => ShowGridOptions(theme);
 
-			this.AddChild(new IconButton(AggContext.StaticData.LoadIcon("1694146.png", 16, 16, theme.InvertIcons), theme)
+			this.AddChild(new IconButton(StaticData.Instance.LoadIcon("1694146.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Selectable = false
 			});

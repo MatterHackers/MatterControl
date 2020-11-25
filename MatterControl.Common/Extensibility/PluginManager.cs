@@ -135,8 +135,11 @@ namespace MatterHackers.MatterControl.Extensibility
 		public class MatterControlPluginItem
 		{
 			public string Name { get; set; }
+
 			public string Url { get; set; }
+
 			public string Version { get; set; }
+
 			public DateTime ReleaseDate { get; set; }
 		}
 	}

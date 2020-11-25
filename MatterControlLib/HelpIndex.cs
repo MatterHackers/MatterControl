@@ -108,7 +108,7 @@ namespace MatterControlLib
 			writer.DeleteAll();
 
 			// Build index from help-docs.zip
-			using (var file = AggContext.StaticData.OpenStream(filePath))
+			using (var file = StaticData.Instance.OpenStream(filePath))
 			using (var zip = new ZipArchive(file, ZipArchiveMode.Read))
 			{
 				var tocEntry = zip.Entries.FirstOrDefault(e => e.FullName == "toc.json");

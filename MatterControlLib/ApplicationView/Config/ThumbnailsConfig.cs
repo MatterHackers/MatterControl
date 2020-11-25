@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl.Library;
@@ -60,7 +61,7 @@ namespace MatterHackers.MatterControl
 		{
 		}
 
-		public ImageBuffer DefaultThumbnail() => AggContext.StaticData.LoadIcon("cube.png", 16, 16, Theme.InvertIcons);
+		public ImageBuffer DefaultThumbnail() => StaticData.Instance.LoadIcon("cube.png", 16, 16, Theme.InvertIcons);
 
 		public ImageBuffer LoadCachedImage(string cacheId, int width, int height)
 		{
@@ -89,9 +90,9 @@ namespace MatterHackers.MatterControl
 
 			// could not find it in the user cache, try to load it from static data
 			var staticDataFilename = Path.Combine("Images", "Thumbnails", $"{cacheId}-{256}x{256}.png");
-			if (AggContext.StaticData.FileExists(staticDataFilename))
+			if (StaticData.Instance.FileExists(staticDataFilename))
 			{
-				cachedItem = AggContext.StaticData.LoadImage(staticDataFilename);
+				cachedItem = StaticData.Instance.LoadImage(staticDataFilename);
 				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 
 				cachedItem = cachedItem.CreateScaledImage(width, height);
@@ -135,9 +136,9 @@ namespace MatterHackers.MatterControl
 
 			// could not find it in the user cache, try to load it from static data
 			var staticDataFilename = Path.Combine("Images", "Thumbnails", CacheFilename(libraryItem, 256, 256));
-			if (AggContext.StaticData.FileExists(staticDataFilename))
+			if (StaticData.Instance.FileExists(staticDataFilename))
 			{
-				cachedItem = AggContext.StaticData.LoadImage(staticDataFilename);
+				cachedItem = StaticData.Instance.LoadImage(staticDataFilename);
 				cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 
 				cachedItem = cachedItem.CreateScaledImage(width, height);

@@ -269,7 +269,7 @@ namespace MatterHackers.MatterControl
 
 		public GuiWidget CreateSearchButton()
 		{
-			return new IconButton(AggContext.StaticData.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
+			return new IconButton(StaticData.Instance.LoadIcon("icon_search_24x24.png", 16, 16, this.InvertIcons), this)
 			{
 				ToolTipText = "Search".Localize(),
 			};
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl
 			restoreNormal = ColorCircle(size, (AggContext.OperatingSystem == OSType.Android) ? new Color(200, 0, 0) : Color.Transparent);
 			restoreHover = ColorCircle(size, new Color("#DB4437"));
 
-			this.GeneratingThumbnailIcon = AggContext.StaticData.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
+			this.GeneratingThumbnailIcon = StaticData.Instance.LoadIcon("building_thumbnail_40x40.png", 40, 40, this.InvertIcons);
 
 			ScrollBar.DefaultThumbView.ThumbColor = new Color(this.TextColor, 30);
 		}

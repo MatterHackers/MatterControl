@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var resetConnectionButton = new TextIconButton(
 					"Reset".Localize(),
-					AggContext.StaticData.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
+					StaticData.Instance.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
 					theme)
 				{
 					ToolTipText = "Reboots the firmware on the controller".Localize(),
@@ -138,7 +138,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var buttonGroupB = new ObservableCollection<GuiWidget>();
 
 			var iconPath = Path.Combine("ViewTransformControls", "model.png");
-			modelViewButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			modelViewButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Model View Button",
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewModes.Add(PartViewMode.Model, modelViewButton);
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_3d.png");
-			layers3DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			layers3DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers3D Button",
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			iconPath = Path.Combine("ViewTransformControls", "gcode_2d.png");
-			layers2DButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
+			layers2DButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 16, 16, theme.InvertIcons), theme)
 			{
 				SiblingRadioButtonList = buttonGroupB,
 				Name = "Layers2D Button",
@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				new NamedAction()
 				{
-					Icon = AggContext.StaticData.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("memory_16x16.png", 16, 16, theme.InvertIcons),
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click,
 					IsEnabled = () => printer.Connection.IsConnected
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
 					}),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				},
 				new ActionSeparator(),
 
@@ -357,7 +357,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
 						});
 					}),
-					Icon = AggContext.StaticData.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
+					Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
 				},
 				new ActionSeparator(),
 				new NamedAction()
@@ -367,7 +367,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						DialogWindow.Show(new UpdateSettingsPage(printer));
 					},
-					Icon = AggContext.StaticData.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
+					Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
 				},
 				new NamedAction()
 				{

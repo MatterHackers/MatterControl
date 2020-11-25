@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			DrawOnTop = true;
 
-			using (Stream arrowStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "up_pointer.stl")))
+			using (Stream arrowStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "up_pointer.stl")))
 			{
 				upArrowMesh = StlProcessing.Load(arrowStream, CancellationToken.None);
 			}

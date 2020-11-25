@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl
 
 		private static VersionInfo DeserializeFromDisk()
 		{
-			string content = AggContext.StaticData.ReadAllText("BuildInfo.txt");
+			string content = StaticData.Instance.ReadAllText("BuildInfo.txt");
 			return JsonConvert.DeserializeObject<VersionInfo>(content);
 		}
 	}

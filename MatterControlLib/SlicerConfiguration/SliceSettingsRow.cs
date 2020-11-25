@@ -595,7 +595,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.HAnchor = HAnchor.Fit;
 				this.Padding = new BorderDouble(left: 5);
 
-				exclamation = AggContext.StaticData.LoadIcon("exclamation.png", 4, 12);
+				exclamation = StaticData.Instance.LoadIcon("exclamation.png", 4, 12);
 
 				this.Border = new BorderDouble(bottom: 1);
 			}

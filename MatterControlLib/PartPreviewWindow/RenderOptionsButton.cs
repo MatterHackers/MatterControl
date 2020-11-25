@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.CustomWidgets;
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.HAnchor = HAnchor.Fit;
 			this.VAnchor = VAnchor.Fit;
 
-			this.AddChild(new IconButton(AggContext.StaticData.LoadIcon("web.png", 16, 16, theme.InvertIcons), theme)
+			this.AddChild(new IconButton(StaticData.Instance.LoadIcon("web.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Selectable = false
 			});

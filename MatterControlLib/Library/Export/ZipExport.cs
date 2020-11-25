@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "Save as ZIP|*.zip";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "zip.png"));
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "zip.png"));
 
 		public void Initialize(PrinterConfig printer)
 		{

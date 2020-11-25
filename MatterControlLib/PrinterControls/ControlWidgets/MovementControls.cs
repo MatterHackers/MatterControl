@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 		{
 			var widget = new MovementControls(printer, new XYZColors(theme), theme);
 
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
+			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme);
 			editButton.Click += (s, e) => widget.EditOptions();
 
 			return new SectionWidget(
@@ -129,7 +129,7 @@ namespace MatterHackers.MatterControl.PrinterControls
 				Margin = new BorderDouble(bottom: 10)
 			};
 
-			var homeIcon = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var homeIcon = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Home X, Y and Z".Localize(),
 				BackgroundColor = theme.MinimalShade,

@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public override void Initialize(int tabIndex)
 		{
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Top,
 				ToolTipText = "Edit".Localize(),
