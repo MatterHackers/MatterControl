@@ -33,6 +33,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -196,7 +197,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Persist
 				string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
-				AggContext.ImageIO.SaveImageData(
+				ImageIO.SaveImageData(
 					filePath,
 					Clipboard.Instance.GetImage());
 

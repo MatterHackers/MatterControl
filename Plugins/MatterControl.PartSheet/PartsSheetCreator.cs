@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 			Directory.CreateDirectory(folderToSavePrintsTo);
 
-			AggContext.ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
+			ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
 
 			XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
 			XImage jpegImage = XImage.FromFile(jpegFileName);

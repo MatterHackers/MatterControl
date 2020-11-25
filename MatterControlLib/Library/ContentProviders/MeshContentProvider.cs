@@ -136,12 +136,12 @@ namespace MatterHackers.MatterControl
 			if (thumbnail != null)
 			{
 				// Cache content thumbnail
-				AggContext.ImageIO.SaveImageData(
+				ImageIO.SaveImageData(
 					ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height),
 					thumbnail);
 
 				// Cache library thumbnail
-				AggContext.ImageIO.SaveImageData(
+				ImageIO.SaveImageData(
 					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
 					thumbnail);
 			}

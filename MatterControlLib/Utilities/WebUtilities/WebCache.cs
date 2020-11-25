@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl
 						&& !savedImages.Contains(imageFileName))
 					{
 						savedImages.Add(imageFileName);
-						AggContext.ImageIO.SaveImageData(imageFileName, imageToLoadInto);
+						ImageIO.SaveImageData(imageFileName, imageToLoadInto);
 					}
 				}
 				catch
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl
 							// save the as png
 							lock (locker)
 							{
-								AggContext.ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
+								ImageIO.SaveImageData(pngFileName, asyncImageSequence.Frames[0]);
 							}
 						}
 						else // save original stream as gif

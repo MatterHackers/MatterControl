@@ -83,7 +83,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				using (var streamAndLength = await streamInterface.GetStream(null))
 				{
 					var imageBuffer = new ImageBuffer();
-					if (AggContext.ImageIO.LoadImageData(streamAndLength.Stream, imageBuffer))
+					if (ImageIO.LoadImageData(streamAndLength.Stream, imageBuffer))
 					{
 						imageBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 						return imageBuffer;
@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
 
 					// Cache library thumbnail
-					AggContext.ImageIO.SaveImageData(
+					ImageIO.SaveImageData(
 						ApplicationController.Instance.Thumbnails.CachePath(item, width, height),
 						thumbnail);
 				}

@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl
 					cachedItem = cachedItem.CreateScaledImage(width, height);
 					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 
-					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+					ImageIO.SaveImageData(expectedCachePath, cachedItem);
 
 					return cachedItem;
 				}
@@ -96,7 +96,7 @@ namespace MatterHackers.MatterControl
 
 				cachedItem = cachedItem.CreateScaledImage(width, height);
 
-				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+				ImageIO.SaveImageData(expectedCachePath, cachedItem);
 
 				return cachedItem;
 			}
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl
 					cachedItem = cachedItem.CreateScaledImage(width, height);
 					cachedItem.SetRecieveBlender(new BlenderPreMultBGRA());
 
-					AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+					ImageIO.SaveImageData(expectedCachePath, cachedItem);
 
 					return cachedItem;
 				}
@@ -142,7 +142,7 @@ namespace MatterHackers.MatterControl
 
 				cachedItem = cachedItem.CreateScaledImage(width, height);
 
-				AggContext.ImageIO.SaveImageData(expectedCachePath, cachedItem);
+				ImageIO.SaveImageData(expectedCachePath, cachedItem);
 
 				return cachedItem;
 			}
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (File.Exists(filePath))
 				{
-					return AggContext.ImageIO.LoadImage(filePath).SetPreMultiply();
+					return ImageIO.LoadImage(filePath).SetPreMultiply();
 				}
 			}
 			catch { } // Suppress exceptions, return null on any errors

@@ -220,7 +220,7 @@ namespace Markdig.Renderers.Agg.Inlines
 								else
 								{
 									// Load img
-									if (!AggContext.ImageIO.LoadImageData(streamTask.Result, imageBuffer))
+									if (!ImageIO.LoadImageData(streamTask.Result, imageBuffer))
 									{
 										Debug.WriteLine("Error loading image: " + url);
 									}
