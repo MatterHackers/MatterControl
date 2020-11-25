@@ -37,7 +37,20 @@ namespace MatterHackers.MatterControl
 {
 	public sealed class VersionInfo
 	{
-		public readonly static VersionInfo Instance = DeserializeFromDisk();
+		private static VersionInfo _instance;
+
+		public static VersionInfo Instance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					_instance = DeserializeFromDisk();
+				}
+
+				return _instance;
+			}
+		}
 
 		// Prevent external construction and limit to singleton Instance above
 		private VersionInfo()
