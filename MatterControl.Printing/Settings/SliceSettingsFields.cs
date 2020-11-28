@@ -1854,8 +1854,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.create_per_layer_support,
-					PresentationName = "Analyze Every Layer".Localize(),
-					HelpText = "Evaluate every layer for support requirements. Support will be algorithmically generated and not user editable. NOTE: If there is any user generated support no algorithmic support will be generated.".Localize(),
+					PresentationName = "Create Supports".Localize(),
+					HelpText = "Evaluate every layer for support requirements. NOTE: If there are any support columns, this setting is ignored.".Localize(),
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
