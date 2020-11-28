@@ -84,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Create a hook so the Braille can be hung from a necklace or keychain.")]
 		public bool AddHook { get; set; }
 
-		static TypeFace typeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
+		static TypeFace typeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "Braille.svg")));
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

@@ -119,7 +119,7 @@ namespace MatterHackers.MatterControl
 
 			string themesPath = Path.Combine("Themes", "System");
 
-			var staticData = AggContext.StaticData;
+			var staticData = StaticData.Instance;
 
 			// Load available themes from StaticData
 			if (staticData.DirectoryExists(themesPath))
@@ -130,7 +130,7 @@ namespace MatterHackers.MatterControl
 					themes[Path.GetFileNameWithoutExtension(themeFile)] = themeFile;
 				}
 
-				foreach (var directoryTheme in AggContext.StaticData.GetDirectories(themesPath).Where(d => Path.GetFileName(d) != "Menus").Select(d => new DirectoryTheme(d)))
+				foreach (var directoryTheme in StaticData.Instance.GetDirectories(themesPath).Where(d => Path.GetFileName(d) != "Menus").Select(d => new DirectoryTheme(d)))
 				{
 					ThemeProviders.Add(directoryTheme.Name, directoryTheme);
 				}
@@ -197,7 +197,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (themes.TryGetValue(themeName, out string themePath))
 				{
-					string json = AggContext.StaticData.ReadAllText(themePath);
+					string json = StaticData.Instance.ReadAllText(themePath);
 
 					var themeConfig = JsonConvert.DeserializeObject<ThemeConfig>(json);
 					themeConfig.EnsureDefaults();

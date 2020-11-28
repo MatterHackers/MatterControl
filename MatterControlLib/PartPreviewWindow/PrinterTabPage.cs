@@ -673,7 +673,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// add in the move up button
 			var babyStepAmount = .02;
-			var upButton = babySteppingControls.AddChild(new IconButton(AggContext.StaticData.LoadIcon("Up Arrow.png", 32, 32, theme.InvertIcons), theme)
+			var upButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Up Arrow.png", 32, 32, theme.InvertIcons), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -711,7 +711,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// add in the move down button
-			var downButton = babySteppingControls.AddChild(new IconButton(AggContext.StaticData.LoadIcon("Down Arrow.png", 32, 32, theme.InvertIcons), theme)
+			var downButton = babySteppingControls.AddChild(new IconButton(StaticData.Instance.LoadIcon("Down Arrow.png", 32, 32, theme.InvertIcons), theme)
 			{
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
@@ -873,7 +873,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 
-			timeContainer.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("fa-clock_24.png", 24, 24, theme.InvertIcons))
+			timeContainer.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("fa-clock_24.png", 24, 24, theme.InvertIcons))
 			{
 				VAnchor = VAnchor.Center
 			});

@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
@@ -83,7 +84,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				using (var streamAndLength = await streamInterface.GetStream(null))
 				{
 					var imageBuffer = new ImageBuffer();
-					if (AggContext.ImageIO.LoadImageData(streamAndLength.Stream, imageBuffer))
+					if (ImageIO.LoadImageData(streamAndLength.Stream, imageBuffer))
 					{
 						imageBuffer.SetRecieveBlender(new BlenderPreMultBGRA());
 						return imageBuffer;
@@ -104,7 +105,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					thumbnail = LibraryProviderHelpers.ResizeImage(thumbnail, width, height);
 
 					// Cache library thumbnail
-					AggContext.ImageIO.SaveImageData(
+					ImageIO.SaveImageData(
 						ApplicationController.Instance.Thumbnails.CachePath(item, width, height),
 						thumbnail);
 				}
@@ -113,6 +114,6 @@ namespace MatterHackers.MatterControl.DesignTools
 			});
 		}
 
-		public ImageBuffer DefaultImage => AggContext.StaticData.LoadIcon("image_converter.png", 16, 16);
+		public ImageBuffer DefaultImage => StaticData.Instance.LoadIcon("image_converter.png", 16, 16);
 	}
 }

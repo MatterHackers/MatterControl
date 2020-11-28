@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ActionArea.VAnchor = VAnchor.Stretch;
 			this.ActionArea.MinimumSize = new Vector2(0, titleText.Height);
 
-			var editButton = new IconButton(AggContext.StaticData.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
+			var editButton = new IconButton(StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = editToolTipText ?? "Edit".Localize(),
 				Name = helpArticle.Name + " Edit"

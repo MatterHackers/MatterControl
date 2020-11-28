@@ -13,7 +13,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckImportPrinterSettingsToPrinter()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printerSettings = new PrinterSettings();
@@ -44,7 +44,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			// Validates that field are dropped during import if they are already set in a base layer
 			//
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printerSettings = new PrinterSettings();

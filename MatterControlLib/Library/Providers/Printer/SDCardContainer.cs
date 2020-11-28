@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -88,7 +89,7 @@ namespace MatterHackers.MatterControl.Library
 		public override Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)
 		{
 			return Task.FromResult(
-				AggContext.StaticData.LoadIcon(
+				StaticData.Instance.LoadIcon(
 					Path.Combine((width > 50 || height > 50) ? "icon_sd_card_115x115.png" : "icon_sd_card_50x50.png"),
 					ApplicationController.Instance.Theme.InvertIcons));
 		}

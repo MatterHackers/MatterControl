@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				try
 				{
 					assetStream = streamTask.Result;
-					imageBuffer = AggContext.ImageIO.LoadImage(assetStream);
+					imageBuffer = ImageIO.LoadImage(assetStream);
 				}
 				catch { }
 

@@ -19,7 +19,7 @@ namespace MatterControl.Tests.MatterControl
 		{
 			string staticDataPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 
-			AggContext.StaticData = new FileSystemStaticData(staticDataPath);
+			StaticData.RootPath = staticDataPath;
 
 			var profilesDirectory = new DirectoryInfo(Path.Combine(staticDataPath, "Profiles"));
 

@@ -58,7 +58,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			if (shape == null)
 			{
-				using (Stream measureAmfStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "CC - gaaZolee - AS.amf")))
+				using (Stream measureAmfStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "CC - gaaZolee - AS.amf")))
 				{
 					var amfObject = AmfDocument.Load(measureAmfStream, CancellationToken.None);
 					shape = amfObject.Children.First().Mesh;

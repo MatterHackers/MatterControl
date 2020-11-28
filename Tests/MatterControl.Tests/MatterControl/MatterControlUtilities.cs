@@ -807,7 +807,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			AggContext.StaticData = new FileSystemStaticData(staticDataPathOverride);
+			StaticData.RootPath = staticDataPathOverride;
 #endif
 			// Popping one directory above MatterControl, then back down into MatterControl ensures this works in MCCentral as well and MatterControl
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl"));
@@ -1129,7 +1129,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
 				testRunner.ClickByName("Printer Overflow Menu")
-					.ClickByName("Configure Printer Menu Item");
+					.ClickByName("Show Printer Menu Item");
 			}
 
 			return testRunner.ClickByName("Printer Tab");

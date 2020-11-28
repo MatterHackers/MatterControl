@@ -244,7 +244,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		{
 #if !__ANDROID__
 			// Set the static data to point to the directory of MatterControl
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 #endif
 			AssetObject3D.AssetManager = new AssetManager();

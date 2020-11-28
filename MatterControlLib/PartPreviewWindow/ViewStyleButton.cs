@@ -56,12 +56,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			viewIcons = new Dictionary<RenderTypes, ImageBuffer>()
 			{
-				[RenderTypes.Shaded] = AggContext.StaticData.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Outlines] = AggContext.StaticData.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Polygons] = AggContext.StaticData.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.NonManifold] = AggContext.StaticData.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Materials] = AggContext.StaticData.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
-				[RenderTypes.Overhang] = AggContext.StaticData.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Shaded] = StaticData.Instance.LoadIcon("view_shaded.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Outlines] = StaticData.Instance.LoadIcon("view_outlines.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Polygons] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.NonManifold] = StaticData.Instance.LoadIcon("view_polygons.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Materials] = StaticData.Instance.LoadIcon("view_materials.png", 16, 16, theme.InvertIcons),
+				[RenderTypes.Overhang] = StaticData.Instance.LoadIcon("view_overhang.png", 16, 16, theme.InvertIcons),
 			};
 
 			this.AddChild(iconButton = new IconButton(viewIcons[sceneContext.ViewState.RenderType], theme)

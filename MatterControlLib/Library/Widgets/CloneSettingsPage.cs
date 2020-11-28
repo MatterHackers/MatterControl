@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			// Must come before pathButton.Click definition
 			RadioButton copyAndCalibrateOption = null;
 
-			var openButton = new IconButton(AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
+			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
 				Margin = new BorderDouble(left: 8)

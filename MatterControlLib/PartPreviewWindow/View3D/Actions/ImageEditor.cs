@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 						// Persist
 						string filePath = ApplicationDataStorage.Instance.GetNewLibraryFilePath(".png");
-						AggContext.ImageIO.SaveImageData(
+						ImageIO.SaveImageData(
 							filePath,
 							activeImage);
 

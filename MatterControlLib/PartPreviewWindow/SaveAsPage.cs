@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl
 			};
 			contentRow.AddChild(itemNameWidget);
 
-			var icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons);
+			var icon = StaticData.Instance.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons);
 			var isEnabled = false;
 			if (librarySelectorWidget.ActiveContainer is ILibraryWritableContainer writableContainer)
 			{
@@ -95,7 +95,7 @@ namespace MatterHackers.MatterControl
 			createFolderButton.Name = "Create Folder In Button";
 			folderButtonRow.AddChild(createFolderButton);
 
-			var refreshButton = new IconButton(AggContext.StaticData.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons), theme)
+			var refreshButton = new IconButton(StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons), theme)
 			{
 				ToolTipText = "Refresh Folder".Localize(),
 				Enabled = isEnabled,

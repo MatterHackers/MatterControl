@@ -928,7 +928,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public static GuiWidget GetUnlockRow(ThemeConfig theme, string url)
 		{
-			var detailsLink = new TextIconButton("Unlock".Localize(), AggContext.StaticData.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
+			var detailsLink = new TextIconButton("Unlock".Localize(), StaticData.Instance.LoadIcon("locked.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = 5,
 				ToolTipText = "Visit MatterHackers.com to Purchase".Localize()
@@ -946,7 +946,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			if (context.item.GetType().GetCustomAttributes(typeof(WebPageLinkAttribute), true).FirstOrDefault() is WebPageLinkAttribute unlockLink)
 			{
-				var detailsLink = new TextIconButton(unlockLink.Name.Localize(), AggContext.StaticData.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
+				var detailsLink = new TextIconButton(unlockLink.Name.Localize(), StaticData.Instance.LoadIcon("internet.png", 16, 16, theme.InvertIcons), theme)
 				{
 					BackgroundColor = theme.MinimalShade,
 					ToolTipText = unlockLink.Url,

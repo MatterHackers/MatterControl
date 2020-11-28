@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		public static GuiWidget CreateSortingMenuButton(ThemeConfig theme, LibraryListView libraryView)
 		{
 			var viewOptionsButton = new PopupMenuButton(
-				new ImageWidget(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons)), theme)
+				new ImageWidget(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons)), theme)
 			{
 				AlignToRightEdge = true,
 				Name = "Print Library View Options",
@@ -304,7 +304,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			Func<bool> containersShown)
 		{
 			var viewMenuButton = new PopupMenuButton(
-				new ImageWidget(AggContext.StaticData.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
+				new ImageWidget(StaticData.Instance.LoadIcon("mi-view-list_10.png", 32, 32, theme.InvertIcons))
 				{
 					// VAnchor = VAnchor.Center
 				},
@@ -645,7 +645,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		{
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
-				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Title = "Add".Localize(),
 				ToolTipText = "Add an.stl, .obj, .amf, .gcode or.zip file to the Library".Localize(),
 				Action = (selectedLibraryItems, listView) =>
@@ -673,7 +673,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Create Folder".Localize() + "...",
-				Icon = AggContext.StaticData.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("fa-folder-new_16.png", 16, 16, ApplicationController.Instance.MenuTheme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					DialogWindow.Show(
@@ -705,7 +705,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListView)
 			{
 				Title = "Enter Share Code".Localize() + "...",
-				Icon = AggContext.StaticData.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("enter-code.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					UiThread.RunOnIdle(() =>
@@ -781,7 +781,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open".Localize(),
-				Icon = AggContext.StaticData.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					if (listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink)))
@@ -805,7 +805,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Add to Bed".Localize(),
-				Icon = AggContext.StaticData.LoadIcon("bed_add.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("bed_add.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					var activeContext = ApplicationController.Instance.DragDropData;
@@ -1014,7 +1014,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Export".Localize(),
-				Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
@@ -1031,7 +1031,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Share".Localize() + "...",
-				Icon = AggContext.StaticData.LoadIcon("share.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("share.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - shareFromLibraryButton_Click

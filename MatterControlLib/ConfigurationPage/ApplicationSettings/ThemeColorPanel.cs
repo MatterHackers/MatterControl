@@ -81,7 +81,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 			this.CreateThemeModeButtons();
 		}
 
-		public ImageBuffer CheckMark { get; } = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, invertImage: true);
+		public ImageBuffer CheckMark { get; } = StaticData.Instance.LoadIcon("fa-check_16.png", 16, 16, invertImage: true);
 
 		private Color accentPanelColor;
 

@@ -18,7 +18,7 @@ namespace MatterControl.Tests.MatterControl
 
 		static OemProfileTests()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			allPrinters = (from printerFile in new DirectoryInfo(printerSettingsDirectory).GetFiles("*.printer", SearchOption.AllDirectories)

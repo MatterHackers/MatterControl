@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.IO;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.Library;
@@ -57,8 +58,8 @@ namespace MatterHackers.MatterControl
 				wrappedLibrary.ExtraContainers.Add(
 					new DynamicContainerLink(
 						() => printer.Settings.GetValue(SettingsKey.printer_name),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "printer_icon.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 						() => new PrinterContainer(printer))
 					{
 						IsReadOnly = true

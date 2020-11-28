@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.Padding = new BorderDouble(3, 0);
 
-			this.AddChild(new ImageWidget(AggContext.StaticData.LoadIcon("wait.png", 14, 14, theme.InvertIcons))
+			this.AddChild(new ImageWidget(StaticData.Instance.LoadIcon("wait.png", 14, 14, theme.InvertIcons))
 			{
 				VAnchor = VAnchor.Center,
 				HAnchor = HAnchor.Left

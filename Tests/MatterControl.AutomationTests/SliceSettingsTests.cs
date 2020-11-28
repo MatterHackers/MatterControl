@@ -378,7 +378,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public void SliceSettingsOrganizerSupportsKeyLookup()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(5, "MatterControl", "StaticData");
 
 			var organizer = PrinterSettings.Layout;
 
@@ -629,7 +629,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public void CopyFromTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var settings = new PrinterSettings();

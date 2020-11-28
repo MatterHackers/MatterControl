@@ -47,7 +47,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 		[Test]
 		public void PinchChangesMesh()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Automation runner must do as much as program.cs to spin up platform
@@ -60,7 +60,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 
 		private async void RunTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var root = new Object3D();

@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 
@@ -42,7 +43,7 @@ namespace MatterHackers.MatterControl.Library
 
 		static LocalZipContainerLink()
 		{
-			Thumbnail = AggContext.StaticData.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply();
+			Thumbnail = StaticData.Instance.LoadIcon(System.IO.Path.Combine("Library", "zip_folder.png")).AlphaToPrimaryAccent().SetPreMultiply();
 		}
 
 		public virtual Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height)

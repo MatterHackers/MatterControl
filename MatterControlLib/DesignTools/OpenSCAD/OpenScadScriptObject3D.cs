@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -77,7 +78,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				if (Mesh == null)
 				{
-					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
+					using (var meshStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
 					{
 						using (new CenterAndHeightMaintainer(this))
 						{

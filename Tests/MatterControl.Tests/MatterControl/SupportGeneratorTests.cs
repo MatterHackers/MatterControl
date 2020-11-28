@@ -52,7 +52,7 @@ namespace MatterControl.Tests.MatterControl
 			var minimumSupportHeight = .05;
 
 			// Set the static data to point to the directory of MatterControl
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// make a single cube in the air and ensure that support is generated
@@ -311,7 +311,7 @@ namespace MatterControl.Tests.MatterControl
 			var minimumSupportHeight = .05;
 
 			// Set the static data to point to the directory of MatterControl
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// make a single cube in the air and ensure that support is generated
@@ -500,7 +500,7 @@ namespace MatterControl.Tests.MatterControl
 		public async Task ComplexPartNoSupport()
 		{
 			// Set the static data to point to the directory of MatterControl
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// load a complex part that should have no support required

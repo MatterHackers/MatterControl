@@ -119,9 +119,9 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(bottom: 15)
 			};
 
-			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(AggContext.StaticData.ReadAllText(Path.Combine("License", "license.json")));
+			var data = JsonConvert.DeserializeObject<List<LibraryLicense>>(StaticData.Instance.ReadAllText(Path.Combine("License", "license.json")));
 
-			var linkIcon = AggContext.StaticData.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons);
+			var linkIcon = StaticData.Instance.LoadIcon("fa-link_16.png", 16, 16, theme.InvertIcons);
 
 			SectionWidget section = null;
 
@@ -205,9 +205,9 @@ namespace MatterHackers.MatterControl
 			public override void OnLoad(EventArgs args)
 			{
 				string filePath = Path.Combine("License", $"{sourceName}.txt");
-				if (AggContext.StaticData.FileExists(filePath))
+				if (StaticData.Instance.FileExists(filePath))
 				{
-					string content = AggContext.StaticData.ReadAllText(filePath);
+					string content = StaticData.Instance.ReadAllText(filePath);
 
 					this.AddChild(new WrappedTextWidget(content, theme.DefaultFontSize, textColor: theme.TextColor));
 				}

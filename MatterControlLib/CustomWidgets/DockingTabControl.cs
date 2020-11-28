@@ -146,7 +146,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			string imageFile = this.ControlIsPinned ? "Pushpin_16x.png" : "PushpinUnpin_16x.png";
 
-			var pinTabButton = new IconButton(AggContext.StaticData.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
+			var pinTabButton = new IconButton(StaticData.Instance.LoadIcon(imageFile, 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Pin Settings Button"
 			};

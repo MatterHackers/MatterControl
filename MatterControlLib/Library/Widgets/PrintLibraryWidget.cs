@@ -92,7 +92,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			allControls.AddChild(navBar);
 			theme.ApplyBottomBorder(navBar);
 
-			var toolbar = new OverflowBar(AggContext.StaticData.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
+			var toolbar = new OverflowBar(StaticData.Instance.LoadIcon("fa-sort_16.png", 32, 32, theme.InvertIcons), theme)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Fit,

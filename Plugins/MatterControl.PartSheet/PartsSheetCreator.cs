@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.Plugins
 
 			Directory.CreateDirectory(folderToSavePrintsTo);
 
-			AggContext.ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
+			ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
 
 			XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
 			XImage jpegImage = XImage.FromFile(jpegFileName);
@@ -312,9 +312,9 @@ namespace MatterHackers.MatterControl.Plugins
 			double currentlyPrintingHeightPixels = plateInventoryImage.Height - PageMarginMM.Top * PixelPerMM;
 
 			string logoPathAndFile = Path.Combine("Images", "PartSheetLogo.png");
-			if (AggContext.StaticData.FileExists(logoPathAndFile))
+			if (StaticData.Instance.FileExists(logoPathAndFile))
 			{
-				ImageBuffer logoImage = AggContext.StaticData.LoadImage(logoPathAndFile);
+				ImageBuffer logoImage = StaticData.Instance.LoadImage(logoPathAndFile);
 				currentlyPrintingHeightPixels -= logoImage.Height;
 				plateGraphics.Render(logoImage, (plateInventoryImage.Width - logoImage.Width) / 2, currentlyPrintingHeightPixels);
 			}

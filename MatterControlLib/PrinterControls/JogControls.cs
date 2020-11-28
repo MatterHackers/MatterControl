@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl
 				Margin = new BorderDouble(left: 10)
 			};
 
-			keyboardImage = new IconButton(AggContext.StaticData.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons), theme)
+			keyboardImage = new IconButton(StaticData.Instance.LoadIcon("hot_key_small_white.png", 19, 12, theme.InvertIcons), theme)
 			{
 				HAnchor = HAnchor.Center,
 				Margin = new BorderDouble(5),

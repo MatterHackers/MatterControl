@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DataStorage;
@@ -50,8 +51,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Plating History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PlatingHistoryContainer())
 				{
 					IsReadOnly = true
@@ -60,8 +61,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Print History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PrintHistoryContainer()
 					{
 						DefaultSort = new SortBehavior()

@@ -196,11 +196,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						// If the attribute allows invert, use the theme.InvertIcons state
 						bool invertIcons = enumDisplayAttibute.InvertIcons ? theme.InvertIcons : false;
 
-						iconImage = AggContext.StaticData.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight, invertIcons);
+						iconImage = StaticData.Instance.LoadIcon(iconPath, enumDisplayAttibute.IconWidth, enumDisplayAttibute.IconHeight, invertIcons);
 					}
 					else
 					{
-						iconImage = AggContext.StaticData.LoadIcon(iconPath);
+						iconImage = StaticData.Instance.LoadIcon(iconPath);
 					}
 
 					var radioButton = new RadioIconButton(iconImage, theme)

@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "Save as STL|*.stl";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "stl.png"));
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "stl.png"));
 
 		public void Initialize(PrinterConfig printer)
 		{

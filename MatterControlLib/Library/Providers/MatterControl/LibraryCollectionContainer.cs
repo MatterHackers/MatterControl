@@ -31,6 +31,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -55,16 +56,16 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Local Library".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "local_library_icon.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "local_library_icon.png")),
 						() => new SqliteLibraryContainer(rootLibraryCollection.Id)));
 			}
 
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Calibration Parts".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "calibration_library_icon.png")),
 					() => new CalibrationPartsContainer())
 				{
 					IsReadOnly = true
@@ -73,8 +74,8 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Primitives".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "primitives_library_icon.png")),
 					() => new PrimitivesContainer())
 				{
 					IsReadOnly = true
@@ -91,8 +92,8 @@ namespace MatterHackers.MatterControl.Library
 				this.ChildContainers.Add(
 					new DynamicContainerLink(
 						() => "Print Queue".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "queue_icon.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "queue_icon.png")),
 						() => new PrintQueueContainer()));
 			}
 
@@ -100,7 +101,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Pipe Works".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					null,
 					() => new PipeWorksContainer())
 				{
@@ -112,7 +113,7 @@ namespace MatterHackers.MatterControl.Library
 			this.ChildContainers.Add(
 				new DynamicContainerLink(
 					() => "Experimental".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
 					null,
 					() => new DynamicContainer()
 					{

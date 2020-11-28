@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			this.DisplayCurrentTemperature();
 			this.ToolTipText = "Bed Temperature".Localize();
 
-			this.ImageWidget.Image = AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons);
+			this.ImageWidget.Image = StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons);
 
 			this.PopupContent = this.GetPopupContent(ApplicationController.Instance.MenuTheme);
 

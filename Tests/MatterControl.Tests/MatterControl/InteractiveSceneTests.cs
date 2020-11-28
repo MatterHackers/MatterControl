@@ -309,7 +309,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForPinchedFitObjects()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Automation runner must do as much as program.cs to spin up platform
@@ -518,7 +518,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForAlignedFitObject()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Automation runner must do as much as program.cs to spin up platform
@@ -565,7 +565,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AlignObjectHasCorrectPositionsOnXAxis()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Automation runner must do as much as program.cs to spin up platform
@@ -628,7 +628,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("InteractiveScene")]
 		public async Task AabbCalculatedCorrectlyForCurvedFitObjects()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Automation runner must do as much as program.cs to spin up platform
