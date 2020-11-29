@@ -737,6 +737,11 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
+				if (AggContext.OperatingSystem == OSType.Mac)
+				{
+					return 1;
+				}
+
 				if (applicationInstanceCount == 0)
 				{
 					var mcAssembly = Assembly.GetEntryAssembly();
