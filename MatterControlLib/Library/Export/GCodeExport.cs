@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public virtual string ExtensionFilter => "Export GCode|*.gcode";
 
-		public virtual ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "gcode.png"));
+		public virtual ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "gcode.png"));
 
 		public void Initialize(PrinterConfig printer)
 		{

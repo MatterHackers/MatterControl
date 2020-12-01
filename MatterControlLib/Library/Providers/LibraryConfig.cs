@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -66,9 +67,9 @@ namespace MatterHackers.MatterControl.Library
 	{
 		public Dictionary<string, IContentProvider> ContentProviders = new Dictionary<string, IContentProvider>();
 
-		private static ImageBuffer defaultFolderIcon = AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
+		private static ImageBuffer defaultFolderIcon = StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")).SetPreMultiply();
 
-		public static ImageBuffer DefaultItemIcon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("Library", "file.png"));
+		public static ImageBuffer DefaultItemIcon { get; } = StaticData.Instance.LoadIcon(Path.Combine("Library", "file.png"));
 
 		private ILibraryContainer activeContainer;
 

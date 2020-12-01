@@ -50,16 +50,13 @@ using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
-using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.Extensibility;
 using MatterHackers.MatterControl.Library;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PartPreviewWindow.View3D;
 using MatterHackers.MatterControl.Plugins;
 using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
@@ -198,7 +195,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -586,7 +583,7 @@ namespace MatterHackers.MatterControl
 				new NamedAction()
 				{
 					ID = "Delete",
-					Icon = AggContext.StaticData.LoadIcon("remove.png", 16, 16).SetPreMultiply(),
+					Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16).SetPreMultiply(),
 					Title = "Remove".Localize(),
 					Action = sceneContext.Scene.DeleteSelection,
 					IsEnabled = () => sceneContext.Scene.SelectedItem != null
@@ -595,7 +592,7 @@ namespace MatterHackers.MatterControl
 				{
 					ID = "Export",
 					Title = "Export".Localize(),
-					Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, invertIcons),
+					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, invertIcons),
 					Action = () =>
 					{
 						ApplicationController.Instance.ExportLibraryItems(
@@ -655,7 +652,7 @@ namespace MatterHackers.MatterControl
 						await sceneContext.Scene.AutoArrangeChildren(view3DWidget.BedCenter).ConfigureAwait(false);
 					},
 					IsEnabled = () => sceneContext.EditableScene,
-					Icon = AggContext.StaticData.LoadIcon("arrange_all.png", 16, 16, invertIcons),
+					Icon = StaticData.Instance.LoadIcon("arrange_all.png", 16, 16, invertIcons),
 				},
 				new NamedAction()
 				{
@@ -737,6 +734,11 @@ namespace MatterHackers.MatterControl
 		{
 			get
 			{
+				if (AggContext.OperatingSystem == OSType.Mac)
+				{
+					return 1;
+				}
+
 				if (applicationInstanceCount == 0)
 				{
 					var mcAssembly = Assembly.GetEntryAssembly();
@@ -776,8 +778,8 @@ namespace MatterHackers.MatterControl
 				this.Library.RegisterContainer(
 					new DynamicContainerLink(
 						() => "Downloads".Localize(),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-						AggContext.StaticData.LoadIcon(Path.Combine("Library", "download_icon.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+						StaticData.Instance.LoadIcon(Path.Combine("Library", "download_icon.png")),
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
 							UseIncrementedNameDuringTypeChange = true,
@@ -793,8 +795,8 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "Library".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "library_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "library_icon.png")),
 					() => this.Library.LibraryCollectionContainer));
 
 			if (File.Exists(ApplicationDataStorage.Instance.CustomLibraryFoldersPath))
@@ -818,8 +820,8 @@ namespace MatterHackers.MatterControl
 			this.Library.RegisterContainer(
 				new DynamicContainerLink(
 					() => "History".Localize(),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-					AggContext.StaticData.LoadIcon(Path.Combine("Library", "history_icon.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new RootHistoryContainer())
 				{
 					IsReadOnly = true
@@ -834,8 +836,8 @@ namespace MatterHackers.MatterControl
 					{
 						new DynamicContainerLink(
 							() => "Printers".Localize(),
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "folder.png")),
-							AggContext.StaticData.LoadIcon(Path.Combine("Library", "printer_icon.png")),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "folder.png")),
+							StaticData.Instance.LoadIcon(Path.Combine("Library", "printer_icon.png")),
 							() => new OpenPrintersContainer())
 					}
 				}
@@ -908,11 +910,11 @@ namespace MatterHackers.MatterControl
 			HelpArticle helpArticle = null;
 
 			string helpPath = Path.Combine("OEMSettings", "toc.json");
-			if (AggContext.StaticData.FileExists(helpPath))
+			if (StaticData.Instance.FileExists(helpPath))
 			{
 				try
 				{
-					helpArticle = JsonConvert.DeserializeObject<HelpArticle>(AggContext.StaticData.ReadAllText(helpPath));
+					helpArticle = JsonConvert.DeserializeObject<HelpArticle>(StaticData.Instance.ReadAllText(helpPath));
 				}
 				catch { }
 			}
@@ -921,7 +923,7 @@ namespace MatterHackers.MatterControl
 
 			Object3D.AssetsPath = Path.Combine(ApplicationDataStorage.Instance.ApplicationLibraryDataPath, "Assets");
 
-			using (var meshSteam = AggContext.StaticData.OpenStream(Path.Combine("Stls", "missing.stl")))
+			using (var meshSteam = StaticData.Instance.OpenStream(Path.Combine("Stls", "missing.stl")))
 			{
 				Object3D.FileMissingMesh = StlProcessing.Load(meshSteam, CancellationToken.None);
 			}
@@ -1060,7 +1062,7 @@ namespace MatterHackers.MatterControl
 		{
 			[NamedTypeFace.Liberation_Sans] = LiberationSansFont.Instance,
 			[NamedTypeFace.Liberation_Sans_Bold] = LiberationSansBoldFont.Instance,
-			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
+			[NamedTypeFace.Liberation_Mono] = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "LiberationMono.svg")))
 		};
 
 		private static object locker = new object();
@@ -1073,8 +1075,8 @@ namespace MatterHackers.MatterControl
 				{
 					var typeFace = new TypeFace();
 					var path = Path.Combine("Fonts", $"{namedTypeFace}.ttf");
-					var exists = AggContext.StaticData.FileExists(path);
-					var stream = exists ? AggContext.StaticData.OpenStream(path) : null;
+					var exists = StaticData.Instance.FileExists(path);
+					var stream = exists ? StaticData.Instance.OpenStream(path) : null;
 					if (stream != null
 						&& typeFace.LoadTTF(stream))
 					{
@@ -1084,8 +1086,8 @@ namespace MatterHackers.MatterControl
 					{
 						// try the svg
 						path = Path.Combine("Fonts", $"{namedTypeFace}.svg");
-						exists = AggContext.StaticData.FileExists(path);
-						typeFace = exists ? TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(path)) : null;
+						exists = StaticData.Instance.FileExists(path);
+						typeFace = exists ? TypeFace.LoadFrom(StaticData.Instance.ReadAllText(path)) : null;
 						if (typeFace != null)
 						{
 							TypeFaceCache.Add(namedTypeFace, typeFace);
@@ -1112,7 +1114,7 @@ namespace MatterHackers.MatterControl
 			{
 				if (titilliumTypeFace == null)
 				{
-					titilliumTypeFace = TypeFace.LoadFrom(AggContext.StaticData.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
+					titilliumTypeFace = TypeFace.LoadFrom(StaticData.Instance.ReadAllText(Path.Combine("Fonts", "TitilliumWeb-Black.svg")));
 				}
 
 				return titilliumTypeFace;
@@ -1144,10 +1146,10 @@ namespace MatterHackers.MatterControl
 			try
 			{
 				if (staticDataFallbackPath != null
-					&& AggContext.StaticData.FileExists(staticDataFallbackPath))
+					&& StaticData.Instance.FileExists(staticDataFallbackPath))
 				{
 					return Task.FromResult(
-						JsonConvert.DeserializeObject<T>(AggContext.StaticData.ReadAllText(staticDataFallbackPath)));
+						JsonConvert.DeserializeObject<T>(StaticData.Instance.ReadAllText(staticDataFallbackPath)));
 				}
 			}
 			catch
@@ -1211,7 +1213,7 @@ namespace MatterHackers.MatterControl
 			try
 			{
 #if DEBUG
-				AggContext.StaticData.PurgeCache();
+				StaticData.Instance.PurgeCache();
 #endif
 
 				this.IsReloading = true;
@@ -1886,7 +1888,7 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				using (var stream = AggContext.StaticData.OpenStream(translationFilePath))
+				using (var stream = StaticData.Instance.OpenStream(translationFilePath))
 				using (var streamReader = new StreamReader(stream))
 				{
 					TranslationMap.ActiveTranslationMap = new TranslationMap(streamReader, UserSettings.Instance.Language);
@@ -2140,7 +2142,7 @@ namespace MatterHackers.MatterControl
 
 		internal void GetViewOptionButtons(GuiWidget parent, ISceneContext sceneContext, PrinterConfig printer, ThemeConfig theme)
 		{
-			var bedButton = new RadioIconButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			var bedButton = new RadioIconButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = "Show Print Bed".Localize(),
@@ -2160,7 +2162,7 @@ namespace MatterHackers.MatterControl
 
 			bool BuildHeightValid() => sceneContext.BuildHeight > 0;
 
-			var printAreaButton = new RadioIconButton(AggContext.StaticData.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
+			var printAreaButton = new RadioIconButton(StaticData.Instance.LoadIcon("print_area.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Button",
 				ToolTipText = BuildHeightValid() ? "Show Print Area".Localize() : "Define printer build height to enable",
@@ -2344,7 +2346,7 @@ namespace MatterHackers.MatterControl
 					VAnchor = VAnchor.Stretch
 				};
 
-				var icon = AggContext.StaticData.LoadIcon("help_page.png", 16, 16, theme.InvertIcons);
+				var icon = StaticData.Instance.LoadIcon("help_page.png", 16, 16, theme.InvertIcons);
 
 				helpDocsTab = new ChromeTab("HelpDocs", "Help".Localize(), tabControl, helpTreePanel, theme, icon)
 				{

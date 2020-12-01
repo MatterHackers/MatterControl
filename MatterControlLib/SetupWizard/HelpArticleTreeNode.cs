@@ -40,7 +40,7 @@ namespace MatterHackers.MatterControl
 			this.HelpArticle = helpArticle;
 			this.Text = helpArticle.Name;
 			this.Tag = helpArticle;
-			this.Image = AggContext.StaticData.LoadIcon("fa-text-file_16.png", 16, 16);
+			this.Image = StaticData.Instance.LoadIcon("fa-text-file_16.png", 16, 16);
 		}
 
 		public HelpArticle HelpArticle { get; }

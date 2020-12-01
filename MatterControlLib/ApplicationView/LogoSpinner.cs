@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl
 
 			Mesh logoMesh;
 
-			using (var logoStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "MH Logo.stl")))
+			using (var logoStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "MH Logo.stl")))
 			{
 				logoMesh = StlProcessing.Load(logoStream, CancellationToken.None);
 			}

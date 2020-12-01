@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(primaryActionsPanel);
 
 			// put in a make permanent button
-			var icon = AggContext.StaticData.LoadIcon("apply.png", 16, 16, theme.InvertIcons).SetPreMultiply();
+			var icon = StaticData.Instance.LoadIcon("apply.png", 16, 16, theme.InvertIcons).SetPreMultiply();
 			flattenButton = new IconButton(icon, theme)
 			{
 				Margin = theme.ButtonSpacing,
@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			toolbar.AddChild(flattenButton);
 
 			// put in a remove button
-			removeButton = new IconButton(AggContext.StaticData.LoadIcon("cancel.png", 16, 16, theme.InvertIcons), theme)
+			removeButton = new IconButton(StaticData.Instance.LoadIcon("cancel.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Cancel".Localize(),

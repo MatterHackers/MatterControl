@@ -96,7 +96,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				printPanel.AddChild(optionsPanel);
 
-				foreach (var key in new[] { SettingsKey.layer_height, SettingsKey.fill_density, SettingsKey.create_raft })
+				var settingsToAdd = new[]
+				{
+					SettingsKey.layer_height,
+					SettingsKey.fill_density,
+					SettingsKey.create_raft,
+					SettingsKey.create_per_layer_support
+				};
+
+				foreach (var key in settingsToAdd)
 				{
 					var settingsData = PrinterSettings.SettingsData[key];
 					var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, menuTheme, ref tabIndex, allUiFields);

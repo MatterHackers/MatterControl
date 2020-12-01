@@ -53,9 +53,9 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		public static void SetMakeAndModel(string make, string model)
 		{
 			string pathToBedSettings = Path.Combine("PrinterSettings", make, model, "BedSettings.json");
-			if (AggContext.StaticData.FileExists(pathToBedSettings))
+			if (StaticData.Instance.FileExists(pathToBedSettings))
 			{
-				string content = AggContext.StaticData.ReadAllText(pathToBedSettings);
+				string content = StaticData.Instance.ReadAllText(pathToBedSettings);
 				instance = (BedSettings)Newtonsoft.Json.JsonConvert.DeserializeObject<BedSettings>(content);
 			}
 			else

@@ -20,7 +20,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void Check3PointLevelingPositions()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var printer = new PrinterConfig(new PrinterSettings());
@@ -41,7 +41,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void CheckIfShouldBeShownParseTests()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// test single if set to 0
@@ -155,7 +155,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void SupportInterfaceMaterialAssignedToExtruderOne()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 
 			// first_layer_extrusion_width
 			{
@@ -204,7 +204,7 @@ namespace MatterControl.Tests.MatterControl
 		// Validates that all SetSettingsOnChange linked fields exist and have their required TargetSetting and Value definitions
 		public void LinkedSettingsExist()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var settingsByName = PrinterSettings.SettingsData;
@@ -226,7 +226,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public void PresentationNamesLackColon()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var allSettings = PrinterSettings.SettingsData.Values;

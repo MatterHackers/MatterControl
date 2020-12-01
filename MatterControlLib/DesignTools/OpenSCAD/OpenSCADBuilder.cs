@@ -131,7 +131,7 @@ namespace MatterHackers.MatterControl.Library
 
 				updateButton.Click += async (s, e) =>
 				{
-					using (var meshStream = AggContext.StaticData.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
+					using (var meshStream = StaticData.Instance.OpenStream(Path.Combine("Stls", "openscad_logo.stl")))
 					{
 						using (new CenterAndHeightMaintainer(this.item))
 						{

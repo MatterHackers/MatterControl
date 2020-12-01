@@ -34,6 +34,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.Transform;
 using MatterHackers.Agg.VertexSource;
@@ -109,7 +110,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			using (RebuildLock())
 			{
-				var currentAssetPath = ImageObject == null ? AggContext.StaticData.ToAssetPath(Path.Combine("Images", "mh-logo.png")) : ImageObject.AssetPath;
+				var currentAssetPath = ImageObject == null ? StaticData.Instance.ToAssetPath(Path.Combine("Images", "mh-logo.png")) : ImageObject.AssetPath;
 
 				this.Children.Modify((list) =>
 				{

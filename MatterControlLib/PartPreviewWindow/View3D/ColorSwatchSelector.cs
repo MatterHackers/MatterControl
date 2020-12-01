@@ -69,7 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				switch (rowIndex)
 				{
 					case 0:
-						var resetButton = new IconButton(AggContext.StaticData.LoadIcon("transparent_grid.png"), theme)
+						var resetButton = new IconButton(StaticData.Instance.LoadIcon("transparent_grid.png"), theme)
 						{
 							Width = scaledButtonSize,
 							Height = scaledButtonSize,

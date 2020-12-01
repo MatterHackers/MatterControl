@@ -68,7 +68,7 @@ namespace Markdig.Renderers.Agg.Inlines
 
 	public class ImageLinkSimpleX : FlowLayoutWidget
 	{
-		private static ImageBuffer icon = AggContext.StaticData.LoadIcon("internet.png", 16, 16);
+		private static ImageBuffer icon = StaticData.Instance.LoadIcon("internet.png", 16, 16);
 
 		public ImageLinkSimpleX(AggRenderer renderer, string imageUrl, string linkUrl = null)
 		{
@@ -171,7 +171,7 @@ namespace Markdig.Renderers.Agg.Inlines
 	{
 		private static HttpClient client = new HttpClient();
 
-		private static ImageBuffer icon = AggContext.StaticData.LoadIcon("internet.png", 16, 16);
+		private static ImageBuffer icon = StaticData.Instance.LoadIcon("internet.png", 16, 16);
 
 		public string Url { get; }
 
@@ -220,7 +220,7 @@ namespace Markdig.Renderers.Agg.Inlines
 								else
 								{
 									// Load img
-									if (!AggContext.ImageIO.LoadImageData(streamTask.Result, imageBuffer))
+									if (!ImageIO.LoadImageData(streamTask.Result, imageBuffer))
 									{
 										Debug.WriteLine("Error loading image: " + url);
 									}

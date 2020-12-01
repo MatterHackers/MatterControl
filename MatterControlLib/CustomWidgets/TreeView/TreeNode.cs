@@ -505,8 +505,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 			public TreeExpandWidget(ThemeConfig theme)
 			{
-				arrowRight = AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons);
-				arrowDown = AggContext.StaticData.LoadIcon("fa-angle-down_12.png", 12, 12, theme.InvertIcons);
+				arrowRight = StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons);
+				arrowDown = StaticData.Instance.LoadIcon("fa-angle-down_12.png", 12, 12, theme.InvertIcons);
 				placeholder = new ImageBuffer(16, 16);
 
 				this.Margin = new BorderDouble(right: 4);

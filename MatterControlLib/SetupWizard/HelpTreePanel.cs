@@ -339,7 +339,9 @@ namespace MatterHackers.MatterControl
 
 			double maxMenuItemWidth = 0;
 
-			while (ApplicationController.Instance.HelpArticles.Path == null)
+			var time = UiThread.CurrentTimerMs;
+			while (ApplicationController.Instance.HelpArticles.Path == null
+				&& UiThread.CurrentTimerMs < time + 5000)
 			{
 				Thread.Sleep(10);
 			}

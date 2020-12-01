@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -54,7 +55,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			connectButton = new TextIconButton(
 				"Connect".Localize(),
-				AggContext.StaticData.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
 				theme)
 			{
 				Name = "Connect to printer button",
@@ -75,7 +76,7 @@ namespace MatterHackers.MatterControl.ActionBar
 			// add the cancel stop button
 			cancelConnectButton = new TextIconButton(
 				"Cancel".Localize(),
-				AggContext.StaticData.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
 				theme)
 			{
 				ToolTipText = "Stop trying to connect to the printer.".Localize(),
@@ -92,7 +93,7 @@ namespace MatterHackers.MatterControl.ActionBar
 
 			disconnectButton = new TextIconButton(
 				"Disconnect".Localize(),
-				AggContext.StaticData.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("connect.png", 14, 14, theme.InvertIcons),
 				theme)
 			{
 				Name = "Disconnect from printer button",

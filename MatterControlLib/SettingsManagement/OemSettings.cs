@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 			{
 				if (instance == null)
 				{
-					string oemSettings = AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
+					string oemSettings = StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Settings.json"));
 					instance = JsonConvert.DeserializeObject<OemSettings>(oemSettings) as OemSettings;
 				}
 
@@ -184,7 +184,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				// If empty, purge the cache file and fall back to StaticData
 				File.Delete(cachePath);
 
-				json = AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+				json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
 			}
 
 			try
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.SettingsManagement
 				// If json parse fails, purge the cache file and fall back to StaticData
 				File.Delete(cachePath);
 
-				json = AggContext.StaticData.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
+				json = StaticData.Instance.ReadAllText(Path.Combine("Profiles", "oemprofiles.json"));
 				return JsonConvert.DeserializeObject<OemProfileDictionary>(json);
 			}
 		}
@@ -259,8 +259,8 @@ namespace MatterHackers.MatterControl.SettingsManagement
 		private OemSettings()
 		{
 			this.ManufacturerNameMappings = new List<ManufacturerNameMapping>();
-			this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
-			this.OemPrinters = JsonConvert.DeserializeObject<Dictionary<string, StorePrinterID>>(AggContext.StaticData.ReadAllText(Path.Combine("OEMSettings", "Printers.json")));
+			this.OemUrls = JsonConvert.DeserializeObject<Dictionary<string, string>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "OEMUrls.json")));
+			this.OemPrinters = JsonConvert.DeserializeObject<Dictionary<string, StorePrinterID>>(StaticData.Instance.ReadAllText(Path.Combine("OEMSettings", "Printers.json")));
 		}
 	}
 

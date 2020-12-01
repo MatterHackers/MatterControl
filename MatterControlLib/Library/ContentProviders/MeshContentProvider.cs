@@ -34,6 +34,7 @@ namespace MatterHackers.MatterControl
 	using System;
 	using System.IO;
 	using System.Threading;
+	using MatterHackers.Agg;
 	using MatterHackers.Agg.Image;
 	using MatterHackers.Agg.Platform;
 	using MatterHackers.DataConverters3D;
@@ -136,12 +137,12 @@ namespace MatterHackers.MatterControl
 			if (thumbnail != null)
 			{
 				// Cache content thumbnail
-				AggContext.ImageIO.SaveImageData(
+				ImageIO.SaveImageData(
 					ApplicationController.Instance.Thumbnails.CachePath(object3D.MeshRenderId().ToString(), width, height),
 					thumbnail);
 
 				// Cache library thumbnail
-				AggContext.ImageIO.SaveImageData(
+				ImageIO.SaveImageData(
 					ApplicationController.Instance.Thumbnails.CachePath(libraryItem, width, height),
 					thumbnail);
 			}
@@ -188,7 +189,7 @@ namespace MatterHackers.MatterControl
 				{
 					theme = AppContext.Theme;
 
-					defaultIcon = AggContext.StaticData.LoadIcon("mesh.png", theme.InvertIcons); //.AnyAlphaToColor(theme.PrimaryAccentColor);
+					defaultIcon = StaticData.Instance.LoadIcon("mesh.png", theme.InvertIcons); //.AnyAlphaToColor(theme.PrimaryAccentColor);
 				}
 
 				return defaultIcon;

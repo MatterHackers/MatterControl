@@ -45,7 +45,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public Task CacheablePathTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 
 			string path = ApplicationController.CacheablePath("scope", "key.file");
 
@@ -60,7 +60,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public Task CacheDirectoryTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 
 			string path = ApplicationDataStorage.Instance.CacheDirectory;
 
@@ -75,7 +75,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public Task TempPathTest()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 
 			string path = ApplicationDataStorage.Instance.ApplicationTempDataPath;
 

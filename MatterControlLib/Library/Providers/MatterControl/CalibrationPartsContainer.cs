@@ -50,7 +50,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Load()
 		{
-			var oemParts = AggContext.StaticData.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
+			var oemParts = StaticData.Instance.GetFiles(Path.Combine("OEMSettings", "SampleParts"));
 			Items = oemParts.Select(s => new StaticDataItem(s)).ToList<ILibraryItem>();
 
 			Items.Add(new GeneratorItem(
@@ -127,7 +127,7 @@ namespace MatterHackers.MatterControl.Library
 			{
 				return Task.FromResult(new StreamAndLength()
 				{
-					Stream = AggContext.StaticData.OpenStream(AssetPath),
+					Stream = StaticData.Instance.OpenStream(AssetPath),
 					Length = -1
 				});
 			}

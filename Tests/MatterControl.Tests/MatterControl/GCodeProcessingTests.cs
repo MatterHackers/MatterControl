@@ -78,7 +78,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test, Category("GCodeProcessing")]
 		public void ReplaceMacroValuesWorking()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			var settings = new PrinterSettings();

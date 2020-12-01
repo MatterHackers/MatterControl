@@ -160,7 +160,7 @@ namespace MatterHackers.MatterControl
 				Text = "Printers".Localize(),
 				HAnchor = HAnchor.Stretch,
 				AlwaysExpandable = true,
-				Image = AggContext.StaticData.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
+				Image = StaticData.Instance.LoadIcon("printer.png", 16, 16, theme.InvertIcons)
 			};
 			rootPrintersNode.TreeView = treeView;
 			treeView.AddChild(rootPrintersNode);

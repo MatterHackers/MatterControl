@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "";
 
-		public ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "folder.png")).SetPreMultiply();
+		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "folder.png")).SetPreMultiply();
 
 		public void Initialize(PrinterConfig printer)
 		{

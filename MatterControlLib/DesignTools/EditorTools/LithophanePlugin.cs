@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Linq;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -87,7 +88,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 					IsEnabled = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
 					HelpTextResolver = () => "*An image must be selected*".Localize(),
 					ShowInModifyMenu = (sceneContext) => sceneContext?.Scene?.SelectedItem is ImageObject3D,
-					Icon = (invertIcon) => AggContext.StaticData.LoadIcon("lithophane.png", 16, 16, invertIcon)
+					Icon = (invertIcon) => StaticData.Instance.LoadIcon("lithophane.png", 16, 16, invertIcon)
 				},
 				"Image");
 		}

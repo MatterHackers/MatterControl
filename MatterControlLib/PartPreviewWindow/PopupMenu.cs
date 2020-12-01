@@ -165,7 +165,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			public CheckboxMenuItem(GuiWidget widget, ThemeConfig theme)
 				: base(widget, theme)
 			{
-				faChecked = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
+				faChecked = StaticData.Instance.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons);
 			}
 
 			public override void OnLoad(EventArgs args)

@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			};
 			container.AddChild(printerMessageThree);
 
-			var removeImage = AggContext.StaticData.LoadImage(Path.Combine("Images", "remove usb.png"));
+			var removeImage = StaticData.Instance.LoadImage(Path.Combine("Images", "remove usb.png"));
 			removeImage.SetRecieveBlender(new BlenderPreMultBGRA());
 			container.AddChild(new ImageWidget(removeImage)
 			{

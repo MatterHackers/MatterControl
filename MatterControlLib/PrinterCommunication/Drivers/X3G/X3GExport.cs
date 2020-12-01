@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.Plugins.X3GDriver
 
 		public override string FileExtension { get; } = ".x3g";
 
-		public override ImageBuffer Icon { get; } = AggContext.StaticData.LoadIcon(Path.Combine("filetypes", "x3g.png"));
+		public override ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "x3g.png"));
 
 		public override bool Enabled
 		{

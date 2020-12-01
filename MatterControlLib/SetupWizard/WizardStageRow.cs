@@ -57,10 +57,10 @@ namespace MatterHackers.MatterControl
 			this.stage = stage;
 			this.Cursor = Cursors.Hand;
 
-			completedIcon = AggContext.StaticData.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
-			recommendedIcon = AggContext.StaticData.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
-			setupIcon = AggContext.StaticData.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
-			hoverIcon = AggContext.StaticData.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
+			completedIcon = StaticData.Instance.LoadIcon("fa-check_16.png", 16, 16, theme.InvertIcons).AjustAlpha(0.3);
+			recommendedIcon = StaticData.Instance.LoadIcon("SettingsGroupWarning_16x.png", 16, 16, theme.InvertIcons);
+			setupIcon = StaticData.Instance.LoadIcon("SettingsGroupError_16x.png", 16, 16, theme.InvertIcons);
+			hoverIcon = StaticData.Instance.LoadIcon("expand.png", 16, 16, theme.InvertIcons);
 		}
 
 		public bool Active { get; set; }

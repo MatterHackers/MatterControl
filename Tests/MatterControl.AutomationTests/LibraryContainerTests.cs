@@ -50,7 +50,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public Task TestExistsForEachContainerType()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			// Find all test methods on this test class
@@ -72,7 +72,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task NoContentChangedOnLoad()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			bool onIdlePumpActive = true;
@@ -136,7 +136,7 @@ namespace MatterControl.Tests.MatterControl
 		[Test]
 		public async Task AddFiresContentChangedEvent()
 		{
-			AggContext.StaticData = new FileSystemStaticData(TestContext.CurrentContext.ResolveProjectPath(4, "StaticData"));
+			StaticData.RootPath = TestContext.CurrentContext.ResolveProjectPath(4, "StaticData");
 			MatterControlUtilities.OverrideAppDataLocation(TestContext.CurrentContext.ResolveProjectPath(4));
 
 			string filePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestParts", "Batman.stl");

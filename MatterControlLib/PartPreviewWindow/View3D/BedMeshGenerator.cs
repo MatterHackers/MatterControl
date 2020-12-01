@@ -325,11 +325,11 @@ namespace MatterHackers.MatterControl
 		{
 			// Add an oem/watermark image to the bedplate grid
 			string imagePathAndFile = Path.Combine("OEMSettings", "bedimage.png");
-			if (AggContext.StaticData.FileExists(imagePathAndFile))
+			if (StaticData.Instance.FileExists(imagePathAndFile))
 			{
 				if (watermarkImage == null)
 				{
-					watermarkImage = AggContext.StaticData.LoadImage(imagePathAndFile);
+					watermarkImage = StaticData.Instance.LoadImage(imagePathAndFile);
 				}
 
 				var xYRatio = printer.Bed.ViewerVolume.X / Math.Max(1, printer.Bed.ViewerVolume.Y);

@@ -238,7 +238,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			titleAndTreeView.AddChild(treeView);
 
 			workspaceName.ActionArea.AddChild(
-				new IconButton(AggContext.StaticData.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons), theme)
+				new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 12, 12, theme.InvertIcons), theme)
 				{
 					Enabled = false
 				},
@@ -286,7 +286,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.Object3DControlLayer.AddChild(viewOptionsBar);
 
-			var homeButton = new IconButton(AggContext.StaticData.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
+			var homeButton = new IconButton(StaticData.Instance.LoadIcon("fa-home_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				VAnchor = VAnchor.Absolute,
 				ToolTipText = "Reset View".Localize(),

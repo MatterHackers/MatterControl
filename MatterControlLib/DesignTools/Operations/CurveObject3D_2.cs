@@ -66,6 +66,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
+		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
+		public bool SplitMesh { get; set; } = true;
+
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
@@ -160,11 +163,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						// transform into this space
 						transformedMesh.Transform(itemMatrix);
 
-						status.Status = "Split Mesh".Localize();
-						reporter.Report(status);
+						if (SplitMesh)
+						{
+							status.Status = "Split Mesh".Localize();
+							reporter.Report(status);
 
-						// split the mesh along the x axis
-						transformedMesh.SplitOnPlanes(Vector3.UnitX, cuts, cutSize / 8);
+							// split the mesh along the x axis
+							transformedMesh.SplitOnPlanes(Vector3.UnitX, cuts, cutSize / 8);
+						}
 
 						for (int i = 0; i < transformedMesh.Vertices.Count; i++)
 						{
@@ -186,10 +192,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						// transform back into item local space
 						transformedMesh.Transform(Matrix4X4.CreateTranslation(-rotationCenter) * itemMatrix.Inverted);
 
-						status.Status = "Merge Vertices".Localize();
-						reporter.Report(status);
+						if (SplitMesh)
+						{
+							status.Status = "Merge Vertices".Localize();
+							reporter.Report(status);
 
-						transformedMesh.MergeVertices(.1);
+							transformedMesh.MergeVertices(.1);
+						}
+
 						transformedMesh.CalculateNormals();
 
 						var curvedChild = new Object3D()

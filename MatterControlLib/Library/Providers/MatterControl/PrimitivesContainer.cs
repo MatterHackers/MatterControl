@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
@@ -119,7 +120,7 @@ namespace MatterHackers.MatterControl.Library
 						// Construct an image
 						var imageObject = new ImageObject3D()
 						{
-							AssetPath = AggContext.StaticData.ToAssetPath(Path.Combine("Images", "mh-logo.png"))
+							AssetPath = StaticData.Instance.ToAssetPath(Path.Combine("Images", "mh-logo.png"))
 						};
 
 						// Construct a scene

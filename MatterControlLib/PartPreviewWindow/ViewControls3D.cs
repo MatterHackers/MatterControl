@@ -137,7 +137,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			bedMenuButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
+			bedMenuButton = new PopupMenuButton(StaticData.Instance.LoadIcon("bed.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Bed Options Menu",
 				ToolTipText = "Bed",
@@ -157,7 +157,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
-			undoButton = new IconButton(AggContext.StaticData.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			undoButton = new IconButton(StaticData.Instance.LoadIcon("Undo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Undo",
 				ToolTipText = "Undo".Localize(),
@@ -172,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			this.AddChild(undoButton);
 
-			redoButton = new IconButton(AggContext.StaticData.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
+			redoButton = new IconButton(StaticData.Instance.LoadIcon("Redo_grey_16x.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "3D View Redo",
 				Margin = theme.ButtonSpacing,
@@ -211,7 +211,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (UserSettings.Instance.IsTouchScreen)
 			{
 				iconPath = Path.Combine("ViewTransformControls", "rotate.png");
-				rotateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
+				rotateButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Rotate (Alt + Left Mouse)".Localize(),
@@ -222,7 +222,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(rotateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "translate.png");
-				translateButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
+				translateButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Move (Shift + Left Mouse)".Localize(),
@@ -233,7 +233,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				AddChild(translateButton);
 
 				iconPath = Path.Combine("ViewTransformControls", "scale.png");
-				scaleButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
+				scaleButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Zoom (Ctrl + Left Mouse)".Localize(),
@@ -249,7 +249,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.AddChild(new ToolbarSeparator(theme.GetBorderColor(50), theme.SeparatorMargin));
 
 				iconPath = Path.Combine("ViewTransformControls", "partSelect.png");
-				partSelectButton = new RadioIconButton(AggContext.StaticData.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
+				partSelectButton = new RadioIconButton(StaticData.Instance.LoadIcon(iconPath, 32, 32, theme.InvertIcons), theme)
 				{
 					SiblingRadioButtonList = buttonGroupA,
 					ToolTipText = "Select Part".Localize(),
@@ -566,7 +566,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						ID = "Export",
 						Title = "Export".Localize(),
-						Icon = AggContext.StaticData.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
+						Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, menuTheme.InvertIcons),
 						Action = () =>
 						{
 							ApplicationController.Instance.ExportLibraryItems(
@@ -607,7 +607,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private IconButton CreateOpenButton(ThemeConfig theme)
 		{
-			var openButton = new IconButton(AggContext.StaticData.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
+			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = theme.ButtonSpacing,
 				ToolTipText = "Open File".Localize(),
@@ -676,7 +676,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			var buttonView = new TextIconButton(
 				"",
-				AggContext.StaticData.LoadIcon("cube_add.png", 16, 16, theme.InvertIcons),
+				StaticData.Instance.LoadIcon("cube_add.png", 16, 16, theme.InvertIcons),
 				theme);
 
 			// Remove right Padding for drop style
@@ -794,7 +794,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				minimumSupportHeight = sceneContext.Printer.Settings.GetValue<double>(SettingsKey.layer_height) / 2;
 			}
 
-			toggleSupportButton = new PopupMenuButton(AggContext.StaticData.LoadIcon("support.png", 16, 16, theme.InvertIcons), theme)
+			toggleSupportButton = new PopupMenuButton(StaticData.Instance.LoadIcon("support.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Name = "Support SplitButton",
 				ToolTipText = "Generate Support".Localize(),
@@ -817,7 +817,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return theme.CreateSplitButton(new SplitButtonParams()
 			{
 				ButtonName = "Save",
-				Icon = AggContext.StaticData.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
+				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
 				DefaultAction = (menuButton) =>
 				{
 					ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async (progress, cancellationToken) =>
