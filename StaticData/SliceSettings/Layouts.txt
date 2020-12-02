@@ -97,6 +97,7 @@ Advanced
       max_fan_speed
       bridge_fan_speed
       disable_fan_first_layers
+      min_fan_speed_absolute
     Retraction
       retract_length
       retract_restart_extra

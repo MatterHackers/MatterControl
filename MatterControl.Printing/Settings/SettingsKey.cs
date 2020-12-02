@@ -155,6 +155,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string merge_overlapping_lines = nameof(merge_overlapping_lines);
 		public const string min_extrusion_before_retract = nameof(min_extrusion_before_retract);
 		public const string min_fan_speed = nameof(min_fan_speed);
+		public const string min_fan_speed_absolute = nameof(min_fan_speed_absolute);
 		public const string min_fan_speed_layer_time = nameof(min_fan_speed_layer_time);
 		public const string min_print_speed = nameof(min_print_speed);
 		public const string min_skirt_length = nameof(min_skirt_length);
