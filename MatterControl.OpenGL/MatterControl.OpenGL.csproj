@@ -4,11 +4,12 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Company>MatterHackers Inc.</Company>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ReleaseVersion>2.20.12</ReleaseVersion>
   </PropertyGroup>
 
   <ItemGroup>
       <ProjectReference Include="..\MatterControl.Printing\MatterControl.Printing.csproj">
-    </ProjectReference>
+      </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\agg\Agg.csproj">
     </ProjectReference>
     <ProjectReference Include="..\Submodules\agg-sharp\Gui\Gui.csproj">
