@@ -1230,6 +1230,18 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.min_fan_speed_absolute,
+					PresentationName = "Minimum Speed Always".Localize(),
+					HelpText = "The minimum speed at which the layer cooling fan will run, expressed as a percentage of full power, regardless of layer time.".Localize(),
+					DataEditType = DataEditTypes.INT,
+					Units = "seconds".Localize(),
+					ShowIfSet = "has_fan",
+					EnableIfSet = SettingsKey.enable_fan,
+					DefaultValue = "0",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.max_fan_speed_layer_time,
 					PresentationName = "Run Max if Below".Localize(),
 					HelpText = "As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.".Localize(),

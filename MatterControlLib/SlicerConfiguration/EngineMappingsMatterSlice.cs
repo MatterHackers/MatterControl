@@ -120,6 +120,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.max_fan_speed_layer_time] = new ExportField("maxFanSpeedLayerTime"),
 				[SettingsKey.bridge_fan_speed] = new ExportField("bridgeFanSpeedPercent"),
 				[SettingsKey.disable_fan_first_layers] = new ExportField("firstLayerToAllowFan"),
+				[SettingsKey.min_fan_speed_absolute] = new ExportField("fanSpeedMinPercentAbsolute"),
 				// end fan
 				[SettingsKey.retract_length_tool_change] = new ExportField("retractionOnExtruderSwitch"),
 				[SettingsKey.retract_restart_extra_toolchange] = new ExportField("unretractExtraOnExtruderSwitch"),

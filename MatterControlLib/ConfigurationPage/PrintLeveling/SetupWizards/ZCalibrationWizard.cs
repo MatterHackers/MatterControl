@@ -150,7 +150,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				this,
 				levelingStrings.HomingPageInstructions(true, false));
 
-			if (LevelingValidation.NeedsToBeRun(printer))
+			if (LevelingPlan.NeedsToBeRun(printer))
 			{
 				// start heating up the bed as that will be needed next
 				var bedTemperature = printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed) ?

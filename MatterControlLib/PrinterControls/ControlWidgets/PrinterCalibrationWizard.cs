@@ -380,7 +380,7 @@ namespace MatterHackers.MatterControl
 		public static bool SetupRequired(PrinterConfig printer, bool requiresLoadedFilament)
 		{
 			return printer == null
-				|| LevelingValidation.NeedsToBeRun(printer) // PrintLevelingWizard
+				|| LevelingPlan.NeedsToBeRun(printer) // PrintLevelingWizard
 				|| ZCalibrationWizard.NeedsToBeRun(printer)
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun0(printer))
 				|| (requiresLoadedFilament && LoadFilamentWizard.NeedsToBeRun1(printer))

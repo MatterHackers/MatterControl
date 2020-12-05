@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 		}
 
-		public bool HasProbeWithLevelingValidation
+		public bool ValidateLevelingWithProbe
 		{
 			get
 			{
