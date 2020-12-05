@@ -2360,12 +2360,12 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			totalGCodeStream?.Dispose();
 			totalGCodeStream = null;
 			GCodeStream accumulatedStream;
+			var doingPrintRecovery = this.RecoveryIsEnabled && ActivePrintTask != null;
 			if (gcodeStream != null)
 			{
 				gCodeFileSwitcher = new GCodeSwitcher(gcodeStream, Printer);
 
-				if (this.RecoveryIsEnabled
-					&& ActivePrintTask != null) // We are resuming a failed print (do lots of interesting stuff).
+				if (doingPrintRecovery) // We are resuming a failed print (do lots of interesting stuff).
 				{
 					accumulatedStream = new SendProgressStream(new PrintRecoveryStream(gCodeFileSwitcher, Printer, ActivePrintTask.PercentDone), Printer);
 					// And increment the recovery count
@@ -2403,12 +2403,14 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			bool enableLineSplitting = gcodeStream != null && Printer.Settings.GetValue<bool>(SettingsKey.enable_line_splitting);
 			accumulatedStream = maxLengthStream = new MaxLengthStream(Printer, accumulatedStream, enableLineSplitting ? 1 : 2000);
 
-			var hasProbeWithLevelingValidation = Printer.Settings.Helpers.HasProbeWithLevelingValidation;
-			if (!LevelingValidation.NeedsToBeRun(Printer)
-				|| hasProbeWithLevelingValidation)
+			var doValidateLeveling = Printer.Settings.Helpers.ValidateLevelingWithProbe;
+			if (!LevelingPlan.NeedsToBeRun(Printer)
+				|| doValidateLeveling)
 			{
-				if (hasProbeWithLevelingValidation)
+				if (!doingPrintRecovery
+					&& doValidateLeveling)
 				{
+					// make sure we don't validate the leveling while recovering a print
 					accumulatedStream = new ValidatePrintLevelingStream(Printer, accumulatedStream);
 				}
 

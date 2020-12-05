@@ -237,7 +237,7 @@ namespace MatterHackers.MatterControl
 						&& printer.Settings.Helpers.PrintLevelingData is PrintLevelingData levelingData
 						&& !levelingData.IssuedLevelingTempWarning
 						&& Math.Abs(bedTemperature - levelingData.BedTemperature) > 10
-						&& !printer.Settings.Helpers.HasProbeWithLevelingValidation)
+						&& !printer.Settings.Helpers.ValidateLevelingWithProbe)
 					{
 						errors.Add(
 							new ValidationError(ValidationErrors.BedLevelingTemperature)

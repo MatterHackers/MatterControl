@@ -65,9 +65,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override bool Enabled => !hasHardwareLeveling && Visible && printer.Connection.IsConnected && !printer.Connection.Printing && !printer.Connection.Paused;
 
-		public override bool Completed => !hasHardwareLeveling && !LevelingValidation.NeedsToBeRun(printer);
+		public override bool Completed => !hasHardwareLeveling && !LevelingPlan.NeedsToBeRun(printer);
 
-		public override bool SetupRequired => LevelingValidation.NeedsToBeRun(printer);
+		public override bool SetupRequired => LevelingPlan.NeedsToBeRun(printer);
 
 		private void Initialize()
 		{
