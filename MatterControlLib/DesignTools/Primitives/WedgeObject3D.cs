@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					if (Round)
 					{
-						var range = 360 / 4;
+						var range = 360 / 4.0;
 						for (int i = 1; i < RoundSegments - 1; i++)
 						{
 							var angle = range / (RoundSegments - 1) * i;
