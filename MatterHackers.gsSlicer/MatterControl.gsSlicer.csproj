@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +27,10 @@
     <ProjectReference Include="..\Submodules\geometry3Sharp\geometry3Sharp.csproj" />
     <ProjectReference Include="..\Submodules\gsGCode\gsGCode.csproj" />
     <ProjectReference Include="..\Submodules\gsSlicer\gsSlicer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="StyleCop.Analyzers" Version="1.1.118" />
   </ItemGroup>
 
 </Project>
