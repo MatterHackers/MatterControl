@@ -34,7 +34,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp.Dom;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -1187,7 +1187,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 								// Parse HTML into something usable for the scene
 								var parser = new HtmlParser();
-								var document = parser.Parse(html);
+								var document = parser.ParseDocument(html);
 
 								// TODO: This needs to become much smarter. Ideally it would inject a yet to be built Object3D for HTML
 								// snippets which could initially infer the content to use but would allow for interactive selection.
