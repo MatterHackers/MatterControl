@@ -120,7 +120,10 @@ namespace MatterHackers.MatterControl
 
 			if (!string.IsNullOrEmpty(line))
 			{
-				visibleLines.Add(line);
+				lock (locker)
+				{
+					visibleLines.Add(line);
+				}
 				return true;
 			}
 
@@ -142,7 +145,10 @@ namespace MatterHackers.MatterControl
 
 		public void RebuildFilteredList()
 		{
-			visibleLines.Clear();
+			lock (locker)
+			{
+				visibleLines.Clear();
+			}
 			foreach (var lineData in terminalLog.AllTerminalLines())
 			{
 				ConditionalyAddToVisible(lineData);
@@ -170,44 +176,41 @@ namespace MatterHackers.MatterControl
 			int numLinesToDraw = NumVisibleLines;
 
 			double y = LocalBounds.Bottom + typeFacePrinter.TypeFaceStyle.EmSizeInPixels * numLinesToDraw;
-			lock (visibleLines)
+			lock (locker)
 			{
-				lock (locker)
+				int startLineIndex = visibleLines.Count - numLinesToDraw;
+				if (forceStartLine != -1)
 				{
-					int startLineIndex = visibleLines.Count - numLinesToDraw;
-					if (forceStartLine != -1)
-					{
-						y = LocalBounds.Top;
+					y = LocalBounds.Top;
 
-						if (forceStartLine > visibleLines.Count - numLinesToDraw)
+					if (forceStartLine > visibleLines.Count - numLinesToDraw)
+					{
+						forceStartLine = -1;
+					}
+					else
+					{
+						// make sure we show all the lines we can
+						startLineIndex = Math.Min(forceStartLine, startLineIndex);
+					}
+				}
+
+				int endLineIndex = visibleLines.Count;
+				for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
+				{
+					if (lineIndex >= 0)
+					{
+						if (visibleLines[lineIndex] != null)
 						{
-							forceStartLine = -1;
-						}
-						else
-						{
-							// make sure we show all the lines we can
-							startLineIndex = Math.Min(forceStartLine, startLineIndex);
+							typeFacePrinter.Text = visibleLines[lineIndex];
+							typeFacePrinter.Origin = new Vector2(bounds.Left + 2, y);
+							typeFacePrinter.Render(graphics2D, TextColor);
 						}
 					}
 
-					int endLineIndex = visibleLines.Count;
-					for (int lineIndex = startLineIndex; lineIndex < endLineIndex; lineIndex++)
+					y -= typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
+					if (y < -typeFacePrinter.TypeFaceStyle.EmSizeInPixels)
 					{
-						if (lineIndex >= 0)
-						{
-							if (visibleLines[lineIndex] != null)
-							{
-								typeFacePrinter.Text = visibleLines[lineIndex];
-								typeFacePrinter.Origin = new Vector2(bounds.Left + 2, y);
-								typeFacePrinter.Render(graphics2D, TextColor);
-							}
-						}
-
-						y -= typeFacePrinter.TypeFaceStyle.EmSizeInPixels;
-						if (y < -typeFacePrinter.TypeFaceStyle.EmSizeInPixels)
-						{
-							break;
-						}
+						break;
 					}
 				}
 			}
@@ -218,7 +221,8 @@ namespace MatterHackers.MatterControl
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
 			base.OnMouseWheel(mouseEvent);
-			double scrollDelta = mouseEvent.WheelDelta / (visibleLines.Count * 60.0);
+			var count = visibleLines.Count;
+			double scrollDelta = mouseEvent.WheelDelta / (count * 60.0);
 
 			if (scrollDelta < 0) // Rounding seems to favor scrolling up, compensating scroll down to feel as smooth
 			{
@@ -226,7 +230,7 @@ namespace MatterHackers.MatterControl
 			}
 			else if (Position0To1 == 0) // If we scroll up at the bottom get pop out from the "on screen" chunk
 			{
-				scrollDelta = NumVisibleLines / (double)visibleLines.Count;
+				scrollDelta = NumVisibleLines / (double)count;
 			}
 
 			double newPos = Position0To1 + scrollDelta;
