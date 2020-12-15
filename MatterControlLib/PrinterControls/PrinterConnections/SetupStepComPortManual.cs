@@ -33,6 +33,7 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 
 namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
@@ -79,7 +80,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 					printer.Connection.ConnectionFailed += Connection_CommunicationStateChanged;
 					printer.Connection.ConnectionSucceeded += Connection_CommunicationStateChanged;
 
-					printer.Settings.Helpers.SetComPort(GetSelectedSerialPort());
 					printer.Connection.Connect();
 
 					connectButton.Visible = false;
@@ -140,8 +140,34 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				HAnchor = HAnchor.Stretch
 			};
 
-			var serialPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom);
-			CreateSerialPortControls(serialPortContainer, null);
+			var serialPortContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch
+			};
+
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+				var menuTheme = ApplicationController.Instance.MenuTheme;
+			var tabIndex = 0;
+			var settingsToAdd = new[]
+			{
+				SettingsKey.com_port,
+				SettingsKey.baud_rate,
+			};
+
+			// turn off the port wizard button in this context
+			ComPortField.ShowPortWizardButton = false;
+			foreach (var key in settingsToAdd)
+			{
+				var settingsRow = SliceSettingsTabView.CreateItemRow(
+				PrinterSettings.SettingsData[key],
+				settingsContext,
+				printer,
+				menuTheme,
+				ref tabIndex);
+
+				serialPortContainer.AddChild(settingsRow);
+			}
+			ComPortField.ShowPortWizardButton = false;
 
 			var comPortMessageContainer = new FlowLayoutWidget
 			{
@@ -201,72 +227,6 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				connectButton.Visible = true;
 				nextButton.Visible = false;
 			}
-		}
-
-		protected void CreateSerialPortControls(FlowLayoutWidget comPortContainer, string activePrinterSerialPort)
-		{
-			int portIndex = 0;
-
-			// Add a radio button for each filtered port
-			foreach (string portName in FrostedSerialPort.GetPortNames())
-			{
-				SerialPortIndexRadioButton comPortOption = CreateComPortOption(portName, activePrinterSerialPort == portName);
-				if (comPortOption.Checked)
-				{
-					printerComPortIsAvailable = true;
-				}
-
-				serialPortButtonsList.Add(comPortOption);
-				comPortContainer.AddChild(comPortOption);
-
-				portIndex++;
-			}
-
-			// Add a virtual entry for serial ports that were previously configured but are not currently connected
-			if (!printerComPortIsAvailable && activePrinterSerialPort != null)
-			{
-				SerialPortIndexRadioButton comPortOption = CreateComPortOption(activePrinterSerialPort, true);
-				comPortOption.Enabled = false;
-
-				comPortContainer.AddChild(comPortOption);
-				serialPortButtonsList.Add(comPortOption);
-				portIndex++;
-			}
-
-			// If there are still no com ports show a message to that effect
-			if (portIndex == 0)
-			{
-				var comPortOption = new TextWidget("No COM ports available".Localize())
-				{
-					Margin = new BorderDouble(3, 6, 5, 6),
-					TextColor = theme.TextColor
-				};
-				comPortContainer.AddChild(comPortOption);
-			}
-		}
-
-		private SerialPortIndexRadioButton CreateComPortOption(string portName, bool isActivePrinterPort)
-		{
-			return new SerialPortIndexRadioButton(portName, portName)
-			{
-				HAnchor = HAnchor.Left,
-				Margin = new BorderDouble(3, 3, 5, 3),
-				TextColor = theme.TextColor,
-				Checked = isActivePrinterPort
-			};
-		}
-
-		private string GetSelectedSerialPort()
-		{
-			foreach (SerialPortIndexRadioButton button in serialPortButtonsList)
-			{
-				if (button.Checked)
-				{
-					return button.PortValue;
-				}
-			}
-
-			throw new Exception("Could not find a selected button.".Localize());
 		}
 	}
 }
