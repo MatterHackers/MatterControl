@@ -309,16 +309,19 @@ namespace MatterHackers.MatterControl
 				}
 			});
 
-			// Persist workspace definitions to disk
-			File.WriteAllText(
-				ProfileManager.Instance.OpenTabsPath,
-				JsonConvert.SerializeObject(
-					workspaces,
-					Formatting.Indented,
-					new JsonSerializerSettings
-					{
-						NullValueHandling = NullValueHandling.Ignore
-					}));
+			lock (workspaces)
+			{
+				// Persist workspace definitions to disk
+				File.WriteAllText(
+					ProfileManager.Instance.OpenTabsPath,
+					JsonConvert.SerializeObject(
+						workspaces,
+						Formatting.Indented,
+						new JsonSerializerSettings
+						{
+							NullValueHandling = NullValueHandling.Ignore
+						}));
+			}
 		}
 
 		internal void ExportAsMatterControlConfig(PrinterConfig printer)

@@ -530,6 +530,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					QuickMenuSettings = { { "Standard 1.75", "1.75" }, { "Wide 2.85", "2.85" } },
 					SlicerConfigName = SettingsKey.filament_diameter,
 					PresentationName = "Diameter".Localize(),
 					HelpText = "The actual diameter of the filament used for printing.".Localize(),
@@ -1325,6 +1326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					QuickMenuSettings = { { "Standard .4", "0.4" }, { "Large .6", "0.6" }, { "Large .8", "0.8" }, { "Large 1.2", "1.2" } },
 					SlicerConfigName = SettingsKey.nozzle_diameter,
 					PresentationName = "Nozzle Diameter".Localize(),
 					HelpText = "The diameter of the extruder's nozzle.".Localize(),

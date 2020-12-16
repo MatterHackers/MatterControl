@@ -155,7 +155,7 @@
     "z_offset": "0",
     "make": "Pulse",
     "model": "A-336",
-    "created_date": "2017-03-31T21:46:45.285Z",
+    "created_date": "2020-08-14T00:55:19.628Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",

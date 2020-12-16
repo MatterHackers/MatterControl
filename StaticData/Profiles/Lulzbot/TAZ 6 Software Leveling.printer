@@ -176,15 +176,14 @@
     "z_can_be_negative": "0",
     "z_homes_to_max": "1",
     "z_offset": "0",
-    "make": "Lulzbot",
+    "make": "LulzBot",
     "model": "TAZ 6 Software Leveling",
-    "created_date": "7/19/2016 7:55:17 PM",
+    "created_date": "2020-08-14T00:58:33.717Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
     "calibration_files": "Calibration - Circle.stl"
   },
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "618 Nylon (Taulman)",

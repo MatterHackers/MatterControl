@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			});
 
-			var printerNotListedButton = theme.CreateDialogButton("Printer not Listed".Localize());
+			var printerNotListedButton = theme.CreateDialogButton("Custom Printer".Localize());
 			printerNotListedButton.ToolTipText = "Select this option only if your printer does not appear in the list".Localize();
 
 			printerNotListedButton.Click += async (s, e) =>
@@ -173,32 +173,28 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	public class SetupCustomPrinter : DialogPage
 	{
 		public SetupCustomPrinter(PrinterConfig printer)
+			: base("Done".Localize())
 		{
+			var scrollable = new ScrollableWidget(autoScroll: true)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			};
+
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			contentRow.AddChild(scrollable);
+
 			var settingsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
 				HAnchor = HAnchor.Stretch
 			};
-			contentRow.AddChild(settingsContainer);
+			scrollable.AddChild(settingsContainer);
 
 			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var tabIndex = 0;
-			var settingsToAdd = new[]
-			{
-				SettingsKey.printer_name,
-				SettingsKey.baud_rate,
-				SettingsKey.bed_shape,
-				SettingsKey.bed_size,
-				SettingsKey.print_center,
-				SettingsKey.nozzle_diameter,
-				SettingsKey.filament_diameter,
-				SettingsKey.extruder_count,
-				SettingsKey.has_heated_bed
-			};
 
-			// turn off the port wizard button in this context
-			ComPortField.ShowPortWizardButton = false;
-			foreach (var key in settingsToAdd)
+			void AddSettingsRow(string key)
 			{
 				var settingsRow = SliceSettingsTabView.CreateItemRow(
 				PrinterSettings.SettingsData[key],
@@ -210,7 +206,38 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				settingsContainer.AddChild(settingsRow);
 			}
 
-			ComPortField.ShowPortWizardButton = false;
+			void AddSettingsRows(string[] keys)
+			{
+				foreach (var key in keys)
+				{
+					AddSettingsRow(key);
+				}
+			}
+
+			settingsContainer.AddChild(
+				new WrappedTextWidget(
+					"Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.".Localize() + ":",
+					pointSize: theme.DefaultFontSize,
+					textColor: theme.TextColor)
+				{
+					Margin = new BorderDouble(5, 5, 5, 15)
+				});
+
+
+			// turn off the port wizard button in this context
+			AddSettingsRow(SettingsKey.printer_name);
+
+			settingsContainer.AddChild(new WrappedTextWidget("Bed Settings".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = new BorderDouble(5, 5, 5, 15)
+			});
+
+			AddSettingsRows(new[] { SettingsKey.bed_shape, SettingsKey.bed_size, SettingsKey.print_center, SettingsKey.build_height, SettingsKey.has_heated_bed });
+			settingsContainer.AddChild(new WrappedTextWidget("Filament Settings".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = new BorderDouble(5, 5, 5, 15)
+			});
+			AddSettingsRows(new[] { SettingsKey.nozzle_diameter, SettingsKey.filament_diameter });
 		}
 	}
 }

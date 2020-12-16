@@ -172,7 +172,7 @@
     "z_offset": "0",
     "make": "3D Cloner",
     "model": "DH G3",
-    "created_date": "09/29/2017 15:30:39",
+    "created_date": "2020-08-14T00:55:35.603Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -184,7 +184,6 @@
     "support_material_create_perimeter": "1",
     "probe_offset": "0,0,0"
   },
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "PLA",

@@ -1,0 +1,107 @@
+{
+  "DocumentVersion": 201606271,
+  "ID": "c1951df4-e061-4099-935f-8e54dd60461b",
+  "StagedUserSettings": {},
+  "Macros": [],
+  "OemLayer": {
+    "make": "Anycubic",
+    "model": "Kossel",
+    "baud_rate": "115200",
+    "filament_diameter": "1.7",
+    "bed_size": "230,230",
+    "build_height": "300",
+    "print_center": "0,0",
+    "bed_shape": "circular",
+    "z_homes_to_max": "1",
+    "start_gcode": "G21;\t;metric values\\nG90;\t;absolute positioning\\nG28;\t;home\\nG1 Z15.0 F5000;\\nM107;\\nG92 E0;\\nG1 F200 E3;\\nG92 E0\\n",
+    "end_gcode": "G92 E0;\\nG1 E-8.0 F5000;\\nM104 S0;\t;extruder heater off\\nM140 S0;\t;heated bed off\\nG28;\\nM84;\t;steppers off\\nM107;",
+    "filament_cost": "46",
+    "layer_height": "0.15",
+    "top_solid_layers": "6",
+    "bottom_solid_layers": "6",
+    "fill_density": "20%",
+    "first_layer_speed": "35%",
+    "support_material_spacing": "4",
+    "support_material_infill_angle": "0",
+    "fill_angle": "60",
+    "raft_extra_distance_around_part": "3",
+    "raft_air_gap": "0.14",
+    "skirt_distance": "2",
+    "skirts": "4",
+    "nozzle_diameter": "0.4",
+    "extrusion_multiplier": "1.05",
+    "retract_length": "6",
+    "coast_at_end_distance": "0",
+    "temperature": "205",
+    "spiral_vase": "0",
+    "layer_to_pause": "",
+    "print_leveling_data": "",
+    "print_leveling_enabled": "0",
+    "probe_has_been_calibrated": "0",
+    "baby_step_z_offset": "0",
+    "baby_step_z_offset_t1": "0",
+    "baby_step_z_offset_t2": "0",
+    "baby_step_z_offset_t3": "0",
+    "xy_offsets_have_been_calibrated": "0",
+    "filament_has_been_loaded": "0",
+    "filament_1_has_been_loaded": "0",
+    "active_material_key": "3632aa32-9e42-4798-a170-357dbcb2e358",
+    "active_quality_key": "80d0151a-7317-41ed-a1ef-54454854d6df",
+    "created_date": "2020-11-02T15:21:25.652Z"
+  },
+  "MaterialLayers": [
+    {
+      "temperature": "205",
+      "bed_temperature": "70",
+      "layer_name": "PLA",
+      "layer_id": "3632aa32-9e42-4798-a170-357dbcb2e358"
+    },
+    {
+      "temperature": "245",
+      "layer_name": "ABS",
+      "layer_id": "985763aa-915a-49e8-be84-a69603ea4eb1"
+    }
+  ],
+  "QualityLayers": [
+    {
+      "layer_height": "0.2",
+      "top_solid_layers": "5",
+      "bottom_solid_layers": "5",
+      "fill_density": "10%",
+      "layer_name": "Fast",
+      "layer_id": "b00d2928-72e9-439d-950c-98a2139111c5"
+    },
+    {
+      "layer_height": "0.15",
+      "top_solid_layers": "6",
+      "bottom_solid_layers": "6",
+      "fill_density": "20%",
+      "layer_name": "Medium",
+      "layer_id": "80d0151a-7317-41ed-a1ef-54454854d6df"
+    },
+    {
+      "layer_height": "0.1",
+      "top_solid_layers": "8",
+      "bottom_solid_layers": "8",
+      "fill_density": "20%",
+      "layer_name": "High",
+      "layer_id": "45634f2e-6d54-4517-8c69-4abb38121ed3"
+    },
+    {
+      "layer_height": "0.3",
+      "top_solid_layers": "5",
+      "bottom_solid_layers": "5",
+      "fill_density": "10%",
+      "layer_name": "Fast ++",
+      "layer_id": "0388c31b-1c01-48e1-8809-d81295237e3e"
+    },
+    {
+      "layer_height": "0.06",
+      "top_solid_layers": "12",
+      "bottom_solid_layers": "12",
+      "fill_density": "20%",
+      "layer_name": "High ++",
+      "layer_id": "5694031e-a6d1-412a-adb5-3eaef2e700ab"
+    }
+  ]
+}
