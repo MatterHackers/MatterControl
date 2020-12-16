@@ -1448,7 +1448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "%".Localize(),
 					DefaultValue = "90",
 					Converter = new AsPercentOrDirect(),
-					QuickMenuSettings = { { "Light", "20" }, { "Standard", "80" }, { "Heavy", "100" } }
+					QuickMenuSettings = { { "Light", "10" }, { "Standard", "30" }, { "Heavy", "80" } }
 				},
 				new SliceSettingData()
 				{
@@ -2266,7 +2266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.printer_name,
 					PresentationName = "Printer Name".Localize(),
 					HelpText = "This is the name of your printer that will be displayed in the choose printer menu.".Localize(),
-					DataEditType = DataEditTypes.STRING,
+					DataEditType = DataEditTypes.WIDE_STRING,
 					ShowAsOverride = false,
 					DefaultValue = "",
 					RebuildGCodeOnChange = false

@@ -216,7 +216,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 
 			settingsContainer.AddChild(
 				new WrappedTextWidget(
-					"Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.".Localize() + ":",
+					"Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.".Localize(),
 					pointSize: theme.DefaultFontSize,
 					textColor: theme.TextColor)
 				{
