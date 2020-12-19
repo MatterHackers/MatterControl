@@ -62,7 +62,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var textEditWidget = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
+				Name = "Profile Path Widget"
 			};
 			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 			{

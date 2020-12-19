@@ -446,17 +446,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Hardware Tab")
 				.ClickByName("Import Printer Button");
 
-			string profilePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestProfiles", profileName);
+			string profilePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestProfiles", profileName + ".printer");
 
 			// Apply filter
-			testRunner.ClickByName("Open File Button")
+			testRunner.ClickByName("Profile Path Widget") // Continue to next page
 				.Type(Path.GetFullPath(profilePath)) // open the right file
+				.Type("{Tab}")
 				.ClickByName("Import Button") // Continue to next page
-				.Delay()
-				.Type("{Enter}")
-				.ClickByName("Next Button") // Continue to next page
-				.Delay();
-
+				.ClickByName("Cancel Wizard Button")
+				.DoubleClickByName(profileName + " Node")
+				.WaitForName("PrintPopupMenu");
+				
 			return testRunner;
 		}
 
