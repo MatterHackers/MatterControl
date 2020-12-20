@@ -41,6 +41,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
+using MatterHackers.MatterControl.PrinterCommunication;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
@@ -348,6 +349,7 @@ namespace MatterHackers.MatterControl.Library.Export
 				// Run each line from the source gcode through the loaded pipeline and dump to the output location
 				using (var file = new StreamWriter(outputPath))
 				{
+					PrinterMove currentDestination = PrinterMove.Unknown;
 					string nextLine = finalStream.ReadLine();
 					while (nextLine != null)
 					{
@@ -357,6 +359,23 @@ namespace MatterHackers.MatterControl.Library.Export
 						}
 
 						nextLine = finalStream.ReadLine();
+
+						if (nextLine != null)
+						{
+							if (nextLine.StartsWith("G92"))
+							{
+								// read out the position and store right now
+								GCodeFile.GetFirstNumberAfter("X", nextLine, ref currentDestination.position.X);
+								GCodeFile.GetFirstNumberAfter("Y", nextLine, ref currentDestination.position.Y);
+								GCodeFile.GetFirstNumberAfter("Z", nextLine, ref currentDestination.position.X);
+								GCodeFile.GetFirstNumberAfter("E", nextLine, ref currentDestination.extrusion);
+
+								// The printer position has changed, make sure all the streams know
+								finalStream.SetPrinterPosition(currentDestination);
+							}
+
+							PrinterConnection.KeepTrackOfAbsolutePositionAndDestination(nextLine, ref currentDestination);
+						}
 					}
 				}
 			}

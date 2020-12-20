@@ -2324,7 +2324,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			PrintingCanContinue(line);
 		}
 
-		private void KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent)
+		public static bool KeepTrackOfAbsolutePositionAndDestination(string lineBeingSent, ref PrinterMove currentDestination)
 		{
 			if (lineBeingSent.StartsWith("G0 ")
 				|| lineBeingSent.StartsWith("G1 ")
@@ -2344,9 +2344,11 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 					|| currentDestination.extrusion != newDestination.extrusion)
 				{
 					currentDestination = newDestination;
-					DestinationChanged?.Invoke(this, null);
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		private void CreateStreamProcessors(Stream gcodeStream = null)
@@ -2891,7 +2893,10 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			// remove the comment if any
 			lineToWrite = RemoveCommentIfAny(lineToWrite);
 
-			KeepTrackOfAbsolutePositionAndDestination(lineToWrite);
+			if (KeepTrackOfAbsolutePositionAndDestination(lineToWrite, ref currentDestination))
+			{
+				DestinationChanged?.Invoke(this, null);
+			}
 
 			if (this.SendWithChecksum && sendLineWithChecksum)
 			{

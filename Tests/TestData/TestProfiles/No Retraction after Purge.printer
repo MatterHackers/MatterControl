@@ -363,7 +363,7 @@
     "solid_infill_speed": "60",
     "spiral_vase": "0",
     "standby_temperature_delta": "-5",
-    "start_gcode": "G28                    ; home all axes\\nM109 S[temperature]\\n\\nG1 Y5 X5 Z0.8 F1800    ; Purge line\\nG92 E0                 ; Purge line\\nG1 X100 Z0.3 E25 F900  ; Purge line\\nG92 E0                 ; Purge line\\nG1 E-2 F2400           ; Purge line\\nM75                    ; start print timer ",
+    "start_gcode": "G28                    ; home all axes\\nM109 S[temperature]\\n\\nG1 Y5 X5 Z0.8 F1800    ; Purge line\\nG92 E0                 ; Purge line\\nG1 X10 Z0.3 E5 F900  ; Purge line\\nG92 E0                 ; Purge line\\nG1 E-2 F2400           ; Purge line\\nM75                    ; start print timer ",
     "start_perimeters_at_concave_points": "0",
     "start_perimeters_at_non_overhang": "0",
     "support_material": "0",

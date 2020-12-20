@@ -8,6 +8,8 @@ using NUnit.Framework;
 using MatterHackers.MatterControl.PrinterCommunication.Io;
 using MatterHackers.VectorMath;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
 {
@@ -63,8 +65,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test]
 		public async Task ExportStreamG92HandlingTest()
 		{
-			var startGCode = "G28\\nM109 S[Temperature]\\nG1 Y5 X5 Z0.8 F1800\\nG92 E0\\nG1 X100 Z0.3 E25 F900\\nG92 E0\\nG1 E-2 F2400\\nG92 E0\\nG1 E1 F900";
-
 			await MatterControlUtilities.RunTest(testRunner =>
 			{
 				testRunner.WaitForFirstDraw();
@@ -72,7 +72,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.CloneAndSelectPrinter("No Retraction after Purge");
 
 				var printer = testRunner.FirstPrinter();
-				printer.Settings.SetValue(SettingsKey.start_gcode, startGCode);
 
 				//Navigate to Downloads Library Provider
 				testRunner.NavigateToFolder("Print Queue Row Item Collection");
@@ -104,21 +103,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var filename = fullPathToGcodeFile + ".gcode";
 				testRunner.WaitFor(() => File.Exists(filename), 10)
+					.WaitFor(() => !IsFileLocked(filename), 1000)
 					.Delay(2);
 
-				var inputLines = new string[]
-				{
-					"G28                    ; home all axes",
-					"M109 S[temperature]",
-					"",
-					"G1 Y5 X5 Z0.8 F1800; Purge line",
-					"G92 E0; Purge line",
-					"G1 X100 Z0.3 E25 F900; Purge line",
-					"G92 E0; Purge line",
-					"G1 E-2 F2400; Purge line",
-					"M75; start print timer"
-				};
-
+				// validate that the actual printer output has the right lines
 				var expectedLines = new string[]
 				{
 					"G28                    ; home all axes",
@@ -127,18 +115,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					"M280 P0 S90",
 					"M109 S205",
 					"G1 X5 Y5 Z3.13 F1800",
-					"G92 E0; Purge line",
-					"G1 X100 Y5 Z2.28 E25 F900",
-					"G92 E0; Purge line",
-					"G1 E-2",
-					"M75                    ; start print timer"
+					"G92 E0                 ; Purge line",
+					"G1 X5.83 Y5 Z3.04 E0.833 F900",
+					"G1 X6.67 Y5 Z2.96 E1.667",
+					"G1 X7.5 Y5 Z2.87 E2.5",
+					"G1 X8.33 Y5 Z2.79 E3.333",
+					"G1 X9.17 Y5 Z2.7 E4.167",
+					"G1 X10 Y5 Z2.62 E5",
+					"G92 E0                 ; Purge line",
+					"G1 X10 Y5 Z2.62 E-2 F2400",
+					"M75                    ; start print timer",
 				};
 
-				// validate that the gcode export stack has the right output
-				var testStream = GCodeExport.GetExportStream(printer, new TestGCodeStream(printer, inputLines), true);
-				ValidateStreamResponse(expectedLines, testStream);
-
-				// validate that the actual printer output has the right lines
 				var actualLines = File.ReadAllLines(filename);
 				ValidateLinesStartingWithFirstExpected(expectedLines, actualLines);
 
@@ -148,89 +136,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}, maxTimeToRun: 200);
 		}
 
-		private void ValidateLinesStartingWithFirstExpected(string[] expectedLines, string[] actualLines)
+		private bool IsFileLocked(string file)
 		{
-			throw new System.NotImplementedException();
-		}
-
-		public static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
-		{
-			int lineIndex = 0;
-
-			// Advance
-			string actualLine = testStream.ReadLine();
-			string expectedLine = expected[lineIndex++];
-
-			while (actualLine != null)
+			try
 			{
-				if (actualLine.StartsWith("G92 E0"))
+				using (FileStream stream = File.Open(file, FileMode.Open, FileAccess.Read, FileShare.None))
 				{
-					testStream.SetPrinterPosition(new PrinterMove(default(Vector3), 0, 300));
-				}
-
-				if (actualLine.StartsWith("G92 Z0"))
-				{
-					testStream.SetPrinterPosition(new PrinterMove(new Vector3(), 0, 0));
-				}
-
-				if (actualLine == "; do_resume")
-				{
-					PauseHandlingStream pauseStream = null;
-					foreach (var stream in streamList)
-					{
-						if (stream as PauseHandlingStream != null)
-						{
-							pauseStream = (PauseHandlingStream)stream;
-							pauseStream.Resume();
-						}
-					}
-				}
-
-				if (expectedLine != actualLine)
-				{
-					int a = 0;
-				}
-
-				Debug.WriteLine(actualLine);
-				Assert.AreEqual(expectedLine, actualLine, "Unexpected response from testStream");
-
-				// Advance
-				actualLine = testStream.ReadLine();
-				if (lineIndex < expected.Length)
-				{
-					expectedLine = expected[lineIndex++];
+					stream.Close();
 				}
 			}
+			catch (IOException)
+			{
+				//the file is unavailable because it is:
+				//still being written to
+				//or being processed by another thread
+				//or does not exist (has already been processed)
+				return true;
+			}
+
+			//file is not locked
+			return false;
+		}
+
+		private void ValidateLinesStartingWithFirstExpected(string[] expectedLines, string[] actualLines)
+		{
+			// search actual lines until we find the first expectedLine
+			for (int i = 0; i < actualLines.Length; i++)
+			{
+				if (actualLines[i] == expectedLines[0])
+				{
+					for (int j = 0; j < expectedLines.Length; j++)
+					{
+						Assert.AreEqual(actualLines[i + j], expectedLines[j], "All lines should match");
+						// Debug.WriteLine("\"" + actualLines[i + j] + "\",");
+					}
+
+					return;
+				}
+			}
+
+			throw new Exception("Did not find the first expected line");
 		}
 	}
-
-	public class TestGCodeStream : GCodeStream
-	{
-		private int index = 0;
-		private string[] lines;
-
-		public TestGCodeStream(PrinterConfig printer, string[] lines)
-			: base(printer)
-		{
-			this.lines = lines;
-		}
-
-		public override void Dispose()
-		{
-		}
-
-		public override string ReadLine()
-		{
-			return index < lines.Length ? lines[index++] : null;
-		}
-
-		public override void SetPrinterPosition(PrinterMove position)
-		{
-		}
-
-		public override GCodeStream InternalStream => null;
-
-		public override string DebugInfo => "";
-	}
-
 }
