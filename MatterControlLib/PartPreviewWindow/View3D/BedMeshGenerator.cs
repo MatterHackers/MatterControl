@@ -70,10 +70,10 @@ namespace MatterHackers.MatterControl
 
 		public static (Mesh bed, Mesh volume) CreatePrintBedAndVolume(PrinterConfig printer)
 		{
-			Mesh printerBed = null;
+			Mesh printerBed;
 			Mesh buildVolume = null;
 
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
+			var displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 
 			// Temporarily assign a placeholder image as the mesh texture. This will be replaced with a themed image by the view
 			var placeHolderImage = new ImageBuffer(5, 5);
@@ -134,7 +134,7 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer CreateCircularBedGridImage(PrinterConfig printer)
 		{
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
+			var displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 			double sizeForMarking = Math.Max(displayVolumeToBuild.X, displayVolumeToBuild.Y);
 			double cmPerLine = 10;
 			int skip = 1;
@@ -190,7 +190,7 @@ namespace MatterHackers.MatterControl
 				}
 			}
 
-			Ellipse bedCircle = new Ellipse(bedplateImage.Width/2, bedplateImage.Height/2, bedplateImage.Width/2, bedplateImage.Height/2);
+			var bedCircle = new Ellipse(bedplateImage.Width/2, bedplateImage.Height/2, bedplateImage.Width/2, bedplateImage.Height/2);
 			graphics2D.Render(bedCircle, theme.BedColor);
 			//graphics2D.Clear(bedBaseColor);
 
@@ -214,8 +214,8 @@ namespace MatterHackers.MatterControl
 					}
 					graphics2D.DrawString((xPositionCmInt * skip).ToString(), linePos + 4, originPixels.Y + 4, pointSize, color: bedMarkingsColor);
 
-					Ellipse circle = new Ellipse(originPixels, linePos - originPixels.X);
-					Stroke outline = new Stroke(circle);
+					var circle = new Ellipse(originPixels, linePos - originPixels.X);
+					var outline = new Stroke(circle);
 					graphics2D.Render(outline, bedMarkingsColor);
 				}
 			}
@@ -250,7 +250,7 @@ namespace MatterHackers.MatterControl
 
 		private static ImageBuffer CreateRectangularBedGridImage(PrinterConfig printer)
 		{
-			Vector3 displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
+			var displayVolumeToBuild = Vector3.ComponentMax(printer.Bed.ViewerVolume, new Vector3(1, 1, 1));
 			double sizeForMarking = Math.Max(displayVolumeToBuild.X, displayVolumeToBuild.Y);
 			double divisor = 10;
 			int skip = 1;

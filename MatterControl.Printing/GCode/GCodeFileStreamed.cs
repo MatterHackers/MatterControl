@@ -231,9 +231,6 @@ namespace MatterControl.Printing
 					int ringBufferIndex = readLineCount % MaxLinesToBuffer;
 					readLinesRingBuffer[ringBufferIndex] = new PrinterMachineInstruction(line);
 
-					PrinterMachineInstruction instruction = readLinesRingBuffer[ringBufferIndex];
-					Vector3 deltaPositionThisLine = new Vector3();
-					double deltaEPositionThisLine = 0;
 					string lineToParse = line.ToUpper().Trim();
 					if (lineToParse.StartsWith("G0") || lineToParse.StartsWith("G1"))
 					{
@@ -250,9 +247,6 @@ namespace MatterControl.Printing
 
 						double ePosition = lastEPosition;
 						GetFirstNumberAfter("E", lineToParse, ref ePosition);
-
-						deltaPositionThisLine = attemptedDestination - lastPrinterPosition;
-						deltaEPositionThisLine = Math.Abs(ePosition - lastEPosition);
 
 						lastPrinterPosition = attemptedDestination;
 						lastEPosition = ePosition;

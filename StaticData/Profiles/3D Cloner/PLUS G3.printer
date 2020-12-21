@@ -172,7 +172,7 @@
     "z_offset": "0",
     "make": "3D Cloner",
     "model": "PLUS G3",
-    "created_date": "09/29/2017 15:29:44",
+    "created_date": "2020-08-14T00:57:35.013Z",
     "baud_rate": "250000",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -185,7 +185,6 @@
     "support_material_create_perimeter": "1",
     "probe_offset": "0,0,0"
   },
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "PLA",

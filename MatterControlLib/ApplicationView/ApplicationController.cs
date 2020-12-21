@@ -309,16 +309,19 @@ namespace MatterHackers.MatterControl
 				}
 			});
 
-			// Persist workspace definitions to disk
-			File.WriteAllText(
-				ProfileManager.Instance.OpenTabsPath,
-				JsonConvert.SerializeObject(
-					workspaces,
-					Formatting.Indented,
-					new JsonSerializerSettings
-					{
-						NullValueHandling = NullValueHandling.Ignore
-					}));
+			lock (workspaces)
+			{
+				// Persist workspace definitions to disk
+				File.WriteAllText(
+					ProfileManager.Instance.OpenTabsPath,
+					JsonConvert.SerializeObject(
+						workspaces,
+						Formatting.Indented,
+						new JsonSerializerSettings
+						{
+							NullValueHandling = NullValueHandling.Ignore
+						}));
+			}
 		}
 
 		internal void ExportAsMatterControlConfig(PrinterConfig printer)
@@ -1975,6 +1978,7 @@ namespace MatterHackers.MatterControl
 		}
 
 		public bool Allow32BitReSlice { get; set; }
+		public Action<bool> KeepAwake { get; set; }
 
 		/// <summary>
 		/// Archives MCX and validates GCode results before starting a print operation
@@ -2230,8 +2234,14 @@ namespace MatterHackers.MatterControl
 			UiThread.RunOnIdle(() => this.ShellFileOpened?.Invoke(this, file));
 		}
 
+		private void KeepAwakeIfNeeded()
+		{
+			KeepAwake?.Invoke(AnyPrintTaskRunning);
+		}
+
 		public void Connection_PrintStarted(object sender, EventArgs e)
 		{
+			KeepAwakeIfNeeded();
 			AnyPrintStarted?.Invoke(sender, e);
 		}
 
@@ -2245,6 +2255,7 @@ namespace MatterHackers.MatterControl
 				printHistoryEditor.CollectInfoPrintFinished();
 			}
 
+			KeepAwakeIfNeeded();
 			AnyPrintComplete?.Invoke(sender, null);
 		}
 
@@ -2258,6 +2269,7 @@ namespace MatterHackers.MatterControl
 				printHistoryEditor.CollectInfoPrintCanceled();
 			}
 
+			KeepAwakeIfNeeded();
 			AnyPrintCanceled?.Invoke(sender, e);
 		}
 

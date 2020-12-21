@@ -530,6 +530,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					QuickMenuSettings = { { "Standard 1.75", "1.75" }, { "Wide 2.85", "2.85" } },
 					SlicerConfigName = SettingsKey.filament_diameter,
 					PresentationName = "Diameter".Localize(),
 					HelpText = "The actual diameter of the filament used for printing.".Localize(),
@@ -1325,6 +1326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					QuickMenuSettings = { { "Standard .4", "0.4" }, { "Large .6", "0.6" }, { "Large .8", "0.8" }, { "Large 1.2", "1.2" } },
 					SlicerConfigName = SettingsKey.nozzle_diameter,
 					PresentationName = "Nozzle Diameter".Localize(),
 					HelpText = "The diameter of the extruder's nozzle.".Localize(),
@@ -1446,7 +1448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "%".Localize(),
 					DefaultValue = "90",
 					Converter = new AsPercentOrDirect(),
-					QuickMenuSettings = { { "Light", "20" }, { "Standard", "80" }, { "Heavy", "100" } }
+					QuickMenuSettings = { { "Light", "10" }, { "Standard", "30" }, { "Heavy", "80" } }
 				},
 				new SliceSettingData()
 				{
@@ -2264,7 +2266,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.printer_name,
 					PresentationName = "Printer Name".Localize(),
 					HelpText = "This is the name of your printer that will be displayed in the choose printer menu.".Localize(),
-					DataEditType = DataEditTypes.STRING,
+					DataEditType = DataEditTypes.WIDE_STRING,
 					ShowAsOverride = false,
 					DefaultValue = "",
 					RebuildGCodeOnChange = false

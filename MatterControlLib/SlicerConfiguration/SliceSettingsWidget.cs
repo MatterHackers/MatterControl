@@ -859,8 +859,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// After initializing the field, wrap with dropmenu if applicable
-				if (settingData.QuickMenuSettings.Count > 0
-					&& settingData.SlicerConfigName == "baud_rate")
+				if (settingData.QuickMenuSettings.Count > 0)
 				{
 					var dropMenu = new DropMenuWrappedField(uiField, settingData, theme.TextColor, theme, printer);
 					dropMenu.Initialize(tabIndexForItem);

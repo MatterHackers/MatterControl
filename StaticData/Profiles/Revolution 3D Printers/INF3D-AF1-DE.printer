@@ -185,9 +185,7 @@
     "manual_movement_speeds": null,
     "active_quality_key": "1ec630de-a239-4e31-9617-b37663f0a5c5",
     "filament_cost": "0",
-    "created_date": "02/15/2017 19:15:27"
-  },
-  "UserLayer": {
+    "created_date": "2020-08-14T00:56:04.054Z",
     "active_material_key": ""
   },
   "MaterialLayers": [

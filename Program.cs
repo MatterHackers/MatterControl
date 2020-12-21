@@ -50,6 +50,20 @@ namespace MatterHackers.MatterControl
 {
 	public class Program
 	{
+		[FlagsAttribute]
+		public enum EXECUTION_STATE : uint
+		{
+			ES_AWAYMODE_REQUIRED = 0x00000040,
+			ES_CONTINUOUS = 0x80000000,
+			ES_DISPLAY_REQUIRED = 0x00000002,
+			ES_SYSTEM_REQUIRED = 0x00000001
+			// Legacy flag, should not be used.
+			// ES_USER_PRESENT = 0x00000004
+		}
+
+		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+		static extern EXECUTION_STATE SetThreadExecutionState(EXECUTION_STATE esFlags);
+
 		private static EventWaitHandle waitHandle;
 
 		private const int RaygunMaxNotifications = 15;
@@ -242,12 +256,27 @@ namespace MatterHackers.MatterControl
 				theme.TabBarBackground,
 				new Color(theme.PrimaryAccentColor, 175));
 
+			ApplicationController.Instance.KeepAwake = KeepAwake;
+
 			systemWindow.ShowAsSystemWindow();
 		}
 
 		private static string[] shellFileExtensions = new string[] { ".stl", ".amf" };
 
 		private static readonly object locker = new object();
+
+		static void KeepAwake(bool keepAwake)
+		{
+			if (keepAwake)
+			{
+				// Prevent Idle-to-Sleep
+				SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS | EXECUTION_STATE.ES_DISPLAY_REQUIRED);
+			}
+			else
+			{
+				SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS);
+			}
+		}
 
 		public class LocalService : IMainService
 		{

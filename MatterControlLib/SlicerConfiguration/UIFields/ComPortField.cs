@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		}
 
 		public new string Name { get; set; }
+		public static bool ShowPortWizardButton { get; set; } = true;
 
 		public override void Initialize(int tabIndex)
 		{
@@ -103,18 +104,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				unregisterEvents?.Invoke(null, null);
 			};
 
-			var configureIcon = new IconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons), theme)
+			if (ShowPortWizardButton)
 			{
-				VAnchor = VAnchor.Center,
-				Margin = theme.ButtonSpacing,
-				ToolTipText = "Port Wizard".Localize()
-			};
-			configureIcon.Click += (s, e) =>
-			{
-				DialogWindow.Show(new SetupStepComPortOne(printer));
-			};
-
-			panel.AddChild(configureIcon);
+				var configureIcon = new IconButton(StaticData.Instance.LoadIcon("fa-cog_16.png", 16, 16, theme.InvertIcons), theme)
+				{
+					VAnchor = VAnchor.Center,
+					Margin = theme.ButtonSpacing,
+					ToolTipText = "Port Wizard".Localize()
+				};
+				configureIcon.Click += (s, e) =>
+				{
+					DialogWindow.Show(new SetupStepComPortOne(printer));
+				};
+			
+				panel.AddChild(configureIcon);
+			}
 
 			panel.AddChild(dropdownList);
 

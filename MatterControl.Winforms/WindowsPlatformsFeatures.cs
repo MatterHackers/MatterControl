@@ -47,7 +47,7 @@ namespace MatterHackers.MatterControl
 
 		public void TakePhoto(string imageFileName)
 		{
-			ImageBuffer noCameraImage = new ImageBuffer(640, 480);
+			var noCameraImage = new ImageBuffer(640, 480);
 			Graphics2D graphics = noCameraImage.NewGraphics2D();
 			graphics.Clear(Color.White);
 			graphics.DrawString("No Camera Detected", 320, 240, pointSize: 24, justification: Agg.Font.Justification.Center);
@@ -59,14 +59,14 @@ namespace MatterHackers.MatterControl
 
 		public void OpenCameraPreview()
 		{
-			//Camera launcher placeholder (KP)
+			// Camera launcher placeholder (KP)
 			if (ApplicationSettings.Instance.get(ApplicationSettingsKey.HardwareHasCamera) == "true")
 			{
-				//Do something
+				// Do something
 			}
 			else
 			{
-				//Do something else (like show warning message)
+				// Do something else (like show warning message)
 			}
 		}
 
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl
 			{
 				using (var mediaStream = StaticData.Instance.OpenStream(Path.Combine("Sounds", fileName)))
 				{
-					(new System.Media.SoundPlayer(mediaStream)).Play();
+					new System.Media.SoundPlayer(mediaStream).Play();
 				}
 			}
 		}

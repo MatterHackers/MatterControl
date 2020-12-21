@@ -23,4 +23,8 @@
     "Name": "libigl",
     "Url": "https://github.com/libigl/libigl"
   },
+  {
+    "Name": "GLFW",
+    "Url": "https://www.glfw.org/"
+  }
 ]

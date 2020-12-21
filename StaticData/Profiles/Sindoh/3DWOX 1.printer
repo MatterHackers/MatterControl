@@ -166,7 +166,7 @@
     "z_offset": "0",
     "make": "Sindoh",
     "model": "3DWOX 1",
-    "created_date": "03/13/2019 22:52:26",
+    "created_date": "2020-08-14T00:54:47.431Z",
     "baud_rate": "115200",
     "default_material_presets": "PLA",
     "windows_driver": "MHSerial.inf",
@@ -189,7 +189,6 @@
     "active_material_key": "938db04f-0fc0-4336-a475-89581cbefaf2",
     "layer_gcode": "; LAYER:[layer_num]"
   },
-  "UserLayer": {},
   "MaterialLayers": [
     {
       "layer_name": "PLA",

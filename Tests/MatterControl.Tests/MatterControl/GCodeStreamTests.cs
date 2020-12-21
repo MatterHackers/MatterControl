@@ -31,7 +31,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using MatterControl.Printing;
-using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.Library.Export;
@@ -741,7 +740,7 @@ namespace MatterControl.Tests.MatterControl
 			ValidateStreamResponse(expected, pauseHandlingStream, streamList);
 		}
 
-		private static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
+		public static void ValidateStreamResponse(string[] expected, GCodeStream testStream, List<GCodeStream> streamList = null)
 		{
 			int lineIndex = 0;
 

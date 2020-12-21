@@ -27,8 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
@@ -41,13 +39,11 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 	// Normally step one of the setup process
 	public class SetupStepMakeModelName : DialogPage
 	{
-		private TextButton nextButton;
-		private AddPrinterWidget printerPanel;
+		private readonly TextButton nextButton;
+		private readonly AddPrinterWidget printerPanel;
 
-		private static BorderDouble elementMargin = new BorderDouble(top: 3);
-
-		private RadioButton createPrinterRadioButton = null;
-		private RadioButton signInRadioButton;
+		private readonly RadioButton createPrinterRadioButton = null;
+		private readonly RadioButton signInRadioButton;
 
 		public SetupStepMakeModelName()
 		{
@@ -59,7 +55,10 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			contentRow.BackgroundColor = theme.SectionBackgroundColor;
 			nextButton = theme.CreateDialogButton("Next".Localize());
 
-			printerPanel = new AddPrinterWidget(theme, nextButton)
+			printerPanel = new AddPrinterWidget(theme, (enabled) =>
+			{
+				nextButton.Enabled = enabled;
+			})
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch
@@ -140,7 +139,26 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			});
 
+			var printerNotListedButton = theme.CreateDialogButton("Custom Printer".Localize());
+			printerNotListedButton.ToolTipText = "Select this option only if your printer does not appear in the list".Localize();
+
+			printerNotListedButton.Click += async (s, e) =>
+			{
+				var printer = await ProfileManager.CreatePrinterAsync("Other", "Other", "Custom Printer");
+				if (printer == null)
+				{
+					printerPanel.SetError("Error creating profile".Localize());
+					return;
+				}
+
+				UiThread.RunOnIdle(() =>
+				{
+					DialogWindow.ChangeToPage(new SetupCustomPrinter(printer) as DialogPage);
+				});
+			};
+
 			this.AddPageAction(nextButton);
+			this.AddPageAction(printerNotListedButton);
 
 			SetElementVisibility();
 		}
@@ -150,39 +168,76 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 			nextButton.Enabled = signInRadioButton?.Checked == true
 				|| printerPanel.SelectedPrinter != null;
 		}
+	}
 
-		private FlowLayoutWidget CreateSelectionContainer(string labelText, string validationMessage, DropDownList selector)
+	public class SetupCustomPrinter : DialogPage
+	{
+		public SetupCustomPrinter(PrinterConfig printer)
+			: base("Done".Localize())
 		{
-			var sectionLabel = new TextWidget(labelText, 0, 0, 12)
+			var scrollable = new ScrollableWidget(autoScroll: true)
 			{
-				TextColor = theme.TextColor,
 				HAnchor = HAnchor.Stretch,
-				Margin = elementMargin
+				VAnchor = VAnchor.Stretch,
 			};
 
-			var validationTextWidget = new TextWidget(validationMessage, 0, 0, 10)
-			{
-				TextColor = theme.PrimaryAccentColor,
-				HAnchor = HAnchor.Stretch,
-				Margin = elementMargin
-			};
+			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
+			contentRow.AddChild(scrollable);
 
-			selector.SelectionChanged += (s, e) =>
+			var settingsContainer = new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
-				validationTextWidget.Visible = selector.SelectedLabel.StartsWith("-"); // The default values have "- Title -"
-			};
-
-			var container = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				Margin = new BorderDouble(0, 5),
 				HAnchor = HAnchor.Stretch
 			};
+			scrollable.AddChild(settingsContainer);
 
-			container.AddChild(sectionLabel);
-			container.AddChild(selector);
-			container.AddChild(validationTextWidget);
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			var menuTheme = ApplicationController.Instance.MenuTheme;
+			var tabIndex = 0;
 
-			return container;
+			void AddSettingsRow(string key)
+			{
+				var settingsRow = SliceSettingsTabView.CreateItemRow(
+				PrinterSettings.SettingsData[key],
+				settingsContext,
+				printer,
+				menuTheme,
+				ref tabIndex);
+
+				settingsContainer.AddChild(settingsRow);
+			}
+
+			void AddSettingsRows(string[] keys)
+			{
+				foreach (var key in keys)
+				{
+					AddSettingsRow(key);
+				}
+			}
+
+			settingsContainer.AddChild(
+				new WrappedTextWidget(
+					"Set the information below to configure your printer. After completing this step, you can customize additional settings under the 'Settings' and 'Printer' options for this printer.".Localize(),
+					pointSize: theme.DefaultFontSize,
+					textColor: theme.TextColor)
+				{
+					Margin = new BorderDouble(5, 5, 5, 15)
+				});
+
+
+			// turn off the port wizard button in this context
+			AddSettingsRow(SettingsKey.printer_name);
+
+			settingsContainer.AddChild(new WrappedTextWidget("Bed Settings".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = new BorderDouble(5, 5, 5, 15)
+			});
+
+			AddSettingsRows(new[] { SettingsKey.bed_shape, SettingsKey.bed_size, SettingsKey.print_center, SettingsKey.build_height, SettingsKey.has_heated_bed });
+			settingsContainer.AddChild(new WrappedTextWidget("Filament Settings".Localize() + ":", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = new BorderDouble(5, 5, 5, 15)
+			});
+			AddSettingsRows(new[] { SettingsKey.nozzle_diameter, SettingsKey.filament_diameter });
 		}
 	}
 }

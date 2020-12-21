@@ -47,13 +47,13 @@ namespace MatterHackers.MatterControl.PrintLibrary
 		private SectionWidget nameSection;
 		private MHTextEditWidget printerNameInput;
 		private bool usingDefaultName = true;
-		private TextButton nextButton;
+		private Action<bool> nextButtonEnabled;
 		private FlowLayoutWidget printerInfo;
 
-		public AddPrinterWidget(ThemeConfig theme, TextButton nextButton)
+		public AddPrinterWidget(ThemeConfig theme, Action<bool> nextButtonEnabled)
 			: base(theme)
 		{
-			this.nextButton = nextButton;
+			this.nextButtonEnabled = nextButtonEnabled;
 			this.ExistingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name).ToList();
 			this.Name = "AddPrinterWidget";
 
@@ -87,6 +87,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				Margin = new BorderDouble(theme.DefaultContainerPadding).Clone(top: 0)
 			};
 
+			var panel2Column = new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch
+			};
+
+			panel2Column.AddChild(new TextWidget("Select a printer to continue".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
+
 			nameSection = new SectionWidget("New Printer Name".Localize(), container, theme, expandingContent: false)
 			{
 				HAnchor = HAnchor.Stretch,
@@ -106,15 +114,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 			nameSection.BackgroundColor = theme.MinimalShade;
 			nameSection.Margin = new BorderDouble(theme.DefaultContainerPadding).Clone(left: 0);
-
-			var panel2Column = new FlowLayoutWidget(FlowDirection.TopToBottom)
-			{
-				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Stretch
-			};
-
-			panel2Column.AddChild(new TextWidget("Select a printer to continue".Localize(), pointSize: theme.DefaultFontSize, textColor: theme.TextColor));
 			panel2Column.AddChild(nameSection);
+
 			panel2Column.AddChild(PrinterNameError = new TextWidget("", 0, 0, 10)
 			{
 				TextColor = Color.Red,
@@ -197,7 +198,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				&& nameValid
 				&& nameIsUnique;
 
-			nextButton.Enabled = allValid;
+			nextButtonEnabled(allValid);
 
 			if (allValid)
 			{
@@ -343,14 +344,14 @@ namespace MatterHackers.MatterControl.PrintLibrary
 								});
 						}
 
-						nextButton.Enabled = treeView.SelectedNode != null
-							&& !string.IsNullOrWhiteSpace(printerNameInput.Text);
+						nextButtonEnabled(treeView.SelectedNode != null
+							&& !string.IsNullOrWhiteSpace(printerNameInput.Text));
 					}
 				});
 			}
 			else
 			{
-				nextButton.Enabled = false;
+				nextButtonEnabled(false);
 			}
 		}
 

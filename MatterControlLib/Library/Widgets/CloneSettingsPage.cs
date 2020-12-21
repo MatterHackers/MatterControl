@@ -62,7 +62,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var textEditWidget = new MHTextEditWidget("", theme)
 			{
 				HAnchor = HAnchor.Stretch,
-				VAnchor = VAnchor.Center
+				VAnchor = VAnchor.Center,
+				Name = "Profile Path Widget"
 			};
 			textEditWidget.ActualTextEditWidget.EditComplete += (s, e) =>
 			{
@@ -77,7 +78,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			var openButton = new IconButton(StaticData.Instance.LoadIcon("fa-folder-open_16.png", 16, 16, theme.InvertIcons), theme)
 			{
 				BackgroundColor = theme.MinimalShade,
-				Margin = new BorderDouble(left: 8)
+				Margin = new BorderDouble(left: 8),
+				Name = "Open File Button"
 			};
 			openButton.Click += (s, e) =>
 			{

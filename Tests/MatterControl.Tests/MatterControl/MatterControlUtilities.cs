@@ -430,6 +430,36 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
+		public static AutomationRunner CloneAndSelectPrinter(this AutomationRunner testRunner, string profileName)
+		{
+			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
+
+			testRunner.WaitforDraw(systemWindow) // make sure we wait for MC to be up and running
+				.EnsureWelcomePageClosed(); // close the welcome message
+
+			if (testRunner.NamedWidgetExists("Cancel Wizard Button"))
+			{
+				testRunner.ClickByName("Cancel Wizard Button");
+			}
+
+			// go to the start page
+			testRunner.ClickByName("Hardware Tab")
+				.ClickByName("Import Printer Button");
+
+			string profilePath = TestContext.CurrentContext.ResolveProjectPath(4, "Tests", "TestData", "TestProfiles", profileName + ".printer");
+
+			// Apply filter
+			testRunner.ClickByName("Profile Path Widget") // Continue to next page
+				.Type(Path.GetFullPath(profilePath)) // open the right file
+				.Type("{Tab}")
+				.ClickByName("Import Button") // Continue to next page
+				.ClickByName("Cancel Wizard Button")
+				.DoubleClickByName(profileName + " Node")
+				.WaitForName("PrintPopupMenu");
+				
+			return testRunner;
+		}
+
 		public static AutomationRunner EnsureWelcomePageClosed(this AutomationRunner testRunner)
 		{
 			// Close the WelcomePage window if active
