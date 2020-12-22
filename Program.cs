@@ -104,6 +104,7 @@ namespace MatterHackers.MatterControl
 
 			// Set default Agg providers
 			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.GlfwProvider.GlfwWindowProvider, MatterHackers.GlfwProvider";
+			AggContext.Config.ProviderTypes.SystemWindowProvider = "MatterHackers.MatterControl.WinformsSingleWindowProvider, MatterControl.Winforms";
 
 			string userProfilePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
