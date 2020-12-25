@@ -2,10 +2,7 @@
 // This file is licensed under the MIT license.
 // See the LICENSE.md file in the project root for more information.
 
-using Markdig.Renderers.Agg.Inlines;
 using Markdig.Syntax;
-using MatterHackers.Agg;
-using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg
 {

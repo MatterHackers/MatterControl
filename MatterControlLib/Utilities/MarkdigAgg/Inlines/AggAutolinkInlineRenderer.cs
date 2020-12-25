@@ -4,7 +4,6 @@
 
 using System;
 using Markdig.Syntax.Inlines;
-using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg.Inlines
 {
