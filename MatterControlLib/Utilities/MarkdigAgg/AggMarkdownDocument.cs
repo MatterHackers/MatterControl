@@ -32,7 +32,6 @@ using System.Collections.Generic;
 using System.Net;
 using Markdig.Renderers;
 using Markdig.Renderers.Agg;
-using Markdig.Syntax.Inlines;
 using MatterHackers.Agg.UI;
 
 namespace Markdig.Agg

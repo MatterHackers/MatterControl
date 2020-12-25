@@ -3,7 +3,6 @@
 // See the LICENSE.md file in the project root for more information.
 
 using Markdig.Syntax.Inlines;
-using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 
 namespace Markdig.Renderers.Agg.Inlines
