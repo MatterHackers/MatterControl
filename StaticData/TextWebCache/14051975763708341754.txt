@@ -28,7 +28,7 @@ For your first print we will add Phil-A-Ment (the MatterHackers mascot) to the b
 
 1. Now that you have a part on the Bed you can click 'Print'  
    ![](https://lh3.googleusercontent.com/AeiAfIESQFalLMGEDdQuayP2X3nhC5naYFq-siwI2aJHnaFPqNfmjGPvkAltslrpjpGmcEB7AQs2q-_TN0iomkD9)
-1. This will show the quick printing options, don't wory about these for now.
+1. This will show the quick printing options, don't worry about these for now.
 1. Click 'Start Print'
 
 **You should now be up and printing**
@@ -38,4 +38,7 @@ For your first print we will add Phil-A-Ment (the MatterHackers mascot) to the b
 * You can come back to the help at any time by clicking on the 'MatterControl' menu and selecting 'Help'.  
   ![](https://lh3.googleusercontent.com/QrO213jp2jIfd4O3OrkWjIjkhMyCSMWjtQ-OXK6PWdSkxVy9f_NKbu8-BiyR-tryrXrztcL4yJ4MNSO2i7V7fhT43zI)
 
+# Getting Help With Shortcuts
+
+![](https://lh3.googleusercontent.com/a8VOYBD4JJW97S0tVWPLxzhy5CtRCwi74XC_BVEV4LSn1K9xwCMDO9DVDsjJzmImRxqKkNCCkTFUmWOnMwJ3GtVBKA)
   

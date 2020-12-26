@@ -18,10 +18,11 @@
         "DisplayListPrice": "799.00", 
         "DisplayPrice": "799.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
-            "ImageFile": "/mh-product-images/prod/3bd7f548-67f3-4258-861f-dd4699314d62", 
-            "ImageUrl": "https://lh3.googleusercontent.com/Tm2LyY5te3nL_LJk2GIgP-kxp_sQ6W8QEwbVsWxGTm8SnArNeZ4SPKgb8vnNeoa3pU-Br3wjTBXnZv8EzwGGFLM", 
-            "IsFeatured": false
+            "ImageFile": "/mh-product-images/prod/eee9d472-3cb4-4c95-b7a5-2028c57d94ad", 
+            "ImageUrl": "https://lh3.googleusercontent.com/tbJtL81GR1Yt1uDg5x-zu5bTa4i05OF8QMOK_PLyGB_1slOxdCovUAYCKnp5pNCNBzlaDpzksgH2SvfVIDAvj0YX5QaobJnhR_2tUQ", 
+            "IsFeatured": true
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
@@ -31,8 +32,9 @@
         "IsOneTimeItem": false, 
         "IsRetired": false, 
         "IsSearchable": true, 
+        "IsWarranty": false, 
         "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVVk2UjFQNQw", 
-        "LeadDays": 23, 
+        "LeadDays": 2, 
         "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GK34u0gM", 
         "ListingIsActive": true, 
         "NoPOBox": false, 
@@ -42,10 +44,28 @@
             "22.00"
         ], 
         "PackagedToShip": true, 
+        "PickImage": null, 
         "PreOrderFlag": true, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
-        "ProductDescription": "Introducing the Pulse 3D printer - an amazingly high-quality machine, customized to meet your 3D printing needs. Pulse is **assembled, tested and guaranteed by the pros at MatterHackers** in California. \r\n\r\nBuilt on top of the proven, open source Prusa i3 design, the Pulse is custom assembled to your specifications with the latest and greatest high quality components pre-installed for the best possible experience out of the box.", 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T22:24:47.457037", 
+            "DateTimeModified": "2020-12-08T00:52:06.900735", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZw66fCww", 
+            "Name": "Pulse", 
+            "PrimaryContact": "tina.chau@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 1, 
+            "SuppliedSIDs": [
+                "MUY6R1P5"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVVk2UjFQNQw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZw66fCww", 
+        "ProductDescription": "Introducing the Pulse 3D printer\u2014an amazingly high-quality machine, customized to meet your 3D printing needs to succeed. **Pulse is assembled, tested, and guaranteed by the pros at MatterHackers in Orange County, California.**\r\n\r\nBuilt on top of the proven, open source Prusa i3 design, the Pulse is also constantly improving and incorporating new and exciting technology as the 3D printing industry grows. This powerful state-of-the-art FDM machine is on its 5th evolution\u2014the E Series\u2014and is custom assembled to your specifications with the latest and greatest high quality components pre-installed for the best possible experience out of the box. Pick and choose which features are the most important to you, while still having a robust platform to build off of.", 
         "ProductListPrice": 79900, 
         "ProductListing": {
             "ActiveSkuCount": 1, 
@@ -69,9 +89,30 @@
                     "ListingIsActive": false, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBcFA3S3R3b00M", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMlk1MkRFRQw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
+                    "SingleSku": true
+                }, 
+                {
+                    "AddOnBasePrice": 29900, 
+                    "AddOnDiscountDisplay": 6, 
+                    "AddOnDisplayBasePrice": "299.00", 
+                    "AddOnDisplayPrice": "279.00", 
+                    "AddOnDisplaySavings": "20.00", 
+                    "AddOnFloatPrice": 279.0, 
+                    "AddOnListingReference": "pulse-enclosure-kit-black", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 27900, 
+                    "AddOnSavings": 2000, 
+                    "AddOnSkuReference": "MMH4KUCT", 
+                    "AddOnTitle": "Pulse Enclosure Kit - Black", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTUg0S1VDVAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 92, 
-                    "QuantityOnHand": 92, 
+                    "QuantityAvailable": 13, 
+                    "QuantityOnHand": 13, 
                     "SingleSku": true
                 }, 
                 {
@@ -96,27 +137,6 @@
                     "SingleSku": true
                 }, 
                 {
-                    "AddOnBasePrice": 9500, 
-                    "AddOnDiscountDisplay": null, 
-                    "AddOnDisplayBasePrice": "95.00", 
-                    "AddOnDisplayPrice": "95.00", 
-                    "AddOnDisplaySavings": null, 
-                    "AddOnFloatPrice": 95.0, 
-                    "AddOnListingReference": "filament-runout-sensor", 
-                    "AddOnPreOrderFlag": false, 
-                    "AddOnPrice": 9500, 
-                    "AddOnSavings": 0, 
-                    "AddOnSkuReference": "MTWV2YJ1", 
-                    "AddOnTitle": "Filament Runout Sensor (requires Bondtech Extruder with E3D upgrade)", 
-                    "ListingIsActive": false, 
-                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAutyfCgw", 
-                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVFdWMllKMQw", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 98, 
-                    "QuantityOnHand": 98, 
-                    "SingleSku": true
-                }, 
-                {
                     "AddOnBasePrice": 3900, 
                     "AddOnDiscountDisplay": null, 
                     "AddOnDisplayBasePrice": "39.00", 
@@ -133,50 +153,50 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA746TCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUlhNVjgzQQw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 100, 
-                    "QuantityOnHand": 100, 
+                    "QuantityAvailable": 190, 
+                    "QuantityOnHand": 190, 
                     "SingleSku": true
                 }, 
                 {
-                    "AddOnBasePrice": 9900, 
+                    "AddOnBasePrice": 5500, 
                     "AddOnDiscountDisplay": null, 
-                    "AddOnDisplayBasePrice": "99.00", 
-                    "AddOnDisplayPrice": "99.00", 
+                    "AddOnDisplayBasePrice": "55.00", 
+                    "AddOnDisplayPrice": "55.00", 
                     "AddOnDisplaySavings": null, 
-                    "AddOnFloatPrice": 99.0, 
-                    "AddOnListingReference": "buildtak-flexplate-upgrade-for-pulse", 
+                    "AddOnFloatPrice": 55.0, 
+                    "AddOnListingReference": "layerlock-magbase-for-pulse", 
                     "AddOnPreOrderFlag": false, 
-                    "AddOnPrice": 9900, 
+                    "AddOnPrice": 5500, 
                     "AddOnSavings": 0, 
-                    "AddOnSkuReference": "MDXUFYX8", 
-                    "AddOnTitle": "FlexPlate Upgrade for Pulse", 
-                    "ListingIsActive": false, 
-                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAwfKGCgw", 
-                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFhVRllYOAw", 
+                    "AddOnSkuReference": "MYMERUGQ", 
+                    "AddOnTitle": "LayerLock MagBase for Pulse", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDqt-GPCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWU1FUlVHUQw", 
                     "ProductType": "physical-on-demand", 
                     "QuantityAvailable": 33, 
                     "QuantityOnHand": 33, 
                     "SingleSku": true
                 }, 
                 {
-                    "AddOnBasePrice": 3500, 
-                    "AddOnDiscountDisplay": null, 
-                    "AddOnDisplayBasePrice": "35.00", 
+                    "AddOnBasePrice": 4100, 
+                    "AddOnDiscountDisplay": 14, 
+                    "AddOnDisplayBasePrice": "41.00", 
                     "AddOnDisplayPrice": "35.00", 
-                    "AddOnDisplaySavings": null, 
+                    "AddOnDisplaySavings": "6.00", 
                     "AddOnFloatPrice": 35.0, 
                     "AddOnListingReference": "buildtak-extra-flexplate-9-x-10", 
                     "AddOnPreOrderFlag": false, 
                     "AddOnPrice": 3500, 
-                    "AddOnSavings": 0, 
+                    "AddOnSavings": 600, 
                     "AddOnSkuReference": "MCMHW0TM", 
-                    "AddOnTitle": "BuildTak Extra FlexPlate 9\" x 10\" for Pulse (Must be paired with Magnetic Flexplate System Upgrade)", 
-                    "ListingIsActive": false, 
+                    "AddOnTitle": "BuildTak Extra FlexPlate 9\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
+                    "ListingIsActive": true, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA1KybCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQ01IVzBUTQw", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 80, 
-                    "QuantityOnHand": 80, 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
                     "SingleSku": true
                 }, 
                 {
@@ -191,34 +211,34 @@
                     "AddOnPrice": 3999, 
                     "AddOnSavings": 0, 
                     "AddOnSkuReference": "MWN4A16M", 
-                    "AddOnTitle": "LayerLock Powder Coated PEI Build Plate 9.5\" x 10\" for Pulse (Must be paired with Magnetic FlexPlate Upgrade)", 
+                    "AddOnTitle": "LayerLock Powder Coated PEI Build Plate 9.5\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
                     "ListingIsActive": true, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDspfCYCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV040QTE2TQw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 67, 
-                    "QuantityOnHand": 67, 
+                    "QuantityAvailable": 18, 
+                    "QuantityOnHand": 18, 
                     "SingleSku": true
                 }, 
                 {
-                    "AddOnBasePrice": 4900, 
-                    "AddOnDiscountDisplay": null, 
-                    "AddOnDisplayBasePrice": "49.00", 
+                    "AddOnBasePrice": 5500, 
+                    "AddOnDiscountDisplay": 10, 
+                    "AddOnDisplayBasePrice": "55.00", 
                     "AddOnDisplayPrice": "49.00", 
-                    "AddOnDisplaySavings": null, 
+                    "AddOnDisplaySavings": "6.00", 
                     "AddOnFloatPrice": 49.0, 
                     "AddOnListingReference": "garolite-extra-flexplate-9-x-10", 
                     "AddOnPreOrderFlag": false, 
                     "AddOnPrice": 4900, 
-                    "AddOnSavings": 0, 
+                    "AddOnSavings": 600, 
                     "AddOnSkuReference": "M9X79CWL", 
-                    "AddOnTitle": "LayerLock Garolite Extra FlexPlate 9\" x 10\" for Pulse (Must be paired with Magnetic Flexplate System Upgrade)", 
-                    "ListingIsActive": false, 
+                    "AddOnTitle": "LayerLock Garolite Extra FlexPlate 9\" x 10\" for Pulse (Must be paired with LayerLock MagBase Upgrade)", 
+                    "ListingIsActive": true, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA1J-BCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOVg3OUNXTAw", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 91, 
-                    "QuantityOnHand": 91, 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
                     "SingleSku": true
                 }, 
                 {
@@ -237,9 +257,9 @@
                     "ListingIsActive": true, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAlZGKCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVlZWWFRLUAw", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 201, 
-                    "QuantityOnHand": 201, 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 33, 
+                    "QuantityOnHand": 33, 
                     "SingleSku": true
                 }, 
                 {
@@ -259,8 +279,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNC1EMnFBb00M", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV1FBMkpIUQw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 94, 
-                    "QuantityOnHand": 94, 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
                     "SingleSku": true
                 }, 
                 {
@@ -280,29 +300,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-ImMCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWEZZSkUxSAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 76, 
-                    "QuantityOnHand": 76, 
-                    "SingleSku": true
-                }, 
-                {
-                    "AddOnBasePrice": 12499, 
-                    "AddOnDiscountDisplay": 4, 
-                    "AddOnDisplayBasePrice": "124.99", 
-                    "AddOnDisplayPrice": "118.75", 
-                    "AddOnDisplaySavings": "6.24", 
-                    "AddOnFloatPrice": 118.75, 
-                    "AddOnListingReference": "printdry-filament-drying-system", 
-                    "AddOnPreOrderFlag": true, 
-                    "AddOnPrice": 11875, 
-                    "AddOnSavings": 624, 
-                    "AddOnSkuReference": "MNXQRWQC", 
-                    "AddOnTitle": "PrintDry Filament Drying System", 
-                    "ListingIsActive": true, 
-                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBMUtmQnNBb00M", 
-                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 311, 
-                    "QuantityOnHand": 311, 
+                    "QuantityAvailable": 16, 
+                    "QuantityOnHand": 16, 
                     "SingleSku": true
                 }, 
                 {
@@ -317,13 +316,13 @@
                     "AddOnPrice": 8994, 
                     "AddOnSavings": 0, 
                     "AddOnSkuReference": "MNUYE0VF", 
-                    "AddOnTitle": "MatterHackers 3D Printing Tool Kit Premium", 
+                    "AddOnTitle": "MatterHackers FDM 3D Printing Tool Kit Premium", 
                     "ListingIsActive": true, 
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 0, 
-                    "QuantityOnHand": 0, 
+                    "QuantityAvailable": -8, 
+                    "QuantityOnHand": -8, 
                     "SingleSku": true
                 }, 
                 {
@@ -343,8 +342,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsm8OICQw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUzlDVjhZQww", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 14, 
-                    "QuantityOnHand": 14, 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
                     "SingleSku": true
                 }, 
                 {
@@ -369,6 +368,27 @@
                     "SingleSku": true
                 }, 
                 {
+                    "AddOnBasePrice": 15900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "159.00", 
+                    "AddOnDisplayPrice": "159.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 159.0, 
+                    "AddOnListingReference": "printdry-pro-filament-drying-system", 
+                    "AddOnPreOrderFlag": true, 
+                    "AddOnPrice": 15900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "M25THN6X", 
+                    "AddOnTitle": "PrintDry PRO Filament Drying System", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 55, 
+                    "QuantityOnHand": 55, 
+                    "SingleSku": true
+                }, 
+                {
                     "AddOnBasePrice": 27900, 
                     "AddOnDiscountDisplay": 10, 
                     "AddOnDisplayBasePrice": "279.00", 
@@ -385,29 +405,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": -8, 
-                    "QuantityOnHand": -8, 
-                    "SingleSku": true
-                }, 
-                {
-                    "AddOnBasePrice": 29900, 
-                    "AddOnDiscountDisplay": 6, 
-                    "AddOnDisplayBasePrice": "299.00", 
-                    "AddOnDisplayPrice": "279.00", 
-                    "AddOnDisplaySavings": "20.00", 
-                    "AddOnFloatPrice": 279.0, 
-                    "AddOnListingReference": "pulse-enclosure-kit-black", 
-                    "AddOnPreOrderFlag": false, 
-                    "AddOnPrice": 27900, 
-                    "AddOnSavings": 2000, 
-                    "AddOnSkuReference": "MMH4KUCT", 
-                    "AddOnTitle": "Pulse Enclosure Kit - Black", 
-                    "ListingIsActive": true, 
-                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw", 
-                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTUg0S1VDVAw", 
-                    "ProductType": "physical-inventory", 
-                    "QuantityAvailable": -10, 
-                    "QuantityOnHand": -10, 
+                    "QuantityAvailable": 13, 
+                    "QuantityOnHand": 13, 
                     "SingleSku": true
                 }
             ], 
@@ -423,103 +422,139 @@
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"collection-features\">\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Custom\" src=\"https://lh3.googleusercontent.com/-802iwacoVveYjHWGvjz5Mq8u0dJY4MCOstsAeo72gVVRjAT8DCPv20IdeyDN1JaiYsHzyWJcwp0KBGH-nOCVu2W=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Customization</div>\r\n<div class=\"desc\">Everyone has unique printing needs. The Pulse 3D printer was created to cater to each of those individual needs. Enhance your Pulse with a variety of upgrades to match your personal 3D printing preferences.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"HighTech\" src=\"https://lh3.googleusercontent.com/IRF10uxRwwYJw47kbv-wlJ9ek_8rO5WpEV8vm6HVpDv6IgLxcE62iiEEQAtWt56tgfwlxDNwbHj3w0cNR-BN-Pq0R1U=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Highest Level Tech</div>\r\n<div class=\"desc\">The Pulse uses best-in-class components. Your Pulse 3D printer arrives stock with BuildTak applied to the heated bed and a BLTouch Bed Leveling Probe - the most technologically advanced auto-calibration solution available. Upgrades for the Pulse include other quality, advanced tech such as the Bondtech Extruder and Olsson Ruby Nozzle, the most wear-resistant nozzle available for 3D printing with advanced materials.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Tested\" src=\"https://lh3.googleusercontent.com/lpJ0Y8auQnLulCI6_12etJDP7qE-QdQQihliCCDmqY6j0VJsh7ieN9GOGbBZwOnLpT4NWA8tc3KGN8NuUozJubo-=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Tested &amp; Guaranteed</div>\r\n<div class=\"desc\">Your custom-made Pulse 3D printer is carefully constructed and painstakingly tested by the Pulse Pros at MatterHackers to guarantee a successful and enjoyable 3D printing experience. Your Pulse will arrive tested and ready to print after our extensive confirmation process.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Streamlined\" src=\"https://lh3.googleusercontent.com/0SrubC3MCtfeUwPkM-qJVdjpJgrmY9lz6AKq9lNIeOPD_eFTuJnrE77Nx9-nyjlaAsLYx7zz5B9nEM-1qg19nqLwp-w=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Streamlined Experience</div>\r\n<div class=\"desc\">Your Pulse 3D printer arrives with fully pre-configured software and settings specific to your upgrades and loaded into your MatterControl account. Our Pulse Pros get the software settings right so you can focus more on 3D printing.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"More Bang for Your Buck\" src=\"https://lh3.googleusercontent.com/FNSTL-MNAZmWHNvMs4P0t9eXyUznc826YS5aSBspJd6_3h2zRpJ8QPv4bIUfalPFA8RP_xt5PGauOpby_pn89fTpYA=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">More Bang for Your Buck</div>\r\n<div class=\"desc\">Customize a Pulse 3D printer; pay only for the components that cater to your specific printing needs. Getting more bang for your buck on a 3D printer is as easy as 1-2-3! Choose from our list of industry-leading components to add on. MatterHackers&rsquo; Pulse Pros fully-assembles and calibrates your custom order. You receive a high-quality Pulse 3D printer that&rsquo;s ready to print what you need, right out of the box.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"collection-features\">\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Custom\" src=\"https://lh3.googleusercontent.com/-802iwacoVveYjHWGvjz5Mq8u0dJY4MCOstsAeo72gVVRjAT8DCPv20IdeyDN1JaiYsHzyWJcwp0KBGH-nOCVu2W=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Customization to the Max</div>\r\n<div class=\"desc\">Everyone has unique printing goals. The Pulse 3D printer was created to cater to each of those individual goals. No other FDM machine on the market allows you to customize up to 7 components during purchase. Pulse puts the power of construction back into the customer. Whether you have a need for higher heat, a desire to extrude abrasive materials, a love for convenient tetherless printing, or all three, this adaptable machine is for you. Enhance your Pulse with a variety of upgrades to match your personal 3D printing preferences.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"HighTech\" src=\"https://lh3.googleusercontent.com/IRF10uxRwwYJw47kbv-wlJ9ek_8rO5WpEV8vm6HVpDv6IgLxcE62iiEEQAtWt56tgfwlxDNwbHj3w0cNR-BN-Pq0R1U=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Highest Level Tech</div>\r\n<div class=\"desc\">The Pulse uses industry-leading components to provide you a world-class experience. Your Pulse 3D printer arrives stock with BuildTak applied to the heated bed and a BLTouch Bed Leveling Probe - the most technologically advanced auto-calibration solution available. Upgrades for the Pulse include other quality, advanced tech such as the Bondtech Extruder, E3D V6 hotend, and Olsson Ruby Nozzle&mdash;the most wear-resistant nozzle available for 3D printing with advanced materials. Pulse produce the best prints using the best parts.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Tested\" src=\"https://lh3.googleusercontent.com/lpJ0Y8auQnLulCI6_12etJDP7qE-QdQQihliCCDmqY6j0VJsh7ieN9GOGbBZwOnLpT4NWA8tc3KGN8NuUozJubo-=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Tested &amp; Guaranteed</div>\r\n<div class=\"desc\">Your custom-made Pulse 3D printer is carefully constructed and painstakingly tested by the Pulse Pros at MatterHackers to guarantee a successful and enjoyable 3D printing experience. No Pulse leaves our warehouse until it's been proven to operate flawlessly and produce beautiful test prints. After performing this process for over 4 evolutions of this machine, we can promise you that your Pulse will arrive ready for digital fabrication after our extensive confirmation process.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"Streamlined\" src=\"https://lh3.googleusercontent.com/0SrubC3MCtfeUwPkM-qJVdjpJgrmY9lz6AKq9lNIeOPD_eFTuJnrE77Nx9-nyjlaAsLYx7zz5B9nEM-1qg19nqLwp-w=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">Streamlined Experience</div>\r\n<div class=\"desc\">Pulse is designed to align with your personal preferences&mdash;that includes slicer software! Whether you want to use MatterControl, Cura, or other slicers, your Pulse 3D printer arrives with fully pre-configured software and settings specific to the upgrades you chose. Operate your single printer or print farm using the slicing software you know best. Our Pulse Pros focus on fine-tuning the machine's software settings so you can focus more on 3D printing.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-2 col-sm-2 col-xs-12\"><img alt=\"More Bang for Your Buck\" src=\"https://lh3.googleusercontent.com/FNSTL-MNAZmWHNvMs4P0t9eXyUznc826YS5aSBspJd6_3h2zRpJ8QPv4bIUfalPFA8RP_xt5PGauOpby_pn89fTpYA=s60\" /></div>\r\n<div class=\"meta col-lg-10 col-sm-10 col-xs-12\">\r\n<div class=\"title\">More Bang for Your Buck</div>\r\n<div class=\"desc\">Customize a Pulse 3D printer and pay only for the components that cater to your specific printing needs. Getting more bang for your buck on a 3D printer is as easy as 1-2-3! Choose from our list of industry-leading components to add on and MatterHackers&rsquo; Pulse Pros will fully-assemble and calibrate your custom order. You receive a high-quality Pulse 3D printer that&rsquo;s ready to print what you need, right out of the box.</div>\r\n</div>\r\n</div>\r\n</div>", 
                     "ElementCode": "SBDAZP", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>About Pulse</h2>\r\n</div>\r\n<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<p>The Pulse 3D printer is a high quality, fully customizable 3D printer based on the Prusa i3, and designed to meet the needs of every maker. For professional use, inside the classroom, or even on your workbench at home, you can personalize your Pulse with a variety of upgrades to make your 3D printing experience unique. Your Pulse is hand-built by MatterHackers&rsquo; Pulse Pros using precision machined components, then thoroughly tested to guarantee successful 3D printing. Your Pulse arrives fully pre-configured with software and settings specific to your selected upgrades, streamlining the experience so you can start creating faster and more efficiently.</p>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/7UXR6V0MMSM8_I3r4iRaPep9dtsqOVPdG0Gdn2T0QmoIKx0AATo4j7RldLs8DA1GVWdGSiAFWa6khISpzmI-anI_kg=s150\" /> <img alt=\"Pulse in use\" src=\"https://lh3.googleusercontent.com/4kjp3_A6OUOxRSB093VGTVX-TkWgSsOkyEJay_Pamswjf6OR4hQIlOXfo1GoAQfNXMyIdTM2aGUFqmusC2W0JAKLJQ=w300-h200-pp\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>About Pulse</h2>\r\n</div>\r\n<div class=\"section\">\r\n<div class=\"row\">\r\n<div class=\"col-lg-6\">\r\n<p>The Pulse 3D printer is a high quality, fully customizable 3D printer based on the Prusa i3, and designed to meet the needs of every maker. For professional use, inside the classroom, or even on your workbench at home, you can personalize your Pulse with a variety of upgrades to make your 3D printing experience unique. Your robust Pulse is hand-built by MatterHackers&rsquo; Pulse Pros using <span>industry-leading printer technology and&nbsp;</span>precision machined components, then thoroughly tested to guarantee successful 3D printing. Your Pulse arrives fully pre-configured with software and settings specific to the upgrades you selected, streamlining the experience so you can start creating faster and more efficiently.</p>\r\n</div>\r\n<div class=\"col-lg-6 icon\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/7UXR6V0MMSM8_I3r4iRaPep9dtsqOVPdG0Gdn2T0QmoIKx0AATo4j7RldLs8DA1GVWdGSiAFWa6khISpzmI-anI_kg=s150\" /> <img alt=\"Pulse in use\" src=\"https://lh3.googleusercontent.com/lFdO1jlXH2YiRM4059PfbXEr7Ba7hJiRsDCt5eMPcjrCJ6bEd2-tAj7nXPCKlobRfbaFQF8QqWI2DKYGUb-xrz68fbJ0vdP4BXeYHg=w300-h200-pp\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
                     "ElementCode": "L2BOTJ", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Standard Pulse 3D Printer: $799 Delivered</h2>\r\n</div>\r\n<div class=\"section\">\r\n<p>The standard Pulse 3D printer, with no added upgrades, is a fantastic option for beginners or those who plan on printing mainly with PLA and PLA hybrid filaments. With the standard Pulse, you can print using <a href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PLA%20Filament\">PLA</a>, <a href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PET%20Filament\">PETG</a>, Nylon, ABS, and much more. The machine design is based on the popular Prusa i3 model, known for its sturdy build and reliable 3D printing. Every Pulse 3D printer comes standard with automatic bed leveling and a heated print bed, with other powerful upgrades available.</p>\r\n<br />\r\n<div class=\"product-desc-photos clearfix\"><img alt=\"quality and results\" src=\"https://lh3.googleusercontent.com/uyBHUhlKN1LAyb4lg_6vpzejxlGFYJTY6LvA3ep1E8qAr4F-aANNQ5pv1_3-DRnAaJllqpTixM1LVAqJxiswfr-v=w660\" class=\"rounded\" /></div>\r\n<div class=\"section\"><!-- <h2><span>Exceptional quality and results</span></h2> -->\r\n<p><span><span>Pulse components are precision machined, and each portion of the experience finely honed so that you can achieve the best 3D printing results possible</span><span>.</span></span></p>\r\n<h3><span>World-Class Reliability</span></h3>\r\n<p><span>Tackle any print job with confidence! Pulse has been designed and tested to deliver consistent, high-quality results without any fuss. It&rsquo;s the high-performance, low-maintenance 3D printer you&rsquo;ve been dreaming about.</span></p>\r\n<!-- <div class=\"product-desc-photos clearfix\">\r\n                                    <img src=\"https://lh3.googleusercontent.com/2MLmmk5jcl2Qs6wHvlwxeccZA3O0skxitmEDyDVQIQpIwU3MEBVDj760U5D_2YjjG6cNOod3Hf_YtFPXMQLh5W0006s=w660-h100-pp\" class=\"rounded\">\r\n                                </div> -->\r\n<h3><span>Incredible Value</span></h3>\r\n<p><span><span>When you customize a Pulse 3D printer, you pay only for the features and components you need, which means more bang for your buck. The standard printer is of great value, including a heated print bed with BuildTak and automatic bed leveling - features available elsewhere as paid upgrades. As you add industry leading components from manufacturers like E3D and Bondtech - we share savings with you because we are able to purchase in large quantities.</span></span></p>\r\n<h3><span>Stealth-Mode Enabled</span></h3>\r\n<p>Pulse is the quietest 3D printer on the market, making it the perfect desktop companion. Choosing specific components and tuning the system results in an incredibly quiet experience while the 3D printer produces your design. Sound dampers have been added to each motor on the Pulse, and the difference is amazing.</p>\r\n<h3><span>Simple Setup, Seamless Workflow</span></h3>\r\n<p><span><span>Go from unboxing to 3D printing success in minutes. Every Pulse 3D printer comes pre-configured with MatterControl, an intuitive application that simplifies the 3D printing experience.</span></span></p>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Standard Pulse 3D Printer: $799 Delivered</h2>\r\n</div>\r\n<div class=\"section\">\r\n<p>The standard Pulse 3D printer, with no added upgrades, is a fantastic option for beginners or those who plan on printing mainly with <a title=\"PRO Series PLA\" href=\"https://www.matterhackers.com/store/c/1.75mm%20PRO%20Series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> and PLA hybrid filaments. With the standard Pulse, you can print using <a title=\"1.75mm PLA 3D Printer Filament\" href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PLA%20Filament\" target=\"_blank\" rel=\"noopener\">PLA</a>, <a title=\"1.75mm PETG 3D Printer Filament\" href=\"https://www.matterhackers.com/store/3d-printer-filament?t=1.75mm%20PET%20Filament\" target=\"_blank\" rel=\"noopener\">PETG</a>, <a title=\"PRO Series Nylon\" href=\"https://www.matterhackers.com/store/c/1.75mm%20PRO%20Series%20Nylon\" target=\"_blank\" rel=\"noopener\">Nylon</a>, <a title=\"PRO Series ABS\" href=\"https://www.matterhackers.com/store/c/1.75mm%20PRO%20Series%20ABS\" target=\"_blank\" rel=\"noopener\">ABS</a>, and much more. The machine design is based on the popular Prusa i3 model (known for its sturdy build and reliable 3D printing) and has since&nbsp;<span>improved and incorporated new and exciting technology as the 3D printing industry grows</span>. Every robust Pulse 3D printer comes standard with automatic bed leveling and a fast-heating print bed, with other powerful upgrades available.</p>\r\n<br />\r\n<div class=\"product-desc-photos clearfix\"><img alt=\"quality and results\" src=\"https://lh3.googleusercontent.com/uyBHUhlKN1LAyb4lg_6vpzejxlGFYJTY6LvA3ep1E8qAr4F-aANNQ5pv1_3-DRnAaJllqpTixM1LVAqJxiswfr-v=w660\" class=\"rounded\" /></div>\r\n<div class=\"section\"><!-- <h2><span>Exceptional quality and results</span></h2> -->\r\n<p><span><span>Pulse components are precision machined, and each portion of the experience finely honed so that you can achieve the best 3D printing results possible</span><span>.</span></span></p>\r\n<h3><span>World-Class Reliability</span></h3>\r\n<p><span>Tackle any print job with confidence! Pulse has been designed and tested to deliver consistent, high-quality results without any fuss. With a 24V power supply attached to the machine's aluminum frame, rest assured knowing your printer is engineered to provide the robust stability and optimal power needed to produce consistently clean prints. This the high-performance, low-maintenance FDM machine is the 3D printer you&rsquo;ve been dreaming about.</span></p>\r\n<!-- <div class=\"product-desc-photos clearfix\">\r\n                                    <img src=\"https://lh3.googleusercontent.com/2MLmmk5jcl2Qs6wHvlwxeccZA3O0skxitmEDyDVQIQpIwU3MEBVDj760U5D_2YjjG6cNOod3Hf_YtFPXMQLh5W0006s=w660-h100-pp\" class=\"rounded\">\r\n                                </div> -->\r\n<h3><span>Incredible Value</span></h3>\r\n<p><span><span>When you customize a Pulse 3D printer, you only invest in the features and components you need&mdash;that's more bang for your buck. The standard printer is of great value, including BuildTak on an impressive print bed that heats up faster than ever thanks to the machine's 24V power and the amazingly accurate automatic bed leveling&mdash;features available elsewhere as paid upgrades. As you add industry-leading components from manufacturers like E3D and Bondtech, our savings become your savings because we are able to purchase in large quantities.</span></span></p>\r\n<h3><span>Stealth-Mode Enabled</span></h3>\r\n<p>Pulse is the quietest 3D printer on the market, making it the perfect desktop companion for users who enjoy or need silence during operation. Our MatterHackers' Pros chose specific components and tuned the system to produce in an incredibly quiet experience while the 3D printer extrudes your design. From incorporating&nbsp;<span>TMC2130 motor drivers</span> to the CPU to attaching sound dampers on each motor on the Pulse, the noticeable reduction in volume is amazing.</p>\r\n<h3><span>Simple Setup, Seamless Workflow</span></h3>\r\n<p><span><span>Go from unboxing to 3D printing success in minutes. Every Pulse 3D printer comes pre-configured with MatterControl, an intuitive application that simplifies the 3D printing experience with a friendly user interface and provides many essential features. Already have a slicing software you can't bear to part with or are required to use? No problem&mdash;Pulse is capable of adapting to any slicer that's already part of your workflow for further seamless integration.</span></span></p>\r\n</div>\r\n</div>", 
                     "ElementCode": "SM4SP9", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"embed-youtube\" data-embed=\"y55VykzgA5A\" data-size=\"lg\"></div>", 
-                    "ElementCode": "XXFITJ", 
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"vHV-DeD2Wa0\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "JIUD90", 
                     "Images": [], 
-                    "Type": "text"
+                    "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Printer Customization By You, For You</h2>\r\n</div>\r\n<p>3D printers aren't a \"one size fits all\" type of deal. Cater to your personal 3D printing needs when you enhance your Pulse 3D printer with a variety of upgrades. Each Pulse is assembled on-demand, to your specifications, then tested and tuned by expert technicians on our Pulse Pros team to ensure optimized 3D printing performance. Choose from the best components available on the market to create a machine of your own. Once you&rsquo;ve selected your options, you can rest easy knowing that the 3D printer you are about to receive is ready and able to turn your ideas into reality. The Pulse is the first machine to become a part of the MatterHackers 3D printer customization service.</p>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>On-Demand Printer Customization By You, For You</h2>\r\n</div>\r\n<p>3D printers aren't a \"one-size-fits-all\" type of deal. Our Pros understands this, which is why Pulse has taken the lead in being the only FDM machine on the market to offer users the flexibility to customize up to 7 components on their printer before checkout. Cater to your personal 3D printing needs when you enhance your Pulse 3D printer with a variety of upgrades. Each Pulse is assembled on demand, to your specifications, then tested and tuned by expert technicians on our Pulse Pros team to ensure an optimal 3D printing performance. Choose from the best components available on the market such a Bondtech, E3D, BuildTak, and more to create a machine that's truly your own. Once you have selected your options, you can rest easy knowing that the 3D printer you envisioned is ready and able to turn your ideas into reality. The Pulse is the first machine to become a part of the MatterHackers 3D printer customization service.</p>", 
                     "ElementCode": "QBWHRZ", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/N2qA38cZjNR9VdBvMDIiALtBbJEbKYzPT76EVusJbiUK-cw82oZlRNY5XSGm51dJ1DxldE7_QuSKiheSnZcItM4m'></p>", 
-                    "ElementCode": "ES4MPE", 
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/-bgM_0-UewAaQqNN780S9eBYjqiUHlQLi_eU5O0B8KjhSTPNjHi4qAW9VpPPlL7XnQxYu-oIJhk1BTG4renbikTwUMkZHQNAvHM'></p>", 
+                    "ElementCode": "X9UJRV", 
                     "Images": [
                         {
-                            "ImageFile": "/mh-product-images/prod/f4be8371-5d99-45a3-956a-788a0d4ba65a", 
-                            "ImageUrl": "https://lh3.googleusercontent.com/N2qA38cZjNR9VdBvMDIiALtBbJEbKYzPT76EVusJbiUK-cw82oZlRNY5XSGm51dJ1DxldE7_QuSKiheSnZcItM4m", 
+                            "ImageFile": "/mh-product-images/prod/d244695f-b4a0-48ef-93b6-fb128c47976b", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/-bgM_0-UewAaQqNN780S9eBYjqiUHlQLi_eU5O0B8KjhSTPNjHi4qAW9VpPPlL7XnQxYu-oIJhk1BTG4renbikTwUMkZHQNAvHM", 
                             "IsFeatured": false
                         }
                     ], 
                     "Type": "Image"
                 }, 
                 {
-                    "Content": "<p>Whether you're printing standard filament or abrasive, advanced materials like NylonX, Pulse offers a variety of nozzles to match your specific printing needs. From Left to Right: Brass Nozzle, Hardened Steel Nozzle, Olsson Ruby Nozzle</p>", 
+                    "Content": "<p>Mix and match your 3D printer with only the parts you want and need to succeed. Pulse offers a variety of components that you can combine in a multitude of combinations, giving you ultimate control on how your FDM machine should be made.</p>", 
                     "ElementCode": "36UC31", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Self-Made Quality Components</h2>\r\n</div>\r\n<p>The Pulse offers top-of-the-line upgrades such as the Bondtech Extruder and Olsson Ruby Nozzle which are used to 3D print parts that make up the Pulse 3D printer's own anatomy. Quality breeds quality and MatterHackers strives to use the best of the best. Printed out of high quality Black PRO Series RYNO filament, the Pulse's 3D printed parts are functional and durable for any print job, and will last for the lifetime of your machine.</p>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Self-Made Quality Components</h2>\r\n</div>\r\n<p>The Pulse offers top-of-the-line upgrades such as the Bondtech Extruder and Olsson Ruby Nozzle which are used to 3D print parts that structure the Pulse's own anatomy. Quality breeds quality and our Pulse Pros strive to use the best of the best technology available. Printed out of high-quality <a title=\"1.75mm Black PRO Series RYNO\" href=\"https://www.matterhackers.com/store/l/pro-series-ryno/sk/M6989PRZ\" target=\"_blank\" rel=\"noopener\">Black PRO Series RYNO</a> filament, the Pulse's 3D printed parts are functional and durable for any print job, and will last for the lifetime of your machine. How do we know this? Some of the Pulse machines in our print farm use components that go back as far as 4 generations since its inception over 5 years ago, easily enduring the daily labor-intensive printing schedule these machines go through to produce the thousands of printed parts on hundreds of Pulse printers currently out in the world, and counting.</p>", 
                     "ElementCode": "QNMO7V", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Less Configuring, More Printing</h2>\r\n</div>\r\n<p>Every Pulse 3D printer arrives with fully pre-configured software and settings specific to your upgrades and loaded into your MatterControl account. Our Pulse Pros spend time testing and calibrating the printer to your specific customizations so you don't have to. Built for reliability, the Pulse arrives ready to print with the best-in-class components that guarantee quality print results. Spend less time configuring and more time 3D printing right from the get-go.</p>", 
-                    "ElementCode": "RP7V5C", 
-                    "Images": [], 
-                    "Type": "Text"
-                }, 
-                {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Quiet Desk Companion</h2>\r\n</div>\r\n<p>The Pulse Pros at MatterHackers don&rsquo;t just fine-tune software; they also fine-tune the hardware. Motor dampers are installed on every single motor on the Pulse 3D printer. Small rubber feet made of flexible printing material, TPU, are attached to the bottom of the Pulse. The dampers and rubber feet work together to absorb vibrations caused by the various motors running on the printer, thus leaving minimal to no vibrations transmitting from the printer to the surface that the Pulse is sitting on. This allows for muffled 3D printing making the Pulse a nice, quiet desk companion.</p>", 
-                    "ElementCode": "CLNGRF", 
-                    "Images": [], 
-                    "Type": "Text"
-                }, 
-                {
-                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/bBnERmAqs7j3b9oFfuGsIO3VHbSDH10qs6FNKdSuKC8jq_0k7AbeLNb_puHIqmsCpqvITCJWvPTxruSL2Lo2XCM'></p>", 
-                    "ElementCode": "PQEF68", 
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/3rGwp53KYNYd8BXe-xBX3ZGaGvLWnvBUu4R2JHzRiwtx4n83-qV9T18ByoIxyGM5zy8XQUz9tMIZ7TIgvxaSH0U'></p>", 
+                    "ElementCode": "JI92QN", 
                     "Images": [
                         {
-                            "ImageFile": "/mh-product-images/prod/fbf78024-2b95-4351-8cc6-e554e1122679", 
-                            "ImageUrl": "https://lh3.googleusercontent.com/bBnERmAqs7j3b9oFfuGsIO3VHbSDH10qs6FNKdSuKC8jq_0k7AbeLNb_puHIqmsCpqvITCJWvPTxruSL2Lo2XCM", 
+                            "ImageFile": "/mh-product-images/prod/09164557-70d0-4899-adc0-b1af5ec5e335", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/3rGwp53KYNYd8BXe-xBX3ZGaGvLWnvBUu4R2JHzRiwtx4n83-qV9T18ByoIxyGM5zy8XQUz9tMIZ7TIgvxaSH0U", 
                             "IsFeatured": false
                         }
                     ], 
                     "Type": "Image"
                 }, 
                 {
-                    "Content": "<p>Not a fan of the sound of motors? Motor dampers tremendously help reduce the noise for a quieter 3D printing experience.</p>", 
+                    "Content": "<p>Our print farm of Pulses churns out hundreds of printed parts around the clock using only the best materials like NylonX, PRO Series RYNO, and PRO Series TPY. This ensures that our 3D printers are robustly structured to help you succeed with all your digital fabricating needs.</p>", 
+                    "ElementCode": "NZWE8O", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Less Configuring, More Printing</h2>\r\n</div>\r\n<p>Every Pulse 3D printer arrives with fully pre-configured software and settings specific to your upgrades. Our Pulse Pros spend hours testing and calibrating the printer to your specific customizations so you don't have to. Using Marlin 2.0, our engineers make sure users experience nothing but the latest firmware <span>for up-to-date improvements reflected in performance and reliability. To ensure your machine delivers consistent results, Pulse runs on a 24V power supply so it can easily handle all the powerful, complex operations of digital fabrication without missing a beat. The 24V heated bed and 24V hotend heat up quickly and consistently for efficient extrusion that results in beautifully produced parts. Have plans for tetherless printing or building your own print farm? Pulse 3D printer has features, both in software and hardware, developed specifically to succeed with that.&nbsp;</span>The Pulse arrives ready to print with the best-in-class components that guarantee quality print results. Spend less time configuring and more time 3D printing right from the get-go.</p>", 
+                    "ElementCode": "RP7V5C", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/WyuQuNm20rj4qE6UcIneI1xMxYFYS3lEJVCWpirCnJ9YsgQHdgF1QCM9anJP8FcIJOQi8neoO5FNxeU6nlEon5Y'></p>", 
+                    "ElementCode": "OCJD34", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/8b1ce0c1-7ac9-4d15-9764-d742fd8b87a6", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/WyuQuNm20rj4qE6UcIneI1xMxYFYS3lEJVCWpirCnJ9YsgQHdgF1QCM9anJP8FcIJOQi8neoO5FNxeU6nlEon5Y", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>Whether it's NylonX on garolite or PRO Series PLA on BuildTak, all of our Pulses require minimal configuring to have it succeed with the desired material because you chose the components at checkout and we assembled and calibrated them. Get straight to additive manufacturing with the fully assembled Pulse 3D printer designed by you.</p>", 
+                    "ElementCode": "QFF7VR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Quiet Desk Companion</h2>\r\n</div>\r\n<p>The Pulse Pros at MatterHackers don&rsquo;t just fine-tune software; they also fine-tune the hardware. Using Marlin 2.0 firmware on the reliable Einsy RamBo, our technicians take advantage of the many pros using this motherboard such as installing&nbsp;<span>TMC2130 motor drivers which silence the buzzes and whirs typically emitted on other CPUs.</span>&nbsp;Additionally, stepper motor dampers are installed on every single motor on the Pulse 3D printer to <span>reduce mechanical vibrations and resonance that naturally occur from XYZ movement</span>. Small rubber feet made of flexible printing material, <a title=\"PRO Series TPU\" href=\"https://www.matterhackers.com/store/c/TPU%20%28Thermoplastic%20Polyurethane%29\" target=\"_blank\" rel=\"noopener\">TPU</a>, are attached to the bottom of the Pulse as the final piece to achieving minimal to no vibrations transmitting from the printer to the surface that it is sitting on. This results in muffled 3D printing making the Pulse a nice, quiet desk companion that many customers claim they forget is even running!</p>", 
+                    "ElementCode": "CLNGRF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/Qlpg9Jp2plg30Reo8GSb8MeM6uPjTwW1iYdd8joh_bnUxx_9_6xk6AO0N1fO-gYcL-UWtYaO8aG8YAj_Wy4NLkY'></p>", 
+                    "ElementCode": "XLL6NK", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/b39cab3e-b632-45d1-a8c9-66a4aca29b4b", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Qlpg9Jp2plg30Reo8GSb8MeM6uPjTwW1iYdd8joh_bnUxx_9_6xk6AO0N1fO-gYcL-UWtYaO8aG8YAj_Wy4NLkY", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p>Not a fan of the sound of motors? Motor dampers tremendously help reduce the noise for a quieter 3D printing experience with its shock-absorbing design.</p>", 
                     "ElementCode": "ABNXBA", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades for the Standard Pulse:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade available for the Pulse 3D printer has been comprehensively tested by MatterHackers, and are the highest quality parts available. Each upgrade allows you to broaden your 3D printing capabilities, like expanding the variety of materials you can use or a fine-tuned interface.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Olsson Ruby Nozzle\" src=\"https://lh3.googleusercontent.com/t3joFTVZu-VT5dqErHd2CwzfHy4hIcnWbkX0cliwo3ACVYoK-MLNltIc4ZnbcpAIXBQ1tLKj3vIN9Yd04h2aFP7ZjmQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Olsson Ruby Nozzle <span class=\"subtitle\">+$90</span></div>\r\n<div class=\"desc\">The Olsson Ruby is the ultimate 3D printer nozzle, capable of printing beautiful PLA parts but also strong enough to handle endless amounts of harsh abrasives like NylonX. The Ruby was designed to be the only nozzle you will ever need, and with this upgrade your Pulse will arrive day one with this 0.40mm ruby-tipped beauty is ready to tackle any project you can imagine. <strong>This upgrade replaces the Brass Nozzle that comes stock with the standard Pulse. If paired with the Bondtech Extruder Upgrade, the Hardened Steel Nozzle will be replaced.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Bondtech Extruder with E3D V6 Hotend and Hardened Steel Nozzle\" src=\"https://lh3.googleusercontent.com/w9iZ65vDxyb-cYn70b7UcArS3uUUgEpfhW3i5Hoc9_0LshQ-iUcNacXVnU-bkPiaU0TwP4LqJb3YIXb-r4ch2lwh=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Bondtech Extruder (1.75mm) with E3D V6 HotEnd and Hardened Steel Nozzle <span class=\"subtitle\">+$245</span></div>\r\n<div class=\"desc\">Containing CNC-machined drive gears, the Bondtech extruder is compatible with abrasive materials, on top of standard filaments. The ability to 3D print with abrasive material will require a stronger hotend setup, hence the addition of an E3D V6 HotEnd and a 0.40mm Hardened Steel Nozzle in this upgrade. Print anywhere between simple filament like PLA to tough NylonX with this specific setup. <strong>This upgrade replaces the EZR Struder with E3D Lite 6 and Brass Nozzle that comes stock with the standard Pulse.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Filament Runout Sensor\" src=\"https://lh3.googleusercontent.com/djrC8a5VD3LhySjk3C6mxL57y6ASAreCRGFlHIP6dLImhn7w1EQEuVhD41pT5tfbdHZDhnp7fKYDdfbsAMpYX-S9ZpA=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Filament Runout Sensor<span class=\"subtitle\">+$95</span></div>\r\n<div class=\"desc\"><span>While a print is in progress, the Filament Runout Sensor constantly monitors filament to ensure successful printing. Run out of filament mid-print? Our Sensor will alert MatterControl to pause your print session. This will allow you to reload filament and seamlessly continue printing. Rest easy knowing incomplete print results will drastically reduce with the Filament Runout Sensor. <strong>This upgrade can only be purchased with the Bondtech Extruder Upgrade.</strong></span></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Heated Bed\" src=\"https://lh3.googleusercontent.com/c5_njxguU0qCp83eHYW-SMCtdSoIFSL0G7YLgF_ADHh70Hi5BpCHfHMQ9is3MzcojwNXe_M1-DVaAc83HXnSV3g=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Bed <span class=\"subtitle\">+$39</span></div>\r\n<div class=\"desc\">From <a title=\"PLA Filament\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> to <a title=\"NylonX Filament\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>, this tough fiberglass-impregnated resin bed surface provides excellent performance across a wide range of materials and long-lasting durability. This build surface is perfect for getting advanced filaments like NylonX to stick to the bed. <strong>This upgrade replaces the BuildTak that comes stock on the heated bed. If paired with the BuildTak Magnetic FlexPlate System Upgrade, you will receive the FlexPlate system with the LayerLock Garolite Build Surface installed, NOT the BuildTak.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Magnetic Flexplate System\" src=\"https://lh3.googleusercontent.com/NeuUWtfMyhxaoUz_z4bbQ-6ZGWFxWSnkvlD763wHWjn_imhAp7hUxS2H_0oKtk5PMXAVBlhq1gm3ev9aUsWYU4R3O74=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak FlexPlate System<span class=\"subtitle\">+$99</span></div>\r\n<div class=\"desc\">When printing large parts, there is a huge advantage to having a build plate that can be removed and flexed to easily remove the print off of the bed. The BuildTak Magnetic Flexplate System 9&rdquo; x 10&rdquo; ensures part removal is super easy and saves you time and effort. This comes with a sheet of BuildTak installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/Yo1uyJ4JEKzVFs7z5Er7GbUc36y0OYxJYk1GCNrEi9sx7waEPSc-ATZmzBy_BnpsV38sJoY-D4HViaG7IuipueFtNQQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak Extra FlexPlate <span class=\"subtitle\">+$35</span></div>\r\n<div class=\"desc\">Move on to the next print quickly and efficiently with an extra BuildTak FlexPlate. When one print finishes, you can detach the flexplate, replace it with this spare, and immediately start printing. No more pausing to scrape. Just swap and print! This upgrade comes with a sheet of BuildTak installed on the build plate and can be paired with the LayerLock Garolite Extra FlexPlate upgrade. <strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/vT325DzdqSZUgCms9yvdWyqDreiDHIjMbuHNPEaEl_vS7ygcgmKjRMPTFN0v7_3C2fzg0YIkq1fTQhGbsnGKR96Nxw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra FlexPlate <span class=\"subtitle\">+$49</span></div>\r\n<div class=\"desc\">Alternating between build surfaces just got easier with an extra LayerLock Garolite FlexPlate! Have the option of using a spare or switching between different types of surfaces! Go from printing on BuildTak to printing on garolite in less than a minute. No more dealing with sticky build surface residue when switching surfaces; just swap build plates on and off. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate and can be paired with the BuildTak Extra FlexPlate upgrade. <strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Powder Coated PEI Build Plate\" src=\"https://lh3.googleusercontent.com/9r_AsVUuAiHeKdBRtFWbd4lshBGzAPm0iL4uMnaHcx2JqbTAg7K5B9uFmaD0yf9CWAGPyyVkuNTqMG31_9ngwQ=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Powder Coated PEI Build Plate <span class=\"subtitle\">+$39.99</span></div>\r\n<div class=\"desc\">Achieve better bed adhesion with zero hassle using the LayerLock Powder Coated PEI Build Plate! This build surface provides the strong bed adhesion you need for standard filaments such as PLA, ABS, PETG, and flexibles such as TPU and TPE. Powder coated with PEI, this durable build plate is resistant to scratches and requires no careful installation of adhesive. Best of all, LayerLock Power Coated PEI Build Plates are guaranteed to last you much longer than adhesives and sheets, saving you money on multiple replacements in the long run. <strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">When you find yourself missing the benefits of printing on a glass surface, easily do so with the Glass Plate for Magnetic Base. Simply take the off the Buildtak, garolite or PEI surface currently on your printer's magnetic bed and attach this glass plate in its place.&nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"32-Bit Upgrade\" src=\"https://lh3.googleusercontent.com/KFNzOIq36EuEjbaOu2bVkowoZKK5_Gav8ND-JpzkcK7Tm_NaP7jD8q2Rb2Ne-a_-grQ0VMiQDpP6YisNuXDd7V2V=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">32-Bit Upgrade for Pulse <span class=\"subtitle\">+$399</span></div>\r\n<div class=\"desc\">Print faster, cleaner, and more accurately with the 32-Bit Upgrade for Pulse! A faster CPU clock, more RAM, and optimized firmware&mdash;these are just some of the many perks you can unlock with this upgrade. Running Smoothieware on the 32-bit Azteeg X5 GT, this board is the solution you need to take the planning ability of your printer to the next level. <strong>This upgrade cannot be paired with the LCD Screen Upgrade. This upgrade replaces the Ultimachine RAMBo Mini Board that comes stock with the Pulse.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Viki 2 LCD Screen\" src=\"https://lh3.googleusercontent.com/S_WO4GvVnDjoVOWwQt0UgIcIkm6oS_cR1lrPwDDtJmnhcnYt2kscluu9fTQQXq6EYy497zIT7LWtqJjhzo1TjMX-=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Viki 2 LCD Screen <span class=\"subtitle\">+$95</span></div>\r\n<div class=\"desc\">The Viki 2 is an onboard LCD screen with a large control wheel and MicroSD memory card slot that allows for untethered printing on top of USB connectivity. Export your gcode from MatterControl onto the MicroSD card, plug it into the printer and you're ready to roll! The Viki 2 has a slightly larger screen than the LCD Screen add-on which allows for more settings to be viewed at a single time. <strong>This upgrade cannot be paired with the LCD Screen Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LCD Screen\" src=\"https://lh3.googleusercontent.com/EBVCQbNYRsSYOYm3NxqLullVW1x6yX6k16PAh4qYi-NQk14v5hv1ZxSDKQeznUXTsOIflcQ38ZEk_yOFP4BJMZIjrQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LCD Screen <span class=\"subtitle\">+$50</span></div>\r\n<div class=\"desc\">LCD Screens allow optional untethered printing, on top of USB connectivity printing, for the Pulse. This LCD screen has an SD card reader on the side for printing files without using a computer and displays basic, essential print factors such as nozzle temp, bed temp, print time, and more in real-time. Feel free to shut down your computer while the printer does its job. <strong>This upgrade cannot be paired with the 32-bit upgrade. This upgrade also cannot be paired with the Viki 2 LCD Screen Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit - Black<span class=\"subtitle\">+$279</span></div>\r\n<div class=\"desc\">Keep your prints warm and warp free with the Pulse Enclosure Kit! This kit is made up of laser cut panels that sit on the same surface as your Pulse 3D printer. Designed to consistently help keep heated and moving parts functional, this enclosure also helps regulate temperature and reduce warping that may occur during printing. Prevent outside variables from affecting the success of your 3D printing results when you use the Pulse Enclosure. <strong>This enclosure kit is available in white for $249 and in black for $279. The colors do not affect the quality of the enclosure.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$89.94</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$110</span></div>\r\n<div class=\"desc\">Show a little love to your hardworking Pulse 3D Printer with the Pulse 3D Printer Maintenance Kit. Every Pulse 3D printer is built to last, but even the strongest of printers could use a little TLC from time to time. With simple, minimal maintenance using essential components and tools in this kit, your Pulse 3D Printer will last for years to come.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">With this extended 2 year warranty, you can repair or replace your Pulse XE 3D printer, at no extra charge, for another year. This is on top of the current 1 year warranty backed by <a title=\"MatterHackers&rsquo; Success Guarantee\" href=\"https://www.matterhackers.com/policies/success-guarantee\" target=\"_blank\" rel=\"noopener\">MatterHackers&rsquo; Success Guarantee</a>, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades and Add-Ons for the Standard Pulse:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade and add-on available for the Pulse 3D printer has been comprehensively tested by our Pulse Pros, and are the highest quality parts available. Each one allows you to broaden your 3D printing capabilities, like expanding the variety of materials you can use or fine-tuning the interface to meet your needs.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Olsson Ruby Nozzle\" src=\"https://lh3.googleusercontent.com/t3joFTVZu-VT5dqErHd2CwzfHy4hIcnWbkX0cliwo3ACVYoK-MLNltIc4ZnbcpAIXBQ1tLKj3vIN9Yd04h2aFP7ZjmQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Olsson Ruby Nozzle <span class=\"subtitle\">+$90</span></div>\r\n<div class=\"desc\">The Olsson Ruby is the ultimate 3D printer nozzle, capable of printing beautiful PLA parts but also strong enough to handle endless amounts of harsh abrasives like NylonX. The Ruby was designed to be the only nozzle you will ever need, and with this upgrade your Pulse will arrive day one with this 0.40mm ruby-tipped beauty, ready to tackle any project you can imagine. <strong>This upgrade REPLACES the Brass Nozzle that comes stock with the standard Pulse. If paired with the Bondtech Extruder Upgrade, the Hardened Steel Nozzle will be replaced.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Bondtech Extruder with E3D V6 Hotend and Hardened Steel Nozzle\" src=\"https://lh3.googleusercontent.com/woyx_ItEe3yolG556-KxaAnaD67vKe3wesmXa0pVhGVxAcHdsUrQVlUpNJZSiQs7QV9dgrAnCsLKiHhbgrXngM8=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Bondtech Extruder (1.75mm) with E3D V6 HotEnd and Hardened Steel Nozzle <span class=\"subtitle\">+$245</span></div>\r\n<div class=\"desc\">Containing CNC-machined drive gears, the Bondtech BMG extruder is compatible with abrasive materials, on top of standard filaments. The ability to 3D print with an abrasive material will require a stronger hotend setup, hence the addition of an E3D V6 HotEnd and a 0.40mm Hardened Steel Nozzle in this upgrade. Print anywhere between simple filament like PLA to tough NylonX with this specific setup. <strong>This upgrade REPLACES the EZR Struder with E3D Lite 6 and Brass Nozzle that comes stock with the standard Pulse.</strong></div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Filament Runout Sensor\" src=\"https://lh3.googleusercontent.com/djrC8a5VD3LhySjk3C6mxL57y6ASAreCRGFlHIP6dLImhn7w1EQEuVhD41pT5tfbdHZDhnp7fKYDdfbsAMpYX-S9ZpA=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Filament Runout Sensor<span class=\"subtitle\">+$95</span></div>\r\n<div class=\"desc\"><span>While a print is in progress, the Filament Runout Sensor constantly monitors filament to ensure successful printing. Run out of filament mid-print? Our Sensor will alert MatterControl to pause your print session. This will allow you to reload filament and seamlessly continue printing. Rest easy knowing incomplete print results will drastically reduce with the Filament Runout Sensor. <strong>This upgrade can only be purchased with the Bondtech Extruder Upgrade.</strong></span></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Heated Bed\" src=\"https://lh3.googleusercontent.com/c5_njxguU0qCp83eHYW-SMCtdSoIFSL0G7YLgF_ADHh70Hi5BpCHfHMQ9is3MzcojwNXe_M1-DVaAc83HXnSV3g=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Bed <span class=\"subtitle\">+$39</span></div>\r\n<div class=\"desc\">From <a title=\"PLA Filament\" href=\"https://www.matterhackers.com/store/c/PRO%20series%20PLA\" target=\"_blank\" rel=\"noopener\">PLA</a> to <a title=\"NylonX Filament\" href=\"https://www.matterhackers.com/store/c/NylonX\" target=\"_blank\" rel=\"noopener\">NylonX</a>, this tough fiberglass-impregnated resin bed surface provides excellent performance across a wide range of materials and long-lasting durability. This build surface is perfect for getting advanced filaments like NylonX to stick to the bed. <strong>This upgrade REPLACES the BuildTak that comes stock on the heated bed. If paired with the LayerLock MagBase Upgrade, you will receive the MagBase system with the LayerLock Garolite Build Surface installed, NOT the BuildTak.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock MagBase\" src=\"https://lh3.googleusercontent.com/msfMu7MUQsM8wbKsCKtszQM20wZcFA-3LPFMuZmLuaNjDr33alubTM15TPCT0JDtemcWOx5EdPcb3abowLz8MRE=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock MagBase<span class=\"subtitle\">+$55</span></div>\r\n<div class=\"desc\">When printing large parts, there is a huge advantage to having a build plate that can be removed and flexed to easily detach the print off of the bed. LayerLock MagBase ensures part removal is super easy and saves you time and effort. Switch between different bed surfaces like BuildTak, Garolite, PEI, Polypropylene and more. <strong>This comes with a sheet of BuildTak (or Garolite if you selected that upgrade) installed on a spring steel sheet build plate, which will attach to the LayerLock MagBase.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/Yo1uyJ4JEKzVFs7z5Er7GbUc36y0OYxJYk1GCNrEi9sx7waEPSc-ATZmzBy_BnpsV38sJoY-D4HViaG7IuipueFtNQQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak Extra FlexPlate <span class=\"subtitle\">+$35</span></div>\r\n<div class=\"desc\">Move on to the next print quickly and efficiently with an extra BuildTak FlexPlate. When one print finishes, you can detach the flexplate, replace it with this spare, and immediately start printing. No more pausing to scrape. Just swap and print! This upgrade comes with a sheet of BuildTak installed on the build plate and can be paired with the Extra FlexPlate add-ons available. <strong>This add-on must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/vT325DzdqSZUgCms9yvdWyqDreiDHIjMbuHNPEaEl_vS7ygcgmKjRMPTFN0v7_3C2fzg0YIkq1fTQhGbsnGKR96Nxw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra FlexPlate <span class=\"subtitle\">+$49</span></div>\r\n<div class=\"desc\">Alternating between build surfaces just got easier with an extra LayerLock Garolite FlexPlate! Have the option of using a spare or switching between different types of surfaces! Go from printing on BuildTak to printing on garolite in less than a minute. No more dealing with sticky build surface residue when switching between surfaces that are attached directly on the bed; just swap build plates on and off. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate and can be paired with any of the Extra FlexPlate add-ons. <strong>This add-on must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Powder Coated PEI Build Plate\" src=\"https://lh3.googleusercontent.com/9r_AsVUuAiHeKdBRtFWbd4lshBGzAPm0iL4uMnaHcx2JqbTAg7K5B9uFmaD0yf9CWAGPyyVkuNTqMG31_9ngwQ=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Powder Coated PEI Build Plate <span class=\"subtitle\">+$39.99</span></div>\r\n<div class=\"desc\">Achieve better bed adhesion with zero hassle using the LayerLock Powder Coated PEI Build Plate! This build surface provides the strong bed adhesion you need for standard filaments such as PLA, ABS, PETG, and flexibles such as TPU and TPE. Powder coated with PEI, this durable build plate is resistant to scratches and requires no careful installation of adhesive. Best of all, LayerLock Power Coated PEI Build Plates are guaranteed to last you much longer than adhesives and sheets, saving you money on multiple replacements in the long run.&nbsp;This add-on can be paired with any of the Extra FlexPlate add-ons.&nbsp;<strong>This add-on must be paired with the LayerLock MagBase Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">When you find yourself missing the benefits of printing on a glass surface, easily do so with the Glass Plate for Magnetic Base. Simply take the off the Buildtak, garolite or PEI surface currently on your printer's magnetic bed and attach this glass plate in its place.&nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"32-Bit Upgrade\" src=\"https://lh3.googleusercontent.com/KFNzOIq36EuEjbaOu2bVkowoZKK5_Gav8ND-JpzkcK7Tm_NaP7jD8q2Rb2Ne-a_-grQ0VMiQDpP6YisNuXDd7V2V=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">32-Bit Upgrade for Pulse <span class=\"subtitle\">+$399</span></div>\r\n<div class=\"desc\">Print faster, cleaner, and more accurately with the 32-Bit Upgrade for Pulse! A faster CPU clock, more RAM, and optimized firmware&mdash;these are just some of the many perks you can unlock with this upgrade. Running Smoothieware on the 32-bit Azteeg X5 GT, this board is the solution you need to take the planning ability of your printer to the next level. <strong>This upgrade cannot be paired with the LCD Screen Upgrade. This upgrade REPLACES the Einsy RAMBo that comes stock with the Pulse.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Viki 2 LCD Screen\" src=\"https://lh3.googleusercontent.com/S_WO4GvVnDjoVOWwQt0UgIcIkm6oS_cR1lrPwDDtJmnhcnYt2kscluu9fTQQXq6EYy497zIT7LWtqJjhzo1TjMX-=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Viki 2 LCD Screen <span class=\"subtitle\">+$95</span></div>\r\n<div class=\"desc\">The Viki 2 is an onboard LCD screen with a large control wheel and MicroSD memory card slot that allows for untethered printing on top of USB connectivity. Export your gcode from MatterControl onto the MicroSD card, plug it into the printer and you're ready to roll! The Viki 2 has a slightly larger screen than the LCD Screen add-on which allows for more settings to be viewed at a single time. <strong>This upgrade cannot be paired with the LCD Screen Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LCD Screen\" src=\"https://lh3.googleusercontent.com/EBVCQbNYRsSYOYm3NxqLullVW1x6yX6k16PAh4qYi-NQk14v5hv1ZxSDKQeznUXTsOIflcQ38ZEk_yOFP4BJMZIjrQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LCD Screen <span class=\"subtitle\">+$50</span></div>\r\n<div class=\"desc\">LCD Screens allow optional untethered printing, on top of USB connectivity printing, for the Pulse. Have a print farm you need to run? Enjoy the idea of no USB cables attached? This upgrade is for you. This LCD screen has an SD card reader on the side for printing files without using a computer and displays basic, essential print factors such as nozzle temp, bed temp, print time, and more in real-time. Feel free to shut down your computer while the printer does its job. <strong>This upgrade cannot be paired with the 32-bit upgrade. This upgrade also cannot be paired with the Viki 2 LCD Screen Upgrade.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit - Black/White<span class=\"subtitle\">+$279/$249</span></div>\r\n<div class=\"desc\">Keep your prints warm and warp-free with the Pulse Enclosure Kit! This kit is made up of laser cut panels that sit on the same surface as your Pulse 3D printer. Designed to consistently help keep heated and moving parts functional, this enclosure also helps regulate temperature and reduce warping that may occur during printing. Prevent outside variables from affecting the success of your 3D printing results when you use the Pulse Enclosure. <strong>This enclosure kit is available in white for $249 and in black for $279. The colors do not affect the quality of the enclosure.</strong></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"PrintDry PRO Filament Drying System\" src=\"https://lh3.googleusercontent.com/ikVic3jNlymhydZY58PKVdFtLLN8bSHdNtgxfnwN9NRqa9nf31_kYsTZR852o7taTXgMjaeWMvMwaSKPufbLITbP=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">PrintDry PRO Filament Drying System <span class=\"subtitle\">+159</span></div>\r\n<div class=\"desc\"><span>Quickly and simply store your filament without any hassle. PrintDry is the perfect moisture control solution for filament storage. Adjust temperatures anywhere between 35&deg;C-70&deg;C and feed filament through small openings on the sides of the chamber if you&rsquo;d like to print while drying. This filament dry container has automatic humidity control and can hold two standard spools and more with additional upgrades.</span></div>\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$89.94</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your FDM experience for faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$110</span></div>\r\n<div class=\"desc\">Show a little love to your hardworking Pulse 3D Printer with the Pulse 3D Printer Maintenance Kit. Every Pulse 3D printer is built to last, but even the strongest of printers could use a little TLC from time to time. With simple, minimal maintenance using essential components and tools in this kit, your Pulse 3D Printer will last for years to come.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">With this extended 2 year warranty, you can repair or replace your Pulse XE 3D printer, at no extra charge, for another year. This is on top of the current 1 year warranty backed by <a title=\"MatterHackers&rsquo; Success Guarantee\" href=\"https://www.matterhackers.com/policies/success-guarantee\" target=\"_blank\" rel=\"noopener\">MatterHackers&rsquo; Success Guarantee</a>, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
                     "ElementCode": "ZDHEEC", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Technical Specifications - Pulse:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>The Pulse is created specifically for reliable 3D printing for all configurations. By selecting specific industry-leading components, methods, and features the Pros at MatterHackers have engineered a truly reliable 3D printer. Regardless of how you customize your Pulse, each of the components below are assembled, tested, and calibrated on every Pulse when it arrives to you.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BLTouch Auto-calibration Sensor\" src=\"https://lh3.googleusercontent.com/J6xFdtfQxARxIHtStcCDBnPuOMrF406HcoaUk44t6neh-hR50JRlvGMDOHISXHAKAaizX0DyguBIaRZAUtYniMuqc_Y=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BLTouch Bed Leveling Probe</div>\r\n<div class=\"desc\">The Pulse 3D printer arrives stock with a BLTouch Probe Auto-leveling system - the most technologically advanced auto-calibration solution available. The BLTouch gathers data by physically touching the bed. This method ensures more accurate data, allowing exact bed leveling and easy flexibility switching between bed surfaces. Enjoy this included feature that makes your 3D printing process faster and more efficient.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Heated Bed with installed BuildTak (included)\" src=\"https://lh3.googleusercontent.com/Vm5_zectkptlAcdvXn-cU9wXyxoQmGgfD_BZsphv9N4JVJhFTIbceULsXipIZeNbkoSuNNQhrm01Y0ZJO8L9Tx9qfQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Heated Bed with Installed BuildTak</div>\r\n<div class=\"desc\">Print with a wide variety of materials on the Pulse 3D printer's heated bed. The bed has a pre-installed sheet of BuildTak, making it incredibly easy for prints of various filaments to stick during printing and easy to remove once completed. Install these sheets faster and with less bubbles than tapes or films. Need a great alternative to PEI tape or Kapton tape? BuildTak is the ideal solution.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"EZR Struder with E3D Lite6 hotend\" src=\"https://lh3.googleusercontent.com/QkP5j-MNu1ffDcWux3PAt1WK2-qoCdZ6UyXDVBiTGySMAO18amhWpekK6MmN-fxcvzL5uz7puq41EmLfZUdupFQ=s240-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">EZR Struder (1.75mm) with E3D Lite6 HotEnd and Brass Nozzle</div>\r\n<div class=\"desc\">For those interested in fine-tuning their printing with no need for high-temperatures, this is the perfect hotend set up for you. Thermal transitions are kept sharp inside the hotend making 3D printing an easier, smoother, and all around better experience for those interested in printing with standard filament such as PLA and ABS. This feature is replaced by the Bondtech Extruder Upgrade if you select that option.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Spool of MatterHackers PRO Series Filament\" src=\"https://lh3.googleusercontent.com/u0YmOnCUuCgLFS9ArV5AY84-a07aM42jDxaIMvixXl8YadbYuQTQoymKT9kB1rIQm5fHs8Q_EKxBBM09M4w88Xo=s240-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm PRO Series Filament (1kg)</div>\r\n<div class=\"desc\">Our MatterHackers PRO Series filament is manufactured to the tightest tolerances on the market. Engineered to highlight the strengths of its printing material, rest assured that the filament you're using is the best of the best, and made in the USA.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Robust and Stable i3 design\" src=\"https://lh3.googleusercontent.com/fv8ixm4AmIuDOKZwt3vfqIVE8WVj-ZBdIBYaO_HnbQv1QchoaAocjahs3QQoPMeAst17cx0M1sSTIUfX9XMYEVw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Robust and Reliable i3 Design</div>\r\n<div class=\"desc\">Based on the proven, open-source Prusa i3 frame design, the Pulse 3D printer&rsquo;s design is robust and reliable at its core. Its current iteration has been improved to include a robust, aluminum extruded base that provides more rigidity and reliability.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterControl\" src=\"https://lh3.googleusercontent.com/QNxUTXgYzDZVFTk2EhYNw0WvkcAS5gxy6y20O_4S0GDP2socHd3CEz7GeVtN7AnZ4TYYrPR1Q4Q0GgZ5Z61h4Q=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterControl 3D Printer Software Including Power Recovery</div>\r\n<div class=\"desc\">MatterControl is a free, open-source, all-in-one software package that lets you design, slice, organize, and manage your 3D prints. Developed in-house by MatterHackers, MatterControl is paired with printer settings ideal for the Pulse 3D printer. Increase your chances of printing success with helpful features such a power recovery, reloading filament mid-print, real-time modification of Z-offset, and more. Do more with your creativity, your time, and your Pulse using MatterControl.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Technical Specifications - Pulse:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>The Pulse is created specifically for reliable 3D printing for all configurations. By selecting specific industry-leading components, methods, and features the Pros at MatterHackers have engineered a truly reliable and robust 3D printer. Regardless of how you customize your Pulse, each of the components below is assembled, tested, and calibrated on every Pulse when it arrives to you.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BLTouch Auto-calibration Sensor\" src=\"https://lh3.googleusercontent.com/J6xFdtfQxARxIHtStcCDBnPuOMrF406HcoaUk44t6neh-hR50JRlvGMDOHISXHAKAaizX0DyguBIaRZAUtYniMuqc_Y=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BLTouch Bed Leveling Probe</div>\r\n<div class=\"desc\">The Pulse 3D printer arrives stock with a BLTouch Probe Auto-leveling system - the most technologically advanced auto-calibration solution available. The BLTouch gathers data by physically touching the bed. This method ensures more accurate data, allowing exact bed leveling and easy flexibility switching between bed surfaces. Enjoy this included feature that makes your 3D printing process faster and more efficient.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Heated Bed with installed BuildTak (included)\" src=\"https://lh3.googleusercontent.com/ItO8OeE1Q3UguW919h4YqfxmXyFajNCSwDb9Og4eEB-Evjg6xJ1OgkX3-IpF37FyN632jr_RPj6IB0AOqFhGyRiP=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">24V Heated Bed with Installed BuildTak</div>\r\n<div class=\"desc\">Print with a wide variety of materials on the Pulse 3D printer's heated bed. Designed to operate at 24V, this FDM machine easily handles the high-performance demands required from a 24V power supply. Not only does this component heat up quickly, but it also does it consistently throughout the entire surface which allows for reliable&nbsp;bed adhesion and delivers the best print results possible. The bed has a pre-installed sheet of BuildTak, making it incredibly easy for prints of various filaments to stick during printing and easy to remove once completed. No more dealing with bubbles and overlaps using blue tape.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"EZR Struder with E3D Lite6 hotend\" src=\"https://lh3.googleusercontent.com/b_gxVwqDaXQYLRtyxjX4YiebCRKYANMI1dE2096yO5zhBJ8U396J_fmPnXtrgRWzhoSQzBrtriD-NinKJxcF0SM=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">EZR Struder (1.75mm) with E3D Lite6 HotEnd and Brass Nozzle</div>\r\n<div class=\"desc\">For those interested in fine-tuning their printing with no need for high-temperatures, the E3D Lite6 is the perfect hotend set up for you. Thermal transitions are kept sharp inside the hotend making 3D printing an easier, smoother, and all-around better experience for those interested in printing with standard filament such as PLA and ABS. The EZR Extruder is replaced by the Bondtech Extruder, the E3D Lite6 is replaced by the E3D V6, and the brass nozzle is replaced by the hardened steel nozzle if you select the Bondtech Extruder Upgrade.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Capricorn Tubing XS Tubing\" src=\"https://lh3.googleusercontent.com/z-nzDdtvWsS-e8N9Y7rs48go2uo5lhBiPqololq2sidYgkTB6sA9Ddotq81mZ5a1WYSk1laaDNzRj3D9FnDNCdKSwYxwlhgfjyr9=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Capricorn Tubing XS Tubing - Premium Bowden Tubing (1.75mm)</div>\r\n<div class=\"desc\">The filament's journey from the spool to the hotend has never been more reliable and smooth thanks to the Capricorn Tubing XS Series. Every Pulse 3D printer comes pre-installed with this premium quality PTFE Bowden Tubing that has been carefully engineered to make FDM 3D printing seamless. Using a special formula to add lubricity to the inner tube, issues resulting from hysteresis are effectively eliminated.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"24V Power Supply\" src=\"https://lh3.googleusercontent.com/G0gVYDJ_Ujolrlbm3Vgb01VC1-pwff8uhKqrfyut0klGFwVGnGw0DnFlz9bY2eudillb1Fts-NWsQuJ21Xs634iq=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">24V Power Supply and Spool Holder</div>\r\n<div class=\"desc\">Careful consideration has been invested into the components and design of the Pulse and it shows via the beautiful prints it produces. Using a 24V power supply, the Pulse 3D printer has the power to process any tasks thrown its way so no missteps occur during a print job. The beautiful results you see are also in part due to added stability to the machine when attaching the power supply to the frame. Add that the spool holder extends from the power supply and you got yourself an insanely robust 3D printer that has a sweet seamless flow of filament, further ensuring the FDM extrusion process goes smoothly for amazing results.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Spool of MatterHackers PRO Series Filament\" src=\"https://lh3.googleusercontent.com/u0YmOnCUuCgLFS9ArV5AY84-a07aM42jDxaIMvixXl8YadbYuQTQoymKT9kB1rIQm5fHs8Q_EKxBBM09M4w88Xo=s240-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">One Spool of 1.75mm PRO Series Filament (1kg)</div>\r\n<div class=\"desc\">Our MatterHackers PRO Series filament is manufactured to the tightest tolerances on the market. Engineered to highlight the strengths of its printing material, rest assured that the filament you're using is the best of the best, and made in the USA.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Robust and Stable i3 design\" src=\"https://lh3.googleusercontent.com/aB1ryie5-7X4VbWNkCcnVil8y656SfKGyum7Mx53sWRyWOQctSQRT_5olAkyxutKajR0_6jScGcqGTDK-55DLlQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Robust and Reliable i3 Design</div>\r\n<div class=\"desc\">Based on the proven, open-source Prusa i3 frame design, the Pulse 3D printer&rsquo;s design is robust and reliable at its core. Its current iteration has been improved to include a robust, aluminum extruded base that provides more rigidity and reliability. Attached to the frame is a 24V power supply that adds even more rigidity and stability resulting in the beautiful clean prints you'll be producing with this machine. With the spool holder that attached to the power supply, filament flow is seamless so any chances of uneven extruded layer lines are reduced. The Pulse 3D printer is truly designed to give you the best results possible.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterControl\" src=\"https://lh3.googleusercontent.com/L9JDIQzvzJQ4KR8jTN-ckCvA4_QXt3xJq9NxKkbtV8P83kTPF_MK186PuKfsSINaRv63pVajSbJTAP3WJSSZIsSC=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterControl 3D Printer Software Including Power Recovery</div>\r\n<div class=\"desc\">MatterControl is a free, open-source, all-in-one software package that lets you design, slice, organize, and manage your 3D prints. Developed in-house by MatterHackers, MatterControl is paired with printer settings ideal for the Pulse 3D printer. Increase your chances of printing success with helpful features such a power recovery, reloading filament mid-print, real-time modification of Z-offset, and more. Do more with your creativity, your time, and your Pulse using MatterControl.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"></div>\r\n</div>\r\n</div>\r\n</div>", 
                     "ElementCode": "PQJVFY", 
                     "Images": [], 
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>What's in the box?</h2>\r\n</div>\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-6\">\r\n<ul>\r\n<li><span>Pulse Custom Assembled 3D Printer</span></li>\r\n<li><span>Spool of MatterHackers PRO Series Filament</span></li>\r\n<li><span>Art Knife</span></li>\r\n<li><span>Power Supply</span></li>\r\n<li><span>USB Cable</span></li>\r\n<li><span>Quick Start Guide</span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/puOG2GxP-bDnxGrfdPJuRXTw5p1gJCESVf2OhdxAYlQ64FX7-2B-RleGNvP9-2MoDyO-e6T6_-l73SENp1EqoJ0=w660\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>What's in the box?</h2>\r\n</div>\r\n<div class=\"row flex-center\">\r\n<div class=\"col-lg-6\">\r\n<ul>\r\n<li><span>Pulse Custom Assembled 3D Printer</span></li>\r\n<li><span>Spool of MatterHackers PRO Series Filament</span></li>\r\n<li><span>Power Supply Cord</span></li>\r\n<li><span>USB Cable</span><span></span></li>\r\n<li><span>Art Knife</span></li>\r\n<li><span>3 pc Hex Wrench Set</span></li>\r\n<li><span>Quick Start Guide</span></li>\r\n</ul>\r\n</div>\r\n<div class=\"col-lg-6\">\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/VbMg981vWrzaAfPdC1b1Xm0k6xE4gfuglmGNrdh-Eyv3MCbAE67tWeha4c7zb5tyZoR1UouNm8Vs75qaO2A5oKeA05h2CPyKDdz4=w660\" class=\"rounded\" /></div>\r\n</div>\r\n</div>", 
                     "ElementCode": "6UOKPE", 
                     "Images": [], 
                     "Type": "Text"
@@ -531,68 +566,83 @@
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"flex-center section\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/7UXR6V0MMSM8_I3r4iRaPep9dtsqOVPdG0Gdn2T0QmoIKx0AATo4j7RldLs8DA1GVWdGSiAFWa6khISpzmI-anI_kg=s400\" /></div>\r\n<div id=\"technical\">\r\n<div class=\"collection-table collection-slant\">\r\n<h2>Technical Information</h2>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<td>Build Volume</td>\r\n<td>250 x 220 x 215 mm (10 x 9 x 8.5 in)</td>\r\n</tr>\r\n<tr>\r\n<td>Machine Volume<br />(L x W x H)</td>\r\n<td>559 x 464 x 584 mm (22 x 18.25 x 23 in)<br />These dimensions include wires protruding from the machine. The X, Y, and Z movement do not go beyond these dimensions.</td>\r\n</tr>\r\n<tr>\r\n<td>Speed</td>\r\n<td>travel speed of up to 250 mm/s and a print speed as high as 60 mm/s</td>\r\n</tr>\r\n<tr>\r\n<td>Resolution</td>\r\n<td>20 microns (.02mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Layer Height</td>\r\n<td>30 microns (.03mm) to 350 microns (.35 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Filament Diameter</td>\r\n<td>&Oslash;<strong>&nbsp;</strong>1.75 mm</td>\r\n</tr>\r\n<tr>\r\n<td>Extruder</td>\r\n<td>\r\n<p>SeeMeCNC EZRstruder</p>\r\n<p>Bondetch QR Extruder (Upgrade)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Nozzle</td>\r\n<td>\r\n<p>E3D v6 Nozzle - 1.75mm x 0.40mm (Brass)</p>\r\n<p><span>E3D Hardened Steel Nozzle&nbsp;0.40mm&nbsp;(w/&nbsp;Bondtech upgrade)</span></p>\r\n<p><span>Olsson Ruby Nozzle&nbsp;</span>0.4mm (w/&nbsp;<span>Olsson Ruby Nozzle upgrade</span>)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Max HotEnd Temp</td>\r\n<td>\r\n<p>E3D Lite6 &lt;255&deg;C</p>\r\n<p>E3D V6 &lt;295&deg;C (Upgrade)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Max Heated Bed Temp</td>\r\n<td>Currently Set to 120&deg;C</td>\r\n</tr>\r\n<tr>\r\n<td>Print Surface</td>\r\n<td>\r\n<p>Heated Bed with installed BuildTak</p>\r\n<p>BuildTak Flexplate and LayerLock Garolite Build Surface available as upgrades</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Filament Sensor</td>\r\n<td>Yes (Upgrade) - monitors filament to ensure successful printing</td>\r\n</tr>\r\n<tr>\r\n<td>Power Recovery</td>\r\n<td>Yes - MatterControl will recover a printer power loss</td>\r\n</tr>\r\n<tr>\r\n<td>Calibration</td>\r\n<td>Automatic Print Leveling - 9 point BLTouch sensor</td>\r\n</tr>\r\n<tr>\r\n<td>Remote Control</td>\r\n<td>Monitor and control your Pulse 3D printer from your tablet or phone over networking using the integrated MatterControl Sync portal.</td>\r\n</tr>\r\n<tr>\r\n<td>Open Standards</td>\r\n<td>Pulse uses open standard technology, which means compatibility with open source tools and no artificial restrictions around the materials you can use.</td>\r\n</tr>\r\n<tr>\r\n<td>Returns/Warranty</td>\r\n<td><a title=\"MatterHackers Success Guarantee\" href=\"https://www.matterhackers.com/policies/success-guarantee\">MatterHackers Success Guarantee</a>, 1 year repair-or-replace warranty, lifetime support.</td>\r\n</tr>\r\n</table>\r\n</div>\r\n</div>\r\n</div>\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/2MLmmk5jcl2Qs6wHvlwxeccZA3O0skxitmEDyDVQIQpIwU3MEBVDj760U5D_2YjjG6cNOod3Hf_YtFPXMQLh5W0006s=w660-h200-pp\" class=\"rounded\" /></div>", 
+                    "Content": "<div class=\"flex-center section\"><img alt=\"Pulse Logo\" src=\"https://lh3.googleusercontent.com/7UXR6V0MMSM8_I3r4iRaPep9dtsqOVPdG0Gdn2T0QmoIKx0AATo4j7RldLs8DA1GVWdGSiAFWa6khISpzmI-anI_kg=s400\" /></div>\r\n<div id=\"technical\">\r\n<div class=\"collection-table collection-slant\">\r\n<h2>Technical Information</h2>\r\n<div class=\"table-responsive\">\r\n<table class=\"table\">\r\n<tr>\r\n<td>Build Volume</td>\r\n<td>250 x 220 x 215 mm (10 x 9 x 8.5 in)</td>\r\n</tr>\r\n<tr>\r\n<td>Machine Volume<br />(L x W x H)</td>\r\n<td>498 x 555 x 625 mm (19.61 x 21.85 x 24.61 in)<br />These dimensions include the wires protruding from the machine. The X, Y, and Z movements do not go beyond these dimensions. If you purchased any LCD screen upgrades with your printer, add about 92mm to the Length.</td>\r\n</tr>\r\n<tr>\r\n<td>Speed</td>\r\n<td>travel speed of up to 250 mm/s and a print speed as high as 60 mm/s</td>\r\n</tr>\r\n<tr>\r\n<td>Resolution</td>\r\n<td>20 microns (.02mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Layer Height</td>\r\n<td>30 microns (.03mm) to 350 microns (.35 mm)</td>\r\n</tr>\r\n<tr>\r\n<td>Filament Diameter</td>\r\n<td>&Oslash;<strong>&nbsp;</strong>1.75 mm</td>\r\n</tr>\r\n<tr>\r\n<td>Extruder</td>\r\n<td>\r\n<p>SeeMeCNC EZRstruder</p>\r\n<p>Bondetch BMG Extruder (Upgrade)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Nozzle</td>\r\n<td>\r\n<p>E3D v6 Nozzle - 1.75mm x 0.40mm (Brass)</p>\r\n<p><span>E3D Hardened Steel Nozzle&nbsp;0.40mm&nbsp;(w/&nbsp;Bondtech upgrade)</span></p>\r\n<p><span>Olsson Ruby Nozzle&nbsp;</span>0.4mm (w/&nbsp;<span>Olsson Ruby Nozzle upgrade</span>)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Max HotEnd Temp</td>\r\n<td>\r\n<p>E3D Lite6 &lt;255&deg;C</p>\r\n<p>E3D V6 &lt;295&deg;C (Upgrade)</p>\r\n</td>\r\n</tr>\r\n<tr>\r\n<td>Max Heated Bed Temp</td>\r\n<td>Currently Set to 120&deg;C</td>\r\n</tr>\r\n<tr>\r\n<td>Print Surface</td>\r\n<td>\r\n<p>Heated Bed with installed BuildTak</p>\r\n<p>LayerLock MagBase and LayerLock Garolite Build Surface available as upgrades</p>\r\n</td>\r\n</tr>\r\n<!--<tr>\r\n<td>Filament Sensor</td>\r\n<td>Yes (Upgrade) - monitors filament to ensure successful printing</td>\r\n</tr>\r\n<tr>-->\r\n<tr>\r\n<td>Power Recovery</td>\r\n<td>Yes - <a href=\"https://www.matterhackers.com/store/l/mattercontrol/sk/MKZGTDW6\">MatterControl</a> will recover a printer power loss</td>\r\n</tr>\r\n<tr>\r\n<td>Calibration</td>\r\n<td>Automatic Print Leveling - 25 point BLTouch sensor</td>\r\n</tr>\r\n<tr>\r\n<td>Remote Control</td>\r\n<td>Monitor and control your Pulse 3D printer from your tablet or phone over networking using the integrated MatterControl Sync portal.</td>\r\n</tr>\r\n<tr>\r\n<td>Open Standards</td>\r\n<td>Pulse uses open standard technology, which means compatibility with open source tools and no artificial restrictions around the materials you can use.</td>\r\n</tr>\r\n<tr>\r\n<td>Returns/Warranty</td>\r\n<td><a title=\"MatterHackers Success Guarantee\" href=\"https://www.matterhackers.com/policies/success-guarantee\">MatterHackers Success Guarantee</a>, 1 year repair-or-replace warranty, lifetime support.</td>\r\n</tr>\r\n</table>\r\n</div>\r\n</div>\r\n</div>\r\n<div class=\"product-desc-photos clearfix\"><img src=\"https://lh3.googleusercontent.com/2MLmmk5jcl2Qs6wHvlwxeccZA3O0skxitmEDyDVQIQpIwU3MEBVDj760U5D_2YjjG6cNOod3Hf_YtFPXMQLh5W0006s=w660-h200-pp\" class=\"rounded\" /></div>", 
                     "ElementCode": "LV7IXF", 
                     "Images": [], 
                     "Type": "Text"
                 }
             ], 
             "FeaturedImage": {
-                "ImageFile": "/mh-product-images/prod/80d274ea-a57b-4a1a-94b2-360b1712eed1", 
-                "ImageUrl": "https://lh3.googleusercontent.com/HKO2IL1yraTv6XSYcBQgzKmrVIkYrWw4DS1dww7n4uIxnHz0ryzxxQyehv22zHFfVxwOsEJCizvDbrcP900xr_sY", 
+                "ImageFile": "/mh-product-images/prod/eee9d472-3cb4-4c95-b7a5-2028c57d94ad", 
+                "ImageUrl": "https://lh3.googleusercontent.com/tbJtL81GR1Yt1uDg5x-zu5bTa4i05OF8QMOK_PLyGB_1slOxdCovUAYCKnp5pNCNBzlaDpzksgH2SvfVIDAvj0YX5QaobJnhR_2tUQ", 
                 "IsFeatured": true
             }, 
             "HasBeenPublished": true, 
             "HideRewardsFlag": false, 
             "Images": [
                 {
-                    "ImageFile": "/mh-product-images/prod/80d274ea-a57b-4a1a-94b2-360b1712eed1", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/HKO2IL1yraTv6XSYcBQgzKmrVIkYrWw4DS1dww7n4uIxnHz0ryzxxQyehv22zHFfVxwOsEJCizvDbrcP900xr_sY", 
+                    "ImageFile": "/mh-product-images/prod/eee9d472-3cb4-4c95-b7a5-2028c57d94ad", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/tbJtL81GR1Yt1uDg5x-zu5bTa4i05OF8QMOK_PLyGB_1slOxdCovUAYCKnp5pNCNBzlaDpzksgH2SvfVIDAvj0YX5QaobJnhR_2tUQ", 
                     "IsFeatured": true
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/5c96f2b2-f162-4e4f-9359-71478953ae49", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/hCa2BYZ7LE_0a-cPyxgDL7_hRw3JSCT4oFLpo_vXKLO3xNl6FwP7ElyU-yzFSTz0lM0HTv6leePk_u_q28MMq_Uq", 
+                    "ImageFile": "/mh-product-images/prod/62ffe047-1421-490a-8054-49d16bbc170e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/O8e3wo3XLQnlyc5V_uoBcebAznuqQwwrHHdxhv1DKOgoQrRzK1BVoP0rRdvOY7TmepEQxX6xPe3TeIYU9FZx0LxvtNcCgUXkfQL3", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/997cc78a-15ab-4b0e-a102-536b6858d024", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/2n7IU8xqwwB5fX_5eFtwpgvtbfhNdnD4I8b2_gm9uwJSKdsE_xl9F0SWf0bk9B20XYWIi2amzF_IQiEnRWMi8w", 
+                    "ImageFile": "/mh-product-images/prod/c9b80f4d-4f80-47ee-b0c4-c99bd30f5652", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/KpfGIfB7ZSpA9GK5hVgXW8MZaDYNC59qGSZc-0sRUcs6fXSWUSGmOb_83Sr2bQwagDKuCPTiDubQ15gOVvaloPthVnm0YejmfZp7Qg", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/40b008ec-4c9b-42b6-974f-72b5111fcdd6", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/IEIw4Nnk_JxjihSKMQm-Nf9j_SKXTEbqcHiqxSZr-J8PNgxK3-G9Qu5n-i7rBuT5-NH_GE56ikycCIo-y9rzGc3f", 
+                    "ImageFile": "/mh-product-images/prod/fd8e7891-96ce-4204-8397-11e98b328332", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/l9D34afxvKjOVARBikk7sRih-xgi36QISKdsxUdQlbkH-Lo5WeXwLazWJF0lUA47_nj9C531q4sXQSLwUts7zX_F", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/16185715-aeff-43ad-8eae-dd26ea43123e", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/5teY95gUVUi5s3BYyL7ElEA4OMc1gRP3GqSJKrO7Y83TA-T7YURT1HC1veYECLRthiuyuWPbte-aUT2rDMqndw", 
+                    "ImageFile": "/mh-product-images/prod/37bf1f58-246e-4626-afe3-4924e2021155", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/23TnxrNbs7PyQFNl1gPkFfoC0t8fmyU2-oGnAkA-XS9etf5nZ2nVbBN4U4WyWVwlKlPVvlXdy_CsEwk4nlZYNbaep7qRX0Lq7v-zUw", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/0447ce7f-1161-42ff-bb8a-ac0e28f8f269", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/XeS8Rvk2OoSq-aeYP6DUymtpgTYlXZnjpEY6cvWFF6FIzQqtSlTcjZmwVFApoEB5CHEjdJ3XOedraYf5U3u0FQ", 
+                    "ImageFile": "/mh-product-images/prod/d89165c2-b529-4ad6-9536-49e9dca066db", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ksAbSJn1aD9-0yVOH35R_47dgsrbNJDocstFAWm-snXF7OyG0NXPRrrBsMKy1jJ1HYNAhGNDHnMp_X_BXJFCPu-mmHw_z5IsXwCBow", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/0ea52597-54e2-479e-a75b-82ccf7479293", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/fghFadjSmgnzlWQ9MNFbUumn0yq39Ti_sB4ESY3ixNKrzDwZEMmv4kYnDxmi90bS9OKo0Q31WUBJg8TNrQoOXeg", 
+                    "ImageFile": "/mh-product-images/prod/fc7e7af8-072b-42cf-9793-8d841e4b139f", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/DVIycegvhQNPVrkAIulyqye3XY-0OYi7pzIfP2VX806pB8WjCzpuPFA5i25L0vr0qv12ngOjseLzaIUYd5iPT87L0-apvGiuZMw", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/06b3a36e-31c5-4804-ba88-7d101dcfc677", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/oBHaVrayVDwRB-1FAVveZDgbhTlNBKbt_TjiHOvZ6ZEZNcibsGp-3MIykOwJK6tN_qy12cb8Rpve1006xnyvGUAl", 
+                    "ImageFile": "/mh-product-images/prod/5fc7da86-01c7-4c91-bb05-208e437714a6", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/DL3nHtwODTu8707gDQ8_zv0xPruAaD2ylXh8BAkzJDM4Ac0n7QfsrW02ujiEI9FgPrrI02gbmYBeynC2NlLTYm_NKmMaawsDea0", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/45f903f7-2c9d-4ac3-9ee0-b54636cd30c5", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/iM7Nldo2SU6HFypXyHOEiy__pdla9pvQ_omCHfqrK6uwGqUvpZoAoWDicfRiyKLdHTyVCx61uBpKamUufTmpUPU", 
+                    "ImageFile": "/mh-product-images/prod/ccd49d6a-17d6-4b3b-b116-360098dd3554", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/BGW_UaxX77HlA2dETWYH_Ur52wEO1lNOimtEBrFkpwhzWcQ2MzQaVkut70m62ZRnl2sz_qLGHcUkDpEu_2rplDAD", 
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/d1d4cd56-95fa-490c-818a-bdd61a561e96", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/0PHKVTSR-pt2wdcST2wEnYM_4jLeqvtGTQozBC0iDRBbvnqXCSH8XFuhZz-biAwIvG5mzPk7aaobdQMjOE_5Ib6r", 
+                    "ImageFile": "/mh-product-images/prod/7a119134-187d-4d75-b66a-b403404876ea", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/pZap3BhOK7o9hIJisS0OyHrpjRtfIBCWC5eY87RbV5zi6mRvEk4lcwSZ_6ibFmFqybb0OAbnF4xXt2tNiuT0-h0", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/5499b218-655e-4c64-9e85-a5ba9f1bc279", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/uir3_llW5QAC9M5iC0O8re0txB4bhwXuQS_hHN625NpfJQf93p_09lDuj9KCIjGAOxzQ7ycK_9j_3u-XFO_XlReS", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/5d0398fd-2149-4111-87cd-011ac160b3de", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/rRInkRaDHUV0yk92e-mofxvjV5WzMdA-D-f8iVdvVJ7YzGbhsCPBZZc_AUyZGzCC69Y4vjNw8sLG1uKyyygkjQ", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/92461bdb-8daf-471a-b44c-fdcc981cf2a2", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/bQBmYO875o_rNzDR8C5OceSI5DFcf1TABTh3oBxPAK0cIm0BQOhMZP8pozaJqLur8AZ1oDdyRPu93in2IeK-dNHkyJkqbcfHzuWo", 
                     "IsFeatured": false
                 }
             ], 
@@ -615,7 +665,7 @@
             ], 
             "PreOrderFlag": true, 
             "ProductCreatedOn": "2017-07-25T07:08:32.377540", 
-            "ProductEditedOn": "2020-06-12T23:06:18.452079", 
+            "ProductEditedOn": "2020-12-10T20:19:28.659964", 
             "ProductType": "physical-on-demand", 
             "RedirectUrl": "", 
             "ReferenceUrl": "pulse-3d-printer", 
@@ -623,7 +673,7 @@
                 "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBOXFuTG9nb00M", 
                 "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICA-rKNCgw"
             ], 
-            "ShortDescription": "Introducing the Pulse 3D printer - an amazingly high-quality machine, customized to meet your 3D printing needs. Pulse is **assembled, tested and guaranteed by the pros at MatterHackers** in California. \r\n\r\nBuilt on top of the proven, open source Prusa i3 design, the Pulse is custom assembled to your specifications with the latest and greatest high quality components pre-installed for the best possible experience out of the box.", 
+            "ShortDescription": "Introducing the Pulse 3D printer\u2014an amazingly high-quality machine, customized to meet your 3D printing needs to succeed. **Pulse is assembled, tested, and guaranteed by the pros at MatterHackers in Orange County, California.**\r\n\r\nBuilt on top of the proven, open source Prusa i3 design, the Pulse is also constantly improving and incorporating new and exciting technology as the 3D printing industry grows. This powerful state-of-the-art FDM machine is on its 5th evolution\u2014the E Series\u2014and is custom assembled to your specifications with the latest and greatest high quality components pre-installed for the best possible experience out of the box. Pick and choose which features are the most important to you, while still having a robust platform to build off of.", 
             "ShowAddToCart": true, 
             "ShowQuestionsFlag": true, 
             "Subtitle": "", 
@@ -639,11 +689,14 @@
         "QuantityOnHand": 33, 
         "QuantityReserved": 1, 
         "ReferenceUrl": "pulse-3d-printer", 
+        "RetiredDateTime": null, 
         "SID": "MUY6R1P5", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Pulse 3D Printer - Custom Pre-Assembled", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 2, 
         "TotalWeight": 12700590, 
         "TotalWeightGrams": "12,700.59", 
         "TotalWeightKilograms": "12.70", 
@@ -651,7 +704,8 @@
         "Weight": 12700590, 
         "WeightGrams": "12,700.59", 
         "WeightKilograms": "12.70", 
-        "WeightPounds": "28.00"
+        "WeightPounds": "28.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

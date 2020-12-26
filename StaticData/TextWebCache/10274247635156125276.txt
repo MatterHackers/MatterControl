@@ -42,4 +42,4 @@ Welcome to the MatterControl help system. Below you can find quick links to get 
 
 * [Frequently Asked Questions](frequently-asked-questions.md)
 * [Settings FAQ](slice-settings/settings-faq.md)
-* [Geting More Help](get-support.md)
+* [Getting More Help](get-support.md)

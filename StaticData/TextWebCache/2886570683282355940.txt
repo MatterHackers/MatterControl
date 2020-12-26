@@ -18,6 +18,7 @@
         "DisplayListPrice": "114.99", 
         "DisplayPrice": "110.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/8cf4cc7e-5cb2-4a74-9713-a6c8b53d5c72", 
             "ImageUrl": "https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM", 
@@ -31,6 +32,7 @@
         "IsOneTimeItem": false, 
         "IsRetired": false, 
         "IsSearchable": true, 
+        "IsWarranty": false, 
         "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUzlDVjhZQww", 
         "LeadDays": 0, 
         "LegacySku": null, 
@@ -42,9 +44,12 @@
             "9.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "While the Pulse 3D printer is built to last, we recommend you give a little TLC to your printer every once in a while. Enter in the Pulse Maintenance Kit. Keep your printer working as new as the day you received it for years to come with the occasional simple maintenance using essential components and tools in this kit.", 
         "ProductListPrice": 11499, 
         "ProductListing": {
@@ -179,15 +184,18 @@
         "ProductPrice": 11000, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 14, 
-        "QuantityOnHand": 14, 
+        "QuantityAvailable": 0, 
+        "QuantityOnHand": 0, 
         "QuantityReserved": 3, 
         "ReferenceUrl": "pulse-3d-printer-maintenance-kit", 
+        "RetiredDateTime": null, 
         "SID": "MS9CV8YC", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Pulse 3D Printer Maintenance Kit", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 397000, 
         "TotalWeightGrams": "397.00", 
         "TotalWeightKilograms": "0.40", 
@@ -195,7 +203,8 @@
         "Weight": 292000, 
         "WeightGrams": "292.00", 
         "WeightKilograms": "0.29", 
-        "WeightPounds": "0.64"
+        "WeightPounds": "0.64", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

@@ -16,6 +16,7 @@
         "DisplayListPrice": "129.99", 
         "DisplayPrice": "124.99", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "57.50", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/7ec69a65-afc1-45b3-be1c-f24bc0cae2aa", 
             "ImageUrl": "https://lh3.googleusercontent.com/PdEwBZq6O5YgbZXkQ1hqeIvikgTVFgw9iyZ6Xxg8NcPu-QQY8CclJD8X2VzuKTSRqULtB0G34ndYBoOVHhdcFBo", 
@@ -24,11 +25,12 @@
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": true, 
         "IsActive": true, 
-        "IsDirty": false, 
+        "IsDirty": true, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
-        "IsRetired": false, 
+        "IsRetired": true, 
         "IsSearchable": true, 
+        "IsWarranty": false, 
         "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
         "LeadDays": 0, 
         "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GPvl0XwM", 
@@ -40,9 +42,29 @@
             "15.00"
         ], 
         "PackagedToShip": true, 
-        "PreOrderFlag": true, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T22:31:31.837644", 
+            "DateTimeModified": "2020-01-21T22:31:41.481917", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICF3OPCCAw", 
+            "Name": "TDL Systems", 
+            "PrimaryContact": null, 
+            "SecondaryContact": null, 
+            "SkuCount": 2, 
+            "SuppliedSIDs": [
+                "MNXQRWQC", 
+                "MZK6ZEMP"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks2WkVNUAw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICF3OPCCAw", 
         "ProductDescription": "The PrintDry Filament Drying System is an easy and affordable solution for 3D printing projects that use hygroscopic materials like nylon, PETG, PVA, and flexible filament. Many types of filament are hygroscopic, meaning it absorbs ambient moisture from the atmosphere if it isn't sealed in an air-tight container. The PrintDry Filament Drying System gives users two options for drying filament. With the included feed ports on the side of the container, feeding filament while it is being dried straight to the 3D printer means there is very little chance that moisture-laden filament will ruin your prints. Users can also pre-dry filament and have it ready to print outside the PrintDry as well. With a capacity of two spools and up to 4.5kg of filament, getting your favorite filament ready for optimized 3D printing is easy. Filament storage vacuum sealed container with air removal pump included.", 
         "ProductListPrice": 12999, 
         "ProductListing": {
@@ -68,8 +90,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICqmOD_Cgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks2WkVNUAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": -5, 
-                    "QuantityOnHand": -5, 
+                    "QuantityAvailable": -3, 
+                    "QuantityOnHand": -3, 
                     "SingleSku": true
                 }
             ], 
@@ -198,9 +220,9 @@
                 "dehydrator", 
                 "dry"
             ], 
-            "PreOrderFlag": true, 
+            "PreOrderFlag": false, 
             "ProductCreatedOn": "2017-10-03T00:11:32.412950", 
-            "ProductEditedOn": "2020-04-15T23:18:55.842797", 
+            "ProductEditedOn": "2020-07-22T18:59:54.874443", 
             "ProductType": "physical-inventory", 
             "RedirectUrl": "", 
             "ReferenceUrl": "printdry-filament-drying-system", 
@@ -220,15 +242,18 @@
         "ProductPrice": 12499, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 311, 
-        "QuantityOnHand": 311, 
+        "QuantityAvailable": -1, 
+        "QuantityOnHand": -1, 
         "QuantityReserved": 1, 
         "ReferenceUrl": "printdry-filament-drying-system", 
+        "RetiredDateTime": "2020-10-02T10:48:35.577892", 
         "SID": "MNXQRWQC", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "PrintDry Filament Drying System", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 4082000, 
         "TotalWeightGrams": "4,082.00", 
         "TotalWeightKilograms": "4.08", 
@@ -236,7 +261,8 @@
         "Weight": 4082000, 
         "WeightGrams": "4,082.00", 
         "WeightKilograms": "4.08", 
-        "WeightPounds": "9.00"
+        "WeightPounds": "9.00", 
+        "WholesaleCost": 5750
     }, 
     "Status": "success"
 }

@@ -1,0 +1,228 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [
+            {
+                "Data": "temp", 
+                "DateTimeCreated": "2020-11-06T00:43:33.047540", 
+                "Description": "The PrintDry PRO filament dryer system alone, no upgrades", 
+                "HexColor": null, 
+                "Image": null, 
+                "Key": "ag1zfm1oLXBscy1wcm9kclsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKX5yJ0JDAsSFlByb2R1Y3RBdHRyaWJ1dGVPcHRpb24YgIDA1d2P1gsM", 
+                "Name": "PrintDry PRO", 
+                "PriceModifier": 0, 
+                "ProductAttributeKey": "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKX5yJ0JDA", 
+                "Reference": "printdry-pro-options:printdry-pro-filament-drying-system"
+            }
+        ], 
+        "AvailableDate": "2020-12-09", 
+        "BarCodeID": "", 
+        "Brand": "PrintDry", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2020-04-01T21:32:24.736900", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Dec 9th", 
+        "DisplayListPrice": "199.99", 
+        "DisplayPrice": "159.00", 
+        "DisplayPriceFlag": false, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/47f19e4a-36bf-473e-871c-c395cf1a143b", 
+            "ImageUrl": "https://lh3.googleusercontent.com/e5Z6hKsKA2b43Y-YUS57FModE7GcwGM9V-tiXotBpsTLsWtVzCL6SU3QMecfVHqHdou9SDZsGm_vT-j8RHwJtSUtXp5jSIKB3gWv", 
+            "IsFeatured": false
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "13.38", 
+            "10.62", 
+            "12.59"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T22:31:31.837644", 
+            "DateTimeModified": "2020-12-08T23:36:51.579521", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICF3OPCCAw", 
+            "Name": "TDL Systems", 
+            "PrimaryContact": "vanessa.yio@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 5, 
+            "SuppliedSIDs": [
+                "MNXQRWQC", 
+                "MZK6ZEMP", 
+                "M25THN6X", 
+                "MWU296R0", 
+                "MW3WFTL6"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlhRUldRQww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks2WkVNUAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNV1UyOTZSMAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVzNXRlRMNgw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICF3OPCCAw", 
+        "ProductDescription": "Printdry has created an optimal filament drying system for 3D printing projects that use hygroscopic materials like Nylon, PETG, PVA, and flexible filament.  The Printdry PRO is the upgrade from the original Printdry packed with features like digital display that allows easy temperature adjustments, built in timer, double-wall for closed loop temperature control, and a vertical mounting for easy add-ons such as large spool kit to dry larger spools up to 5kg or additional chamber allowing you to dry 4 spools at a time. Choose between Printdry PRO standalone, with a Large Spool Kit or Additional Chamber Kit, or all together. Your ultimate filament drying experience starts here.\r\n\r\n\r\n", 
+        "ProductListPrice": 19999, 
+        "ProductListing": {
+            "ActiveSkuCount": 4, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU01MWkZLWgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMk1HUFIxUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjNFSDZERgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMjVUSE42WAw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 9995, 
+                    "AddOnDiscountDisplay": 4, 
+                    "AddOnDisplayBasePrice": "99.95", 
+                    "AddOnDisplayPrice": "94.99", 
+                    "AddOnDisplaySavings": "4.96", 
+                    "AddOnFloatPrice": 94.99, 
+                    "AddOnListingReference": "printdry-filament-storage-vacuum-sealed-package-of-5", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 9499, 
+                    "AddOnSavings": 496, 
+                    "AddOnSkuReference": "MZK6ZEMP", 
+                    "AddOnTitle": "Printdry Filament Storage Vacuum Sealed - Package of 5  ", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICqmOD_Cgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks2WkVNUAw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [
+                "ag1zfm1oLXBscy1wcm9kcjgLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQwLEhBQcm9kdWN0QXR0cmlidXRlGICAwKX5yJ0JDA"
+            ], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-11-06T00:42:45.396936", 
+            "DisplayPriceRange": "$159.00 - $225.00", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>PrintDry PRO - 3D Printing Filament Drying Solution</strong></h3>\r\n<p>This PrintDry PRO is the perfect moisture control solution for filament storage. This filament drying container features automatic humidity control that can hold up to two standard spools. This storage provides a quick and simple way to store your filament without any hassle. How does it work? Simply set the desired temperature, put in the filament and the PrintDry will take care of the rest!&nbsp;</p>\r\n<div id=\"gtx-trans\">\r\n<div class=\"gtx-trans-icon\"></div>\r\n</div>", 
+                    "ElementCode": "3AYOHB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Print Straight&nbsp;from the PrintDry PRO Moisture Control Solution</strong></h3>\r\n<p>Not only will your filament be kept dry, but also easily accessible via the two small openings on the side of the chamber. This means you don't have to choose between using your filament and drying it - leave it in the PrintDry PRO overnight, then feed the dry material directly from the machine into your 3D printer. With PrintDry PRO, your filament will stay completely dry, easily accessible, perfectly identifiable, (i.e. no need to open every container to find the right kind of filament you are looking for), and ready to be used at anytime you start a print.&nbsp;</p>\r\n<div id=\"gtx-trans\">\r\n<div class=\"gtx-trans-icon\"></div>\r\n</div>", 
+                    "ElementCode": "NRDXSF", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>PrintDry PRO - The Best Solution for 3D Printing with Hygroscopic Materials</strong></h3>\r\n<p>Many advanced materials like NylonX, <a href=\"https://www.matterhackers.com/store/c/nylong\">NylonG</a>, <a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20Nylon\">Nylon</a>, <a href=\"https://www.matterhackers.com/store/c/pva-support-filament\">PVA</a>, and <a href=\"https://www.matterhackers.com/store/c/PRO%20Series%20PETG\">PETG</a> are incredibly hygroscopic, which means that they can absorb moisture right from the air. When these (or any) material have moisture in them, they do not print well. It's important to take the time to dry your filament to get the best results possible - the PrintDry PRO 3D filament Drying Solution is the easiest way to get the most from your filament.&nbsp;</p>\r\n<div id=\"gtx-trans\">\r\n<div class=\"gtx-trans-icon\"></div>\r\n</div>", 
+                    "ElementCode": "7V8J2X", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Specifications:</strong></h3>\r\n<ul>\r\n<li>Weight: 8lbs</li>\r\n<li>Outside dimension: 320mm x 270mm x 340mm</li>\r\n<li>Drying temperature: 5 presets for different filament type; <span>35&ordm;C, 45&ordm;C, 55&ordm;C, 65&ordm;C, and 75&ordm;C</span></li>\r\n<li>Drying time: digital timer with 48 hours max, built-in auto off</li>\r\n</ul>\r\n<p>For more technical information regarding the <a href=\"https://www.matterhackers.com/r/x3Vbot\">Printdry PRO</a></p>\r\n<p></p>\r\n<p></p>\r\n<p></p>", 
+                    "ElementCode": "KPKOPS", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/bb44e752-7f78-4405-a1e3-8c42678c498b", 
+                "ImageUrl": "https://lh3.googleusercontent.com/0iqhykV6FbbEwPLO8HtJlj9GI_SPj6-o3V3stb7z-F68kI1r-gvLGC1OQChY3TmVdKeM0O1QghOAMrlsRcUwzRoBzD6e-E6G3ysF", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/bb44e752-7f78-4405-a1e3-8c42678c498b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/0iqhykV6FbbEwPLO8HtJlj9GI_SPj6-o3V3stb7z-F68kI1r-gvLGC1OQChY3TmVdKeM0O1QghOAMrlsRcUwzRoBzD6e-E6G3ysF", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/63429065-43df-4a28-a868-82a8a0f51918", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/AzTS4AhH3k8WHq4fhoQ-Df3_4jHpvQBObfWDfBoz1Kfq4_MDQmVxUVYe_yrp9C5n6fHbJtQXSqC27qg_rSWM7-wXB7V8fOgG3XNk", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQw", 
+            "MetaTagKeywords": [
+                "print dry", 
+                "drybox", 
+                "dry box", 
+                "dehydrator", 
+                "dry"
+            ], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2020-11-06T00:42:45.396928", 
+            "ProductEditedOn": "2020-12-14T22:01:23.593175", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "printdry-pro-filament-drying-system", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBdS15S3Fnb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcGVtbTlRa00M"
+            ], 
+            "ShortDescription": "Printdry has created an optimal filament drying system for 3D printing projects that use hygroscopic materials like Nylon, PETG, PVA, and flexible filament.  The Printdry PRO is the upgrade from the original Printdry packed with features like digital display that allows easy temperature adjustments, built in timer, double-wall for closed loop temperature control, and a vertical mounting for easy add-ons such as large spool kit to dry larger spools up to 5kg or additional chamber allowing you to dry 4 spools at a time. Choose between Printdry PRO standalone, with a Large Spool Kit or Additional Chamber Kit, or all together. Your ultimate filament drying experience starts here.\r\n\r\n\r\n", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "PrintDry PRO Filament Drying System"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMClyrygCQw", 
+        "ProductNumber": null, 
+        "ProductPrice": 15900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 55, 
+        "QuantityOnHand": 55, 
+        "QuantityReserved": 3, 
+        "ReferenceUrl": "printdry-pro-filament-drying-system", 
+        "RetiredDateTime": null, 
+        "SID": "M25THN6X", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "PrintDry PRO Filament Drying System", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 5085900, 
+        "TotalWeightGrams": "5,085.90", 
+        "TotalWeightKilograms": "5.09", 
+        "TotalWeightPounds": "11.21", 
+        "Weight": 5085900, 
+        "WeightGrams": "5,085.90", 
+        "WeightKilograms": "5.09", 
+        "WeightPounds": "11.21", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}

@@ -118,7 +118,7 @@ The speed multiplier can be used to speed up or slow down a print. The speed mul
 Extrusion Multiplier
 --------------------
 
-During an active print, the extrusion multiplier modifies the extrusion flow rate, allowing you to increase or decrease the amount of plastic layed down.
+During an active print, the extrusion multiplier modifies the extrusion flow rate, allowing you to increase or decrease the amount of plastic laid down.
 
 This variable is different from that of the Extrusion Multiplier slice setting and will work in conjunction with it. For example, if the slicer setting is set at 1.06 and then the slider in Controls is used during the print and set to 1.08, the total result will be a multiplier of 1.1448 (1.06 * 1.08).
 

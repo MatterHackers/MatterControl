@@ -1,0 +1,185 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-08-17", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2020-08-17T21:27:37.188747", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Aug 17th", 
+        "DisplayListPrice": "60.00", 
+        "DisplayPrice": "55.00", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/5b805ad9-79c5-4877-a897-76236fe6cf31", 
+            "ImageUrl": "https://lh3.googleusercontent.com/sIi_offCc8E8N-gEhMxP9WSTi9LQ1u1IC7jpWofc2riEDHUezGpUDOL8tDn5Q4JaOElOHt1j27LbUedXbcOdSm4", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": false, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWU1FUlVHUQw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductDescription": "Ready to upgrade your 3D printing experience to include more convenience? Introducing LayerLock MagBase\u2014the ideal solution that allows users the flexibility to detach and interchange surfaces for seamless 3D printing production. LayerLock MagBase is strong enough to hold down a metal build plate in place for stable printing while also capable of easily releasing the plate whenever you choose to detach it to remove a print, switch build surfaces or reduce down time between production. Have the freedom to print on any build surface compatible with magnetic bases and the dimensions of your printer with LayerLock MagBase. This upgrade comes with the magnetic base and the extra flexplate by BuildTak. The bed surface that will attach to the flexplate will depend on the bed surface option you choose when purchasing your Pulse.", 
+        "ProductListPrice": 6000, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWU1FUlVHUQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2020-08-17T21:27:36.992048", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/664Hi73fdUt0S2wsh4xxazBqt7OD4rJrvm7rEABLZHRryJw2ownBeV-TE9l71T7lUdK2xYUvVXp0-FYOmuBOhKY=s660\" /></p>", 
+                    "ElementCode": "K8F8PP", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MAXIMIZE PRODUCTIVITY AND CONVENIENCE OUT OF YOUR 3D PRINTING EXPERIENCE</strong></h3>\r\n<p>Save effort removing parts from your build surface and maintain higher print up time thanks to LayerLock MagBase, the flexible magnetic base designed to bring convenience to your 3D printing experience. A magnetic base with interchangeable build plates is easily one of the most accessible upgrades makers can install on their 3D printer. With LayerLock MagBase, simply adhere it to your bare print bed, attach any magnetic build plate to it, adjust your z-height and you're ready to reap all the beneficial perks! No more struggling to scrape off prints at awkward angles or in restricted spaces&mdash;detach the plate from the magnetic base and pop your print off with a simple bend. Want to reduce the amount of time spent between removing a part and starting your next print? Simply take off the current build surface that's magnetically attached and throw on a spare plate for seamless production. Not interested in being tied down to one type of build surface? Switch between any surface that can be attached to a plate such as powder coated PEI, garolite and even glass thanks to LayerLock MagBase's diverse compatibility. The benefits of a magnetic base with detachable build plates are so popular that some 3D printers such as the <a title=\"Pulse 3D Printers\" href=\"https://www.matterhackers.com/store/c/Pulse\" target=\"_blank\" rel=\"noopener\">Pulse</a> offer options for a pre-installed magnetic base on the print bed. Install LayerLock MagBase on your 3D printer and experience the invaluable convenience for yourself.</p>", 
+                    "ElementCode": "E7E27D", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><strong>FLEXIBLE OPTIONS FOR A FLEXIBLE BASE</strong></p>\r\n<p>LayerLock MagBase locks down on build plates during printing, but remains flexible with build surface options. This product is sold as a magnetic base alone so users may choose to mix and match what types and how many different types of build surfaces they would prefer to make with their purchase. Every maker from beginners to veterans has a unique 3D printing experience which is why LayerLock MagBase offers flexibility in build surface options. Only want a powder coated PEI build plate? How about all the different surfaces currently listed in the add-ons? Maybe you already have a build plate and don't need an add-on? Whatever your reason, LayerLock MagBase offers flexibility for every maker's individual needs.</p>", 
+                    "ElementCode": "0FM4XB", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><img src=\"https://lh3.googleusercontent.com/dgY1CCAXDGVoUs0F4cVI14a6-0Ok--Zq9tnZ9Nw-A_6xpMfLnCjqPjrWUIahkehESdDpe2y4F59hMfMzXHFrDg=s660\" /></p>", 
+                    "ElementCode": "OR9MRA", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>TECHNICAL SPECIFICATIONS</strong></h3>\r\n<ul>\r\n<li>Flexible Magnetic Sheet with Adhesive Backing</li>\r\n<li>Dimensions (L x W x H): 9\" x 10\" x 0.03\" (228mm x 254mm x 0.762mm)</li>\r\n<li>Recommended Operating Temperatures: &lt;85&deg;C</li>\r\n<li>Recommended Max Operating Temperature: &lt;100&deg;C\r\n<ul>\r\n<li>Please note that magnets tend to permanently lose some magnetism when consistently exposed to temperatures of&nbsp;100&deg;C+ for long periods of time.</li>\r\n</ul>\r\n</li>\r\n</ul>", 
+                    "ElementCode": "YL6JC2", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MATERIAL COMPATIBILITY</strong></h3>\r\n<p>When printing on an attachable build plate with this magnetic base, the following filaments are compatible:</p>\r\n<ul>\r\n<li>PLA (Various)</li>\r\n<li>ABS</li>\r\n<li>PET</li>\r\n<li>PETG</li>\r\n<li>TPU</li>\r\n<li>TPE</li>\r\n<li>Nylon (Various)</li>\r\n<li>Wood-fill Materials</li>\r\n<li>Metal-fill Materials</li>\r\n<li>ColorFabb nGenn</li>\r\n<li>Taulman 910</li>\r\n<li>Taulman T-Glase</li>\r\n<li>HIPS</li>\r\n<li>PVA</li>\r\n</ul>", 
+                    "ElementCode": "WLCH2H", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>INSTALLATION</strong></h3>\r\n<p>If your 3D printer comes with a pre-installed build surface, carefully remove it from the print bed and clean the bare surface of any leftover adhesive residue, dirt, dust, etc. with 91%+ isopropyl alcohol on a paper towel. If using acetone to remove the leftover adhesive, make sure the acetone is only used on the areas with adhesive still attached. Place the LayerLock MagBase on the print bed (with the adhesive liner still attached) and confirm you are satisfied with the placement before attempting attachment. Remove the adhesive half way and carefully stick the exposed side onto the print bed, making sure to align it parallel with the print bed. Slowly and firmly smooth the rest of the magnetic sheet onto the bed with your hand from one side to the other, making sure to leave no air bubbles underneath. If you do find air bubbles under the sheet, make sure to use a credit card to push the air bubbles out towards the nearest corner/side. Once your base is attached, put on a build plate and level your bed either through the printer or software. Now you are ready to print!</p>", 
+                    "ElementCode": "J8JVCK", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>MAINTENANCE</strong></h3>\r\n<p>We recommend printing at temperatures less than 85&deg;C to maximize your LayerLock MagBase's lifespan. Due to the nature between magnets and heat, reaching temperatures of 100&deg;C+ will increase the chances of permanent magnetism loss if performed consistently for long periods of time. If you notice decrease is magnetism that isn't due to surpassing recommended temperatures, simply wipe the magnetic base clean with 91%+ isopropyl alcohol using a paper towel. Reattach your build plate and you're ready to print again.</p>", 
+                    "ElementCode": "WY4OI5", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/5b805ad9-79c5-4877-a897-76236fe6cf31", 
+                "ImageUrl": "https://lh3.googleusercontent.com/sIi_offCc8E8N-gEhMxP9WSTi9LQ1u1IC7jpWofc2riEDHUezGpUDOL8tDn5Q4JaOElOHt1j27LbUedXbcOdSm4", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/5b805ad9-79c5-4877-a897-76236fe6cf31", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/sIi_offCc8E8N-gEhMxP9WSTi9LQ1u1IC7jpWofc2riEDHUezGpUDOL8tDn5Q4JaOElOHt1j27LbUedXbcOdSm4", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/551e529e-d8ac-45ed-9f35-fdb8a8d2a22c", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/ZxCap5TcYixy1JqwUcQRh0BnePDw2uEoNU3bQiUAAdkR9zQTWPwofnJfSZB4NCtBorq9j6AehiXq8SpQngz8Z1A", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/9ba9c071-8af6-443e-bbdc-38223bc9dc7b", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/l9ntlMXGtxefCSVR_fyjkwrflU--gwfflIeDwNZFRPgpkq-_d5gnFJlMSMnUcJVQFBi0CBG4e-rz7ItF0UVErm0", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": false, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDqt-GPCgw", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2020-08-17T21:27:36.992066", 
+            "ProductEditedOn": "2020-08-17T22:07:35.947155", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "layerlock-magbase-for-pulse", 
+            "RelatedProducts": [], 
+            "ShortDescription": "Ready to upgrade your 3D printing experience to include more convenience? Introducing LayerLock MagBase\u2014the ideal solution that allows users the flexibility to detach and interchange surfaces for seamless 3D printing production. LayerLock MagBase is strong enough to hold down a metal build plate in place for stable printing while also capable of easily releasing the plate whenever you choose to detach it to remove a print, switch build surfaces or reduce down time between production. Have the freedom to print on any build surface compatible with magnetic bases and the dimensions of your printer with LayerLock MagBase. This upgrade comes with the magnetic base and the extra flexplate by BuildTak. The bed surface that will attach to the flexplate will depend on the bed surface option you choose when purchasing your Pulse.", 
+            "ShowAddToCart": false, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "ag9zfm1hdHRlcmhhY2tlcnNyGQsSDFBhZ2VUZW1wbGF0ZRiAgKCF47vlCAw", 
+            "Title": "LayerLock MagBase for Pulse"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgMDqt-GPCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 5500, 
+        "ProductType": "physical-on-demand", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 33, 
+        "QuantityOnHand": 33, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "layerlock-magbase-for-pulse", 
+        "RetiredDateTime": null, 
+        "SID": "MYMERUGQ", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "LayerLock MagBase for Pulse", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 0, 
+        "TotalWeightGrams": "0.00", 
+        "TotalWeightKilograms": "0.00", 
+        "TotalWeightPounds": "0.00", 
+        "Weight": 0, 
+        "WeightGrams": "0.00", 
+        "WeightKilograms": "0.00", 
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}
