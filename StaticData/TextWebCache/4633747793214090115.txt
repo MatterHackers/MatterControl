@@ -36,7 +36,7 @@ The air gap is the space between the top of the support material and the bottom 
 
 The larger the air gap, the easier it will be to remove the support material. However, it will also make the bottom surface of your print messier. A smaller air gap will give a smoother, higher quality bottom surface, but also make the support material harder to remove.
 
-Choosing the right air gap requires a lot of experimentation, and it is heavily dependant on the material you are printing. Materials that typically haver stronger interlayer adhesion, like PLA, will require a larger air gap.
+Choosing the right air gap requires a lot of experimentation, and it is heavily dependent on the material you are printing. Materials that typically haver stronger interlayer adhesion, like PLA, will require a larger air gap.
 
 Unlike other slicers, which simply skip layers, MatterControl takes a unique approach to the air gap. For the first layer of the print above the support material, the nozzle is lifted by the air gap distance. Since the nozzle is higher than it normally would be for that layer, the plastic falls a short distance onto the support material below, and cools a little while it is falling. By adjusting the air gap, you can precisely control how much the plastic cools while it falls and thus how well it sticks to the support material below.
 

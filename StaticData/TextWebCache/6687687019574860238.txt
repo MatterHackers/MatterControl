@@ -3,7 +3,7 @@ A skirt is a couple of loops drawn around the outside of the first layer of a pr
 
 ![](https://lh3.googleusercontent.com/GGH5d8Po_EtGHVhGLxrT2aaZWrm2ootlP28L99H1712gHVhWJmd5znjlBeyODiNZ6V00Rk6iyldNfujViwn_ThwrqLI=s0)
 
-This is the very first thing that is printed. It is used to prime the nozzle and also allows you to check your leveling and nozzle height before the actual print begins. When the skirt is printing, it is a good time to adjust your nozzle height using [baybstepping](../../printer-controls#movement).
+This is the very first thing that is printed. It is used to prime the nozzle and also allows you to check your leveling and nozzle height before the actual print begins. When the skirt is printing, it is a good time to adjust your nozzle height using [babystepping](../../printer-controls#movement).
 
 Distance or Loops
 =================

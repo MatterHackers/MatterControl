@@ -9,8 +9,21 @@ Support is required on overhangs more than a certain angle and where [bridging](
 
 Support structures can be generated automatically, or you can use the design tools to create support structures manually. This allows you to place the support only where you want it.
 
-Support Everywhere
-==================
+Adding Supports
+===============
+
+Supports can be added, then edited by clicking the supports button in the toolbar then the Generate within the drop down. Once supports have been added they can be deleted or moved at any time.
+
+![Generating Supports](https://lh3.googleusercontent.com/szS02lAmwIwE46RkNo44UFzMUJGNX67XPIw0eMDtNaZZWcZFF4LWNGURL7Wcgm4UB4Dx3DvX_7BcLyCXTSxIczp-aw)
+
+It is worth noting that you can also create custom geometry and turn int into support by clicking the support button rather than the drop down arrow.
+
+Analyze Every Layer
+===================
+
+If you have used supports in an older version of MatterControl and want the behavior of them generating in every place that they might be needed you can enable this is the Slice Settings. Under Support turn on Analyze Every Layer and if there are no manual supports in the scene you will have the old behavior of fully automatic supports in the scene. The details below will give you more information about controlling supports while in this mode.
+
+## Support Everywhere
 
 When this option is off, support structures will only be created where the bottom of the support will be touching the bed. When this option is on, supports will be created everywhere, including places where the bottom of the support is on top of part of the print.
 
@@ -20,8 +33,7 @@ These pictures show Support Everywhere off and on.
 
 **Recommended Baseline:** Off
 
-Support Percent
-===============
+## Support Percent
 
 This controls the amount of support material that will be generated. It is similar to the support angle setting in other slicers.
 

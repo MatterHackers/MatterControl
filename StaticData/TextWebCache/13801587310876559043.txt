@@ -3,7 +3,7 @@
 
 Adequate cooling is very important for achieving high quality prints. A layer cooling fan is used to cool off the plastic as soon as it comes out of the nozzle. This ensures that it hardens quickly and holds it's shape. If a layer above is being printed while the layer below is still soft, it will deform. If you have inadequate cooling it will be most apparent on overhangs and sharp corners. Overhangs will tend to curl up and become very messy underneath. Sharp corners will become rounded and blunt.
 
-Fan settings are heavily dependant on the material you are printing. Some materials, like PLA, respond very well to cooling. For PLA you will want the fan running basically all the time. However, other materials do not react well to cooling. For instance, with ABS it can cause the layers to split apart from each other (delamination). In this case you only want to use the fan when absolutely necessary.
+Fan settings are heavily dependent on the material you are printing. Some materials, like PLA, respond very well to cooling. For PLA you will want the fan running basically all the time. However, other materials do not react well to cooling. For instance, with ABS it can cause the layers to split apart from each other (delamination). In this case you only want to use the fan when absolutely necessary.
 
 MatterControl controls the speed of your layer cooling fan based on how long each layer will take to print. Layers with a small area will take less time to print. Thus, there will be less time for them to cool off and harden before the layer above is printed. So more fan power will be necessary. MatterControl's layer view will show you how long a particular layer takes to print, and the fan speed used for that layer.
 

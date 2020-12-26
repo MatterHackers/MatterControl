@@ -37,7 +37,7 @@ You can tune this setting in order to minimize the visibility of the perimeter s
 Merge Overlapping Lines
 =======================
 
-In very thin sections of a model it is possible for the perimeter loops to cross over each other. This results in a line of plastic being layed down twice in the same spot. The Merge Overlapping Lines feature detects when perimeter loops cross over each other, and replaces them with a single fatter line. These pictures show a thin section of a print with Merge Overlapping Lines turned off and turned on.
+In very thin sections of a model it is possible for the perimeter loops to cross over each other. This results in a line of plastic being laid down twice in the same spot. The Merge Overlapping Lines feature detects when perimeter loops cross over each other, and replaces them with a single fatter line. These pictures show a thin section of a print with Merge Overlapping Lines turned off and turned on.
 
 ![](https://lh3.googleusercontent.com/HpvzkkRpdE11ZAne2xP9iJQrWsr99chgWzXH4p9dBlVhcHBSvxZH_oY57YvTIKXjeY7GmeDFmM-4pQgQc3d-PWDOtQ=s0) ![](https://lh3.googleusercontent.com/ghbigi4iA9nvTlFXfBjnZu9ZkYk1JYT0cow_BYzlHU0S0kH3o5kAuoV7kC4Q4_1YQm9kev-Emggv0rLN6Mciqo2F=s0)
 

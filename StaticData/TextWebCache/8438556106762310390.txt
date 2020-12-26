@@ -1,0 +1,234 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": true, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2020-04-24", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2018-02-20T15:57:40.124110", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Apr 24th", 
+        "DisplayListPrice": "19.95", 
+        "DisplayPrice": "19.95", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "9.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/ed011a03-2495-465f-8cb5-ae747407284e", 
+            "ImageUrl": "https://lh3.googleusercontent.com/EwAmaw1wXty0dzGH1kHThY6-EaUdTWBNLdX86atubLhj5litUk56z0v4-ACg3owdFwVh5mOwXI2eGVSr3sYtde4", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": true, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOURBRzJKNAw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "1.50", 
+            "1.50", 
+            "6.50"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": true, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T22:31:48.571792", 
+            "DateTimeModified": "2020-11-10T01:42:09.017053", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFjezdCQw", 
+            "Name": "Thought3D", 
+            "PrimaryContact": "sam.alston@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 8, 
+            "SuppliedSIDs": [
+                "M0C7KAX1", 
+                "M33XRCW7", 
+                "M6TY0NEE", 
+                "M9DAG2J4", 
+                "MJHAE73T", 
+                "MJP07ZUK", 
+                "MPWU1CA7", 
+                "MSSFM4U7"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEM3S0FYMQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMzNYUkNXNww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNlRZME5FRQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOURBRzJKNAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSkhBRTczVAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSlAwN1pVSww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNUFdVMUNBNww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNU1NGTTRVNww"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgICFjezdCQw", 
+        "ProductDescription": "Magigoo is your one solution for bed adhesion! Great 3D printer bed adhesion specifically created for PLA & ABS- easily remove 3D prints with no mess! Designed to address the most common problem found in FDM 3D printing technology occurring when the print detaches itself from the rest of the print. ", 
+        "ProductListPrice": 1995, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNOURBRzJKNAw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2018-02-20T15:57:39.850200", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3><strong>Magigoo</strong></h3>\r\n<p>This easy, no-mess solution was born from the frustration almost all 3D printer enthusiasts face; bed adhesion problems, 3D prints stuck to the bed, and warped first layers. The folks at Magigoo have created the easiest, no-mess product on the market to help you overcome all three of these problems! Not only will your 3D prints stick every time, there is no smell, it&rsquo;s completely safe for the environment, and it cleans up quick and easy with only water or a damp cloth. You won&rsquo;t need a spatula to remove your creations, and one 50ml tube will easily last you over 100 prints!</p>", 
+                    "ElementCode": "0VRHC0", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3><strong>Non-Toxic and Odorless</strong></h3>\r\n<p><span>The Magigoo stick won&rsquo;t stink up your workspace with nasty chemicals.</span></p>\r\n<p></p>\r\n<h3><strong>Easy to Apply and Easy to Remove Prints</strong></h3>\r\n<p><span>Just brush it on the bed, and let it dry. 3D Prints adhere tight, but removal is quick and easy.</span></p>\r\n<p></p>\r\n<h3><strong>Long-Lasting</strong></h3>\r\n<p><span>You can get over 100 applications from one 50ml tube of Magigoo.</span></p>\r\n<p></p>\r\n<h3><strong>Use <span>On&nbsp;</span>Any Material</strong></h3>\r\n<p><span>It doesn&rsquo;t matter if you&rsquo;re using PLA, ABS, PETG and more - Magigoo works for them all</span></p>\r\n<h3></h3>\r\n<h3><strong>Easy Clean-Up</strong></h3>\r\n<p>Magigoo cleans up with just a damp cloth or water!</p>", 
+                    "ElementCode": "7SPQIG", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/jkt0TPPURkLoCyzZ2v5rXtfBVJaQm9Y1xVtmxb5j3eIW17JGwMdZi_Tiq0m3-J-6LL7IBAZnOi540LF5_XV__Xc'></p>", 
+                    "ElementCode": "71LZVJ", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/d7b5b8f2-d971-432e-944a-8abfbec65750", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/jkt0TPPURkLoCyzZ2v5rXtfBVJaQm9Y1xVtmxb5j3eIW17JGwMdZi_Tiq0m3-J-6LL7IBAZnOi540LF5_XV__Xc", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/YgtpF8ejxpcMYIigWnqrwG038kKhUP_ufz8TwqqaLRPtlpUAhTEcHLCiFj-7NHF5LL7-bSjoOq7qTD8gk12SIQ'></p>", 
+                    "ElementCode": "IV4710", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/28856a79-1db1-41ae-bcd2-5b03734dfc5c", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/YgtpF8ejxpcMYIigWnqrwG038kKhUP_ufz8TwqqaLRPtlpUAhTEcHLCiFj-7NHF5LL7-bSjoOq7qTD8gk12SIQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "", 
+                    "ElementCode": "J98Z0J", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p><strong>HOW TO USE</strong></p>\r\n<ul>\r\n<li>Shake the bottle</li>\r\n<li>Apply to the desired area by pressing the nib on the bed (activates the inner valve)</li>\r\n<li>Print according to filament / printer manufacturer recommendation</li>\r\n<li>Allow to cool and remove. The print should pop right off</li>\r\n<li>Clean using a damp cloth</li>\r\n</ul>", 
+                    "ElementCode": "T9B0S5", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/ed011a03-2495-465f-8cb5-ae747407284e", 
+                "ImageUrl": "https://lh3.googleusercontent.com/EwAmaw1wXty0dzGH1kHThY6-EaUdTWBNLdX86atubLhj5litUk56z0v4-ACg3owdFwVh5mOwXI2eGVSr3sYtde4", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/ed011a03-2495-465f-8cb5-ae747407284e", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/EwAmaw1wXty0dzGH1kHThY6-EaUdTWBNLdX86atubLhj5litUk56z0v4-ACg3owdFwVh5mOwXI2eGVSr3sYtde4", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/48112be1-0f16-4f38-a4b1-9f6f03f4f1be", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/kiAbSaYMXin_ZRcIq0tjv9teNc0OXAewvW7CE1zdc8yJk0j48Ngrd6rnygSCAMhq0yFzWhIED1i055VhDS0OHA", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/b80d7462-30d7-44de-b3e4-f3218b3d86b2", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/hjU8rF_peCHwAMII3wACHQ41RxZT5Q99jQFsM8Z3ALYus_pJRo0UnhipBfaQcVY_D0qrqNikQvira9kZCyr6Krs", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/d4d7512b-be75-4f3e-9368-484db6e28970", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/AqKL3n4b2qT9RpikkQ7KmGCXPPcdDxyr6o4pWbzwAb7347fkayMaCpX8nftKkXvyKZguCYDyIO7KZd4YqQx37gl7", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAhMqbCgw", 
+            "MetaTagKeywords": [
+                "wolfbite", 
+                "wolf bite", 
+                "glue", 
+                "adhesive", 
+                "bed adhesive", 
+                "adhesion", 
+                "stick", 
+                "glue stick", 
+                "gluestick", 
+                "bed adhesion"
+            ], 
+            "PreOrderFlag": true, 
+            "ProductCreatedOn": "2018-02-20T15:57:39.850310", 
+            "ProductEditedOn": "2019-10-10T16:21:35.397052", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "magigoo-3d-printer-bed-adhesion-solution", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kckkLEg5Qcm9kdWN0TGlzdGluZyI1bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUR3c1NCMUJ5YjJSMVkzUVltdGt6REEM", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNXFLeXVRb00M"
+            ], 
+            "ShortDescription": "Magigoo is your one solution for bed adhesion! Great 3D printer bed adhesion specifically created for PLA & ABS- easily remove 3D prints with no mess! Designed to address the most common problem found in FDM 3D printing technology occurring when the print detaches itself from the rest of the print. ", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Magigoo 3D Printer Bed Adhesion Solution"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICAhMqbCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 1995, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 49, 
+        "QuantityOnHand": 49, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "magigoo-3d-printer-bed-adhesion-solution", 
+        "RetiredDateTime": null, 
+        "SID": "M9DAG2J4", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Magigoo 3D Printer Bed Adhesion Solution", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 82000, 
+        "TotalWeightGrams": "82.00", 
+        "TotalWeightKilograms": "0.08", 
+        "TotalWeightPounds": "0.18", 
+        "Weight": 82000, 
+        "WeightGrams": "82.00", 
+        "WeightKilograms": "0.08", 
+        "WeightPounds": "0.18", 
+        "WholesaleCost": 900
+    }, 
+    "Status": "success"
+}

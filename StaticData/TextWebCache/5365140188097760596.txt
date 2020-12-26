@@ -15,6 +15,7 @@
         "DisplayListPrice": "95.00", 
         "DisplayPrice": "95.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/ea1b0703-03ed-4789-9c77-b1df48404805", 
             "ImageUrl": "https://lh3.googleusercontent.com/wDxG77NmyA839Oja0mxhLous8kaqgrG89d7Ctw20Nik08ANmrtVa8DDrU_BFm7i4oJtkf8Vsl4wcarTvIOg-jmwf", 
@@ -22,8 +23,8 @@
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
-        "IsDirty": false, 
+        "IsActive": true, 
+        "IsDirty": true, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
         "IsRetired": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "Never worry about running out of filament again! This sensor detects when you run out of filament, automatically pauses the print, and can even send you an SMS or email message alerting you.", 
         "ProductListPrice": 9500, 
         "ProductListing": {
@@ -106,15 +110,18 @@
         "ProductPrice": 9500, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 98, 
-        "QuantityOnHand": 98, 
+        "QuantityAvailable": 99, 
+        "QuantityOnHand": 99, 
         "QuantityReserved": 3, 
         "ReferenceUrl": "filament-runout-sensor", 
+        "RetiredDateTime": null, 
         "SID": "MTWV2YJ1", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Filament Runout Sensor (requires Bondtech Extruder with E3D upgrade)", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -122,7 +129,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

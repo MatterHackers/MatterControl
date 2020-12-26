@@ -150,6 +150,8 @@ namespace MatterHackers.MatterControl
 					&& keyEvent.KeyCode == Keys.F5)
 				{
 					GC.Collect();
+					GC.WaitForPendingFinalizers();
+					GC.Collect();
 					systemWindow.Invalidate();
 				}
 

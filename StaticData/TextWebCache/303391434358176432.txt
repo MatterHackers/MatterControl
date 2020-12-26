@@ -15,6 +15,7 @@
         "DisplayListPrice": "129.00", 
         "DisplayPrice": "95.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/ff3c4005-b013-4592-a3dc-b52b04e5c3b0", 
             "ImageUrl": "https://lh3.googleusercontent.com/RVj5W7I3dRa6VLK9-8u-2WjNwoDZmVzsCqt_cYTNnUpGG3maII_g8GClfzKEy8QayG1xzCoxxEp0CxlpIAKpwwE", 
@@ -22,7 +23,7 @@
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
+        "IsActive": true, 
         "IsDirty": false, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "Viki 2 LCD screen for Pulse", 
         "ProductListPrice": 12900, 
         "ProductListing": {
@@ -95,15 +99,18 @@
         "ProductPrice": 9500, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 76, 
-        "QuantityOnHand": 76, 
+        "QuantityAvailable": 16, 
+        "QuantityOnHand": 16, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "viki-2-lcd-upgrade-for-pulse", 
+        "RetiredDateTime": null, 
         "SID": "MXFYJE1H", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Viki 2 LCD Upgrade for Pulse", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -111,7 +118,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

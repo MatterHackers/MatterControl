@@ -15,6 +15,7 @@
         "DisplayListPrice": "299.00", 
         "DisplayPrice": "299.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/d6d938e8-fc77-4428-99c9-195c471402c9", 
             "ImageUrl": "https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw", 
@@ -28,6 +29,7 @@
         "IsOneTimeItem": false, 
         "IsRetired": false, 
         "IsSearchable": true, 
+        "IsWarranty": false, 
         "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRzNaSkNBOQw", 
         "LeadDays": 0, 
         "LegacySku": null, 
@@ -39,9 +41,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "MatterHackers cares deeply about providing you with a wonderful 3D printing experience. Pulse Protection upgrades your one-year coverage of manufacturer defects for an additional year, thus giving you a total of two years of coverage from purchase. This extended warranty may be applied to any custom Pulse, Pulse XE, and Pulse HV models within the past 30 days of its purchase.", 
         "ProductListPrice": 29900, 
         "ProductListing": {
@@ -178,12 +183,14 @@
         "QuantityOnHand": 33, 
         "QuantityReserved": 3, 
         "ReferenceUrl": "pulse-protection-extended-2-year-warranty", 
+        "RetiredDateTime": null, 
         "SID": "MG3ZJCA9", 
         "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Pulse Protection Extended 2 Year Warranty", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -191,7 +198,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

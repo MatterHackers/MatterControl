@@ -15,14 +15,15 @@
         "DisplayListPrice": "295.00", 
         "DisplayPrice": "245.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
-            "ImageFile": "/mh-product-images/prod/legacy_BI0cBQRfxpHwTlOyUvtlFhlVXcShRafcGT1tFQA9Emj6xTGyeceATo7BAcC0iMmaErqHbbmNzaGblCSReHUOvZq41zY", 
-            "ImageUrl": "https://lh3.googleusercontent.com/F2L6NyCsQb5sKEcpHynyyZO6791_5avKj985S89UwPOvtUswANNnCWWIYfMabINcM3Q_qiM98LB-b1NAykUNLA", 
-            "IsFeatured": true
+            "ImageFile": "/mh-product-images/prod/f94b129a-7363-4ff5-8683-46e202daee62", 
+            "ImageUrl": "https://lh3.googleusercontent.com/yrNCgIMla0gtYDqyHXSBs6v6CzLxWfG50SEywdf5Paus1Vr-8Hv1qQi9jqQk3-lv73eptDBm0yqz--w716KzEREp", 
+            "IsFeatured": false
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
+        "IsActive": true, 
         "IsDirty": false, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "", 
         "ProductListPrice": 29500, 
         "ProductListing": {
@@ -100,11 +104,14 @@
         "QuantityOnHand": 33, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "bondtech-extruder-with-e3d-v6", 
+        "RetiredDateTime": null, 
         "SID": "MX8ZMNV1", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Bondtech Extruder with E3D V6 HotEnd and Hardened Steel Nozzle Upgrade for Pulse", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 1000000, 
         "TotalWeightGrams": "1,000.00", 
         "TotalWeightKilograms": "1.00", 
@@ -112,7 +119,8 @@
         "Weight": 1000000, 
         "WeightGrams": "1,000.00", 
         "WeightKilograms": "1.00", 
-        "WeightPounds": "2.20"
+        "WeightPounds": "2.20", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

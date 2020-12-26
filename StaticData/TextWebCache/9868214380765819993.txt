@@ -1,0 +1,175 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2017-04-29", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:27:56.975970", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Apr 29th", 
+        "DisplayListPrice": "40.57", 
+        "DisplayPrice": "40.57", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_1xBEVS3WP0-8W8CmpOKoLLh9G_JfWpB4RwiuTja0D7VKrTj0kiP8kI5g2esKFXAInMzHT8WszExkkDUCmo083GLDzoA", 
+            "ImageUrl": "https://lh3.googleusercontent.com/A2SawXgEFnmZWgjsSIMNA__1z_-AzbuhOu6bpH0Epo-Zz3DZfEGTJJpgV3oh-0AehQTCx1G9ZPQ0ZvPdLNyI9Aw", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": true, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEhRMVlDWgw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GLmD9CEM", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T21:03:18.065769", 
+            "DateTimeModified": "2020-11-10T01:26:03.451042", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZ0euLCgw", 
+            "Name": "Apress", 
+            "PrimaryContact": "sam.alston@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 2, 
+            "SuppliedSIDs": [
+                "M0HQ1YCZ", 
+                "MT68RWXC"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEhRMVlDWgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVDY4UldYQww"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIDZ0euLCgw", 
+        "ProductDescription": "3D Printing with MatterControl is your step-by-step guide to using and mastering MatterControl 3D printing software. This book will teach you how to maximize and optimize your 3D printing experience through the use of MatterControl. Whether you are new to 3D printing or a seasoned printing veteran, there is plenty you can learn from 3D printing with MatterControl.", 
+        "ProductListPrice": 4057, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEhRMVlDWgw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 24999, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "249.99", 
+                    "AddOnDisplayPrice": "289.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 289.0, 
+                    "AddOnListingReference": "mattercontrol-touch", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 28900, 
+                    "AddOnSavings": -3901, 
+                    "AddOnSkuReference": "MZK5LG7P", 
+                    "AddOnTitle": "MatterControl T7X - Standalone 3D Printer Controller (Refurbished)", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWks1TEc3UAw", 
+                    "ProductType": "physical-on-demand", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:41.798910", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p>3D Printing with MatterControl is your in-depth guide to upgrading your 3D printing experience through the use of <a href=\"http://www.mattercontrol.com/\">MatterControl</a>. In this book, Joan Horvath and Rich Cameron provide a step-by-step guide for how to use MatterControl. If you have never used MatterControl before, this book will teach you how to install and configure MatterControl as well as general best practices. If you're already a MatterControl pro, this book can serve as a handy desk reference for specific questions.&nbsp;</p>\r\n<p>This book is ideal for anyone that is currently 3D printing or wants to start 3D printing. That includes makers, entrepreneurs, teachers, engineers, students, hobbyists, and anyone else with an interest in 3D printing. There are plenty of books available about 3D printers but this is one of the few books available about 3D printing software.</p>\r\n<h3><strong>Table of Contents</strong></h3>\r\n<p>Part 1: The 3D-Printing Ecosystem</p>\r\n<p>Chapter 1. The Desktop 3D Printer</p>\r\n<p>Chapter 2. What is MatterControl?</p>\r\n<p>Chapter 3. Downloading and Configuring MatterControl</p>\r\n<p>Part 2: The 3D-Printing Process</p>\r\n<p>Chapter 4. Making a 3D Model</p>\r\n<p>Chapter 5. Slicing a 3D Model</p>\r\n<p>Chapter 6. Controlling your 3D Printer</p>\r\n<p>Chapter 7. Material Considerations</p>\r\n<p>Chapter 8. Special Cases</p>\r\n<p>Part 3: Your Printer at Work</p>\r\n<p>Chapter 9. File and Settings Management and the Touch Tablet</p>\r\n<p>Chapter 10. Case Studies and Classroom Tips</p>\r\n<p>Chapter 11. MatterControl Plugins</p>\r\n<p>Chapter 12. Troubleshooting and Post-Processing</p>\r\n<p>Appendix A. Supported Printer Manufacturers</p>\r\n<p>Appendix B. Links</p>", 
+                    "ElementCode": "W7MSGM", 
+                    "Images": [], 
+                    "Type": "text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_1xBEVS3WP0-8W8CmpOKoLLh9G_JfWpB4RwiuTja0D7VKrTj0kiP8kI5g2esKFXAInMzHT8WszExkkDUCmo083GLDzoA", 
+                "ImageUrl": "https://lh3.googleusercontent.com/A2SawXgEFnmZWgjsSIMNA__1z_-AzbuhOu6bpH0Epo-Zz3DZfEGTJJpgV3oh-0AehQTCx1G9ZPQ0ZvPdLNyI9Aw", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_1xBEVS3WP0-8W8CmpOKoLLh9G_JfWpB4RwiuTja0D7VKrTj0kiP8kI5g2esKFXAInMzHT8WszExkkDUCmo083GLDzoA", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/A2SawXgEFnmZWgjsSIMNA__1z_-AzbuhOu6bpH0Epo-Zz3DZfEGTJJpgV3oh-0AehQTCx1G9ZPQ0ZvPdLNyI9Aw", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbXUtNHNnb00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAmu-4sgoM", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:05:41.798960", 
+            "ProductEditedOn": "2019-11-21T21:28:32.445866", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "3d-printing-with-mattercontrol", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBcEtLNnNRb00M"
+            ], 
+            "ShortDescription": "3D Printing with MatterControl is your step-by-step guide to using and mastering MatterControl 3D printing software. This book will teach you how to maximize and optimize your 3D printing experience through the use of MatterControl. Whether you are new to 3D printing or a seasoned printing veteran, there is plenty you can learn from 3D printing with MatterControl.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "3D Printing with MatterControl - Paperback Book"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbXUtNHNnb00M", 
+        "ProductNumber": "71107001", 
+        "ProductPrice": 4057, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "9781484210567", 
+        "QuantityAvailable": 0, 
+        "QuantityOnHand": 0, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "3d-printing-with-mattercontrol", 
+        "RetiredDateTime": "2020-10-02T10:31:08.907970", 
+        "SID": "M0HQ1YCZ", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "3D Printing with MatterControl - Paperback Book", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 1000000, 
+        "TotalWeightGrams": "1,000.00", 
+        "TotalWeightKilograms": "1.00", 
+        "TotalWeightPounds": "2.20", 
+        "Weight": 1000000, 
+        "WeightGrams": "1,000.00", 
+        "WeightKilograms": "1.00", 
+        "WeightPounds": "2.20", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}

@@ -12,7 +12,7 @@ Slow Down If Layer Print Time Is Below
 
 The minimum amount of time a layer must take to print. If a layer takes less time than this, then all printing speeds will be slowed down until the layer takes at least this much time.
 
-This setting is heavily material dependant. Some materials need lots of time to cool while others do not need any.
+This setting is heavily material dependent. Some materials need lots of time to cool while others do not need any.
 
 **Recommended Baseline for PLA:** 30 s  
 **Units:** seconds (s)

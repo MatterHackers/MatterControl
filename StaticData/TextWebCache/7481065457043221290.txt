@@ -15,6 +15,7 @@
         "DisplayListPrice": "39.00", 
         "DisplayPrice": "39.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/b4fafce3-00b6-4eff-aaf6-68a306df741e", 
             "ImageUrl": "https://lh3.googleusercontent.com/r_4i2j-GQ5cC3FhkkplVP2lE686iNXxD1mxM7TK_9kRl1_MMRCHSxA6dsfgcbFWVvSR7US83UVpc3cjiISUgngYi", 
@@ -22,7 +23,7 @@
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
+        "IsActive": true, 
         "IsDirty": false, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "Garolite is a high-pressure, glass-epoxy laminate that is perfect for adhesion for nylon 3D printing. It is created by stacking multiple layers of glass cloth, soaking them in epoxy resin, and compressing the resulting material under heat until the epoxy cures. With a heated print bed underneath your sheet of garolite, you won\u2019t have any problems 3D printing nylon or getting great first layers on your Pulse 3D printer.", 
         "ProductListPrice": 3900, 
         "ProductListing": {
@@ -98,15 +102,18 @@
         "ProductPrice": 3900, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 100, 
-        "QuantityOnHand": 100, 
+        "QuantityAvailable": 190, 
+        "QuantityOnHand": 190, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "garolite-bed-upgrade-for-pulse", 
+        "RetiredDateTime": null, 
         "SID": "MRXMV83A", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "LayerLock Garolite Bed Upgrade for Pulse", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -114,7 +121,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

@@ -15,6 +15,7 @@
         "DisplayListPrice": "90.00", 
         "DisplayPrice": "90.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/legacy_JqWDeHaXX_uDbCwU76XItPLRvgnb9pb4fZRFbvxD9o6CFsHyuq1j1ZW5WH--ZIIBBBLm1p7lYP-cUQdqN3gNsGVhEhg", 
             "ImageUrl": "https://lh3.googleusercontent.com/sTC-CEgMbodOSlarfsyW2IaR4q-wsQNW4oq4p-17bqhO8XSdEfrB8QPpayEE_ApS-qK5IwC1OB-KFrdurmr-Cqgo", 
@@ -22,7 +23,7 @@
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
+        "IsActive": true, 
         "IsDirty": false, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "", 
         "ProductListPrice": 9000, 
         "ProductListing": {
@@ -94,17 +98,20 @@
         "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBcFA3S3R3b00M", 
         "ProductNumber": "246637001", 
         "ProductPrice": 9000, 
-        "ProductType": "physical-inventory", 
+        "ProductType": "physical-on-demand", 
         "ProductUpc": "", 
-        "QuantityAvailable": 92, 
-        "QuantityOnHand": 92, 
+        "QuantityAvailable": 33, 
+        "QuantityOnHand": 33, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "ruby-nozzle-pulse", 
+        "RetiredDateTime": null, 
         "SID": "M2Y52DEE", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "Ruby Nozzle Upgrade for Pulse", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -112,7 +119,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

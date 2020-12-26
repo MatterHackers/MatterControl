@@ -15,6 +15,7 @@
         "DisplayListPrice": "99.00", 
         "DisplayPrice": "99.00", 
         "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
             "ImageFile": "/mh-product-images/prod/0983478a-4f6e-4904-90f9-d506385b5218", 
             "ImageUrl": "https://lh3.googleusercontent.com/JeyO2VQmB4SdgPuJvbENhsZ1TPyCP8ch6dj2HHO8ojGaaNw7RIfXPk1QiylRPjP5sAUDJeKlHqqbk3SMNn28tznw", 
@@ -22,8 +23,8 @@
         }, 
         "HardwareDeviceTokens": [], 
         "HasBeenReviewed": false, 
-        "IsActive": false, 
-        "IsDirty": false, 
+        "IsActive": true, 
+        "IsDirty": true, 
         "IsOnSale": false, 
         "IsOneTimeItem": false, 
         "IsRetired": false, 
@@ -39,9 +40,12 @@
             "0.00"
         ], 
         "PackagedToShip": false, 
+        "PickImage": null, 
         "PreOrderFlag": false, 
         "PreviewFlag": false, 
         "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
         "ProductDescription": "BuildTak FlexPlate Upgrade for Pulse", 
         "ProductListPrice": 9900, 
         "ProductListing": {
@@ -99,11 +103,14 @@
         "QuantityOnHand": 33, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "buildtak-flexplate-upgrade-for-pulse", 
+        "RetiredDateTime": null, 
         "SID": "MDXUFYX8", 
+        "ShipInBox": false, 
         "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "FlexPlate Upgrade for Pulse", 
         "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 
@@ -111,7 +118,8 @@
         "Weight": 0, 
         "WeightGrams": "0.00", 
         "WeightKilograms": "0.00", 
-        "WeightPounds": "0.00"
+        "WeightPounds": "0.00", 
+        "WholesaleCost": 0
     }, 
     "Status": "success"
 }

@@ -1,0 +1,239 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2019-09-10", 
+        "BarCodeID": "", 
+        "Brand": "Mosaic", 
+        "ComponentSkuCount": 1, 
+        "ComponentSkus": [
+            "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSjhUVEtQUgw"
+        ], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2018-11-06T19:54:31.354424", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Sep 10th", 
+        "DisplayListPrice": "599.00", 
+        "DisplayPrice": "499.00", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/1e940512-2ca6-49c4-b903-5a98d752cab9", 
+            "ImageUrl": "https://lh3.googleusercontent.com/SIKn3t7cMk_zf1P5EAUYW4IA-I6DHdBykQo9JWBC4WC9m3nHbJp8DAZ0k5_Vv6zdK8-M5ERKkU9v_YihIbLR47sR", 
+            "IsFeatured": false
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": true, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWlpEUVVNUgw", 
+        "LeadDays": 0, 
+        "LegacySku": null, 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "18.00", 
+            "11.00", 
+            "10.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T22:06:45.430902", 
+            "DateTimeModified": "2020-01-21T22:07:00.745933", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgID5gdGVCww", 
+            "Name": "Mosaic", 
+            "PrimaryContact": null, 
+            "SecondaryContact": null, 
+            "SkuCount": 8, 
+            "SuppliedSIDs": [
+                "MAADCCUC", 
+                "MDJKCV51", 
+                "ME80DHPR", 
+                "MED7Y6TQ", 
+                "MJQKN4Z5", 
+                "MM7A15P7", 
+                "MVEWZLMH", 
+                "MZZDQUMR"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQUFEQ0NVQww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNREpLQ1Y1MQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRTgwREhQUgw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRUQ3WTZUUQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNSlFLTjRaNQw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTTdBMTVQNww", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVkVXWkxNSAw", 
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWlpEUVVNUgw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgID5gdGVCww", 
+        "ProductDescription": "The Palette 2 from those wizards at Mosaic intakes four strands of filament and combines them before feeding the color of your choice into your 3D printer. This means you can switch color at any point in your print for some beautiful, complex, surprising prints that will look like magic. And with the Ultimaker 1.75mm Adaptor from Mosaic, sold separately, you can even use the Palette 2 Pro on the Ultimaker!", 
+        "ProductListPrice": 59900, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNWlpEUVVNUgw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 5900, 
+                    "AddOnDiscountDisplay": null, 
+                    "AddOnDisplayBasePrice": "59.00", 
+                    "AddOnDisplayPrice": "59.00", 
+                    "AddOnDisplaySavings": null, 
+                    "AddOnFloatPrice": 59.0, 
+                    "AddOnListingReference": "mosaic-canvas-hub-for-the-palette-2-2-pro", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 5900, 
+                    "AddOnSavings": 0, 
+                    "AddOnSkuReference": "MAYM7MXM", 
+                    "AddOnTitle": "Mosaic CANVAS Hub for the Palette 2 & 2 Pro", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs6rafCgw", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQVlNN01YTQw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 3, 
+                    "QuantityOnHand": 3, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2018-11-06T19:54:31.091418", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h3>Smart Palette</h3>\r\n<p>Imagine changing colors during the same layer, without any supervision. Imagine having a single extruder printer, but being able to print up to four different colors of filament. Seems insane, we know, but you can stop imagining--it's real!</p>\r\n<p>The Palette 2 has an elegant design that leads each of the four filaments you choose through a tidy path, into the newly designed SpliceCore, which creates stronger and more reliable bonds between filament. The G-Code generated by the CANVAS (or Chroma if you prefer to use another slicer) software will talk to the Palette 2, making certain the correct color is used at each point of your print.</p>", 
+                    "ElementCode": "YJP3XR", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<div class=\"embed-youtube\" data-embed=\"lZYyNI4Yu-k\" data-size=\"lg\"></div>\r\n<p></p>", 
+                    "ElementCode": "0HWVFN", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h3>Four Part Harmony</h3>\r\n<p>With the freedom to switch colors as much as you like, the Mosaic Palette 2 opens up a whole new universe of infinite possibilities with your prints. You can keep different features of a test part highlighted in different ways, you can print out topographic maps with accurate color, or you can finally turn your printer into the artistic instrument it's always dreamed of being. The Palette 2 encourages experimentation and creativity, and your imagination is the limit!</p>", 
+                    "ElementCode": "TZYLWG", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/Ty3nU9cl0-fQVW5hourKpDOw7YbGFcC4_0UysIwXp8OKUghcXxGJubLxT5pYmVOQV2dKye4pY05kY4SBq8egl8U'></p>", 
+                    "ElementCode": "6RO2BN", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/13b24710-15ab-4757-a5e1-9ac3769cca2a", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Ty3nU9cl0-fQVW5hourKpDOw7YbGFcC4_0UysIwXp8OKUghcXxGJubLxT5pYmVOQV2dKye4pY05kY4SBq8egl8U", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>The Run-Out Sensor: Detect and Correct</h3>\r\n<p>The Palette 2 Pro isn't just for multi-filament printing. When one spool runs out of filament, the Palette 2&nbsp;can automatically detect it and will splice to another spool, without a second thought. Away from the printer for one of those days-long prints? You never have to worry again.</p>", 
+                    "ElementCode": "OLNYHJ", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/Rd8uX2vT5R_cT47ZbvQKlx0OfkcJ-bdRXNn6YDTv9OfRLnrYz1BcRTR269PGQClbj6moF7BUTNDGpZnawSsP7LQQ'></p>", 
+                    "ElementCode": "75X4OD", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/76aaad67-dcf5-434a-9267-91d74f034ad2", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/Rd8uX2vT5R_cT47ZbvQKlx0OfkcJ-bdRXNn6YDTv9OfRLnrYz1BcRTR269PGQClbj6moF7BUTNDGpZnawSsP7LQQ", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "Image"
+                }, 
+                {
+                    "Content": "<h3>Ultimaker 1.75mm Adaptor Option</h3>\r\n<p>Print with 1.75mm filament, and use the Palette 2, on your Ultimaker printer with this 1.75mm UM Adaptor from Mosaic Manufacturing!</p>\r\n<p>The 1.75mm UM Adaptor allows select 2.85mm Ultimaker printers to print reliably with 1.75mm filament. The adaptor can be installed or removed in less than 10 minutes and does not require any permanent changes or modifications to the printer. Now you can Print with Palette 2 or Palette 2 Pro and have access to lower cost and a wider variety of 1.75mm filament available on the market!</p>", 
+                    "ElementCode": "VSVTIK", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/af84f101-c0e2-4893-8475-2557d1cb5036", 
+                "ImageUrl": "https://lh3.googleusercontent.com/geKKRVx8HpwLoL95SUu0xMfuL8Nkr5bQkWFcJT07Vwml7zEsaAX5JDPM01y00oYU3-1vTcTlkWzikEHMgApOdNE", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/af84f101-c0e2-4893-8475-2557d1cb5036", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/geKKRVx8HpwLoL95SUu0xMfuL8Nkr5bQkWFcJT07Vwml7zEsaAX5JDPM01y00oYU3-1vTcTlkWzikEHMgApOdNE", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICg1IKSCgw", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2018-11-06T19:54:31.091442", 
+            "ProductEditedOn": "2020-02-26T01:26:59.165366", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "mosaic-palette-2-multi-material-filament-system-175mm", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSURBck11QXRBb00M", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDs8JKTCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICs6rafCgw", 
+                "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDG1d2MCQw"
+            ], 
+            "ShortDescription": "The Palette 2 from those wizards at Mosaic intakes four strands of filament and combines them before feeding the color of your choice into your 3D printer. This means you can switch color at any point in your print for some beautiful, complex, surprising prints that will look like magic. And with the Ultimaker 1.75mm Adaptor from Mosaic, sold separately, you can even use the Palette 2 Pro on the Ultimaker!", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "Mosaic Palette 2 Multi Material Filament System - 1.75mm"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICg1IKSCgw", 
+        "ProductNumber": null, 
+        "ProductPrice": 49900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": -2, 
+        "QuantityOnHand": -2, 
+        "QuantityReserved": 1, 
+        "ReferenceUrl": "mosaic-palette-2-multi-material-filament-system-175mm", 
+        "RetiredDateTime": "2020-10-02T10:55:44.761363", 
+        "SID": "MZZDQUMR", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "Mosaic Palette 2 Multi Material Filament System - 1.75mm", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 0, 
+        "TotalWeight": 6804000, 
+        "TotalWeightGrams": "6,804.00", 
+        "TotalWeightKilograms": "6.80", 
+        "TotalWeightPounds": "15.00", 
+        "Weight": 6804000, 
+        "WeightGrams": "6,804.00", 
+        "WeightKilograms": "6.80", 
+        "WeightPounds": "15.00", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}
