@@ -353,6 +353,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.RebuildTree();
 			}
+
+			if (sceneContext?.Scene?.SelectedItem != null)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// make sure the selected item is still selected after reload
+					var currentItem = sceneContext.Scene.SelectedItem;
+					sceneContext.Scene.SelectedItem = null;
+					sceneContext.Scene.SelectedItem = currentItem;
+				});
+			}
 		}
 
 		private void GetNearFar(out double zNear, out double zFar)
