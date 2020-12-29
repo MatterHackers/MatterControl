@@ -313,6 +313,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}),
 					("Retraction", new[]
 					{
+						SettingsKey.enable_retractions,
 						SettingsKey.retract_length,
 						SettingsKey.retract_restart_extra,
 						SettingsKey.retract_restart_extra_time_to_apply,
