@@ -343,7 +343,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Create Raft".Localize(),
 					HelpText = "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ShowIfSet = "NEVER_SHOW",
 					DefaultValue = "0",
 					ReloadUiWhenChanged = true,
 					Converter = new MappedToBoolString(),

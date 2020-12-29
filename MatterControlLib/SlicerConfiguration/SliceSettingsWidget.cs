@@ -66,7 +66,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.AddChild(settingsControlBar);
 
-				var settingsSection = PrinterSettings.Layout.Advanced;
+				var settingsSection = PrinterSettings.Layout.Simple;
 				switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
 				{
 					case "Simple":
@@ -442,16 +442,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Dictionary<string, UIField> UIFields => allUiFields;
 
-		// Known sections which have toggle fields that enabled/disable said feature/section
-		private Dictionary<string, string> toggleSwitchSectionKeys = new Dictionary<string, string>
-		{
-			{ "Skirt", SettingsKey.create_skirt },
-			{ "Raft", SettingsKey.create_raft },
-			{ "Brim", SettingsKey.create_brim },
-			{ "Retraction", SettingsKey.enable_retractions },
-			{ "Fan", SettingsKey.enable_fan },
-		};
-
 		public SectionWidget CreateGroupSection(SettingsLayout.Group group, List<ValidationError> errors)
 		{
 			var groupPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
@@ -469,12 +459,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				NameSanitizer.Replace(group.Name, ""));
 
 			UIField uiField = null;
-
-			if (toggleSwitchSectionKeys.TryGetValue(group.Name, out string toggleFieldKey))
-			{
-				var settingData = PrinterSettings.SettingsData[toggleFieldKey];
-				uiField = CreateToggleFieldForSection(settingData);
-			}
 
 			var sectionName = group.Name.Localize();
 
