@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.create_raft);
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, SettingsKey.create_raft);
 
 				testRunner.WaitForReloadAll(() => testRunner.StartSlicing());
 
@@ -382,17 +382,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			var organizer = PrinterSettings.Layout;
 
-			var userLevel = organizer.SliceSettings;
+			var userLevel = organizer.Advanced;
 			Assert.IsNotNull(userLevel);
 
 			// Confirm expected keys
 			Assert.IsTrue(userLevel.ContainsKey("bed_temperature"));
-			Assert.IsTrue(organizer.Contains("Advanced", "bed_temperature"));
-			Assert.IsTrue(organizer.Contains("Printer", "extruder_count"));
+			Assert.IsTrue(organizer.Advanced.ContainsKey("bed_temperature"));
+			Assert.IsTrue(organizer.Printer.ContainsKey("extruder_count"));
 
 			// Confirm non-existent key
 			Assert.IsFalse(userLevel.ContainsKey("non_existing_setting"));
-			Assert.IsFalse(organizer.Contains("Advanced", "non_existing_setting"));
+			Assert.IsFalse(organizer.Advanced.ContainsKey("non_existing_setting"));
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				// Navigate to General Tab -> Layers / Surface Tab
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.layer_height);
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, SettingsKey.layer_height);
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
 				var theme = ApplicationController.Instance.Theme;
@@ -537,8 +537,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.bed_temperature);
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.temperature);
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, SettingsKey.bed_temperature);
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, SettingsKey.temperature);
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
@@ -547,7 +547,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(.5);
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.NavigateToSliceSettingsField(PrinterSettings.Layout.SliceSettings, SettingsKey.temperature);
+				testRunner.NavigateToSliceSettingsField(PrinterSettings.Layout.Advanced, SettingsKey.temperature);
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -572,11 +572,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var printer = testRunner.FirstPrinter();
 
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "layer_height");
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, "layer_height");
 				testRunner.Type(".5");
 
 				// Force lose focus
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "first_layer_height");
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, "first_layer_height");
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");

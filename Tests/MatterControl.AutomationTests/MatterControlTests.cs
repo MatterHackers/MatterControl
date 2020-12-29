@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				// Move to Adhesion tab
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.SliceSettings, "skirts");
+				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.Advanced, "skirts");
 
 				// Click Brim toggle field forcing ReloadAll
 				testRunner.WaitForReloadAll(() => testRunner.ClickByName("Create Brim Field"));

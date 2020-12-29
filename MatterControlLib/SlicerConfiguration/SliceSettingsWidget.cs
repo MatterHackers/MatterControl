@@ -66,12 +66,28 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.AddChild(settingsControlBar);
 
+				var settingsSection = PrinterSettings.Layout.Advanced;
+				switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
+				{
+					case "Simple":
+						settingsSection = PrinterSettings.Layout.Simple;
+						break;
+
+					case "Moderate":
+						settingsSection = PrinterSettings.Layout.Moderate;
+						break;
+
+					case "Advanced":
+						settingsSection = PrinterSettings.Layout.Advanced;
+						break;
+				}
+
 				this.AddChild(
 					new SliceSettingsTabView(
 						settingsContext,
 						"SliceSettings",
 						printer,
-						PrinterSettings.Layout.SliceSettings,
+						settingsSection,
 						theme,
 						isPrimarySettingsView: true,
 						justMySettingsTitle: "My Modified Settings".Localize(),
@@ -389,6 +405,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
+
+			popupMenu.CreateSeparator();
+
+			popupMenu.CreateSubMenu("Settings Detail".Localize(),
+				theme,
+				(menu) =>
+				{
+					void SetDetail(string level, bool value)
+					{
+						UiThread.RunOnIdle(() =>
+						{
+							if (value)
+							{
+								UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
+								ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+							}
+						});
+					}
+
+					menu.CreateBoolMenuItem("Simple".Localize(),
+						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
+						(value) => SetDetail("Simple", value));
+					
+					menu.CreateBoolMenuItem("Moderate".Localize(),
+						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Moderate",
+						(value) => SetDetail("Moderate", value));
+
+					menu.CreateBoolMenuItem("Advanced".Localize(),
+						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
+						(value) => SetDetail("Advanced", value));
+				});
 
 			externalExtendMenu?.Invoke(popupMenu);
 		}
