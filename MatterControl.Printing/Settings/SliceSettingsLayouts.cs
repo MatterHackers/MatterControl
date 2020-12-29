@@ -303,6 +303,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}),
 					("Fan", new[]
 					{
+						SettingsKey.enable_fan,
 						SettingsKey.min_fan_speed_layer_time,
 						SettingsKey.max_fan_speed_layer_time,
 						SettingsKey.min_fan_speed,
@@ -313,6 +314,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}),
 					("Retraction", new[]
 					{
+						SettingsKey.enable_retractions,
 						SettingsKey.retract_length,
 						SettingsKey.retract_restart_extra,
 						SettingsKey.retract_restart_extra_time_to_apply,
