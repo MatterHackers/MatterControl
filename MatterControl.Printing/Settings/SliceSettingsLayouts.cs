@@ -303,6 +303,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					}),
 					("Fan", new[]
 					{
+						SettingsKey.enable_fan,
 						SettingsKey.min_fan_speed_layer_time,
 						SettingsKey.max_fan_speed_layer_time,
 						SettingsKey.min_fan_speed,
