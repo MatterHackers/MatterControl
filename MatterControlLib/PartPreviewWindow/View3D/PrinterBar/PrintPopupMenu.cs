@@ -205,12 +205,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					exportPlugin.Initialize(printer);
 
 					var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
+
 					exportGCodeButton.Name = "Export Gcode Button";
 					exportGCodeButton.Enabled = exportPlugin.Enabled;
 					exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
 
 					exportGCodeButton.Click += (s, e) =>
 					{
+						this.CloseMenu();
 						ExportPrintItemPage.DoExport(
 							new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
 							printer,

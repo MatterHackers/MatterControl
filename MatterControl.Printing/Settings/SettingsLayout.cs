@@ -37,82 +37,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SettingsLayout
 	{
-		private Dictionary<string, SettingsSection> Sections { get; set; } = new Dictionary<string, SettingsSection>();
+		public SettingsSection Simple { get; } = new SettingsSection("Simple");
 
-		public SettingsSection SliceSettings => Sections["Advanced"];
+		public SettingsSection Moderate { get; } = new SettingsSection("Moderate");
 
-		public SettingsSection Printer => Sections["Printer"];
+		public SettingsSection Advanced { get; } = new SettingsSection("Advanced");
+
+		public SettingsSection Printer { get; } = new SettingsSection("Printer");
 
 		internal SettingsLayout()
 		{
-			LoadAndParseLayoutFile();
+			LoadAndParseLayoutFile(Simple, SliceSettingsLayouts.SimpleSettings());
+			LoadAndParseLayoutFile(Moderate, SliceSettingsLayouts.ModerateSettings());
+			LoadAndParseLayoutFile(Advanced, SliceSettingsLayouts.AdvancedSettings());
+			LoadAndParseLayoutFile(Printer, SliceSettingsLayouts.PrinterSettings());
 		}
 
-		public bool Contains(string sectionKey, string slicerConfigName)
+		private void LoadAndParseLayoutFile(SettingsSection section, (string categoryName, (string groupName, string[] settings)[] groups)[] layout)
 		{
-			if (this.Sections.TryGetValue(sectionKey, out SettingsSection section))
+			foreach (var (categoryName, groups) in layout)
 			{
-				return section.ContainsKey(slicerConfigName);
-			}
+				var categoryToAddTo = new Category(categoryName, section);
+				section.Categories.Add(categoryToAddTo);
 
-			return false;
-		}
-
-		private void LoadAndParseLayoutFile()
-		{
-			SettingsSection sectionToAddTo = null;
-			Category categoryToAddTo = null;
-			Group groupToAddTo = null;
-
-			foreach (string line in StaticData.Instance.ReadAllLines(Path.Combine("SliceSettings", "Layouts.txt")))
-			{
-				if (line.Length > 0)
+				foreach (var (groupName, settings) in groups)
 				{
-					string sanitizedLine = line.Replace('"', ' ').Trim();
-					var leadingSpaces = CountLeadingSpaces(line);
-					switch (leadingSpaces)
+					var groupToAddTo = new Group(groupName, categoryToAddTo);
+					categoryToAddTo.Groups.Add(groupToAddTo);
+
+					foreach (var setting in settings)
 					{
-						case 0:
-							sectionToAddTo = new SettingsSection(sanitizedLine);
-							Sections.Add(sanitizedLine, sectionToAddTo);
-							break;
-
-						case 2:
-							categoryToAddTo = new Category(sanitizedLine, sectionToAddTo);
-							sectionToAddTo.Categories.Add(categoryToAddTo);
-							break;
-
-						case 4:
-							groupToAddTo = new Group(sanitizedLine, categoryToAddTo);
-							categoryToAddTo.Groups.Add(groupToAddTo);
-							break;
-
-						case 6:
-							if (PrinterSettings.SettingsData.TryGetValue(sanitizedLine, out SliceSettingData data))
-							{
-								groupToAddTo.Settings.Add(data);
-								data.OrganizerGroup = groupToAddTo;
-								sectionToAddTo.AddSetting(data.SlicerConfigName, groupToAddTo);
-							}
-
-							break;
-
-						default:
-							throw new Exception($"Bad file, too many spaces - {leadingSpaces} (must be 0, 2, 4 or 6).");
+						if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+						{
+							groupToAddTo.Settings.Add(data);
+							data.OrganizerGroup = groupToAddTo;
+							section.AddSetting(data.SlicerConfigName, groupToAddTo);
+						}
 					}
 				}
 			}
-		}
-
-		private static int CountLeadingSpaces(string line)
-		{
-			int numSpaces = 0;
-			while (line[numSpaces] == ' ' && numSpaces < line.Length)
-			{
-				numSpaces++;
-			}
-
-			return numSpaces;
 		}
 
 		/// <summary>

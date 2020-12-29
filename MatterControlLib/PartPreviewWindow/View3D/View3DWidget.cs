@@ -59,19 +59,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int EditButtonHeight { get; set; } = 44;
 
-		private Color[] selectionColors = new Color[] { new Color(131, 4, 66), new Color(227, 31, 61), new Color(255, 148, 1), new Color(247, 224, 23), new Color(143, 212, 1) };
-		private Stopwatch timeSinceLastSpin = new Stopwatch();
-		private Stopwatch timeSinceReported = new Stopwatch();
-
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;
 
-		private TreeView treeView;
+		private readonly TreeView treeView;
 
-		private ViewStyleButton modelViewStyleButton;
+		private readonly ViewStyleButton modelViewStyleButton;
 
-		private PrinterConfig printer;
+		private readonly PrinterConfig printer;
 
-		private ThemeConfig theme;
+		private readonly ThemeConfig theme;
 
 		public Vector3 BedCenter
 		{
@@ -89,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public PrinterConfig Printer { get; private set; }
 
-		private PrinterTabPage printerTabPage;
+		private readonly PrinterTabPage printerTabPage;
 
 		public View3DWidget(PrinterConfig printer, ISceneContext sceneContext, ViewControls3D viewControls3D, ThemeConfig theme, PartTabPage printerTabBase, Object3DControlsLayer.EditorType editorType = Object3DControlsLayer.EditorType.Part)
 		{
@@ -357,6 +353,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.RebuildTree();
 			}
+
+			if (sceneContext?.Scene?.SelectedItem != null)
+			{
+				UiThread.RunOnIdle(() =>
+				{
+					// make sure the selected item is still selected after reload
+					var currentItem = sceneContext.Scene.SelectedItem;
+					sceneContext.Scene.SelectedItem = null;
+					sceneContext.Scene.SelectedItem = currentItem;
+				});
+			}
 		}
 
 		private void GetNearFar(out double zNear, out double zFar)
@@ -402,7 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		private Dictionary<IObject3D, TreeNode> treeNodesByObject = new Dictionary<IObject3D, TreeNode>();
+		private readonly Dictionary<IObject3D, TreeNode> treeNodesByObject = new Dictionary<IObject3D, TreeNode>();
 
 		private bool watingToScroll = false;
 
@@ -687,7 +694,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private GuiWidget topMostParent;
 
-		private PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
+		private readonly PlaneShape bedPlane = new PlaneShape(Vector3.UnitZ, 0, null);
 
 		public bool DragOperationActive { get; private set; }
 
@@ -1278,7 +1285,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (!PositionWithinLocalBounds(localMousePosition.X, localMousePosition.Y))
 			{
-				Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
+				var totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
 				selectedItem.Matrix *= totalTransform;
 				CurrentSelectInfo.LastMoveDelta = Vector3.Zero;
 				Invalidate();
@@ -1298,7 +1305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// move the mesh back to the start position
 				{
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
+					var totalTransform = Matrix4X4.CreateTranslation(new Vector3(-CurrentSelectInfo.LastMoveDelta));
 					selectedItem.Matrix *= totalTransform;
 				}
 
@@ -1352,7 +1359,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// move the mesh back to the new position
 				{
-					Matrix4X4 totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
+					var totalTransform = Matrix4X4.CreateTranslation(new Vector3(delta));
 
 					selectedItem.Matrix *= totalTransform;
 
@@ -1365,14 +1372,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		Vector2 OffsetToMeshViewerWidget()
 		{
-			List<GuiWidget> parents = new List<GuiWidget>();
+			var parents = new List<GuiWidget>();
 			GuiWidget parent = this.Object3DControlLayer.Parent;
 			while (parent != this)
 			{
 				parents.Add(parent);
 				parent = parent.Parent;
 			}
-			Vector2 offset = default(Vector2);
+			var offset = default(Vector2);
 			for (int i = parents.Count - 1; i >= 0; i--)
 			{
 				offset += parents[i].OriginRelativeParent;
@@ -1438,8 +1445,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (ModifierKeys == Keys.Control)
 					{
 						// find the think we clicked on
-						var info = new IntersectInfo();
-						var hitObject = FindHitObject3D(mouseEvent.Position, out info);
+						var hitObject = FindHitObject3D(mouseEvent.Position, out IntersectInfo info);
 						if (hitObject != null)
 						{
 							if (selectedItem == hitObject
@@ -1491,9 +1497,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& mouseDownPositon == mouseEvent.Position
 				&& this.TrackballTumbleWidget.FirstWidgetUnderMouse)
 			{
-				var info = new IntersectInfo();
-
-				if (FindHitObject3D(mouseEvent.Position, out info) is IObject3D hitObject
+				if (FindHitObject3D(mouseEvent.Position, out _) is IObject3D hitObject
 					&& (this.Printer == null // Allow Model -> Right Click in Part view
 						|| this.Printer?.ViewState.ViewMode == PartViewMode.Model)) // Disallow Model -> Right Click in GCode views
 				{
@@ -1654,7 +1658,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public static Regex fileNameNumberMatch = new Regex("\\(\\d+\\)", RegexOptions.Compiled);
 
-		private SelectedObjectPanel selectedObjectPanel;
+		private readonly SelectedObjectPanel selectedObjectPanel;
 
 		internal VerticalResizeContainer modelViewSidePanel;
 
@@ -1677,10 +1681,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// popupMenu.CreateHorizontalLine();
 		}
 
-		private bool assigningTreeNode;
-		private FlowLayoutWidget treeNodeContainer;
+		private readonly bool assigningTreeNode;
+		private readonly FlowLayoutWidget treeNodeContainer;
 		
-		private InlineStringEdit workspaceName;
+		private readonly InlineStringEdit workspaceName;
 		private int lastSceneDescendantsCount;
 		private Vector2 beforeReubildScrollPosition;
 
