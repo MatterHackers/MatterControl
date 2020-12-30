@@ -301,7 +301,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			var canSaveDefault = !SettingIsOem();
-			var isPrinterSetting = PrinterSettings.Layout.Printer.ContainsKey(settingName);
+			var isPrinterSetting = PrinterSettings.Layout.AllPrinterSettings.ContainsKey(settingName);
 			var canSaveQuality = !isPrinterSetting && printer.Settings.QualityLayer != null && !SettingIsSameAsLayer(printer.Settings.QualityLayer);
 			var canSaveMaterial = !isPrinterSetting && printer.Settings.MaterialLayer != null && !SettingIsSameAsLayer(printer.Settings.MaterialLayer);
 

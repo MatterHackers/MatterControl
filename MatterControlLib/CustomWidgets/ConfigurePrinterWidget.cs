@@ -64,12 +64,28 @@ namespace MatterHackers.MatterControl
 				printer.Settings.SettingChanged -= Printer_SettingChanged;
 			};
 
+			var settingsSection = PrinterSettings.Layout.PrinterSections[0];
+			switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
+			{
+				case "Simple":
+					settingsSection = PrinterSettings.Layout.PrinterSections[0];
+					break;
+
+				case "Intermediate":
+					settingsSection = PrinterSettings.Layout.PrinterSections[1];
+					break;
+
+				case "Advanced":
+					settingsSection = PrinterSettings.Layout.PrinterSections[2];
+					break;
+			}
+
 			this.AddChild(
 				new SliceSettingsTabView(
 					settingsContext,
 					"ConfigurePrinter",
 					printer,
-					PrinterSettings.Layout.Printer,
+					settingsSection,
 					theme,
 					isPrimarySettingsView: true,
 					justMySettingsTitle: "My Modified Settings (Printer)".Localize(),

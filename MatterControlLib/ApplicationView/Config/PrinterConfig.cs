@@ -323,7 +323,7 @@ namespace MatterHackers.MatterControl
 								break;
 
 							case SliceSettingData.UiUpdateRequired.SliceSettings:
-								ApplicationController.Instance.ReloadSliceSettings(this);
+								ApplicationController.Instance.ReloadSettings(this);
 								break;
 
 							default:

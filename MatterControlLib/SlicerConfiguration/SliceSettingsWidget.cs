@@ -66,19 +66,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.AddChild(settingsControlBar);
 
-				var settingsSection = PrinterSettings.Layout.Simple;
+				var settingsSection = PrinterSettings.Layout.SlicingSections[0];
 				switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
 				{
 					case "Simple":
-						settingsSection = PrinterSettings.Layout.Simple;
+						settingsSection = PrinterSettings.Layout.SlicingSections[0];
 						break;
 
 					case "Intermediate":
-						settingsSection = PrinterSettings.Layout.Intermediate;
+						settingsSection = PrinterSettings.Layout.SlicingSections[1];
 						break;
 
 					case "Advanced":
-						settingsSection = PrinterSettings.Layout.Advanced;
+						settingsSection = PrinterSettings.Layout.SlicingSections[2];
 						break;
 				}
 
@@ -400,8 +400,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
-			if (this.scopeName == "SliceSettings"
-				&& settingsContext.ViewFilter == NamedSettingsLayers.All)
+			if (settingsContext.ViewFilter == NamedSettingsLayers.All)
 			{
 				popupMenu.CreateSeparator();
 
@@ -412,22 +411,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						if (value)
 						{
 							UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
-							ApplicationController.Instance.ReloadSliceSettings(printer);
+							ApplicationController.Instance.ReloadSettings(printer);
 						}
 					});
 				}
 
-				popupMenu.CreateBoolMenuItem("Simple".Localize(),
+				var menuItem = popupMenu.CreateBoolMenuItem("Simple".Localize(),
 					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
 					(value) => SetDetail("Simple", value));
+				menuItem.ToolTipText = "Show only the most important settings";
 
-				popupMenu.CreateBoolMenuItem("Intermediate".Localize(),
+				menuItem = popupMenu.CreateBoolMenuItem("Intermediate".Localize(),
 					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Intermediate",
 					(value) => SetDetail("Intermediate", value));
+				menuItem.ToolTipText = "Show commonly changed settings";
 
-				popupMenu.CreateBoolMenuItem("Advanced".Localize(),
+				menuItem = popupMenu.CreateBoolMenuItem("Advanced".Localize(),
 					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
 					(value) => SetDetail("Advanced", value));
+				menuItem.ToolTipText = "Show all available settings";
 			}
 
 			externalExtendMenu?.Invoke(popupMenu);

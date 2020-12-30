@@ -106,7 +106,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				{
 					var index = allTabs.IndexOf(tab);
 					allTabs.Remove(tab);
-					allTabs.Add((tab.key, tab.text, widget));
+					allTabs.Insert(index, (tab.key, tab.text, widget));
 					if (allowRebuild)
 					{
 						this.Rebuild();

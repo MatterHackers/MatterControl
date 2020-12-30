@@ -134,6 +134,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Slice Engine".Localize(),
 					HelpText = "The slicer to use.".Localize(),
 					DataEditType = DataEditTypes.SLICE_ENGINE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "MatterSlice",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 				},
@@ -164,19 +165,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Filament Speed".Localize(),
 					HelpText = "The speed to run filament into and out of the printer.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "80"
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.unload_filament_time,
-					PresentationName = "Unload Filament Time".Localize(),
-					HelpText = "The time it will take to unload the filament".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					Units = "s".Localize(),
-					ShowIfSet = "!sla_printer",
-					DefaultValue = "5"
 				},
 				new SliceSettingData()
 				{
@@ -194,6 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Trim Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Trim Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "Trim the end of the filament to ensure a good load.  \n![](https://www.matterhackers.com/r/c3zLyf)  \nMake sure you trim it at a slight angle"
 				},
@@ -202,6 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.insert_filament_markdown2,
 					PresentationName = "Insert Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Insert Filament page.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "* Insert filament into the extruder until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
@@ -211,6 +205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.insert_filament_1_markdown,
 					PresentationName = "Insert Filament 2 Page".Localize(),
 					HelpText = "The Markdown that will be shown on the second extruders Insert Filament page.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "* Insert filament into extruder 2 until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
@@ -221,6 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Clean Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "In a few seconds filament should be coming out of the extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
@@ -230,6 +226,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extruder 2 Clean Page".Localize(),
 					HelpText = "The Markdown that will be shown on the second extruders Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "In a few seconds filament should be coming out of the second extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
@@ -323,6 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.connect_gcode,
 					PresentationName = "On Connect G-Code".Localize(),
 					HelpText = "G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -399,6 +397,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.end_gcode,
 					PresentationName = "End G-Code".Localize(),
 					HelpText = "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors",
 					Converter = new GCodeMapping(),
@@ -442,6 +441,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle Offsets".Localize(),
 					HelpText = "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.".Localize(),
 					DataEditType = DataEditTypes.OFFSET3,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0x0,0x0,0x0,0x0"
@@ -464,6 +464,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Share Temperature".Localize(),
 					HelpText = "Used to specify if more than one extruder share a common heater cartridge.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					UiUpdate = UiUpdateRequired.Application
@@ -716,6 +717,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Use G0".Localize(),
 					HelpText = "Use G0 for moves rather than G1.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0"
 				},
@@ -756,6 +758,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer has a c axis used by too changer (e3d quad extruder).".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.SliceSettings,
@@ -799,6 +802,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Printer is SLA".Localize(),
 					HelpText = "Switch the settings interface to one intended for SLA printers.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
@@ -810,6 +814,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ListValues = "None,Simple Arduino",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "None",
 					ShowIfSet = "!sla_printer",
 					UiUpdate = UiUpdateRequired.SliceSettings,
@@ -822,6 +827,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "When upgrading to new firmware, first save a backup of the current firmware.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&!include_firmware_updater=None",
 					RebuildGCodeOnChange = false
 				},
@@ -832,6 +838,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
@@ -918,6 +925,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Firmware Type".Localize(),
 					HelpText = "The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.".Localize(),
 					DataEditType = DataEditTypes.LIST,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					ListValues = "Unknown,Marlin,Smoothie",
 					DefaultValue = "Unknown",
@@ -932,6 +940,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ListValues = "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk,Custom Points",
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "3 Point Plane",
 					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
@@ -964,6 +973,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer requires print leveling to run correctly.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					ShowAsOverride = true,
 					UiUpdate = UiUpdateRequired.Application,
@@ -989,6 +999,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&filament_runout_sensor",
 					RebuildGCodeOnChange = false,
 					DefaultValue = "1"
@@ -999,6 +1010,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Runout Trigger Ratio".Localize(),
 					HelpText = "The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer&filament_runout_sensor",
 					RebuildGCodeOnChange = false,
@@ -1156,6 +1168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.layer_gcode,
 					PresentationName = "Layer Change G-Code".Localize(),
 					HelpText = "G-Code to be run after the change in Z height for the next layer.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "; LAYER:[layer_num]",
 					Converter = new MapLayerChangeGCode(),
@@ -1407,6 +1420,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "First Layer Only".Localize(),
 					HelpText = "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
@@ -1650,6 +1664,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.reset_long_extrusion,
 					PresentationName = "Reset Long Extrusion".Localize(),
 					HelpText = "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
@@ -1661,6 +1676,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Send With Checksum".Localize(),
 					HelpText = "Calculate and transmit a standard rep-rap checksum for all commands.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1"
 				},
@@ -1842,6 +1858,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Start G-Code".Localize(),
 					HelpText = "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle",
 					Converter = new GCodeMapping(),
 				},
@@ -1851,6 +1868,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Write Filter".Localize(),
 					HelpText = "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
@@ -1862,6 +1880,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Read Filter".Localize(),
 					HelpText = "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
@@ -2112,6 +2131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle 1 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2121,6 +2141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle 2 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2179,6 +2200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Before Tool Change G-Code".Localize(),
 					HelpText = "G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2188,6 +2210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code".Localize(),
 					HelpText = "G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2196,6 +2219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_1,
 					PresentationName = "Before Tool Change G-Code 2".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
@@ -2206,6 +2230,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code 2".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2214,6 +2239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_2,
 					PresentationName = "Before Tool Change G-Code 3".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>2",
 					DefaultValue = ""
@@ -2223,6 +2249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode_2,
 					PresentationName = "After Tool Change G-Code 3".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>2",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2232,6 +2259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_3,
 					PresentationName = "Before Tool Change G-Code 4".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>3",
 					DefaultValue = ""
@@ -2241,6 +2269,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode_3,
 					PresentationName = "After Tool Change G-Code 4".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>3",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2401,6 +2430,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Networked Printing".Localize(),
 					HelpText = "Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
 					{
@@ -2431,6 +2461,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Emulate Endstops".Localize(),
 					HelpText = "Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
@@ -2440,6 +2471,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.enable_sailfish_communication,
 					PresentationName = "Sailfish Communication".Localize(),
 					HelpText = "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
@@ -2522,7 +2554,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.max_acceleration,
 					PresentationName = "Max Acceleration".Localize(),
-					HelpText = "The maximum amount the printer can accelerate on a G-Code move.".Localize(),
+					HelpText = "The maximum amount the printer can accelerate on a G-Code move. Used for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "1000",
 					Units = "mm/s²".Localize(),
@@ -2532,7 +2565,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.max_velocity,
 					PresentationName = "Max Velocity".Localize(),
-					HelpText = "The maximum speed the printer can move.".Localize(),
+					HelpText = "The maximum speed the printer can move. Uused for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "500",
 					Units = "mm/s".Localize(),
@@ -2542,7 +2576,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.jerk_velocity,
 					PresentationName = "Jerk Velocity".Localize(),
-					HelpText = "The maximum speed that the printer treats as 0 and changes direction instantly.".Localize(),
+					HelpText = "The maximum speed that the printer treats as 0 and changes direction instantly. Used for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "8",
 					Units = "mm/s".Localize(),
@@ -2573,6 +2608,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Progress Reporting".Localize(),
 					HelpText = "Choose the command for showing the print progress on the printer's LCD screen, if it has one.".Localize(),
 					DataEditType = DataEditTypes.LIST,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ListValues = "None,M73,M117",
 					DefaultValue = "M117",
 					RebuildGCodeOnChange = false
