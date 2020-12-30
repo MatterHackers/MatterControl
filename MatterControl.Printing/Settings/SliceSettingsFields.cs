@@ -100,7 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bed Temperature".Localize(),
 					HelpText = "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed",
 					DefaultValue = "70"
@@ -132,7 +132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The slicer to use.".Localize(),
 					DataEditType = DataEditTypes.SLICE_ENGINE,
 					DefaultValue = "MatterSlice",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 				},
 				new SliceSettingData()
 				{
@@ -246,7 +246,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".".Localize(),
 					DataEditType = DataEditTypes.STRING,
 					ShowIfSet = "!sla_printer",
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ResetAtEndOfPrint = true,
 					DefaultValue = ""
 				},
@@ -346,8 +346,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
-					IncludeInSimple = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()
@@ -423,7 +423,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
@@ -456,7 +456,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -560,7 +560,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The amount of infill material to generate, expressed as a ratio or a percentage.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					DefaultValue = "0.4",
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new AsPercentOrDirectFirst(),
 				},
 				new SliceSettingData()
@@ -591,7 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "0.3",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.layer_height),
 				},
@@ -635,7 +635,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -645,7 +645,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					Units = "",
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowAsOverride = true,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
@@ -659,7 +659,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -728,7 +728,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -740,7 +740,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -752,7 +752,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "has_z_probe",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -763,7 +763,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -773,7 +773,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -782,7 +782,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Switch the settings interface to one intended for SLA printers.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -794,7 +794,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ListValues = "None,Simple Arduino",
 					DefaultValue = "None",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -815,7 +815,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -827,7 +827,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "",
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -837,7 +837,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -914,7 +914,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "3 Point Plane",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -947,7 +947,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
 					ShowAsOverride = true,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -959,7 +959,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -1057,7 +1057,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1069,7 +1069,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1200,7 +1200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -1210,7 +1210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer&has_fan&extruder_count>1",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -1218,7 +1218,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Enable Fan".Localize(),
 					HelpText = "Turn the fan on and off regardless of settings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					ShowIfSet = "!sla_printer&has_fan",
 					DefaultValue = "1"
 				},
@@ -1544,7 +1544,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -1779,7 +1779,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					ResetAtEndOfPrint = true,
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
 				},
@@ -1879,9 +1879,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new MappedToBoolString(),
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2019,7 +2019,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
-					IncludeInSimple = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "200"
 				},
@@ -2356,7 +2356,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -2396,7 +2396,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2408,7 +2408,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "enable_network_printing",
 					DefaultValue = "Manual",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2527,8 +2527,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					IncludeInSimple = true,
-					ReloadUiWhenChanged = true
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2537,8 +2537,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
-					IncludeInSimple = true,
-					ReloadUiWhenChanged = true
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
+					UiUpdate = UiUpdateRequired.SliceSettings
 				}
 			};
 		}

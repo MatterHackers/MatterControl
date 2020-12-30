@@ -418,8 +418,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						{
 							if (value)
 							{
-								UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
-								ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+								ApplicationController.Instance.ReloadSliceSettings(printer);
 							}
 						});
 					}

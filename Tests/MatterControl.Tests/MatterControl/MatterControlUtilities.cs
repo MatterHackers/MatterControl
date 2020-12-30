@@ -123,7 +123,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			foreach (var setting in settings)
 			{
 				if (printer.Settings.GetValue(setting.key) != setting.value
-					&& PrinterSettings.SettingsData[setting.key].ReloadUiWhenChanged)
+					&& PrinterSettings.SettingsData[setting.key].UiUpdate != SliceSettingData.UiUpdateRequired.None)
 				{
 					needReload = true;
 					break;

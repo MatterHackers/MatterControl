@@ -33,21 +33,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SliceSettingsLayouts
 	{
-		public static HashSet<string> SimpleSettings()
-		{
-			return new HashSet<string>(new []
-			{
-				SettingsKey.layer_height,
-				SettingsKey.fill_density,
-				SettingsKey.create_skirt,
-				SettingsKey.create_raft,
-				SettingsKey.create_brim,
-				SettingsKey.create_per_layer_support,
-				SettingsKey.temperature,
-				SettingsKey.bed_temperature,
-			});
-		}
-
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] ModerateSettings()
 		{
 			var settings = new[]
@@ -158,7 +143,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			return settings;
 		}
 
-		public static (string categoryName, (string groupName, string[] settings)[] groups)[] AdvancedSettings()
+		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SliceSettings()
 		{
 			var settings = new[]
 			{

@@ -47,12 +47,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal SettingsLayout()
 		{
-			CreateLayout(Advanced, SliceSettingsLayouts.AdvancedSettings());
-			CreateLayout(Simple, SliceSettingsLayouts.AdvancedSettings(), (setting) =>
+			CreateLayout(Advanced, SliceSettingsLayouts.SliceSettings());
+			CreateLayout(Simple, SliceSettingsLayouts.SliceSettings(), (setting) =>
 			{
 				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
 				{
-					return data.IncludeInSimple;
+					return data.ReqiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
 				}
 
 				return false;

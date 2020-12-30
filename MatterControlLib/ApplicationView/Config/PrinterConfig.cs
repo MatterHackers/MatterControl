@@ -312,11 +312,23 @@ namespace MatterHackers.MatterControl
 			{
 				// Fire ReloadAll if changed setting marked with ReloadUiWhenChanged
 				if (PrinterSettings.SettingsData.TryGetValue(stringEvent.Data, out SliceSettingData settingsData)
-					&& settingsData.ReloadUiWhenChanged)
+					&& settingsData.UiUpdate != SliceSettingData.UiUpdateRequired.None)
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+						switch (settingsData.UiUpdate)
+						{
+							case SliceSettingData.UiUpdateRequired.Application:
+								ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+								break;
+
+							case SliceSettingData.UiUpdateRequired.SliceSettings:
+								ApplicationController.Instance.ReloadSliceSettings(this);
+								break;
+
+							default:
+								throw new NotImplementedException();
+						}
 					});
 
 					// No further processing if changed setting has ReloadUiWhenChanged set

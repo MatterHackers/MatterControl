@@ -383,6 +383,27 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<WorkspacesChangedEventArgs> WorkspacesChanged;
 
+		public void ReloadSliceSettings(PrinterConfig printerConfig)
+		{
+			if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
+			{
+				var xxx = workspace.SceneContext.EditContext.
+				UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
+				var printerTabPage = this.Parents<PrinterTabPage>().FirstOrDefault();
+				if (printerTabPage != null)
+				{
+					var sideBar = printerTabPage.Descendants<DockingTabControl>().FirstOrDefault();
+					sideBar.ReplacePage("Slice Settings",
+						new SliceSettingsWidget(printer,
+						new SettingsContext(
+							printer,
+							null,
+							NamedSettingsLayers.All),
+						theme));
+				}
+			}
+		}
+
 		public static Action WebRequestFailed;
 		public static Action WebRequestSucceeded;
 
