@@ -87,8 +87,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// <summary>
 		/// The display minimum display detail that must be set for this setting to be visible
 		/// </summary>
-		public enum DisplayDetailRequired { Simple, Moderate, Advance }
+		public enum DisplayDetailRequired { Simple, Intermediate, Advanced }
 
-		public DisplayDetailRequired ReqiredDisplayDetail { get; internal set; } = DisplayDetailRequired.Moderate;
+		public DisplayDetailRequired ReqiredDisplayDetail { get; internal set; } = DisplayDetailRequired.Intermediate;
 	}
 }

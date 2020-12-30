@@ -206,6 +206,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.OverflowButton.Name = "Printer Overflow Menu";
+			this.OverflowButton.ToolTipText = "Printer Options".Localize();
 			this.ExtendOverflowMenu = (popupMenu) =>
 			{
 				this.GeneratePrinterOverflowMenu(popupMenu, ApplicationController.Instance.MenuTheme);

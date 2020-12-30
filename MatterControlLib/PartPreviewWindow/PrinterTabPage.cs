@@ -98,7 +98,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var opaqueTrackColor = theme.ResolveColor(theme.BedBackgroundColor, theme.SlightShade);
 
-			LayerScrollbar = new SliceLayerSelector(printer, theme)
+			LayerScrollbar = new SliceLayerSelector(Printer, theme)
 			{
 				VAnchor = VAnchor.Stretch,
 				HAnchor = HAnchor.Right | HAnchor.Fit,
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			layerRenderRatioSlider.SecondValue = 1;
 			layerRenderRatioSlider.SecondValueChanged += (s, e) =>
 			{
-				if (printer?.Bed?.RenderInfo != null)
+				if (Printer?.Bed?.RenderInfo != null)
 				{
 					sceneContext.RenderInfo.FeatureToStartOnRatio0To1 = layerRenderRatioSlider.FirstValue;
 					sceneContext.RenderInfo.FeatureToEndOnRatio0To1 = layerRenderRatioSlider.SecondValue;
@@ -140,7 +140,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				SetSliderSizes();
 			};
 
-			PrinterActionsBar = new PrinterActionsBar(printer, this, theme);
+			PrinterActionsBar = new PrinterActionsBar(Printer, this, theme);
 			theme.ApplyBottomBorder(PrinterActionsBar);
 			PrinterActionsBar.modelViewButton.Enabled = sceneContext.EditableScene;
 
@@ -153,7 +153,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var position = view3DWidget.Object3DControlLayer.Children.IndexOf(trackball);
 
-			gcodePanel = new GCodePanel(this, printer, sceneContext, theme)
+			gcodePanel = new GCodePanel(this, Printer, sceneContext, theme)
 			{
 				Name = "GCode3DWidget",
 				HAnchor = HAnchor.Stretch,
@@ -176,7 +176,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			gcodeContainer.AddChild(gcodePanel);
 			gcodeContainer.Resized += (s, e) =>
 			{
-				if (printer != null)
+				if (Printer != null)
 				{
 					UserSettings.Instance.SelectedObjectPanelWidth = gcodeContainer.Width;
 				}
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			splitContainer.AddChild(gcodeContainer);
 
-			view3DContainer.AddChild(new RunningTasksWidget(theme, printer)
+			view3DContainer.AddChild(new RunningTasksWidget(theme, Printer)
 			{
 				MinimumSize = new Vector2(100, 0),
 				Margin = new BorderDouble(top: PrinterActionsBar.Height + 1, left: favoritesBar.LocalBounds.Width + favoritesBar.DeviceMarginAndBorder.Width + 1),
@@ -205,15 +205,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			// Create and append new widget
-			gcode2DWidget = new GCode2DWidget(printer, theme)
+			gcode2DWidget = new GCode2DWidget(Printer, theme)
 			{
-				Visible = printer.ViewState.ViewMode == PartViewMode.Layers2D
+				Visible = Printer.ViewState.ViewMode == PartViewMode.Layers2D
 			};
 			view3DWidget.Object3DControlLayer.AddChild(gcode2DWidget, position + 1);
 
 			SetSliderSizes();
 
-			this.SetViewMode(printer.ViewState.ViewMode);
+			this.SetViewMode(Printer.ViewState.ViewMode);
 
 			this.LayerScrollbar.Margin = LayerScrollbar.Margin.Clone(top: tumbleCubeControl.Height + tumbleCubeControl.Margin.Height + 4);
 
@@ -230,15 +230,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Register listeners
-			printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
-			printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
+			Printer.ViewState.VisibilityChanged += ProcessOptionalTabs;
+			Printer.ViewState.ViewModeChanged += ViewState_ViewModeChanged;
 
-			printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
+			Printer.Bed.RendererOptions.PropertyChanged += RendererOptions_PropertyChanged;
 
 			// register for communication messages
-			printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
-			printer.Connection.PauseOnLayer += Connection_PauseOnLayer;
-			printer.Connection.FilamentRunout += Connection_FilamentRunout;
+			Printer.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
+			Printer.Connection.PauseOnLayer += Connection_PauseOnLayer;
+			Printer.Connection.FilamentRunout += Connection_FilamentRunout;
 
 			ApplicationController.Instance.ApplicationError += ApplicationController_ApplicationError;
 			ApplicationController.Instance.ApplicationEvent += ApplicationController_ApplicationEvent;
@@ -279,9 +279,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private void ResumePrint(bool clickedOk)
 		{
 			// They clicked either Resume or Ok
-			if (clickedOk && printer.Connection.Paused)
+			if (clickedOk && Printer.Connection.Paused)
 			{
-				printer.Connection.Resume();
+				Printer.Connection.Resume();
 			}
 		}
 
@@ -314,7 +314,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						unloadFilamentButton.Click += (s, e2) =>
 						{
 							unloadFilamentButton.Parents<SystemWindow>().First().Close();
-							DialogWindow.Show(new UnloadFilamentWizard(printer, extruderIndex: 0));
+							DialogWindow.Show(new UnloadFilamentWizard(Printer, extruderIndex: 0));
 						};
 
 						theme.ApplyPrimaryActionStyle(unloadFilamentButton);
@@ -358,17 +358,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ApplicationController_ApplicationEvent(object sender, string e)
 		{
-			printer.Connection.TerminalLog.WriteLine(e);
+			Printer.Connection.TerminalLog.WriteLine(e);
 		}
 
 		private void ApplicationController_ApplicationError(object sender, string e)
 		{
-			printer.Connection.TerminalLog.WriteLine(e);
+			Printer.Connection.TerminalLog.WriteLine(e);
 		}
 
 		private void RendererOptions_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			if (e.PropertyName == nameof(printer.Bed.RendererOptions.SyncToPrint))
+			if (e.PropertyName == nameof(Printer.Bed.RendererOptions.SyncToPrint))
 			{
 				this.SetSliderVisibility();
 			}
@@ -409,7 +409,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			gcode2DWidget.Visible = viewMode == PartViewMode.Layers2D;
 
-			view3DWidget.Object3DControlLayer.DrawOpenGLContent = printer?.ViewState.ViewMode != PartViewMode.Layers2D;
+			view3DWidget.Object3DControlLayer.DrawOpenGLContent = Printer?.ViewState.ViewMode != PartViewMode.Layers2D;
 
 			sceneContext.ViewState.ModelView = viewMode == PartViewMode.Model;
 
@@ -419,12 +419,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (viewMode == PartViewMode.Layers3D)
 			{
-				printer.Bed.Scene.ClearSelection();
+				Printer.Bed.Scene.ClearSelection();
 			}
 
 			this.SetSliderVisibility();
 
-			view3DWidget.modelViewSidePanel.Visible = printer?.ViewState.ViewMode == PartViewMode.Model;
+			view3DWidget.modelViewSidePanel.Visible = Printer?.ViewState.ViewMode == PartViewMode.Model;
 		}
 
 		private void BedPlate_LoadedGCodeChanged(object sender, EventArgs e)
@@ -441,7 +441,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void SetSliderVisibility()
 		{
-			bool printerIsRunningPrint = printer.Connection.Paused || printer.Connection.Printing;
+			bool printerIsRunningPrint = Printer.Connection.Paused || Printer.Connection.Printing;
 
 			if (gcodeOptions.SyncToPrint && printerIsRunningPrint)
 			{
@@ -457,7 +457,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					layerRenderRatioSlider.SecondValue = 1;
 				}
 
-				bool hasLayers = printer.Bed.LoadedGCode?.LayerCount > 0;
+				bool hasLayers = Printer.Bed.LoadedGCode?.LayerCount > 0;
 
 				layerRenderRatioSlider.Visible = hasLayers && !sceneContext.ViewState.ModelView;
 				LayerScrollbar.Visible = hasLayers && !sceneContext.ViewState.ModelView;
@@ -480,9 +480,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private bool SetAnimationPosition()
 		{
-			LayerScrollbar.Value = printer.Connection.CurrentlyPrintingLayer;
+			LayerScrollbar.Value = Printer.Connection.CurrentlyPrintingLayer;
 
-			double currentPosition = printer.Connection.RatioIntoCurrentLayerInstructions;
+			double currentPosition = Printer.Connection.RatioIntoCurrentLayerInstructions;
 			layerRenderRatioSlider.FirstValue = 0;
 
 			if (lastPosition != currentPosition)
@@ -501,10 +501,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
-			bool printerIsRunningPrint = printer.Connection.Paused || printer.Connection.Printing;
+			bool printerIsRunningPrint = Printer.Connection.Paused || Printer.Connection.Printing;
 			if (gcodeOptions.SyncToPrint
 				&& printerIsRunningPrint
-				&& printer.ViewState.ViewMode != PartViewMode.Model)
+				&& Printer.ViewState.ViewMode != PartViewMode.Model)
 			{
 				if (this.SetAnimationPosition())
 				{
@@ -517,7 +517,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		protected override void GetViewControls3DOverflowMenu(PopupMenu popupMenu)
 		{
-			if (printer?.ViewState.ViewMode != PartViewMode.Model)
+			if (Printer?.ViewState.ViewMode != PartViewMode.Model)
 			{
 				view3DWidget.ShowBedViewOptions(popupMenu);
 				this.ShowGCodeOverflowMenu(popupMenu);
@@ -532,14 +532,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			// Unregister listeners
 			sceneContext.LoadedGCodeChanged -= BedPlate_LoadedGCodeChanged;
-			printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
+			Printer.Connection.CommunicationStateChanged -= Connection_CommunicationStateChanged;
 
-			printer.Connection.PauseOnLayer -= Connection_PauseOnLayer;
-			printer.Connection.FilamentRunout -= Connection_FilamentRunout;
+			Printer.Connection.PauseOnLayer -= Connection_PauseOnLayer;
+			Printer.Connection.FilamentRunout -= Connection_FilamentRunout;
 
-			printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
-			printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
-			printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
+			Printer.ViewState.VisibilityChanged -= ProcessOptionalTabs;
+			Printer.ViewState.ViewModeChanged -= ViewState_ViewModeChanged;
+			Printer.Bed.RendererOptions.PropertyChanged -= RendererOptions_PropertyChanged;
 			ApplicationController.Instance.ApplicationError -= ApplicationController_ApplicationError;
 			ApplicationController.Instance.ApplicationEvent -= ApplicationController_ApplicationEvent;
 
@@ -548,15 +548,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void AddSettingsTabBar(GuiWidget parent, GuiWidget widgetTodockTo)
 		{
-			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, printer, theme)
+			sideBar = new DockingTabControl(widgetTodockTo, DockSide.Right, Printer, theme)
 			{
 				Name = "DockingTabControl",
-				ControlIsPinned = printer.ViewState.SliceSettingsTabPinned,
+				ControlIsPinned = Printer.ViewState.SliceSettingsTabPinned,
 				MinDockingWidth = 400 * (int)GuiWidget.DeviceScale
 			};
 			sideBar.PinStatusChanged += (s, e) =>
 			{
-				printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
+				Printer.ViewState.SliceSettingsTabPinned = sideBar.ControlIsPinned;
 			};
 			parent.AddChild(sideBar);
 
@@ -564,9 +564,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				"Slice Settings",
 				"Slice Settings".Localize(),
 				sliceSettingsWidget = new SliceSettingsWidget(
-					printer,
+					Printer,
 					new SettingsContext(
-						printer,
+						Printer,
 						null,
 						NamedSettingsLayers.All),
 					theme));
@@ -580,16 +580,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar.RemovePage("Terminal", false);
 			sideBar.RemovePage("Printer", false);
 
-			if (printer.ViewState.ControlsVisible)
+			if (Printer.ViewState.ControlsVisible)
 			{
-				sideBar.AddPage("Controls", "Controls".Localize(), new ManualPrinterControls(printer, theme), false);
+				sideBar.AddPage("Controls", "Controls".Localize(), new ManualPrinterControls(Printer, theme), false);
 			}
 
-			if (printer.ViewState.TerminalVisible)
+			if (Printer.ViewState.TerminalVisible)
 			{
 				sideBar.AddPage("Terminal",
 					"Terminal".Localize(),
-					new TerminalWidget(printer, theme)
+					new TerminalWidget(Printer, theme)
 					{
 						VAnchor = VAnchor.Stretch,
 						HAnchor = HAnchor.Stretch
@@ -597,12 +597,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					false);
 			}
 
-			if (printer.ViewState.ConfigurePrinterVisible)
+			if (Printer.ViewState.ConfigurePrinterVisible)
 			{
 				sideBar.AddPage(
 					"Printer",
 					"Printer".Localize(),
-					new ConfigurePrinterWidget(sliceSettingsWidget.SettingsContext, printer, theme)
+					new ConfigurePrinterWidget(sliceSettingsWidget.SettingsContext, Printer, theme)
 					{
 						HAnchor = HAnchor.Stretch,
 						VAnchor = VAnchor.Stretch,

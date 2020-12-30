@@ -73,8 +73,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						settingsSection = PrinterSettings.Layout.Simple;
 						break;
 
-					case "Moderate":
-						settingsSection = PrinterSettings.Layout.Moderate;
+					case "Intermediate":
+						settingsSection = PrinterSettings.Layout.Intermediate;
 						break;
 
 					case "Advanced":
@@ -153,6 +153,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.scopeName = scopeName;
 
 				var overflowBar = this.TabBar as OverflowBar;
+				overflowBar.ToolTipText = "Settings View Options".Localize();
 				overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
 
 				var overflowButton = this.TabBar.RightAnchorItem;
@@ -326,23 +327,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				searchButton.VAnchorChanged += (s, e) => Console.WriteLine();
 
 				// Restore the last selected tab
-				if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
-					&& tabIndex >= 0
-					&& tabIndex < this.TabCount)
-				{
-					this.SelectedTabIndex = tabIndex;
-				}
-				else
-				{
-					this.SelectedTabIndex = 0;
-				}
+				this.SelectedTabKey = UserSettings.Instance.get(databaseMRUKey);
 
 				// Store the last selected tab on change
 				this.ActiveTabChanged += (s, e) =>
 				{
 					if (settingsContext.IsPrimarySettingsView)
 					{
-						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabIndex.ToString());
+						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabKey);
 					}
 				};
 
@@ -378,7 +370,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
 		{
-			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
+			var menu = popupMenu.CreateMenuItem("View Just My Settings".Localize());
+			menu.ToolTipText = "Show all settings that are not the printer default".Localize();
+			menu.Click += (s, e) =>
 			{
 				switch (settingsContext.ViewFilter)
 				{
@@ -406,35 +400,35 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
-			popupMenu.CreateSeparator();
+			if (this.scopeName == "SliceSettings"
+				&& settingsContext.ViewFilter == NamedSettingsLayers.All)
+			{
+				popupMenu.CreateSeparator();
 
-			popupMenu.CreateSubMenu("Settings Detail".Localize(),
-				theme,
-				(menu) =>
+				void SetDetail(string level, bool value)
 				{
-					void SetDetail(string level, bool value)
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
+						if (value)
 						{
-							if (value)
-							{
-								ApplicationController.Instance.ReloadSliceSettings(printer);
-							}
-						});
-					}
+							UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
+							ApplicationController.Instance.ReloadSliceSettings(printer);
+						}
+					});
+				}
 
-					menu.CreateBoolMenuItem("Simple".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
-						(value) => SetDetail("Simple", value));
-					
-					menu.CreateBoolMenuItem("Moderate".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Moderate",
-						(value) => SetDetail("Moderate", value));
+				popupMenu.CreateBoolMenuItem("Simple".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
+					(value) => SetDetail("Simple", value));
 
-					menu.CreateBoolMenuItem("Advanced".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
-						(value) => SetDetail("Advanced", value));
-				});
+				popupMenu.CreateBoolMenuItem("Intermediate".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Intermediate",
+					(value) => SetDetail("Intermediate", value));
+
+				popupMenu.CreateBoolMenuItem("Advanced".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
+					(value) => SetDetail("Advanced", value));
+			}
 
 			externalExtendMenu?.Invoke(popupMenu);
 		}

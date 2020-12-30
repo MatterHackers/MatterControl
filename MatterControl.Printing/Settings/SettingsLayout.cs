@@ -29,9 +29,6 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -39,7 +36,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	{
 		public SettingsSection Simple { get; } = new SettingsSection("Simple");
 
-		public SettingsSection Moderate { get; } = new SettingsSection("Moderate");
+		public SettingsSection Intermediate { get; } = new SettingsSection("Intermediate");
 
 		public SettingsSection Advanced { get; } = new SettingsSection("Advanced");
 
@@ -57,8 +54,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				return false;
 			});
+			CreateLayout(Intermediate, SliceSettingsLayouts.SliceSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.ReqiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
+				}
 
-			CreateLayout(Moderate, SliceSettingsLayouts.ModerateSettings());
+				return false;
+			});
+
 			CreateLayout(Printer, SliceSettingsLayouts.PrinterSettings());
 		}
 

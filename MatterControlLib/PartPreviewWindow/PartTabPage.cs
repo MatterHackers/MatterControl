@@ -42,13 +42,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		// TODO: Don't change casing... almost certainly none of these should be exposed
 		internal View3DWidget view3DWidget;
 		internal ISceneContext sceneContext;
-		internal PrinterConfig printer;
 		protected ViewControls3D viewControls3D;
 		protected ThemeConfig theme;
 		protected GuiWidget view3DContainer;
 		protected FlowLayoutWidget topToBottom;
 		protected FlowLayoutWidget leftToRight;
 		protected LibraryListView favoritesBar;
+
+		public PrinterConfig Printer => Workspace.Printer;
 
 		public PartTabPage(PartWorkspace workspace, ThemeConfig theme, string tabTitle)
 			: base(tabTitle)
@@ -57,7 +58,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.theme = theme;
 			this.BackgroundColor = theme.BackgroundColor;
 			this.Padding = 0;
-			this.printer = workspace.Printer;
 			this.Workspace = workspace;
 
 			bool isPrinterType = this is PrinterTabPage;
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			// The 3D model view
 			view3DWidget = new View3DWidget(
-				printer,
+				Printer,
 				sceneContext,
 				viewControls3D,
 				theme,

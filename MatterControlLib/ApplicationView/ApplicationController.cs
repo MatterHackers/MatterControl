@@ -383,24 +383,19 @@ namespace MatterHackers.MatterControl
 
 		public event EventHandler<WorkspacesChangedEventArgs> WorkspacesChanged;
 
-		public void ReloadSliceSettings(PrinterConfig printerConfig)
+		public void ReloadSliceSettings(PrinterConfig printer)
 		{
-			if (this.Workspaces.FirstOrDefault(w => w.Printer?.Settings.ID == printer.Settings.ID) is PartWorkspace workspace)
+			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
+			if (printerTabPage != null)
 			{
-				var xxx = workspace.SceneContext.EditContext.
-				UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
-				var printerTabPage = this.Parents<PrinterTabPage>().FirstOrDefault();
-				if (printerTabPage != null)
-				{
-					var sideBar = printerTabPage.Descendants<DockingTabControl>().FirstOrDefault();
-					sideBar.ReplacePage("Slice Settings",
-						new SliceSettingsWidget(printer,
-						new SettingsContext(
-							printer,
-							null,
-							NamedSettingsLayers.All),
-						theme));
-				}
+				var sideBar = printerTabPage.Descendants<DockingTabControl>().FirstOrDefault();
+				sideBar.ReplacePage("Slice Settings",
+					new SliceSettingsWidget(printer,
+					new SettingsContext(
+						printer,
+						null,
+						NamedSettingsLayers.All),
+					Theme));
 			}
 		}
 
@@ -1479,7 +1474,7 @@ namespace MatterHackers.MatterControl
 		public void OpenPrinter(PrinterInfo printerInfo)
 		{
 			if (this.ActivePrinters.FirstOrDefault(p => p.Settings.ID == printerInfo.ID) is PrinterConfig printer
-				&& this.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.printer == printer) is ITab tab)
+				&& this.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTabPage && printerTabPage.Printer == printer) is ITab tab)
 			{
 				// Switch to existing printer tab
 				this.MainView.TabControl.ActiveTab = tab;
