@@ -81,5 +81,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public SettingsLayout.Group OrganizerGroup { get; set; }
 
 		public ValueConverter Converter { get; set; }
+		public bool IncludeInSimple { get; internal set; }
 	}
 }

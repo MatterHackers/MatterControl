@@ -47,13 +47,22 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		internal SettingsLayout()
 		{
-			LoadAndParseLayoutFile(Simple, SliceSettingsLayouts.SimpleSettings());
-			LoadAndParseLayoutFile(Moderate, SliceSettingsLayouts.ModerateSettings());
-			LoadAndParseLayoutFile(Advanced, SliceSettingsLayouts.AdvancedSettings());
-			LoadAndParseLayoutFile(Printer, SliceSettingsLayouts.PrinterSettings());
+			CreateLayout(Advanced, SliceSettingsLayouts.AdvancedSettings());
+			CreateLayout(Simple, SliceSettingsLayouts.AdvancedSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.IncludeInSimple;
+				}
+
+				return false;
+			});
+
+			CreateLayout(Moderate, SliceSettingsLayouts.ModerateSettings());
+			CreateLayout(Printer, SliceSettingsLayouts.PrinterSettings());
 		}
 
-		private void LoadAndParseLayoutFile(SettingsSection section, (string categoryName, (string groupName, string[] settings)[] groups)[] layout)
+		private void CreateLayout(SettingsSection section, (string categoryName, (string groupName, string[] settings)[] groups)[] layout, Func<string, bool> includeSetting = null)
 		{
 			foreach (var (categoryName, groups) in layout)
 			{
@@ -67,7 +76,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					foreach (var setting in settings)
 					{
-						if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+						if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data)
+							&& includeSetting?.Invoke(setting) != false)
 						{
 							groupToAddTo.Settings.Add(data);
 							data.OrganizerGroup = groupToAddTo;

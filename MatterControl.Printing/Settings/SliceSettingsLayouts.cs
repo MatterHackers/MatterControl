@@ -27,36 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SliceSettingsLayouts
 	{
-		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SimpleSettings()
+		public static HashSet<string> SimpleSettings()
 		{
-			var settings = new[]
+			return new HashSet<string>(new []
 			{
-				("General", new[]
-				{
-					("General", new[]
-					{
-						SettingsKey.layer_height,
-						SettingsKey.fill_density,
-						SettingsKey.create_skirt,
-						SettingsKey.create_raft,
-						SettingsKey.create_brim,
-						SettingsKey.create_per_layer_support,
-						SettingsKey.temperature,
-						SettingsKey.bed_temperature,
-					}),
-					("Advanced", new[]
-					{
-						SettingsKey.spiral_vase,
-						SettingsKey.layer_to_pause,
-					}),
-				}),
-			};
-
-			return settings;
+				SettingsKey.layer_height,
+				SettingsKey.fill_density,
+				SettingsKey.create_skirt,
+				SettingsKey.create_raft,
+				SettingsKey.create_brim,
+				SettingsKey.create_per_layer_support,
+				SettingsKey.temperature,
+				SettingsKey.bed_temperature,
+			});
 		}
 
 		public static (string categoryName, (string groupName, string[] settings)[] groups)[] ModerateSettings()
@@ -205,6 +194,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.wipe_shield_distance,
 						SettingsKey.wipe_tower_size,
+					}),
+					("Advanced", new[]
+					{
+						SettingsKey.spiral_vase,
+						SettingsKey.layer_to_pause,
 					}),
 				}),
 				("Speed", new[]

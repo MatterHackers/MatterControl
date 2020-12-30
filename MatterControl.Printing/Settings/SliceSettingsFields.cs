@@ -100,6 +100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bed Temperature".Localize(),
 					HelpText = "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					IncludeInSimple = true,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed",
 					DefaultValue = "70"
@@ -245,6 +246,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".".Localize(),
 					DataEditType = DataEditTypes.STRING,
 					ShowIfSet = "!sla_printer",
+					IncludeInSimple = true,
 					ResetAtEndOfPrint = true,
 					DefaultValue = ""
 				},
@@ -345,6 +347,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
 					ReloadUiWhenChanged = true,
+					IncludeInSimple = true,
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()
@@ -551,12 +554,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					QuickMenuSettings = { { "Light", "10%" }, { "Standard", "30%" }, { "Heavy", "90%" } },
 					SlicerConfigName = SettingsKey.fill_density,
+					QuickMenuSettings = { { "Light", "10%" }, { "Standard", "30%" }, { "Heavy", "90%" } },
 					PresentationName = "Fill Density".Localize(),
 					HelpText = "The amount of infill material to generate, expressed as a ratio or a percentage.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					DefaultValue = "0.4",
+					IncludeInSimple = true,
 					Converter = new AsPercentOrDirectFirst(),
 				},
 				new SliceSettingData()
@@ -587,6 +591,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
+					IncludeInSimple = true,
 					DefaultValue = "0.3",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.layer_height),
 				},
@@ -640,6 +645,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					Units = "",
+					IncludeInSimple = true,
 					ShowAsOverride = true,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
@@ -1773,6 +1779,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					ResetAtEndOfPrint = true,
+					IncludeInSimple = true,
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
 				},
@@ -1872,6 +1879,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
+					IncludeInSimple = true,
 					Converter = new MappedToBoolString(),
 					ReloadUiWhenChanged = true
 				},
@@ -2011,6 +2019,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
+					IncludeInSimple = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "200"
 				},
@@ -2518,6 +2527,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
+					IncludeInSimple = true,
 					ReloadUiWhenChanged = true
 				},
 				new SliceSettingData()
@@ -2527,6 +2537,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
+					IncludeInSimple = true,
 					ReloadUiWhenChanged = true
 				}
 			};
