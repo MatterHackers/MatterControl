@@ -139,7 +139,7 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				}
 			});
 
-			var printerNotListedButton = theme.CreateDialogButton("Custom Printer".Localize());
+			var printerNotListedButton = theme.CreateDialogButton("Unavailable".Localize());
 			printerNotListedButton.ToolTipText = "Select this option only if your printer does not appear in the list".Localize();
 
 			printerNotListedButton.Click += async (s, e) =>
@@ -157,8 +157,8 @@ namespace MatterHackers.MatterControl.PrinterControls.PrinterConnections
 				});
 			};
 
+			this.AddPageAction(printerNotListedButton, false);
 			this.AddPageAction(nextButton);
-			this.AddPageAction(printerNotListedButton);
 
 			SetElementVisibility();
 		}
