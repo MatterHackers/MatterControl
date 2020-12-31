@@ -76,10 +76,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		public Func<int, string> PerToolName { get; set; } = null;
 
-		public bool ReloadUiWhenChanged { get; set; } = false;
+		public enum UiUpdateRequired { None, SliceSettings, Application };
+
+		public UiUpdateRequired UiUpdate { get; set; } = UiUpdateRequired.None;
 
 		public SettingsLayout.Group OrganizerGroup { get; set; }
 
 		public ValueConverter Converter { get; set; }
+
+		/// <summary>
+		/// The display minimum display detail that must be set for this setting to be visible
+		/// </summary>
+		public enum DisplayDetailRequired { Simple, Intermediate, Advanced }
+
+		public DisplayDetailRequired ReqiredDisplayDetail { get; internal set; } = DisplayDetailRequired.Intermediate;
 	}
 }

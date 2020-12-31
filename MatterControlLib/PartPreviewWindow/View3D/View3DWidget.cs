@@ -1762,9 +1762,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// Render 3D GCode if applicable
 			if (sceneContext.LoadedGCode != null
 				&& sceneContext.GCodeRenderer != null
-				&& printerTabPage?.printer.ViewState.ViewMode == PartViewMode.Layers3D)
+				&& printerTabPage?.Printer.ViewState.ViewMode == PartViewMode.Layers3D)
 			{
-				printerTabPage.printer.Bed.RenderGCode3D(e);
+				printerTabPage.Printer.Bed.RenderGCode3D(e);
 			}
 		}
 

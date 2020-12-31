@@ -108,6 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				view3DWidget.Object3DControlLayer.Focus();
 			};
 
+			this.OverflowButton.ToolTipText = "Tool Bar Overflow".Localize();
+
 			this.OverflowButton.DynamicPopupContent = () =>
 			{
 				bool IncludeInMenu(SceneOperation operation)

@@ -258,7 +258,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string travel_speed = nameof(travel_speed);
 		public const string trim_filament_markdown = nameof(trim_filament_markdown);
 		public const string unload_filament_length = nameof(unload_filament_length);
-		public const string unload_filament_time = nameof(unload_filament_time);
 		public const string use_firmware_retraction = nameof(use_firmware_retraction);
 		public const string use_relative_e_distances = nameof(use_relative_e_distances);
 		public const string use_z_probe = nameof(use_z_probe);

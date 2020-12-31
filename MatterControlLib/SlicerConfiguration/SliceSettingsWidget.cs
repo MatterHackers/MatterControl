@@ -66,19 +66,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				this.AddChild(settingsControlBar);
 
-				var settingsSection = PrinterSettings.Layout.Simple;
+				var settingsSection = PrinterSettings.Layout.SlicingSections[0];
 				switch (UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
 				{
 					case "Simple":
-						settingsSection = PrinterSettings.Layout.Simple;
+						settingsSection = PrinterSettings.Layout.SlicingSections[0];
 						break;
 
-					case "Moderate":
-						settingsSection = PrinterSettings.Layout.Moderate;
+					case "Intermediate":
+						settingsSection = PrinterSettings.Layout.SlicingSections[1];
 						break;
 
 					case "Advanced":
-						settingsSection = PrinterSettings.Layout.Advanced;
+						settingsSection = PrinterSettings.Layout.SlicingSections[2];
 						break;
 				}
 
@@ -153,6 +153,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.scopeName = scopeName;
 
 				var overflowBar = this.TabBar as OverflowBar;
+				overflowBar.ToolTipText = "Settings View Options".Localize();
 				overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
 
 				var overflowButton = this.TabBar.RightAnchorItem;
@@ -326,23 +327,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				searchButton.VAnchorChanged += (s, e) => Console.WriteLine();
 
 				// Restore the last selected tab
-				if (int.TryParse(UserSettings.Instance.get(databaseMRUKey), out int tabIndex)
-					&& tabIndex >= 0
-					&& tabIndex < this.TabCount)
-				{
-					this.SelectedTabIndex = tabIndex;
-				}
-				else
-				{
-					this.SelectedTabIndex = 0;
-				}
+				this.SelectedTabKey = UserSettings.Instance.get(databaseMRUKey);
 
 				// Store the last selected tab on change
 				this.ActiveTabChanged += (s, e) =>
 				{
 					if (settingsContext.IsPrimarySettingsView)
 					{
-						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabIndex.ToString());
+						UserSettings.Instance.set(databaseMRUKey, this.SelectedTabKey);
 					}
 				};
 
@@ -378,7 +370,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
 		{
-			popupMenu.CreateMenuItem("View Just My Settings".Localize()).Click += (s, e) =>
+			var menu = popupMenu.CreateMenuItem("View Just My Settings".Localize());
+			menu.ToolTipText = "Show all settings that are not the printer default".Localize();
+			menu.Click += (s, e) =>
 			{
 				switch (settingsContext.ViewFilter)
 				{
@@ -406,36 +400,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
-			popupMenu.CreateSeparator();
+			if (settingsContext.ViewFilter == NamedSettingsLayers.All)
+			{
+				popupMenu.CreateSeparator();
 
-			popupMenu.CreateSubMenu("Settings Detail".Localize(),
-				theme,
-				(menu) =>
+				void SetDetail(string level, bool value)
 				{
-					void SetDetail(string level, bool value)
+					UiThread.RunOnIdle(() =>
 					{
-						UiThread.RunOnIdle(() =>
+						if (value)
 						{
-							if (value)
-							{
-								UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
-								ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
-							}
-						});
-					}
+							UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
+							ApplicationController.Instance.ReloadSettings(printer);
+						}
+					});
+				}
 
-					menu.CreateBoolMenuItem("Simple".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
-						(value) => SetDetail("Simple", value));
-					
-					menu.CreateBoolMenuItem("Moderate".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Moderate",
-						(value) => SetDetail("Moderate", value));
+				var menuItem = popupMenu.CreateBoolMenuItem("Simple".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
+					(value) => SetDetail("Simple", value));
+				menuItem.ToolTipText = "Show only the most important settings";
 
-					menu.CreateBoolMenuItem("Advanced".Localize(),
-						() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
-						(value) => SetDetail("Advanced", value));
-				});
+				menuItem = popupMenu.CreateBoolMenuItem("Intermediate".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Intermediate",
+					(value) => SetDetail("Intermediate", value));
+				menuItem.ToolTipText = "Show commonly changed settings";
+
+				menuItem = popupMenu.CreateBoolMenuItem("Advanced".Localize(),
+					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
+					(value) => SetDetail("Advanced", value));
+				menuItem.ToolTipText = "Show all available settings";
+			}
 
 			externalExtendMenu?.Invoke(popupMenu);
 		}
@@ -462,7 +457,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			var sectionName = group.Name.Localize();
 
-			var sectionWidget = new SectionWidget(sectionName, groupPanel, theme, serializationKey: userSettingsKey, rightAlignedContent: uiField?.Content);
+			var sectionWidget = new SectionWidget(sectionName, groupPanel, theme, serializationKey: userSettingsKey, defaultExpansion: true, rightAlignedContent: uiField?.Content);
 			theme.ApplyBoxStyle(sectionWidget);
 
 			bool firstRow = true;
@@ -517,66 +512,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			systemWindow = this.Parents<SystemWindow>().FirstOrDefault();
 
 			base.OnLoad(args);
-		}
-
-		private UIField CreateToggleFieldForSection(SliceSettingData settingData)
-		{
-			bool useDefaultSavePattern = false;
-
-			string sliceSettingValue = settingsContext.GetValue(settingData.SlicerConfigName);
-
-			// Create toggle field for key
-			var uiField = new ToggleboxField(theme)
-			{
-				HelpText = settingData.HelpText,
-				Name = $"{settingData.PresentationName} Field"
-			};
-			uiField.Initialize(tabIndexForItem++);
-
-			uiField.ValueChanged += (s, e) =>
-			{
-				if (e.UserInitiated)
-				{
-					ICheckbox checkbox = uiField.Content as ICheckbox;
-					string checkedKey = checkbox.Checked ? "OnValue" : "OffValue";
-
-					// Linked settings should be updated in all cases (user clicked checkbox, user clicked clear)
-					foreach (var setSettingsData in settingData.SetSettingsOnChange)
-					{
-						if (setSettingsData.TryGetValue(checkedKey, out string targetValue))
-						{
-							settingsContext.SetValue(setSettingsData["TargetSetting"], targetValue);
-						}
-					}
-
-					// Store actual field value
-					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-				}
-			};
-
-			if (allUiFields != null)
-			{
-				allUiFields[settingData.SlicerConfigName] = uiField;
-			}
-
-			uiField.SetValue(sliceSettingValue, userInitiated: false);
-
-			// Second ValueChanged listener defined after SetValue to ensure it's unaffected by initial change
-			uiField.ValueChanged += (s, e) =>
-			{
-				if (useDefaultSavePattern
-					&& e.UserInitiated)
-				{
-					settingsContext.SetValue(settingData.SlicerConfigName, uiField.Value);
-				}
-			};
-
-			uiField.Content.Margin = uiField.Content.Margin.Clone(right: 15);
-			// uiField.Content.ToolTipText = settingData.HelpText;
-			uiField.Content.ToolTipText = "";
-			uiField.HelpText = "";
-
-			return uiField;
 		}
 
 		private static bool CheckIfShouldBeShown(SliceSettingData settingData, SettingsContext settingsContext)

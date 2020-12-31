@@ -574,7 +574,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				// Close existing printer tabs
 				if (tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerTab
-						&& printerTab.printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
+						&& printerTab.Printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
 					&& tab.TabContent is PrinterTabPage printerPage)
 				{
 					tabControl.RemoveTab(tab);
@@ -682,7 +682,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var printerTabPage = tab1?.TabContent as PrinterTabPage;
 			if (printerTabPage == null
-				|| printerTabPage.printer != printer)
+				|| printerTabPage.Printer != printer)
 			{
 				// TODO - call save before remove
 				// printerTabPage.sceneContext.SaveChanges();
@@ -914,7 +914,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				&& stringEvent?.Data == SettingsKey.printer_name)
 			{
 				// Try to find a printer tab for the given printer
-				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.printer.Settings.ID == printerSettings.ID) as ChromeTab;
+				var printerTab = tabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage printerPage && printerPage.Printer.Settings.ID == printerSettings.ID) as ChromeTab;
 				if (printerTab != null)
 				{
 					printerTab.Title = printerSettings.GetValue(SettingsKey.printer_name);

@@ -27,149 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System.Collections.Generic;
+
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public static class SliceSettingsLayouts
 	{
-		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SimpleSettings()
-		{
-			var settings = new[]
-			{
-				("General", new[]
-				{
-					("General", new[]
-					{
-						SettingsKey.layer_height,
-						SettingsKey.fill_density,
-						SettingsKey.create_skirt,
-						SettingsKey.create_raft,
-						SettingsKey.create_brim,
-						SettingsKey.create_per_layer_support,
-						SettingsKey.temperature,
-						SettingsKey.bed_temperature,
-					}),
-					("Advanced", new[]
-					{
-						SettingsKey.spiral_vase,
-						SettingsKey.layer_to_pause,
-					}),
-				}),
-			};
-
-			return settings;
-		}
-
-		public static (string categoryName, (string groupName, string[] settings)[] groups)[] ModerateSettings()
-		{
-			var settings = new[]
-			{
-				("General", new[]
-				{
-					("General", new[]
-					{
-						SettingsKey.layer_height,
-						SettingsKey.first_layer_height,
-						SettingsKey.perimeters,
-						SettingsKey.top_solid_layers,
-						SettingsKey.bottom_solid_layers,
-						SettingsKey.fill_density,
-						SettingsKey.infill_type
-					}),
-					("Layers / Surface", new[]
-					{
-						SettingsKey.avoid_crossing_perimeters,
-						SettingsKey.merge_overlapping_lines,
-						SettingsKey.expand_thin_walls,
-					}),
-					("Infill", new[]
-					{
-						SettingsKey.fill_angle,
-						SettingsKey.fill_thin_gaps,
-					}),
-				}),
-				("Speed", new[]
-				{
-					("Laser Speed", new[]
-					{
-						SettingsKey.laser_speed_025,
-						SettingsKey.laser_speed_100,
-					}),
-					("Infill Speeds", new[]
-					{
-						SettingsKey.first_layer_speed,
-						SettingsKey.infill_speed,
-						SettingsKey.top_solid_infill_speed,
-					}),
-					("Perimeter Speeds", new[]
-					{
-						SettingsKey.perimeter_speed,
-						SettingsKey.external_perimeter_speed,
-					}),
-					("Other Speeds", new[]
-					{
-						SettingsKey.support_material_speed,
-						SettingsKey.interface_layer_speed,
-						SettingsKey.bridge_speed,
-						SettingsKey.travel_speed,
-					}),
-				}),
-				("Adhesion", new[]
-				{
-					("Adhesion", new[]
-					{
-						SettingsKey.create_skirt,
-						SettingsKey.skirts,
-						SettingsKey.create_raft,
-						SettingsKey.create_brim,
-						SettingsKey.brims,
-					}),
-				}),
-				("Support", new[]
-				{
-					("Support", new[]
-					{
-						SettingsKey.create_per_layer_support,
-						SettingsKey.create_per_layer_internal_support,
-						SettingsKey.support_percent,
-						SettingsKey.support_material_create_perimeter,
-						SettingsKey.support_material_interface_layers,
-						SettingsKey.support_material_spacing,
-						SettingsKey.support_material_infill_angle,
-						SettingsKey.support_material_extruder,
-						SettingsKey.support_material_interface_extruder,
-					}),
-				}),
-				("Filament", new[]
-				{
-					("Filament", new[]
-					{
-						SettingsKey.temperature,
-						SettingsKey.temperature1,
-						SettingsKey.temperature2,
-						SettingsKey.temperature3,
-						SettingsKey.bed_temperature,
-					}),
-					("Fan", new[]
-					{
-						SettingsKey.disable_fan_first_layers,
-						SettingsKey.min_fan_speed_absolute,
-					}),
-					("Retraction", new[]
-					{
-						SettingsKey.retract_length,
-						SettingsKey.retract_lift,
-					}),
-					("Advanced", new[]
-					{
-						SettingsKey.extrusion_multiplier,
-					}),
-				}),
-			};
-
-			return settings;
-		}
-
-		public static (string categoryName, (string groupName, string[] settings)[] groups)[] AdvancedSettings()
+		public static (string categoryName, (string groupName, string[] settings)[] groups)[] SliceSettings()
 		{
 			var settings = new[]
 			{
@@ -205,6 +69,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.wipe_shield_distance,
 						SettingsKey.wipe_tower_size,
+					}),
+					("Advanced", new[]
+					{
+						SettingsKey.spiral_vase,
+						SettingsKey.layer_to_pause,
 					}),
 				}),
 				("Speed", new[]
@@ -269,12 +138,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}),
 				("Support", new[]
 				{
-					("Support", new[]
+					("General", new[]
 					{
-						SettingsKey.create_per_layer_support,
-						SettingsKey.create_per_layer_internal_support,
-						SettingsKey.support_percent,
-						SettingsKey.support_grab_distance,
 						SettingsKey.support_material_create_perimeter,
 						SettingsKey.support_material_interface_layers,
 						SettingsKey.support_material_xy_distance,
@@ -284,6 +149,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.support_material_infill_angle,
 						SettingsKey.support_material_extruder,
 						SettingsKey.support_material_interface_extruder,
+					}),
+					("Automatic", new[]
+					{
+						SettingsKey.create_per_layer_support,
+						SettingsKey.create_per_layer_internal_support,
+						SettingsKey.support_percent,
+						SettingsKey.support_grab_distance,
 					}),
 				}),
 				("Filament", new[]

@@ -132,6 +132,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Enabled = scene.SelectedItem != null,
 			};
+			overflowButton.ToolTipText = "Selected Object Options".Localize();
 			overflowButton.DynamicPopupContent = () =>
 			{
 				return ApplicationController.Instance.GetModifyMenu(view3DWidget.sceneContext);

@@ -29,31 +29,78 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
 	public class SettingsLayout
 	{
-		public SettingsSection Simple { get; } = new SettingsSection("Simple");
+		public SettingsSection[] SlicingSections { get; } =
+			new[]
+			{
+				new SettingsSection("Slice Simple"),
+				new SettingsSection("Slice Intermediate"),
+				new SettingsSection("Slice Advanced")
+			};
 
-		public SettingsSection Moderate { get; } = new SettingsSection("Moderate");
-
-		public SettingsSection Advanced { get; } = new SettingsSection("Advanced");
-
-		public SettingsSection Printer { get; } = new SettingsSection("Printer");
+		public SettingsSection[] PrinterSections { get; } =
+			new[]
+			{
+				new SettingsSection("Printer Simple"),
+				new SettingsSection("Printer Intermediate"),
+				new SettingsSection("Printer Advanced")
+			};
+		
+		public SettingsSection AllSliceSettings => SlicingSections[2];
+		
+		public SettingsSection AllPrinterSettings => PrinterSections[2];
 
 		internal SettingsLayout()
 		{
-			LoadAndParseLayoutFile(Simple, SliceSettingsLayouts.SimpleSettings());
-			LoadAndParseLayoutFile(Moderate, SliceSettingsLayouts.ModerateSettings());
-			LoadAndParseLayoutFile(Advanced, SliceSettingsLayouts.AdvancedSettings());
-			LoadAndParseLayoutFile(Printer, SliceSettingsLayouts.PrinterSettings());
+			// slice settings
+			CreateLayout(SlicingSections[0], SliceSettingsLayouts.SliceSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.ReqiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
+				}
+
+				return false;
+			});
+			CreateLayout(SlicingSections[1], SliceSettingsLayouts.SliceSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.ReqiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
+				}
+
+				return false;
+			});
+			CreateLayout(SlicingSections[2], SliceSettingsLayouts.SliceSettings());
+
+			// printer settings
+			CreateLayout(PrinterSections[0], SliceSettingsLayouts.PrinterSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.ReqiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
+				}
+
+				return false;
+			});
+			CreateLayout(PrinterSections[1], SliceSettingsLayouts.PrinterSettings(), (setting) =>
+			{
+				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+				{
+					return data.ReqiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
+				}
+
+				return false;
+			});
+
+			CreateLayout(PrinterSections[2], SliceSettingsLayouts.PrinterSettings());
 		}
 
-		private void LoadAndParseLayoutFile(SettingsSection section, (string categoryName, (string groupName, string[] settings)[] groups)[] layout)
+		private void CreateLayout(SettingsSection section, (string categoryName, (string groupName, string[] settings)[] groups)[] layout, Func<string, bool> includeSetting = null)
 		{
 			foreach (var (categoryName, groups) in layout)
 			{
@@ -67,7 +114,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 					foreach (var setting in settings)
 					{
-						if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
+						if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data)
+							&& includeSetting?.Invoke(setting) != false)
 						{
 							groupToAddTo.Settings.Add(data);
 							data.OrganizerGroup = groupToAddTo;

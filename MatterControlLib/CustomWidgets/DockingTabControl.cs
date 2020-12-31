@@ -98,6 +98,25 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
+		public void ReplacePage(string key, GuiWidget widget, bool allowRebuild = true)
+		{
+			foreach (var tab in allTabs)
+			{
+				if (tab.key == key)
+				{
+					var index = allTabs.IndexOf(tab);
+					allTabs.Remove(tab);
+					allTabs.Insert(index, (tab.key, tab.text, widget));
+					if (allowRebuild)
+					{
+						this.Rebuild();
+					}
+					return;
+				}
+			}
+
+		}
+
 		public void RemovePage(string key, bool allowRebuild = true)
 		{
 			foreach (var tab in allTabs)

@@ -82,6 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The shape of the physical print bed.".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ListValues = "rectangular,circular",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "rectangular",
 					RebuildGCodeOnChange = false
 				},
@@ -91,6 +92,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bed Size".Localize(),
 					HelpText = "The X and Y values of the size of the print bed, in millimeters. For printers with a circular bed, these values are the diameters on the X and Y axes.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Units = "mm".Localize(),
 					DefaultValue = "200,200"
 				},
@@ -100,6 +102,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bed Temperature".Localize(),
 					HelpText = "The temperature to which the bed will be set for the duration of the print. Set to 0 to disable.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed",
 					DefaultValue = "70"
@@ -120,6 +123,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Inactive Cool Down".Localize(),
 					HelpText = "The amount to lower the temperature when the hotend is inactive.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "°C".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "0"
@@ -130,14 +134,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Slice Engine".Localize(),
 					HelpText = "The slicer to use.".Localize(),
 					DataEditType = DataEditTypes.SLICE_ENGINE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "MatterSlice",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 				},
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.seconds_to_reheat,
 					PresentationName = "Warm up Time".Localize(),
 					HelpText = "The time it takes to heat back up from a cool down.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "s".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
@@ -159,19 +165,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Filament Speed".Localize(),
 					HelpText = "The speed to run filament into and out of the printer.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "80"
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.unload_filament_time,
-					PresentationName = "Unload Filament Time".Localize(),
-					HelpText = "The time it will take to unload the filament".Localize(),
-					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					Units = "s".Localize(),
-					ShowIfSet = "!sla_printer",
-					DefaultValue = "5"
 				},
 				new SliceSettingData()
 				{
@@ -189,6 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Trim Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Trim Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "Trim the end of the filament to ensure a good load.  \n![](https://www.matterhackers.com/r/c3zLyf)  \nMake sure you trim it at a slight angle"
 				},
@@ -197,6 +195,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.insert_filament_markdown2,
 					PresentationName = "Insert Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Insert Filament page.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "* Insert filament into the extruder until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
@@ -206,6 +205,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.insert_filament_1_markdown,
 					PresentationName = "Insert Filament 2 Page".Localize(),
 					HelpText = "The Markdown that will be shown on the second extruders Insert Filament page.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "* Insert filament into extruder 2 until you feel it start to feed\\n  * Make sure the filament is all the way into the extruder\\n  * Hold the filament for several seconds until it catches\\n  * Test that it is inserted by gently pulling down, there should be some resistance  \\n* Click 'Next'  \\n![Load Filament](https://www.matterhackers.com/r/Ipj4Bb)"
@@ -216,6 +216,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Clean Filament Page".Localize(),
 					HelpText = "The Markdown that will be shown on the Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "In a few seconds filament should be coming out of the extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
@@ -225,6 +226,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extruder 2 Clean Page".Localize(),
 					HelpText = "The Markdown that will be shown on the second extruders Clean Filament page.".Localize(),
 					DataEditType = DataEditTypes.MARKDOWN_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "In a few seconds filament should be coming out of the second extruder\\n* Wait for the new filament to be coming out with no trace of the previous filament\\n* Click 'Next' when the new filament is running cleanly"
 				},
@@ -245,6 +247,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The layer(s) at which the print will pause, allowing for a change in filament. Printer is paused before starting the given layer. Leave blank to disable. To pause on multiple layers, separate the layer numbers with semicolons. For example: \"16; 37\".".Localize(),
 					DataEditType = DataEditTypes.STRING,
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ResetAtEndOfPrint = true,
 					DefaultValue = ""
 				},
@@ -265,6 +268,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Air Gapped Layer".Localize(),
 					HelpText = "The speed at which the layer on top of the air gap will print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "15",
@@ -286,6 +290,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.build_height,
 					PresentationName = "Build Height".Localize(),
 					HelpText = "The height of the printer's printable volume, in millimeters. Controls the height of the visual print area displayed in 3D View.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					DefaultValue = "0",
@@ -315,6 +320,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.connect_gcode,
 					PresentationName = "On Connect G-Code".Localize(),
 					HelpText = "G-Code to run upon successful connection to a printer. This can be useful to set settings specific to a given printer.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -344,7 +350,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates a raft under the printed part. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()
@@ -354,6 +361,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The extra distance the raft will extend around the edge of the part.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = "create_raft",
 					DefaultValue = "5",
@@ -367,6 +375,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = "create_raft",
 					DefaultValue = ".2",
 					Converter = new ValueConverter(),
@@ -377,6 +386,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Raft".Localize(),
 					HelpText = "The speed at which the layers of the raft (other than the first layer) will print. This can be set explicitly or as a percentage of the Infill speed.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s or %".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "100%",
@@ -387,6 +397,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.end_gcode,
 					PresentationName = "End G-Code".Localize(),
 					HelpText = "G-Code to be run at the end of all automatic output (the very end of the G-Code commands).".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "M104 S0 ; turn off temperature\\nG28 X0 ; home X axis\\nM84 ; disable motors",
 					Converter = new GCodeMapping(),
@@ -408,6 +419,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "External Perimeters First".Localize(),
 					HelpText = "Forces external perimeters to be printed first. By default, they will print last.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
@@ -420,7 +432,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
@@ -429,6 +441,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle Offsets".Localize(),
 					HelpText = "The offset of each nozzle relative to the first nozzle. Only useful for multiple extruder machines.".Localize(),
 					DataEditType = DataEditTypes.OFFSET3,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0x0,0x0,0x0,0x0"
@@ -451,9 +464,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Share Temperature".Localize(),
 					HelpText = "Used to specify if more than one extruder share a common heater cartridge.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer&extruder_count>1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -470,6 +484,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Merge Overlapping Lines".Localize(),
 					HelpText = "Detect perimeters that cross over themselves and combine them.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
 					Converter = new MappedToBoolString(),
@@ -480,6 +495,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Expand Thin Walls".Localize(),
 					HelpText = "Detects sections of the model that would be too thin to print and expands them to make them printable.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
 					Converter = new MappedToBoolString(),
@@ -503,6 +519,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "3",
 					Converter = new AsPercentOrDirect(),
 				},
@@ -512,6 +529,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Cost".Localize(),
 					HelpText = "The price of one kilogram of filament. Used for estimating the cost of a print in the Layer View.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "$/kg".Localize(),
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
@@ -522,6 +540,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Density".Localize(),
 					HelpText = "Material density. Only used for estimating mass in the Layer View.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "g/cm³".Localize(),
 					DefaultValue = "1.24",
 					RebuildGCodeOnChange = false,
@@ -534,6 +553,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Diameter".Localize(),
 					HelpText = "The actual diameter of the filament used for printing.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					Units = "mm".Localize(),
 					DefaultValue = "3",
@@ -551,12 +571,13 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					QuickMenuSettings = { { "Light", "10%" }, { "Standard", "30%" }, { "Heavy", "90%" } },
 					SlicerConfigName = SettingsKey.fill_density,
+					QuickMenuSettings = { { "Light", "10%" }, { "Standard", "30%" }, { "Heavy", "90%" } },
 					PresentationName = "Fill Density".Localize(),
 					HelpText = "The amount of infill material to generate, expressed as a ratio or a percentage.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					DefaultValue = "0.4",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new AsPercentOrDirectFirst(),
 				},
 				new SliceSettingData()
@@ -575,6 +596,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "First Layer".Localize(),
 					HelpText = "A modifier of the width of the extrusion for the first layer of the print. A value greater than 100% can help with adhesion to the print bed.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm or %".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "100%",
@@ -587,6 +609,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The thickness of the first layer. A first layer taller than the default layer thickness can ensure good adhesion to the build plate.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "0.3",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.layer_height),
 				},
@@ -606,6 +629,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Initial Layers".Localize(),
 					HelpText = "The number of layers to consider as the beginning of the print. These will print at initial layer speed.".Localize(),
 					DataEditType = DataEditTypes.INT_OR_MM,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "layers or mm".Localize(),
 					ShowIfSet = "sla_printer",
 					DefaultValue = "1",
@@ -630,7 +654,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -640,6 +664,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Checks before each print that the layer height is less than the nozzle diameter (important for filament adhesion)".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					Units = "",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowAsOverride = true,
 					DefaultValue = "1",
 					ShowIfSet = "!sla_printer",
@@ -653,7 +678,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -692,6 +717,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Use G0".Localize(),
 					HelpText = "Use G0 for moves rather than G1.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0"
 				},
@@ -722,7 +748,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -732,9 +758,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer has a c axis used by too changer (e3d quad extruder).".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -746,7 +773,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "has_z_probe",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -757,7 +784,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -767,7 +794,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -775,8 +802,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Printer is SLA".Localize(),
 					HelpText = "Switch the settings interface to one intended for SLA printers.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -786,9 +814,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "This will only work on specific hardware. Do not use unless you are sure your printer controller supports this feature".Localize(),
 					DataEditType = DataEditTypes.LIST,
 					ListValues = "None,Simple Arduino",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "None",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -798,6 +827,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "When upgrading to new firmware, first save a backup of the current firmware.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&!include_firmware_updater=None",
 					RebuildGCodeOnChange = false
 				},
@@ -808,8 +838,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer has the ability to control the power supply. Enable this function to show the ATX Power Control section on the Controls pane.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -821,7 +852,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "",
 					DefaultValue = "0",
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -831,7 +862,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Shows a button at the right side of the Printer Connection Bar used to reset the USB connection to the printer. This can be used on printers that support it as an emergency stop.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -841,6 +872,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The amount the infill edge will push into the perimeter. Helps ensure the infill is connected to the edge. This can be expressed as a percentage of the Nozzle Diameter.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "25%",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter, change0ToReference: false),
 					QuickMenuSettings = { { "Light", "20%" }, { "Standard", "35%" }, { "Heavy", "75%" } }
@@ -893,6 +925,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Firmware Type".Localize(),
 					HelpText = "The firmware being used by the printer. Allows for improvements based on firmware such as optimized G-Code output.".Localize(),
 					DataEditType = DataEditTypes.LIST,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					ListValues = "Unknown,Marlin,Smoothie",
 					DefaultValue = "Unknown",
@@ -907,8 +940,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ListValues = "3 Point Plane,3x3 Mesh,5x5 Mesh,10x10 Mesh,7 Point Disk,13 Point Disk,100 Point Disk,Custom Points",
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "3 Point Plane",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -939,9 +973,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The printer requires print leveling to run correctly.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!has_hardware_leveling",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					ShowAsOverride = true,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.Application,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -953,7 +988,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()
@@ -964,6 +999,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					ShowAsOverride = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&filament_runout_sensor",
 					RebuildGCodeOnChange = false,
 					DefaultValue = "1"
@@ -974,6 +1010,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Runout Trigger Ratio".Localize(),
 					HelpText = "The ratio between the requested extrusion and the sensors measured extrusion that will trigger an error.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowAsOverride = true,
 					ShowIfSet = "!sla_printer&filament_runout_sensor",
 					RebuildGCodeOnChange = false,
@@ -1051,7 +1088,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1063,7 +1100,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowAsOverride = true,
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&use_z_probe",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					DefaultValue = "0"
 				},
 				new SliceSettingData()
@@ -1131,6 +1168,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.layer_gcode,
 					PresentationName = "Layer Change G-Code".Localize(),
 					HelpText = "G-Code to be run after the change in Z height for the next layer.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "; LAYER:[layer_num]",
 					Converter = new MapLayerChangeGCode(),
@@ -1181,6 +1219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum length of filament that must be extruded before a retraction can occur.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.enable_retractions,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = ".1",
@@ -1194,7 +1233,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -1204,7 +1243,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer&has_fan&extruder_count>1",
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -1212,7 +1251,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Enable Fan".Localize(),
 					HelpText = "Turn the fan on and off regardless of settings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
-					ReloadUiWhenChanged = true,
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					ShowIfSet = "!sla_printer&has_fan",
 					DefaultValue = "1"
 				},
@@ -1223,6 +1262,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "If the time to print a layer is less than this, the fan will turn on at its minimum speed. It will then ramp up to its maximum speed as the layer time decreases.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "seconds".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "60",
@@ -1246,6 +1286,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Run Max if Below".Localize(),
 					HelpText = "As the time to print a layer decreases to this, the fan speed will be increased up to its maximum speed.".Localize(),
 					DataEditType = DataEditTypes.INT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "seconds".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
@@ -1260,6 +1301,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.INT,
 					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "35",
 					Converter = new ConditionalField(SettingsKey.enable_fan, new ValueConverter()),
@@ -1270,6 +1312,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Maximum Speed".Localize(),
 					HelpText = "The maximum speed at which the layer cooling fan will run, expressed as a percentage of full power.".Localize(),
 					DataEditType = DataEditTypes.INT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "%".Localize(),
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
@@ -1283,6 +1326,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which the layer cooling fan will run when bridging, expressed as a percentage of full power.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					Units = "%".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "has_fan",
 					EnableIfSet = SettingsKey.enable_fan,
 					DefaultValue = "100",
@@ -1317,6 +1361,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Minimum Extrusion Length".Localize(),
 					HelpText = "The minimum length of filament to use printing the skirt loops. Enough skirt loops will be drawn to use this amount of filament, overriding the value set in Loops if the value in Loops will produce a skirt shorter than this value.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm".Localize(),
@@ -1329,6 +1374,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.nozzle_diameter,
 					PresentationName = "Nozzle Diameter".Localize(),
 					HelpText = "The diameter of the extruder's nozzle.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
 					DefaultValue = "0.5",
@@ -1348,6 +1394,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Make".Localize(),
 					HelpText = "This is the make (often the manufacturer) of printer this profile is targeting.".Localize(),
 					DataEditType = DataEditTypes.READONLY_STRING,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "Undefined"
 				},
 				new SliceSettingData()
@@ -1355,6 +1402,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.model,
 					PresentationName = "Model".Localize(),
 					HelpText = "This is the model of printer this profile is targeting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DataEditType = DataEditTypes.READONLY_STRING,
 					DefaultValue = "Undefined"
 				},
@@ -1372,6 +1420,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "First Layer Only".Localize(),
 					HelpText = "Output only the first layer of the print. Especially useful for outputting gcode data for applications like engraving or cutting.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
@@ -1404,6 +1453,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm or %".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "100%",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.nozzle_diameter),
 				},
@@ -1424,6 +1474,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Perimeter Acceleration".Localize(),
 					HelpText = "The acceleration that the printer will be set to for perimeters, will not be changed if set to 0. A typical perimeter acceleration is 800.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s^2".Localize(),
 					DefaultValue = "0",
@@ -1434,6 +1485,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Default Acceleration".Localize(),
 					HelpText = "The acceleration that the printer will be set to by default, will not be changed if set to 0. A typical default acceleration is 1500.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					Units = "mm/s^2".Localize(),
 					DefaultValue = "0",
@@ -1444,6 +1496,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Start End Overlap".Localize(),
 					HelpText = "The distance that a perimeter will overlap itself when it completes its loop, expressed as a percentage of the Nozzle Diameter.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "%".Localize(),
 					DefaultValue = "90",
 					Converter = new AsPercentOrDirect(),
@@ -1465,6 +1518,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Print Center".Localize(),
 					HelpText = "The position (X and Y coordinates) of the center of the print bed, in millimeters. Normally this is 1/2 the bed size for Cartesian printers and 0, 0 for Delta printers.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Units = "mm".Localize(),
 					DefaultValue = "100,100"
 				},
@@ -1501,6 +1555,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Minimum Travel Requiring Retraction".Localize(),
 					HelpText = "The minimum distance of a non-print move which will trigger a retraction.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
@@ -1514,6 +1569,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The minimum distance with, avoid crossing perimeters turned on, of a non-print move which will trigger a retraction.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "20",
@@ -1526,6 +1582,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The distance to travel after completing a perimeter to improve seams.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "3",
 					Converter = new ValueConverter(),
@@ -1538,7 +1595,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -1558,6 +1615,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Length on Tool Change".Localize(),
 					HelpText = "When using multiple extruders, the distance filament will reverse before changing to a different extruder.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
@@ -1569,6 +1627,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.retract_when_changing_islands,
 					PresentationName = "Retract When Changing Islands".Localize(),
 					HelpText = "Force a retraction when moving between islands (distinct parts on the layer).".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
@@ -1593,6 +1652,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extra Length After Tool Change".Localize(),
 					HelpText = "Length of extra filament to extrude after a complete tool change (in addition to the re-extrusion of the tool change retraction distance).".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					EnableIfSet = SettingsKey.enable_retractions,
 					Units = "mm zero to disable".Localize(),
@@ -1604,6 +1664,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.reset_long_extrusion,
 					PresentationName = "Reset Long Extrusion".Localize(),
 					HelpText = "If the extruder has been running for a long time, it may be reporting values that are too large, this will periodically reset it.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1",
@@ -1615,6 +1676,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Send With Checksum".Localize(),
 					HelpText = "Calculate and transmit a standard rep-rap checksum for all commands.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "1"
 				},
@@ -1624,6 +1686,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extra Length On Restart".Localize(),
 					HelpText = "Length of filament to extrude after a complete retraction (in addition to the re-extrusion of the Length on Move distance).".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
@@ -1637,6 +1700,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The time over which to increase the Extra Length On Restart to its maximum value. Below this time only a portion of the extra length will be applied. Leave 0 to apply the entire amount all the time.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE,
 					Units = "s".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "0",
@@ -1649,6 +1713,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which filament will retract and re-extrude.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					EnableIfSet = SettingsKey.enable_retractions,
 					DefaultValue = "30",
@@ -1687,6 +1752,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The distance from the model at which the first skirt loop is drawn.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm".Localize(),
 					DefaultValue = "6",
@@ -1773,6 +1839,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowIfSet = "!sla_printer",
 					ResetAtEndOfPrint = true,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
 				},
@@ -1791,6 +1858,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Start G-Code".Localize(),
 					HelpText = "G-Code to be run immediately following the temperature setting commands. Including commands to set temperature in this section will cause them not be generated outside of this section. Will accept Custom G-Code variables.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "G28 ; home all axes\\nG1 Z5 F5000 ; lift nozzle",
 					Converter = new GCodeMapping(),
 				},
@@ -1800,6 +1868,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Write Filter".Localize(),
 					HelpText = "This is a set of regular expressions to apply to lines prior to sending to a printer. They will be applied in the order listed before sending. To return more than one instruction separate them with comma.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
@@ -1811,6 +1880,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Read Filter".Localize(),
 					HelpText = "This is a set of regular expressions to apply to lines after they are received from the printer. They will be applied in order to each line received.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "",
 					ShowAsOverride = true,
 					ShowIfSet = null,
@@ -1839,6 +1909,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The distance between the top of the support and the bottom of the model. A good value depends on the type of material. For ABS and PLA a value between 0.4 and 0.6 works well, respectively.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					DefaultValue = ".3",
 					Converter = new ValueConverter(),
@@ -1872,8 +1943,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					Converter = new MappedToBoolString(),
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -1891,6 +1963,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Line Support Overlap".Localize(),
 					HelpText = "The percentage overlap a given printed line must have over the layer below to be supported.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "%".Localize(),
 					ShowIfSet = "!sla_printer&create_per_layer_support",
 					DefaultValue = "50",
@@ -1902,6 +1975,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Support Expand Distance".Localize(),
 					HelpText = "The amount to expand the support so it is easy to grab.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer&create_per_layer_support",
 					DefaultValue = "1",
@@ -1924,6 +1998,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					EnableIfSet = "create_raft",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.INT,
 					DefaultValue = "0",
 					Converter = new ValuePlusConstant(-1),
@@ -1955,6 +2030,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Pattern Spacing".Localize(),
 					HelpText = "The distance between support material lines.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "2.5",
@@ -1988,6 +2064,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "X and Y Distance".Localize(),
 					HelpText = "The distance the support material will be from the object in the X and Y directions.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					Units = "mm".Localize(),
 					DefaultValue = "0.7",
@@ -1999,6 +2076,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Support Type".Localize(),
 					HelpText = "The pattern to draw for the generation of support material.".Localize(),
 					DataEditType = DataEditTypes.LIST,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					ListValues = "GRID,LINES",
 					DefaultValue = "LINES",
@@ -2011,6 +2089,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "°C".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = "!sla_printer",
 					DefaultValue = "200"
 				},
@@ -2031,6 +2110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Modify T1 speeds during extrusion moves by the ratio or percent.".Localize(),
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "Ratio or %".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "100%",
 					Converter = new AsPercentOrDirect()
@@ -2051,6 +2131,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle 1 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2060,6 +2141,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Nozzle 2 Inset".Localize(),
 					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2079,6 +2161,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Extruder Wipe Temperature".Localize(),
 					HelpText = "The temperature at which the extruder will wipe the nozzle, as specified by Custom G-Code.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					Units = "°C".Localize(),
 					DefaultValue = "0"
@@ -2089,6 +2172,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bed Remove Part Temperature".Localize(),
 					HelpText = "The temperature to which the bed will heat (or cool) in order to remove the part, as specified in Custom G-Code.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "°C".Localize(),
 					ShowIfSet = "has_heated_bed",
 					DefaultValue = "0"
@@ -2116,6 +2200,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Before Tool Change G-Code".Localize(),
 					HelpText = "G-Code to be run before every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
 				},
@@ -2125,6 +2210,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code".Localize(),
 					HelpText = "G-Code to be run after every tool change. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2133,6 +2219,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_1,
 					PresentationName = "Before Tool Change G-Code 2".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 2. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = ""
@@ -2143,6 +2230,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "After Tool Change G-Code 2".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
 					ShowIfSet = "!sla_printer&extruder_count>1",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
 				},
@@ -2151,6 +2239,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_2,
 					PresentationName = "Before Tool Change G-Code 3".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>2",
 					DefaultValue = ""
@@ -2160,6 +2249,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode_2,
 					PresentationName = "After Tool Change G-Code 3".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 3. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>2",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2169,6 +2259,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.before_toolchange_gcode_3,
 					PresentationName = "Before Tool Change G-Code 4".Localize(),
 					HelpText = "G-Code to be run before switching to extruder 3. Will use standard before G-Code if not set. You can use [wipe_tower_x] [wipe_tower_y] & [wipe_tower_z]  to set the extruder position if needed. You can also use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					ShowIfSet = "!sla_printer&extruder_count>3",
 					DefaultValue = ""
@@ -2178,6 +2269,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.toolchange_gcode_3,
 					PresentationName = "After Tool Change G-Code 4".Localize(),
 					HelpText = "G-Code to be run after switching to extruder 2. Will use standard after G-Code if not set. You can use '; WRITE_RAW' to skip checksums or '; NO_PROCESSING' to skip position offsetting.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer&extruder_count>3",
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = ""
@@ -2237,6 +2329,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Bridge Over Infill".Localize(),
 					HelpText = "Make the first layer on top of partial infill use the speed and fan for bridging.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = "0",
 					Converter = new MappedToBoolString(),
 				},
@@ -2256,6 +2349,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The serial port communication speed of the printers firmware.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					ShowAsOverride = false,
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = null,
 					DefaultValue = "250000",
 					RebuildGCodeOnChange = false
@@ -2288,6 +2382,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.COM_PORT,
 					ShowAsOverride = false,
 					ShowIfSet = "!enable_network_printing",
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
 					DefaultValue = "",
 					RebuildGCodeOnChange = false
 				},
@@ -2335,6 +2430,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Networked Printing".Localize(),
 					HelpText = "Sets MatterControl to attempt to connect to a printer over the network. (You must disconnect and reconnect for this to take effect)".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
 					{
@@ -2347,7 +2443,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.Application
 				},
 				new SliceSettingData()
 				{
@@ -2365,6 +2461,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Emulate Endstops".Localize(),
 					HelpText = "Make MatterControl emulate bed limits and endstops in software and prevent the printer from moving to invalid locations.".Localize(),
 					ShowIfSet = "!sla_printer",
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false
@@ -2374,6 +2471,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.enable_sailfish_communication,
 					PresentationName = "Sailfish Communication".Localize(),
 					HelpText = "Sets MatterControl to use s3g communication method. (You must disconnect and reconnect for this to take effect)".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "!sla_printer",
 					DataEditType = DataEditTypes.CHECK_BOX,
 					SetSettingsOnChange = new List<Dictionary<string, string>>
@@ -2387,7 +2485,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					},
 					DefaultValue = "0",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2399,7 +2497,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					ShowIfSet = "enable_network_printing",
 					DefaultValue = "Manual",
 					RebuildGCodeOnChange = false,
-					ReloadUiWhenChanged = true
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2456,7 +2554,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.max_acceleration,
 					PresentationName = "Max Acceleration".Localize(),
-					HelpText = "The maximum amount the printer can accelerate on a G-Code move.".Localize(),
+					HelpText = "The maximum amount the printer can accelerate on a G-Code move. Used for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "1000",
 					Units = "mm/s²".Localize(),
@@ -2466,7 +2565,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.max_velocity,
 					PresentationName = "Max Velocity".Localize(),
-					HelpText = "The maximum speed the printer can move.".Localize(),
+					HelpText = "The maximum speed the printer can move. Uused for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "500",
 					Units = "mm/s".Localize(),
@@ -2476,7 +2576,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.jerk_velocity,
 					PresentationName = "Jerk Velocity".Localize(),
-					HelpText = "The maximum speed that the printer treats as 0 and changes direction instantly.".Localize(),
+					HelpText = "The maximum speed that the printer treats as 0 and changes direction instantly. Used for print time estimation.".Localize(),
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					DefaultValue = "8",
 					Units = "mm/s".Localize(),
@@ -2507,6 +2608,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Progress Reporting".Localize(),
 					HelpText = "Choose the command for showing the print progress on the printer's LCD screen, if it has one.".Localize(),
 					DataEditType = DataEditTypes.LIST,
+					ReqiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ListValues = "None,M73,M117",
 					DefaultValue = "M117",
 					RebuildGCodeOnChange = false
@@ -2518,7 +2620,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates a brim attached to the base of the print. Useful to prevent warping when printing ABS (and other warping-prone plastics) as it helps parts adhere to the bed.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "0",
-					ReloadUiWhenChanged = true
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
+					UiUpdate = UiUpdateRequired.SliceSettings
 				},
 				new SliceSettingData()
 				{
@@ -2527,7 +2630,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Creates an outline around the print, but not attached to it. This is useful for priming the nozzle to ensure the plastic is flowing when the print starts.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
-					ReloadUiWhenChanged = true
+					ReqiredDisplayDetail = DisplayDetailRequired.Simple,
+					UiUpdate = UiUpdateRequired.SliceSettings
 				}
 			};
 		}
