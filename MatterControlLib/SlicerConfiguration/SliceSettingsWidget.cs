@@ -345,29 +345,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			this.PerformLayout();
 		}
 
-		public enum ExpansionMode
-		{
-			Expanded,
-			Collapsed
-		}
-
-		public void ForceExpansionMode(ExpansionMode expansionMode)
-		{
-			bool firstItem = true;
-			foreach (var sectionWidget in this.ActiveTab.TabContent.Descendants<SectionWidget>().Reverse())
-			{
-				if (firstItem)
-				{
-					sectionWidget.Checkbox.Checked = true;
-					firstItem = false;
-				}
-				else
-				{
-					sectionWidget.Checkbox.Checked = expansionMode == ExpansionMode.Expanded;
-				}
-			}
-		}
-
 		private void ExtendOverflowMenu(PopupMenu popupMenu)
 		{
 			var menu = popupMenu.CreateMenuItem("View Just My Settings".Localize());
@@ -386,18 +363,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						this.FilterToOverrides(printer.Settings.QualityLayerCascade);
 						break;
 				}
-			};
-
-			popupMenu.CreateSeparator();
-
-			popupMenu.CreateMenuItem("Expand All".Localize()).Click += (s, e) =>
-			{
-				this.ForceExpansionMode(ExpansionMode.Expanded);
-			};
-
-			popupMenu.CreateMenuItem("Collapse All".Localize()).Click += (s, e) =>
-			{
-				this.ForceExpansionMode(ExpansionMode.Collapsed);
 			};
 
 			if (settingsContext.ViewFilter == NamedSettingsLayers.All)
