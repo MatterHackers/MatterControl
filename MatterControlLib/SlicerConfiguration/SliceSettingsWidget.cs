@@ -382,7 +382,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 
 				var menuItem = popupMenu.CreateBoolMenuItem("Simple".Localize(),
-					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Simple",
+					() =>
+					{
+						var value = UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail);
+						return string.IsNullOrEmpty(value) || value == "Simple";
+					},
 					(value) => SetDetail("Simple", value));
 				menuItem.ToolTipText = "Show only the most important settings";
 
