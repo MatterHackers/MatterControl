@@ -1186,7 +1186,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(category.Name + " Tab");
 
 			// Open the subGroup if required
-			var foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _);
+			var foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _, .1);
+			if (foundWidget == null)
+			{
+				// turn on advanced mode and try to get it again
+				testRunner.ClickByName("Slice Settings Overflow Menu");
+				testRunner.ClickByName("Advanced Menu Item");
+				foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _);
+			}
+
 			if (foundWidget != null)
 			{
 				var containerCheckBox = foundWidget.Descendants<ExpandCheckboxButton>().First();
@@ -1205,7 +1213,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
 			// Click field
 			var widgetName = $"{settingData.PresentationName} Field";
-			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, onlyVisible: false);
+			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, .2, onlyVisible: false);
+			if (foundWidget == null)
+			{
+				// turn on advanced mode and try to get it again
+				testRunner.ClickByName("Slice Settings Overflow Menu");
+				testRunner.ClickByName("Advanced Menu Item");
+				foundWidget = testRunner.GetWidgetByName(widgetName, out _, onlyVisible: false);
+			}
+
 			foreach (var scrollable in foundWidget.Parents<ScrollableWidget>())
 			{
 				scrollable.ScrollIntoView(foundWidget);
