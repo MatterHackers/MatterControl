@@ -29,11 +29,14 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ClipperLib;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.VectorMath;
+using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
+using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
@@ -61,6 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			RemoveFacesAboveCut(mesh);
 
 			// calculate and add the PWN face from the loops
+			// vertexSourceBottom.TriangulateFaces(bottomTeselatedSource, mesh);
 
 			return mesh;
 		}
@@ -162,6 +166,20 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
+		}
+	}
+
+	public static class CutExtensionMethods
+	{
+		public static Polygons CreateUnion(this Polygons polygons, Polygons other)
+		{
+			Clipper clipper = new Clipper();
+			clipper.AddPaths(polygons, PolyType.ptSubject, true);
+			clipper.AddPaths(other, PolyType.ptSubject, true);
+
+			Polygons ret = new Polygons();
+			clipper.Execute(ClipType.ctUnion, ret, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+			return ret;
 		}
 	}
 }
