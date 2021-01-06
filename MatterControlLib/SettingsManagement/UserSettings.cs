@@ -73,6 +73,7 @@ namespace MatterHackers.MatterControl
 		public const string SliceSettingsWidget_CurrentTab = nameof(SliceSettingsWidget_CurrentTab);
 		public const string SliceSettingsWidth = nameof(SliceSettingsWidth);
 		public const string SliceSettingsViewDetail = nameof(SliceSettingsViewDetail);
+		public const string SliceSettingsMoreClicked = nameof(SliceSettingsMoreClicked);
 		public const string SnapGridDistance = nameof(SnapGridDistance);
 		public const string SoftwareLicenseAccepted = nameof(SoftwareLicenseAccepted);
 		public const string TerminalAutoUppercase = nameof(TerminalAutoUppercase);

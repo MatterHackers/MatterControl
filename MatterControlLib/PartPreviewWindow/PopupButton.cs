@@ -180,6 +180,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					this.PopupContent.Close();
 				}
+
+				UiThread.RunOnIdle(() =>
+				{
+					menuVisibileAtMouseDown = false;
+				});
 			};
 
 			if (overridePopupHAnchor)

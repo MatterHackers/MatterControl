@@ -39,21 +39,6 @@ namespace MatterHackers.MatterControl
 		private string StartCountKey = "StartCount";
 		private string StartCountDurringExitKey = "StartCountDurringExit";
 
-		private string IsSimpleModeKey = "IsSimpleMode";
-
-		public bool IsSimpleMode
-		{
-			get
-			{
-				return GetBool(IsSimpleModeKey, OemSettings.Instance.UseSimpleModeByDefault);
-			}
-
-			set
-			{
-				SetBool(IsSimpleModeKey, value);
-			}
-		}
-
 		public int StartCount
 		{
 			get { return GetInt(StartCountKey); }

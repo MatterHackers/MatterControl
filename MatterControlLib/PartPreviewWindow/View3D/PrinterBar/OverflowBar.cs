@@ -139,7 +139,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				this.DynamicPopupContent = () =>
 				{
-					var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+					var menuTheme = ApplicationController.Instance.MenuTheme;
+					var popupMenu = new PopupMenu(menuTheme);
 
 					// Perform overflow
 					bool hasOverflowItems = false;
@@ -158,13 +159,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						var iconButton = widget as IconButton;
 
 						var iconImage = iconButton?.IconImage;
-
-						// Invert the menu icon if the application theme is dark
-						if (iconImage != null
-							&& theme.InvertIcons)
-						{
-							iconImage = iconImage.InvertLightness();
-						}
 
 						menuItem = popupMenu.CreateMenuItem(
 							widget.ToolTipText ?? widget.Text,

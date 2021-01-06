@@ -121,7 +121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private static readonly Regex NameSanitizer = new Regex("[^a-zA-Z0-9-]", RegexOptions.Compiled);
 
 		private int tabIndexForItem = 0;
-		private Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
+		private readonly Dictionary<string, UIField> allUiFields = new Dictionary<string, UIField>();
 		private readonly ThemeConfig theme;
 		private readonly PrinterConfig printer;
 		private readonly SettingsContext settingsContext;
@@ -129,8 +129,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private readonly TextEditWithInlineCancel settingsNameEdit;
 		private int groupPanelCount = 0;
-		private List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
-		private TextWidget filteredItemsHeading;
+		private readonly List<(GuiWidget widget, SliceSettingData settingData)> settingsRows;
+		private readonly TextWidget filteredItemsHeading;
 		private readonly Action<PopupMenu> externalExtendMenu;
 		private readonly string scopeName;
 
@@ -156,8 +156,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				overflowBar.ToolTipText = "Settings View Options".Localize();
 				overflowBar.ExtendOverflowMenu = this.ExtendOverflowMenu;
 
-				var overflowButton = this.TabBar.RightAnchorItem;
-				overflowButton.Name = "Slice Settings Overflow Menu";
+				this.TabBar.RightAnchorItem.Name = "Slice Settings Overflow Menu";
 
 				this.TabBar.Padding = this.TabBar.Margin.Clone(right: theme.ToolbarPadding.Right);
 
@@ -173,12 +172,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var filter = settingsNameEdit.TextEditWidget.Text.Trim();
 
-					foreach (var item in this.settingsRows)
+					foreach (var (widget, settingData) in this.settingsRows)
 					{
-						var metaData = item.settingData;
+						var metaData = settingData;
 
 						// Show matching items
-						item.widget.Visible = metaData.SlicerConfigName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
+						widget.Visible = metaData.SlicerConfigName.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0
 							|| metaData.HelpText.IndexOf(filter, StringComparison.OrdinalIgnoreCase) >= 0;
 					}
 
@@ -307,6 +306,31 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					categoryPanel.PerformLayout();
 				}
 
+				if (settingsSection.Name == "Slice Simple"
+					&& UserSettings.Instance.get(UserSettingsKey.SliceSettingsMoreClicked) != "true")
+				{
+					var button = new TextButton("More", theme, 8)
+					{
+						Margin = new BorderDouble(5, 0),
+						Padding = new BorderDouble(7, 3),
+						VAnchor = VAnchor.Fit | VAnchor.Center,
+						HAnchor = HAnchor.Fit,
+						BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
+						HoverColor = theme.AccentMimimalOverlay,
+						BorderColor = theme.PrimaryAccentColor,
+						RenderOutline = true,
+					};
+
+					button.Click += (s, e) =>
+					{
+						this.TabBar.RightAnchorItem.InvokeClick();
+					};
+
+					button.RoundRadius = button.Height / 2;
+
+					this.TabBar.AddChild(button);
+				}
+
 				this.TabBar.AddChild(new HorizontalSpacer());
 
 				var searchButton = theme.CreateSearchButton();
@@ -369,34 +393,48 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				popupMenu.CreateSeparator();
 
-				void SetDetail(string level, bool value)
+				void SetDetail(string level, bool changingTo)
 				{
 					UiThread.RunOnIdle(() =>
 					{
-						if (value)
+						if (changingTo)
 						{
 							UserSettings.Instance.set(UserSettingsKey.SliceSettingsViewDetail, level);
 							ApplicationController.Instance.ReloadSettings(printer);
+							UserSettings.Instance.set(UserSettingsKey.SliceSettingsMoreClicked, "true");
 						}
 					});
 				}
 
-				var menuItem = popupMenu.CreateBoolMenuItem("Simple".Localize(),
-					() =>
+				int GetMenuIndex()
+				{
+					switch(UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail))
 					{
-						var value = UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail);
-						return string.IsNullOrEmpty(value) || value == "Simple";
-					},
+						case "Simple":
+							return 0;
+
+						case "Intermediate":
+							return 1;
+
+						case "Advanced":
+							return 2;
+					}
+
+					return 0;
+				}
+
+				var menuItem = popupMenu.CreateBoolMenuItem("Simple".Localize(),
+					() => GetMenuIndex() == 0,
 					(value) => SetDetail("Simple", value));
 				menuItem.ToolTipText = "Show only the most important settings";
 
 				menuItem = popupMenu.CreateBoolMenuItem("Intermediate".Localize(),
-					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Intermediate",
+					() => GetMenuIndex() == 1,
 					(value) => SetDetail("Intermediate", value));
 				menuItem.ToolTipText = "Show commonly changed settings";
 
 				menuItem = popupMenu.CreateBoolMenuItem("Advanced".Localize(),
-					() => UserSettings.Instance.get(UserSettingsKey.SliceSettingsViewDetail) == "Advanced",
+					() => GetMenuIndex() == 2,
 					(value) => SetDetail("Advanced", value));
 				menuItem.ToolTipText = "Show all available settings";
 			}
