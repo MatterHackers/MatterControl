@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					VAnchor = VAnchor.Absolute,
 					HAnchor = HAnchor.Right,
 					BackgroundColor = theme.MinimalShade,
-					Margin = new BorderDouble(right: leftRightMargin)
+					Margin = new BorderDouble(right: leftRightMargin),
 				};
 				moreButton.Click += (s, e1) =>
 				{
