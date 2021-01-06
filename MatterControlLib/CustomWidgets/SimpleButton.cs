@@ -144,8 +144,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var bounds = this.LocalBounds;
 				bounds -= BackgroundInset;
-				var rect = new RoundedRect(bounds.Left + .5, bounds.Bottom + .5, bounds.Right - .5, bounds.Top - .5, RoundRadius);
-				var rectOutline = new Stroke(rect, 1);
+				var stroke = 1 * GuiWidget.DeviceScale;
+				var expand = stroke / 2;
+				var rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);
 			}
@@ -158,8 +160,17 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var bounds = this.LocalBounds;
 				bounds -= BackgroundInset;
 				var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
-
 				graphics2D.Render(rect, BackgroundColor);
+
+				if (RenderOutline)
+				{
+					var stroke = 1 * GuiWidget.DeviceScale;
+					var expand = stroke / 2;
+					rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+					var rectOutline = new Stroke(rect, stroke);
+
+					graphics2D.Render(rectOutline, BorderColor);
+				}
 			}
 		}
 
@@ -180,6 +191,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public BorderDouble BackgroundInset { get; set; }
 
 		public double RoundRadius { get; set; }
+
+		public bool RenderOutline { get; set; }
 	}
 
 	public class SimpleFlowButton : FlowLayoutWidget
