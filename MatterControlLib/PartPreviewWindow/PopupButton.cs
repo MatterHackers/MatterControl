@@ -36,11 +36,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PopupButton : GuiWidget, IIgnoredPopupChild, IMenuCreator
 	{
 		protected GuiWidget buttonView;
-		protected bool menuVisible = false;
 		private bool menuVisibileAtMouseDown = false;
 		private PopupWidget popupWidget;
 		private bool overridePopupHAnchor = false;
 		private bool overridePopupVAnchor = false;
+
+		public bool MenuVisible { get; private set; } = false;
 
 		public PopupButton()
 		{
@@ -66,7 +67,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override Color BackgroundColor
 		{
-			get => menuVisible ? this.OpenColor : base.BackgroundColor;
+			get => MenuVisible ? this.OpenColor : base.BackgroundColor;
 			set => base.BackgroundColor = value;
 		}
 
@@ -74,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public Color HoverColor { get; set; } = new Color(0, 0, 0, 40);
 
-		public bool KeepMenuOpen => menuVisible || this.AlwaysKeepOpen;
+		public bool KeepMenuOpen => MenuVisible || this.AlwaysKeepOpen;
 
 		public bool MakeScrollable { get; set; } = true;
 
@@ -121,6 +122,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				this.ShowPopup();
 			}
 
+			menuVisibileAtMouseDown = false;
 			base.OnClick(mouseEvent);
 		}
 
@@ -133,7 +135,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
 			// Store the menu state at the time of mousedown
-			menuVisibileAtMouseDown = menuVisible;
+			menuVisibileAtMouseDown = MenuVisible;
 			base.OnMouseDown(mouseEvent);
 		}
 
@@ -144,7 +146,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				PopupLayoutEngine = new PopupLayoutEngine(this.PopupContent, this, this.PopDirection, 0, this.AlignToRightEdge);
 			}
 
-			menuVisible = true;
+			MenuVisible = true;
 
 			this.PopupContent?.ClearRemovedFlag();
 
@@ -156,7 +158,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (this.PopupContent == null
 				|| this.PopupContent.Children.Count <= 0)
 			{
-				menuVisible = false;
+				MenuVisible = false;
 				return;
 			}
 
@@ -170,7 +172,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			popupWidget.Closed += (s, e) =>
 			{
-				menuVisible = false;
+				MenuVisible = false;
 				popupWidget = null;
 
 				this.PopupWindowClosed?.Invoke(this, null);

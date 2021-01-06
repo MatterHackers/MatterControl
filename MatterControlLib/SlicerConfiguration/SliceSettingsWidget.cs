@@ -322,9 +322,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						ToolTipText = "Open Settings View Options".Localize()
 					};
 
+					bool menuWasOpenOnMoreDown = false;
+					button.MouseDown += (s, e) =>
+					{
+						if (this.TabBar.RightAnchorItem is OverflowBar.OverflowMenuButton menuButton)
+						{
+							menuWasOpenOnMoreDown = menuButton.MenuVisible;
+						}
+					};
+
 					button.Click += (s, e) =>
 					{
-						this.TabBar.RightAnchorItem.InvokeClick();
+						if (!menuWasOpenOnMoreDown)
+						{
+							this.TabBar.RightAnchorItem.InvokeClick();
+						}
 					};
 
 					button.RoundRadius = button.Height / 2;
