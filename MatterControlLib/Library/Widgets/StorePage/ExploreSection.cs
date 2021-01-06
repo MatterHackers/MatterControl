@@ -109,7 +109,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					HAnchor = HAnchor.Right,
 					BackgroundColor = theme.MinimalShade,
 					Margin = new BorderDouble(right: leftRightMargin),
-					ToolTipText = "Open settings options menu".Localize()
 				};
 				moreButton.Click += (s, e1) =>
 				{

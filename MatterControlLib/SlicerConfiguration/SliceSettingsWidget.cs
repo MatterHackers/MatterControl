@@ -309,7 +309,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				if (settingsSection.Name == "Slice Simple"
 					&& UserSettings.Instance.get(UserSettingsKey.SliceSettingsMoreClicked) != "true")
 				{
-					var button = new TextButton("More", theme, 8)
+					var button = new TextButton("More".Localize(), theme, 8)
 					{
 						Margin = new BorderDouble(5, 0),
 						Padding = new BorderDouble(7, 3),
@@ -319,6 +319,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						HoverColor = theme.AccentMimimalOverlay,
 						BorderColor = theme.PrimaryAccentColor,
 						RenderOutline = true,
+						ToolTipText = "Open Settings View Options".Localize()
 					};
 
 					button.Click += (s, e) =>
