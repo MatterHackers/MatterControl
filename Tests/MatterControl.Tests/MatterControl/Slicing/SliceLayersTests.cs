@@ -57,20 +57,20 @@ namespace MatterHackers.MatterControl.Slicing.Tests
 			Assert.IsTrue(bounds.ZSize == 10);
 
 
-			var allLayers = SliceLayers.GetPerimetersForAllLayers(cubeMesh, .2, .2);
-			Assert.IsTrue(allLayers.Count == 50);
+			//var alllayers = slicelayers.getperimetersforalllayers(cubemesh, .2, .2);
+			//assert.istrue(alllayers.count == 50);
 
-			foreach (SliceLayer layer in allLayers)
-			{
-				Assert.IsTrue(layer.UnorderedSegments.Count == 8);
+			//foreach (slicelayer layer in alllayers)
+			//{
+			//	assert.istrue(layer.unorderedsegments.count == 8);
 
-				// work in progress
-				//Assert.IsTrue(layer.Perimeters.Count == 1);
-				//Assert.IsTrue(layer.Perimeters[0].Count == 8);
-			}
+			//	// work in progress
+			//	//assert.istrue(layer.perimeters.count == 1);
+			//	//assert.istrue(layer.perimeters[0].count == 8);
+			//}
 
-			allLayers = SliceLayers.GetPerimetersForAllLayers(cubeMesh, .2, .1);
-			Assert.IsTrue(allLayers.Count == 99);
+			//alllayers = slicelayers.getperimetersforalllayers(cubemesh, .2, .1);
+			//Assert.IsTrue(allLayers.Count == 99);
 		}
 	}
 }
