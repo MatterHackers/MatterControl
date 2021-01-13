@@ -212,6 +212,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private int _internalToothCount;
 
+		public double OuterEdgeWidth { get; set; }
+
 		public int InternalToothCount
 		{
 			get => _internalToothCount;
@@ -224,8 +226,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		}
 
 		public bool Debug { get; set; } = false;
-
-		public double OuterEdgeWidth { get; set; }
 
 		private List<Polygons> debugData = new List<Polygons>();
 
@@ -461,15 +461,18 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			this.CenterHoleDiameter = 0;
 
-			//var externalGear = CreateExternalGearShape();
-
 			var innerRadius = this.pitchRadius + (1 - this.profileShift) * this.addendum + this.Clearance;
 			var outerRadius = innerRadius + OuterEdgeWidth;
 			var outerCircle = Circle(this.center.X, center.Y, outerRadius, 1000);
 
-			//var internalGear = outerCircle.Subtract(externalGear);
-			//debugData.Add(internalGear);
-			// return internalGear;
+			var simpleInnerGear = false;
+			if (simpleInnerGear)
+			{
+				var externalGear = CreateExternalGearShape();
+				var internalGear = outerCircle.Subtract(externalGear);
+				debugData.Add(internalGear);
+				return internalGear;
+			}
 
 			var singleTooth = this.CreateInternalToothProfile();
 			debugData.Add(singleTooth);

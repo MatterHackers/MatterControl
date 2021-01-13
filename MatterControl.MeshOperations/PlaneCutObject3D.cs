@@ -28,13 +28,16 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
+using MatterHackers.DataConverters2D;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
@@ -49,14 +52,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double CutHeight { get; set; } = 10;
 
-		private double cutMargin = .1;
+		private double cutMargin = .01;
 
 		public Mesh Cut(Mesh inMesh)
 		{
 			var mesh = new Mesh(inMesh.Vertices, inMesh.Faces);
 
 			// copy every face that is on or below the cut plane
-
 			// cut the faces at the cut plane
 			mesh.Split(new Plane(Vector3.UnitZ, CutHeight), cutMargin, cleanAndMerge: false);
 
@@ -64,7 +66,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			RemoveFacesAboveCut(mesh);
 
 			// calculate and add the PWN face from the loops
-			// vertexSourceBottom.TriangulateFaces(bottomTeselatedSource, mesh);
+			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, CutHeight));
+			var slice = SliceLayer.CreateSlice(inMesh, cutPlane);
+
+			var aPolys = slice.Vertices().CreatePolygons();
+			aPolys = aPolys.GetCorrectedWinding();
+
+			aPolys.CreateVertexStorage().Vertices().TriangulateFaces(null, mesh, CutHeight);
 
 			return mesh;
 		}

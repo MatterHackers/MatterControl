@@ -46,11 +46,12 @@ namespace MatterHackers.MatterControl
 {
 	public class HelpTreePanel : SearchableTreePanel
 	{
-		private string guideKey = null;
+		private readonly string guideKey = null;
 
 		public HelpTreePanel(ThemeConfig theme, string guideKey = null)
 			: base(theme)
 		{
+			this.guideKey = guideKey;
 			horizontalSplitter.Panel1.BackgroundColor = Color.Black.WithAlpha(12);
 
 			var toolbar = new Toolbar(theme.TabbarPadding)
@@ -174,10 +175,10 @@ namespace MatterHackers.MatterControl
 			AddContent(keys, "Keys".Localize(), true, true);
 			AddContent(actions, "Action".Localize(), false, true);
 
-			foreach (var keyAction in keyActions)
+			foreach (var (key, action) in keyActions)
 			{
-				AddContent(keys, keyAction.key, true, false);
-				AddContent(actions, keyAction.action, false, false);
+				AddContent(keys, key, true, false);
+				AddContent(actions, action, false, false);
 			}
 
 			// center the vertical bar in the view by adding margin to the small side
@@ -233,10 +234,10 @@ namespace MatterHackers.MatterControl
 			AddContent(mouseKeys, "Mouse".Localize(), true, true);
 			AddContent(mouseActions, "Action".Localize(), false, true);
 
-			foreach (var keyAction in mouseKeyActions)
+			foreach (var (key, action) in mouseKeyActions)
 			{
-				AddContent(mouseKeys, keyAction.key, true, false);
-				AddContent(mouseActions, keyAction.action, false, false);
+				AddContent(mouseKeys, key, true, false);
+				AddContent(mouseActions, action, false, false);
 			}
 
 			// center the vertical bar in the view by adding margin to the small side
@@ -360,8 +361,7 @@ namespace MatterHackers.MatterControl
 		private TreeNode initialSelection = null;
 		private TreeNode rootNode;
 
-		private Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
-		private IEnumerable<HelpSearchResult> searchResults;
+		private readonly Dictionary<string, HelpArticleTreeNode> nodesByPath = new Dictionary<string, HelpArticleTreeNode>();
 		private HashSet<string> searchHits;
 
 		private TreeNode ProcessTree(HelpArticle container)
