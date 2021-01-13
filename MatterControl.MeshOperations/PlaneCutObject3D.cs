@@ -69,10 +69,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, CutHeight));
 			var slice = SliceLayer.CreateSlice(inMesh, cutPlane);
 
-			var aPolys = slice.Vertices().CreatePolygons();
-			aPolys = aPolys.GetCorrectedWinding();
+			var aPolys = slice.GetCorrectedWinding();
 
-			aPolys.CreateVertexStorage().Vertices().TriangulateFaces(null, mesh, CutHeight);
+			aPolys.Vertices().TriangulateFaces(null, mesh, CutHeight);
 
 			return mesh;
 		}
