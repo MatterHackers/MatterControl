@@ -517,7 +517,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer.Bed.EditContext,
 						printer,
 						null,
-						CancellationToken.None).ConfigureAwait(false);
+						CancellationToken.None,
+						true).ConfigureAwait(false);
 				});
 			}
 			else if (ProfileManager.Instance.ActiveProfiles.Count() <= 0)
@@ -627,7 +628,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					printer.Bed.EditContext,
 					printer,
 					null,
-					CancellationToken.None);
+					CancellationToken.None,
+					true);
 			});
 		}
 

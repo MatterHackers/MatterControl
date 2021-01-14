@@ -1747,7 +1747,7 @@ namespace MatterHackers.MatterControl
 			leftChild.Padding = new BorderDouble(padding.Left, padding.Bottom, sourceExentionArea.Width, padding.Height);
 		}
 
-		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken)
+		public async Task PrintPart(EditContext editContext, PrinterConfig printer, IProgress<ProgressStatus> reporter, CancellationToken cancellationToken, bool recordPrintHistory)
 		{
 			var partFilePath = editContext.SourceFilePath;
 			var gcodeFilePath = await editContext.GCodeFilePath(printer);
@@ -1818,7 +1818,7 @@ namespace MatterHackers.MatterControl
 										if (messageBoxResponse)
 										{
 											printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+											this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer, recordPrintHistory);
 										}
 									},
 									"The file you are attempting to print is a GCode file.\n\nIt is recommended that you only print Gcode files known to match your printer's configuration.\n\nAre you sure you want to print this GCode file?".Localize(),
@@ -1833,7 +1833,7 @@ namespace MatterHackers.MatterControl
 						else
 						{
 							printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer);
+							this.ArchiveAndStartPrint(partFilePath, gcodeFilePath, printer, recordPrintHistory);
 						}
 					}
 					else
@@ -1848,7 +1848,7 @@ namespace MatterHackers.MatterControl
 						// Only start print if slicing completed
 						if (slicingSucceeded)
 						{
-							this.ArchiveAndStartPrint(partFilePath, finalPath, printer);
+							this.ArchiveAndStartPrint(partFilePath, finalPath, printer, recordPrintHistory);
 						}
 						else
 						{
@@ -2013,7 +2013,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		/// <param name="sourcePath">The source file which originally caused the slice->print operation</param>
 		/// <param name="gcodeFilePath">The resulting GCode to print</param>
-		private async void ArchiveAndStartPrint(string sourcePath, string gcodeFilePath, PrinterConfig printer)
+		private async void ArchiveAndStartPrint(string sourcePath, string gcodeFilePath, PrinterConfig printer, bool recordPrintHistory)
 		{
 			if (File.Exists(sourcePath)
 				&& File.Exists(gcodeFilePath))
@@ -2044,7 +2044,7 @@ namespace MatterHackers.MatterControl
 
 					if (originalIsGCode)
 					{
-						await printer.Connection.StartPrint(gcodeFilePath);
+						await printer.Connection.StartPrint(gcodeFilePath, recordPrintHistory: recordPrintHistory);
 
 						MonitorPrintTask(printer);
 
@@ -2055,7 +2055,7 @@ namespace MatterHackers.MatterControl
 						// Ask for slicer specific gcode validation
 						if (printer.Settings.Slicer.ValidateFile(gcodeFilePath))
 						{
-							await printer.Connection.StartPrint(gcodeFilePath);
+							await printer.Connection.StartPrint(gcodeFilePath, recordPrintHistory: recordPrintHistory);
 							MonitorPrintTask(printer);
 							return;
 						}
@@ -2276,7 +2276,7 @@ namespace MatterHackers.MatterControl
 		public void Connection_PrintFinished(object sender, string e)
 		{
 			if (sender is PrinterConnection printerConnection
-				&& !printerConnection.CalibrationPrint)
+				&& printerConnection.RecordPrintHistory)
 			{
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
 				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.ActivePrintTask, printTasks);
@@ -2290,7 +2290,7 @@ namespace MatterHackers.MatterControl
 		public void Connection_PrintCanceled(object sender, EventArgs e)
 		{
 			if (sender is PrinterConnection printerConnection
-				&& !printerConnection.CalibrationPrint)
+				&& printerConnection.RecordPrintHistory)
 			{
 				var printTasks = PrintHistoryData.Instance.GetHistoryItems(10);
 				var printHistoryEditor = new PrintHistoryEditor(((PrinterConnection)sender).Printer, AppContext.Theme, printerConnection.CanceledPrintTask, printTasks);

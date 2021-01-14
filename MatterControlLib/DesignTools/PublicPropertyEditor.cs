@@ -140,6 +140,10 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
+				foreach (var property in GetEditablePropreties(context.item))
+				{
+				}
+
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
 				// add in an Update button if applicable
@@ -224,6 +228,17 @@ namespace MatterHackers.MatterControl.DesignTools
 		public static IEnumerable<EditableProperty> GetEditablePropreties(IObject3D item)
 		{
 			return item.GetType().GetProperties(OwnedPropertiesOnly)
+				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
+					&& pi.GetGetMethod() != null
+					&& pi.GetSetMethod() != null)
+				.Select(p => new EditableProperty(p, item));
+		}
+
+		public static IEnumerable<EditableProperty> GetExecutableFunctions(IObject3D item)
+		{
+			BindingFlags buttonFunctionsOnly = BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+
+			return item.GetType().GetProperties(buttonFunctionsOnly)
 				.Where(pi => (AllowedTypes.Contains(pi.PropertyType) || pi.PropertyType.IsEnum)
 					&& pi.GetGetMethod() != null
 					&& pi.GetSetMethod() != null)
