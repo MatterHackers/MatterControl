@@ -328,7 +328,8 @@ namespace MatterHackers.MatterControl
 				this.EditContext,
 				this.Printer,
 				null,
-				CancellationToken.None);
+				CancellationToken.None,
+				true);
 		}
 
 		public async Task StashAndPrint(IEnumerable<ILibraryItem> selectedLibraryItems)
@@ -348,7 +349,8 @@ namespace MatterHackers.MatterControl
 				this.EditContext,
 				this.Printer,
 				null,
-				CancellationToken.None);
+				CancellationToken.None,
+				true);
 		}
 
 		private GCodeFile loadedGCode;

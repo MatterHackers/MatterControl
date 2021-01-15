@@ -449,7 +449,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 
 			var feedRates = printer.Settings.Helpers.ManualMovementSpeeds();
 
-			queuedCommands.Enqueue("G90");
 			queuedCommands.Enqueue($"G1 Z{positionToSample.Z:0.###} F{feedRates.Z}");
 			queuedCommands.Enqueue($"G1 X{positionToSampleWithProbeOffset.X:0.###}Y{positionToSampleWithProbeOffset.Y:0.###}Z{positionToSampleWithProbeOffset.Z:0.###} F{feedRates.X}");
 

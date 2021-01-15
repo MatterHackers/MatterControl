@@ -595,7 +595,7 @@ namespace MatterControl.Tests.MatterControl.ToolChanges
 
 			// start a print
 			printer.Connection.CommunicationState = CommunicationStates.PreparingToPrint;
-			await printer.Connection.StartPrint(inputStream);
+			await printer.Connection.StartPrint(inputStream, null, null, true);
 
 			// wait up to 40 seconds for the print to finish
 			timer = Stopwatch.StartNew();

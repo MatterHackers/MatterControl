@@ -327,7 +327,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						printer.Bed.EditContext,
 						printer,
 						null,
-						CancellationToken.None);
+						CancellationToken.None,
+						true);
 				});
 			};
 

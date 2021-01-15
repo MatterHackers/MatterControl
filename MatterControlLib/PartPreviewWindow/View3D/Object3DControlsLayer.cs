@@ -1090,7 +1090,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawObject3DControlVolumes(DrawEventArgs e)
 		{
-			foreach (var item in this.Object3DControls)
+			var currentControls = this.Object3DControls.ToArray();
+
+			foreach (var item in currentControls)
 			{
 				item.Visible = !SuppressObject3DControls;
 			}
@@ -1103,7 +1105,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// draw on top of anything that is already drawn
 			GL.Disable(EnableCap.DepthTest);
 
-			foreach (var object3DControl in this.Object3DControls)
+			foreach (var object3DControl in currentControls)
 			{
 				if (object3DControl.DrawOnTop)
 				{
@@ -1115,7 +1117,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			GL.Enable(EnableCap.DepthTest);
 
 			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (var object3DVolume in this.Object3DControls)
+			foreach (var object3DVolume in currentControls)
 			{
 				object3DVolume.Draw(new DrawGlContentEventArgs(true, e));
 			}

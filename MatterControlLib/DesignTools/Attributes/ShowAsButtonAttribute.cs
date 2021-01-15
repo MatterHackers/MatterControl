@@ -28,56 +28,17 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-using MatterHackers.Agg;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class EditableProperty
+	[AttributeUsage(AttributeTargets.Method)]
+	public class ShowAsButtonAttribute : Attribute
 	{
-		public IObject3D Item { get; private set; }
+		public string HelpText { get; private set; }
 
-		public object Source { get; private set; }
-
-		public PropertyInfo PropertyInfo { get; private set; }
-
-		public EditableProperty(PropertyInfo p, object source)
+		public ShowAsButtonAttribute(string helpText)
 		{
-			this.Source = source;
-			this.Item = source as IObject3D;
-			this.PropertyInfo = p;
+			HelpText = helpText;
 		}
-
-		private string GetDescription(PropertyInfo prop)
-		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
-			return nameAttribute?.Description ?? null;
-		}
-
-		public static string GetDisplayName(PropertyInfo prop)
-		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
-			return nameAttribute?.DisplayName ?? prop.Name.SplitCamelCase();
-		}
-
-		public object Value => PropertyInfo.GetGetMethod().Invoke(Source, null);
-
-		/// <summary>
-		/// Use reflection to set property value.
-		/// </summary>
-		/// <param name="value">The value to set through reflection.</param>
-		public void SetValue(object value)
-		{
-			this.PropertyInfo.GetSetMethod().Invoke(Source, new object[] { value });
-		}
-
-		public string DisplayName => GetDisplayName(PropertyInfo);
-
-		public string Description => GetDescription(PropertyInfo);
-
-		public Type PropertyType => PropertyInfo.PropertyType;
 	}
 }

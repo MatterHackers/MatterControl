@@ -85,6 +85,19 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 			}
 		}
 
+		public static PrinterConfig ContainingPrinter(this IObject3D object3D)
+		{
+			foreach (var printer in ApplicationController.Instance.ActivePrinters)
+			{
+				if (printer.Bed.Scene.Descendants().Contains(object3D))
+				{
+					return printer;
+				}
+			}
+
+			return null;
+		}
+
 		public static int EstimatedMemory(this IObject3D object3D)
 		{
 			return 0;
