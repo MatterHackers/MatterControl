@@ -54,9 +54,16 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private double cutMargin = .01;
 
-		public Mesh Cut(Mesh inMesh)
+		public Mesh Cut(IObject3D item)
 		{
-			var mesh = new Mesh(inMesh.Vertices, inMesh.Faces);
+			var mesh = new Mesh(item.Mesh.Vertices, item.Mesh.Faces);
+
+			var itemMatrix = item.WorldMatrix(this);
+			mesh.Transform(itemMatrix);
+
+			// calculate and add the PWN face from the loops
+			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, CutHeight));
+			var slice = SliceLayer.CreateSlice(mesh, cutPlane);
 
 			// copy every face that is on or below the cut plane
 			// cut the faces at the cut plane
@@ -65,13 +72,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			// remove every face above the cut plane
 			RemoveFacesAboveCut(mesh);
 
-			// calculate and add the PWN face from the loops
-			var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, CutHeight));
-			var slice = SliceLayer.CreateSlice(inMesh, cutPlane);
-
 			var aPolys = slice.GetCorrectedWinding();
 
 			aPolys.Vertices().TriangulateFaces(null, mesh, CutHeight);
+
+			mesh.Transform(itemMatrix.Inverted);
 
 			return mesh;
 		}
@@ -133,14 +138,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			var valuesChanged = false;
 
 			return TaskBuilder(
-				"Reduce".Localize(),
+				"Plane Cut".Localize(),
 				(reporter, cancellationToken) =>
 				{
 					var newChildren = new List<Object3D>();
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
-						var originalMesh = sourceItem.Mesh;
-						var reducedMesh = Cut(originalMesh);
+						var reducedMesh = Cut(sourceItem);
 
 						var newMesh = new Object3D()
 						{
