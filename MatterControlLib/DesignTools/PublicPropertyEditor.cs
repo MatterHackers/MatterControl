@@ -33,7 +33,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -140,9 +139,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 				}
 
-				foreach (var property in GetEditablePropreties(context.item))
-				{
-				}
+				AddFunctionButtons(item, mainContainer, theme);
 
 				AddWebPageLinkIfRequired(context, mainContainer, theme);
 
@@ -168,6 +165,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 
 			return mainContainer;
+		}
+
+		private void AddFunctionButtons(IObject3D item, FlowLayoutWidget mainContainer, ThemeConfig theme)
+		{
+			if (item is IEditorButtonProvider editorButtonProvider)
+			{
+				foreach (var editorButtonData in editorButtonProvider.GetEditorButtonsData())
+				{
+					var editorButton = new TextButton(editorButtonData.Name, theme)
+					{
+						Margin = 5,
+						ToolTipText = editorButtonData.HelpText,
+					};
+					editorButtonData.SetEnabled(editorButton);
+					editorButton.Click += (s, e) =>
+					{
+						editorButtonData.Action?.Invoke();
+					};
+
+					mainContainer.AddChild(new SettingsRow("".Localize(), null, editorButton, theme));
+				}
+			}
 		}
 
 		private static GuiWidget CreateSettingsRow(EditableProperty property, UIField field, ThemeConfig theme)
@@ -562,7 +581,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 						{
-							double newValue = (double)property.Value;
+							int newValue = (int)property.Value;
 							valueField.Text = string.Format("{0:n0}", newValue);
 						}
 					}

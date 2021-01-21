@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2018, Lars Brubaker, John Lewin
+Copyright (c) 2020, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,18 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.UI;
 using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[AttributeUsage(AttributeTargets.Method)]
-	public class ShowAsButtonAttribute : Attribute
+	public class EditorButtonData
 	{
-		public string HelpText { get; private set; }
+		public string Name { get; set; }
 
-		public ShowAsButtonAttribute(string helpText)
-		{
-			HelpText = helpText;
-		}
+		public string HelpText { get; set; }
+
+		public Action<GuiWidget> SetEnabled { get; set; }
+
+		public Action Action { get; set; }
+	}
+
+	public interface IEditorButtonProvider
+	{
+		IEnumerable<EditorButtonData> GetEditorButtonsData();
 	}
 }
