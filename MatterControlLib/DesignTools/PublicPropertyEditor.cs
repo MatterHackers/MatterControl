@@ -581,7 +581,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						if (e.InvalidateType.HasFlag(InvalidateType.DisplayValues))
 						{
-							double newValue = (double)property.Value;
+							int newValue = (int)property.Value;
 							valueField.Text = string.Format("{0:n0}", newValue);
 						}
 					}
