@@ -57,6 +57,17 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// TODO: Violates UIField norms but consistent with past behavior - state is only correct at construction time, often reconstructed
 		public string InitialValue { get; set; }
 
+		T GetAttribute<T>(Enum value)
+			where T : Attribute
+		{
+			var type = value.GetType();
+			var name = Enum.GetName(type, value);
+			return type.GetField(name) // I prefer to get attributes this way
+				.GetCustomAttributes(false)
+				.OfType<T>()
+				.SingleOrDefault();
+		}
+
 		public override void Initialize(int tabIndex)
 		{
 			// Enum keyed on name to friendly name
@@ -64,23 +75,19 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			string GetDescription(Enum value)
 			{
-				var type = value.GetType();
-
-				var name = Enum.GetName(type, value);
-
-				if (name != null)
+				if (GetAttribute<DescriptionAttribute>(value) is DescriptionAttribute attr)
 				{
-					if (Attribute.GetCustomAttribute(property, property.PropertyType) is DescriptionAttribute attr)
-					{
-						return attr.Description;
-					}
+					return attr.Description;
 				}
 
-				return name;
+				return null;
 			}
 
-			var enumDescriptions = Enum.GetValues(property.PropertyType);
-
+			var enumDescriptions = new List<string>();
+			foreach (var value in Enum.GetValues(property.PropertyType))
+			{
+				enumDescriptions.Add(GetDescription((Enum)value));
+			}
 
 			switch (enumDisplayAttibute.Mode)
 			{
