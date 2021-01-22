@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -60,6 +61,26 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ')));
+
+			string GetDescription(Enum value)
+			{
+				var type = value.GetType();
+
+				var name = Enum.GetName(type, value);
+
+				if (name != null)
+				{
+					if (Attribute.GetCustomAttribute(property, property.PropertyType) is DescriptionAttribute attr)
+					{
+						return attr.Description;
+					}
+				}
+
+				return name;
+			}
+
+			var enumDescriptions = Enum.GetValues(property.PropertyType);
+
 
 			switch (enumDisplayAttibute.Mode)
 			{
