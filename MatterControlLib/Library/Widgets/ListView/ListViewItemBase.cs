@@ -152,7 +152,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				// Clear existing selection when item is not selected and control key is not press
 				if (!this.IsSelected
-					&& !Keyboard.IsKeyDown(Keys.ControlKey))
+					&& !Keyboard.IsKeyDown(Keys.Control))
 				{
 					listViewItem.ListView?.SelectedItems.Clear();
 				}
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			hitDragThreshold = false;
 
 			// Used to toggle selection on selected items - revised to require control key
-			toggleSelection = this.IsSelected && Keyboard.IsKeyDown(Keys.ControlKey);
+			toggleSelection = this.IsSelected && Keyboard.IsKeyDown(Keys.Control);
 
 			this.EnsureSelection();
 

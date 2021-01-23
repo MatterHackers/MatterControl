@@ -517,6 +517,41 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnClick(mouseEvent);
 		}
 
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			// this must be called first to ensure we get the correct Handled state
+			base.OnKeyDown(keyEvent);
+
+			if (!keyEvent.Handled)
+			{
+				switch (keyEvent.KeyCode)
+				{
+					case Keys.A:
+						if (keyEvent.Control)
+						{
+							SelectAllItems();
+							keyEvent.Handled = true;
+							keyEvent.SuppressKeyPress = true;
+						}
+
+						break;
+				}
+			}
+		}
+
+		public void SelectAllItems()
+		{
+			this.SelectedItems.Clear();
+			foreach (var item in this.Items)
+			{
+				if (item.Model is ILibraryAssetStream
+					|| item.Model is ILibraryObject3D)
+				{
+					this.SelectedItems.Add(item);
+				}
+			}
+		}
+
 		private void ShowRightClickMenu(MouseEventArgs mouseEvent)
 		{
 			var bounds = this.LocalBounds;
