@@ -89,6 +89,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// </summary>
 		public enum DisplayDetailRequired { Simple, Intermediate, Advanced }
 
-		public DisplayDetailRequired ReqiredDisplayDetail { get; internal set; } = DisplayDetailRequired.Intermediate;
+		public DisplayDetailRequired RequiredDisplayDetail { get; internal set; } = DisplayDetailRequired.Intermediate;
 	}
 }

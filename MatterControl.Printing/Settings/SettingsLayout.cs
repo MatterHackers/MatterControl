@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
 				{
-					return data.ReqiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
+					return data.RequiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
 				}
 
 				return false;
@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
 				{
-					return data.ReqiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
+					return data.RequiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
 				}
 
 				return false;
@@ -82,7 +82,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
 				{
-					return data.ReqiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
+					return data.RequiredDisplayDetail == SliceSettingData.DisplayDetailRequired.Simple;
 				}
 
 				return false;
@@ -91,7 +91,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			{
 				if (PrinterSettings.SettingsData.TryGetValue(setting, out SliceSettingData data))
 				{
-					return data.ReqiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
+					return data.RequiredDisplayDetail != SliceSettingData.DisplayDetailRequired.Advanced;
 				}
 
 				return false;
