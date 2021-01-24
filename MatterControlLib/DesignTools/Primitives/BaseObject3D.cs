@@ -40,6 +40,7 @@ using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
@@ -125,6 +126,20 @@ namespace MatterHackers.MatterControl.DesignTools
 			get
 			{
 				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
+				var meshSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.Mesh != null);
+				var mesh = meshSource?.Mesh;
+				if (vertexSource?.VertexSource == null
+					&& mesh != null)
+				{
+					// return the vertex source of the bottom of the mesh
+					var aabb = this.GetAxisAlignedBoundingBox();
+					var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + .1));
+					cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
+					var slice = SliceLayer.CreateSlice(mesh, cutPlane);
+					return slice.CreateVertexStorage();
+
+				}
+
 				return vertexSource?.VertexSource;
 			}
 

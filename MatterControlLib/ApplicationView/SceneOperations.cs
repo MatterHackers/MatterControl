@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl
 		{
 			return new SceneOperation("AddBase")
 			{
-				OperationType = typeof(IPathObject),
+				OperationType = typeof(IObject3D),
 				TitleResolver = () => "Add Base".Localize(),
 				ResultType = typeof(BaseObject3D),
 				Action = (sceneContext) =>
