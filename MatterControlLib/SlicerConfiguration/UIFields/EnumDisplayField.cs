@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
@@ -56,10 +57,37 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		// TODO: Violates UIField norms but consistent with past behavior - state is only correct at construction time, often reconstructed
 		public string InitialValue { get; set; }
 
+		T GetAttribute<T>(Enum value)
+			where T : Attribute
+		{
+			var type = value.GetType();
+			var name = Enum.GetName(type, value);
+			return type.GetField(name) // I prefer to get attributes this way
+				.GetCustomAttributes(false)
+				.OfType<T>()
+				.SingleOrDefault();
+		}
+
 		public override void Initialize(int tabIndex)
 		{
 			// Enum keyed on name to friendly name
 			var enumItems = Enum.GetNames(property.PropertyType).Select(enumName => (enumName, enumName.Replace('_', ' ')));
+
+			string GetDescription(Enum value)
+			{
+				if (GetAttribute<DescriptionAttribute>(value) is DescriptionAttribute attr)
+				{
+					return attr.Description;
+				}
+
+				return null;
+			}
+
+			var enumDescriptions = new List<string>();
+			foreach (var value in Enum.GetValues(property.PropertyType))
+			{
+				enumDescriptions.Add(GetDescription((Enum)value));
+			}
 
 			switch (enumDisplayAttibute.Mode)
 			{

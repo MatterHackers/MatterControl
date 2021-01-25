@@ -338,6 +338,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.end_gcode,
 						SettingsKey.layer_gcode,
 						SettingsKey.connect_gcode,
+						SettingsKey.clear_bed_gcode,
 					}),
 					("User Control", new[]
 					{

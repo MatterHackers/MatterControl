@@ -58,6 +58,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string build_height = nameof(build_height);
 		public const string calibration_files = nameof(calibration_files);
 		public const string cancel_gcode = nameof(cancel_gcode);
+		public const string clear_bed_gcode = nameof(clear_bed_gcode);
 		public const string coast_at_end_distance = nameof(coast_at_end_distance);
 		public const string com_port = nameof(com_port);
 		public const string complete_objects = nameof(complete_objects);

@@ -76,7 +76,15 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					&& e.Clicks == 2)
 				{
 					TreeView.SelectedNode = this;
-					this.TreeView.NotifyItemDoubleClicked(this.TitleBar, e);
+
+					if (this.Nodes.Count > 0)
+					{
+						this.Expanded = !this.Expanded;
+					}
+					else
+					{
+						this.TreeView.NotifyItemDoubleClicked(this.TitleBar, e);
+					}
 				}
 			};
 
