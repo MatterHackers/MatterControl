@@ -44,6 +44,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		private bool mouseDownOnRing;
 		private Vector2 unitTrianglePosition = new Vector2(1, .5);
 		private float alpha;
+		private Color downColor;
 
 		public RadialColorPicker()
 		{
@@ -67,6 +68,9 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				// throw new Exception("Incorrect transform");
 			}
 		}
+
+		public event EventHandler IncrementalColorChanged;
+
 
 		public event EventHandler SelectedColorChanged;
 
@@ -167,6 +171,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			downColor = SelectedColor;
+
 			var center = new Vector2(Width / 2, Height / 2);
 			var direction = mouseEvent.Position - center;
 			var startColor = SelectedColor;
@@ -202,7 +208,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (startColor != SelectedColor)
 			{
-				SelectedColorChanged?.Invoke(this, null);
+				IncrementalColorChanged?.Invoke(this, null);
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -233,7 +239,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (startColor != SelectedColor)
 			{
-				SelectedColorChanged?.Invoke(this, null);
+				IncrementalColorChanged?.Invoke(this, null);
 			}
 
 			base.OnMouseMove(mouseEvent);
@@ -243,6 +249,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			mouseDownOnRing = false;
 			MouseDownOnTriangle = false;
+
+			if (downColor != SelectedColor)
+			{
+				SelectedColorChanged?.Invoke(this, null);
+			}
 
 			base.OnMouseUp(mouseEvent);
 		}

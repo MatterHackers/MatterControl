@@ -31,9 +31,11 @@ using System;
 using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
+using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.ColorPicker;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
@@ -61,20 +63,44 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-#if false
-				var container = new GuiWidget(128, 128);
+#if true
+				GuiWidget content = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				{
+					Padding = new BorderDouble(5),
+					BackgroundColor = menuTheme.BackgroundColor,
+				};
+
 				var picker = new RadialColorPicker()
 				{
 					SelectedColor = selectedColor,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch,
+					Width = 128 * DeviceScale,
+					Height = 128 * DeviceScale,
+					BackgroundColor = Color.Transparent,
 				};
-
+				content.AddChild(picker);
 				picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
 
-				container.AddChild(picker);
+				GuiWidget rightContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				{
+					Padding = new BorderDouble(5, 0)
+				};
+				content.AddChild(rightContent);
 
-				return container;
+				var resetButton = new IconButton(StaticData.Instance.LoadIcon("transparent_grid.png"), theme)
+				{
+					Width = scaledButtonSize,
+					Height = scaledButtonSize,
+					Margin = 3,
+					VAnchor = VAnchor.Absolute
+				};
+				resetButton.Click += (s, e) =>
+				{
+					// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
+					colorButton.BackgroundColor = Color.Transparent;
+				};
+				rightContent.AddChild(resetButton);
+
+				return content;
 #else
 				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
