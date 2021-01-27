@@ -78,6 +78,17 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public double RingWidth { get => Width / 10; }
 
+		public void SetColorWithoutChangeEvent(Color color)
+		{
+			color.ToColorF().GetHSL(out double h, out double s, out double l);
+			colorAngle = h * MathHelper.Tau;
+			unitTrianglePosition.X = s;
+			unitTrianglePosition.Y = l;
+			alpha = color.Alpha0To1;
+
+			CLampTrianglePosition(ref unitTrianglePosition);
+		}
+
 		public Color SelectedColor
 		{
 			get
@@ -89,13 +100,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			{
 				if (value != SelectedColor)
 				{
-					value.ToColorF().GetHSL(out double h, out double s, out double l);
-					colorAngle = h * MathHelper.Tau;
-					unitTrianglePosition.X = s;
-					unitTrianglePosition.Y = l;
-					alpha = value.Alpha0To1;
-
-					CLampTrianglePosition(ref unitTrianglePosition);
+					SetColorWithoutChangeEvent(value);
 
 					SelectedColorChanged?.Invoke(this, null);
 				}

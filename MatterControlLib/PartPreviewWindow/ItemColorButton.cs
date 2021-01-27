@@ -64,41 +64,49 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DynamicPopupContent = () =>
 			{
 #if true
-				GuiWidget content = new FlowLayoutWidget(FlowDirection.LeftToRight)
+				GuiWidget content = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					Padding = new BorderDouble(5),
 					BackgroundColor = menuTheme.BackgroundColor,
 				};
 
+				var pickerContainer = new GuiWidget(128 * DeviceScale, 128 * DeviceScale);
 				var picker = new RadialColorPicker()
 				{
-					SelectedColor = selectedColor,
-					Width = 128 * DeviceScale,
-					Height = 128 * DeviceScale,
+					SelectedColor = selectedColor.WithAlpha(255),
 					BackgroundColor = Color.Transparent,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Stretch,
 				};
-				content.AddChild(picker);
+				pickerContainer.AddChild(picker);
+				content.AddChild(pickerContainer);
 				picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
 
-				GuiWidget rightContent = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var resetButton = new TextIconButton("Default".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
 				{
-					Padding = new BorderDouble(5, 0)
-				};
-				content.AddChild(rightContent);
-
-				var resetButton = new IconButton(StaticData.Instance.LoadIcon("transparent_grid.png"), theme)
-				{
-					Width = scaledButtonSize,
-					Height = scaledButtonSize,
 					Margin = 3,
+					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Absolute
 				};
 				resetButton.Click += (s, e) =>
 				{
 					// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
 					colorButton.BackgroundColor = Color.Transparent;
+					picker.SetColorWithoutChangeEvent(Color.White);
 				};
-				rightContent.AddChild(resetButton);
+				content.AddChild(resetButton);
+
+				var selectButton = new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16), theme)
+				{
+					Margin = 3,
+					HAnchor = HAnchor.Stretch,
+					VAnchor = VAnchor.Absolute
+				};
+				selectButton.Click += (s, e) =>
+				{
+					// change to an eye dropper mode in the design view to allow for color selection
+				};
+				content.AddChild(selectButton);
 
 				return content;
 #else

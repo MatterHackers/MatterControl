@@ -177,7 +177,16 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override Color BackgroundColor
 		{
-			get => mouseInBounds ? hoverColor : base.BackgroundColor;
+			get
+			{
+				if (this.ContainsFirstUnderMouseRecursive())
+				{
+					return hoverColor;
+				}
+				
+				return base.BackgroundColor;
+			}
+
 			set => base.BackgroundColor = value;
 		}
 
