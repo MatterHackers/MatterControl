@@ -41,10 +41,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 	public class RadialColorPicker : GuiWidget
 	{
 		private double colorAngle = 0;
-		private bool mouseDownOnRing;
 		private Vector2 unitTrianglePosition = new Vector2(1, .5);
 		private float alpha;
 		private Color downColor;
+
+		private enum DownState
+		{
+			None,
+			OnRing,
+			OnTriangle,
+		}
+
+		private DownState downState = DownState.None;
 
 		public RadialColorPicker()
 		{
@@ -74,8 +82,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public event EventHandler SelectedColorChanged;
 
-		public bool MouseDownOnTriangle { get; private set; }
-
 		public double RingWidth { get => Width / 10; }
 
 		public void SetColorWithoutChangeEvent(Color color)
@@ -92,6 +98,19 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			alpha = color.Alpha0To1;
 
 			CLampTrianglePosition(ref unitTrianglePosition);
+			Invalidate();
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (downState != DownState.None
+				&& keyEvent.KeyCode == Keys.Escape)
+			{
+				downState = DownState.None;
+				SetColorWithoutChangeEvent(downColor);
+			}
+
+			base.OnKeyDown(keyEvent);
 		}
 
 		public Color SelectedColor
@@ -192,7 +211,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				if (direction.Length > RingRadius - RingWidth / 2
 				&& direction.Length < RingRadius + RingWidth / 2)
 				{
-					mouseDownOnRing = true;
+					downState = DownState.OnRing;
 
 					colorAngle = Math.Atan2(direction.Y, direction.X);
 					if (colorAngle < 0)
@@ -208,7 +227,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 					if (inside)
 					{
-						MouseDownOnTriangle = true;
+						downState = DownState.OnTriangle;
 						unitTrianglePosition = position;
 					}
 
@@ -228,23 +247,25 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var startColor = SelectedColor;
 
-			if (mouseDownOnRing)
+			switch (downState)
 			{
-				var center = new Vector2(Width / 2, Height / 2);
+				case DownState.OnRing:
+					var center = new Vector2(Width / 2, Height / 2);
 
-				var direction = mouseEvent.Position - center;
-				colorAngle = Math.Atan2(direction.Y, direction.X);
-				if (colorAngle < 0)
-				{
-					colorAngle += MathHelper.Tau;
-				}
+					var direction = mouseEvent.Position - center;
+					colorAngle = Math.Atan2(direction.Y, direction.X);
+					if (colorAngle < 0)
+					{
+						colorAngle += MathHelper.Tau;
+					}
 
-				Invalidate();
-			}
-			else if (MouseDownOnTriangle)
-			{
-				unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
-				Invalidate();
+					Invalidate();
+					break;
+
+				case DownState.OnTriangle:
+					unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
+					Invalidate();
+					break;
 			}
 
 			if (startColor != SelectedColor)
@@ -257,8 +278,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			mouseDownOnRing = false;
-			MouseDownOnTriangle = false;
+			downState = DownState.None;
 
 			if (downColor != SelectedColor)
 			{

@@ -64,51 +64,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DynamicPopupContent = () =>
 			{
 #if true
-				GuiWidget content = new FlowLayoutWidget(FlowDirection.TopToBottom)
-				{
-					Padding = new BorderDouble(5),
-					BackgroundColor = menuTheme.BackgroundColor,
-				};
-
-				var pickerContainer = new GuiWidget(128 * DeviceScale, 128 * DeviceScale);
-				var picker = new RadialColorPicker()
-				{
-					SelectedColor = selectedColor.WithAlpha(255),
-					BackgroundColor = Color.Transparent,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Stretch,
-				};
-				pickerContainer.AddChild(picker);
-				content.AddChild(pickerContainer);
-				picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
-
-				var resetButton = new TextIconButton("Default".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
-				{
-					Margin = 3,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Absolute
-				};
-				resetButton.Click += (s, e) =>
-				{
-					// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
-					colorButton.BackgroundColor = Color.Transparent;
-					picker.SetColorWithoutChangeEvent(Color.White);
-				};
-				content.AddChild(resetButton);
-
-				var selectButton = new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16), theme)
-				{
-					Margin = 3,
-					HAnchor = HAnchor.Stretch,
-					VAnchor = VAnchor.Absolute
-				};
-				selectButton.Click += (s, e) =>
-				{
-					// change to an eye dropper mode in the design view to allow for color selection
-				};
-				content.AddChild(selectButton);
-
-				return content;
+				return NewColorSelector(theme, selectedColor, menuTheme);
 #else
 				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
@@ -141,6 +97,75 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 
 			this.AddChild(colorButton);
+		}
+
+		private GuiWidget NewColorSelector(ThemeConfig theme, Color selectedColor, ThemeConfig menuTheme)
+		{
+			var content = new FlowLayoutWidget(FlowDirection.LeftToRight)
+			{
+				Padding = new BorderDouble(5),
+				BackgroundColor = menuTheme.BackgroundColor,
+			};
+
+			var pickerContainer = content.AddChild(new GuiWidget(128 * DeviceScale, 128 * DeviceScale));
+			var picker = pickerContainer.AddChild(new RadialColorPicker()
+			{
+				SelectedColor = selectedColor.WithAlpha(255),
+				BackgroundColor = Color.Transparent,
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			}) as RadialColorPicker;
+			picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
+
+			var rightContent = content.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
+			{
+				Padding = new BorderDouble(5),
+				VAnchor = VAnchor.Stretch,
+			});
+
+			var colorSwatch = rightContent.AddChild(new GuiWidget(10, 10)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				BackgroundColor = picker.SelectedColor
+			});
+
+			picker.IncrementalColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
+
+			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
+			{
+				Margin = 0,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Absolute
+			});
+			resetButton.Click += (s, e) =>
+			{
+				// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
+				colorButton.BackgroundColor = Color.Transparent;
+				picker.SetColorWithoutChangeEvent(Color.White);
+			};
+
+			var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16, theme.InvertIcons), theme)
+			{
+				Margin = 0,
+				HAnchor = HAnchor.Fit,
+				VAnchor = VAnchor.Absolute
+			});
+			selectButton.Click += (s, e) =>
+			{
+				// change to an eye dropper mode in the design view to allow for color selection
+			};
+
+			if (selectButton.Width < resetButton.Width)
+			{
+				selectButton.HAnchor = HAnchor.Stretch;
+			}
+			else
+			{
+				resetButton.HAnchor = HAnchor.Stretch;
+			}
+
+			return content;
 		}
 
 		public override void OnLoad(EventArgs args)
