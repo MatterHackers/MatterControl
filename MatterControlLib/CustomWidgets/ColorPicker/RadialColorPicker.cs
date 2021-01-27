@@ -81,7 +81,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		public void SetColorWithoutChangeEvent(Color color)
 		{
 			color.ToColorF().GetHSL(out double h, out double s, out double l);
-			colorAngle = h * MathHelper.Tau;
+			// if the color is not white or black, set the angle (otherwise leave it where it is)
+			if ((color.red != color.green || color.green != color.blue || color.blue != 0)
+				&& (color.red != color.green || color.green != color.blue || color.blue != 255))
+			{
+				colorAngle = h * MathHelper.Tau;
+			}
 			unitTrianglePosition.X = s;
 			unitTrianglePosition.Y = l;
 			alpha = color.Alpha0To1;
