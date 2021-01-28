@@ -370,6 +370,34 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
+				if (settings.GetValue<double>(SettingsKey.fill_density) <= 0)
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.fill_density)
+						{
+							Error = "{0} should be greater than 0.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.fill_density)),
+							ErrorLevel = ValidationErrorLevel.Warning,
+							ValueDetails = "{0} = {1}".FormatWith(
+								GetSettingsName(SettingsKey.fill_density),
+								settings.GetValue<double>(SettingsKey.fill_density)),
+						});
+				}
+
+				if (settings.GetValue<double>(SettingsKey.perimeters) <= 0)
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.perimeters)
+						{
+							Error = "{0} should be greater than 0.".Localize().FormatWith(
+								GetSettingsName(SettingsKey.perimeters)),
+							ErrorLevel = ValidationErrorLevel.Warning,
+							ValueDetails = "{0} = {1}".FormatWith(
+								GetSettingsName(SettingsKey.perimeters),
+								settings.GetValue<double>(SettingsKey.perimeters)),
+						});
+				}
+
 				if (settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) < -settings.GetValue<double>(SettingsKey.nozzle_diameter)
 					|| settings.GetValue<double>(SettingsKey.infill_overlap_perimeter) > settings.GetValue<double>(SettingsKey.nozzle_diameter))
 				{

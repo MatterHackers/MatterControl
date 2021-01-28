@@ -41,9 +41,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 	public class RadialColorPicker : GuiWidget
 	{
 		private double colorAngle = 0;
-		private bool mouseDownOnRing;
 		private Vector2 unitTrianglePosition = new Vector2(1, .5);
 		private float alpha;
+		private Color downColor;
+
+		private enum DownState
+		{
+			None,
+			OnRing,
+			OnTriangle,
+		}
+
+		private DownState downState = DownState.None;
 
 		public RadialColorPicker()
 		{
@@ -68,11 +77,41 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
+		public event EventHandler IncrementalColorChanged;
+
+
 		public event EventHandler SelectedColorChanged;
 
-		public bool MouseDownOnTriangle { get; private set; }
-
 		public double RingWidth { get => Width / 10; }
+
+		public void SetColorWithoutChangeEvent(Color color)
+		{
+			color.ToColorF().GetHSL(out double h, out double s, out double l);
+			// if the color is not white or black, set the angle (otherwise leave it where it is)
+			if ((color.red != color.green || color.green != color.blue || color.blue != 0)
+				&& (color.red != color.green || color.green != color.blue || color.blue != 255))
+			{
+				colorAngle = h * MathHelper.Tau;
+			}
+			unitTrianglePosition.X = s;
+			unitTrianglePosition.Y = l;
+			alpha = color.Alpha0To1;
+
+			CLampTrianglePosition(ref unitTrianglePosition);
+			Invalidate();
+		}
+
+		public override void OnKeyDown(KeyEventArgs keyEvent)
+		{
+			if (downState != DownState.None
+				&& keyEvent.KeyCode == Keys.Escape)
+			{
+				downState = DownState.None;
+				SelectedColor = downColor;
+			}
+
+			base.OnKeyDown(keyEvent);
+		}
 
 		public Color SelectedColor
 		{
@@ -85,13 +124,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			{
 				if (value != SelectedColor)
 				{
-					value.ToColorF().GetHSL(out double h, out double s, out double l);
-					colorAngle = h * MathHelper.Tau;
-					unitTrianglePosition.X = s;
-					unitTrianglePosition.Y = l;
-					alpha = value.Alpha0To1;
-
-					CLampTrianglePosition(ref unitTrianglePosition);
+					SetColorWithoutChangeEvent(value);
 
 					SelectedColorChanged?.Invoke(this, null);
 				}
@@ -167,6 +200,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
+			downColor = SelectedColor;
+
 			var center = new Vector2(Width / 2, Height / 2);
 			var direction = mouseEvent.Position - center;
 			var startColor = SelectedColor;
@@ -176,7 +211,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				if (direction.Length > RingRadius - RingWidth / 2
 				&& direction.Length < RingRadius + RingWidth / 2)
 				{
-					mouseDownOnRing = true;
+					downState = DownState.OnRing;
 
 					colorAngle = Math.Atan2(direction.Y, direction.X);
 					if (colorAngle < 0)
@@ -192,7 +227,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 					if (inside)
 					{
-						MouseDownOnTriangle = true;
+						downState = DownState.OnTriangle;
 						unitTrianglePosition = position;
 					}
 
@@ -202,7 +237,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			if (startColor != SelectedColor)
 			{
-				SelectedColorChanged?.Invoke(this, null);
+				IncrementalColorChanged?.Invoke(this, null);
 			}
 
 			base.OnMouseDown(mouseEvent);
@@ -212,28 +247,30 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			var startColor = SelectedColor;
 
-			if (mouseDownOnRing)
+			switch (downState)
 			{
-				var center = new Vector2(Width / 2, Height / 2);
+				case DownState.OnRing:
+					var center = new Vector2(Width / 2, Height / 2);
 
-				var direction = mouseEvent.Position - center;
-				colorAngle = Math.Atan2(direction.Y, direction.X);
-				if (colorAngle < 0)
-				{
-					colorAngle += MathHelper.Tau;
-				}
+					var direction = mouseEvent.Position - center;
+					colorAngle = Math.Atan2(direction.Y, direction.X);
+					if (colorAngle < 0)
+					{
+						colorAngle += MathHelper.Tau;
+					}
 
-				Invalidate();
-			}
-			else if (MouseDownOnTriangle)
-			{
-				unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
-				Invalidate();
+					Invalidate();
+					break;
+
+				case DownState.OnTriangle:
+					unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
+					Invalidate();
+					break;
 			}
 
 			if (startColor != SelectedColor)
 			{
-				SelectedColorChanged?.Invoke(this, null);
+				IncrementalColorChanged?.Invoke(this, null);
 			}
 
 			base.OnMouseMove(mouseEvent);
@@ -241,8 +278,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		public override void OnMouseUp(MouseEventArgs mouseEvent)
 		{
-			mouseDownOnRing = false;
-			MouseDownOnTriangle = false;
+			downState = DownState.None;
+
+			if (downColor != SelectedColor)
+			{
+				SelectedColorChanged?.Invoke(this, null);
+			}
 
 			base.OnMouseUp(mouseEvent);
 		}
@@ -267,8 +308,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					var angle = MathHelper.DegreesToRadians(i);
 
 					GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-					GL.Vertex2(GetAtAngle(angle, outer));
-					GL.Vertex2(GetAtAngle(angle, inner));
+					GL.Vertex2(GetAtAngle(angle, outer, true));
+					GL.Vertex2(GetAtAngle(angle, inner, true));
 				}
 
 				GL.End();
@@ -289,11 +330,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle, true));
 				GL.Color4(Color.White);
-				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle, true));
 				GL.Color4(Color.Black);
-				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle, true));
 
 				GL.End();
 
@@ -301,28 +342,32 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
-		private Vector2 GetAtAngle(double angle, double radius)
+		private Vector2 GetAtAngle(double angle, double radius, bool screenSpace)
 		{
 			var start = new Vector2(radius, 0);
 
-			var position = this.TransformToScreenSpace(this.Position);
+			var position = default(Vector2);
+			if (screenSpace)
+			{
+				position = this.TransformToScreenSpace(this.Position);
+			}
 
 			var center = new Vector2(Width / 2, Height / 2);
 			return position + center + Vector2.Rotate(start, angle);
 		}
 
-		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle)
+		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle, bool screenSpace = false)
 		{
 			switch (index)
 			{
 				case 0:
-					return GetAtAngle(pontingAngle, radius);
+					return GetAtAngle(pontingAngle, radius, screenSpace);
 
 				case 1:
-					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(120), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(120), radius, screenSpace);
 
 				case 2:
-					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(240), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(240), radius, screenSpace);
 			}
 
 			return Vector2.Zero;
