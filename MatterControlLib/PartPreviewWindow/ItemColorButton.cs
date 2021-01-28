@@ -43,13 +43,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class ItemColorButton : PopupButton
 	{
 		private ColorButton colorButton;
+		private GuiWidget popupContent;
 
 		public event EventHandler ColorChanged;
+
+		public bool IsOpen => popupContent?.ContainsFocus == true;
 
 		public ItemColorButton(ThemeConfig theme, Color selectedColor)
 		{
 			this.ToolTipText = "Color".Localize();
 			var scaledButtonSize = 14 * GuiWidget.DeviceScale;
+			this.PopupBorderColor = theme.PopupBorderColor;
 
 			Width = 30 * GuiWidget.DeviceScale;
 			Height = 30 * GuiWidget.DeviceScale;
@@ -64,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.DynamicPopupContent = () =>
 			{
 #if true
-				return NewColorSelector(theme, selectedColor, menuTheme);
+				popupContent = NewColorSelector(theme, selectedColor, menuTheme, (color) => colorButton.BackgroundColor = color);
 #else
 				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
@@ -77,6 +81,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					VAnchor = VAnchor.Fit
 				};
 #endif
+				return popupContent;
 			};
 
 			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
@@ -99,7 +104,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			this.AddChild(colorButton);
 		}
 
-		private GuiWidget NewColorSelector(ThemeConfig theme, Color selectedColor, ThemeConfig menuTheme)
+		public static GuiWidget NewColorSelector(ThemeConfig theme, Color selectedColor, ThemeConfig menuTheme, Action<Color> update)
 		{
 			var content = new FlowLayoutWidget(FlowDirection.LeftToRight)
 			{
@@ -115,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			}) as RadialColorPicker;
-			picker.SelectedColorChanged += (s, newColor) => colorButton.BackgroundColor = picker.SelectedColor;
+			picker.SelectedColorChanged += (s, newColor) => update?.Invoke(picker.SelectedColor);
 
 			var rightContent = content.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -123,7 +128,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			});
 
-			var colorSwatch = rightContent.AddChild(new GuiWidget(10, 10)
+			var colorContent = rightContent.AddChild(new FlowLayoutWidget()
+			{
+				Padding = new BorderDouble(5),
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+			});
+
+			var startColorSwatch = colorContent.AddChild(new GuiWidget(10, 10)
+			{
+				HAnchor = HAnchor.Stretch,
+				VAnchor = VAnchor.Stretch,
+				BackgroundColor = picker.SelectedColor
+			});
+
+			var colorSwatch = colorContent.AddChild(new GuiWidget(10, 10)
 			{
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
@@ -131,17 +150,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 
 			picker.IncrementalColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
+			picker.SelectedColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
 
 			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
 			{
-				Margin = 0,
+				Margin = new BorderDouble(0, 0, 0, 3),
 				HAnchor = HAnchor.Fit,
-				VAnchor = VAnchor.Absolute
+				VAnchor = VAnchor.Absolute,
+				ToolTipText = "Clear any assigned color. This may allow component colors to be visible.".Localize(),
 			});
 			resetButton.Click += (s, e) =>
 			{
 				// The colorChanged action displays the given color - use .MinimalHighlight rather than no color
-				colorButton.BackgroundColor = Color.Transparent;
+				update?.Invoke(Color.Transparent);
 				picker.SetColorWithoutChangeEvent(Color.White);
 			};
 
@@ -154,6 +175,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			selectButton.Click += (s, e) =>
 			{
 				// change to an eye dropper mode in the design view to allow for color selection
+				ApplicationController.Instance.GetEyeDropperColor((color) =>
+				{
+					update?.Invoke(color);
+					picker.SelectedColor = color;
+				});
 			};
 
 			if (selectButton.Width < resetButton.Width)

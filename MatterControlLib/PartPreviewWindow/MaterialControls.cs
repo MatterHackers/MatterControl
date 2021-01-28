@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -68,14 +69,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.BorderColor))
-				{
-					Width = scaledButtonSize,
-					Height = scaledButtonSize,
-					VAnchor = VAnchor.Center,
-					Margin = new BorderDouble(3, 0, 5, 0),
-					DrawGrid = true,
-				});
+				buttonView.AddChild(new ItemColorButton(theme, MaterialRendering.Color(extruderIndex, theme.BorderColor)));
 
 				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 				{
@@ -96,6 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Checked = extruderIndex == initialMaterialIndex,
 					Name = name + " Button"
 				};
+				radioButtonView.Selectable = true;
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
 
@@ -112,6 +107,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnClosed(e);
 		}
 
-		public bool KeepMenuOpen => false;
+		public bool KeepMenuOpen
+		{
+			get
+			{
+				if (materialButtons.Where(b => b.DescendantsAndSelf() is ItemColorButton).Where(cb => ((ItemColorButton)cb).IsOpen).Any())
+				{
+					return true;
+				}
+
+				return false;
+			}
+		}
 	}
 }

@@ -107,7 +107,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				&& keyEvent.KeyCode == Keys.Escape)
 			{
 				downState = DownState.None;
-				SetColorWithoutChangeEvent(downColor);
+				SelectedColor = downColor;
 			}
 
 			base.OnKeyDown(keyEvent);

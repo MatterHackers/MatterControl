@@ -41,17 +41,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 {
 	public class GenerateSupportPanel : FlowLayoutWidget
 	{
-		private SupportGenerator supportGenerator;
-		private InteractiveScene scene;
-		private ThemeConfig theme;
+		private readonly SupportGenerator supportGenerator;
 
 		public GenerateSupportPanel(ThemeConfig theme, InteractiveScene scene, double minimumSupportHeight)
 			: base(FlowDirection.TopToBottom)
 		{
 			supportGenerator = new SupportGenerator(scene, minimumSupportHeight);
-
-			this.scene = scene;
-			this.theme = theme;
 
 			this.VAnchor = VAnchor.Fit;
 			this.HAnchor = HAnchor.Absolute;
