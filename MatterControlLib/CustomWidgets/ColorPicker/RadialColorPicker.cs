@@ -308,8 +308,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					var angle = MathHelper.DegreesToRadians(i);
 
 					GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-					GL.Vertex2(GetAtAngle(angle, outer));
-					GL.Vertex2(GetAtAngle(angle, inner));
+					GL.Vertex2(GetAtAngle(angle, outer, true));
+					GL.Vertex2(GetAtAngle(angle, inner, true));
 				}
 
 				GL.End();
@@ -330,11 +330,11 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
-				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle, true));
 				GL.Color4(Color.White);
-				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle, true));
 				GL.Color4(Color.Black);
-				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle));
+				GL.Vertex2(GetTrianglePoint(2, radius, colorAngle, true));
 
 				GL.End();
 
@@ -342,28 +342,32 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			}
 		}
 
-		private Vector2 GetAtAngle(double angle, double radius)
+		private Vector2 GetAtAngle(double angle, double radius, bool screenSpace)
 		{
 			var start = new Vector2(radius, 0);
 
-			var position = this.TransformToScreenSpace(this.Position);
+			var position = default(Vector2);
+			if (screenSpace)
+			{
+				position = this.TransformToScreenSpace(this.Position);
+			}
 
 			var center = new Vector2(Width / 2, Height / 2);
 			return position + center + Vector2.Rotate(start, angle);
 		}
 
-		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle)
+		private Vector2 GetTrianglePoint(int index, double radius, double pontingAngle, bool screenSpace = false)
 		{
 			switch (index)
 			{
 				case 0:
-					return GetAtAngle(pontingAngle, radius);
+					return GetAtAngle(pontingAngle, radius, screenSpace);
 
 				case 1:
-					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(120), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(120), radius, screenSpace);
 
 				case 2:
-					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(240), radius);
+					return GetAtAngle(pontingAngle + MathHelper.DegreesToRadians(240), radius, screenSpace);
 			}
 
 			return Vector2.Zero;

@@ -139,7 +139,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			htmlField.Initialize(0);
 			htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
 			htmlField.ClearUndoHistory();
-			htmlField.Content.HAnchor = HAnchor.Fit | HAnchor.Left;
 			htmlField.ValueChanged += (s, e) =>
 			{
 				var colorString = htmlField.Value;
@@ -187,7 +186,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = picker.SelectedColor
 			});
 
-			picker.IncrementalColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
+			picker.IncrementalColorChanged += (s, newColor) =>
+			{
+				colorSwatch.BackgroundColor = picker.SelectedColor;
+				htmlField.SetValue(picker.SelectedColor.Html.Substring(1, 6), false);
+			};
+
 			picker.SelectedColorChanged += (s, newColor) => colorSwatch.BackgroundColor = picker.SelectedColor;
 
 			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
