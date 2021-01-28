@@ -234,7 +234,7 @@ namespace MatterHackers.MatterControl
 			return popupMenu;
 		}
 
-		public void GetEyeDropperColor(Action<Color> setColor)
+		public void GetTracedMouseRay(Action<Color> setColor)
 		{
 			setColor?.Invoke(Color.Cyan);
 		}

@@ -37,6 +37,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.CustomWidgets.ColorPicker;
+using MatterHackers.MatterControl.SlicerConfiguration;
 
 namespace MatterHackers.MatterControl.PartPreviewWindow
 {
@@ -112,6 +113,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = menuTheme.BackgroundColor,
 			};
 
+			var htmlField = new TextField(theme);
+
 			var pickerContainer = content.AddChild(new GuiWidget(128 * DeviceScale, 128 * DeviceScale));
 			var picker = pickerContainer.AddChild(new RadialColorPicker()
 			{
@@ -120,7 +123,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			}) as RadialColorPicker;
-			picker.SelectedColorChanged += (s, newColor) => update?.Invoke(picker.SelectedColor);
+			picker.SelectedColorChanged += (s, newColor) =>
+			{
+				update?.Invoke(picker.SelectedColor);
+				htmlField.SetValue(picker.SelectedColor.Html.Substring(1, 6), false);
+			};
 
 			var rightContent = content.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)
 			{
@@ -128,9 +135,40 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				VAnchor = VAnchor.Stretch,
 			});
 
+			// put in an html edit field
+			htmlField.Initialize(0);
+			htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+			htmlField.ClearUndoHistory();
+			htmlField.Content.HAnchor = HAnchor.Fit | HAnchor.Left;
+			htmlField.ValueChanged += (s, e) =>
+			{
+				var colorString = htmlField.Value;
+				if (!colorString.StartsWith("#"))
+				{
+					colorString = "#" + colorString;
+				}
+
+				var color = new Color(colorString);
+				if (color == Color.Transparent)
+				{
+					// we did not understand the color
+					// set it back to selectedColor
+					htmlField.SetValue(selectedColor.Html.Substring(1, 6), false);
+				}
+				else // valid color set
+				{
+					picker.SelectedColor = color;
+				}
+			};
+
+			var rowContainer = new SettingsRow("", "", htmlField.Content, theme)
+			{
+				HAnchor = HAnchor.Fit
+			};
+			var htmlColor = rightContent.AddChild(rowContainer);
+
 			var colorContent = rightContent.AddChild(new FlowLayoutWidget()
 			{
-				Padding = new BorderDouble(5),
 				HAnchor = HAnchor.Stretch,
 				VAnchor = VAnchor.Stretch,
 			});
@@ -155,7 +193,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var resetButton = rightContent.AddChild(new TextIconButton("Clear".Localize(), StaticData.Instance.LoadIcon("transparent_grid.png", 16, 16), theme)
 			{
 				Margin = new BorderDouble(0, 0, 0, 3),
-				HAnchor = HAnchor.Fit,
+				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Absolute,
 				ToolTipText = "Clear any assigned color. This may allow component colors to be visible.".Localize(),
 			});
@@ -169,18 +207,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var selectButton = rightContent.AddChild(new TextIconButton("Select".Localize(), StaticData.Instance.LoadIcon("eye_dropper.png", 16, 16, theme.InvertIcons), theme)
 			{
 				Margin = 0,
-				HAnchor = HAnchor.Fit,
+				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Absolute
 			});
 			selectButton.Click += (s, e) =>
 			{
 				// change to an eye dropper mode in the design view to allow for color selection
-				ApplicationController.Instance.GetEyeDropperColor((color) =>
+				ApplicationController.Instance.GetTracedMouseRay((color) =>
 				{
 					update?.Invoke(color);
 					picker.SelectedColor = color;
 				});
 			};
+			selectButton.Visible = false;
 
 			if (selectButton.Width < resetButton.Width)
 			{
