@@ -39,9 +39,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ThemeConfig theme;
 		private Color initialColor;
 
-		public ColorField(ThemeConfig theme, Color initialColor)
+		public ColorField(ThemeConfig theme)
 		{
 			this.theme = theme;
+		}
+
+		public ColorField(ThemeConfig theme, Color initialColor)
+			: this(theme)
+		{
 			this.initialColor = initialColor;
 		}
 

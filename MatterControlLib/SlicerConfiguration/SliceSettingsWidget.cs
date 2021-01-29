@@ -671,6 +671,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					uiField = new SliceEngineField(printer, theme);
 					break;
 
+				case SliceSettingData.DataEditTypes.COLOR:
+					uiField = new ColorField(theme);
+					break;
+
 				case SliceSettingData.DataEditTypes.POSITIVE_DOUBLE:
 					if (settingData.SetSettingsOnChange.Count > 0)
 					{

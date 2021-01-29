@@ -162,6 +162,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					("Filament", new[]
 					{
+						SettingsKey.material_color,
+						SettingsKey.material_color_1,
+						SettingsKey.material_color_2,
+						SettingsKey.material_color_3,
 						SettingsKey.filament_diameter,
 						SettingsKey.filament_density,
 						SettingsKey.filament_cost,

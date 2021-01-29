@@ -44,7 +44,32 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class SliceSettingData
 	{
 		[JsonConverter(typeof(StringEnumConverter))]
-		public enum DataEditTypes { STRING, READONLY_STRING, WIDE_STRING, INT, INT_OR_MM, DOUBLE, POSITIVE_DOUBLE, OFFSET, DOUBLE_OR_PERCENT, VECTOR2, VECTOR3, OFFSET3, CHECK_BOX, LIST, MULTI_LINE_TEXT, MARKDOWN_TEXT, HARDWARE_PRESENT, COM_PORT, IP_LIST, BOUNDS, VECTOR4, SLICE_ENGINE };
+		public enum DataEditTypes
+		{
+			BOUNDS,
+			CHECK_BOX,
+			COLOR,
+			COM_PORT,
+			DOUBLE,
+			DOUBLE_OR_PERCENT,
+			HARDWARE_PRESENT,
+			INT,
+			INT_OR_MM,
+			IP_LIST,
+			LIST,
+			MARKDOWN_TEXT,
+			MULTI_LINE_TEXT,
+			OFFSET,
+			OFFSET3,
+			POSITIVE_DOUBLE,
+			READONLY_STRING,
+			SLICE_ENGINE,
+			STRING,
+			VECTOR2,
+			VECTOR3,
+			VECTOR4,
+			WIDE_STRING,
+		};
 
 		public string SlicerConfigName { get; set; }
 
