@@ -125,8 +125,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}) as RadialColorPicker;
 			picker.SelectedColorChanged += (s, newColor) =>
 			{
-				update?.Invoke(picker.SelectedColor);
 				htmlField.SetValue(picker.SelectedColor.Html.Substring(1, 6), false);
+				update?.Invoke(picker.SelectedColor);
 			};
 
 			var rightContent = content.AddChild(new FlowLayoutWidget(FlowDirection.TopToBottom)

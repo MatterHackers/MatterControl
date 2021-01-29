@@ -31,17 +31,15 @@ using System;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using System.Threading;
+using MatterHackers.Agg;
+using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PrinterCommunication;
+using MatterHackers.VectorMath;
+using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl
 {
-	using System.Threading;
-	using MatterHackers.Agg;
-	using MatterHackers.Localizations;
-	using MatterHackers.MatterControl.PrinterCommunication;
-	using MatterHackers.MatterControl.SlicerConfiguration.MappingClasses;
-	using MatterHackers.VectorMath;
-	using Newtonsoft.Json;
-
 	public class PrinterConfig : IDisposable
 	{
 		public event EventHandler Disposed;

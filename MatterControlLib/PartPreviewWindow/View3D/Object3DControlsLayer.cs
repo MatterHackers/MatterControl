@@ -801,7 +801,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if (sceneContext.ViewState.RenderType == RenderTypes.Materials)
 			{
 				// check if we should be rendering materials (this overrides the other colors)
-				drawColor = MaterialRendering.Color(item.WorldMaterialIndex());
+				drawColor = MaterialRendering.Color(sceneContext.Printer, item.WorldMaterialIndex());
 			}
 
 			if (sceneContext.Printer is PrinterConfig printer)
@@ -983,7 +983,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var matrix = Matrix4X4.CreateTranslation(emulator.CurrentPosition + new Vector3(.5, .5, 5));
 				GLHelper.Render(emulatorNozzleMesh,
-					MaterialRendering.Color(emulator.ExtruderIndex),
+					MaterialRendering.Color(sceneContext.Printer, emulator.ExtruderIndex),
 					matrix,
 					RenderTypes.Shaded,
 					matrix * World.ModelviewMatrix);

@@ -2094,6 +2094,45 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.material_color,
+					PresentationName = "Color".Localize(),
+					HelpText = "The color of the first material.".Localize(),
+					DataEditType = DataEditTypes.COLOR,
+					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					DefaultValue = ColorF.FromHSL(0 / 10.0, .99, .49).ToColor().Html,
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.material_color_1,
+					PresentationName = "Color 2".Localize(),
+					HelpText = "The color of the second material (extruder 2).".Localize(),
+					DataEditType = DataEditTypes.COLOR,
+					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					ShowIfSet = "!sla_printer&extruder_count>1",
+					DefaultValue = ColorF.FromHSL(1 / 10.0, .99, .49).ToColor().Html,
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.material_color_2,
+					PresentationName = "Color 3".Localize(),
+					HelpText = "The color of the third material (extruder 3).".Localize(),
+					DataEditType = DataEditTypes.COLOR,
+					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					ShowIfSet = "!sla_printer&extruder_count>2",
+					DefaultValue = ColorF.FromHSL(2 / 10.0, .99, .49).ToColor().Html,
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.material_color_3,
+					PresentationName = "Color 4".Localize(),
+					HelpText = "The color of the forth material (extruder 4).".Localize(),
+					DataEditType = DataEditTypes.COLOR,
+					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					ShowIfSet = "!sla_printer&extruder_count>3",
+					DefaultValue = ColorF.FromHSL(3 / 10.0, .99, .49).ToColor().Html,
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.temperature,
 					PresentationName = "Extruder Temperature".Localize(),
 					HelpText = "The target temperature the extruder will attempt to reach during the print.".Localize(),

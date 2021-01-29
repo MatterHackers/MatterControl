@@ -46,7 +46,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private int currentIndex;
 
-		public ItemMaterialButton(ThemeConfig theme, int initialMaterialIndex)
+		public ItemMaterialButton(PrinterConfig printer, ThemeConfig theme, int initialMaterialIndex)
 		{
 			this.currentIndex = initialMaterialIndex;
 			this.ToolTipText = "Material".Localize();
@@ -61,7 +61,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.DynamicPopupContent = () =>
 			{
-				var materialControl = new MaterialControls(menuTheme, currentIndex)
+				var materialControl = new MaterialControls(printer, menuTheme, currentIndex)
 				{
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = menuTheme.BackgroundColor,
@@ -73,13 +73,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					currentIndex = e;
 					MaterialChanged?.Invoke(this, e);
-					materialColorButton.BackgroundColor = MaterialRendering.Color(currentIndex, theme.BorderColor);
+					materialColorButton.BackgroundColor = MaterialRendering.Color(printer, currentIndex, theme.BorderColor);
 				};
 
 				return materialControl;
 			};
 
-			materialColorButton = new ColorButton(MaterialRendering.Color(currentIndex, theme.BorderColor))
+			materialColorButton = new ColorButton(MaterialRendering.Color(printer, currentIndex, theme.BorderColor))
 			{
 				Width = scaledButtonSize,
 				Height = scaledButtonSize,

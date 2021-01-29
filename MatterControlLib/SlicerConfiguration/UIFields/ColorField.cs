@@ -39,9 +39,14 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private ThemeConfig theme;
 		private Color initialColor;
 
-		public ColorField(ThemeConfig theme, Color initialColor)
+		public ColorField(ThemeConfig theme)
 		{
 			this.theme = theme;
+		}
+
+		public ColorField(ThemeConfig theme, Color initialColor)
+			: this(theme)
+		{
 			this.initialColor = initialColor;
 		}
 
@@ -58,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			colorWidget = new ItemColorButton(theme, initialColor);
 			colorWidget.ColorChanged += (s, e) =>
 			{
-				base.OnValueChanged(new FieldChangedEventArgs(true));
+				this.SetValue(Color.Html, true);
 			};
 
 			container.AddChild(colorWidget);
