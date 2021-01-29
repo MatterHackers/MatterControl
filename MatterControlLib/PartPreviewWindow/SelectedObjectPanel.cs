@@ -272,7 +272,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			editorPanel.AddChild(row);
 
 			// put in a material edit field
-			var materialField = new MaterialIndexField(theme, selectedItem.MaterialIndex);
+			var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
 			materialField.Initialize(0);
 			materialField.ValueChanged += (s, e) =>
 			{

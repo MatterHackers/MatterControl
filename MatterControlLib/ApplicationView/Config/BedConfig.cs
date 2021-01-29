@@ -626,7 +626,7 @@ namespace MatterHackers.MatterControl
 					0,
 					1,
 					this.GetRenderType,
-					MaterialRendering.Color);
+					(index) => MaterialRendering.Color(this.Printer, index));
 
 			GCodeRenderer.ExtruderWidth = this.Printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter);
 

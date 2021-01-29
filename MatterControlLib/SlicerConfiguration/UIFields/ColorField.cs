@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			colorWidget = new ItemColorButton(theme, initialColor);
 			colorWidget.ColorChanged += (s, e) =>
 			{
-				base.OnValueChanged(new FieldChangedEventArgs(true));
+				this.SetValue(Color.Html, true);
 			};
 
 			container.AddChild(colorWidget);

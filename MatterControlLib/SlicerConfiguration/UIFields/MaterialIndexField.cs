@@ -36,10 +36,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 	public class MaterialIndexField : UIField
 	{
 		private ItemMaterialButton materialWidget;
+		private PrinterConfig printer;
 		private ThemeConfig theme;
 
-		public MaterialIndexField(ThemeConfig theme, int materialIndex)
+		public MaterialIndexField(PrinterConfig printer, ThemeConfig theme, int materialIndex)
 		{
+			this.printer = printer;
 			this.theme = theme;
 			this.MaterialIndex = materialIndex;
 		}
@@ -50,7 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		{
 			var container = new FlowLayoutWidget();
 
-			materialWidget = new ItemMaterialButton(theme, MaterialIndex);
+			materialWidget = new ItemMaterialButton(printer, theme, MaterialIndex);
 			materialWidget.MaterialChanged += (s, e) =>
 			{
 				MaterialIndex = e;

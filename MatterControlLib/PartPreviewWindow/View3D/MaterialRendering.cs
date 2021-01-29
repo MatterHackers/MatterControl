@@ -27,8 +27,10 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using MatterHackers.Agg;
+using MatterHackers.MatterControl;
+using MatterHackers.MatterControl.SlicerConfiguration;
+using System;
 
 namespace MatterHackers.MeshVisualizer
 {
@@ -39,9 +41,9 @@ namespace MatterHackers.MeshVisualizer
 		/// </summary>
 		/// <param name="materialIndex">The extruder/material index to resolve</param>
 		/// <returns>The color for the given extruder</returns>
-		public static Color Color(int materialIndex)
+		public static Color Color(PrinterConfig printer, int materialIndex)
 		{
-			return ColorF.FromHSL(Math.Max(materialIndex, 0) / 10.0, .99, .49).ToColor();
+			return Color(printer, Math.Min(4, Math.Max(0, materialIndex)), Agg.Color.Cyan);
 		}
 
 		/// <summary>
@@ -50,8 +52,23 @@ namespace MatterHackers.MeshVisualizer
 		/// <param name="materialIndex">The extruder/material index to resolve</param>
 		/// <param name="unassignedColor">The color to use when the extruder/material has not been assigned</param>
 		/// <returns>The color for the given extruder</returns>
-		public static Color Color(int materialIndex, Color unassignedColor)
+		public static Color Color(PrinterConfig printer, int materialIndex, Color unassignedColor)
 		{
+			if (printer?.Settings != null)
+			{
+				switch (materialIndex)
+				{
+					case 0:
+						return new Color(printer.Settings.GetValue(SettingsKey.material_color));
+					case 1:
+						return new Color(printer.Settings.GetValue(SettingsKey.material_color_1));
+					case 2:
+						return new Color(printer.Settings.GetValue(SettingsKey.material_color_2));
+					case 3:
+						return new Color(printer.Settings.GetValue(SettingsKey.material_color_3));
+				}
+			}
+
 			return (materialIndex == -1) ? unassignedColor : ColorF.FromHSL(materialIndex / 10.0, .99, .49).ToColor();
 		}
 	}

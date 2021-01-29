@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		public event EventHandler<int> IndexChanged;
 
-		public MaterialControls(ThemeConfig theme, int initialMaterialIndex)
+		public MaterialControls(PrinterConfig printer, ThemeConfig theme, int initialMaterialIndex)
 			: base(FlowDirection.TopToBottom)
 		{
 			this.theme = theme;
@@ -68,7 +68,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				buttonView.AddChild(new ColorButton(MaterialRendering.Color(extruderIndex, theme.BorderColor))
+				buttonView.AddChild(new ColorButton(MaterialRendering.Color(printer, extruderIndex, theme.BorderColor))
 				{
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
