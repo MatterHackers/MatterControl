@@ -2099,6 +2099,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The color of the first material.".Localize(),
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
+					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(0 / 10.0, .99, .49).ToColor().Html,
 				},
 				new SliceSettingData()
@@ -2109,6 +2110,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = "!sla_printer&extruder_count>1",
+					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(1 / 10.0, .99, .49).ToColor().Html,
 				},
 				new SliceSettingData()
@@ -2119,6 +2121,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = "!sla_printer&extruder_count>2",
+					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(2 / 10.0, .99, .49).ToColor().Html,
 				},
 				new SliceSettingData()
@@ -2129,6 +2132,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.COLOR,
 					RequiredDisplayDetail = DisplayDetailRequired.Simple,
 					ShowIfSet = "!sla_printer&extruder_count>3",
+					RebuildGCodeOnChange = false,
 					DefaultValue = ColorF.FromHSL(3 / 10.0, .99, .49).ToColor().Html,
 				},
 				new SliceSettingData()
