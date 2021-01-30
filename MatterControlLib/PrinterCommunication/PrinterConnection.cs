@@ -1192,7 +1192,7 @@ Details
 										else
 										{
 											UiThread.RunOnIdle(() => {
-												StyledMessageBox.ShowMessageBox(e.Message, e.GetType().ToString());
+												StyledMessageBox.ShowMessageBox(e.Message + "\n" + "Attempting to connect again may address the issue.".Localize(), e.GetType().ToString());
 											});
 										}
 									}
