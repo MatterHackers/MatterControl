@@ -65,9 +65,7 @@ namespace MatterHackers.GCodeVisualizer
 
 		internal class FeatureSet
 		{
-			internal List<List<int>> startIndices = new List<List<int>>();
-			internal List<List<int>> endIndices = new List<List<int>>();
-			internal List<List<RenderFeatureBase>> features = new List<List<RenderFeatureBase>>();
+			internal List<Layer> layers = new List<Layer>();
 		}
 
 		private FeatureSet all = new FeatureSet();
@@ -89,7 +87,7 @@ namespace MatterHackers.GCodeVisualizer
 
 				for (int i = 0; i < gCodeFileToDraw.LayerCount; i++)
 				{
-					all.features.Add(new List<RenderFeatureBase>());
+					all.layers.Add(new Layer());
 				}
 			}
 		}
@@ -102,13 +100,13 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void CreateFeaturesForLayerIfRequired(int layerToCreate)
 		{
-			if (all.features.Count == 0
-				|| all.features[layerToCreate].Count > 0)
+			if (all.layers.Count == 0
+				|| all.layers[layerToCreate].features.Count > 0)
 			{
 				return;
 			}
 
-			List<RenderFeatureBase> renderFeaturesForLayer = all.features[layerToCreate];
+			List<RenderFeatureBase> renderFeaturesForLayer = all.layers[layerToCreate].features;
 
 			int startRenderIndex = gCodeFileToDraw.GetFirstLayerInstruction(layerToCreate);
 			int endRenderIndex = gCodeFileToDraw.LineCount - 1;
@@ -186,7 +184,7 @@ namespace MatterHackers.GCodeVisualizer
 		public int GetNumFeatures(int layerToCountFeaturesOn)
 		{
 			CreateFeaturesForLayerIfRequired(layerToCountFeaturesOn);
-			return all.features[layerToCountFeaturesOn].Count;
+			return all.layers[layerToCountFeaturesOn].features.Count;
 		}
 
 		public RenderFeatureBase this[int layerIndex, int featureIndex]
@@ -195,11 +193,11 @@ namespace MatterHackers.GCodeVisualizer
 			{
 				try
 				{
-					var layer = all.features[layerIndex];
+					var features = all.layers[layerIndex].features;
 
-					if (featureIndex < layer.Count)
+					if (featureIndex < features.Count)
 					{
-						return layer[featureIndex];
+						return features[featureIndex];
 					}
 				}
 				catch
@@ -215,11 +213,11 @@ namespace MatterHackers.GCodeVisualizer
 
 		public void Render(Graphics2D graphics2D, GCodeRenderInfo renderInfo)
 		{
-			if (all.features.Count > 0)
+			if (all.layers.Count > 0)
 			{
 				CreateFeaturesForLayerIfRequired(renderInfo.EndLayerIndex);
 
-				int featuresOnLayer = all.features[renderInfo.EndLayerIndex].Count;
+				int featuresOnLayer = all.layers[renderInfo.EndLayerIndex].features.Count;
 				int endFeature = (int)(featuresOnLayer * renderInfo.FeatureToEndOnRatio0To1 + .5);
 				endFeature = Math.Max(0, Math.Min(endFeature, featuresOnLayer));
 
@@ -247,7 +245,7 @@ namespace MatterHackers.GCodeVisualizer
 					int lastFeature = endFeature - 1;
 					for (int i = startFeature; i < endFeature; i++)
 					{
-						RenderFeatureBase feature = all.features[renderInfo.EndLayerIndex][i];
+						RenderFeatureBase feature = all.layers[renderInfo.EndLayerIndex].features[i];
 						if (feature != null)
 						{
 							feature.Render(graphics2DGl, renderInfo, highlightFeature: this.GCodeInspector && i == lastFeature);
@@ -260,7 +258,7 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					for (int i = startFeature; i < endFeature; i++)
 					{
-						RenderFeatureBase feature = all.features[renderInfo.EndLayerIndex][i];
+						RenderFeatureBase feature = all.layers[renderInfo.EndLayerIndex].features[i];
 						if (feature != null)
 						{
 							feature.Render(graphics2D, renderInfo);
@@ -275,14 +273,15 @@ namespace MatterHackers.GCodeVisualizer
 			var colorVertexData = new VectorPOD<ColorVertexData>();
 			var vertexIndexArray = new VectorPOD<int>();
 
-			all.startIndices[layerIndex].Clear();
-			all.endIndices[layerIndex].Clear();
+			var layer = all.layers[layerIndex];
+			layer.startIndices.Clear();
+			layer.endIndices.Clear();
 
-			for (int i = 0; i < all.features[layerIndex].Count; i++)
+			for (int i = 0; i < layer.features.Count; i++)
 			{
-				all.startIndices[layerIndex].Add(vertexIndexArray.Count);
+				layer.startIndices.Add(vertexIndexArray.Count);
 
-				RenderFeatureBase feature = all.features[layerIndex][i];
+				RenderFeatureBase feature = layer.features[i];
 
 				if (feature != null)
 				{
@@ -290,7 +289,7 @@ namespace MatterHackers.GCodeVisualizer
 					feature.CreateRender3DData(colorVertexData, vertexIndexArray, renderInfo);
 				}
 
-				all.endIndices[layerIndex].Add(vertexIndexArray.Count);
+				layer.endIndices.Add(vertexIndexArray.Count);
 			}
 
 			// Construct and return the new VertexBuffer object with all color/index data
@@ -330,8 +329,7 @@ namespace MatterHackers.GCodeVisualizer
 				for (int layerIndex = 0; layerIndex < gCodeFileToDraw.LayerCount; layerIndex++)
 				{
 					layerVertexBuffer.Add(null);
-					all.startIndices.Add(new List<int>());
-					all.endIndices.Add(new List<int>());
+					all.layers.Add(new Layer());
 				}
 			}
 
@@ -346,7 +344,7 @@ namespace MatterHackers.GCodeVisualizer
 				lastRenderType = renderInfo.CurrentRenderType;
 			}
 
-			if (all.features.Count > 0)
+			if (all.layers.Count > 0)
 			{
 				for (int i = renderInfo.EndLayerIndex - 1; i >= renderInfo.StartLayerIndex; i--)
 				{
@@ -367,11 +365,12 @@ namespace MatterHackers.GCodeVisualizer
 				{
 					for (int i = renderInfo.StartLayerIndex; i < renderInfo.EndLayerIndex - 1; i++)
 					{
-						int featuresOnLayer = all.features[i].Count;
+						var layer = all.layers[i];
+						int featuresOnLayer = layer.features.Count;
 						if (featuresOnLayer > 1
 							&& layerVertexBuffer[i] != null)
 						{
-							layerVertexBuffer[i].RenderRange(0, all.endIndices[i][featuresOnLayer - 1]);
+							layerVertexBuffer[i].RenderRange(0, layer.endIndices[featuresOnLayer - 1]);
 						}
 					}
 				}
@@ -379,7 +378,8 @@ namespace MatterHackers.GCodeVisualizer
 				// draw the partial layer of end-1 from startRatio to endRatio
 				{
 					int layerIndex = renderInfo.EndLayerIndex - 1;
-					int featuresOnLayer = all.features[layerIndex].Count;
+					var layer = all.layers[layerIndex];
+					int featuresOnLayer = layer.features.Count;
 					int startFeature = (int)(featuresOnLayer * renderInfo.FeatureToStartOnRatio0To1 + .5);
 					startFeature = Math.Max(0, Math.Min(startFeature, featuresOnLayer));
 
@@ -402,9 +402,9 @@ namespace MatterHackers.GCodeVisualizer
 					if (endFeature > startFeature
 						&& layerVertexBuffer[layerIndex] != null)
 					{
-						int ellementCount = all.endIndices[layerIndex][endFeature - 1] - all.startIndices[layerIndex][startFeature];
+						int ellementCount = layer.endIndices[endFeature - 1] - layer.startIndices[startFeature];
 
-						layerVertexBuffer[layerIndex].RenderRange(all.startIndices[layerIndex][startFeature], ellementCount);
+						layerVertexBuffer[layerIndex].RenderRange(layer.startIndices[startFeature], ellementCount);
 					}
 				}
 				GL.PopAttrib();

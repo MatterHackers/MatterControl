@@ -129,6 +129,33 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test, Category("Emulator")]
+		public async Task MenuStaysOpenOnRebuildSettings()
+		{
+			await MatterControlUtilities.RunTest(async (testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
+				{
+					var printer = testRunner.FirstPrinter();
+
+					// open the print menu and prove no oem message
+					testRunner.OpenPrintPopupMenu();
+					var supportWidegtName = SettingsKey.create_per_layer_support.SettingWidgetName();
+					Assert.IsTrue(testRunner.NameExists(supportWidegtName, 1), "support option is visible");
+					// toggle supports
+					var supportButton = testRunner.GetWidgetByName(supportWidegtName, out _) as ICheckbox;
+					for (int i = 0; i < 3; i++)
+					{
+						testRunner.ClickByName(supportWidegtName);
+						testRunner.WaitFor(() => supportButton.Checked);
+						testRunner.ClickByName(supportWidegtName);
+						testRunner.WaitFor(() => !supportButton.Checked);
+					}
+					Assert.IsTrue(testRunner.NameExists(supportWidegtName, 1), "Print menu should still be open after toggle supports");
+				}
+			}, maxTimeToRun: 120);
+		}
+		
+		[Test, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>

@@ -1208,11 +1208,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return settingData;
 		}
 
+		public static string SettingWidgetName(this string slicerConfigName)
+		{
+			var settingData = PrinterSettings.SettingsData[slicerConfigName];
+			// Click field
+			return $"{settingData.PresentationName} Field";
+		}
+
 		public static void SelectSliceSettingsField(this AutomationRunner testRunner, SettingsLayout.SettingsSection settingsSection, string slicerConfigName)
 		{
-			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
 			// Click field
-			var widgetName = $"{settingData.PresentationName} Field";
+			var widgetName = SettingWidgetName(slicerConfigName);
 			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, .2, onlyVisible: false);
 			if (foundWidget == null)
 			{

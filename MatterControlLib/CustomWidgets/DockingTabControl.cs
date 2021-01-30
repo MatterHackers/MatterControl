@@ -198,8 +198,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void Rebuild()
 		{
-			this.Focus();
-
 			foreach (var (key, text, widget) in allTabs)
 			{
 				widget.Parent?.RemoveChild(widget);
