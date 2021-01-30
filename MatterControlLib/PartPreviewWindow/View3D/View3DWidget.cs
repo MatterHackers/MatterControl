@@ -433,7 +433,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Top level selection only - rebuild tree
-			treeNodeContainer.CloseAllChildren();
+			treeNodeContainer.CloseChildren();
 
 			treeNodesByObject.Clear();
 

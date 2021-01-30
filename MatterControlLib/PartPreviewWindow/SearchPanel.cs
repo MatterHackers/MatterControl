@@ -75,7 +75,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			searchBox.TextEditWidget.ActualTextEditWidget.EnterPressed += async (s2, e2) =>
 			{
-				searchResults.CloseAllChildren();
+				searchResults.CloseChildren();
 
 				searchResults.AddChild(
 					new TextWidget("Searching".Localize() + "...", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
@@ -90,7 +90,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					return HelpIndex.Search(searchBox.TextEditWidget.Text);
 				});
 
-				searchResults.CloseAllChildren();
+				searchResults.CloseChildren();
 
 				foreach (var searchResult in searchHits)
 				{
@@ -120,7 +120,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				searchBox.BackgroundColor = Color.Transparent;
 				searchBox.TextEditWidget.Text = "";
 
-				searchResults.CloseAllChildren();
+				searchResults.CloseChildren();
 			};
 
 			this.AddChild(searchBox);

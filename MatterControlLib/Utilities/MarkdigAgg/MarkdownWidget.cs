@@ -141,7 +141,7 @@ namespace Markdig.Agg
 					_markDownText = value;
 
 					// Empty self
-					contentPanel.CloseAllChildren();
+					contentPanel.CloseChildren();
 
 					this.Width = 10;
 					this.ScrollPositionFromTop = Vector2.Zero;

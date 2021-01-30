@@ -60,7 +60,7 @@ namespace MatterHackers.MatterControl
 
 		private void AddAllContent()
 		{
-			contentRow.CloseAllChildren();
+			contentRow.CloseChildren();
 
 			GuiWidget settingsColumn;
 

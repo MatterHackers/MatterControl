@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl
 
 		private void RebuildList(PrinterSettings printerSettings)
 		{
-			this.contentRow.CloseAllChildren();
+			this.contentRow.CloseChildren();
 
 			if (printerSettings?.Macros != null)
 			{

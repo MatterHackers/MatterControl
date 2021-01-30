@@ -293,7 +293,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 		private void AddLibraryButtonElements()
 		{
-			buttonPanel.RemoveAllChildren();
+			buttonPanel.RemoveChildren();
 
 			// add in the message widget
 			providerMessageContainer = new GuiWidget()

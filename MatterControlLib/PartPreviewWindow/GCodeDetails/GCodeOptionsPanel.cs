@@ -181,7 +181,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (e.PropertyName == nameof(gcodeOptions.RenderBed)
 					|| e.PropertyName == nameof(gcodeOptions.RenderBuildVolume))
 				{
-					optionsContainer.CloseAllChildren();
+					optionsContainer.CloseChildren();
 					BuildMenu();
 				}
 			};

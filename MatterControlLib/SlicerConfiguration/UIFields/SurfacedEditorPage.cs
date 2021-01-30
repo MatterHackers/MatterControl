@@ -108,7 +108,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				}
 			};
 
-			treeView.ScrollArea.CloseAllChildren();
+			treeView.ScrollArea.CloseChildren();
 
 			var keyValues = new Dictionary<IObject3D, TreeNode>();
 	

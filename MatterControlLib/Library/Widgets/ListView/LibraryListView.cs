@@ -256,7 +256,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.items.Clear();
 
 			this.SelectedItems.Clear();
-			contentView.CloseAllChildren();
+			contentView.CloseChildren();
 
 			var itemsContentView = contentView as IListContentView;
 			itemsContentView.ClearItems();
@@ -377,7 +377,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (contentView != null
 						&& contentView != value)
 					{
-						this.ScrollArea.CloseAllChildren();
+						this.ScrollArea.CloseChildren();
 
 						contentView = value;
 						contentView.HAnchor = HAnchor.Stretch;

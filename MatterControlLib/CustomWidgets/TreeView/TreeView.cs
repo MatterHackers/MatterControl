@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void Clear()
 		{
-			this.ScrollArea.CloseAllChildren();
+			this.ScrollArea.CloseChildren();
 
 			// Release held reference
 			_selectedNode = null;

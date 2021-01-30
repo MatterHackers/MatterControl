@@ -292,7 +292,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		private void RebuildContentSection()
 		{
 			// Remove but don't close all the current nodes
-			content.RemoveAllChildren();
+			content.RemoveChildren();
 
 			using (content.LayoutLock())
 			{

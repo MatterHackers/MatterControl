@@ -112,7 +112,7 @@ namespace MatterHackers.MatterControl.Library.Widgets.HardwarePage
 							UiThread.RunOnIdle(() =>
 							{
 								var result = JsonConvert.DeserializeObject<ProductSidData>(json);
-								productDataContainer.RemoveAllChildren();
+								productDataContainer.RemoveChildren();
 
 								foreach (var addOn in result.ProductSku.ProductListing.AddOns)
 								{

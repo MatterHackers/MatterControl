@@ -66,10 +66,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			PopupHAnchor = HAnchor.Fit;
 			PopupVAnchor = VAnchor.Fit;
 
+			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
+			{
+				Width = scaledButtonSize,
+				Height = scaledButtonSize,
+				HAnchor = HAnchor.Center,
+				VAnchor = VAnchor.Center,
+				DisabledColor = theme.MinimalShade,
+				Border = 1,
+				BorderColor = theme.BorderColor20,
+				Selectable = false
+			};
+
 			this.DynamicPopupContent = () =>
 			{
 #if true
-				popupContent = NewColorSelector(theme, selectedColor, menuTheme, (color) => colorButton.BackgroundColor = color);
+				popupContent = NewColorSelector(theme, colorButton.BackgroundColor, menuTheme, (color) => colorButton.BackgroundColor = color);
 #else
 				return new ColorSwatchSelector(menuTheme,
 					buttonSize: 16,
@@ -83,18 +95,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 #endif
 				return popupContent;
-			};
-
-			colorButton = new ColorButton(selectedColor == Color.Transparent ? theme.SlightShade : selectedColor)
-			{
-				Width = scaledButtonSize,
-				Height = scaledButtonSize,
-				HAnchor = HAnchor.Center,
-				VAnchor = VAnchor.Center,
-				DisabledColor = theme.MinimalShade,
-				Border = 1,
-				BorderColor = theme.BorderColor20,
-				Selectable = false
 			};
 
 			colorButton.BackgroundColorChanged += (s, e) =>

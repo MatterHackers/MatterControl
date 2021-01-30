@@ -1225,7 +1225,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 									OnConnectionFailed(ConnectionFailure.PortInUse);
 									UiThread.RunOnIdle(() =>
 									{
-										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close any other 3D printing programs or other other programs which access serial ports and try again.";
+										string message = @"MatterControl cannot connect to your printer because another program on your computer is already connected. Close or disconnect any other 3D printing programs or other programs which access serial ports and try again.";
 										StyledMessageBox.ShowMessageBox(message, "Port In Use".Localize(), useMarkdown: true);
 									});
 								}

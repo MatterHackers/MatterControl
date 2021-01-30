@@ -78,7 +78,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 					this.RemoveChild(iconView);
 				}
 			}
-			this.CloseAllChildren();
+			this.CloseChildren();
 
 			if (content.group_title != null)
 			{

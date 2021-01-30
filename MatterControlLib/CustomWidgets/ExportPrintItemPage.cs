@@ -115,7 +115,7 @@ namespace MatterHackers.MatterControl
 					var gcodeExportButton = pluginButton;
 					gcodeExportButton.CheckedStateChanged += (s, e) =>
 					{
-						validationPanel.CloseAllChildren();
+						validationPanel.CloseChildren();
 
 						if (gcodeExportButton.Checked)
 						{

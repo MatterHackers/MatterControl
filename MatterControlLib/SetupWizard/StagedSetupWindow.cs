@@ -213,7 +213,7 @@ namespace MatterHackers.MatterControl
 			activePage = pageToChangeTo;
 
 			pageToChangeTo.DialogWindow = this;
-			rightPanel.CloseAllChildren();
+			rightPanel.CloseChildren();
 
 			rightPanel.AddChild(pageToChangeTo);
 

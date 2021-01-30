@@ -161,7 +161,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			{
 				if (treeView.SelectedNode.Tag is PrinterInfo printerInfo)
 				{
-					horizontalSplitter.Panel2.CloseAllChildren();
+					horizontalSplitter.Panel2.CloseChildren();
 					horizontalSplitter.Panel2.AddChild(new PrinterDetails(printerInfo, theme, true)
 					{
 						HAnchor = HAnchor.MaxFitOrStretch,
