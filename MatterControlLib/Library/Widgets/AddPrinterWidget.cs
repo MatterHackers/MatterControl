@@ -321,7 +321,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 
 						this.SelectedPrinter = treeView.SelectedNode.Tag as MakeModelInfo;
 
-						printerInfo.CloseAllChildren();
+						printerInfo.CloseChildren();
 
 						if (this.SelectedPrinter != null
 							&& OemSettings.Instance.OemPrinters.TryGetValue($"{SelectedPrinter.Make}-{ SelectedPrinter.Model}", out StorePrinterID storePrinterID))

@@ -86,7 +86,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.PlusTab
 						{
 							UiThread.RunOnIdle(() =>
 							{
-								this.CloseAllChildren();
+								this.CloseChildren();
 
 									// Add controls for content
 								foreach (var content in explorerFeed.Content)

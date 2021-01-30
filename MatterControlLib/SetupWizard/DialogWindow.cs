@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl
 			activePage = pageToChangeTo;
 
 			pageToChangeTo.DialogWindow = this;
-			this.CloseAllChildren();
+			this.CloseChildren();
 			this.AddChild(pageToChangeTo);
 
 			this.Invalidate();
@@ -251,7 +251,7 @@ namespace MatterHackers.MatterControl
 
 				// find out where the contents we put in last time are
 				int thisIndex = Children.IndexOf(panel);
-				this.RemoveAllChildren();
+				this.RemoveChildren();
 
 				// make new content with the possibly changed theme
 				var newPanel = new PanelType

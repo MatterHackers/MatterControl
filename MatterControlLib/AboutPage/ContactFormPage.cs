@@ -72,7 +72,7 @@ namespace MatterHackers.MatterControl.ContactForm
 				{
 					ContactFormRequest postRequest = new ContactFormRequest(questionInput.Text, detailInput.Text, emailInput.Text, nameInput.Text, "");
 
-					contentRow.RemoveAllChildren();
+					contentRow.RemoveChildren();
 
 					contentRow.AddChild(messageContainer);
 

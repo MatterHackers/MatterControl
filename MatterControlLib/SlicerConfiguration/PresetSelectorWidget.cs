@@ -448,7 +448,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		private void RebuildDropDownList()
 		{
-			pullDownContainer.CloseAllChildren();
+			pullDownContainer.CloseChildren();
 			pullDownContainer.AddChild(this.NewPulldownContainer());
 		}
 

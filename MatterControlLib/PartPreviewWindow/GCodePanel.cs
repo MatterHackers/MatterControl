@@ -103,7 +103,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void RefreshGCodeDetails(PrinterConfig printer)
 		{
-			loadedGCodeSection.CloseAllChildren();
+			loadedGCodeSection.CloseChildren();
 
 			if (sceneContext.LoadedGCode?.LineCount > 0)
 			{

@@ -1289,7 +1289,7 @@ namespace MatterHackers.MatterControl
 
 					using (new QuickTimer("Time to AddMainview: "))
 					{
-						AppContext.RootSystemWindow.CloseAllChildren();
+						AppContext.RootSystemWindow.CloseChildren();
 						AppContext.RootSystemWindow.AddChild(MainView);
 					}
 				}

@@ -280,7 +280,7 @@ namespace MatterHackers.MatterControl.EeProm
 				}
 			}
 
-			settingsColumn.CloseAllChildren();
+			settingsColumn.CloseChildren();
 
 			foreach (EePromRepetierParameter newSetting in tempList)
 			{

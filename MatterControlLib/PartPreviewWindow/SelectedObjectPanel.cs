@@ -185,7 +185,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			this.item = selectedItem;
-			editorPanel.CloseAllChildren();
+			editorPanel.CloseChildren();
 
 			// Allow caller to clean up with passing null for selectedItem
 			if (item == null)
@@ -196,7 +196,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var selectedItemType = selectedItem.GetType();
 
-			primaryActionsPanel.RemoveAllChildren();
+			primaryActionsPanel.RemoveChildren();
 
 			IEnumerable<SceneOperation> primaryActions;
 
@@ -442,7 +442,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			overflowButton.Enabled = selectedItem != null;
 			if (selectedItem == null)
 			{
-				primaryActionsPanel.RemoveAllChildren();
+				primaryActionsPanel.RemoveChildren();
 			}
 		}
 	}

@@ -102,7 +102,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 		private void CreateThemeModeButtons()
 		{
-			previewButtonPanel.CloseAllChildren();
+			previewButtonPanel.CloseChildren();
 
 			var accentColor = theme.PrimaryAccentColor;
 
@@ -254,7 +254,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage
 
 			public void RebuildColorButtons()
 			{
-				this.CloseAllChildren();
+				this.CloseChildren();
 
 				colorButtons.Clear();
 

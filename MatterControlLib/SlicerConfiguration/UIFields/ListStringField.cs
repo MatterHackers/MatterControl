@@ -71,7 +71,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 		protected virtual void Rebuild()
 		{
-			this.Content.CloseAllChildren();
+			this.Content.CloseChildren();
 
 			for (int i = 0; i < _list.Count; i++)
 			{

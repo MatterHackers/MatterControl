@@ -57,7 +57,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public void SetContainer(ILibraryContainer currentContainer)
 		{
-			this.CloseAllChildren();
+			this.CloseChildren();
 
 			var upbutton = new IconButton(StaticData.Instance.LoadIcon(Path.Combine("Library", "upfolder_20.png"), 20, 20, theme.InvertIcons), theme)
 			{

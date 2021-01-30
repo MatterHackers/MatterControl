@@ -97,7 +97,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 						child.Click -= Row_Click;
 					}
 
-					this.CloseAllChildren();
+					this.CloseChildren();
 
 					foreach (var iconView in allIconViews)
 					{
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			rowButtonContainer = null;
 			allIconViews.Clear();
 
-			this.CloseAllChildren();
+			this.CloseChildren();
 		}
 
 		private bool reloading = false;
@@ -258,7 +258,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public virtual void ClearItems()
 		{
-			this.CloseAllChildren();
+			this.CloseChildren();
 		}
 	}
 

@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				widget.ClearRemovedFlag();
 			}
 
-			this.CloseAllChildren();
+			this.CloseChildren();
 
 			SimpleTabs tabControl = null;
 
