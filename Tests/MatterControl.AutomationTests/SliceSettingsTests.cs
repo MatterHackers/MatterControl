@@ -154,7 +154,28 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			}, maxTimeToRun: 120);
 		}
-		
+
+		[Test, Category("Emulator")]
+		public async Task SettingsStayOpenOnRebuildSettings()
+		{
+			await MatterControlUtilities.RunTest(async (testRunner) =>
+			{
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator(pinSettingsOpen: false))
+				{
+					var printer = testRunner.FirstPrinter();
+
+					testRunner.OpenSettingsSidebar(false);
+					for (int i = 0; i < 3; i++)
+					{
+						testRunner.ClickByName("Slice Settings Overflow Menu");
+						testRunner.ClickByName("Advanced Menu Item");
+						testRunner.ClickByName("Slice Settings Overflow Menu");
+						testRunner.ClickByName("Simple Menu Item");
+					}
+				}
+			}, maxTimeToRun: 120);
+		}
+
 		[Test, Category("Emulator")]
 		public async Task CancelWorksAsExpected()
 		{
