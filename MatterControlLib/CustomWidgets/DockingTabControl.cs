@@ -255,11 +255,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 							theme,
 							hasClose: widget is ICloseableTab,
 							pointSize: theme.DefaultFontSize)
-						{
-							Name = key + " Tab",
-							InactiveTabColor = Color.Transparent,
-							ActiveTabColor = theme.BackgroundColor
-						};
+					{
+						Name = key + " Tab",
+						InactiveTabColor = Color.Transparent,
+						ActiveTabColor = theme.BackgroundColor
+					};
 
 					tab.CloseClicked += (s, e) =>
 					{
@@ -324,13 +324,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					if (this.printer.ViewState.DockWindowFloating
 						&& localTabKey == this.printer.ViewState.SliceSettingsTabKey)
 					{
-						UiThread.RunOnIdle(() =>
+						if (!tabBarButton.HasBeenClosed && tabBarButton.Parent != null)
 						{
-							if (!tabBarButton.HasBeenClosed && tabBarButton.Parent != null)
-							{
-								tabBarButton.ShowPopup();
-							}
-						});
+							tabBarButton.ShowPopup();
+						}
 					}
 				}
 			}
