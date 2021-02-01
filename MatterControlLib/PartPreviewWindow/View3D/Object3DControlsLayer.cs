@@ -350,7 +350,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				_ = this.FindHitObject3DControl(ray, out IObject3DControl hitObject3DControl, out _);
+				this.FindHitObject3DControl(ray, out IObject3DControl hitObject3DControl, out _);
 
 				var object3DControls = this.Object3DControls;
 
