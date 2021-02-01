@@ -516,12 +516,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 						void UpdateImageBuffer(ImageBuffer thumbnail)
 						{
-							// Dump OpenGL texture
-							ImageGlPlugin.Remove(imageBuffer);
-
 							// Copy updated thumbnail into original image
 							imageBuffer.CopyFrom(thumbnail);
-
 							bedHistory.Invalidate();
 						}
 

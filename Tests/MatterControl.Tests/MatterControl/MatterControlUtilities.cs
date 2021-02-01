@@ -273,7 +273,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner, string make = "Airwolf 3D", string model = "HD", bool runSlow = false)
+		public static Emulator LaunchAndConnectToPrinterEmulator(this AutomationRunner testRunner,
+			string make = "Airwolf 3D",
+			string model = "HD",
+			bool runSlow = false,
+			bool pinSettingsOpen = true)
 		{
 			var hardwareTab = testRunner.GetWidgetByName("Hardware Tab", out SystemWindow systemWindow, 10);
 
@@ -291,7 +295,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model)
-				.SwitchToPrinterSettings();
+				.SwitchToPrinterSettings(pinSettingsOpen);
 
 			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
 
@@ -1094,7 +1098,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// <param name="testRunner">The AutomationRunner in use</param>
 		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
 		{
-			EnsurePrinterSidebarOpen(testRunner);
+			OpenSettingsSidebar(testRunner);
 
 			testRunner.WaitForWidgetEnabled("Slice Settings Tab");
 
@@ -1152,17 +1156,30 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Switch to printer settings
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner in use</param>
-		public static AutomationRunner SwitchToPrinterSettings(this AutomationRunner testRunner)
+		public static AutomationRunner SwitchToPrinterSettings(this AutomationRunner testRunner, bool pinSettingsOpen = true)
 		{
-			EnsurePrinterSidebarOpen(testRunner);
+			testRunner.OpenSettingsSidebar(pinSettingsOpen);
 
 			if (!testRunner.NameExists("Printer Tab", 0.1))
 			{
 				testRunner.ClickByName("Printer Overflow Menu")
 					.ClickByName("Show Printer Menu Item");
+
+				if (!pinSettingsOpen)
+				{
+					// close the menu
+					testRunner.ClickByName("Printer Overflow Menu");
+				}
 			}
 
-			return testRunner.ClickByName("Printer Tab");
+			if (pinSettingsOpen)
+			{
+				return testRunner.ClickByName("Printer Tab");
+			}
+			else
+			{
+				return testRunner.ClickByName("Printer Sidebar");
+			}
 		}
 
 		public static void InlineTitleEdit(this AutomationRunner testRunner, string controlName, string replaceString)
@@ -1174,7 +1191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(controlName + " Save");
 		}
 
-		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, SettingsLayout.SettingsSection rootLevel, string slicerConfigName)
+		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
 		{
 			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 
@@ -1208,18 +1225,27 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return settingData;
 		}
 
-		public static void SelectSliceSettingsField(this AutomationRunner testRunner, SettingsLayout.SettingsSection settingsSection, string slicerConfigName)
+		public static string SettingWidgetName(this string slicerConfigName)
 		{
-			var settingData = NavigateToSliceSettingsField(testRunner, settingsSection, slicerConfigName);
+			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 			// Click field
-			var widgetName = $"{settingData.PresentationName} Field";
+			return $"{settingData.PresentationName} Field";
+		}
+
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
+		{
+			testRunner.NavigateToSliceSettingsField(slicerConfigName);
+
+			// Click field
+			var widgetName = SettingWidgetName(slicerConfigName);
 			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, .2, onlyVisible: false);
 			if (foundWidget == null)
 			{
 				// turn on advanced mode and try to get it again
 				testRunner.ClickByName("Slice Settings Overflow Menu");
 				testRunner.ClickByName("Advanced Menu Item");
-				foundWidget = testRunner.GetWidgetByName(widgetName, out _, onlyVisible: false);
+
+				foundWidget = testRunner.GetWidgetByName(widgetName, out _, 20, onlyVisible: false);
 			}
 
 			foreach (var scrollable in foundWidget.Parents<ScrollableWidget>())
@@ -1237,7 +1263,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToControlsTab(this AutomationRunner testRunner)
 		{
 			// Change to Printer Controls
-			EnsurePrinterSidebarOpen(testRunner);
+			OpenSettingsSidebar(testRunner);
 
 			if (!testRunner.NameExists("Controls Tab", 0.2))
 			{
@@ -1255,7 +1281,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void SwitchToTerminalTab(this AutomationRunner testRunner)
 		{
 			// Change to Printer Controls
-			EnsurePrinterSidebarOpen(testRunner);
+			OpenSettingsSidebar(testRunner);
 
 			if (!testRunner.NameExists("Terminal Tab", 0.2))
 			{
@@ -1280,16 +1306,18 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			// TODO: Remove workaround needed to force GCode options to appear }}
 		}
 
-		private static void EnsurePrinterSidebarOpen(AutomationRunner testRunner)
+		public static void OpenSettingsSidebar(this AutomationRunner testRunner, bool pinOpen = true)
 		{
-			// If the sidebar exists, we need to expand and pin it
-			if (testRunner.WaitForName("Slice Settings Sidebar", 0.2))
+			// If the sidebar exists, we need to expand and pin  it
+			if (testRunner.NameExists("Slice Settings Sidebar", .1))
 			{
 				testRunner.ClickByName("Slice Settings Sidebar");
-				if (UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) != "true")
-				{
-					testRunner.ClickByName("Pin Settings Button");
-				}
+			}
+
+			if (pinOpen
+				&& UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) != "true")
+			{
+				testRunner.ClickByName("Pin Settings Button");
 			}
 		}
 

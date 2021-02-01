@@ -393,6 +393,7 @@ namespace MatterHackers.MatterControl
 			var printerTabPage = this.MainView.Descendants<PrinterTabPage>().Where(page => page.Printer == printer).FirstOrDefault();
 			if (printerTabPage != null)
 			{
+				ApplicationController.Instance.IsReloading = true;
 				var settingsContext = new SettingsContext(
 						printer,
 						null,
@@ -413,6 +414,7 @@ namespace MatterHackers.MatterControl
 				}
 
 				sideBar.ReplacePage("Slice Settings", new SliceSettingsWidget(printer, settingsContext, Theme));
+				ApplicationController.Instance.IsReloading = false;
 			}
 		}
 
