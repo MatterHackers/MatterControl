@@ -28,7 +28,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.AddItemToBedplate("", "Row Item Rook");
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, SettingsKey.create_raft);
+				testRunner.SelectSliceSettingsField(SettingsKey.create_raft);
 
 				testRunner.WaitForReloadAll(() => testRunner.StartSlicing());
 
@@ -397,7 +397,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					// Switch back to the general tab
 					testRunner.ClickByName("General Tab");
 
-					testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllPrinterSettings, SettingsKey.extruder_count);
+					testRunner.SelectSliceSettingsField(SettingsKey.extruder_count);
 					testRunner.Type("2");
 					testRunner.Type("{Enter}");
 
@@ -471,7 +471,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.SwitchToSliceSettings();
 
 				// Navigate to General Tab -> Layers / Surface Tab
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, SettingsKey.layer_height);
+				testRunner.SelectSliceSettingsField(SettingsKey.layer_height);
 				Assert.AreEqual(0, layerHeightChangedCount, "No change to layer height yet.");
 
 				var theme = ApplicationController.Instance.Theme;
@@ -543,7 +543,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			//testRunner.ScrollIntoView(checkBoxName);
 			//testRunner.ClickByName(checkBoxName);
-			testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllPrinterSettings, settingToChange);
+			testRunner.SelectSliceSettingsField(settingToChange);
 
 			// give some time for the ui to update if necessary
 			testRunner.Delay(2);
@@ -563,7 +563,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(printer.Settings.UserLayer.ContainsKey(settingToChange));
 
 			// make sure the setting is still open in case of a reload all
-			testRunner.NavigateToSliceSettingsField(PrinterSettings.Layout.AllPrinterSettings, settingToChange);
+			testRunner.NavigateToSliceSettingsField(settingToChange);
 			// Click the cancel user override button
 			testRunner.ClickByName("Restore " + settingToChange);
 			testRunner.Delay(2);
@@ -585,17 +585,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// Navigate to Settings Tab and make sure Bed Temp Text box is visible
 				testRunner.SwitchToSliceSettings();
 
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, SettingsKey.bed_temperature);
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, SettingsKey.temperature);
+				testRunner.SelectSliceSettingsField(SettingsKey.bed_temperature);
+				testRunner.SelectSliceSettingsField(SettingsKey.temperature);
 
 				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
 				testRunner.SwitchToPrinterSettings();
 
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllPrinterSettings, SettingsKey.has_heated_bed);
+				testRunner.SelectSliceSettingsField(SettingsKey.has_heated_bed);
 				testRunner.Delay(.5);
 
 				testRunner.SwitchToSliceSettings();
-				testRunner.NavigateToSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, SettingsKey.temperature);
+				testRunner.NavigateToSliceSettingsField(SettingsKey.temperature);
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -620,11 +620,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				var printer = testRunner.FirstPrinter();
 
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, "layer_height");
+				testRunner.SelectSliceSettingsField(SettingsKey.layer_height);
 				testRunner.Type(".5");
 
 				// Force lose focus
-				testRunner.SelectSliceSettingsField(PrinterSettings.Layout.AllSliceSettings, "first_layer_height");
+				testRunner.SelectSliceSettingsField(SettingsKey.first_layer_height);
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");

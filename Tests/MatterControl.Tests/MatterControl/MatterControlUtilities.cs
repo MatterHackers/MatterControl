@@ -1191,7 +1191,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(controlName + " Save");
 		}
 
-		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, SettingsLayout.SettingsSection rootLevel, string slicerConfigName)
+		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
 		{
 			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 
@@ -1232,8 +1232,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return $"{settingData.PresentationName} Field";
 		}
 
-		public static void SelectSliceSettingsField(this AutomationRunner testRunner, SettingsLayout.SettingsSection settingsSection, string slicerConfigName)
+		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
 		{
+			testRunner.NavigateToSliceSettingsField(slicerConfigName);
+
 			// Click field
 			var widgetName = SettingWidgetName(slicerConfigName);
 			var foundWidget = testRunner.GetWidgetByName(widgetName, out _, .2, onlyVisible: false);
@@ -1242,7 +1244,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// turn on advanced mode and try to get it again
 				testRunner.ClickByName("Slice Settings Overflow Menu");
 				testRunner.ClickByName("Advanced Menu Item");
-				foundWidget = testRunner.GetWidgetByName(widgetName, out _, onlyVisible: false);
+
+				foundWidget = testRunner.GetWidgetByName(widgetName, out _, 20, onlyVisible: false);
 			}
 
 			foreach (var scrollable in foundWidget.Parents<ScrollableWidget>())
@@ -1305,8 +1308,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void OpenSettingsSidebar(this AutomationRunner testRunner, bool pinOpen = true)
 		{
-			// If the sidebar exists, we need to expand and pin it
-			testRunner.ClickByName("Slice Settings Sidebar");
+			// If the sidebar exists, we need to expand and pin  it
+			if (testRunner.NameExists("Slice Settings Sidebar", .1))
+			{
+				testRunner.ClickByName("Slice Settings Sidebar");
+			}
+
 			if (pinOpen
 				&& UserSettings.Instance.get(UserSettingsKey.SliceSettingsTabPinned) != "true")
 			{
