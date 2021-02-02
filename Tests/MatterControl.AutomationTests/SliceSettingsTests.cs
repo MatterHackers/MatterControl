@@ -167,10 +167,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					testRunner.OpenSettingsSidebar(false);
 					for (int i = 0; i < 3; i++)
 					{
-						testRunner.ClickByName("Slice Settings Overflow Menu");
-						testRunner.ClickByName("Advanced Menu Item");
-						testRunner.ClickByName("Slice Settings Overflow Menu");
-						testRunner.ClickByName("Simple Menu Item");
+						testRunner.Delay()
+							.ClickByName("Slice Settings Overflow Menu")
+							.Delay()
+							.ClickByName("Advanced Menu Item")
+							.Delay()
+							.ClickByName("Slice Settings Overflow Menu")
+							.Delay()
+							.ClickByName("Simple Menu Item");
 					}
 				}
 			}, maxTimeToRun: 120);

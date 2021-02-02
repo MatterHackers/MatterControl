@@ -40,8 +40,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 {
 	public class RadialColorPicker : GuiWidget
 	{
-		private double colorAngle = 0;
-		private Vector2 unitTrianglePosition = new Vector2(1, .5);
+		private (double h, double s, double l) hsl;
 		private float alpha;
 		private Color downColor;
 
@@ -60,21 +59,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			this.Width = 100;
 			this.Height = 100;
-
-			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
-
-			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
-
-			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
 		}
 
 		public event EventHandler IncrementalColorChanged;
@@ -91,13 +75,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			if ((color.red != color.green || color.green != color.blue || color.blue != 0)
 				&& (color.red != color.green || color.green != color.blue || color.blue != 255))
 			{
-				colorAngle = h * MathHelper.Tau;
+				hsl.h = h;
 			}
-			unitTrianglePosition.X = s;
-			unitTrianglePosition.Y = l;
+			hsl.s = s;
+			hsl.l = l;
 			alpha = color.Alpha0To1;
 
-			CLampTrianglePosition(ref unitTrianglePosition);
 			Invalidate();
 		}
 
@@ -117,7 +100,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			get
 			{
-				return ColorF.FromHSL(colorAngle / MathHelper.Tau, unitTrianglePosition.X, unitTrianglePosition.Y, alpha).ToColor();
+				return ColorF.FromHSL(hsl.h, hsl.s, hsl.l, alpha).ToColor();
 			}
 
 			set
@@ -135,13 +118,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 		{
 			get
 			{
-				return ColorF.FromHSL(colorAngle / MathHelper.Tau, 1, .5).ToColor();
+				return ColorF.FromHSL(hsl.h, 1, .5).ToColor();
 			}
 
 			set
 			{
 				value.ToColorF().GetHSL(out double h, out _, out _);
-				colorAngle = h * MathHelper.Tau;
+				hsl.h = h;
 			}
 		}
 
@@ -176,12 +159,16 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			graphics2D.Ring(center, RingRadius - RingWidth / 2, 1, Color.Black);
 
 			// draw the triangle outline
+			var colorAngle = hsl.h * MathHelper.Tau;
 			graphics2D.Line(GetTrianglePoint(0, InnerRadius, colorAngle), GetTrianglePoint(1, InnerRadius, colorAngle), Color.Black);
 			graphics2D.Line(GetTrianglePoint(1, InnerRadius, colorAngle), GetTrianglePoint(2, InnerRadius, colorAngle), Color.Black);
 			graphics2D.Line(GetTrianglePoint(2, InnerRadius, colorAngle), GetTrianglePoint(0, InnerRadius, colorAngle), Color.Black);
 
 			// draw the color circle on the triangle
-			var triangleColorCenter = TriangleToWidgetTransform(colorAngle).Transform(unitTrianglePosition);
+			var unitPosition = new Vector2(hsl.s, hsl.l);
+			unitPosition.Y = agg_basics.Clamp(unitPosition.Y, .5 - (1 - unitPosition.X) / 2, .5 + (1 - unitPosition.X) / 2);
+
+			var triangleColorCenter = TriangleToWidgetTransform().Transform(unitPosition);
 			graphics2D.Circle(triangleColorCenter, RingWidth / 2 - 2, new Color(SelectedColor, 255));
 			graphics2D.Ring(triangleColorCenter, RingWidth / 2 - 2, 2, Color.White);
 
@@ -213,11 +200,13 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 				{
 					downState = DownState.OnRing;
 
-					colorAngle = Math.Atan2(direction.Y, direction.X);
+					var colorAngle = Math.Atan2(direction.Y, direction.X);
 					if (colorAngle < 0)
 					{
 						colorAngle += MathHelper.Tau;
 					}
+
+					hsl.h = colorAngle / MathHelper.Tau;
 
 					Invalidate();
 				}
@@ -228,7 +217,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					if (inside)
 					{
 						downState = DownState.OnTriangle;
-						unitTrianglePosition = position;
+						SetSLFromUnitPosition(position);
 					}
 
 					Invalidate();
@@ -243,6 +232,21 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			base.OnMouseDown(mouseEvent);
 		}
 
+		private void SetSLFromUnitPosition(Vector2 position)
+		{
+			hsl.s = position.X;
+			hsl.l = position.Y;
+			/*
+			if (hsl.l > hsl.s)
+			{
+
+			}
+			else if (hsl.l < hsl.s)
+				agg_basics.Clamp(unitPosition.Y, .5 - (1 - unitPosition.X) / 2, .5 + (1 - unitPosition.X) / 2);
+			unitTrianglePosition = position;
+			*/
+		}
+
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
 		{
 			var startColor = SelectedColor;
@@ -253,17 +257,18 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 					var center = new Vector2(Width / 2, Height / 2);
 
 					var direction = mouseEvent.Position - center;
-					colorAngle = Math.Atan2(direction.Y, direction.X);
+					var colorAngle = Math.Atan2(direction.Y, direction.X);
 					if (colorAngle < 0)
 					{
 						colorAngle += MathHelper.Tau;
 					}
+					hsl.h = colorAngle / MathHelper.Tau;
 
 					Invalidate();
 					break;
 
 				case DownState.OnTriangle:
-					unitTrianglePosition = WidgetToUnitTriangle(mouseEvent.Position).position;
+					SetSLFromUnitPosition(WidgetToUnitTriangle(mouseEvent.Position).position);
 					Invalidate();
 					break;
 			}
@@ -330,6 +335,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 				GL.Begin(BeginMode.Triangles);
 				GL.Color4(color.Red0To255, color.Green0To255, color.Blue0To255, color.Alpha0To255);
+				var colorAngle = hsl.h * MathHelper.Tau;
 				GL.Vertex2(GetTrianglePoint(0, radius, colorAngle, true));
 				GL.Color4(Color.White);
 				GL.Vertex2(GetTrianglePoint(1, radius, colorAngle, true));
@@ -373,7 +379,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			return Vector2.Zero;
 		}
 
-		private Affine TriangleToWidgetTransform(double angle)
+		private Affine TriangleToWidgetTransform()
 		{
 			var center = new Vector2(Width / 2, Height / 2);
 			var leftSize = .5;
@@ -385,7 +391,8 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			// center
 			total *= Affine.NewTranslation(-leftSize, -sizeToTop);
 			// rotate to correct color
-			total *= Affine.NewRotation(angle);
+			var colorAngle = hsl.h * MathHelper.Tau;
+			total *= Affine.NewRotation(colorAngle);
 			// scale to radius
 			total *= Affine.NewScaling(InnerRadius);
 			// move to center
@@ -395,15 +402,15 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 		private (bool inside, Vector2 position) WidgetToUnitTriangle(Vector2 widgetPosition)
 		{
-			var trianglePosition = TriangleToWidgetTransform(colorAngle)
+			var trianglePosition = TriangleToWidgetTransform()
 				.InverseTransform(widgetPosition);
 
-			bool changed = CLampTrianglePosition(ref trianglePosition);
+			bool changed = ClampTrianglePosition(ref trianglePosition);
 
 			return (!changed, trianglePosition);
 		}
 
-		private static bool CLampTrianglePosition(ref Vector2 trianglePosition)
+		private static bool ClampTrianglePosition(ref Vector2 trianglePosition)
 		{
 			bool changed = false;
 			trianglePosition.X = agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
