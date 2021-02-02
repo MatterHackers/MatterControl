@@ -60,21 +60,6 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 
 			this.Width = 100;
 			this.Height = 100;
-
-			if (!TriangleToWidgetTransform(0).Transform(new Vector2(1, .5)).Equals(new Vector2(88, 50), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
-
-			if (!TriangleToWidgetTransform(0).InverseTransform(new Vector2(88, 50)).Equals(new Vector2(1, .5), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
-
-			if (!TriangleToWidgetTransform(0).Transform(new Vector2(0, .5)).Equals(new Vector2(23.13, 50), .01))
-			{
-				// throw new Exception("Incorrect transform");
-			}
 		}
 
 		public event EventHandler IncrementalColorChanged;
@@ -97,7 +82,7 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			unitTrianglePosition.Y = l;
 			alpha = color.Alpha0To1;
 
-			CLampTrianglePosition(ref unitTrianglePosition);
+			ClampTrianglePosition(ref unitTrianglePosition);
 			Invalidate();
 		}
 
@@ -398,12 +383,12 @@ namespace MatterHackers.MatterControl.CustomWidgets.ColorPicker
 			var trianglePosition = TriangleToWidgetTransform(colorAngle)
 				.InverseTransform(widgetPosition);
 
-			bool changed = CLampTrianglePosition(ref trianglePosition);
+			bool changed = ClampTrianglePosition(ref trianglePosition);
 
 			return (!changed, trianglePosition);
 		}
 
-		private static bool CLampTrianglePosition(ref Vector2 trianglePosition)
+		private static bool ClampTrianglePosition(ref Vector2 trianglePosition)
 		{
 			bool changed = false;
 			trianglePosition.X = agg_basics.Clamp(trianglePosition.X, 0, 1, ref changed);
