@@ -38,9 +38,7 @@ using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PrintLibrary;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {

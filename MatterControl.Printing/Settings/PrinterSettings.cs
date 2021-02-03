@@ -104,6 +104,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.before_toolchange_gcode_3,
 			SettingsKey.build_height,
 			SettingsKey.cancel_gcode,
+			SettingsKey.clear_bed_gcode,
 			SettingsKey.com_port,
 			SettingsKey.connect_gcode,
 			SettingsKey.create_brim,
