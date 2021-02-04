@@ -128,7 +128,7 @@ namespace MatterHackers.MatterControl
 
 		public bool IsMatterControlPro()
 		{
-			var result = ApplicationController.Instance.UserHasPermissionToId?.Invoke("ag1zfm1oLWRmcy1wcm9kchgLEgtEaWdpdGFsSXRlbRiAgIDzyMGxCgw");
+			var result = ApplicationController.Instance.UserHasPro?.Invoke();
 			if (result != null)
 			{
 				return result.Value;
@@ -373,7 +373,7 @@ namespace MatterHackers.MatterControl
 		public Func<IObject3D, bool> UserHasPermission { get; set; } = (item) => false;
 
 		// check permission to a purchase
-		public Func<string, bool> UserHasPermissionToId { get; set; }
+		public Func<bool> UserHasPro { get; set; }
 
 		public Func<IObject3D, ThemeConfig, (string url, GuiWidget markdownWidget)> GetUnlockData { get; set; }
 

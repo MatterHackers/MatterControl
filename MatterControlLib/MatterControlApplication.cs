@@ -38,7 +38,7 @@ namespace MatterHackers.MatterControl
 
 		static MatterControlApplication()
 		{
-			if (MatterHackers.MatterControl.AppContext.Options.McwsTestEnvironment)
+			if (AppContext.Options.McwsTestEnvironment)
 			{
 				MCWSBaseUri = "https://mattercontrol-test.appspot.com"; // http://192.168.2.129:9206
 			}
