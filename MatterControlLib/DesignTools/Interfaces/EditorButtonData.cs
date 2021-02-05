@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public string HelpText { get; set; }
 
-		public Action<GuiWidget> SetEnabled { get; set; }
+		public Action<GuiWidget> SetStates { get; set; }
 
 		public Action Action { get; set; }
 	}

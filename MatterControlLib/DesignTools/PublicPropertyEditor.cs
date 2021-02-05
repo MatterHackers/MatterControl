@@ -178,7 +178,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						Margin = 5,
 						ToolTipText = editorButtonData.HelpText,
 					};
-					editorButtonData.SetEnabled(editorButton);
+					editorButtonData.SetStates(editorButton);
 					editorButton.Click += (s, e) =>
 					{
 						editorButtonData.Action?.Invoke();
