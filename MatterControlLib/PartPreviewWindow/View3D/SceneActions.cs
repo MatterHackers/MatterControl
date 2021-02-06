@@ -237,6 +237,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Copy selected item
 				IObject3D newItem = await Task.Run(() =>
 				{
+					var namedItems = new HashSet<string>(scene.DescendantsAndSelf().Select((d) => d.Name));
 					if (sourceItem != null)
 					{
 						if (sourceItem is SelectionGroupObject3D)
@@ -249,7 +250,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 								var clonedItem = item.Clone();
 								clonedItem.Translate(xOffset);
 								// make the name unique
-								var newName = agg_basics.GetNonCollidingName(item.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
+								var newName = agg_basics.GetNonCollidingName(item.Name, namedItems);
 								clonedItem.Name = newName;
 								// add it to the scene
 								scene.Children.Add(clonedItem);
@@ -266,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							if (!string.IsNullOrWhiteSpace(sourceItem.Name))
 							{
 								// make the name unique
-								var newName = agg_basics.GetNonCollidingName(sourceItem.Name, scene.DescendantsAndSelf().Select((d) => d.Name));
+								var newName = agg_basics.GetNonCollidingName(sourceItem.Name, namedItems);
 								clonedItem.Name = newName;
 							}
 

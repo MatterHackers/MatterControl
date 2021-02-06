@@ -766,7 +766,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.has_c_axis,
 					PresentationName = "Has C Axis".Localize(),
-					HelpText = "The printer has a c axis used by too changer (e3d quad extruder).".Localize(),
+					HelpText = "The printer has a c axis used by a tool changer (e3d quad extruder).".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					ShowAsOverride = true,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
