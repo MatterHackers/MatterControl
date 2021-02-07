@@ -72,9 +72,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// remove every face above the cut plane
 			RemoveFacesAboveCut(mesh);
 
-			var aPolys = slice.GetCorrectedWinding();
-
-			aPolys.Vertices().TriangulateFaces(null, mesh, CutHeight);
+			slice.Vertices().TriangulateFaces(null, mesh, CutHeight);
 
 			mesh.Transform(itemMatrix.Inverted);
 

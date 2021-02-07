@@ -644,7 +644,7 @@ namespace MatterHackers.MatterControl
 			this.LoadedGCode = loadedGCode;
 
 			// Constrain to max layers
-			if (this.ActiveLayerIndex > loadedGCode.LayerCount)
+			if (this.ActiveLayerIndex > loadedGCode?.LayerCount)
 			{
 				this.ActiveLayerIndex = loadedGCode.LayerCount;
 			}
