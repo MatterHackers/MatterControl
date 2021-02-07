@@ -783,9 +783,7 @@ namespace MatterHackers.MatterControl
 						CurveOperation(),
 						PinchOperation(),
 						TwistOperation(),
-#if DEBUG // don't make this part of the distribution until it is working
 						PlaneCutOperation(),
-#endif
 						HollowOutOperation(),
 					}
 				},
