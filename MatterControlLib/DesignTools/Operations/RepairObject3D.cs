@@ -151,7 +151,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					// Remove parts of the mesh we don't want before we bother with anything else
 					// TODO: maybe we need to repair orientation first? if we want to use MWN (MeshWindingNumber)...
-					RremoveInside(mesh);
+					RemoveInside(mesh);
 					cancellationToken.ThrowIfCancellationRequested();
 				}
 
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			return true;
 		}
 
-		private bool RremoveInside(DMesh3 mesh)
+		private bool RemoveInside(DMesh3 mesh)
 		{
 			if (RemoveMode == RemoveModes.Interior)
 			{
