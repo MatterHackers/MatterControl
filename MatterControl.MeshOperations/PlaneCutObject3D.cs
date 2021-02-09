@@ -28,7 +28,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ClipperLib;
 using MatterHackers.DataConverters3D;
@@ -37,8 +36,6 @@ using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
-using MatterHackers.DataConverters2D;
-using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Polygons = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
 
 namespace MatterHackers.MatterControl.DesignTools
@@ -72,9 +69,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			// remove every face above the cut plane
 			RemoveFacesAboveCut(mesh);
 
-			var aPolys = slice.GetCorrectedWinding();
-
-			aPolys.Vertices().TriangulateFaces(null, mesh, CutHeight);
+			slice.Vertices().TriangulateFaces(null, mesh, CutHeight);
 
 			mesh.Transform(itemMatrix.Inverted);
 

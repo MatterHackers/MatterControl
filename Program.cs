@@ -116,6 +116,7 @@ namespace MatterHackers.MatterControl
 				ApplicationVersion = VersionInfo.Instance.ReleaseVersion
 			};
 
+#if !DEBUG
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
 				waitHandle = new EventWaitHandle(false, EventResetMode.ManualReset, "MatterControl#Startup", out bool created);
@@ -147,6 +148,7 @@ namespace MatterHackers.MatterControl
 					"Service started: {0};",
 					string.Join(", ", serviceHost.Description.Endpoints.Select(s => s.ListenUri.AbsoluteUri).ToArray()));
 			}
+#endif
 
 			// If MatterControl isn't running and valid files were shelled, schedule a StartupAction to open the files after load
 			var shellFiles = args.Where(f => File.Exists(f) && shellFileExtensions.Contains(Path.GetExtension(f).ToLower()));

@@ -609,7 +609,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			}
 
 			string fileName = Path.GetFileNameWithoutExtension(settingsFilePath);
-			var existingPrinterNames = Instance.ActiveProfiles.Select(p => p.Name);
+			var existingPrinterNames = new HashSet<string>(Instance.ActiveProfiles.Select(p => p.Name));
 
 			var printerInfo = new PrinterInfo
 			{

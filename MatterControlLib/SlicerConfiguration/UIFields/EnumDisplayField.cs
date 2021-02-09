@@ -135,7 +135,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				radioButton.SelectedBackgroundColor = theme.PrimaryAccentColor;
 
 				// set it if checked
-				if (enumItem.Value == this.InitialValue)
+				if (enumItem.Key == this.InitialValue)
 				{
 					radioButton.Checked = true;
 				}

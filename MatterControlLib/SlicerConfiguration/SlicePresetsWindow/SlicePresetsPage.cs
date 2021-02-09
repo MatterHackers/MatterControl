@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			duplicateButton.Click += (s, e) =>
 			{
 				string sanitizedName = numberMatch.Replace(inlineNameEdit.Text, "").Trim();
-				string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name)));
+				string newProfileName = agg_basics.GetNonCollidingName(sanitizedName, new HashSet<string>(presetsContext.PresetLayers.Select(preset => preset.ValueOrDefault(SettingsKey.layer_name))));
 
 				var clonedLayer = presetsContext.PersistenceLayer.Clone();
 				clonedLayer.Name = newProfileName;

@@ -178,13 +178,14 @@ namespace MatterHackers.MatterControl.DesignTools
 						Margin = 5,
 						ToolTipText = editorButtonData.HelpText,
 					};
-					editorButtonData.SetStates(editorButton);
+					var row = new SettingsRow("".Localize(), null, editorButton, theme);
+					editorButtonData.SetStates(editorButton, row);
 					editorButton.Click += (s, e) =>
 					{
 						editorButtonData.Action?.Invoke();
 					};
 
-					mainContainer.AddChild(new SettingsRow("".Localize(), null, editorButton, theme));
+					mainContainer.AddChild(row);
 				}
 			}
 		}

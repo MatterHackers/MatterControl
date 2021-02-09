@@ -39,7 +39,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public string HelpText { get; set; }
 
-		public Action<GuiWidget> SetStates { get; set; }
+		/// <summary>
+		/// First parameter is the actual button, second parameter is the row containing the button
+		/// </summary>
+		public Action<GuiWidget, GuiWidget> SetStates { get; set; }
 
 		public Action Action { get; set; }
 	}

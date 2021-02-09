@@ -54,7 +54,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			: base(theme)
 		{
 			this.nextButtonEnabled = nextButtonEnabled;
-			this.ExistingPrinterNames = ProfileManager.Instance.ActiveProfiles.Select(p => p.Name).ToList();
+			this.ExistingPrinterNames = new HashSet<string>(ProfileManager.Instance.ActiveProfiles.Select(p => p.Name));
 			this.Name = "AddPrinterWidget";
 
 			horizontalSplitter.Panel2.Padding = theme.DefaultContainerPadding;
@@ -166,7 +166,7 @@ namespace MatterHackers.MatterControl.PrintLibrary
 			}
 		}
 
-		public IReadOnlyList<string> ExistingPrinterNames { get; private set; }
+		public HashSet<string> ExistingPrinterNames { get; private set; }
 
 		public TextWidget PrinterNameError { get; private set; }
 
