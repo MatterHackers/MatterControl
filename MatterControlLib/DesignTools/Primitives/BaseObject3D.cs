@@ -137,7 +137,6 @@ namespace MatterHackers.MatterControl.DesignTools
 					cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
 					var slice = SliceLayer.CreateSlice(mesh, cutPlane);
 					return slice.CreateVertexStorage();
-
 				}
 
 				return vertexSource?.VertexSource;
