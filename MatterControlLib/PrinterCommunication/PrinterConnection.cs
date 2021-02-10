@@ -156,7 +156,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication
 
 		public event EventHandler PrintStarted;
 
-		public event EventHandler PrintCanceled;
+		public event EventHandler CanceleRequested;
+
+		public event EventHandler CancelCompleted;
 
 		public event EventHandler<PrintPauseEventArgs> PauseOnLayer;
 
@@ -2263,6 +2265,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 
 				// let the process know we canceled not ended normally.
 				this.printMarkedCanceled = true;
+				CanceleRequested?.Invoke(this, null);
 				if (markPrintCanceled
 					&& ActivePrintTask != null)
 				{
@@ -2697,7 +2700,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 						this.PrintWasCanceled = true;
 						this.printMarkedCanceled = false;
 						// and finally notify anyone that wants to know
-						PrintCanceled?.Invoke(this, null);
+						CancelCompleted?.Invoke(this, null);
 					}
 					else if (CommunicationState == CommunicationStates.Printing) // we finished printing normally
 					{

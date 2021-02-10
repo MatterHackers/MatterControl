@@ -43,7 +43,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => 3;
 
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		public override IEnumerable<Vector2> GetPositionsToSample(Vector3 startingPosition)
 		{
 			Vector2 bedSize = printer.Settings.GetValue<Vector2>(SettingsKey.bed_size);
 			Vector2 printCenter = printer.Settings.GetValue<Vector2>(SettingsKey.print_center);

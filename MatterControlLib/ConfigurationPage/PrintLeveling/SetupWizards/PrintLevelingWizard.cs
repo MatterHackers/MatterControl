@@ -259,7 +259,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			int i = 0;
 
-			var probePoints = LevelingPlan.GetPrintLevelPositionToSample().ToList();
+			var probePoints = LevelingPlan.GetPositionsToSample(printer.Connection.HomingPosition).ToList();
 			if (printer.Settings.Helpers.UseZProbe())
 			{
 				var autoProbePage = new AutoProbePage(this, printer, "Bed Detection", probePoints, probePositions);

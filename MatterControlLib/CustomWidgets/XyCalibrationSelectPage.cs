@@ -164,7 +164,7 @@ namespace MatterHackers.MatterControl
 
 			// register callbacks for print completion
 			printer.Connection.Disposed += this.Connection_Disposed;
-			printer.Connection.PrintCanceled += this.Connection_PrintCanceled;
+			printer.Connection.CancelCompleted += this.Connection_PrintCanceled;
 			printer.Connection.CommunicationStateChanged += this.Connection_CommunicationStateChanged;
 
 			// hide this window
@@ -206,7 +206,7 @@ namespace MatterHackers.MatterControl
 		{
 			printer.Connection.Disposed -= this.Connection_Disposed;
 			printer.Connection.CommunicationStateChanged -= this.Connection_CommunicationStateChanged;
-			printer.Connection.PrintCanceled -= this.Connection_PrintCanceled;
+			printer.Connection.CancelCompleted -= this.Connection_PrintCanceled;
 		}
 
 		private void Connection_CommunicationStateChanged(object sender, EventArgs e)

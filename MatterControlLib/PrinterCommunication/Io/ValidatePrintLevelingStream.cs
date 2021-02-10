@@ -63,7 +63,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public ValidatePrintLevelingStream(PrinterConfig printer, GCodeStream internalStream)
 			: base(printer, internalStream)
 		{
-			printer.Connection.PrintCanceled += Connection_PrintCanceled;
+			printer.Connection.CanceleRequested += Connection_PrintCanceled;
 		}
 
 		private void Connection_PrintCanceled(object sender, EventArgs e)
@@ -76,7 +76,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		public override void Dispose()
 		{
 			CancelValidation();
-			printer.Connection.PrintCanceled -= Connection_PrintCanceled;
+			printer.Connection.CanceleRequested -= Connection_PrintCanceled;
 
 			base.Dispose();
 		}
@@ -145,10 +145,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				gcodeAlreadyLeveled = true;
 			}
 
-			if (validationRunning && printer.Connection.PrintWasCanceled)
-			{
-				CancelValidation();
-			}
 
 			if (lineToSend != null)
 			{
@@ -388,7 +384,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				sampledPositions.Add(new PrintLevelingWizard.ProbePosition());
 			}
 
-			positionsToSample = levelingPlan.GetPrintLevelPositionToSample().ToList();
+			positionsToSample = levelingPlan.GetPositionsToSample(printer.Connection.HomingPosition).ToList();
 
 			StartReporting();
 		}
