@@ -36,6 +36,7 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
 {
@@ -83,6 +84,24 @@ namespace MatterHackers.MatterControl
 							}
 						}
 					});
+				}
+			}
+
+			if (!settings.GetValue<bool>(SettingsKey.extruder_offset))
+			{
+				var t0Offset = printer.Settings.Helpers.ExtruderOffset(0);
+				if (t0Offset != Vector3.Zero)
+				{
+					errors.Add(
+						new SettingsValidationError(SettingsKey.extruder_offset)
+						{
+							Error = "Nozzle 1 should have offsets set to 0.".Localize(),
+							ValueDetails = "{0} = {1}\n{2} = {3}".FormatWith(
+								GetSettingsName(SettingsKey.extruder_offset),
+								settings.GetValue<double>(SettingsKey.extruder_offset),
+								GetSettingsName(SettingsKey.extruder_offset),
+								settings.GetValue<double>(SettingsKey.extruder_offset)),
+						});
 				}
 			}
 

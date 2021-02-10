@@ -454,7 +454,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.OFFSET3,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
-					ShowIfSet = "!sla_printer",
+					ShowIfSet = "!sla_printer&extruder_count>1",
 					DefaultValue = "0x0,0x0,0x0,0x0"
 				},
 				new SliceSettingData()

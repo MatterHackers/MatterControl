@@ -70,7 +70,7 @@ namespace MatterHackers.MatterControl
 			this.Connection.TemporarilyHoldingTemp += ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 			this.Connection.PrintStarted += ApplicationController.Instance.Connection_PrintStarted;
 			this.Connection.PrintFinished += ApplicationController.Instance.Connection_PrintFinished;
-			this.Connection.PrintCanceled += ApplicationController.Instance.Connection_PrintCanceled;
+			this.Connection.CancelCompleted += ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported += ApplicationController.Instance.Connection_ErrorReported;
 			this.Connection.CommunicationStateChanged += Connection_CommunicationStateChanged;
 			this.Connection.DetailedPrintingStateChanged += Connection_CommunicationStateChanged;
@@ -353,7 +353,7 @@ namespace MatterHackers.MatterControl
 			this.Connection.PrintFinished -= Connection_PrintFinished;
 			this.Connection.TemporarilyHoldingTemp -= ApplicationController.Instance.Connection_TemporarilyHoldingTemp;
 			this.Connection.PrintFinished -= ApplicationController.Instance.Connection_PrintFinished;
-			this.Connection.PrintCanceled -= ApplicationController.Instance.Connection_PrintCanceled;
+			this.Connection.CancelCompleted -= ApplicationController.Instance.Connection_PrintCanceled;
 			this.Connection.ErrorReported -= ApplicationController.Instance.Connection_ErrorReported;
 
 			// Dispose children
