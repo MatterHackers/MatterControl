@@ -39,7 +39,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 	{
 		protected PrinterConfig printer;
 
-		public abstract IEnumerable<Vector2> GetPrintLevelPositionToSample();
+		public abstract IEnumerable<Vector2> GetPositionsToSample(Vector3 startingPosition);
 
 		public virtual int ProbeCount { get; }
 

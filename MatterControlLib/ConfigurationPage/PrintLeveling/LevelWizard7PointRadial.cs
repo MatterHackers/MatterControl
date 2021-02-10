@@ -41,7 +41,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => 7;
 
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		public override IEnumerable<Vector2> GetPositionsToSample(Vector3 startingPosition)
 		{
 			// the center
 			foreach (var sample in GetSampleRing(1, 0, 0))

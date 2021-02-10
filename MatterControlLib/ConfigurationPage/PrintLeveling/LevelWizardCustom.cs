@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			}
 		}
 
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		public override IEnumerable<Vector2> GetPositionsToSample(Vector3 startingPosition)
 		{
 			foreach(var position in ParseLevelingSamplePoints(printer))
 			{

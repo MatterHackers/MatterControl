@@ -384,7 +384,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				sampledPositions.Add(new PrintLevelingWizard.ProbePosition());
 			}
 
-			positionsToSample = levelingPlan.GetPrintLevelPositionToSample().ToList();
+			positionsToSample = levelingPlan.GetPositionsToSample(printer.Connection.HomingPosition).ToList();
 
 			StartReporting();
 		}

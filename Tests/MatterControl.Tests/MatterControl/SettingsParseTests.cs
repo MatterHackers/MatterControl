@@ -28,7 +28,7 @@ namespace MatterControl.Tests.MatterControl
 			var printerSettings = printer.Settings;
 
 			{
-				var samples = levelingSolution.GetPrintLevelPositionToSample().ToList();
+				var samples = levelingSolution.GetPositionsToSample(default(Vector3)).ToList();
 				Assert.AreEqual("200,200", printerSettings.GetValue(SettingsKey.bed_size));
 				Assert.AreEqual("100,100", printerSettings.GetValue(SettingsKey.print_center));
 				Assert.AreEqual("rectangular", printerSettings.GetValue(SettingsKey.bed_shape));

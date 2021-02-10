@@ -49,7 +49,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 		public override int ProbeCount => gridWidth * gridHeight;
 
-		public override IEnumerable<Vector2> GetPrintLevelPositionToSample()
+		public override IEnumerable<Vector2> GetPositionsToSample(Vector3 startPosition)
 		{
 			AxisAlignedBoundingBox aabb = printer.Bed.Aabb;
 
@@ -89,6 +89,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			double xStep = aabb.XSize / (gridWidth - 1);
 			double yStep = aabb.YSize / (gridHeight - 1);
 
+			var allPositions = new List<Vector2>(gridWidth * gridHeight);
 			for (int y = 0; y < gridHeight; y++)
 			{
 				// make it such that every other line is printed from right to left
@@ -100,14 +101,38 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						dirX = (gridWidth - 1) - x;
 					}
 
-					var samplePosition = new Vector2
+					allPositions.Add(new Vector2
 					{
 						X = aabb.MinXYZ.X + dirX * xStep,
 						Y = aabb.MinXYZ.Y + y * yStep
-					};
-
-					yield return samplePosition;
+					});
 				}
+			}
+
+			var currentPosition = new Vector2(startPosition);
+			Vector2 ClosestPosition()
+			{
+				var closestIndex = 0;
+				var closestDist = double.PositiveInfinity;
+				for(int i=0; i<allPositions.Count; i++)
+				{
+					var position = allPositions[i];
+					var dist = (currentPosition - position).Length;
+					if (dist < closestDist)
+					{
+						closestDist = dist;
+						closestIndex = i;
+					}
+				}
+
+				currentPosition = allPositions[closestIndex];
+				allPositions.RemoveAt(closestIndex);
+				return currentPosition;
+			}
+
+			while (allPositions.Count > 0)
+			{
+				yield return ClosestPosition();
 			}
 		}
 	}

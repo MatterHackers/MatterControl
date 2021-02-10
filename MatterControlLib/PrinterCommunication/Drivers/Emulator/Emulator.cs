@@ -414,7 +414,12 @@ ok
 		/// <returns>Printer status after command.</returns>
 		private string SetHomeOffset(string command)
 		{
-			HomePosition = Destination;
+			var newPosition = Destination;
+			GetFirstNumberAfter("X", command, ref newPosition.X);
+			GetFirstNumberAfter("Y", command, ref newPosition.Y);
+			GetFirstNumberAfter("Z", command, ref newPosition.Z);
+
+			HomePosition = newPosition;
 
 			return "ok\n";
 		}
