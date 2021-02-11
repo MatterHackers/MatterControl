@@ -730,9 +730,12 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				field.ValueChanged += (s, e) =>
 				{
-					property.SetValue(Enum.Parse(property.PropertyType, field.Value));
-					object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
-					propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					if (property.Value.ToString() != field.Value)
+					{
+						property.SetValue(Enum.Parse(property.PropertyType, field.Value));
+						object3D?.Invalidate(new InvalidateArgs(context.item, InvalidateType.Properties));
+						propertyGridModifier?.UpdateControls(new PublicPropertyChange(context, property.PropertyInfo.Name));
+					}
 				};
 
 				if (addToSettingsRow)

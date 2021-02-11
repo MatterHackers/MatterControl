@@ -120,6 +120,8 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.Remove(undoBuffer);
 		}
 
+		private IVertexSource meshVertexSource;
+
 		[JsonIgnore]
 		public IVertexSource VertexSource
 		{
@@ -131,12 +133,17 @@ namespace MatterHackers.MatterControl.DesignTools
 				if (vertexSource?.VertexSource == null
 					&& mesh != null)
 				{
-					// return the vertex source of the bottom of the mesh
-					var aabb = this.GetAxisAlignedBoundingBox();
-					var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + .1));
-					cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
-					var slice = SliceLayer.CreateSlice(mesh, cutPlane);
-					return slice.CreateVertexStorage();
+					if (meshVertexSource == null)
+					{
+						// return the vertex source of the bottom of the mesh
+						var aabb = this.GetAxisAlignedBoundingBox();
+						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + .1));
+						cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
+						var slice = SliceLayer.CreateSlice(mesh, cutPlane);
+						meshVertexSource = slice.CreateVertexStorage();
+					}
+
+					return meshVertexSource;
 				}
 
 				return vertexSource?.VertexSource;
@@ -168,6 +175,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
+				// make sure we clear our cache
+				meshVertexSource = null;
 				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
@@ -192,7 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMaintainer(this))
+					using (new CenterAndHeightMaintainer(this, CenterAndHeightMaintainer.MaintainFlags.Height))
 					{
 						var firstChild = this.Children.FirstOrDefault();
 
