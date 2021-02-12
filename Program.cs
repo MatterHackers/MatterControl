@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -44,6 +45,7 @@ using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
 using Microsoft.Extensions.Configuration;
 using Mindscape.Raygun4Net;
+using Photon.Parts;
 using SQLiteWin32;
 
 namespace MatterHackers.MatterControl
@@ -90,6 +92,17 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main(string[] args)
 		{
+#if false
+			var test = new PhotonFile();
+			void Progress(string message)
+			{
+				Debug.WriteLine(message);
+			}
+
+			test.ReadFile(@"C:\Users\LarsBrubaker\Downloads\10mm-benchy.photon", Progress);
+			test.SaveFile(@"C:\Users\LarsBrubaker\Downloads\10mm-bench2.photon");
+#endif
+
 			// Set the global culture for the app, current thread and all new threads
 			CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 			CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;

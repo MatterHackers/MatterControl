@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2019, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,25 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration.MappingClasses
+using MatterHackers.MatterControl.Extensibility;
+using MatterHackers.MatterControl.SlicerConfiguration;
+
+namespace MatterHackers.gsBundle
 {
-	public class OverrideSpeedOnSlaPrinters : AsPercentOfReferenceOrDirect
+	public class SlaSlicerPlugin : IApplicationPlugin
 	{
-		public OverrideSpeedOnSlaPrinters(string originalReference, double scale = 1)
-			: base(originalReference, scale)
+		public void Initialize()
 		{
+			PrinterSettings.SliceEngines["MH-SLA Slicer"] = new SlaSlicer();
 		}
 
-		public override string Convert(string value, PrinterSettings settings)
+		public PluginInfo MetaData => new PluginInfo()
 		{
-			if (settings.GetValue<bool>(SettingsKey.sla_printer))
-			{
-				// return the speed based on the layer height
-				var speedAt025 = settings.GetValue<double>(SettingsKey.laser_speed_025);
-				var speedAt100 = settings.GetValue<double>(SettingsKey.laser_speed_100);
-				var deltaSpeed = speedAt100 - speedAt025;
-
-				var layerHeight = settings.GetValue<double>(SettingsKey.layer_height);
-				var deltaHeight = .1 - .025;
-				var heightRatio = (layerHeight - .025) / deltaHeight;
-				var ajustedSpeed = speedAt025 + deltaSpeed * heightRatio;
-
-				return ajustedSpeed.ToString();
-			}
-			else
-			{
-				return base.Convert(value, settings);
-			}
-		}
+			About = "MatterHackers SLA Slicer for MatterControl",
+			Developer = "MatterHackers Inc.",
+			Name = "MH-SLA-Slicer",
+			Url = "https://www.matterhackers.com/MatterControl",
+			UUID = "637FD858-1C6A-4B37-B001-6306933DF379"
+		};
 	}
 }

@@ -580,12 +580,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			sideBar.RemovePage("Terminal", false);
 			sideBar.RemovePage("Printer", false);
 
-			if (Printer.ViewState.ControlsVisible)
+			var printerType = Printer.Settings.Slicer.PrinterType;
+			if(Printer.ViewState.ControlsVisible
+				&& printerType == PrinterType.FFF)
 			{
 				sideBar.AddPage("Controls", "Controls".Localize(), new ManualPrinterControls(Printer, theme), false);
 			}
 
-			if (Printer.ViewState.TerminalVisible)
+			if (Printer.ViewState.TerminalVisible
+				&& printerType == PrinterType.FFF)
 			{
 				sideBar.AddPage("Terminal",
 					"Terminal".Localize(),

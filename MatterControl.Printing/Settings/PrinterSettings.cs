@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
 		/// through into the slicer config file.
 		/// </summary>
-		public static readonly HashSet<string> ApplicationLevelSettings = new HashSet<string>()
+		public static readonly HashSet<string> DefaultFFFSettings = new HashSet<string>()
 		{
 			SettingsKey.auto_connect,
 			SettingsKey.auto_release_motors,
@@ -182,7 +182,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.selector_ip_address,
 			SettingsKey.send_with_checksum,
 			SettingsKey.show_reset_connection,
-			SettingsKey.sla_printer,
 			SettingsKey.slice_engine,
 			SettingsKey.solid_shell,
 			SettingsKey.t0_inset,
@@ -826,7 +825,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool IsActive(string canonicalSettingsName)
 		{
 			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
-				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
+				|| (this.Slicer.PrinterType == PrinterType.FFF && PrinterSettings.DefaultFFFSettings.Contains(canonicalSettingsName));
 		}
 
 		public bool IsOverride(string sliceSetting, IEnumerable<PrinterSettingsLayer> layers)

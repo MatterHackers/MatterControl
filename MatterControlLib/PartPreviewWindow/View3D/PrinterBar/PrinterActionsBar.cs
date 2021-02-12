@@ -73,54 +73,66 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var defaultMargin = theme.ButtonSpacing;
 
-			// add the reset button first (if there is one)
-			if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
+			var printerType = printer.Settings.Slicer.PrinterType;
+			if (printerType == PrinterType.FFF)
 			{
-				var resetConnectionButton = new TextIconButton(
-					"Reset".Localize(),
-					StaticData.Instance.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
-					theme)
+				// add the reset button first (if there is one)
+				if (printer.Settings.GetValue<bool>(SettingsKey.show_reset_connection))
 				{
-					ToolTipText = "Reboots the firmware on the controller".Localize(),
-					Margin = defaultMargin
-				};
-				resetConnectionButton.Click += (s, e) =>
-				{
-					UiThread.RunOnIdle(printer.Connection.RebootBoard);
-				};
-				this.AddChild(resetConnectionButton);
-			}
-
-			this.AddChild(new PrinterConnectButton(printer, theme));
-
-			// add the start print button
-			GuiWidget startPrintButton;
-			this.AddChild(startPrintButton = new PrintPopupMenu(printer, theme)
-			{
-				Margin = theme.ButtonSpacing
-			});
-
-			void SetPrintButtonStyle(object s, EventArgs e)
-			{
-				switch (printer.Connection.CommunicationState)
-				{
-					case CommunicationStates.FinishedPrint:
-					case CommunicationStates.Connected:
-						theme.ApplyPrimaryActionStyle(startPrintButton);
-						break;
-
-					default:
-						theme.RemovePrimaryActionStyle(startPrintButton);
-						break;
+					var resetConnectionButton = new TextIconButton(
+						"Reset".Localize(),
+						StaticData.Instance.LoadIcon("e_stop.png", 14, 14, theme.InvertIcons),
+						theme)
+					{
+						ToolTipText = "Reboots the firmware on the controller".Localize(),
+						Margin = defaultMargin
+					};
+					resetConnectionButton.Click += (s, e) =>
+					{
+						UiThread.RunOnIdle(printer.Connection.RebootBoard);
+					};
+					this.AddChild(resetConnectionButton);
 				}
+
+				this.AddChild(new PrinterConnectButton(printer, theme));
+
+				// add the start print button
+				GuiWidget startPrintButton;
+				this.AddChild(startPrintButton = new PrintPopupMenu(printer, theme)
+				{
+					Margin = theme.ButtonSpacing
+				});
+
+				void SetPrintButtonStyle(object s, EventArgs e)
+				{
+					switch (printer.Connection.CommunicationState)
+					{
+						case CommunicationStates.FinishedPrint:
+						case CommunicationStates.Connected:
+							theme.ApplyPrimaryActionStyle(startPrintButton);
+							break;
+
+						default:
+							theme.RemovePrimaryActionStyle(startPrintButton);
+							break;
+					}
+				}
+
+				// make sure the buttons state is set correctly
+				printer.Connection.CommunicationStateChanged += SetPrintButtonStyle;
+				startPrintButton.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= SetPrintButtonStyle;
+
+				// and set the style right now
+				SetPrintButtonStyle(this, null);
 			}
-
-			// make sure the buttons state is set correctly
-			printer.Connection.CommunicationStateChanged += SetPrintButtonStyle;
-			startPrintButton.Closed += (s, e) => printer.Connection.CommunicationStateChanged -= SetPrintButtonStyle;
-
-			// and set the style right now
-			SetPrintButtonStyle(this, null);
+			else
+			{
+				// add the start print button
+				this.AddChild(new ExportSlaPopupMenu(printer, theme)
+				{
+					Margin = theme.ButtonSpacing
+				});
+			}
 
 			this.AddChild(new SliceButton(printer, printerTabPage, theme)
 			{
@@ -188,9 +200,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			this.AddChild(new HorizontalSpacer());
 
-			int hotendCount = printer.Settings.Helpers.HotendCount();
-			if (!printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
+			if (printerType == PrinterType.FFF)
 			{
+				int hotendCount = printer.Settings.Helpers.HotendCount();
+
 				for (int extruderIndex = 0; extruderIndex < hotendCount; extruderIndex++)
 				{
 					this.AddChild(new TemperatureWidgetHotend(printer, extruderIndex, theme, hotendCount)
@@ -198,11 +211,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Margin = new BorderDouble(right: 10)
 					});
 				}
-			}
 
-			if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
-			{
-				this.AddChild(new TemperatureWidgetBed(printer, theme));
+				if (printer.Settings.GetValue<bool>(SettingsKey.has_heated_bed))
+				{
+					this.AddChild(new TemperatureWidgetBed(printer, theme));
+				}
+
+				// Register listeners
+				printer.Connection.ConnectionSucceeded += CheckForPrintRecovery;
+
+				// if we are already connected than check if there is a print recovery right now
+				if (printer.Connection.CommunicationState == CommunicationStates.Connected)
+				{
+					CheckForPrintRecovery(null, null);
+				}
 			}
 
 			this.OverflowButton.Name = "Printer Overflow Menu";
@@ -229,15 +251,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						theme);
 				}
 			};
-
-			// Register listeners
-			printer.Connection.ConnectionSucceeded += CheckForPrintRecovery;
-
-			// if we are already connected than check if there is a print recovery right now
-			if (printer.Connection.CommunicationState == CommunicationStates.Connected)
-			{
-				CheckForPrintRecovery(null, null);
-			}
 		}
 
 		bool buttonIsBeingClicked;
@@ -298,20 +311,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click,
 					IsEnabled = () => printer.Connection.IsConnected
-				},
-				new NamedBoolAction()
-				{
-					Title = "Show Controls".Localize(),
-					Action = () => { },
-					GetIsActive = () => printer.ViewState.ControlsVisible,
-					SetIsActive = (value) => printer.ViewState.ControlsVisible = value
-				},
-				new NamedBoolAction()
-				{
-					Title = "Show Terminal".Localize(),
-					Action = () => { },
-					GetIsActive = () => printer.ViewState.TerminalVisible,
-					SetIsActive = (value) => printer.ViewState.TerminalVisible = value
 				},
 				new NamedBoolAction()
 				{
@@ -423,6 +422,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					},
 				}
 			};
+
+			var printerType = printer.Settings.Slicer.PrinterType;
+			if (printerType == PrinterType.FFF)
+			{
+				menuActions.Add(new NamedBoolAction()
+				{
+					Title = "Show Controls".Localize(),
+					Action = () => { },
+					GetIsActive = () => printer.ViewState.ControlsVisible,
+					SetIsActive = (value) => printer.ViewState.ControlsVisible = value,
+				});
+				menuActions.Add(new NamedBoolAction()
+				{
+					Title = "Show Terminal".Localize(),
+					Action = () => { },
+					GetIsActive = () => printer.ViewState.TerminalVisible,
+					SetIsActive = (value) => printer.ViewState.TerminalVisible = value,
+				});
+			}
+
 
 			theme.CreateMenuItems(popupMenu, menuActions);
 		}
