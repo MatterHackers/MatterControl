@@ -87,7 +87,6 @@ namespace MatterHackers.MatterControl.DataStorage.ClassicDB
 			printerSettings.UserLayer[SettingsKey.baud_rate] = printer.BaudRate ?? "";
 			printerSettings.UserLayer[SettingsKey.auto_connect] = printer.AutoConnect ? "1" : "0";
 			printerSettings.UserLayer[SettingsKey.default_material_presets] = printer.MaterialCollectionIds ?? "";
-			printerSettings.UserLayer[SettingsKey.windows_driver] = printer.DriverType ?? "";
 			printerSettings.UserLayer[SettingsKey.device_token] = printer.DeviceToken ?? "";
 			printerSettings.UserLayer[SettingsKey.device_type] = printer.DeviceType ?? "";
 

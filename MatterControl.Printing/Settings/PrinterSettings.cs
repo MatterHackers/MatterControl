@@ -88,7 +88,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		/// in this list ensures they show up for all slice engines and the lack of a MappedSetting for the engine guarantees that it won't pass
 		/// through into the slicer config file.
 		/// </summary>
-		public static readonly HashSet<string> ApplicationLevelSettings = new HashSet<string>()
+		public static readonly HashSet<string> DefaultFFFSettings = new HashSet<string>()
 		{
 			SettingsKey.auto_connect,
 			SettingsKey.auto_release_motors,
@@ -137,6 +137,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.has_sd_card_reader,
 			SettingsKey.has_z_probe,
 			SettingsKey.has_z_servo,
+			SettingsKey.has_conductive_nozzle,
+			SettingsKey.measure_probe_offset_conductively,
+			SettingsKey.conductive_pad_position,
 			SettingsKey.heat_extruder_before_homing,
 			SettingsKey.inactive_cool_down,
 			SettingsKey.include_firmware_updater,
@@ -166,7 +169,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.printer_name,
 			SettingsKey.probe_has_been_calibrated,
 			SettingsKey.probe_offset,
-			SettingsKey.probe_offset_sample_point,
 			SettingsKey.progress_reporting,
 			SettingsKey.read_regex,
 			SettingsKey.recover_first_layer_speed,
@@ -182,7 +184,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			SettingsKey.selector_ip_address,
 			SettingsKey.send_with_checksum,
 			SettingsKey.show_reset_connection,
-			SettingsKey.sla_printer,
 			SettingsKey.slice_engine,
 			SettingsKey.solid_shell,
 			SettingsKey.t0_inset,
@@ -826,7 +827,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public bool IsActive(string canonicalSettingsName)
 		{
 			return this.Slicer.Exports.ContainsKey(canonicalSettingsName)
-				|| PrinterSettings.ApplicationLevelSettings.Contains(canonicalSettingsName);
+				|| (this.Slicer.PrinterType == PrinterType.FFF && PrinterSettings.DefaultFFFSettings.Contains(canonicalSettingsName));
 		}
 
 		public bool IsOverride(string sliceSetting, IEnumerable<PrinterSettingsLayer> layers)

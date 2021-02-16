@@ -47,7 +47,25 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.top_solid_layers,
 						SettingsKey.bottom_solid_layers,
 						SettingsKey.fill_density,
-						SettingsKey.infill_type
+						SettingsKey.infill_type,
+						// add settings specific to SLA
+						SettingsKey.sla_layer_height,
+						SettingsKey.sla_decend_speed,
+					}),
+					("Normal Layers", new[] // this is for SLA resin printing
+					{
+						SettingsKey.sla_exposure_time,
+						SettingsKey.sla_lift_distance,
+						SettingsKey.sla_lift_speed,
+						SettingsKey.sla_min_off_time,
+					}),
+					("Base Layers", new[] // this is for SLA resin printing
+					{
+						SettingsKey.sla_base_layers,
+						SettingsKey.sla_base_exposure_time,
+						SettingsKey.sla_base_lift_distance,
+						SettingsKey.sla_base_lift_speed,
+						SettingsKey.sla_base_min_off_time,
 					}),
 					("Layers / Surface", new[]
 					{
@@ -129,6 +147,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.raft_extra_distance_around_part,
 						SettingsKey.raft_air_gap,
 						SettingsKey.raft_extruder,
+						// add settings specific to SLA
+						SettingsKey.sla_create_raft,
 					}),
 					("Brim", new[]
 					{
@@ -156,11 +176,21 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.create_per_layer_internal_support,
 						SettingsKey.support_percent,
 						SettingsKey.support_grab_distance,
+						// add settings specific to SLA
+						SettingsKey.sla_auto_support,
+					}),
+				}),
+				("Resin", new[]
+				{
+					("Properties", new []
+					{
+						SettingsKey.resin_density,
+						SettingsKey.resin_cost,
 					}),
 				}),
 				("Filament", new[]
 				{
-					("Filament", new[]
+					("Properties", new[]
 					{
 						SettingsKey.material_color,
 						SettingsKey.material_color_1,
@@ -240,6 +270,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.print_center,
 						SettingsKey.build_height,
 						SettingsKey.bed_shape,
+						// add settings specific to SLA
+						SettingsKey.sla_resolution,
+						SettingsKey.sla_printable_area_inset,
+						SettingsKey.sla_mirror_mode,
 					}),
 					("Extruders", new[]
 					{
@@ -257,7 +291,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.print_leveling_solution,
 						SettingsKey.leveling_sample_points,
-						SettingsKey.probe_offset_sample_point,
 						SettingsKey.print_leveling_required_to_print,
 					}),
 					("Print Recovery", new[]
@@ -276,6 +309,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.probe_offset,
 						SettingsKey.z_servo_depolyed_angle,
 						SettingsKey.z_servo_retracted_angle,
+						SettingsKey.measure_probe_offset_conductively,
+						SettingsKey.conductive_pad_position,
 					}),
 					("Behavior", new[]
 					{
@@ -312,10 +347,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.runout_sensor_trigger_ratio,
 						SettingsKey.has_z_probe,
 						SettingsKey.has_z_servo,
+						SettingsKey.has_conductive_nozzle,
 						SettingsKey.has_c_axis,
 						SettingsKey.enable_network_printing,
 						SettingsKey.enable_sailfish_communication,
-						SettingsKey.sla_printer,
 						SettingsKey.max_acceleration,
 						SettingsKey.max_velocity,
 						SettingsKey.jerk_velocity,

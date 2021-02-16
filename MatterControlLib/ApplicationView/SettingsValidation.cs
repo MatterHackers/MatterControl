@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl
 		/// <returns>A list of all warnings and errors.</returns>
 		public static List<ValidationError> ValidateSettings(this PrinterConfig printer, SettingsContext settings = null, bool validatePrintBed = true)
 		{
+			var fffPrinter = printer.Settings.Slicer.PrinterType == PrinterType.FFF;
+
 			if (settings == null)
 			{
 				settings = new SettingsContext(printer, null, NamedSettingsLayers.All);
@@ -433,7 +435,9 @@ namespace MatterHackers.MatterControl
 						});
 				}
 
-				if (printer.Settings?.Helpers.ComPort() == "Emulator")
+				if (printer.Connection.IsConnected
+					&& printer.Settings?.Helpers.ComPort() == "Emulator"
+					&& fffPrinter)
 				{
 					errors.Add(
 						new SettingsValidationError(SettingsKey.com_port, "Connected to Emulator".Localize())
@@ -548,7 +552,10 @@ namespace MatterHackers.MatterControl
 		{
 			var errors = new List<ValidationError>();
 
-			if (!printer.Connection.IsConnected)
+			var fffPrinter = printer.Settings.Slicer.PrinterType == PrinterType.FFF;
+
+			if (!printer.Connection.IsConnected
+				&& fffPrinter)
 			{
 				errors.Add(new ValidationError(ValidationErrors.PrinterDisconnected)
 				{

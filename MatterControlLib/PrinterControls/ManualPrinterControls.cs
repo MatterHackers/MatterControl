@@ -78,16 +78,11 @@ namespace MatterHackers.MatterControl
 
 			calibrationControlsContainer = this.AddPluginWidget(CalibrationControls.CreateSection(printer, theme));
 
-			if (!printer.Settings.GetValue<bool>(SettingsKey.sla_printer))
-			{
-				temperatureControlsContainer = this.AddPluginWidget(TemperatureControls.CreateSection(printer, theme));
-			}
+			temperatureControlsContainer = this.AddPluginWidget(TemperatureControls.CreateSection(printer, theme));
 
 			macroControlsContainer = this.AddPluginWidget(MacroControls.CreateSection(printer, theme));
 
-#if !__ANDROID__
 			this.AddPluginWidget(PowerControls.CreateSection(printer, theme));
-#endif
 
 			tuningAdjustmentControlsContainer = this.AddPluginWidget(AdjustmentControls.CreateSection(printer, theme));
 

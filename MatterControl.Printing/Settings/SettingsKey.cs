@@ -66,8 +66,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string cool_extruder_lift = nameof(cool_extruder_lift);
 		public const string cooling = nameof(cooling);
 		public const string create_brim = nameof(create_brim);
-		public const string create_per_layer_support = nameof(create_per_layer_support);
 		public const string create_per_layer_internal_support = nameof(create_per_layer_internal_support);
+		public const string create_per_layer_support = nameof(create_per_layer_support);
 		public const string create_raft = nameof(create_raft);
 		public const string create_skirt = nameof(create_skirt);
 		public const string created_date = nameof(created_date);
@@ -101,9 +101,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string filament_diameter = nameof(filament_diameter);
 		public const string filament_has_been_loaded = nameof(filament_has_been_loaded);
 		public const string filament_runout_sensor = nameof(filament_runout_sensor);
-		public const string runout_sensor_check_distance = nameof(runout_sensor_check_distance);
-		public const string runout_sensor_trigger_ratio = nameof(runout_sensor_trigger_ratio);
-		public const string report_runout_sensor_data = nameof(report_runout_sensor_data);
 		public const string fill_angle = nameof(fill_angle);
 		public const string fill_density = nameof(fill_density);
 		public const string fill_pattern = nameof(fill_pattern);
@@ -126,6 +123,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
+		public const string has_conductive_nozzle = nameof(has_conductive_nozzle);
+		public const string measure_probe_offset_conductively = nameof(measure_probe_offset_conductively);
+		public const string conductive_pad_position = nameof(conductive_pad_position);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
 		public const string inactive_cool_down = nameof(inactive_cool_down);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
@@ -185,7 +185,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string printer_name = nameof(printer_name);
 		public const string probe_has_been_calibrated = nameof(probe_has_been_calibrated);
 		public const string probe_offset = nameof(probe_offset);
-		public const string probe_offset_sample_point = nameof(probe_offset_sample_point);
 		public const string progress_reporting = nameof(progress_reporting);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string raft_air_gap = nameof(raft_air_gap);
@@ -200,8 +199,10 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string recover_position_before_z_home = nameof(recover_position_before_z_home);
 		public const string repair_outlines_extensive_stitching = nameof(repair_outlines_extensive_stitching);
 		public const string repair_outlines_keep_open = nameof(repair_outlines_keep_open);
+		public const string report_runout_sensor_data = nameof(report_runout_sensor_data);
 		public const string reset_long_extrusion = nameof(reset_long_extrusion);
-		public const string resolution = nameof(resolution);
+		public const string resin_cost = nameof(resin_cost);
+		public const string resin_density = nameof(resin_density);
 		public const string resume_gcode = nameof(resume_gcode);
 		public const string retract_before_travel = nameof(retract_before_travel);
 		public const string retract_before_travel_avoid = nameof(retract_before_travel_avoid);
@@ -215,6 +216,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string retract_when_changing_islands = nameof(retract_when_changing_islands);
 		public const string running_clean_1_markdown = nameof(running_clean_1_markdown);
 		public const string running_clean_markdown2 = nameof(running_clean_markdown2);
+		public const string runout_sensor_check_distance = nameof(runout_sensor_check_distance);
+		public const string runout_sensor_trigger_ratio = nameof(runout_sensor_trigger_ratio);
 		public const string seconds_to_reheat = nameof(seconds_to_reheat);
 		public const string selector_ip_address = nameof(selector_ip_address);
 		public const string send_with_checksum = nameof(send_with_checksum);
@@ -222,7 +225,23 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string skirt_distance = nameof(skirt_distance);
 		public const string skirt_height = nameof(skirt_height);
 		public const string skirts = nameof(skirts);
-		public const string sla_printer = nameof(sla_printer);
+		public const string sla_auto_support = nameof(sla_auto_support);
+		public const string sla_base_exposure_time = nameof(sla_base_exposure_time);
+		public const string sla_base_min_off_time = nameof(sla_base_min_off_time);
+		public const string sla_min_off_time = nameof(sla_min_off_time);
+		public const string sla_mirror_mode = nameof(sla_mirror_mode);
+		public const string sla_base_layers = nameof(sla_base_layers);
+		public const string sla_base_lift_distance = nameof(sla_base_lift_distance);
+		public const string sla_lift_distance = nameof(sla_lift_distance);
+		public const string sla_base_lift_speed = nameof(sla_base_lift_speed);
+		public const string sla_lift_speed = nameof(sla_lift_speed);
+		public const string sla_decend_speed = nameof(sla_decend_speed);
+		public const string sla_create_raft = nameof(sla_create_raft);
+		public const string sla_exposure_time = nameof(sla_exposure_time);
+		public const string sla_layer_height = nameof(sla_layer_height);
+		public const string sla_printable_area_inset = nameof(sla_printable_area_inset);
+		public const string sla_resolution = nameof(sla_resolution);
+		public const string slice_engine = nameof(slice_engine);
 		public const string slowdown_below_layer_time = nameof(slowdown_below_layer_time);
 		public const string small_perimeter_speed = nameof(small_perimeter_speed);
 		public const string solid_fill_pattern = nameof(solid_fill_pattern);
@@ -246,7 +265,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string support_material_xy_distance = nameof(support_material_xy_distance);
 		public const string support_percent = nameof(support_percent);
 		public const string support_type = nameof(support_type);
+		public const string t0_inset = nameof(t0_inset);
 		public const string t1_extrusion_move_speed_multiplier = nameof(t1_extrusion_move_speed_multiplier);
+		public const string t1_inset = nameof(t1_inset);
 		public const string temperature = nameof(temperature);
 		public const string temperature1 = nameof(temperature1);
 		public const string temperature2 = nameof(temperature2);
@@ -269,8 +290,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string validate_layer_height = nameof(validate_layer_height);
 		public const string validate_leveling = nameof(validate_leveling);
 		public const string validation_threshold = nameof(validation_threshold);
-		public const string vibration_limit = nameof(vibration_limit);
-		public const string windows_driver = nameof(windows_driver);
 		public const string wipe_shield_distance = nameof(wipe_shield_distance);
 		public const string wipe_tower_size = nameof(wipe_tower_size);
 		public const string write_regex = nameof(write_regex);
@@ -280,8 +299,5 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string z_probe_samples = nameof(z_probe_samples);
 		public const string z_servo_depolyed_angle = nameof(z_servo_depolyed_angle);
 		public const string z_servo_retracted_angle = nameof(z_servo_retracted_angle);
-		public const string t0_inset = nameof(t0_inset);
-		public const string t1_inset = nameof(t1_inset);
-		public const string slice_engine = nameof(slice_engine);
 	}
 }

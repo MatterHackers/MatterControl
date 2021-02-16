@@ -197,6 +197,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			matterSliceSettingNames = new HashSet<string>(this.Exports.Select(m => m.Key));
 		}
 
+		public PrinterType PrinterType => PrinterType.FFF;
+
 		public string Name => "MatterSlice";
 
 		public void WriteSliceSettingsFile(string outputFilename, IEnumerable<string> rawLines, PrinterSettings settings)

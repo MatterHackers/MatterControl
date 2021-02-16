@@ -36,11 +36,19 @@ using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
+	public enum PrinterType
+	{
+		FFF,
+		SLA
+	}
+
 	public interface IObjectSlicer
 	{
 		Task<bool> Slice(IEnumerable<IObject3D> itemsOnBed, PrinterSettings printerSettings, string filePath, IProgress<ProgressStatus> progressReporter, CancellationToken cancellationToken);
 
 		Dictionary<string, ExportField> Exports { get; }
+
+		PrinterType PrinterType { get; }
 
 		bool ValidateFile(string filePath);
 	}

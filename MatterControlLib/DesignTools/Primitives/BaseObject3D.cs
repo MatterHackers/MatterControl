@@ -40,6 +40,7 @@ using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
+using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
@@ -119,12 +120,32 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.Remove(undoBuffer);
 		}
 
+		private IVertexSource meshVertexSource;
+
 		[JsonIgnore]
 		public IVertexSource VertexSource
 		{
 			get
 			{
 				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
+				var meshSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.Mesh != null);
+				var mesh = meshSource?.Mesh;
+				if (vertexSource?.VertexSource == null
+					&& mesh != null)
+				{
+					if (meshVertexSource == null)
+					{
+						// return the vertex source of the bottom of the mesh
+						var aabb = this.GetAxisAlignedBoundingBox();
+						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + .1));
+						cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
+						var slice = SliceLayer.CreateSlice(mesh, cutPlane);
+						meshVertexSource = slice.CreateVertexStorage();
+					}
+
+					return meshVertexSource;
+				}
+
 				return vertexSource?.VertexSource;
 			}
 
@@ -154,6 +175,8 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& invalidateType.Source != this
 				&& !RebuildLocked)
 			{
+				// make sure we clear our cache
+				meshVertexSource = null;
 				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
@@ -178,7 +201,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				null,
 				(reporter, cancellationToken) =>
 				{
-					using (new CenterAndHeightMaintainer(this))
+					using (new CenterAndHeightMaintainer(this, CenterAndHeightMaintainer.MaintainFlags.Height))
 					{
 						var firstChild = this.Children.FirstOrDefault();
 

@@ -148,6 +148,8 @@ namespace MatterHackers.gsBundle
 			[SettingsKey.top_solid_layers] = new ExportField("")
 		};
 
+		public PrinterType PrinterType => PrinterType.FFF;
+
 		public bool ValidateFile(string filePath)
 		{
 			// TODO: Implement solution

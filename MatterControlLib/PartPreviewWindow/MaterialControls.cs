@@ -68,13 +68,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				var scaledButtonSize = 16 * GuiWidget.DeviceScale;
 
-				buttonView.AddChild(new ColorButton(MaterialRendering.Color(printer, extruderIndex, theme.BorderColor))
+				GuiWidget colorButton;
+				buttonView.AddChild(colorButton = new ItemColorButton(theme, MaterialRendering.Color(printer, extruderIndex, theme.BorderColor))
 				{
 					Width = scaledButtonSize,
 					Height = scaledButtonSize,
 					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(3, 0, 5, 0),
-					DrawGrid = true,
 				});
 
 				buttonView.AddChild(new TextWidget(name, pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
@@ -98,6 +98,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 				materialButtons.Add(radioButton);
 				this.AddChild(radioButton);
+
+				radioButton.MouseMove += (s, e) =>
+				{
+					var screenSpace = radioButton.TransformToScreenSpace(e.Position);
+					var colorButtonSpace = colorButton.TransformFromScreenSpace(screenSpace);
+					if (colorButton.LocalBounds.Contains(colorButtonSpace))
+					{
+						var parent = colorButton.Parent;
+						while (parent != radioButton)
+						{
+							parent.Selectable = true;
+							parent = parent.Parent;
+						}
+					}
+					else
+					{
+						var parent = colorButton.Parent;
+						while (parent != radioButton)
+						{
+							parent.Selectable = false;
+							parent = parent.Parent;
+						}
+					}
+				};
+
+				radioButton.MouseLeaveBounds += (s, e) =>
+				{
+
+				};
 
 				int localExtruderIndex = extruderIndex;
 				radioButton.Click += (sender, e) =>
