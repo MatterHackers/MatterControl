@@ -104,7 +104,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 					case State.WaitingForEndstopStatusOk:
 						// found the ok of the M119 command
 						// move down more
-						if (nozzleCurrentPosition.Z < -2)
+						if (printer.Connection.CurrentDestination.Z < printer.Settings.GetValue<double>(SettingsKey.conductive_probe_min_z))
 						{
 							// we have gone down too far
 							// abort with error

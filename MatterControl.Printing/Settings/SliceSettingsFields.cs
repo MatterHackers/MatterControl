@@ -925,14 +925,24 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
-					SlicerConfigName = SettingsKey.conductive_pad_position,
-					PresentationName = "Conductive Pad Position".Localize(),
-					HelpText = "The position of the conductive pad used for nozzle probing.".Localize(),
+					SlicerConfigName = SettingsKey.conductive_pad_center,
+					PresentationName = "Conductive Pad Center".Localize(),
+					HelpText = "The center of the conductive pad used for nozzle probing.".Localize(),
 					DataEditType = DataEditTypes.VECTOR2,
 					ShowAsOverride = true,
 					DefaultValue = "0,0",
 					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle&measure_probe_offset_conductively",
-					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.conductive_probe_min_z,
+					PresentationName = "Conductive Probe Min Z".Localize(),
+					HelpText = "The minimum z to allow the probe to go to before the test is stopped and marked as failing. This is used to ensure the printer is not damaged.".Localize(),
+					DataEditType = DataEditTypes.DOUBLE,
+					ShowAsOverride = true,
+					DefaultValue = "-1",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle&measure_probe_offset_conductively",
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()

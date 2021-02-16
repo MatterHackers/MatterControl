@@ -124,8 +124,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
 		public const string has_conductive_nozzle = nameof(has_conductive_nozzle);
+		public const string conductive_probe_min_z = nameof(conductive_probe_min_z);
 		public const string measure_probe_offset_conductively = nameof(measure_probe_offset_conductively);
-		public const string conductive_pad_position = nameof(conductive_pad_position);
+		public const string conductive_pad_center = nameof(conductive_pad_center);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
 		public const string inactive_cool_down = nameof(inactive_cool_down);
 		public const string include_firmware_updater = nameof(include_firmware_updater);

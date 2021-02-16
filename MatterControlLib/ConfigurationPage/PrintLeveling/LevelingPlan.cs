@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			if (printer.Settings.GetValue<bool>(SettingsKey.has_conductive_nozzle)
 				&& printer.Settings.GetValue<bool>(SettingsKey.measure_probe_offset_conductively))
 			{
-				return printer.Settings.GetValue<Vector2>(SettingsKey.conductive_pad_position);
+				return printer.Settings.GetValue<Vector2>(SettingsKey.conductive_pad_center);
 			}
 
 			return printer.Settings.GetValue<Vector2>(SettingsKey.print_center);
