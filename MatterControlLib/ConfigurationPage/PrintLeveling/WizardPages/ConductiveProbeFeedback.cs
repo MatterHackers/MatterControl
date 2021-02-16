@@ -67,6 +67,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 		State state = State.WaitingForEndstopStatusStart;
 		private Vector3 feedRates;
 
+		public bool MovedBelowMinZ { get; private set; }
+
 		private void PrinterLineRecieved(object sender, string line)
 		{
 			// looking for 'conductive: TRIGGERED' in an M119 command
@@ -108,12 +110,16 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 						{
 							// we have gone down too far
 							// abort with error
+							this.MovedBelowMinZ = true;
+							// move on to the next page of the wizard
+							UiThread.RunOnIdle(() => NextButton.InvokeClick());
 						}
 						else if (line.StartsWith("ok"))
 						{
 							state = State.WaitingForEndstopStatusStart;
 							// send the next set of commands
 							printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
+							printer.Connection.QueueLine("G4 P1");
 							printer.Connection.QueueLine("M119");
 						}
 						break;
@@ -128,13 +134,14 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 
 			NextButton.Enabled = false;
 
-			// do a last minute check that the printer is read to do this action
+			// do a last minute check that the printer is ready to do this action
 			if (printer.Connection.IsConnected
 				&& !(printer.Connection.Printing
 				|| printer.Connection.Paused))
 			{
 				printer.Connection.LineReceived += PrinterLineRecieved;
 				printer.Connection.MoveAbsolute(nozzleCurrentPosition, feedRates.X);
+				printer.Connection.QueueLine("G4 P1");
 				printer.Connection.QueueLine("M119");
 			}
 

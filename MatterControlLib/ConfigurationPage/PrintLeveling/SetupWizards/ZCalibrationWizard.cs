@@ -212,14 +212,26 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				&& printer.Settings.GetValue<bool>(SettingsKey.has_conductive_nozzle)
 				&& printer.Settings.GetValue<bool>(SettingsKey.measure_probe_offset_conductively))
 			{
-				yield return new ConductiveProbeFeedback(
+				var conductiveProbeFeedback = new ConductiveProbeFeedback(
 					this,
 					probeStartPosition,
 					"Conductive Probing".Localize(),
 					"Measure the nozzle to probe offset using the conductive pad.".Localize(),
 					manualProbePositions[0]);
+				yield return conductiveProbeFeedback;
 
-				SetExtruderOffset(autoProbePositions, manualProbePositions, false, 0);
+				if (conductiveProbeFeedback.MovedBelowMinZ)
+				{
+					// show an error message
+					yield return new WizardPage(
+						this,
+						"Error: Below Conductive Probe Min Z".Localize(),
+						"The printer moved below the minimum height set for conductive probing. Check that the nozzle is clean and there is continuity with the pad.".Localize());
+				}
+				else // found a good probe height
+				{
+					SetExtruderOffset(autoProbePositions, manualProbePositions, false, 0);
+				}
 			}
 			else // collect the probe information manually
 			{
