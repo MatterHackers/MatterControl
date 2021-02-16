@@ -99,8 +99,18 @@ namespace MatterHackers.MatterControl
 				Debug.WriteLine(message);
 			}
 
-			test.ReadFile(@"C:\Users\LarsBrubaker\Downloads\10mm-benchy.photon", Progress);
-			test.SaveFile(@"C:\Users\LarsBrubaker\Downloads\10mm-bench2.photon");
+			var sourceFile = @"C:\Users\LarsBrubaker\Downloads\10mm-benchy.photon";
+			if (File.Exists(sourceFile))
+			{
+				test.ReadFile(sourceFile, Progress);
+				test.SaveFile(@"C:\Users\LarsBrubaker\Downloads\10mm-bench2.photon");
+			}
+			else
+			{
+				sourceFile = @"C:\Users\larsb\Downloads\_rocktopus.ctb";
+				test.ReadFile(sourceFile, Progress);
+				test.SaveFile(@"C:\Users\larsb\Downloads\_rocktopus.photon");
+			}
 #endif
 
 			// Set the global culture for the app, current thread and all new threads
