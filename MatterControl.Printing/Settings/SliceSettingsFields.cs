@@ -898,6 +898,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.has_conductive_nozzle,
+					PresentationName = "Has Conductive Nozzle".Localize(),
+					HelpText = "The printer has the ability to check for continuity on the nozzle.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "0",
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.measure_probe_offset_conductively,
+					PresentationName = "Measure Probe Offset Conductively".Localize(),
+					HelpText = "If the printer has both a conductive nozzle and a z probe this will enable automatic validation of the distance between their readings. Expected output is 'conductive: TRIGGERED' on M119.".Localize(),
+					DataEditType = DataEditTypes.CHECK_BOX,
+					ShowAsOverride = true,
+					DefaultValue = "0",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle",
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.conductive_pad_position,
+					PresentationName = "Conductive Pad Position".Localize(),
+					HelpText = "The position of the conductive pad used for nozzle probing.".Localize(),
+					DataEditType = DataEditTypes.VECTOR2,
+					ShowAsOverride = true,
+					DefaultValue = "0,0",
+					ShowIfSet = "!has_hardware_leveling&has_z_probe&has_conductive_nozzle&measure_probe_offset_conductively",
+					UiUpdate = UiUpdateRequired.SliceSettings,
+					RebuildGCodeOnChange = false
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.has_hardware_leveling,
 					PresentationName = "Has Hardware Leveling".Localize(),
 					HelpText = "The printer has its own auto bed leveling probe and procedure which can be called using a G29 command during Start G-Code.".Localize(),
@@ -1032,17 +1067,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.MULTI_LINE_TEXT,
 					DefaultValue = "20,20,100,180,180,20",
 					ShowIfSet = "!has_hardware_leveling&print_leveling_solution=Custom Points",
-					RebuildGCodeOnChange = false
-				},
-				new SliceSettingData()
-				{
-					SlicerConfigName = SettingsKey.probe_offset_sample_point,
-					PresentationName = "Probe Offset Sample Point".Localize(),
-					HelpText = "The position to measure the probe offset.".Localize(),
-					Units = "mm".Localize(),
-					DataEditType = DataEditTypes.VECTOR2,
-					DefaultValue = "100,100",
-					ShowIfSet = "!has_hardware_leveling&print_leveling_solution=Custom Points&use_z_probe",
 					RebuildGCodeOnChange = false
 				},
 				new SliceSettingData()

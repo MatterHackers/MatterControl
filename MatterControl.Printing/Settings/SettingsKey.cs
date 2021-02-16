@@ -123,6 +123,9 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string has_sd_card_reader = nameof(has_sd_card_reader);
 		public const string has_z_probe = nameof(has_z_probe);
 		public const string has_z_servo = nameof(has_z_servo);
+		public const string has_conductive_nozzle = nameof(has_conductive_nozzle);
+		public const string measure_probe_offset_conductively = nameof(measure_probe_offset_conductively);
+		public const string conductive_pad_position = nameof(conductive_pad_position);
 		public const string heat_extruder_before_homing = nameof(heat_extruder_before_homing);
 		public const string inactive_cool_down = nameof(inactive_cool_down);
 		public const string include_firmware_updater = nameof(include_firmware_updater);
@@ -182,7 +185,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string printer_name = nameof(printer_name);
 		public const string probe_has_been_calibrated = nameof(probe_has_been_calibrated);
 		public const string probe_offset = nameof(probe_offset);
-		public const string probe_offset_sample_point = nameof(probe_offset_sample_point);
 		public const string progress_reporting = nameof(progress_reporting);
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string raft_air_gap = nameof(raft_air_gap);

@@ -76,6 +76,7 @@ namespace MatterHackers.PrinterEmulator
 			responses = new Dictionary<string, Func<string, string>>()
 			{
 				{ "A",    Echo },
+				{ "FAST", ChangeToFast },
 				{ "G0",   ParseMovmentCommand },
 				{ "G1",   ParseMovmentCommand },
 				{ "G28",  HomeAxis },
@@ -89,6 +90,7 @@ namespace MatterHackers.PrinterEmulator
 				{ "M110", SetLineCount },
 				{ "M114", GetPosition },
 				{ "M115", ReportMarlinFirmware },
+				{ "M119", ReportEndStops },
 				{ "M140", SetBedTemperature },
 				{ "M190", SetBedTemperature },
 				{ "M20",  ListSdCard },
@@ -96,11 +98,29 @@ namespace MatterHackers.PrinterEmulator
 				{ "M306", SetHomeOffset },
 				{ "M851", SetXYZProbeOffset },
 				{ "N",    ParseChecksumLine },
+				{ "SLOW", ChangeToSlow },
 				{ "T0",    SetExtruderIndex },
 				{ "T1",    SetExtruderIndex },
-				{ "SLOW", ChangeToSlow },
-				{ "FAST", ChangeToFast },
 			};
+		}
+
+		private AxisAlignedBoundingBox xMaxTriggerRegion = new AxisAlignedBoundingBox(95, 210, -10, 105, 220, 0);
+
+		private string ReportEndStops(string arg)
+		{
+			var xMaxOpen = "open";
+			if (xMaxTriggerRegion.Contains(CurrentPosition))
+			{
+				xMaxOpen = "TRIGGERED";
+			}
+
+			var status = "Reporting endstop status\n";
+			status += $"x_min: open\n";
+			status += $"x_max: {xMaxOpen}\n";
+			status += $"y_min: open\n";
+			status += $"z_min: open\n";
+			status += "ok\n";
+			return status;
 		}
 
 		public event EventHandler ExtruderIndexChanged;
@@ -440,7 +460,7 @@ ok
 				Thread.Sleep(500);
 			}
 
-			return $"Bed Position X: {CurrentPosition.X} Y: {CurrentPosition.Y} Z: {rand.NextDouble():0.###}\n"
+			return $"Bed Position X: {CurrentPosition.X} Y: {CurrentPosition.Y} Z: {-XYZProbeOffset.Z + rand.NextDouble():0.###}\n"
 				 + "ok\n";
 		}
 
@@ -722,7 +742,7 @@ ok
 
 		public Vector3 HomePosition { get; set; } = default(Vector3);
 
-		public Vector3 XYZProbeOffset { get; set; } = default(Vector3);
+		public Vector3 XYZProbeOffset { get; set; } = new Vector3(0, 0, -5);
 
 		public void Close()
 		{

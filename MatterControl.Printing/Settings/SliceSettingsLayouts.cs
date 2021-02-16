@@ -291,7 +291,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.print_leveling_solution,
 						SettingsKey.leveling_sample_points,
-						SettingsKey.probe_offset_sample_point,
 						SettingsKey.print_leveling_required_to_print,
 					}),
 					("Print Recovery", new[]
@@ -310,6 +309,8 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.probe_offset,
 						SettingsKey.z_servo_depolyed_angle,
 						SettingsKey.z_servo_retracted_angle,
+						SettingsKey.measure_probe_offset_conductively,
+						SettingsKey.conductive_pad_position,
 					}),
 					("Behavior", new[]
 					{
@@ -346,6 +347,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						SettingsKey.runout_sensor_trigger_ratio,
 						SettingsKey.has_z_probe,
 						SettingsKey.has_z_servo,
+						SettingsKey.has_conductive_nozzle,
 						SettingsKey.has_c_axis,
 						SettingsKey.enable_network_printing,
 						SettingsKey.enable_sailfish_communication,
