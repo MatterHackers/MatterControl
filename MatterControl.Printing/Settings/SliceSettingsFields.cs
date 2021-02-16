@@ -370,6 +370,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "20",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -380,6 +381,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm/s".Localize(),
 					DefaultValue = "15",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -389,6 +391,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "0",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -529,6 +532,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "70%",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.perimeter_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1023,6 +1027,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -1570,6 +1575,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "30",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -2124,6 +2130,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -2133,6 +2140,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
 					DefaultValue = "60",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
@@ -2416,6 +2424,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.DOUBLE_OR_PERCENT,
 					Units = "mm/s or %".Localize(),
 					DefaultValue = "50",
+					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
 				{
