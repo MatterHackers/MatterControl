@@ -75,13 +75,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				allUiFields.Clear();
 
-				var printPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
+				var exportPanel = new FlowLayoutWidget(FlowDirection.TopToBottom)
 				{
 					Padding = theme.DefaultContainerPadding,
 					BackgroundColor = menuTheme.BackgroundColor
 				};
 
-				printPanel.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor, pointSize: theme.DefaultFontSize)
+				exportPanel.AddChild(new TextWidget("Options".Localize(), textColor: menuTheme.TextColor, pointSize: theme.DefaultFontSize)
 				{
 					HAnchor = HAnchor.Left
 				});
@@ -94,7 +94,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Padding = 5,
 					MinimumSize = new Vector2(400 * GuiWidget.DeviceScale, 65 * GuiWidget.DeviceScale),
 				};
-				printPanel.AddChild(optionsPanel);
+				exportPanel.AddChild(optionsPanel);
 
 				var settingsToAdd = new[]
 				{
@@ -151,17 +151,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Find the first export plugin with the target type
 				if (exportPlugins.FirstOrDefault(p => p.GetType() == targetPluginType) is IExportPlugin exportPlugin)
 				{
-					string exportType = "Export G-Code".Localize();
+					string exportType = "Export Photon File".Localize();
 
 					exportPlugin.Initialize(printer);
 
-					var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
+					var exportButton = menuTheme.CreateDialogButton("Export".Localize());
+					theme.ApplyPrimaryActionStyle(exportButton);
 
-					exportGCodeButton.Name = "Export SLA Button";
-					exportGCodeButton.Enabled = exportPlugin.Enabled;
-					exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
+					exportButton.Name = "Export SLA Button";
+					exportButton.Enabled = exportPlugin.Enabled;
+					exportButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
 
-					exportGCodeButton.Click += (s, e) =>
+					exportButton.Click += (s, e) =>
 					{
 						this.CloseMenu();
 						ExportPrintItemPage.DoExport(
@@ -170,12 +171,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							exportPlugin);
 					};
 
-					setupRow.AddChild(exportGCodeButton);
+					setupRow.AddChild(exportButton);
 				}
 
 				// Export button
 
-				printPanel.AddChild(setupRow);
+				exportPanel.AddChild(setupRow);
 
 				if (hasErrorsOrWarnings)
 				{
@@ -208,19 +209,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					{
 						HAnchor = HAnchor.Fit,
 						VAnchor = VAnchor.Fit,
-						BackgroundColor = layoutStyle == FlowDirection.TopToBottom ? printPanel.BackgroundColor : Color.Transparent
+						BackgroundColor = layoutStyle == FlowDirection.TopToBottom ? exportPanel.BackgroundColor : Color.Transparent
 					};
 
 					// Clear bottom padding
-					printPanel.Padding = printPanel.Padding.Clone(bottom: 2);
+					exportPanel.Padding = exportPanel.Padding.Clone(bottom: 2);
 
-					errorsContainer.AddChild(printPanel);
+					errorsContainer.AddChild(exportPanel);
 					errorsContainer.AddChild(errorsPanel);
 
 					return errorsContainer;
 				}
 
-				return printPanel;
+				return exportPanel;
 			};
 
 			this.AddChild(new TextButton("Export".Localize(), theme)
