@@ -74,9 +74,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void RemoveAllFromQueue(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Queue... Menu");
-			testRunner.Delay(1);
-			testRunner.ClickByName(" Remove All Menu Item");
+			testRunner.ClickByName("Queue... Menu")
+				.Delay(1)
+				.ClickByName(" Remove All Menu Item");
 		}
 
 		public static void CreateDownloadsSubFolder()
@@ -109,9 +109,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void ClickSignOut(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("User Options Menu");
-			testRunner.ClickByName("Sign Out Menu Item");
-			testRunner.Delay(.5);
+			testRunner.ClickByName("User Options Menu")
+				.ClickByName("Sign Out Menu Item")
+				.Delay(.5);
 		}
 
 		public static void ChangeSettings(this AutomationRunner testRunner,
@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 		}
 
-		public static void WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
+		public static AutomationRunner WaitForReloadAll(this AutomationRunner testRunner, Action reloadAllAction)
 		{
 			// Wire up a block and release mechanism to wait until the sign in process has completed
 			AutoResetEvent resetEvent = new AutoResetEvent(false);
@@ -166,6 +166,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Wait for any post DoneReloadingAll code to finish up and return
 			testRunner.Delay(.2);
+			return testRunner;
 		}
 
 		public static AutomationRunner WaitForPage(this AutomationRunner testRunner, string headerText)
@@ -224,17 +225,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.ClickByName("3D View Edit");
 			}
 
-			testRunner.DragDropByName("Object3DControlLayer", "Object3DControlLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right);
-
-			testRunner.Delay(1);
-			testRunner.ClickByName(partNameToSelect);
+			testRunner.DragDropByName("Object3DControlLayer", "Object3DControlLayer", offsetDrop: new Agg.Point2D(10, 15), mouseButtons: MouseButtons.Right)
+				.Delay(1)
+				.ClickByName(partNameToSelect);
 		}
 
-		public static void WaitForFirstDraw(this AutomationRunner testRunner)
+		public static AutomationRunner WaitForFirstDraw(this AutomationRunner testRunner)
 		{
 			testRunner.GetWidgetByName("PartPreviewContent", out SystemWindow systemWindow, 10);
 			// make sure we wait for MC to be up and running
 			testRunner.WaitforDraw(systemWindow);
+			return testRunner;
 		}
 
 		public static void OpenEmptyPartTab(this AutomationRunner testRunner)
@@ -370,11 +371,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		public static void DeleteSelectedPrinter(AutomationRunner testRunner)
 		{
 			// Click 'Delete Printer' menu item
-			testRunner.ClickByName("Printer Overflow Menu");
-			testRunner.ClickByName("Delete Printer Menu Item");
-
-			// Confirm Delete
-			testRunner.WaitForName("HeaderRow");
+			testRunner.ClickByName("Printer Overflow Menu")
+				.ClickByName("Delete Printer Menu Item")
+				// Confirm Delete
+				.WaitForName("HeaderRow");
 			testRunner.ClickByName("Yes Button");
 		}
 
@@ -396,8 +396,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				if (!testRunner.NameExists("Create Printer", 0.2))
 				{
 					// go to the start page
-					testRunner.ClickByName("Hardware Tab");
-					testRunner.ClickByName("Create Printer");
+					testRunner.ClickByName("Hardware Tab")
+						.ClickByName("Create Printer");
 				}
 				else
 				{
@@ -490,9 +490,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Cancel Wizard Button");
 		}
 
-		public static void SwitchToHardwareTab(this AutomationRunner testRunner)
+		public static AutomationRunner SwitchToHardwareTab(this AutomationRunner testRunner)
 		{
 			testRunner.ClickByName("Hardware Tab");
+			return testRunner;
 		}
 
 		private static void OutputImage(ImageBuffer imageToOutput, string fileName)
@@ -592,13 +593,13 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				printer.Connection.CurrentlyPrintingLayer,
 				$"Expected the paused layer to be {expectedLayer} but was {printer.Connection.CurrentlyPrintingLayer}.");
 
-			testRunner.ClickByName(buttonName);
-			testRunner.WaitFor(() => !testRunner.NameExists(buttonName), 2);
+			testRunner.ClickByName(buttonName)
+				.WaitFor(() => !testRunner.NameExists(buttonName), 2);
 
 			return testRunner;
 		}
 
-		public static void NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
+		public static AutomationRunner NavigateToFolder(this AutomationRunner testRunner, string libraryRowItemName)
 		{
 			testRunner.EnsureContentMenuOpen();
 
@@ -622,70 +623,74 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				case "Local Library Row Item Collection":
 					if (!testRunner.NameExists("Library Row Item Collection"))
 					{
-						testRunner.ClickByName("Bread Crumb Button Home");
-						testRunner.Delay();
+						testRunner.ClickByName("Bread Crumb Button Home")
+							.Delay();
 					}
 
 					// If visible, navigate into Libraries container before opening target
 					if (testRunner.NameExists("Library Row Item Collection"))
 					{
-						testRunner.DoubleClickByName("Library Row Item Collection");
-						testRunner.Delay();
+						testRunner.DoubleClickByName("Library Row Item Collection")
+							.Delay();
 					}
 
 					break;
 			}
 
 			testRunner.DoubleClickByName(libraryRowItemName);
+			return testRunner;
 		}
 
-		public static void EnsureContentMenuOpen(this AutomationRunner testRunner)
+		public static AutomationRunner EnsureContentMenuOpen(this AutomationRunner testRunner)
 		{
 			if (!testRunner.WaitForName("FolderBreadCrumbWidget", secondsToWait: 0.2))
 			{
 				testRunner.ClickByName("Add Content Menu");
 			}
+
+			return testRunner;
 		}
 
 		public static void OpenRequiredSetupAndConfigureMaterial(this AutomationRunner testRunner)
 		{
 			// Complete new material selection requirement
-			testRunner.ClickByName("PrintPopupMenu");
-			testRunner.ClickByName("SetupPrinter");
+			testRunner.ClickByName("PrintPopupMenu")
+				.ClickByName("SetupPrinter")
+				// Configure ABS as selected material
+				// testRunner.ClickByName("Material DropDown List")
+				// testRunner.ClickByName("ABS Menu")
 
-			// Configure ABS as selected material
-			// testRunner.ClickByName("Material DropDown List");
-			// testRunner.ClickByName("ABS Menu");
-
-			// Currently material selection is not required, simply act of clicking 'Select' clears setup required
-			testRunner.ClickByName("Already Loaded Button");
+				// Currently material selection is not required, simply act of clicking 'Select' clears setup required
+				.ClickByName("Already Loaded Button");
 		}
 
 		public static void NavigateToLibraryHome(this AutomationRunner testRunner)
 		{
-			testRunner.EnsureContentMenuOpen();
-			testRunner.ClickByName("Bread Crumb Button Home");
-			testRunner.Delay(.5);
+			testRunner.EnsureContentMenuOpen()
+				.ClickByName("Bread Crumb Button Home")
+				.Delay(.5);
 		}
 
 		public static void InvokeLibraryAddDialog(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Add Menu Item");
+			testRunner.ClickByName("Print Library Overflow Menu")
+				.ClickByName("Add Menu Item");
 		}
 
-		public static void InvokeLibraryCreateFolderDialog(this AutomationRunner testRunner)
+		public static AutomationRunner InvokeLibraryCreateFolderDialog(this AutomationRunner testRunner)
 		{
-			testRunner.ClickByName("Print Library Overflow Menu");
-			testRunner.ClickByName("Create Folder... Menu Item");
+			testRunner.ClickByName("Print Library Overflow Menu")
+				.ClickByName("Create Folder... Menu Item");
+
+			return testRunner;
 		}
 
 		public static string CreateChildFolder(this AutomationRunner testRunner, string folderName)
 		{
-			testRunner.InvokeLibraryCreateFolderDialog();
-			testRunner.WaitForName("InputBoxPage Action Button");
-			testRunner.Type(folderName);
-			testRunner.ClickByName("InputBoxPage Action Button");
+			testRunner.InvokeLibraryCreateFolderDialog()
+				.WaitForName("InputBoxPage Action Button");
+			testRunner.Type(folderName)
+				.ClickByName("InputBoxPage Action Button");
 
 			string folderID = $"{folderName} Row Item Collection";
 
@@ -713,10 +718,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.Delay(secondsToWait);
 			}
 
-			testRunner.Type(textValue);
-
-			testRunner.Type("{Enter}");
-			testRunner.WaitForWidgetDisappear("Automation Dialog TextEdit", 5);
+			testRunner.Type(textValue)
+				.Type("{Enter}")
+				.WaitForWidgetDisappear("Automation Dialog TextEdit", 5);
 		}
 
 		public static AutomationRunner AddItemToBedplate(this AutomationRunner testRunner, string containerName = "Calibration Parts Row Item Collection", string partName = "Row Item Calibration - Box.stl")
@@ -738,9 +742,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			var scene = view3D.Object3DControlLayer.Scene;
 			var preAddCount = scene.Children.Count();
 
-			testRunner.ClickByName("Add to Bed Menu Item");
-			// wait for the object to be added
-			testRunner.WaitFor(() => scene.Children.Count == preAddCount + 1);
+			testRunner.ClickByName("Add to Bed Menu Item")
+				// wait for the object to be added
+				.WaitFor(() => scene.Children.Count == preAddCount + 1);
 			// wait for the object to be done loading
 			var insertionGroup = scene.Children.LastOrDefault() as InsertionGroupObject3D;
 			if (insertionGroup != null)
@@ -753,20 +757,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 		public static void SaveBedplateToFolder(this AutomationRunner testRunner, string newFileName, string folderName)
 		{
-			testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(8, 0));
-
-			testRunner.ClickByName("Save As Menu Item");
-
-			testRunner.Delay(1);
-
-			testRunner.Type(newFileName);
-
-			testRunner.NavigateToFolder(folderName);
-
-			testRunner.ClickByName("Accept Button");
-
-			// Give the SaveAs window time to close before returning to the caller
-			testRunner.Delay(2);
+			testRunner.ClickByName("Save Menu SplitButton", offset: new Point2D(8, 0))
+				.ClickByName("Save As Menu Item")
+				.Delay(1)
+				.Type(newFileName)
+				.NavigateToFolder(folderName)
+				.ClickByName("Accept Button")
+				// Give the SaveAs window time to close before returning to the caller
+				.Delay(2);
 		}
 
 		public static AutomationRunner WaitForPrintFinished(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
@@ -790,7 +788,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return ApplicationController.Instance.ActivePrinters.First();
 		}
 
-		public static void CloseFirstPrinterTab(this AutomationRunner testRunner)
+		public static AutomationRunner CloseFirstPrinterTab(this AutomationRunner testRunner)
 		{
 			// Close all printer tabs
 			var mainViewWidget = testRunner.GetWidgetByName("PartPreviewContent", out _) as MainViewWidget;
@@ -801,6 +799,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				testRunner.ClickWidget(closeWidget);
 			}
+
+			return testRunner;
 		}
 
 		public static void WaitForCommunicationStateDisconnected(this AutomationRunner testRunner, PrinterConfig printer, int maxSeconds = 500)
@@ -981,6 +981,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return testRunner;
 		}
 
+		public static AutomationRunner WaitForLayerAndResume(this AutomationRunner testRunner, PrinterConfig printer, int indexToWaitFor)
+		{
+			testRunner.WaitForName("Yes Button", 15);
+
+			// Wait for layer
+			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 10, 500);
+			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1, "Active layer index does not match expected");
+
+			testRunner.ClickByName("Yes Button");
+			testRunner.Delay();
+			return testRunner;
+		}
+
 		/// <summary>
 		/// Open the Print popup menu and click the Start Print button
 		/// </summary>
@@ -1096,13 +1109,15 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// Switch to the primary SliceSettings tab
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner in use</param>
-		public static void SwitchToSliceSettings(this AutomationRunner testRunner)
+		public static AutomationRunner SwitchToSliceSettings(this AutomationRunner testRunner)
 		{
 			OpenSettingsSidebar(testRunner);
 
 			testRunner.WaitForWidgetEnabled("Slice Settings Tab");
 
 			testRunner.ClickByName("Slice Settings Tab");
+
+			return testRunner;
 		}
 
 		public static AutomationRunner WaitForPageAndAdvance(this AutomationRunner testRunner, string headerText)
@@ -1191,7 +1206,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName(controlName + " Save");
 		}
 
-		public static SliceSettingData NavigateToSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
+		public static AutomationRunner NavigateToSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
 		{
 			var settingData = PrinterSettings.SettingsData[slicerConfigName];
 
@@ -1207,8 +1222,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (foundWidget == null)
 			{
 				// turn on advanced mode and try to get it again
-				testRunner.ClickByName("Slice Settings Overflow Menu");
-				testRunner.ClickByName("Advanced Menu Item");
+				testRunner.ClickByName("Slice Settings Overflow Menu")
+					.ClickByName("Advanced Menu Item");
 				foundWidget = testRunner.GetWidgetByName(group.Name + " Panel", out _);
 			}
 
@@ -1222,7 +1237,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				}
 			}
 
-			return settingData;
+			return testRunner;
 		}
 
 		public static string SettingWidgetName(this string slicerConfigName)
@@ -1232,7 +1247,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			return $"{settingData.PresentationName} Field";
 		}
 
-		public static void SelectSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
+		public static AutomationRunner SelectSliceSettingsField(this AutomationRunner testRunner, string slicerConfigName)
 		{
 			testRunner.NavigateToSliceSettingsField(slicerConfigName);
 
@@ -1242,8 +1257,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			if (foundWidget == null)
 			{
 				// turn on advanced mode and try to get it again
-				testRunner.ClickByName("Slice Settings Overflow Menu");
-				testRunner.ClickByName("Advanced Menu Item");
+				testRunner.ClickByName("Slice Settings Overflow Menu")
+					.ClickByName("Advanced Menu Item");
 
 				foundWidget = testRunner.GetWidgetByName(widgetName, out _, 20, onlyVisible: false);
 			}
@@ -1254,6 +1269,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			}
 
 			testRunner.ClickByName(widgetName);
+			return testRunner;
 		}
 
 		/// <summary>
@@ -1267,8 +1283,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (!testRunner.NameExists("Controls Tab", 0.2))
 			{
-				testRunner.ClickByName("Printer Overflow Menu");
-				testRunner.ClickByName("Show Controls Menu Item");
+				testRunner.ClickByName("Printer Overflow Menu")
+					.ClickByName("Show Controls Menu Item");
 			}
 
 			testRunner.ClickByName("Controls Tab");
@@ -1285,8 +1301,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			if (!testRunner.NameExists("Terminal Tab", 0.2))
 			{
-				testRunner.ClickByName("Printer Overflow Menu");
-				testRunner.ClickByName("Show Terminal Menu Item");
+				testRunner.ClickByName("Printer Overflow Menu")
+					.ClickByName("Show Terminal Menu Item");
 			}
 
 			testRunner.ClickByName("Terminal Tab");
@@ -1301,8 +1317,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			testRunner.ClickByName("Layers3D Button");
 
 			// TODO: Remove workaround needed to force GCode options to appear {{
-			testRunner.AddItemToBedplate();
-			testRunner.ClickByName("Generate Gcode Button");
+			testRunner.AddItemToBedplate()
+				.ClickByName("Generate Gcode Button");
 			// TODO: Remove workaround needed to force GCode options to appear }}
 		}
 
@@ -1326,7 +1342,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		/// </summary>
 		/// <param name="testRunner">The AutomationRunner in use</param>
 		/// <param name="assetNames">The test assets to add to the library</param>
-		public static void AddTestAssetsToLibrary(this AutomationRunner testRunner, IEnumerable<string> assetNames, string targetLibrary = "Local Library Row Item Collection")
+		public static AutomationRunner AddTestAssetsToLibrary(this AutomationRunner testRunner, IEnumerable<string> assetNames, string targetLibrary = "Local Library Row Item Collection")
 		{
 			// Switch to the Local Library tab
 			testRunner.NavigateToFolder(targetLibrary);
@@ -1357,6 +1373,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					|| testRunner.WaitForName($"Row Item {fileName}", 2),
 					$"{friendlyName} part should exist after adding");
 			}
+			return testRunner;
 		}
 
 		/// <summary>

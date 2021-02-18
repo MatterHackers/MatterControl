@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -19,26 +20,47 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForFirstDraw();
-
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
-				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
-
-				testRunner.AddItemToBedplate("", "Row Item Rook");
-
-				testRunner.SwitchToSliceSettings();
-				testRunner.SelectSliceSettingsField(SettingsKey.create_raft);
-
-				testRunner.WaitForReloadAll(() => testRunner.StartSlicing());
-
-				testRunner.WaitFor(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
+				testRunner.WaitForFirstDraw()
+					.AddAndSelectPrinter()
+					.AddTestAssetsToLibrary(new[] { "Rook.amf" })
+					.AddItemToBedplate("", "Row Item Rook")
+					.SwitchToSliceSettings()
+					.SelectSliceSettingsField(SettingsKey.create_raft)
+					.WaitForReloadAll(() => testRunner.StartSlicing())
+					.WaitFor(() => MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"), 10);
 
 				// Call compare slice settings method here
 				Assert.IsTrue(MatterControlUtilities.CompareExpectedSliceSettingValueWithActualVaue("enableRaft", "True"));
 
 				return Task.CompletedTask;
 			}, overrideWidth: 1224, overrideHeight: 800);
+		}
+
+		[Test]
+		public async Task RelativeRetractionExecutesCorrectly()
+		{
+			await MatterControlUtilities.RunTest((testRunner) =>
+			{
+				testRunner.WaitForName("Cancel Wizard Button");
+
+				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator("Other", "Other"))
+				{
+					var printer = testRunner.FirstPrinter();
+
+					var farthestE = 0.0;
+					printer.Connection.LineReceived += (e, line) =>
+					{
+						// make sure the extrusion never goes back very far
+						Assert.Greater(printer.Connection.CurrentExtruderDestination, farthestE - 10);
+						farthestE = Math.Max(farthestE, printer.Connection.CurrentExtruderDestination);
+					};
+
+					testRunner.AddItemToBedplate()
+						.StartPrint(printer);
+				}
+
+				return Task.CompletedTask;
+			}, maxTimeToRun: 120);
 		}
 
 		[Test, Category("Emulator")]
@@ -52,14 +74,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				{
 					var printer = testRunner.FirstPrinter();
 
-					testRunner.AddItemToBedplate();
-					testRunner.StartPrint(printer, pauseAtLayers: "4;2;a;not;6");
-
-					WaitForLayerAndResume(testRunner, printer, 2);
-					WaitForLayerAndResume(testRunner, printer, 4);
-					WaitForLayerAndResume(testRunner, printer, 6);
-
-					testRunner.WaitForPrintFinished(printer);
+					testRunner.AddItemToBedplate()
+						.StartPrint(printer, pauseAtLayers: "4;2;a;not;6")
+						.WaitForLayerAndResume(printer, 2)
+						.WaitForLayerAndResume(printer, 4)
+						.WaitForLayerAndResume(printer, 6)
+						.WaitForPrintFinished(printer);
 				}
 
 				return Task.CompletedTask;
@@ -82,10 +102,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
 					// close the menu
 					testRunner.ClickByName("PartPreviewContent")
-						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
-
-					// test again in case we have not downloaded the profile the first time
-					testRunner.OpenPrintPopupMenu();
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"))
+						// test again in case we have not downloaded the profile the first time
+						.OpenPrintPopupMenu();
 					Assert.IsFalse(testRunner.NameExists(expectedWarningName, 1));
 					// close the menu
 					testRunner.ClickByName("PartPreviewContent")
@@ -101,9 +120,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// open menu again and check that warning is now visible
 					testRunner.OpenPrintPopupMenu()
-						.ClickByName(ValidationErrors.SettingsUpdateAvailable + " Button");
-
-					testRunner.ClickByName(SettingsKey.layer_height + " Update");
+						.ClickByName(ValidationErrors.SettingsUpdateAvailable + " Button")
+						.ClickByName(SettingsKey.layer_height + " Update");
 
 					Assert.AreEqual(1, (await ProfileManager.GetChangedOemSettings(printer)).Count());
 
@@ -114,13 +132,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 					// close the menu
 					testRunner.ClickByName("PartPreviewContent")
-						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"));
-
-					// open the menu button
-					testRunner.ClickByName("Printer Overflow Menu");
-					testRunner.ClickByName("Update Settings... Menu Item");
-
-					testRunner.ClickByName(SettingsKey.first_layer_height + " Update");
+						.WaitFor(() => !testRunner.NamedWidgetExists("Start Print Button"))
+						// open the menu button
+						.ClickByName("Printer Overflow Menu")
+						.ClickByName("Update Settings... Menu Item")
+						.ClickByName(SettingsKey.first_layer_height + " Update");
 
 					// accept the last option
 					Assert.AreEqual(0, (await ProfileManager.GetChangedOemSettings(printer)).Count());
@@ -145,10 +161,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var supportButton = testRunner.GetWidgetByName(supportWidegtName, out _) as ICheckbox;
 					for (int i = 0; i < 3; i++)
 					{
-						testRunner.ClickByName(supportWidegtName);
-						testRunner.WaitFor(() => supportButton.Checked);
-						testRunner.ClickByName(supportWidegtName);
-						testRunner.WaitFor(() => !supportButton.Checked);
+						testRunner.ClickByName(supportWidegtName)
+							.WaitFor(() => supportButton.Checked)
+							.ClickByName(supportWidegtName)
+							.WaitFor(() => !supportButton.Checked);
 					}
 					Assert.IsTrue(testRunner.NameExists(supportWidegtName, 1), "Print menu should still be open after toggle supports");
 				}
@@ -215,19 +231,6 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
-		}
-
-		// TODO: Promote to extension method
-		private static void WaitForLayerAndResume(AutomationRunner testRunner, PrinterConfig printer, int indexToWaitFor)
-		{
-			testRunner.WaitForName("Yes Button", 15);
-
-			// Wait for layer
-			testRunner.WaitFor(() => printer.Bed.ActiveLayerIndex + 1 == indexToWaitFor, 10, 500);
-			Assert.AreEqual(indexToWaitFor, printer.Bed.ActiveLayerIndex + 1, "Active layer index does not match expected");
-
-			testRunner.ClickByName("Yes Button");
-			testRunner.Delay();
 		}
 
 		[Test /* Test will fail if screen size is and "HeatBeforeHoming" falls below the fold */]
@@ -547,10 +550,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			//testRunner.ScrollIntoView(checkBoxName);
 			//testRunner.ClickByName(checkBoxName);
-			testRunner.SelectSliceSettingsField(settingToChange);
-
-			// give some time for the ui to update if necessary
-			testRunner.Delay(2);
+			testRunner.SelectSliceSettingsField(settingToChange)
+				// give some time for the ui to update if necessary
+				.Delay(2);
 
 			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) == valueToSet);
 		}
@@ -567,10 +569,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 			Assert.IsTrue(printer.Settings.UserLayer.ContainsKey(settingToChange));
 
 			// make sure the setting is still open in case of a reload all
-			testRunner.NavigateToSliceSettingsField(settingToChange);
-			// Click the cancel user override button
-			testRunner.ClickByName("Restore " + settingToChange);
-			testRunner.Delay(2);
+			testRunner.NavigateToSliceSettingsField(settingToChange)
+				// Click the cancel user override button
+				.ClickByName("Restore " + settingToChange)
+				.Delay(2);
 
 			// Assert the checkbox is unchecked and there is no user override
 			Assert.IsTrue(printer.Settings.GetValue<bool>(settingToChange) == expected);
@@ -582,24 +584,19 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForFirstDraw();
+				testRunner.WaitForFirstDraw()
+					.AddAndSelectPrinter("Airwolf 3D", "HD")
+					// Navigate to Settings Tab and make sure Bed Temp Text box is visible
+					.SwitchToSliceSettings()
+					.SelectSliceSettingsField(SettingsKey.bed_temperature)
+					.SelectSliceSettingsField(SettingsKey.temperature)
+					// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
+					.SwitchToPrinterSettings()
+					.SelectSliceSettingsField(SettingsKey.has_heated_bed)
+					.Delay(.5)
+					.SwitchToSliceSettings()
+					.NavigateToSliceSettingsField(SettingsKey.temperature);
 
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
-				// Navigate to Settings Tab and make sure Bed Temp Text box is visible
-				testRunner.SwitchToSliceSettings();
-
-				testRunner.SelectSliceSettingsField(SettingsKey.bed_temperature);
-				testRunner.SelectSliceSettingsField(SettingsKey.temperature);
-
-				// Uncheck Has Heated Bed checkbox and make sure Bed Temp Textbox is not visible
-				testRunner.SwitchToPrinterSettings();
-
-				testRunner.SelectSliceSettingsField(SettingsKey.has_heated_bed);
-				testRunner.Delay(.5);
-
-				testRunner.SwitchToSliceSettings();
-				testRunner.NavigateToSliceSettingsField(SettingsKey.temperature);
 				Assert.IsFalse(testRunner.WaitForName("Bed Temperature Textbox", .5), "Filament -> Bed Temp should not be visible after Heated Bed unchecked");
 
 				// Make sure Bed Temperature Options are not visible in printer controls
@@ -619,22 +616,21 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				testRunner.WaitForFirstDraw();
 
 				// Add Guest printers
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-				testRunner.SwitchToSliceSettings();
+				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD")
+					.SwitchToSliceSettings();
 
 				var printer = testRunner.FirstPrinter();
 
-				testRunner.SelectSliceSettingsField(SettingsKey.layer_height);
-				testRunner.Type(".5");
-
-				// Force lose focus
-				testRunner.SelectSliceSettingsField(SettingsKey.first_layer_height);
-
-				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				testRunner.SelectSliceSettingsField(SettingsKey.layer_height)
+					.Type(".5")
+					// Force lose focus
+					.SelectSliceSettingsField(SettingsKey.first_layer_height)
+					.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
+				
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
-				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("Fine Menu");
+				testRunner.ClickByName("Quality")
+					.ClickByName("Fine Menu");
 
 				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.1);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
@@ -653,12 +649,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(1, ApplicationController.Instance.ActivePrinters.Count(), "One printer should be active after BCN add");
 
 				// Close BCN
-				testRunner.CloseFirstPrinterTab();
-
-				// Reopen Airwolf
-				testRunner.SwitchToHardwareTab();
-				testRunner.DoubleClickByName("Airwolf 3D HD Node");
-				testRunner.Delay(0.2);
+				testRunner.CloseFirstPrinterTab()
+					// Reopen Airwolf
+					.SwitchToHardwareTab()
+					.DoubleClickByName("Airwolf 3D HD Node")
+					.Delay(0.2);
 
 				printer = testRunner.FirstPrinter();
 
@@ -666,12 +661,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.1", "Layer height is the fine override");
 
 				// Switch to Slice Settings Tab
-				testRunner.ClickByName("Slice Settings Tab");
+				testRunner.ClickByName("Slice Settings Tab")
+					.ClickByName("Quality")
+					.ClickByName("- none - Menu Item")
+					.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 
-				testRunner.ClickByName("Quality");
-				testRunner.ClickByName("- none - Menu Item");
-
-				testRunner.WaitFor(() => printer.Settings.GetValue<double>(SettingsKey.layer_height) == 0.5);
 				Assert.AreEqual(printer.Settings.GetValue<double>(SettingsKey.layer_height).ToString(), "0.5", "Layer height is what we set it to");
 
 				return Task.CompletedTask;
