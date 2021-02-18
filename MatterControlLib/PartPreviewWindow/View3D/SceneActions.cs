@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Clear selection to ensure all root level children are arranged on the bed
 				scene.SelectedItem = null;
 
-				var children = scene.Children.ToList();
+				var children = scene.Children.ToList().Where(item => item.Persistable == true).ToList();
 				var transformData = new List<TransformData>();
 				foreach (var child in children)
 				{
