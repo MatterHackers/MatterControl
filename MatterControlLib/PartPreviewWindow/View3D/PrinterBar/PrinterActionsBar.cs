@@ -127,11 +127,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			else
 			{
-				// add the start print button
-				this.AddChild(new ExportSlaPopupMenu(printer, theme)
+				var exportButton = new ExportSlaPopupMenu(printer, theme)
 				{
 					Margin = theme.ButtonSpacing
-				});
+				};
+				// add the SLA export button
+				this.AddChild(exportButton);
+
+				theme.ApplyPrimaryActionStyle(exportButton);
 			}
 
 			this.AddChild(new SliceButton(printer, printerTabPage, theme)

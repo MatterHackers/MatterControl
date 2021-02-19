@@ -87,6 +87,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					{
 						SettingsKey.wipe_shield_distance,
 						SettingsKey.wipe_tower_size,
+						SettingsKey.wipe_tower_perimeters_per_extruder,
 					}),
 					("Advanced", new[]
 					{

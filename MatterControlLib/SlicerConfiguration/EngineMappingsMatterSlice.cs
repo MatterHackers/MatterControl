@@ -136,6 +136,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				[SettingsKey.travel_speed] = new ExportField("travelSpeed"),
 				[SettingsKey.wipe_shield_distance] = new ExportField("wipeShieldDistanceFromObject"),
 				[SettingsKey.wipe_tower_size] = new ExportField("wipeTowerSize"),
+				[SettingsKey.wipe_tower_perimeters_per_extruder] = new ExportField("wipeTowerPerimetersPerExtruder"),
 				[SettingsKey.filament_diameter] = new ExportField("filamentDiameter"),
 				[SettingsKey.layer_height] = new ExportField("layerThickness"),
 				[SettingsKey.nozzle_diameter] = new ExportField("extrusionWidth"),

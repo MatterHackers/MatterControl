@@ -292,6 +292,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string validate_leveling = nameof(validate_leveling);
 		public const string validation_threshold = nameof(validation_threshold);
 		public const string wipe_shield_distance = nameof(wipe_shield_distance);
+		public const string wipe_tower_perimeters_per_extruder = nameof(wipe_tower_perimeters_per_extruder);
 		public const string wipe_tower_size = nameof(wipe_tower_size);
 		public const string write_regex = nameof(write_regex);
 		public const string xy_offsets_have_been_calibrated = nameof(xy_offsets_have_been_calibrated);

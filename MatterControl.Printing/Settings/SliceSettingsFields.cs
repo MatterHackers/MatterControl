@@ -2539,6 +2539,16 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				},
 				new SliceSettingData()
 				{
+					SlicerConfigName = SettingsKey.wipe_tower_perimeters_per_extruder,
+					PresentationName = "Perimeters Per Extruder".Localize(),
+					HelpText = "The number of perimeters will be this number times the number of active extruders. Make this a smaller number to make the wipe more hollow or bigger to fill it.".Localize(),
+					DataEditType = DataEditTypes.INT,
+					ShowIfSet = "extruder_count>1",
+					DefaultValue = "20",
+					Converter = new ValueConverter(),
+				},
+				new SliceSettingData()
+				{
 					SlicerConfigName = SettingsKey.wipe_tower_size,
 					PresentationName = "Wipe Tower Size".Localize(),
 					HelpText = "The length and width of a tower created at the back left of the print used for wiping the next nozzle when changing between multiple extruders. Set to 0 to disable.".Localize(),

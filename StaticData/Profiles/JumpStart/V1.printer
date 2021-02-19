@@ -172,7 +172,7 @@
     "wipe_tower_size": "0",
     "z_can_be_negative": "0",
     "z_homes_to_max": "0",
-    "z_offset": "0.2",
+    "z_offset": "0",
     "make": "JumpStart",
     "model": "V1",
     "created_date": "7/19/2016 7:54:58 PM",
