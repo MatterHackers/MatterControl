@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.OFFSET3,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
-					ShowIfSet = "extruder_count>1",
+					 // ShowIfSet = "extruder_count>1", // can't do this currently as it breaks legacy printers (kossle & jump start). Have to have a fix for that to enable hiding.
 					DefaultValue = "0x0,0x0,0x0,0x0"
 				},
 				new SliceSettingData()
