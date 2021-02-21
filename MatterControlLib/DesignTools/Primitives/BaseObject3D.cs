@@ -77,6 +77,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BaseTypes BaseType { get; set; } = BaseTypes.Circle;
 
+		[Description("The height the base will be derived from (starting at the bottom).")]
+		public double CalculationHeight { get; set; } = .1;
+
 		[DisplayName("Expand")]
 		public double BaseSize { get; set; } = 3;
 
@@ -120,7 +123,21 @@ namespace MatterHackers.MatterControl.DesignTools
 			base.Remove(undoBuffer);
 		}
 
-		private IVertexSource meshVertexSource;
+		private (IVertexSource vertexSource, double height) meshVertexCache;
+
+		public static IVertexSource GetSlicePaths(IObject3D source, Plane plane)
+		{
+			var totalSlice = new Polygons();
+			foreach (var item in source.VisibleMeshes())
+			{
+				var cutPlane = Plane.Transform(plane, item.WorldMatrix(source).Inverted);
+				// return the vertex source of the bottom of the mesh
+				var slice = SliceLayer.CreateSlice(item.Mesh, cutPlane);
+				totalSlice = totalSlice.Union(slice);
+			}
+		
+			return totalSlice.CreateVertexStorage();
+		}
 
 		[JsonIgnore]
 		public IVertexSource VertexSource
@@ -128,22 +145,18 @@ namespace MatterHackers.MatterControl.DesignTools
 			get
 			{
 				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
-				var meshSource = this.Descendants<IObject3D>().FirstOrDefault((i) => i.Mesh != null);
-				var mesh = meshSource?.Mesh;
-				if (vertexSource?.VertexSource == null
-					&& mesh != null)
+				var hasMesh = this.Descendants<IObject3D>().Where(m => m.Mesh != null).Any();
+				if (vertexSource?.VertexSource == null && hasMesh)
 				{
-					if (meshVertexSource == null)
+					if (meshVertexCache.vertexSource == null || meshVertexCache.height != CalculationHeight)
 					{
-						// return the vertex source of the bottom of the mesh
 						var aabb = this.GetAxisAlignedBoundingBox();
-						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + .1));
-						cutPlane = Plane.Transform(cutPlane, this.Matrix.Inverted);
-						var slice = SliceLayer.CreateSlice(mesh, cutPlane);
-						meshVertexSource = slice.CreateVertexStorage();
+						var cutPlane = new Plane(Vector3.UnitZ, new Vector3(0, 0, aabb.MinXYZ.Z + CalculationHeight));
+						meshVertexCache.vertexSource = GetSlicePaths(this, cutPlane);
+						meshVertexCache.height = CalculationHeight;
 					}
 
-					return meshVertexSource;
+					return meshVertexCache.vertexSource;
 				}
 
 				return vertexSource?.VertexSource;
@@ -176,7 +189,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				&& !RebuildLocked)
 			{
 				// make sure we clear our cache
-				meshVertexSource = null;
+				meshVertexCache.vertexSource = null;
 				await Rebuild();
 			}
 			else if (invalidateType.InvalidateType.HasFlag(InvalidateType.Properties)
@@ -413,6 +426,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			changeSet.Add(nameof(InfillAmount), BaseType == BaseTypes.Outline);
 			changeSet.Add(nameof(Centering), BaseType == BaseTypes.Circle);
 			changeSet.Add(nameof(ExtrusionHeight), BaseType != BaseTypes.None);
+
+			var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
+			var meshSource = this.Descendants<IObject3D>().Where((i) => i.Mesh != null);
+
+			changeSet.Add(nameof(CalculationHeight), vertexSource == null && meshSource.Where(m => m.Mesh != null).Any());
 
 			// first turn on all the settings we want to see
 			foreach (var kvp in changeSet.Where(c => c.Value))
