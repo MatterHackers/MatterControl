@@ -185,6 +185,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						return "0";
 					}),
 				[SettingsKey.raft_extruder] = new ExportField("raftExtruder"),
+				[SettingsKey.brim_extruder] = new ExportField("brimExtruder"),
 				[SettingsKey.support_material_extruder] = new ExportField("supportExtruder"),
 				[SettingsKey.support_material_interface_extruder] = new ExportField("supportInterfaceExtruder"),
 				// Skirt settings

@@ -757,10 +757,29 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.LIST:
-					uiField = new ListField(theme)
 					{
-						ListItems = settingData.ListValues.Split(',').ToList()
-					};
+						var items = settingData.ListValues.Split(',');
+						ListField listField;
+						uiField = listField = new ListField(theme);
+						foreach (var item in items)
+						{
+							listField.Items.Add((item, item.Localize()));
+						}
+					}
+					break;
+
+				case SliceSettingData.DataEditTypes.EXTRUDER_LIST:
+					{
+						var extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
+						ListField listField;
+						uiField = listField = new ListField(theme);
+						var list = listField.Items;
+						list.Add(("0", "Default".Localize()));
+						for (int i = 1; i <= extruderCount; i++)
+						{
+							list.Add(($"{i}", "Extruder".Localize() + $" {i}"));
+						}
+					}
 					break;
 
 				case SliceSettingData.DataEditTypes.HARDWARE_PRESENT:

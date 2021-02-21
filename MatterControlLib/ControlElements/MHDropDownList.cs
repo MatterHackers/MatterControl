@@ -113,7 +113,6 @@ namespace MatterHackers.MatterControl
 			{
 				base.BackgroundColor = value;
 			}
-
 		}
 
 		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
