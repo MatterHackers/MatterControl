@@ -296,12 +296,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 			// Create the printer
 			testRunner.AddAndSelectPrinter(make, model)
-				.SwitchToPrinterSettings(pinSettingsOpen);
-
-			var serialPortDropDown = testRunner.GetWidgetByName("com_port Field", out _, 1);
-
-			testRunner.WaitFor(() => serialPortDropDown.Enabled); // Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
-			testRunner.ClickByName("com_port Field")
+				.SwitchToPrinterSettings(pinSettingsOpen)
+				.GetWidgetByName("com_port Field", out GuiWidget serialPortDropDown, out _)
+				// Wait until the serialPortDropDown is ready to click it. Ensures the printer is loaded.
+				.WaitFor(() => serialPortDropDown.Enabled)
+				.ClickByName("com_port Field")
 				.ClickByName("Emulator Menu Item")
 				.ClickByName("Connect to printer button") // connect to the created printer
 				.WaitForName("Disconnect from printer button");

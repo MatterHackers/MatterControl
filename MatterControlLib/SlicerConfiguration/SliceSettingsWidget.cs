@@ -735,16 +735,12 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					break;
 
 				case SliceSettingData.DataEditTypes.MARKDOWN_TEXT:
-#if !__ANDROID__
 					uiField = new MarkdownEditField(theme, settingData.PresentationName);
-#endif
 					break;
 
 				case SliceSettingData.DataEditTypes.COM_PORT:
 					useDefaultSavePattern = false;
-
 					sliceSettingValue = printer.Settings.Helpers.ComPort();
-
 					uiField = new ComPortField(printer, theme);
 					uiField.ValueChanged += (s, e) =>
 					{
@@ -753,7 +749,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							printer.Settings.Helpers.SetComPort(uiField.Value);
 						}
 					};
-
 					break;
 
 				case SliceSettingData.DataEditTypes.LIST:

@@ -2084,7 +2084,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.support_material_extruder,
 					PresentationName = "Support Material Extruder".Localize(),
 					ShowIfSet = "extruder_count>1",
-					HelpText = "The extruder to use for printing support material.".Localize(),
+					HelpText = "The extruder to use for support material. Default will use whichever extruder active at the time.".Localize(),
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
 					DefaultValue = "1",
@@ -2093,7 +2093,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.raft_extruder,
 					PresentationName = "Raft Extruder".Localize(),
-					HelpText = "The extruder to use to print the raft.".Localize(),
+					HelpText = "The extruder to use to print the raft. Default will use extruder 1.".Localize(),
 					ShowIfSet = "extruder_count>1",
 					EnableIfSet = "create_raft",
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
@@ -2105,7 +2105,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.support_material_interface_extruder,
 					PresentationName = "Support Interface Extruder".Localize(),
-					HelpText = "The extruder to use to for support material interface layer(s).".Localize(),
+					HelpText = "The extruder to use to for support material interface layers. Default will use whichever extruder active at the time.".Localize(),
 					ShowIfSet = "extruder_count>1",
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
@@ -2115,7 +2115,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.brim_extruder,
 					PresentationName = "Brim Extruder".Localize(),
-					HelpText = "The extruder to use for the brim.".Localize(),
+					HelpText = "The extruder to use for the brim.  Default will use the first extruder of the print.".Localize(),
 					ShowIfSet = "extruder_count>1",
 					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
