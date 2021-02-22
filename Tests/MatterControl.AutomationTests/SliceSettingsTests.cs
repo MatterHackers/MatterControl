@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("Emulator")]
 		public async Task MenuStaysOpenOnRebuildSettings()
 		{
-			await MatterControlUtilities.RunTest(async (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -168,6 +168,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 					Assert.IsTrue(testRunner.NameExists(supportWidegtName, 1), "Print menu should still be open after toggle supports");
 				}
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
