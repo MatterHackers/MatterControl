@@ -147,7 +147,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		[Test, Category("Emulator")]
 		public async Task MenuStaysOpenOnRebuildSettings()
 		{
-			await MatterControlUtilities.RunTest(async (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator())
 				{
@@ -168,13 +168,14 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					}
 					Assert.IsTrue(testRunner.NameExists(supportWidegtName, 1), "Print menu should still be open after toggle supports");
 				}
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
 		[Test, Category("Emulator")]
 		public async Task SettingsStayOpenOnRebuildSettings()
 		{
-			await MatterControlUtilities.RunTest(async (testRunner) =>
+			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				using (var emulator = testRunner.LaunchAndConnectToPrinterEmulator(pinSettingsOpen: false))
 				{
@@ -193,6 +194,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 							.ClickByName("Simple Menu Item");
 					}
 				}
+		
+				return Task.CompletedTask;
 			}, maxTimeToRun: 120);
 		}
 
@@ -208,20 +211,16 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					var printer = testRunner.FirstPrinter();
 					printer.Settings.SetValue(SettingsKey.cancel_gcode, "G28 ; Cancel GCode");
 
-					testRunner.AddItemToBedplate();
-
-					testRunner.StartPrint(printer, pauseAtLayers: "2");
-
-					// Wait for the Ok button
-					testRunner.WaitForName("Yes Button", 30);
+					testRunner.AddItemToBedplate()
+						.StartPrint(printer, pauseAtLayers: "2")
+						// Wait for the Ok button
+						.WaitForName("Yes Button", 30);
 					emulator.RunSlow = true;
-					testRunner.ClickByName("Yes Button");
-
-					// Cancel the Printing task
-					testRunner.ClickByName("Stop Task Button");
-
-					// Wait for and assert that printing has been canceled
-					testRunner.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
+					testRunner.ClickByName("Yes Button")
+						// Cancel the Printing task
+						.ClickByName("Stop Task Button")
+						// Wait for and assert that printing has been canceled
+						.WaitFor(() => printer.Connection.CommunicationState == PrinterCommunication.CommunicationStates.Connected);
 					Assert.AreEqual(printer.Connection.CommunicationState, PrinterCommunication.CommunicationStates.Connected);
 
 					// Assert that two G28s were output to the terminal
@@ -238,14 +237,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
-				testRunner.WaitForFirstDraw();
-
-				testRunner.AddAndSelectPrinter("Airwolf 3D", "HD");
-
-				// Navigate to Local Library
-				testRunner.SwitchToPrinterSettings();
-
-				testRunner.ClickByName("Features Tab");
+				testRunner.WaitForFirstDraw()
+					.AddAndSelectPrinter("Airwolf 3D", "HD")
+					// Navigate to Local Library
+					.SwitchToPrinterSettings()
+					.ClickByName("Features Tab");
 
 				var printer = testRunner.FirstPrinter();
 
@@ -283,8 +279,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					DropDownList materialSelector = dropDownLists[0].Widget as DropDownList;
 					Assert.AreEqual("", materialSelector.SelectedValue);
 
-					testRunner.ClickByName("Hotend Preset Selector");
-					testRunner.ClickByName("HIPS Menu");
+					testRunner.ClickByName("Hotend Preset Selector")
+						.ClickByName("HIPS Menu");
 
 					// check the extruder count
 					var extrudeButtons = testRunner.GetWidgetsByName("Extrude Button");
@@ -299,24 +295,24 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, (int) emulator.CurrentExtruder.TargetTemperature, "The printer should report the heaters are off");
 
 					// turn on the heater
-					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay(1);
+					testRunner.ClickByName("Toggle Heater")
+						.Delay(1);
 
 					// assert the printer is heating
 					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
 
 					// turn off the heater
-					testRunner.ClickByName("Toggle Heater");
-					testRunner.Delay(1);
+					testRunner.ClickByName("Toggle Heater")
+						.Delay(1);
 
 					// assert the printer is off
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the heaters are off");
 
 					// type in a temp when the heating is off
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("110");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
+					testRunner.ClickByName("Temperature Input")
+						.Type("110")
+						.Type("{Enter}")
+						.Delay();
 
 					// assert the printer is off
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
@@ -330,47 +326,46 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(110, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// adjust when on
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("104");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
+					testRunner.ClickByName("Temperature Input")
+						.Type("104")
+						.Type("{Enter}")
+						.Delay();
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// type in 0 and have the heater turn off
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("^a");
-					testRunner.Type("0");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
-
-					// type in 60 and have the heater turn on
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("^a");
-					testRunner.Type("60");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
-					testRunner.ClickByName("Toggle Heater");
+					testRunner.ClickByName("Temperature Input")
+						.Type("^a")
+						.Type("0")
+						.Type("{Enter}")
+						.Delay()
+						// type in 60 and have the heater turn on
+						.ClickByName("Temperature Input")
+						.Type("^a")
+						.Type("60")
+						.Type("{Enter}")
+						.Delay()
+						.ClickByName("Toggle Heater");
 					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// click the remove override and have it change to default temp
-					testRunner.ClickByName("Restore temperature");
-					testRunner.WaitFor(() => hipsGoalTemp == emulator.CurrentExtruder.TargetTemperature);
+					testRunner.ClickByName("Restore temperature")
+						.WaitFor(() => hipsGoalTemp == emulator.CurrentExtruder.TargetTemperature);
 					Assert.AreEqual(hipsGoalTemp, (int)emulator.CurrentExtruder.TargetTemperature, "The printer should report the expected goal temp");
 
 					// type in 60 and have the heater turn on
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("^a");
-					testRunner.Type("60");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
+					testRunner.ClickByName("Temperature Input")
+						.Type("^a")
+						.Type("60")
+						.Type("{Enter}")
+						.Delay();
 					Assert.AreEqual(60, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// type in 0 and have the heater turn off
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("^a");
-					testRunner.Type("0");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
+					testRunner.ClickByName("Temperature Input")
+						.Type("^a")
+						.Type("0")
+						.Type("{Enter}")
+						.Delay();
 
 					// assert the printer is not heating
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
@@ -378,23 +373,23 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.IsFalse(heatToggle.Checked);
 
 					// test that the load filament button works and closes correctly
-					testRunner.ClickByName("Temperature Input");
-					testRunner.Type("^a");
-					testRunner.Type("104");
-					testRunner.Type("{Enter}");
-					testRunner.Delay();
-					testRunner.ClickByName("Load Filament Button");
-					testRunner.ClickByName("Load Filament");
+					testRunner.ClickByName("Temperature Input")
+						.Type("^a")
+						.Type("104")
+						.Type("{Enter}")
+						.Delay()
+						.ClickByName("Load Filament Button")
+						.ClickByName("Load Filament");
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
-					testRunner.Delay();
-					testRunner.ClickByName("Cancel Wizard Button");
-					testRunner.Delay();
+					testRunner.Delay()
+						.ClickByName("Cancel Wizard Button")
+						.Delay();
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 
-					testRunner.ClickByName("Hotend 0");
-					testRunner.ClickByName("Load Filament Button");
-					testRunner.ClickByName("Load Filament");
-					testRunner.Delay();
+					testRunner.ClickByName("Hotend 0")
+						.ClickByName("Load Filament Button")
+						.ClickByName("Load Filament")
+						.Delay();
 					Assert.AreEqual(104, (int)emulator.CurrentExtruder.TargetTemperature);
 					var systemWindow = testRunner.GetWidgetByName("Cancel Wizard Button", out SystemWindow containingWindow);
 					// close the window through windows (alt-f4)
@@ -402,11 +397,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					Assert.AreEqual(0, (int)emulator.CurrentExtruder.TargetTemperature);
 
 					// Switch back to the general tab
-					testRunner.ClickByName("General Tab");
-
-					testRunner.SelectSliceSettingsField(SettingsKey.extruder_count);
-					testRunner.Type("2");
-					testRunner.Type("{Enter}");
+					testRunner.ClickByName("General Tab")
+						.SelectSliceSettingsField(SettingsKey.extruder_count)
+						.Type("2")
+						.Type("{Enter}");
 
 					// there are now 2 hotends and 2 extruders
 					Assert.IsTrue(testRunner.NameExists("Hotend 0"));

@@ -93,7 +93,7 @@ namespace MatterControl.Tests.MatterControl
 			TestMacroReplacement("[first_layer_speed]", "1080");
 			TestMacroReplacement("[bed_remove_part_temperature]", "0");
 			TestMacroReplacement("[bridge_fan_speed]", "100");
-			TestMacroReplacement("[bridge_speed]", "20");
+			TestMacroReplacement("[bridge_speed]", "3");
 			TestMacroReplacement("[external_perimeter_speed]", "1260");
 			TestMacroReplacement("[extruder_wipe_temperature]", "0");
 			TestMacroReplacement("[filament_diameter]", "3");

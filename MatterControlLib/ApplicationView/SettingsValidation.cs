@@ -103,6 +103,7 @@ namespace MatterHackers.MatterControl
 								settings.GetValue<double>(SettingsKey.extruder_offset),
 								GetSettingsName(SettingsKey.extruder_offset),
 								settings.GetValue<double>(SettingsKey.extruder_offset)),
+							ErrorLevel = ValidationErrorLevel.Warning,
 						});
 				}
 			}

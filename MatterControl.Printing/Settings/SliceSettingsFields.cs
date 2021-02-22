@@ -369,7 +369,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The speed at which bridging between walls will print.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
 					Units = "mm/s".Localize(),
-					DefaultValue = "20",
+					DefaultValue = "3",
 					Converter = new AsPercentOfReferenceOrDirect(SettingsKey.infill_speed),
 				},
 				new SliceSettingData()
@@ -562,7 +562,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					DataEditType = DataEditTypes.OFFSET3,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
-					ShowIfSet = "extruder_count>1",
+					 // ShowIfSet = "extruder_count>1", // can't do this currently as it breaks legacy printers (kossle & jump start). Have to have a fix for that to enable hiding.
 					DefaultValue = "0x0,0x0,0x0,0x0"
 				},
 				new SliceSettingData()
@@ -2084,32 +2084,43 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					SlicerConfigName = SettingsKey.support_material_extruder,
 					PresentationName = "Support Material Extruder".Localize(),
 					ShowIfSet = "extruder_count>1",
-					HelpText = "The index of the extruder to use for printing support material. Applicable only when Extruder Count is set to a value more than 1.".Localize(),
-					DataEditType = DataEditTypes.INT,
-					DefaultValue = "1",
+					HelpText = "The extruder to use for support material. Default will use whichever extruder active at the time.".Localize(),
+					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
+					DefaultValue = "1",
 				},
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.raft_extruder,
 					PresentationName = "Raft Extruder".Localize(),
-					HelpText = "The index of the extruder to use to print the raft. Set to 0 to use the support extruder index.".Localize(),
+					HelpText = "The extruder to use to print the raft. Default will use extruder 1.".Localize(),
 					ShowIfSet = "extruder_count>1",
 					EnableIfSet = "create_raft",
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
-					DataEditType = DataEditTypes.INT,
-					DefaultValue = "0",
+					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
+					DefaultValue = "1",
 				},
 				new SliceSettingData()
 				{
 					SlicerConfigName = SettingsKey.support_material_interface_extruder,
 					PresentationName = "Support Interface Extruder".Localize(),
-					HelpText = "The index of the extruder to use for support material interface layer(s).".Localize(),
+					HelpText = "The extruder to use to for support material interface layers. Default will use whichever extruder active at the time.".Localize(),
 					ShowIfSet = "extruder_count>1",
-					DataEditType = DataEditTypes.INT,
-					DefaultValue = "1",
+					DataEditType = DataEditTypes.EXTRUDER_LIST,
 					Converter = new ValuePlusConstant(-1),
+					DefaultValue = "1",
+				},
+				new SliceSettingData()
+				{
+					SlicerConfigName = SettingsKey.brim_extruder,
+					PresentationName = "Brim Extruder".Localize(),
+					HelpText = "The extruder to use for the brim.  Default will use the first extruder of the print.".Localize(),
+					ShowIfSet = "extruder_count>1",
+					DataEditType = DataEditTypes.EXTRUDER_LIST,
+					Converter = new ValuePlusConstant(-1),
+					EnableIfSet = SettingsKey.create_brim,
+					DefaultValue = "0",
 				},
 				new SliceSettingData()
 				{

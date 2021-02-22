@@ -190,6 +190,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public const string publish_bed_image = nameof(publish_bed_image);
 		public const string raft_air_gap = nameof(raft_air_gap);
 		public const string raft_extra_distance_around_part = nameof(raft_extra_distance_around_part);
+		public const string brim_extruder = nameof(brim_extruder);
 		public const string raft_extruder = nameof(raft_extruder);
 		public const string raft_layers = nameof(raft_layers);
 		public const string raft_print_speed = nameof(raft_print_speed);

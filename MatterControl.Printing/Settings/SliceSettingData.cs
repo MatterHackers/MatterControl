@@ -52,6 +52,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 			COM_PORT,
 			DOUBLE,
 			DOUBLE_OR_PERCENT,
+			EXTRUDER_LIST,
 			HARDWARE_PRESENT,
 			INT,
 			INT_OR_MM,

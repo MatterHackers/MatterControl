@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -40,11 +39,41 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		private DropDownList dropdownList;
 		private ThemeConfig theme;
 
-		public List<string> ListItems { get; set; }
+		public List<(string key, string value)> Items { get; set; } = new List<(string key, string value)>();
 
 		public ListField(ThemeConfig theme)
 		{
 			this.theme = theme;
+		}
+
+		int GetKeyIndex(string key)
+		{
+			int i = 0;
+			foreach (var item in Items)
+			{
+				if (item.key == key)
+				{
+					return i;
+				}
+				i++;
+			}
+
+			return 0;
+		}
+
+		int GetValueIndex(string value)
+		{
+			int i = 0;
+			foreach (var item in Items)
+			{
+				if (item.value == value)
+				{
+					return i;
+				}
+				i++;
+			}
+
+			return 0;
 		}
 
 		public override void Initialize(int tabIndex)
@@ -56,31 +85,27 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				Margin = new BorderDouble(),
 			};
 
-			foreach (string listItem in this.ListItems)
+			foreach (var item in this.Items)
 			{
-				MenuItem newItem = dropdownList.AddItem(listItem);
-				if (newItem.Text == this.Value)
-				{
-					dropdownList.SelectedLabel = this.Value;
-				}
+				MenuItem newItem = dropdownList.AddItem(item.value);
 
 				newItem.Selected += (sender, e) =>
 				{
 					if (sender is MenuItem menuItem)
 					{
-						this.SetValue(
-							menuItem.Text,
-							userInitiated: true);
+						this.SetValue(Items[GetValueIndex(menuItem.Text)].key, userInitiated: true);
 					}
 				};
 			}
+
+			dropdownList.SelectedIndex = GetKeyIndex(this.Value);
 
 			this.Content = dropdownList;
 		}
 
 		protected override void OnValueChanged(FieldChangedEventArgs fieldChangedEventArgs)
 		{
-			dropdownList.SelectedLabel = this.Value;
+			dropdownList.SelectedIndex = GetKeyIndex(this.Value);
 			base.OnValueChanged(fieldChangedEventArgs);
 		}
 	}
