@@ -220,7 +220,7 @@ namespace MatterHackers.MatterControl
 				helpItem.Enabled = !string.IsNullOrEmpty(componentID) && this.HelpArticlesByID.ContainsKey(componentID);
 				helpItem.Click += (s, e) =>
 				{
-					var helpTab = ApplicationController.Instance.ActivateHelpTab();
+					var helpTab = ApplicationController.Instance.ActivateHelpTab("Docs");
 					if (helpTab.TabContent is HelpTreePanel helpTreePanel)
 					{
 						if (this.HelpArticlesByID.TryGetValue(componentID, out HelpArticle helpArticle))
@@ -728,9 +728,9 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void ShowApplicationHelp()
+		public void ShowApplicationHelp(string guideKey)
 		{
-			this.ActivateHelpTab();
+			this.ActivateHelpTab(guideKey);
 		}
 
 		public void ShowAboutPage()
@@ -2379,7 +2379,7 @@ namespace MatterHackers.MatterControl
 			return Regex.Replace(name, invalidRegStr, replacementCharacter);
 		}
 
-		public ChromeTab ActivateHelpTab()
+		public ChromeTab ActivateHelpTab(string guideKey)
 		{
 			var tabControl = this.MainView.TabControl;
 			var theme = AppContext.Theme;
@@ -2387,7 +2387,7 @@ namespace MatterHackers.MatterControl
 			var helpDocsTab = tabControl.AllTabs.FirstOrDefault(t => t.Key == "HelpDocs") as ChromeTab;
 			if (helpDocsTab == null)
 			{
-				var helpTreePanel = new HelpTreePanel(theme)
+				var helpTreePanel = new HelpTreePanel(theme, guideKey)
 				{
 					HAnchor = HAnchor.Stretch,
 					VAnchor = VAnchor.Stretch
@@ -2402,6 +2402,10 @@ namespace MatterHackers.MatterControl
 				};
 
 				tabControl.AddTab(helpDocsTab);
+			}
+			else
+			{
+
 			}
 
 			tabControl.ActiveTab = helpDocsTab;

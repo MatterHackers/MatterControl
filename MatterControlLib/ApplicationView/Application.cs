@@ -143,7 +143,7 @@ namespace MatterHackers.MatterControl
 
 				if (keyEvent.KeyCode == Keys.F1)
 				{
-					ApplicationController.Instance.ActivateHelpTab();
+					ApplicationController.Instance.ActivateHelpTab("Docs");
 				}
 
 				if (EnableF5Collect
