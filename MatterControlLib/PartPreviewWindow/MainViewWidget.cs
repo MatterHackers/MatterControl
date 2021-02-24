@@ -347,6 +347,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			tabControl.TabBar.ActionArea.VAnchor = VAnchor.Absolute;
 			tabControl.TabBar.ActionArea.Height = brandMenu.Height;
+			tabControl.FirstMovableTab = tabControl.AllTabs.Count();
 
 			// Restore active workspace tabs
 			foreach (var workspace in ApplicationController.Instance.Workspaces)
@@ -577,7 +578,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						&& printerTab.Printer.Settings.ID == activePrinter.Settings.ID) is ITab tab
 					&& tab.TabContent is PrinterTabPage printerPage)
 				{
-					tabControl.RemoveTab(tab);
+					tabControl.CloseTab(tab);
 				}
 			}
 
@@ -689,7 +690,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				if (printerTabPage != null)
 				{
-					tabControl.RemoveTab(tab1);
+					tabControl.CloseTab(tab1);
 				}
 
 				var printerTab = new ChromeTab(
@@ -708,7 +709,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (e.Button == MouseButtons.Right)
 					{
-						AddRightClickPrinterMenu(printerTab, printer, e);
+						AddRightClickPrinterMenu(tabControl, printerTab, printer, e);
 					}
 				};
 
@@ -746,7 +747,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private void AddRightClickPrinterMenu(ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		private void AddRightClickPrinterMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
@@ -765,6 +766,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						{
 							printer.Settings.SetValue(SettingsKey.printer_name, newName);
 						}));
+			};
+
+			var moveLeftMenuItem = popupMenu.CreateMenuItem("Move <<".Localize());
+			moveLeftMenuItem.Click += (s, e) =>
+			{
+				tabs.MoveTabLeft(printerTab);
+			};
+
+			var moveRightMenuItem = popupMenu.CreateMenuItem("Move >>".Localize());
+			moveRightMenuItem.Click += (s, e) =>
+			{
+				// move it to the right
+				tabs.MoveTabRight(printerTab);
 			};
 
 			popupMenu.ShowMenu(printerTab, mouseEvent);

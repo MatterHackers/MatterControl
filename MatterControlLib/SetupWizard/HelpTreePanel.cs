@@ -44,7 +44,7 @@ namespace MatterHackers.MatterControl
 {
 	public class HelpTreePanel : SearchableTreePanel
 	{
-		private readonly string guideKey = null;
+		private string guideKey { get; set; } = null;
 
 		public HelpTreePanel(ThemeConfig theme, string guideKey = null)
 			: base(theme)

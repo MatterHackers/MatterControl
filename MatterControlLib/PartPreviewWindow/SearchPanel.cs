@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ResultsRow_Click(object sender, MouseEventArgs e)
 		{
-			ChromeTab helpDocsTab = ApplicationController.Instance.ActivateHelpTab();
+			ChromeTab helpDocsTab = ApplicationController.Instance.ActivateHelpTab("Docs");
 
 			tabControl.ActiveTab = helpDocsTab;
 

@@ -85,7 +85,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler ActiveTabChanged;
 
-		private List<ITab> _allTabs = new List<ITab>();
+		protected List<ITab> _allTabs = new List<ITab>();
 
 		public IEnumerable<ITab> AllTabs => _allTabs;
 
@@ -162,7 +162,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal virtual void RemoveTab(ITab tab)
+		internal virtual void CloseTab(ITab tab)
 		{
 			_allTabs.Remove(tab);
 
@@ -204,6 +204,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 			}
 		}
+
+		// default to no movable tabs
+		public int FirstMovableTab { get; set; } = int.MaxValue;
 
 		public override GuiWidget AddChild(GuiWidget childToAdd, int indexInChildrenList = -1)
 		{
@@ -304,6 +307,59 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
+		public void MoveTabRight(ITab tab)
+		{
+			var index = _allTabs.IndexOf(tab);
+			var tabWidget = tab as GuiWidget;
+
+			if (index >= FirstMovableTab
+				&& index < _allTabs.Count - 1)
+			{
+				_allTabs.Remove(tab);
+				_allTabs.Insert(index + 1, tab);
+
+				TabBar.ActionArea.Children.Modify(list =>
+				{
+					var wi = list.IndexOf(tabWidget);
+					list.Remove(tabWidget);
+					list.Insert(wi + 1, tabWidget);
+				});
+
+				TabBar.ActionArea.PerformLayout();
+
+				ActiveTab = tab;
+			}
+
+			RefreshTabPointers();
+		}
+
+		public void MoveTabLeft(ITab tab)
+		{
+			var index = _allTabs.IndexOf(tab);
+			var tabWidget = tab as GuiWidget;
+
+			if (index >= FirstMovableTab + 1
+				&& index < _allTabs.Count)
+			{
+				_allTabs.Remove(tab);
+				_allTabs.Insert(index - 1, tab);
+
+				TabBar.ActionArea.Children.Modify(list =>
+				{
+					var wi = list.IndexOf(tabWidget);
+					list.Remove(tabWidget);
+					list.Insert(wi - 1, tabWidget);
+				});
+
+				TabBar.ActionArea.PerformLayout();
+
+				ActiveTab = tab;
+			}
+
+			RefreshTabPointers();
+		}
+
+
 		public void RefreshTabPointers()
 		{
 			ChromeTab lastTab = null;
@@ -321,9 +377,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		internal override void RemoveTab(ITab tab)
+		internal override void CloseTab(ITab tab)
 		{
-			base.RemoveTab(tab);
+			base.CloseTab(tab);
 
 			// Update pointers - collapse out removed tab
 			if (tab is ChromeTab removedTab)
@@ -447,7 +503,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							{
 								UiThread.RunOnIdle(() =>
 								{
-									this.parentTabControl.RemoveTab(this);
+									this.parentTabControl.CloseTab(this);
 									this.CloseClicked?.Invoke(this, null);
 								});
 							}
@@ -463,7 +519,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					this.CloseClicked?.Invoke(this, null);
 
 					// Must be called after CloseClicked otherwise listeners are cleared before event is invoked
-					this.parentTabControl?.RemoveTab(this);
+					this.parentTabControl?.CloseTab(this);
 				}
 			});
 		}
