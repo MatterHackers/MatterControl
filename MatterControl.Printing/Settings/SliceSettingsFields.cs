@@ -2555,7 +2555,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "The number of perimeters will be this number times the number of active extruders. Make this a smaller number to make the wipe more hollow or bigger to fill it.".Localize(),
 					DataEditType = DataEditTypes.INT,
 					ShowIfSet = "extruder_count>1",
-					DefaultValue = "20",
+					DefaultValue = "3",
 					Converter = new ValueConverter(),
 				},
 				new SliceSettingData()
