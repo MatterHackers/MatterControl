@@ -47,8 +47,9 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 		private double lastSeenFeedRate;
 		private Vector3 preSwitchPosition;
 		private readonly IGCodeLineReader gcodeLineReader;
-		private readonly GCodeMemoryFile gCodeMemoryFile;
 		private readonly QueuedCommandsStream queuedCommandsStream;
+
+		private GCodeMemoryFile gCodeMemoryFile => gcodeLineReader?.GCodeFile as GCodeMemoryFile;
 
 		public int RequestedTool { get; set; }
 
@@ -78,10 +79,6 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 			: base(printer, internalStream)
 		{
 			this.gcodeLineReader = gcodeLineReader;
-			if (gcodeLineReader != null)
-			{
-				this.gCodeMemoryFile = gcodeLineReader.GCodeFile as GCodeMemoryFile;
-			}
 
 			this.queuedCommandsStream = queuedCommandsStream;
 			extruderCount = printer.Settings.GetValue<int>(SettingsKey.extruder_count);
