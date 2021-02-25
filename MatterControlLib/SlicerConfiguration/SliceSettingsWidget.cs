@@ -321,6 +321,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 						RenderOutline = true,
 						ToolTipText = "Open Settings View Options".Localize()
 					};
+					button.RoundRadius = button.Height / 2;
 
 					bool menuWasOpenOnMoreDown = false;
 					button.MouseDown += (s, e) =>
@@ -338,8 +339,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							this.TabBar.RightAnchorItem.InvokeClick();
 						}
 					};
-
-					button.RoundRadius = button.Height / 2;
 
 					this.TabBar.AddChild(button);
 				}

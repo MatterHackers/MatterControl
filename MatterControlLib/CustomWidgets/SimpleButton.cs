@@ -197,6 +197,10 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class SimpleFlowButton : FlowLayoutWidget
 	{
+		public double RoundRadius { get; set; }
+
+		public bool RenderOutline { get; set; }
+
 		private bool mouseInBounds = false;
 
 		protected ThemeConfig theme;
@@ -237,6 +241,26 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			base.OnMouseUp(mouseEvent);
 			this.Invalidate();
+		}
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			if (BackgroundColor.Alpha0To255 > 0)
+			{
+				var bounds = this.LocalBounds;
+				var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
+				graphics2D.Render(rect, BackgroundColor);
+
+				if (RenderOutline)
+				{
+					var stroke = 1 * GuiWidget.DeviceScale;
+					var expand = stroke / 2;
+					rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+					var rectOutline = new Stroke(rect, stroke);
+
+					graphics2D.Render(rectOutline, BorderColor);
+				}
+			}
 		}
 
 		public override Color BackgroundColor

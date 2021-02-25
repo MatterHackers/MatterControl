@@ -1060,13 +1060,13 @@ namespace MatterHackers.MatterControl
 					},
 					taskActions: new RunningTaskOptions()
 					{
-						PauseAction = () => UiThread.RunOnIdle(() =>
+						PauseAction = (action) => UiThread.RunOnIdle(() =>
 						{
 							paused = true;
 							printerConnection.TimeHaveBeenHoldingTemperature.Stop();
 						}),
 						PauseToolTip = "Pause automatic heater shutdown".Localize(),
-						ResumeAction = () => UiThread.RunOnIdle(() =>
+						ResumeAction = (action) => UiThread.RunOnIdle(() =>
 						{
 							paused = false;
 							printerConnection.TimeHaveBeenHoldingTemperature.Start();
@@ -1973,7 +1973,7 @@ namespace MatterHackers.MatterControl
 				{
 					ExpansionSerializationKey = $"{nameof(MonitorPrintTask)}_expanded",
 					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, this.Theme),
-					PauseAction = () => UiThread.RunOnIdle(() =>
+					PauseAction = (action) => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.RequestPause();
 					}),
@@ -1982,16 +1982,19 @@ namespace MatterHackers.MatterControl
 						return printer.Connection.Paused;
 					},
 					PauseToolTip = "Pause Print".Localize(),
-					ResumeAction = () => UiThread.RunOnIdle(() =>
+					PauseText = "Pause".Localize(),
+					ResumeAction = (action) => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.Resume();
 					}),
 					ResumeToolTip = "Resume Print".Localize(),
+					ResumeText = "Resume".Localize(),
 					StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
 					{
 						printer.CancelPrint(abortCancel);
 					}),
 					StopToolTip = "Cancel Print".Localize(),
+					StopText = "Stop".Localize(),
 				});
 		}
 

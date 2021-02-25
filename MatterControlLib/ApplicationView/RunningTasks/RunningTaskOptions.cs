@@ -102,15 +102,21 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public Func<bool> IsPaused { get; set; }
 
-		public Action PauseAction { get; set; }
+		public Action<Action> PauseAction { get; set; }
 
-		public Action ResumeAction { get; set; }
+		public Action<Action> ResumeAction { get; set; }
 
 		public Action<Action> StopAction { get; set; }
 
+		public string StopText { get; set; }
+
 		public string StopToolTip { get; set; } = "Cancel".Localize();
 
+		public string ResumeText { get; set; }
+
 		public string ResumeToolTip { get; set; } = "Resume".Localize();
+
+		public string PauseText { get; set; }
 
 		public string PauseToolTip { get; set; } = "Pause".Localize();
 

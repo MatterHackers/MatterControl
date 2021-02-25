@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public string HelpText { get; set; }
 
+		public bool PrimaryAction { get; set; }
+
 		/// <summary>
 		/// First parameter is the actual button, second parameter is the row containing the button
 		/// </summary>
