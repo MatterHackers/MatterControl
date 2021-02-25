@@ -102,9 +102,9 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public Func<bool> IsPaused { get; set; }
 
-		public Action<Action> PauseAction { get; set; }
+		public Action PauseAction { get; set; }
 
-		public Action<Action> ResumeAction { get; set; }
+		public Action ResumeAction { get; set; }
 
 		public Action<Action> StopAction { get; set; }
 

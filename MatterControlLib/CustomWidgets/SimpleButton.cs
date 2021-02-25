@@ -245,21 +245,22 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
+			var bounds = this.LocalBounds;
+			var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
+
 			if (BackgroundColor.Alpha0To255 > 0)
 			{
-				var bounds = this.LocalBounds;
-				var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
 				graphics2D.Render(rect, BackgroundColor);
+			}
 
-				if (RenderOutline)
-				{
-					var stroke = 1 * GuiWidget.DeviceScale;
-					var expand = stroke / 2;
-					rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
-					var rectOutline = new Stroke(rect, stroke);
+			if (BorderColor.Alpha0To255 > 0 && RenderOutline)
+			{
+				var stroke = 1 * GuiWidget.DeviceScale;
+				var expand = stroke / 2;
+				rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+				var rectOutline = new Stroke(rect, stroke);
 
-					graphics2D.Render(rectOutline, BorderColor);
-				}
+				graphics2D.Render(rectOutline, BorderColor);
 			}
 		}
 

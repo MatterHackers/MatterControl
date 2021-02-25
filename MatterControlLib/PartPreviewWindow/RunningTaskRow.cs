@@ -108,7 +108,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.Options?.PauseAction,
 				taskDetails.Options?.PauseToolTip ?? "Pause".Localize(),
 				"",
-				theme);
+				theme,
+				0);
 
 			if (taskDetails.Options?.IsPaused != null)
 			{
@@ -133,7 +134,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 			pauseButton.Click += (s, e) =>
 			{
-				taskDetails.Options?.PauseAction(null);
+				taskDetails.Options?.PauseAction();
 				pauseButton.Visible = false;
 				resumeButton.Visible = true;
 			};
@@ -145,13 +146,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.Options?.ResumeAction,
 				taskDetails.Options?.ResumeToolTip ?? "Resume".Localize(),
 				"",
-				theme);
+				theme,
+				0);
 			// start with it hidden
 			resumeButton.Visible = false;
 
 			resumeButton.Click += (s, e) =>
 			{
-				taskDetails.Options?.ResumeAction(null);
+				taskDetails.Options?.ResumeAction();
 				pauseButton.Visible = true;
 				resumeButton.Visible = false;
 			};
@@ -162,7 +164,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.Options?.StopAction,
 				taskDetails.Options?.StopToolTip ?? "Cancel".Localize(),
 				"Stop Task Button",
-				theme);
+				theme,
+				5);
 
 			stopButton.Click += (s, e) =>
 			{
@@ -210,7 +213,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
 		}
 
-		private static GuiWidget CreateIconOrTextButton(string iconFilename, string buttonText, Action<Action> clickAction, string toolTip, string name, ThemeConfig theme)
+		private static GuiWidget CreateIconOrTextButton(string iconFilename,
+			string buttonText,
+			Object clickAction,
+			string toolTip,
+			string name,
+			ThemeConfig theme,
+			double marginX)
 		{
 			if (string.IsNullOrEmpty(buttonText))
 			{
@@ -228,13 +237,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				theme.DefaultFontSize = 8;
 				var pauseButton = new TextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12, theme.InvertIcons), theme)
 				{
-					Margin = new BorderDouble(5, 0),
+					Margin = new BorderDouble(marginX, 0),
 					Padding = new BorderDouble(7, 3),
 					VAnchor = VAnchor.Fit | VAnchor.Center,
 					HAnchor = HAnchor.Fit,
-					BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
+					// BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
 					HoverColor = theme.AccentMimimalOverlay,
-					BorderColor = theme.PrimaryAccentColor,
+					BorderColor = theme.TextColor,
 					RenderOutline = true,
 
 					// Margin = theme.ButtonSpacing,
