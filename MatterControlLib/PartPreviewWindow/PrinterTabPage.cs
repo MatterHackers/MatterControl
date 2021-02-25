@@ -761,12 +761,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var resliceButton = new TextButton("Re-Slice", theme)
 				{
-					HAnchor = HAnchor.Right,
-					VAnchor = VAnchor.Center,
 					Margin = new BorderDouble(0, 0, 7, 0),
+					Padding = new BorderDouble(7, 5),
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					HAnchor = HAnchor.Fit | HAnchor.Right,
+					// BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
+					HoverColor = theme.AccentMimimalOverlay,
+					BorderColor = theme.TextColor,
+					RenderOutline = true,
 					Name = "Re-Slice Button",
 					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
 				};
+				((TextButton)resliceButton).RoundRadius = resliceButton.Height / 2;
 				bool activelySlicing = false;
 				resliceButton.Click += (s, e) =>
 				{
