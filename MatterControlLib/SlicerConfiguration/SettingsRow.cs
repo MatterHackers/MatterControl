@@ -32,6 +32,7 @@ using System.Linq;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
+using MatterHackers.Agg.VertexSource;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
@@ -190,6 +191,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			set => base.BackgroundColor = value;
 		}
 
+		public int BorderRadius { get; set; } = 3;
+
 		public override void OnLoad(EventArgs args)
 		{
 			// The top level SystemWindow - due to single window implementation details, multiple SystemWindow parents may exist - proceed to the topmost one
@@ -275,6 +278,19 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		protected virtual void ExtendPopover(ClickablePopover popover)
 		{
+		}
+
+		public override void OnDrawBackground(Graphics2D graphics2D)
+		{
+			if (this.BorderRadius > 0)
+			{
+				var rect = new RoundedRect(this.LocalBounds, this.BorderRadius);
+				graphics2D.Render(rect, this.BackgroundColor);
+			}
+			else
+			{
+				base.OnDrawBackground(graphics2D);
+			}
 		}
 
 		protected void ShowPopover(SettingsRow settingsRow)

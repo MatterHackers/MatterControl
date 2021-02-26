@@ -328,6 +328,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
+				RenderOutline = true,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -343,6 +344,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
+				RenderOutline = true,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -523,19 +525,34 @@ namespace MatterHackers.MatterControl
 		{
 			PopupMenuButton menuButton = null;
 
-			var innerButton = new IconButton(buttonParams.Icon, this)
+			GuiWidget innerButton;
+			if (buttonParams.ButtonText == null)
 			{
-				Name = buttonParams.ButtonName + " Inner SplitButton",
-				ToolTipText = buttonParams.DefaultActionTooltip,
-			};
+				innerButton = new IconButton(buttonParams.Icon, this)
+				{
+					Name = buttonParams.ButtonName + " Inner SplitButton",
+					Enabled = buttonParams.ButtonEnabled,
+					ToolTipText = buttonParams.ButtonTooltip,
+				};
+
+				// Remove right Padding for drop style
+				innerButton.Padding = innerButton.Padding.Clone(right: 0);
+			}
+			else
+			{
+				innerButton = new TextButton(buttonParams.ButtonText, this)
+				{
+					Name = buttonParams.ButtonName,
+					Enabled = buttonParams.ButtonEnabled,
+					ToolTipText = buttonParams.ButtonTooltip,
+				};
+			}
 
 			innerButton.Click += (s, e) =>
 			{
-				buttonParams.DefaultAction.Invoke(menuButton);
+				buttonParams.ButtonAction.Invoke(menuButton);
 			};
 
-			// Remove right Padding for drop style
-			innerButton.Padding = innerButton.Padding.Clone(right: 0);
 
 			if (operationGroup == null)
 			{
@@ -555,7 +572,15 @@ namespace MatterHackers.MatterControl
 			};
 
 			menuButton.Name = buttonParams.ButtonName + " Menu SplitButton";
-			menuButton.BackgroundColor = this.ToolbarButtonBackground;
+			if (buttonParams.ButtonText == null)
+			{
+				menuButton.BackgroundColor = this.ToolbarButtonBackground;
+			}
+			else
+			{
+				menuButton.BackgroundColor = this.MinimalShade;
+			}
+
 			menuButton.HoverColor = this.ToolbarButtonHover;
 			menuButton.MouseDownColor = this.ToolbarButtonDown;
 			menuButton.DrawArrow = true;
@@ -723,14 +748,18 @@ namespace MatterHackers.MatterControl
 	{
 		public ImageBuffer Icon { get; set; }
 
-		public Action<GuiWidget> DefaultAction { get; set; }
+		public bool ButtonEnabled { get; set; } = true;
 
-		public string DefaultActionTooltip { get; set; }
+		public string ButtonName { get; set; }
+
+		public Action<GuiWidget> ButtonAction { get; set; }
+
+		public string ButtonTooltip { get; set; }
 
 		public Action MenuAction { get; set; }
 
 		public Action<PopupMenu> ExtendPopupMenu { get; set; }
 
-		public string ButtonName { get; set; }
+		public string ButtonText { get; set; }
 	}
 }

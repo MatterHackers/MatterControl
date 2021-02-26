@@ -146,7 +146,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				bounds -= BackgroundInset;
 				var stroke = 1 * GuiWidget.DeviceScale;
 				var expand = stroke / 2;
-				var rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+				var rect = new RoundedRect(bounds.Left + expand,
+					bounds.Bottom + expand,
+					bounds.Right - expand,
+					bounds.Top - expand,
+					RoundRadius * GuiWidget.DeviceScale);
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);
@@ -157,7 +161,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		{
 			var bounds = this.LocalBounds;
 			bounds -= BackgroundInset;
-			var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
+			var rect = new RoundedRect(bounds.Left,
+				bounds.Bottom,
+				bounds.Right,
+				bounds.Top,
+				RoundRadius * GuiWidget.DeviceScale);
 
 			if (BackgroundColor.Alpha0To255 > 0)
 			{
@@ -168,7 +176,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var stroke = 1 * GuiWidget.DeviceScale;
 				var expand = stroke / 2;
-				rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+				rect = new RoundedRect(bounds.Left + expand,
+					bounds.Bottom + expand, 
+					bounds.Right - expand,
+					bounds.Top - expand,
+					RoundRadius * GuiWidget.DeviceScale);
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, BorderColor);
@@ -191,6 +203,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public BorderDouble BackgroundInset { get; set; }
 
+		/// <summary>
+		/// This is in device units and will be scaled when drawn to the screen (do not scale the input by DeviceScale)
+		/// </summary>
 		public double RoundRadius { get; set; }
 
 		public bool RenderOutline { get; set; }
@@ -198,6 +213,9 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 	public class SimpleFlowButton : FlowLayoutWidget
 	{
+		/// <summary>
+		/// This is in device units and will be scaled when drawn to the screen (do not scale the input by DeviceScale)
+		/// </summary>
 		public double RoundRadius { get; set; }
 
 		public bool RenderOutline { get; set; }
@@ -247,7 +265,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public override void OnDrawBackground(Graphics2D graphics2D)
 		{
 			var bounds = this.LocalBounds;
-			var rect = new RoundedRect(bounds.Left, bounds.Bottom, bounds.Right, bounds.Top, RoundRadius);
+			var rect = new RoundedRect(bounds.Left,
+				bounds.Bottom,
+				bounds.Right,
+				bounds.Top,
+				RoundRadius * GuiWidget.DeviceScale);
 
 			if (BackgroundColor.Alpha0To255 > 0)
 			{
@@ -258,7 +280,11 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				var stroke = 1 * GuiWidget.DeviceScale;
 				var expand = stroke / 2;
-				rect = new RoundedRect(bounds.Left + expand, bounds.Bottom + expand, bounds.Right - expand, bounds.Top - expand, RoundRadius);
+				rect = new RoundedRect(bounds.Left + expand,
+					bounds.Bottom + expand,
+					bounds.Right - expand,
+					bounds.Top - expand,
+					RoundRadius * GuiWidget.DeviceScale);
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, BorderColor);

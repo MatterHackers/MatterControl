@@ -155,7 +155,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ContentPanel.BorderColor = Color.Transparent;
 		}
 
-		public int BorderRadius { get; set; } = 0;
+		public int BorderRadius { get; set; }
 
 		public bool ExpandableWhenDisabled { get; set; }
 

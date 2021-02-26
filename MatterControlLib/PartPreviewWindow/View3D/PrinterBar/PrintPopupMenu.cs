@@ -204,20 +204,35 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					exportPlugin.Initialize(printer);
 
-					var exportGCodeButton = menuTheme.CreateDialogButton("Export".Localize());
-
-					exportGCodeButton.Name = "Export Gcode Button";
-					exportGCodeButton.Enabled = exportPlugin.Enabled;
-					exportGCodeButton.ToolTipText = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason;
-
-					exportGCodeButton.Click += (s, e) =>
+					var exportGCodeButton = menuTheme.CreateSplitButton(new SplitButtonParams()
 					{
-						this.CloseMenu();
-						ExportPrintItemPage.DoExport(
-							new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
-							printer,
-							exportPlugin);
-					};
+						ButtonText = "Export".Localize(),
+						ButtonTooltip = exportPlugin.Enabled ? exportType : exportPlugin.DisabledReason,
+						ExtendPopupMenu = (popupMenu) =>
+						{
+							var operationMenu = popupMenu.CreateMenuItem("Options...");
+							operationMenu.Click += (s, e) =>
+							{
+								ApplicationController.Instance.ExportLibraryItems(
+										new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
+										centerOnBed: false,
+										printer: printer);
+								this.CloseMenu();
+							};
+						},
+						ButtonEnabled = exportPlugin.Enabled,
+						ButtonName = "Export Gcode Button",
+						ButtonAction = (widget) =>
+						{
+							this.CloseMenu();
+							ExportPrintItemPage.DoExport(
+								new[] { new InMemoryLibraryItem(printer.Bed.Scene) },
+								printer,
+								exportPlugin);
+						},
+
+					});
+					exportGCodeButton.ToolTipText = "More Export Options".Localize();
 
 					setupRow.AddChild(exportGCodeButton);
 				}

@@ -53,8 +53,16 @@ namespace MatterHackers.MatterControl
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed, PrinterConfig printer)
 		{
 			this.WindowTitle = "Export File".Localize();
-			this.HeaderText = "Export selection to".Localize() + ":";
-			this.Name = "Export Item Window";
+			if (libraryItems.First().Name == printer.Bed.Scene.Name)
+			{
+				this.HeaderText = "Export bed to".Localize() + ":";
+				this.Name = "Export Scene Window";
+			}
+			else
+			{
+				this.HeaderText = "Export selection to".Localize() + ":";
+				this.Name = "Export Item Window";
+			}
 
 			var commonMargin = new BorderDouble(4, 2);
 
