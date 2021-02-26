@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DrawOpenGLContent { get; set; } = true;
 
-		public List<IObject3DControl> Object3DControls { get; set; } = new List<IObject3DControl>();
+		public SimpleSafeList<IObject3DControl> Object3DControls { get; set; } = new SimpleSafeList<IObject3DControl>();
 
 		private readonly LightingData lighting = new LightingData();
 		private GuiWidget renderSource;
@@ -1090,37 +1090,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void DrawObject3DControlVolumes(DrawEventArgs e)
 		{
-			var currentControls = this.Object3DControls.ToArray();
-
-			foreach (var item in currentControls)
+			this.Object3DControls.Modify((currentControls) =>
 			{
-				item.Visible = !SuppressObject3DControls;
-			}
-
-			if (SuppressObject3DControls)
-			{
-				return;
-			}
-
-			// draw on top of anything that is already drawn
-			GL.Disable(EnableCap.DepthTest);
-
-			foreach (var object3DControl in currentControls)
-			{
-				if (object3DControl.DrawOnTop)
+				foreach (var item in currentControls)
 				{
-					object3DControl.Draw(new DrawGlContentEventArgs(false, e));
+					item.Visible = !SuppressObject3DControls;
 				}
-			}
 
-			// Restore DepthTest
-			GL.Enable(EnableCap.DepthTest);
+				if (SuppressObject3DControls)
+				{
+					return;
+				}
 
-			// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
-			foreach (var object3DVolume in currentControls)
-			{
-				object3DVolume.Draw(new DrawGlContentEventArgs(true, e));
-			}
+				// draw on top of anything that is already drawn
+				GL.Disable(EnableCap.DepthTest);
+
+				foreach (var object3DControl in currentControls)
+				{
+					if (object3DControl.DrawOnTop)
+					{
+						object3DControl.Draw(new DrawGlContentEventArgs(false, e));
+					}
+				}
+
+				// Restore DepthTest
+				GL.Enable(EnableCap.DepthTest);
+
+				// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
+				foreach (var object3DVolume in currentControls)
+				{
+					object3DVolume.Draw(new DrawGlContentEventArgs(true, e));
+				}
+			});
 		}
 
 		public enum ModelRenderStyle

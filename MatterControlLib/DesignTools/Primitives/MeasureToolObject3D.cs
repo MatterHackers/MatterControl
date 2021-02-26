@@ -134,7 +134,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				};
 			}
 
-			object3DControlsLayer.Object3DControls.AddRange(editorControls);
+			object3DControlsLayer.Object3DControls.Modify((list) =>
+			{
+				list.AddRange(editorControls);
+			});
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
