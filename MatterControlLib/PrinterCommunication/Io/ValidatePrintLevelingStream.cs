@@ -161,7 +161,8 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 				if (haveSeenG28
 					&& haveSeenM190
 					&& !validationRunning
-					&& !validationHasBeenRun)
+					&& !validationHasBeenRun
+					&& printer.Connection.Printing)
 				{
 					SetupForValidation();
 				}
