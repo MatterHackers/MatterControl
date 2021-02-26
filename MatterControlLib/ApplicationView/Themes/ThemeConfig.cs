@@ -83,7 +83,29 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool InvertIcons => this?.IsDarkTheme ?? false;
 
-		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
+		public void MakeRoundedButton(GuiWidget button, Color? boarderColor = null)
+		{
+			if (button is TextButton textButton)
+			{
+				textButton.VAnchor |= VAnchor.Fit;
+				textButton.HAnchor |= HAnchor.Fit;
+				textButton.HoverColor = this.AccentMimimalOverlay;
+				textButton.Margin = new BorderDouble(0, 0, 7, 0);
+				textButton.Padding = new BorderDouble(7, 5);
+				if (boarderColor != null)
+				{
+					textButton.BorderColor = boarderColor.Value;
+				}
+				else
+				{
+					textButton.BorderColor = this.TextColor;
+				}
+				textButton.RenderOutline = true;
+				textButton.RoundRadius = textButton.Height / 2;
+			}
+		}
+
+		public void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
 			guiWidget.BackgroundColor = new Color(this.AccentMimimalOverlay, 50);
 
@@ -305,7 +327,6 @@ namespace MatterHackers.MatterControl
 			return new JogControls.MoveButton(label, printer, axis, movementFeedRate, this)
 			{
 				BackgroundColor = this.MinimalShade,
-				Border = 1,
 				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
@@ -321,7 +342,6 @@ namespace MatterHackers.MatterControl
 			return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, this)
 			{
 				BackgroundColor = this.MinimalShade,
-				Border = 1,
 				BorderColor = this.BorderColor40,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,

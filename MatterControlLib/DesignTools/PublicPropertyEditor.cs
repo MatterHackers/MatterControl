@@ -177,6 +177,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					{
 						Margin = 5,
 						ToolTipText = editorButtonData.HelpText,
+						BackgroundColor = theme.MinimalShade,
 					};
 					if (editorButtonData.PrimaryAction)
 					{

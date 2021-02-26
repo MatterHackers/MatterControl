@@ -519,6 +519,8 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Padding = theme.TextButtonPadding;
 			this.TabStop = true;
 
+			this.RoundRadius = 3;
+
 			var textSize = (pointSize != -1) ? pointSize : theme.DefaultFontSize;
 
 			this.AddChild(textWidget = new TextWidget(text, pointSize: textSize, textColor: theme.TextColor)

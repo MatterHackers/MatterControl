@@ -761,18 +761,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				var resliceButton = new TextButton("Re-Slice", theme)
 				{
-					Margin = new BorderDouble(0, 0, 7, 0),
-					Padding = new BorderDouble(7, 5),
-					VAnchor = VAnchor.Fit | VAnchor.Center,
-					HAnchor = HAnchor.Fit | HAnchor.Right,
-					// BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
-					HoverColor = theme.AccentMimimalOverlay,
-					BorderColor = theme.TextColor,
-					RenderOutline = true,
+					VAnchor = VAnchor.Center,
+					HAnchor = HAnchor.Right,
 					Name = "Re-Slice Button",
 					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
 				};
-				((TextButton)resliceButton).RoundRadius = resliceButton.Height / 2;
+				theme.MakeRoundedButton(resliceButton);
 				bool activelySlicing = false;
 				resliceButton.Click += (s, e) =>
 				{
@@ -846,6 +840,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Margin = new BorderDouble(5),
 						Name = "Switch Button"
 					};
+					theme.MakeRoundedButton(switchButton);
+
 					switchButtonRow.AddChild(switchButton);
 					switchButton.Click += async (s, e) =>
 					{
@@ -867,6 +863,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Margin = new BorderDouble(5),
 						Name = "Cancel Re-Slice Button"
 					};
+					theme.MakeRoundedButton(cancelButton);
+
 					switchButtonRow.AddChild(cancelButton);
 					cancelButton.Click += async (s, e) =>
 					{
