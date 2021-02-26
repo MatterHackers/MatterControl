@@ -81,7 +81,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Position = widget.Position + new VectorMath.Vector2(widget.Margin.Width, widget.Margin.Height),
 				Size = widget.Size,
 				BackgroundColor = theme.AccentMimimalOverlay,
-				Border = 1,
+				BackgroundRadius = 3,
+				BackgroundOutlineWidth = 1,
 				BorderColor = theme.PrimaryAccentColor
 			};
 			parent.AddChildDirect(box);

@@ -149,7 +149,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					bounds.Bottom + expand,
 					bounds.Right - expand,
 					bounds.Top - expand,
-					RoundRadius * GuiWidget.DeviceScale);
+					BackgroundRadius * GuiWidget.DeviceScale);
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);

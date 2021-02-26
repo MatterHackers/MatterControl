@@ -327,7 +327,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
-				RenderOutline = true,
+				BackgroundOutlineWidth = 1,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -343,7 +343,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
-				RenderOutline = true,
+				BackgroundOutlineWidth = 1,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,

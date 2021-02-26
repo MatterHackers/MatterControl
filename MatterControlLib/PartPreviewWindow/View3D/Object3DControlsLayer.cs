@@ -74,7 +74,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public bool DrawOpenGLContent { get; set; } = true;
 
-		public SimpleSafeList<IObject3DControl> Object3DControls { get; set; } = new SimpleSafeList<IObject3DControl>();
+		public SafeList<IObject3DControl> Object3DControls { get; set; } = new SafeList<IObject3DControl>();
 
 		private readonly LightingData lighting = new LightingData();
 		private GuiWidget renderSource;

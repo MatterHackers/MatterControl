@@ -232,6 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						},
 
 					});
+					exportGCodeButton.BackgroundRadius = 3;
 					exportGCodeButton.ToolTipText = "More Export Options".Localize();
 
 					setupRow.AddChild(exportGCodeButton);
