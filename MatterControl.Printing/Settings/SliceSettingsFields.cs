@@ -1846,7 +1846,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					PresentationName = "Distance From Object".Localize(),
 					HelpText = "The distance from the model at which the first skirt loop is drawn.".Localize(),
 					DataEditType = DataEditTypes.POSITIVE_DOUBLE,
-					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.create_skirt,
 					Units = "mm".Localize(),
 					DefaultValue = "6",

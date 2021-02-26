@@ -83,7 +83,29 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public bool InvertIcons => this?.IsDarkTheme ?? false;
 
-		internal void ApplyPrimaryActionStyle(GuiWidget guiWidget)
+		public void MakeRoundedButton(GuiWidget button, Color? boarderColor = null)
+		{
+			if (button is TextButton textButton)
+			{
+				textButton.VAnchor |= VAnchor.Fit;
+				textButton.HAnchor |= HAnchor.Fit;
+				textButton.HoverColor = this.AccentMimimalOverlay;
+				textButton.Margin = new BorderDouble(0, 0, 7, 0);
+				textButton.Padding = new BorderDouble(7, 5);
+				if (boarderColor != null)
+				{
+					textButton.BorderColor = boarderColor.Value;
+				}
+				else
+				{
+					textButton.BorderColor = this.TextColor;
+				}
+				textButton.RenderOutline = true;
+				textButton.RoundRadius = textButton.Height / 2;
+			}
+		}
+
+		public void ApplyPrimaryActionStyle(GuiWidget guiWidget)
 		{
 			guiWidget.BackgroundColor = new Color(this.AccentMimimalOverlay, 50);
 
@@ -305,8 +327,8 @@ namespace MatterHackers.MatterControl
 			return new JogControls.MoveButton(label, printer, axis, movementFeedRate, this)
 			{
 				BackgroundColor = this.MinimalShade,
-				Border = 1,
 				BorderColor = this.BorderColor40,
+				RenderOutline = true,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -321,8 +343,8 @@ namespace MatterHackers.MatterControl
 			return new JogControls.ExtrudeButton(printer, label, movementFeedRate, extruderNumber, this)
 			{
 				BackgroundColor = this.MinimalShade,
-				Border = 1,
 				BorderColor = this.BorderColor40,
+				RenderOutline = true,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -503,19 +525,34 @@ namespace MatterHackers.MatterControl
 		{
 			PopupMenuButton menuButton = null;
 
-			var innerButton = new IconButton(buttonParams.Icon, this)
+			GuiWidget innerButton;
+			if (buttonParams.ButtonText == null)
 			{
-				Name = buttonParams.ButtonName + " Inner SplitButton",
-				ToolTipText = buttonParams.DefaultActionTooltip,
-			};
+				innerButton = new IconButton(buttonParams.Icon, this)
+				{
+					Name = buttonParams.ButtonName + " Inner SplitButton",
+					Enabled = buttonParams.ButtonEnabled,
+					ToolTipText = buttonParams.ButtonTooltip,
+				};
+
+				// Remove right Padding for drop style
+				innerButton.Padding = innerButton.Padding.Clone(right: 0);
+			}
+			else
+			{
+				innerButton = new TextButton(buttonParams.ButtonText, this)
+				{
+					Name = buttonParams.ButtonName,
+					Enabled = buttonParams.ButtonEnabled,
+					ToolTipText = buttonParams.ButtonTooltip,
+				};
+			}
 
 			innerButton.Click += (s, e) =>
 			{
-				buttonParams.DefaultAction.Invoke(menuButton);
+				buttonParams.ButtonAction.Invoke(menuButton);
 			};
 
-			// Remove right Padding for drop style
-			innerButton.Padding = innerButton.Padding.Clone(right: 0);
 
 			if (operationGroup == null)
 			{
@@ -535,7 +572,15 @@ namespace MatterHackers.MatterControl
 			};
 
 			menuButton.Name = buttonParams.ButtonName + " Menu SplitButton";
-			menuButton.BackgroundColor = this.ToolbarButtonBackground;
+			if (buttonParams.ButtonText == null)
+			{
+				menuButton.BackgroundColor = this.ToolbarButtonBackground;
+			}
+			else
+			{
+				menuButton.BackgroundColor = this.MinimalShade;
+			}
+
 			menuButton.HoverColor = this.ToolbarButtonHover;
 			menuButton.MouseDownColor = this.ToolbarButtonDown;
 			menuButton.DrawArrow = true;
@@ -703,14 +748,18 @@ namespace MatterHackers.MatterControl
 	{
 		public ImageBuffer Icon { get; set; }
 
-		public Action<GuiWidget> DefaultAction { get; set; }
+		public bool ButtonEnabled { get; set; } = true;
 
-		public string DefaultActionTooltip { get; set; }
+		public string ButtonName { get; set; }
+
+		public Action<GuiWidget> ButtonAction { get; set; }
+
+		public string ButtonTooltip { get; set; }
 
 		public Action MenuAction { get; set; }
 
 		public Action<PopupMenu> ExtendPopupMenu { get; set; }
 
-		public string ButtonName { get; set; }
+		public string ButtonText { get; set; }
 	}
 }

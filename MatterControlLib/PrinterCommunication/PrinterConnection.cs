@@ -2254,6 +2254,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				printingCancellation.Cancel();
 				Thread.Sleep(15);
 
+				CancelInProgressStreamProcessors();
 				// get rid of all the gcode we have left to print
 				ClearQueuedGCode();
 
@@ -3067,7 +3068,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 			queuedCommandStream?.Reset();
 		}
 
-		public void MacroCancel()
+		public void CancelInProgressStreamProcessors()
 		{
 			maxLengthStream?.Cancel();
 			waitForTempStream?.Cancel();

@@ -311,16 +311,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					var button = new TextButton("More".Localize(), theme, 8)
 					{
-						Margin = new BorderDouble(5, 0),
-						Padding = new BorderDouble(7, 3),
-						VAnchor = VAnchor.Fit | VAnchor.Center,
-						HAnchor = HAnchor.Fit,
+						VAnchor = VAnchor.Center,
 						BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
-						HoverColor = theme.AccentMimimalOverlay,
-						BorderColor = theme.PrimaryAccentColor,
-						RenderOutline = true,
 						ToolTipText = "Open Settings View Options".Localize()
 					};
+					theme.MakeRoundedButton(button, theme.PrimaryAccentColor);
 
 					bool menuWasOpenOnMoreDown = false;
 					button.MouseDown += (s, e) =>
@@ -338,8 +333,6 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 							this.TabBar.RightAnchorItem.InvokeClick();
 						}
 					};
-
-					button.RoundRadius = button.Height / 2;
 
 					this.TabBar.AddChild(button);
 				}

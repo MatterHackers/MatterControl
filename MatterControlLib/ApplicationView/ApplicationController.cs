@@ -1982,16 +1982,19 @@ namespace MatterHackers.MatterControl
 						return printer.Connection.Paused;
 					},
 					PauseToolTip = "Pause Print".Localize(),
+					PauseText = "Pause".Localize(),
 					ResumeAction = () => UiThread.RunOnIdle(() =>
 					{
 						printer.Connection.Resume();
 					}),
 					ResumeToolTip = "Resume Print".Localize(),
+					ResumeText = "Resume".Localize(),
 					StopAction = (abortCancel) => UiThread.RunOnIdle(() =>
 					{
 						printer.CancelPrint(abortCancel);
 					}),
 					StopToolTip = "Cancel Print".Localize(),
+					StopText = "Stop".Localize(),
 				});
 		}
 

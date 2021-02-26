@@ -101,15 +101,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(expandButton);
 
-			IconButton resumeButton = null;
+			GuiWidget resumeButton = null;
 
-			var pauseButton = new IconButton(StaticData.Instance.LoadIcon("fa-pause_12.png", 12, 12, theme.InvertIcons), theme)
-			{
-				Margin = theme.ButtonSpacing,
-				Enabled = taskDetails.Options?.PauseAction != null,
-				ToolTipText = taskDetails.Options?.PauseToolTip ?? "Pause".Localize()
-			};
-			if(taskDetails.Options?.IsPaused != null)
+			GuiWidget pauseButton = CreateIconOrTextButton("fa-pause_12.png",
+				taskDetails.Options?.PauseText,
+				taskDetails.Options?.PauseAction,
+				taskDetails.Options?.PauseToolTip ?? "Pause".Localize(),
+				"",
+				theme,
+				0);
+
+			if (taskDetails.Options?.IsPaused != null)
 			{
 				RunningInterval runningInterval = null;
 				runningInterval = UiThread.SetInterval(() =>
@@ -129,7 +131,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						UiThread.ClearInterval(runningInterval);
 					}
 				}, .2);
-
 			}
 			pauseButton.Click += (s, e) =>
 			{
@@ -139,13 +140,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(pauseButton);
 
-			resumeButton = new IconButton(StaticData.Instance.LoadIcon("fa-play_12.png", 12, 12, theme.InvertIcons), theme)
-			{
-				Visible = false,
-				Margin = theme.ButtonSpacing,
-				ToolTipText = taskDetails.Options?.ResumeToolTip ?? "Resume".Localize(),
-				Name = "Resume Task Button"
-			};
+
+			resumeButton = CreateIconOrTextButton("fa-play_12.png",
+				taskDetails.Options?.ResumeText,
+				taskDetails.Options?.ResumeAction,
+				taskDetails.Options?.ResumeToolTip ?? "Resume".Localize(),
+				"",
+				theme,
+				0);
+			// start with it hidden
+			resumeButton.Visible = false;
+
 			resumeButton.Click += (s, e) =>
 			{
 				taskDetails.Options?.ResumeAction();
@@ -154,12 +159,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			topRow.AddChild(resumeButton);
 
-			var stopButton = new IconButton(StaticData.Instance.LoadIcon("fa-stop_12.png", 12, 12, theme.InvertIcons), theme)
-			{
-				Margin = theme.ButtonSpacing,
-				Name = "Stop Task Button",
-				ToolTipText = taskDetails.Options?.StopToolTip ?? "Cancel".Localize()
-			};
+			var stopButton = CreateIconOrTextButton("fa-stop_12.png",
+				taskDetails.Options?.StopText,
+				taskDetails.Options?.StopAction,
+				taskDetails.Options?.StopToolTip ?? "Cancel".Localize(),
+				"Stop Task Button",
+				theme,
+				5);
+
 			stopButton.Click += (s, e) =>
 			{
 				var stopAction = taskDetails.Options?.StopAction;
@@ -204,6 +211,51 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			SetExpansionMode(theme, detailsPanel, taskDetails.IsExpanded);
 
 			taskDetails.ProgressChanged += TaskDetails_ProgressChanged;
+		}
+
+		private static GuiWidget CreateIconOrTextButton(string iconFilename,
+			string buttonText,
+			Object clickAction,
+			string toolTip,
+			string name,
+			ThemeConfig theme,
+			double marginX)
+		{
+			if (string.IsNullOrEmpty(buttonText))
+			{
+				return new IconButton(StaticData.Instance.LoadIcon(iconFilename, 12, 12, theme.InvertIcons), theme)
+				{
+					Margin = theme.ButtonSpacing,
+					Enabled = clickAction != null,
+					ToolTipText = toolTip,
+					Name = name,
+				};
+			}
+			else
+			{
+				var oldSize = theme.DefaultFontSize;
+				theme.DefaultFontSize = 8;
+				var pauseButton = new TextIconButton(buttonText, StaticData.Instance.LoadIcon(iconFilename, 12, 12, theme.InvertIcons), theme)
+				{
+					Margin = new BorderDouble(marginX, 0),
+					Padding = new BorderDouble(7, 3),
+					VAnchor = VAnchor.Fit | VAnchor.Center,
+					HAnchor = HAnchor.Fit,
+					// BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
+					HoverColor = theme.AccentMimimalOverlay,
+					BorderColor = theme.TextColor,
+					RenderOutline = true,
+
+					// Margin = theme.ButtonSpacing,
+					Enabled = clickAction != null,
+					ToolTipText = toolTip,
+					Name = name,
+				};
+				((TextIconButton)pauseButton).RoundRadius = pauseButton.Height / 2;
+				theme.DefaultFontSize = oldSize;
+
+				return pauseButton;
+			}
 		}
 
 		public Color ProgressBackgroundColor

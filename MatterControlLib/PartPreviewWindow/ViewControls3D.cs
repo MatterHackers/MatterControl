@@ -295,11 +295,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							new SplitButtonParams()
 							{
 								Icon = defaultOperation.Icon(theme.InvertIcons),
-								DefaultAction = (menuButton) =>
+								ButtonAction = (menuButton) =>
 								{
 									defaultOperation.Action.Invoke(sceneContext);
 								},
-								DefaultActionTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
+								ButtonTooltip = defaultOperation.HelpText ?? defaultOperation.Title,
 								ButtonName = defaultOperation.Title,
 								ExtendPopupMenu = (PopupMenu popupMenu) =>
 								{
@@ -816,7 +816,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ButtonName = "Save",
 				Icon = StaticData.Instance.LoadIcon("save_grey_16x.png", 16, 16, theme.InvertIcons),
-				DefaultAction = (menuButton) =>
+				ButtonAction = (menuButton) =>
 				{
 					ApplicationController.Instance.Tasks.Execute("Saving".Localize(), sceneContext.Printer, async (progress, cancellationToken) =>
 					{
@@ -834,7 +834,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						menuButton.Enabled = true;
 					}).ConfigureAwait(false);
 				},
-				DefaultActionTooltip = "Save".Localize(),
+				ButtonTooltip = "Save".Localize(),
 				ExtendPopupMenu = (PopupMenu popupMenu) =>
 				{
 					var saveAs = popupMenu.CreateMenuItem("Save As".Localize());

@@ -102,23 +102,14 @@ namespace MatterHackers.MatterControl
 
 		public void DrawTrackAndThumb(Graphics2D graphics2D)
 		{
-			RoundedRect track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
-			Vector2 ValuePrintPosition;
-			if (sliderAttachedTo.Orientation == Orientation.Horizontal)
-			{
-				ValuePrintPosition = new Vector2(sliderAttachedTo.TotalWidthInPixels / 2, -TrackHeight - 12);
-			}
-			else
-			{
-				ValuePrintPosition = new Vector2(0, -TrackHeight - 12);
-			}
+			var track = new RoundedRect(GetTrackBounds(), this.TrackRadius);
 
 			// draw the track
 			graphics2D.Render(track, TrackColor);
 
 			// now do the thumb
 			RectangleDouble thumbBounds = sliderAttachedTo.GetThumbHitBounds();
-			RoundedRect thumbOutside = new RoundedRect(thumbBounds, 0);
+			var thumbOutside = new RoundedRect(thumbBounds, 2 * GuiWidget.DeviceScale);
 			graphics2D.Render(thumbOutside, this.ThumbColor); // ColorF.GetTweenColor(ThumbColor.ToColorF(), ColorF.Black.ToColorF(), .2).ToColor());
 		}
 	}

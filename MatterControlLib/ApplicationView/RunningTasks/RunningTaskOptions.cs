@@ -108,9 +108,15 @@ namespace MatterHackers.MatterControl
 
 		public Action<Action> StopAction { get; set; }
 
+		public string StopText { get; set; }
+
 		public string StopToolTip { get; set; } = "Cancel".Localize();
 
+		public string ResumeText { get; set; }
+
 		public string ResumeToolTip { get; set; } = "Resume".Localize();
+
+		public string PauseText { get; set; }
 
 		public string PauseToolTip { get; set; } = "Pause".Localize();
 
