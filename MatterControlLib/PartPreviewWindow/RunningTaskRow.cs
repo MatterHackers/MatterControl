@@ -244,14 +244,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					// BackgroundColor = new Color(theme.AccentMimimalOverlay, 50),
 					HoverColor = theme.AccentMimimalOverlay,
 					BorderColor = theme.TextColor,
-					RenderOutline = true,
+					BackgroundOutlineWidth = 1,
 
 					// Margin = theme.ButtonSpacing,
 					Enabled = clickAction != null,
 					ToolTipText = toolTip,
 					Name = name,
 				};
-				((TextIconButton)pauseButton).RoundRadius = pauseButton.Height / 2;
+				((TextIconButton)pauseButton).BackgroundRadius = pauseButton.Height / 2;
 				theme.DefaultFontSize = oldSize;
 
 				return pauseButton;

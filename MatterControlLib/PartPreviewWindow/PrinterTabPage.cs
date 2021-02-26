@@ -763,6 +763,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					VAnchor = VAnchor.Center,
 					HAnchor = HAnchor.Right,
+					Margin = new BorderDouble(0, 0, 7, 0),
 					Name = "Re-Slice Button",
 					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
 				};
