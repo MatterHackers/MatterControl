@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		public override bool CanFlatten => true;
 
 		[JsonIgnore]
-		public SafeList<IObject3D> UntransformedChildren
+		public AscendableSafeList<IObject3D> UntransformedChildren
 		{
 			get
 			{

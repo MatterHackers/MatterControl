@@ -681,6 +681,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
+				BackgroundRadius = 3,
 				ToolTipText = "Raise extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
 			});
 
@@ -719,6 +720,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
+				BackgroundRadius = 3,
 				ToolTipText = "Lower extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
 			});
 			downButton.Click += (s, e) =>
@@ -763,6 +765,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					VAnchor = VAnchor.Center,
 					HAnchor = HAnchor.Right,
+					Margin = new BorderDouble(0, 0, 7, 0),
 					Name = "Re-Slice Button",
 					ToolTipText = "Apply changes to this print".Localize() + "\n\n*" + "Plating and settings changes can be applied".Localize() + "*"
 				};
@@ -860,7 +863,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					var cancelButton = new TextButton("Cancel", theme)
 					{
 						VAnchor = VAnchor.Center,
-						Margin = new BorderDouble(5),
+						Margin = new BorderDouble(0, 5),
 						Name = "Cancel Re-Slice Button"
 					};
 					theme.MakeRoundedButton(cancelButton);

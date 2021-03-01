@@ -90,7 +90,6 @@ namespace MatterHackers.MatterControl
 				textButton.VAnchor |= VAnchor.Fit;
 				textButton.HAnchor |= HAnchor.Fit;
 				textButton.HoverColor = this.AccentMimimalOverlay;
-				textButton.Margin = new BorderDouble(0, 0, 7, 0);
 				textButton.Padding = new BorderDouble(7, 5);
 				if (boarderColor != null)
 				{
@@ -100,8 +99,8 @@ namespace MatterHackers.MatterControl
 				{
 					textButton.BorderColor = this.TextColor;
 				}
-				textButton.RenderOutline = true;
-				textButton.RoundRadius = textButton.Height / 2;
+				textButton.BackgroundOutlineWidth = 1;
+				textButton.BackgroundRadius = textButton.Height / 2;
 			}
 		}
 
@@ -328,7 +327,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
-				RenderOutline = true,
+				BackgroundOutlineWidth = 1,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
@@ -344,7 +343,7 @@ namespace MatterHackers.MatterControl
 			{
 				BackgroundColor = this.MinimalShade,
 				BorderColor = this.BorderColor40,
-				RenderOutline = true,
+				BackgroundOutlineWidth = 1,
 				VAnchor = VAnchor.Absolute,
 				HAnchor = HAnchor.Absolute,
 				Margin = 0,
