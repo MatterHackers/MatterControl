@@ -99,9 +99,16 @@ namespace MatterHackers.PrinterEmulator
 				{ "M851", SetXYZProbeOffset },
 				{ "N",    ParseChecksumLine },
 				{ "SLOW", ChangeToSlow },
+				{ "THROWERROR", ThrowError },
 				{ "T0",    SetExtruderIndex },
 				{ "T1",    SetExtruderIndex },
 			};
+		}
+
+		private string ThrowError(string arg)
+		{
+			// throw an error for testing
+			return "MINTEMP\nok\n";
 		}
 
 		private AxisAlignedBoundingBox xMaxTriggerRegion = new AxisAlignedBoundingBox(95, 210, -10, 105, 220, 0);
@@ -328,6 +335,7 @@ namespace MatterHackers.PrinterEmulator
 Commands:
     SLOW // make the emulator simulate actual printing speeds (default)
     FAST // run as fast as possible
+	THROWERROR // generate a simulated error for testing
 Emulating:
 FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a
 ok

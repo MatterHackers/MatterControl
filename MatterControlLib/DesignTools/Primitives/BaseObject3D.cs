@@ -39,7 +39,6 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.PolygonMesh.Csg;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
