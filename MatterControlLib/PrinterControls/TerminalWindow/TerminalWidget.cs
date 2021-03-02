@@ -258,45 +258,7 @@ namespace MatterHackers.MatterControl
 			exportButton.Margin = theme.ButtonSpacing;
 			exportButton.Click += (s, e) =>
 			{
-				UiThread.RunOnIdle(() =>
-				{
-					AggContext.FileDialogs.SaveFileDialog(
-						new SaveFileDialogParams("Save as Text|*.txt")
-						{
-							Title = "MatterControl: Terminal Log",
-							ActionButtonLabel = "Export",
-							FileName = "print_log.txt"
-						},
-						(saveParams) =>
-						{
-							if (!string.IsNullOrEmpty(saveParams.FileName))
-							{
-								string filePathToSave = saveParams.FileName;
-
-								if (filePathToSave != null && filePathToSave != "")
-								{
-									try
-									{
-										textScrollWidget.WriteToFile(filePathToSave);
-									}
-									catch (UnauthorizedAccessException ex)
-									{
-										Debug.Print(ex.Message);
-
-										printer.Connection.TerminalLog.WriteLine("");
-										printer.Connection.TerminalLog.WriteLine("WARNING: Write Failed!".Localize());
-										printer.Connection.TerminalLog.WriteLine("Can't access".Localize() + " " + filePathToSave);
-										printer.Connection.TerminalLog.WriteLine("");
-
-										UiThread.RunOnIdle(() =>
-										{
-											StyledMessageBox.ShowMessageBox(ex.Message, "Couldn't save file".Localize());
-										});
-									}
-								}
-							}
-						});
-				});
+				UiThread.RunOnIdle(() => TerminalLog.Export(printer.Connection));
 			};
 			footerRow.AddChild(exportButton);
 

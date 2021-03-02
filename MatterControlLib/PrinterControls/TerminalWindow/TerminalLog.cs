@@ -30,6 +30,8 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MatterHackers.Agg.Platform;
+using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PrinterCommunication;
 
@@ -57,6 +59,49 @@ namespace MatterHackers.MatterControl
 				// About 10 megs worth. Average line length in gcode file is about 14 and we store strings as chars (16 bit) so 450,000 lines.
 				maxLinesToBuffer = 450000;
 			}
+		}
+
+		public static void Export(PrinterConnection printerConnection)
+		{
+			AggContext.FileDialogs.SaveFileDialog(
+				new SaveFileDialogParams("Save as Text|*.txt")
+				{
+					Title = "MatterControl: Terminal Log",
+					ActionButtonLabel = "Export",
+					FileName = "print_log.txt"
+				},
+				(saveParams) =>
+				{
+					if (!string.IsNullOrEmpty(saveParams.FileName))
+					{
+						string filePathToSave = saveParams.FileName;
+
+						if (filePathToSave != null && filePathToSave != "")
+						{
+							try
+							{
+								printerConnection.TerminalLog.WriteToFile(filePathToSave);
+							}
+							catch (UnauthorizedAccessException ex)
+							{
+								printerConnection.TerminalLog.WriteLine("");
+								printerConnection.TerminalLog.WriteLine("WARNING: Write Failed!".Localize());
+								printerConnection.TerminalLog.WriteLine("Can't access".Localize() + " " + filePathToSave);
+								printerConnection.TerminalLog.WriteLine("");
+
+								UiThread.RunOnIdle(() =>
+								{
+									StyledMessageBox.ShowMessageBox(ex.Message, "Couldn't save file".Localize());
+								});
+							}
+						}
+					}
+				});
+		}
+
+		private void WriteToFile(string filePath)
+		{
+			System.IO.File.WriteAllLines(filePath, AllLines());
 		}
 
 		public event EventHandler<TerminalLine> LineAdded;

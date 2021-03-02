@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			typeof(double), typeof(int), typeof(char), typeof(string), typeof(bool),
 			typeof(Color),
-			typeof(Vector2), typeof(Vector3),
+			typeof(Vector2), typeof(Vector3), typeof(Vector4),
 			typeof(DirectionVector), typeof(DirectionAxis),
 			typeof(SelectedChildren),
 			typeof(ImageBuffer),
@@ -421,6 +421,29 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				rowContainer = CreateSettingsColumn(property, field);
 			}
+			else if (propertyValue is Vector4 vector4)
+			{
+				var field = new Vector4Field(theme);
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<VectorFieldLabelsAttribute>().FirstOrDefault() is VectorFieldLabelsAttribute vectorFieldLabels)
+				{
+					field.Labels = vectorFieldLabels.Labels;
+				}
+
+				field.Initialize(0);
+				field.Vector4 = vector4;
+				field.ClearUndoHistory();
+
+				RegisterValueChanged(
+					field,
+					(valueString) => Vector4.Parse(valueString),
+					(value) =>
+					{
+						var s = ((Vector4)value).ToString();
+						return s.Substring(1, s.Length - 2);
+					});
+
+				rowContainer = CreateSettingsColumn(property, field);
+			}
 			else if (propertyValue is DirectionVector directionVector)
 			{
 				var field = new DirectionVectorField(theme);
@@ -500,8 +523,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			}
 			else if (propertyValue is SelectedChildren childSelector)
 			{
-				var showAsList = property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() != null;
-				if (showAsList)
+				if (property.PropertyInfo.GetCustomAttributes(true).OfType<ShowAsListAttribute>().FirstOrDefault() is ShowAsListAttribute showAsList)
 				{
 					UIField field = new ChildrenSelectorListField(property, theme);
 

@@ -155,11 +155,6 @@ namespace MatterHackers.MatterControl
 			}
 		}
 
-		public void WriteToFile(string filePath)
-		{
-			System.IO.File.WriteAllLines(filePath, terminalLog.AllLines());
-		}
-
 		public override void OnClosed(EventArgs e)
 		{
 			// Unregister listeners

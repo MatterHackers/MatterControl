@@ -996,19 +996,33 @@ namespace MatterHackers.MatterControl
 				if (sender is PrinterConnection printerConnection)
 				{
 					UiThread.RunOnIdle(() =>
-						StyledMessageBox.ShowMessageBox(
-							(clickedOk) =>
+					{
+						var messageBox = new StyledMessageBox.MessageBoxPage((clickedOk) =>
+						{
+							if (clickedOk && printerConnection.Paused)
 							{
-								if (clickedOk && printerConnection.Paused)
-								{
-									printerConnection.Resume();
-								}
-							},
-							message,
-							"Printer Hardware Error".Localize(),
-							StyledMessageBox.MessageType.YES_NO,
-							"Resume".Localize(),
-							"OK".Localize()));
+								printerConnection.Resume();
+							}
+						},
+						message,
+						"Printer Hardware Error".Localize(),
+						StyledMessageBox.MessageType.YES_NO,
+						null,
+						400,
+						300,
+						"Resume".Localize(),
+						"OK".Localize(),
+						ApplicationController.Instance.Theme);
+
+						var exportButton = Theme.CreateDialogButton("Export Print Log...".Localize());
+						exportButton.Click += (s, e) =>
+						{
+							UiThread.RunOnIdle(() => TerminalLog.Export(printerConnection), .1);
+						};
+						messageBox.AddPageAction(exportButton);
+
+						DialogWindow.Show(messageBox);
+					});
 				}
 			}
 		}
@@ -1832,7 +1846,7 @@ namespace MatterHackers.MatterControl
 									"Warning - GCode file".Localize(),
 									new GuiWidget[]
 									{
-									hideGCodeWarningCheckBox
+										hideGCodeWarningCheckBox
 									},
 									StyledMessageBox.MessageType.YES_NO);
 							});
