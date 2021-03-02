@@ -1,5 +1,5 @@
 ﻿/*
-Copyright (c) 2019, Lars Brubaker, John Lewin
+Copyright (c) 2018, Lars Brubaker, John Lewin
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -27,14 +27,17 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-namespace MatterHackers.MatterControl.SlicerConfiguration
+using System;
+
+namespace MatterHackers.MatterControl.DesignTools
 {
-	public class BoundsField : Vector4Field
+	public class VectorFieldLabelsAttribute : Attribute
 	{
-		public BoundsField(ThemeConfig theme)
-			: base (theme)
+		public char[] Labels { get; private set; } = new[] { 'X', 'Y', 'Z', 'W' };
+
+		public VectorFieldLabelsAttribute(char[] labels)
 		{
-			Labels = new[] { 'L', 'B', 'R', 'T' };
+			Labels = labels;
 		}
 	}
 }
