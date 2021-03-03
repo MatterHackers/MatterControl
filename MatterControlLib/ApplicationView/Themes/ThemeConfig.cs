@@ -539,12 +539,24 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				innerButton = new TextButton(buttonParams.ButtonText, this)
+				if (buttonParams.Icon == null)
 				{
-					Name = buttonParams.ButtonName,
-					Enabled = buttonParams.ButtonEnabled,
-					ToolTipText = buttonParams.ButtonTooltip,
-				};
+					innerButton = new TextButton(buttonParams.ButtonText, this)
+					{
+						Name = buttonParams.ButtonName,
+						Enabled = buttonParams.ButtonEnabled,
+						ToolTipText = buttonParams.ButtonTooltip,
+					};
+				}
+				else
+				{
+					innerButton = new TextIconButton(buttonParams.ButtonText, buttonParams.Icon, this)
+					{
+						Name = buttonParams.ButtonName,
+						Enabled = buttonParams.ButtonEnabled,
+						ToolTipText = buttonParams.ButtonTooltip,
+					};
+				}
 			}
 
 			innerButton.Click += (s, e) =>
