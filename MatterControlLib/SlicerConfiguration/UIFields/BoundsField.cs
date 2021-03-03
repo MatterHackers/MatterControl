@@ -34,7 +34,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 		public BoundsField(ThemeConfig theme)
 			: base (theme)
 		{
-			Labels = new[] { 'L', 'B', 'R', 'T' };
+			Labels = new[] { 'L', 'F', 'R', 'B' };
 		}
 	}
 }
