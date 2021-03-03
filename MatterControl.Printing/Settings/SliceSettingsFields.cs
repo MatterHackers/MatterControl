@@ -2273,7 +2273,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.sla_printable_area_inset,
 					PresentationName = "Printable Area Inset".Localize(),
-					HelpText = "The inset amount from the edges of the bed. Defines the printable area of the bed. Leave as 0s if the entire bed can be printed to.".Localize(),
+					HelpText = "The inset amount from the edges of the bed. Defines the printable area of the bed. Leave as 0s if the entire bed can be printed to (Left, Front, Right, Back).".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					DefaultValue = ""
@@ -2282,7 +2282,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.t0_inset,
 					PresentationName = "Nozzle 1 Inset".Localize(),
-					HelpText = "The inset amount for nozzle 1 from the bed".Localize(),
+					HelpText = "The inset amount for nozzle 1 from the bed (Left, Front, Right, Back).".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "extruder_count>1",
@@ -2292,7 +2292,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				{
 					SlicerConfigName = SettingsKey.t1_inset,
 					PresentationName = "Nozzle 2 Inset".Localize(),
-					HelpText = "The inset amount for nozzle 2 from the bed".Localize(),
+					HelpText = "The inset amount for nozzle 2 from the bed (Left, Front, Right, Back).".Localize(),
 					DataEditType = DataEditTypes.BOUNDS,
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					ShowIfSet = "extruder_count>1",
