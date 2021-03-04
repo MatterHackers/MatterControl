@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Model View Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Model || printer == null,
 				ToolTipText = "Model View".Localize(),
-				BackgroundRadius = 3,
+				BackgroundRadius = theme.ButtonRadius,
 				Margin = theme.ButtonSpacing
 			};
 			modelViewButton.Click += SwitchModes_Click;
@@ -175,7 +175,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Layers3D Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers3D,
 				ToolTipText = "3D Layer View".Localize(),
-				BackgroundRadius = 3,
+				BackgroundRadius = theme.ButtonRadius,
 				Margin = theme.ButtonSpacing
 			};
 			layers3DButton.Click += SwitchModes_Click;
@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Name = "Layers2D Button",
 				Checked = printer?.ViewState.ViewMode == PartViewMode.Layers2D,
 				ToolTipText = "2D Layer View".Localize(),
-				BackgroundRadius = 3,
+				BackgroundRadius = theme.ButtonRadius,
 				Margin = theme.ButtonSpacing,
 			};
 			layers2DButton.Click += SwitchModes_Click;
