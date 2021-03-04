@@ -287,6 +287,7 @@ namespace MatterHackers.MatterControl
 		public Color PrinterBedTextColor { get; set; }
 
 		public GridColors BedGridColors { get; set; } = new GridColors();
+		public double ButtonRadius { get; set; } = 3;
 
 		public GuiWidget CreateSearchButton()
 		{
@@ -539,12 +540,24 @@ namespace MatterHackers.MatterControl
 			}
 			else
 			{
-				innerButton = new TextButton(buttonParams.ButtonText, this)
+				if (buttonParams.Icon == null)
 				{
-					Name = buttonParams.ButtonName,
-					Enabled = buttonParams.ButtonEnabled,
-					ToolTipText = buttonParams.ButtonTooltip,
-				};
+					innerButton = new TextButton(buttonParams.ButtonText, this)
+					{
+						Name = buttonParams.ButtonName,
+						Enabled = buttonParams.ButtonEnabled,
+						ToolTipText = buttonParams.ButtonTooltip,
+					};
+				}
+				else
+				{
+					innerButton = new TextIconButton(buttonParams.ButtonText, buttonParams.Icon, this)
+					{
+						Name = buttonParams.ButtonName,
+						Enabled = buttonParams.ButtonEnabled,
+						ToolTipText = buttonParams.ButtonTooltip,
+					};
+				}
 			}
 
 			innerButton.Click += (s, e) =>
@@ -562,9 +575,10 @@ namespace MatterHackers.MatterControl
 				menuButton = new OperationGroupButton(operationGroup, innerButton, this);
 			}
 
+			var theme = ApplicationController.Instance.MenuTheme;
 			menuButton.DynamicPopupContent = () =>
 			{
-				var popupMenu = new PopupMenu(ApplicationController.Instance.MenuTheme);
+				var popupMenu = new PopupMenu(theme);
 				buttonParams.ExtendPopupMenu?.Invoke(popupMenu);
 
 				return popupMenu;
@@ -585,6 +599,8 @@ namespace MatterHackers.MatterControl
 			menuButton.DrawArrow = true;
 			menuButton.Margin = this.ButtonSpacing;
 			menuButton.DistinctPopupButton = true;
+			menuButton.BackgroundRadius = theme.ButtonRadius;
+
 
 			innerButton.Selectable = true;
 			return menuButton;
