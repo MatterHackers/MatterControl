@@ -860,6 +860,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 									}
 								}));
 					});
+					var export = popupMenu.CreateMenuItem("Export".Localize(), StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons));
+					export.Click += (s, e) => UiThread.RunOnIdle(() =>
+					{
+						ApplicationController.Instance.ExportLibraryItems(
+							new[] { new InMemoryLibraryItem(sceneContext.Scene) },
+							centerOnBed: false,
+							printer: view3DWidget.Printer);
+					});
 				}
 			});
 		}
