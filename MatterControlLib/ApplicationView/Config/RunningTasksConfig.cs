@@ -84,7 +84,6 @@ using Newtonsoft.Json.Linq;
 
 namespace MatterHackers.MatterControl
 {
-
 	public class RunningTasksConfig
 	{
 		public event EventHandler TasksChanged;
