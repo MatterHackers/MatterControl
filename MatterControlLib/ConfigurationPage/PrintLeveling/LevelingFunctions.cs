@@ -148,15 +148,8 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 			(destination.Y == double.PositiveInfinity) ? 0 : destination.Y,
 			(destination.Z == double.PositiveInfinity) ? 0 : destination.Z);
 
-			// get the offset to the active extruder
-			var extruderOffset = printer.Settings.Helpers.ExtruderOffset(printer.Connection.ActiveExtruderIndex);
-			correctedPosition += extruderOffset;
-
 			// level it
 			Vector3 outPosition = GetPositionWithZOffset(correctedPosition);
-
-			// take the extruder offset back out
-			outPosition -= extruderOffset;
 
 			// Only output known positions
 			if (destination.X != double.PositiveInfinity)

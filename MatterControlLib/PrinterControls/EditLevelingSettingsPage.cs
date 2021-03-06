@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -37,6 +38,8 @@ using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.SlicerConfiguration;
+using MatterHackers.PolygonMesh;
+using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl
@@ -116,7 +119,7 @@ namespace MatterHackers.MatterControl
 					int linkCompatibleRow = row;
 					int linkCompatibleAxis = axis;
 
-					MHNumberEdit valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], theme, allowNegatives: true, allowDecimals: true, pixelWidth: 60 * GuiWidget.DeviceScale, tabIndex: tab_index++)
+					var valueEdit = new MHNumberEdit(positions[linkCompatibleRow][linkCompatibleAxis], theme, allowNegatives: true, allowDecimals: true, pixelWidth: 60 * GuiWidget.DeviceScale, tabIndex: tab_index++)
 					{
 						Name = $"{axisName} Position {row}"
 					};
@@ -151,7 +154,9 @@ namespace MatterHackers.MatterControl
 			this.AddPageAction(savePresetsButton);
 
 			var exportButton = theme.CreateDialogButton("Export".Localize());
-			exportButton.Click += (s, e) => {
+			exportButton.ToolTipText = "Export as .csv, .json or .stl".Localize();
+			exportButton.Click += (s, e) =>
+			{
 				UiThread.RunOnIdle(this.ExportSettings, .1);
 			};
 			this.AddPageAction(exportButton);
@@ -161,30 +166,57 @@ namespace MatterHackers.MatterControl
 		private void ExportSettings()
 		{
 			AggContext.FileDialogs.SaveFileDialog(
-				new SaveFileDialogParams("Bed Leveling Data|*.csv") {
+				new SaveFileDialogParams("Bed Leveling Data|*.csv")
+				{
 					Title = "Export Bed Leveling Data".Localize(),
 					FileName = $"{printer.Settings.GetValue(SettingsKey.printer_name)} Leveling Data"
 				},
-				(saveParams) => {
-					try {
-						if (!string.IsNullOrWhiteSpace(saveParams.FileName)) {
-							// Export JSON data
-							//File.WriteAllText(saveParams.FileName, printer.Settings.GetValue(SettingsKey.print_leveling_data));
+				(saveParams) =>
+				{
+					try
+					{
+						if (!string.IsNullOrWhiteSpace(saveParams.FileName))
+						{
+							var levelingData = printer.Settings.Helpers.PrintLevelingData;
 
-							// Export CSV data
-							PrintLevelingData levelingData = printer.Settings.Helpers.PrintLevelingData;
-							using (StreamWriter file =
-								   new StreamWriter(saveParams.FileName)) {
-								for (int i = 0; i < levelingData.SampledPositions.Count; i++) {
-									double x = levelingData.SampledPositions[i].X;
-									double y = levelingData.SampledPositions[i].Y;
-									double z = levelingData.SampledPositions[i].Z;
-									file.WriteLine($"{x}, {y}, {z}");
-								}
+							switch (Path.GetExtension(saveParams.FileName).ToUpper())
+							{
+								case ".STL":
+									// Export CSV data
+									var mesh = new Mesh();
+									foreach (var poly in levelingData.GetLevelingTriangles())
+									{
+										mesh.CreateFace(new Vector3[] { poly.v2, poly.v1, poly.v0 });
+									}
+									mesh.Save(saveParams.FileName, CancellationToken.None);
+									break;
+
+								case ".JSON":
+									// Export JSON data
+									File.WriteAllText(saveParams.FileName, printer.Settings.GetValue(SettingsKey.print_leveling_data));
+									break;
+
+								default:
+									// Export CSV data
+									using (var file =
+										   new StreamWriter(saveParams.FileName))
+									{
+										for (int i = 0; i < levelingData.SampledPositions.Count; i++)
+										{
+											double x = levelingData.SampledPositions[i].X;
+											double y = levelingData.SampledPositions[i].Y;
+											double z = levelingData.SampledPositions[i].Z;
+											file.WriteLine($"{x}, {y}, {z}");
+										}
+									}
+									break;
 							}
 						}
-					} catch (Exception e) {
-						UiThread.RunOnIdle(() => {
+					}
+					catch (Exception e)
+					{
+						UiThread.RunOnIdle(() =>
+						{
 							StyledMessageBox.ShowMessageBox(e.Message, "Couldn't save file".Localize());
 						});
 					}

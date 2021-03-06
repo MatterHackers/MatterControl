@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using MatterHackers.VectorMath;
+using MIConvexHull;
 
 namespace MatterHackers.MatterControl.SlicerConfiguration
 {
@@ -66,5 +67,72 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 			return false;
 		}
+
+        public IEnumerable<(Vector3 v0, Vector3 v1, Vector3 v2)> GetLevelingTriangles()
+        {
+            // get the delaunay triangulation
+            var zDictionary = new Dictionary<(double, double), double>();
+            var vertices = new List<DefaultVertex>();
+
+            if (SampledPositions.Count > 2)
+            {
+                foreach (var sample in SampledPositions)
+                {
+                    vertices.Add(new DefaultVertex()
+                    {
+                        Position = new double[] { sample.X, sample.Y }
+                    });
+                    var key = (sample.X, sample.Y);
+                    if (!zDictionary.ContainsKey(key))
+                    {
+                        zDictionary.Add(key, sample.Z);
+                    }
+                }
+            }
+            else
+            {
+                vertices.Add(new DefaultVertex()
+                {
+                    Position = new double[] { 0, 0 }
+                });
+                zDictionary.Add((0, 0), 0);
+
+                vertices.Add(new DefaultVertex()
+                {
+                    Position = new double[] { 200, 0 }
+                });
+                zDictionary.Add((200, 0), 0);
+
+                vertices.Add(new DefaultVertex()
+                {
+                    Position = new double[] { 100, 200 }
+                });
+                zDictionary.Add((100, 200), 0);
+            }
+
+            int extraXPosition = -50000;
+            vertices.Add(new DefaultVertex()
+            {
+                Position = new double[] { extraXPosition, vertices[0].Position[1] }
+            });
+
+            var triangles = DelaunayTriangulation<DefaultVertex, DefaultTriangulationCell<DefaultVertex>>.Create(vertices, .001);
+
+            // make all the triangle planes for these triangles
+            foreach (var triangle in triangles.Cells)
+            {
+                var p0 = triangle.Vertices[0].Position;
+                var p1 = triangle.Vertices[1].Position;
+                var p2 = triangle.Vertices[2].Position;
+                if (p0[0] != extraXPosition && p1[0] != extraXPosition && p2[0] != extraXPosition)
+                {
+                    var v0 = new Vector3(p0[0], p0[1], zDictionary[(p0[0], p0[1])]);
+                    var v1 = new Vector3(p1[0], p1[1], zDictionary[(p1[0], p1[1])]);
+                    var v2 = new Vector3(p2[0], p2[1], zDictionary[(p2[0], p2[1])]);
+                    // add all the regions
+                    yield return (v0, v1, v2);
+                }
+            }
+        }
 	}
 }

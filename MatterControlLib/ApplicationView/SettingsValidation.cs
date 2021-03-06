@@ -35,6 +35,7 @@ using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.ConfigurationPage.PrintLeveling;
 using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.PrinterControls.PrinterConnections;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.VectorMath;
 
@@ -445,6 +446,19 @@ namespace MatterHackers.MatterControl
 						{
 							Error = "You are connected to the Emulator not an actual printer.".Localize(),
 							ErrorLevel = ValidationErrorLevel.Warning,
+							FixAction = new NamedAction()
+							{
+								Title = "Switch".Localize(),
+								IsEnabled = () => !printer.Connection.Printing && !printer.Connection.Paused,
+								Action = () => UiThread.RunOnIdle(() =>
+								{
+									// make sure we are not connected or we can't change the port
+									printer.Connection.Disable();
+
+									// User initiated connect attempt failed, show port selection dialog
+									DialogWindow.Show(new SetupStepComPortOne(printer));
+								})
+							}
 						});
 				}
 

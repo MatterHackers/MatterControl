@@ -599,8 +599,7 @@ namespace MatterHackers.MatterControl
 			menuButton.DrawArrow = true;
 			menuButton.Margin = this.ButtonSpacing;
 			menuButton.DistinctPopupButton = true;
-			menuButton.BackgroundRadius = theme.ButtonRadius;
-
+			menuButton.BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0);
 
 			innerButton.Selectable = true;
 			return menuButton;
