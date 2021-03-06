@@ -250,6 +250,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 
 					foreach (var paint in paintObjects)
 					{
+						if (cancellationToken.IsCancellationRequested)
+						{
+							SourceContainer.Visible = true;
+							RemoveAllButSource();
+							return;
+						}
+
 						Mesh paintMesh = BooleanProcessing.Do(keepResultsMesh,
 							keepWorldMatrix,
 							// paint data

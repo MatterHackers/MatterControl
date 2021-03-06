@@ -167,6 +167,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				theme,
 				5);
 
+			stopButton.Enabled = true;
+
 			stopButton.Click += (s, e) =>
 			{
 				var stopAction = taskDetails.Options?.StopAction;
