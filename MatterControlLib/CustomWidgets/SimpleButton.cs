@@ -148,8 +148,12 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var rect = new RoundedRect(bounds.Left + expand,
 					bounds.Bottom + expand,
 					bounds.Right - expand,
-					bounds.Top - expand,
-					BackgroundRadius * GuiWidget.DeviceScale);
+					bounds.Top - expand);
+				rect.radius(BackgroundRadius.SW * GuiWidget.DeviceScale,
+					BackgroundRadius.SE * GuiWidget.DeviceScale,
+					BackgroundRadius.NE * GuiWidget.DeviceScale,
+					BackgroundRadius.NW * GuiWidget.DeviceScale);
+
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);

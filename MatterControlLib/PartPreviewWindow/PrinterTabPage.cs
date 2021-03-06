@@ -720,7 +720,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				HAnchor = HAnchor.Center,
 				VAnchor = VAnchor.Absolute,
 				Margin = 0,
-				BackgroundRadius = theme.ButtonRadius,
+				BackgroundRadius = new RadiusCorners(theme.ButtonRadius, theme.ButtonRadius, 0, 0),
 				ToolTipText = "Lower extruder".Localize() + "\n\n*" + "First layer only".Localize() + "*",
 			});
 			downButton.Click += (s, e) =>
