@@ -56,23 +56,6 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public string ThumbnailName => "Text";
 
-		public override Mesh Mesh
-		{
-			get
-			{
-				// if all of our children (the characters) don't have a mesh, rebuild
-				if (!this.Children.Where(c => c.Mesh != null).Any()
-					&& !RebuildLocked)
-				{
-					this.Rebuild().Wait();
-				}
-
-				return base.Mesh;
-			}
-
-			set => base.Mesh = value;
-		}
-
 		public static async Task<TextObject3D> Create()
 		{
 			var item = new TextObject3D();
@@ -160,31 +143,39 @@ namespace MatterHackers.MatterControl.DesignTools
 				{
 					using (new CenterAndHeightMaintainer(this))
 					{
-						this.Children.Modify(list =>
+						if (string.IsNullOrWhiteSpace(NameToWrite))
 						{
-							list.Clear();
-
-							var offest = 0.0;
-							double pointsToMm = 0.352778;
-
-							foreach (var letter in this.NameToWrite.ToCharArray())
+							Mesh = PlatonicSolids.CreateCube(20, 10, Height);
+						}
+						else
+						{
+							Mesh = null;
+							this.Children.Modify(list =>
 							{
-								var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
-								{
-									ResolutionScale = 10
-								};
-								var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+								list.Clear();
 
-								list.Add(new Object3D()
-								{
-									Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
-									Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
-									Name = letter.ToString()
-								});
+								var offest = 0.0;
+								double pointsToMm = 0.352778;
 
-								offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
-							}
-						});
+								foreach (var letter in this.NameToWrite.ToCharArray())
+								{
+									var letterPrinter = new TypeFacePrinter(letter.ToString(), new StyledTypeFace(ApplicationController.GetTypeFace(this.Font), this.PointSize))
+									{
+										ResolutionScale = 10
+									};
+									var scaledLetterPrinter = new VertexSourceApplyTransform(letterPrinter, Affine.NewScaling(pointsToMm));
+
+									list.Add(new Object3D()
+									{
+										Mesh = VertexSourceToMesh.Extrude(scaledLetterPrinter, this.Height),
+										Matrix = Matrix4X4.CreateTranslation(offest, 0, 0),
+										Name = letter.ToString()
+									});
+
+									offest += letterPrinter.GetSize(letter.ToString()).X * pointsToMm;
+								}
+							});
+						}
 					}
 
 					rebuildLock.Dispose();
