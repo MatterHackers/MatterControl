@@ -300,7 +300,7 @@
     "create_raft": "0",
     "default_acceleration": "0",
     "disable_fan_first_layers": "1",
-    "end_gcode": "G1 E-[retract_length] F[retract_speed]\\nG90\\nG0 X5 Y215 F[travel_speed]\\nG28 Z0                  ; Retract and move away, then home Z axis\\n\\nM104 S0                 ; turn off temperature\\nM140 S0                 ; turn off heat bed\\nM106 S0                 ; turn off layer fan\\nM84                     ; disable motors",
+    "end_gcode": "G91\\nG1 E-[retract_length] F[retract_speed]\\nG90\\nG0 X5 Y215 F[travel_speed]\\nG28 Z0                  ; Retract and move away, then home Z axis\\n\\nM104 S0                 ; turn off temperature\\nM140 S0                 ; turn off heat bed\\nM106 S0                 ; turn off layer fan\\nM84                     ; disable motors",
     "external_perimeter_speed": "25",
     "external_perimeters_first": "0",
     "extra_perimeters": "1",

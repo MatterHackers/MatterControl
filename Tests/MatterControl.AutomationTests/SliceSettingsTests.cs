@@ -56,7 +56,9 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					};
 
 					testRunner.AddItemToBedplate()
-						.StartPrint(printer);
+						.StartPrint(printer)
+						.WaitFor(() => printer.Connection.Printing, 60) // wait for the print to start
+						.WaitFor(() => !printer.Connection.Printing, 60); // wait for the print to finish
 				}
 
 				return Task.CompletedTask;
