@@ -31,6 +31,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -91,6 +92,21 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 		{
 			this.DebugDepth("Rebuild");
 			var activeImage = this.ImageChild.Image;
+
+			if (activeImage == null
+				|| activeImage.Width == 0
+				|| activeImage.Height == 0)
+			{
+				return Task.CompletedTask;
+			}
+
+			activeImage.GetVisibleBounds(out RectangleInt visibleBounds);
+
+			if (visibleBounds.Width == 0
+				|| visibleBounds.Height == 0)
+			{
+				return Task.CompletedTask;
+			}
 
 			ApplicationController.Instance.Tasks.Execute("Generating Lithophane".Localize(), null, (reporter, cancellationToken) =>
 			{
