@@ -97,7 +97,10 @@ namespace MatterHackers.MatterControl
 				},
 				Icon = (invertIcon) => StaticData.Instance.LoadIcon("add_base.png", 16, 16, invertIcon).SetPreMultiply(),
 				HelpTextResolver = () => "*A path must be selected*".Localize(),
-				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				// this is for when base is working with generic meshes
+				//IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && !(sceneContext.Scene.SelectedItem is IPathObject),
+				// this is for when only IPathObjects are working correctly
+				IsEnabled = (sceneContext) => sceneContext.Scene.SelectedItem != null && sceneContext.Scene.SelectedItem.DescendantsAndSelf().Where(i => i is IPathObject).Any(),
 			};
 		}
 
