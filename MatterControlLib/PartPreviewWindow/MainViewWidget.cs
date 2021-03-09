@@ -368,8 +368,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					tabControl.ActiveTab = newTab;
 				}
-
-				tabControl.RefreshTabPointers();
 			}
 
 			statusBar = new Toolbar(theme.TabbarPadding)
@@ -581,8 +579,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl.CloseTab(tab);
 				}
 			}
-
-			tabControl.RefreshTabPointers();
 		}
 
 		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
@@ -709,7 +705,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (e.Button == MouseButtons.Right)
 					{
-						AddRightClickPrinterMenu(tabControl, printerTab, printer, e);
+						AddRightClickTabMenu(tabControl, printerTab, printer, e);
 					}
 				};
 
@@ -747,26 +743,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private void AddRightClickPrinterMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
 
-			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			renameMenuItem.Click += (s, e) =>
+			if (printer != null)
 			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						printer.Settings.GetValue(SettingsKey.printer_name),
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
-							printer.Settings.SetValue(SettingsKey.printer_name, newName);
-						}));
-			};
+				var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+				renameMenuItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							printer.Settings.GetValue(SettingsKey.printer_name),
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
+								printer.Settings.SetValue(SettingsKey.printer_name, newName);
+							}));
+				};
+			}
 
 			var moveLeftMenuItem = popupMenu.CreateMenuItem("Move <<".Localize());
 			moveLeftMenuItem.Click += (s, e) =>
@@ -829,6 +828,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ApplicationController.Instance.Workspaces.Remove(workspace);
 			}
+
+			// add a right click menu
+			partTab.Click += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Right)
+				{
+					AddRightClickTabMenu(tabControl, partTab, null, e);
+				}
+			};
 
 			void Widget_Closed(object sender, EventArgs args)
 			{

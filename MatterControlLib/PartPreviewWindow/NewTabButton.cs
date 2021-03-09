@@ -41,7 +41,27 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private SimpleTabs parentTabControl;
 		private ThemeConfig theme;
 
-		public ITab LastTab { get; set; }
+		public ITab LastTab
+		{
+			get
+			{
+				ITab lastTab = null;
+				var owner = this.Parent;
+				if (owner != null)
+				{
+					foreach (var item in owner.Children)
+					{
+						if (item is ITab tab)
+						{
+							lastTab = tab;
+						}
+					}
+
+				}
+
+				return lastTab;
+			}
+		}
 
 		public TabTrailer(SimpleTabs parentTabControl, ThemeConfig theme)
 		{

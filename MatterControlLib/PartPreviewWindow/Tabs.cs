@@ -293,17 +293,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				// Call AddTab(widget, int) in base explicitly
 				base.AddTab(tabWidget, widgetPosition - firstTabPosition, widgetPosition);
-
-				tabTrailer.LastTab = this.AllTabs.LastOrDefault();
-
-				// Listen for tab changes and update links
-				/*
-				newTab.VisibleChanged += (s, e) =>
-				{
-					this.RefreshTabPointers();
-				}; */
-
-				this.RefreshTabPointers();
 			}
 		}
 
@@ -329,8 +318,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				ActiveTab = tab;
 			}
-
-			RefreshTabPointers();
 		}
 
 		public void MoveTabLeft(ITab tab)
@@ -355,59 +342,9 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				ActiveTab = tab;
 			}
-
-			RefreshTabPointers();
-		}
-
-
-		public void RefreshTabPointers()
-		{
-			ChromeTab lastTab = null;
-
-			foreach(var tab in AllTabs.OfType<ChromeTab>().Where(t => t.Visible))
-			{
-				if (lastTab != null)
-				{
-					lastTab.NextTab = tab;
-				}
-
-				tab.PreviousTab = lastTab;
-
-				lastTab = tab;
-			}
-		}
-
-		internal override void CloseTab(ITab tab)
-		{
-			base.CloseTab(tab);
-
-			// Update pointers - collapse out removed tab
-			if (tab is ChromeTab removedTab)
-			{
-				var tabA = removedTab.PreviousTab;
-				var tabB = removedTab.NextTab;
-
-				if (tabA != null)
-				{
-					tabA.NextTab = tabB;
-				}
-
-				if (tabB != null)
-				{
-					tabB.PreviousTab = tabA;
-				}
-			}
-
-			tabTrailer.LastTab = this.AllTabs.LastOrDefault();
 		}
 
 		public Func<GuiWidget> NewTabPage { get; set; }
-
-		protected override void OnActiveTabChanged()
-		{
-			tabTrailer.LastTab = this.AllTabs.LastOrDefault();
-			base.OnActiveTabChanged();
-		}
 	}
 
 	public class SimpleTab : GuiWidget, ITab
@@ -634,9 +571,58 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private static int tabInsetDistance = 14 / 2;
 
-		internal ChromeTab NextTab { get; set; }
 
-		internal ChromeTab PreviousTab { get; set; }
+		internal ChromeTab NextTab
+		{
+			get
+			{
+				var owner = this.Parent;
+				if (owner != null)
+				{
+					var found = false;
+					foreach(var item in owner.Children)
+					{
+						if (item == this)
+						{
+							found = true;
+						}
+						else if (found && item is ChromeTab chromeTab)
+						{
+							return chromeTab;
+						}
+					}
+
+				}
+
+				return null;
+			}
+		}
+
+		internal ChromeTab PreviousTab
+		{
+			get
+			{
+				var owner = this.Parent;
+				if (owner != null)
+				{
+					ChromeTab last = null;
+					foreach (var item in owner.Children)
+					{
+						if (item == this)
+						{
+							return last;
+						}
+						else if (item is ChromeTab chromeTab)
+						{
+							last = chromeTab;
+						}
+					}
+				}
+
+				return null;
+			}
+		}
+
 
 		public override void OnDraw(Graphics2D graphics2D)
 		{
