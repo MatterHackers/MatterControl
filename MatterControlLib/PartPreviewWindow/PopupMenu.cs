@@ -45,7 +45,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private ThemeConfig theme;
 
-		public BorderDouble MenuPadding => new BorderDouble(40, 8, 20, 8);
+		public static BorderDouble MenuPadding => new BorderDouble(40, 8, 20, 8);
 
 		public static Color DisabledTextColor { get; set; } = Color.Gray;
 

@@ -767,18 +767,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				};
 			}
 
-			var moveLeftMenuItem = popupMenu.CreateMenuItem("Move <<".Localize());
-			moveLeftMenuItem.Click += (s, e) =>
+			var moveButtons = new FlowLayoutWidget();
+
+			var textWidget = new TextWidget("Move Tab", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Padding = PopupMenu.MenuPadding.Clone(right: 0),
+				VAnchor = VAnchor.Center,
+			};
+			moveButtons.AddChild(textWidget);
+			var moveLeftButton = new TextButton("<<".Localize(), theme)
+			{
+				VAnchor = VAnchor.Center,
+			};
+			moveLeftButton.Click += (s, e) =>
 			{
 				tabs.MoveTabLeft(printerTab);
+				popupMenu.Unfocus();
+			};
+			moveButtons.AddChild(moveLeftButton);
+
+			var moveRightButton = new TextButton(">>".Localize(), theme)
+			{
+				VAnchor = VAnchor.Center,
 			};
 
-			var moveRightMenuItem = popupMenu.CreateMenuItem("Move >>".Localize());
-			moveRightMenuItem.Click += (s, e) =>
+			moveRightButton.Click += (s, e) =>
 			{
-				// move it to the right
 				tabs.MoveTabRight(printerTab);
+				popupMenu.Unfocus();
 			};
+			moveButtons.AddChild(moveRightButton);
+
+			popupMenu.AddChild(moveButtons);
 
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
