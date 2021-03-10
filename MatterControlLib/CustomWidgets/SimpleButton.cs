@@ -39,8 +39,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 {
 	public class SimpleButton : GuiWidget
 	{
-		private bool mouseInBounds = false;
-
 		protected ThemeConfig theme;
 
 		private bool hasKeyboardFocus;
@@ -58,20 +56,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public Color HoverColor { get; set; } = Color.Transparent;
 
 		public Color MouseDownColor { get; set; } = Color.Transparent;
-
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = true;
-			base.OnMouseEnterBounds(mouseEvent);
-			this.Invalidate();
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = false;
-			base.OnMouseLeaveBounds(mouseEvent);
-			this.Invalidate();
-		}
 
 		public override void OnMouseDown(MouseEventArgs mouseEvent)
 		{
@@ -104,17 +88,30 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			base.OnKeyUp(keyEvent);
 		}
 
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			Invalidate();
+			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			Invalidate();
+			base.OnMouseLeaveBounds(mouseEvent);
+		}
+
 		public override Color BackgroundColor
 		{
 			get
 			{
+				var firstWidgetUnderMouse = ContainsFirstUnderMouseRecursive();
 				if (this.MouseCaptured
-					&& mouseInBounds
+					&& firstWidgetUnderMouse
 					&& this.Enabled)
 				{
 					return this.MouseDownColor;
 				}
-				else if (mouseInBounds
+				else if (firstWidgetUnderMouse
 					&& this.Enabled)
 				{
 					return this.HoverColor;
@@ -129,7 +126,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 
 		public override void OnFocusChanged(EventArgs e)
 		{
-			hasKeyboardFocus = this.Focused && !mouseInBounds;
+			hasKeyboardFocus = this.Focused && !ContainsFirstUnderMouseRecursive();
 			this.Invalidate();
 
 			base.OnFocusChanged(e);
@@ -157,20 +154,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				var rectOutline = new Stroke(rect, stroke);
 
 				graphics2D.Render(rectOutline, theme.EditFieldColors.Focused.BorderColor);
-			}
-		}
-
-		public override bool Enabled
-		{
-			get => base.Enabled;
-			set
-			{
-				base.Enabled = value;
-
-				if (!base.Enabled)
-				{
-					mouseInBounds = false;
-				}
 			}
 		}
 	}

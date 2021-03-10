@@ -234,7 +234,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
 				if (info != null
-					&& selectedItem != null)
+					&& selectedItem != null
+					&& mouseDownSelectedBounds != null)
 				{
 					var delta = info.HitPosition.Z - initialHitPosition.Z;
 

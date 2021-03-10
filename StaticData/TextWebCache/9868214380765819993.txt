@@ -160,7 +160,7 @@
         "ShownInListing": true, 
         "SkuName": "3D Printing with MatterControl - Paperback Book", 
         "SkuWarningMessages": [], 
-        "TotalLeadDays": 0, 
+        "TotalLeadDays": 1, 
         "TotalWeight": 1000000, 
         "TotalWeightGrams": "1,000.00", 
         "TotalWeightKilograms": "1.00", 

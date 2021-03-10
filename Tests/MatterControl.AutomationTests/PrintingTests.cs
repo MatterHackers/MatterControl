@@ -195,6 +195,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				"Commands:",
 				"    SLOW // make the emulator simulate actual printing speeds (default)",
 				"    FAST // run as fast as possible",
+				"    THROWERROR // generate a simulated error for testing",
 				"Emulating:",
 				"FIRMWARE_NAME:Marlin V1; Sprinter/grbl mashup for gen6 FIRMWARE_URL:https://github.com/MarlinFirmware/Marlin PROTOCOL_VERSION:1.0 MACHINE_TYPE:Framelis v1 EXTRUDER_COUNT:1 UUID:155f84b5-d4d7-46f4-9432-667e6876f37a",
 				"ok",
@@ -365,6 +366,8 @@ namespace MatterHackers.MatterControl.Tests.Automation
 						.ClickResumeButton(printer, true, 1) // Resume
 						.ClickResumeButton(printer, false, 3) // close the pause dialog pop-up do not resume
 						.ClickByName("Disconnect from printer button")
+						.ClickByName("Yes Button") // accept the disconnect
+						.ClickByName("Cancel Wizard Button") // click the close on the collect info dialog
 						.ClickByName("Connect to printer button") // Reconnect
 						.WaitFor(() => printer.Connection.CommunicationState == CommunicationStates.Connected);
 

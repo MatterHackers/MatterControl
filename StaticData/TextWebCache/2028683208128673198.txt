@@ -4,7 +4,7 @@
         "AddOns": [], 
         "AdminNote": "SHIPPING - Please ship via fedex-pak.", 
         "AttributeOptions": [], 
-        "AvailableDate": "2021-01-07", 
+        "AvailableDate": "2021-02-04", 
         "BarCodeID": "", 
         "Brand": "", 
         "ComponentSkuCount": 0, 
@@ -12,14 +12,14 @@
         "CustomRuleSet": false, 
         "DateTimeCreated": "2019-05-24T17:49:45.203596", 
         "DigitalLicenseKeys": [], 
-        "DisplayAvailableDate": "Jan 7th", 
-        "DisplayListPrice": "95.00", 
-        "DisplayPrice": "89.94", 
+        "DisplayAvailableDate": "Feb 4th", 
+        "DisplayListPrice": "100.00", 
+        "DisplayPrice": "96.00", 
         "DisplayPriceFlag": true, 
         "DisplayWholesaleCost": "0.00", 
         "FeaturedImage": {
-            "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
-            "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+            "ImageFile": "/mh-product-images/prod/e7e220f4-aab8-4b2d-a01c-aabb5c93e575", 
+            "ImageUrl": "https://lh3.googleusercontent.com/1HoMHoQBetKPuND-lI20mLVQEpyZSRAIKtJXMROuslrqboaPLVKQbbpjDZ-iRSgoNu_H75-dxnK2emFYyLjA145k1DyjKf9YUetA", 
             "IsFeatured": true
         }, 
         "HardwareDeviceTokens": [], 
@@ -49,7 +49,7 @@
         "PrimarySupplier": {}, 
         "PrimarySupplierKey": "", 
         "ProductDescription": "Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag. Need convenience in a kit? Check out our MatterHackers 3D Printing Tool Kit Premium.", 
-        "ProductListPrice": 9500, 
+        "ProductListPrice": 10000, 
         "ProductListing": {
             "ActiveSkuCount": 1, 
             "ActiveSkus": [
@@ -74,12 +74,12 @@
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/fr_69ampBFeDi1T5ii74VKyX-av33-VaggFywEG5x93q4746JaRRnHyyA3cTUMrKOyDgn2lYHPgxWNWvTeVnTxk'></p>", 
-                    "ElementCode": "F2I7KX", 
+                    "Content": "<p style='text-align:center;'><img src='https://lh3.googleusercontent.com/hOeiPg1jaHw8qxR_BTnmqTBddHjT0X0k_af0OE32Ugw1LPEvu1HAVOSbT2k4jf_K5r1F7Ax0gA516UtkhQCop5D5aAOOw2Ys42or'></p>", 
+                    "ElementCode": "M51ZSU", 
                     "Images": [
                         {
-                            "ImageFile": "/mh-product-images/prod/14cbc74c-6fcd-4555-9535-e3af431820e6", 
-                            "ImageUrl": "https://lh3.googleusercontent.com/fr_69ampBFeDi1T5ii74VKyX-av33-VaggFywEG5x93q4746JaRRnHyyA3cTUMrKOyDgn2lYHPgxWNWvTeVnTxk", 
+                            "ImageFile": "/mh-product-images/prod/0f2a1e30-f7c8-4f48-9d4f-7384613adb69", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/hOeiPg1jaHw8qxR_BTnmqTBddHjT0X0k_af0OE32Ugw1LPEvu1HAVOSbT2k4jf_K5r1F7Ax0gA516UtkhQCop5D5aAOOw2Ys42or", 
                             "IsFeatured": false
                         }
                     ], 
@@ -141,16 +141,16 @@
                 }
             ], 
             "FeaturedImage": {
-                "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
-                "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+                "ImageFile": "/mh-product-images/prod/e7e220f4-aab8-4b2d-a01c-aabb5c93e575", 
+                "ImageUrl": "https://lh3.googleusercontent.com/1HoMHoQBetKPuND-lI20mLVQEpyZSRAIKtJXMROuslrqboaPLVKQbbpjDZ-iRSgoNu_H75-dxnK2emFYyLjA145k1DyjKf9YUetA", 
                 "IsFeatured": true
             }, 
             "HasBeenPublished": true, 
             "HideRewardsFlag": false, 
             "Images": [
                 {
-                    "ImageFile": "/mh-product-images/prod/7e41f85a-429b-4815-9f2e-d469cfd2694f", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w", 
+                    "ImageFile": "/mh-product-images/prod/e7e220f4-aab8-4b2d-a01c-aabb5c93e575", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/1HoMHoQBetKPuND-lI20mLVQEpyZSRAIKtJXMROuslrqboaPLVKQbbpjDZ-iRSgoNu_H75-dxnK2emFYyLjA145k1DyjKf9YUetA", 
                     "IsFeatured": true
                 }, 
                 {
@@ -179,8 +179,8 @@
                     "IsFeatured": false
                 }, 
                 {
-                    "ImageFile": "/mh-product-images/prod/9f88ff20-02b6-4d50-bfce-ad32576d29ac", 
-                    "ImageUrl": "https://lh3.googleusercontent.com/TPZNDjNWC0IxR4abhsb8lBmzxpDp8Wk3-NLDNExLAtMkofqzpHrZGKF5IHRBjQuxqMhv_W1JFbOQ89hpECMfhQ", 
+                    "ImageFile": "/mh-product-images/prod/1ed6ae96-bcd0-43a0-b0c6-88ce43c02cb5", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/1u5AZ9GZ4dLaajNGMouy_dG2EZy0JSCW0CcCTlbpCdjbM8XYmhic_IoiEMTWOI439ieMhW-_YQds7wNQg1LFo_P9Ebtf8h4_Klq_", 
                     "IsFeatured": false
                 }, 
                 {
@@ -211,7 +211,7 @@
             ], 
             "PreOrderFlag": false, 
             "ProductCreatedOn": "2019-05-24T17:49:44.947944", 
-            "ProductEditedOn": "2020-10-26T18:52:56.281182", 
+            "ProductEditedOn": "2020-12-30T20:26:32.696894", 
             "ProductType": "physical-inventory", 
             "RedirectUrl": "", 
             "ReferenceUrl": "matterhackers-3d-printing-tool-kit-premium", 
@@ -228,17 +228,17 @@
         }, 
         "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
         "ProductNumber": null, 
-        "ProductPrice": 8994, 
+        "ProductPrice": 9600, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": -8, 
-        "QuantityOnHand": -8, 
+        "QuantityAvailable": 31, 
+        "QuantityOnHand": 31, 
         "QuantityReserved": 0, 
         "ReferenceUrl": "matterhackers-3d-printing-tool-kit-premium", 
         "RetiredDateTime": null, 
         "SID": "MNUYE0VF", 
         "ShipInBox": false, 
-        "ShowAvailableDate": true, 
+        "ShowAvailableDate": false, 
         "ShownInListing": true, 
         "SkuName": "MatterHackers FDM 3D Printing Tool Kit Premium", 
         "SkuWarningMessages": [], 

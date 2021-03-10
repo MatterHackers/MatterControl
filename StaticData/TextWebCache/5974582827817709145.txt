@@ -111,8 +111,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDM5ZvQCAw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTENUWFpNSww", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 61, 
-                    "QuantityOnHand": 61, 
+                    "QuantityAvailable": 37, 
+                    "QuantityOnHand": 37, 
                     "SingleSku": true
                 }
             ], 
@@ -217,8 +217,8 @@
         "ProductPrice": 29900, 
         "ProductType": "physical-inventory", 
         "ProductUpc": "", 
-        "QuantityAvailable": 13, 
-        "QuantityOnHand": 13, 
+        "QuantityAvailable": -2, 
+        "QuantityOnHand": -2, 
         "QuantityReserved": 10, 
         "ReferenceUrl": "pulse-enclosure-kit-black", 
         "RetiredDateTime": null, 

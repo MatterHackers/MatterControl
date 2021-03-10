@@ -39,7 +39,10 @@ using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters2D;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.PolygonMesh.Csg;
+using MatterHackers.RenderOpenGl;
+using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 using Polygon = System.Collections.Generic.List<ClipperLib.IntPoint>;
@@ -56,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		Outline
 	}
 
-	public class BaseObject3D : Object3D, IPropertyGridModifier
+	public class BaseObject3D : Object3D, IPropertyGridModifier, IEditorDraw
 	{
 		public enum CenteringTypes
 		{
@@ -138,14 +141,23 @@ namespace MatterHackers.MatterControl.DesignTools
 			return totalSlice.CreateVertexStorage();
 		}
 
-		[JsonIgnore]
-		public IVertexSource VertexSource
+		private bool OutlineIsFromMesh
 		{
 			get
 			{
 				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
 				var hasMesh = this.Descendants<IObject3D>().Where(m => m.Mesh != null).Any();
-				if (vertexSource?.VertexSource == null && hasMesh)
+
+				return vertexSource?.VertexSource == null && hasMesh;
+			}
+		}
+
+		[JsonIgnore]
+		public IVertexSource VertexSource
+		{
+			get
+			{
+				if (OutlineIsFromMesh)
 				{
 					if (meshVertexCache.vertexSource == null || meshVertexCache.height != CalculationHeight)
 					{
@@ -158,6 +170,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					return meshVertexCache.vertexSource;
 				}
 
+				var vertexSource = (IPathObject)this.Descendants<IObject3D>().FirstOrDefault((i) => i is IPathObject);
 				return vertexSource?.VertexSource;
 			}
 
@@ -441,6 +454,19 @@ namespace MatterHackers.MatterControl.DesignTools
 			foreach (var kvp in changeSet.Where(c => !c.Value))
 			{
 				change.SetRowVisible(kvp.Key, () => kvp.Value);
+			}
+		}
+
+		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		{
+			if (OutlineIsFromMesh)
+			{
+				var aabb = this.GetAxisAlignedBoundingBox(this.WorldMatrix());
+				// ExtrusionHeight
+				layer.World.RenderPathOutline(this.WorldMatrix() * Matrix4X4.CreateTranslation(0, 0, CalculationHeight - aabb.MinXYZ.Z + ExtrusionHeight), VertexSource, Agg.Color.Red, 5);
+
+				// turn the lighting back on
+				GL.Enable(EnableCap.Lighting);
 			}
 		}
 	}

@@ -107,6 +107,10 @@
       <Project>{74F6BB6C-9D02-4512-A59A-21940E35C532}</Project>
       <Name>Gui</Name>
     </ProjectReference>
+    <ProjectReference Include="Submodules\agg-sharp\VectorMath\VectorMath.csproj">
+      <Project>{d3e41b4e-bfbb-44ca-94c8-95c00f754fdd}</Project>
+      <Name>VectorMath</Name>
+    </ProjectReference>
     <ProjectReference Include="Submodules\MatterSlice\MatterSlice.csproj">
       <Project>{b0aed568-8796-42b9-baa9-ebc796134e78}</Project>
       <Name>MatterSlice</Name>

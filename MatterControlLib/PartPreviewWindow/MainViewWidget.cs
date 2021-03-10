@@ -35,6 +35,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -368,8 +369,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					tabControl.ActiveTab = newTab;
 				}
-
-				tabControl.RefreshTabPointers();
 			}
 
 			statusBar = new Toolbar(theme.TabbarPadding)
@@ -581,8 +580,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					tabControl.CloseTab(tab);
 				}
 			}
-
-			tabControl.RefreshTabPointers();
 		}
 
 		private GuiWidget CreateNetworkStatusPanel(ThemeConfig theme)
@@ -709,7 +706,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (e.Button == MouseButtons.Right)
 					{
-						AddRightClickPrinterMenu(tabControl, printerTab, printer, e);
+						AddRightClickTabMenu(tabControl, printerTab, printer, e);
 					}
 				};
 
@@ -747,39 +744,71 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private void AddRightClickPrinterMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
 
-			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-			renameMenuItem.Click += (s, e) =>
+			if (printer != null)
 			{
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						printer.Settings.GetValue(SettingsKey.printer_name),
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
-							printer.Settings.SetValue(SettingsKey.printer_name, newName);
-						}));
-			};
+				var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+				renameMenuItem.Click += (s, e) =>
+				{
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							printer.Settings.GetValue(SettingsKey.printer_name),
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
+							{
+								printer.Settings.SetValue(SettingsKey.printer_name, newName);
+							}));
+				};
+			}
 
-			var moveLeftMenuItem = popupMenu.CreateMenuItem("Move <<".Localize());
-			moveLeftMenuItem.Click += (s, e) =>
+			var moveButtons = new FlowLayoutWidget();
+
+			var textWidget = new TextWidget("Move Tab", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
+			{
+				Margin = PopupMenu.MenuPadding.Clone(PopupMenu.MenuPadding.Left - 5, right: 5),
+				VAnchor = VAnchor.Center,
+			};
+			moveButtons.AddChild(textWidget);
+			var buttonSize = 24 * DeviceScale;
+			var moveLeftButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons).MirrorX(), theme)
+			{
+				Width = buttonSize,
+				Height = buttonSize,
+				Margin = new BorderDouble(3, 0),
+				HoverColor = theme.AccentMimimalOverlay,
+				VAnchor = VAnchor.Center,
+			};
+			moveLeftButton.Click += (s, e) =>
 			{
 				tabs.MoveTabLeft(printerTab);
+				popupMenu.Unfocus();
+			};
+			moveButtons.AddChild(moveLeftButton);
+
+			var moveRightButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons), theme)
+			{
+				Width = buttonSize,
+				Height = buttonSize,
+				Margin = new BorderDouble(3, 0),
+				HoverColor = theme.AccentMimimalOverlay,
+				VAnchor = VAnchor.Center,
 			};
 
-			var moveRightMenuItem = popupMenu.CreateMenuItem("Move >>".Localize());
-			moveRightMenuItem.Click += (s, e) =>
+			moveRightButton.Click += (s, e) =>
 			{
-				// move it to the right
 				tabs.MoveTabRight(printerTab);
+				popupMenu.Unfocus();
 			};
+			moveButtons.AddChild(moveRightButton);
+
+			popupMenu.AddChild(moveButtons);
 
 			popupMenu.ShowMenu(printerTab, mouseEvent);
 		}
@@ -829,6 +858,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				ApplicationController.Instance.Workspaces.Remove(workspace);
 			}
+
+			// add a right click menu
+			partTab.Click += (s, e) =>
+			{
+				if (e.Button == MouseButtons.Right)
+				{
+					AddRightClickTabMenu(tabControl, partTab, null, e);
+				}
+			};
 
 			void Widget_Closed(object sender, EventArgs args)
 			{

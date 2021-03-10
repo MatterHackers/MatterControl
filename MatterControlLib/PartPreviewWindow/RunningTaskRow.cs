@@ -145,7 +145,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				taskDetails.Options?.ResumeText,
 				taskDetails.Options?.ResumeAction,
 				taskDetails.Options?.ResumeToolTip ?? "Resume".Localize(),
-				"",
+				"Resume Task Button",
 				theme,
 				0);
 			// start with it hidden

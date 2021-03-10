@@ -36,6 +36,7 @@ using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.ServiceModel.Description;
 using System.Threading;
+using MatterControl.Printing;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
@@ -43,6 +44,7 @@ using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.SettingsManagement;
 using MatterHackers.MatterControl.SlicerConfiguration;
 using MatterHackers.SerialPortCommunication.FrostedSerial;
+using MatterHackers.VectorMath;
 using Microsoft.Extensions.Configuration;
 using Mindscape.Raygun4Net;
 using Photon.Parts;
@@ -92,7 +94,7 @@ namespace MatterHackers.MatterControl
 		[STAThread]
 		public static void Main(string[] args)
 		{
-#if false
+#if false // this is for some early testing of SLA output
 			var test = new PhotonFile();
 			void Progress(string message)
 			{
@@ -110,6 +112,36 @@ namespace MatterHackers.MatterControl
 				sourceFile = @"C:\Users\larsb\Downloads\_rocktopus.ctb";
 				test.ReadFile(sourceFile, Progress);
 				test.SaveFile(@"C:\Users\larsb\Downloads\_rocktopus.photon");
+			}
+#endif
+
+#if false // this is for processing print log exports
+			var filename = "C:\\Users\\LarsBrubaker\\Downloads\\210309 B2 print_log.txt";
+			var lines = File.ReadAllLines(filename);
+			var newPosition = default(Vector3);
+			var ePosition = 0.0;
+			var instruction = 0;
+			var layer = 0;
+			using (var writetext = new StreamWriter("C:\\Temp\\printlog.gcode"))
+			{
+				foreach (var line in lines)
+				{
+					if (line.Contains(" G1 "))
+					{
+						GCodeFile.GetFirstNumberAfter("X", line, ref newPosition.X);
+						GCodeFile.GetFirstNumberAfter("Y", line, ref newPosition.Y);
+						GCodeFile.GetFirstNumberAfter("Z", line, ref newPosition.Z);
+						GCodeFile.GetFirstNumberAfter("E", line, ref ePosition);
+
+						writetext.WriteLine($"G1 X{newPosition.X} Y{newPosition.Y} Z{newPosition.Z} E{ePosition}");
+						instruction++;
+
+						if(instruction % 500 == 0)
+						{
+							writetext.WriteLine($"; LAYER:{layer++}");
+						}
+					}
+				}
 			}
 #endif
 

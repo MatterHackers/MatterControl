@@ -1,0 +1,322 @@
+{
+    "ProductSku": {
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2016-03-31", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:27:43.205100", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Mar 31st", 
+        "DisplayListPrice": "329.00", 
+        "DisplayPrice": "329.00", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.00", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_QL913WZi18m6Ld0Vvl8AsbkD2M1-_p5X3xRLgJlYoFI0YOuyAq-6SiuBmQ1lv3J7bI4STsz8xd9TlPUaANJbH0GpHLo", 
+            "ImageUrl": "https://lh3.googleusercontent.com/6wA9_orn-RuH5UUAZV6co6wU4MrZtWqQGrrX1UBNVEDVNt7mi01tCJNXumLSO2-zQ2eZ11w6r1Ur7S0G6PWXxfk", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": true, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTk1ITFdUWgw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GM-poiUM", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.00", 
+            "0.00", 
+            "0.00"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {}, 
+        "PrimarySupplierKey": "", 
+        "ProductDescription": "MatterControl T10 is a powerful, standalone, full-featured version of the MatterControl you are already familiar with. MatterControl T10 features a large 10.6\" screen delivering sharp renderings and a powerful processor for fast onboard slicing. MatterControl T10 is the ultimate upgrade for your 3D printer - providing a streamlined 3D printing experience as a result of onboard slicing combined with the power of the cloud. MatterControl Touch gives you the ability create, edit and prepare models directly on your printer using a simple touchscreen interface. The device includes a 5.0 megapixel onboard camera, an easy to use interface and free access to MatterControl Cloud Sync\u2019s wireless capabilities.", 
+        "ProductListPrice": 32900, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTk1ITFdUWgw"
+            ], 
+            "AddOns": [
+                {
+                    "AddOnBasePrice": 4057, 
+                    "AddOnDiscountDisplay": 28, 
+                    "AddOnDisplayBasePrice": "40.57", 
+                    "AddOnDisplayPrice": "29.00", 
+                    "AddOnDisplaySavings": "11.57", 
+                    "AddOnFloatPrice": 29.0, 
+                    "AddOnListingReference": "3d-printing-with-mattercontrol", 
+                    "AddOnPreOrderFlag": false, 
+                    "AddOnPrice": 2900, 
+                    "AddOnSavings": 1157, 
+                    "AddOnSkuReference": "M0HQ1YCZ", 
+                    "AddOnTitle": "3D Printing with MatterControl - Paperback Book", 
+                    "ListingIsActive": true, 
+                    "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbXUtNHNnb00M", 
+                    "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNMEhRMVlDWgw", 
+                    "ProductType": "physical-inventory", 
+                    "QuantityAvailable": 0, 
+                    "QuantityOnHand": 0, 
+                    "SingleSku": true
+                }
+            ], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:05:27.305890", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<h2>Easy to Use with Reliability You Can Count On</h2>\r\n<p>MatterControl T10 has all the same great features as MatterControl Touch with even more capabilities. A high definition 10.6\" touchscreen allows controlling your printer to be seamless and rendering designs sharp. A powerful 2Ghz Octa-Core processor enables faster on board slicing and quick access to design files stored on MatterControl Cloud Sync. The software development team at MatterHackers has optimized the device performance to ensure stability, even for long prints.</p>", 
+                    "ElementCode": "PEFFJP", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img title='MatterControl Touch T10 - 10.6\" Standalone 3D Printer Controller' src='https://lh3.googleusercontent.com/MaGzJictCAE-bJEcXwrd2WXAmM8E81U8EhXp7P1Z_ExD4oRFnDt7QJO72NHIWyfc_w5uxrosob3p7odAHnC0sNz3QQ'></p>", 
+                    "ElementCode": "RCHYCU", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_MaGzJictCAE-bJEcXwrd2WXAmM8E81U8EhXp7P1Z_ExD4oRFnDt7QJO72NHIWyfc_w5uxrosob3p7odAHnC0sNz3QQ", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/RVstvi8Ope3EIZoeCsUnLMyL93EEmZ4re60NGAwy-wWHoEj20Yl4MTDD2mHznaKEjhYwBURmuYOkd-hkO2_T-j7R", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>Give Your 3D Printer a Brain with MatterControl Touch</h2>\r\n<p>MatterControl T10 gives your 3D printer a life of its own. With it you can reclaim your laptop and eliminate the &lsquo;SD card shuffle&rsquo; between your computer and printer. You get the full-featured experience of printing with MatterControl without relying on a desktop computer. Curious how your print is going? You can check the progress wherever you are via the web with the free MatterControl Cloud Sync. MatterControl T10 can even text or email you a picture of your completed print the moment it&rsquo;s finished. MatterControl supports over 40 models of 3D printers, and that list is always growing.</p>", 
+                    "ElementCode": "LTECKK", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>How It Works</h2>\r\n<p>Plug in your MatterControl Touch, connect via USB to any compatible 3D printer and then follow the simple setup wizard. Congratulations! You now have a standalone 3D printer capable of handling your 3D printing workflow from start to finish. Sign-in to send and receive print jobs, or download models directly from the web.</p>", 
+                    "ElementCode": "W9YJHQ", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>Getting Started With MatterControl Touch</h2>", 
+                    "ElementCode": "1QV21N", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<div class=\"video-container\">\n<div class=\"embed-youtube\" data-embed=\"nposQEgTc_s\" data-size=\"lg\">\n</div>\n</div>", 
+                    "ElementCode": "3VFX7U", 
+                    "Images": [], 
+                    "Type": "html"
+                }, 
+                {
+                    "Content": "<h2>MatterControl T10 Features</h2>\r\n<p>MatterControl T10 integrates every component that you love about MatterControl and includes some exciting new features.</p>\r\n<p><strong>Simple Setup</strong> - Preloaded configurations make setting up your 3D printer a snap - plug it in and start printing in minutes.</p>\r\n<p><strong>Integrated Slicing</strong> - Give your printer the ability to directly generate print files from 3D models using MatterSlice.</p>\r\n<p><strong>Remote Print Monitoring</strong> - Keep an eye on your 3D prints from afar using your phone or any web-enabled device using MatterControl Cloud Sync.</p>\r\n<p><strong>Automatic Print Leveling</strong> - Use software-based leveling to achieve that perfect first layer.</p>\r\n<p><strong>SMS / Email Notifications</strong> - Have your printer send a text message or email alert with a photo of your finished part.</p>\r\n<p><strong>Onboard Camera</strong> - Take a picture of your finished print or check on the status while printing with the onboard 5.0 megapixel camera.</p>", 
+                    "ElementCode": "3GJPA8", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style=\"text-align: center;\"><img title=\"\" src=\"https://lh3.googleusercontent.com/WbbGR9XxfVOd8GZbNTR_EBQXxp2thlVEYWjEQMaSjSAui_HtvvSTsAuIBTmeYP1qDOD8PH4YHuozyOxc5zpr7VIuZg\" alt=\"\" />&nbsp;</p>\r\n<p style=\"text-align: center;\"><em>Text message notifications alert you when your print is complete.&nbsp;</em></p>", 
+                    "ElementCode": "XGOAWF", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_WbbGR9XxfVOd8GZbNTR_EBQXxp2thlVEYWjEQMaSjSAui_HtvvSTsAuIBTmeYP1qDOD8PH4YHuozyOxc5zpr7VIuZg", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/2NE4ZJsmH2CuQQqOqsPlnJewjIz5Yygk97H5qth9g5mWFjQA6u03CHAV6zOviTtl6gwtYe5tOQvV9ADeJjoiOBDm", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p><strong><strong>Free Updates</strong>&nbsp;-&nbsp;</strong>MatterControl is a continuously improving platform and staying up to date with the latest developments is just a simple click away.</p>\r\n<p><strong>Open Source Software</strong>&nbsp;- MatterControl T10 is powered by open source software and libraries, including MatterControl, MatterSlice, the&nbsp;agg-sharp graphics engine, and the Android operating system.</p>\r\n<p><strong>Wifi Enabled, Not Required</strong>&nbsp;- Enjoy a fully standalone experience or connect your printer to the web to take advantage of <a title=\"MatterControl Sync\" href=\"http://sync.mattercontrol.com/\" target=\"_blank\">MatterControl Cloud Sync</a> features.</p>\r\n<p><strong>Send Files over the Web</strong>&nbsp;- Send designs to your printer from anywhere, or transfer models between printers using&nbsp;MatterControl Cloud Library. SD Cards not required.</p>\r\n<p><strong>Model Editing Tools</strong>&nbsp;- Make changes to your 3D model quickly and easily prior to printing. Rotate, scale,&nbsp;mirror&nbsp;and position your models for the perfect print.</p>\r\n<p><span id=\"docs-internal-guid-de3e4705-136a-3d4d-4e64-b1a58c286096\"><strong>Full Preview</strong>&nbsp;- Preview and interact with 3D models prior to printing. Use the layer-by-layer preview to see exactly how your print will turn out.</span></p>", 
+                    "ElementCode": "LYBPJA", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style=\"text-align: center;\"><img title=\"MatterControl Touch T10 - 10.6&quot; Standalone 3D Printer Controller\" src=\"https://lh3.googleusercontent.com/z6LcjwLdtoQxT7OaQIjXt9t_Iroipryh4dl2St1HzAEoAIeDQZpP-TjZC-h4qzpI-RbFLECJlIDUacNqySpjyn4YZvo\" alt=\"\" /></p>\r\n<p style=\"text-align: center;\">MatterControl T10 can be used with most 3D Printers</p>", 
+                    "ElementCode": "LWDQHE", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_z6LcjwLdtoQxT7OaQIjXt9t_Iroipryh4dl2St1HzAEoAIeDQZpP-TjZC-h4qzpI-RbFLECJlIDUacNqySpjyn4YZvo", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/dWdamSJEu9oMSc_o63fHoTGNb44WokEZN-pq0d8LJ16A-LcNRKzdCO7eg6434eAJb5jMiQWd_3lKWu5bX27f2KE", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p><strong>Customizable Settings</strong>&nbsp;- Create and customize your own, or use built-in presets for material and quality settings to make switching filaments simple and convenient. No more failed prints because you forgot to change a setting.</p>\r\n<p dir=\"ltr\"><strong>Design Plugins</strong>&nbsp;- Get add-ons to make simple parts right on your printer.</p>\r\n<p><strong>Dual Extrusion / Multi-Material</strong>&nbsp;- Assigning different materials is a snap so you can take full advantage of any multi-extruder equipped 3D printer.</p>\r\n<p><strong>Mid-print Tuning and Adjustment</strong>&nbsp;- Fine tune your prints with on-the-fly adjustments to speed, extrusion rates, and first layer height.</p>\r\n<p><strong>Print History</strong>&nbsp;- Keep a record of your favorite prints so you can reprint your most impressive parts with the click of a button.</p>\r\n<p><strong>Design Library</strong>&nbsp;- Organize all of your 3D printable models in one searchable location for easy access.</p>\r\n<p><strong>Advanced Features</strong>&nbsp;- MatterControl Touch puts the full capability of 3D printing into the hands of power users. So if you want to adjust&nbsp;eeprom&nbsp;settings, create custom macros, or send terminal commands directly to your machine - you can.</p>", 
+                    "ElementCode": "BK8HG1", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>What's New?</h2>\r\n<p>MatterControl is an ever-evolving platform here are just a few of the features that have been recently added:</p>\r\n<p><strong>Web-based Camera Monitoring</strong> - Keep an eye on your prints using the onboard camera.</p>\r\n<p><strong>Web-based Control</strong> - Start and stop prints remotely.</p>\r\n<p><strong>Cloud Library</strong> - Sync your design files across multiple devices.</p>\r\n<p><strong>X3G Support</strong> - More models are now supported than ever before, including .x3g based printers.</p>\r\n<p>The best part? Any future features will be delivered directly to your MatterControl T10 device. You can participate in this continuously improving experience by providing feedback and letting us know what features you would like to see.</p>", 
+                    "ElementCode": "KNK782", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img title='MatterControl Touch T10 - Standalone 3D Printer Controller' src='https://lh3.googleusercontent.com/ZVyN7uC1ZdF1tamixakcDgApAvUcpoA0Gfe9zvhvz-gNBJwTJ_f8bGfJYsvndDQYjvdswaFdc9D2QIVT_2lIQEtuaw'></p>", 
+                    "ElementCode": "O4J793", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_ZVyN7uC1ZdF1tamixakcDgApAvUcpoA0Gfe9zvhvz-gNBJwTJ_f8bGfJYsvndDQYjvdswaFdc9D2QIVT_2lIQEtuaw", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/RNB8bE6zRf2abvLyztl44AZCyz-Rl3lEBhSgDYsSLx_yv8O2Ljjd66Fqax8GRwn7IDD3uxPp0PtD5CrfmiUs3g", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2 dir=\"ltr\"><span>Hardware Tech Specs:\u00a0</span></h2>\n<ul>\n<li><span id=\"docs-internal-guid-de3e4705-135e-117f-783f-19a8dd722f0e\">RAM:\u00a0<span id=\"docs-internal-guid-de3e4705-135f-8317-2099-e1b7ae506da7\">1GB</span></span></li>\n<li><span id=\"docs-internal-guid-de3e4705-135e-27a8-53f7-2a0c0159f513\">CPU: 2GHz Octa-Core</span></li>\n<li><span id=\"docs-internal-guid-de3e4705-135e-27a8-53f7-2a0c0159f513\"><span id=\"docs-internal-guid-de3e4705-135f-b06e-f33c-e4282fcef90d\">Internal Storage:\u00a0<span id=\"docs-internal-guid-de3e4705-135f-cc26-baf6-4aeb4ec42c74\">16GB</span></span></span></li>\n<li><span id=\"docs-internal-guid-de3e4705-135e-8cdc-a133-3f1b05932d3f\">External Storage: micro<span id=\"docs-internal-guid-de3e4705-135f-f9e7-9d90-92e17d3a2f70\">SD Card</span></span></li>\n<li><span id=\"docs-internal-guid-de3e4705-135e-a7ec-50a6-7a8ecee84ae0\">5.0 megapixel Onboard Camera</span></li>\n<li>IPS Touchscreen</li>\n<li>Wifi-Connectivity</li>\n<li><span id=\"docs-internal-guid-de3e4705-135f-1888-ac9b-8b9338d7d35a\">Standalone Control</span></li>\n<li>Web Monitoring</li>\n<li><span id=\"docs-internal-guid-de3e4705-135f-51f2-07ab-4edadf58bdf4\">Remote Print Start &amp; Stop</span></li>\n</ul>\n<p>\u00a0</p>\n<p>Check out MatterControl Touch\u00a0<a href=\"https://www.matterhackers.com/articles/mattercontrol-touch-getting-started-guide\" target=\"_blank\">Getting Started Guide</a>.</p>", 
+                    "ElementCode": "HE9X5Z", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<p style='text-align:center;'><img title='MatterControl Touch T10 - 10.6\" Standalone 3D Printer Controller' src='https://lh3.googleusercontent.com/U29FJeMocMeSU3BkgRNK8_naT8ur8_Tex4_f3UwH6Q6sdhEV9YB5gjF-_aa_k_8seWHT3Hxscuu722vYTFLRRJXhf8k'></p>", 
+                    "ElementCode": "XAKJ9H", 
+                    "Images": [
+                        {
+                            "ImageFile": "/mh-product-images/prod/legacy_U29FJeMocMeSU3BkgRNK8_naT8ur8_Tex4_f3UwH6Q6sdhEV9YB5gjF-_aa_k_8seWHT3Hxscuu722vYTFLRRJXhf8k", 
+                            "ImageUrl": "https://lh3.googleusercontent.com/cFboKZerj7GF9jVPNlYFpswWt9eWYdFcf36R-2nb5UrFI_pSEpGnkMH6LTtWbb4FF6PTHeK6rBnlr52F2wCdM1w", 
+                            "IsFeatured": false
+                        }
+                    ], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h3>Currently Supported Printer Models</h3>\r\n<table>\r\n<tr>\r\n<td>3D Cloner DH</td>\r\n<td>Other X3G</td>\r\n</tr>\r\n<tr>\r\n<td>3D Cloner DH Plus</td>\r\n<td>Portabee Portabee GO</td>\r\n</tr>\r\n<tr>\r\n<td>3D Cloner DH+</td>\r\n<td>PrintSpace Altair_25</td>\r\n</tr>\r\n<tr>\r\n<td>3D Cloner LAB</td>\r\n<td>PrintSpace Altair_40</td>\r\n</tr>\r\n<tr>\r\n<td>3D Cloner ST</td>\r\n<td>Printrbot Metal Plus (Dual Extrusion)</td>\r\n</tr>\r\n<tr>\r\n<td>3D Cloner ST+</td>\r\n<td>Printrbot Metal Plus (Heated Bed)</td>\r\n</tr>\r\n<tr>\r\n<td>3D Factory MendelMax 1.5</td>\r\n<td>Printrbot Metal Plus (No Heated Bed)</td>\r\n</tr>\r\n<tr>\r\n<td>3D Stuffmaker Core</td>\r\n<td>Printrbot Printrbot Jr</td>\r\n</tr>\r\n<tr>\r\n<td>3D Stuffmaker Creator</td>\r\n<td>Printrbot Printrbot LC</td>\r\n</tr>\r\n<tr>\r\n<td>3D Stuffmaker Evolution</td>\r\n<td>Printrbot Printrbot PLUS</td>\r\n</tr>\r\n<tr>\r\n<td>3D Stuffmaker Mega i3</td>\r\n<td>Printrbot Simple</td>\r\n</tr>\r\n<tr>\r\n<td>3D Stuffmaker i3 Plus+</td>\r\n<td>Printrbot Simple Metal</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D Axiom</td>\r\n<td>Prusa Research i3 MK2</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D HD</td>\r\n<td>Pulse A-024</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D HD-R</td>\r\n<td>Pulse A-025</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D HD2x</td>\r\n<td>Pulse A-034</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D HDL</td>\r\n<td>Pulse A-035</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D HDx</td>\r\n<td>Pulse A-124</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D XL</td>\r\n<td>Pulse A-125</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D v5.5</td>\r\n<td>Pulse A-134</td>\r\n</tr>\r\n<tr>\r\n<td>Airwolf 3D v5.5</td>\r\n<td>Pulse A-135</td>\r\n</tr>\r\n<tr>\r\n<td>BCN3D Sigma</td>\r\n<td>Pulse A-136</td>\r\n</tr>\r\n<tr>\r\n<td>BeeVeryCreative BeeTheFirst</td>\r\n<td>Pulse A-335</td>\r\n</tr>\r\n<tr>\r\n<td>Blue Eagle Labs Kossel Clear</td>\r\n<td>Pulse A-336</td>\r\n</tr>\r\n<tr>\r\n<td>CTC Bizer</td>\r\n<td>Pulse NA</td>\r\n</tr>\r\n<tr>\r\n<td>Deezmaker Bukito</td>\r\n<td>ROBO 3D R1 &amp; R1 +Plus</td>\r\n</tr>\r\n<tr>\r\n<td>Deezmaker Bukobot v2</td>\r\n<td>Revolution 3D Printers INF3D-AF1-DE</td>\r\n</tr>\r\n<tr>\r\n<td>FlashForge Creator</td>\r\n<td>Revolution 3D Printers INF3D-AF1-SE</td>\r\n</tr>\r\n<tr>\r\n<td>FlashForge Creator Dual</td>\r\n<td>RoBo 3D BETA PLA ABS</td>\r\n</tr>\r\n<tr>\r\n<td>FlashForge Creator Pro Dual</td>\r\n<td>RoBo 3D BETA PLA ONLY</td>\r\n</tr>\r\n<tr>\r\n<td>FlashForge Creator X Dual</td>\r\n<td>RoBo 3D R1 5-16TH RODS</td>\r\n</tr>\r\n<tr>\r\n<td>Genkei Lepton 2</td>\r\n<td>RoBo 3D R1 8MM RODS</td>\r\n</tr>\r\n<tr>\r\n<td>IRA3D Poetry Infinity_25</td>\r\n<td>RoBo 3D R1 Heated Bed</td>\r\n</tr>\r\n<tr>\r\n<td>IRA3D Poetry Infinity_40</td>\r\n<td>RoBo 3D R1 Plus</td>\r\n</tr>\r\n<tr>\r\n<td>IRA3D Poetry Infinity_80</td>\r\n<td>RoBo 3D R1 Plus V2</td>\r\n</tr>\r\n<tr>\r\n<td>JumpStart V1</td>\r\n<td>RoBo 3D R1PLUSGLCD</td>\r\n</tr>\r\n<tr>\r\n<td>Leapfrog Creatr</td>\r\n<td>RoBo 3D ROBO 3D PLA ABS</td>\r\n</tr>\r\n<tr>\r\n<td>Leapfrog Creatr HS</td>\r\n<td>RoBo 3D ROBO 3D PLA ONLY</td>\r\n</tr>\r\n<tr>\r\n<td>Leapfrog Creatr XL</td>\r\n<td>RoBo 3D RoBo 3D ABS</td>\r\n</tr>\r\n<tr>\r\n<td>Leapfrog Xeed</td>\r\n<td>RoBo 3D RoBo 3D R1 V5</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot Mini</td>\r\n<td>RoBo 3D RoBo3DR1AUTOV3</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot TAZ</td>\r\n<td>RoBo 3D Robo 3D</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot TAZ 4</td>\r\n<td>RoBo 3D Robo 3D Heated Bed</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot TAZ 5</td>\r\n<td>RoBo 3D Robo 3D PLA - Heated Bed</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot TAZ 6</td>\r\n<td>RoBo 3D Robo 3D PLA - Unheated Bed</td>\r\n</tr>\r\n<tr>\r\n<td>Lulzbot TAZ 6 Software Leveling</td>\r\n<td>SeeMeCNC Eris</td>\r\n</tr>\r\n<tr>\r\n<td>M3D Micro with iMe Firmware</td>\r\n<td>SeeMeCNC Orion</td>\r\n</tr>\r\n<tr>\r\n<td>MAKEiT Pro-L</td>\r\n<td>SeeMeCNC Rostock MAX v2</td>\r\n</tr>\r\n<tr>\r\n<td>MAKEiT Pro-M</td>\r\n<td>SeeMeCNC Rostock MAX v3</td>\r\n</tr>\r\n<tr>\r\n<td>Maker's Tool Works Fusematic</td>\r\n<td>Solidoodle Solidoodle 2</td>\r\n</tr>\r\n<tr>\r\n<td>Maker's Tool Works MendelMax 2</td>\r\n<td>Solidoodle Solidoodle 3</td>\r\n</tr>\r\n<tr>\r\n<td>Maker's Tool Works MendelMax 3</td>\r\n<td>Solidoodle Solidoodle 4</td>\r\n</tr>\r\n<tr>\r\n<td>Maker's Tool Works MendelMax 3 (Dual Extrusion)</td>\r\n<td>Solidoodle Solidoodle Press</td>\r\n</tr>\r\n<tr>\r\n<td>Maker's Tool Works MiniMax</td>\r\n<td>Solidoodle Solidoodle Workbench</td>\r\n</tr>\r\n<tr>\r\n<td>MakerBot Replicator 2</td>\r\n<td>Solidoodle Solidoodle Workbench Apprentice</td>\r\n</tr>\r\n<tr>\r\n<td>MakerBot Replicator 2X</td>\r\n<td>Tosingraf 3DPrint</td>\r\n</tr>\r\n<tr>\r\n<td>MakerBot Replicator 5th Gen</td>\r\n<td>Tosingraf Cover 3DPrint</td>\r\n</tr>\r\n<tr>\r\n<td>MakerBot Replicator Mini</td>\r\n<td>Tosingraf Cover Engraving</td>\r\n</tr>\r\n<tr>\r\n<td>MakerBot Replicator Z18</td>\r\n<td>Type A Machines Series 1 Plywood</td>\r\n</tr>\r\n<tr>\r\n<td>MakerGear M2</td>\r\n<td>Ultimaker 2</td>\r\n</tr>\r\n<tr>\r\n<td>Me3D Me2</td>\r\n<td>Ultimaker 2 Extended</td>\r\n</tr>\r\n<tr>\r\n<td>ORD Solutions RoVa3D Dual</td>\r\n<td>Ultimaker 2 Extended+</td>\r\n</tr>\r\n<tr>\r\n<td>OpenBeam Kossel Pro</td>\r\n<td>Ultimaker 2+</td>\r\n</tr>\r\n<tr>\r\n<td>Organic Thinking System DeltaBot-K</td>\r\n<td>Velleman K8200</td>\r\n</tr>\r\n<tr>\r\n<td>Other EHuxley</td>\r\n<td>Wanhao 4S</td>\r\n</tr>\r\n<tr>\r\n<td>Other Mendel90</td>\r\n<td>Wanhao Duplicator i3</td>\r\n</tr>\r\n<tr>\r\n<td>Other Mendelmax 2</td>\r\n<td>ZYYX ZYYX+</td>\r\n</tr>\r\n<tr>\r\n<td>Other Prusa i3</td>\r\n<td>gCreate gMax</td>\r\n</tr>\r\n</table>\r\n<p>&nbsp;</p>\r\n<p>Any 3D printer that runs G-Code or X3G and has a direct USB connection</p>\r\n<p>More 3D printer models are coming soon!Any 3D printer that runs G-Code will work with MatterControl Touch. Please see our article about compatibility:&nbsp;<a href=\"/articles/is-mattercontrol-compatible-with-my-3d-printer\">Is MatterControl Compatible with my printer?</a></p>", 
+                    "ElementCode": "0X19J5", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<h2>Frequently Asked Questions</h2>\r\n<p dir=\"ltr\"><strong><em>My 3D Printer model isn&rsquo;t listed as supported, will it still work?</em></strong></p>\r\n<p dir=\"ltr\">As a general rule any printer that runs &ldquo;.gcode&rdquo; will work, including custom, and home-built printers.</p>\r\n<p dir=\"ltr\"><strong><em>Do I need to be connected to the internet or a wifi network for this to work?</em></strong></p>\r\n<p dir=\"ltr\">No. &nbsp;However, MatterControl Cloud Sync features such as web file transfers, remote monitoring, remote controls and auto-updates, do require a wireless internet connection.</p>\r\n<p dir=\"ltr\"><strong><em>How do I add printable models to my MatterControl Touch?</em></strong></p>\r\n<p dir=\"ltr\">There are several ways to find printable files - you can download files directly to the Touch from the web, transfer files via microSD Card or transfer files wirelessly from your computer via MatterControl Desktop by uploading them to the Cloud Library.</p>\r\n<p dir=\"ltr\"><strong><em>Can I get the application separately and run it on a standard Android tablet?</em></strong></p>\r\n<p dir=\"ltr\">Nope. &nbsp;MatterControl T10 has been modified at the hardware and firmware level in order to act as a dedicated computing device connected over USB. &nbsp;It it important to note that these devices are not meant to work separately from the 3D printer itself.</p>", 
+                    "ElementCode": "3SCHKG", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>30 Day Money Back Guarantee</h2>\r\n<p>Try MatterControl T10 risk free&nbsp;today - we&rsquo;re sure you&rsquo;ll be fully satisfied with your MatterControl T10, but if you&rsquo;re not we&rsquo;ve got you covered with a 30 Day Money Back Guarantee. Hardware issues or defective units are covered by our&nbsp;1 year&nbsp;repair-or-replace warranty.</p>", 
+                    "ElementCode": "3LJL8N", 
+                    "Images": [], 
+                    "Type": "text"
+                }, 
+                {
+                    "Content": "<h2>Trade-In Program</h2>\r\n<p>If you currently own a 7\" MatterControl Touch that is in good working order and condition, you can trade it in for a $100 credit towards the purchase of a MatterControl T10. Please email us at&nbsp;<a href=\"mailto:support@matterhackers.com\">support@matterhackers.com&nbsp;</a>or call 949-613-5838 for details.</p>\r\n<h2><span>Resellers &amp; Manufacturers Welcome!</span></h2>\r\n<p><span>Interested in reselling this fine piece of beautifully crafted hardware and software? We are actively seeking resellers and manufacturers of 3D printers to deploy MatterControl T10. If you are interested in becoming a reseller or if you are a manufacturer interested in bundling MatterControl Touch with your 3D printers, please shoot us an email at<span class=\"apple-converted-space\">&nbsp;</span><a href=\"mailto:support@matterhackers.com\">support@matterhackers.com</a>. Our goal is to get the MatterControl Touch into the hands of every maker and hacker out there so we welcome partners in accomplishing this goal!</span></p>\r\n<h2>Current MatterControl Touch Resellers</h2>\r\n<p>Feel free to purchase a MatterControl Touch unit from us or from any of our fabulous resellers listed below:</p>\r\n<p><a href=\"http://seemecnc.com/collections/parts-accesories/products/mattercontrol-touch-tablet\"><img alt=\"\" src=\"https://lh5.ggpht.com/fmO3dedmlwhezH5S34ov0gygN5r0CGyfoFeHXfCCkOrL3wub40xJlGI0gKE5Dvj8o2dW8xA2bT-EjNReoF51epTDbbQ\" title=\"seemecnc\" /></a></p>\r\n<p><a href=\"http://www.robo3d.com/products/mattercontrol-touch-standalone-3d-printer-controller\"><img alt=\"Image result for robo3d logo\" src=\"https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcTJofEnRUdDxqWGsUnUuwXXAw6VcOaEDT0FFuzJu1QcZitvEOM2\" /></a></p>\r\n<p><a href=\"http://www.amazon.com/Matterhackers-mattertouch-MatterControl-Printer-Controller/dp/B00UN7INBS/ref=sr_1_5?ie=UTF8&amp;qid=1427414823&amp;sr=8-5&amp;keywords=mattercontrol\"><img alt=\"Image result for amazon logo\" src=\"data:image/png;base64,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\" /></a></p>\r\n<p><a href=\"http://me3d.com.au/\"><img alt=\"Me3D\" src=\"https://lh3.googleusercontent.com/uP5T1IX3A9m-6_ENWIrOHDFU9wX1ZGHo2rAKPxpz4UkTlXUo_xGBCblKxmVL1xrYhuEmkehlmdrS5PdbVUnkqSdQKw=s200\" /></a></p>\r\n<p><a href=\"http://www.newegg.com/Product/Product.aspx?Item=9SIA7MS2N69670&amp;cm_re=mattercontrol-_-9SIA7MS2N69670-_-Product\"><img alt=\"Image result for newegg logo\" src=\"data:image/png;base64,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\" /></a></p>\r\n<p><a href=\"http://www.3dprintlife.com/shop/mattercontrol-touch-standalone-3d-printer-controller\"><img alt=\"\" src=\"http://static1.squarespace.com/static/5372fcf3e4b0297decd38337/t/54d557f9e4b0701606f93f9a/1423267837066/3d.Printlife.Green.Black.jpg\" /></a></p>\r\n<p><a href=\"http://www.bhphotovideo.com/\"><img alt=\"Image result for bh photo logo\" src=\"https://lh3.googleusercontent.com/0PXValcAteoLu2Pi4vIkGEG9DQCjbI8XE9A3VBkR8K3ud5Hf5waRibzf_KMHLW0X-oSyPli6klw3tmoUEg06FTPEb4g=s150\" /></a></p>", 
+                    "ElementCode": "DOBY3D", 
+                    "Images": [], 
+                    "Type": "Text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_QL913WZi18m6Ld0Vvl8AsbkD2M1-_p5X3xRLgJlYoFI0YOuyAq-6SiuBmQ1lv3J7bI4STsz8xd9TlPUaANJbH0GpHLo", 
+                "ImageUrl": "https://lh3.googleusercontent.com/6wA9_orn-RuH5UUAZV6co6wU4MrZtWqQGrrX1UBNVEDVNt7mi01tCJNXumLSO2-zQ2eZ11w6r1Ur7S0G6PWXxfk", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_97mMPGNrKU4xwPEKgSzcTr1Ah1rePCySefpef4Go-RN5GjBBfBpMNA39HXCH9apnKgzSjbQA9HGxuzZpgXWXbipI", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/EVscGDQMHBpF5y1olFRJcwep85tm4wuPKaSBUmjdGtMVP_eaWXQrdW4GvThLehVsDOfKcOcLIJAFFNZqHJy0aaBu", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_DIbfq1KXEHEvABlR2lRXx9dldcsmWfa9ANrsuReC49zIlRp7J-IOahf8kf2KWwqlDMvY4NT9XAWX-HIQ0Wl_7BZtAQ", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/uQv5XmMZfPRe6TiIP8NRXl2si0T5X9oqgx9CYFDnVuJP6BcRMCJ3JGu1_GVJYlGC2se3EX9XYJvNgpjSuKeQzg", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_WP5nwEHpRFRNlkpA3gKqU54T_fZSB5n6a1nvzxT7iobsye-bfyHp7KmsoGUIsRpP7Kx25EAEw_64RAuNJOQlskD-STQ", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/FL-cAOmDz8rLq8wnTqsJMhOHeG4MqUqK_ZuOWivbIRESepgwGEQwsxWJzj4FNlaeQx1rQzhiPIv4vDXQv4JZyg", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_CaXw6WYHcDy-EQr_S1k9HSvd98zt00ODI-pSchk3LITDS9DtSRdPQJ2oDhWaaMZ8AzZN2SPj9_47GS7bq2qPj7uW", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/zNg2vrdKDi0KKRohE_yi5_BhuBYR96NFMcu6lGs5CUhklBIcuTvoXoog1BSbnQ7pcknh4wpUESdYuehf9l0vm24", 
+                    "IsFeatured": false
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_QL913WZi18m6Ld0Vvl8AsbkD2M1-_p5X3xRLgJlYoFI0YOuyAq-6SiuBmQ1lv3J7bI4STsz8xd9TlPUaANJbH0GpHLo", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/6wA9_orn-RuH5UUAZV6co6wU4MrZtWqQGrrX1UBNVEDVNt7mi01tCJNXumLSO2-zQ2eZ11w6r1Ur7S0G6PWXxfk", 
+                    "IsFeatured": true
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbHJEYnJRb00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAlrDbrQoM", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:05:27.305910", 
+            "ProductEditedOn": "2019-10-02T22:35:10.376677", 
+            "ProductType": "", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "mattercontrol-touch-t10", 
+            "RelatedProducts": [
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBMnVmTXBnb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBeW83d3R3b00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBOUsyS3FRb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBd2ZDT3VBb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBc0thU2dnZ00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBa2YzTnFnb00M", 
+                "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBNnFXdi13Z00M"
+            ], 
+            "ShortDescription": "MatterControl T10 is a powerful, standalone, full-featured version of the MatterControl you are already familiar with. MatterControl T10 features a large 10.6\" screen delivering sharp renderings and a powerful processor for fast onboard slicing. MatterControl T10 is the ultimate upgrade for your 3D printer - providing a streamlined 3D printing experience as a result of onboard slicing combined with the power of the cloud. MatterControl Touch gives you the ability create, edit and prepare models directly on your printer using a simple touchscreen interface. The device includes a 5.0 megapixel onboard camera, an easy to use interface and free access to MatterControl Cloud Sync\u2019s wireless capabilities.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": null, 
+            "Title": "MatterControl Touch T10 - 10.6\" Standalone 3D Printer Controller"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBbHJEYnJRb00M", 
+        "ProductNumber": "78157007", 
+        "ProductPrice": 32900, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "735810238205", 
+        "QuantityAvailable": 0, 
+        "QuantityOnHand": 0, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "mattercontrol-touch-t10", 
+        "RetiredDateTime": "2020-10-02T10:48:21.774320", 
+        "SID": "MNMHLWTZ", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "MatterControl Touch T10 - 10.6\" Standalone 3D Printer Controller", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 1, 
+        "TotalWeight": 1500000, 
+        "TotalWeightGrams": "1,500.00", 
+        "TotalWeightKilograms": "1.50", 
+        "TotalWeightPounds": "3.31", 
+        "Weight": 1500000, 
+        "WeightGrams": "1,500.00", 
+        "WeightKilograms": "1.50", 
+        "WeightPounds": "3.31", 
+        "WholesaleCost": 0
+    }, 
+    "Status": "success"
+}
