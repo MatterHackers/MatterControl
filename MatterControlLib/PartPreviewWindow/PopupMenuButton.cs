@@ -40,7 +40,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	public class PopupMenuButton : PopupButton
 	{
 		private readonly ThemeConfig theme;
-		private bool mouseInBounds;
 		private bool _drawArrow = false;
 		private VertexStorage dropArrow = DropArrow.DownArrow;
 		private RectangleDouble dropButtonBounds = RectangleDouble.ZeroIntersection;
@@ -125,6 +124,18 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnBoundsChanged(e);
 		}
 
+		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
+		{
+			Invalidate();
+			base.OnMouseEnterBounds(mouseEvent);
+		}
+
+		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
+		{
+			Invalidate();
+			base.OnMouseLeaveBounds(mouseEvent);
+		}
+
 		public override void OnDraw(Graphics2D graphics2D)
 		{
 			base.OnDraw(graphics2D);
@@ -147,33 +158,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public override void OnMouseEnterBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = true;
-			base.OnMouseEnterBounds(mouseEvent);
-			this.Invalidate();
-		}
-
-		public override void OnMouseLeaveBounds(MouseEventArgs mouseEvent)
-		{
-			mouseInBounds = false;
-			base.OnMouseLeaveBounds(mouseEvent);
-			this.Invalidate();
-		}
-
 		public override Color BackgroundColor
 		{
 			get
 			{
+				var firstWidgetUnderMouse = FirstWidgetUnderMouse;
 				if (!MenuVisible
 					&& this.MouseCaptured
-					&& mouseInBounds
+					&& firstWidgetUnderMouse
 					&& this.Enabled)
 				{
 					return this.MouseDownColor;
 				}
 				else if (!MenuVisible
-					&& mouseInBounds
+					&& firstWidgetUnderMouse
 					&& this.Enabled)
 				{
 					return this.HoverColor;

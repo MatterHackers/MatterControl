@@ -270,8 +270,7 @@ namespace MatterHackers.MatterControl.Tour
 				}
 				else
 				{
-					var leftArrow = new ImageBuffer(rightArrow);
-					leftArrow.FlipX();
+					var leftArrow = new ImageBuffer(rightArrow).MirrorX();
 
 					this.Image = leftArrow;
 				}

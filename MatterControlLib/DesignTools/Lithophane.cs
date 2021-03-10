@@ -173,8 +173,7 @@ namespace MatterHackers.MatterControl.Plugins.Lithophane
 
 			public ImageBufferImageData(ImageBuffer image, double pixelWidth)
 			{
-				resizedImage = this.ToResizedGrayscale(image, pixelWidth);
-				resizedImage.FlipY();
+				resizedImage = this.ToResizedGrayscale(image, pixelWidth).MirrorY();
 			}
 
 			public int Width => resizedImage.Width;

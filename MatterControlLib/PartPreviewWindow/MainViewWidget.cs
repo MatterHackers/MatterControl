@@ -35,6 +35,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using MatterControlLib;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -771,12 +772,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var textWidget = new TextWidget("Move Tab", pointSize: theme.DefaultFontSize, textColor: theme.TextColor)
 			{
-				Padding = PopupMenu.MenuPadding.Clone(right: 0),
+				Margin = PopupMenu.MenuPadding.Clone(PopupMenu.MenuPadding.Left - 5, right: 5),
 				VAnchor = VAnchor.Center,
 			};
 			moveButtons.AddChild(textWidget);
-			var moveLeftButton = new TextButton("<<".Localize(), theme)
+			var buttonSize = 24 * DeviceScale;
+			var moveLeftButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons).MirrorX(), theme)
 			{
+				Width = buttonSize,
+				Height = buttonSize,
+				Margin = new BorderDouble(3, 0),
+				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
 			};
 			moveLeftButton.Click += (s, e) =>
@@ -786,8 +792,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			};
 			moveButtons.AddChild(moveLeftButton);
 
-			var moveRightButton = new TextButton(">>".Localize(), theme)
+			var moveRightButton = new IconButton(StaticData.Instance.LoadIcon("fa-angle-right_12.png", 14, 14, theme.InvertIcons), theme)
 			{
+				Width = buttonSize,
+				Height = buttonSize,
+				Margin = new BorderDouble(3, 0),
+				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
 			};
 
