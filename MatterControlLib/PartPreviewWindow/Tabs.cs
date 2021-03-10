@@ -85,24 +85,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public event EventHandler ActiveTabChanged;
 
-		protected List<ITab> _allTabs = new List<ITab>();
+		public IEnumerable<ITab> AllTabs
+		{
+			get
+			{
+				foreach (var child in this.TabBar.ActionArea.Children)
+				{
+					if (child is ITab iTab)
+					{
+						yield return iTab;
+					}
+				}
+			}
+		}
 
-		public IEnumerable<ITab> AllTabs => _allTabs;
-
-		public int TabCount => _allTabs.Count;
+		public int TabCount => AllTabs.Count();
 
 		public virtual void AddTab(GuiWidget tabWidget, int position = -1)
 		{
 			var iTab = tabWidget as ITab;
-
-			if (position == -1)
-			{
-				_allTabs.Add(iTab);
-			}
-			else
-			{
-				_allTabs.Insert(position - 1, iTab);
-			}
 
 			tabWidget.Click += TabWidget_Click;
 
@@ -114,7 +115,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		public virtual void AddTab(GuiWidget tabWidget, int tabPosition, int widgetPosition)
 		{
 			var iTab = tabWidget as ITab;
-			_allTabs.Insert(tabPosition, iTab);
 
 			tabWidget.Click += TabWidget_Click;
 
@@ -140,8 +140,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			get => this.ActiveTab.Key;
 			set
 			{
-				var foundTab = _allTabs[0];
-				foreach (var tab in _allTabs)
+				var foundTab = AllTabs.First();
+				foreach (var tab in AllTabs)
 				{
 					if (tab.Key == value)
 					{
@@ -155,17 +155,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public int SelectedTabIndex
 		{
-			get => _allTabs.IndexOf(this.ActiveTab);
+			get => AllTabs.IndexOf(this.ActiveTab);
 			set
 			{
-				this.ActiveTab = _allTabs[value];
+				int index = 0;
+				foreach (var tab in AllTabs)
+				{
+					if (index == value)
+					{
+						this.ActiveTab = tab;
+					}
+				}
 			}
 		}
 
 		internal virtual void CloseTab(ITab tab)
 		{
-			_allTabs.Remove(tab);
-
 			// Close Tab and TabContent widgets
 			tab.TabContent.Close();
 			(tab as GuiWidget)?.Close();
@@ -173,12 +178,12 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			if (tab is ChromeTab chromeTab)
 			{
 				// Activate next or last tab
-				ActiveTab = chromeTab.NextTab ?? _allTabs.LastOrDefault();
+				ActiveTab = chromeTab.NextTab ?? AllTabs.LastOrDefault();
 			}
 			else
 			{
 				// Activate last tab
-				ActiveTab = _allTabs.LastOrDefault();
+				ActiveTab = AllTabs.LastOrDefault();
 			}
 		}
 
@@ -195,7 +200,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					var clickedWidget = value as GuiWidget;
 
-					foreach (var tab in _allTabs)
+					foreach (var tab in AllTabs)
 					{
 						tab.TabContent.Visible = tab == clickedWidget;
 					}
@@ -227,7 +232,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		internal int GetTabIndex(SimpleTab tab)
 		{
-			return _allTabs.IndexOf(tab);
+			return AllTabs.IndexOf(tab);
 		}
 	}
 
@@ -298,21 +303,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void MoveTabRight(ITab tab)
 		{
-			var index = _allTabs.IndexOf(tab);
+			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;
 
 			if (index >= FirstMovableTab
-				&& index < _allTabs.Count - 1)
+				&& index < AllTabs.Count() - 1)
 			{
-				_allTabs.Remove(tab);
-				_allTabs.Insert(index + 1, tab);
-
 				TabBar.ActionArea.Children.Modify(list =>
 				{
-					var wi = list.IndexOf(tabWidget);
+					var tabIndex = list.IndexOf(tabWidget);
 					list.Remove(tabWidget);
-					list.Insert(wi + 1, tabWidget);
+					list.Insert(tabIndex + 1, tabWidget);
 				});
+
+				var savedIndex = index - 3;
+				var moving = ApplicationController.Instance.Workspaces[savedIndex];
+				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
+				ApplicationController.Instance.Workspaces.Insert(savedIndex + 1, moving);
 
 				TabBar.ActionArea.PerformLayout();
 
@@ -322,21 +329,23 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void MoveTabLeft(ITab tab)
 		{
-			var index = _allTabs.IndexOf(tab);
+			var index = AllTabs.IndexOf(tab);
 			var tabWidget = tab as GuiWidget;
 
 			if (index >= FirstMovableTab + 1
-				&& index < _allTabs.Count)
+				&& index < AllTabs.Count())
 			{
-				_allTabs.Remove(tab);
-				_allTabs.Insert(index - 1, tab);
-
 				TabBar.ActionArea.Children.Modify(list =>
 				{
-					var wi = list.IndexOf(tabWidget);
+					var tabIndex = list.IndexOf(tabWidget);
 					list.Remove(tabWidget);
-					list.Insert(wi - 1, tabWidget);
+					list.Insert(tabIndex - 1, tabWidget);
 				});
+
+				var savedIndex = index - 3;
+				var moving = ApplicationController.Instance.Workspaces[savedIndex];
+				ApplicationController.Instance.Workspaces.RemoveAt(savedIndex);
+				ApplicationController.Instance.Workspaces.Insert(savedIndex - 1, moving);
 
 				TabBar.ActionArea.PerformLayout();
 
@@ -724,6 +733,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			graphics2D.Line(rect.Left, rect.YCenter, rect.Left + tabInsetDistance, rect.Bottom, AppContext.Theme.MinimalShade, 1.3);
 
 			graphics2D.Render(tabLeft, color);
+		}
+	}
+
+	public static class TabsExtensions
+	{
+		public static int IndexOf<ITab>(this IEnumerable<ITab> source, ITab value)
+		{
+			int index = 0;
+			var comparer = EqualityComparer<ITab>.Default; // or pass in as a parameter
+			foreach (ITab item in source)
+			{
+				if (comparer.Equals(item, value)) return index;
+				index++;
+			}
+			return -1;
 		}
 	}
 }
