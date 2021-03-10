@@ -169,7 +169,7 @@
         "ShownInListing": true, 
         "SkuName": "Glass Plate for Magnetic Base 9\" x 10\"", 
         "SkuWarningMessages": [], 
-        "TotalLeadDays": 2, 
+        "TotalLeadDays": 1, 
         "TotalWeight": 0, 
         "TotalWeightGrams": "0.00", 
         "TotalWeightKilograms": "0.00", 

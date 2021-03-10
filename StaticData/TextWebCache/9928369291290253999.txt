@@ -1,0 +1,161 @@
+{
+    "ProductSku": {
+        "ActivelyDisplayedFlag": null, 
+        "AddOns": [], 
+        "AdminNote": "", 
+        "AttributeOptions": [], 
+        "AvailableDate": "2015-08-18", 
+        "BarCodeID": "", 
+        "Brand": "", 
+        "ComponentSkuCount": 0, 
+        "ComponentSkus": [], 
+        "CustomRuleSet": false, 
+        "DateTimeCreated": "2017-08-03T23:27:25.739220", 
+        "DigitalLicenseKeys": [], 
+        "DisplayAvailableDate": "Aug 18th", 
+        "DisplayListPrice": "4.99", 
+        "DisplayPrice": "3.00", 
+        "DisplayPriceFlag": true, 
+        "DisplayWholesaleCost": "0.58", 
+        "FeaturedImage": {
+            "ImageFile": "/mh-product-images/prod/legacy_YznfQY6kjf4zusHz7nOlABifWUayK1q8PPxFn0OpT36BW1RUsCEbmaiieRnFO_2TYTBDjelr9slSzWxacoqBuQ3l-g", 
+            "ImageUrl": "https://lh3.googleusercontent.com/Bhfo5E-t34vmBxRmbT0frPolhqUBLLR0DKbxr9xqhvYk1UfWSBGCurRgXkfddJxts2hadvzzGm8-DSOonfMrzlU", 
+            "IsFeatured": true
+        }, 
+        "HardwareDeviceTokens": [], 
+        "HasBeenReviewed": false, 
+        "IsActive": true, 
+        "IsDirty": false, 
+        "IsOnSale": false, 
+        "IsOneTimeItem": false, 
+        "IsRetired": false, 
+        "IsSearchable": true, 
+        "IsWarranty": false, 
+        "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQzJVUTNZUQw", 
+        "LeadDays": 0, 
+        "LegacySku": "ag1zfm1oLW9mcy1wcm9kchALEgdQcm9kdWN0GJm14h4M", 
+        "ListingIsActive": true, 
+        "NoPOBox": false, 
+        "PackageDimensions": [
+            "0.68", 
+            "2.56", 
+            "8.18"
+        ], 
+        "PackagedToShip": false, 
+        "PickImage": null, 
+        "PreOrderFlag": false, 
+        "PreviewFlag": false, 
+        "PricingRuleList": [], 
+        "PrimarySupplier": {
+            "DateTimeCreated": "2020-01-21T21:53:38.528358", 
+            "DateTimeModified": "2020-12-08T00:49:39.157657", 
+            "IsActive": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIC52bOUCQw", 
+            "Name": "Kaida", 
+            "PrimaryContact": "max.bz@matterhackers.com", 
+            "SecondaryContact": null, 
+            "SkuCount": 1, 
+            "SuppliedSIDs": [
+                "MC2UQ3YQ"
+            ], 
+            "SuppliedSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQzJVUTNZUQw"
+            ]
+        }, 
+        "PrimarySupplierKey": "ag1zfm1oLXBscy1wcm9kchULEghTdXBwbGllchiAgIC52bOUCQw", 
+        "ProductDescription": "The MatterHackers Heavy-Duty Art Knife is perfect for precision cutting and trimming of 3D printed projects made of PLA, ABS, and most specialty materials.", 
+        "ProductListPrice": 499, 
+        "ProductListing": {
+            "ActiveSkuCount": 1, 
+            "ActiveSkus": [
+                "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNQzJVUTNZUQw"
+            ], 
+            "AddOns": [], 
+            "Attributes": [], 
+            "BasePrice": 0, 
+            "DateTimeCreated": "2017-07-25T07:07:27.156510", 
+            "DisplayPriceRange": "", 
+            "Elements": [
+                {
+                    "Content": "<p><strong><span>Please note, all&nbsp;<span class=\"il\">Clearance</span>&nbsp;Item purchases are final and are not covered by the MatterHackers Return Policy - this excludes Refurbished 3D printers and machines which have at least a 6-month warranty.</span></strong></p>\r\n<p><strong>Reason for Clearance:&nbsp; This item is being discontinued.</strong></p>", 
+                    "ElementCode": "FBIIGW", 
+                    "Images": [], 
+                    "Type": "Text"
+                }, 
+                {
+                    "Content": "<p>The MatterHackers Heavy-Duty Art Knife is a must have for any 3d printing toolkit. Use this precise cutting tool to trim away imperfections and excess support for any 3D printed material.</p>\r\n<p>A soft comfort grip covers the knife's metal core.</p>\r\n<p>This knife uses a standard #11 blade.</p>\r\n<p style=\"text-align: center;\"><img style=\"display: block; margin-left: auto; margin-right: auto;\" title=\"Heavy-Duty Art Knife\" src=\"https://lh3.googleusercontent.com/B7jTshnZZXR6FwQyxvjy1Y-Z60QM5EG1M4FmAWUQBdRiRYH3lcKeym-GVwmjtiDTCmNAjHeY1GXF5qzo_T6oB4aA\" alt=\"\" /><em><span class=\"product-detail-widget\">Shave away your unicorn's support beard!</span></em></p>", 
+                    "ElementCode": "39OC9D", 
+                    "Images": [], 
+                    "Type": "text"
+                }
+            ], 
+            "FeaturedImage": {
+                "ImageFile": "/mh-product-images/prod/legacy_YznfQY6kjf4zusHz7nOlABifWUayK1q8PPxFn0OpT36BW1RUsCEbmaiieRnFO_2TYTBDjelr9slSzWxacoqBuQ3l-g", 
+                "ImageUrl": "https://lh3.googleusercontent.com/Bhfo5E-t34vmBxRmbT0frPolhqUBLLR0DKbxr9xqhvYk1UfWSBGCurRgXkfddJxts2hadvzzGm8-DSOonfMrzlU", 
+                "IsFeatured": true
+            }, 
+            "HasBeenPublished": true, 
+            "HideRewardsFlag": false, 
+            "Images": [
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_YznfQY6kjf4zusHz7nOlABifWUayK1q8PPxFn0OpT36BW1RUsCEbmaiieRnFO_2TYTBDjelr9slSzWxacoqBuQ3l-g", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/Bhfo5E-t34vmBxRmbT0frPolhqUBLLR0DKbxr9xqhvYk1UfWSBGCurRgXkfddJxts2hadvzzGm8-DSOonfMrzlU", 
+                    "IsFeatured": true
+                }, 
+                {
+                    "ImageFile": "/mh-product-images/prod/legacy_WjJ5v370lhVQWFhWTBRH9xelmfEne5INx-lae8qDyC0bp_Scf5V80wKZYKFVvIqNmAB8_hkx0p109DripPrrv8SiwA", 
+                    "ImageUrl": "https://lh3.googleusercontent.com/HlgYNd7AKFIWu9T0JpQ5ujm9Z93wPeJKG0uWeGlRXaZkF4N67Yc8kuRoc3OTlMoJ_Fcavol2mkmeKxKdxZun4h4", 
+                    "IsFeatured": false
+                }
+            ], 
+            "IsActive": true, 
+            "IsAdminSearchable": true, 
+            "IsCustomizable": false, 
+            "IsDeprecated": false, 
+            "IsSearchable": true, 
+            "Key": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBeXZ1RHF3b00M", 
+            "LegacyProductKey": "ag9zfm1hdHRlcmhhY2tlcnNyFAsSB1Byb2R1Y3QYgICAyvuDqwoM", 
+            "MetaTagKeywords": [], 
+            "PreOrderFlag": false, 
+            "ProductCreatedOn": "2017-07-25T07:07:27.156560", 
+            "ProductEditedOn": "2021-02-04T21:27:39.558874", 
+            "ProductType": "physical-inventory", 
+            "RedirectUrl": "", 
+            "ReferenceUrl": "heavy-duty-art-knife", 
+            "RelatedProducts": [], 
+            "ShortDescription": "The MatterHackers Heavy-Duty Art Knife is perfect for precision cutting and trimming of 3D printed projects made of PLA, ABS, and most specialty materials.", 
+            "ShowAddToCart": true, 
+            "ShowQuestionsFlag": true, 
+            "Subtitle": "", 
+            "TemplateKey": "", 
+            "Title": "CLEARANCE - Heavy-Duty 3D Printing & Art Knife"
+        }, 
+        "ProductListingKey": "ag1zfm1oLXBscy1wcm9kck8LEg5Qcm9kdWN0TGlzdGluZyI7bGVnYWN5OmFnOXpmbTFoZEhSbGNtaGhZMnRsY25OeUZBc1NCMUJ5YjJSMVkzUVlnSUNBeXZ1RHF3b00M", 
+        "ProductNumber": "64527001", 
+        "ProductPrice": 300, 
+        "ProductType": "physical-inventory", 
+        "ProductUpc": "", 
+        "QuantityAvailable": 1112, 
+        "QuantityOnHand": 1112, 
+        "QuantityReserved": 0, 
+        "ReferenceUrl": "heavy-duty-art-knife", 
+        "RetiredDateTime": null, 
+        "SID": "MC2UQ3YQ", 
+        "ShipInBox": false, 
+        "ShowAvailableDate": false, 
+        "ShownInListing": true, 
+        "SkuName": "CLEARANCE - Heavy-Duty 3D Printing & Art Knife", 
+        "SkuWarningMessages": [], 
+        "TotalLeadDays": 1, 
+        "TotalWeight": 48000, 
+        "TotalWeightGrams": "48.00", 
+        "TotalWeightKilograms": "0.05", 
+        "TotalWeightPounds": "0.11", 
+        "Weight": 48000, 
+        "WeightGrams": "48.00", 
+        "WeightKilograms": "0.05", 
+        "WeightPounds": "0.11", 
+        "WholesaleCost": 58
+    }, 
+    "Status": "success"
+}

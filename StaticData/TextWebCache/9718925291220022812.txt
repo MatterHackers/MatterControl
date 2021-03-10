@@ -53,7 +53,7 @@ Calibration
 
 The calibration section of the controls allows you to manage MatterControl's software print leveling feature. Software print leveling is only available on printers which do not use their own form of automatic print leveling.
 
-![](https://lh3.googleusercontent.com/NApNV_GfomZEwBKAP9ltyD5cejLwktWy8-fklAErv8iytHe1HYUKbvMbBCtbhfIVP-7eyH2Olgc4KnanZY-sipzS=s0)
+![](https://lh3.googleusercontent.com/eCe0uWImo0urmud8MHkUkVShyfpKmUqEeSQlzyloYNb_BOFbDKBLaoNn4eOKJizpGjMCOM9wTMkQIOBc94xVe77PoETlphV75kMh4-c)
 
 Click the pencil icon ![Pencil-edit.png](http://wiki.mattercontrol.com/images/b/b0/Pencil-edit.png
 "Pencil-edit.png") to view or edit the print leveling data.

@@ -525,7 +525,7 @@
                     "banner_url": null, 
                     "icon_url": "https://lh3.googleusercontent.com/CY_6nkt8pT8Hk0spvYPnv5qIEVMlHPWXP_QYtUDB7WUtJaSkDZD0KGbLrChif6JocrVKm6973j7kt3OASoGs9mMg", 
                     "link": "https://www.matterhackers.com/store/c/fillamentum-asa-series", 
-                    "subtitle": "", 
+                    "subtitle": "High quality ASA in dozens of eye-catching colors.", 
                     "title": "Fillamentum ASA Series", 
                     "widget_url": "https://lh3.googleusercontent.com/2mhn5Tvfnsco2Sqifcim5Vwiq2Ur9YAUWfBf0wGcQ5nsNMRPJwh0Vvav_GihSBaZ0pWfYJpPvJiy7hDP0tTVjTpMtw"
                 }, 
@@ -1238,7 +1238,7 @@
                     "category": "articles", 
                     "date_published": "Feb 27, 2013", 
                     "description": "Discover the best tips for 3D printing with PLA filament - from finding the right temperature, to which surfaces to 3D print on, this step-by-step guide will help you succeed with 3D printing PLA.", 
-                    "hero": "https://lh3.googleusercontent.com/Qe0fe5d8YmBkND7B-bj_5L6uvdJbFIGDWFX27aso3l4-uZ8-cN5vh2eFWacZtjxDj1DWbSYA8Olp9OWxwBRvKH2_j8I", 
+                    "hero": "https://lh3.googleusercontent.com/btWe-eB7QA8iyGsfXklSLDFnHg2wOc8hJCbJ_8lmfz2Wo-I1y0B8rY3_FheuWrrA2DqItzKAdyue-oppqyL8CZgAiAWGj3wXBO5org", 
                     "icon": "https://lh3.googleusercontent.com/Qe0fe5d8YmBkND7B-bj_5L6uvdJbFIGDWFX27aso3l4-uZ8-cN5vh2eFWacZtjxDj1DWbSYA8Olp9OWxwBRvKH2_j8I", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyEwsSC0FydGljbGVQYWdlGPDxFgw", 
                     "preview": "<div class='article-block'><p>PLA is a wonderful, easy to use, 3D printing material. It is a renewable and biodegradable resource. &nbsp;It is non-toxic and has a pleasant smell when printing. &nbsp;<a href=\"../../store/3d-printer-filament/pla\" target=\"_blank\">PLA</a> filament comes in a wide range of <a href=\"../../store/3d-printer-filament/pla\" target=\"_blank\">colors</a> and because of its thermal characteristics, is particularly easy to get great prints with.</p></div>", 
@@ -1758,12 +1758,12 @@
                     "category": "news", 
                     "date_published": "Oct 20, 2016", 
                     "description": "Durable and easy to print, PETG filament is likely to take over as the most commonly-used filament. This in-depth guide provides a few tips and tricks on how to get started and embrace the fantastic properties of this material. ", 
-                    "hero": "https://lh3.googleusercontent.com/nG68azjZUtCNKR8cK7VwU_n6Z8HSA7m7Zy95UR4UKFjs5yJuIQ386q-2fM_h2by67Q6KqFwsurDf0YHIUciN74rKogg", 
+                    "hero": "https://lh3.googleusercontent.com/h69_9LBIhVlutqY1rjQo9UIqOmJVI8AWEfR6XNKx_EWuP39bGNy0G5Iu8UQm5qTK5oQPZuPqrcR1wk8zU7ABXtKlKsPLmeD4qWPWI9U", 
                     "icon": "https://lh3.googleusercontent.com/45TmCajv4Znajv9kxnWpJWH5Dd_2kxfkSa7_iYIbWMI1jLYqYsJ5ItxMc96mFpyiC3GbUqyF-yjtugAksAC5CYSP", 
                     "key": "ag9zfm1hdHRlcmhhY2tlcnNyGAsSC0FydGljbGVQYWdlGICAgP3YibMJDA", 
                     "preview": "<div class='article-block'><p><a title=\"SHOP PETG\" href=\"http://www.matterhackers.com/store/c/PRO%20Series%20PETG\" target=\"_blank\" rel=\"noopener\">PETG</a>&nbsp;is an&nbsp;abbreviation for Polyethylene Terephthalate (with a glycol modification) which is one of the most common polymers used today. It&rsquo;s used to make water bottles, food packaging, and countless other common plastic items. As a 3D printing filament, PETG plastic has proven its worth as a durable material that is easy to use. Figuratively speaking, it combines the most useful characteristics of ABS filament (the rigidity and mechanical properties for functional parts) with the ease of printing that PLA filament affords. Kind of a &ldquo;best of both worlds&rdquo; scenario.</p></div>", 
                     "reference": "how-to-succeed-when-printing-with-petg-filament", 
-                    "title": "How to Succeed when Printing with PETG Filament", 
+                    "title": "How to Succeed when 3D Printing with PETG Filament", 
                     "url": "/news/how-to-succeed-when-printing-with-petg-filament"
                 }, 
                 {

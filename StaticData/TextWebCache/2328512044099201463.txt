@@ -37,7 +37,7 @@
         "IsSearchable": true, 
         "IsWarranty": false, 
         "Key": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNVEEySk5QTQw", 
-        "LeadDays": 22, 
+        "LeadDays": 5, 
         "LegacySku": null, 
         "ListingIsActive": true, 
         "NoPOBox": false, 
@@ -78,8 +78,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICgtNSeCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNRFdXVjFKMAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 9, 
-                    "QuantityOnHand": 9, 
+                    "QuantityAvailable": -1, 
+                    "QuantityOnHand": -1, 
                     "SingleSku": true
                 }, 
                 {
@@ -99,8 +99,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4qiMCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTUg0S1VDVAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 16, 
-                    "QuantityOnHand": 16, 
+                    "QuantityAvailable": 12, 
+                    "QuantityOnHand": 12, 
                     "SingleSku": true
                 }, 
                 {
@@ -120,8 +120,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgIDsybCDCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNNFQ3QUE5WAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 99, 
-                    "QuantityOnHand": 99, 
+                    "QuantityAvailable": 97, 
+                    "QuantityOnHand": 97, 
                     "SingleSku": true
                 }, 
                 {
@@ -141,8 +141,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICc4d2HCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNN05XU1Q2MAw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": 92, 
-                    "QuantityOnHand": 92, 
+                    "QuantityAvailable": 90, 
+                    "QuantityOnHand": 90, 
                     "SingleSku": true
                 }, 
                 {
@@ -167,15 +167,15 @@
                     "SingleSku": true
                 }, 
                 {
-                    "AddOnBasePrice": 8994, 
+                    "AddOnBasePrice": 9600, 
                     "AddOnDiscountDisplay": null, 
-                    "AddOnDisplayBasePrice": "89.94", 
-                    "AddOnDisplayPrice": "89.94", 
+                    "AddOnDisplayBasePrice": "96.00", 
+                    "AddOnDisplayPrice": "96.00", 
                     "AddOnDisplaySavings": null, 
-                    "AddOnFloatPrice": 89.94, 
+                    "AddOnFloatPrice": 96.0, 
                     "AddOnListingReference": "matterhackers-3d-printing-tool-kit-premium", 
                     "AddOnPreOrderFlag": false, 
-                    "AddOnPrice": 8994, 
+                    "AddOnPrice": 9600, 
                     "AddOnSavings": 0, 
                     "AddOnSkuReference": "MNUYE0VF", 
                     "AddOnTitle": "MatterHackers FDM 3D Printing Tool Kit Premium", 
@@ -183,8 +183,8 @@
                     "ProductListingKey": "ag1zfm1oLXBscy1wcm9kchsLEg5Qcm9kdWN0TGlzdGluZxiAgICcs-yPCgw", 
                     "ProductSkuKey": "ag1zfm1oLXBscy1wcm9kchgLEgpQcm9kdWN0U2t1IghNTlVZRTBWRgw", 
                     "ProductType": "physical-inventory", 
-                    "QuantityAvailable": -2, 
-                    "QuantityOnHand": -2, 
+                    "QuantityAvailable": 24, 
+                    "QuantityOnHand": 24, 
                     "SingleSku": true
                 }, 
                 {
@@ -359,7 +359,7 @@
                     "Type": "Text"
                 }, 
                 {
-                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades for the Pulse DXE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade available for the Pulse DXE 3D printer has been thoroughly tested and calibrated by the Pulse Pros team, and consist of the highest quality parts on the market. Each upgrade you include unlocks more 3D printing capabilities such as control over the temperature surrounding your printer, interchangeable bed surfaces, and easy print removal. Enhance your 3D printing experience with the upgrades below.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit <span class=\"subtitle\">+$279</span></div>\r\n<div class=\"desc\">Designed to consistently help keep prints consistent and reliable, the Pulse Enclosure Kit helps regulate the printing environment to reduce warping. With specialty filaments like Nylon being notorious for its difficulty adhering to build surfaces, enclosure kits are a wonderful solution to combat this issue. This kit consists of laser cut panels that sit on the same surface as your Pulse 3D printer, making it super desktop-friendly. Achieve the success 3D printing results you need when you use the Pulse Enclosure Kit.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/Yo1uyJ4JEKzVFs7z5Er7GbUc36y0OYxJYk1GCNrEi9sx7waEPSc-ATZmzBy_BnpsV38sJoY-D4HViaG7IuipueFtNQQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak Extra FlexPlate <span class=\"subtitle\">+$35</span></div>\r\n<div class=\"desc\">With an extra BuildTak FlexPlate, users will save time and effort alternating between multiple build surfaces for various print jobs. Take off the Garolite build plate right after a finished NylonX print, place the extra BuildTak build plate onto the magnetic base for a PLA print job and you're good to go. Alternating between build plates has never been easier and faster than with an extra FlexPlate. This upgrade comes with a sheet of BuildTak installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/vT325DzdqSZUgCms9yvdWyqDreiDHIjMbuHNPEaEl_vS7ygcgmKjRMPTFN0v7_3C2fzg0YIkq1fTQhGbsnGKR96Nxw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra FlexPlate <span class=\"subtitle\">+$49</span></div>\r\n<div class=\"desc\">Move on to your next print quickly and easily with an extra LayerLock Garolite Build Surface FlexPlate. Detach the build plate right after a finished print, swap the spare onto the magnetic base and immediately begin your next project. Long pauses between prints to struggle scraping off a part is a thing of the past. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">Printing on glass with a magnetic base is possible with the Glass Plate for Magnetic Base. When you find yourself missing the benefits of printing on a glass surface, easily do so by simply take the off the Buildtak, garolite or PEI surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base in its place. Because the glass plate attaches firmly to the magnetic base, the base of your prints will come out nice and flat. &nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"><!--<strong>With this upgrade, you receive this spool in addition to the 2 Spools of 1.75 NylonX (0.5kg) that come stock with every Pulse XE.</strong>--></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$89.94</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$79.65</span></div>\r\n<div class=\"desc\">While all of our Pulse 3D Printers are designed and built to last, we recommend you occasionally give your printer a little TLC to maximize its lifespan. The small effort you invest in occasionally maintaining your Pulse will have your 3D printer returning years and years of hard work to provide you the fine, quality prints you need.</div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">Repair or replace your Pulse XE 3D printer for another year with this extended 2 year warranty. This is on top of the current 1 year warranty backed by MatterHackers&rsquo; Success Guarantee, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n</div>", 
+                    "Content": "<div class=\"product-heading\">\r\n<h2>Available Upgrades for the Pulse DXE:</h2>\r\n</div>\r\n<div class=\"section collection-upgrades\">\r\n<p>Every upgrade available for the Pulse DXE 3D printer has been thoroughly tested and calibrated by the Pulse Pros team, and consist of the highest quality parts on the market. Each upgrade you include unlocks more 3D printing capabilities such as control over the temperature surrounding your printer, interchangeable bed surfaces, and easy print removal. Enhance your 3D printing experience with the upgrades below.</p>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Enclosure Kit\" src=\"https://lh3.googleusercontent.com/5fi3yZHt9X2NjjAXoPc6auuMUGG8o9uVJryFSiwOkL7DbML9oZcBm-tYMS7LmG_whHWuO24xXs7Kd0iCIU-PRNrL=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Enclosure Kit <span class=\"subtitle\">+$279</span></div>\r\n<div class=\"desc\">Designed to consistently help keep prints consistent and reliable, the Pulse Enclosure Kit helps regulate the printing environment to reduce warping. With specialty filaments like Nylon being notorious for its difficulty adhering to build surfaces, enclosure kits are a wonderful solution to combat this issue. This kit consists of laser cut panels that sit on the same surface as your Pulse 3D printer, making it super desktop-friendly. Achieve the success 3D printing results you need when you use the Pulse Enclosure Kit.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"BuildTak Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/Yo1uyJ4JEKzVFs7z5Er7GbUc36y0OYxJYk1GCNrEi9sx7waEPSc-ATZmzBy_BnpsV38sJoY-D4HViaG7IuipueFtNQQ=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">BuildTak Extra FlexPlate <span class=\"subtitle\">+$35</span></div>\r\n<div class=\"desc\">With an extra BuildTak FlexPlate, users will save time and effort alternating between multiple build surfaces for various print jobs. Take off the Garolite build plate right after a finished NylonX print, place the extra BuildTak build plate onto the magnetic base for a PLA print job and you're good to go. Alternating between build plates has never been easier and faster than with an extra FlexPlate. This upgrade comes with a sheet of BuildTak installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"LayerLock Garolite Extra FlexPlate\" src=\"https://lh3.googleusercontent.com/vT325DzdqSZUgCms9yvdWyqDreiDHIjMbuHNPEaEl_vS7ygcgmKjRMPTFN0v7_3C2fzg0YIkq1fTQhGbsnGKR96Nxw=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">LayerLock Garolite Extra FlexPlate <span class=\"subtitle\">+$49</span></div>\r\n<div class=\"desc\">Move on to your next print quickly and easily with an extra LayerLock Garolite Build Surface FlexPlate. Detach the build plate right after a finished print, swap the spare onto the magnetic base and immediately begin your next project. Long pauses between prints to struggle scraping off a part is a thing of the past. This upgrade comes with LayerLock Garolite Build Surface installed on the build plate.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Glass Plate for Magnetic Base\" src=\"https://lh3.googleusercontent.com/Hiin6zg9w2zaOjIBK2PHq-c68HqhoSplz7O61K6G0ab3LaLaDyOQTjB0Hs_1atedew90knr9jnzQbhN5QyJGcoU=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Glass Plate for Magnetic Base <span class=\"subtitle\">+$69.95</span></div>\r\n<div class=\"desc\">Printing on glass with a magnetic base is possible with the Glass Plate for Magnetic Base. When you find yourself missing the benefits of printing on a glass surface, easily do so by simply take the off the Buildtak, garolite or PEI surface currently on the magnetic bed and attach the Glass Plate for Magnetic Base in its place. Because the glass plate attaches firmly to the magnetic base, the base of your prints will come out nice and flat. &nbsp;<strong>This upgrade must be paired with the Magnetic FlexPlate System Upgrade.</strong></div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"desc\"><!--<strong>With this upgrade, you receive this spool in addition to the 2 Spools of 1.75 NylonX (0.5kg) that come stock with every Pulse XE.</strong>--></div>\r\n</div>\r\n</div>\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"MatterHackers 3D Printing Tool Kit Premium\" src=\"https://lh3.googleusercontent.com/On3moTBdFZdODnt9qkNmzTHO98elvRogNLDbFzbsJlptE8lzYEl4_BGeJCmpNIJ3F2jmrBv0MqDtyYP8YHKX5w=s150\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">MatterHackers 3D Printing Tool Kit Premium<span class=\"subtitle\">+$96</span></div>\r\n<div class=\"desc\">Introducing the premium version of our MatterHackers 3D Printing Tool Kit! This product contains all of the essential tools a maker needs for successful 3D printing, as well as additional items that further streamline your experience for a faster and better workflow. Successfully producing and processing prints has never been easier and quicker than with all the tools accumulated in this handy travel-size bag.</div>\r\n</div>\r\n</div>\r\n<!--<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse 3D Printer Maintenance Kit\" src=\"https://lh3.googleusercontent.com/Hl0YYs3iC7HJXypoiURC3nF31lBSYwwuWED8SckFmE2XsLTjg0wcu_VZoqPHBSJN8UgjwhZSrEuGfFtLly3TRQM=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse 3D Printer Maintenance Kit <span class=\"subtitle\">+$79.65</span></div>\r\n<div class=\"desc\">While all of our Pulse 3D Printers are designed and built to last, we recommend you occasionally give your printer a little TLC to maximize its lifespan. The small effort you invest in occasionally maintaining your Pulse will have your 3D printer returning years and years of hard work to provide you the fine, quality prints you need.</div>\r\n</div>\r\n</div>-->\r\n<div class=\"feature\">\r\n<div class=\"image col-lg-3 col-sm-3 col-xs-12\"><img alt=\"Pulse Protection Extended 2 Year Warranty\" src=\"https://lh3.googleusercontent.com/dFZWm5HDps_zuArgwDnd0Ha63Fp-lSZWYcjWlyY3iwU6Cl4PKsmcxKLXfQH32zBYeW9ZJntBcsYqqi4qKo2QWw=s150-p-rw\" /></div>\r\n<div class=\"meta col-lg-9 col-sm-9 col-xs-12\">\r\n<div class=\"title\">Pulse Protection Extended 2 Year Warranty <span class=\"subtitle\">+$299</span></div>\r\n<div class=\"desc\">Repair or replace your Pulse XE 3D printer for another year with this extended 2 year warranty. This is on top of the current 1 year warranty backed by MatterHackers&rsquo; Success Guarantee, thus giving you a safety net of 2 years for repair or replacement from time of purchasing your printer.</div>\r\n</div>\r\n</div>\r\n</div>", 
                     "ElementCode": "LAYHWY", 
                     "Images": [], 
                     "Type": "Text"
@@ -446,7 +446,7 @@
             ], 
             "PreOrderFlag": false, 
             "ProductCreatedOn": "2019-04-24T15:18:39.806595", 
-            "ProductEditedOn": "2020-11-18T21:26:57.189341", 
+            "ProductEditedOn": "2020-12-30T19:16:55.030439", 
             "ProductType": "physical-on-demand", 
             "RedirectUrl": "", 
             "ReferenceUrl": "pulse-dxe-dual-extrusion-nylonx-3d-printer-bundle", 
@@ -477,7 +477,7 @@
         "ShownInListing": true, 
         "SkuName": "Pulse DXE - Dual Extrusion 3D Printer Bundle", 
         "SkuWarningMessages": [], 
-        "TotalLeadDays": 23, 
+        "TotalLeadDays": 5, 
         "TotalWeight": 15571000, 
         "TotalWeightGrams": "15,571.00", 
         "TotalWeightKilograms": "15.57", 

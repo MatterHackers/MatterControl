@@ -5,4 +5,5 @@
 * [Add Existing Objects](../designing/add-existing-objects.md)
 * [Starting a Print](starting-a-print.md)
 * [Slice Settings](../slice-settings/index.md)
+* [Calibration](../calibration/index.md)
 * [Printing Multi-Extrusion Models](multi-color-stls.md)
