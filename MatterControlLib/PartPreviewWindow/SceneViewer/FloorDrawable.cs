@@ -99,10 +99,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					GLHelper.Render(
 						sceneContext.Mesh,
-						theme.UnderBedColor,
+						theme.UnderBedColor.WithAlpha(0),
 						RenderTypes.Shaded,
 						world.ModelviewMatrix,
-						blendTexture: !this.LookingDownOnBed);
+						blendTexture: !this.LookingDownOnBed,
+						forceCullBackFaces: true);
 
 					if (sceneContext.PrinterShape != null)
 					{
