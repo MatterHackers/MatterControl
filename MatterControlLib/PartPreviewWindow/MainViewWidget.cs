@@ -784,6 +784,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(3, 0),
 				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
+				Enabled = tabs.GetTabIndex(printerTab) > tabs.FirstMovableTab,
 			};
 			moveLeftButton.Click += (s, e) =>
 			{
@@ -799,6 +800,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Margin = new BorderDouble(3, 0),
 				HoverColor = theme.AccentMimimalOverlay,
 				VAnchor = VAnchor.Center,
+				Enabled = printerTab.NextTab != null,
 			};
 
 			moveRightButton.Click += (s, e) =>
