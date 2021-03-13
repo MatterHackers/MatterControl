@@ -1950,8 +1950,6 @@ namespace MatterHackers.MatterControl
 
 		public void MonitorPrintTask(PrinterConfig printer)
 		{
-			string layerDetails = (printer.Bed.LoadedGCode?.LayerCount > 0) ? $" of {printer.Bed.LoadedGCode.LayerCount}" : "";
-
 			this.Tasks.Execute(
 				"Printing".Localize(),
 				printer,
@@ -1975,7 +1973,8 @@ namespace MatterHackers.MatterControl
 						while ((printer.Connection.Printing || printer.Connection.Paused)
 							&& !cancellationTokenB.IsCancellationRequested)
 						{
-							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1}{layerDetails}) - {printer.Connection.PercentComplete:0}%";
+							var layerCount = printer.Bed.LoadedGCode == null ? "?" : printer.Bed.LoadedGCode.LayerCount.ToString();
+							progressStatus.Status = $"{printing} ({printer.Connection.CurrentlyPrintingLayer + 1} of {layerCount}) - {printer.Connection.PercentComplete:0}%";
 
 							progressStatus.Progress0To1 = printer.Connection.PercentComplete / 100;
 							reporterB.Report(progressStatus);
