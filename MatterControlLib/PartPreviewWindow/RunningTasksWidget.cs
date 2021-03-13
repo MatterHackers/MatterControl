@@ -62,7 +62,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				BackgroundColor = theme.InteractionLayerOverlayColor,
 				HAnchor = HAnchor.Fit | HAnchor.Left,
 				VAnchor = VAnchor.Fit,
-				MinimumSize = new Vector2(325 * GuiWidget.DeviceScale, 0),
+				MinimumSize = new Vector2(345 * GuiWidget.DeviceScale, 0),
 				Border = new BorderDouble(top: 1),
 				BorderColor = borderColor,
 			};

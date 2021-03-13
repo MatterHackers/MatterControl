@@ -317,118 +317,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					Title = "Configure EEProm".Localize(),
 					Action = configureEePromButton_Click,
 					IsEnabled = () => printer.Connection.IsConnected
-				},
-				new NamedBoolAction()
-				{
-					Title = "Show Printer".Localize(),
-					Action = () => { },
-					GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
-					SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					Title = "Import Presets".Localize(),
-					Action = () =>
-					{
-						AggContext.FileDialogs.OpenFileDialog(
-							new OpenFileDialogParams("settings files|*.printer"),
-							(dialogParams) =>
-							{
-								if (!string.IsNullOrEmpty(dialogParams.FileName))
-								{
-									DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
-								}
-							});
-					}
-				},
-				new NamedAction()
-				{
-					Title = "Export Printer".Localize(),
-					Action = () => UiThread.RunOnIdle(() =>
-					{
-						ApplicationController.Instance.ExportAsMatterControlConfig(printer);
-					}),
-					Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
-				},
-				new ActionSeparator(),
-
-				new NamedAction()
-				{
-					Title = "Calibrate Printer".Localize(),
-					Action = () => UiThread.RunOnIdle(() =>
-					{
-						UiThread.RunOnIdle(() =>
-						{
-							DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
-						});
-					}),
-					Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					Title = "Update Settings...".Localize(),
-					Action = () =>
-					{
-						DialogWindow.Show(new UpdateSettingsPage(printer));
-					},
-					Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
-				},
-				new NamedAction()
-				{
-					Title = "Restore Settings...".Localize(),
-					Action = () =>
-					{
-						DialogWindow.Show(new PrinterProfileHistoryPage(printer));
-					}
-				},
-				new NamedAction()
-				{
-					Title = "Reset to Defaults...".Localize(),
-					Action = () =>
-					{
-						StyledMessageBox.ShowMessageBox(
-							(revertSettings) =>
-							{
-								if (revertSettings)
-								{
-									printer.Settings.ClearUserOverrides();
-									printer.Settings.ResetSettingsForNewProfile();
-									// this is user driven
-									printer.Settings.Save();
-									printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();
-
-									ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
-								}
-							},
-							"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
-							"Revert Settings".Localize(),
-							StyledMessageBox.MessageType.YES_NO);
-					}
-				},
-				new ActionSeparator(),
-				new NamedAction()
-				{
-					Title = "Delete Printer".Localize(),
-					Action = () =>
-					{
-						StyledMessageBox.ShowMessageBox(
-							(doDelete) =>
-							{
-								if (doDelete)
-								{
-									ProfileManager.Instance.DeletePrinter(printer.Settings.ID);
-								}
-							},
-							"Are you sure you want to delete printer '{0}'?".Localize().FormatWith(printer.Settings.GetValue(SettingsKey.printer_name)),
-							"Delete Printer?".Localize(),
-							StyledMessageBox.MessageType.YES_NO,
-							"Delete Printer".Localize());
-					},
 				}
 			};
-
+			menuActions.Add(new NamedBoolAction()
+			{
+				Title = "Show Printer".Localize(),
+				Action = () => { },
+				GetIsActive = () => printer.ViewState.ConfigurePrinterVisible,
+				SetIsActive = (value) => printer.ViewState.ConfigurePrinterVisible = value
+			});
 			var printerType = printer.Settings.Slicer.PrinterType;
 			if (printerType == PrinterType.FFF)
 			{
@@ -447,7 +344,107 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					SetIsActive = (value) => printer.ViewState.TerminalVisible = value,
 				});
 			}
+			menuActions.Add(new ActionSeparator());
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Import Presets".Localize(),
+				Action = () =>
+				{
+					AggContext.FileDialogs.OpenFileDialog(
+						new OpenFileDialogParams("settings files|*.printer"),
+						(dialogParams) =>
+						{
+							if (!string.IsNullOrEmpty(dialogParams.FileName))
+							{
+								DialogWindow.Show(new ImportSettingsPage(dialogParams.FileName, printer));
+							}
+						});
+				}
+			});
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Export Printer".Localize(),
+				Action = () => UiThread.RunOnIdle(() =>
+				{
+					ApplicationController.Instance.ExportAsMatterControlConfig(printer);
+				}),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+			});
+			menuActions.Add(new ActionSeparator());
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Calibrate Printer".Localize(),
+				Action = () => UiThread.RunOnIdle(() =>
+				{
+					UiThread.RunOnIdle(() =>
+					{
+						DialogWindow.Show(new PrinterCalibrationWizard(printer, theme));
+					});
+				}),
+				Icon = StaticData.Instance.LoadIcon("compass.png", 16, 16, theme.InvertIcons)
+			});
+			menuActions.Add(new ActionSeparator());
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Update Settings...".Localize(),
+				Action = () =>
+				{
+					DialogWindow.Show(new UpdateSettingsPage(printer));
+				},
+				Icon = StaticData.Instance.LoadIcon("fa-refresh_14.png", 16, 16, theme.InvertIcons)
+			});
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Restore Settings...".Localize(),
+				Action = () =>
+				{
+					DialogWindow.Show(new PrinterProfileHistoryPage(printer));
+				}
+			});
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Reset to Defaults...".Localize(),
+				Action = () =>
+				{
+					StyledMessageBox.ShowMessageBox(
+						(revertSettings) =>
+						{
+							if (revertSettings)
+							{
+								printer.Settings.ClearUserOverrides();
+								printer.Settings.ResetSettingsForNewProfile();
+									// this is user driven
+									printer.Settings.Save();
+								printer.Settings.Helpers.PrintLevelingData.SampledPositions.Clear();
 
+								ApplicationController.Instance.ReloadAll().ConfigureAwait(false);
+							}
+						},
+						"Resetting to default values will remove your current overrides and restore your original printer settings.\nAre you sure you want to continue?".Localize(),
+						"Revert Settings".Localize(),
+						StyledMessageBox.MessageType.YES_NO);
+				}
+			});
+			menuActions.Add(new ActionSeparator());
+			menuActions.Add(new NamedAction()
+			{
+				Title = "Delete Printer".Localize(),
+				Action = () =>
+				{
+					StyledMessageBox.ShowMessageBox(
+						(doDelete) =>
+						{
+							if (doDelete)
+							{
+								ProfileManager.Instance.DeletePrinter(printer.Settings.ID);
+							}
+						},
+						"Are you sure you want to delete printer '{0}'?".Localize().FormatWith(printer.Settings.GetValue(SettingsKey.printer_name)),
+						"Delete Printer?".Localize(),
+						StyledMessageBox.MessageType.YES_NO,
+						"Delete Printer".Localize());
+				},
+			});
 
 			theme.CreateMenuItems(popupMenu, menuActions);
 		}
