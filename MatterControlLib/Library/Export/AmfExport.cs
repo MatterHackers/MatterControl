@@ -43,7 +43,9 @@ namespace MatterHackers.MatterControl.Library.Export
 {
 	public class AmfExport : IExportPlugin
 	{
-		public string ButtonText => "Part as AMF File".Localize();
+		public int Priority => 2;
+
+		public string ButtonText => "AMF File".Localize();
 
 		public string FileExtension => ".amf";
 
