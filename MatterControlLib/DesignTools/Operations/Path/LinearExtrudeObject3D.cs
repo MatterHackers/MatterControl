@@ -27,11 +27,13 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
@@ -132,6 +134,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			this.DebugDepth("Rebuild");
 
+			bool valuesChanged = false;
+
+			if (BevelTop)
+			{
+				BevelSteps = agg_basics.Clamp(BevelSteps, 1, 32, ref valuesChanged);
+				BevelStart = agg_basics.Clamp(BevelStart, 0, Height, ref valuesChanged);
+				var aabb = this.GetAxisAlignedBoundingBox();
+				BevelInset = agg_basics.Clamp(BevelInset, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
+			}
+
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
 			return ApplicationController.Instance.Tasks.Execute(
@@ -161,6 +173,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					rebuildLock.Dispose();
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					return Task.CompletedTask;
 				});

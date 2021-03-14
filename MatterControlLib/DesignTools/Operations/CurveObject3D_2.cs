@@ -97,11 +97,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			bool valuesChanged = false;
 
 			// ensure we have good values
-			if (StartPercent < 0 || StartPercent > 100)
-			{
-				StartPercent = Math.Min(100, Math.Max(0, StartPercent));
-				valuesChanged = true;
-			}
+			StartPercent = agg_basics.Clamp(StartPercent, 0, 100, ref valuesChanged);
 
 			if (Diameter < 1 || Diameter > 100000)
 			{
@@ -116,11 +112,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				valuesChanged = true;
 			}
 
-			if (MinSidesPerRotation < 3 || MinSidesPerRotation > 360)
-			{
-				MinSidesPerRotation = Math.Min(360, Math.Max(3, MinSidesPerRotation));
-				valuesChanged = true;
-			}
+			MinSidesPerRotation = agg_basics.Clamp(MinSidesPerRotation, 3, 360, ref valuesChanged);
 
 			var rebuildLocks = this.RebuilLockAll();
 
