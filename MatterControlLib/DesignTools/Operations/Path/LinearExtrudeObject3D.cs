@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,6 +38,7 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -45,11 +47,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public double Height { get; set; } = 5;
 
+		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
-
+		
+		[Description("The amount to inset the bevel")]
 		public double BevelInset { get; set; } = 2;
 
-		public double BevelHeight { get; set; } = 4;
+		/// <summary>
+		[Description("The height the bevel will start")]
+		/// </summary>
+		public double BevelStart { get; set; } = 4;
 
 		public int BevelSteps { get; set; } = 1;
 
@@ -139,10 +146,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						bevel = new List<(double height, double inset)>();
 						for (int i = 0; i < BevelSteps; i++)
 						{
-							var heightRatio = i / BevelSteps;
-							var height = heightRatio * (Height - BevelHeight) + BevelHeight;
-							var insetRatio = (i + 1) / BevelSteps;
-							var inset = insetRatio * -BevelInset;
+							var heightRatio = i / (double)BevelSteps;
+							var height = heightRatio * (Height - BevelStart) + BevelStart;
+							var insetRatio = (i + 1) / (double)BevelSteps;
+							var inset = Easing.Sinusoidal.In(insetRatio) * -BevelInset;
 							bevel.Add((height, inset));
 						}
 					}
@@ -161,7 +168,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(BevelHeight), () => BevelTop);
+			change.SetRowVisible(nameof(BevelStart), () => BevelTop);
 			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
 			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
 		}
