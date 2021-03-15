@@ -53,7 +53,8 @@ namespace MatterHackers.MatterControl
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed, PrinterConfig printer)
 		{
 			this.WindowTitle = "Export File".Localize();
-			if (libraryItems.First().Name == printer.Bed.Scene.Name)
+			var exportWholeBed = libraryItems.First().Name == printer.Bed.Scene.Name;
+			if (exportWholeBed)
 			{
 				this.HeaderText = "Export bed to".Localize() + ":";
 				this.Name = "Export Scene Window";
@@ -79,7 +80,7 @@ namespace MatterHackers.MatterControl
 			// GCode export
 			exportPluginButtons = new Dictionary<RadioButton, IExportPlugin>();
 
-			foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.ButtonText))
+			foreach (IExportPlugin plugin in PluginFinder.CreateInstancesOf<IExportPlugin>().OrderBy(p => p.Priority))
 			{
 				plugin.Initialize(printer);
 

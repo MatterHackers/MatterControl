@@ -27,16 +27,20 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.DataConverters3D.UndoCommands;
 using MatterHackers.Localizations;
 using MatterHackers.PolygonMesh;
+using MatterHackers.VectorMath;
 using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
@@ -45,11 +49,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	{
 		public double Height { get; set; } = 5;
 
+		[Description("Bevel the top of the extrusion")]
 		public bool BevelTop { get; set; } = false;
-
+		
+		[Description("The amount to inset the bevel")]
 		public double BevelInset { get; set; } = 2;
 
-		public double BevelHeight { get; set; } = 4;
+		/// <summary>
+		[Description("The height the bevel will start")]
+		/// </summary>
+		public double BevelStart { get; set; } = 4;
 
 		public int BevelSteps { get; set; } = 1;
 
@@ -125,6 +134,16 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		{
 			this.DebugDepth("Rebuild");
 
+			bool valuesChanged = false;
+
+			if (BevelTop)
+			{
+				BevelSteps = agg_basics.Clamp(BevelSteps, 1, 32, ref valuesChanged);
+				BevelStart = agg_basics.Clamp(BevelStart, 0, Height, ref valuesChanged);
+				var aabb = this.GetAxisAlignedBoundingBox();
+				BevelInset = agg_basics.Clamp(BevelInset, 0, Math.Min(aabb.XSize /2, aabb.YSize / 2), ref valuesChanged);
+			}
+
 			var rebuildLock = RebuildLock();
 			// now create a long running task to process the image
 			return ApplicationController.Instance.Tasks.Execute(
@@ -139,10 +158,10 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 						bevel = new List<(double height, double inset)>();
 						for (int i = 0; i < BevelSteps; i++)
 						{
-							var heightRatio = i / BevelSteps;
-							var height = heightRatio * (Height - BevelHeight) + BevelHeight;
-							var insetRatio = (i + 1) / BevelSteps;
-							var inset = insetRatio * -BevelInset;
+							var heightRatio = i / (double)BevelSteps;
+							var height = heightRatio * (Height - BevelStart) + BevelStart;
+							var insetRatio = (i + 1) / (double)BevelSteps;
+							var inset = Easing.Sinusoidal.In(insetRatio) * -BevelInset;
 							bevel.Add((height, inset));
 						}
 					}
@@ -154,6 +173,12 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 					}
 
 					rebuildLock.Dispose();
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
 					Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 					return Task.CompletedTask;
 				});
@@ -161,7 +186,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public void UpdateControls(PublicPropertyChange change)
 		{
-			change.SetRowVisible(nameof(BevelHeight), () => BevelTop);
+			change.SetRowVisible(nameof(BevelStart), () => BevelTop);
 			change.SetRowVisible(nameof(BevelInset), () => BevelTop);
 			change.SetRowVisible(nameof(BevelSteps), () => BevelTop);
 		}

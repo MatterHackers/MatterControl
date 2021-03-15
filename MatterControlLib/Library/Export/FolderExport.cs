@@ -49,6 +49,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		public string ExtensionFilter => "";
 
+		public int Priority => 5;
+
 		public ImageBuffer Icon { get; } = StaticData.Instance.LoadIcon(Path.Combine("filetypes", "folder.png")).SetPreMultiply();
 
 		public void Initialize(PrinterConfig printer)

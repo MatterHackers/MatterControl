@@ -59,6 +59,8 @@ namespace MatterHackers.MatterControl.Library.Export
 
 		private SpiralVaseOptions spiralVaseOverride = SpiralVaseOptions.USE_SETTINGS;
 
+		public int Priority => 0;
+
 		protected PrinterConfig Printer { get; set; }
 
 		private bool printerSetupRequired;

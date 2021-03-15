@@ -235,7 +235,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					});
 
-					exportGCodeButton.Enabled = startPrintButton.Enabled;
+					exportGCodeButton.Enabled = exportPlugin.Enabled;
 					exportGCodeButton.ToolTipText = "More Export Options".Localize();
 
 					setupRow.AddChild(exportGCodeButton);

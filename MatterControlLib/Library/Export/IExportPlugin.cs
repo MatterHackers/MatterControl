@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl
 {
 	public interface IExportPlugin
 	{
+		int Priority { get; }
+
 		string ButtonText { get; }
 
 		string FileExtension { get; }
