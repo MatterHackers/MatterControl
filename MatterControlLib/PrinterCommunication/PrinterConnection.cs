@@ -1539,6 +1539,7 @@ Make sure that your printer is turned on. Some printers will appear to be connec
 				}
 
 				// pause the printer
+				this.TerminalLog.WriteLine("Pause Due to Error");
 				RequestPause();
 			}
 		}

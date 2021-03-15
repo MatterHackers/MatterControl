@@ -1988,6 +1988,7 @@ namespace MatterHackers.MatterControl
 					RichProgressWidget = () => PrinterTabPage.PrintProgressWidget(printer, this.Theme),
 					PauseAction = () => UiThread.RunOnIdle(() =>
 					{
+						printer?.Connection.TerminalLog.WriteLine("User Requested Pause");
 						printer.Connection.RequestPause();
 					}),
 					IsPaused = () =>
