@@ -1060,7 +1060,7 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.OpenPrintPopupMenu();
 			}
 
-			testRunner.ClickByName("Export Gcode Button");
+			testRunner.ClickByName("Export GCode Button");
 
 			// wait for the export to finish
 			throw new NotImplementedException();

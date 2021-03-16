@@ -58,6 +58,17 @@ namespace MatterHackers.MatterControl.Tests.Automation
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 
+				// add an item to the bed
+				fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Cube");
+				testRunner.AddItemToBedplate()
+					.ClickByName("PrintPopupMenu")
+					.ClickByName("Export GCode Button")
+					.Type(fullPathToGcodeFile)
+					.Type("{Enter}");
+
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
+
 				return Task.FromResult(0);
 			});
 		}
