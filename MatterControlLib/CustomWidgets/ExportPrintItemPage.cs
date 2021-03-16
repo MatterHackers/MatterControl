@@ -53,7 +53,7 @@ namespace MatterHackers.MatterControl
 		public ExportPrintItemPage(IEnumerable<ILibraryItem> libraryItems, bool centerOnBed, PrinterConfig printer)
 		{
 			this.WindowTitle = "Export File".Localize();
-			var exportWholeBed = libraryItems.First().Name == printer.Bed.Scene.Name;
+			var exportWholeBed = libraryItems.First().Name == printer?.Bed.Scene.Name;
 			if (exportWholeBed)
 			{
 				this.HeaderText = "Export bed to".Localize() + ":";
