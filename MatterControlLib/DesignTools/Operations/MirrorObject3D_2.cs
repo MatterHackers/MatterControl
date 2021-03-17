@@ -97,6 +97,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							transformedMesh.ReverseFaces();
 
+							transformedMesh.CalculateNormals();
+
 							var newMesh = new Object3D()
 							{
 								Mesh = transformedMesh

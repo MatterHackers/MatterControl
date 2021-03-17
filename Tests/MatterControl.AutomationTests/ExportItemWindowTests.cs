@@ -42,21 +42,61 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.ClickByName("Export Menu Item")
 					.WaitForName("Export Item Window");
 
+				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
+				Directory.CreateDirectory(gcodeOutputPath);
+				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
+
 				testRunner.ClickByName("Machine File (G-Code) Button")
 					.ClickByName("Export Button")
-					.Delay();
-
-				string gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
-
-				Directory.CreateDirectory(gcodeOutputPath);
-
-				string fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Batman");
-				testRunner.Type(fullPathToGcodeFile);
-				testRunner.Type("{Enter}");
-
-				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+					.Delay()
+					.Type(fullPathToGcodeFile)
+					.Type("{Enter}")
+					.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
 
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
+
+				// add an item to the bed
+				fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Cube");
+				testRunner.AddItemToBedplate()
+					.ClickByName("PrintPopupMenu")
+					.ClickByName("Export GCode Button")
+					.Type(fullPathToGcodeFile)
+					.Type("{Enter}");
+
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
+
+				return Task.FromResult(0);
+			});
+		}
+
+		[Test]
+		public async Task ExportDesignTabAsSTL()
+		{
+			await MatterControlUtilities.RunTest(testRunner =>
+			{
+				testRunner.WaitForFirstDraw();
+
+				// save from design tab
+				var gcodeOutputPath = MatterControlUtilities.PathToExportGcodeFolder;
+				var fullPathToGcodeFile = Path.Combine(gcodeOutputPath, "Cube2");
+				Directory.CreateDirectory(gcodeOutputPath);
+				testRunner.EnsureWelcomePageClosed()
+					.ClickByName("Create New")
+					.AddItemToBedplate()					
+					.ClickByName("Bed Options Menu")
+					.ClickByName("Export Menu Item")
+					.WaitForName("Export Item Window");
+
+				testRunner.ClickByName("STL File Button")
+					.ClickByName("Export Button")
+					.Delay()
+					.Type(fullPathToGcodeFile)
+					.Type("{Enter}")
+					.WaitFor(() => File.Exists(fullPathToGcodeFile + ".stl"), 10);
+
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".stl"), 10);
+				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".stl"), "Exported file not found");
 
 				return Task.FromResult(0);
 			});
