@@ -646,7 +646,7 @@ namespace MatterControl.Tests.MatterControl
 
 			Assert.IsTrue(fit.GetAxisAlignedBoundingBox().Equals(new AxisAlignedBoundingBox(new Vector3(-25, -10, -10), new Vector3(25, 10, 10)), 1.0));
 
-			var curve = new CurveObject3D_2();
+			var curve = new CurveObject3D_3();
 			curve.Children.Add(fit);
 			await curve.Rebuild();
 			var curveAabb = curve.GetAxisAlignedBoundingBox();

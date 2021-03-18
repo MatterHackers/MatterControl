@@ -27,6 +27,11 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/*********************************************************************/
+/**************************** OBSOLETE! ******************************/
+/************************ USE NEWER VERSION **************************/
+/*********************************************************************/
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,6 +51,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
+	[Obsolete("Use CurveObject3D_3 instead", false)]
 	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
 	{
 		public CurveObject3D_2()

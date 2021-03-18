@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-
 /*********************************************************************/
 /**************************** OBSOLETE! ******************************/
 /************************ USE NEWER VERSION **************************/
@@ -46,7 +45,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MatterControl.PartPreviewWindow.View3D;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -54,7 +52,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[Obsolete("Use CurveObject3D_2 instead", false)]
+	[Obsolete("Use CurveObject3D_3 instead", false)]
 	public class CurveObject3D : MeshWrapperObject3D, IEditorDraw
 	{
 		// holds where we rotate the object

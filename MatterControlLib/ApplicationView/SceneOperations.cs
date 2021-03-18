@@ -946,11 +946,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Curve")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(CurveObject3D_2),
+				ResultType = typeof(CurveObject3D_3),
 				TitleResolver = () => "Curve".Localize(),
 				Action = (sceneContext) =>
 				{
-					var curve = new CurveObject3D_2();
+					var curve = new CurveObject3D_3();
 					curve.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => StaticData.Instance.LoadIcon("curve.png", 16, 16, invertIcon),

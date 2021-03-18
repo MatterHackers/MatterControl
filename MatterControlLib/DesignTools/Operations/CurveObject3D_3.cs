@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D_3 : OperationSourceContainerObject3D, IEditorDraw
+	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
 		public CurveObject3D_3()
 		{
@@ -74,6 +74,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
 		public double Diameter { get; set; } = double.MaxValue;
+		
+		public double Angle { get; set; } = 90;
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
@@ -107,6 +109,28 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
+		private void DiameterFromAngle()
+		{
+			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var angleR = MathHelper.DegreesToRadians(Angle);
+			var ratio = angleR / MathHelper.Tau;
+			Diameter = aabb.XSize * ratio;
+		}
+
+
+		private void AngleFromDiameter()
+		{
+			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var ratio = aabb.XSize / (MathHelper.Tau * Diameter / 2);
+			var angleR = MathHelper.Tau * ratio;
+			var newAngle = MathHelper.RadiansToDegrees(angleR);
+			if (Angle != newAngle)
+			{
+				Angle = MathHelper.RadiansToDegrees(angleR);
+				Invalidate(InvalidateType.DisplayValues);
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -116,16 +140,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			// ensure we have good values
 			StartPercent = agg_basics.Clamp(StartPercent, 0, 100, ref valuesChanged);
 
+			if (Diameter == double.MaxValue)
+			{
+				DiameterFromAngle();
+			}
+
+			// keep the unused type synced so we don't change the bend when clicking the tabs
+			if (BendType == BendTypes.Diameter)
+			{
+				AngleFromDiameter();
+			}
+			else
+			{
+				DiameterFromAngle();
+			}
+
 			if (Diameter < 1 || Diameter > 100000)
 			{
-				if (Diameter == double.MaxValue)
-				{
-					var aabb = this.GetAxisAlignedBoundingBox();
-					// uninitialized set to a reasonable value
-					Diameter = (int)aabb.XSize;
-				}
-
-				Diameter = Math.Min(100000, Math.Max(1, Diameter));
+				Diameter = Math.Min(10000000, Math.Max(.1, Diameter));
 				valuesChanged = true;
 			}
 
@@ -245,6 +277,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
+	
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(Diameter), () => BendType == BendTypes.Diameter);
+			change.SetRowVisible(nameof(Angle), () => BendType == BendTypes.Angle);
 		}
 	}
 }
