@@ -171,7 +171,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					VAnchor = VAnchor.Center | VAnchor.Fit,
 					DrawUnderline = false,
 					BackgroundRadius = theme.ButtonRadius + 4,
-					Margin = new BorderDouble(0, 0, 5, 0),
+					Margin = new BorderDouble(5, 0, 0, 0),
 					Padding = new BorderDouble(9, 5),
 					// BackgroundInset = new BorderDouble(5, 4),
 					SelectedBackgroundColor = theme.PrimaryAccentColor,
