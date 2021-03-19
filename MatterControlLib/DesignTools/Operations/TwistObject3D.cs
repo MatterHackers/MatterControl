@@ -40,8 +40,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.MatterControl.PrintQueue;
-using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.RenderOpenGl.OpenGl;
@@ -66,6 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public RotationTypes RotationType { get; set; } = RotationTypes.Angle;
 
+		[MaxDecimalPlaces(2)]
 		[Description("The angle to rotate the top of the part")]
 		public double Angle { get; set; } = 135;
 

@@ -168,9 +168,11 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 
 				var radioButton = new RadioTextButton(enumItem.Value, theme)
 				{
-					VAnchor = VAnchor.Center,
+					VAnchor = VAnchor.Center | VAnchor.Fit,
 					DrawUnderline = false,
-					BackgroundRadius = theme.ButtonRadius,
+					BackgroundRadius = theme.ButtonRadius + 4,
+					Margin = new BorderDouble(5, 0, 0, 0),
+					Padding = new BorderDouble(9, 5),
 					// BackgroundInset = new BorderDouble(5, 4),
 					SelectedBackgroundColor = theme.PrimaryAccentColor,
 					UnselectedBackgroundColor = theme.MinimalShade,
@@ -184,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// set it if checked
-				if (enumItem.Value == this.InitialValue)
+				if (enumItem.Key == this.InitialValue)
 				{
 					radioButton.Checked = true;
 				}

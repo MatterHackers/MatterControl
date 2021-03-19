@@ -371,6 +371,40 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.SelectedBackgroundColor = theme.SlightShade;
 		}
 
+		public override Color BackgroundColor
+		{
+			get
+			{
+				var firstWidgetUnderMouse = ContainsFirstUnderMouseRecursive();
+				if (this.MouseCaptured
+					&& firstWidgetUnderMouse
+					&& this.Enabled)
+				{
+					if (Checked)
+					{
+						return SelectedBackgroundColor.AdjustLightness(.9).ToColor();
+					}
+
+					return this.MouseDownColor;
+				}
+				else if (firstWidgetUnderMouse
+					&& this.Enabled)
+				{
+					if (Checked)
+					{
+						return SelectedBackgroundColor.AdjustLightness(.8).ToColor();
+					}
+
+					return this.HoverColor;
+				}
+				else
+				{
+					return base.BackgroundColor;
+				}
+			}
+			set => base.BackgroundColor = value;
+		}
+
 		protected override void OnClick(MouseEventArgs mouseEvent)
 		{
 			base.OnClick(mouseEvent);

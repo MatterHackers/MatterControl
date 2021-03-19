@@ -27,11 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,27 +46,57 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[Obsolete("Use CurveObject3D_3 instead", false)]
-	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
+	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
 	{
-		public CurveObject3D_2()
+		public CurveObject3D_3()
 		{
 			Name = "Curve".Localize();
 		}
 
-		[DisplayName("Bend Up")]
-		public bool BendCcw { get; set; } = true;
+		public enum BendDirections
+		{
+			Bend_Up,
+			Bend_Down,
+		}
 
+		public enum BendTypes
+		{
+			[Description("Bend the part by an angle")]
+			Angle,
+			[Description("Bend the part around a specified diameter")]
+			Diameter,
+		}
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
+		public BendTypes BendType { get; set; } = BendTypes.Angle;
+
+		
+		[MaxDecimalPlaces(2)]
+		[Description("Set the radius that the bend will wrap around")]
+		[DescriptionImage("https://lh3.googleusercontent.com/PpQKIIOqD-49UMhgM_HCvig9Mw_UtUwO08UoRVSLJlCv9h5cGBLMvaXbtORrVQrWYPcKZ4_DfrDoKfcu2TuyYVQOl3AeZNoYflgnijc")]
 		public double Diameter { get; set; } = double.MaxValue;
+
+		[MaxDecimalPlaces(1)]
+		[Description("Set the angle of the curvature")]
+		[DescriptionImage("https://lh3.googleusercontent.com/TYe-CZfwJMKvP2JWBQihkvHD1PyB_nvyf0h3DhvyJu1RBjQWgqeOEsSH3sYcwA4alJjJmziueYGCbB_mic_QoYKuhKrmipkV2eG4_A")]
+		public double Angle { get; set; } = 90;
+
+		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		[Description("The part will bend around the z axis either up or down")]
+		[DescriptionImage("https://lh3.googleusercontent.com/h-s2FyBKO5etYDr_9YSLtGmGmQTcmSGMu4p0mRqX4_7Z62Ndn2QRLoFICC6X9scbhr1EP29RiYRj4EmhLMUwiNTAG-PIiFbzI_jAses")]		
+		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
+		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
 		public double MinSidesPerRotation { get; set; } = 30;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Where to start the bend as a percent of the width of the part")]
+		[Description("Where to start the bend as a percent from the left side")]
+		[DescriptionImage("https://lh3.googleusercontent.com/eOeWjr98uz_E924PnNaXrasepv15nWEuvhqH-jbaQyvrOVdX5MHXF00HdZQGC8NLpJc9ok1sToMtyPx1wnnDgFwTTGA5MjoMFu612AY1")]
 		public double StartPercent { get; set; } = 50;
 
+		[DescriptionImage("https://lh3.googleusercontent.com/arAJFTHAOPKn9BQtm1xEyct4LuA2jUAxW11q4cdQPz_JfoCTjS1rxtVTUdE1ND0Q_eigUa27Yc28U08zY2LDiQgS7kKkXKY_FY838p-5")]
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
 
@@ -79,7 +104,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			var sourceAabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var distance = Diameter / 2 + sourceAabb.YSize / 2;
-			var center = sourceAabb.Center + new Vector3(0, BendCcw ? distance : -distance, 0);
+			var center = sourceAabb.Center + new Vector3(0, BendDirection == BendDirections.Bend_Up ? distance : -distance, 0);
 			center.X -= sourceAabb.XSize / 2 - (StartPercent / 100.0) * sourceAabb.XSize;
 
 			// render the top and bottom rings
@@ -96,6 +121,33 @@ namespace MatterHackers.MatterControl.DesignTools
 			GL.Enable(EnableCap.Lighting);
 		}
 
+		private void DiameterFromAngle()
+		{
+			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var angleR = MathHelper.DegreesToRadians(Angle);
+			var ratio = angleR / MathHelper.Tau;
+			var newDiameter = (aabb.XSize / ratio) / Math.PI;
+			if (Math.Abs(Diameter - newDiameter) > .0001)
+			{
+				Diameter = newDiameter;
+				Invalidate(InvalidateType.DisplayValues);
+			}
+		}
+
+
+		private void AngleFromDiameter()
+		{
+			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
+			var ratio = aabb.XSize / (MathHelper.Tau * Diameter / 2);
+			var angleR = MathHelper.Tau * ratio;
+			var newAngle = MathHelper.RadiansToDegrees(angleR);
+			if (Math.Abs(Angle - newAngle) > .00001)
+			{
+				Angle = MathHelper.RadiansToDegrees(angleR);
+				Invalidate(InvalidateType.DisplayValues);
+			}
+		}
+
 		public override Task Rebuild()
 		{
 			this.DebugDepth("Rebuild");
@@ -105,16 +157,24 @@ namespace MatterHackers.MatterControl.DesignTools
 			// ensure we have good values
 			StartPercent = agg_basics.Clamp(StartPercent, 0, 100, ref valuesChanged);
 
+			if (Diameter == double.MaxValue)
+			{
+				DiameterFromAngle();
+			}
+
+			// keep the unused type synced so we don't change the bend when clicking the tabs
+			if (BendType == BendTypes.Diameter)
+			{
+				AngleFromDiameter();
+			}
+			else
+			{
+				DiameterFromAngle();
+			}
+
 			if (Diameter < 1 || Diameter > 100000)
 			{
-				if (Diameter == double.MaxValue)
-				{
-					var aabb = this.GetAxisAlignedBoundingBox();
-					// uninitialized set to a reasonable value
-					Diameter = (int)aabb.XSize;
-				}
-
-				Diameter = Math.Min(100000, Math.Max(1, Diameter));
+				Diameter = Math.Min(10000000, Math.Max(.1, Diameter));
 				valuesChanged = true;
 			}
 
@@ -143,7 +203,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					var rotationCenter = new Vector3(sourceAabb.MinXYZ.X + (sourceAabb.MaxXYZ.X - sourceAabb.MinXYZ.X) * (StartPercent / 100),
-						BendCcw ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
+						BendDirection == BendDirections.Bend_Up ? sourceAabb.MaxXYZ.Y + radius : sourceAabb.MinXYZ.Y - radius,
 						sourceAabb.Center.Z);
 
 					var curvedChildren = new List<IObject3D>();
@@ -176,7 +236,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 							var angleToRotate = ((position.X - rotationCenter.X) / circumference) * MathHelper.Tau - MathHelper.Tau / 4;
 							var distanceFromCenter = rotationCenter.Y - position.Y;
-							if (!BendCcw)
+							if (BendDirection == BendDirections.Bend_Down)
 							{
 								angleToRotate = -angleToRotate;
 								distanceFromCenter = -distanceFromCenter;
@@ -207,7 +267,7 @@ namespace MatterHackers.MatterControl.DesignTools
 						curvedChild.CopyWorldProperties(sourceItem, SourceContainer, Object3DPropertyFlags.All, false);
 						curvedChild.Visible = true;
 						curvedChild.Translate(new Vector3(rotationCenter));
-						if (!BendCcw)
+						if (BendDirection == BendDirections.Bend_Down)
 						{
 							curvedChild.Translate(0, -sourceAabb.YSize - Diameter, 0);
 						}
@@ -234,6 +294,14 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					return Task.CompletedTask;
 				});
+		}
+
+		private Dictionary<string, bool> changeSet = new Dictionary<string, bool>();
+	
+		public void UpdateControls(PublicPropertyChange change)
+		{
+			change.SetRowVisible(nameof(Diameter), () => BendType == BendTypes.Diameter);
+			change.SetRowVisible(nameof(Angle), () => BendType == BendTypes.Angle);
 		}
 	}
 }

@@ -48,10 +48,13 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 {
 	public class RevolveObject3D : Object3D, IEditorDraw
 	{
+		[MaxDecimalPlaces(2)]
 		public double AxisPosition { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		public double EndingAngle { get; set; } = 45;
 
 		public int Sides { get; set; } = 30;

@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Linq;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.UI;
@@ -312,11 +313,28 @@ namespace MatterHackers.MatterControl.CustomWidgets
 				TagColor = theme.ResolveColor(AppContext.Theme.BackgroundColor, AppContext.Theme.AccentMimimalOverlay.WithAlpha(50)),
 			};
 
-			popover.AddChild(new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+			GuiWidget contentWidget;
+			if (true)
 			{
-				Width = 400 * GuiWidget.DeviceScale,
-				HAnchor = HAnchor.Fit,
-			});
+				popover.HAnchor = HAnchor.Absolute;
+				popover.Width = 300 * GuiWidget.DeviceScale;
+
+				var markdown = new MarkdownWidget(theme);
+				markdown.HAnchor = HAnchor.Stretch;
+				markdown.VAnchor = VAnchor.Fit;
+				markdown.Markdown = settingsRow.HelpText;
+				
+				contentWidget = markdown;
+			}
+			else // this is what it was before
+			{
+				contentWidget = new WrappedTextWidget(settingsRow.HelpText, pointSize: theme.DefaultFontSize - 1, textColor: AppContext.Theme.TextColor)
+				{
+					Width = 300 * GuiWidget.DeviceScale,
+					HAnchor = HAnchor.Fit,
+				};
+			}
+			popover.AddChild(contentWidget);
 
 			bool alignLeft = this.ArrowDirection == ArrowDirection.Right;
 

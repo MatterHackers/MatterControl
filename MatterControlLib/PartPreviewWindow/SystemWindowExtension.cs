@@ -198,6 +198,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			WidgetRelativeTo_PositionChanged(anchor.Widget, null);
 
+			popup.Widget.BoundsChanged += (s, e) => WidgetRelativeTo_PositionChanged(anchor.Widget, null);
+
 			// When the widgets position changes, sync the popup position
 			systemWindow?.AddChild(popup.Widget);
 

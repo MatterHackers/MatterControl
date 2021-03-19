@@ -65,14 +65,17 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[MaxDecimalPlaces(2)]
 		public double Diameter { get; set; } = 20;
 
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
+		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		public double EndingAngle { get; set; } = 360;
 
 		public int LatitudeSides { get; set; } = 30;
