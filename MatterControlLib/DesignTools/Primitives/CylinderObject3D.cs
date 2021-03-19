@@ -115,9 +115,11 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[MaxDecimalPlaces(2)]
 		[Description("The width from one side to the opposite side.")]
 		public double Diameter { get; set; } = 20;
 
+		[MaxDecimalPlaces(2)]
 		public double Height { get; set; } = 20;
 
 		[Description("The number of segments around the perimeter.")]
@@ -125,10 +127,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public bool Advanced { get; set; } = false;
 
+		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		public double EndingAngle { get; set; } = 360;
 
+		[MaxDecimalPlaces(2)]
 		public double DiameterTop { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

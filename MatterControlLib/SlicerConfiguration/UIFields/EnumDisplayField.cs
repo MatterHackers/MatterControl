@@ -186,7 +186,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 				};
 
 				// set it if checked
-				if (enumItem.Value == this.InitialValue)
+				if (enumItem.Key == this.InitialValue)
 				{
 					radioButton.Checked = true;
 				}

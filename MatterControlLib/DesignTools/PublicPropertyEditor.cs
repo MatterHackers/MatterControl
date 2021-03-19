@@ -370,6 +370,11 @@ namespace MatterHackers.MatterControl.DesignTools
 					field.Content.Descendants<InternalTextEditWidget>().First().Name = property.DisplayName + " Edit";
 					field.Content.Closed += (s, e) => object3D.Invalidated -= RefreshField;
 
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MaxDecimalPlacesAttribute>().FirstOrDefault() is MaxDecimalPlacesAttribute decimalPlaces)
+					{
+						field.Content.Descendants<InternalNumberEdit>().First().MaxDecimalsPlaces = decimalPlaces.Number;
+					}
+
 					rowContainer = CreateSettingsRow(property, field, theme);
 				}
 			}

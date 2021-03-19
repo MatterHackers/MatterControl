@@ -64,6 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public RotationTypes RotationType { get; set; } = RotationTypes.Angle;
 
+		[MaxDecimalPlaces(2)]
 		[Description("The angle to rotate the top of the part")]
 		public double Angle { get; set; } = 135;
 

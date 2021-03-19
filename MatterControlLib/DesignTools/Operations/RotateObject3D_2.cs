@@ -92,6 +92,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 
 		public DirectionAxis RotateAbout { get; set; } = new DirectionAxis() { Origin = Vector3.Zero, Normal = Vector3.UnitZ };
 
+		[MaxDecimalPlaces(2)]
 		[DisplayName("Angle")]
 		public double AngleDegrees { get; set; } = 0;
 

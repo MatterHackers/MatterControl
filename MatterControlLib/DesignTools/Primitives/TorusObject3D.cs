@@ -54,21 +54,26 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[MaxDecimalPlaces(2)]
 		public double OuterDiameter { get; set; } = 20;
 
+		[MaxDecimalPlaces(2)]
 		public double InnerDiameter { get; set; } = 10;
 
 		public int Sides { get; set; } = 40;
 
 		public bool Advanced { get; set; } = false;
 
+		[MaxDecimalPlaces(2)]
 		public double StartingAngle { get; set; } = 0;
 
+		[MaxDecimalPlaces(2)]
 		public double EndingAngle { get; set; } = 360;
 
 		public int RingSides { get; set; } = 15;
 
-		public int RingPhaseAngle { get; set; } = 0;
+		[MaxDecimalPlaces(2)]
+		public double RingPhaseAngle { get; set; } = 0;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
 		{

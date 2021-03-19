@@ -61,30 +61,34 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public enum BendTypes
 		{
-			[Description("Bend the part around a specified diameter")]
-			Diameter,
 			[Description("Bend the part by an angle")]
 			Angle,
+			[Description("Bend the part around a specified diameter")]
+			Diameter,
 		}
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
-		public BendTypes BendType { get; set; } = BendTypes.Diameter;
+		public BendTypes BendType { get; set; } = BendTypes.Angle;
+
+		[MaxDecimalPlaces(2)]
+		public double Diameter { get; set; } = double.MaxValue;
+
+		[MaxDecimalPlaces(1)]
+		public double Angle { get; set; } = 90;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
 		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
-		public double Diameter { get; set; } = double.MaxValue;
-		
-		public double Angle { get; set; } = 90;
-
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
+		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
 		public double MinSidesPerRotation { get; set; } = 30;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Where to start the bend as a percent of the width of the part")]
 		public double StartPercent { get; set; } = 50;
 
+		[DescriptionImage("https://lh3.googleusercontent.com/arAJFTHAOPKn9BQtm1xEyct4LuA2jUAxW11q4cdQPz_JfoCTjS1rxtVTUdE1ND0Q_eigUa27Yc28U08zY2LDiQgS7kKkXKY_FY838p-5")]
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
 
@@ -114,7 +118,12 @@ namespace MatterHackers.MatterControl.DesignTools
 			var aabb = this.SourceContainer.GetAxisAlignedBoundingBox();
 			var angleR = MathHelper.DegreesToRadians(Angle);
 			var ratio = angleR / MathHelper.Tau;
-			Diameter = aabb.XSize * ratio;
+			var newDiameter = (aabb.XSize / ratio) / Math.PI;
+			if (Math.Abs(Diameter - newDiameter) > .0001)
+			{
+				Diameter = newDiameter;
+				Invalidate(InvalidateType.DisplayValues);
+			}
 		}
 
 
@@ -124,7 +133,7 @@ namespace MatterHackers.MatterControl.DesignTools
 			var ratio = aabb.XSize / (MathHelper.Tau * Diameter / 2);
 			var angleR = MathHelper.Tau * ratio;
 			var newAngle = MathHelper.RadiansToDegrees(angleR);
-			if (Angle != newAngle)
+			if (Math.Abs(Angle - newAngle) > .00001)
 			{
 				Angle = MathHelper.RadiansToDegrees(angleR);
 				Invalidate(InvalidateType.DisplayValues);

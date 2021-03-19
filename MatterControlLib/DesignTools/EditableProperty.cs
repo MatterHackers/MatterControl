@@ -53,8 +53,27 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private string GetDescription(PropertyInfo prop)
 		{
-			var nameAttribute = prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault();
-			return nameAttribute?.Description ?? null;
+			if (prop.GetCustomAttributes(true).OfType<DescriptionAttribute>().FirstOrDefault() is DescriptionAttribute descriptionAttribute)
+			{
+				var description = descriptionAttribute.Description;
+
+				if (prop.GetCustomAttributes(true).OfType<DescriptionImageAttribute>().FirstOrDefault() is DescriptionImageAttribute descriptionImageAttribute)
+				{
+					if (descriptionImageAttribute.ImageUrl.Contains("googleusercontent"))
+					{
+						// the "=w200" scales the image
+						description += $"\n\n![{prop.Name} Image]({descriptionImageAttribute.ImageUrl}=w240)";
+					}
+					else
+					{
+						description += $"\n\n![{prop.Name} Image]({descriptionImageAttribute.ImageUrl})";
+					}
+				}
+
+				return description;
+			}
+
+			return null;
 		}
 
 		public static string GetDisplayName(PropertyInfo prop)
