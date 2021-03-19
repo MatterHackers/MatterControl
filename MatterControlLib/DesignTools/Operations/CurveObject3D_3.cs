@@ -70,13 +70,20 @@ namespace MatterHackers.MatterControl.DesignTools
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Tabs)]
 		public BendTypes BendType { get; set; } = BendTypes.Angle;
 
+		
 		[MaxDecimalPlaces(2)]
+		[Description("Set the radius that the bend will wrap around")]
+		[DescriptionImage("https://lh3.googleusercontent.com/PpQKIIOqD-49UMhgM_HCvig9Mw_UtUwO08UoRVSLJlCv9h5cGBLMvaXbtORrVQrWYPcKZ4_DfrDoKfcu2TuyYVQOl3AeZNoYflgnijc")]
 		public double Diameter { get; set; } = double.MaxValue;
 
 		[MaxDecimalPlaces(1)]
+		[Description("Set the angle of the curvature")]
+		[DescriptionImage("https://lh3.googleusercontent.com/TYe-CZfwJMKvP2JWBQihkvHD1PyB_nvyf0h3DhvyJu1RBjQWgqeOEsSH3sYcwA4alJjJmziueYGCbB_mic_QoYKuhKrmipkV2eG4_A")]
 		public double Angle { get; set; } = 90;
 
 		[EnumDisplay(Mode = EnumDisplayAttribute.PresentationMode.Buttons)]
+		[Description("The part will bend around the z axis either up or down")]
+		[DescriptionImage("https://lh3.googleusercontent.com/h-s2FyBKO5etYDr_9YSLtGmGmQTcmSGMu4p0mRqX4_7Z62Ndn2QRLoFICC6X9scbhr1EP29RiYRj4EmhLMUwiNTAG-PIiFbzI_jAses")]		
 		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
 		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
@@ -85,7 +92,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double MinSidesPerRotation { get; set; } = 30;
 
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Where to start the bend as a percent of the width of the part")]
+		[Description("Where to start the bend as a percent from the left side")]
+		[DescriptionImage("https://lh3.googleusercontent.com/eOeWjr98uz_E924PnNaXrasepv15nWEuvhqH-jbaQyvrOVdX5MHXF00HdZQGC8NLpJc9ok1sToMtyPx1wnnDgFwTTGA5MjoMFu612AY1")]
 		public double StartPercent { get; set; } = 50;
 
 		[DescriptionImage("https://lh3.googleusercontent.com/arAJFTHAOPKn9BQtm1xEyct4LuA2jUAxW11q4cdQPz_JfoCTjS1rxtVTUdE1ND0Q_eigUa27Yc28U08zY2LDiQgS7kKkXKY_FY838p-5")]
