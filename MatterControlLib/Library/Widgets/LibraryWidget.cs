@@ -858,15 +858,18 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 
 					ApplicationController.Instance.BlinkTab(
-						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage));
+						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PartTabPage));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					var isFolder = listView.SelectedItems.FirstOrDefault()?.Model is DynamicContainerLink;
+
 					// Multiselect - disallow containers, require View3DWidget context
 					return ApplicationController.Instance.DragDropData.View3DWidget != null
 						&& listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink))
-						&& ApplicationController.Instance.ActivePrinters.Any();
+						&& !isFolder
+						&& ApplicationController.Instance.MainView.TabControl.AllTabs.Any(t => t.TabContent is PartTabPage);
 				}
 			});
 
