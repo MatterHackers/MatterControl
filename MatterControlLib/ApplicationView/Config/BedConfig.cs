@@ -195,7 +195,7 @@ namespace MatterHackers.MatterControl
 				new EditContext()
 				{
 					ContentStore = historyContainer,
-					SourceItem = historyContainer.NewPlatingItem()
+					SourceItem = historyContainer.NewPlatingItem(this.Scene)
 				});
 		}
 
@@ -294,19 +294,6 @@ namespace MatterHackers.MatterControl
 				var itemCache = new Dictionary<string, IObject3D>();
 				this.AddToPlate(filePaths.Select(f => new FileSystemFileItem(f)));
 			}
-		}
-
-		/// <summary>
-		/// Loads content to the bed and prepares edit/persistence context for use
-		/// </summary>
-		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</placeholder></returns>
-		public async Task LoadPlateFromHistory()
-		{
-			await this.LoadContent(new EditContext()
-			{
-				ContentStore = historyContainer,
-				SourceItem = historyContainer.GetLastPlateOrNew()
-			});
 		}
 
 		public async Task StashAndPrintGCode(ILibraryItem libraryItem)

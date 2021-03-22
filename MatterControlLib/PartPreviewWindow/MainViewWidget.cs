@@ -749,24 +749,38 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
 
-			if (printer != null)
+			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
+			renameMenuItem.Click += (s, e) =>
 			{
-				var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
-				renameMenuItem.Click += (s, e) =>
+				var currentName = "";
+				if (printer != null)
 				{
-					DialogWindow.Show(
-						new InputBoxPage(
-							"Rename Item".Localize(),
-							"Name".Localize(),
-							printer.Settings.GetValue(SettingsKey.printer_name),
-							"Enter New Name Here".Localize(),
-							"Rename".Localize(),
-							(newName) =>
+					printer.Settings.GetValue(SettingsKey.printer_name);
+				}
+				else // design tab
+				{
+					currentName = "Design";
+				}
+
+				DialogWindow.Show(
+					new InputBoxPage(
+						"Rename Item".Localize(),
+						"Name".Localize(),
+						currentName,
+						"Enter New Name Here".Localize(),
+						"Rename".Localize(),
+						(newName) =>
+						{
+							if (printer != null)
 							{
 								printer.Settings.SetValue(SettingsKey.printer_name, newName);
-							}));
-				};
-			}
+							}
+							else
+							{
+								// do something with design tab
+							}
+						}));
+			};
 
 			var moveButtons = new FlowLayoutWidget();
 
@@ -828,7 +842,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				new EditContext()
 				{
 					ContentStore = ApplicationController.Instance.Library.PlatingHistory,
-					SourceItem = history.NewPlatingItem()
+					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
 				});
 
 			ApplicationController.Instance.Workspaces.Add(workspace);

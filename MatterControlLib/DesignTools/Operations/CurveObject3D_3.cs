@@ -86,11 +86,6 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DescriptionImage("https://lh3.googleusercontent.com/h-s2FyBKO5etYDr_9YSLtGmGmQTcmSGMu4p0mRqX4_7Z62Ndn2QRLoFICC6X9scbhr1EP29RiYRj4EmhLMUwiNTAG-PIiFbzI_jAses")]		
 		public BendDirections BendDirection { get; set; } = BendDirections.Bend_Up;
 
-		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
-		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
-		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
-		public double MinSidesPerRotation { get; set; } = 30;
-
 		[Range(0, 100, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
 		[Description("Where to start the bend as a percent from the left side")]
 		[DescriptionImage("https://lh3.googleusercontent.com/eOeWjr98uz_E924PnNaXrasepv15nWEuvhqH-jbaQyvrOVdX5MHXF00HdZQGC8NLpJc9ok1sToMtyPx1wnnDgFwTTGA5MjoMFu612AY1")]
@@ -99,6 +94,11 @@ namespace MatterHackers.MatterControl.DesignTools
 		[DescriptionImage("https://lh3.googleusercontent.com/arAJFTHAOPKn9BQtm1xEyct4LuA2jUAxW11q4cdQPz_JfoCTjS1rxtVTUdE1ND0Q_eigUa27Yc28U08zY2LDiQgS7kKkXKY_FY838p-5")]
 		[Description("Split the mesh so it has enough geometry to create a smooth curve")]
 		public bool SplitMesh { get; set; } = true;
+
+		[Range(3, 360, ErrorMessage = "Value for {0} must be between {1} and {2}.")]
+		[Description("Ensures the rotated part has a minimum number of sides per complete rotation")]
+		[DescriptionImage("https://lh3.googleusercontent.com/p9MyKu3AFP55PnobUKZQPqf6iAx11GzXyX-25f1ddrUnfCt8KFGd1YtHOR5HqfO0mhlX2ZVciZV4Yn0Kzfm43SErOS_xzgsESTu9scux")]
+		public double MinSidesPerRotation { get; set; } = 30;
 
 		public void DrawEditor(Object3DControlsLayer layer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
@@ -302,6 +302,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		{
 			change.SetRowVisible(nameof(Diameter), () => BendType == BendTypes.Diameter);
 			change.SetRowVisible(nameof(Angle), () => BendType == BendTypes.Angle);
+			change.SetRowVisible(nameof(MinSidesPerRotation), () => SplitMesh);
 		}
 	}
 }

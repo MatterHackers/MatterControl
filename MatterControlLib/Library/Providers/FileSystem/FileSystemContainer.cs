@@ -254,18 +254,18 @@ namespace MatterHackers.MatterControl.Library
 
 		public override void Remove(IEnumerable<ILibraryItem> items)
 		{
-			// Removing content from the filesystem can have devastating effects - open a shell window allowing the customer make changes as they seem fit
 			if (AggContext.OperatingSystem == OSType.Windows)
 			{
-				if (items.Count() == 1
-					&& items.FirstOrDefault() is FileSystemFileItem fileItem)
+				foreach (var item in items)
 				{
-					Process.Start("explorer.exe", $"/select, \"{fileItem.Path}\"");
+					if (item is FileSystemItem fileItem
+						&& File.Exists(fileItem.Path))
+					{
+						File.Delete(fileItem.Path);
+					}
 				}
-				else
-				{
-					Process.Start(this.FullPath);
-				}
+
+				this.ReloadContent();
 			}
 		}
 
@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.Library
 		public class DirectoryContainerLink : FileSystemItem, ILibraryContainerLink
 		{
 			public DirectoryContainerLink(string path)
-				: base(path)
+				: base(path, null)
 			{
 			}
 

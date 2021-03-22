@@ -27,9 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg;
 using System;
 using System.IO;
-using MatterHackers.Agg;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -40,9 +40,12 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private string fileName;
 
-		public FileSystemItem(string path)
+		private Func<FileSystemItem, string> getFirstSaveName;
+
+		public FileSystemItem(string path, Func<FileSystemItem, string> getFirstSaveName = null)
 		{
 			this.Path = path;
+			this.getFirstSaveName = getFirstSaveName;
 
 			var type = GetType();
 
@@ -102,6 +105,25 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		public string Path { get; set; }
+		private string _path;
+		public string Path
+		{
+			get
+			{
+				if (getFirstSaveName != null)
+				{
+					var newPath = getFirstSaveName(this);
+					if (!string.IsNullOrEmpty(newPath))
+					{
+						getFirstSaveName = null;
+						_path = newPath;
+					}
+				}
+
+				return _path;
+			}
+
+			set => _path = value;
+		}
 	}
 }

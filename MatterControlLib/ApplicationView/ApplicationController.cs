@@ -919,7 +919,7 @@ namespace MatterHackers.MatterControl
 								new EditContext()
 								{
 									ContentStore = historyContainer,
-									SourceItem = historyContainer.NewPlatingItem()
+									SourceItem = historyContainer.NewPlatingItem(onlyPrinter.Bed.Scene)
 								});
 
 							UiThread.RunOnIdle(() =>
@@ -1488,7 +1488,7 @@ namespace MatterHackers.MatterControl
 				await workspace.SceneContext.LoadContent(new EditContext()
 				{
 					ContentStore = history,
-					SourceItem = history.NewPlatingItem()
+					SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
 				});
 
 				if (workspace.Printer != null)
@@ -1644,7 +1644,7 @@ namespace MatterHackers.MatterControl
 					new EditContext()
 					{
 						ContentStore = history,
-						SourceItem = history.NewPlatingItem()
+						SourceItem = history.NewPlatingItem(workspace.SceneContext.Scene)
 					});
 
 				ApplicationController.Instance.MainTabKey = workspace.Name;

@@ -62,10 +62,6 @@ namespace MatterHackers.MatterControl.Library
 			};
 		}
 
-		public int PageSize { get; set; } = 25;
-
-		public event EventHandler<ItemChangedEventArgs> ItemContentChanged;
-
 		public override bool AllowAction(ContainerActions containerActions)
 		{
 			switch(containerActions)
@@ -82,44 +78,50 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		// PrintItems projected onto FileSystemFileItem
-		public override void Load()
-		{
-			// Select the 25 most recent files and project onto FileSystemItems
-			if (Directory.Exists(this.FullPath))
-			{
-				var recentFiles = new DirectoryInfo(this.FullPath).GetFiles("*.mcx").OrderByDescending(f => f.LastWriteTime);
-				Items = recentFiles.Where(f => f.Length > 215).Select(f => new FileSystemFileItem(f.FullName)).ToList<ILibraryItem>();
-			}
-		}
-
-		internal ILibraryItem NewPlatingItem()
+		internal ILibraryItem NewPlatingItem(InteractiveScene scene)
 		{
 			string now = "Workspace " + DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss");
 			string mcxPath = Path.Combine(this.FullPath, now + ".mcx");
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 
-			return new FileSystemFileItem(mcxPath);
-		}
-
-		public ILibraryItem GetLastPlateOrNew()
-		{
-			// Find the last used bed plate mcx
-			var directoryInfo = new DirectoryInfo(ApplicationDataStorage.Instance.PlatingDirectory);
-			var firstFile = directoryInfo.GetFileSystemInfos("*.mcx").OrderByDescending(fl => fl.LastWriteTime).FirstOrDefault();
-
-			// Set as the current item - should be restored as the Active scene in the MeshViewer
-			if (firstFile != null)
+			return new FileSystemFileItem(mcxPath, (fileItem) =>
 			{
-				return new FileSystemFileItem(firstFile.FullName);
-			}
-
-			// Otherwise generate a new plating item
-			return this.NewPlatingItem();
+				// Find the names of stuff in the scene
+				if (scene.Children.Any())
+				{
+					// Create a reasonable name
+					var baseName = scene.Children.First().Name;
+					var newName = baseName;
+					// Make sure the name is unique on disk
+					var count = 1;
+					while (File.Exists(Path.Combine(this.FullPath, newName + ".mcx")))
+					{
+						newName = baseName + $" ({count++})";
+					}
+					// return the new name
+					var filename = Path.Combine(this.FullPath, newName + ".mcx");
+					if (File.Exists(filename))
+					{
+						File.Move(mcxPath, filename);
+					}
+					// change the path in the workspaces
+					// w.SceneContext.EditContext?.SourceFilePath
+					var workspace = ApplicationController.Instance.Workspaces.Where(w => w.SceneContext.EditContext?.SourceFilePath == mcxPath).FirstOrDefault();
+					if (workspace != null)
+					{
+						workspace.SceneContext.EditContext.SourceFilePath = filename;
+					}
+					
+					fileItem.Name = newName;
+					fileItem.Path = filename;
+					return filename;
+				}
+				return null;
+			});
 		}
 
-		public void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
+		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
 		{
 		}
 	}
