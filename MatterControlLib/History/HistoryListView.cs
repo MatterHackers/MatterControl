@@ -27,21 +27,9 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using CsvHelper;
-using MatterHackers.Agg;
-using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
-using MatterHackers.Localizations;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DataStorage;
 using MatterHackers.MatterControl.Library;
-using MatterHackers.MatterControl.PartPreviewWindow;
-using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.PrintHistory
 {

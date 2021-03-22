@@ -29,6 +29,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -777,27 +778,54 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				});
 			}
 
-			// Open menu item
+			menuActions.Add(new MenuSeparator("Open"));
+
+			// open menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Open".Localize(),
 				Icon = StaticData.Instance.LoadIcon("cube.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
-					if (listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink)))
-					{
-						ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
-					}
-					else
-					{
-						// open the folder
-						listView.SelectedItems.First().OnDoubleClick();
-					}
+					listView.SelectedItems.FirstOrDefault()?.OnDoubleClick();
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
-					// Singleselect
-					return listView.SelectedItems.Count == 1;
+					// Single select
+					var only1 = listView.SelectedItems.Count == 1;
+					// mcx only - disallow containers and protected items
+					var isAsset = selectedListItems.FirstOrDefault()?.Model is ILibraryItem libraryItem
+								&& !(libraryItem is ILibraryContainer) // containers are also items
+								&& !libraryItem.IsProtected
+								// and we can only edit it if it is an mcx (can't edit stls)
+								&& libraryItem is ILibraryAsset asset && asset.ContentType == "mcx";
+
+					// Check if it is writeable
+					var writableContainer = !libraryContext.ActiveContainer.IsProtected
+								&& libraryContext.ActiveContainer is ILibraryWritableContainer;
+
+					var isFolder = listView.SelectedItems.FirstOrDefault()?.Model is DynamicContainerLink;
+					return only1 && ((isAsset && writableContainer) || isFolder);
+				}
+			});
+
+			// Open a copy menu item
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
+			{
+				Title = "Open a copy".Localize(),
+				Icon = StaticData.Instance.LoadIcon("cube_add.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					ApplicationController.Instance.OpenIntoNewTab(selectedLibraryItems);
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					var isFolder = listView.SelectedItems.FirstOrDefault()?.Model is DynamicContainerLink;
+
+					return listView.SelectedItems.Count == 1
+						&& (listView.SelectedItems.FirstOrDefault().Container is ILibraryContainerLink
+							|| listView.SelectedItems.FirstOrDefault().Container is ILibraryContainer)
+						&& !isFolder;
 				}
 			});
 
@@ -830,61 +858,69 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					}
 
 					ApplicationController.Instance.BlinkTab(
-						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PrinterTabPage));
+						ApplicationController.Instance.MainView.TabControl.AllTabs.FirstOrDefault(t => t.TabContent is PartTabPage));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
+					var isFolder = listView.SelectedItems.FirstOrDefault()?.Model is DynamicContainerLink;
+
 					// Multiselect - disallow containers, require View3DWidget context
 					return ApplicationController.Instance.DragDropData.View3DWidget != null
 						&& listView.SelectedItems.Any()
-						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink))
+						&& !isFolder
+						&& ApplicationController.Instance.MainView.TabControl.AllTabs.Any(t => t.TabContent is PartTabPage);
 				}
 			});
 
-			// edit menu item
+			menuActions.Add(new MenuSeparator("Export"));
+
+			// export menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
-				Title = "Edit".Localize(),
-				Action = async (selectedLibraryItems, listView) =>
+				Title = "Export".Localize(),
+				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
 				{
-					if (selectedLibraryItems.FirstOrDefault() is ILibraryItem firstItem
-						&& libraryContext.ActiveContainer is ILibraryWritableContainer writableContainer)
-					{
-						var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory))
-						{
-							Name = firstItem.Name,
-						};
-
-						ApplicationController.Instance.Workspaces.Add(workspace);
-
-						var tab = mainViewWidget.CreatePartTab(workspace);
-						mainViewWidget.TabControl.ActiveTab = tab;
-
-						// Load content after UI widgets to support progress notification during acquire/load
-						await workspace.SceneContext.LoadContent(
-							new EditContext()
-							{
-								ContentStore = writableContainer,
-								SourceItem = firstItem
-							});
-					}
+					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
 				},
 				IsEnabled = (selectedListItems, listView) =>
 				{
-					// Singleselect, WritableContainer, mcx only - disallow containers and protected items
+					// Multiselect - disallow containers
+					return listView.SelectedItems.Any()
+						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
+				},
+			});
+
+			// share menu item
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
+			{
+				Title = "Share".Localize() + "...",
+				Icon = StaticData.Instance.LoadIcon("share.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					// Previously - shareFromLibraryButton_Click
+					// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
+					ApplicationController.Instance.ShareLibraryItem(libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault());
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					// Singleselect - disallow containers and protected items
 					return listView.SelectedItems.Count == 1
 						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
+						&& listView.ActiveContainer.GetType().Name.IndexOf("Cloud", StringComparison.OrdinalIgnoreCase) >= 0
 						&& !(firstItem is ILibraryContainer)
-						&& !firstItem.IsProtected
-						&& firstItem is ILibraryAsset asset && asset.ContentType == "mcx"
-						&& libraryContext.ActiveContainer is ILibraryWritableContainer;
+						&& !firstItem.IsProtected;
 				}
 			});
 
+			menuActions.Add(new MenuSeparator("Rename"));
+	
 			// rename menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Rename".Localize(),
+				Icon = StaticData.Instance.LoadIcon("icon_edit.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					if (libraryView.SelectedItems.Count == 1)
@@ -961,10 +997,51 @@ namespace MatterHackers.MatterControl.PrintLibrary
 				}
 			});
 
+			// show on disk menu item
+			menuActions.Add(new LibraryAction(ActionScope.ListItem)
+			{
+				Title = "Show in Explorer".Localize(),
+				// Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16, theme.InvertIcons),
+				Action = (selectedLibraryItems, listView) =>
+				{
+					if (AggContext.OperatingSystem == OSType.Windows)
+					{
+						if (AggContext.OperatingSystem == OSType.Windows
+							&& listView.SelectedItems.Count() == 1)
+						{
+							if (listView.SelectedItems.FirstOrDefault().Model is FileSystemFileItem fileItem)
+							{
+								Process.Start("explorer.exe", $"/select, \"{fileItem.Path}\"");
+							}
+							else if (listView.SelectedItems.FirstOrDefault().Model is FileSystemContainer.DirectoryContainerLink container)
+							{
+								Process.Start("explorer.exe", $"/select, \"{container.Path}\"");
+							}
+							else if (listView.SelectedItems.FirstOrDefault().Model is LocalZipContainerLink zipContainer)
+							{
+								Process.Start("explorer.exe", $"/select, \"{zipContainer.Path}\"");
+							}
+						}
+					}
+				},
+				IsEnabled = (selectedListItems, listView) =>
+				{
+					if (AggContext.OperatingSystem == OSType.Windows
+						&& listView.SelectedItems.Count() == 1
+						&& listView.SelectedItems.FirstOrDefault().Model is FileSystemItem)
+					{
+						return true;
+					}
+
+					return false;
+				}
+			});
+
 			// remove menu item
 			menuActions.Add(new LibraryAction(ActionScope.ListItem)
 			{
 				Title = "Remove".Localize(),
+				Icon = StaticData.Instance.LoadIcon("remove.png", 16, 16, theme.InvertIcons),
 				Action = (selectedLibraryItems, listView) =>
 				{
 					// Previously - deleteFromLibraryButton_Click
@@ -975,27 +1052,19 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					{
 						if (libraryView.ActiveContainer is ILibraryWritableContainer container)
 						{
-							if (container is FileSystemContainer)
-							{
-								container.Remove(libraryItems);
-								libraryView.SelectedItems.Clear();
-							}
-							else
-							{
-								StyledMessageBox.ShowMessageBox(
-									(doDelete) =>
+							StyledMessageBox.ShowMessageBox(
+								(doDelete) =>
+								{
+									if (doDelete)
 									{
-										if (doDelete)
-										{
-											container.Remove(libraryItems);
-											libraryView.SelectedItems.Clear();
-										}
-									},
-									"Are you sure you want to remove the currently selected items?".Localize(),
-									"Remove Items?".Localize(),
-									StyledMessageBox.MessageType.YES_NO,
-									"Remove".Localize());
-							}
+										container.Remove(libraryItems);
+										libraryView.SelectedItems.Clear();
+									}
+								},
+								"Are you sure you want to remove the currently selected items?".Localize(),
+								"Remove Items?".Localize(),
+								StyledMessageBox.MessageType.YES_NO,
+								"Remove".Localize());
 						}
 					}
 				},
@@ -1005,47 +1074,6 @@ namespace MatterHackers.MatterControl.PrintLibrary
 					return listView.SelectedItems.Any()
 						&& listView.SelectedItems.All(i => !i.Model.IsProtected
 						&& libraryContext.ActiveContainer is ILibraryWritableContainer);
-				}
-			});
-
-			menuActions.Add(new MenuSeparator("Export"));
-
-			// export menu item
-			menuActions.Add(new LibraryAction(ActionScope.ListItem)
-			{
-				Title = "Export".Localize(),
-				Icon = StaticData.Instance.LoadIcon("cube_export.png", 16, 16, theme.InvertIcons),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					ApplicationController.Instance.ExportLibraryItems(libraryView.SelectedItems.Select(item => item.Model));
-				},
-				IsEnabled = (selectedListItems, listView) =>
-				{
-					// Multiselect - disallow containers
-					return listView.SelectedItems.Any()
-						&& listView.SelectedItems.All(i => !(i.Model is ILibraryContainerLink));
-				},
-			});
-
-			// share menu item
-			menuActions.Add(new LibraryAction(ActionScope.ListItem)
-			{
-				Title = "Share".Localize() + "...",
-				Icon = StaticData.Instance.LoadIcon("share.png", 16, 16, theme.InvertIcons),
-				Action = (selectedLibraryItems, listView) =>
-				{
-					// Previously - shareFromLibraryButton_Click
-					// TODO: Should be rewritten to Register from cloudlibrary, include logic to add to library as needed
-					ApplicationController.Instance.ShareLibraryItem(libraryView.SelectedItems.Select(i => i.Model).FirstOrDefault());
-				},
-				IsEnabled = (selectedListItems, listView) =>
-				{
-					// Singleselect - disallow containers and protected items
-					return listView.SelectedItems.Count == 1
-						&& selectedListItems.FirstOrDefault()?.Model is ILibraryItem firstItem
-						&& listView.ActiveContainer.GetType().Name.IndexOf("Cloud", StringComparison.OrdinalIgnoreCase) >= 0
-						&& !(firstItem is ILibraryContainer)
-						&& !firstItem.IsProtected;
 				}
 			});
 

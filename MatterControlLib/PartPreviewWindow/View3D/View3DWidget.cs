@@ -57,6 +57,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 	{
 		private bool deferEditorTillMouseUp = false;
 
+		public float ZoomDelta { get; set; } = 0.2f;
+		
 		public int EditButtonHeight { get; set; } = 44;
 
 		public Matrix4X4 TransformOnMouseDown { get; private set; } = Matrix4X4.Identity;

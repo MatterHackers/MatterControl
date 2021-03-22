@@ -30,6 +30,7 @@ either expressed or implied, of the FreeBSD Project.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
@@ -475,7 +476,55 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					{
 						if (this.DoubleClickAction == DoubleClickActions.PreviewItem)
 						{
-							ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+							if (itemModel is ILibraryAsset asset && asset.ContentType == "mcx"
+								&& itemModel is ILibraryItem firstItem
+								&& this.ActiveContainer is ILibraryWritableContainer writableContainer)
+							{
+								var mainViewWidget = ApplicationController.Instance.MainView;
+
+								// check if it is already open
+								foreach (var openWorkspace in ApplicationController.Instance.Workspaces)
+								{
+									if (openWorkspace.SceneContext.EditContext.SourceFilePath == asset.AssetPath
+										|| (openWorkspace.SceneContext.EditContext.SourceItem is IAssetPath cloudItem
+											&& cloudItem.AssetPath == asset.AssetPath))
+									{
+										foreach (var tab in mainViewWidget.TabControl.AllTabs)
+										{
+											if (tab.TabContent is PartTabPage tabContent
+												&& (tabContent.sceneContext.EditContext.SourceFilePath == asset.AssetPath
+													|| (tabContent.sceneContext.EditContext.SourceItem is IAssetPath cloudItem2
+														&& cloudItem2.AssetPath == asset.AssetPath)))
+											{
+												mainViewWidget.TabControl.ActiveTab = tab;
+												return;
+											}
+										}
+									}
+								}
+
+								var workspace = new PartWorkspace(new BedConfig(ApplicationController.Instance.Library.PlatingHistory))
+								{
+									Name = firstItem.Name,
+								};
+
+								ApplicationController.Instance.Workspaces.Add(workspace);
+
+								var partTab = mainViewWidget.CreatePartTab(workspace);
+								mainViewWidget.TabControl.ActiveTab = partTab;
+
+								// Load content after UI widgets to support progress notification during acquire/load
+								await workspace.SceneContext.LoadContent(
+									new EditContext()
+									{
+										ContentStore = writableContainer,
+										SourceItem = firstItem
+									});
+							}
+							else
+							{
+								ApplicationController.Instance.OpenIntoNewTab(new[] { itemModel });
+							}
 						}
 						else
 						{

@@ -53,6 +53,11 @@ namespace MatterHackers.MatterControl.Library
 		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
 	}
 
+	public interface IAssetPath
+	{
+		string AssetPath { get; }
+	}
+
 	public interface ILibraryAssetStream : ILibraryAsset
 	{
 		/// <summary>

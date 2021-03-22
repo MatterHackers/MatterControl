@@ -52,7 +52,7 @@ namespace MatterHackers.MatterControl
 		/// </summary>
 		public IContentStore ContentStore { get; set; }
 
-		public string SourceFilePath { get; private set; }
+		public string SourceFilePath { get; set; }
 
 		public bool FreezeGCode { get; set; }
 
