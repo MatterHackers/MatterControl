@@ -28,21 +28,19 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-
-	public class ItemChangedEventArgs : EventArgs
+	public interface ILibraryAssetStream : ILibraryAsset
 	{
-		public ILibraryItem LibraryItem { get; }
+		/// <summary>
+		// Gets the size, in bytes, of the current file.
+		/// </summary>
+		long FileSize { get; }
 
-		public ItemChangedEventArgs(ILibraryItem libraryItem)
-		{
-			this.LibraryItem = libraryItem;
-		}
+		bool LocalContentExists { get; }
+
+		Task<StreamAndLength> GetStream(Action<double, string> progress);
 	}
 }

@@ -29,52 +29,44 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.IO;
 using MatterControl.Printing;
+using MatterHackers.Agg;
+using MatterHackers.DataConverters3D;
+using MatterHackers.MatterControl.DataStorage;
+using MatterHackers.MatterControl.DesignTools;
+using MatterHackers.MatterControl.Library;
+using Newtonsoft.Json;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl
 {
-	using MatterHackers.Agg;
-	using MatterHackers.DataConverters3D;
-	using MatterHackers.MatterControl.DataStorage;
-	using MatterHackers.MatterControl.DesignTools;
-	using MatterHackers.MatterControl.Library;
-	using MatterHackers.MatterControl.SlicerConfiguration;
-	using Newtonsoft.Json;
-	using System.Linq;
-	using System.Threading;
-	using System.Threading.Tasks;
-
 	public class EditContext
 	{
-		private ILibraryItem _sourceItem;
-
 		/// <summary>
 		/// The object responsible for item persistence 
 		/// </summary>
 		public IContentStore ContentStore { get; set; }
 
-		public string SourceFilePath { get; set; }
+		public string SourceFilePath
+		{
+			get
+			{
+				if (SourceItem is ILibraryAsset fileItem)
+				{
+					return fileItem.AssetPath;
+				}
+
+				return null;
+			}
+		}
 
 		public bool FreezeGCode { get; set; }
 
 		/// <summary>
 		/// The library item to load and persist
 		/// </summary>
-		public ILibraryItem SourceItem
-		{
-			get => _sourceItem;
-			set
-			{
-				if (_sourceItem != value)
-				{
-					_sourceItem = value;
-
-					if (_sourceItem is FileSystemFileItem fileItem)
-					{
-						this.SourceFilePath = fileItem.Path;
-					}
-				}
-			}
-		}
+		public ILibraryItem SourceItem { get; set; }
 
 		public bool IsGGCodeSource => (this.SourceItem as ILibraryAsset)?.ContentType == "gcode";
 

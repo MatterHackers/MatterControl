@@ -821,7 +821,7 @@ namespace MatterHackers.MatterControl
 						() => new FileSystemContainer(ApplicationDataStorage.Instance.DownloadsDirectory)
 						{
 							UseIncrementedNameDuringTypeChange = true,
-							DefaultSort = new SortBehavior()
+							DefaultSort = new LibrarySortBehavior()
 							{
 								SortKey = SortKey.ModifiedDate,
 							}

@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 					StaticData.Instance.LoadIcon(Path.Combine("Library", "history_icon.png")),
 					() => new PrintHistoryContainer()
 					{
-						DefaultSort = new SortBehavior()
+						DefaultSort = new LibrarySortBehavior()
 						{
 							SortKey = SortKey.ModifiedDate,
 						}

@@ -27,63 +27,56 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using MatterHackers.Agg.Image;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MatterHackers.Agg.Image;
-using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	[Flags]
-	public enum SortKey
+	public enum ContainerActions
 	{
-		Default = 0,
-		Name = 1,
-		CreatedDate = 2,
-		ModifiedDate = 4,
+		AddItems,
+
+		AddContainers,
+
+		RenameItems,
+
+		RemoveItems
 	}
 
 	public interface ILibraryContainer : IDisposable
 	{
-		string ID { get; }
-
-		string Name { get; }
-
-		string StatusMessage { get; }
-
-		bool IsProtected { get; }
-
-		Type DefaultView { get; }
-
-		SortBehavior DefaultSort { get; }
-
 		event EventHandler ContentChanged;
-
-		string CollectionKeyName { get; }
 
 		List<ILibraryContainerLink> ChildContainers { get; }
 
-		List<ILibraryItem> Items { get; }
+		string CollectionKeyName { get; }
 
 		ICustomSearch CustomSearch { get; }
 
+		LibrarySortBehavior DefaultSort { get; }
+
+		Type DefaultView { get; }
+
+		string ID { get; }
+
+		bool IsProtected { get; }
+
+		List<ILibraryItem> Items { get; }
+
+		string Name { get; }
+
 		ILibraryContainer Parent { get; set; }
 
-		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
-
-		void Deactivate();
+		string StatusMessage { get; }
 
 		void Activate();
 
-		void Load();
-	}
+		void Deactivate();
 
-	public enum ContainerActions
-	{
-		AddItems,
-		AddContainers,
-		RenameItems,
-		RemoveItems
+		Task<ImageBuffer> GetThumbnail(ILibraryItem item, int width, int height);
+
+		void Load();
 	}
 }

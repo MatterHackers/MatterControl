@@ -63,11 +63,11 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.Type(fullPathToGcodeFile)
 					.Type("{Enter}");
 
-				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 10);
+				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 1000);
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 
 				return Task.FromResult(0);
-			});
+			},maxTimeToRun:1000);
 		}
 
 		[Test]

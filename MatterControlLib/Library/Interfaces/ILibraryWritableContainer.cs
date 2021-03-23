@@ -35,7 +35,7 @@ namespace MatterHackers.MatterControl.Library
 {
 	public interface ILibraryWritableContainer : ILibraryContainer, IContentStore
 	{
-		event EventHandler<ItemChangedEventArgs> ItemContentChanged;
+		event EventHandler<LibraryItemChangedEventArgs> ItemContentChanged;
 
 		void Add(IEnumerable<ILibraryItem> items);
 
