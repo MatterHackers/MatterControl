@@ -66,7 +66,7 @@ namespace MatterHackers.PolygonMesh.UnitTests
 			var root = new Object3D();
 
 			// now add a pinch
-			var pinch1 = new PinchObject3D_2();
+			var pinch1 = new PinchObject3D_3();
 			pinch1.Children.Add(new CubeObject3D());
 			await pinch1.Rebuild();
 			root.Children.Add(pinch1);
