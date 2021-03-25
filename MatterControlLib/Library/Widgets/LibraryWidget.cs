@@ -931,25 +931,8 @@ namespace MatterHackers.MatterControl.PrintLibrary
 							return;
 						}
 
-						DialogWindow.Show(
-							new InputBoxPage(
-								"Rename Item".Localize(),
-								"Name".Localize(),
-								selectedItem.Model.Name,
-								"Enter New Name Here".Localize(),
-								"Rename".Localize(),
-								(newName) =>
-								{
-									var model = libraryView.SelectedItems.FirstOrDefault()?.Model;
-									if (model != null)
-									{
-										if (libraryView.ActiveContainer is ILibraryWritableContainer container)
-										{
-											container.Rename(model, newName);
-											libraryView.SelectedItems.Clear();
-										}
-									}
-								}));
+						libraryContext.ActiveContainer.Rename(selectedItem.Model);
+						libraryView.SelectedItems.Clear();
 					}
 				},
 				IsEnabled = (selectedListItems, listView) =>

@@ -706,7 +706,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (e.Button == MouseButtons.Right)
 					{
-						AddRightClickTabMenu(tabControl, printerTab, printer, e);
+						AddRightClickTabMenu(tabControl, printerTab, printer, null, e);
 					}
 				};
 
@@ -744,7 +744,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return null;
 		}
 
-		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, MouseEventArgs mouseEvent)
+		private void AddRightClickTabMenu(ChromeTabs tabs, ChromeTab printerTab, PrinterConfig printer, PartWorkspace workspace, MouseEventArgs mouseEvent)
 		{
 			var menuTheme = ApplicationController.Instance.MenuTheme;
 			var popupMenu = new PopupMenu(menuTheme);
@@ -752,35 +752,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var renameMenuItem = popupMenu.CreateMenuItem("Rename".Localize());
 			renameMenuItem.Click += (s, e) =>
 			{
-				var currentName = "";
-				if (printer != null)
+				if (workspace != null)
 				{
-					printer.Settings.GetValue(SettingsKey.printer_name);
+					workspace.LibraryView.ActiveContainer.Rename(workspace.LibraryView.ActiveContainer.Items.FirstOrDefault());
 				}
-				else // design tab
+				else if (printer != null)
 				{
-					currentName = "Design";
-				}
-
-				DialogWindow.Show(
-					new InputBoxPage(
-						"Rename Item".Localize(),
-						"Name".Localize(),
-						currentName,
-						"Enter New Name Here".Localize(),
-						"Rename".Localize(),
-						(newName) =>
-						{
-							if (printer != null)
+					DialogWindow.Show(
+						new InputBoxPage(
+							"Rename Item".Localize(),
+							"Name".Localize(),
+							printer.Settings.GetValue(SettingsKey.printer_name),
+							"Enter New Name Here".Localize(),
+							"Rename".Localize(),
+							(newName) =>
 							{
 								printer.Settings.SetValue(SettingsKey.printer_name, newName);
-							}
-							else
-							{
-								// do something with design tab
-							}
-						}));
+							}));
+				}
 			};
+
 
 			var moveButtons = new FlowLayoutWidget();
 
@@ -880,7 +871,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				if (e.Button == MouseButtons.Right)
 				{
-					AddRightClickTabMenu(tabControl, partTab, null, e);
+					AddRightClickTabMenu(tabControl, partTab, null, workspace, e);
 				}
 			};
 
