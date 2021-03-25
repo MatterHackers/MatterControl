@@ -65,7 +65,7 @@ namespace MatterHackers.MatterControl.Library
 
 		public virtual ICustomSearch CustomSearch { get; } = null;
 
-		public SortBehavior DefaultSort { get; set; }
+		public LibrarySortBehavior DefaultSort { get; set; }
 
 		/// <summary>
 		/// Reloads the container when contents have changes and fires ContentChanged to notify listeners

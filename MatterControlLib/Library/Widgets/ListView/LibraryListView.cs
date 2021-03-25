@@ -156,7 +156,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			{
 				if (stashedSortOrder == null)
 				{
-					stashedSortOrder = new SortBehavior()
+					stashedSortOrder = new LibrarySortBehavior()
 					{
 						SortKey = this.ActiveSort,
 						Ascending = this.Ascending
@@ -193,7 +193,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 		public IEnumerable<ListViewItem> Items => items;
 
 		private SortKey _activeSort = SortKey.Name;
-		private SortBehavior stashedSortOrder;
+		private LibrarySortBehavior stashedSortOrder;
 
 		public SortKey ActiveSort
 		{
@@ -351,7 +351,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			}
 		}
 
-		private void WritableContainer_ItemContentChanged(object sender, ItemChangedEventArgs e)
+		private void WritableContainer_ItemContentChanged(object sender, LibraryItemChangedEventArgs e)
 		{
 			if (items.Where(i => i.Model.ID == e.LibraryItem.ID).FirstOrDefault() is ListViewItem listViewItem)
 			{

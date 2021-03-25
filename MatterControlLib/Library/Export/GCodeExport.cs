@@ -244,7 +244,7 @@ namespace MatterHackers.MatterControl.Library.Export
 									return errors;
 								}
 
-								// This mush be calculated after the settings have been set (spiral vase)
+								// This must be calculated after the settings have been set (spiral vase)
 								// or it uses the wrong slice settings.
 								// TODO: Prior code bypassed GCodeOverridePath mechanisms in EditContext. Consolidating into a single pathway
 								gcodePath = await Printer.Bed.EditContext.GCodeFilePath(Printer);

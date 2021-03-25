@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.DataConverters3D;
+using MatterHackers.Localizations;
 
 namespace MatterHackers.MatterControl.Library
 {
@@ -98,6 +99,31 @@ namespace MatterHackers.MatterControl.Library
 		{
 			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(item) as ISceneContentProvider;
 			return contentProvider?.CreateItem(item, reporter);
+		}
+
+		public static void Rename(this ILibraryContainer libraryContainer, ILibraryItem libraryItem)
+		{
+			if (libraryItem == null)
+			{
+				return;
+			}
+
+			var contentProvider = ApplicationController.Instance.Library.GetContentProvider(libraryItem) as ISceneContentProvider;
+
+			DialogWindow.Show(
+				new InputBoxPage(
+					"Rename Item".Localize(),
+					"Name".Localize(),
+					libraryItem.Name,
+					"Enter New Name Here".Localize(),
+					"Rename".Localize(),
+					(newName) =>
+					{
+						if (libraryContainer is ILibraryWritableContainer writableContainer)
+						{
+							writableContainer.Rename(libraryItem, newName);
+						}
+					}));
 		}
 	}
 }

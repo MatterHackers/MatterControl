@@ -345,7 +345,7 @@ namespace MatterControl.Tests.MatterControl
 				fit.SizeY = 20;
 				fit.SizeZ = 20;
 
-				var pinch = new PinchObject3D_2();
+				var pinch = new PinchObject3D_3();
 				pinch.Children.Add(fit);
 				await pinch.Rebuild();
 				root.Children.Add(pinch);
@@ -372,7 +372,7 @@ namespace MatterControl.Tests.MatterControl
 
 				var translate = new TranslateObject3D(cube, 11, 0, 0);
 
-				var pinch = new PinchObject3D_2();
+				var pinch = new PinchObject3D_3();
 				pinch.Children.Add(translate);
 				root.Children.Add(pinch);
 				await pinch.Rebuild();
@@ -392,7 +392,7 @@ namespace MatterControl.Tests.MatterControl
 
 				var translate = new TranslateObject3D(fit, 11, 0, 0);
 
-				var pinch = new PinchObject3D_2();
+				var pinch = new PinchObject3D_3();
 				pinch.Children.Add(translate);
 				await pinch.Rebuild();
 				root.Children.Add(pinch);

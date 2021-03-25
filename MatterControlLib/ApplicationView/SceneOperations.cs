@@ -1209,11 +1209,11 @@ namespace MatterHackers.MatterControl
 			return new SceneOperation("Pinch")
 			{
 				OperationType = typeof(IObject3D),
-				ResultType = typeof(PinchObject3D_2),
+				ResultType = typeof(PinchObject3D_3),
 				TitleResolver = () => "Pinch".Localize(),
 				Action = (sceneContext) =>
 				{
-					var pinch = new PinchObject3D_2();
+					var pinch = new PinchObject3D_3();
 					pinch.WrapSelectedItemAndSelect(sceneContext.Scene);
 				},
 				Icon = (invertIcon) => StaticData.Instance.LoadIcon("pinch.png", 16, 16, invertIcon),

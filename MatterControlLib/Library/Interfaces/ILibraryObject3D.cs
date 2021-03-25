@@ -27,12 +27,14 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+using System;
+using System.Threading.Tasks;
+using MatterHackers.DataConverters3D;
+
 namespace MatterHackers.MatterControl.Library
 {
-	public class SortBehavior
+	public interface ILibraryObject3D : ILibraryAsset
 	{
-		public SortKey SortKey { get; set; }
-
-		public bool Ascending { get; set; }
+		Task<IObject3D> GetObject3D(Action<double, string> reportProgress);
 	}
 }

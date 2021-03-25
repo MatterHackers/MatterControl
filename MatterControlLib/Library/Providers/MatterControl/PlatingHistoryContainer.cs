@@ -56,7 +56,7 @@ namespace MatterHackers.MatterControl.Library
 			this.Items = new List<ILibraryItem>();
 			this.IsProtected = true;
 
-			DefaultSort = new SortBehavior()
+			DefaultSort = new LibrarySortBehavior()
 			{
 				SortKey = SortKey.ModifiedDate,
 			};
@@ -104,13 +104,6 @@ namespace MatterHackers.MatterControl.Library
 					if (File.Exists(filename))
 					{
 						File.Move(mcxPath, filename);
-					}
-					// change the path in the workspaces
-					// w.SceneContext.EditContext?.SourceFilePath
-					var workspace = ApplicationController.Instance.Workspaces.Where(w => w.SceneContext.EditContext?.SourceFilePath == mcxPath).FirstOrDefault();
-					if (workspace != null)
-					{
-						workspace.SceneContext.EditContext.SourceFilePath = filename;
 					}
 					
 					fileItem.Name = newName;

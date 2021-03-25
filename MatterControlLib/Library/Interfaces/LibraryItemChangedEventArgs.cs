@@ -29,64 +29,20 @@ either expressed or implied, of the FreeBSD Project.
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+using System.Threading.Tasks;
 using MatterHackers.Agg.Image;
 using MatterHackers.DataConverters3D;
 
 namespace MatterHackers.MatterControl.Library
 {
-	public abstract class WritableContainer : LibraryContainer, ILibraryWritableContainer
+
+	public class LibraryItemChangedEventArgs : EventArgs
 	{
-		public event EventHandler<LibraryItemChangedEventArgs> ItemContentChanged;
+		public ILibraryItem LibraryItem { get; }
 
-		public virtual void OnItemContentChanged(LibraryItemChangedEventArgs args)
+		public LibraryItemChangedEventArgs(ILibraryItem libraryItem)
 		{
-			this.ItemContentChanged?.Invoke(this, args);
-		}
-
-		public virtual void Add(IEnumerable<ILibraryItem> items)
-		{
-		}
-
-		public virtual void Remove(IEnumerable<ILibraryItem> items)
-		{
-		}
-
-		public virtual void Rename(ILibraryItem item, string revisedName)
-		{
-		}
-
-		public virtual void Save(ILibraryItem item, IObject3D content)
-		{
-			if (item is FileSystemFileItem fileItem)
-			{
-				// Serialize the scene to disk using a modified Json.net pipeline with custom ContractResolvers and JsonConverters
-				File.WriteAllText(fileItem.Path, content.ToJson());
-
-				this.OnItemContentChanged(new LibraryItemChangedEventArgs(fileItem));
-			}
-		}
-
-		public virtual void Move(IEnumerable<ILibraryItem> items, ILibraryWritableContainer sourceContainer)
-		{
-			foreach( var item in items.OfType<ILibraryAssetStream>().ToList())
-			{
-				var enumerable = new[] { item };
-
-				this.Add(enumerable);
-				sourceContainer.Remove(enumerable);
-			}
-
-		}
-
-		public virtual void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)
-		{
-		}
-
-		public virtual bool AllowAction(ContainerActions containerActions)
-		{
-			return true;
+			this.LibraryItem = libraryItem;
 		}
 	}
 }
