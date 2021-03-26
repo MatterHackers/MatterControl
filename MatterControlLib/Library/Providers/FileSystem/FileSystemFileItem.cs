@@ -35,8 +35,8 @@ namespace MatterHackers.MatterControl.Library
 {
 	public class FileSystemFileItem : FileSystemItem, ILibraryAssetStream
 	{
-		public FileSystemFileItem(string path, Func<FileSystemItem, string> getFirstSaveName = null)
-			: base(path, getFirstSaveName)
+		public FileSystemFileItem(string path)
+			: base(path)
 		{
 			var fileInfo = new FileInfo(path);
 			if (fileInfo.Exists)

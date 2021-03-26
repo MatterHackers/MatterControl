@@ -354,7 +354,7 @@ namespace MatterHackers.MatterControl.Library
 		public class DirectoryContainerLink : FileSystemItem, ILibraryContainerLink
 		{
 			public DirectoryContainerLink(string path)
-				: base(path, null)
+				: base(path)
 			{
 			}
 
