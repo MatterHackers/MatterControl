@@ -92,8 +92,6 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.ScrollArea.HAnchor = HAnchor.Stretch;
 			this.ListContentView = libraryView;
 
-			this.VerticalScrollBar.Show = ScrollBar.ShowState.Never;
-
 			context.ContainerChanged += ActiveContainer_Changed;
 			context.ContentChanged += ActiveContainer_ContentChanged;
 		}
