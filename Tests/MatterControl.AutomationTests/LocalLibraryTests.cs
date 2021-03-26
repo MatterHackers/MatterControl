@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg.UI;
 using MatterHackers.MatterControl.PrintQueue;
@@ -126,32 +127,49 @@ namespace MatterHackers.MatterControl.Tests.Automation
 		}
 
 		[Test]
-		public async Task RenameButtonRenameLocalLibraryItem()
+		public async Task DoubleClickSwitchesToOpenTab()
 		{
 			await MatterControlUtilities.RunTest((testRunner) =>
 			{
 				testRunner.AddAndSelectPrinter();
 
-				testRunner.AddTestAssetsToLibrary(new[] { "Rook.amf" });
+				testRunner.AddItemToBedplate()
+					.ClickByName("Save Menu SplitButton", offset: new Agg.Point2D(10, 0))
+					.ClickByName("Save As Menu Item")
+					.DoubleClickByName("Library Row Item Collection")
+					.DoubleClickByName("Local Library Row Item Collection")
+					.ClickByName("Design Name Edit Field")
+					.Type("Cube Design")
+					.ClickByName("Accept Button");
 
-				testRunner.ClickByName("Row Item Rook");
+				var mainViewWidget = ApplicationController.Instance.MainView;
+				var tabControl = mainViewWidget.TabControl;
+				Assert.AreEqual(5, mainViewWidget.TabControl.AllTabs.Count());
 
-				// Open and wait rename window
-				testRunner.LibraryRenameSelectedItem();
-				testRunner.WaitForName("InputBoxPage Action Button");
+				// open the design for editing
+				testRunner.ClickByName("Library Tab")
+					.DoubleClickByName("Library Row Item Collection")
+					.DoubleClickByName("Local Library Row Item Collection")
+					.DoubleClickByName("Row Item Cube Design")
+					.WaitFor(() => mainViewWidget.TabControl.AllTabs.Count() == 6);
 
-				testRunner.Delay(1);
+				// we have opened a new tab
+				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
+				// we are on the design tab
+				Assert.AreEqual(5, tabControl.SelectedTabIndex);
+				Assert.AreEqual("Cube Design", tabControl.SelectedTabKey);
 
-				// Rename item
-				testRunner.Type("Rook Renamed");
-				testRunner.ClickByName("InputBoxPage Action Button");
+				// double click it again and prove that it goes to the currently open tab
+				testRunner.ClickByName("Library Tab")
+					.DoubleClickByName("Row Item Cube Design");
 
-				// Confirm
-				Assert.IsTrue(testRunner.WaitForName("Row Item Rook Renamed"));
-				Assert.IsFalse(testRunner.WaitForName("Row Item Rook", 1));
+				// we have not opened a new tab
+				Assert.AreEqual(6, mainViewWidget.TabControl.AllTabs.Count());
+				// we are on the design tab
+				Assert.AreEqual(5, tabControl.SelectedTabIndex);
 
 				return Task.CompletedTask;
-			}, overrideWidth: 600);
+			});
 		}
 
 		[Test]
