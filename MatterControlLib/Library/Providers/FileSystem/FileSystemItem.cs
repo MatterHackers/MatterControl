@@ -40,13 +40,9 @@ namespace MatterHackers.MatterControl.Library
 	{
 		private string fileName;
 
-		private Func<FileSystemItem, string> getFirstSaveName;
-
-		public FileSystemItem(string path, Func<FileSystemItem, string> getFirstSaveName = null)
+		public FileSystemItem(string path)
 		{
 			this.Path = path;
-			this.getFirstSaveName = getFirstSaveName;
-
 			var type = GetType();
 
 			try
@@ -105,25 +101,6 @@ namespace MatterHackers.MatterControl.Library
 			}
 		}
 
-		private string _path;
-		public string Path
-		{
-			get
-			{
-				if (getFirstSaveName != null)
-				{
-					var newPath = getFirstSaveName(this);
-					if (!string.IsNullOrEmpty(newPath))
-					{
-						getFirstSaveName = null;
-						_path = newPath;
-					}
-				}
-
-				return _path;
-			}
-
-			set => _path = value;
-		}
+		public string Path { get; set; }
 	}
 }

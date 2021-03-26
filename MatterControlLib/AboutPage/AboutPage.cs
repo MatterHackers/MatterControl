@@ -35,7 +35,6 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.Localizations;
-using MatterHackers.MatterControl.ContactForm;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.VectorMath;
 using Newtonsoft.Json;
@@ -156,18 +155,6 @@ namespace MatterHackers.MatterControl
 			scrollable.ScrollArea.HAnchor = HAnchor.Stretch;
 			scrollable.AddChild(licensePanel);
 			contentRow.AddChild( scrollable);
-
-			var feedbackButton = new TextButton("Send Feedback", theme)
-			{
-				BackgroundColor = theme.MinimalShade,
-				HAnchor = HAnchor.Absolute,
-			};
-			feedbackButton.Click += (s, e) => UiThread.RunOnIdle(() =>
-			{
-				this.DialogWindow.ChangeToPage<ContactFormPage>();
-			});
-
-			this.AddPageAction(feedbackButton, highlightFirstAction: false);
 
 			contentRow.AddChild(
 				new TextWidget("Copyright © 2019 MatterHackers, Inc.", textColor: theme.TextColor, pointSize: theme.DefaultFontSize)

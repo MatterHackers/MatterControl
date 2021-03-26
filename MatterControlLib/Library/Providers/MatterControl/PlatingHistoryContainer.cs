@@ -85,33 +85,7 @@ namespace MatterHackers.MatterControl.Library
 
 			File.WriteAllText(mcxPath, new Object3D().ToJson());
 
-			return new FileSystemFileItem(mcxPath, (fileItem) =>
-			{
-				// Find the names of stuff in the scene
-				if (scene.Children.Any())
-				{
-					// Create a reasonable name
-					var baseName = scene.Children.First().Name;
-					var newName = baseName;
-					// Make sure the name is unique on disk
-					var count = 1;
-					while (File.Exists(Path.Combine(this.FullPath, newName + ".mcx")))
-					{
-						newName = baseName + $" ({count++})";
-					}
-					// return the new name
-					var filename = Path.Combine(this.FullPath, newName + ".mcx");
-					if (File.Exists(filename))
-					{
-						File.Move(mcxPath, filename);
-					}
-					
-					fileItem.Name = newName;
-					fileItem.Path = filename;
-					return filename;
-				}
-				return null;
-			});
+			return new FileSystemFileItem(mcxPath);
 		}
 
 		public override void SetThumbnail(ILibraryItem item, int width, int height, ImageBuffer imageBuffer)

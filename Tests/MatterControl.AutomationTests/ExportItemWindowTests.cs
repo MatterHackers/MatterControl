@@ -1,14 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using MatterHackers.MatterControl.Library.Export;
-using MatterHackers.MatterControl.SlicerConfiguration;
-using MatterControl.Tests.MatterControl;
 using NUnit.Framework;
-using MatterHackers.MatterControl.PrinterCommunication.Io;
-using MatterHackers.VectorMath;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System;
 
 namespace MatterHackers.MatterControl.Tests.Automation
@@ -63,11 +56,10 @@ namespace MatterHackers.MatterControl.Tests.Automation
 					.Type(fullPathToGcodeFile)
 					.Type("{Enter}");
 
-				testRunner.WaitFor(() => File.Exists(fullPathToGcodeFile + ".gcode"), 1000);
 				Assert.IsTrue(File.Exists(fullPathToGcodeFile + ".gcode"), "Exported file not found");
 
 				return Task.FromResult(0);
-			},maxTimeToRun:1000);
+			});
 		}
 
 		[Test]
