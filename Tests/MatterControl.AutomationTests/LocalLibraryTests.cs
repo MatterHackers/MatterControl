@@ -168,6 +168,12 @@ namespace MatterHackers.MatterControl.Tests.Automation
 				// we are on the design tab
 				Assert.AreEqual(5, tabControl.SelectedTabIndex);
 
+				// rename in the library tab
+				// assert tab name has change
+
+				// rename from the tab
+				// assert name in library tab has changed
+
 				return Task.CompletedTask;
 			});
 		}
