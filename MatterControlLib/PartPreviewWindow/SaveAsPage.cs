@@ -61,7 +61,8 @@ namespace MatterHackers.MatterControl
 			itemNameWidget = new MHTextEditWidget("", theme, pixelWidth: 300, messageWhenEmptyAndNotSelected: "Enter a Design Name Here".Localize())
 			{
 				HAnchor = HAnchor.Stretch,
-				Margin = new BorderDouble(5)
+				Margin = new BorderDouble(5),
+				Name = "Design Name Edit Field"
 			};
 			itemNameWidget.ActualTextEditWidget.EnterPressed += (s, e) =>
 			{
