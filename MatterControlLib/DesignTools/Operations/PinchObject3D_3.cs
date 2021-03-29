@@ -27,11 +27,7 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-/*********************************************************************/
-/**************************** OBSOLETE! ******************************/
-/************************ USE NEWER VERSION **************************/
-/*********************************************************************/
-
+using MatterHackers.Agg;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
 using MatterHackers.MatterControl.DesignTools.Operations;
@@ -75,6 +71,10 @@ namespace MatterHackers.MatterControl.DesignTools
 
 					var aabb = SourceContainer.GetAxisAlignedBoundingBox();
 
+					bool valuesChanged = false;
+
+					PinchPercent = agg_basics.Clamp(PinchPercent, 0, 3, ref valuesChanged);
+
 					foreach (var sourceItem in SourceContainer.VisibleMeshes())
 					{
 						var originalMesh = sourceItem.Mesh;
@@ -115,6 +115,12 @@ namespace MatterHackers.MatterControl.DesignTools
 					Matrix = currentMatrix;
 					SourceContainer.Visible = false;
 					rebuildLocks.Dispose();
+
+					if (valuesChanged)
+					{
+						Invalidate(InvalidateType.DisplayValues);
+					}
+
 					Invalidate(InvalidateType.Children);
 					return Task.CompletedTask;
 				});
