@@ -290,15 +290,12 @@ namespace MatterHackers.MatterControl.Plugins
 			printer.Origin = new Vector2(plateGraphics.DestImage.Width / 2, 60);
 			plateGraphics.Render(printer, Color.Black);
 
-			string folderToSavePrintsTo = Path.Combine(ApplicationDataStorage.Instance.ApplicationTempDataPath, "plateImages");
-			string jpegFileName = Path.Combine(folderToSavePrintsTo, plateNumber.ToString() + ".jpeg");
-
-			Directory.CreateDirectory(folderToSavePrintsTo);
-
-			ImageIO.SaveImageData(jpegFileName, plateInventoryImage);
+			MemoryStream jpegStream = new MemoryStream();
+			ImageIO.SaveImageData(jpegStream, ".jpeg", plateInventoryImage);
 
 			XGraphics gfx = XGraphics.FromPdfPage(pdfPage);
-			XImage jpegImage = XImage.FromFile(jpegFileName);
+			jpegStream.Seek(0, SeekOrigin.Begin);
+			XImage jpegImage = XImage.FromStream(jpegStream);
 			//double width = jpegImage.PixelWidth * 72 / jpegImage.HorizontalResolution;
 			//double height = jpegImage.PixelHeight * 72 / jpegImage. .HorizontalResolution;
 
