@@ -117,7 +117,7 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 								else
 								{
 									// only switch if we are within one layer height of the new gcode
-									var delta = currentBottom - switchBottom;
+									var delta = switchBottom - currentBottom;
 									var switchLayerHeight = switchToGCode.GetLayerHeight(layerIndex);
 									if (delta < switchLayerHeight)
 									{

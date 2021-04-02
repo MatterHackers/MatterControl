@@ -101,7 +101,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 				GLHelper.Render(
 					sceneContext.Mesh,
-					theme.UnderBedColor.WithAlpha(0),
+					theme.UnderBedColor,
 					RenderTypes.Shaded,
 					world.ModelviewMatrix,
 					blendTexture: !this.LookingDownOnBed,
