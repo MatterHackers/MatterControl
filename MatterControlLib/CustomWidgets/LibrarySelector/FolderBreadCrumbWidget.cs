@@ -51,7 +51,7 @@ namespace MatterHackers.MatterControl.CustomWidgets
 			this.Name = "FolderBreadCrumbWidget";
 			this.HAnchor = HAnchor.Stretch;
 			this.VAnchor = VAnchor.Fit | VAnchor.Center;
-			this.MinimumSize = new VectorMath.Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
+			this.MinimumSize = new Vector2(0, 1); // Force some minimum bounds to ensure draw and thus onload (and our local init) are called on startup
 			this.theme = theme;
 		}
 
@@ -123,28 +123,31 @@ namespace MatterHackers.MatterControl.CustomWidgets
 					firstItem = false;
 				}
 
+				var childrenWidth = this.GetChildrenBoundsIncludingMargins().Width;
 				// while all the buttons don't fit in the control
 				if (this.Parent != null
 					&& this.Width > 0
 					&& this.Children.Count > 4
-					&& this.GetChildrenBoundsIncludingMargins().Width > (this.Width - 20))
+					&& childrenWidth > (this.Width - 20))
 				{
 					// lets take out the > and put in a ...
-					this.RemoveChild(1);
+					var removedWidth = this.RemoveChild(1).Width;
 
 					var separator = new TextWidget("...", textColor: theme.TextColor)
 					{
 						VAnchor = VAnchor.Center,
 						Margin = new BorderDouble(right:  5)
 					};
-					this.AddChild(separator, 1);
+					removedWidth -= this.AddChild(separator, 1).Width;
 
-					while (this.GetChildrenBoundsIncludingMargins().Width > this.Width - 20
+					while (childrenWidth - removedWidth > this.Width - 20
 						&& this.Children.Count > 4)
 					{
-						this.RemoveChild(3);
-						this.RemoveChild(2);
+						removedWidth += this.RemoveChild(3).Width;
+						removedWidth += this.RemoveChild(2).Width;
 					}
+
+					UiThread.RunOnIdle(() => this.Width = this.Width + 1);
 				}
 			}
 		}

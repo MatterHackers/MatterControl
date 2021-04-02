@@ -109,15 +109,26 @@ namespace MatterHackers.MatterControl.PrinterCommunication.Io
 							{
 								bool change = false;
 								// is the current gcode the same or bigger than the new gcode
-								if (currentBottom >= switchBottom)
+								if (switchBottom == currentBottom)
 								{
+									// the layers are the same height, so switch now
 									change = true;
 								}
-								else // only switch if we are within one layer height of the new gcode
+								else
 								{
-									if (currentBottom - switchBottom < switchToGCode.GetLayerHeight(layerIndex))
+									// only switch if we are within one layer height of the new gcode
+									var delta = currentBottom - switchBottom;
+									var switchLayerHeight = switchToGCode.GetLayerHeight(layerIndex);
+									if (delta < switchLayerHeight)
 									{
-										change = true;
+										if (delta < switchLayerHeight / 2)
+										{
+											change = true;
+										}
+										else
+										{
+											int a = 0;
+										}
 									}
 								}
 

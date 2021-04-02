@@ -90,25 +90,26 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Draw(GuiWidget sender, DrawEventArgs e, Matrix4X4 itemMaxtrix, WorldView world)
 		{
+			if (!sceneContext.RendererOptions.RenderBed)
+			{
+				return;
+			}
+
 			if (editorType == Object3DControlsLayer.EditorType.Printer)
 			{
-				// only render if we are above the bed
-				if (sceneContext.RendererOptions.RenderBed)
+				this.EnsureBedTexture(sceneContext.Scene.SelectedItem);
+
+				GLHelper.Render(
+					sceneContext.Mesh,
+					theme.UnderBedColor.WithAlpha(0),
+					RenderTypes.Shaded,
+					world.ModelviewMatrix,
+					blendTexture: !this.LookingDownOnBed,
+					forceCullBackFaces: true);
+
+				if (sceneContext.PrinterShape != null)
 				{
-					this.EnsureBedTexture(sceneContext.Scene.SelectedItem);
-
-					GLHelper.Render(
-						sceneContext.Mesh,
-						theme.UnderBedColor.WithAlpha(0),
-						RenderTypes.Shaded,
-						world.ModelviewMatrix,
-						blendTexture: !this.LookingDownOnBed,
-						forceCullBackFaces: true);
-
-					if (sceneContext.PrinterShape != null)
-					{
-						GLHelper.Render(sceneContext.PrinterShape, theme.BedColor, RenderTypes.Shaded, world.ModelviewMatrix);
-					}
+					GLHelper.Render(sceneContext.PrinterShape, theme.BedColor, RenderTypes.Shaded, world.ModelviewMatrix);
 				}
 
 				if (sceneContext.BuildVolumeMesh != null && sceneContext.RendererOptions.RenderBuildVolume)
@@ -134,14 +135,17 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					GL.Disable(EnableCap.Blend);
 				}
 
-				// Draw grid background with active BedColor
-				GL.Color4(bedColor);
-				GL.Begin(BeginMode.TriangleStrip);
-				GL.Vertex3(-width, -width, 0);
-				GL.Vertex3(-width, width, 0);
-				GL.Vertex3(width, -width, 0);
-				GL.Vertex3(width, width, 0);
-				GL.End();
+				if (this.LookingDownOnBed)
+				{
+					// Draw grid background with active BedColor
+					GL.Color4(bedColor);
+					GL.Begin(BeginMode.TriangleStrip);
+					GL.Vertex3(-width, -width, 0);
+					GL.Vertex3(-width, width, 0);
+					GL.Vertex3(width, -width, 0);
+					GL.Vertex3(width, width, 0);
+					GL.End();
+				}
 
 				GL.Disable(EnableCap.Texture2D);
 				GL.Disable(EnableCap.Blend);
