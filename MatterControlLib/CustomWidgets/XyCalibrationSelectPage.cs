@@ -28,6 +28,7 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
@@ -121,6 +122,60 @@ namespace MatterHackers.MatterControl
 				calibrationWizard.Quality = QualityType.Fine;
 				calibrationWizard.Offset = printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 9.0;
 			};
+
+			var settingsContext = new SettingsContext(printer, null, NamedSettingsLayers.All);
+			int tabIndex = 0;
+			var  allUiFields = new Dictionary<string, UIField>();
+			var settingAdded = false;
+			
+			void AddSettingsRow(string warning, string key)
+			{
+				if (!settingAdded)
+				{
+					contentRow.AddChild(
+						new TextWidget(
+							"Recommended Settings Changes".Localize() + ":",
+							textColor: theme.TextColor,
+							pointSize: theme.DefaultFontSize)
+						{
+							Margin = new BorderDouble(10, 0, 0, 20)
+						});
+
+					settingAdded = true;
+				}
+
+				contentRow.AddChild(
+					new WrappedTextWidget(
+						warning,
+						textColor: theme.TextColor,
+						pointSize: theme.DefaultFontSize)
+					{
+						Margin = new BorderDouble(0, 10, 0, 20)
+					});
+
+				var settingsData = PrinterSettings.SettingsData[key];
+				var row = SliceSettingsTabView.CreateItemRow(settingsData, settingsContext, printer, theme, ref tabIndex, allUiFields);
+
+				if (row is SliceSettingsRow settingsRow)
+				{
+					settingsRow.ArrowDirection = ArrowDirection.Left;
+				}
+
+				contentRow.AddChild(row);
+			}
+
+
+			if (printer.Settings.GetValue<double>(SettingsKey.layer_height) < printer.Settings.GetValue<double>(SettingsKey.nozzle_diameter) / 2)
+			{
+				// The layer height is very small and it will be hard to see features. Show a warning.
+				AddSettingsRow("The calibration object will printer better if the layer hight is set to a larger value. It is recommended that your increase it.".Localize(), SettingsKey.layer_height);
+			}
+
+			if (printer.Settings.GetValue<bool>(SettingsKey.create_raft))
+			{
+				// The layer height is very small and it will be hard to see features. Show a warning.
+				AddSettingsRow("A raft is not needed for the calibration object. It is recommended that you turn it off.".Localize(), SettingsKey.create_raft);
+			}
 
 			this.NextButton.Visible = false;
 
