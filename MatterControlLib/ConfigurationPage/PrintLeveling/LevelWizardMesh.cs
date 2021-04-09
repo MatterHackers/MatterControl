@@ -69,20 +69,23 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				var probeOffset = printer.Settings.GetValue<Vector3>(SettingsKey.probe_offset);
 				if (probeOffset.X < 0)
 				{
-					aabb.MinXYZ.X -= probeOffset.X;
+					// add the negative offset as the place we are going to probe cannot be the right edge (the nozzle can't get there)
+					aabb.MaxXYZ.X += probeOffset.X;
 				}
 				else
 				{
-					aabb.MaxXYZ.X -= probeOffset.X;
+					// Where are we going to try to probe (this position will be offset with the probe later)?
+					// We adjust the left side as we cannot put the probe on the left edge as it would require the nozzle to be too far left.
+					aabb.MinXYZ.X += probeOffset.X;
 				}
 
 				if (probeOffset.Y < 0)
 				{
-					aabb.MinXYZ.Y -= probeOffset.Y;
+					aabb.MaxXYZ.Y += probeOffset.Y;
 				}
 				else
 				{
-					aabb.MaxXYZ.Y -= probeOffset.Y;
+					aabb.MinXYZ.Y += probeOffset.Y;
 				}
 			}
 
@@ -95,15 +98,9 @@ namespace MatterHackers.MatterControl.ConfigurationPage.PrintLeveling
 				// make it such that every other line is printed from right to left
 				for (int x = 0; x < gridWidth; x++)
 				{
-					int dirX = x;
-					if ((y % 2) == 1)
-					{
-						dirX = (gridWidth - 1) - x;
-					}
-
 					allPositions.Add(new Vector2
 					{
-						X = aabb.MinXYZ.X + dirX * xStep,
+						X = aabb.MinXYZ.X + x * xStep,
 						Y = aabb.MinXYZ.Y + y * yStep
 					});
 				}
