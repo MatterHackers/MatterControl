@@ -69,9 +69,9 @@ namespace MatterHackers.MatterControl
 
 			return "Location of the '{0}' setting".Localize().FormatWith(settingData.PresentationName) + ":"
 				 + "\n" + setingsSectionName.Localize()
-				 + "\n  • " + settingData.OrganizerGroup.Category.Name
-				 + "\n    • " + settingData.OrganizerGroup.Name
-				 + "\n      • " + settingData.PresentationName;
+				 + "\n  - " + settingData.OrganizerGroup.Category.Name
+				 + "\n    - " + settingData.OrganizerGroup.Name
+				 + "\n      - " + settingData.PresentationName;
 		}
 	}
 }
