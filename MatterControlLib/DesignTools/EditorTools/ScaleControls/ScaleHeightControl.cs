@@ -210,6 +210,8 @@ namespace MatterHackers.Plugins.EditorTools
 			return worldBottom;
 		}
 
+		private Plane debugPlane;
+
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
@@ -223,6 +225,11 @@ namespace MatterHackers.Plugins.EditorTools
 
 				double distanceToHit = Vector3Ex.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
 				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
+
+				debugPlane = hitPlane.Plane;
+
+				// Matrix4X4.LookAt(Object3DControlContext.World.EyePosition, mouseEvent3D.info.HitPosition,)
+
 				originalPointToMove = GetTopPosition(selectedItem);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
@@ -412,6 +419,10 @@ namespace MatterHackers.Plugins.EditorTools
 					zValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -zValueDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
+
+			Object3DControlContext.World.RenderPlane(debugPlane, Color.Red, true, 500, 300);
+			
+			Object3DControlContext.World.RenderPlane((new Plane(new Vector3(0, 0, 3), new Vector3(0, 0, -1))).Transform(Object3DControlContext.World.ModelviewMatrix), Color.Red, false, 50, 30);
 		}
 
 		public override void Dispose()
