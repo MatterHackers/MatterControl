@@ -61,7 +61,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 originalPointToMove;
 		private readonly double arrowSize = 7 * GuiWidget.DeviceScale;
 		private readonly ThemeConfig theme;
-		private readonly InlineEditControl zValueDisplayInfo;
+		private readonly InlineEditControl heightValueDisplayInfo;
 		private bool hadClickOnControl;
 
 		public ScaleHeightControl(IObject3DControlContext context)
@@ -69,7 +69,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			theme = AppContext.Theme;
 
-			zValueDisplayInfo = new InlineEditControl()
+			heightValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = () =>
 				{
@@ -97,40 +97,30 @@ namespace MatterHackers.Plugins.EditorTools
 				GetDisplayString = (value) => "{0:0.0}".FormatWith(value)
 			};
 
-			zValueDisplayInfo.VisibleChanged += (s, e) =>
+			heightValueDisplayInfo.VisibleChanged += (s, e) =>
 			{
-				if (!zValueDisplayInfo.Visible)
+				if (!heightValueDisplayInfo.Visible)
 				{
 					hadClickOnControl = false;
 				}
 			};
 
-			zValueDisplayInfo.EditComplete += (s, e) =>
+			heightValueDisplayInfo.EditComplete += async (s, e) =>
 			{
 				var selectedItem = activeSelectedItem;
 
-				if (selectedItem is IObjectWithHeight heightObject)
+				if (selectedItem is IObjectWithHeight heightObject
+					&& heightValueDisplayInfo.Value != heightObject.Height)
 				{
-					var startingHeight = heightObject.Height;
-					var originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-					Vector3 topPosition = GetTopPosition(selectedItem);
-					var lockedBottom = GetBottomPosition(selectedItem);
-
-					Vector3 newSize = Vector3.Zero;
-					newSize.Z = zValueDisplayInfo.Value;
-					Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
-
-					heightObject.Height *= scaleAmount.Z;
-
-					var scale = Matrix4X4.CreateScale(scaleAmount);
+					await selectedItem.Rebuild();
 
 					Invalidate();
 
-					SetHeightUndo(startingHeight);
+					SetHeightUndo(heightValueDisplayInfo.Value, heightObject.Height);
 				}
 			};
 
-			Object3DControlContext.GuiSurface.AddChild(zValueDisplayInfo);
+			Object3DControlContext.GuiSurface.AddChild(heightValueDisplayInfo);
 
 			DrawOnTop = true;
 
@@ -187,6 +177,12 @@ namespace MatterHackers.Plugins.EditorTools
 						Object3DControlContext.World.Render3DLine(clippingFrustum, bottomPosition, topPosition, theme.TextColor.WithAlpha(Constants.LineAlpha), false, GuiWidget.DeviceScale);
 					}
 				}
+
+				if (hitPlane != null)
+				{
+					//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
+					//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+				}
 			}
 
 			base.Draw(e);
@@ -210,8 +206,6 @@ namespace MatterHackers.Plugins.EditorTools
 			return worldBottom;
 		}
 
-		private Plane debugPlane;
-
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
@@ -219,16 +213,17 @@ namespace MatterHackers.Plugins.EditorTools
 				hadClickOnControl = true;
 				activeSelectedItem = RootSelection;
 
-				zValueDisplayInfo.Visible = true;
+				heightValueDisplayInfo.Visible = true;
 
 				var selectedItem = activeSelectedItem;
 
-				double distanceToHit = Vector3Ex.Dot(mouseEvent3D.info.HitPosition, mouseEvent3D.MouseRay.directionNormal);
-				hitPlane = new PlaneShape(mouseEvent3D.MouseRay.directionNormal, distanceToHit, null);
+				var bottomPosition = GetBottomPosition(selectedItem);
+				var topPosition = GetTopPosition(selectedItem);
 
-				debugPlane = hitPlane.Plane;
-
-				// Matrix4X4.LookAt(Object3DControlContext.World.EyePosition, mouseEvent3D.info.HitPosition,)
+				var upNormal = (topPosition - bottomPosition).GetNormal();
+				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
+				var planeNormal = upNormal.Cross(sideNormal).GetNormal();
+				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
 				originalPointToMove = GetTopPosition(selectedItem);
 
@@ -251,11 +246,11 @@ namespace MatterHackers.Plugins.EditorTools
 			activeSelectedItem = selectedItem;
 			if (MouseIsOver)
 			{
-				zValueDisplayInfo.Visible = true;
+				heightValueDisplayInfo.Visible = true;
 			}
 			else if (!hadClickOnControl)
 			{
-				zValueDisplayInfo.Visible = false;
+				heightValueDisplayInfo.Visible = false;
 			}
 
 			if (MouseDownOnControl)
@@ -267,17 +262,24 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					var delta = info.HitPosition - initialHitPosition;
 
+					var bottom = GetBottomPosition(selectedItem);
+					var top = GetTopPosition(selectedItem);
+
+					var up = top - bottom;
+
 					var newPosition = originalPointToMove + delta;
 
-					var lockedBottom = GetBottomPosition(selectedItem);
-
-					var newSize = (newPosition - lockedBottom).Length;
-
-					if (Object3DControlContext.SnapGridDistance > 0)
+					var newSize = (newPosition - bottom).Length;
+					double snapGridDistance = Object3DControlContext.SnapGridDistance;
+					// if we are about to scale the object to less than 0
+					if (up.Dot(info.HitPosition - bottom) < 0)
 					{
-						// snap this position to the grid
-						double snapGridDistance = Object3DControlContext.SnapGridDistance;
+						newSize = .001;
+					}
 
+					if (snapGridDistance > 0)
+					{
+						newSize = System.Math.Max(newSize, snapGridDistance);
 						// snap this position to the grid
 						newSize = ((int)((newSize / snapGridDistance) + .5)) * snapGridDistance;
 					}
@@ -292,7 +294,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 					var postScaleBottom = GetBottomPosition(selectedItem);
 
-					selectedItem.Translate(lockedBottom - postScaleBottom);
+					selectedItem.Translate(bottom - postScaleBottom);
 
 					Invalidate();
 				}
@@ -303,27 +305,28 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (activeSelectedItem is IObjectWithHeight heightObject)
+			if (activeSelectedItem is IObjectWithHeight heightObject
+				&& heightObject.Height != heightOnMouseDown)
 			{
-				SetHeightUndo(heightObject.Height);
+				SetHeightUndo(heightObject.Height, heightOnMouseDown);
 			}
 
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		private void SetHeightUndo(double height)
+		private void SetHeightUndo(double doHeight, double undoHeight)
 		{
 			if (activeSelectedItem is IObjectWithHeight heightObject)
 			{
 				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
 				undoBuffer.AddAndDo(new UndoRedoActions(() =>
 				{
-					heightObject.Height = heightOnMouseDown;
+					heightObject.Height = undoHeight;
 					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
 				},
 				() =>
 				{
-					heightObject.Height = height;
+					heightObject.Height = doHeight;
 					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
 				}));
 			}
@@ -371,7 +374,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (selectedItem != null)
 			{
-				if (zValueDisplayInfo.Visible)
+				if (heightValueDisplayInfo.Visible)
 				{
 					var topPosition = GetTopPosition(selectedItem);
 					double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
@@ -413,21 +416,17 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector2 heightDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
 					if (activeSelectedItem is IObjectWithHeight heightObject)
 					{
-						zValueDisplayInfo.Value = heightObject.Height;
+						heightValueDisplayInfo.Value = heightObject.Height;
 					}
 
-					zValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -zValueDisplayInfo.LocalBounds.Center.Y);
+					heightValueDisplayInfo.OriginRelativeParent = heightDisplayCenter + new Vector2(10, -heightValueDisplayInfo.LocalBounds.Center.Y);
 				}
 			}
-
-			Object3DControlContext.World.RenderPlane(debugPlane, Color.Red, true, 500, 300);
-			
-			Object3DControlContext.World.RenderPlane((new Plane(new Vector3(0, 0, 3), new Vector3(0, 0, -1))).Transform(Object3DControlContext.World.ModelviewMatrix), Color.Red, false, 50, 30);
 		}
 
 		public override void Dispose()
 		{
-			zValueDisplayInfo.Close();
+			heightValueDisplayInfo.Close();
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 	}
