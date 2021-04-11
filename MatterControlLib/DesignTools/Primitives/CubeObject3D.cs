@@ -34,7 +34,7 @@ using MatterHackers.PolygonMesh;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CubeObject3D : PrimitiveObject3D, IObjectWithHeight
+	public class CubeObject3D : PrimitiveObject3D, IObjectWithHeight, IObjectWithWidthAndDepth
 	{
 		public CubeObject3D()
 		{
@@ -103,5 +103,11 @@ namespace MatterHackers.MatterControl.DesignTools
 	public interface IObjectWithHeight
 	{
 		double Height { get; set; }
+	}
+
+	public interface IObjectWithWidthAndDepth
+	{
+		double Width { get; set; }
+		double Depth { get; set; }
 	}
 }

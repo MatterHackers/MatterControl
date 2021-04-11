@@ -194,6 +194,12 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
+			if (hitPlane != null)
+			{
+				// Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
+				// Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+			}
+
 			base.Draw(e);
 		}
 

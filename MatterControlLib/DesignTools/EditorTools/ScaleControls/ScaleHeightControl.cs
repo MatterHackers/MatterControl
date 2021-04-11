@@ -44,7 +44,6 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-
 	public class ScaleHeightControl : Object3DControl
 	{
 		private IObject3D activeSelectedItem;

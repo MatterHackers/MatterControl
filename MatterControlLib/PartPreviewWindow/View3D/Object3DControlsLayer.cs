@@ -192,9 +192,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 						Object3DControls.Add(new ScaleMatrixTopControl(this));
 					}
 
+					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
+					{
+#if DEBUG
+						//Object3DControls.Add(new ScaleCornerControl(this, 0));
+						Object3DControls.Add(new ScaleEdgeControl(this, 0));
+#else
+						AddControls(ControlTypes.ScaleMatrixXY);
+#endif
+					}
+					else
+					{
+						AddControls(ControlTypes.ScaleMatrixXY);
+					}
+
 					AddControls(ControlTypes.RotateXYZ
 						| ControlTypes.MoveInZ
-						| ControlTypes.ScaleMatrixXY
 						| ControlTypes.Shadow
 						| ControlTypes.SnappingIndicators);
 				}
@@ -231,6 +244,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Object3DControls.Add(new ScaleCornerControl(this, 1));
 				Object3DControls.Add(new ScaleCornerControl(this, 2));
 				Object3DControls.Add(new ScaleCornerControl(this, 3));
+
+				Object3DControls.Add(new ScaleEdgeControl(this, 0));
+				Object3DControls.Add(new ScaleEdgeControl(this, 1));
+				Object3DControls.Add(new ScaleEdgeControl(this, 2));
+				Object3DControls.Add(new ScaleEdgeControl(this, 3));
 			}
 
 			if (controls.HasFlag(ControlTypes.Shadow))
