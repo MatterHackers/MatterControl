@@ -116,7 +116,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 				Vector3 newSize = Vector3.Zero;
 				newSize.Z = zValueDisplayInfo.Value;
-				Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
+				Vector3 scaleAmount = ScaleMatrixCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
 				var scale = Matrix4X4.CreateScale(scaleAmount);
 
@@ -275,7 +275,7 @@ namespace MatterHackers.Plugins.EditorTools
 					newSize.Z = newPosition.Z - lockedBottom.Z;
 
 					// scale it
-					Vector3 scaleAmount = ScaleCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
+					Vector3 scaleAmount = ScaleMatrixCornerControl.GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
 					var scale = Matrix4X4.CreateScale(scaleAmount);
 

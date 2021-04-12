@@ -289,6 +289,9 @@ namespace MatterHackers.Plugins.EditorTools
 						selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 					}
 
+					var startMatrix = selectedItem.Matrix;
+					selectedItem.Matrix = startMatrix;
+
 					await selectedItem.Rebuild();
 
 					var postScaleBottom = GetBottomPosition(selectedItem);
@@ -354,8 +357,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
-			AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-
 			var topPosition = GetTopPosition(selectedItem);
 			double distBetweenPixelsWorldSpace = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(topPosition);
 
