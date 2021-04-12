@@ -50,7 +50,6 @@ namespace MatterHackers.Plugins.EditorTools
 		private PlaneShape hitPlane;
 		private Vector3 initialHitPosition;
 		private readonly Mesh topScaleMesh;
-		private AxisAlignedBoundingBox mouseDownSelectedBounds;
 		private double heightOnMouseDown = 0;
 
 		private double DistToStart => 5 * GuiWidget.DeviceScale;
@@ -148,11 +147,11 @@ namespace MatterHackers.Plugins.EditorTools
 					// don't draw if any other control is dragging
 					if (MouseIsOver)
 					{
-						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(topScaleMesh, theme.TextColor, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(topScaleMesh, theme.TextColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
@@ -231,8 +230,6 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					heightOnMouseDown = heightObject.Height;
 				}
-
-				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
 			base.OnMouseDown(mouseEvent3D);

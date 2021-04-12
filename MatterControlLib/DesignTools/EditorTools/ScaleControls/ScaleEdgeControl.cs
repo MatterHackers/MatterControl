@@ -27,6 +27,8 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+#define UseMatrix
+
 using System;
 using System.Collections.Generic;
 using MatterHackers.Agg;
@@ -34,7 +36,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -45,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleMatrixEdgeControl : Object3DControl
+	public class ScaleEdgeControl : Object3DControl
 	{
 		public IObject3D ActiveSelectedItem { get; set; }
 
@@ -53,9 +54,11 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 initialHitPosition;
 		private readonly Mesh minXminYMesh;
 		private AxisAlignedBoundingBox mouseDownSelectedBounds;
-
+#if UseMatrix
 		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
 		private Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
+#endif
+
 		private double DistToStart => 10 * GuiWidget.DeviceScale;
 
 		private double LineLength => 35 * GuiWidget.DeviceScale;
@@ -73,7 +76,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private readonly InlineEditControl yValueDisplayInfo;
 		private bool hadClickOnControl;
 
-		public ScaleMatrixEdgeControl(IObject3DControlContext context, int edgeIndex)
+		public ScaleEdgeControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
@@ -93,7 +96,7 @@ namespace MatterHackers.Plugins.EditorTools
 					hadClickOnControl = false;
 				}
 			};
-			
+
 			yValueDisplayInfo = new InlineEditControl()
 			{
 				ForceHide = ForceHideScale,
@@ -162,8 +165,9 @@ namespace MatterHackers.Plugins.EditorTools
 			Invalidate();
 
 			Object3DControlContext.Scene.AddTransformSnapshot(startingTransform);
-
+#if UseMatrix
 			transformAppliedByThis = selectedItem.Matrix;
+#endif
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)
@@ -192,7 +196,7 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor.WithAlpha(e.Alpha0to255), .35), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 			}
@@ -249,7 +253,9 @@ namespace MatterHackers.Plugins.EditorTools
 				originalPointToMove = GetEdgePosition(selectedItem, edgeIndex);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
+#if UseMatrix
 				transformOnMouseDown = transformAppliedByThis = selectedItem.Matrix;
+#endif
 				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
@@ -338,7 +344,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (selectedItem != null)
 			{
+#if UseMatrix
 				transformAppliedByThis = selectedItem.Matrix;
+#endif
 			}
 
 			base.OnMouseMove(mouseEvent3D, mouseIsOver);
@@ -348,7 +356,9 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (hadClickOnControl)
 			{
+#if UseMatrix
 				Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
+#endif
 			}
 
 			base.OnMouseUp(mouseEvent3D);
@@ -360,7 +370,9 @@ namespace MatterHackers.Plugins.EditorTools
 			if (selectedItem != null
 				&& MouseDownOnControl)
 			{
+#if UseMatrix
 				selectedItem.Matrix = transformOnMouseDown;
+#endif
 				MouseDownOnControl = false;
 				MouseIsOver = false;
 

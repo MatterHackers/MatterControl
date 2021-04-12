@@ -178,11 +178,11 @@ namespace MatterHackers.Plugins.EditorTools
 					// don't draw if any other control is dragging
 					if (MouseIsOver)
 					{
-						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, theme.TextColor, TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.TextColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
