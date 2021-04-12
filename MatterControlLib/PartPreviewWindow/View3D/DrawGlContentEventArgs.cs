@@ -34,11 +34,13 @@ namespace MatterHackers.MeshVisualizer
 	public class DrawGlContentEventArgs : DrawEventArgs
 	{
 		public bool ZBuffered { get; }
+		public int Alpha0to255 { get; }
 
-		public DrawGlContentEventArgs(bool zBuffered, DrawEventArgs e)
+		public DrawGlContentEventArgs(bool zBuffered, int alpha0to255, DrawEventArgs e)
 			: base(e.Graphics2D)
 		{
 			ZBuffered = zBuffered;
+			Alpha0to255 = alpha0to255;
 		}
 	}
 }

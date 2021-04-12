@@ -1123,7 +1123,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (object3DControl.DrawOnTop)
 					{
-						object3DControl.Draw(new DrawGlContentEventArgs(false, e));
+						object3DControl.Draw(new DrawGlContentEventArgs(false, 60, e));
 					}
 				}
 
@@ -1133,7 +1133,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				// Draw again setting the depth buffer and ensuring that all the interaction objects are sorted as well as we can
 				foreach (var object3DVolume in currentControls)
 				{
-					object3DVolume.Draw(new DrawGlContentEventArgs(true, e));
+					object3DVolume.Draw(new DrawGlContentEventArgs(true, 255, e));
 				}
 			});
 		}
