@@ -181,20 +181,29 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (selectedItem is IObjectWithHeight heightObject)
 					{
 						// When this is ready make the debug behavior the only behavior
-#if DEBUG
 						Object3DControls.Add(new ScaleHeightControl(this));
-#else
-						Object3DControls.Add(new ScaleMatrixTopControl(this));
-#endif
 					}
 					else
 					{
 						Object3DControls.Add(new ScaleMatrixTopControl(this));
 					}
 
+					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
+					{
+#if DEBUG
+						//Object3DControls.Add(new ScaleCornerControl(this, 0));
+						Object3DControls.Add(new ScaleMatrixEdgeControl(this, 0));
+#else
+						AddControls(ControlTypes.ScaleMatrixXY);
+#endif
+					}
+					else
+					{
+						AddControls(ControlTypes.ScaleMatrixXY);
+					}
+
 					AddControls(ControlTypes.RotateXYZ
 						| ControlTypes.MoveInZ
-						| ControlTypes.ScaleMatrixXY
 						| ControlTypes.Shadow
 						| ControlTypes.SnappingIndicators);
 				}
@@ -227,10 +236,15 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (controls.HasFlag(ControlTypes.ScaleMatrixXY))
 			{
-				Object3DControls.Add(new ScaleCornerControl(this, 0));
-				Object3DControls.Add(new ScaleCornerControl(this, 1));
-				Object3DControls.Add(new ScaleCornerControl(this, 2));
-				Object3DControls.Add(new ScaleCornerControl(this, 3));
+				Object3DControls.Add(new ScaleMatrixCornerControl(this, 0));
+				Object3DControls.Add(new ScaleMatrixCornerControl(this, 1));
+				Object3DControls.Add(new ScaleMatrixCornerControl(this, 2));
+				Object3DControls.Add(new ScaleMatrixCornerControl(this, 3));
+
+				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 0));
+				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 1));
+				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 2));
+				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 3));
 			}
 
 			if (controls.HasFlag(ControlTypes.Shadow))
