@@ -27,7 +27,6 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -41,26 +40,31 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleHeightControl : Object3DControl
 	{
-		private IObject3D activeSelectedItem;
-		private PlaneShape hitPlane;
-		private Vector3 initialHitPosition;
+		private readonly double arrowSize = 7 * GuiWidget.DeviceScale;
+
+		private readonly InlineEditControl heightValueDisplayInfo;
+
+		private readonly ThemeConfig theme;
+
 		private readonly Mesh topScaleMesh;
+
+		private IObject3D activeSelectedItem;
+
+		private bool hadClickOnControl;
+
 		private double heightOnMouseDown = 0;
 
-		private double DistToStart => 5 * GuiWidget.DeviceScale;
+		private PlaneShape hitPlane;
 
-		private double LineLength => 55 * GuiWidget.DeviceScale;
+		private Vector3 initialHitPosition;
 
 		private Vector3 originalPointToMove;
-		private readonly double arrowSize = 7 * GuiWidget.DeviceScale;
-		private readonly ThemeConfig theme;
-		private readonly InlineEditControl heightValueDisplayInfo;
-		private bool hadClickOnControl;
 
 		public ScaleHeightControl(IObject3DControlContext context)
 			: base(context)
@@ -129,6 +133,37 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
+		private double DistToStart => 5 * GuiWidget.DeviceScale;
+
+		private double LineLength => 55 * GuiWidget.DeviceScale;
+
+		public override void CancelOperation()
+		{
+			IObject3D selectedItem = RootSelection;
+			if (selectedItem != null
+				&& MouseDownOnControl)
+			{
+				if (activeSelectedItem is IObjectWithHeight heightObject)
+				{
+					heightObject.Height = heightOnMouseDown;
+				}
+
+				MouseDownOnControl = false;
+				MouseIsOver = false;
+
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
+			}
+
+			base.CancelOperation();
+		}
+
+		public override void Dispose()
+		{
+			heightValueDisplayInfo.Close();
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
+		}
+
 		public override void Draw(DrawGlContentEventArgs e)
 		{
 			bool shouldDrawScaleControls = true;
@@ -186,15 +221,6 @@ namespace MatterHackers.Plugins.EditorTools
 			base.Draw(e);
 		}
 
-		public Vector3 GetTopPosition(IObject3D selectedItem)
-		{
-			var meshBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix.Inverted);
-			var top = new Vector3(meshBounds.Center.X, meshBounds.Center.Y, meshBounds.MaxXYZ.Z);
-
-			var worldTop = top.Transform(selectedItem.Matrix);
-			return worldTop;
-		}
-
 		public Vector3 GetBottomPosition(IObject3D selectedItem)
 		{
 			var meshBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix.Inverted);
@@ -204,9 +230,20 @@ namespace MatterHackers.Plugins.EditorTools
 			return worldBottom;
 		}
 
+		public Vector3 GetTopPosition(IObject3D selectedItem)
+		{
+			var meshBounds = selectedItem.GetAxisAlignedBoundingBox(selectedItem.Matrix.Inverted);
+			var top = new Vector3(meshBounds.Center.X, meshBounds.Center.Y, meshBounds.MaxXYZ.Z);
+
+			var worldTop = top.Transform(selectedItem.Matrix);
+			return worldTop;
+		}
+
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (mouseEvent3D.info != null && Object3DControlContext.Scene.SelectedItem != null)
+			if (mouseEvent3D.info != null 
+				&& mouseEvent3D.MouseEvent2D.Button == MouseButtons.Left
+				&& Object3DControlContext.Scene.SelectedItem != null)
 			{
 				hadClickOnControl = true;
 				activeSelectedItem = RootSelection;
@@ -313,45 +350,6 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseUp(mouseEvent3D);
 		}
 
-		private void SetHeightUndo(double doHeight, double undoHeight)
-		{
-			if (activeSelectedItem is IObjectWithHeight heightObject)
-			{
-				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
-				undoBuffer.AddAndDo(new UndoRedoActions(() =>
-				{
-					heightObject.Height = undoHeight;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				},
-				() =>
-				{
-					heightObject.Height = doHeight;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				}));
-			}
-		}
-
-		public override void CancelOperation()
-		{
-			IObject3D selectedItem = RootSelection;
-			if (selectedItem != null
-				&& MouseDownOnControl)
-			{
-				if (activeSelectedItem is IObjectWithHeight heightObject)
-				{
-					heightObject.Height = heightOnMouseDown;
-				}
-
-				MouseDownOnControl = false;
-				MouseIsOver = false;
-
-				Object3DControlContext.Scene.DrawSelection = true;
-				Object3DControlContext.Scene.ShowSelectionShadow = true;
-			}
-
-			base.CancelOperation();
-		}
-
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			var topPosition = GetTopPosition(selectedItem);
@@ -421,10 +419,22 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		public override void Dispose()
+		private void SetHeightUndo(double doHeight, double undoHeight)
 		{
-			heightValueDisplayInfo.Close();
-			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
+			if (activeSelectedItem is IObjectWithHeight heightObject)
+			{
+				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
+				undoBuffer.AddAndDo(new UndoRedoActions(() =>
+				{
+					heightObject.Height = undoHeight;
+					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
+				},
+				() =>
+				{
+					heightObject.Height = doHeight;
+					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
+				}));
+			}
 		}
 	}
 }

@@ -192,7 +192,7 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor.WithAlpha(e.Alpha0to255), .35), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 			}
