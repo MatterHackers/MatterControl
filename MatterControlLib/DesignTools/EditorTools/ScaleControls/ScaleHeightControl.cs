@@ -254,13 +254,12 @@ namespace MatterHackers.Plugins.EditorTools
 
 				var bottomPosition = GetBottomPosition(selectedItem);
 				var topPosition = GetTopPosition(selectedItem);
+				originalPointToMove = topPosition;
 
 				var upNormal = (topPosition - bottomPosition).GetNormal();
 				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
 				var planeNormal = upNormal.Cross(sideNormal).GetNormal();
 				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
-
-				originalPointToMove = GetTopPosition(selectedItem);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				if (selectedItem is IObjectWithHeight heightObject)

@@ -249,6 +249,12 @@ namespace MatterHackers.Plugins.EditorTools
 						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
+
+				if (hitPlane != null)
+				{
+					Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
+					Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+				}
 			}
 
 			base.Draw(e);
@@ -256,15 +262,15 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
 		{
-			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
 
-			return SetBottomControlHeight(originalSelectedBounds, cornerPosition);
+			return cornerPosition.Transform(item.Matrix);
 		}
 
 		public Vector3 GetEdgePosition(IObject3D item, int edegIndex)
 		{
-			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox();
+			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			var edgePosition = default(Vector3);
 			switch (edegIndex)
 			{
@@ -285,7 +291,7 @@ namespace MatterHackers.Plugins.EditorTools
 					break;
 			}
 
-			return SetBottomControlHeight(aabb, edgePosition);
+			return edgePosition.Transform(item.Matrix);
 		}
 
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
@@ -303,7 +309,14 @@ namespace MatterHackers.Plugins.EditorTools
 				yValueDisplayInfo.Visible = true;
 
 				hitPlane = new PlaneShape(Vector3.UnitZ, mouseEvent3D.info.HitPosition.Z, null);
-				originalPointToMove = GetEdgePosition(selectedItem, edgeIndex);
+				var edge = GetEdgePosition(selectedItem, edgeIndex);
+				var otherSide = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+				originalPointToMove = edge;
+
+				var upNormal = (edge - otherSide).GetNormal();
+				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
+				var planeNormal = upNormal.Cross(sideNormal).GetNormal();
+				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
