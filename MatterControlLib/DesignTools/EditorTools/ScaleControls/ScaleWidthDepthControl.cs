@@ -45,7 +45,7 @@ using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleEdgeControl : Object3DControl
+	public class ScaleWidthDepthControl : Object3DControl
 	{
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw
@@ -76,7 +76,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector2 sizeOnMouseDown;
 
-		public ScaleEdgeControl(IObject3DControlContext context, int edgeIndex)
+		public ScaleWidthDepthControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
@@ -232,8 +232,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			var selectedItem = RootSelection;
 
-			if (selectedItem != null
-				&& Object3DControlContext.Scene.ShowSelectionShadow)
+			if (selectedItem != null)
 			{
 				// Ensures that functions in this scope run against the original instance reference rather than the
 				// current value, thus avoiding null reference errors that would occur otherwise
@@ -241,7 +240,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseIsOver)
+					if (MouseIsOver || MouseDownOnControl)
 					{
 						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
@@ -317,7 +316,7 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseDown(mouseEvent3D);
 		}
 
-		public override void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
+		public override async void OnMouseMove(Mouse3DEventArgs mouseEvent3D, bool mouseIsOver)
 		{
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
@@ -386,6 +385,8 @@ namespace MatterHackers.Plugins.EditorTools
 						widthDepthItem.Width *= scaleAmount.X;
 						widthDepthItem.Depth *= scaleAmount.Y;
 					}
+
+					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
 					Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);

@@ -160,7 +160,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseIsOver)
+					if (MouseIsOver || MouseDownOnControl)
 					{
 						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
