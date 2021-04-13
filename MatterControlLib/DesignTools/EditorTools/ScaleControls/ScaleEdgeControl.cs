@@ -27,15 +27,12 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-#define UseMatrix
-
-using System;
-using System.Collections.Generic;
 using MatterHackers.Agg;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
+using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -43,38 +40,41 @@ using MatterHackers.PolygonMesh;
 using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
+using System;
+using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
 {
 	public class ScaleEdgeControl : Object3DControl
 	{
-		public IObject3D ActiveSelectedItem { get; set; }
-
-		private PlaneShape hitPlane;
-		private Vector3 initialHitPosition;
-		private readonly Mesh minXminYMesh;
-		private AxisAlignedBoundingBox mouseDownSelectedBounds;
-#if UseMatrix
-		private Matrix4X4 transformOnMouseDown = Matrix4X4.Identity;
-		private Matrix4X4 transformAppliedByThis = Matrix4X4.Identity;
-#endif
-
-		private double DistToStart => 10 * GuiWidget.DeviceScale;
-
-		private double LineLength => 35 * GuiWidget.DeviceScale;
-
-		private readonly List<Vector2> lines = new List<Vector2>();
-		private Vector3 originalPointToMove;
-
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw
 		/// </summary>
 		private readonly int edgeIndex;
+
+		private readonly List<Vector2> lines = new List<Vector2>();
+
+		private readonly Mesh minXminYMesh;
+
 		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
+
 		private readonly ThemeConfig theme;
+
 		private readonly InlineEditControl xValueDisplayInfo;
+
 		private readonly InlineEditControl yValueDisplayInfo;
+
 		private bool hadClickOnControl;
+
+		private PlaneShape hitPlane;
+
+		private Vector3 initialHitPosition;
+
+		private AxisAlignedBoundingBox mouseDownSelectedBounds;
+
+		private Vector3 originalPointToMove;
+
+		private Vector2 sizeOnMouseDown;
 
 		public ScaleEdgeControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
@@ -133,41 +133,92 @@ namespace MatterHackers.Plugins.EditorTools
 			Object3DControlContext.GuiSurface.BeforeDraw += Object3DControl_BeforeDraw;
 		}
 
-		private void EditComplete(object s, EventArgs e)
+		public IObject3D ActiveSelectedItem { get; set; }
+
+		private double DistToStart => 10 * GuiWidget.DeviceScale;
+
+		private double LineLength => 35 * GuiWidget.DeviceScale;
+
+		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,
+			AxisAlignedBoundingBox mouseDownSelectedBounds,
+			Vector3 newSize,
+			Keys modifierKeys)
 		{
-			var selectedItem = ActiveSelectedItem;
-			Matrix4X4 startingTransform = selectedItem.Matrix;
+			var minimumSize = .1;
+			var scaleAmount = Vector3.One;
 
-			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+			if (originalSelectedBounds.XSize <= 0
+				|| originalSelectedBounds.YSize <= 0
+				|| originalSelectedBounds.ZSize <= 0)
+			{
+				// don't scale if any dimension will go to 0
+				return scaleAmount;
+			}
 
-			Vector3 lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+			if (modifierKeys == Keys.Shift)
+			{
+				newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
+				newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
+				newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
 
-			Vector3 newSize = Vector3.Zero;
-			newSize.X = xValueDisplayInfo.Value;
-			newSize.Y = yValueDisplayInfo.Value;
+				scaleAmount.X = mouseDownSelectedBounds.XSize / originalSelectedBounds.XSize;
+				scaleAmount.Y = mouseDownSelectedBounds.YSize / originalSelectedBounds.YSize;
+				scaleAmount.Z = mouseDownSelectedBounds.ZSize / originalSelectedBounds.ZSize;
 
-			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
+				double scaleFromOriginal = Math.Max(newSize.X / mouseDownSelectedBounds.XSize, newSize.Y / mouseDownSelectedBounds.YSize);
+				scaleFromOriginal = Math.Max(scaleFromOriginal, newSize.Z / mouseDownSelectedBounds.ZSize);
+				scaleAmount *= scaleFromOriginal;
+			}
+			else
+			{
+				if (newSize.X > 0)
+				{
+					newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
+					scaleAmount.X = newSize.X / originalSelectedBounds.XSize;
+				}
 
-			// scale it
-			var scale = Matrix4X4.CreateScale(scaleAmount);
+				if (newSize.Y > 0)
+				{
+					newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
+					scaleAmount.Y = newSize.Y / originalSelectedBounds.YSize;
+				}
 
-			selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
+				if (newSize.Z > 0)
+				{
+					newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
+					scaleAmount.Z = newSize.Z / originalSelectedBounds.ZSize;
+				}
+			}
 
-			// and keep the locked edge in place
-			Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+			return scaleAmount;
+		}
 
-			AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
-			newLockedEdge.Z = 0;
-			lockedEdge.Z = originalSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
+		public override void CancelOperation()
+		{
+			IObject3D selectedItem = RootSelection;
+			if (selectedItem != null
+				&& MouseDownOnControl)
+			{
+				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+				{
+					widthDepthItem.Width = sizeOnMouseDown.X;
+					widthDepthItem.Depth = sizeOnMouseDown.Y;
+				}
 
-			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+				MouseDownOnControl = false;
+				MouseIsOver = false;
 
-			Invalidate();
+				Object3DControlContext.Scene.DrawSelection = true;
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
+			}
 
-			Object3DControlContext.Scene.AddTransformSnapshot(startingTransform);
-#if UseMatrix
-			transformAppliedByThis = selectedItem.Matrix;
-#endif
+			base.CancelOperation();
+		}
+
+		public override void Dispose()
+		{
+			yValueDisplayInfo.Close();
+			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 
 		public override void Draw(DrawGlContentEventArgs e)
@@ -221,12 +272,15 @@ namespace MatterHackers.Plugins.EditorTools
 				case 0:
 					edgePosition = new Vector3(aabb.Center.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
 					break;
+
 				case 1:
 					edgePosition = new Vector3(aabb.MinXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
 					break;
+
 				case 2:
 					edgePosition = new Vector3(aabb.Center.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
 					break;
+
 				case 3:
 					edgePosition = new Vector3(aabb.MaxXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
 					break;
@@ -253,9 +307,10 @@ namespace MatterHackers.Plugins.EditorTools
 				originalPointToMove = GetEdgePosition(selectedItem, edgeIndex);
 
 				initialHitPosition = mouseEvent3D.info.HitPosition;
-#if UseMatrix
-				transformOnMouseDown = transformAppliedByThis = selectedItem.Matrix;
-#endif
+				if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+				{
+					sizeOnMouseDown = new Vector2(widthDepthItem.Width, widthDepthItem.Depth);
+				}
 				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
@@ -273,7 +328,8 @@ namespace MatterHackers.Plugins.EditorTools
 				yValueDisplayInfo.Visible = true;
 			}
 			else if (!hadClickOnControl
-				|| (selectedItem != null && selectedItem.Matrix != transformAppliedByThis))
+				|| (selectedItem is IObjectWithWidthAndDepth widthDepthItem 
+					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y)))
 			{
 				xValueDisplayInfo.Visible = false;
 				yValueDisplayInfo.Visible = false;
@@ -325,9 +381,11 @@ namespace MatterHackers.Plugins.EditorTools
 					Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
 
 					// scale it
-					var scale = Matrix4X4.CreateScale(scaleAmount);
-
-					selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
+					if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+					{
+						widthDepthItem.Width *= scaleAmount.X;
+						widthDepthItem.Depth *= scaleAmount.Y;
+					}
 
 					// and keep the locked edge in place
 					Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
@@ -342,45 +400,40 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
-			if (selectedItem != null)
-			{
-#if UseMatrix
-				transformAppliedByThis = selectedItem.Matrix;
-#endif
-			}
-
 			base.OnMouseMove(mouseEvent3D, mouseIsOver);
+		}
+
+		private void SetWidthDepthUndo(Vector2 doWidthDepth, Vector2 undoWidthDepth)
+		{
+			var activeSelectedItem = RootSelection;
+			if (activeSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			{
+				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
+				undoBuffer.AddAndDo(new UndoRedoActions(() =>
+				{
+					widthDepthItem.Width = undoWidthDepth.X;
+					widthDepthItem.Depth = undoWidthDepth.Y;
+					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
+				},
+				() =>
+				{
+					widthDepthItem.Width = doWidthDepth.X;
+					widthDepthItem.Depth = doWidthDepth.Y;
+					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
+				}));
+			}
 		}
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (hadClickOnControl)
+			if (hadClickOnControl
+				&& RootSelection is IObjectWithWidthAndDepth widthDepthItem
+				&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
 			{
-#if UseMatrix
-				Object3DControlContext.Scene.AddTransformSnapshot(transformOnMouseDown);
-#endif
+				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
 			}
 
 			base.OnMouseUp(mouseEvent3D);
-		}
-
-		public override void CancelOperation()
-		{
-			IObject3D selectedItem = RootSelection;
-			if (selectedItem != null
-				&& MouseDownOnControl)
-			{
-#if UseMatrix
-				selectedItem.Matrix = transformOnMouseDown;
-#endif
-				MouseDownOnControl = false;
-				MouseIsOver = false;
-
-				Object3DControlContext.Scene.DrawSelection = true;
-				Object3DControlContext.Scene.ShowSelectionShadow = true;
-			}
-
-			base.CancelOperation();
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
@@ -396,12 +449,15 @@ namespace MatterHackers.Plugins.EditorTools
 				case 0:
 					boxCenter.Y += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 					break;
+
 				case 1:
 					boxCenter.X -= selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 					break;
+
 				case 2:
 					boxCenter.Y -= selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 					break;
+
 				case 3:
 					boxCenter.X += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 					break;
@@ -471,63 +527,45 @@ namespace MatterHackers.Plugins.EditorTools
 
 					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
 					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-
 				}
 			}
 		}
 
-		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,
-			AxisAlignedBoundingBox mouseDownSelectedBounds,
-			Vector3 newSize,
-			Keys modifierKeys)
+		private void EditComplete(object s, EventArgs e)
 		{
-			var minimumSize = .1;
-			var scaleAmount = Vector3.One;
+			var selectedItem = ActiveSelectedItem;
+			Matrix4X4 startingTransform = selectedItem.Matrix;
 
-			if (originalSelectedBounds.XSize <= 0
-				|| originalSelectedBounds.YSize <= 0
-				|| originalSelectedBounds.ZSize <= 0)
+			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+
+			Vector3 lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+
+			Vector3 newSize = Vector3.Zero;
+			newSize.X = xValueDisplayInfo.Value;
+			newSize.Y = yValueDisplayInfo.Value;
+
+			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
+
+			// scale it
+			var scale = Matrix4X4.CreateScale(scaleAmount);
+
+			selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
+
+			// and keep the locked edge in place
+			Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+
+			AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
+			newLockedEdge.Z = 0;
+			lockedEdge.Z = originalSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
+
+			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+
+			Invalidate();
+
+			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
 			{
-				// don't scale if any dimension will go to 0
-				return scaleAmount;
+				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
 			}
-
-			if (modifierKeys == Keys.Shift)
-			{
-				newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
-				newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
-				newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
-
-				scaleAmount.X = mouseDownSelectedBounds.XSize / originalSelectedBounds.XSize;
-				scaleAmount.Y = mouseDownSelectedBounds.YSize / originalSelectedBounds.YSize;
-				scaleAmount.Z = mouseDownSelectedBounds.ZSize / originalSelectedBounds.ZSize;
-
-				double scaleFromOriginal = Math.Max(newSize.X / mouseDownSelectedBounds.XSize, newSize.Y / mouseDownSelectedBounds.YSize);
-				scaleFromOriginal = Math.Max(scaleFromOriginal, newSize.Z / mouseDownSelectedBounds.ZSize);
-				scaleAmount *= scaleFromOriginal;
-			}
-			else
-			{
-				if (newSize.X > 0)
-				{
-					newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
-					scaleAmount.X = newSize.X / originalSelectedBounds.XSize;
-				}
-
-				if (newSize.Y > 0)
-				{
-					newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
-					scaleAmount.Y = newSize.Y / originalSelectedBounds.YSize;
-				}
-
-				if (newSize.Z > 0)
-				{
-					newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
-					scaleAmount.Z = newSize.Z / originalSelectedBounds.ZSize;
-				}
-			}
-
-			return scaleAmount;
 		}
 
 		private bool ForceHideScale()
@@ -615,12 +653,6 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 				}
 			}
-		}
-
-		public override void Dispose()
-		{
-			yValueDisplayInfo.Close();
-			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
 	}
 }

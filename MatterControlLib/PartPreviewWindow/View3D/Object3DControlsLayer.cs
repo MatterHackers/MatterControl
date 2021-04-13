@@ -191,8 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
 					{
 #if DEBUG
-						//Object3DControls.Add(new ScaleCornerControl(this, 0));
-						Object3DControls.Add(new ScaleMatrixEdgeControl(this, 0));
+						Object3DControls.Add(new ScaleEdgeControl(this, 0));
 #else
 						AddControls(ControlTypes.ScaleMatrixXY);
 #endif
