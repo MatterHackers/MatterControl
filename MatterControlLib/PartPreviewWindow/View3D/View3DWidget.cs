@@ -77,7 +77,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 		}
 
-		public TrackballTumbleWidget TrackballTumbleWidget { get; private set; }
+		public TrackballTumbleWidgetExtended TrackballTumbleWidget { get; private set; }
 
 		public Object3DControlsLayer Object3DControlLayer { get; }
 
@@ -113,7 +113,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			viewControls3D.TransformStateChanged += ViewControls3D_TransformStateChanged;
 
 			// MeshViewer
-			TrackballTumbleWidget = new TrackballTumbleWidget(sceneContext.World, this)
+			TrackballTumbleWidget = new TrackballTumbleWidgetExtended(sceneContext.World, this, Object3DControlLayer)
 			{
 				TransformState = TrackBallTransformType.Rotation
 			};
@@ -262,7 +262,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			historyAndProperties.Panel2.AddChild(selectedObjectPanel);
 			splitContainer.AddChild(modelViewSidePanel);
 
-			var tumbleCubeControl = new TumbleCubeControl(this.Object3DControlLayer, theme)
+			var tumbleCubeControl = new TumbleCubeControl(this.Object3DControlLayer, theme, TrackballTumbleWidget)
 			{
 				Margin = new BorderDouble(0, 0, 10, 35),
 				VAnchor = VAnchor.Top,
@@ -1391,7 +1391,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ResetView()
 		{
-			TrackballTumbleWidget.ZeroVelocity();
+			TrackballTumbleWidget.Reset(-new Vector3(sceneContext.BedCenter));
 
 			var world = sceneContext.World;
 
