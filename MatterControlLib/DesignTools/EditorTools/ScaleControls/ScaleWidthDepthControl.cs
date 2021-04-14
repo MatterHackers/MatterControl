@@ -52,8 +52,6 @@ namespace MatterHackers.Plugins.EditorTools
 		/// </summary>
 		private readonly int edgeIndex;
 
-		private readonly List<Vector2> lines = new List<Vector2>();
-
 		private readonly Mesh minXminYMesh;
 
 		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
@@ -255,11 +253,17 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
+			if (MouseIsOver || MouseDownOnControl)
+			{
+				DrawMeasureLines(e);
+			}
+
 			base.Draw(e);
 		}
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
 		{
+			quadrantIndex = quadrantIndex % 4;
 			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
 
@@ -268,6 +272,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public Vector3 GetEdgePosition(IObject3D item, int edegIndex)
 		{
+			edegIndex = edegIndex % 4;
 			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
 			var edgePosition = default(Vector3);
 			switch (edegIndex)
@@ -307,7 +312,7 @@ namespace MatterHackers.Plugins.EditorTools
 				yValueDisplayInfo.Visible = true;
 
 				var edge = GetEdgePosition(selectedItem, edgeIndex);
-				var otherSide = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+				var otherSide = GetEdgePosition(selectedItem, edgeIndex + 2);
 				originalPointToMove = edge;
 
 				var upNormal = (edge - otherSide).GetNormal();
@@ -352,7 +357,7 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					var delta = info.HitPosition - initialHitPosition;
 
-					var lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+					var lockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
 
 					var stretchDirection = (GetEdgePosition(selectedItem, edgeIndex) - lockedEdge).GetNormal();
 					var deltaAlongStretch = stretchDirection.Dot(delta);
@@ -396,7 +401,7 @@ namespace MatterHackers.Plugins.EditorTools
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
-					Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+					Vector3 newLockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 
@@ -440,6 +445,45 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseUp(mouseEvent3D);
 		}
 
+		private void GetMeasureLine(out Vector3 start, out Vector3 end)
+		{
+			var selectedItem = RootSelection;
+			var corner = new Vector3[4];
+			var screen = new Vector3[4];
+			for (int i = 0; i < 4; i++)
+			{
+				corner[i] = GetCornerPosition(selectedItem, edgeIndex + i);
+				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
+			}
+
+			// do we lie the start or the end of our edge
+			if (screen[0].Z < screen[1].Z)
+			{
+				start = corner[0];
+				end = corner[3];
+			}
+			else
+			{
+				start = corner[1];
+				end = corner[2];
+			}
+		}
+
+		private void DrawMeasureLines(DrawGlContentEventArgs e)
+		{
+			GetMeasureLine(out Vector3 start, out Vector3 end);
+
+			var color = theme.TextColor;
+			if (!e.ZBuffered)
+			{
+				theme.TextColor.WithAlpha(Constants.LineAlpha);
+			}
+
+			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
+
+			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale);
+		}
+
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			// create the transform for the box
@@ -472,74 +516,13 @@ namespace MatterHackers.Plugins.EditorTools
 			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
-
-			// build the scaling lines
-			lines.Clear();
-			Vector3 otherSideDelta = GetDeltaToOtherSideXy(selectedItem, edgeIndex);
-			var cornerPosition = GetCornerPosition(selectedItem, edgeIndex);
-			var screen1 = Object3DControlContext.World.GetScreenSpace(cornerPosition);
-			var screen2 = Object3DControlContext.World.GetScreenSpace(GetCornerPosition(selectedItem, (edgeIndex + 1) % 4));
-
-			if (screen1.Z < screen2.Z)
-			{
-				if (edgeIndex % 2 == 0)
-				{
-					// left lines
-					double xSign = otherSideDelta.X > 0 ? 1 : -1;
-					var yOtherSide = new Vector3(cornerPosition.X, cornerPosition.Y + otherSideDelta.Y, cornerPosition.Z);
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-
-					lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-				}
-				else
-				{
-					// bottom lines
-					double ySign = otherSideDelta.Y > 0 ? 1 : -1;
-					var xOtherSide = new Vector3(cornerPosition.X + otherSideDelta.X, cornerPosition.Y, cornerPosition.Z);
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-
-					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-				}
-			}
-			else
-			{
-				cornerPosition = GetCornerPosition(selectedItem, (edgeIndex + 2) % 4);
-				if (edgeIndex % 2 == 0)
-				{
-					// right lines
-					double xSign = otherSideDelta.X < 0 ? 1 : -1;
-					var yOtherSide = new Vector3(cornerPosition.X, cornerPosition.Y - otherSideDelta.Y, cornerPosition.Z);
-
-					// left lines
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-
-					lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-				}
-				else
-				{
-					// bottom lines
-					double ySign = otherSideDelta.Y < 0 ? 1 : -1;
-					var xOtherSide = new Vector3(cornerPosition.X - otherSideDelta.X, cornerPosition.Y, cornerPosition.Z);
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-
-					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-				}
-			}
 		}
 
 		private void EditComplete(object s, EventArgs e)
 		{
 			var selectedItem = ActiveSelectedItem;
 
-			Vector3 lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+			Vector3 lockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
 
 			Vector3 newSize = Vector3.Zero;
 			newSize.X = xValueDisplayInfo.Value;
@@ -551,7 +534,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			// and keep the locked edge in place
-			Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+			Vector3 newLockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
 
 			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 
@@ -586,8 +569,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 GetDeltaToOtherSideXy(IObject3D selectedItem, int quadrantIndex)
 		{
 			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
-			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
-			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, (quadrantIndex + 3) % 4);
+			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, quadrantIndex + 1);
+			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, quadrantIndex + 3);
 
 			double xDirection = cornerPositionCcw.X - cornerPosition.X;
 			if (xDirection == 0)
@@ -612,34 +595,19 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					for (int i = 0; i < lines.Count; i += 2)
-					{
-						// draw the line that is on the ground
-						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], theme.TextColor);
-					}
+					GetMeasureLine(out Vector3 start, out Vector3 end);
+					var screenStart = Object3DControlContext.World.GetScreenSpace(start);
+					var screenEnd = Object3DControlContext.World.GetScreenSpace(end);
 
-					for (int i = 0; i < lines.Count; i += 4)
-					{
-						drawEvent.Graphics2D.DrawMeasureLine((lines[i] + lines[i + 1]) / 2,
-							(lines[i + 2] + lines[i + 3]) / 2,
-							LineArrows.Both,
-							theme);
-					}
-
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-
-					var j = 0;
 					if (edgeIndex % 2 == 1)
 					{
-						Vector2 widthDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
-						xValueDisplayInfo.Value = selectedBounds.XSize;
-						xValueDisplayInfo.OriginRelativeParent = widthDisplayCenter - xValueDisplayInfo.LocalBounds.Center;
+						xValueDisplayInfo.Value = (start - end).Length;
+						xValueDisplayInfo.OriginRelativeParent = new Vector2((screenStart - screenEnd) /2 );
 					}
 					else
 					{
-						Vector2 heightDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
-						yValueDisplayInfo.Value = selectedBounds.YSize;
-						yValueDisplayInfo.OriginRelativeParent = heightDisplayCenter - yValueDisplayInfo.LocalBounds.Center;
+						yValueDisplayInfo.Value = (start - end).Length;
+						yValueDisplayInfo.OriginRelativeParent = new Vector2((screenStart - screenEnd) / 2);
 					}
 				}
 			}
