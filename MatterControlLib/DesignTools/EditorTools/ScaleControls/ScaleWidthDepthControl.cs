@@ -70,8 +70,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private AxisAlignedBoundingBox mouseDownSelectedBounds;
-
 		private Vector3 originalPointToMove;
 
 		private Vector2 sizeOnMouseDown;
@@ -252,8 +250,8 @@ namespace MatterHackers.Plugins.EditorTools
 
 				if (hitPlane != null)
 				{
-					Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
-					Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
+					//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 50, 3);
+					//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 50, 3);
 				}
 			}
 
@@ -308,7 +306,6 @@ namespace MatterHackers.Plugins.EditorTools
 				xValueDisplayInfo.Visible = true;
 				yValueDisplayInfo.Visible = true;
 
-				hitPlane = new PlaneShape(Vector3.UnitZ, mouseEvent3D.info.HitPosition.Z, null);
 				var edge = GetEdgePosition(selectedItem, edgeIndex);
 				var otherSide = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
 				originalPointToMove = edge;
@@ -323,7 +320,6 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					sizeOnMouseDown = new Vector2(widthDepthItem.Width, widthDepthItem.Depth);
 				}
-				mouseDownSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -334,7 +330,7 @@ namespace MatterHackers.Plugins.EditorTools
 			var selectedItem = RootSelection;
 			ActiveSelectedItem = selectedItem;
 
-			if (MouseIsOver)
+			if (MouseIsOver || MouseDownOnControl)
 			{
 				xValueDisplayInfo.Visible = true;
 				yValueDisplayInfo.Visible = true;
@@ -349,64 +345,58 @@ namespace MatterHackers.Plugins.EditorTools
 
 			if (MouseDownOnControl && hitPlane != null)
 			{
-				IntersectInfo info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
+				var info = hitPlane.GetClosestIntersection(mouseEvent3D.MouseRay);
 
 				if (info != null
 					&& selectedItem != null)
 				{
-					AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
+					var delta = info.HitPosition - initialHitPosition;
 
-					Vector3 delta = info.HitPosition - initialHitPosition;
+					var lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
 
-					Vector3 newPosition = originalPointToMove + delta;
-
-					if (Object3DControlContext.SnapGridDistance > 0)
-					{
-						// snap this position to the grid
-						double snapGridDistance = Object3DControlContext.SnapGridDistance;
-
-						// snap this position to the grid
-						newPosition.X = ((int)((newPosition.X / snapGridDistance) + .5)) * snapGridDistance;
-						newPosition.Y = ((int)((newPosition.Y / snapGridDistance) + .5)) * snapGridDistance;
-					}
-
-					Vector3 lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
-
-					Vector3 newSize = Vector3.Zero;
-					if (edgeIndex % 2 == 1)
-					{
-						newSize.X = lockedEdge.X - newPosition.X;
-						if (edgeIndex == 0 || edgeIndex == 3)
-						{
-							newSize.X *= -1;
-						}
-					}
-					else
-					{
-						newSize.Y = lockedEdge.Y - newPosition.Y;
-						if (edgeIndex == 0 || edgeIndex == 1)
-						{
-							newSize.Y *= -1;
-						}
-					}
-
-					Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
+					var stretchDirection = (GetEdgePosition(selectedItem, edgeIndex) - lockedEdge).GetNormal();
+					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
 					if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
 					{
-						widthDepthItem.Width *= scaleAmount.X;
-						widthDepthItem.Depth *= scaleAmount.Y;
+						var newSize = new Vector3(widthDepthItem.Width, widthDepthItem.Depth, 0);
+						if (edgeIndex % 2 == 1)
+						{
+							newSize.X = sizeOnMouseDown.X + deltaAlongStretch;
+							newSize.X = Math.Max(Math.Max(newSize.X, .001), Object3DControlContext.SnapGridDistance);
+						}
+						else
+						{
+							newSize.Y = sizeOnMouseDown.Y + deltaAlongStretch;
+							newSize.Y = Math.Max(Math.Max(newSize.Y, .001), Object3DControlContext.SnapGridDistance);
+						}
+
+						if (Object3DControlContext.SnapGridDistance > 0)
+						{
+							// snap this position to the grid
+							double snapGridDistance = Object3DControlContext.SnapGridDistance;
+
+							// snap this position to the grid
+							if (edgeIndex % 2 == 1)
+							{
+								newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
+							}
+							else
+							{
+								newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
+							}
+						}
+
+						widthDepthItem.Width = newSize.X;
+						widthDepthItem.Depth = newSize.Y;
+						selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 					}
 
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
 					Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
-
-					AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
-					newLockedEdge.Z = 0;
-					lockedEdge.Z = mouseDownSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 
@@ -548,9 +538,6 @@ namespace MatterHackers.Plugins.EditorTools
 		private void EditComplete(object s, EventArgs e)
 		{
 			var selectedItem = ActiveSelectedItem;
-			Matrix4X4 startingTransform = selectedItem.Matrix;
-
-			AxisAlignedBoundingBox originalSelectedBounds = selectedItem.GetAxisAlignedBoundingBox();
 
 			Vector3 lockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
 
@@ -558,28 +545,17 @@ namespace MatterHackers.Plugins.EditorTools
 			newSize.X = xValueDisplayInfo.Value;
 			newSize.Y = yValueDisplayInfo.Value;
 
-			Vector3 scaleAmount = GetScalingConsideringShiftKey(originalSelectedBounds, mouseDownSelectedBounds, newSize, Object3DControlContext.GuiSurface.ModifierKeys);
-
-			// scale it
-			var scale = Matrix4X4.CreateScale(scaleAmount);
-
-			selectedItem.Matrix = selectedItem.ApplyAtBoundsCenter(scale);
-
-			// and keep the locked edge in place
-			Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
-
-			AxisAlignedBoundingBox postScaleBounds = selectedItem.GetAxisAlignedBoundingBox();
-			newLockedEdge.Z = 0;
-			lockedEdge.Z = originalSelectedBounds.MinXYZ.Z - postScaleBounds.MinXYZ.Z;
-
-			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
-
-			Invalidate();
-
 			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
 			{
 				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
 			}
+
+			// and keep the locked edge in place
+			Vector3 newLockedEdge = GetEdgePosition(selectedItem, (edgeIndex + 2) % 4);
+
+			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+
+			Invalidate();
 		}
 
 		private bool ForceHideScale()
