@@ -358,9 +358,12 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 arrowCenter = topPosition;
 			arrowCenter.Z += arrowSize / 2 * distBetweenPixelsWorldSpace;
 
-			var centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
-			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
-			TotalTransform = centerMatrix;
+			var normal = Vector3.UnitZ.Transform(selectedItem.Matrix);
+			var up = Vector3.UnitX.Transform(selectedItem.Matrix);
+			var rotation = Matrix4X4.LookAt(Vector3.Zero, normal, up);
+			rotation = Matrix4X4.Identity;
+
+			TotalTransform = rotation * Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * Matrix4X4.CreateTranslation(arrowCenter);
 		}
 
 		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
