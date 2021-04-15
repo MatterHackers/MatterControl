@@ -33,7 +33,6 @@ using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
 using MatterHackers.MatterControl.DesignTools;
-using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
@@ -41,7 +40,6 @@ using MatterHackers.RayTracer;
 using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 using System;
-using System.Collections.Generic;
 
 namespace MatterHackers.Plugins.EditorTools
 {
@@ -341,7 +339,7 @@ namespace MatterHackers.Plugins.EditorTools
 				yValueDisplayInfo.Visible = true;
 			}
 			else if (!hadClickOnControl
-				|| (selectedItem is IObjectWithWidthAndDepth widthDepthItem 
+				|| (selectedItem is IObjectWithWidthAndDepth widthDepthItem
 					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y)))
 			{
 				xValueDisplayInfo.Visible = false;
@@ -412,27 +410,6 @@ namespace MatterHackers.Plugins.EditorTools
 			base.OnMouseMove(mouseEvent3D, mouseIsOver);
 		}
 
-		private void SetWidthDepthUndo(Vector2 doWidthDepth, Vector2 undoWidthDepth)
-		{
-			var activeSelectedItem = RootSelection;
-			if (activeSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
-			{
-				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
-				undoBuffer.AddAndDo(new UndoRedoActions(() =>
-				{
-					widthDepthItem.Width = undoWidthDepth.X;
-					widthDepthItem.Depth = undoWidthDepth.Y;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				},
-				() =>
-				{
-					widthDepthItem.Width = doWidthDepth.X;
-					widthDepthItem.Depth = doWidthDepth.Y;
-					activeSelectedItem?.Invalidate(new InvalidateArgs(activeSelectedItem, InvalidateType.Properties));
-				}));
-			}
-		}
-
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
 			if (hadClickOnControl
@@ -443,45 +420,6 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 
 			base.OnMouseUp(mouseEvent3D);
-		}
-
-		private void GetMeasureLine(out Vector3 start, out Vector3 end)
-		{
-			var selectedItem = RootSelection;
-			var corner = new Vector3[4];
-			var screen = new Vector3[4];
-			for (int i = 0; i < 4; i++)
-			{
-				corner[i] = GetCornerPosition(selectedItem, edgeIndex + i);
-				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
-			}
-
-			// do we lie the start or the end of our edge
-			if (screen[0].Z < screen[1].Z)
-			{
-				start = corner[0];
-				end = corner[3];
-			}
-			else
-			{
-				start = corner[1];
-				end = corner[2];
-			}
-		}
-
-		private void DrawMeasureLines(DrawGlContentEventArgs e)
-		{
-			GetMeasureLine(out Vector3 start, out Vector3 end);
-
-			var color = theme.TextColor;
-			if (!e.ZBuffered)
-			{
-				theme.TextColor.WithAlpha(Constants.LineAlpha);
-			}
-
-			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
-
-			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale);
 		}
 
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
@@ -518,25 +456,42 @@ namespace MatterHackers.Plugins.EditorTools
 			TotalTransform = centerMatrix;
 		}
 
-		private void EditComplete(object s, EventArgs e)
+		private void DrawMeasureLines(DrawGlContentEventArgs e)
 		{
-			var selectedItem = ActiveSelectedItem;
+			var limitsLines = GetMeasureLine();
 
-			Vector3 lockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
-
-			Vector3 newSize = Vector3.Zero;
-			newSize.X = xValueDisplayInfo.Value;
-			newSize.Y = yValueDisplayInfo.Value;
-
-			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			var color = theme.TextColor.WithAlpha(e.Alpha0to255);
+			if (!e.ZBuffered)
 			{
-				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
+				theme.TextColor.WithAlpha(Constants.LineAlpha);
 			}
 
-			// and keep the locked edge in place
-			Vector3 newLockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
+			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
 
-			selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+			Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start0, limitsLines.end0, color, e.ZBuffered, GuiWidget.DeviceScale);
+			Object3DControlContext.World.Render3DLine(clippingFrustum, limitsLines.start1, limitsLines.end1, color, e.ZBuffered, GuiWidget.DeviceScale);
+			var start = (limitsLines.start0 + limitsLines.end0) / 2;
+			var end = (limitsLines.start1 + limitsLines.end1) / 2;
+			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
+		}
+
+		private void EditComplete(object s, EventArgs e)
+		{
+			if (ActiveSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			{
+				Vector3 lockedEdge = GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+
+				Vector3 newSize = Vector3.Zero;
+				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
+				newSize.Y = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
+
+				SetWidthDepthUndo(new Vector2(newSize), sizeOnMouseDown);
+
+				// and keep the locked edge in place
+				Vector3 newLockedEdge = GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+
+				ActiveSelectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
+			}
 
 			Invalidate();
 		}
@@ -587,6 +542,38 @@ namespace MatterHackers.Plugins.EditorTools
 			return new Vector3(xDirection, yDirection, cornerPosition.Z);
 		}
 
+		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine()
+		{
+			var selectedItem = RootSelection;
+			var corner = new Vector3[4];
+			var screen = new Vector3[4];
+			for (int i = 0; i < 4; i++)
+			{
+				corner[i] = GetCornerPosition(selectedItem, edgeIndex + i);
+				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
+			}
+
+			var start = corner[0];
+			var direction = (start - corner[1]).GetNormal();
+			var end = corner[3];
+			// find out which side we should render on (the one closer to the screen)
+			if (screen[0].Z > screen[1].Z)
+			{
+				start = corner[1];
+				end = corner[2];
+				direction = (start - corner[0]).GetNormal();
+			}
+
+			var startScale = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(start);
+			var endScale = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(end);
+			var offset = .3;
+			var start0 = start + direction * LineLength * offset * startScale;
+			var end0 = start + direction * LineLength * (1 + offset) * endScale;
+			var start1 = end + direction * LineLength * offset * endScale;
+			var end1 = end + direction * LineLength * (1 + offset) * endScale;
+			return (start0, end0, start1, end1);
+		}
+
 		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)
 		{
 			var selectedItem = RootSelection;
@@ -595,21 +582,46 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					GetMeasureLine(out Vector3 start, out Vector3 end);
-					var screenStart = Object3DControlContext.World.GetScreenSpace(start);
-					var screenEnd = Object3DControlContext.World.GetScreenSpace(end);
+					var limitsLines = GetMeasureLine();
+					var start = (limitsLines.start0 + limitsLines.end0) / 2;
+					var end = (limitsLines.start1 + limitsLines.end1) / 2;
+					var screenStart = Object3DControlContext.World.GetScreenPosition(start);
+					var screenEnd = Object3DControlContext.World.GetScreenPosition(end);
 
 					if (edgeIndex % 2 == 1)
 					{
 						xValueDisplayInfo.Value = (start - end).Length;
-						xValueDisplayInfo.OriginRelativeParent = new Vector2((screenStart - screenEnd) /2 );
+						xValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - xValueDisplayInfo.LocalBounds.Center;
 					}
 					else
 					{
 						yValueDisplayInfo.Value = (start - end).Length;
-						yValueDisplayInfo.OriginRelativeParent = new Vector2((screenStart - screenEnd) / 2);
+						yValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - yValueDisplayInfo.LocalBounds.Center;
 					}
 				}
+			}
+		}
+
+		private void SetWidthDepthUndo(Vector2 doWidthDepth, Vector2 undoWidthDepth)
+		{
+			var selectedItem = RootSelection;
+			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
+			{
+				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
+				undoBuffer.AddAndDo(new UndoRedoActions(async () =>
+				{
+					widthDepthItem.Width = undoWidthDepth.X;
+					widthDepthItem.Depth = undoWidthDepth.Y;
+					await selectedItem.Rebuild();
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+				},
+				async () =>
+				{
+					widthDepthItem.Width = doWidthDepth.X;
+					widthDepthItem.Depth = doWidthDepth.Y;
+					await selectedItem.Rebuild();
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+				}));
 			}
 		}
 	}
