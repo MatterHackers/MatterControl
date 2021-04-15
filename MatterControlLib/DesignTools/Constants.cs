@@ -39,6 +39,8 @@ namespace MatterHackers.MatterControl.DesignTools
 		/// <summary>
 		/// Gets the alpha of the non z-buffered lines in the editor
 		/// </summary>
-		public static int LineAlpha => 30;
+		public static int LineAlpha => 80;
+
+		public static int Controls3DAlpha => 80;
 	}
 }

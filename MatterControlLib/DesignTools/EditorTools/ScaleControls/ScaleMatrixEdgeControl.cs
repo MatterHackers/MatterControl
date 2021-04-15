@@ -34,7 +34,6 @@ using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
 using MatterHackers.MatterControl;
 using MatterHackers.MatterControl.CustomWidgets;
-using MatterHackers.MatterControl.DesignTools;
 using MatterHackers.MatterControl.DesignTools.Operations;
 using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
@@ -177,8 +176,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 			var selectedItem = RootSelection;
 
-			if (selectedItem != null
-				&& Object3DControlContext.Scene.ShowSelectionShadow)
+			if (selectedItem != null)
 			{
 				// Ensures that functions in this scope run against the original instance reference rather than the
 				// current value, thus avoiding null reference errors that would occur otherwise
@@ -186,7 +184,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseIsOver)
+					if (MouseIsOver || MouseDownOnControl)
 					{
 						GLHelper.Render(minXminYMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
@@ -459,7 +457,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
 					lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-
 				}
 			}
 		}

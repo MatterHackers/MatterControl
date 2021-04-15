@@ -190,12 +190,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
 					{
-#if DEBUG
-						//Object3DControls.Add(new ScaleCornerControl(this, 0));
-						Object3DControls.Add(new ScaleMatrixEdgeControl(this, 0));
-#else
-						AddControls(ControlTypes.ScaleMatrixXY);
-#endif
+						Object3DControls.Add(new ScaleWidthDepthControl(this, 0));
+						Object3DControls.Add(new ScaleWidthDepthControl(this, 1));
+						Object3DControls.Add(new ScaleWidthDepthControl(this, 2));
+						Object3DControls.Add(new ScaleWidthDepthControl(this, 3));
 					}
 					else
 					{
@@ -1123,7 +1121,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				{
 					if (object3DControl.DrawOnTop)
 					{
-						object3DControl.Draw(new DrawGlContentEventArgs(false, 60, e));
+						object3DControl.Draw(new DrawGlContentEventArgs(false, Constants.Controls3DAlpha, e));
 					}
 				}
 

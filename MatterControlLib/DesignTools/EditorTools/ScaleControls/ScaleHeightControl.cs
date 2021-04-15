@@ -180,7 +180,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (shouldDrawScaleControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseIsOver)
+					if (MouseIsOver || MouseDownOnControl)
 					{
 						GLHelper.Render(topScaleMesh, theme.PrimaryAccentColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
@@ -254,19 +254,20 @@ namespace MatterHackers.Plugins.EditorTools
 
 				var bottomPosition = GetBottomPosition(selectedItem);
 				var topPosition = GetTopPosition(selectedItem);
+				originalPointToMove = topPosition;
 
 				var upNormal = (topPosition - bottomPosition).GetNormal();
 				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
 				var planeNormal = upNormal.Cross(sideNormal).GetNormal();
 				hitPlane = new PlaneShape(new Plane(planeNormal, mouseEvent3D.info.HitPosition), null);
 
-				originalPointToMove = GetTopPosition(selectedItem);
-
 				initialHitPosition = mouseEvent3D.info.HitPosition;
 				if (selectedItem is IObjectWithHeight heightObject)
 				{
 					heightOnMouseDown = heightObject.Height;
 				}
+
+				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -323,8 +324,6 @@ namespace MatterHackers.Plugins.EditorTools
 						selectedItem.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 					}
 
-					var startMatrix = selectedItem.Matrix;
-					selectedItem.Matrix = startMatrix;
 
 					await selectedItem.Rebuild();
 
@@ -345,6 +344,7 @@ namespace MatterHackers.Plugins.EditorTools
 				&& heightObject.Height != heightOnMouseDown)
 			{
 				SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.OnMouseUp(mouseEvent3D);

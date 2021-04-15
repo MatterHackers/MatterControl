@@ -168,7 +168,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				if (shouldDrawMoveControls)
 				{
 					// don't draw if any other control is dragging
-					if (MouseIsOver)
+					if (MouseIsOver || MouseDownOnControl)
 					{
 						GLHelper.Render(upArrowMesh, theme.PrimaryAccentColor, TotalTransform, RenderTypes.Shaded);
 					}
