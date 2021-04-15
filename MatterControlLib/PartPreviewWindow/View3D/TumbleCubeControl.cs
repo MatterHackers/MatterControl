@@ -154,7 +154,6 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private Mesh cube = PlatonicSolids.CreateCube(4, 4, 4);
 		private ITraceable cubeTraceData;
 		private Object3DControlsLayer object3DControlLayer;
-		private Vector2 lastMovePosition;
 		private LightingData lighting = new LightingData();
 		private Vector2 mouseDownPosition;
 		private bool mouseOver = false;
@@ -163,12 +162,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private ThemeConfig theme;
 		private List<ConnectedFaces> connections = new List<ConnectedFaces>();
 		private HitData lastHitData = new HitData();
+		private TrackballTumbleWidgetExtended trackballTumbleWidgetExtended;
 
-		public TumbleCubeControl(Object3DControlsLayer object3DControlLayer, ThemeConfig theme)
+		public TumbleCubeControl(Object3DControlsLayer object3DControlLayer, ThemeConfig theme, TrackballTumbleWidgetExtended trackballTumbleWidgetExtended)
 			: base(100 * GuiWidget.DeviceScale, 100 * GuiWidget.DeviceScale)
 		{
 			this.theme = theme;
 			this.object3DControlLayer = object3DControlLayer;
+			this.trackballTumbleWidgetExtended = trackballTumbleWidgetExtended;
 
 			// this data needs to be made on the ui thread
 			UiThread.RunOnIdle(() =>
@@ -226,7 +227,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			base.OnMouseDown(mouseEvent);
 
 			mouseDownPosition = mouseEvent.Position;
-			lastMovePosition = mouseDownPosition;
+			trackballTumbleWidgetExtended.StartRotateAroundOrigin(mouseDownPosition);
 		}
 
 		public override void OnMouseMove(MouseEventArgs mouseEvent)
@@ -240,15 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			// rotate the view
 			if (MouseDownOnWidget)
 			{
-				var movePosition = mouseEvent.Position;
-				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(new Vector2(Width / 2, Height / 2), Width, lastMovePosition, movePosition, false);
-
-				if (activeRotationQuaternion != Quaternion.Identity)
-				{
-					lastMovePosition = movePosition;
-					object3DControlLayer.World.RotationMatrix = object3DControlLayer.World.RotationMatrix * Matrix4X4.CreateRotation(activeRotationQuaternion);
-					object3DControlLayer.Invalidate();
-				}
+				trackballTumbleWidgetExtended.DoRotateAroundOrigin(mouseEvent.Position);
 			}
 			else if (world != null
 				&& cubeTraceData != null) // Make sure we don't use the trace data before it is ready
@@ -373,6 +366,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			base.OnMouseUp(mouseEvent);
 
+			trackballTumbleWidgetExtended.EndRotateAroundOrigin();
+
 			if (mouseEvent.Button != MouseButtons.Left)
 			{
 				return;
@@ -407,14 +402,13 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 							var current = Quaternion.Slerp(start, end, time / duration);
 							UiThread.RunOnIdle(() =>
 							{
-								object3DControlLayer.World.RotationMatrix = Matrix4X4.CreateRotation(current);
-								Invalidate();
+								trackballTumbleWidgetExtended.SetRotationWithDisplacement(current);
 							});
 							time = timer.Elapsed.TotalSeconds;
 							Thread.Sleep(10);
 						}
 
-						object3DControlLayer.World.RotationMatrix = Matrix4X4.CreateRotation(end);
+						trackballTumbleWidgetExtended.SetRotationWithDisplacement(end);
 						Invalidate();
 					});
 				}
