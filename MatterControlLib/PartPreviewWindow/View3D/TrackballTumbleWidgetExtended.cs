@@ -30,6 +30,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		private bool isRotating = false;
 		private Vector3 lastRotationOrigin = Vector3.Zero;
 		private Vector3 lastTranslationOrigin = Vector3.Zero;
+		private Vector2 lastScaleMousePosition = Vector2.Zero;
 		private Vector3 rotateVec = Vector3.Zero;
 		private Vector3 rotateVecOriginal = Vector3.Zero;
 		private Vector2 mouseDownPosition = Vector2.Zero;
@@ -52,7 +53,31 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				Vector2 currentMousePosition = GetMousePosition(mouseEvent);
 				ZeroVelocity();
 
-				if (mouseEvent.Button == MouseButtons.Middle)
+				if (mouseEvent.Button == MouseButtons.Left)
+				{
+					if (TrackBallController.CurrentTrackingType == TrackBallTransformType.None)
+					{
+						switch (TransformState)
+						{
+							case TrackBallTransformType.Rotation:
+								CurrentTrackingType = TrackBallTransformType.Rotation;
+								StartRotateAroundOrigin(currentMousePosition);
+								break;
+
+							case TrackBallTransformType.Translation:
+								CurrentTrackingType = TrackBallTransformType.Translation;
+								mouseDownPosition = currentMousePosition;
+								break;
+
+							case TrackBallTransformType.Scale:
+								CurrentTrackingType = TrackBallTransformType.Scale;
+								mouseDownPosition = currentMousePosition;
+								lastScaleMousePosition = currentMousePosition;
+								break;
+						}
+					}
+				}
+				else if (mouseEvent.Button == MouseButtons.Middle)
 				{
 					if(CurrentTrackingType == TrackBallTransformType.None)
 					{
@@ -85,6 +110,22 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			else if(CurrentTrackingType == TrackBallTransformType.Translation)
 			{
 				Translate(currentMousePosition);
+			}
+			else if(CurrentTrackingType == TrackBallTransformType.Scale)
+			{
+				Vector2 mouseDelta = currentMousePosition - lastScaleMousePosition;
+				double zoomDelta = 1;
+				if (mouseDelta.Y < 0)
+				{
+					zoomDelta = - (-1 * mouseDelta.Y / 100);
+				}
+				else if (mouseDelta.Y > 0)
+				{
+					zoomDelta = + (1 * mouseDelta.Y / 100);
+				}
+
+				ZoomToScreenPosition(currentMousePosition, zoomDelta);
+				lastScaleMousePosition = currentMousePosition;
 			}
 		}
 
@@ -130,7 +171,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
-			ZoomToScreenPosition(GetMousePosition(mouseEvent), mouseEvent.WheelDelta > 0 ? true : false);
+			ZoomToScreenPosition(GetMousePosition(mouseEvent), mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
 		}
 
 		private Vector2 GetMousePosition(MouseEventArgs mouseEvent)
@@ -252,14 +293,14 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Invalidate();
 		}
 
-		public void ZoomToScreenPosition(Vector2 position, bool direction)
+		public void ZoomToScreenPosition(Vector2 screenPosition, double zoomDelta)
 		{
 			if(isRotating)
 			{
 				ZeroVelocity();
 			}
 
-			Ray ray = world.GetRayForLocalBounds(position);
+			Ray ray = world.GetRayForLocalBounds(screenPosition);
 			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(ray);
 			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
 
@@ -271,8 +312,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// calculate the vector between the camera and the intersection position and move the camera along it by ZoomDelta, then set it's direction
-			Vector3 zoomVec = (hitPos - ray.origin) * ZoomDelta;
-			zoomVec = direction ? -zoomVec : zoomVec;
+			Vector3 zoomVec = (hitPos - world.EyePosition) * zoomDelta;
 
 			DisplacementVec += zoomVec;
 			world.Translate(zoomVec);
