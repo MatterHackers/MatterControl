@@ -266,6 +266,8 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					heightOnMouseDown = heightObject.Height;
 				}
+
+				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -342,6 +344,7 @@ namespace MatterHackers.Plugins.EditorTools
 				&& heightObject.Height != heightOnMouseDown)
 			{
 				SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.OnMouseUp(mouseEvent3D);

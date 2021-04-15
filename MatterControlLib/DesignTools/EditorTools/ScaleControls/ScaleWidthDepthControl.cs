@@ -323,6 +323,8 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					sizeOnMouseDown = new Vector2(widthDepthItem.Width, widthDepthItem.Depth);
 				}
+
+				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
 
 			base.OnMouseDown(mouseEvent3D);
@@ -417,6 +419,7 @@ namespace MatterHackers.Plugins.EditorTools
 				&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
 			{
 				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
+				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
 			base.OnMouseUp(mouseEvent3D);
