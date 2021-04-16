@@ -67,6 +67,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 initialHitPosition;
 
 		private Vector2 sizeOnMouseDown;
+		private Vector2 matrixOnMouseDown;
 
 		public ScaleWidthDepthEdgeControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
@@ -513,7 +514,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		private void SetWidthDepthUndo(Vector2 doWidthDepth, Vector2 undoWidthDepth)
+		private void SetWidthDepthUndo(Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
 		{
 			var selectedItem = RootSelection;
 			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
@@ -524,14 +525,16 @@ namespace MatterHackers.Plugins.EditorTools
 					widthDepthItem.Width = undoWidthDepth.X;
 					widthDepthItem.Depth = undoWidthDepth.Y;
 					await selectedItem.Rebuild();
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+					selectedItem.Matrix = undoMatrix;
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 				},
 				async () =>
 				{
 					widthDepthItem.Width = doWidthDepth.X;
 					widthDepthItem.Depth = doWidthDepth.Y;
 					await selectedItem.Rebuild();
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+					selectedItem.Matrix = doMatrix;
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 				}));
 			}
 		}

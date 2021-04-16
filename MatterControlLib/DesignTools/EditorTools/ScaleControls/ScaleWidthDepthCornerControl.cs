@@ -264,25 +264,37 @@ namespace MatterHackers.Plugins.EditorTools
 				if (info != null
 					&& selectedItem != null)
 				{
+					var lockedEdge = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 2);
+
 					var delta = info.HitPosition - initialHitPosition;
 
-					var lockedEdge = ObjectSpace.GetEdgePosition(selectedItem, quadrantIndex + 2);
+					var corner0 = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex);
+					var corner1 = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 1);
+					var corner3 = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 3);
+					var direction01 = (corner0 - corner1).GetNormal();
+					var direction03 = (corner0 - corner3).GetNormal();
 
-					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, quadrantIndex) - lockedEdge).GetNormal();
-					var deltaAlongStretch = stretchDirection.Dot(delta);
+					var deltaAlong01 = direction01.Dot(delta);
+					var deltaAlong03 = direction03.Dot(delta);
 
 					// scale it
 					if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
 					{
 						var newSize = new Vector3(widthDepthItem.Width, widthDepthItem.Depth, 0);
-						if (quadrantIndex % 2 == 1)
+						if (quadrantIndex % 2 == 0)
 						{
-							newSize.X = sizeOnMouseDown.X + deltaAlongStretch;
+							newSize.X = sizeOnMouseDown.X + deltaAlong01;
 							newSize.X = Math.Max(Math.Max(newSize.X, .001), Object3DControlContext.SnapGridDistance);
+
+							newSize.Y = sizeOnMouseDown.Y + deltaAlong03;
+							newSize.Y = Math.Max(Math.Max(newSize.Y, .001), Object3DControlContext.SnapGridDistance);
 						}
 						else
 						{
-							newSize.Y = sizeOnMouseDown.Y + deltaAlongStretch;
+							newSize.X = sizeOnMouseDown.X + deltaAlong03;
+							newSize.X = Math.Max(Math.Max(newSize.X, .001), Object3DControlContext.SnapGridDistance);
+
+							newSize.Y = sizeOnMouseDown.Y + deltaAlong01;
 							newSize.Y = Math.Max(Math.Max(newSize.Y, .001), Object3DControlContext.SnapGridDistance);
 						}
 
@@ -292,14 +304,8 @@ namespace MatterHackers.Plugins.EditorTools
 							double snapGridDistance = Object3DControlContext.SnapGridDistance;
 
 							// snap this position to the grid
-							if (quadrantIndex % 2 == 1)
-							{
-								newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
-							}
-							else
-							{
-								newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
-							}
+							newSize.X = ((int)((newSize.X / snapGridDistance) + .5)) * snapGridDistance;
+							newSize.Y = ((int)((newSize.Y / snapGridDistance) + .5)) * snapGridDistance;
 						}
 
 						widthDepthItem.Width = newSize.X;
@@ -310,7 +316,7 @@ namespace MatterHackers.Plugins.EditorTools
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
-					Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(selectedItem, quadrantIndex + 2);
+					var newLockedEdge = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 2);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 
@@ -397,7 +403,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (ActiveSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
 			{
-				Vector3 lockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, quadrantIndex + 2);
+				Vector3 lockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
 
 				Vector3 newSize = Vector3.Zero;
 				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
@@ -406,7 +412,7 @@ namespace MatterHackers.Plugins.EditorTools
 				SetWidthDepthUndo(new Vector2(newSize), sizeOnMouseDown);
 
 				// and keep the locked edge in place
-				Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, quadrantIndex + 2);
+				Vector3 newLockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
 
 				ActiveSelectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 			}
@@ -505,7 +511,7 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		private void SetWidthDepthUndo(Vector2 doWidthDepth, Vector2 undoWidthDepth)
+		private void SetWidthDepthUndo(Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
 		{
 			var selectedItem = RootSelection;
 			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
@@ -516,14 +522,16 @@ namespace MatterHackers.Plugins.EditorTools
 					widthDepthItem.Width = undoWidthDepth.X;
 					widthDepthItem.Depth = undoWidthDepth.Y;
 					await selectedItem.Rebuild();
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+					selectedItem.Matrix = undoMatrix;
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 				},
 				async () =>
 				{
 					widthDepthItem.Width = doWidthDepth.X;
 					widthDepthItem.Depth = doWidthDepth.Y;
 					await selectedItem.Rebuild();
-					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
+					selectedItem.Matrix = doMatrix;
+					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.DisplayValues));
 				}));
 			}
 		}
