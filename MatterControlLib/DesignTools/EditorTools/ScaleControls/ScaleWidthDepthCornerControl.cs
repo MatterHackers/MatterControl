@@ -479,23 +479,29 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					var (start0, end0, start1, end1) = GetMeasureLine(quadrantIndex);
-					var start = (start0 + end0) / 2;
-					var end = (start1 + end1) / 2;
-					var screenStart = Object3DControlContext.World.GetScreenPosition(start);
-					var screenEnd = Object3DControlContext.World.GetScreenPosition(end);
-
-					if (quadrantIndex % 2 == 1)
-					{
-						xValueDisplayInfo.Value = (start - end).Length;
-						xValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - xValueDisplayInfo.LocalBounds.Center;
-					}
-					else
-					{
-						yValueDisplayInfo.Value = (start - end).Length;
-						yValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - yValueDisplayInfo.LocalBounds.Center;
-					}
+					UpdateNumberControl(quadrantIndex);
+					UpdateNumberControl(quadrantIndex + 1);
 				}
+			}
+		}
+
+		private void UpdateNumberControl(int quadrant)
+		{
+			var (start0, end0, start1, end1) = GetMeasureLine(quadrant);
+			var start = (start0 + end0) / 2;
+			var end = (start1 + end1) / 2;
+			var screenStart = Object3DControlContext.World.GetScreenPosition(start);
+			var screenEnd = Object3DControlContext.World.GetScreenPosition(end);
+
+			if (quadrant % 2 == 1)
+			{
+				xValueDisplayInfo.Value = (start - end).Length;
+				xValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - xValueDisplayInfo.LocalBounds.Center;
+			}
+			else
+			{
+				yValueDisplayInfo.Value = (start - end).Length;
+				yValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - yValueDisplayInfo.LocalBounds.Center;
 			}
 		}
 
