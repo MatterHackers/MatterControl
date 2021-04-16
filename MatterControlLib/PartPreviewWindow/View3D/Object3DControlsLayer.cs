@@ -190,10 +190,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
 					{
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 0));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 1));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 2));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 3));
+						Object3DControls.Add(new ScaleWidthDepthCornerControl(this, 0));
+						//Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, 0));
+						//Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, 1));
+						//Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, 2));
+						//Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, 3));
 					}
 					else
 					{

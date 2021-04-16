@@ -43,7 +43,7 @@ using System;
 
 namespace MatterHackers.Plugins.EditorTools
 {
-	public class ScaleWidthDepthControl : Object3DControl
+	public class ScaleWidthDepthEdgeControl : Object3DControl
 	{
 		/// <summary>
 		/// Edge starting from the back (+y) going ccw
@@ -66,11 +66,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 initialHitPosition;
 
-		private Vector3 originalPointToMove;
-
 		private Vector2 sizeOnMouseDown;
 
-		public ScaleWidthDepthControl(IObject3DControlContext context, int edgeIndex)
+		public ScaleWidthDepthEdgeControl(IObject3DControlContext context, int edgeIndex)
 			: base(context)
 		{
 			theme = MatterControl.AppContext.Theme;
@@ -129,63 +127,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public IObject3D ActiveSelectedItem { get; set; }
 
-		private double DistToStart => 10 * GuiWidget.DeviceScale;
-
 		private double LineLength => 35 * GuiWidget.DeviceScale;
-
-		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,
-			AxisAlignedBoundingBox mouseDownSelectedBounds,
-			Vector3 newSize,
-			Keys modifierKeys)
-		{
-			var minimumSize = .1;
-			var scaleAmount = Vector3.One;
-
-			if (originalSelectedBounds.XSize <= 0
-				|| originalSelectedBounds.YSize <= 0
-				|| originalSelectedBounds.ZSize <= 0)
-			{
-				// don't scale if any dimension will go to 0
-				return scaleAmount;
-			}
-
-			if (modifierKeys == Keys.Shift)
-			{
-				newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
-				newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
-				newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
-
-				scaleAmount.X = mouseDownSelectedBounds.XSize / originalSelectedBounds.XSize;
-				scaleAmount.Y = mouseDownSelectedBounds.YSize / originalSelectedBounds.YSize;
-				scaleAmount.Z = mouseDownSelectedBounds.ZSize / originalSelectedBounds.ZSize;
-
-				double scaleFromOriginal = Math.Max(newSize.X / mouseDownSelectedBounds.XSize, newSize.Y / mouseDownSelectedBounds.YSize);
-				scaleFromOriginal = Math.Max(scaleFromOriginal, newSize.Z / mouseDownSelectedBounds.ZSize);
-				scaleAmount *= scaleFromOriginal;
-			}
-			else
-			{
-				if (newSize.X > 0)
-				{
-					newSize.X = newSize.X <= minimumSize ? minimumSize : newSize.X;
-					scaleAmount.X = newSize.X / originalSelectedBounds.XSize;
-				}
-
-				if (newSize.Y > 0)
-				{
-					newSize.Y = newSize.Y <= minimumSize ? minimumSize : newSize.Y;
-					scaleAmount.Y = newSize.Y / originalSelectedBounds.YSize;
-				}
-
-				if (newSize.Z > 0)
-				{
-					newSize.Z = newSize.Z <= minimumSize ? minimumSize : newSize.Z;
-					scaleAmount.Z = newSize.Z / originalSelectedBounds.ZSize;
-				}
-			}
-
-			return scaleAmount;
-		}
 
 		public override void CancelOperation()
 		{
@@ -211,6 +153,7 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void Dispose()
 		{
+			xValueDisplayInfo.Close();
 			yValueDisplayInfo.Close();
 			Object3DControlContext.GuiSurface.BeforeDraw -= Object3DControl_BeforeDraw;
 		}
@@ -259,42 +202,6 @@ namespace MatterHackers.Plugins.EditorTools
 			base.Draw(e);
 		}
 
-		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
-		{
-			quadrantIndex = quadrantIndex % 4;
-			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
-
-			return cornerPosition.Transform(item.Matrix);
-		}
-
-		public Vector3 GetEdgePosition(IObject3D item, int edegIndex)
-		{
-			edegIndex = edegIndex % 4;
-			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
-			var edgePosition = default(Vector3);
-			switch (edegIndex)
-			{
-				case 0:
-					edgePosition = new Vector3(aabb.Center.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
-					break;
-
-				case 1:
-					edgePosition = new Vector3(aabb.MinXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
-					break;
-
-				case 2:
-					edgePosition = new Vector3(aabb.Center.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
-					break;
-
-				case 3:
-					edgePosition = new Vector3(aabb.MaxXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
-					break;
-			}
-
-			return edgePosition.Transform(item.Matrix);
-		}
-
 		public override void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
 			var selectedItem = RootSelection;
@@ -309,9 +216,8 @@ namespace MatterHackers.Plugins.EditorTools
 				xValueDisplayInfo.Visible = true;
 				yValueDisplayInfo.Visible = true;
 
-				var edge = GetEdgePosition(selectedItem, edgeIndex);
-				var otherSide = GetEdgePosition(selectedItem, edgeIndex + 2);
-				originalPointToMove = edge;
+				var edge = ObjectSpace.GetEdgePosition(selectedItem, edgeIndex);
+				var otherSide = ObjectSpace.GetEdgePosition(selectedItem, edgeIndex + 2);
 
 				var upNormal = (edge - otherSide).GetNormal();
 				var sideNormal = upNormal.Cross(mouseEvent3D.MouseRay.directionNormal).GetNormal();
@@ -357,9 +263,9 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					var delta = info.HitPosition - initialHitPosition;
 
-					var lockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
+					var lockedEdge = ObjectSpace.GetEdgePosition(selectedItem, edgeIndex + 2);
 
-					var stretchDirection = (GetEdgePosition(selectedItem, edgeIndex) - lockedEdge).GetNormal();
+					var stretchDirection = (ObjectSpace.GetEdgePosition(selectedItem, edgeIndex) - lockedEdge).GetNormal();
 					var deltaAlongStretch = stretchDirection.Dot(delta);
 
 					// scale it
@@ -401,7 +307,7 @@ namespace MatterHackers.Plugins.EditorTools
 					await selectedItem.Rebuild();
 
 					// and keep the locked edge in place
-					Vector3 newLockedEdge = GetEdgePosition(selectedItem, edgeIndex + 2);
+					Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(selectedItem, edgeIndex + 2);
 
 					selectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 
@@ -428,7 +334,7 @@ namespace MatterHackers.Plugins.EditorTools
 		public override void SetPosition(IObject3D selectedItem, MeshSelectInfo selectInfo)
 		{
 			// create the transform for the box
-			Vector3 edgePosition = GetEdgePosition(selectedItem, edgeIndex);
+			Vector3 edgePosition = ObjectSpace.GetEdgePosition(selectedItem, edgeIndex);
 
 			Vector3 boxCenter = edgePosition;
 
@@ -454,8 +360,10 @@ namespace MatterHackers.Plugins.EditorTools
 
 			boxCenter.Z += selectCubeSize / 2 * distBetweenPixelsWorldSpace;
 
+			var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
+
 			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
-			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
+			centerMatrix = rotation * Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
 		}
 
@@ -482,7 +390,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			if (ActiveSelectedItem is IObjectWithWidthAndDepth widthDepthItem)
 			{
-				Vector3 lockedEdge = GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+				Vector3 lockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
 
 				Vector3 newSize = Vector3.Zero;
 				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
@@ -491,7 +399,7 @@ namespace MatterHackers.Plugins.EditorTools
 				SetWidthDepthUndo(new Vector2(newSize), sizeOnMouseDown);
 
 				// and keep the locked edge in place
-				Vector3 newLockedEdge = GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
+				Vector3 newLockedEdge = ObjectSpace.GetEdgePosition(ActiveSelectedItem, edgeIndex + 2);
 
 				ActiveSelectedItem.Matrix *= Matrix4X4.CreateTranslation(lockedEdge - newLockedEdge);
 			}
@@ -526,9 +434,9 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private Vector3 GetDeltaToOtherSideXy(IObject3D selectedItem, int quadrantIndex)
 		{
-			Vector3 cornerPosition = GetCornerPosition(selectedItem, quadrantIndex);
-			Vector3 cornerPositionCcw = GetCornerPosition(selectedItem, quadrantIndex + 1);
-			Vector3 cornerPositionCw = GetCornerPosition(selectedItem, quadrantIndex + 3);
+			Vector3 cornerPosition = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex);
+			Vector3 cornerPositionCcw = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 1);
+			Vector3 cornerPositionCw = ObjectSpace.GetCornerPosition(selectedItem, quadrantIndex + 3);
 
 			double xDirection = cornerPositionCcw.X - cornerPosition.X;
 			if (xDirection == 0)
@@ -552,7 +460,7 @@ namespace MatterHackers.Plugins.EditorTools
 			var screen = new Vector3[4];
 			for (int i = 0; i < 4; i++)
 			{
-				corner[i] = GetCornerPosition(selectedItem, edgeIndex + i);
+				corner[i] = ObjectSpace.GetCornerPosition(selectedItem, edgeIndex + i);
 				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
 			}
 
@@ -626,6 +534,45 @@ namespace MatterHackers.Plugins.EditorTools
 					selectedItem?.Invalidate(new InvalidateArgs(selectedItem, InvalidateType.Properties));
 				}));
 			}
+		}
+	}
+
+	public static class ObjectSpace
+	{
+		public static Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
+		{
+			quadrantIndex %= 4;
+			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
+
+			return cornerPosition.Transform(item.Matrix);
+		}
+
+		public static Vector3 GetEdgePosition(IObject3D item, int edegIndex)
+		{
+			edegIndex %= 4;
+			AxisAlignedBoundingBox aabb = item.GetAxisAlignedBoundingBox(item.Matrix.Inverted);
+			var edgePosition = default(Vector3);
+			switch (edegIndex)
+			{
+				case 0:
+					edgePosition = new Vector3(aabb.Center.X, aabb.MaxXYZ.Y, aabb.MinXYZ.Z);
+					break;
+
+				case 1:
+					edgePosition = new Vector3(aabb.MinXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
+					break;
+
+				case 2:
+					edgePosition = new Vector3(aabb.Center.X, aabb.MinXYZ.Y, aabb.MinXYZ.Z);
+					break;
+
+				case 3:
+					edgePosition = new Vector3(aabb.MaxXYZ.X, aabb.Center.Y, aabb.MinXYZ.Z);
+					break;
+			}
+
+			return edgePosition.Transform(item.Matrix);
 		}
 	}
 }

@@ -189,29 +189,8 @@ namespace MatterHackers.Plugins.EditorTools
 				if (e != null)
 				{
 					Vector3 startPosition = GetCornerPosition(selectedItem, quadrantIndex);
-
 					Vector3 endPosition = GetCornerPosition(selectedItem, (quadrantIndex + 1) % 4);
-
-					Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
-
-					if (clippingFrustum.ClipLine(ref startPosition, ref endPosition))
-					{
-						if (e.ZBuffered)
-						{
-							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, theme.TextColor, width: GuiWidget.DeviceScale);
-						}
-						else
-						{
-							// render on top of everything very lightly
-							Object3DControlContext.World.Render3DLine(clippingFrustum, startPosition, endPosition, new Color(theme.TextColor, Constants.LineAlpha), false, GuiWidget.DeviceScale);
-						}
-					}
-
-					// Vector3 startScreenSpace = Object3DControlContext.World.GetScreenSpace(startPosition);
-					// e.graphics2D.Circle(startScreenSpace.x, startScreenSpace.y, 5, theme.PrimaryAccentColor);
-
-					// Vector2 startScreenPosition = Object3DControlContext.World.GetScreenPosition(startPosition);
-					// e.graphics2D.Circle(startScreenPosition.x, startScreenPosition.y, 5, theme.PrimaryAccentColor);
+					Object3DControlContext.World.Render3DLine(startPosition, endPosition, theme.TextColor.WithAlpha(e.Alpha0to255), e.ZBuffered, GuiWidget.DeviceScale);
 				}
 			}
 
