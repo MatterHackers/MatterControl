@@ -67,6 +67,7 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector3 initialHitPosition;
 
 		private Vector2 sizeOnMouseDown;
+		private Matrix4X4 matrixOnMouseDown;
 
 		public ScaleWidthDepthCornerControl(IObject3DControlContext context, int quadrant)
 			: base(context)
@@ -135,6 +136,8 @@ namespace MatterHackers.Plugins.EditorTools
 					widthDepthItem.Depth = sizeOnMouseDown.Y;
 				}
 
+				selectedItem.Matrix = matrixOnMouseDown;
+
 				MouseDownOnControl = false;
 				MouseIsOver = false;
 
@@ -184,7 +187,7 @@ namespace MatterHackers.Plugins.EditorTools
 				if (hitPlane != null)
 				{
 					//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
-					Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
+					//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
 				}
 			}
 
@@ -232,6 +235,8 @@ namespace MatterHackers.Plugins.EditorTools
 				{
 					sizeOnMouseDown = new Vector2(widthDepthItem.Width, widthDepthItem.Depth);
 				}
+
+				matrixOnMouseDown = selectedItem.Matrix;
 
 				Object3DControlContext.Scene.ShowSelectionShadow = false;
 			}
@@ -333,7 +338,12 @@ namespace MatterHackers.Plugins.EditorTools
 				&& RootSelection is IObjectWithWidthAndDepth widthDepthItem
 				&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
 			{
-				SetWidthDepthUndo(new Vector2(widthDepthItem.Width, widthDepthItem.Depth), sizeOnMouseDown);
+				SetWidthDepthUndo(RootSelection,
+					Object3DControlContext.Scene.UndoBuffer,
+					new Vector2(widthDepthItem.Width,widthDepthItem.Depth),
+					RootSelection.Matrix,
+					sizeOnMouseDown,
+					matrixOnMouseDown);
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
@@ -409,7 +419,12 @@ namespace MatterHackers.Plugins.EditorTools
 				newSize.X = xValueDisplayInfo.Value != 0 ? xValueDisplayInfo.Value : widthDepthItem.Width;
 				newSize.Y = yValueDisplayInfo.Value != 0 ? yValueDisplayInfo.Value : widthDepthItem.Depth;
 
-				SetWidthDepthUndo(new Vector2(newSize), sizeOnMouseDown);
+				SetWidthDepthUndo(RootSelection,
+					Object3DControlContext.Scene.UndoBuffer, 
+					new Vector2(newSize),
+					RootSelection.Matrix,
+					sizeOnMouseDown,
+					matrixOnMouseDown);
 
 				// and keep the locked edge in place
 				Vector3 newLockedEdge = ObjectSpace.GetCornerPosition(ActiveSelectedItem, quadrantIndex + 2);
@@ -511,12 +526,10 @@ namespace MatterHackers.Plugins.EditorTools
 			}
 		}
 
-		private void SetWidthDepthUndo(Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
+		public static void SetWidthDepthUndo(IObject3D selectedItem, UndoBuffer undoBuffer, Vector2 doWidthDepth, Matrix4X4 doMatrix, Vector2 undoWidthDepth, Matrix4X4 undoMatrix)
 		{
-			var selectedItem = RootSelection;
 			if (selectedItem is IObjectWithWidthAndDepth widthDepthItem)
 			{
-				var undoBuffer = Object3DControlContext.Scene.UndoBuffer;
 				undoBuffer.AddAndDo(new UndoRedoActions(async () =>
 				{
 					widthDepthItem.Width = undoWidthDepth.X;
