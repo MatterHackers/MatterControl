@@ -159,7 +159,7 @@ namespace MatterHackers.Plugins.EditorTools
 		{
 			bool shouldDrawScaleControls = true;
 			if (Object3DControlContext.SelectedObject3DControl != null
-				&& Object3DControlContext.SelectedObject3DControl as ScaleMatrixEdgeControl == null)
+				&& Object3DControlContext.SelectedObject3DControl as ScaleMatrixCornerControl == null)
 			{
 				shouldDrawScaleControls = false;
 			}
@@ -180,7 +180,7 @@ namespace MatterHackers.Plugins.EditorTools
 					}
 					else
 					{
-						GLHelper.Render(minXminYMesh, theme.TextColor.Blend(theme.BackgroundColor, .35).WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
+						GLHelper.Render(minXminYMesh, theme.TextColor.WithAlpha(e.Alpha0to255), TotalTransform, RenderTypes.Shaded);
 					}
 				}
 
@@ -334,16 +334,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (hadClickOnControl
-				&& RootSelection is IObjectWithWidthAndDepth widthDepthItem
-				&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
+			if (hadClickOnControl)
 			{
-				SetWidthDepthUndo(RootSelection,
-					Object3DControlContext.Scene.UndoBuffer,
-					new Vector2(widthDepthItem.Width,widthDepthItem.Depth),
-					RootSelection.Matrix,
-					sizeOnMouseDown,
-					matrixOnMouseDown);
+				if (RootSelection is IObjectWithWidthAndDepth widthDepthItem
+					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
+				{
+					SetWidthDepthUndo(RootSelection,
+						Object3DControlContext.Scene.UndoBuffer,
+						new Vector2(widthDepthItem.Width, widthDepthItem.Depth),
+						RootSelection.Matrix,
+						sizeOnMouseDown,
+						matrixOnMouseDown);
+				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 

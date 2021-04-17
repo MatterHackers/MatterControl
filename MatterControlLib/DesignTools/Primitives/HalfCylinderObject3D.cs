@@ -33,11 +33,12 @@ using MatterHackers.Agg;
 using MatterHackers.Agg.VertexSource;
 using MatterHackers.DataConverters3D;
 using MatterHackers.Localizations;
+using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class HalfCylinderObject3D : PrimitiveObject3D
+	public class HalfCylinderObject3D : PrimitiveObject3D, IObject3DControlsProvider, IObjectWithWidthAndDepth
 	{
 		public HalfCylinderObject3D()
 		{
@@ -55,8 +56,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[MaxDecimalPlaces(2)]
 		public double Width { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
 		public double Depth { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
 		public int Sides { get; set; } = 20;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -104,6 +110,11 @@ namespace MatterHackers.MatterControl.DesignTools
 
 			Parent?.Invalidate(new InvalidateArgs(this, InvalidateType.Mesh));
 			return Task.CompletedTask;
+		}
+
+		public void AddObject3DControls(Object3DControlsLayer object3DControlsLayer)
+		{
+			object3DControlsLayer.AddControls(ControlTypes.ScaleWidthDepth);
 		}
 	}
 }

@@ -60,7 +60,6 @@ namespace MatterHackers.Plugins.EditorTools
 
 		private double LineLength => 35 * GuiWidget.DeviceScale;
 
-		private readonly List<Vector2> lines = new List<Vector2>();
 		private Vector3 originalPointToMove;
 		private readonly int quadrantIndex;
 		private readonly double selectCubeSize = 7 * GuiWidget.DeviceScale;
@@ -194,11 +193,69 @@ namespace MatterHackers.Plugins.EditorTools
 				}
 			}
 
+			if (MouseIsOver || MouseDownOnControl)
+			{
+				DrawMeasureLines(e, quadrantIndex);
+				DrawMeasureLines(e, quadrantIndex + 1);
+			}
+
 			base.Draw(e);
+		}
+
+		private (Vector3 start0, Vector3 end0, Vector3 start1, Vector3 end1) GetMeasureLine(int quadrant)
+		{
+			var selectedItem = RootSelection;
+			var corner = new Vector3[4];
+			var screen = new Vector3[4];
+			for (int i = 0; i < 4; i++)
+			{
+				corner[i] = GetCornerPosition(selectedItem, quadrant + i);
+				screen[i] = Object3DControlContext.World.GetScreenSpace(corner[i]);
+			}
+
+			var start = corner[0];
+			var direction = (start - corner[1]).GetNormal();
+			var end = corner[3];
+			// find out which side we should render on (the one closer to the screen)
+			if (screen[0].Z > screen[1].Z)
+			{
+				start = corner[1];
+				end = corner[2];
+				direction = (start - corner[0]).GetNormal();
+			}
+
+			var startScale = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(start);
+			var endScale = Object3DControlContext.World.GetWorldUnitsPerScreenPixelAtPosition(end);
+			var offset = .3;
+			var start0 = start + direction * LineLength * offset * startScale;
+			var end0 = start + direction * LineLength * (1 + offset) * endScale;
+			var start1 = end + direction * LineLength * offset * endScale;
+			var end1 = end + direction * LineLength * (1 + offset) * endScale;
+			return (start0, end0, start1, end1);
+		}
+
+		private void DrawMeasureLines(DrawGlContentEventArgs e, int quadrant)
+		{
+			var (start0, end0, start1, end1) = GetMeasureLine(quadrant);
+
+			var color = theme.TextColor.WithAlpha(e.Alpha0to255);
+			if (!e.ZBuffered)
+			{
+				theme.TextColor.WithAlpha(Constants.LineAlpha);
+			}
+
+			Frustum clippingFrustum = Object3DControlContext.World.GetClippingFrustum();
+
+			Object3DControlContext.World.Render3DLine(clippingFrustum, start0, end0, color, e.ZBuffered, GuiWidget.DeviceScale);
+			Object3DControlContext.World.Render3DLine(clippingFrustum, start1, end1, color, e.ZBuffered, GuiWidget.DeviceScale);
+			var start = (start0 + end0) / 2;
+			var end = (start1 + end1) / 2;
+			Object3DControlContext.World.Render3DLine(clippingFrustum, start, end, color, e.ZBuffered, GuiWidget.DeviceScale * 1.2, true, true);
 		}
 
 		public Vector3 GetCornerPosition(IObject3D item, int quadrantIndex)
 		{
+			quadrantIndex %= 4;
 			AxisAlignedBoundingBox originalSelectedBounds = item.GetAxisAlignedBoundingBox();
 			Vector3 cornerPosition = originalSelectedBounds.GetBottomCorner(quadrantIndex);
 
@@ -359,24 +416,6 @@ namespace MatterHackers.Plugins.EditorTools
 			var centerMatrix = Matrix4X4.CreateTranslation(boxCenter);
 			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
 			TotalTransform = centerMatrix;
-
-			var xOtherSide = new Vector3(cornerPosition.X + otherSideDelta.X, cornerPosition.Y, cornerPosition.Z);
-			var yOtherSide = new Vector3(cornerPosition.X, cornerPosition.Y + otherSideDelta.Y, cornerPosition.Z);
-
-			lines.Clear();
-			// left lines
-			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-
-			lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * DistToStart * distBetweenPixelsWorldSpace, 0, 0)));
-			lines.Add(Object3DControlContext.World.GetScreenPosition(yOtherSide - new Vector3(xSign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0, 0)));
-
-			// bottom lines
-			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(Object3DControlContext.World.GetScreenPosition(cornerPosition - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
-
-			lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * DistToStart * distBetweenPixelsWorldSpace, 0)));
-			lines.Add(Object3DControlContext.World.GetScreenPosition(xOtherSide - new Vector3(0, ySign * (DistToStart + LineLength) * distBetweenPixelsWorldSpace, 0)));
 		}
 
 		public static Vector3 GetScalingConsideringShiftKey(AxisAlignedBoundingBox originalSelectedBounds,
@@ -487,33 +526,29 @@ namespace MatterHackers.Plugins.EditorTools
 			{
 				if (MouseIsOver || MouseDownOnControl)
 				{
-					for (int i = 0; i < lines.Count; i += 2)
-					{
-						// draw the line that is on the ground
-						drawEvent.Graphics2D.Line(lines[i], lines[i + 1], theme.TextColor);
-					}
-
-					for (int i = 0; i < lines.Count; i += 4)
-					{
-						drawEvent.Graphics2D.DrawMeasureLine((lines[i] + lines[i + 1]) / 2,
-							(lines[i + 2] + lines[i + 3]) / 2,
-							LineArrows.Both,
-							theme);
-					}
-
-					int j = 4;
-
-					AxisAlignedBoundingBox selectedBounds = selectedItem.GetAxisAlignedBoundingBox();
-
-					Vector2 widthDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
-					xValueDisplayInfo.Value = selectedBounds.XSize;
-					xValueDisplayInfo.OriginRelativeParent = widthDisplayCenter - xValueDisplayInfo.LocalBounds.Center;
-
-					j = 0;
-					Vector2 heightDisplayCenter = (((lines[j] + lines[j + 1]) / 2) + ((lines[j + 2] + lines[j + 3]) / 2)) / 2;
-					yValueDisplayInfo.Value = selectedBounds.YSize;
-					yValueDisplayInfo.OriginRelativeParent = heightDisplayCenter - yValueDisplayInfo.LocalBounds.Center;
+					UpdateNumberControl(quadrantIndex);
+					UpdateNumberControl(quadrantIndex + 1);
 				}
+			}
+		}
+
+		private void UpdateNumberControl(int quadrant)
+		{
+			var (start0, end0, start1, end1) = GetMeasureLine(quadrant);
+			var start = (start0 + end0) / 2;
+			var end = (start1 + end1) / 2;
+			var screenStart = Object3DControlContext.World.GetScreenPosition(start);
+			var screenEnd = Object3DControlContext.World.GetScreenPosition(end);
+
+			if (quadrant % 2 == 1)
+			{
+				xValueDisplayInfo.Value = (start - end).Length;
+				xValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - xValueDisplayInfo.LocalBounds.Center;
+			}
+			else
+			{
+				yValueDisplayInfo.Value = (start - end).Length;
+				yValueDisplayInfo.OriginRelativeParent = (screenStart + screenEnd) / 2 - yValueDisplayInfo.LocalBounds.Center;
 			}
 		}
 

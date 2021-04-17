@@ -340,10 +340,14 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (activeSelectedItem is IObjectWithHeight heightObject
-				&& heightObject.Height != heightOnMouseDown)
+			if (MouseDownOnControl)
 			{
-				SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				if (activeSelectedItem is IObjectWithHeight heightObject
+					&& heightObject.Height != heightOnMouseDown)
+				{
+					SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				}
+
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 

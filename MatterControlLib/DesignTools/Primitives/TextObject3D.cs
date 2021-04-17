@@ -70,6 +70,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public double PointSize { get; set; } = 24;
 
+		[MaxDecimalPlaces(2)]
 		public double Height { get; set; } = 5;
 
 		[Sortable]

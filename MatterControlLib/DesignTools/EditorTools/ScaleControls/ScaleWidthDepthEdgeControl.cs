@@ -325,16 +325,18 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (hadClickOnControl
-				&& RootSelection is IObjectWithWidthAndDepth widthDepthItem
-				&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
+			if (hadClickOnControl)
 			{
-				ScaleWidthDepthCornerControl.SetWidthDepthUndo(RootSelection,
-					Object3DControlContext.Scene.UndoBuffer,
-					new Vector2(widthDepthItem.Width, widthDepthItem.Depth),
-					RootSelection.Matrix,
-					sizeOnMouseDown,
-					matrixOnMouseDown);
+				if (RootSelection is IObjectWithWidthAndDepth widthDepthItem
+					&& (widthDepthItem.Width != sizeOnMouseDown.X || widthDepthItem.Depth != sizeOnMouseDown.Y))
+				{
+					ScaleWidthDepthCornerControl.SetWidthDepthUndo(RootSelection,
+						Object3DControlContext.Scene.UndoBuffer,
+						new Vector2(widthDepthItem.Width, widthDepthItem.Depth),
+						RootSelection.Matrix,
+						sizeOnMouseDown,
+						matrixOnMouseDown);
+				}
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 

@@ -56,7 +56,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public double Diameter { get; set; } = 20;
 		//[DisplayName("Top")]
 		//public double TopDiameter { get; set; } = 0;
+
+		[MaxDecimalPlaces(2)]
 		public double Height { get; set; } = 20;
+
 		public int Sides { get; set; } = 40;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
