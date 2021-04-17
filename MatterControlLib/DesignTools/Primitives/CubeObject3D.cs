@@ -44,10 +44,13 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public override string ThumbnailName => "Cube";
 
+		[MaxDecimalPlaces(2)]
 		public double Width { get; set; } = 20;
 
+		[MaxDecimalPlaces(2)]
 		public double Depth { get; set; } = 20;
 
+		[MaxDecimalPlaces(2)]
 		public double Height { get; set; } = 20;
 
 		public static async Task<CubeObject3D> Create()

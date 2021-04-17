@@ -340,10 +340,14 @@ namespace MatterHackers.Plugins.EditorTools
 
 		public override void OnMouseUp(Mouse3DEventArgs mouseEvent3D)
 		{
-			if (activeSelectedItem is IObjectWithHeight heightObject
-				&& heightObject.Height != heightOnMouseDown)
+			if (MouseDownOnControl)
 			{
-				SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				if (activeSelectedItem is IObjectWithHeight heightObject
+					&& heightObject.Height != heightOnMouseDown)
+				{
+					SetHeightUndo(heightObject.Height, heightOnMouseDown);
+				}
+
 				Object3DControlContext.Scene.ShowSelectionShadow = true;
 			}
 
@@ -358,9 +362,8 @@ namespace MatterHackers.Plugins.EditorTools
 			Vector3 arrowCenter = topPosition;
 			arrowCenter.Z += arrowSize / 2 * distBetweenPixelsWorldSpace;
 
-			var centerMatrix = Matrix4X4.CreateTranslation(arrowCenter);
-			centerMatrix = Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * centerMatrix;
-			TotalTransform = centerMatrix;
+			var rotation = Matrix4X4.CreateRotation(new Quaternion(selectedItem.Matrix));
+			TotalTransform = rotation * Matrix4X4.CreateScale(distBetweenPixelsWorldSpace) * Matrix4X4.CreateTranslation(arrowCenter);
 		}
 
 		private void Object3DControl_BeforeDraw(object sender, DrawEventArgs drawEvent)

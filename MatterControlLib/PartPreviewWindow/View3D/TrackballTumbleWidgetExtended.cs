@@ -79,7 +79,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (mouseEvent.Button == MouseButtons.Middle)
 				{
-					if(CurrentTrackingType == TrackBallTransformType.None)
+					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						CurrentTrackingType = TrackBallTransformType.Translation;
 						mouseDownPosition = currentMousePosition;
@@ -87,7 +87,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 				else if (mouseEvent.Button == MouseButtons.Right)
 				{
-					if(CurrentTrackingType == TrackBallTransformType.None)
+					if (CurrentTrackingType == TrackBallTransformType.None)
 					{
 						CurrentTrackingType = TrackBallTransformType.Rotation;
 						StartRotateAroundOrigin(currentMousePosition);
@@ -107,21 +107,21 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				motionQueue.AddMoveToMotionQueue(currentMousePosition, UiThread.CurrentTimerMs);
 				DoRotateAroundOrigin(currentMousePosition);
 			}
-			else if(CurrentTrackingType == TrackBallTransformType.Translation)
+			else if (CurrentTrackingType == TrackBallTransformType.Translation)
 			{
 				Translate(currentMousePosition);
 			}
-			else if(CurrentTrackingType == TrackBallTransformType.Scale)
+			else if (CurrentTrackingType == TrackBallTransformType.Scale)
 			{
 				Vector2 mouseDelta = currentMousePosition - lastScaleMousePosition;
 				double zoomDelta = 1;
 				if (mouseDelta.Y < 0)
 				{
-					zoomDelta = - (-1 * mouseDelta.Y / 100);
+					zoomDelta = -(-1 * mouseDelta.Y / 100);
 				}
 				else if (mouseDelta.Y > 0)
 				{
-					zoomDelta = + (1 * mouseDelta.Y / 100);
+					zoomDelta = +(1 * mouseDelta.Y / 100);
 				}
 
 				ZoomToScreenPosition(currentMousePosition, zoomDelta);
@@ -159,7 +159,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private Vector3 IntersectPlane(Vector3 rayP, Vector3 rayD)
 		{
-			return IntersectPlane(Vector3.Zero, new Vector3(0,0,1), rayP, rayD);
+			return IntersectPlane(Vector3.Zero, new Vector3(0, 0, 1), rayP, rayD);
 		}
 
 		private Vector3 IntersectPlane(Vector3 planeP, Vector3 planeN, Vector3 rayP, Vector3 rayD)
@@ -191,7 +191,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void StartRotateAroundOrigin(Vector2 mousePosition)
 		{
-			if(isRotating)
+			if (isRotating)
 			{
 				ZeroVelocity();
 			}
@@ -202,16 +202,16 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			IntersectInfo intersectionInfo = Object3DControlLayer.Scene.GetBVHData().GetClosestIntersection(rayToCenter);
 			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : -intersectionInfo.HitPosition;
 
-			if(hitPos == Vector3.Zero)
+			if (hitPos == Vector3.Zero)
 			{
 				hitPos = -IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
-				if(hitPos.Length > 1000)
+				if (hitPos.Length > 1000)
 				{
 					hitPos = Vector3.Zero;
 				}
 			}
 
-			if(hitPos == Vector3.Zero)
+			if (hitPos == Vector3.Zero)
 			{
 				hitPos = lastRotationOrigin;
 			}
@@ -223,7 +223,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void DoRotateAroundOrigin(Vector2 mousePosition)
 		{
-			if(isRotating)
+			if (isRotating)
 			{
 				Quaternion activeRotationQuaternion = TrackBallController.GetRotationForMove(TrackBallController.ScreenCenter, TrackBallController.TrackBallRadius, mouseDownPosition, mousePosition, false);
 				mouseDownPosition = mousePosition;
@@ -241,7 +241,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void EndRotateAroundOrigin()
 		{
-			if(isRotating)
+			if (isRotating)
 			{
 				isRotating = false;
 				DisplacementVec += rotateVecOriginal - rotateVec;
@@ -267,7 +267,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void Translate(Vector2 position)
 		{
-			if(isRotating)
+			if (isRotating)
 			{
 				ZeroVelocity();
 			}
@@ -275,7 +275,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
 			Vector3 hitPos = IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal)).GetNormal();
 
-			if(hitPos == Vector3.Zero)
+			if (hitPos == Vector3.Zero)
 			{
 				hitPos = lastTranslationOrigin;
 			}
@@ -295,7 +295,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public void ZoomToScreenPosition(Vector2 screenPosition, double zoomDelta)
 		{
-			if(isRotating)
+			if (isRotating)
 			{
 				ZeroVelocity();
 			}
@@ -305,7 +305,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			Vector3 hitPos = intersectionInfo == null ? Vector3.Zero : intersectionInfo.HitPosition;
 
 			// if no object is found under the mouse trace from center to xy plane
-			if(hitPos == Vector3.Zero)
+			if (hitPos == Vector3.Zero)
 			{
 				Ray rayToCenter = world.GetRayForLocalBounds(new Vector2(Width / 2, Height / 2));
 				hitPos = IntersectPlane(rayToCenter.origin, new Vector3(rayToCenter.directionNormal).GetNormal());
@@ -380,7 +380,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			motionQueue.Clear();
 			currentVelocityPerMs = Vector2.Zero;
-			if(runningInterval != null){
+			if (runningInterval != null)
+			{
 				UiThread.ClearInterval(runningInterval);
 			}
 			EndRotateAroundOrigin();
@@ -388,7 +389,8 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		private void ApplyVelocity()
 		{
-			if(isRotating){
+			if (isRotating)
+			{
 				if (HasBeenClosed || currentVelocityPerMs.LengthSquared <= 0)
 				{
 					ZeroVelocity();

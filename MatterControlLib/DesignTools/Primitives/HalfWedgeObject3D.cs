@@ -53,8 +53,13 @@ namespace MatterHackers.MatterControl.DesignTools
 			return item;
 		}
 
+		[MaxDecimalPlaces(2)]
 		public double Width { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
 		public double Depth { get; set; } = 20;
+
+		[MaxDecimalPlaces(2)]
 		public double Height { get; set; } = 10;
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)

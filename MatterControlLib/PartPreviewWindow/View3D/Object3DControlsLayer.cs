@@ -55,7 +55,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		MoveInZ = 1,
 		RotateXYZ = 2,
 		RotateZ = 4,
-		ScaleCornersXY = 8,
+		ScaleWidthDepth = 8,
 		ScaleMatrixXY = 16,
 		Shadow = 32,
 		SnappingIndicators = 64,
@@ -190,10 +190,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 					if (selectedItem is IObjectWithWidthAndDepth widthAndDepth)
 					{
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 0));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 1));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 2));
-						Object3DControls.Add(new ScaleWidthDepthControl(this, 3));
+						AddControls(ControlTypes.ScaleWidthDepth);
 					}
 					else
 					{
@@ -212,9 +209,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 		{
 			if (controls.HasFlag(ControlTypes.RotateXYZ))
 			{
-				Object3DControls.Add(new RotateCornerControl(this, 0));
-				Object3DControls.Add(new RotateCornerControl(this, 1));
-				Object3DControls.Add(new RotateCornerControl(this, 2));
+				for (int i = 0; i < 3; i++)
+				{
+					Object3DControls.Add(new RotateCornerControl(this, i));
+				}
 			}
 
 			if (controls.HasFlag(ControlTypes.RotateZ))
@@ -234,15 +232,20 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			if (controls.HasFlag(ControlTypes.ScaleMatrixXY))
 			{
-				Object3DControls.Add(new ScaleMatrixCornerControl(this, 0));
-				Object3DControls.Add(new ScaleMatrixCornerControl(this, 1));
-				Object3DControls.Add(new ScaleMatrixCornerControl(this, 2));
-				Object3DControls.Add(new ScaleMatrixCornerControl(this, 3));
+				for (int i = 0; i < 4; i++)
+				{
+					Object3DControls.Add(new ScaleMatrixCornerControl(this, i));
+					Object3DControls.Add(new ScaleMatrixEdgeControl(this, i));
+				}
+			}
 
-				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 0));
-				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 1));
-				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 2));
-				Object3DControls.Add(new ScaleMatrixEdgeControl(this, 3));
+			if (controls.HasFlag(ControlTypes.ScaleWidthDepth))
+			{
+				for (int i = 0; i < 4; i++)
+				{
+					Object3DControls.Add(new ScaleWidthDepthCornerControl(this, i));
+					Object3DControls.Add(new ScaleWidthDepthEdgeControl(this, i));
+				}
 			}
 
 			if (controls.HasFlag(ControlTypes.Shadow))
