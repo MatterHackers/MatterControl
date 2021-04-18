@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ArrayRadialObject3D : ArrayObject3D, IEditorDraw
+	public class ArrayRadialObject3D : ArrayObject3D, ISelectedEditorDraw
 	{
 		public ArrayRadialObject3D()
 		{

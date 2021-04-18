@@ -69,8 +69,8 @@ namespace MatterHackers.Plugins.EditorTools
 		private Vector2 sizeOnMouseDown;
 		private Matrix4X4 matrixOnMouseDown;
 
-		public ScaleWidthDepthCornerControl(IObject3DControlContext context, int quadrant)
-			: base(context)
+		public ScaleWidthDepthCornerControl(IObject3DControlContext object3DControlContext, int quadrant)
+			: base(object3DControlContext)
 		{
 			theme = MatterControl.AppContext.Theme;
 

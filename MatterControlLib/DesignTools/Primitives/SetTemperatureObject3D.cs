@@ -42,7 +42,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, IEditorDraw
+	public class SetTemperatureObject3D : Object3D, IObject3DControlsProvider, IGCodeTransformer, ISelectedEditorDraw
 	{
 		private bool hasBeenReached;
 		private double accumulatedLayerHeight;

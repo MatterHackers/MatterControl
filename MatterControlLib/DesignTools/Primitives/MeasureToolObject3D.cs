@@ -33,6 +33,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using MatterHackers.Agg;
+using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
 using MatterHackers.Agg.UI;
 using MatterHackers.DataConverters3D;
@@ -42,12 +43,13 @@ using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
 using MatterHackers.RenderOpenGl;
-using MatterHackers.RenderOpenGl.OpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IEditorDraw
+	[MarkDownDescription("Drag the spheres to the locations you would like to measure the distance between.")]
+	[HideMeterialAndColor]
+	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
@@ -82,7 +84,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		public Vector3 EndPosition { get; set; } = new Vector3(10, 5, 3);
 
 		[ReadOnly(true)]
-		public double Distance { get; set; } = 10;
+		public double Distance { get; set; } = 0;
+
+		public bool AlwaysVisible { get; set; } = false;
 
 		[HideFromEditor]
 		public bool PositionsHaveBeenSet { get; set; } = false;
@@ -168,16 +172,72 @@ namespace MatterHackers.MatterControl.DesignTools
 			return Task.CompletedTask;
 		}
 
-		public void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
+		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
+			if (controlLayer.Scene.SelectedItem != this
+				&& !AlwaysVisible)
+			{
+				return;
+			}
+
 			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
 
+			var world = controlLayer.World;
 			// draw on top of anything that is already drawn
-			object3DControlLayer.World.Render3DLine(start, end, Color.Black.WithAlpha(Constants.LineAlpha), false, width: GuiWidget.DeviceScale);
+			world.Render3DLine(start,
+				end,
+				Color.Black.WithAlpha(Constants.LineAlpha),
+				false,
+				width: GuiWidget.DeviceScale,
+				true,
+				true);
 
 			// Restore DepthTest
-			object3DControlLayer.World.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
+			world.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
+
+			var screenStart = world.GetScreenPosition(start);
+			var screenEnd = world.GetScreenPosition(end);
+
+			var center = (screenStart + screenEnd) / 2;
+
+			if (PositionsHaveBeenSet)
+			{
+				controlLayer.DrawBeforeGui((graphics) =>
+				{
+					var number = new TypeFacePrinter(Distance.ToString("0.##"),
+						10,
+						center,
+						Justification.Center,
+						Baseline.BoundsCenter);
+
+					var theme = ApplicationController.Instance.MenuTheme;
+
+					var bounds = number.LocalBounds;
+					bounds.Inflate(3 * GuiWidget.DeviceScale);
+
+					graphics.Render(new RoundedRectShape(bounds, 3 * GuiWidget.DeviceScale), theme.BackgroundColor);
+
+					graphics.Render(number, theme.TextColor);
+				});
+			}
+		}
+
+		public IEnumerable<EditorButtonData> GetEditorButtonsData()
+		{
+			yield return new EditorButtonData()
+			{
+				Action = () =>
+				{
+					StartPosition = new Vector3(-10, 5, 3);
+					EndPosition = new Vector3(10, 5, 3);
+					Distance = 0;
+					PositionsHaveBeenSet = false;
+					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
+				},
+				HelpText = "Reset the line ends back to their starting positions".Localize(),
+				Name = "Reset".Localize(),
+			};
 		}
 	}
 }

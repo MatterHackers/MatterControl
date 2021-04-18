@@ -33,8 +33,12 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public interface IEditorDraw
+	public interface ISelectedEditorDraw
 	{
 		void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e);
+	}
+
+	public interface IAlwaysEditorDraw : ISelectedEditorDraw
+	{
 	}
 }

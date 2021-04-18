@@ -241,59 +241,62 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 			var undoBuffer = sceneContext.Scene.UndoBuffer;
 
-			// put in a color edit field
-			var colorField = new ColorField(theme, selectedItem.Color);
-			colorField.Initialize(0);
-			colorField.ValueChanged += (s, e) =>
+			if (!(selectedItem.GetType().GetCustomAttributes(typeof(HideMeterialAndColor), true).FirstOrDefault() is HideMeterialAndColor))
 			{
-				if (selectedItem.Color != colorField.Color)
+				// put in a color edit field
+				var colorField = new ColorField(theme, selectedItem.Color);
+				colorField.Initialize(0);
+				colorField.ValueChanged += (s, e) =>
 				{
-					undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
-				}
-			};
+					if (selectedItem.Color != colorField.Color)
+					{
+						undoBuffer.AddAndDo(new ChangeColor(selectedItem, colorField.Color));
+					}
+				};
 
-			colorField.Content.MouseDown += (s, e) =>
-			{
+				colorField.Content.MouseDown += (s, e) =>
+				{
 				// make sure the render mode is set to shaded or outline
 				if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Shaded
-					&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
-				{
+						&& sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Outlines)
+					{
 					// make sure the render mode is set to outline
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Outlines;
-				}
-			};
+					}
+				};
 
-			// color row
-			var row = new SettingsRow("Color".Localize(), null, colorField.Content, theme);
+				// color row
+				var row = new SettingsRow("Color".Localize(), null, colorField.Content, theme);
 
-			// Special top border style for first item in editor
-			row.Border = new BorderDouble(0, 1);
+				// Special top border style for first item in editor
+				row.Border = new BorderDouble(0, 1);
 
-			editorPanel.AddChild(row);
+				editorPanel.AddChild(row);
 
-			// put in a material edit field
-			var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
-			materialField.Initialize(0);
-			materialField.ValueChanged += (s, e) =>
-			{
-				if (selectedItem.MaterialIndex != materialField.MaterialIndex)
+				// put in a material edit field
+				var materialField = new MaterialIndexField(sceneContext.Printer, theme, selectedItem.MaterialIndex);
+				materialField.Initialize(0);
+				materialField.ValueChanged += (s, e) =>
 				{
-					undoBuffer.AddAndDo(new ChangeMaterial(selectedItem, materialField.MaterialIndex));
-				}
-			};
+					if (selectedItem.MaterialIndex != materialField.MaterialIndex)
+					{
+						undoBuffer.AddAndDo(new ChangeMaterial(selectedItem, materialField.MaterialIndex));
+					}
+				};
 
-			materialField.Content.MouseDown += (s, e) =>
-			{
-				if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Materials)
+				materialField.Content.MouseDown += (s, e) =>
 				{
+					if (sceneContext.ViewState.RenderType != RenderOpenGl.RenderTypes.Materials)
+					{
 					// make sure the render mode is set to material
 					sceneContext.ViewState.RenderType = RenderOpenGl.RenderTypes.Materials;
-				}
-			};
+					}
+				};
 
-			// material row
-			editorPanel.AddChild(
-				new SettingsRow("Material".Localize(), null, materialField.Content, theme));
+				// material row
+				editorPanel.AddChild(
+					new SettingsRow("Material".Localize(), null, materialField.Content, theme));
+			}
 
 			// put in the normal editor
 			if (selectedItem is ComponentObject3D componentObject

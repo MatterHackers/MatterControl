@@ -49,7 +49,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToCylinderObject3D : TransformWrapperObject3D, IEditorDraw
+	public class FitToCylinderObject3D : TransformWrapperObject3D, ISelectedEditorDraw
 	{
 		public FitToCylinderObject3D()
 		{

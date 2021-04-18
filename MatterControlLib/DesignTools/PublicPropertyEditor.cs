@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Image;
 using MatterHackers.Agg.Platform;
@@ -84,6 +85,8 @@ namespace MatterHackers.MatterControl.DesignTools
 
 				// CreateEditor
 				AddUnlockLinkIfRequired(context.item, mainContainer, theme);
+				
+				AddMarkDownDescription(context.item, mainContainer, theme);
 
 				GuiWidget scope = mainContainer;
 
@@ -185,7 +188,7 @@ namespace MatterHackers.MatterControl.DesignTools
 					}
 
 					var row = new SettingsRow("".Localize(), null, editorButton, theme);
-					editorButtonData.SetStates(editorButton, row);
+					editorButtonData.SetStates?.Invoke(editorButton, row);
 					editorButton.Click += (s, e) =>
 					{
 						editorButtonData.Action?.Invoke();
@@ -1000,6 +1003,21 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 
 				editControlsContainer.AddChild(GetUnlockRow(theme, unlockdata.Value.url));
+			}
+		}
+
+		public static void AddMarkDownDescription(IObject3D item, GuiWidget editControlsContainer, ThemeConfig theme)
+		{
+			if (item.GetType().GetCustomAttributes(typeof(MarkDownDescriptionAttribute), true).FirstOrDefault() is MarkDownDescriptionAttribute markdownDescription)
+			{
+				var markdownWidget = new MarkdownWidget(theme)
+				{
+					Padding = new BorderDouble(left: theme.DefaultContainerPadding / 2),
+					Markdown = markdownDescription.Markdown,
+					VAnchor = VAnchor.Fit
+				};
+				
+				editControlsContainer.AddChild(markdownWidget);
 			}
 		}
 

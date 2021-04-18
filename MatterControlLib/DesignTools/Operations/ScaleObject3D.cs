@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class ScaleObject3D : TransformWrapperObject3D, IEditorDraw, IPropertyGridModifier
+	public class ScaleObject3D : TransformWrapperObject3D, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		public enum ScaleType
 		{

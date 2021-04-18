@@ -205,6 +205,25 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			});
 		}
 
+		private List<Action<Graphics2D>> drawBeforeCallbacks = new List<Action<Graphics2D>>();
+
+		public void DrawBeforeGui(Action<Graphics2D> drawFunction)
+		{
+			drawBeforeCallbacks.Add(drawFunction);
+		}
+
+		public override void OnDraw(Graphics2D graphics2D)
+		{
+			foreach (var draw in drawBeforeCallbacks)
+			{
+				draw(graphics2D);
+			}
+
+			drawBeforeCallbacks.Clear();
+
+			base.OnDraw(graphics2D);
+		}
+
 		public void AddControls(ControlTypes controls)
 		{
 			if (controls.HasFlag(ControlTypes.RotateXYZ))
@@ -939,6 +958,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			return bCenterInViewSpace.LengthSquared.CompareTo(aCenterInViewSpace.LengthSquared);
 		}
 
+		private HashSet<IObject3D> editorDrawItems = new HashSet<IObject3D>();
 		private void DrawGlContent(DrawEventArgs e)
 		{
 			var gcodeOptions = sceneContext.RendererOptions;
@@ -974,12 +994,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			var transparentMeshes = new List<Object3DView>();
 
 			var selectedItem = scene.SelectedItem;
+			editorDrawItems.Clear();
+			editorDrawItems.Add(selectedItem);
 
 			foreach (var item in scene.Children)
 			{
 				if (item.Visible)
 				{
 					DrawObject(item, transparentMeshes, e);
+				}
+
+				if (item is IAlwaysEditorDraw editorDraw)
+				{
+					editorDrawItems.Add(item);
 				}
 			}
 
@@ -1059,10 +1086,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			}
 
 			// Draw the editor items in the same scope as the 3D Controls
-			if (selectedItem != null)
+			foreach (var item in editorDrawItems)
 			{
 				// Invoke existing IEditorDraw when iterating items
-				if (selectedItem is IEditorDraw editorDraw)
+				if (item is ISelectedEditorDraw editorDraw)
 				{
 					editorDraw.DrawEditor(this, transparentMeshes, e);
 				}

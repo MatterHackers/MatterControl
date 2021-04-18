@@ -52,7 +52,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[Obsolete("Use CurveObject3D_3 instead", false)]
-	public class CurveObject3D_2 : OperationSourceContainerObject3D, IEditorDraw
+	public class CurveObject3D_2 : OperationSourceContainerObject3D, ISelectedEditorDraw
 	{
 		public CurveObject3D_2()
 		{

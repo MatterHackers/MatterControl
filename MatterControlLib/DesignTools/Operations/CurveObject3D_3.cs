@@ -46,7 +46,7 @@ using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
+	public class CurveObject3D_3 : OperationSourceContainerObject3D, IPropertyGridModifier, ISelectedEditorDraw
 	{
 		public CurveObject3D_3()
 		{

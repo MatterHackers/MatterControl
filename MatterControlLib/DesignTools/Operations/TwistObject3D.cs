@@ -48,7 +48,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, IEditorDraw
+	public class TwistObject3D : OperationSourceContainerObject3D, IPropertyGridModifier, ISelectedEditorDraw
 	{
 		public TwistObject3D()
 		{

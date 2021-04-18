@@ -47,7 +47,7 @@ using Newtonsoft.Json.Converters;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	public class TextPathObject3D : Object3D, IPathObject, IEditorDraw
+	public class TextPathObject3D : Object3D, IPathObject, ISelectedEditorDraw
 	{
 		public TextPathObject3D()
 		{

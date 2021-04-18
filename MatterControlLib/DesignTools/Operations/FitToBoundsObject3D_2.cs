@@ -45,7 +45,7 @@ using System.Threading.Tasks;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, IEditorDraw
+	public class FitToBoundsObject3D_2 : TransformWrapperObject3D, ISelectedEditorDraw
 	{
 		private Vector3 boundsSize;
 
