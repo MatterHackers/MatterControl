@@ -618,7 +618,7 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override List<WidgetAndPosition> FindDescendants(IEnumerable<string> namesToSearchFor, List<WidgetAndPosition> foundChildren, RectangleDouble touchingBounds, SearchType seachType, bool allowInvalidItems = true)
 		{
-			foreach (Object3DControl child in this.Object3DControls)
+			foreach (IObject3DControl child in this.Object3DControls)
 			{
 				string object3DName = child.Name;
 
@@ -646,10 +646,11 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 				}
 
 				if (nameFound
-					&& child.CollisionVolume != null)
+					&& child is Object3DControl object3DControl
+					&& object3DControl.CollisionVolume != null)
 				{
-					AxisAlignedBoundingBox bounds = child.CollisionVolume.GetAxisAlignedBoundingBox();
-					bounds = bounds.NewTransformed(child.TotalTransform);
+					AxisAlignedBoundingBox bounds = object3DControl.CollisionVolume.GetAxisAlignedBoundingBox();
+					bounds = bounds.NewTransformed(object3DControl.TotalTransform);
 
 					RectangleDouble screenBoundsOfObject3D = RectangleDouble.ZeroIntersection;
 					for (int i = 0; i < 4; i++)

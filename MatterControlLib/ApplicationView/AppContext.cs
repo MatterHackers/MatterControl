@@ -144,7 +144,7 @@ namespace MatterHackers.MatterControl
 			};
 
 			markdownWidegt.Markdown = toolTipText;
-			markdownWidegt.Width = 350;
+			markdownWidegt.Width = 350 * GuiWidget.DeviceScale;
 			var maxLineWidth = 0.0;
 			if (markdownWidegt.Descendants<ParagraphX>().Any())
 			{

@@ -72,6 +72,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					HelpText = "Forces the slicer to attempt to avoid having the perimeter line cross over existing perimeter lines. This can help with oozing or strings.".Localize(),
 					DataEditType = DataEditTypes.CHECK_BOX,
 					DefaultValue = "1",
+					UiUpdate = UiUpdateRequired.SliceSettings,
 					Converter = new MappedToBoolString(),
 				},
 				new SliceSettingData()
@@ -1673,6 +1674,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					Units = "mm".Localize(),
 					EnableIfSet = SettingsKey.enable_retractions,
+					ShowIfSet = "!avoid_crossing_perimeters",
 					DefaultValue = "5",
 					Converter = new MapFirstValue(),
 				},
@@ -1685,6 +1687,7 @@ namespace MatterHackers.MatterControl.SlicerConfiguration
 					Units = "mm".Localize(),
 					RequiredDisplayDetail = DisplayDetailRequired.Advanced,
 					EnableIfSet = SettingsKey.enable_retractions,
+					ShowIfSet = "avoid_crossing_perimeters",
 					DefaultValue = "20",
 					Converter = new MapFirstValue(),
 				},

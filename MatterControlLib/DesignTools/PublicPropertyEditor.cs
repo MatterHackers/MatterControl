@@ -678,12 +678,22 @@ namespace MatterHackers.MatterControl.DesignTools
 				}
 				else // normal edit row
 				{
-					var multiLineEditAttribute = property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault();
-
-					if (multiLineEditAttribute != null)
+					if (property.PropertyInfo.GetCustomAttributes(true).OfType<MultiLineEditAttribute>().FirstOrDefault() != null)
 					{
 						// create a a multi-line string editor
 						var field = new MultilineStringField(theme);
+						field.Initialize(0);
+						field.SetValue(stringValue, false);
+						field.ClearUndoHistory();
+						field.Content.HAnchor = HAnchor.Stretch;
+						// field.Content.MinimumSize = new Vector2(0, 200 * GuiWidget.DeviceScale);
+						RegisterValueChanged(field, (valueString) => valueString);
+						rowContainer = CreateSettingsColumn(property, field, fullWidth: true);
+					}
+					else if (property.PropertyInfo.GetCustomAttributes(true).OfType<MarkdownStringAttribute>().FirstOrDefault() != null)
+					{
+						// create a a multi-line string editor
+						var field = new MarkdownEditField(theme, "Description".Localize());
 						field.Initialize(0);
 						field.SetValue(stringValue, false);
 						field.ClearUndoHistory();

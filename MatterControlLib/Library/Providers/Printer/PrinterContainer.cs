@@ -83,12 +83,13 @@ namespace MatterHackers.MatterControl.Library
 						"MatterHackers",
 						repository,
 						subPath),
-					() => printer.Settings.GetValue<bool>(SettingsKey.has_fan)) // visibility
+					() => printer.Settings.GetValue<bool>(SettingsKey.has_fan)) // visibility (should be base on folder existing)
 				{
 					IsReadOnly = true
 				});
 
-			// TODO: An enumerable list of serialized container paths (or some other markup) to construct for this printer
+			// TODO: An enumerable list of serialized container paths (or some other markup) to construct for this printer.
+			// This would allow for external repositories of parts that are not part of the MH library
 			// printer.Settings.GetValue(SettingsKey.library_containers);
 		}
 	}

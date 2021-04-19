@@ -171,7 +171,10 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 
 		public override void OnMouseWheel(MouseEventArgs mouseEvent)
 		{
-			ZoomToScreenPosition(GetMousePosition(mouseEvent), mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
+			if (this.ContainsFirstUnderMouseRecursive())
+			{
+				ZoomToScreenPosition(GetMousePosition(mouseEvent), mouseEvent.WheelDelta > 0 ? -ZoomDelta : ZoomDelta);
+			}
 		}
 
 		private Vector2 GetMousePosition(MouseEventArgs mouseEvent)
