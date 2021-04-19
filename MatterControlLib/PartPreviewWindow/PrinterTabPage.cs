@@ -209,7 +209,19 @@ namespace MatterHackers.MatterControl.PartPreviewWindow
 			{
 				Visible = Printer.ViewState.ViewMode == PartViewMode.Layers2D
 			};
-			view3DWidget.Object3DControlLayer.AddChild(gcode2DWidget, position + 1);
+
+			var trackballIndex = 0;
+			foreach (var child in view3DWidget.Object3DControlLayer.Children)
+			{
+				if (child is TrackballTumbleWidgetExtended)
+				{
+					break;
+				}
+
+				trackballIndex++;
+			}
+
+			view3DWidget.Object3DControlLayer.AddChild(gcode2DWidget, trackballIndex + 1);
 
 			SetSliderSizes();
 
