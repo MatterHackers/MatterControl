@@ -27,26 +27,18 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
-using System;
+using System.Collections.Generic;
+using MatterHackers.Agg.UI;
+using MatterHackers.MatterControl.PartPreviewWindow;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[AttributeUsage(AttributeTargets.Class)]
-	public class RequiresPermissionsAttribute : Attribute
+	public interface ISelectedEditorDraw
 	{
-		public RequiresPermissionsAttribute()
-		{
-		}
+		void DrawEditor(Object3DControlsLayer object3DControlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e);
 	}
 
-	[AttributeUsage(AttributeTargets.Class)]
-	public class MarkDownDescriptionAttribute : Attribute
+	public interface IAlwaysEditorDraw : ISelectedEditorDraw
 	{
-		public MarkDownDescriptionAttribute(string markdown)
-		{
-			this.Markdown = markdown;
-		}
-
-		public string Markdown { get; }
 	}
 }

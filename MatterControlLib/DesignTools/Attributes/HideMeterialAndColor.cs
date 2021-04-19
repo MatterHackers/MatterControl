@@ -32,21 +32,10 @@ using System;
 namespace MatterHackers.MatterControl.DesignTools
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class RequiresPermissionsAttribute : Attribute
+	public class HideMeterialAndColor : Attribute
 	{
-		public RequiresPermissionsAttribute()
+		public HideMeterialAndColor()
 		{
 		}
-	}
-
-	[AttributeUsage(AttributeTargets.Class)]
-	public class MarkDownDescriptionAttribute : Attribute
-	{
-		public MarkDownDescriptionAttribute(string markdown)
-		{
-			this.Markdown = markdown;
-		}
-
-		public string Markdown { get; }
 	}
 }

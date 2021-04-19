@@ -46,6 +46,9 @@ namespace MatterHackers.MatterControl.DesignTools
 		private readonly double blockSize = 11 * GuiWidget.DeviceScale;
 
 		private ITraceable collisionVolume;
+
+		public IObject3DControlContext Object3DControlContext { get; }
+
 		private ThemeConfig theme;
 		private IObject3DControlContext context;
 
@@ -57,12 +60,18 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		private Mesh shape;
 		private bool mouseOver;
+		private PlaneShape hitPlane;
 		private bool downOnControl;
 
-		public TracedPositionObject3DControl(IObject3DControlContext context, IObject3D owner, Func<Vector3> getPosition, Action<Vector3> setPosition)
+		public TracedPositionObject3DControl(IObject3DControlContext object3DControlContext,
+			IObject3D owner,
+			Func<Vector3> getPosition,
+			Action<Vector3> setPosition)
 		{
+			this.Object3DControlContext = object3DControlContext;
+
 			this.theme = ApplicationController.Instance.Theme;
-			this.context = context;
+			this.context = object3DControlContext;
 			this.getPosition = getPosition;
 			this.setPosition = setPosition;
 			this.shape = PlatonicSolids.CreateCube();
@@ -93,7 +102,13 @@ namespace MatterHackers.MatterControl.DesignTools
 				color = theme.PrimaryAccentColor;
 			}
 
-			GLHelper.Render(shape, color, ShapeMatrix(), RenderTypes.Shaded);
+			GLHelper.Render(shape, color.WithAlpha(e.Alpha0to255), ShapeMatrix(), RenderTypes.Shaded);
+
+			if (hitPlane != null)
+			{
+				//Object3DControlContext.World.RenderPlane(hitPlane.Plane, Color.Red, true, 30, 3);
+				//Object3DControlContext.World.RenderPlane(initialHitPosition, hitPlane.Plane.Normal, Color.Red, true, 30, 3);
+			}
 		}
 
 		private Matrix4X4 ShapeMatrix()
@@ -114,6 +129,7 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void OnMouseDown(Mouse3DEventArgs mouseEvent3D)
 		{
+			hitPlane = new PlaneShape(new Plane(mouseEvent3D.MouseRay.directionNormal, mouseEvent3D.info.HitPosition), null);
 			downOnControl = true;
 		}
 
@@ -130,21 +146,35 @@ namespace MatterHackers.MatterControl.DesignTools
 				var ray = context.World.GetRayForLocalBounds(mouseEvent3D.MouseEvent2D.Position);
 				var scene = context.Scene;
 				var intersectionInfo = scene.GetBVHData().GetClosestIntersection(ray);
-				if (intersectionInfo != null)
+
+				var oldPosition = getPosition();
+				var newPosition = oldPosition;
+				if (intersectionInfo == null)
 				{
+					intersectionInfo = hitPlane.GetClosestIntersection(ray);
+					if (intersectionInfo != null)
+					{
+						newPosition = intersectionInfo.HitPosition;
+					}
+				}
+				else
+				{
+					hitPlane = new PlaneShape(new Plane(mouseEvent3D.MouseRay.directionNormal, intersectionInfo.HitPosition), null);
+
 					foreach (var object3D in scene.Children)
 					{
 						if (object3D.GetBVHData().Contains(intersectionInfo.HitPosition))
 						{
-							var newPosition = intersectionInfo.HitPosition;
-							if (newPosition != getPosition())
-							{
-								setPosition(newPosition);
-								context.GuiSurface.Invalidate();
-								break;
-							}
+							newPosition = intersectionInfo.HitPosition;
+							break;
 						}
 					}
+				}
+
+				if (newPosition != oldPosition)
+				{
+					setPosition(newPosition);
+					context.GuiSurface.Invalidate();
 				}
 			}
 		}

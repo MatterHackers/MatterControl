@@ -46,7 +46,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RevolveObject3D : Object3D, IEditorDraw
+	public class RevolveObject3D : Object3D, ISelectedEditorDraw
 	{
 		[MaxDecimalPlaces(2)]
 		public double AxisPosition { get; set; } = 0;

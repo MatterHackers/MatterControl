@@ -48,7 +48,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 		Sharp,
 	}
 
-	public class InflatePathObject3D : Object3D, IPathObject, IEditorDraw, IObject3DControlsProvider
+	public class InflatePathObject3D : Object3D, IPathObject, ISelectedEditorDraw, IObject3DControlsProvider
 	{
 		public IVertexSource VertexSource { get; set; } = new VertexStorage();
 

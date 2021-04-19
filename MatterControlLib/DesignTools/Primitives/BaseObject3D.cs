@@ -59,7 +59,7 @@ namespace MatterHackers.MatterControl.DesignTools
 		Outline
 	}
 
-	public class BaseObject3D : Object3D, IPropertyGridModifier, IEditorDraw
+	public class BaseObject3D : Object3D, IPropertyGridModifier, ISelectedEditorDraw
 	{
 		public enum CenteringTypes
 		{

@@ -45,7 +45,7 @@ using MatterHackers.VectorMath;
 namespace MatterHackers.MatterControl.PartPreviewWindow.View3D
 {
 	[ShowUpdateButton]
-	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, IEditorDraw
+	public class SubtractObject3D_2 : OperationSourceContainerObject3D, ISelectableChildContainer, ISelectedEditorDraw
 	{
 		public SubtractObject3D_2()
 		{

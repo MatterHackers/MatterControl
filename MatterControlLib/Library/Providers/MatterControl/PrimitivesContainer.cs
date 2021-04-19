@@ -143,6 +143,10 @@ namespace MatterHackers.MatterControl.Library
 					() => "Measure Tool".Localize(),
 					async () => await MeasureToolObject3D.Create())
 					{ DateCreated = new System.DateTime(index++) },
+				new GeneratorItem(
+					() => "Description".Localize(),
+					async () => await DescriptionObject3D.Create())
+					{ DateCreated = new System.DateTime(index++) },
 			};
 
 			string title = "Primitive Shapes".Localize();

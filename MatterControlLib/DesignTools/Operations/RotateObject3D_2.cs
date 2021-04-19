@@ -42,7 +42,7 @@ using Newtonsoft.Json;
 
 namespace MatterHackers.MatterControl.DesignTools.Operations
 {
-	public class RotateObject3D_2 : TransformWrapperObject3D, IEditorDraw
+	public class RotateObject3D_2 : TransformWrapperObject3D, ISelectedEditorDraw
 	{
 		public RotateObject3D_2()
 		{

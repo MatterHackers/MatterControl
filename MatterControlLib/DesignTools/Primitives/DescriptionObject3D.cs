@@ -28,10 +28,11 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Markdig.Agg;
 using MatterHackers.Agg;
 using MatterHackers.Agg.Font;
 using MatterHackers.Agg.Platform;
@@ -42,21 +43,21 @@ using MatterHackers.MatterControl.PartPreviewWindow;
 using MatterHackers.MeshVisualizer;
 using MatterHackers.PolygonMesh;
 using MatterHackers.PolygonMesh.Processors;
-using MatterHackers.RenderOpenGl;
 using MatterHackers.VectorMath;
 
 namespace MatterHackers.MatterControl.DesignTools
 {
-	[MarkDownDescription("Drag the spheres to the locations you would like to measure the distance between.")]
+	[MarkDownDescription("Drag the sphere to the locations you would like to position the description.")]
 	[HideMeterialAndColor]
-	public class MeasureToolObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
+	public class DescriptionObject3D : Object3D, IObject3DControlsProvider, IAlwaysEditorDraw, IEditorButtonProvider
 	{
 		private static Mesh shape = null;
 		private List<IObject3DControl> editorControls = null;
+		private MarkdownWidget markdownWidget;
 
-		public MeasureToolObject3D()
+		public DescriptionObject3D()
 		{
-			Name = "Measure Tool".Localize();
+			Name = "Description".Localize();
 			Color = Color.FromHSL(.11, .98, .76);
 
 			if (shape == null)
@@ -70,9 +71,9 @@ namespace MatterHackers.MatterControl.DesignTools
 			Mesh = shape;
 		}
 
-		public static async Task<MeasureToolObject3D> Create()
+		public static async Task<DescriptionObject3D> Create()
 		{
-			var item = new MeasureToolObject3D();
+			var item = new DescriptionObject3D();
 			await item.Rebuild();
 			return item;
 		}
@@ -81,15 +82,10 @@ namespace MatterHackers.MatterControl.DesignTools
 		public Vector3 StartPosition { get; set; } = new Vector3(-10, 5, 3);
 
 		[HideFromEditor]
-		public Vector3 EndPosition { get; set; } = new Vector3(10, 5, 3);
+		public bool PositionHasBeenSet { get; set; } = false;
 
-		[ReadOnly(true)]
-		public double Distance { get; set; } = 0;
-
-		public bool AlwaysVisible { get; set; } = false;
-
-		[HideFromEditor]
-		public bool PositionsHaveBeenSet { get; set; } = false;
+		[MarkdownString]
+		public string Description { get; set; } = "Type a description in the properties panel";
 
 		public override bool Persistable => false;
 
@@ -103,36 +99,16 @@ namespace MatterHackers.MatterControl.DesignTools
 					this,
 					() =>
 					{
-						return PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
+						return PositionHasBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 					},
 					(position) =>
 					{
-						if (!PositionsHaveBeenSet)
+						if (!PositionHasBeenSet)
 						{
-							PositionsHaveBeenSet = true;
-							EndPosition = EndPosition.Transform(this.Matrix);
+							PositionHasBeenSet = true;
 						}
 
 						StartPosition = position;
-						Distance = (StartPosition - EndPosition).Length;
-						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
-					}),
-					new TracedPositionObject3DControl(object3DControlsLayer,
-					this,
-					() =>
-					{
-						return PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
-					},
-					(position) =>
-					{
-						if (!PositionsHaveBeenSet)
-						{
-							PositionsHaveBeenSet = true;
-							StartPosition = StartPosition.Transform(this.Matrix);
-						}
-
-						EndPosition = position;
-						Distance = (StartPosition - EndPosition).Length;
 						UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 					}),
 				};
@@ -142,6 +118,16 @@ namespace MatterHackers.MatterControl.DesignTools
 			{
 				list.AddRange(editorControls);
 			});
+		}
+
+		public override void Remove(UndoBuffer undoBuffer)
+		{
+			if (markdownWidget != null)
+			{
+				markdownWidget.Close();
+			}
+
+			base.Remove(undoBuffer);
 		}
 
 		public override async void OnInvalidate(InvalidateArgs invalidateType)
@@ -174,52 +160,63 @@ namespace MatterHackers.MatterControl.DesignTools
 
 		public void DrawEditor(Object3DControlsLayer controlLayer, List<Object3DView> transparentMeshes, DrawEventArgs e)
 		{
-			if (controlLayer.Scene.SelectedItem != this
-				&& !AlwaysVisible)
-			{
-				return;
-			}
-
-			var start = PositionsHaveBeenSet ? StartPosition : StartPosition.Transform(Matrix);
-			var end = PositionsHaveBeenSet ? EndPosition : EndPosition.Transform(Matrix);
+			var start = PositionHasBeenSet ? StartPosition : StartPosition.Transform(Matrix);
 
 			var world = controlLayer.World;
-			// draw on top of anything that is already drawn
-			world.Render3DLine(start,
-				end,
-				Color.Black.WithAlpha(Constants.LineAlpha),
-				false,
-				GuiWidget.DeviceScale,
-				true,
-				true);
-
-			// Restore DepthTest
-			world.Render3DLine(start, end, Color.Black, true, width: GuiWidget.DeviceScale);
 
 			var screenStart = world.GetScreenPosition(start);
-			var screenEnd = world.GetScreenPosition(end);
 
-			var center = (screenStart + screenEnd) / 2;
-
-			if (PositionsHaveBeenSet)
+			if (PositionHasBeenSet)
 			{
-				controlLayer.DrawBeforeGui((graphics) =>
+				if (markdownWidget == null)
 				{
-					var number = new TypeFacePrinter(Distance.ToString("0.##"),
-						10,
-						center,
-						Justification.Center,
-						Baseline.BoundsCenter);
-
 					var theme = ApplicationController.Instance.MenuTheme;
+					markdownWidget = new MarkdownWidget(theme, true)
+					{
+						HAnchor = HAnchor.Absolute,
+						VAnchor = VAnchor.Fit,
+						Width = 200,
+						Height = 100,
+						BackgroundColor = theme.BackgroundColor,
+						BackgroundRadius = new RadiusCorners(3 * GuiWidget.DeviceScale),
+						Margin = 0,
+						BorderColor = theme.PrimaryAccentColor,
+						BackgroundOutlineWidth = 1,
+						Padding = 5,
+					};
 
-					var bounds = number.LocalBounds;
-					bounds.Inflate(3 * GuiWidget.DeviceScale);
+					markdownWidget.Markdown = Description;
+					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
 
-					graphics.Render(new RoundedRectShape(bounds, 3 * GuiWidget.DeviceScale), theme.BackgroundColor);
+					controlLayer.GuiSurface.AddChild(markdownWidget);
 
-					graphics.Render(number, theme.TextColor);
-				});
+					markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
+
+					void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+					{
+						controlLayer.Scene.SelectedItem = this;
+					}
+
+					markdownWidget.MouseDown += MarkdownWidget_MouseDown;
+				}
+
+				var descrpition = Description.Replace("\\n", "\n");
+				if (markdownWidget.Markdown != descrpition)
+				{
+					markdownWidget.Markdown = descrpition;
+					markdownWidget.Width = 100 * GuiWidget.DeviceScale;
+				}
+
+				markdownWidget.Position = screenStart;
+			}
+		}
+
+		private void MarkdownWidget_AfterDraw(object sender, DrawEventArgs e)
+		{
+			if (!this.Parent.Children.Where(c => c == this).Any())
+			{
+				markdownWidget.Close();
+				markdownWidget.AfterDraw -= MarkdownWidget_AfterDraw;
 			}
 		}
 
@@ -230,12 +227,10 @@ namespace MatterHackers.MatterControl.DesignTools
 				Action = () =>
 				{
 					StartPosition = new Vector3(-10, 5, 3);
-					EndPosition = new Vector3(10, 5, 3);
-					Distance = 0;
-					PositionsHaveBeenSet = false;
+					PositionHasBeenSet = false;
 					UiThread.RunOnIdle(() => Invalidate(InvalidateType.DisplayValues));
 				},
-				HelpText = "Reset the line ends back to their starting positions".Localize(),
+				HelpText = "Reset the position".Localize(),
 				Name = "Reset".Localize(),
 			};
 		}

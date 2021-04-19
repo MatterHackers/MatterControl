@@ -64,7 +64,7 @@ namespace MatterHackers.MatterControl.DesignTools.Operations
 	}
 
 	[Obsolete("Not used anymore. Replaced with FitToBoundsObject3D_2", true)]
-	public class FitToBoundsObject3D : Object3D, IEditorDraw, IPropertyGridModifier
+	public class FitToBoundsObject3D : Object3D, ISelectedEditorDraw, IPropertyGridModifier
 	{
 		[Description("Set the shape the part will be fit into.")]
 		public FitType FitType { get; set; } = FitType.Box;
