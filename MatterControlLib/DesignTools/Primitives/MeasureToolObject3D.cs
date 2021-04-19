@@ -189,7 +189,7 @@ namespace MatterHackers.MatterControl.DesignTools
 				end,
 				Color.Black.WithAlpha(Constants.LineAlpha),
 				false,
-				width: GuiWidget.DeviceScale,
+				GuiWidget.DeviceScale,
 				true,
 				true);
 
