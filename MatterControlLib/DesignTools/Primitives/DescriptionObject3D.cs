@@ -191,6 +191,13 @@ namespace MatterHackers.MatterControl.DesignTools
 					controlLayer.GuiSurface.AddChild(markdownWidget);
 
 					markdownWidget.AfterDraw += MarkdownWidget_AfterDraw;
+
+					void MarkdownWidget_MouseDown(object sender, MouseEventArgs e2)
+					{
+						controlLayer.Scene.SelectedItem = this;
+					}
+
+					markdownWidget.MouseDown += MarkdownWidget_MouseDown;
 				}
 
 				var descrpition = Description.Replace("\\n", "\n");
